@@ -929,10 +929,36 @@ fn the_contextual_len_rule_still_leaves_a_contract_parameter_resolvable() {
         "    return;",
         "}",
     ]);
-    let module = compile(&source)
-        .expect("`len` in a contract clause must still resolve against its parameter");
-    // It stays on the ordinary sequential route: a contract clause is not a
+    // Card `W48-QR-SCALAR-TYPES-R3` (`W48-INERT-EXTERN-DECLARATION-TYPES`):
+    // this uncalled declaration's unbraced clauses are carried as part of its
+    // result annotation, which nothing read before the card; it is now read
+    // and refused at `Q020`. What this test pins is unchanged: `len` resolves
+    // against its parameter — name resolution's `Q013` does not fire — and the
+    // one refusal is the declaration check, after every earlier pass.
+    let refused = compile(&source).expect_err("the unbraced result annotation is read and refused");
+    assert_eq!(
+        refused.iter().map(|d| d.code.as_str()).collect::<Vec<_>>(),
+        ["Q020"],
+        "`len` in a contract clause must still resolve against its parameter: {refused:?}"
+    );
+    // The braced contract form of the same declaration is read, admitted, and
+    // stays on the ordinary sequential route: a contract clause is not a
     // statement, so it cannot reach this card's detector at all.
+    let braced = source_lines(&[
+        "#import std.extern;",
+        "",
+        "extern fn take_len(str: ptr<const, u8>, len: i32) -> ptr<mut, u8>",
+        "contract {",
+        "    requires resource_valid(str);",
+        "    ensures normal resource_borrowed(len);",
+        "};",
+        "",
+        "fn main() -> unit {",
+        "    return;",
+        "}",
+    ]);
+    let module = compile(&braced)
+        .expect("`len` in a contract clause must still resolve against its parameter");
     assert_eq!(
         module.execution_profile,
         SourceExecutionProfile::SequentialCleanupV1

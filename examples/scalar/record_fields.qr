@@ -1,0 +1,27 @@
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+#import std.logger;
+
+// A record's fields are fixed-width scalars: each value is checked against
+// its field's type, and a field read binds a value of that type. An index
+// takes an `i32`, so a `u8` field is converted with `as` before it is one.
+type Header { version: u8, flags: u16, length: u32, signed: bool }
+
+fn main() -> unit effects { io, alloc, mut } {
+    let h = Header { version: 2, flags: 65535, length: 4, signed: true };
+    let v = h.version;
+    let f = h.flags;
+    let s = h.signed;
+    print dec v;
+    print hex f;
+    log info dec s;
+    let b = bytes(8);
+    let at = v as i32;
+    b[at] = 7;
+    let read = b[2];
+    print dec read;
+    drop b;
+    flush;
+    return;
+}

@@ -82,8 +82,8 @@ use crate::whole_program::{CallSite, FunctionSemantics, FunctionSummary, Paramet
 use qcore_core::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram};
 use qcore_core::extern_call::{
     AbiType, CallParameter, ExternAdapter, ExternArgument, ExternCall, ExternCallee, ExternCustody,
-    ExternEvent, ExternProgram, ScalarBinding, ScalarLiteral, ValueId, binds_scalar,
-    derived_custody, derived_effects,
+    ExternEvent, ExternProgram, ScalarBinding, ScalarLiteral, ValueId, ValueOperand,
+    ValueOperation, ValueStatement, binds_scalar, derived_custody, derived_effects,
 };
 use qcore_core::native_library::SourceLibraryBinding;
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
@@ -116,7 +116,17 @@ pub struct LoweredExternModule {
     /// Published so a *composing* route can resolve a rendering operand against
     /// the value namespace and nothing else. It is deliberately not consulted by
     /// this route, which renders nothing.
-    pub scalar_values: BTreeMap<String, (ValueId, Option<i32>)>,
+    ///
+    /// Card `W48-QR-SCALAR-TYPES-R3`: read from the checker's certificate, so a
+    /// value statement whose operands were all known carries the number the
+    /// checker folded, of any width.
+    pub scalar_values: BTreeMap<String, (ValueId, Option<i128>)>,
+    /// The §G02t type of each bound value, from the checker's certificate (card
+    /// `W48-QR-SCALAR-TYPES-R3`).
+    pub value_types: BTreeMap<ValueId, qcore_core::scalar_types::ScalarType>,
+    /// The checker's certificate of this lowering's program, so a composing
+    /// route reads the value decisions the checker made rather than a copy.
+    pub certificate: qcore_core::extern_call::ExternCallCertificate,
     /// The declared ABI spelling behind each bound value, so a composing route
     /// can refuse to render a width it does not render.
     pub value_abi: BTreeMap<ValueId, AbiType>,
@@ -380,6 +390,22 @@ fn symbol(token: Option<&Token>, expected: Symbol) -> bool {
 /// The declared effect row of the entry, read from its `effects { … }` suffix.
 /// An absent suffix is the empty row, which admits no extern call at all: the
 /// derived row always contains `Io`, so the opt-in stays visible.
+/// Whether the entry's `effects { … }` row lists `throws<ArithmeticError>`
+/// (card `W48-QR-SCALAR-TYPES-R3`) — the one error a value statement may raise.
+fn declares_arithmetic_error(declaration: &SourceDeclaration) -> bool {
+    declaration.tokens.windows(4).any(|window| {
+        matches!(
+            window,
+            [
+                TokenKind::Word(throws),
+                TokenKind::Symbol(Symbol::Less),
+                TokenKind::Word(name),
+                TokenKind::Symbol(Symbol::Greater),
+            ] if throws == "throws" && name == "ArithmeticError"
+        )
+    })
+}
+
 fn declared_effect_row(
     declaration: &SourceDeclaration,
     span: Span,
@@ -407,6 +433,27 @@ fn declared_effect_row(
     loop {
         match tokens.get(cursor) {
             Some(TokenKind::Symbol(Symbol::RightBrace)) => break,
+            // Card `W48-QR-SCALAR-TYPES-R3`: `throws<ArithmeticError>` is the
+            // permission a value statement needs to raise; it is no effect of
+            // the row the calls derive, so it is read here and carried on the
+            // program as `ExternProgram::raises`. Any other error name keeps
+            // the refusal every non-effect word gets.
+            Some(TokenKind::Word(name))
+                if name == "throws"
+                    && matches!(
+                        (tokens.get(cursor + 1), tokens.get(cursor + 2), tokens.get(cursor + 3)),
+                        (
+                            Some(TokenKind::Symbol(Symbol::Less)),
+                            Some(TokenKind::Word(error)),
+                            Some(TokenKind::Symbol(Symbol::Greater)),
+                        ) if error == "ArithmeticError"
+                    ) =>
+            {
+                cursor += 4;
+                if matches!(tokens.get(cursor), Some(TokenKind::Symbol(Symbol::Comma))) {
+                    cursor += 1;
+                }
+            }
             Some(TokenKind::Word(name)) => {
                 let effect = match name.as_str() {
                     "io" => Effect::Io,
@@ -479,7 +526,7 @@ struct Lowering<'a> {
     /// declares one. A literal binding always does; a call binding does exactly
     /// when the site wrote `succeeds INTEGER`. Absent means *the value is bound
     /// and its number is not modeled*, which is what keeps it unrenderable.
-    value_outcomes: BTreeMap<ValueId, i32>,
+    value_outcomes: BTreeMap<ValueId, i128>,
     /// The declared ABI spelling behind each bound value, so a consumer that
     /// must render one can refuse a width this profile does not render.
     value_abi: BTreeMap<ValueId, AbiType>,
@@ -717,7 +764,20 @@ pub fn lower_source_extern(
     callees: &BTreeMap<String, ExternCallee>,
     libraries: &[SourceLibraryBinding],
 ) -> Result<LoweredExternModule, Vec<SourceDiagnostic>> {
-    lower_source_extern_skipping(parsed, typed, entry, callees, libraries, &[])
+    lower_source_extern_for_target(parsed, typed, entry, callees, libraries, None)
+}
+
+/// [`lower_source_extern`] for the builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES-R3`), which gives `isize`/`usize` values their width.
+pub fn lower_source_extern_for_target(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+    callees: &BTreeMap<String, ExternCallee>,
+    libraries: &[SourceLibraryBinding],
+    target: Option<&qcore_core::scalar_types::RecordedTarget>,
+) -> Result<LoweredExternModule, Vec<SourceDiagnostic>> {
+    lower_source_extern_skipping(parsed, typed, entry, callees, libraries, &[], target)
 }
 
 /// [`lower_source_extern`] with a set of entry-body statement spans left to
@@ -742,6 +802,7 @@ pub fn lower_source_extern_skipping(
     callees: &BTreeMap<String, ExternCallee>,
     libraries: &[SourceLibraryBinding],
     skip: &[Span],
+    target: Option<&qcore_core::scalar_types::RecordedTarget>,
 ) -> Result<LoweredExternModule, Vec<SourceDiagnostic>> {
     let mut diagnostics = Vec::new();
     let errors = parsed
@@ -885,6 +946,29 @@ pub fn lower_source_extern_skipping(
                         }
                         continue;
                     }
+                    // Card `W48-QR-SCALAR-TYPES-R3`: a value statement — one
+                    // §G02t operation over bound values and literals. Tried
+                    // after both call shapes and before the literal binding,
+                    // which it cannot swallow: it needs an operator or `as`
+                    // after its first operand.
+                    match parse_value_statement(&tokens, &lowering.values) {
+                        Some(Ok(operation)) => {
+                            if lowering.refuse_cross_namespace_shadow(name, span, true) {
+                                continue;
+                            }
+                            let value = lowering.next_value;
+                            lowering.next_value += 1;
+                            lowering.values.insert(name.clone(), value);
+                            events.push(ExternEvent::Compute(ValueStatement { value, operation }));
+                            event_spans.push(span);
+                            continue;
+                        }
+                        Some(Err(message)) => {
+                            lowering.diagnostics.push(bridging(span, message));
+                            continue;
+                        }
+                        None => {}
+                    }
                     // Card `EXTERN-SCALAR-LITERAL`. Tried last of the three, so
                     // nothing naming a callee can reach it and no call shape
                     // loses its own diagnostic to it. A literal binds a number
@@ -898,7 +982,7 @@ pub fn lower_source_extern_skipping(
                         let value = lowering.next_value;
                         lowering.next_value += 1;
                         lowering.values.insert(name.clone(), value);
-                        lowering.value_outcomes.insert(value, literal);
+                        lowering.value_outcomes.insert(value, i128::from(literal));
                         lowering.value_abi.insert(value, AbiType::I32);
                         events.push(ExternEvent::Bind(ScalarLiteral { value, literal }));
                         event_spans.push(span);
@@ -1183,24 +1267,31 @@ pub fn lower_source_extern_skipping(
         // single callee, so what travels here is already a decision, not a
         // request.
         libraries: libraries.to_vec(),
+        // Card `W48-QR-SCALAR-TYPES-R3`: the row's permission to raise the
+        // typed arithmetic error, and the builder's recorded target.
+        raises: declares_arithmetic_error(&entry_declaration.value),
+        target: target.cloned(),
     };
-    if let Err(errors) = qcore_core::extern_call::check_extern_program(&program) {
-        return Err(errors
-            .into_iter()
-            .map(|error| {
-                let span = event_spans
-                    .get(error.event())
-                    .copied()
-                    .unwrap_or(scope_span);
-                diagnostic(
-                    error.code(),
-                    SemanticPass::ExternCall,
-                    span,
-                    error.to_string(),
-                )
-            })
-            .collect());
-    }
+    let certificate = match qcore_core::extern_call::check_extern_program(&program) {
+        Ok(certificate) => certificate,
+        Err(errors) => {
+            return Err(errors
+                .into_iter()
+                .map(|error| {
+                    let span = event_spans
+                        .get(error.event())
+                        .copied()
+                        .unwrap_or(scope_span);
+                    diagnostic(
+                        error.code(),
+                        SemanticPass::ExternCall,
+                        span,
+                        error.to_string(),
+                    )
+                })
+                .collect());
+        }
+    };
     let lowering_program = LoweringProgram::new(
         entry.to_owned(),
         resources.clone(),
@@ -1251,14 +1342,22 @@ pub fn lower_source_extern_skipping(
             .values
             .iter()
             .map(|(name, value)| {
-                (
-                    name.clone(),
-                    (*value, lowering.value_outcomes.get(value).copied()),
-                )
+                // A literal and a declared outcome carry their number; a value
+                // statement carries the one the checker folded, when it could.
+                let known = lowering.value_outcomes.get(value).copied().or_else(|| {
+                    certificate
+                        .computations
+                        .iter()
+                        .find(|computation| computation.value == *value)
+                        .and_then(|computation| computation.known)
+                });
+                (name.clone(), (*value, known))
             })
             .collect(),
+        value_types: certificate.value_types.clone(),
         value_abi: lowering.value_abi.clone(),
         resource_bindings: lowering.ever_bound.clone(),
+        certificate,
     })
 }
 
@@ -1467,8 +1566,10 @@ struct ParsedCall {
     succeeds: bool,
     /// Card `STD-IO-COMPOSE`: the number a scalar-result site declares the call
     /// returns, from a `succeeds INTEGER` tail. Only [`parse_bound_call`] ever
-    /// sets it; an acquisition's control is the boolean above.
-    outcome: Option<i32>,
+    /// sets it; an acquisition's control is the boolean above. Card
+    /// `W48-QR-SCALAR-TYPES-R3` reads it at any width; the checker range-checks
+    /// it against the declared result.
+    outcome: Option<i128>,
     /// The error arm's dispositions, in written order: `(callee, arguments)`.
     releases: Vec<(String, Vec<Token>)>,
     error: String,
@@ -1547,7 +1648,7 @@ fn parse_bound_call(tokens: &[Token]) -> Option<ParsedCall> {
     // the two tails are told apart by the literal alone and no malformed
     // adapter tail can be read as this one.
     let (outcome, next) = if word(tokens.get(next)) == Some("succeeds") {
-        let (value, after) = signed_integer(tokens, next + 1)?;
+        let (value, after) = wide_signed_integer(tokens, next + 1)?;
         (Some(value), after)
     } else {
         (None, next)
@@ -1581,6 +1682,149 @@ fn signed_integer(tokens: &[Token], cursor: usize) -> Option<(i32, usize)> {
     let value = text.parse::<i64>().ok()?;
     let value = if negative { -value } else { value };
     i32::try_from(value).ok().map(|value| (value, cursor + 1))
+}
+
+/// Read `["-"] INTEGER` at `cursor` exactly, at any magnitude an `i128`
+/// holds (card `W48-QR-SCALAR-TYPES-R3`): whether it is a value of the type its
+/// position gives it is the checker's range check, never a truncation here.
+fn wide_signed_integer(tokens: &[Token], cursor: usize) -> Option<(i128, usize)> {
+    let (negative, cursor) = match tokens.get(cursor).map(|token| &token.kind) {
+        Some(TokenKind::Symbol(Symbol::Minus)) => (true, cursor + 1),
+        _ => (false, cursor),
+    };
+    let TokenKind::Integer(text) = &tokens.get(cursor)?.kind else {
+        return None;
+    };
+    let value = text.parse::<i128>().ok()?;
+    Some((if negative { -value } else { value }, cursor + 1))
+}
+
+/// One value-statement operand at `cursor`: a bound value, `true`/`false`, or
+/// `["-"] INTEGER`.
+fn value_operand(
+    tokens: &[Token],
+    cursor: usize,
+    values: &BTreeMap<String, ValueId>,
+) -> Option<Result<(ValueOperand, usize), String>> {
+    if let Some((literal, next)) = wide_signed_integer(tokens, cursor) {
+        return Some(Ok((ValueOperand::Integer(literal), next)));
+    }
+    match word(tokens.get(cursor)) {
+        Some("true") => Some(Ok((ValueOperand::Bool(true), cursor + 1))),
+        Some("false") => Some(Ok((ValueOperand::Bool(false), cursor + 1))),
+        Some(name) => Some(match values.get(name) {
+            Some(value) => Ok((ValueOperand::Value(*value), cursor + 1)),
+            None => Err(format!(
+                "`{name}` is not a bound scalar in this body; a value statement reads bound \
+                 values, `true`/`false` and integer literals"
+            )),
+        }),
+        None => None,
+    }
+}
+
+/// `let NAME = VALUE_EXPRESSION;` — a value statement (card
+/// `W48-QR-SCALAR-TYPES-R3`): `A OP B`, `A CMP B`, `- NAME` or `A as TYPE`,
+/// one operation per statement. `None` when the statement is not this shape at
+/// all (so a literal binding or another `let` keeps its own reading),
+/// `Some(Err)` when it is and is malformed.
+fn parse_value_statement(
+    tokens: &[Token],
+    values: &BTreeMap<String, ValueId>,
+) -> Option<Result<ValueOperation, String>> {
+    use qcore_core::scalar_types::{Cmp, Op, ScalarType};
+    if word(tokens.first()) != Some("let") || !symbol(tokens.get(2), Symbol::Equal) {
+        return None;
+    }
+    let closes = |at: usize| symbol(tokens.get(at), Symbol::Semicolon) && tokens.len() == at + 1;
+    // `- NAME ;` — negation of a bound value. `- INTEGER ;` is the literal
+    // binding and is left to it.
+    if symbol(tokens.get(3), Symbol::Minus)
+        && let Some(name) = word(tokens.get(4))
+        && !matches!(name, "true" | "false")
+        && closes(5)
+    {
+        return Some(match values.get(name) {
+            Some(value) => Ok(ValueOperation::Negate(ValueOperand::Value(*value))),
+            None => Err(format!("`{name}` is not a bound scalar in this body")),
+        });
+    }
+    let (left, next) = match value_operand(tokens, 3, values)? {
+        Ok(read) => read,
+        // A bare name that is no value, followed by an operator, is this
+        // statement's malformation; anything else is left to the other shapes.
+        Err(message) => {
+            let operator = tokens.get(4).map(|token| &token.kind);
+            let operates = matches!(
+                operator,
+                Some(TokenKind::Symbol(
+                    Symbol::Plus
+                        | Symbol::Minus
+                        | Symbol::Star
+                        | Symbol::Slash
+                        | Symbol::Percent
+                        | Symbol::EqualEqual
+                        | Symbol::NotEqual
+                        | Symbol::Less
+                        | Symbol::LessEqual
+                        | Symbol::Greater
+                        | Symbol::GreaterEqual
+                ))
+            ) || word(tokens.get(4)) == Some("as");
+            return operates.then_some(Err(message));
+        }
+    };
+    if word(tokens.get(next)) == Some("as") {
+        let Some(to) = word(tokens.get(next + 1)).and_then(ScalarType::parse) else {
+            return Some(Err(
+                "`as` converts to one fixed-width scalar type (bool, i8, i16, i32, i64, isize, \
+                 u8, u16, u32, u64, usize)"
+                    .to_owned(),
+            ));
+        };
+        if !closes(next + 2) {
+            return Some(Err(
+                "a value statement performs one operation, `let NAME = A as TYPE;`".to_owned(),
+            ));
+        }
+        return Some(Ok(ValueOperation::Convert(left, to)));
+    }
+    let operator = match tokens.get(next).map(|token| &token.kind) {
+        Some(TokenKind::Symbol(Symbol::Plus)) => Ok(Op::Add),
+        Some(TokenKind::Symbol(Symbol::Minus)) => Ok(Op::Sub),
+        Some(TokenKind::Symbol(Symbol::Star)) => Ok(Op::Mul),
+        Some(TokenKind::Symbol(Symbol::Slash)) => Ok(Op::Div),
+        Some(TokenKind::Symbol(Symbol::Percent)) => Ok(Op::Rem),
+        Some(TokenKind::Symbol(Symbol::EqualEqual)) => Err(Cmp::Eq),
+        Some(TokenKind::Symbol(Symbol::NotEqual)) => Err(Cmp::Ne),
+        Some(TokenKind::Symbol(Symbol::Less)) => Err(Cmp::Lt),
+        Some(TokenKind::Symbol(Symbol::LessEqual)) => Err(Cmp::Le),
+        Some(TokenKind::Symbol(Symbol::Greater)) => Err(Cmp::Gt),
+        Some(TokenKind::Symbol(Symbol::GreaterEqual)) => Err(Cmp::Ge),
+        _ => return None,
+    };
+    let (right, after) = match value_operand(tokens, next + 1, values) {
+        Some(Ok(read)) => read,
+        Some(Err(message)) => return Some(Err(message)),
+        None => {
+            return Some(Err(
+                "a value statement's operator takes a bound value, `true`/`false` or an integer \
+                 literal on each side"
+                    .to_owned(),
+            ));
+        }
+    };
+    if !closes(after) {
+        return Some(Err(
+            "a value statement performs one operation per statement; bind the intermediate \
+             value and use it in the next statement"
+                .to_owned(),
+        ));
+    }
+    Some(Ok(match operator {
+        Ok(op) => ValueOperation::Binary(op, left, right),
+        Err(cmp) => ValueOperation::Compare(cmp, left, right),
+    }))
 }
 
 /// `let NAME = ["-"] INTEGER;` — a scalar literal binding (card

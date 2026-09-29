@@ -510,8 +510,8 @@ fn a_scalar_record_reaches_the_window_function_and_names_nothing() {
             binding: "p".to_owned(),
             type_name: "Pair".to_owned(),
             fields: vec![
-                ("a".to_owned(), BufferOperand::Literal(1)),
-                ("b".to_owned(), BufferOperand::Literal(2)),
+                ("a".to_owned(), BufferOperand::Literal(1).into()),
+                ("b".to_owned(), BufferOperand::Literal(2).into()),
             ],
         },
         BufferEvent::Field {

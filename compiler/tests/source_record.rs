@@ -285,10 +285,15 @@ fn a_repeated_field_name_is_refused() {
 
 /// The refusal names the gap that remains. Before card `AGGREGATE-OWNED-FIELD`
 /// it named that card; the owned field now exists (`bytes`), so a field of any
-/// other type is `AGGREGATE-FIELD-TYPES` and the message says so.
+/// other type is `AGGREGATE-FIELD-TYPES` and the message says so. Card
+/// `W48-QR-SCALAR-TYPES-R3` admits every §G02t scalar (`u8` here before it),
+/// so the unmodelled spelling is now one outside that table.
 #[test]
 fn a_field_type_this_revision_does_not_model_is_refused() {
-    let source = module("type Point { x: u8 }", "    let a = 1;\n    print dec a;\n");
+    let source = module(
+        "type Point { x: f64 }",
+        "    let a = 1;\n    print dec a;\n",
+    );
     assert_eq!(codes(&source), ["Q051"]);
     assert!(messages(&source).contains("AGGREGATE-FIELD-TYPES"));
     assert!(!messages(&source).contains("AGGREGATE-OWNED-FIELD"));
@@ -559,7 +564,7 @@ fn a_record_contributes_no_custody_operation() {
             BufferEvent::Construct {
                 binding: "p".to_owned(),
                 type_name: "Point".to_owned(),
-                fields: vec![("x".to_owned(), BufferOperand::Literal(1))],
+                fields: vec![("x".to_owned(), BufferOperand::Literal(1).into())],
             },
             BufferEvent::Field {
                 binding: "a".to_owned(),

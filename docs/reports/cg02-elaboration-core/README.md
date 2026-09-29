@@ -401,7 +401,7 @@ through Clang and `elaborate`, comparing the admission.
 - The model's places are named objects. Rust's path rules are *stricter* than
   the model's: two paths never commute.
 
-## 8. Ledger (621 → 622)
+## 8. Ledger (622 → 623 on main 0691a1cc; 621 → 622 at the card's base)
 
 - **Retired**:
   - `CG02-ELABORATION-CORE`. Every DISCHARGE clause holds: BEFORE reproduces,

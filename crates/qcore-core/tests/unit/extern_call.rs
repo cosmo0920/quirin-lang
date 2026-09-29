@@ -72,6 +72,8 @@ fn program(events: Vec<ExternEvent>) -> ExternProgram {
         events,
         errors: BTreeSet::from(["Failure".to_owned()]),
         libraries: Vec::new(),
+        raises: false,
+        target: None,
     }
 }
 
@@ -736,6 +738,8 @@ fn f1_program(events: Vec<ExternEvent>) -> ExternProgram {
         events,
         errors: BTreeSet::from(["Failure".to_owned()]),
         libraries: Vec::new(),
+        raises: false,
+        target: None,
     }
 }
 
@@ -1914,6 +1918,8 @@ fn modes_program(events: Vec<ExternEvent>) -> ExternProgram {
         events,
         errors: BTreeSet::from(["Failure".to_owned()]),
         libraries: Vec::new(),
+        raises: false,
+        target: None,
     }
 }
 
@@ -2369,7 +2375,10 @@ fn a_reallocation_emits_a_replacement_and_the_reference_run_agrees() {
 /// undeclared pin below fixes, so the two tests differ in exactly one field.
 fn peek(value: ValueId, outcome: Option<i32>) -> ExternEvent {
     ExternEvent::Call(ExternCall {
-        binding: Some(ScalarBinding { value, outcome }),
+        binding: Some(ScalarBinding {
+            value,
+            outcome: outcome.map(i128::from),
+        }),
         callee: "qcore_extern_peek".into(),
         arguments: vec![ExternArgument::Borrow(1), ExternArgument::Data(0)],
         adapter: None,

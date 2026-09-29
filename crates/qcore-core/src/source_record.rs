@@ -65,6 +65,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
+use crate::scalar_types::ScalarType;
+
 /// The largest number of fields a record this model admits may declare.
 ///
 /// Bounded for the reason [`crate::std_buffer::MAX_EXTENT`] is: every field of
@@ -76,27 +78,34 @@ pub const MAX_FIELDS: usize = 32;
 
 /// The type of a record field.
 ///
-/// Two constructors. `i32` is the scalar the admitting route's environment
-/// already holds, so a field read binds a value that route can already index
-/// with, store, render and carry. `bytes` (card `AGGREGATE-OWNED-FIELD`) is the
-/// route's **owned byte buffer** — spelled with the acquisition's own reserved
-/// word rather than the task route's `Buffer`, because that word names a
-/// different resource (`qcore_buffer_new`'s four-byte payload) with a different
-/// model, and a field type that spelled one while meaning the other would be a
+/// Two constructors. A **scalar** field is one type of the §G02t fixed-width
+/// table (card `W48-QR-SCALAR-TYPES-R3`; before it, `i32` only): a field read
+/// binds a value of exactly that type, which the admitting route then checks
+/// at every position it reaches — `i32` is the one its indices, stored bytes
+/// and loop bounds take. `bytes` (card `AGGREGATE-OWNED-FIELD`) is the route's
+/// **owned byte buffer** — spelled with the acquisition's own reserved word
+/// rather than the task route's `Buffer`, because that word names a different
+/// resource (`qcore_buffer_new`'s four-byte payload) with a different model,
+/// and a field type that spelled one while meaning the other would be a
 /// collision by design. Widening this enum further is `AGGREGATE-FIELD-TYPES`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum FieldType {
-    I32,
+    /// A §G02t scalar, held by value.
+    Scalar(ScalarType),
     /// An owned `source.buffer.v1` buffer, moved in at construction.
     Bytes,
 }
 
 impl FieldType {
+    /// The `i32` field every record declared before card
+    /// `W48-QR-SCALAR-TYPES-R3` has.
+    pub const I32: Self = Self::Scalar(ScalarType::I32);
+
     /// The source spelling this type is declared with.
     #[must_use]
     pub fn spelling(self) -> &'static str {
         match self {
-            Self::I32 => "i32",
+            Self::Scalar(ty) => ty.name(),
             Self::Bytes => "bytes",
         }
     }
@@ -105,9 +114,17 @@ impl FieldType {
     #[must_use]
     pub fn from_spelling(word: &str) -> Option<Self> {
         match word {
-            "i32" => Some(Self::I32),
             "bytes" => Some(Self::Bytes),
-            _ => None,
+            _ => ScalarType::parse(word).map(Self::Scalar),
+        }
+    }
+
+    /// The scalar type of a scalar field, `None` for an owned one.
+    #[must_use]
+    pub fn scalar(self) -> Option<ScalarType> {
+        match self {
+            Self::Scalar(ty) => Some(ty),
+            Self::Bytes => None,
         }
     }
 
@@ -168,14 +185,37 @@ pub fn field_type_refusal(
 
 /// The value supplied for — and held by — one field.
 ///
-/// A scalar is the integer itself. An owned field holds the **name** of the
-/// buffer binding moved into it at construction; the custody of that move is
-/// the ownership IR's ([`crate::ownership::OwnershipOp::Compose`]), and the
-/// admitting route carries the buffer's extent and bytes beside this model.
+/// An `i32` is the integer itself, the one kind every record declared before
+/// card `W48-QR-SCALAR-TYPES-R3` holds. A value of any other §G02t type is
+/// [`Self::Typed`]: the type and the number (`bool` is `0`/`1`), so a value
+/// never travels without the type that says what it is, and one type has one
+/// representation. An owned field holds the **name** of the buffer binding
+/// moved into it at construction; the custody of that move is the ownership
+/// IR's ([`crate::ownership::OwnershipOp::Compose`]), and the admitting route
+/// carries the buffer's extent and bytes beside this model.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum FieldValue {
     Scalar(i32),
-    Bytes { moved_from: String },
+    /// A value of a §G02t type other than `i32` (card `W48-QR-SCALAR-TYPES-R3`).
+    Typed {
+        ty: ScalarType,
+        value: i128,
+    },
+    Bytes {
+        moved_from: String,
+    },
+}
+
+impl FieldValue {
+    /// The scalar type of this value, `None` for an owned buffer.
+    #[must_use]
+    pub fn scalar_type(&self) -> Option<ScalarType> {
+        match self {
+            Self::Scalar(_) => Some(ScalarType::I32),
+            Self::Typed { ty, .. } => Some(*ty),
+            Self::Bytes { .. } => None,
+        }
+    }
 }
 
 /// One declared field: a name and a type, in declaration order.
@@ -253,12 +293,22 @@ impl RecordValue {
         self.fields.get(field)
     }
 
-    /// Read one **scalar** field: `None` for a field the type does not declare
-    /// or one that owns a buffer.
+    /// Read one **`i32`** field: `None` for a field the type does not declare,
+    /// one of another scalar type, or one that owns a buffer.
     #[must_use]
     pub fn scalar(&self, field: &str) -> Option<i32> {
         match self.fields.get(field) {
             Some(FieldValue::Scalar(value)) => Some(*value),
+            _ => None,
+        }
+    }
+
+    /// Read one field of a §G02t type other than `i32` (card
+    /// `W48-QR-SCALAR-TYPES-R3`): its type and number.
+    #[must_use]
+    pub fn typed(&self, field: &str) -> Option<(ScalarType, i128)> {
+        match self.fields.get(field) {
+            Some(FieldValue::Typed { ty, value }) => Some((*ty, *value)),
             _ => None,
         }
     }
@@ -340,12 +390,42 @@ pub enum RecordRefusal {
     /// from the admitting route only through its own crossing rule (`Q055`,
     /// unchanged); this is the model's total statement of the same fault.
     FieldTakesAScalar { type_name: String, field: String },
+    /// A construction supplying a value of one §G02t type at a field declared
+    /// another (card `W48-QR-SCALAR-TYPES-R3`). There is no implicit
+    /// conversion anywhere, so a `u8` name at an `i32` field is refused rather
+    /// than widened; the reader writes `as` where they mean one.
+    FieldTakesAType {
+        type_name: String,
+        field: String,
+        declared: ScalarType,
+        supplied: ScalarType,
+    },
+    /// A construction supplying a literal that is not a value of its field's
+    /// type (card `W48-QR-SCALAR-TYPES-R3`): outside the type's range, the
+    /// minimum included, or a number at a `bool` field.
+    FieldLiteralOutOfRange {
+        type_name: String,
+        field: String,
+        declared: ScalarType,
+        literal: String,
+    },
+    /// A field declared `isize` or `usize` in a module checked with no
+    /// recorded target (card `W48-QR-SCALAR-TYPES-R3`): the width is never
+    /// guessed.
+    FieldNeedsRecordedTarget {
+        type_name: String,
+        field: String,
+        declared: ScalarType,
+    },
     /// A custody position — a store, a load, an extent read, a release —
     /// naming a field that is a scalar, not a buffer.
     FieldIsNotABuffer {
         name: String,
         type_name: String,
         field: String,
+        /// The field's declared scalar type (card `W48-QR-SCALAR-TYPES-R3`;
+        /// before it, always `i32`).
+        declared: ScalarType,
     },
 }
 
@@ -384,7 +464,18 @@ impl RecordRefusal {
             // takes a buffer — both "a name that is not what this position
             // takes", `Q052`'s existing condition widened.
             | Self::FieldTakesABuffer { .. }
-            | Self::FieldIsNotABuffer { .. } => "Q052",
+            | Self::FieldIsNotABuffer { .. }
+            // Card `W48-QR-SCALAR-TYPES-R3`: a value of another type at a
+            // field is "a name that is not what this position takes", the
+            // same condition, widened.
+            | Self::FieldTakesAType { .. } => "Q052",
+            // Card `W48-QR-SCALAR-TYPES-R3`: a literal outside its field's
+            // type is the band's **range** condition, widened.
+            Self::FieldLiteralOutOfRange { .. } => "Q053",
+            // Card `W48-QR-SCALAR-TYPES-R3`: a target-width field without a
+            // recorded target is a declaration this module cannot state, the
+            // band's **shape** condition, widened.
+            Self::FieldNeedsRecordedTarget { .. } => "Q051",
             // A buffer at a scalar field is the route's crossing condition,
             // `Q055`, which the route reports first; the model's own statement
             // of it lands on the same code so one fault has one code.
@@ -421,7 +512,8 @@ impl fmt::Display for RecordRefusal {
             } => write!(
                 f,
                 "`{type_name}.{field}` is declared `{spelling}`, which is not a field type \
-                 `source.record.v1` models; a field is `i32` or `bytes` (an owned buffer, moved \
+                 `source.record.v1` models; a field is a fixed-width scalar (bool, i8, i16, \
+                 i32, i64, isize, u8, u16, u32, u64, usize) or `bytes` (an owned buffer, moved \
                  in at construction), and any other type is `AGGREGATE-FIELD-TYPES`"
             ),
             Self::ViewFieldType {
@@ -501,14 +593,47 @@ impl fmt::Display for RecordRefusal {
                 "`{type_name}.{field}` is declared `i32` and takes an integer; a buffer cannot \
                  cross into a scalar field"
             ),
+            Self::FieldTakesAType {
+                type_name,
+                field,
+                declared,
+                supplied,
+            } => write!(
+                f,
+                "`{type_name}.{field}` is declared `{declared}` and is supplied a `{supplied}`; \
+                 there is no implicit conversion, so bind `let v = NAME as {declared};` first \
+                 where the number is meant at the field's type"
+            ),
+            Self::FieldLiteralOutOfRange {
+                type_name,
+                field,
+                declared,
+                literal,
+            } => write!(
+                f,
+                "`{type_name}.{field}` is declared `{declared}` and `{literal}` is not a value \
+                 of `{declared}`; a field literal is range-checked against its field's type, \
+                 the minimum included, and refused rather than truncated"
+            ),
+            Self::FieldNeedsRecordedTarget {
+                type_name,
+                field,
+                declared,
+            } => write!(
+                f,
+                "`{type_name}.{field}` is declared `{declared}`, and `isize` and `usize` take \
+                 their width from a recorded target, none of which was supplied; the width is \
+                 never guessed (supply one with `--recorded-target FILE`)"
+            ),
             Self::FieldIsNotABuffer {
                 name,
                 type_name,
                 field,
+                declared,
             } => write!(
                 f,
-                "`{name}.{field}` is a `{type_name}` field declared `i32`, not a buffer; a store, \
-                 a load, an extent read and a release name a field declared `bytes`"
+                "`{name}.{field}` is a `{type_name}` field declared `{declared}`, not a buffer; a \
+                 store, a load, an extent read and a release name a field declared `bytes`"
             ),
         }
     }
@@ -567,19 +692,38 @@ pub fn construct(
             });
         };
         match (field_type, value) {
-            (FieldType::I32, FieldValue::Scalar(_))
-            | (FieldType::Bytes, FieldValue::Bytes { .. }) => {}
-            (FieldType::Bytes, FieldValue::Scalar(_)) => {
+            (FieldType::Bytes, FieldValue::Bytes { .. }) => {}
+            (FieldType::Bytes, FieldValue::Scalar(_) | FieldValue::Typed { .. }) => {
                 return Err(RecordRefusal::FieldTakesABuffer {
                     type_name: declared.name.clone(),
                     field: name.clone(),
                 });
             }
-            (FieldType::I32, FieldValue::Bytes { .. }) => {
+            (FieldType::Scalar(_), FieldValue::Bytes { .. }) => {
                 return Err(RecordRefusal::FieldTakesAScalar {
                     type_name: declared.name.clone(),
                     field: name.clone(),
                 });
+            }
+            // Card `W48-QR-SCALAR-TYPES-R3`: the value's type is the field's,
+            // exactly. An `i32` is held as `Scalar` and every other type as
+            // `Typed`, so one type has one representation and the check is an
+            // equality; a `Typed` spelling of `i32` is refused as not that
+            // representation.
+            (FieldType::Scalar(expected), value) => {
+                let supplied = value
+                    .scalar_type()
+                    .expect("a scalar or typed value has a scalar type");
+                let canonical =
+                    !matches!(value, FieldValue::Typed { ty, .. } if *ty == ScalarType::I32);
+                if supplied != expected || !canonical {
+                    return Err(RecordRefusal::FieldTakesAType {
+                        type_name: declared.name.clone(),
+                        field: name.clone(),
+                        declared: expected,
+                        supplied,
+                    });
+                }
             }
         }
         if fields.insert(name.clone(), value.clone()).is_some() {

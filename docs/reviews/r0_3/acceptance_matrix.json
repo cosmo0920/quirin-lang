@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 622
+  "named_followups": 623
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG00-CLANG-GAP-BASELINE card gate at tip (base d3508e10 with main 7e7ba401 merged), logs private/cg00/gate2 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 367 units, 380 summaries, 6,561 passed, 0 failed, 11 ignored (private/test-binaries/20260929T113425Z-1044802/summary.json; +106 CG00 controls over CG01's 6,455); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 227 audits passed (no Lean change); python tests after the matrix edit (10-python.exit); docs index and clean-dev (11/12). A pre-merge run at base (private/cg00/gate) was also green: 6,551 passed, 226 audits. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter BEFORE (base binary) and AFTER (tip binary) (--jobs 8): resource-diagnostics.json ae17152b byte-identical in both. Exits in gate/.",
-  "workspace_tests": 6561,
+  "note": "W48-QR-SCALAR-TYPES-R3 integration gate on integrate/w48-r3 4cfc4d32 (main e182d403, CG00/CG01 landed, plus the card at 05f0aefb), script merged-gate-r3.sh, logs private/w48-int-r3/gate-4cfc4d32 of the implementation-wave-47 worktree: submodule 0; run_test_binaries.py 369 units, 382 summaries, 6,579 passed, 2 failed, 11 ignored (exit 101; private/test-binaries/20260929T121351Z-1547079). The two failures were load-sensitive under load average ~30: cycle20_verifier_plugins vp04_vp07_vp08 (elapsed < 500ms) and package_identity a_removed_executable_is_refused_at_the_next_spawn (spawn ETXTBSY 'Text file busy'); each rerun alone passed (20/20 and 10/10, exits 0, gate/rerun-*.exit), so 6,581 tests pass. fmt, clippy, both reevaluation probes 0; 228 Lean audits (CG01's AuditTypedSourceOperators and the card's AuditScalarPositions); python first run 1 failure, the matrix's stale lean_audits 227 against 228 on disk, corrected by this regeneration and rerun; docs index 0; provider gate 0 (129 passed, 0 failed, 1 ignored; contracts check, package build and 5 verifies 0; provider python 24 OK). Corpus arbiter resource-diagnostics.json byte-identical (ae17152b); system and slice resource-diagnostics.json identical to round 9's (private/w47-int-l/gate-6cacfb1b) after checkout-path normalization. Clang 21.1.8.",
+  "workspace_tests": 6581,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 227,
+  "lean_audits": 228,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6932,6 +6932,7 @@
    "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
    "AuditScalarObservationContracts.lean",
+   "AuditScalarPositions.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditScalarTypedErrors.lean",
    "AuditScalarTypes.lean",
@@ -6993,7 +6994,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg00-clang-gap-baseline/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r3/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -11000,30 +11001,16 @@
    "recorded_by": "W47-PREMISES-HOLDER-REGION"
   },
   {
-   "id": "W48-QR-TYPES-RECORD-FIELDS",
-   "title": "Admit every fixed-width scalar type as a record field",
-   "why": "W48-QR-SCALAR-TYPES made the scalar_abi table first-class on source.scalar-calls.v1 only (implemented grammars G02t). Record fields (G07.13, `field = NAME \":\" \"i32\"`) are admitted on source.buffer.v1 alone, whose scalar namespace is untyped i32 literals and byte reads, so a typed field would need that route's operands typed too; it keeps its refusal (`let x: u8 = 5;` there is Q051, `x as u8` refuses at the route's own reader). Size: the buffer route's scalar operand reader and binding map (source_std_buffer.rs, source_record.rs, core source_record.rs), the record declaration reader, one C member type per field, field reads rendered through the typed std.io lines; 0 fixtures move. DISCHARGE: `field = NAME \":\" SCALAR` with construct-then-read under G02t's typing, checked arithmetic and conversions on the admitting route, Lean parity with QCore.ScalarTypes, native rendering per type.",
-   "source": "docs/reports/w48-qr-scalar-types/README.md",
-   "recorded_by": "W48-QR-SCALAR-TYPES"
-  },
-  {
    "id": "W48-QR-TYPES-LOOP-BOUNDS",
    "title": "Type the counted loop's bound and index with the fixed-width table",
-   "why": "W48-QR-SCALAR-TYPES leaves G07.12's `for NAME in 0..BOUND` on source.buffer.v1 untyped: the index is that route's i32-valued scalar and the bound a check-time i32 constant, so a typed bound (a usize extent, a u8 count) keeps its refusal. Size: the loop reader and unrolling (source_loop.rs, core source_loop.rs), the index's type (usize under a recorded target, or the bound's own type), the 4096 ceiling and 8192 event budget restated per type; 0 fixtures move. DISCHARGE: a bound of any integer type with the index at that type, the budget unchanged, Lean parity and native runs per type.",
-   "source": "docs/reports/w48-qr-scalar-types/README.md",
-   "recorded_by": "W48-QR-SCALAR-TYPES"
-  },
-  {
-   "id": "W48-QR-TYPES-EXTERN-VALUES",
-   "title": "Let a bound extern scalar result enter arithmetic, rendering and branches",
-   "why": "W48-QR-SCALAR-TYPES widened no position whose operand is undetermined at check time. An extern call's scalar result (G02d scalar_binding) can still only be passed on at a declared scalar parameter, and the composed extern + io route (G02i) renders only an i32 whose number a `succeeds INTEGER` outcome declared. Size: the extern route's value namespace (source_extern.rs, core extern_call.rs), the composed route's operand rule (source_composed.rs, Q043 rule 2's one-ABI-width clause), rendering of every ABI width, arithmetic on undeclared results, which needs the typed fault of W48-QR-TYPED-ARITHMETIC-ERROR; 0 fixtures move. DISCHARGE: a bound result of any scalar_abi type is a G02t value on the extern and composed routes, a declared outcome decided at check time and an undeclared one through the typed error, with native runs.",
+   "why": "W48-QR-SCALAR-TYPES leaves G07.12's `for NAME in 0..BOUND` on source.buffer.v1 untyped: the index is that route's i32-valued scalar and the bound a check-time i32 constant, so a typed bound (a usize extent, a u8 count) keeps its refusal. Size: the loop reader and unrolling (source_loop.rs, core source_loop.rs), the index's type (usize under a recorded target, or the bound's own type), the 4096 ceiling and 8192 event budget restated per type; 0 fixtures move. DISCHARGE: a bound of any integer type with the index at that type, the budget unchanged, Lean parity and native runs per type. Amended by W48-QR-SCALAR-TYPES-R3: W48-QR-SCALAR-TYPES-R3 typed source.buffer.v1's environment: a name of another type at a loop bound is refused by the lowering's existing BOUND-FROM-FIELD tier (a field read and a conversion contribute no bound), and the index is an i32. What remains is exactly a typed bound and index (the loop reader, LoweringConstants and the unrolling), not the environment.",
    "source": "docs/reports/w48-qr-scalar-types/README.md",
    "recorded_by": "W48-QR-SCALAR-TYPES"
   },
   {
    "id": "W48-QR-TYPES-TASK-CAPTURES",
    "title": "Admit every fixed-width scalar type at task workers and copy captures",
-   "why": "W48-QR-SCALAR-TYPES leaves G02a's leaf-worker parameters and results (i32/unit), `copy` captures and G02j's composed tasks + io operands (a name the task model bound to an i32) at their existing refusals. This is the position track card 3 (task record captures) builds on. Size: the task reader and checked task IR (source_tasks.rs, core task_execution.rs, scoped_tasks.rs), task C emission (task_c_emit.rs), the composed route's operand rule (source_composed_tasks.rs, Q050 rule 3), typed worker results through join; 0 fixtures move. DISCHARGE: every scalar_abi type as a worker parameter/result and copy capture, rendered by workers and parent under G02t, with the task model's trace relation and native runs.",
+   "why": "W48-QR-SCALAR-TYPES leaves G02a's leaf-worker parameters and results (i32/unit), `copy` captures and G02j's composed tasks + io operands (a name the task model bound to an i32) at their existing refusals. This is the position track card 3 (task record captures) builds on. Size: the task reader and checked task IR (source_tasks.rs, core task_execution.rs, scoped_tasks.rs), task C emission (task_c_emit.rs), the composed route's operand rule (source_composed_tasks.rs, Q050 rule 3), typed worker results through join; 0 fixtures move. DISCHARGE: every scalar_abi type as a worker parameter/result and copy capture, rendered by workers and parent under G02t, with the task model's trace relation and native runs. Amended by W48-QR-SCALAR-TYPES-R3: W48-QR-SCALAR-TYPES-R3 did not reach this item (it stopped after item 2). Measured for sizing: the task route has no arithmetic or conversion statement in a worker (G02a: general expressions reject in every definition), so a worker's ArithmeticError needs a value statement there first (the extern route's is the precedent) before it can be collected through join as a typed worker error.",
    "source": "docs/reports/w48-qr-scalar-types/README.md",
    "recorded_by": "W48-QR-SCALAR-TYPES"
   },
@@ -11037,16 +11024,9 @@
   {
    "id": "W48-QR-TYPES-MSVC-NATIVE",
    "title": "Build the fixed-width helpers natively under MSVC",
-   "why": "W48-QR-SCALAR-TYPES' native boundary table and rendering runs are Unix-only (Clang 21.1.8 with UBSan). The emitted helpers use explicit range tests rather than compiler builtins so that `cl` can build them, and the renderings use `%zu`, `%td`, `%zX` and `_Static_assert`, which MSVC's C11 mode accepts by documentation, but no MSVC build of a fixed-width program has been run. Size: the two native tests under the existing tests/support/windows_c.rs harness (/W4 /WX); 0 fixtures move. DISCHARGE: the boundary harness and the renderings program built and run under MSVC in Windows CI, each fault exiting 86 and each stream equal to the reference. Amended by W48-QR-SCALAR-TYPES-R2: W48-QR-SCALAR-TYPES-R2 adds the q_scalar_try_* helpers and the `80 + tag` entry exit to what no MSVC build has run; the discharge now also covers the dynamic boundary harness (scalar_typed_errors.rs) under /W4 /WX.",
+   "why": "W48-QR-SCALAR-TYPES' native boundary table and rendering runs are Unix-only (Clang 21.1.8 with UBSan). The emitted helpers use explicit range tests rather than compiler builtins so that `cl` can build them, and the renderings use `%zu`, `%td`, `%zX` and `_Static_assert`, which MSVC's C11 mode accepts by documentation, but no MSVC build of a fixed-width program has been run. Size: the two native tests under the existing tests/support/windows_c.rs harness (/W4 /WX); 0 fixtures move. DISCHARGE: the boundary harness and the renderings program built and run under MSVC in Windows CI, each fault exiting 86 and each stream equal to the reference. Amended by W48-QR-SCALAR-TYPES-R2: W48-QR-SCALAR-TYPES-R2 adds the q_scalar_try_* helpers and the `80 + tag` entry exit to what no MSVC build has run; the discharge now also covers the dynamic boundary harness (scalar_typed_errors.rs) under /W4 /WX. Amended by W48-QR-SCALAR-TYPES-R3: W48-QR-SCALAR-TYPES-R3 adds the buffer route's typed struct members and conversion helpers (abort witnesses) and the extern route's value statements (the shared q_scalar_* and q_scalar_try_* helpers, `80 + tag`) to what no MSVC build has run; the discharge now also covers scalar_positions.rs and scalar_extern_values.rs under /W4 /WX.",
    "source": "docs/reports/w48-qr-scalar-types/README.md",
    "recorded_by": "W48-QR-SCALAR-TYPES"
-  },
-  {
-   "id": "W48-INERT-EXTERN-DECLARATION-TYPES",
-   "title": "Check or refuse the signature of an extern declaration no route calls",
-   "why": "Found by W48-QR-SCALAR-TYPES-R2 while closing W48-SEQUENTIAL-UNCHECKED-PARAMETER-TYPES: an `extern fn` declaration that no body calls is admitted on the sequential route with its parameter and result annotations unread (`extern fn f(x: Widget) -> Widget; fn main() -> i32 { return 0; }` checks). The extern routes (G02d, G02i) read every declaration they call and refuse any helper function at Q026; an uncalled declaration on another route is read by nothing but name resolution. Two tracked probes rely on it: docs/reports/remaining-v04/probes/P08-valid-named-use.qr and P10-decl-after-use-site.qr declare `extern fn f(q: quant<n where n := 5>) -> unit;` to show quantity-name resolution, so refusing unread declarations would move both (admission to refusal) and change what those frozen probes measure. Size: a declaration check on the sequential route (and any other route admitting an uncalled declaration) against the C04.1 ABI vocabulary or the quantity forms name resolution already reads; 2 fixtures move. DISCHARGE: every admitted extern declaration's annotations are read by the admitting route or refused, with P08/P10 attributed.",
-   "source": "docs/reports/w48-qr-scalar-types-r2/README.md",
-   "recorded_by": "W48-QR-SCALAR-TYPES-R2"
   },
   {
    "id": "W48-QR-TYPED-ERROR-CONTINUING-ARMS",
@@ -11061,20 +11041,6 @@
    "why": "W48-QR-SCALAR-TYPES-R2's `Result::Err { error: e }` arm can only re-raise `e` (`raise e;`) or discard it: there is no match on the variant and no rendering of an error, so a program cannot tell Overflow from DivisionByZero from OutOfRange except by propagating it out of the entry (exit 80 + tag). Size: a variant pattern or an error-to-scalar conversion on the scalar route, its evaluation and emission (the C tag is already an int), a std.fmt rendering if one is wanted; 0 fixtures move. DISCHARGE: a handler that branches on or renders the variant, checked, evaluated and emitted, with Lean parity and native runs.",
    "source": "docs/reports/w48-qr-scalar-types-r2/README.md",
    "recorded_by": "W48-QR-SCALAR-TYPES-R2"
-  },
-  {
-   "id": "CG01-T-CONSUMER-ADMISSIONS",
-   "title": "19 production typed-source (route T) import sites refuse every CG01 operator/literal node by name",
-   "why": "Found by CG01-T-OPERATOR-CLOSURE (gateway rule 10r): route T now reads binary - <= >= ^ << >>, unary + ~, the ten compound assignments as statements and floating/character literals, but admits a node only through the importing consumer's validated NodeAdmission. Only import_monkey_wrappers (a projection that certifies nothing) admits them; the other 19 production import sites pass NodeAdmission::LEGACY and refuse each node by name. Measured by a read-only census of every SourceExpression/SourceOperation reader: readers that would accept an unknown operator undecided block an admission, namely source_call_use::symbols into call_use_contract (any operator in a guard over a call result counts as checked; call_use_source.rs:314, chunkio/file_attempts.rs:44,74), cycle18_callback_obligations::timeout_steps (ignores guards and writes while discharging AllPathExecutionCoverage) and event_payload::identity/allocation_shape (import_monkey_callbacks, observed_wait_inputs.rs:223, qcore-audit callback_task_handoff.rs:372), counter_contract (a += 1 / -= 1 shaped like ++/--; counter_source.rs:178, chunkio/teardown_source.rs:51), field_destructor replay (any non-== binary read as !=, guarded only by validate_value; teardown_source.rs:320,424, chunkio/teardown_source.rs:19,91), and the close compositions' i32 literal parsers (composition_source.rs:628,992,1332, memory_close_composition.rs:331, filesystem_chunk_close_composition.rs:359, cleanup_replay_source.rs:370). No function in the pinned corpus contains a CG01 node today (every pinned Monkey wrapper and callback imported at base), so the size in functions is 0 on the arbiter and grows only with new profile functions. DISCHARGE: per import site, an admission whose rows are justified by reading every reader of its summaries, with each silently accepting reader made to refuse or decide the node, tests per admitted node and position, and no verdict move without attribution. AMENDED by CG02-ELABORATION-CORE: route T also names CG02's value forms (assignment value, compound assignment value, pre/post increment and decrement, comma) in its refusal (`typed-source value form ... is decided by no typed-source consumer (CG02)`); an admission of one needs the same per-consumer reading.",
-   "source": "docs/reports/cg01-t-operator-closure/README.md",
-   "recorded_by": "CG01-T-OPERATOR-CLOSURE"
-  },
-  {
-   "id": "CG01-CYCLE18-EVALUATOR-WIDTH",
-   "title": "cycle18_callback_obligations::evaluate_integer ignores C integer width and signedness",
-   "why": "Seen in passing by CG01-T-OPERATOR-CLOSURE's consumer census and re-read (crates/qcore-verification/src/cycle18_callback_obligations.rs:291-313): evaluate_integer strips every cast through strip(), IntegralCast included, and evaluates |, & and checked + in i128 regardless of the operands' C type; its unary - is an unchecked negation. It evaluates closed integer constants in guards only (initialization-result comparisons, activation-flag single-bit tests), so no Safe is known to rest on a width-dependent value, but a constant whose C value wraps or narrows would be evaluated as its mathematical value. Size: one evaluator, its three callers. Owned by the numeric-domain card CG20 (N04) unless decided earlier. DISCHARGE: the evaluator reads each node's C type and refuses (or evaluates through a checked C-width kernel such as typed_source_nodes::checked_binary) any operation whose value depends on width or signedness, with a test per cast and operator.",
-   "source": "docs/reports/cg01-t-operator-closure/README.md",
-   "recorded_by": "CG01-T-OPERATOR-CLOSURE"
   },
   {
    "id": "CG03-CALL-SUMMARY-INSTANTIATION",
@@ -11273,11 +11239,53 @@
    "recorded_by": "CLANG-GAP-CARD-QUEUE"
   },
   {
+   "id": "CG01-T-CONSUMER-ADMISSIONS",
+   "title": "19 production typed-source (route T) import sites refuse every CG01 operator/literal node by name",
+   "why": "Found by CG01-T-OPERATOR-CLOSURE (gateway rule 10r): route T now reads binary - <= >= ^ << >>, unary + ~, the ten compound assignments as statements and floating/character literals, but admits a node only through the importing consumer's validated NodeAdmission. Only import_monkey_wrappers (a projection that certifies nothing) admits them; the other 19 production import sites pass NodeAdmission::LEGACY and refuse each node by name. Measured by a read-only census of every SourceExpression/SourceOperation reader: readers that would accept an unknown operator undecided block an admission, namely source_call_use::symbols into call_use_contract (any operator in a guard over a call result counts as checked; call_use_source.rs:314, chunkio/file_attempts.rs:44,74), cycle18_callback_obligations::timeout_steps (ignores guards and writes while discharging AllPathExecutionCoverage) and event_payload::identity/allocation_shape (import_monkey_callbacks, observed_wait_inputs.rs:223, qcore-audit callback_task_handoff.rs:372), counter_contract (a += 1 / -= 1 shaped like ++/--; counter_source.rs:178, chunkio/teardown_source.rs:51), field_destructor replay (any non-== binary read as !=, guarded only by validate_value; teardown_source.rs:320,424, chunkio/teardown_source.rs:19,91), and the close compositions' i32 literal parsers (composition_source.rs:628,992,1332, memory_close_composition.rs:331, filesystem_chunk_close_composition.rs:359, cleanup_replay_source.rs:370). No function in the pinned corpus contains a CG01 node today (every pinned Monkey wrapper and callback imported at base), so the size in functions is 0 on the arbiter and grows only with new profile functions. DISCHARGE: per import site, an admission whose rows are justified by reading every reader of its summaries, with each silently accepting reader made to refuse or decide the node, tests per admitted node and position, and no verdict move without attribution. AMENDED by CG02-ELABORATION-CORE: route T also names CG02's value forms (assignment value, compound assignment value, pre/post increment and decrement, comma) in its refusal (`typed-source value form ... is decided by no typed-source consumer (CG02)`); an admission of one needs the same per-consumer reading.",
+   "source": "docs/reports/cg01-t-operator-closure/README.md",
+   "recorded_by": "CG01-T-OPERATOR-CLOSURE"
+  },
+  {
+   "id": "CG01-CYCLE18-EVALUATOR-WIDTH",
+   "title": "cycle18_callback_obligations::evaluate_integer ignores C integer width and signedness",
+   "why": "Seen in passing by CG01-T-OPERATOR-CLOSURE's consumer census and re-read (crates/qcore-verification/src/cycle18_callback_obligations.rs:291-313): evaluate_integer strips every cast through strip(), IntegralCast included, and evaluates |, & and checked + in i128 regardless of the operands' C type; its unary - is an unchecked negation. It evaluates closed integer constants in guards only (initialization-result comparisons, activation-flag single-bit tests), so no Safe is known to rest on a width-dependent value, but a constant whose C value wraps or narrows would be evaluated as its mathematical value. Size: one evaluator, its three callers. Owned by the numeric-domain card CG20 (N04) unless decided earlier. DISCHARGE: the evaluator reads each node's C type and refuses (or evaluates through a checked C-width kernel such as typed_source_nodes::checked_binary) any operation whose value depends on width or signedness, with a test per cast and operator.",
+   "source": "docs/reports/cg01-t-operator-closure/README.md",
+   "recorded_by": "CG01-T-OPERATOR-CLOSURE"
+  },
+  {
    "id": "CG00-G-CORRECTION-RESIDUALS",
    "title": "Custody-gateway refusals the Clang gap baseline found under a different reason, owned by no live card",
    "why": "Found by CG00-CLANG-GAP-BASELINE's executed controls (corrections to the static gap analysis): in G, `char c = 'a';` binds the character literal as the unresolved identity __qcore_literal__ (E14; CG01 closed only T), a `cleanup` local and a `_BitInt` local are refused through the indirect-access family rather than as an attribute or a type (C11, N14), and an inline asm statement is read as a call to an uncontracted function named `volatile`, `__asm__` or `goto` (C12). Each is fail-closed today (Unknown), so no Safe rests on it; the refusal reason is mislabelled, which misleads census attribution. Pinned by e14_g_reads_literals_except_a_character_initializer, c11_cleanup_attributes_are_refused, n14_bit_precise_integers_are_refused and c12_inline_asm_is_refused_as_a_call. Corpus size by CG00's attribution: C12 6 leaves / 2 functions; the others 0 leaves. DISCHARGE: each form refused under its own named reason (or modelled by its phase-4 card), with the controls updated deliberately.",
    "source": "docs/reports/cg00-clang-gap-baseline/README.md",
    "recorded_by": "CG00-CLANG-GAP-BASELINE"
+  },
+  {
+   "id": "W48-QR-BUFFER-ROUTE-ARITHMETIC",
+   "title": "Give the byte-buffer route checked arithmetic over its typed values",
+   "why": "W48-QR-SCALAR-TYPES-R3 typed source.buffer.v1's value environment and gave it the one conversion `let NAME = OPERAND as TYPE;`, but the route has no arithmetic statement and never had one, so a typed field can be converted, rendered, stored as an index once converted and copied, and nothing more (W48-QR-TYPES-RECORD-FIELDS' discharge named 'checked arithmetic and conversions on the admitting route'; the conversion half landed). Size: a value statement on the buffer route like the extern route's (one operation over bound values and literals), folded at check time because every value there is a check-time constant (a fault refuses at Q053), emitted through the shared scalar helpers, the lend and loop tiers kept i32-only; 0 fixtures move. DISCHARGE: arithmetic and comparisons over typed buffer-route values, checked at check time, emitted and run natively under UBSan, with Lean parity.",
+   "source": "docs/reports/w48-qr-scalar-types-r3/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R3"
+  },
+  {
+   "id": "W48-QR-VALUE-STATEMENT-EXPRESSIONS",
+   "title": "Admit nested expressions in the extern route's value statements",
+   "why": "W48-QR-SCALAR-TYPES-R3's extern value statement performs exactly one operation (`let z = a OP b;`, `a CMP b`, `-a`, `a as T`); a longer computation is a sequence of bindings, each checked on its own. G02s's expression grammar (precedence, parentheses, chained arithmetic) is not admitted there. Size: the scalar route's expression parser and bidirectional typing reused on the extern route's value namespace, the known/run-time split per subexpression, one try-helper call per operation in the emitted C; 0 fixtures move. DISCHARGE: nested expressions over extern values with the same fold, permission and typed-error rules, and native runs.",
+   "source": "docs/reports/w48-qr-scalar-types-r3/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R3"
+  },
+  {
+   "id": "W48-QR-EXTERN-VALUE-BRANCHES",
+   "title": "Branch on an extern value's bool",
+   "why": "W48-QR-TYPES-EXTERN-VALUES was titled 'arithmetic, rendering and branches'; W48-QR-SCALAR-TYPES-R3 discharged arithmetic, comparisons, conversions and rendering, and a comparison produces a bool value, but the extern route has no `if` (G02i's source branching construct is the sequential route's), so no statement can branch on it. Size: admitting G02i's `if` on the extern route over a bool value of the namespace, a run-time condition needing both arms checked against the custody ledger (the extern route's error arms are the precedent), emission of the branch; 0 fixtures move. DISCHARGE: an `if` on an extern bool value, both arms checked and emitted, with native runs of each arm.",
+   "source": "docs/reports/w48-qr-scalar-types-r3/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R3"
+  },
+  {
+   "id": "W48-QR-EXTERN-TARGET-WIDTH-OUTCOME",
+   "title": "Range-check an isize/usize declared outcome with no recorded target",
+   "why": "W48-QR-SCALAR-TYPES-R3 range-checks every `succeeds INTEGER` against the declared result's type, except an isize/usize result with no recorded target, whose outcome is carried unchecked exactly as before the card (the extern route admitted target-width results without a record, and refusing them would move that surface); any value statement or rendering reading it refuses for want of the width, and the emitted program still compares the real result and exits 70 on disagreement, so no run publishes a number it did not return. Size: refuse such an outcome without a record, or check it against the narrowest width, after a census of the tracked extern fixtures; 0 fixtures expected to move. DISCHARGE: every declared outcome is checked against its type's range, or refused for want of a width.",
+   "source": "docs/reports/w48-qr-scalar-types-r3/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R3"
   },
   {
    "id": "CG02-COMMA-OPERAND-RESIDUALS",

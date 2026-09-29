@@ -32,8 +32,13 @@ use std::fmt::Write;
 /// A per-type helper the program needs. Only needed helpers are emitted, so
 /// `-Wunused-function` has nothing to report. The `Try*` helpers return the
 /// typed error's tag instead of exiting.
+///
+/// Public since card `W48-QR-SCALAR-TYPES-R3`, so another route that computes
+/// a §G02t operation (the extern route's value statements) emits **these**
+/// helpers — [`Helper::name`] and [`scalar_helper_definition`] — rather than a
+/// second implementation of the same tests.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-enum Helper {
+pub enum Helper {
     Op(Op, ScalarType),
     Neg(ScalarType),
     Convert(ScalarType, ScalarType),
@@ -326,6 +331,29 @@ impl Emitter<'_> {
 /// The definition of one helper. Every test is decided on the operands, before
 /// the operation, so no signed overflow is ever evaluated.
 fn helper_definition(helper: Helper, checked: &Checked) -> String {
+    scalar_helper_definition(helper, checked.target())
+}
+
+impl Helper {
+    /// The C name of the helper [`scalar_helper_definition`] defines.
+    #[must_use]
+    pub fn name(self) -> String {
+        match self {
+            Self::Op(op, ty) => format!("q_scalar_{}_{ty}", op_name(op)),
+            Self::Neg(ty) => format!("q_scalar_neg_{ty}"),
+            Self::Convert(from, to) => format!("q_scalar_as_{from}_{to}"),
+            Self::TryOp(op, ty) => format!("q_scalar_try_{}_{ty}", op_name(op)),
+            Self::TryNeg(ty) => format!("q_scalar_try_neg_{ty}"),
+            Self::TryConvert(from, to) => format!("q_scalar_try_as_{from}_{to}"),
+        }
+    }
+}
+
+/// The definition of one helper for the recorded target `target`. Every test is
+/// decided on the operands, before the operation, so no signed overflow is ever
+/// evaluated.
+#[must_use]
+pub fn scalar_helper_definition(helper: Helper, target: Option<&st::RecordedTarget>) -> String {
     let fault = "{ exit(86); }";
     match helper {
         Helper::Op(op, ty) => {
@@ -347,7 +375,7 @@ fn helper_definition(helper: Helper, checked: &Checked) -> String {
             let (from_c, to_c) = (st::c_type(from), st::c_type(to));
             format!(
                 "static {to_c} q_scalar_as_{from}_{to}({from_c} v) {{\n    if ({}) {fault}\n    return ({to_c})v;\n}}\n",
-                conversion_test(from, to, checked)
+                conversion_test(from, to, target)
             )
         }
         Helper::TryOp(op, ty) => {
@@ -394,7 +422,7 @@ fn helper_definition(helper: Helper, checked: &Checked) -> String {
             let (from_c, to_c) = (st::c_type(from), st::c_type(to));
             format!(
                 "static int q_scalar_try_as_{from}_{to}({from_c} v, {to_c} *r) {{\n    if ({}) {{ return {}; }}\n    *r = ({to_c})v;\n    return 0;\n}}\n",
-                conversion_test(from, to, checked),
+                conversion_test(from, to, target),
                 ArithmeticError::OutOfRange.tag()
             )
         }
@@ -439,38 +467,19 @@ fn negation_test(ty: ScalarType) -> (String, &'static str) {
     }
 }
 
-fn conversion_test(from: ScalarType, to: ScalarType, checked: &Checked) -> String {
-    let target = checked.target();
-    let (to_min, to_max) = st::c_limits(to);
-    let (from_low, from_high) = from.range(target).expect("a checked width");
-    let (to_low, to_high) = to.range(target).expect("a checked width");
-    let mut tests = Vec::new();
-    if from_low < to_low {
-        tests.push(if to.is_signed() {
-            format!("v < {to_min}")
-        } else {
-            "v < 0".into()
-        });
-    }
-    if from_high > to_high {
-        tests.push(if from.is_signed() == to.is_signed() {
-            format!("v > {to_max}")
-        } else {
-            format!("(uintmax_t)v > (uintmax_t){to_max}")
-        });
-    }
-    tests.join(" || ")
+fn conversion_test(
+    from: ScalarType,
+    to: ScalarType,
+    target: Option<&st::RecordedTarget>,
+) -> String {
+    st::c_conversion_test(from, to, target).expect("a checked width")
 }
 
 /// The `_Static_assert`s that bind the emitted program to the recorded
 /// target's width: a C compiler whose `size_t`/`ptrdiff_t` differ refuses to
 /// build it.
 fn target_assertions(checked: &Checked) -> Option<String> {
-    let target = checked.target_assumption()?;
-    let bits = target.pointer_width.bits();
-    Some(format!(
-        "_Static_assert(SIZE_MAX == UINT{bits}_MAX, \"usize is the recorded target's {bits}-bit size_t\");\n_Static_assert(PTRDIFF_MAX == INT{bits}_MAX && PTRDIFF_MIN == INT{bits}_MIN, \"isize is the recorded target's {bits}-bit ptrdiff_t\");\n"
-    ))
+    checked.target_assumption().map(st::c_target_assertions)
 }
 
 /// The C signature of function `id`. A throwing function returns its error

@@ -711,6 +711,36 @@ builtin errors do:
   with status `80 + tag` (`Overflow` 1, `DivisionByZero` 2, `OutOfRange` 3)
   after the lines already written.
 
+**The table beyond the scalar route** (card `W48-QR-SCALAR-TYPES-R3`,
+implemented grammars §G02t, §G07.13, §G02k, §G02d, §G02i). The rules above hold
+at every position a route admits a scalar:
+
+* A record field of `source.buffer.v1` MAY be declared any type of the table.
+  A construction MUST supply each field a value of exactly its declared type —
+  a literal in its range, `true`/`false` for `bool`, or a name of that type —
+  and a field read binds a value of that type. That route's value environment
+  is typed: every scalar name has one type, and each position MUST take only
+  the type it names (an index, a stored byte, a lend bound and a loop bound an
+  `i32`). Its one operation is the conversion `let NAME = OPERAND as TYPE;`,
+  decided at check time because every value on that route is a check-time
+  constant.
+* A bound extern scalar result has its declared result's type. The extern
+  route MUST check a value statement — one operation over bound values and
+  literals — by these rules: over values the source determined (a literal, a
+  declared `succeeds INTEGER`, a statement over such values) it is decided at
+  check time and a fault refuses; over a value known only at run time an
+  operation that can fault MUST be refused unless the entry's row declares
+  `throws<ArithmeticError>`, and then MUST raise its variant and exit
+  `80 + tag` rather than fault. A declared outcome MUST be a value of the
+  declared result's type, and an argument at a declared scalar parameter a
+  value — or a literal in range — of exactly that parameter's type. The
+  composed extern + io route renders a determined value of any type at its
+  type; a value no model determined MUST still not be rendered.
+* Every `extern fn` declaration of an executable or library module MUST be read
+  whether or not a body calls it: a parameter or result outside the §C04.1 ABI
+  vocabulary MUST be refused. A contract module's declarations are the
+  contract surface itself and are read by the contract loader.
+
 ### L14.1. Unchecked linkage
 
 An external library that has **no contract at all** MAY be linked, under an
@@ -1286,7 +1316,10 @@ This is a reporting requirement; the complete tuple is not already one universal
 A result that depends on the width of `isize`/`usize` (§L14.0) names the
 builder's recorded target — pointer width, target triple and compiler — among
 its assumptions (`recorded target: …` in the declared-assumption list of
-`quirin check`). A result that names neither type carries no such assumption.
+`quirin check`), on every route that admits them (card
+`W48-QR-SCALAR-TYPES-R3`: the scalar, byte-buffer, extern and composed
+extern + io routes). A result that names neither type carries no such
+assumption.
 
 **Safe** means that the named property is established for the identified subject, scope, and assumptions with complete coverage under the selected profile. **Unsafe** means a validated defect or counterexample under that profile. **Unknown** means the requested property was not established, including unsupported behavior, incomplete imports, missing premises, invalid evidence, or exhausted analysis bounds. **Pending** (card W45-USER-CONTRACT-PLUGINS, approved 2026-09-26) means the requested property was not decided by the tool and awaits a named human act: a review edit (`awaiting-human-review`), a re-pin after review (`contract-pin-mismatch`) or a checkable certificate for a checker plugin's claim (`plugin-claim-uncertified`). Pending is not Safe, stays in every denominator exactly as Unknown does, and is produced only by one of those named reasons (§L21.2).
 
@@ -1407,6 +1440,24 @@ recorded target), and each route that models its entry only
 `source.string.v1` Q068, `source.socket.v1` Q080, `source.http.v1` Q090)
 refuses at its own existing "models the entry only" condition every function
 other than the entry, which it admitted unread before.
+
+`W48-QR-SCALAR-TYPES-R3` allocates no code. On `source.buffer.v1` it widens
+`Q051` (a field declared `isize`/`usize` or a conversion to one with no
+recorded target; a malformed conversion or typed field value), `Q052` (a name
+of another type at a position — a field of another type, an `i32` position, a
+conversion to or from `bool`, `hex` of a `bool`) and `Q053` (a field literal
+outside its type, a conversion that does not fit). On `source.extern-call.v1`
+it widens `Q024`, the value namespace's condition: mixed operand types, `bool`
+arithmetic or ordering, a literal or a declared outcome outside its type, a
+conversion to or from `bool`, a target width with no record, a fault decided
+at check time, a run-time fault without `throws<ArithmeticError>`, and an
+argument of another type at a declared scalar parameter. The composed route's
+`Q043` keeps its rendering refusals and gains a target-width value rendered
+with no record; `source.std-io.v1`'s `Q030` shape condition covers a typed
+operand it cannot render. The read of every `extern fn` declaration widens
+the OrdinaryTypes `Q020` condition to a declaration's parameter or result
+outside the §C04.1 vocabulary, on every route of an executable or library
+module.
 
 `SOURCE-ANNOTATION-ENFORCEMENT` extends Q020 to executable local annotation
 compatibility, unsupported explicit local types, malformed local heads before

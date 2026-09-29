@@ -570,20 +570,26 @@ fn the_same_shape_with_a_declared_outcome_is_admitted() {
 }
 
 #[test]
-fn rendering_a_wider_scalar_refuses_at_q043() {
-    // `qcore_extern_widen` declares `i64`. It binds a scalar perfectly well —
-    // `binds_scalar` admits every non-pointer, non-`unit` width — and it may be
-    // passed at a declared scalar parameter. What it may not be is *rendered*:
-    // `source.std-io.v1`'s two renderings are the signed decimal and the
-    // unsigned reinterpretation of the same 32 bits, so any other width would
-    // go through a conversion that does not describe it.
+fn rendering_a_wider_scalar_renders_it_at_its_own_type() {
+    // `qcore_extern_widen` declares `i64`. Before card
+    // `W48-QR-SCALAR-TYPES-R3` its rendering refused at `Q043`, because
+    // `source.std-io.v1`'s two renderings were total on `int32_t` alone. The
+    // card widened the composed rendering to every §G02t type through §G02t's
+    // own conversion table — a deliberate widening — so the determined `i64`
+    // renders at its own type: `dec` the number, `hex` sixteen digits. A value
+    // no model determined is still refused (`Q043`, rendering an undeclared
+    // result, pinned above).
     let source = module(
         "    let wide = qcore_extern_widen(21) succeeds 21;\n\
-         \x20   print dec wide;\n",
+         \x20   print dec wide;\n\
+         \x20   print hex wide;\n",
     );
-    assert_eq!(codes(&source), ["Q043"]);
-    // The same binding, not rendered, is admitted — so the refusal is the
-    // rendering's and not the binding's.
+    let rendered = compile(&source).expect("an i64 renders at its own type");
+    assert_eq!(
+        rendered.extern_observation.unwrap(),
+        ["out: 21", "out: 0x0000000000000015"]
+    );
+    // The same binding, not rendered, is admitted too.
     let bound_only = module(
         "    let wide = qcore_extern_widen(21) succeeds 21;\n\
          \x20   print dec 1;\n",

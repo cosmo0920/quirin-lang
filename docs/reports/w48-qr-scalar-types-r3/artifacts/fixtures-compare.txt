@@ -1,0 +1,15 @@
+before quirin 9342a7c9174b363e…, after quirin 00689550dd9178ae…
+docs/reports/remaining-v04/probes/P08-valid-named-use.qr: check exit 0 -> 1
+docs/reports/remaining-v04/probes/P08-valid-named-use.qr: check stdout_sha256 3d462d73561e45fb754b8b9c436e106eed7d38e702d5df428724d151cd4968f1 -> e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+docs/reports/remaining-v04/probes/P08-valid-named-use.qr: check stderr_sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 -> 5d1a7a2aa616eb68e5cff6eda6508f1b3790676974dbb9d394cdc78a001087c5
+docs/reports/remaining-v04/probes/P08-valid-named-use.qr: emit exit 0 -> 1
+docs/reports/remaining-v04/probes/P08-valid-named-use.qr: emit stdout_sha256 6b1a11bca4f86d677be27176823b8ab811c126984c9f1c536eb14c77f2035c39 -> e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+docs/reports/remaining-v04/probes/P08-valid-named-use.qr: emit stderr_sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 -> 5d1a7a2aa616eb68e5cff6eda6508f1b3790676974dbb9d394cdc78a001087c5
+docs/reports/remaining-v04/probes/P10-decl-after-use-site.qr: check exit 0 -> 1
+docs/reports/remaining-v04/probes/P10-decl-after-use-site.qr: check stdout_sha256 3d462d73561e45fb754b8b9c436e106eed7d38e702d5df428724d151cd4968f1 -> e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+docs/reports/remaining-v04/probes/P10-decl-after-use-site.qr: check stderr_sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 -> e0e72fb7193e13c29c8068a9e680ffc17bbad8b06ca60bd04495a41bf90939ec
+docs/reports/remaining-v04/probes/P10-decl-after-use-site.qr: emit exit 0 -> 1
+docs/reports/remaining-v04/probes/P10-decl-after-use-site.qr: emit stdout_sha256 ea5af64ad7abdd53fcd8074caa39a612c53891c4cf2c4957402031c41f67ad87 -> e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+docs/reports/remaining-v04/probes/P10-decl-after-use-site.qr: emit stderr_sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 -> e0e72fb7193e13c29c8068a9e680ffc17bbad8b06ca60bd04495a41bf90939ec
+examples/scalar/record_fields.qr: only after
+628 files, 13 differing field(s)

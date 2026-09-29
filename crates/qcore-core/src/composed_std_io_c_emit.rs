@@ -32,7 +32,8 @@ use crate::diagnostic_log_c_emit;
 use crate::extern_c_emit::{
     self, ExternEmissionRefusal, emit_extern_statements, trace_extern_events,
 };
-use crate::std_io::StdIoEvent;
+use crate::scalar_types as st;
+use crate::std_io::{Rendering, StdIoEvent, StdIoOperand};
 use crate::std_io_c_emit::{self, StdIoEmissionRefusal};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -181,6 +182,13 @@ pub fn emit_composed_c11(
     }
     fragments.push(crate::io_emit::io_prelude_fragment());
     fragments.push(extern_c_emit::prototypes_fragment(&program.externs));
+    // Card `W48-QR-SCALAR-TYPES-R3`: the extern model's value statements bring
+    // their headers, width assertions and helpers — nothing for a program
+    // without one.
+    fragments.extend(
+        extern_c_emit::scalar_fragments(&program.externs, &certificate.externs)
+            .map_err(ComposedEmissionRefusal::Extern)?,
+    );
 
     let mut source = String::new();
     for step in &program.order {
@@ -194,6 +202,56 @@ pub fn emit_composed_c11(
                 let Some(event) = program.io.events.get(*index) else {
                     return Err(ComposedEmissionRefusal::ObservationDisagrees);
                 };
+                // Card `W48-QR-SCALAR-TYPES-R3`: a value of another §G02t type
+                // renders at its type — §G02t's conversion, over the extern
+                // model's own variable cast to the type's C11 spelling (the
+                // ABI's `intptr_t`/`uintptr_t` and `_Bool` are the same values
+                // at the same widths), framed like every line.
+                if let StdIoEvent::Print {
+                    rendering,
+                    operand: StdIoOperand::Scalar(name),
+                }
+                | StdIoEvent::Log {
+                    rendering,
+                    operand: StdIoOperand::Scalar(name),
+                    ..
+                } = event
+                    && let Some((ty, _)) = program.io.typed_scalars.get(name)
+                {
+                    let Some(variable) = expressions.get(name) else {
+                        return Err(ComposedEmissionRefusal::UnboundOperand {
+                            step: *index,
+                            name: name.clone(),
+                        });
+                    };
+                    let level = match event {
+                        StdIoEvent::Log { level, .. } => Some(*level),
+                        _ => None,
+                    };
+                    let (stream, prefix) = crate::std_io::line_framing(level);
+                    let cast = format!("({})({variable})", st::c_type(*ty));
+                    let Some((conversion, operand)) = st::c_rendering(
+                        *rendering == Rendering::Hex,
+                        *ty,
+                        &cast,
+                        program.io.target.as_ref(),
+                    ) else {
+                        return Err(ComposedEmissionRefusal::UnboundOperand {
+                            step: *index,
+                            name: name.clone(),
+                        });
+                    };
+                    let _ = writeln!(
+                        source,
+                        "    {}",
+                        crate::io_emit::write_line(
+                            stream,
+                            &format!("{prefix}{conversion}"),
+                            &[&operand]
+                        )
+                    );
+                    continue;
+                }
                 match std_io_c_emit::event_statement(event, &expressions, &program.io.identities) {
                     Ok(Some(statement)) => {
                         let _ = writeln!(source, "    {statement}");

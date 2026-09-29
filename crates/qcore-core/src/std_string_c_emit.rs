@@ -37,7 +37,7 @@ use std::fmt::Write as _;
 
 use crate::c_program::{self, Fragment, Section};
 use crate::io_emit;
-use crate::std_buffer::{BufferEvent, BufferOperand};
+use crate::std_buffer::{BufferEvent, BufferOperand, FieldOperand};
 use crate::std_buffer_c_emit;
 use crate::std_io::{StdIoEvent, line_framing};
 use crate::std_io_c_emit;
@@ -197,11 +197,23 @@ fn buffer_consumers(event: &BufferEvent, consumed: &mut BTreeMap<String, bool>) 
         // compile error rather than a refusal.
         BufferEvent::Construct { fields, .. } => {
             for (_, operand) in fields {
-                if let BufferOperand::Scalar(scalar) = operand {
+                if let FieldOperand::Name(scalar) = operand {
                     consumed.insert(scalar.clone(), true);
                 }
             }
         }
+        // Card `W48-QR-SCALAR-TYPES-R3`: a conversion reads its operand —
+        // unreachable here (this route lowers none) and total anyway.
+        BufferEvent::Convert {
+            operand: BufferOperand::Scalar(scalar),
+            ..
+        } => {
+            consumed.insert(scalar.clone(), true);
+        }
+        BufferEvent::Convert {
+            operand: BufferOperand::Literal(_),
+            ..
+        } => {}
         BufferEvent::Field { record, .. } => {
             consumed.insert(record.clone(), true);
         }
