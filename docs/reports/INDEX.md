@@ -81,6 +81,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg03-call-summary-instantiation](cg03-call-summary-instantiation/README.md) | CG03-CALL-SUMMARY-INSTANTIATION: one call-contract application point |
 
+| [cg05-nested-call-effects](cg05-nested-call-effects/README.md) | CG05-NESTED-CALL-EFFECTS: nested and sibling call effects |
+
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |

@@ -118,7 +118,7 @@ Every consultation is a parity row (`position: "nested-call"`).
 | E10: non-identity nested effects are refused (`sink(release_and_status(p))`) | **Yes.** CG00's executed controls held on the base (`e10_non_identity_effects_of_a_nested_call_are_refused`). |
 | E11: depth > 1 and calls in part of an argument are refused | **Yes** for the shapes CG00 pinned (`f(g(h(p)))`, `f(g(p) + 1)`). |
 | E12: G restricts sibling calls to identity effects | **Yes** (`e12_g_sibling_calls_compose_only_as_identity_effects`). |
-| CG02: 98 elaborator consultations refused as an unordered or nested call | Not re-run here: those are the elaborator's own consultations (rule 10s), which this card does not change. The nested-call statements they overlap reach rule 10y through the classifier's refusal instead. |
+| CG02: 98 elaborator consultations refused as an unordered or nested call, mostly `P = f(...)` with `P`'s read unsequenced with the call | **Yes, exactly:** 98 de-duplicated `elaboration-*` rows at the base, all `call … unsequenced with another event (CG05)`, over 33 functions, and all a compound assignment or store of a call (`len += f(acl)`, `x \|= g(r)`). **Not closed by this card:** the footprint check is applied to the nested-call consumers, not yet to the elaborator's own call events, and the classifier refuses those statements with another refusal, so rule 10y is not asked. They are still 98 at the tip (`CG05-ELABORATOR-CALL-FOOTPRINTS`). |
 | CG00: 405 leaves over 269 Unknown functions; E10 130, E11 275 | **Correction.** E11's `path:call` reason (223 leaves) is a *call-rooted place*, not a call occupying part of an argument: `errno` (`(*__errno_location ())`), the ctype macros (`(*__ctype_b_loc ())[c]`), `f(r)->m`, `a[f(i)]`. The lexical indirect-access gate (180), a condition (39) or a `return` (4) refuses them before any nested-call rule. All 223 are still present at the tip, over 157 functions (`CG05-CALL-ROOTED-PLACES`). The nested-call family proper is 177 leaves over 96 functions at the base. |
 | CG00: 23 functions freed alone | **Correction:** 22 of them have a second cause CG00 did not label. 15 are call-rooted places. 6 have an inner callee with no contract in force: the three `cJSON_DeleteItemFrom*`, `rd_kafka_srand`, `rd_kafka_error_to_legacy`, `rd_kafka_topic_partition_cmp_topic_id`. `cio_file_native_compose_path` keeps two `errno` places. Only `snappy.c::hash` was freeable, and it moved. |
 | W44-PRINTF-NESTED-INNER-CALLEES: 87 printf-family nested refusals over 60 functions | **Yes, exactly:** 87 over 60 on the base's statement consultations. |
@@ -300,7 +300,8 @@ The corpus sidecars (`monkey-source.json`, `*.contracts.json`,
   scalar result are refused.
 - **Depth:** any.
 - **Evaluation order:** only footprint-commuting unordered pairs; no order is
-  chosen.
+  chosen. The elaborator's own compound assignments of a call stay refused
+  (`CG05-ELABORATOR-CALL-FOOTPRINTS`).
 - **Place:** plain actuals only, through the classifier. A place inside a data
   value refuses; a call-rooted place is `CG05-CALL-ROOTED-PLACES`.
 - **Boundary:** contracts in force only.
@@ -355,7 +356,7 @@ The clauses themselves are applied by the unchanged `apply_contract_call`.
 
 ## 7. Follow-ups
 
-Ledger 629 → 629 ([scripts/update_ledger.py](scripts/update_ledger.py)).
+Ledger 629 → 630 ([scripts/update_ledger.py](scripts/update_ledger.py)).
 
 - **Retired:**
   - `CG05-NESTED-CALL-EFFECTS`: every DISCHARGE clause holds.
@@ -373,6 +374,9 @@ Ledger 629 → 629 ([scripts/update_ledger.py](scripts/update_ledger.py)).
   - `CG05-FOOTPRINT-ADDRESS-CONSERVATISM`: 25 consultations.
   - `CG05-CALL-ROOTED-PLACES`: 223 leaves over 157 functions (the correction
     above).
+  - `CG05-ELABORATOR-CALL-FOOTPRINTS`: CG02's 98 compound-assignment
+    consultations over 33 functions. The elaborator's own call events do not
+    yet carry footprints.
 
 ## 8. Gate
 

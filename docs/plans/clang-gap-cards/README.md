@@ -155,6 +155,13 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     commutativity proved from contract footprints.
   - *Absorbs:* NESTED-CALL-IN-ARGUMENT-POSITION, W44-PRINTF-NESTED-INNER-CALLEES,
     W43-RETURN-COMPOUND-CALL and CJSON-DELETE-NESTED-DETACH.
+  - *Status (wave 48, round 4).* Landed on route G (gateway rule 10y): nested
+    calls applied inside-out through `instantiate_call` at any depth, data
+    actuals, and a footprint order check for unordered calls; +2 corpus Safe,
+    no correction. Residuals `CG05-UNCONTRACTED-INNER-CALLEES`,
+    `CG05-FOOTPRINT-ADDRESS-CONSERVATISM`, `CG05-CALL-ROOTED-PLACES` and
+    `CG05-ELABORATOR-CALL-FOOTPRINTS`.
+    [Report](../../reports/cg05-nested-call-effects/README.md).
 - **CG06: value-producing connectives and `?:`.**
   - *Positions.* `&&`, `||` and `?:` in assignments, actuals, returns and
     operands. The unevaluated side produces no effects.

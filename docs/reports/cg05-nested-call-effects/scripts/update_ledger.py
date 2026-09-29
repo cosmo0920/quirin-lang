@@ -81,6 +81,24 @@ REGISTER = [
             "then CG10's per-hop obligations), measured; `errno` and the ctype table are declared-result reads."
         ),
     },
+    {
+        "id": "CG05-ELABORATOR-CALL-FOOTPRINTS",
+        "title": "Elaborated statements whose call is unordered with a read of the destination (98 consultations over 33 functions)",
+        "why": (
+            "Found by CG05-NESTED-CALL-EFFECTS: CG02 measured 98 elaborator consultations refused as a call unsequenced "
+            "with another event; they reproduce exactly on the card's base and tip (de-duplicated `position: "
+            "elaboration-*` rows), over 33 functions, every one a compound assignment or store whose value is a call "
+            "(`len += rd_kafka_AclBinding_request_size(acl, v)`, `not_in_group |= rd_kafka_cgrp_leave_maybe(rkcg)`, "
+            "`score += abs(...)`): the read of the destination is unordered with the call. Rule 10y adds the footprint "
+            "order check (`EvalGraph::check_footprints`) and applies it to the nested-call consumers only; the "
+            "elaborator's own `elaborate` still calls `check`, whose call events carry no footprint, and its lowering "
+            "refuses a call inside a piece's events. The classifier refuses these statements with another refusal, so "
+            "rule 10y's consumers are not asked. DISCHARGE: the elaborator's call events carry their contract "
+            "footprint (the destination's read against the call's footprint: a scalar local unaliased is disjoint from "
+            "every identity cell) and its lowering instantiates the call through `instantiate_call`, measured, with "
+            "Lean parity (`QCore.NestedCallEffects.footprint_commute_sound` already covers the pair)."
+        ),
+    },
 ]
 
 AMEND = {
