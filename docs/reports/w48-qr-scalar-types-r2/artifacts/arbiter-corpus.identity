@@ -1,0 +1,6 @@
+ae17152b05516be7a3ca2b8c3b653c169a5ad5e692adeddd4ca29339a4bf77c8  resource-diagnostics.json
+cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484  resource-diagnostics.chunk-contracts.json
+57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11  monkey-source.json
+17127660e0918e12544e848402d18ecfa135db6078242e379c27708ada997b83  quirin-audit (release, tip fea82fdc)
+run exit 0, source commit 66910c10, QCORE_AUDIT_JOBS 8
+archive: docs/reports/w48-qr-scalar-types/artifacts/arbiter-corpus.identity (resource-diagnostics.json ae17152b05516be7, as archived by w47-round9-integration)

@@ -138,7 +138,7 @@ or `match` on a callee that cannot raise, arms other than one `Ok` and one
 
 **Fixture identity.** The first half's `freeze_fixtures.py` over every tracked
 `.qr`/`.qv`/`.qrlib` file, debug `quirin` at the base (`169e3920…`, 626 files)
-and at the tip (`FINAL_QUIRIN…`, 627 files) ([BEFORE](artifacts/fixtures-before.json),
+and at the tip (`1c102d36…`, 627 files) ([BEFORE](artifacts/fixtures-before.json),
 [AFTER](artifacts/fixtures-after.json), [comparison](artifacts/fixtures-compare.txt)):
 **624 of the 626 existing files are byte-identical** in the exit, stdout and
 stderr of both `check` and `emit`; the two differences are the corrections
@@ -153,7 +153,7 @@ to every other integer type), called on every boundary case (MIN, MIN+1, −1, 0
 1, MAX−1, MAX) by a harness that compares the returned tag and value with an
 independent classifying reference inside the program; Clang 21.1.8 at `-O0` and
 `-O2` under `-fsanitize=undefined,integer -fno-sanitize-recover=all` and at
-plain `-O2`: **NATIVE_SUMMARY**. The harness also asserts no exiting helper
+plain `-O2`: **2,175 cases × 3 builds; per build 1,561 reference values and 614 raises (325 `Overflow`, 110 `DivisionByZero`, 179 `OutOfRange`), every raise the reference's variant, 0 exits 86, 0 sanitizer reports, 0 bytes on either stream**. These are the first half's 1,561 values and 614 faults, case for case, now returned as typed errors. The harness also asserts no exiting helper
 (`q_scalar_add_…`, `q_scalar_neg_…`) is emitted in a throwing function.
 
 **Checker on the dynamic path.** The same 1,625 operation cases as closed
@@ -202,10 +202,10 @@ theorem.
 | item 0 moves no entry-only-route fixture | 90% | **none** |
 | item 1 moves no fixture | 90% | **none** (the item-0 and item-1 freezes are identical) |
 | existing tests changed for item 0 | a few sequential ones, 60% | **two**, neither sequential: a string-route and an std.io-route test pinned an unread helper |
-| native table under UBSan | typed error, 0 reports, no 86, 85% | **NATIVE_SHORT** |
+| native table under UBSan | typed error, 0 reports, no 86, 85% | **2,175 × 3: all agree, 614 typed raises per build, 0 exit 86, 0 reports** |
 | Lean | new theorems audit, 85% | **226 audits pass** (20 new theorems) |
-| corpus arbiter | byte-identical `ae17152b…`, 97% | **ARBITER_SHORT** |
-| standing gate | green, new tests only, 85% | **GATE_SHORT** |
+| corpus arbiter | byte-identical `ae17152b…`, 97% | **byte-identical** (`ae17152b…`) |
+| standing gate | green, new tests only, 85% | **green** after one clippy fix; 6,433 → 6,445 (+12, the two new test files) |
 | items completed | 0 and 1; 2 attempted, 60% | **0 and 1**; item 2 not attempted (below) |
 
 Not predicted: the six entry-only routes admitted helpers unread in their
@@ -215,11 +215,32 @@ declarations are a separate unread position.
 
 ## Gate
 
-GATE_TABLE
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | (rerun after the clippy fix) |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 361 units, 374 summaries; **6,445 passed, 0 failed, 11 ignored** (`private/test-binaries/20260929T084824Z-191140/summary.json`) |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | first run 101 (`type_complexity` on one test-local tuple type in `scalar_typed_errors.rs`); fixed with a type alias, rerun 0, and that test binary rerun: 8 passed |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **226 audits** (225 + `AuditScalarTypedErrors.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | **365 tests OK** (after the matrix regeneration) |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+| clean | `cargo clean --profile dev` | 0 | |
+
+Exits in [gate/](gate/), record in [gate.json](gate.json); logs under
+`private/w48-r2/gate/`. `providers/` is unchanged, so the provider gate is not
+due. Clang 21.1.8 recorded in this worktree ([gate/clang-version.txt](gate/clang-version.txt)).
 
 ## Corpus arbiter
 
-ARBITER_SECTION
+`QCORE_TYPED_PATH_PARITY=OUT/parity.jsonl python3 scripts/run_pinned_audit.py
+OUT 66910c10 --inputs-root …/build/cycle19 --jobs 8`, AFTER only, with this
+tip's release `quirin-audit` (`17127660…`, built at `fea82fdc`): exit 0.
+`resource-diagnostics.json` sha256 `ae17152b05516be7…` is **byte-identical** to
+the archived baseline, and so are `resource-diagnostics.chunk-contracts.json`
+(`cbbcfd9c…`) and `monkey-source.json` (`57acfc58…`)
+([identity](artifacts/arbiter-corpus.identity)). No C-audit path was touched.
 
 ## Positions and follow-ups
 

@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 7,
-  "named_followups": 588
+  "named_followups": 589
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6738,11 +6738,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W48-QR-SCALAR-TYPES card gate at base d389700a, logs private/w48-qr-scalar-types/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 359 units, 372 summaries, 6,433 passed, 0 failed, 11 ignored (private/test-binaries/20260929T075249Z-4024297/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 225 audits passed (new AuditScalarTypes.lean, 23 theorems); clean-dev 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried from the W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS record. The records phase ran after the ledger (580 -> 588), matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8). No gate step failed. Exits in gate/.",
-  "workspace_tests": 6433,
+  "note": "W48-QR-SCALAR-TYPES-R2 card gate at base 7e723a96, logs private/w48-r2/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 361 units, 374 summaries, 6,445 passed, 0 failed, 11 ignored (private/test-binaries/20260929T084824Z-191140/summary.json); clippy first exit 101 (type_complexity on one test-local tuple type in compiler/tests/scalar_typed_errors.rs), fixed with a type alias and rerun 0, that test binary rerun 8 passed, fmt rerun 0; both reevaluation probes exit 0; check_lean_audits.py 226 audits passed (new AuditScalarTypedErrors.lean, 20 theorems). providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried from the W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS record. The records phase ran after the ledger (588 -> 589), matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8), resource-diagnostics.json byte-identical (ae17152b). Exits in gate/.",
+  "workspace_tests": 6445,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 225,
+  "lean_audits": 226,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6918,6 +6918,7 @@
    "AuditScalarMemberStore.lean",
    "AuditScalarObservationContracts.lean",
    "AuditScalarRouteExitEdge.lean",
+   "AuditScalarTypedErrors.lean",
    "AuditScalarTypes.lean",
    "AuditSingleEmissionRoute.lean",
    "AuditSizeofOperand.lean",
@@ -6976,7 +6977,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r2/gate.json)"
  },
  "named_followups": [
   {
@@ -11025,25 +11026,32 @@
    "recorded_by": "W48-QR-SCALAR-TYPES"
   },
   {
-   "id": "W48-QR-TYPED-ARITHMETIC-ERROR",
-   "title": "Carry the arithmetic and conversion fault as a typed error where the checker cannot decide it",
-   "why": "The user decision of 2026-09-29 (checked overflow) says an operation that can overflow produces a typed error or is refused at check time when the checker can decide it. On every position W48-QR-SCALAR-TYPES widened the operands are check-time constants of the closed evaluation or literal-only folds, so every fault is refused at check time and the emitted guard (exit 86) is unreachable from an admitted program; no error type was added. The first position with an undetermined operand (an undeclared extern result, W48-QR-TYPES-EXTERN-VALUES; a value computed in a worker, W48-QR-TYPES-TASK-CAPTURES) needs the fault as a value: modelled on throws<E>, `?` and `match … Result::Err`, with a named error type (proposed `ArithmeticError` with Overflow, DivisionByZero and OutOfRange variants, or an existing type if one fits). Size: one error declaration, the scalar IR's fault becoming an error exit, the emitted guard returning the error instead of exiting 86, the effect row's throws<E>. DISCHARGE: the typed error on the first such position, Lean parity (a checked operation's None is the error arm), native runs taking the error path at every boundary.",
-   "source": "docs/reports/w48-qr-scalar-types/README.md",
-   "recorded_by": "W48-QR-SCALAR-TYPES"
-  },
-  {
-   "id": "W48-SEQUENTIAL-UNCHECKED-PARAMETER-TYPES",
-   "title": "Check or refuse parameter type annotations on the sequential route",
-   "why": "Found by W48-QR-SCALAR-TYPES: the sequential cleanup route (G02) admits a function whose parameter annotation it never reads, `fn g(x: u8) -> i32 { return 0; } fn main() -> i32 { return 0; }` (measured before and after the card, unchanged), so `fn f(x: usize) -> i32 { return 0; }` is admitted with no recorded target although no width is ever given to it. Such a function cannot be called on that route (a direct call must name a zero-parameter function), so no value of the type exists and nothing is emitted for it; G02 already says a structurally accepted spelling is not a claim of ordinary type semantics. Size: the sequential route's function synthesis (driver.rs synthesize_semantics); fixtures with parameterised functions on that route must be censused first. DISCHARGE: a parameter annotation on the sequential route is checked against the G02t table (isize/usize requiring a recorded target) or refused, measured on every fixture.",
-   "source": "docs/reports/w48-qr-scalar-types/README.md",
-   "recorded_by": "W48-QR-SCALAR-TYPES"
-  },
-  {
    "id": "W48-QR-TYPES-MSVC-NATIVE",
    "title": "Build the fixed-width helpers natively under MSVC",
-   "why": "W48-QR-SCALAR-TYPES' native boundary table and rendering runs are Unix-only (Clang 21.1.8 with UBSan). The emitted helpers use explicit range tests rather than compiler builtins so that `cl` can build them, and the renderings use `%zu`, `%td`, `%zX` and `_Static_assert`, which MSVC's C11 mode accepts by documentation, but no MSVC build of a fixed-width program has been run. Size: the two native tests under the existing tests/support/windows_c.rs harness (/W4 /WX); 0 fixtures move. DISCHARGE: the boundary harness and the renderings program built and run under MSVC in Windows CI, each fault exiting 86 and each stream equal to the reference.",
+   "why": "W48-QR-SCALAR-TYPES' native boundary table and rendering runs are Unix-only (Clang 21.1.8 with UBSan). The emitted helpers use explicit range tests rather than compiler builtins so that `cl` can build them, and the renderings use `%zu`, `%td`, `%zX` and `_Static_assert`, which MSVC's C11 mode accepts by documentation, but no MSVC build of a fixed-width program has been run. Size: the two native tests under the existing tests/support/windows_c.rs harness (/W4 /WX); 0 fixtures move. DISCHARGE: the boundary harness and the renderings program built and run under MSVC in Windows CI, each fault exiting 86 and each stream equal to the reference. Amended by W48-QR-SCALAR-TYPES-R2: W48-QR-SCALAR-TYPES-R2 adds the q_scalar_try_* helpers and the `80 + tag` entry exit to what no MSVC build has run; the discharge now also covers the dynamic boundary harness (scalar_typed_errors.rs) under /W4 /WX.",
    "source": "docs/reports/w48-qr-scalar-types/README.md",
    "recorded_by": "W48-QR-SCALAR-TYPES"
+  },
+  {
+   "id": "W48-INERT-EXTERN-DECLARATION-TYPES",
+   "title": "Check or refuse the signature of an extern declaration no route calls",
+   "why": "Found by W48-QR-SCALAR-TYPES-R2 while closing W48-SEQUENTIAL-UNCHECKED-PARAMETER-TYPES: an `extern fn` declaration that no body calls is admitted on the sequential route with its parameter and result annotations unread (`extern fn f(x: Widget) -> Widget; fn main() -> i32 { return 0; }` checks). The extern routes (G02d, G02i) read every declaration they call and refuse any helper function at Q026; an uncalled declaration on another route is read by nothing but name resolution. Two tracked probes rely on it: docs/reports/remaining-v04/probes/P08-valid-named-use.qr and P10-decl-after-use-site.qr declare `extern fn f(q: quant<n where n := 5>) -> unit;` to show quantity-name resolution, so refusing unread declarations would move both (admission to refusal) and change what those frozen probes measure. Size: a declaration check on the sequential route (and any other route admitting an uncalled declaration) against the C04.1 ABI vocabulary or the quantity forms name resolution already reads; 2 fixtures move. DISCHARGE: every admitted extern declaration's annotations are read by the admitting route or refused, with P08/P10 attributed.",
+   "source": "docs/reports/w48-qr-scalar-types-r2/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R2"
+  },
+  {
+   "id": "W48-QR-TYPED-ERROR-CONTINUING-ARMS",
+   "title": "Let a match arm on the typed error continue after the match",
+   "why": "W48-QR-SCALAR-TYPES-R2's `match CALL { Result::Ok … Result::Err … }` on source.scalar-calls.v1 is always the last thing its block does: each arm ends in `return`, `raise` or another `match`, so a function body is a tree and no join is modeled. The task profile's arms may continue with outer identities; a scalar arm that falls through (binding a fallback value and continuing) is refused by the grammar. Size: a join of the two arms' local slots in the scalar IR, the checker and the closed evaluator (scalar_calls.rs), C emission of the continuation after an if/else (scalar_calls_c_emit.rs), the parser's block end (source_scalar_calls.rs), Lean for the join; 0 fixtures move. DISCHARGE: an arm that ends without a terminator continues after the match with only outer bindings in scope, checked, evaluated and emitted, with native runs.",
+   "source": "docs/reports/w48-qr-scalar-types-r2/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R2"
+  },
+  {
+   "id": "W48-QR-ERROR-VARIANT-INSPECTION",
+   "title": "Let a handler inspect which ArithmeticError variant it caught",
+   "why": "W48-QR-SCALAR-TYPES-R2's `Result::Err { error: e }` arm can only re-raise `e` (`raise e;`) or discard it: there is no match on the variant and no rendering of an error, so a program cannot tell Overflow from DivisionByZero from OutOfRange except by propagating it out of the entry (exit 80 + tag). Size: a variant pattern or an error-to-scalar conversion on the scalar route, its evaluation and emission (the C tag is already an int), a std.fmt rendering if one is wanted; 0 fixtures move. DISCHARGE: a handler that branches on or renders the variant, checked, evaluated and emitted, with Lean parity and native runs.",
+   "source": "docs/reports/w48-qr-scalar-types-r2/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R2"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

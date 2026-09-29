@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-SCALAR-TYPES-R2 card gate at base 7e723a96, logs private/w48-r2/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 361 units, 374 summaries, 6,445 passed, 0 failed, 11 ignored (private/test-binaries/20260929T084824Z-191140/summary.json); clippy first exit 101 (type_complexity on one test-local tuple type in compiler/tests/scalar_typed_errors.rs), fixed with a type alias and rerun 0, that test binary rerun 8 passed, fmt rerun 0; both reevaluation probes exit 0; check_lean_audits.py 226 audits passed (new AuditScalarTypedErrors.lean, 20 theorems); python 365 tests OK after the matrix regeneration; docs index 0; clean-dev 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8), resource-diagnostics.json byte-identical (ae17152b). Exits in gate/.",
+  "workspace_tests": 6445,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 226,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
