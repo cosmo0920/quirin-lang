@@ -1045,3 +1045,62 @@ fn every_boundary_raise_is_on_its_error_edge() {
         );
     }
 }
+
+/// A worker renders the value it received at its own type (§G02j with card
+/// `OBS-REORDERING`'s worker lines): every type, `dec` and `hex` (`bool`
+/// `dec` only), on the worker's own `log` stream. Standard output (the
+/// parent's trace) is single-writer and compared byte for byte; the workers'
+/// standard error is compared up to the declared reordering relation, under
+/// the three builds.
+#[cfg(unix)]
+#[test]
+fn native_worker_lines_render_at_their_type() {
+    use native::*;
+    use qcore_core::std_io::Stream;
+    let mut source = String::from(IMPORTS);
+    let mut parent = String::new();
+    for (index, ty) in qcore_compiler::scalar_types::ALL.into_iter().enumerate() {
+        let hex = if ty == ScalarType::Bool {
+            ""
+        } else {
+            " log warn hex x;"
+        };
+        source.push_str(&format!(
+            "fn w{index}(x: {ty}) -> {ty} effects {{ io }} {{ log info dec x;{hex} return x; }}\n"
+        ));
+        let value = if ty == ScalarType::Bool {
+            "false".to_owned()
+        } else {
+            ty.range(Some(&host_target())).unwrap().0.to_string()
+        };
+        parent.push_str(&format!(
+            "        let a{index}: {ty} = {value};\n        let h{index} = spawn s w{index}(copy a{index})?;\n        let r{index} = join move h{index}?;\n"
+        ));
+    }
+    source.push_str(&format!(
+        "fn main() -> i32 effects {{ {ENTRY}, io }} {{\n    thread scope s {{\n{parent}        return 0;\n    }}\n}}\n"
+    ));
+    let module = admitted(&source);
+    let composed = module.checked.as_composed_tasks().unwrap();
+    let observation = execute_with_source_lines(
+        composed.tasks(),
+        &TaskExecutionScript::default(),
+        &BTreeMap::new(),
+        composed.sites(),
+    )
+    .unwrap();
+    let (out, err) = observation.projections();
+    assert!(
+        err.contains("[INFO] -128\n[WARN] 0x80\n") && err.contains("[INFO] false\n"),
+        "{err}"
+    );
+    let c = diagnostic_sink::instrument_fixed(module.c_source.as_deref().unwrap());
+    for (label, flags) in BUILDS {
+        let run = build_and_run(&c, flags).unwrap_or_else(|e| panic!("{label}: {e}"));
+        assert_eq!(run.stdout, out, "{label}: stdout");
+        observation
+            .compare_stream(Stream::Err, &run.stderr)
+            .unwrap_or_else(|refusal| panic!("{label}: {refusal}\n{}", run.stderr));
+        assert_eq!(run.status, Some(0), "{label}");
+    }
+}

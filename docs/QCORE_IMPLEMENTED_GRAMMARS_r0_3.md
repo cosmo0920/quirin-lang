@@ -392,14 +392,16 @@ conversions on `source.scalar-calls.v1`, its line statements, and the `|>`
 sinks that desugar to them. Widened by card `W48-QR-SCALAR-TYPES-R3` (below):
 the record fields of `source.buffer.v1` and that route's whole value
 environment (§G07.13, §G02k), and extern results as values on the extern and
-composed extern + io routes (§G02d, §G02i). Every other position that takes
-`i32` keeps its existing refusal and is a named follow-up: loop bounds and
-indices (§G07.12, `W48-QR-TYPES-LOOP-BOUNDS`), task workers, `copy` captures
-and the composed tasks + io route (§G02a, §G02j,
-`W48-QR-TYPES-TASK-CAPTURES`), the `Buffer` and `protected N` payloads
-(§G02b, §G02c, `W48-QR-TYPES-PAYLOADS`), and an executable entry result other
-than `i32`/`unit` (C's `main` returns `int`; the entry's value is published,
-never returned). A typed `let` beside an `std.io` line is
+composed extern + io routes (§G02d, §G02i). Widened by card
+`W48-QR-SCALAR-TYPES-R4` (below): task worker parameters and results, `copy`
+captures, value statements in every task function, and the composed tasks + io
+operands (§G02a, §G02j). Every other position that takes `i32` keeps its
+existing refusal and is a named follow-up: loop bounds and indices (§G07.12,
+`W48-QR-TYPES-LOOP-BOUNDS`), the `Buffer` and `protected N` payloads (§G02b,
+§G02c, `W48-QR-TYPES-PAYLOADS`), the composed epoch route's task half (§G02f,
+`W48-QR-TYPES-EPOCH-TASKS`), and an executable entry result other than
+`i32`/`unit` (C's `main` returns `int`; the entry's value is published, never
+returned; a task entry's likewise). A typed `let` beside an `std.io` line is
 scalar-call syntax, so such a module reaches this route and needs no change
 to `source.std-io.v1`. A conversion written on one of those routes was
 refused at `Q013` before this card (name resolution collected the type name);
@@ -460,6 +462,41 @@ extern + io route a rendering reads a known value of **every** §G02t type at
 that type (before the card, an `i32` only); a value known only at run time
 still refuses (`Q043`, "no model computed"), and `isize`/`usize` render only
 with a recorded target (`Q043`).
+
+**Task workers and `copy` captures** (card `W48-QR-SCALAR-TYPES-R4`, §G02a,
+§G02j). On the scoped-task route a worker parameter and a worker result may be
+any type of the table, a local annotation any type (a literal after it takes
+its type, range-checked), and a `copy` capture copies a value of any type into
+a parameter of exactly that type — there is no conversion at the boundary, and
+the transferability judgment classifies the other ten types as one duplicated
+kind beside `i32` (`TransferKind::FixedScalar`, `QCore.Transferability`). A
+task entry's result stays `i32`, `unit` or its error. Every task function —
+the entry and every worker — gains the extern route's **value statement**
+(the grammar above, read by the same reader and decided by the same decision,
+`qcore_core::scalar_values`): a statement over values known at check time (a
+literal, a copy of a known value, a statement over such values) is folded and
+a fault refuses (`Q020`); a statement reading a value known only at run time —
+a parameter, which is what a capture is inside the worker, a joined outcome, a
+buffer read — that can fault is refused without the function's
+`throws<ArithmeticError>` (`Q300`) and with it lowers to a checked step whose
+error edge is the route's **ordinary error exit**: the scope exits, then
+`raise` of the classified variant. So a raise is an exit like any other, and a
+worker that still holds an owned Buffer there is refused (`Q600`).
+`ArithmeticError` is a builtin error type of the route, payload-free, beside
+`SpawnError` and `AllocError`, and like them may not be redeclared (`Q013`); a
+worker's `ArithmeticError` is an ordinary typed worker error, which `join`
+collects and the creator consumes with `?` (under its own permission) or
+`match` (`QCore.ScalarTasks.worker_error_reaches_creator_unchanged`). The
+emitted C widens the task value by a union holding one member per fixed-width
+type the module names, calls §G02t's `q_scalar_*` / `q_scalar_try_*` helpers,
+and logs a fixed-width worker result under the name `=TYPE`; a module that
+names none of the table's other types and performs no value statement emits
+exactly the bytes it always did. A composed rendering reads a value of any type
+at its type, in the parent or in a worker; `bool` has no `hex` (`Q050`). A
+fixed-width worker outcome has no spelling in the F02 observable alphabet, so
+such a program sits outside F02 relational comparison (`reference_trace`
+refuses it) and its native evidence is the byte comparison of the maintained
+trace, whose sink prints `QCORE_TASK_RESULT TASK TYPE NUMBER`.
 
 **Every extern declaration is read** (card `W48-QR-SCALAR-TYPES-R3`,
 `W48-INERT-EXTERN-DECLARATION-TYPES`). An executable or library module's
@@ -558,7 +595,9 @@ frontend-to-C translation.
 
 `source.tasks.copy.v1` uses the ordinary compiler commands and requires exactly
 one `concurrency checked;` marker. All definitions are checked. The entry has no
-parameters; leaf workers accept named i32 parameters and return i32/unit.
+parameters; leaf workers accept named i32 parameters and return i32/unit —
+since card `W48-QR-SCALAR-TYPES-R4`, parameters and results of every §G02t type
+(§G02t, "Task workers and `copy` captures"; the entry's result stays i32/unit).
 Local scalar bindings are immutable. A return may use an i32 literal or live
 scalar slot; unit uses bare return or a live unit result slot. Explicit supported effect rows permit
 `spawn`, `join`, `may_block` and `throws<E>`; every actual effect/error must be
@@ -609,10 +648,14 @@ match scrutinees and general branching remain unsupported. Explicit matching
 of an infallible Result conservatively checks both arms; only infallible `?`
 uses the empty-error extraction rule.
 
-Captures must be `copy` of direct immutable i32 local/parameter names. General
-expressions, assignments, loops, general branches, resources, loans, move/read/write
-captures, mutexes, externs, globals, user contracts and task-bearing workers
-reject in every definition. Entry-free task modules are not admitted yet.
+Captures must be `copy` of direct immutable i32 local/parameter names (since
+card `W48-QR-SCALAR-TYPES-R4`, of any §G02t type, into a parameter of exactly
+that type). General expressions, assignments, loops, general branches,
+resources, loans, move/read/write captures, mutexes, externs, globals, user
+contracts and task-bearing workers reject in every definition; the one
+expression form admitted, by the same card, is §G02t's value statement — one
+operation per `let`, with `ArithmeticError` raised through the ordinary error
+exit. Entry-free task modules are not admitted yet.
 The native driver supports Linux C11 threads, macOS through an emitted pthread
 adapter, and Windows through an emitted winpthreads-derived C11 thread subset;
 it explicitly rejects other targets. Its start record survives until successful native join; failed
@@ -2185,7 +2228,8 @@ stream, its own. All four published `examples/threads` programs are of that
 kind.
 
 **Operands.** A rendering operand is an integer literal or a name the *task*
-model bound to an `i32`:
+model bound to an `i32` — since card `W48-QR-SCALAR-TYPES-R4`, to a value of
+any §G02t type, rendered at its type (§G02t; `bool` has no `hex`, `Q050`):
 
 ```ebnf
 OPERAND     = [ "-" ], INTEGER | NAME ;   (* no `borrow NAME` on this route *)
