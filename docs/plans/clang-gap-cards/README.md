@@ -116,6 +116,11 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     never serialised left to right. The layer runs beside the shape routes,
     and parity is required before any shape route retires (hard invariant 3).
   - *Absorbs:* W43-RETURN-COMMA-MACRO.
+  - *Status (wave 48, round 2).* Landed on route G as a fallback in statements,
+    returns and call-free conditions (gateway rule 10s): 16 Unknown → Safe in the
+    corpus arbiter, no correction; route T names the value forms. Residuals
+    `CG02-COMMA-OPERAND-RESIDUALS` and `CG02-FOR-CLAUSE-SEQUENCES`.
+    [Report](../../reports/cg02-elaboration-core/README.md).
 - **CG03: call-summary instantiation.**
   - *One application point.* A contract applies exactly once, where the
     callee, types and actual identities are established. The same contract
