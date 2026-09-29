@@ -307,13 +307,10 @@ fn a_connective_return_keeps_every_refusal_it_does_not_prove() {
     if !clang_available() {
         return;
     }
-    for body in [
-        "int w(struct c_q *q) { return q->cnt > 0 && c_count(q) > 1; }",
-    ] {
-        let (status, keys) = outcome(body);
-        assert_eq!(status, "Unknown", "{body}");
-        assert!(keys.contains(&RETURN.to_owned()), "{body}: {keys:?}");
-    }
+    let body = "int w(struct c_q *q) { return q->cnt > 0 && c_count(q) > 1; }";
+    let (status, keys) = outcome(body);
+    assert_eq!(status, "Unknown", "{body}");
+    assert!(keys.contains(&RETURN.to_owned()), "{body}: {keys:?}");
     // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): the
     // pointer-valued `?:` return is lowered by branching on `c`, each edge's
     // `return q->head.first;` / `return q->arr;` decided by rule 10k's typed
