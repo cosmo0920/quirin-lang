@@ -125,6 +125,28 @@ Every consultation is a parity row (`position: "nested-call"`).
 
 ## 3. Measurements
 
+### 3.1 On the merged base (main `c0ccc66a`): the published figures
+
+W48-QR-SCALAR-TYPES-R4 and then CG04-CONDITION-ACQUISITION landed while the
+card ran. Main was merged twice (`524d08f9` at `6883623c`, then `32635478` at
+`c0ccc66a`), and the corpus was retaken on the final merge.
+
+- **BEFORE:** the release binary built at `c0ccc66a`
+  (`private/cg05/quirin-audit-main3`, `fd3b7932…`); run `private/cg05/before3`,
+  exit 0. It reproduces CG04's AFTER byte for byte (`24571074…`,
+  **565 / 10 / 4,259**).
+- **AFTER:** the release binary built at the merge `32635478`
+  (`quirin-audit-after3`, `209485a4…`); run `private/cg05/after3`, exit 0:
+  **567 / 10 / 4,257** (`8642ec02…`).
+  [corpus-comparison-merged.json](artifacts/corpus-comparison-merged.json).
+- The moves (`snappy.c::hash`, `lz4hc.c::LZ4HC_hashPtr`), the 15 functions
+  whose diagnostics change and the leaf deltas are **identical** to §3.2's.
+  Nothing composes differently with CG04's condition lowering.
+- System: BEFORE 33 / 2 / 199 (`42259780…`, byte-identical to the base's), AFTER **33 / 2 / 199** (`32f9a5aa…`, byte-identical to the base's AFTER): the same two leaves go.
+- Tail-pause slice: **26 / 1 / 242 / 1 Pending**, BEFORE and AFTER byte-identical (`fc9a6e0b…`).
+
+### 3.2 At the card's base `27dc7c9a`
+
 **BEFORE.**
 
 - Binary: the release `quirin-audit` built at `27dc7c9a`
