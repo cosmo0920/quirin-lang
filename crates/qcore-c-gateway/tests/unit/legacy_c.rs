@@ -1555,18 +1555,16 @@ fn increment_side_effects_outside_the_unary_scalar_statement_remain_refused() {
         );
     }
     // A call whose actual carries the increment keeps its refusal (CG03).
-    for body in ["int n = 0; consume(n++);"] {
-        let summary = analyze(&format!("int subject(void) {{ {body} }}"));
-        assert_ne!(summary.status, AnalysisStatus::Safe, "{body}");
-        assert!(
-            has(&summary, |kind| matches!(
-                kind,
-                LegacyDiagnosticKind::Unsupported { .. }
-            )),
-            "{body}: {:?}",
-            summary.diagnostics
-        );
-    }
+    let summary = analyze("int subject(void) { int n = 0; consume(n++); }");
+    assert_ne!(summary.status, AnalysisStatus::Safe);
+    assert!(
+        has(&summary, |kind| matches!(
+            kind,
+            LegacyDiagnosticKind::Unsupported { .. }
+        )),
+        "{:?}",
+        summary.diagnostics
+    );
     // Deliberate pin update, card W43-INDEX-TRAVERSAL. `p++` on a declared
     // `char *` is now a modeled pointer step. It refuses because it steps the
     // allocation's only name (`unknown_alias`), and releasing the stepped

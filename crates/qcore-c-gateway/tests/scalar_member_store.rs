@@ -245,24 +245,22 @@ fn rhs_mutation_and_indirect_rhs_shapes_keep_the_lexical_refusal() {
         "subject",
     );
     assert_eq!(status(&run, "subject"), AnalysisStatus::Safe);
-    for rhs in ["*(&n)"] {
-        let program = format!(
-            "void subject(int n) {{ struct record *p = w_fresh(); p->state = {rhs}; w_release(p); }}"
-        );
-        let result = analyze(&program, "subject");
-        let diagnostic = diagnostics(&result, "subject");
-        assert_eq!(
-            status(&result, "subject"),
-            AnalysisStatus::Unknown,
-            "{rhs}: {diagnostic:?}"
-        );
-        assert!(
-            diagnostic
-                .iter()
-                .any(|kind| matches!(kind, LegacyDiagnosticKind::Unsupported { .. })),
-            "{rhs}: {diagnostic:?}"
-        );
-    }
+    let result = analyze(
+        "void subject(int n) { struct record *p = w_fresh(); p->state = *(&n); w_release(p); }",
+        "subject",
+    );
+    let diagnostic = diagnostics(&result, "subject");
+    assert_eq!(
+        status(&result, "subject"),
+        AnalysisStatus::Unknown,
+        "*(&n): {diagnostic:?}"
+    );
+    assert!(
+        diagnostic
+            .iter()
+            .any(|kind| matches!(kind, LegacyDiagnosticKind::Unsupported { .. })),
+        "*(&n): {diagnostic:?}"
+    );
 }
 
 #[test]
