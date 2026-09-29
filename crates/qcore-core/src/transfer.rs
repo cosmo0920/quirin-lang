@@ -130,6 +130,12 @@ pub enum TransferKind {
     Unit,
     /// An immutable 32-bit integer.
     I32,
+    /// An immutable value of any other type of the §G02t fixed-width table —
+    /// `bool`, `i8`, `i16`, `i64`, `isize`, `u8`, `u16`, `u32`, `u64`, `usize`
+    /// (card `W48-QR-SCALAR-TYPES-R4`). It is on `i32`'s footing exactly: a
+    /// copy capture reads a slot's value, and the ledger records no resource
+    /// for a scalar, so there is no identity to hold twice.
+    FixedScalar,
     /// A heap Buffer whose custody is affine.
     OwnedBuffer,
     /// A scoped read loan of a Buffer someone else still owns.
@@ -181,9 +187,10 @@ impl TransferKind {
     /// Exhaustiveness of the judgment is checked against this list, so an
     /// added constructor that no arm handles is a compile error here and a
     /// test failure in the totality tests.
-    pub const ALL: [TransferKind; 16] = [
+    pub const ALL: [TransferKind; 17] = [
         TransferKind::Unit,
         TransferKind::I32,
+        TransferKind::FixedScalar,
         TransferKind::OwnedBuffer,
         TransferKind::ReadLoan,
         TransferKind::WriteLease,
@@ -434,8 +441,10 @@ impl TransferClass {
 pub const fn transferable(kind: TransferKind) -> TransferClass {
     match kind {
         // Scalars duplicate. The ledger records no resource for them, so
-        // there is no identity that could be held twice.
-        TransferKind::I32 => TransferClass::Duplicated,
+        // there is no identity that could be held twice. Card
+        // `W48-QR-SCALAR-TYPES-R4` adds the rest of the fixed-width table on
+        // exactly that ground.
+        TransferKind::I32 | TransferKind::FixedScalar => TransferClass::Duplicated,
 
         // The unit value is a result type. It never occupies a capture or
         // parameter position, so it is refused there by position, not by
@@ -579,8 +588,9 @@ pub enum TransferRefusal {
 
 /// **The operational judgment.** Given a kind and the mode a capture asks
 /// for, decide. Total over [`TransferKind`] x [`TransferMode`] — all
-/// 16 x 6 = 96 pairs (13 x 4 originally; 14 x 5 after card
-/// `WRITE-LEND-TASKS`).
+/// 17 x 6 = 102 pairs (13 x 4 originally; 14 x 5 after card
+/// `WRITE-LEND-TASKS`; 16 x 6 after card `MUTEX-SHARE-CROSS`; 17 x 6 after
+/// card `W48-QR-SCALAR-TYPES-R4`).
 pub const fn admits(
     kind: TransferKind,
     mode: TransferMode,

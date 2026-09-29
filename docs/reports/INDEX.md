@@ -1044,6 +1044,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-qr-scalar-types-r3](w48-qr-scalar-types-r3/README.md) | W48-QR-SCALAR-TYPES-R3: typed record fields and extern values |
 
+| [w48-qr-scalar-types-r4](w48-qr-scalar-types-r4/README.md) | W48-QR-SCALAR-TYPES-R4: fixed-width values across a task boundary |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |

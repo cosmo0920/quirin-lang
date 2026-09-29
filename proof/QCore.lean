@@ -240,6 +240,7 @@ import QCore.ScalarCalls
 import QCore.ScalarTypes
 import QCore.ScalarTypedErrors
 import QCore.ScalarPositions
+import QCore.ScalarTasks
 import QCore.ResourceCalls
 
 import QCore.MonkeyWaitSourcePolicy

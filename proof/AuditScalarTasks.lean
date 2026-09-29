@@ -1,0 +1,16 @@
+import QCore.ScalarTasks
+#print axioms QCore.ScalarTasks.capture_admitted_iff
+#print axioms QCore.ScalarTasks.capture_refuses_another_type
+#print axioms QCore.ScalarTasks.capture_preserves_value
+#print axioms QCore.ScalarTasks.fixedScalar_crosses_only_by_copy
+#print axioms QCore.ScalarTasks.captured_operand_raises_under_permission
+#print axioms QCore.ScalarTasks.captured_operand_refused_without_permission
+#print axioms QCore.ScalarTasks.raised_variant_is_raisable
+#print axioms QCore.ScalarTasks.conversion_raise_is_raisable
+#print axioms QCore.ScalarTasks.join_returns_the_completion
+#print axioms QCore.ScalarTasks.join_consumes_the_completion
+#print axioms QCore.ScalarTasks.join_leaves_other_tasks
+#print axioms QCore.ScalarTasks.worker_error_reaches_creator_unchanged
+#print axioms QCore.ScalarTasks.worker_conversion_error_reaches_creator_unchanged
+#print axioms QCore.ScalarTasks.worker_value_reaches_creator
+#print axioms QCore.ScalarTasks.taskAgreement_holds

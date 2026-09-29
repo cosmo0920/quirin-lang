@@ -122,6 +122,43 @@ static void qcore_diagnostic_log(enum qcore_diagnostic_level level,
 }
 "#;
 
+/// The fixed-width result arm of the hosted stdout adapter (card
+/// `W48-QR-SCALAR-TYPES-R4`). A task worker's result of a fixed-width type other
+/// than `i32` is logged under a name `=TYPE` that no other event uses — every
+/// other result name is `i32`, `unit`, `buffer` or an error tag, which is an
+/// identifier — with an unsigned number in `related` and a signed one (and
+/// `bool`) in `value`, each lossless. The line is `QCORE_TASK_RESULT TASK TYPE
+/// NUMBER`, `true`/`false` for `bool`.
+const FIXED_RESULT_ARM: &str = r#"        if (event->name != NULL && event->name[0] == '=') {
+            if (event->name[1] == 'U')
+                (void)fprintf(stdout, "QCORE_TASK_RESULT %" PRIu64 " %s %" PRIu64 "\n",
+                    event->subject, event->name + 1, event->related);
+            else if (event->name[1] == 'B')
+                (void)fprintf(stdout, "QCORE_TASK_RESULT %" PRIu64 " BOOL %s\n",
+                    event->subject, event->value != 0 ? "true" : "false");
+            else
+                (void)fprintf(stdout, "QCORE_TASK_RESULT %" PRIu64 " %s %" PRId64 "\n",
+                    event->subject, event->name + 1, event->value);
+            return;
+        }
+"#;
+
+/// [`DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION`] with [`FIXED_RESULT_ARM`] placed
+/// first in its task-result case (card `W48-QR-SCALAR-TYPES-R4`). A program
+/// whose workers return no fixed-width value never logs such a name, so the
+/// arm is unreachable there; it is installed only in a program that needs it,
+/// and every other program keeps the historical adapter's bytes.
+#[must_use]
+pub fn diagnostic_stdout_adapter_definition_with_fixed_results() -> String {
+    let anchor = "    case QCORE_DIAG_TASK_RESULT:\n";
+    assert_eq!(
+        DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION.matches(anchor).count(),
+        1,
+        "the adapter has one task-result case"
+    );
+    DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION.replace(anchor, &format!("{anchor}{FIXED_RESULT_ARM}"))
+}
+
 /// Install the hosted stdout adapter before [`DIAGNOSTIC_LOG_PRELUDE`]. The
 /// source-level `log_level` declaration is the only production route that uses
 /// it; ordinary emission never includes stdio through this module.

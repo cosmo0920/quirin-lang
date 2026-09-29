@@ -1041,6 +1041,20 @@ pub fn derive_ledger(
 fn ledger(checked: &CheckedTaskModule) -> Result<Vec<LedgerSpawn>, SourceDiagnostic> {
     let module = checked.module();
     let creator = &module.functions[&module.entry];
+    // Card `W48-QR-SCALAR-TYPES-R4` widened the task half with the fixed-width
+    // table and value statements; the epoch composition keeps refusing them —
+    // its accounting was measured over `i32` captures only — until a card
+    // measures it (`W48-QR-TYPES-EPOCH-TASKS`). Fail closed, as before.
+    if qcore_core::task_execution::uses_fixed_width(module) {
+        return Err(failure(
+            Span {
+                start: creator.span.start,
+                end: creator.span.end,
+            },
+            "a fixed-width scalar or a value statement in a task has no composed epoch \
+             spelling yet: `W48-QR-TYPES-EPOCH-TASKS` names the missing measurement",
+        ));
+    }
     let mut spawns = Vec::new();
     for block in creator.blocks.values() {
         let TaskTerminatorKind::TrySpawn {
@@ -1083,7 +1097,7 @@ fn ledger(checked: &CheckedTaskModule) -> Result<Vec<LedgerSpawn>, SourceDiagnos
                          `WRITE-LEND-TASKS-EPOCH` names the missing residency rule",
                     ));
                 }
-                ScalarOperand::Unit | ScalarOperand::I32(_) => {
+                ScalarOperand::Unit | ScalarOperand::I32(_) | ScalarOperand::Fixed { .. } => {
                     return Err(failure(
                         span,
                         "a spawn argument that is neither a place copy nor a move has no \

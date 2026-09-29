@@ -427,7 +427,11 @@ fn outcome(value: &TaskOutcome, index: usize) -> Result<ObservedOutcome, Referen
         TaskOutcome::I32(value) => Ok(ObservedOutcome::I32(*value)),
         TaskOutcome::OwnedBuffer(buffer) => Ok(ObservedOutcome::Buffer(*buffer)),
         TaskOutcome::Error(tag) => Ok(ObservedOutcome::Error(tag.clone())),
-        TaskOutcome::ErrorWithBuffer { .. } => {
+        // Card `W48-QR-SCALAR-TYPES-R4`: the observable alphabet has no
+        // fixed-width outcome, so a run carrying one is refused rather than
+        // encoded — such a program sits outside the F02 relation, and its
+        // native evidence is the byte comparison of the maintained trace.
+        TaskOutcome::ErrorWithBuffer { .. } | TaskOutcome::Fixed { .. } => {
             Err(ReferenceTraceError::UnsupportedOutcome { index })
         }
     }

@@ -1,0 +1,55 @@
+#import std.concurrency;
+#import std.fmt;
+#import std.io;
+#import std.logger;
+concurrency checked;
+
+// Average two u8 readings in a worker. Every conversion is written with `as`,
+// and the sum is taken at u16, so 250 and 240 average to 245 instead of
+// overflowing u8. The captured readings are known only at run time inside the
+// worker, so each operation that can fault may raise ArithmeticError.
+fn average(a: u8, b: u8) -> u8 effects { throws<ArithmeticError> } {
+    let wide_a = a as u16;
+    let wide_b = b as u16;
+    let sum = wide_a + wide_b;
+    let half = sum / 2;
+    let back = half as u8;
+    return back;
+}
+
+// Scale an i64 total. An exact result outside i64 raises
+// ArithmeticError::Overflow; it never wraps.
+fn scale(total: i64, factor: i64) -> i64 effects { throws<ArithmeticError> } {
+    let scaled = total * factor;
+    return scaled;
+}
+
+fn main() -> i32 effects { throws<SpawnError>, throws<ArithmeticError>, spawn, join, may_block, io } {
+    let first: u8 = 250;
+    let second: u8 = 240;
+    let total: i64 = 3000000000;
+    let big_total: i64 = 4611686018427387904;
+    let factor: i64 = 3;
+    thread scope s {
+        let h = spawn s average(copy first, copy second)?;
+        let mean = join move h?;
+        print dec mean;
+        print hex mean;
+        let g = spawn s scale(copy total, copy factor)?;
+        let scaled = join move g?;
+        print dec scaled;
+        let grew = scaled > total;
+        print dec grew;
+        let k = spawn s scale(copy big_total, copy factor)?;
+        match join move k {
+            Result::Ok { value: v } => {
+                print dec v;
+                return 1;
+            }
+            Result::Err { error: e } => {
+                log warn dec big_total;
+                return 0;
+            }
+        }
+    }
+}
