@@ -1533,6 +1533,10 @@ fn scalar_assignment_effects_survive_unrelated_condition_frames() {
 
 #[test]
 fn increment_side_effects_outside_the_unary_scalar_statement_remain_refused() {
+    // Deliberate pin update, card CG02-ELABORATION-CORE (rule 10s): the
+    // elaborator lowers these increments to a `ForgetScalar` of `n` sequenced
+    // before the value's consumer, so no stale branch fact survives
+    // (AOM-POISON-NOOP-INCREMENT's concern) and each is admitted.
     for body in [
         "int n = 0; int m = 0; m = n++;",
         "int n = 0; if (n++) {}",
@@ -1541,8 +1545,17 @@ fn increment_side_effects_outside_the_unary_scalar_statement_remain_refused() {
         "int n = 0; do {} while (n++);",
         "int n = 0; switch(n++) { default: break; }",
         "int n = 0; return n++;",
-        "int n = 0; consume(n++);",
     ] {
+        let summary = analyze(&format!("int subject(void) {{ {body} }}"));
+        assert_eq!(
+            summary.status,
+            AnalysisStatus::Safe,
+            "{body}: {:?}",
+            summary.diagnostics
+        );
+    }
+    // A call whose actual carries the increment keeps its refusal (CG03).
+    for body in ["int n = 0; consume(n++);"] {
         let summary = analyze(&format!("int subject(void) {{ {body} }}"));
         assert_ne!(summary.status, AnalysisStatus::Safe, "{body}");
         assert!(

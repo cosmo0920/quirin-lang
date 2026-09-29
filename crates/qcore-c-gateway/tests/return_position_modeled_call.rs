@@ -398,10 +398,15 @@ fn a_call_that_is_not_the_whole_return_expression_is_refused() {
         (cast.status, cast.certified, cast.unsupported()),
         (uncast.status, uncast.certified, uncast.unsupported())
     );
+    // Deliberate pin update, card CG02-ELABORATION-CORE (rule 10s): a comma
+    // return is `r_release_code(p); return 0;` — the call is the classifier's
+    // own statement, applied once, and the return escapes nothing.
+    let comma = run("int subject(void) { void *p = q_alloc(); return r_release_code(p), 0; }");
+    assert!(!comma.refuses_return(), "{:?}", comma.unsupported());
+    assert!(comma.unsupported().is_empty(), "{:?}", comma.unsupported());
     for body in [
         "int subject(void) { void *p = q_alloc(); return r_release_code(p) ? 1 : 0; }",
         "int subject(void) { void *p = q_alloc(); return r_release_code(p) & 1; }",
-        "int subject(void) { void *p = q_alloc(); return r_release_code(p), 0; }",
     ] {
         let refused = run(body);
         assert!(

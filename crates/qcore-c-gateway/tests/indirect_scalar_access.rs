@@ -324,13 +324,24 @@ fn a_post_increment_through_the_pointer_stays_refused() {
     );
 }
 
+/// Deliberate pin update, card CG02-ELABORATION-CORE (rule 10s): `(*n)++`
+/// writes the object `n` points to, not the formal `n` (the lexical gate's
+/// formal-mutation refusal read it as the latter). The elaborator reads it as
+/// one typed read and one typed write of `*n`, the accesses `*n = *n + 1` has,
+/// with the same base obligation and refused-write frame.
 #[test]
-fn an_increment_of_a_protected_name_keeps_its_refusal() {
+fn an_increment_through_a_formal_pointer_is_its_typed_read_and_write() {
     expect(
-        "`(*n)++` where `*n` protects the formal",
+        "`(*n)++` writes the pointee, not the formal",
         "void w(int *n) { (*n)++; }",
-        "Unknown",
-        &["unsupported:unmodeled expression may mutate a formal resource identity"],
+        "Safe",
+        &[],
+    );
+    expect(
+        "`*n = *n + 1`, its desugaring",
+        "void w(int *n) { *n = *n + 1; }",
+        "Safe",
+        &[],
     );
 }
 

@@ -236,7 +236,16 @@ fn rhs_mutation_and_indirect_rhs_shapes_keep_the_lexical_refusal() {
     // Deliberate pin update, card W44-INDIRECT-CHAIN-ACCESS: `p->next->state`
     // moved to `a_chained_rhs_through_an_unstored_member_refuses_on_its_link`
     // below. The chain route now reads it, and refuses it on its own link.
-    for rhs in ["n++", "*(&n)"] {
+    //
+    // Deliberate pin update, card CG02-ELABORATION-CORE (rule 10s): `n++` on
+    // the scalar formal `n` is now the elaborator's (a typed write of
+    // `p->state`, then `n` forgotten); `*(&n)` keeps the refusal.
+    let run = analyze(
+        "void subject(int n) { struct record *p = w_fresh(); p->state = n++; w_release(p); }",
+        "subject",
+    );
+    assert_eq!(status(&run, "subject"), AnalysisStatus::Safe);
+    for rhs in ["*(&n)"] {
         let program = format!(
             "void subject(int n) {{ struct record *p = w_fresh(); p->state = {rhs}; w_release(p); }}"
         );
@@ -287,11 +296,14 @@ fn a_mutating_rhs_cannot_leave_a_stale_scalar_branch_fact() {
         AnalysisStatus::Unsafe,
         "{diagnostic:?}"
     );
+    // Deliberate pin update, card CG02-ELABORATION-CORE (rule 10s): the
+    // statement is now the elaborator's, which forgets `flag` after its write
+    // (no stale branch fact), so the double release on the reachable `flag`
+    // edge is still found, and no refusal remains.
     assert!(
-        diagnostic.iter().any(|kind| {
-            matches!(kind, LegacyDiagnosticKind::Unsupported { description }
-            if description == "unmodeled expression may mutate a formal resource identity")
-        }),
+        !diagnostic
+            .iter()
+            .any(|kind| matches!(kind, LegacyDiagnosticKind::Unsupported { .. })),
         "{diagnostic:?}"
     );
     assert!(
