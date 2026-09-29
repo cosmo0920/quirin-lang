@@ -243,6 +243,7 @@ import QCore.ScalarPositions
 import QCore.ScalarTasks
 import QCore.ScalarLoopBounds
 import QCore.ScalarBufferValues
+import QCore.ScalarPayloads
 import QCore.ResourceCalls
 
 import QCore.MonkeyWaitSourcePolicy
