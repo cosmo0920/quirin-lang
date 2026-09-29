@@ -33,18 +33,25 @@ fn nested(callee: &str) -> String {
 // CG01 — T operator closure (E01 E02 E03(T) E14)
 // ---------------------------------------------------------------------------
 
+/// The refusal `import_source_functions` gives for a node CG01 added to the
+/// importer but a legacy consumer does not classify.
+fn legacy(node: &str) -> String {
+    format!("typed-source node `{node}` is not classified by the legacy typed-source consumer")
+}
+
+// After CG01-T-OPERATOR-CLOSURE (merged at 7e7ba401) the importer reads every
+// E01/E02/E03(T)/E14 node; only `import_monkey_wrappers` admits them, and the
+// legacy consumer behind `import_source_functions` refuses each by name. These
+// controls pin that post-CG01 state (the BEFORE refusals are in CG01's report).
+
 #[test]
-fn e01_t_refuses_six_binary_operators_that_g_reads() {
+fn e01_t_legacy_consumer_refuses_six_binary_operators_by_name() {
     if !clang_available() {
         return;
     }
     for operator in ["-", "<=", ">=", "^", "<<", ">>"] {
         let source = format!("int subject(int a, int b) {{ return a {operator} b; }}");
-        assert_eq!(
-            t_refusal(&source),
-            "unmodeled callback expression BinaryOperator",
-            "{operator}"
-        );
+        assert_eq!(t_refusal(&source), legacy(&format!("binary {operator}")));
     }
     // Control: `+` is in T's allowlist.
     assert!(t("int subject(int a, int b) { return a + b; }").is_ok());
@@ -57,17 +64,13 @@ fn e01_t_refuses_six_binary_operators_that_g_reads() {
 }
 
 #[test]
-fn e02_t_refuses_unary_plus_and_complement() {
+fn e02_t_legacy_consumer_refuses_unary_plus_and_complement_by_name() {
     if !clang_available() {
         return;
     }
     for operator in ["+", "~"] {
         let source = format!("int subject(int a) {{ return {operator}a; }}");
-        assert_eq!(
-            t_refusal(&source),
-            "unmodeled callback expression UnaryOperator",
-            "{operator}"
-        );
+        assert_eq!(t_refusal(&source), legacy(&format!("unary {operator}")));
     }
     assert!(t("int subject(int a) { return -a; }").is_ok());
     let run = gs("int subject(struct S *s) { int x = +s->a; x = ~s->a; return x; }");
@@ -75,17 +78,13 @@ fn e02_t_refuses_unary_plus_and_complement() {
 }
 
 #[test]
-fn e03_t_admits_only_int_or_assign() {
+fn e03_t_legacy_consumer_admits_only_int_or_assign() {
     if !clang_available() {
         return;
     }
     for operator in ["+=", "-=", "*=", "/=", "%=", "<<=", ">>=", "&=", "^="] {
         let source = format!("int subject(int a) {{ int x = 1; x {operator} a; return x; }}");
-        assert_eq!(
-            t_refusal(&source),
-            "unmodeled callback statement CompoundAssignOperator",
-            "{operator}"
-        );
+        assert_eq!(t_refusal(&source), legacy(&format!("compound {operator}")));
     }
     assert!(t("int subject(int a) { int x = 1; x |= a; return x; }").is_ok());
 }
@@ -127,17 +126,17 @@ fn e03_g_scalar_compound_assignments_are_partial() {
 }
 
 #[test]
-fn e14_t_has_no_floating_or_character_literal() {
+fn e14_t_legacy_consumer_refuses_floating_and_character_literals_by_name() {
     if !clang_available() {
         return;
     }
     assert_eq!(
         t_refusal("int subject(void) { return 1.5 == 0.0; }"),
-        "unmodeled callback expression FloatingLiteral"
+        legacy("literal floating")
     );
     assert_eq!(
         t_refusal("int subject(void) { return 'a'; }"),
-        "unmodeled callback expression CharacterLiteral"
+        legacy("literal character")
     );
 }
 
