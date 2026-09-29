@@ -42,13 +42,28 @@
 //! # Refusals
 //!
 //! Every form outside [`FORM_TABLE`]'s admitted rows is refused **by name**,
-//! with the card that owns it ([`Refusal`]): value `&&`/`||`/`?:` (CG06),
-//! nested and unordered calls (CG05), calls whose actuals carry effects
+//! with the card that owns it ([`Refusal`]): nested and unordered calls (CG05), calls whose actuals carry effects
 //! (CG03), pointer-valued stores (CG11), pointer arithmetic (CG16), casts and
 //! type queries (CG08), `_Generic` and statement expressions (CG07), aggregate
 //! values (CG14), volatile and atomic places (CG15/CG19), indirect callees
 //! (CG22). The Lean model is `QCore.ElaborationCore`, bound to [`FORM_TABLE`]
 //! and [`commutes`] by the shared-vector test in `tests/unit/elaboration.rs`.
+//!
+//! # Branching value forms (card CG06, gateway rule 10z)
+//!
+//! Value `&&`, `||`, `C ? A : B` and GNU `X ?: B` are elaborated into a
+//! [`BranchRegion`]: the deciding operand's events, then [`Event::Branch`],
+//! then each arm's events (sequenced after the branch), then [`Event::Merge`].
+//! The operand C does not evaluate on a path is an arm whose events occur only
+//! on that path: `A && B` has the arms `[B]` and `[]`, `A || B` the arms `[]`
+//! and `[B]`, `C ? A : B` the arms `[A]` and `[B]`, and `X ?: B` the arms `[]`
+//! and `[B]`, with `X` evaluated once, before the branch. The two arms of one
+//! region never both occur, so [`EvalGraph::check`] never pairs an event of
+//! one with an event of the other ([`EvalGraph::exclusive`]); each is still
+//! checked against every event outside the region it is unordered with.
+//! `Branch` and `Merge` touch no storage and commute with every event. The
+//! value is the `int` 0/1 for a connective and the conditional's own class
+//! otherwise. The Lean model is `QCore.ValueConnectives`.
 
 use std::collections::BTreeMap;
 
@@ -107,7 +122,7 @@ impl Place {
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[allow(
     dead_code,
-    reason = "Branch, Merge and the lifetime events are the vocabulary cards CG06, CG07 and CG14 emit"
+    reason = "the lifetime events are the vocabulary cards CG07 and CG14 emit"
 )]
 pub(crate) enum Event {
     /// A value computation that reads a place.
@@ -124,8 +139,10 @@ pub(crate) enum Event {
     Call {
         callee: String,
     },
-    /// A control split and join (value `&&`, `||`, `?:`: card CG06). Not
-    /// emitted by this card's forms, which refuse those operators by name.
+    /// A control split and join (value `&&`, `||`, `?:`, `?:` with the
+    /// middle operand omitted: card CG06, rule 10z). Neither touches storage;
+    /// the region's arms are listed in [`EvalGraph::exclusive`] and
+    /// [`Elaboration::branches`].
     Branch,
     Merge,
     /// An object's lifetime (compound literals, statement expressions: cards
@@ -155,6 +172,8 @@ pub(crate) enum Commutation {
 pub(crate) fn commutes(a: &Event, b: &Event, unaliased: &dyn Fn(&str) -> bool) -> Commutation {
     use Event::*;
     match (a, b) {
+        // Card CG06 (rule 10z): a control event touches no storage.
+        (Branch | Merge, _) | (_, Branch | Merge) => Commutation::Commutes,
         (Read(_), Read(_)) => Commutation::Commutes,
         (Read(p) | Write { place: p, .. }, Read(q) | Write { place: q, .. }) => {
             if p.disjoint(q, unaliased) {
@@ -241,6 +260,9 @@ pub(crate) struct EvalGraph {
     pub(crate) before: Vec<(EventId, EventId)>,
     /// Each group lists operands (event sets) C leaves mutually unsequenced.
     pub(crate) unsequenced: Vec<Vec<Vec<EventId>>>,
+    /// Card CG06 (rule 10z): the two arms of one branch region, event sets
+    /// that never both occur in one execution.
+    pub(crate) exclusive: Vec<(Vec<EventId>, Vec<EventId>)>,
 }
 
 impl EvalGraph {
@@ -270,13 +292,22 @@ impl EvalGraph {
         reach.get(b).copied().unwrap_or(false)
     }
 
+    /// Card CG06 (rule 10z): whether `a` and `b` lie in the two arms of one
+    /// branch region, so they never both occur.
+    pub(crate) fn excluded(&self, a: EventId, b: EventId) -> bool {
+        self.exclusive.iter().any(|(one, other)| {
+            (one.contains(&a) && other.contains(&b)) || (one.contains(&b) && other.contains(&a))
+        })
+    }
+
     /// Refuse the graph unless every pair the closure leaves unordered
-    /// commutes. A pair is checked once, in event order.
+    /// commutes. A pair is checked once, in event order; two events in the two
+    /// arms of one branch region never both occur and are not a pair.
     pub(crate) fn check(&self, unaliased: &dyn Fn(&str) -> bool) -> Result<(), Refusal> {
         debug_assert!(self.before.iter().all(|(a, b)| a < b));
         for a in 0..self.events.len() {
             for b in a + 1..self.events.len() {
-                if self.sequenced(a, b) {
+                if self.sequenced(a, b) || self.excluded(a, b) {
                     continue;
                 }
                 match commutes(&self.events[a], &self.events[b], unaliased) {
@@ -413,6 +444,25 @@ pub(crate) struct Elaboration<F> {
     pub(crate) obligations: Vec<Obligation>,
     #[allow(dead_code, reason = "read by the tests; CG20 reads it")]
     pub(crate) assumptions: Vec<Assumption>,
+    /// Card CG06 (rule 10z): every branch region, innermost first.
+    #[allow(dead_code, reason = "read by the tests")]
+    pub(crate) branches: Vec<BranchRegion>,
+}
+
+/// Card CG06 (rule 10z): one elaborated value `&&`, `||`, `?:` or `X ?: B`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+#[allow(dead_code, reason = "read by the tests")]
+pub(crate) struct BranchRegion {
+    /// The form, a [`FORM_TABLE`] row.
+    pub(crate) form: &'static str,
+    /// The deciding operand's events (`A` of `A && B`, `C` of `C ? A : B`, `X`
+    /// of `X ?: B`), all sequenced before the branch.
+    pub(crate) condition: Vec<EventId>,
+    pub(crate) branch: EventId,
+    /// The events on the edge where the decision is non-zero, and on the edge
+    /// where it is zero. At most one arm's events occur.
+    pub(crate) arms: [Vec<EventId>; 2],
+    pub(crate) merge: EventId,
 }
 
 /// A named refusal, with the card that owns the form.
@@ -496,11 +546,14 @@ pub(crate) enum Disposition {
     Sequenced,
     /// Refused by name; the owning card.
     Refused(&'static str),
+    /// Card CG06 (rule 10z): elaborated into a branch region whose arms are
+    /// exclusive; a route lowers it only by branching.
+    Branching,
 }
 
 /// Every form the elaborator names, with its disposition. A form not listed is
 /// refused as unlisted.
-pub(crate) const FORM_TABLE: [(&str, Disposition); 28] = [
+pub(crate) const FORM_TABLE: [(&str, Disposition); 29] = [
     ("literal", Disposition::Admitted),
     ("object read", Disposition::Admitted),
     ("path read", Disposition::Admitted),
@@ -516,9 +569,10 @@ pub(crate) const FORM_TABLE: [(&str, Disposition); 28] = [
     ("comma", Disposition::Admitted),
     ("declaration", Disposition::Admitted),
     ("direct call", Disposition::Sequenced),
-    ("value &&", Disposition::Refused("CG06")),
-    ("value ||", Disposition::Refused("CG06")),
-    ("conditional", Disposition::Refused("CG06")),
+    ("value &&", Disposition::Branching),
+    ("value ||", Disposition::Branching),
+    ("conditional", Disposition::Branching),
+    ("omitted-middle conditional", Disposition::Branching),
     ("nested call", Disposition::Refused("CG05")),
     ("indirect call", Disposition::Refused("CG22")),
     ("pointer store", Disposition::Refused("CG11")),
@@ -603,6 +657,7 @@ pub(crate) fn elaborate<C: Context>(
         in_actual: false,
         actuals: BTreeMap::new(),
         address_reads: std::collections::BTreeSet::new(),
+        branches: Vec::new(),
     };
     let part = if kind(node) == "DeclStmt" {
         elaborator.declaration(node)?
@@ -635,6 +690,7 @@ pub(crate) fn elaborate<C: Context>(
         } else {
             Vec::new()
         },
+        branches: elaborator.branches,
     })
 }
 
@@ -677,6 +733,8 @@ struct Elaborator<'a, C: Context> {
     in_actual: bool,
     actuals: BTreeMap<EventId, Vec<EventId>>,
     address_reads: std::collections::BTreeSet<EventId>,
+    /// Card CG06 (rule 10z).
+    branches: Vec<BranchRegion>,
 }
 
 fn qualified(node: &Value) -> Option<&'static str> {
@@ -880,7 +938,9 @@ impl<C: Context> Elaborator<'_, C> {
             "BinaryOperator" => self.binary(node),
             "CompoundAssignOperator" => self.compound(node),
             "CallExpr" => self.call(node),
-            "ConditionalOperator" | "BinaryConditionalOperator" => Err(refused("conditional")),
+            // Card CG06 (rule 10z).
+            "ConditionalOperator" => self.conditional(node),
+            "BinaryConditionalOperator" => self.omitted_middle(node),
             "GenericSelectionExpr" => Err(refused("generic selection")),
             "StmtExpr" => Err(refused("statement expression")),
             "CompoundLiteralExpr" => Err(refused("compound literal")),
@@ -1037,8 +1097,9 @@ impl<C: Context> Elaborator<'_, C> {
                     arithmetic: value.arithmetic,
                 })
             }
-            "&&" => Err(refused("value &&")),
-            "||" => Err(refused("value ||")),
+            // Card CG06 (rule 10z).
+            "&&" => self.connective(node, left, right, "value &&"),
+            "||" => self.connective(node, left, right, "value ||"),
             "+" | "-" | "*" | "/" | "%" | "<<" | ">>" | "&" | "|" | "^" | "==" | "!=" | "<"
             | ">" | "<=" | ">=" => {
                 let first = self.expression(left)?;
@@ -1103,6 +1164,138 @@ impl<C: Context> Elaborator<'_, C> {
             },
             arithmetic: true,
         })
+    }
+
+    /// Card CG06 (rule 10z): the branch region after its deciding operand's
+    /// part: the branch, each arm elaborated after it, then the merge. `arms`
+    /// holds the nodes of the non-zero and the zero edge (`None`: no events on
+    /// that edge). The returned part's result is the caller's to set.
+    fn region(
+        &mut self,
+        form: &'static str,
+        condition: Part,
+        arms: [Option<&Value>; 2],
+    ) -> Result<(Part, [Option<Part>; 2]), Refusal> {
+        if matches!(condition.result, Operand::Void) {
+            return Err(Refusal::Unlisted("a void operand"));
+        }
+        let branch = self.graph.push(Event::Branch);
+        self.graph.order(&condition.all, branch);
+        let mut parts = [None, None];
+        for (slot, arm) in arms.into_iter().enumerate() {
+            if let Some(arm) = arm {
+                let part = self.expression(arm)?;
+                for &event in &part.all {
+                    self.graph.order(&[branch], event);
+                }
+                parts[slot] = Some(part);
+            }
+        }
+        let events = |part: &Option<Part>| part.as_ref().map_or(Vec::new(), |p| p.all.clone());
+        let yes = events(&parts[0]);
+        let no = events(&parts[1]);
+        let merge = self.graph.push(Event::Merge);
+        self.graph.order(&[branch], merge);
+        self.graph.order(&yes, merge);
+        self.graph.order(&no, merge);
+        self.graph.exclusive.push((yes.clone(), no.clone()));
+        self.branches.push(BranchRegion {
+            form,
+            condition: condition.all.clone(),
+            branch,
+            arms: [yes.clone(), no.clone()],
+            merge,
+        });
+        let arithmetic = condition.arithmetic
+            || parts
+                .iter()
+                .any(|part| part.as_ref().is_some_and(|p| p.arithmetic));
+        let mut all = condition.all;
+        all.push(branch);
+        all.extend(yes);
+        all.extend(no);
+        all.push(merge);
+        Ok((
+            Part {
+                all,
+                // A consumer of the value waits for the merge, which follows
+                // every event of the region.
+                values: vec![merge],
+                result: Operand::Void,
+                arithmetic,
+            },
+            parts,
+        ))
+    }
+
+    /// `A && B`, `A || B`: `A`, the branch, `B` on one edge only; the value is
+    /// the `int` 0 or 1.
+    fn connective(
+        &mut self,
+        node: &Value,
+        left: &Value,
+        right: &Value,
+        form: &'static str,
+    ) -> Result<Part, Refusal> {
+        let first = self.expression(left)?;
+        // `A && B` evaluates `B` where `A` is non-zero, `A || B` where it is
+        // zero.
+        let arms = if form == "value &&" {
+            [Some(right), None]
+        } else {
+            [None, Some(right)]
+        };
+        let (mut part, arms) = self.region(form, first, arms)?;
+        if arms
+            .iter()
+            .flatten()
+            .any(|arm| matches!(arm.result, Operand::Void))
+        {
+            return Err(Refusal::Unlisted("a void operand"));
+        }
+        if !self.context.scalar(node) {
+            return Err(Refusal::Unlisted("value of an unread type"));
+        }
+        part.result = Operand::Value {
+            pointer: false,
+            source: ValueSource::Computed,
+        };
+        Ok(part)
+    }
+
+    /// `C ? A : B`: `C`, the branch, then `A` on the non-zero edge and `B` on
+    /// the zero edge; the value is the conditional's own class.
+    fn conditional(&mut self, node: &Value) -> Result<Part, Refusal> {
+        let [condition, yes, no] = children(node) else {
+            return Err(Refusal::Unlisted("conditional arity"));
+        };
+        let decided = self.expression(condition)?;
+        let (mut part, _) = self.region("conditional", decided, [Some(yes), Some(no)])?;
+        part.result = Operand::Value {
+            pointer: self.value(node)?,
+            source: ValueSource::Computed,
+        };
+        Ok(part)
+    }
+
+    /// GNU `X ?: B`: `X` is evaluated **once**, before the branch; its value
+    /// is the result on the non-zero edge, where nothing more is evaluated,
+    /// and `B` runs on the zero edge only. Clang's two `OpaqueValueExpr`
+    /// children re-present `X`'s value without evaluating it again.
+    fn omitted_middle(&mut self, node: &Value) -> Result<Part, Refusal> {
+        let [common, condition, yes, no] = children(node) else {
+            return Err(Refusal::Unlisted("omitted-middle arity"));
+        };
+        if kind(condition) != "OpaqueValueExpr" || kind(yes) != "OpaqueValueExpr" {
+            return Err(Refusal::Unlisted("omitted-middle without opaque operands"));
+        }
+        let decided = self.expression(common)?;
+        let (mut part, _) = self.region("omitted-middle conditional", decided, [None, Some(no)])?;
+        part.result = Operand::Value {
+            pointer: self.value(node)?,
+            source: ValueSource::Computed,
+        };
+        Ok(part)
     }
 
     fn call(&mut self, node: &Value) -> Result<Part, Refusal> {

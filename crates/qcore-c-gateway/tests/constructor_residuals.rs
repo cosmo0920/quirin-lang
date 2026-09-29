@@ -41,9 +41,6 @@ const GENERIC_CONTRACTS: &str = include_str!("fixtures/contracts/constructor_res
 
 /// The existing rejection every refused shape must keep.
 const INDIRECT: &str = "indirect memory access is outside the resource projection";
-/// The existing rejection card O04-B09B10 attached to an unadmitted nested call.
-const NESTED: &str =
-    "nested call `d_slot` inside a modeled call is outside the resource projection";
 
 /// Deliberately unrelated to every library in this repository and to the `g_*`,
 /// `h_*`, `k_*`, `r_*`, `m_*` and `v_*` families of the earlier cards.
@@ -705,10 +702,16 @@ fn the_bare_nested_call_family_is_unchanged() {
         "void d_run(int n) { d_report(d_slot_of ((struct d_rec *) 0) ? 1 : 0, \"x\"); (void) n; }",
         "d_run",
     );
-    assert!(
-        unsupported(&summary).contains(&INDIRECT) || !unsupported(&summary).is_empty(),
+    // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): the call
+    // is the deciding operand of the actual's `?:`, decided by the `if`
+    // routes before `d_report`, which C sequences after it; each edge's
+    // `d_report(1, "x")` / `d_report(0, "x")` is the classifier's. BEFORE:
+    // the nested-call family's refusal.
+    assert_eq!(
+        summary.status,
+        AnalysisStatus::Safe,
         "{:?}",
-        unsupported(&summary)
+        summary.diagnostics
     );
     // And the refusal wording card O04-B09B10 fixed is still reachable, at a
     // position premise N8 refuses.
@@ -717,9 +720,21 @@ fn the_bare_nested_call_family_is_unchanged() {
          d_consume(d_slot () ? h : h); d_close(h); (void) n; }",
         "d_run",
     );
-    assert!(
-        unsupported(&summary).contains(&NESTED) || !unsupported(&summary).is_empty(),
+    // FLIPPED by CG06 (rule 10z): `d_consume(d_slot() ? h : h)` consumes `h`
+    // on both edges, so the fixture's own `d_close(h)` is now reached as the
+    // double release it is (BEFORE: premise N8's refusal hid it).
+    assert_eq!(
+        summary.status,
+        AnalysisStatus::Unsafe,
         "{:?}",
-        unsupported(&summary)
+        summary.diagnostics
+    );
+    assert!(
+        summary
+            .diagnostics
+            .iter()
+            .any(|d| matches!(d.kind, LegacyDiagnosticKind::DoubleRelease { .. })),
+        "{:?}",
+        summary.diagnostics
     );
 }

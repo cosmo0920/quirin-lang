@@ -1,0 +1,13 @@
+{
+  "note": "CG06-VALUE-CONNECTIVES-AND-CONDITIONAL card gate at tip 6be67b0f (base 27dc7c9a; main 6883623c, c0ccc66a and 41719835 merged), script docs/reports/cg06-value-connectives-and-conditional/scripts/gate.sh, logs private/cg06/gate-6be67b0f of this worktree: submodule 0; run_test_binaries.py 377 units, 390 summaries, 6,714 passed, 0 failed, 11 ignored; fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 237 audits passed (236 + AuditValueConnectives.lean); python tests 365 OK; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 8): BEFORE on main 41719835 (binary 901c264f built there) resource-diagnostics.json 8642ec02 byte-identical to CG05's AFTER; AFTER (binary 669201fb at 6be67b0f) c012e785, 567/10/4,257 -> 586/10/4,238 (+19); system 33/2/199 -> 34/2/198; tail-pause slice 26/1/242/1 Pending unmoved. At the card's base 27dc7c9a: 564/10/4,260 -> 582/10/4,242 (+18). Exits in docs/reports/cg06-value-connectives-and-conditional/gate/.",
+  "workspace_tests": 6714,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 237,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

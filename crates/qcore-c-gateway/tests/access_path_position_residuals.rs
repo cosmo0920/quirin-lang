@@ -307,15 +307,24 @@ fn a_connective_return_keeps_every_refusal_it_does_not_prove() {
     if !clang_available() {
         return;
     }
-    for body in [
-        "int w(struct c_q *q) { return q->cnt > 0 && c_count(q) > 1; }",
-        "int w(struct c_q *q, int r) { return q->cnt > 0 && (r = q->head.first->v); }",
-        "struct c_node *w(struct c_q *q, int c) { return c ? q->head.first : q->arr; }",
-    ] {
-        let (status, keys) = outcome(body);
-        assert_eq!(status, "Unknown", "{body}");
-        assert!(keys.contains(&RETURN.to_owned()), "{body}: {keys:?}");
-    }
+    let body = "int w(struct c_q *q) { return q->cnt > 0 && c_count(q) > 1; }";
+    let (status, keys) = outcome(body);
+    assert_eq!(status, "Unknown", "{body}");
+    assert!(keys.contains(&RETURN.to_owned()), "{body}: {keys:?}");
+    // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): the
+    // pointer-valued `?:` return is lowered by branching on `c`, each edge's
+    // `return q->head.first;` / `return q->arr;` decided by rule 10k's typed
+    // pointer return (never-bound root). BEFORE: the return refusal.
+    let (status, keys) =
+        outcome("struct c_node *w(struct c_q *q, int c) { return c ? q->head.first : q->arr; }");
+    assert_eq!(status, "Safe", "{keys:?}");
+    // FLIPPED by CG06 (rule 10z) composed with CG04 (rule 10x): the
+    // connective is the deciding operand of the branching, whose `NAME = PATH`
+    // leaf the condition desugaring now decides on the edge C evaluates it;
+    // each edge returns `1` or `0`. BEFORE: the return refusal.
+    let (status, keys) =
+        outcome("int w(struct c_q *q, int r) { return q->cnt > 0 && (r = q->head.first->v); }");
+    assert_eq!(status, "Safe", "{keys:?}");
     // Evaluation order: `q` released on one path. `q && …` is guarded by C's
     // short circuit only on the null edge, so reading `q->cnt` after the
     // release is never Safe; the unguarded `||` form is never Safe either.

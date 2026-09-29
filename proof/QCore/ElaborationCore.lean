@@ -27,6 +27,9 @@ inductive Disposition where
   | admitted
   | sequenced
   | refused (card : String)
+  /-- Card CG06 (rule 10z): elaborated into a branch region with exclusive
+  arms (`QCore.ValueConnectives`). -/
+  | branching
   deriving DecidableEq, Repr
 
 /-- `FORM_TABLE`. -/
@@ -46,9 +49,10 @@ def formTable : List (String × Disposition) := [
   ("comma", .admitted),
   ("declaration", .admitted),
   ("direct call", .sequenced),
-  ("value &&", .refused "CG06"),
-  ("value ||", .refused "CG06"),
-  ("conditional", .refused "CG06"),
+  ("value &&", .branching),
+  ("value ||", .branching),
+  ("conditional", .branching),
+  ("omitted-middle conditional", .branching),
   ("nested call", .refused "CG05"),
   ("indirect call", .refused "CG22"),
   ("pointer store", .refused "CG11"),
@@ -74,6 +78,7 @@ def read (form : String) : Reading :=
   match disposition form with
   | some .admitted => .elaborated
   | some .sequenced => .elaborated
+  | some .branching => .elaborated
   | some (.refused card) => .refusedBy card
   | none => .unlisted
 
@@ -89,9 +94,12 @@ theorem listed_refusal_named (form card : String)
     (h : disposition form = some (.refused card)) : read form = .refusedBy card := by
   simp [read, h]
 
-theorem value_connectives_refused :
-    read "value &&" = .refusedBy "CG06" ∧ read "value ||" = .refusedBy "CG06" ∧
-      read "conditional" = .refusedBy "CG06" := by decide
+/-- Card CG06 (rule 10z) lifted the reservation: the value connectives and
+conditionals are elaborated as branch regions. -/
+theorem value_connectives_branch :
+    read "value &&" = .elaborated ∧ read "value ||" = .elaborated ∧
+      read "conditional" = .elaborated ∧ read "omitted-middle conditional" = .elaborated := by
+  decide
 
 theorem out_of_scope_refused :
     read "nested call" = .refusedBy "CG05" ∧ read "pointer store" = .refusedBy "CG11" ∧
