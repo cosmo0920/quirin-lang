@@ -176,3 +176,22 @@ correspondence are trust boundary 28's premises, pinned by
 #print axioms QCore.LoopOwner.keptArms_all_unknown
 #print axioms QCore.LoopOwner.a_compiler_mismatch_keeps_every_arm
 #print axioms QCore.LoopOwner.the_old_test_path_is_never_discharged_whatever_the_arms
+
+-- The list-head region's macro invocations and the holder's opacity (card
+-- W47-PREMISES-HOLDER-REGION).
+#print axioms QCore.LoopOwner.an_unexpandable_invocation_refuses
+#print axioms QCore.LoopOwner.a_loud_expansion_refuses
+#print axioms QCore.LoopOwner.created_quiet
+#print axioms QCore.LoopOwner.mutates_quiet
+#print axioms QCore.LoopOwner.created_append
+#print axioms QCore.LoopOwner.mutates_append
+#print axioms QCore.LoopOwner.the_region_reading_derives_what_the_expansion_runs
+#print axioms QCore.LoopOwner.a_derived_region_head_is_the_programs_one_creation
+#print axioms QCore.LoopOwner.a_region_without_invocations_reads_lexically
+#print axioms QCore.LoopOwner.the_included_definition_is_the_one_read
+#print axioms QCore.LoopOwner.an_opaque_holder_writes_nothing_the_route_reads
+#print axioms QCore.LoopOwner.an_opaque_holder_keeps_the_derivation
+#print axioms QCore.LoopOwner.a_carrier_that_writes_keeps_the_route
+#print axioms QCore.LoopOwner.a_data_reader_that_writes_the_flag_keeps_the_route
+#print axioms QCore.LoopOwner.the_route_is_dropped_only_through_read_macros_and_an_opaque_holder
+#print axioms QCore.LoopOwner.the_old_test_path_is_never_discharged_whatever_the_region
