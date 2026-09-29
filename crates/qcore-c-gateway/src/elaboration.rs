@@ -22,9 +22,11 @@
 //! event of what precedes them. [`EvalGraph::check`] then refuses the graph
 //! unless **every pair of events the closure leaves unordered commutes**:
 //! two reads, or a read/write or write/write pair on provably disjoint places
-//! ([`Place::disjoint`]). A same-place write/write or write/read pair is C
-//! undefined behaviour and is refused, never claimed safe; a call unordered with
-//! any other event is refused (card CG05 owns calls in unordered groups). No
+//! ([`Place::disjoint`]). A write/write or write/read pair on one named object
+//! is C undefined behaviour and is refused, never claimed safe; a pair on places
+//! not proved disjoint (two paths) is refused without that claim (CG10 owns
+//! field-level disjointness); a call unordered with any other event is refused
+//! (card CG05 owns calls in unordered groups). No
 //! left-to-right order is ever chosen: a route may lower the events in
 //! [`EvalGraph::events`]' order only because an admitted graph reaches the same
 //! state in every permitted order (`QCore.ElaborationCore.interleave_run`).
@@ -136,8 +138,13 @@ pub(crate) enum Event {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum Commutation {
     Commutes,
-    /// A same-place write/write or write/read pair: C undefined behaviour.
+    /// A write/write or write/read pair on one named object: C undefined
+    /// behaviour.
     Conflict(String),
+    /// A write/write or write/read pair on places not proved disjoint (two
+    /// paths, or a path and an object whose address is taken): refused
+    /// without claiming it is undefined; CG10/CG13 own footprints.
+    Overlap(String, String),
     /// A call unordered with another event (card CG05).
     Call(String),
     /// An event kind this card never leaves unordered.
@@ -152,8 +159,10 @@ pub(crate) fn commutes(a: &Event, b: &Event, unaliased: &dyn Fn(&str) -> bool) -
         (Read(p) | Write { place: p, .. }, Read(q) | Write { place: q, .. }) => {
             if p.disjoint(q, unaliased) {
                 Commutation::Commutes
-            } else {
+            } else if matches!((p, q), (Place::Object { .. }, Place::Object { .. })) {
                 Commutation::Conflict(p.spelling().to_owned())
+            } else {
+                Commutation::Overlap(p.spelling().to_owned(), q.spelling().to_owned())
             }
         }
         (Call { callee }, _) | (_, Call { callee }) => Commutation::Call(callee.clone()),
@@ -212,6 +221,9 @@ impl EvalGraph {
                     Commutation::Commutes => {}
                     Commutation::Conflict(place) => {
                         return Err(Refusal::UnsequencedConflict(place));
+                    }
+                    Commutation::Overlap(one, other) => {
+                        return Err(Refusal::NotDisjoint(one, other));
                     }
                     Commutation::Call(callee) => return Err(Refusal::UnorderedCall(callee)),
                     Commutation::Unlisted => return Err(Refusal::Unlisted("unordered event")),
@@ -293,8 +305,11 @@ pub(crate) enum Refusal {
     /// A call whose actuals carry side effects, outside a sequenced piece
     /// (card CG03 owns applying its contract).
     EffectfulActual(String),
-    /// A same-place write/write or write/read pair left unordered.
+    /// A write/write or write/read pair on one named object left unordered.
     UnsequencedConflict(String),
+    /// An unordered write/write or write/read pair on places not proved
+    /// disjoint (card CG10 owns field-level disjointness).
+    NotDisjoint(String, String),
     /// A cast kind outside the scalar set (card CG08).
     Cast(String),
     /// The route's place reader refused the place (card CG10).
@@ -326,6 +341,9 @@ impl Refusal {
             Refusal::UnsequencedConflict(place) => format!(
                 "unsequenced write/write or write/read on `{place}` (C undefined behaviour)"
             ),
+            Refusal::NotDisjoint(one, other) => {
+                format!("unsequenced access of `{one}` and `{other}`, not proved disjoint (CG10)")
+            }
             Refusal::Cast(cast) => format!("cast `{cast}` (CG08)"),
             Refusal::Place(reason) => format!("place: {reason} (CG10)"),
             Refusal::Declaration(reason) => format!("declaration: {reason}"),

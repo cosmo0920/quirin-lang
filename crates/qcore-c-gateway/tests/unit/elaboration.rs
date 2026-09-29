@@ -140,6 +140,28 @@ fn cg02_unsequenced_same_place_pairs_are_refused() {
     }
 }
 
+/// Two paths are never proved disjoint here: an unordered pair on distinct
+/// fields refuses without claiming undefined behaviour.
+#[test]
+fn cg02_path_pairs_are_not_disjoint_and_not_called_undefined() {
+    if !clang_available() {
+        return;
+    }
+    let source =
+        "struct P { int lo; int hi; }; int subject(struct P *p) { p->lo = p->hi = 0; return 0; }";
+    match run(source) {
+        Err(Refusal::NotDisjoint(one, other)) => {
+            assert_ne!(one, other);
+            assert!(
+                !Refusal::NotDisjoint(one, other)
+                    .reason()
+                    .contains("undefined")
+            );
+        }
+        other => panic!("{other:?}"),
+    }
+}
+
 #[test]
 fn cg02_unordered_calls_are_refused_for_cg05() {
     if !clang_available() {
@@ -182,7 +204,7 @@ fn cg02_disjoint_and_read_only_groups_are_admitted() {
     let taken = "struct S { int a; }; int subject(struct S *s, int i) { int *q = &i; \
                  s->a = i++; return *q; }";
     assert!(
-        matches!(run(taken), Err(Refusal::UnsequencedConflict(_))),
+        matches!(run(taken), Err(Refusal::NotDisjoint(_, _))),
         "{:?}",
         run(taken)
     );

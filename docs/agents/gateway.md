@@ -1903,9 +1903,10 @@ which is not a second authority.
     refused unless **every pair the closure leaves unordered commutes**: two
     reads, or a pair on disjoint places (distinct objects; a path inside
     another object; a path through a pointer against an automatic object whose
-    address is never taken). A same-place write/write or write/read pair is
-    C undefined behaviour and refuses; a call unordered with any event refuses
-    (CG05). Every form outside `FORM_TABLE`'s admitted rows refuses by name
+    address is never taken). A write/write or write/read pair on one named
+    object is C undefined behaviour and refuses; a pair on places not proved
+    disjoint (two paths) refuses without that claim; a call unordered with any
+    event refuses (CG05). Every form outside `FORM_TABLE`'s admitted rows refuses by name
     with its owning card (value `&&` `||` `?:` CG06, nested call CG05, pointer
     store CG11, pointer arithmetic CG16, type query operand CG08, `_Generic`
     and statement expression CG07, compound literal CG14, volatile CG15, atomic
