@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-SCALAR-TYPES-R6 card gate (base 8a378bf3), script private/w48-r6/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-r6/gate: submodule (--init --recursive) 0; the first run at 7b0fff4a had tests 0 and clippy 101 (two lints in the new code, fixed at b1410565), so fmt, clippy and the whole test suite were rerun at b1410565: fmt 0; run_test_binaries.py 383 units, 396 summaries, 6,745 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260929T215155Z-3081128/summary.json; the first run at 7b0fff4a gave the same totals), no load-sensitive rerun needed; clippy 0; both reevaluation probes 0; check_lean_audits.py 242 audits passed (238 + AuditScalarPayloads.lean 15, AuditScalarEpochTasks.lean 7, AuditTaskTraceFixedOutcomes.lean 12, AuditScalarComposedString.lean 8); the provider suite, run as the brief asks although providers/ is unchanged: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries), provider fmt 0, provider clippy 0. Matrix, docs index and Python after the ledger (631 -> 627). Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit from b1410565): resource-diagnostics.json 8642ec02..., matching the base's archived AFTER (CG05-NESTED-CALL-EFFECTS on the merged base, 567 / 10 / 4,257; only the prefix is archived), sidecars byte-identical. Exits in gate/.",
+  "workspace_tests": 6745,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 242,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

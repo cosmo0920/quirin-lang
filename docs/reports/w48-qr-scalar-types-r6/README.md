@@ -197,7 +197,15 @@ among tracked files.
 `-fsanitize=undefined,integer -fno-sanitize-recover=all` and at plain `-O2`,
 all with `-Wall -Wextra -Werror -pedantic`; [summary](artifacts/native-payloads.json)):
 
-NATIVE_TABLE
+| Table | Per build | Result |
+|---|---|---|
+| every type × every boundary value (57 values: 7 per signed type, 4 per unsigned, `false`/`true`): the payload moved to a worker that reads it and writes the next boundary value, returned through `join`, lent to a reader, read and released; and every type's payload split between two disjoint byte leases (one for a one-byte payload, a read-only lease for `bool`), each worker writing one byte, then read byte by byte and whole by the owner | **114** programs, **342** runs, **6,129** trace lines (`scalar_payloads.rs`) | stdout byte-identical to the reference trace, the whole value after the byte writes equal to an independent little-endian reconstruction, exit 0, **0** sanitizer reports |
+| the spawn-failure control: a `u64::MAX` payload restored to its owner when creation fails, then released | 1 program | the reference's trace, exit 0 |
+| every `protected TYPE` (11) under the mutex observation sink | 11 programs | the typed reference observation line for line; a `bool` cell reads 0/1 |
+| composed epoch task halves (`u64`, `i8`, `usize`; the overflow of `u64` and of `i8` through `join`) | 5 programs (`scalar_epoch_tasks.rs`) | the reference trace; the overflow reaches the creator as `ArithmeticError::Overflow` |
+| every non-`i32` worker outcome through F02 | 10 programs (`scalar_f02_outcomes.rs`) | the native stdout parses and **relates** to the reference's admitted order |
+| every integer type's composed string/buffer program | 10 programs (`scalar_composed_string.rs`) | both streams equal to the reference |
+| the unused-binding shapes and the self-comparisons on the scalar, task and extern routes | 6 programs (`emitted_c_werror.rs`, `scalar_extern_values.rs`) | build under `-Werror`, the reference's output |
 
 **Negative controls** (each a test row): a write of another type, a literal
 outside the payload type, an `i32` annotation of a typed read, an owner byte
@@ -224,17 +232,50 @@ tables, not an extraction theorem.
 | F02-pinned traces and digests | unmoved, 90% | **unmoved** |
 | native tables under UBSan | all agree, 0 reports, 75% | **all agree, 0 reports** |
 | Lean | one new audit file, 85% | **four** audit files, **42** theorems |
-| corpus arbiter | byte-identical to the base's archive, 97% | ARBITER_OUTCOME |
-| standing gate | green, new tests only, 60% | GATE_OUTCOME |
+| corpus arbiter | byte-identical to the base's archive, 97% | **matches** the base's own archived AFTER, `8642ec02…` (CG05's; the brief's `ae17152b…` was superseded on main) |
+| standing gate | green, new tests only, 60% | **green**: the first run had tests 0 and clippy 101 (two lints in new code); fixed and fmt, clippy and the full test suite rerun; +27 tests |
 | items completed | 1 (70%), 2 (30%), 3 (25%), 4 (15%), 5 (20%) | **all five** |
 
 ## Gate
 
-GATE_TABLE
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | rerun at `b1410565` |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 383 units, 396 summaries; **6,745 passed, 0 failed, 11 ignored** (`private/test-binaries/20260929T215155Z-3081128/summary.json`, at `b1410565`; the first run at `7b0fff4a` gave the same totals); no load-sensitive rerun was needed |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | first run at `7b0fff4a` **101** (`unnecessary_lazy_evaluations` in `task_execution.rs`, then `get_last_with_len` in `source_tasks.rs`); fixed, rerun 0 at `b1410565` |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **242 audits** (238 + the four new files) |
+| provider tests | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **129 passed, 0 failed, 1 ignored** (43 summaries) — run as the brief asks; `providers/` is unchanged |
+| provider fmt | `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | |
+| provider clippy | `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | |
+| arbiter | `run_pinned_audit.py` (below) | 0 | |
+| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qr-scalar-types-r6/gate.json` | 0 | after the ledger, 631 → 627 |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | **365 tests OK** (after the matrix regeneration) |
+| clean | `cargo clean --profile dev` | 0 | |
+
+Exits in [gate/](gate/), record in [gate.json](gate.json); logs under
+`private/w48-r6/gate/`. The six new and extended test files add 27 tests; the
+base's full count was not remeasured here. Clang 21.1.8 recorded in this
+worktree ([gate/clang-version.txt](gate/clang-version.txt)). The fixture
+freezes used the debug `quirin` built at the base (`11891c95…`) and at
+`7b0fff4a` (`6564711f…`); later source commits are the two lint fixes only.
 
 ## Corpus arbiter
 
-ARBITER_SECTION
+`QCORE_TYPED_PATH_PARITY=OUT/parity.jsonl python3 scripts/run_pinned_audit.py
+OUT b1410565 --inputs-root …/build/cycle19 --jobs 8`, AFTER only, with this
+card's release `quirin-audit` (`e6d5df27…`, built from `b1410565`): exit 0.
+`resource-diagnostics.json` sha256 `8642ec029ec5e98a…` **matches** the base's
+own archived AFTER — CG05-NESTED-CALL-EFFECTS's corpus AFTER on the merged base
+(567 / 10 / 4,257, `8642ec02…`; only the 8-hex prefix is archived, in its README
+and gate.json) — which superseded the brief's `ae17152b…` (the w47-round9
+archive) when the Clang-gap cards moved corpus figures on main; the two sidecars
+are byte-identical to every archive since R3: `resource-diagnostics.chunk-contracts.json`
+`cbbcfd9c…`, `monkey-source.json` `57acfc58…`
+([identity](artifacts/arbiter-corpus.identity)). No C-audit path was touched.
 
 ## Follow-ups
 

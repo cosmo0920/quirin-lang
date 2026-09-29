@@ -1,0 +1,6 @@
+8642ec029ec5e98ae0999e3d40040e22542645098005f46925728df0a242d182  resource-diagnostics.json
+cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484  resource-diagnostics.chunk-contracts.json
+57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11  monkey-source.json
+e6d5df273094bf7a  quirin-audit (release, built in this worktree from the sources of b1410565)
+run exit 0, source commit b1410565, --jobs 8, QCORE_TYPED_PATH_PARITY set
+baseline: the base 8a378bf3 carries CG05-NESTED-CALL-EFFECTS's AFTER on the merged base, resource-diagnostics.json 8642ec02 (567 / 10 / 4,257; docs/reports/cg05-nested-call-effects/README.md section 3.1); only the 8-hex prefix is archived, and this AFTER matches it; both sidecars are byte-identical to every archive since R3

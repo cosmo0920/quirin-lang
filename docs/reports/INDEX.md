@@ -1050,6 +1050,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-qr-scalar-types-r5](w48-qr-scalar-types-r5/README.md) | W48-QR-SCALAR-TYPES-R5: typed loops and buffer-route arithmetic |
 
+| [w48-qr-scalar-types-r6](w48-qr-scalar-types-r6/README.md) | W48-QR-SCALAR-TYPES-R6: typed payloads and the remaining positions |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |
