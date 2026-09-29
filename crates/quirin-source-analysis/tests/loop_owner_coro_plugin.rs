@@ -442,7 +442,12 @@ fn premise(census: &Census, name: &str) -> Vec<String> {
         .coro_plugin_premises
         .get(name)
         .cloned()
-        .unwrap_or_else(|| panic!("no premise {name}: {:#?}", census.reading.coro_plugin_premises))
+        .unwrap_or_else(|| {
+            panic!(
+                "no premise {name}: {:#?}",
+                census.reading.coro_plugin_premises
+            )
+        })
 }
 
 fn not_derived(census: &Census, name: &str, needle: &str) {
