@@ -1,0 +1,250 @@
+//! Card CG00-CLANG-GAP-BASELINE, phase 2 (cards CG10–CG15): executed BEFORE
+//! controls for the Clang gap analysis's typed-place and store entries.
+//! Conventions as in `clang_gap_phase1.rs`; the core-model halves of M06 and
+//! M07 are in `crates/qcore-core/tests/clang_gap_core.rs`.
+
+#[path = "support/clang_gap.rs"]
+mod clang_gap;
+
+use clang_gap::*;
+
+const S: &str = "struct S { int a; int b; unsigned bf : 3; void *p; void *v; \
+struct I { void *p; int x; } in; int arr[4]; void *slots[4]; void (*cb)(void); };\n";
+
+fn gs(source: &str) -> G {
+    g(&format!("{S}{source}"))
+}
+
+// ---------------------------------------------------------------------------
+// CG10 — common typed place (M01 I04; K03's place side is in phase 1)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn m01_mixed_paths_need_a_never_bound_root() {
+    if !clang_available() {
+        return;
+    }
+    // Tracked root (bound to an acquisition): embedded field and array element.
+    let run = gs("void subject(void) { struct S *s = q_alloc(); s->in.x = 1; s->arr[1] = 2; q_free(s); }");
+    assert!(run.refused(IND), "{run:?}");
+    assert!(!run.safe());
+    // Never-bound formal root: the same mixed path is read.
+    assert!(gs("int subject(struct S *s) { return s->in.x + s->arr[1]; }").safe());
+}
+
+#[test]
+fn i04_one_line_identity_refuses_duplicate_candidates() {
+    if !clang_available() {
+        return;
+    }
+    // Two identical statements on one line: no unique node.
+    let run = gs("void subject(struct S *s) { s->in.x = 1; s->in.x = 1; }");
+    assert!(run.refused(IND), "{run:?}");
+    // The same statements on separate lines are read.
+    assert!(gs("void subject(struct S *s) {\n s->in.x = 1;\n s->in.x = 1;\n}").safe());
+}
+
+// ---------------------------------------------------------------------------
+// CG11 — pointer-valued stores (M02 M03 M04)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn m02_general_pointer_valued_stores_are_refused() {
+    if !clang_available() {
+        return;
+    }
+    // Example C's store `s->p = q`, a slot and an element.
+    assert!(gs("void subject(struct S *s, void *q) { s->p = q; }").refused(IND));
+    assert!(gs("void subject(void **slot, void *p) { *slot = p; }")
+        .refused("store through `*slot` without an out-parameter contract"));
+    assert!(gs("void subject(void **slots, int i, void *p) { slots[i] = p; }").refused(DESTINATION));
+    // Controls: the limited forms that exist — a local copy, a contracted
+    // store, an Out hand-off of a fresh acquisition.
+    assert!(gs("void subject(void) { void *a = q_alloc(); void *b = a; q_free(b); }").safe());
+    assert!(gs("void subject(void) { void *owner = q_alloc(); void *item = q_alloc(); q_store(owner, item); q_free(owner); }").safe());
+    assert!(gs("void subject(void **slot) { void *p = q_alloc(); *slot = p; }").safe());
+}
+
+#[test]
+fn m03_field_stores_through_formals_and_local_owners_are_refused() {
+    if !clang_available() {
+        return;
+    }
+    let run = gs("void subject(struct S *s) { void *q = q_alloc(); s->p = q; }");
+    assert!(run.refused(IND), "{run:?}");
+    // A local owner acquired here is refused too in this shape.
+    let run = gs("void subject(void) { struct S *s = q_alloc(); void *q = q_alloc(); s->p = q; q_free(s->p); q_free(s); }");
+    assert!(run.refused(IND), "{run:?}");
+}
+
+#[test]
+fn m04_nested_array_and_function_pointer_stores_are_refused() {
+    if !clang_available() {
+        return;
+    }
+    for body in [
+        "void subject(void) { struct S *s = q_alloc(); void *q = q_alloc(); s->in.p = q; q_free(s); }",
+        "void subject(void) { struct S *s = q_alloc(); void *q = q_alloc(); s->slots[1] = q; q_free(s); }",
+        "void f(void); void subject(struct S *s) { s->cb = f; }",
+    ] {
+        let run = gs(body);
+        assert!(run.refused(IND), "{body}: {run:?}");
+    }
+}
+
+// ---------------------------------------------------------------------------
+// CG12 — typed readback from `void *` fields (M05)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn m05_readback_from_a_void_field_is_refused() {
+    if !clang_available() {
+        return;
+    }
+    let run = gs("void subject(void) { struct S *s = q_alloc(); s->v = q_alloc(); char *c = s->v; q_free(c); q_free(s); }");
+    assert!(run.refused(IND), "{run:?}");
+    assert!(run.has("UnknownAlias { variable: \"c\" }"));
+}
+
+// ---------------------------------------------------------------------------
+// CG13 — unions and bit-fields (M06 M07)
+// ---------------------------------------------------------------------------
+
+/// Partial correction to the input: G refuses union and bit-field *stores*,
+/// but reads a scalar union member and a bit-field through a never-bound root
+/// as custody-neutral scalars (no overlap or storage-unit fact is carried).
+#[test]
+fn m06_union_stores_are_refused_and_reads_are_neutral() {
+    if !clang_available() {
+        return;
+    }
+    const U: &str = "union U { int i; void *p; };";
+    assert!(gs(&format!("{U} void subject(union U *u) {{ u->i = 1; }}")).refused(IND));
+    assert!(gs(&format!("{U} int subject(union U *u) {{ return u->i; }}")).safe());
+    assert_eq!(
+        t_refusal("union U { int i; float f; }; int subject(union U *u) { return u->i; }"),
+        "field is not a direct ordinary field of a selected record"
+    );
+}
+
+#[test]
+fn m07_bitfield_stores_are_refused_and_reads_are_neutral() {
+    if !clang_available() {
+        return;
+    }
+    assert!(gs("void subject(struct S *s) { s->bf = 1; }").refused(IND));
+    assert!(gs("int subject(struct S *s) { return s->bf; }").safe());
+    // T drops bit-fields from its record field table.
+    assert_eq!(
+        t_with(
+            "struct B { unsigned bf : 3; int a; }; int subject(struct B *b) { return b->bf; }",
+            "subject",
+            &["B"],
+        )
+        .expect_err("a bit-field is not a selected field"),
+        "field is not a direct ordinary field of a selected record"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// CG14 — aggregate values and initializers (M08 M09 M10 M11)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn m08_aggregate_copies_are_refused() {
+    if !clang_available() {
+        return;
+    }
+    assert!(gs("void subject(struct S *a, struct S *b) { *a = *b; }").refused(IND));
+    assert!(gs("void subject(struct S *s) { s->in = s->in; }").refused(IND));
+}
+
+#[test]
+fn m09_braced_initializers_are_refused() {
+    if !clang_available() {
+        return;
+    }
+    let run = gs("void subject(void) { void *q = q_alloc(); struct S s = { .p = q }; q_free(s.p); }");
+    assert!(run.refused(INITIALIZER), "{run:?}");
+    assert!(gs("int subject(void) { struct S s = { .a = 1 }; return s.a; }").refused(INITIALIZER));
+    assert_eq!(
+        t_refusal("struct R { int a; int b; }; int subject(void) { struct R r = { .a = 1 }; return 0; }"),
+        "local outside scalar/pointer callback profile"
+    );
+    // T's one initializer is the two-field `struct timeval`, and only with its
+    // record selected.
+    assert_eq!(
+        t_refusal("struct timeval { long tv_sec; long tv_usec; }; int subject(void) { struct timeval t = { 1, 2 }; return 0; }"),
+        "record initializer outside fixed timeval profile"
+    );
+}
+
+#[test]
+fn m10_compound_literals_have_no_identity() {
+    if !clang_available() {
+        return;
+    }
+    let run = gs("void subject(void) { void *q = q_alloc(); q_observe(&(struct S){ .p = 0 }); q_free(q); }");
+    assert!(run.refused(INITIALIZER), "{run:?}");
+    assert_eq!(
+        t_refusal("struct R { int a; int b; }; int f(struct R *); int subject(void) { return f(&(struct R){1, 2}); }"),
+        "unmodeled callback expression CompoundLiteralExpr"
+    );
+}
+
+/// Correction to the input: G does not read a string-initialised local array
+/// at all (an unrecognized destination), and a pointer to a string literal
+/// binds the literal as an unresolved identity. No extent or terminator is
+/// derived on either form.
+#[test]
+fn m11_string_initializers_are_refused_or_unresolved() {
+    if !clang_available() {
+        return;
+    }
+    assert!(gs("void subject(void) { char buf[] = \"abc\"; }").refused(DESTINATION));
+    assert!(gs("int subject(void) { char buf[] = \"abc\"; return buf[9]; }").refused(DESTINATION));
+    let run = gs("int subject(void) { const char *s = \"abc\"; return s[3]; }");
+    assert!(run.unknown() && run.has("__qcore_literal__"), "{run:?}");
+}
+
+// ---------------------------------------------------------------------------
+// CG15 — storage duration and volatile (M24 M23)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn m24_static_storage_is_refused_or_unresolved() {
+    if !clang_available() {
+        return;
+    }
+    assert_eq!(
+        t_refusal("int g_counter; int subject(void) { return g_counter; }"),
+        "global or unresolved local reference"
+    );
+    assert_eq!(
+        t_refusal("int subject(void) { static int s; return s; }"),
+        "unmodeled callback statement DeclStmt"
+    );
+    let run = gs("void *g_slot; void subject(void) { g_slot = q_alloc(); }");
+    assert!(run.refused(
+        "publication of a tracked resource into the static-storage object `g_slot` is outside the resource projection"
+    ), "{run:?}");
+    let run = gs("void *g_slot; void subject(void) { q_free(g_slot); }");
+    assert!(run.has("UnknownAlias { variable: \"g_slot\" }"), "{run:?}");
+    // A thread-local scalar read is custody-neutral: no lifetime is modelled.
+    assert!(gs("_Thread_local int t_count; int subject(void) { return t_count; }").safe());
+}
+
+#[test]
+fn m23_volatile_accesses_are_not_counted_or_ordered() {
+    if !clang_available() {
+        return;
+    }
+    assert_eq!(
+        t_refusal("int subject(volatile int *p) { return *p; }"),
+        "qualified access requires additional synchronization/alias evidence"
+    );
+    // G reads two volatile loads as one neutral scalar expression: no count or
+    // order of observable accesses exists in the verdict.
+    assert!(gs("int subject(volatile int *v) { return *v + *v; }").safe());
+    assert!(gs("struct V { volatile int r; }; int subject(struct V *v) { return v->r; }").safe());
+}
