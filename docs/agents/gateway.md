@@ -1048,7 +1048,8 @@ which is not a second authority.
     only where C evaluates it.** Card W47-ACCESS-PATH-POSITIONS
     (`legacy_typed_positions.rs`, `typed_access_positions.rs`) applies the
     W46-ACCESS-PATH-STATEMENTS reader, with every refusal it has (unions and
-    typedef-hidden unions, bitfields, casts within a path, volatile/atomic,
+    typedef-hidden unions, bitfields — both read by rule 10w since CG13 —
+    casts within a path, volatile/atomic,
     pointer arithmetic, a tracked mixed embedded/indexed path, pointer
     stores, calls, missing or ambiguous AST facts), to a sub-expression
     matched by its line and exact tokens to one Clang node. (1) A call-free
@@ -1953,7 +1954,8 @@ which is not a second authority.
     `->F` / `.F` (FieldDecl id), `[I]` and `*`, each with Clang's type and
     view; a subscript or indirection is a *hop* only through an
     `LValueToRValue` pointer read, never through `ArrayToPointerDecay`. A
-    missing fact, a union or bit-field member, a `volatile`/`_Atomic` base,
+    missing fact, a union or bit-field member (read by rule 10w since
+    CG13), a `volatile`/`_Atomic` base,
     any cast but those, a call, pointer arithmetic or any other form refuses.
     (2) **The tracked root.** Where W46's mixed-path premise (a never-bound
     root) fails, the place is admitted only on a pointer root that the
@@ -1989,3 +1991,54 @@ which is not a second authority.
     line are the analysed source's (trust boundary 28).
     `QCore.TypedPlace`, bound to the Rust decision table by a shared-vector
     test; [report](../reports/cg10-common-typed-place/README.md).
+
+<a id="constraint-10w"></a>
+
+10w. **A union-member or bit-field place step is read only as its storage
+    permits: a union member as overlapping storage, a bit-field as its storage
+    unit.** Card CG13-UNION-AND-BITFIELD-PLACES (`union_bitfield.rs`, thin
+    hooks in `typed_access_path.rs` (`Reader::path`), `typed_place.rs`
+    (`MemberStorage` on each step, `Refusal::UnionHop`), `elaboration.rs`
+    (`Context::shared_bitfield_unit`, `Refusal::SharedBitfieldUnit`),
+    `legacy_elaboration.rs` and `typed_c_ast.rs`). It amends the union and
+    bit-field refusals of rules 10k and 10t; every other refusal of theirs
+    stands. (1) **The step.** A member whose `FieldDecl` a complete `union`
+    owns is a union step; a `struct` bit-field whose width Clang gives is a
+    bit-field step, in the storage unit C11 makes it (a maximal run of
+    adjacent non-zero-width bit-fields in declaration order, never a guessed
+    layout). A union bit-field, a bit-field without a width, a member whose
+    owner is not read, a `volatile`/`_Atomic` base and every other form
+    refuse. (2) **The decision** (`decide`, per step, from the access through
+    it): a scalar read is custody-neutral whatever member is live; a pointer
+    value read (the path's value, or a pointer later read through) is P2's
+    target-free borrowed alias, refused when the function stores through,
+    increments or takes the address of another member of a union of that
+    record, or writes a whole object of the union's type (type punning, M22);
+    a scalar store through a union that can hold a pointer (a member not
+    transitively a builtin scalar, enumeration or array of them) carries
+    W43's refused-write frame, which poisons every binding but a spared
+    local, so no sibling pointer member keeps a tracked identity, and through
+    a custody-free union it is frame-neutral; a pointer-valued store through a
+    union member refuses (CG11's store, and no contract fixes the view); a
+    bit-field read is a read of its unit and a store a read-modify-write of
+    the whole unit, which holds only bit-fields and is frame-neutral. On a
+    tracked root a union step joins rule 10t's decision unchanged, but no
+    pointer loaded after a union step is a link (`union-hop`). (3) **Units.**
+    Two bit-fields of one unit are one memory location: disjoint bit ranges
+    never make their footprints disjoint. When the elaborator refuses an
+    unordered pair of two bit-field places of one object as not proved
+    disjoint, it asks the core `disjoint_footprint` model with a layout
+    contract read from Clang's own `-fdump-record-layouts-complete` output and
+    names the refusal `SharedBitfieldUnit` (Q661) when the model does; the
+    pair stays refused either way, and no field pair is admitted as disjoint
+    here (CG18). **Do not** bind a pointer place or a field link through a
+    union member, admit a punned pointer read, drop the frame of a store
+    through a pointer-bearing union, treat two bit-fields of one unit as
+    disjoint, guess a layout, or consult this rule before an older route of
+    the position (hard invariant 3). Premises stated, not proved: faithful
+    Clang extraction of field owners, widths and record layouts (trust
+    boundary 28), and `union-live-member-view` — a callee's store through
+    another member is not visible, so a pointer so read is still only a
+    target-free borrow. `QCore.UnionBitfieldPlace`, bound to the Rust
+    decision table by a shared-vector test and reusing
+    `QCore.DisjointFootprint`; [report](../reports/cg13-union-and-bitfield-places/README.md).

@@ -106,7 +106,6 @@ pub(crate) enum Access {
 }
 
 impl Access {
-    #[cfg_attr(not(test), allow(dead_code, reason = "the Lean vectors' spelling"))]
     pub(crate) fn code(self) -> &'static str {
         match self {
             Self::ScalarRead => "scalar-read",
@@ -142,7 +141,6 @@ pub(crate) enum Outcome {
 }
 
 impl Outcome {
-    #[cfg_attr(not(test), allow(dead_code, reason = "the Lean vectors' spelling"))]
     pub(crate) fn code(self) -> &'static str {
         match self {
             Self::Ordinary => "ordinary",
@@ -549,14 +547,18 @@ pub(crate) struct MemberStep {
 
 /// The decision on every non-ordinary step of one path, or the first
 /// refusal. `final_access` is the path's own access. Returns whether a store
-/// needs the refused-write frame.
+/// needs the refused-write frame. Parity runs record every decision
+/// (`position: "union-bitfield"`) with the path's node offset.
 pub(crate) fn decide_path(
     steps: &[MemberStep],
     final_access: Access,
     facts: &RecordFacts,
     function: Option<&Value>,
+    node: &Value,
 ) -> Result<bool, Outcome> {
     let mut framed = false;
+    let mut decided = Vec::new();
+    let mut refusal = None;
     for step in steps {
         let access = if step.hop_after {
             Access::PointerRead
@@ -573,13 +575,35 @@ pub(crate) fn decide_path(
             }
             _ => (false, false),
         };
-        match decide(step.storage, access, punned, custody_free) {
+        let outcome = decide(step.storage, access, punned, custody_free);
+        decided.push((step.storage, access, outcome));
+        match outcome {
             Outcome::Framed => framed = true,
-            outcome if !outcome.admits() => return Err(outcome),
+            outcome if !outcome.admits() => {
+                refusal = Some(outcome);
+                break;
+            }
             _ => {}
         }
     }
-    Ok(framed)
+    if crate::typed_access_path::parity_enabled() {
+        crate::typed_access_path::record_row(serde_json::json!({
+            "position": "union-bitfield",
+            "function": function.and_then(|function| function["name"].as_str()),
+            "offset": crate::typed_access_path::offset(&node["range"]["begin"]),
+            "steps": decided.iter().map(|(storage, access, outcome)| serde_json::json!({
+                "storage": storage.code(),
+                "access": access.code(),
+                "outcome": outcome.code(),
+            })).collect::<Vec<_>>(),
+            "admitted": refusal.is_none(),
+            "framed": framed,
+        }));
+    }
+    match refusal {
+        Some(outcome) => Err(outcome),
+        None => Ok(framed),
+    }
 }
 
 // ---------------------------------------------------------------------------

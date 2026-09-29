@@ -1220,8 +1220,14 @@ impl Reader<'_> {
             } else {
                 crate::union_bitfield::Access::ScalarRead
             };
-            crate::union_bitfield::decide_path(&member_steps, access, self.records, self.function)
-                .ok()?
+            crate::union_bitfield::decide_path(
+                &member_steps,
+                access,
+                self.records,
+                self.function,
+                node,
+            )
+            .ok()?
         };
         steps.reverse();
         let first = steps.first()?;
