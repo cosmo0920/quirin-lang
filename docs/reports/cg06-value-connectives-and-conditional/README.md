@@ -2,7 +2,8 @@
 
 Card CG06 of the [Clang gap card queue](../../plans/clang-gap-cards/README.md)
 (wave 48, round 4; base `27dc7c9a` = local `main` at dispatch, CG03's final
-records commit).
+records commit; main `6883623c` merged at `dd5664b8` and main `c0ccc66a`,
+with CG04, at `789b262a`, re-measured in §3.2a).
 
 - **Gap entries:** E06 and E07, on route **G** (the custody gateway). Route T
   is unchanged: no typed-source consumer decides a value connective (CG01's
@@ -167,6 +168,29 @@ tail-pause slice; release `quirin-audit`), [compare_all.sh](scripts/compare_all.
 **No Safe → non-Safe move, no correction, no new provisional Unsafe, and no
 leak or violation added** (the leaf deltas hold no `Leak`, `DoubleRelease`,
 `UseAfterRelease` or conflict entry).
+
+### 3.2a Re-measured on main `c0ccc66a` (CG04 landed)
+
+Main moved twice during the card: `6883623c` (W48-QR-SCALAR-TYPES-R4, no
+analyzer code; merged at `dd5664b8`) and `c0ccc66a`
+(CG04-CONDITION-ACQUISITION, rule 10x; merged at `789b262a`). On the latter:
+
+| Route | BEFORE (main `c0ccc66a`, binary `d261bdbc…`) | AFTER (tip `789b262a`, binary `58be330d…`) | Moves |
+|---|---|---|---|
+| corpus | 565 / 10 / 4,259 (`24571074…`, **byte-identical** to CG04's AFTER) | **583 / 10 / 4,241** (`9b9f784a…`) | the **same 18 Unknown → Safe**; 159 more Unknown functions change diagnostics |
+| system | 33 / 2 / 199 | **34 / 2 / 198** | +1, the same |
+| tail-pause slice | 26 / 1 / 242 / 1 Pending | unmoved | none |
+
+[main-c0ccc66a/](artifacts/main-c0ccc66a/) holds the comparisons, census and
+absorbed re-measurement. The leaf deltas equal §3.3's plus one: −1
+"unmodeled increment or decrement expression" in
+`rd_kafka_broker_producer_serve`, a region whose deciding operand CG04's
+per-leaf increment handling now decides. One control flipped only in the
+composition (`access_path_position_residuals`:
+`return q->cnt > 0 && (r = q->head.first->v)` → Safe, the `NAME = PATH`
+leaf decided by the condition desugaring on the edge C evaluates it). The
+census on this main: 2,452 consultations, **233 admitted** (164 functions),
+2,219 refused (291 undecided deciding operands; every other row as §3.5).
 
 ### 3.3 The eighteen moves, each attributed by reading
 

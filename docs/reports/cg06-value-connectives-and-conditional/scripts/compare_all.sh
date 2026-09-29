@@ -1,11 +1,11 @@
 #!/bin/sh
-# compare_all.sh BEFORE AFTER -- CG06-VALUE-CONNECTIVES-AND-CONDITIONAL: the
+# compare_all.sh BEFORE AFTER [SUBDIR] -- CG06-VALUE-CONNECTIVES-AND-CONDITIONAL: the
 # corpus, system and tail-pause slice comparisons of two measure.sh runs, into
 # artifacts/, then the census and absorbed-follow-up re-measurement of AFTER.
 set -u
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
-out="$here/../artifacts"
+out="$here/../artifacts${3:+/$3}"; mkdir -p "$out"
 runs="$repo/private/cg06"
 slice=/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1
 before="$1"; after="$2"

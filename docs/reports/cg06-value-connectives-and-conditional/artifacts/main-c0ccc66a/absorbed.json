@@ -1,0 +1,34 @@
+{
+ "returns": {
+  "call refused": 25,
+  "call admitted": 10,
+  "call-free refused": 72,
+  "call-free admitted": 7
+ },
+ "return_refusals": {
+  "a value connective or conditional under `BinaryOperator ,`": 67,
+  "an arm's expression an older route refuses": 17,
+  "a deciding operand no condition route decides": 9,
+  "an operand unsequenced with the region carries an effect": 3,
+  "no unique Clang node": 1
+ },
+ "functions_keeping_a_return_leaf_on_a_refused_consultation": 58,
+ "unknown_among_them": 58,
+ "conditional_actual_rows": {
+  "admitted": 5,
+  "not consulted": 41,
+  "refused": 42
+ },
+ "conditional_actual_functions": {
+  "admitted": 3,
+  "not consulted": 24,
+  "refused": 31
+ },
+ "comma_refusals": {
+  "rows": 67,
+  "functions": 32,
+  "by_position": {
+   "value-connective-return": 67
+  }
+ }
+}
