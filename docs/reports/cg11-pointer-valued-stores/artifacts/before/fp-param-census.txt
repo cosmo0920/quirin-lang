@@ -1,0 +1,25 @@
+functions with a function-pointer parameter: {'Unknown': 92}
+Unknown with unknown_alias on another parameter: 23
+  mk_server/mk_http_parser.c::http_parser_transfer_encoding_chunked
+  mk_server/mk_lib.c::mk_http_send
+  rdkafka.c::rd_kafka_share_set_acknowledgement_commit_cb
+  rdkafka_broker.c::rd_kafka_broker_any
+  rdkafka_broker.c::rd_kafka_broker_any_up
+  rdkafka_buf.c::rd_kafka_buf_set_maker
+  rdkafka_msg.c::rd_kafka_msgq_enq_sorted0
+  rdkafka_msgset_writer.c::rd_kafka_msgset_writer_write_msg
+  rdkafka_msgset_writer.c::rd_kafka_msgset_writer_write_msg_payload
+  rdkafka_msgset_writer.c::rd_kafka_msgset_writer_write_msg_v0_1
+  rdkafka_msgset_writer.c::rd_kafka_msgset_writer_write_msg_v2
+  rdkafka_offset.c::rd_kafka_commit_queue
+  rdkafka_partition.c::rd_kafka_msgq_insert_msgq
+  rdkafka_partition.c::rd_kafka_msgq_insert_msgq_before
+  rdkafka_partition.c::rd_kafka_retry_msgq
+  rdkafka_queue.c::rd_kafka_q_apply
+  rdkafka_range_assignor.c::rd_kafka_assign_ranges
+  rdkafka_request.c::rd_kafka_OffsetFetchRequest
+  rdkafka_timer.c::rd_kafka_timer_start0
+  rdlist.c::rd_list_find
+  rdlist.c::rd_list_sort
+  rdports.c::rd_qsort_r
+  rdstring.c::rd_string_render

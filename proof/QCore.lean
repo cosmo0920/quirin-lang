@@ -279,5 +279,6 @@ import QCore.TypedSourceOperators
 import QCore.ElaborationCore
 import QCore.TypedPlace
 import QCore.CallInstantiation
+import QCore.PointerStore
 
 /-! The executable formal core of QCore-C revision 0.1. -/

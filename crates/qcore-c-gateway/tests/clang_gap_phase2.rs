@@ -131,11 +131,14 @@ fn m04_nested_array_and_function_pointer_stores_are_refused() {
     for body in [
         "void subject(void) { struct S *s = q_alloc(); void *q = q_alloc(); s->in.p = q; q_free(s); }",
         "void subject(void) { struct S *s = q_alloc(); void *q = q_alloc(); s->slots[1] = q; q_free(s); }",
-        "void f(void); void subject(struct S *s) { s->cb = f; }",
     ] {
         let run = gs(body);
         assert!(run.refused(IND), "{body}: {run:?}");
     }
+    // CG11 flip (rule 10v): a function stored into a caller's object moves no
+    // custody. BEFORE: refused (IND).
+    let run = gs("void f(void); void subject(struct S *s) { s->cb = f; }");
+    assert!(run.safe(), "{run:?}");
 }
 
 // ---------------------------------------------------------------------------
