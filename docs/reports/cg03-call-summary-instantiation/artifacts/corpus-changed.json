@@ -1,0 +1,726 @@
+[
+ {
+  "unit": "cJSON.c",
+  "function": "get_object_item",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in loop condition": -1
+  }
+ },
+ {
+  "unit": "cio_meta.c",
+  "function": "cio_meta_cmp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmetrics.c",
+  "function": "cmt_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: call has an unmodeled formal address or borrowed expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_prometheus_remote_write.c",
+  "function": "cmt_metric_name_from_labels",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_prometheus_remote_write.c",
+  "function": "decode_metrics_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry.c",
+  "function": "destroy_resource_metrics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry.c",
+  "function": "destroy_scope_metrics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_prometheus.c",
+  "function": "metric_banner",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_prometheus_remote_write.c",
+  "function": "pack_basic_type",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_splunk_hec.c",
+  "function": "format_metric_name",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_filter.c",
+  "function": "compare_fqname",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "cmt_mpack_utils.c",
+  "function": "cmt_mpack_unpack_map",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_opts.c",
+  "function": "cmt_opts_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "ctr_decode_opentelemetry.c",
+  "function": "ctr_decode_opentelemetry_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "ctr_id.c",
+  "function": "ctr_id_cmp",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "ctr_mpack_utils.c",
+  "function": "ctr_mpack_unpack_map",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_chunk_route_plugin_matches",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_flush",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "input_chunk_append_raw",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "input_chunk_collect_output_references",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "input_chunk_get",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_config.c",
+  "function": "mk_config_listener_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_config.c",
+  "function": "mk_config_read_files",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "function": "mk_fifo_queue_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_http.c",
+  "function": "mk_http_range_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_http_parser.c",
+  "function": "http_parser_transfer_encoding_chunked",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_stream.c",
+  "function": "mk_channel_write",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_utils.c",
+  "function": "mk_utils_url_decode",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_get",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "rd_hdr_highestEquivalentValue",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "rd_hdr_histogram_max",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_hdr_highestEquivalentValue`": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "rd_hdr_histogram_mean",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "rd_hdr_histogram_quantile",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "rd_hdr_medianEquivalentValue",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "rd_hdr_nextNonEquivalentValue",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdhttp.c",
+  "function": "unittest_http_get_params_append",
+  "before": "Unsafe",
+  "after": "Unsafe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_consumer_group_state_code",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_consumer_group_type_code",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_simple_consumer_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListOffsets_handle_result",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "ut_verify_ListConsumerGroups_result",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_aux.c",
+  "function": "rd_kafka_topic_result_free",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: arguments do not match resource contract for `rd_kafka_topic_result_destroy`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_weight_usable",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_buf.c",
+  "function": "rd_kafka_bufq_deq",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_assigned_offsets_commit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_assignment_clear_lost",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_assignment_is_lost",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_defer_offset_commit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_offsets_commit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_unsubscribe",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_update_subscribed_topics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_kv_split",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: call has an unmodeled formal address or borrowed expression": -1,
+   "unsupported: nullable resource `out` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_s2i_find",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_defaultconf_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_destroy",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: arguments do not match resource contract for `rd_free`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_topics_to_list",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_broker_start_listener",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_connection_parse_request",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ApiVersion",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_sharegrp.c",
+  "function": "rd_kafka_mock_sharegroup_member_subscribed_topic_names_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock_sharegrp.c",
+  "function": "rd_kafka_mock_sharegroup_target_assignment_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_reader.c",
+  "function": "rd_kafka_aborted_txns_sort",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_toppar_handle_Offset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_topic_assignment_state_cmp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_CreatePartitionsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_CreateTopicsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_DescribeConfigsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_cyrus.c",
+  "function": "rd_kafka_sasl_cyrus_cb_canon",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_cyrus.c",
+  "function": "rd_kafka_sasl_cyrus_ready",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_all_explicit_values",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_defaults",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_explicit_scope_and_life",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "rd_kafka_sasl_oauthbearer_build_client_first_message",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka_ssl.c",
+  "function": "rd_kafka_ssl_ctx_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "partitionCanParticipateInReassignment",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_topic_info_cmp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdstring.c",
+  "function": "rd_strtup_free",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: arguments do not match resource contract for `rd_strtup_destroy`": -1
+  }
+ }
+]

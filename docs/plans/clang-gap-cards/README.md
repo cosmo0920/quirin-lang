@@ -131,6 +131,11 @@ High for anything that could publish a wrong Safe, Medium for measurement.
   - *Total-or-reject.* Declared supported clauses keep total-or-reject.
   - *Absorbs:* W46-ACCESS-PATH-PARITY (the plan-vocabulary part). The
     W44-CALL-ARGUMENT-CUSTODY-POSITION refusals stay by design.
+  - *Status (wave 48, round 3).* Landed on route G (gateway rule 10u):
+    `Parser::instantiate_call` is the one application point (CG04 and CG05
+    call it), acceptance is by the value's use, and a scalar `return`
+    operand, effectful scalar actuals and a typed substitution are new
+    fallbacks. [Report](../../reports/cg03-call-summary-instantiation/README.md).
 - **CG04: condition acquisition.**
   - *Example A* of the analysis: `if ((p = malloc(n)) != NULL) free(p);`.
   - *Lowering.* Acquisition identity, binding, NULL/sentinel split,

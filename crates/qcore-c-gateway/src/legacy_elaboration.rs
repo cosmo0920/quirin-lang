@@ -218,7 +218,7 @@ impl Parser<'_> {
     /// kind `accept` takes. A match's own sub-nodes (implicit wrappers) are the
     /// same text and are not visited; two separate matches are ambiguous and
     /// answer nothing.
-    fn elaboration_node<'i>(
+    pub(super) fn elaboration_node<'i>(
         index: &'i StatementIndex,
         line: usize,
         wanted: &[&str],
@@ -538,6 +538,23 @@ impl Parser<'_> {
                 "a sequenced piece outside this card's forms",
             ));
         }
+        // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): a piece that is
+        // one direct call whose actuals carry effects C sequences before it.
+        if let Step::Piece(node) = step {
+            let elaborated = {
+                let never_bound = |name: &str| self.joined_never_bound(name);
+                let context = Self::elaboration_context(index, &never_bound);
+                elaboration::elaborate(node, &context)?
+            };
+            if let Ok(Some(instructions)) =
+                self.effectful_call_piece(index, node, &elaborated, line)
+            {
+                return Ok(instructions
+                    .into_iter()
+                    .map(|instruction| Statement::Instruction(instruction, line))
+                    .collect());
+            }
+        }
         let instructions = self.event_instructions(index, &synthetic, Site::Statement)?;
         Ok(instructions
             .into_iter()
@@ -568,63 +585,75 @@ impl Parser<'_> {
         elaborated: &Elaboration<StatementPlan>,
     ) -> Result<Vec<LegacyInstruction>, Refusal> {
         let mut instructions = Vec::new();
-        for (id, event) in elaborated.graph.events.iter().enumerate() {
-            match event {
-                Event::Read(Place::Object { .. }) => {}
-                // A read inside a path's address: the typed reader's plan of
-                // that path carries its base and per-link obligations.
-                Event::Read(Place::Path { .. }) if elaborated.address_reads.contains(&id) => {}
-                Event::Write {
-                    place: Place::Object { name, .. },
-                    pointer: false,
-                } => {
-                    if self.protected_formals.contains(name)
-                        || !crate::typed_field_access::is_scalar_initializer(
-                            name,
-                            &["1"],
-                            &self.typed_model,
-                            &self.typed_types,
-                        )
-                    {
-                        return Err(Refusal::Unlisted(
-                            "write to an object the gateway does not read as a scalar local",
-                        ));
-                    }
-                    instructions.push(LegacyInstruction::ForgetScalar {
-                        destination: name.clone(),
-                    });
-                }
-                Event::Read(Place::Path { .. })
-                | Event::Write {
-                    place: Place::Path { .. },
-                    pointer: false,
-                } => {
-                    let plan = elaborated
-                        .facts
-                        .get(&id)
-                        .ok_or(Refusal::Unlisted("path event without facts"))?;
-                    let write = matches!(event, Event::Write { .. });
-                    instructions.push(self.path_instruction(plan, write));
-                }
-                Event::Write { pointer: true, .. } => {
-                    return Err(elaboration::refused("pointer store"));
-                }
-                Event::Call { callee } => {
-                    let effectful = elaborated.actuals.get(&id).is_some_and(|events| {
-                        events
-                            .iter()
-                            .any(|&event| !matches!(elaborated.graph.events[event], Event::Read(_)))
-                    });
-                    return Err(if effectful {
-                        Refusal::EffectfulActual(callee.clone())
-                    } else {
-                        Refusal::UnorderedCall(callee.clone())
-                    });
-                }
-                _ => return Err(Refusal::Unlisted("event outside this card's lowering")),
+        for id in 0..elaborated.graph.events.len() {
+            if let Some(instruction) = self.lower_event(elaborated, id)? {
+                instructions.push(instruction);
             }
         }
         Ok(instructions)
+    }
+
+    /// One event's instruction, `None` for an event that lowers to nothing.
+    /// Card CG03-CALL-SUMMARY-INSTANTIATION lowers the events before a
+    /// sequenced call through this same function.
+    pub(super) fn lower_event(
+        &self,
+        elaborated: &Elaboration<StatementPlan>,
+        id: usize,
+    ) -> Result<Option<LegacyInstruction>, Refusal> {
+        let event = &elaborated.graph.events[id];
+        match event {
+            Event::Read(Place::Object { .. }) => Ok(None),
+            // A read inside a path's address: the typed reader's plan of
+            // that path carries its base and per-link obligations.
+            Event::Read(Place::Path { .. }) if elaborated.address_reads.contains(&id) => Ok(None),
+            Event::Write {
+                place: Place::Object { name, .. },
+                pointer: false,
+            } => {
+                if self.protected_formals.contains(name)
+                    || !crate::typed_field_access::is_scalar_initializer(
+                        name,
+                        &["1"],
+                        &self.typed_model,
+                        &self.typed_types,
+                    )
+                {
+                    return Err(Refusal::Unlisted(
+                        "write to an object the gateway does not read as a scalar local",
+                    ));
+                }
+                Ok(Some(LegacyInstruction::ForgetScalar {
+                    destination: name.clone(),
+                }))
+            }
+            Event::Read(Place::Path { .. })
+            | Event::Write {
+                place: Place::Path { .. },
+                pointer: false,
+            } => {
+                let plan = elaborated
+                    .facts
+                    .get(&id)
+                    .ok_or(Refusal::Unlisted("path event without facts"))?;
+                let write = matches!(event, Event::Write { .. });
+                Ok(Some(self.path_instruction(plan, write)))
+            }
+            Event::Write { pointer: true, .. } => Err(elaboration::refused("pointer store")),
+            Event::Call { callee } => {
+                let effectful = elaborated.actuals.get(&id).is_some_and(|events| {
+                    events
+                        .iter()
+                        .any(|&event| !matches!(elaborated.graph.events[event], Event::Read(_)))
+                });
+                Err(if effectful {
+                    Refusal::EffectfulActual(callee.clone())
+                } else {
+                    Refusal::UnorderedCall(callee.clone())
+                })
+            }
+            _ => Err(Refusal::Unlisted("event outside this card's lowering")),
+        }
     }
 
     /// The typed access-path reader's instruction for one path event, as

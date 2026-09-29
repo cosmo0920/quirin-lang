@@ -70,10 +70,12 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use qcore_schemas::contract::{ResourceParameterMode, ResourceReturnMode};
 
+use super::call_instantiation_route::CallRefusal;
 use super::{
     CfgBuilder, LegacyInstruction, LegacyNodeId, Parser, Statement, SwitchTargets, TYPE_OPERATORS,
     Token, contains_braces, contains_call, descriptor_custody, is_identifier, matching,
 };
+use crate::call_instantiation::Decline;
 use crate::neutral_position::ExpressionRole;
 
 /// Whether the desugaring is consulted by the lowering. The census commits
@@ -409,7 +411,7 @@ struct LeafPlan {
 /// call whose every position borrows, whose result owns nothing, which
 /// produces no site and carries no member read or address that could take
 /// custody.
-fn is_identity_call(instruction: &LegacyInstruction) -> bool {
+pub(super) fn is_identity_call(instruction: &LegacyInstruction) -> bool {
     let LegacyInstruction::ContractCall {
         contract,
         produced_sites,
@@ -597,6 +599,51 @@ impl Parser<'_> {
         Ok(ConditionPlan { nodes, entry })
     }
 
+    /// Card **CG03-CALL-SUMMARY-INSTANTIATION** (rule 10u): the plan of an
+    /// expression that is exactly one leaf, read with the same premises as a
+    /// controlling expression (braces, type operators, increments, the elvis
+    /// operator and any connective refuse). The calls, in evaluation order,
+    /// and the leaf's decision; the caller restores the counters on a
+    /// refusal. A refusal is its census variant's text.
+    pub(super) fn single_leaf_plan(
+        &mut self,
+        expression: &[Token],
+        position: Position,
+    ) -> Result<(Vec<LegacyInstruction>, LegacyInstruction), String> {
+        let texts = expression
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let refuse = |refusal: Refusal| format!("{refusal:?}");
+        if contains_braces(expression) {
+            return Err(refuse(Refusal::Braces));
+        }
+        if texts.iter().any(|text| TYPE_OPERATORS.contains(text)) {
+            return Err(refuse(Refusal::TypeOperator));
+        }
+        if texts
+            .windows(2)
+            .any(|pair| matches!(pair, ["+", "+"] | ["-", "-"]))
+        {
+            return Err(refuse(Refusal::IncrementOrDecrement));
+        }
+        if texts.windows(2).any(|pair| pair == ["?", ":"]) {
+            return Err(refuse(Refusal::Elvis));
+        }
+        // A negation evaluates its operand once and decides nothing more.
+        let mut tree = parse(&texts, 0, texts.len()).map_err(refuse)?;
+        while let Tree::Not(inner) = tree {
+            tree = *inner;
+        }
+        let Tree::Leaf(start, end) = tree else {
+            return Err("a connective (CG06)".to_owned());
+        };
+        let plan = self
+            .leaf_plan(&expression[start..end], position)
+            .map_err(refuse)?;
+        Ok((plan.calls, plan.decision))
+    }
+
     fn leaf_plan(&mut self, tokens: &[Token], position: Position) -> Result<LeafPlan, Refusal> {
         let texts = tokens
             .iter()
@@ -649,9 +696,6 @@ impl Parser<'_> {
         let mut lowered = Vec::with_capacity(calls.len());
         for call in &calls {
             let callee = texts[call.callee];
-            if let Some(body_owner) = self.recursive_local_callee(callee) {
-                return Err(Refusal::RecursiveLocalCallee(body_owner));
-            }
             let (statement, destination) = match &assigned {
                 Some(group) if call.callee == group.call => (
                     &tokens[group.statement..=call.close],
@@ -659,55 +703,65 @@ impl Parser<'_> {
                 ),
                 _ => (&tokens[call.callee..=call.close], None),
             };
-            let instruction = self.classify_simple(statement);
-            match &instruction {
-                LegacyInstruction::ContractCall {
-                    destination: written,
-                    contract,
-                    ..
-                } => {
-                    if written.as_deref() != destination {
-                        return Err(Refusal::CallRefused(
-                            callee.to_owned(),
-                            "unexpected destination".to_owned(),
-                        ));
-                    }
-                    // An owned, reallocated or descriptor result is custody
-                    // and refuses. A derived result owns nothing: discarded,
-                    // it is exactly a discarded `None` (the classifier's own
-                    // W43-LIBC-RESULT-ALIAS rule); written to the program's
-                    // own pointer, that binding tracks it.
-                    let resource_free = matches!(
-                        contract.result,
-                        ResourceReturnMode::None | ResourceReturnMode::Derived { .. }
-                    );
-                    if !resource_free {
-                        return Err(Refusal::CustodyResult(callee.to_owned()));
-                    }
+            // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): the one
+            // instantiation. A leaf's call value is tested, so an owned,
+            // reallocated or descriptor result is custody and refuses; a
+            // derived result owns nothing (discarded, it is a discarded
+            // `None`; written to the program's own pointer, that binding
+            // tracks it). A callee in the caller's recursive component
+            // refuses before the classifier runs. The refusals below are the
+            // desugaring's own, unchanged.
+            // A call whose actuals the lexical gate refused arrives with its
+            // actuals' typed reads before it (card W44-INDIRECT-CALL-
+            // ARGUMENT-ACCESS, the statement position's own lowering).
+            let sequence = match self.instantiate_call(
+                callee,
+                statement,
+                destination,
+                crate::call_instantiation::ResultUse::Tested,
+            ) {
+                Ok(sequence) => sequence,
+                Err(CallRefusal::Declined(Decline::RecursiveLocal)) => {
+                    return Err(Refusal::RecursiveLocalCallee(callee.to_owned()));
                 }
-                LegacyInstruction::Unknown { description, .. } => {
+                Err(CallRefusal::Declined(_)) => {
+                    return Err(Refusal::CustodyResult(callee.to_owned()));
+                }
+                Err(CallRefusal::UnexpectedDestination) => {
                     return Err(Refusal::CallRefused(
                         callee.to_owned(),
-                        census_reason(description),
+                        "unexpected destination".to_owned(),
                     ));
                 }
-                other => {
+                Err(CallRefusal::Unapplied(description)) => {
                     return Err(Refusal::CallRefused(
                         callee.to_owned(),
-                        format!("lowered to {}", variant_name(other)),
+                        census_reason(&description),
                     ));
                 }
-            }
-            lowered.push(instruction);
+                Err(CallRefusal::Lowered(other)) => {
+                    return Err(Refusal::CallRefused(
+                        callee.to_owned(),
+                        format!("lowered to {}", variant_name(&other)),
+                    ));
+                }
+            };
+            lowered.push(sequence);
         }
         if lowered.len() > 1 {
             // C does not sequence two calls of one operand. Only calls that
             // are the identity on the abstract state commute; with one of
-            // them written through, neither order may be chosen.
-            if assigned.is_some() || !lowered.iter().all(is_identity_call) {
+            // them written through, neither order may be chosen. A call's
+            // actual reads change no map, so they commute with an identity.
+            if assigned.is_some()
+                || !lowered
+                    .iter()
+                    .all(|sequence| sequence.last().is_some_and(is_identity_call))
+            {
                 return Err(Refusal::UnsequencedEffects);
             }
         }
+        let lowered = lowered.into_iter().flatten().collect::<Vec<_>>();
         // The residual: every call replaced by a neutral literal, the one
         // assignment group by its destination.
         let mut residual = Vec::with_capacity(tokens.len());
@@ -888,7 +942,7 @@ impl Parser<'_> {
     /// function back through the unit's direct-call graph. Such a callee's
     /// contract in force may be the neutral route's provisional `N(m)`
     /// (constraint 4), so it is not read as admission evidence.
-    fn recursive_local_callee(&mut self, callee: &str) -> Option<String> {
+    pub(super) fn recursive_local_callee(&mut self, callee: &str) -> Option<String> {
         let tokens = self.tokens;
         let state = &mut self.desugar;
         if state.function.is_empty() {

@@ -79,6 +79,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg02-elaboration-core](cg02-elaboration-core/README.md) | CG02-ELABORATION-CORE: the common expression elaborator and its order model |
 
+| [cg03-call-summary-instantiation](cg03-call-summary-instantiation/README.md) | CG03-CALL-SUMMARY-INSTANTIATION: one call-contract application point |
+
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |

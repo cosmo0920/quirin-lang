@@ -1,0 +1,21 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 199,
+   "Safe": 33,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 199,
+   "Safe": 33,
+   "Unsafe": 2
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 11,
+ "leaf_delta": {
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -12,
+  "unknown_alias: unresolved resource identity": 10
+ }
+}

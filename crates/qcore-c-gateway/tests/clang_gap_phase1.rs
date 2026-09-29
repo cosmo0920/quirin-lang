@@ -221,8 +221,9 @@ fn e04_assignment_as_a_value_is_refused_on_both_routes() {
 /// **Flipped by CG02-ELABORATION-CORE** where the value is a scalar and no
 /// call takes it: `int j = i++;` (a `ForgetScalar` for `i`, then for `j`) and
 /// `int j = s->a++;` (the typed read and write of `s->a`, then `j`). T names
-/// the form. `cg_sink(i++)` keeps its refusal: applying a contract to a call
-/// whose actual carries an effect is CG03's single application point.
+/// the form. **Flipped by CG03-CALL-SUMMARY-INSTANTIATION** (rule 10u):
+/// `cg_sink(i++)` is the increment, sequenced before the call, then the call's
+/// one contract application.
 #[test]
 fn e05_value_producing_increments_are_refused() {
     if !clang_available() {
@@ -237,11 +238,14 @@ fn e05_value_producing_increments_are_refused() {
         t_value_form("pre increment")
     );
     assert!(t("int subject(int a) { a++; return a; }").is_ok());
-    // G: the value of `i++` in an initializer (flipped) and an actual (kept).
+    // G: the value of `i++` in an initializer (flipped by CG02) and an actual
+    // (flipped by CG03-CALL-SUMMARY-INSTANTIATION, rule 10u: the increment is
+    // sequenced before the call and the scalar value is data at a borrowed
+    // formal; BEFORE this was the elaborator's `EffectfulActual` refusal).
     let run = gs("void subject(void) { void *p = q_alloc(); int i = 0; int j = i++; q_free(p); }");
     assert!(run.safe(), "{run:?}");
     let run = gs("void subject(void) { void *p = q_alloc(); int i = 0; cg_sink(i++); q_free(p); }");
-    assert!(run.refused(INCREMENT), "{run:?}");
+    assert!(run.safe(), "{run:?}");
     assert!(gs("int subject(struct S *s) { int j = s->a++; return j; }").safe());
     // Standalone scalar and pointer steps are admitted.
     assert!(

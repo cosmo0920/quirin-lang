@@ -404,17 +404,28 @@ fn a_call_that_is_not_the_whole_return_expression_is_refused() {
     let comma = run("int subject(void) { void *p = q_alloc(); return r_release_code(p), 0; }");
     assert!(!comma.refuses_return(), "{:?}", comma.unsupported());
     assert!(comma.unsupported().is_empty(), "{:?}", comma.unsupported());
-    for body in [
-        "int subject(void) { void *p = q_alloc(); return r_release_code(p) ? 1 : 0; }",
-        "int subject(void) { void *p = q_alloc(); return r_release_code(p) & 1; }",
-    ] {
-        let refused = run(body);
-        assert!(
-            refused.refuses_return(),
-            "`{body}` must keep the return refusal, got {:?}",
-            refused.unsupported()
-        );
-    }
+    let body = "int subject(void) { void *p = q_alloc(); return r_release_code(p) ? 1 : 0; }";
+    let refused = run(body);
+    assert!(
+        refused.refuses_return(),
+        "`{body}` must keep the return refusal, got {:?}",
+        refused.unsupported()
+    );
+    // Deliberate pin update, card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u):
+    // `r_release_code(p) & 1` is one condition leaf, and the return operand
+    // accepts exactly what the same leaf in an `if` accepts. B01 refused it
+    // only lexically (its operand walker does not list `&`). The call is
+    // applied once and the scalar exit escapes nothing.
+    let leaf = run("int subject(void) { void *p = q_alloc(); return r_release_code(p) & 1; }");
+    assert!(!leaf.refuses_return(), "{:?}", leaf.unsupported());
+    assert!(leaf.unsupported().is_empty(), "{:?}", leaf.unsupported());
+    let condition = run(
+        "int subject(void) { void *p = q_alloc(); int r = 0; if (r_release_code(p) & 1) { r = 1; } return r; }",
+    );
+    assert_eq!(
+        (leaf.status, leaf.unsupported()),
+        (condition.status, condition.unsupported())
+    );
     // Deliberately re-pinned by card W43-RETURN-EXPRESSION: an uncontracted
     // *whole* call whose argument is a contracted call is a whole-call return
     // the classifier refuses, so it is lowered to that refusal. The nested
