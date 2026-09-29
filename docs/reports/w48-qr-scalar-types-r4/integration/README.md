@@ -31,3 +31,14 @@ The C-audit outputs were compared with round 9's gate outputs (`private/w47-int-
 | Corpus | 543 / 10 / 4,281 | 17 moves: exactly CG02's 16 plus CG10's `rd_kafka_anyconf_is_modified` (`corpus-vs-round9.json`) |
 
 This card moves nothing on any route.
+
+## Final gate after CG11 landed
+
+Main moved to `cb20c28e` (CG11-POINTER-VALUED-STORES, C gateway only) before landing. It was merged in as `fa733dda`, with the ledger at **628**, and the standing and provider gates were re-run:
+
+- **Rust tests:** 6,637 passed, 0 failed.
+- **Lean:** 232 audits.
+- **Provider:** `configured_audit` failed again under load average ~37, with the check failing closed (0 checked, 3 Unknown). The whole provider suite, rerun with `--no-fail-fast`, passed: 129 / 0 / 1.
+- **Python:** passed after the matrix was regenerated.
+
+The arbiters were not re-run for this merge: the card moves no C-audit output (see above), and CG11 measured its own. Exits are in `exits-fa733dda/`.
