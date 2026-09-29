@@ -54,13 +54,24 @@ route is dropped only through one non-coroutine creation, such an escape and a
 non-coroutine copy. The old test's resolved test-thread context is never
 discharged.
 
+**Predefined-macro arms** (card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS). A
+reserved macro decided from the recorded compiler, per command, agrees with
+its definedness at every point of every unit of the file, so it behaves as an
+owned macro; a condition's three-valued reading agrees with the
+preprocessor's value; an arithmetic comparison is never evaluated and keeps
+its arm; an absent derivation (a compiler that is unavailable or not the
+recorded one) decides nothing and keeps every arm; a `-U` after a `-D`
+undefines; a file's own directive keeps the opposite decision from being
+made; the old test's path is refused whatever arms a reading keeps.
+
 The lexical census reading, the hop tables, P-INSTANCE and the Rust
 correspondence are trust boundary 28's premises, pinned by
 `crates/qcore-core/tests/unit/loop_owner.rs`,
 `crates/quirin-source-analysis/tests/loop_owner_census.rs` and
 `crates/quirin-source-analysis/tests/loop_owner_coroutine.rs` and
 `crates/quirin-source-analysis/tests/loop_owner_typed_dispatch.rs` and
-`crates/quirin-source-analysis/tests/loop_owner_instance_flow.rs`. -/
+`crates/quirin-source-analysis/tests/loop_owner_instance_flow.rs` and
+`crates/quirin-source-analysis/tests/loop_owner_predefined_macros.rs`. -/
 
 -- Derived ownership.
 #print axioms QCore.LoopOwner.a_step_keeps_the_thread
@@ -148,3 +159,20 @@ correspondence are trust boundary 28's premises, pinned by
 #print axioms QCore.LoopOwner.a_case_variant_matches_the_same_entries
 #print axioms QCore.LoopOwner.a_key_reach_holding_a_hazard_keeps_the_route
 #print axioms QCore.LoopOwner.a_key_reach_without_a_hazard_leaves_the_one_creation
+
+-- Predefined-macro arms (card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS).
+#print axioms QCore.LoopOwner.definedAfter_without_undef
+#print axioms QCore.LoopOwner.definedAfter_without_define
+#print axioms QCore.LoopOwner.a_predefined_macro_behaves_as_an_owned_macro
+#print axioms QCore.LoopOwner.a_compiler_mismatch_decides_nothing
+#print axioms QCore.LoopOwner.a_minus_u_undefines
+#print axioms QCore.LoopOwner.a_file_directive_wins
+#print axioms QCore.LoopOwner.agrees_neg
+#print axioms QCore.LoopOwner.agrees_conj
+#print axioms QCore.LoopOwner.the_condition_reading_agrees_with_the_preprocessor
+#print axioms QCore.LoopOwner.keptArms_unknown_head
+#print axioms QCore.LoopOwner.an_undecidable_comparison_keeps_the_arm
+#print axioms QCore.LoopOwner.readCond_without_decisions
+#print axioms QCore.LoopOwner.keptArms_all_unknown
+#print axioms QCore.LoopOwner.a_compiler_mismatch_keeps_every_arm
+#print axioms QCore.LoopOwner.the_old_test_path_is_never_discharged_whatever_the_arms
