@@ -1010,6 +1010,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-review-hold-concrete-reason](w47-review-hold-concrete-reason/README.md) | W47-REVIEW-HOLD-CONCRETE-REASON: a held row names the act it awaits |
 
+| [w47-round9-integration](w47-round9-integration/README.md) | W47 round 9 integration |
+
 | [w47-service-property-keys](w47-service-property-keys/README.md) | W47-SERVICE-PROPERTY-KEYS: the keys a property setter carries |
 
 | [w47-summary-validation-protected-formals](w47-summary-validation-protected-formals/README.md) | W47-SUMMARY-VALIDATION-PROTECTED-FORMALS — a W4 summary is validated on the premises its reported row reads (wave 47) |
