@@ -279,6 +279,17 @@ refusals.
   - `condition_call_desugar::a_descriptor_keeps_the_sentinel_validity_rules`:
     the owned descriptor assigned in the condition is now `Safe`; a
     comparison that refines nothing (`== 3`) is decided as the pair (leak).
+  - `cg02_elaboration::refusals_stay_byte_for_byte`: `while (n-- > 0 && m)`
+    is now `Safe` (the increment is its own call-free leaf, the elaborator's,
+    sequenced by `&&`; CG02's comment had given it to CG06, the brief gives it
+    here); `while ((n-- && m) > 0)` is the new refused control.
+  - `typed_const_pointer_value::a_const_pointer_value_from_a_bound_root_is_not_safe`:
+    `if (!(b = c_make(n))) return 0; return b->item;` loses its branch
+    refusal and equals the assignment-statement pair (`Unknown`, the return's
+    refusal). The pair `b = c_make(n); if (!b)` and the declaration
+    `const struct c_box *b = c_make(n); if (!b)` already differed on the base
+    (Unknown against a provisional Unsafe leak); the condition form reads as
+    the assignment pair.
   - `call_instantiation` unit table: five `tested-split` rows.
 
 ## 8. Lean
