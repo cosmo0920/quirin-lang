@@ -1065,7 +1065,10 @@ impl CompiledModule {
             // `usize`, alone or composed with rendered lines.
             CheckedSourceModule::ScopedTasks(checked) => checked.target_assumption(),
             CheckedSourceModule::ComposedTasks(module) => module.tasks().target_assumption(),
-            // Card `W48-QR-SCALAR-TYPES-R6`: a `protected isize`/`usize` payload.
+            // Card `W48-QR-SCALAR-TYPES-R6`: the composed epoch route's task
+            // half (`W48-QR-TYPES-EPOCH-TASKS`), and a `protected isize`/`usize`
+            // payload.
+            CheckedSourceModule::ComposedEpochTasks(module) => module.tasks.target_assumption(),
             CheckedSourceModule::CheckedMutexGuards(module) => {
                 module.lowered.target_assumption.as_ref()
             }
@@ -1523,7 +1526,7 @@ fn compile_elaborated_source(
         // scope and the scoped-task profile's own marker is accounting for a
         // real task region, and must not be handed to a route whose workers are
         // declarations with no bodies.
-        return compile_composed_epoch_source(parsed, mode, options, ranges);
+        return compile_composed_epoch_source(parsed, mode, options, ranges, target);
     }
     if qcore_frontend::source_epoch::has_source_epoch(parsed) {
         // Selected before every other concurrent route: an epoch scope is also
@@ -4440,10 +4443,13 @@ fn compile_task_source(
     mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
-    // The composed-epoch route's task half: no recorded target reaches it, so
-    // `isize`/`usize` refuse there as they always did.
-    task_route(parsed, typed, mode, options, ranges, false, None)
+    // The composed-epoch route's task half. Card `W48-QR-SCALAR-TYPES-R6`
+    // (`W48-QR-TYPES-EPOCH-TASKS`) threads the builder's recorded target to it,
+    // so `isize`/`usize` have their recorded width there as on the task route,
+    // and refuse without one exactly as they always did.
+    task_route(parsed, typed, mode, options, ranges, false, target)
 }
 
 fn compile_bitfield_task_source(
@@ -7181,6 +7187,7 @@ fn compile_composed_epoch_source(
     mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     use qcore_frontend::source_epoch_tasks;
 
@@ -7241,7 +7248,8 @@ fn compile_composed_epoch_source(
             .collect::<Vec<_>>()
     })?;
     // The whole scoped-task route, unedited, on the task half alone.
-    let task_module = compile_task_source(&task_parsed, &task_typed, mode, options, ranges)?;
+    let task_module =
+        compile_task_source(&task_parsed, &task_typed, mode, options, ranges, target)?;
     let CheckedSourceModule::ScopedTasks(tasks) = task_module.checked else {
         unreachable!("the scoped-task route publishes scoped-task evidence")
     };

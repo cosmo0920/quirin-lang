@@ -244,6 +244,7 @@ import QCore.ScalarTasks
 import QCore.ScalarLoopBounds
 import QCore.ScalarBufferValues
 import QCore.ScalarPayloads
+import QCore.ScalarEpochTasks
 import QCore.ResourceCalls
 
 import QCore.MonkeyWaitSourcePolicy
