@@ -2124,15 +2124,7 @@ fn raisable_variants(
     state: &State,
     operation: &TaskValueOperation,
 ) -> Result<BTreeSet<String>, String> {
-    let shared = shared_operation(state, operation)?;
-    let operand_ty = match shared {
-        scalar_values::Operation::Binary(_, scalar_values::Operand::Typed { ty, .. }, _)
-        | scalar_values::Operation::Compare(_, scalar_values::Operand::Typed { ty, .. }, _)
-        | scalar_values::Operation::Negate(scalar_values::Operand::Typed { ty, .. })
-        | scalar_values::Operation::Convert(scalar_values::Operand::Typed { ty, .. }, _) => ty,
-        _ => return Err("a task value operand is always typed".into()),
-    };
-    Ok(scalar_values::raisable(shared, operand_ty)
+    Ok(scalar_values::raisable(shared_operation(state, operation)?)
         .into_iter()
         .map(|error| error.to_string())
         .collect())

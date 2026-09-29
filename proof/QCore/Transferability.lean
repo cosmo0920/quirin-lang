@@ -9,10 +9,12 @@ Model of `qcore_core::transfer`. Two things are established, and nothing else.
 
 1. **The judgment is total and closed.** Every constructor of the boundary
    kind vocabulary, of the declared-type tag set and of the capture-mode set
-   has exactly one answer, `admits` is decided on the whole 16 x 6 product and
-   `admitsCapture` on the whole 16 x 6 x 16 product (13 x 4 x 13 originally,
+   has exactly one answer, `admits` is decided on the whole 17 x 6 product and
+   `admitsCapture` on the whole 17 x 6 x 17 product (13 x 4 x 13 originally,
    14 x 5 x 14 after card `WRITE-LEND-TASKS` grew both vocabularies by one,
-   and 16 x 6 x 16 after card `MUTEX-SHARE-CROSS` grew them by two and one).
+   16 x 6 x 16 after card `MUTEX-SHARE-CROSS` grew them by two and one, and
+   17 x 6 x 17 after card `W48-QR-SCALAR-TYPES-R4` added the fixed-width
+   scalars other than `i32`).
    There is no fallback arm and no residual case, so a kind nobody classified
    cannot slip through as an unlisted default.
 
@@ -54,6 +56,11 @@ type forms this profile does not elaborate. -/
 inductive Kind where
   | unit
   | i32
+  /-- Every other type of the fixed-width scalar table — `bool`, `i8`, `i16`,
+  `i64`, `isize`, `u8`, `u16`, `u32`, `u64`, `usize` (card
+  `W48-QR-SCALAR-TYPES-R4`). On `i32`'s footing: a copy reads a slot's value
+  and the ledger records no resource for a scalar. -/
+  | fixedScalar
   | ownedBuffer
   | readLoan
   | writeLease
@@ -80,7 +87,7 @@ inductive Kind where
 against this list, so a constructor missing from it is caught by
 `kindInventoryIsComplete`. -/
 def allKinds : List Kind :=
-  [.unit, .i32, .ownedBuffer, .readLoan, .writeLease, .threadScope, .taskHandle,
+  [.unit, .i32, .fixedScalar, .ownedBuffer, .readLoan, .writeLease, .threadScope, .taskHandle,
    .taskResult, .errorValue, .knownErrorTag, .protectedResource, .mutexShare,
    .mutexGeneration, .guard, .protectedFact, .unmodeled]
 
@@ -173,6 +180,7 @@ inductive Transfer where
 /-- **The judgment.** Total over `Kind` by exhaustive match. -/
 def transferable : Kind → Class
   | .i32 => .duplicated
+  | .fixedScalar => .duplicated
   | .unit => .never .resultPositionOnly
   | .ownedBuffer => .movedOnly (some .countedReadShares) (some .disjointWriteLeases)
   | .readLoan => .never .notAValue
@@ -300,7 +308,7 @@ theorem kindInventoryIsComplete : ∀ k : Kind, k ∈ allKinds := by
 
 theorem kindInventoryHasNoDuplicates : allKinds.Nodup := by decide
 
-theorem kindInventoryHasSixteenEntries : allKinds.length = 16 := by decide
+theorem kindInventoryHasSeventeenEntries : allKinds.length = 17 := by decide
 
 theorem tagInventoryIsComplete : ∀ t : DeclaredTag, t ∈ allTags := by
   intro t; cases t <;> simp [allTags]
@@ -331,6 +339,7 @@ theorem theClassificationIsPinned :
     allKinds.map (fun k => (k, transferable k)) =
       [(.unit, .never .resultPositionOnly),
        (.i32, .duplicated),
+       (.fixedScalar, .duplicated),
        (.ownedBuffer,
          .movedOnly (some .countedReadShares) (some .disjointWriteLeases)),
        (.readLoan, .never .notAValue),
@@ -352,7 +361,7 @@ exactly one of them is shareable under a protocol: that one is the Buffer, the
 "Send but not Sync" kind the case is about. -/
 theorem exactlyOneKindIsSendableButNotFreelyShareable :
     allKinds.filter (fun k => sendable (transferable k))
-        = [.i32, .ownedBuffer, .protectedResource] ∧
+        = [.i32, .fixedScalar, .ownedBuffer, .protectedResource] ∧
       allKinds.filter (fun k => (shareableUnder (transferable k)).isSome)
         = [.ownedBuffer, .protectedResource] ∧
       shareableUnder (transferable .ownedBuffer) = some .countedReadShares ∧
@@ -378,11 +387,11 @@ theorem guardsFactsAndMutexesNeverCross :
 
 /-! ### The admission matrices, decided whole -/
 
-/-- The 16 x 6 kind/mode matrix: exactly six cells admit. -/
+/-- The 17 x 6 kind/mode matrix: exactly seven cells admit. -/
 theorem theAdmissionMatrixIsPinned :
     (allKinds.flatMap (fun k => allModes.map (fun m => (k, m)))).filter
         (fun p => (admits p.1 p.2).isSome) =
-      [(.i32, .copy), (.ownedBuffer, .move), (.ownedBuffer, .lend),
+      [(.i32, .copy), (.fixedScalar, .copy), (.ownedBuffer, .move), (.ownedBuffer, .lend),
        (.ownedBuffer, .lendWrite), (.protectedResource, .move),
        (.protectedResource, .shareUnderMutex)] := by decide
 
@@ -390,13 +399,14 @@ theorem theAdmissionMatrixIsPinned :
 theorem noKindAdmitsAWriteCapture : ∀ k ∈ allKinds, admits k .write = none := by decide
 
 set_option maxRecDepth 16000 in
-/-- The 16 x 6 x 16 boundary matrix: exactly six cells admit out of 1,536. -/
+/-- The 17 x 6 x 17 boundary matrix: exactly seven cells admit out of 1,734. -/
 theorem theCaptureMatrixIsPinned :
     (allKinds.flatMap (fun place =>
       allModes.flatMap (fun mode =>
         allKinds.map (fun parameter => (place, mode, parameter))))).filter
         (fun t => (admitsCapture t.1 t.2.1 t.2.2).isSome) =
       [(.i32, .copy, .i32),
+       (.fixedScalar, .copy, .fixedScalar),
        (.ownedBuffer, .move, .ownedBuffer),
        (.ownedBuffer, .lend, .readLoan),
        (.ownedBuffer, .lendWrite, .writeLease),
@@ -544,14 +554,14 @@ def refuseCapture (place : Kind) (mode : Mode) (parameter : Kind) : Option Refus
   | none => refuse place mode
   | some t => if receivedKind place t = parameter then none else some .receivedKindMismatch
 
-/-- Refusal and admission partition the 16 x 6 matrix: every cell is decided,
+/-- Refusal and admission partition the 17 x 6 matrix: every cell is decided,
 and decided exactly once. This is what makes moving the refusal's attribution
 (card `CT47-COPY-CAPTURE`) incapable of moving the refused set. -/
 theorem refusalComplementsAdmission :
     ∀ k ∈ allKinds, ∀ m ∈ allModes, (refuse k m).isSome = (admits k m).isNone := by decide
 
 set_option maxRecDepth 8000 in
-/-- The same partition over the whole 16 x 6 x 16 boundary matrix. -/
+/-- The same partition over the whole 17 x 6 x 17 boundary matrix. -/
 theorem theBoundaryIsDecidedExactlyOnce :
     ∀ place ∈ allKinds, ∀ mode ∈ allModes, ∀ parameter ∈ allKinds,
       (refuseCapture place mode parameter).isSome =
@@ -720,8 +730,10 @@ theorem aRefusingKindNeedsNoRule :
 
 /-- The duplicated arm needs no custody rule because a copy splits no custody:
 it is the only admitted transfer whose obligation is trivially `True`, and it
-is admitted for exactly one kind. -/
+is admitted for exactly the scalars — `i32` and, since card
+`W48-QR-SCALAR-TYPES-R4`, the rest of the fixed-width table. -/
 theorem duplicationCarriesNoCustody :
-    allKinds.filter (fun k => decide (transferable k = .duplicated)) = [.i32] := by decide
+    allKinds.filter (fun k => decide (transferable k = .duplicated))
+      = [.i32, .fixedScalar] := by decide
 
 end QCore.Transferability

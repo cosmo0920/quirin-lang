@@ -345,19 +345,18 @@ impl Decider {
     }
 }
 
-/// The `ArithmeticError` variants a raising statement can produce: the
-/// classification `checked_error`, `negate_error` and `convert_error` apply,
-/// restricted to what the operation at `operand_ty` can reach. A comparison and
-/// a total conversion raise nothing.
+/// The `ArithmeticError` variants a raising statement's error edge carries:
+/// the classification `checked_error`, `negate_error` and `convert_error`
+/// apply — `DivisionByZero` or `Overflow` for `/` and `%`, `Overflow` for the
+/// other arithmetic and negation, `OutOfRange` for a conversion; nothing for a
+/// comparison. For an unsigned `/` or `%` the `Overflow` is unreachable and
+/// kept anyway: a wider edge only adds checked alternatives. Stated in Lean as
+/// `QCore.ScalarTasks.raisable` with `raised_variant_is_raisable`.
 #[must_use]
-pub fn raisable(operation: Operation, operand_ty: ScalarType) -> BTreeSet<ArithmeticError> {
+pub fn raisable(operation: Operation) -> BTreeSet<ArithmeticError> {
     match operation {
         Operation::Binary(Op::Div | Op::Rem, ..) => {
-            let mut errors = BTreeSet::from([ArithmeticError::DivisionByZero]);
-            if operand_ty.is_signed() {
-                errors.insert(ArithmeticError::Overflow);
-            }
-            errors
+            BTreeSet::from([ArithmeticError::DivisionByZero, ArithmeticError::Overflow])
         }
         Operation::Binary(..) | Operation::Negate(_) => BTreeSet::from([ArithmeticError::Overflow]),
         Operation::Convert(..) => BTreeSet::from([ArithmeticError::OutOfRange]),

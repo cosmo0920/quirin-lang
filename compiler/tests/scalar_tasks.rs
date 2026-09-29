@@ -776,7 +776,7 @@ fn native_worker_boundary_table_matches_the_reference_through_join() {
                         let wanted = chunk.iter().map(|case| trace_outcome(case.result, &case.expected)).collect::<Vec<_>>();
                         assert_eq!(outcomes, wanted, "{ty}: reference outcomes");
                         assert!(out.ends_with("QCORE_TASK_RESULT 0 I32 0\n"), "{ty}: {out}");
-                        let c = diagnostic_sink::instrument(module.c_source.as_deref().unwrap());
+                        let c = diagnostic_sink::instrument_fixed(module.c_source.as_deref().unwrap());
                         programs += 1;
                         for (label, flags) in BUILDS {
                             let run = build_and_run(&c, flags).unwrap_or_else(|e| panic!("{ty} {label}: {e}"));
@@ -910,7 +910,7 @@ fn native_end_to_end_programs_match_the_reference() {
         }
         let c = format!(
             "{prefix}{}",
-            diagnostic_sink::instrument(module.c_source.as_deref().unwrap())
+            diagnostic_sink::instrument_fixed(module.c_source.as_deref().unwrap())
         );
         for (label, flags) in BUILDS {
             let run = build_and_run(&c, flags).unwrap_or_else(|e| panic!("{name} {label}: {e}"));
@@ -945,4 +945,103 @@ fn the_published_example_matches_its_page() {
         block("<!-- transcript: typed_workers stdout -->")
     );
     assert_eq!(err, block("<!-- transcript: typed_workers stderr -->"));
+}
+
+/// `QCore.ScalarTasks.taskAgreement`, replayed through the task route: each
+/// vector is a worker computing on two captured values, joined by the entry;
+/// the collected outcome the reference execution records is the vector's.
+#[test]
+fn lean_task_vectors_match_the_reference_run() {
+    use ScalarType::*;
+    let vectors: [(Op, ScalarType, i128, i128, Result<i128, ArithmeticError>); 10] = [
+        (Op::Add, U8, 200, 55, Ok(255)),
+        (Op::Add, U8, 200, 56, Err(ArithmeticError::Overflow)),
+        (Op::Sub, U16, 0, 1, Err(ArithmeticError::Overflow)),
+        (
+            Op::Mul,
+            I64,
+            3037000500,
+            3037000500,
+            Err(ArithmeticError::Overflow),
+        ),
+        (
+            Op::Div,
+            I32,
+            -2147483648,
+            -1,
+            Err(ArithmeticError::Overflow),
+        ),
+        (Op::Rem, U32, 7, 0, Err(ArithmeticError::DivisionByZero)),
+        (Op::Div, Usize, 10, 3, Ok(3)),
+        (
+            Op::Add,
+            Isize,
+            9223372036854775807,
+            1,
+            Err(ArithmeticError::Overflow),
+        ),
+        (Op::Rem, I8, -128, 0, Err(ArithmeticError::DivisionByZero)),
+        (Op::Sub, I16, -32768, 1, Err(ArithmeticError::Overflow)),
+    ];
+    for (op, ty, a, b, outcome) in vectors {
+        assert_eq!(
+            expected(op, ty, a, b),
+            outcome,
+            "the vector is the language's"
+        );
+        let source = format!(
+            "{IMPORTS}fn w(x: {ty}, y: {ty}) -> {ty} effects {{ {THROWS} }} {{ let z = x {} y; return z; }}
+fn main() -> i32 effects {{ {ENTRY} }} {{
+    let a: {ty} = {a};
+    let b: {ty} = {b};
+    thread scope s {{
+        let h = spawn s w(copy a, copy b)?;
+        match join move h {{
+            Result::Ok {{ value: v }} => {{ return 1; }}
+            Result::Err {{ error: e }} => {{ return 2; }}
+        }}
+    }}
+}}
+",
+            symbol(op)
+        );
+        let (out, _) = reference(&admitted(&source), &TaskExecutionScript::default());
+        let root = if outcome.is_ok() { 1 } else { 2 };
+        assert!(
+            out.contains(&format!(
+                "QCORE_TASK_RESULT 1 {}\n",
+                trace_outcome(ty, &outcome)
+            )) && out.ends_with(&format!("QCORE_TASK_RESULT 0 I32 {root}\n")),
+            "{op:?} {ty} {a} {b}: {out}"
+        );
+    }
+}
+
+/// The error edge's variants cover every raise of the boundary table: the
+/// classified variant of each faulting case is in `scalar_values::raisable`
+/// (`QCore.ScalarTasks.raised_variant_is_raisable`).
+#[test]
+fn every_boundary_raise_is_on_its_error_edge() {
+    use qcore_core::scalar_values::{Operand, Operation, raisable};
+    let dynamic = |ty| Operand::Typed { ty, known: None };
+    for ty in INTEGERS {
+        for op in Op::ALL {
+            let edge = raisable(Operation::Binary(op, dynamic(ty), dynamic(ty)));
+            for &a in &boundary(ty) {
+                for &b in &boundary(ty) {
+                    if let Err(error) = expected(op, ty, a, b) {
+                        assert!(edge.contains(&error), "{op:?} {ty} {a} {b}");
+                    }
+                }
+            }
+        }
+        assert_eq!(
+            raisable(Operation::Negate(dynamic(ty))),
+            [ArithmeticError::Overflow].into()
+        );
+        assert_eq!(
+            raisable(Operation::Convert(dynamic(ty), ScalarType::U8)),
+            [ArithmeticError::OutOfRange].into()
+        );
+    }
 }
