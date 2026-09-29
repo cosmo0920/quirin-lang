@@ -281,8 +281,13 @@ the source text).
 
 ## 7. Tip identity
 
-The tip binary (`scripts/measure.sh tip`) reran all three routes. The results
-are in [artifacts/tip/](artifacts/tip/); see the gate record.
+The tip binary (`scripts/measure.sh tip`, `d00075ea…`, built at `eae253a9`) adds
+only the named value's declaration-id check and a doc comment. It reran all
+three routes, every exit 0, and each `resource-diagnostics.json` and sidecar is
+**byte-identical to AFTER**: corpus `a6dc500b…`, system `c53ffd61…`, slice
+`a6a4495e…` ([artifacts/tip/identity.json](artifacts/tip/identity.json)). The
+later commits change no analyzer code: rustfmt, records, and one exhaustive
+match in `compiler/examples/alias_aggregate_probe.rs`.
 
 ## 8. Lean
 
@@ -358,5 +363,25 @@ The queue's P5 status line and CG11's row are marked in the two plans.
 ## 10. Gate
 
 See [gate.json](gate.json) and [gate/](gate/). The commands are those of
-[scripts/gate.sh](scripts/gate.sh). The provider gate is not due, because
-`providers/` is unchanged.
+[scripts/gate.sh](scripts/gate.sh), at tip `6a1a2b2d`, with logs in
+`private/cg11/gate`.
+
+| Step | Exit | Count |
+|---|---:|---|
+| submodule update (`--init --recursive`) | 0 | |
+| `run_test_binaries.py` | 0 | 371 units, 6,624 passed, 0 failed, 11 ignored |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 231 audits (230 + `AuditPointerStore.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests |
+| `build_docs_index.py` | 0 | |
+
+- **First run.** The test runner and clippy first exited 101 on one compile
+  error: `compiler/examples/alias_aggregate_probe.rs` matches
+  `LegacyInstruction` exhaustively. That is fixed in `6a1a2b2d`, and both
+  steps were rerun to 0.
+- **Provider gate.** Not due, because `providers/` is unchanged; the 129
+  provider tests are carried.
+- **Matrix.** The validation block is regenerated with `--gate`, and
+  `dimensions.named_followups` is 627.

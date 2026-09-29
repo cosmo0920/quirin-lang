@@ -1,0 +1,46 @@
+{
+ "corpus": {
+  "before": {
+   "resource-diagnostics.json": "963d7c9f0a0365132bd65bf488d70a4e37bfa345096f701cf93c59119aa50a36",
+   "monkey-source.json": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "resource-diagnostics.chunk-contracts.json": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "resource-diagnostics.contracts.json": "f184daffc08b3bff34d22c436a9d5f7197ee728c53ac0a596f9a2ed7553fc992",
+   "resource-diagnostics.source-effects.json": "17492c3479dc2b75cfbd1043efe3c7694f4d06e7b552d791972d3b8bdbcc539f"
+  },
+  "after": {
+   "resource-diagnostics.json": "a6dc500bebee158e83929931c37b1ec46599cfedc699af07d57a416ebfb7034a",
+   "monkey-source.json": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "resource-diagnostics.chunk-contracts.json": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "resource-diagnostics.contracts.json": "f184daffc08b3bff34d22c436a9d5f7197ee728c53ac0a596f9a2ed7553fc992",
+   "resource-diagnostics.source-effects.json": "17492c3479dc2b75cfbd1043efe3c7694f4d06e7b552d791972d3b8bdbcc539f"
+  }
+ },
+ "system": {
+  "before": {
+   "resource-diagnostics.json": "e67834fec75cca059c47227c9e075ff2108029c2adff4ae6b2b3a44a0d8512b2",
+   "resource-diagnostics.chunk-contracts.json": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+   "resource-diagnostics.contracts.json": "a450d656518f4fd9774daf52a5211c5544e1b93f96abe9d865101713871da4ce",
+   "resource-diagnostics.source-effects.json": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+  },
+  "after": {
+   "resource-diagnostics.json": "c53ffd6166ffa1575ba9788976cb0c59b66fb001ed543e9cc59854151cb72641",
+   "resource-diagnostics.chunk-contracts.json": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+   "resource-diagnostics.contracts.json": "a450d656518f4fd9774daf52a5211c5544e1b93f96abe9d865101713871da4ce",
+   "resource-diagnostics.source-effects.json": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922"
+  }
+ },
+ "slice": {
+  "before": {
+   "resource-diagnostics.json": "cd0624f5b1c7abb724b01ac5c20f723777688c4a43f09f0076814285d1d83c77",
+   "resource-diagnostics.chunk-contracts.json": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+   "resource-diagnostics.contracts.json": "88dedba5f6caca0f7f21887d4ef90c102108539289d0be59dd547fd47f347c22",
+   "resource-diagnostics.source-effects.json": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+  },
+  "after": {
+   "resource-diagnostics.json": "a6a4495e86aef023c47395fcc9fbeed7a371474f76d05e540768dc2f4246a0af",
+   "resource-diagnostics.chunk-contracts.json": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+   "resource-diagnostics.contracts.json": "88dedba5f6caca0f7f21887d4ef90c102108539289d0be59dd547fd47f347c22",
+   "resource-diagnostics.source-effects.json": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8"
+  }
+ }
+}

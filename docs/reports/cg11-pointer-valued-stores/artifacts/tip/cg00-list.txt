@@ -1,0 +1,82 @@
+cJSON.c::suffix_object: Unknown (predicted Safe)
+    unsupported @2823: indirect memory access is outside the resource projection
+    unsupported @2824: indirect memory access is outside the resource projection
+chunkio.c::cio_set_log_callback: Unknown (predicted Safe)
+    unsupported @2437: indirect memory access is outside the resource projection
+cmt_decode_msgpack.c::create_counter_instance: Unknown (predicted Safe)
+    unsupported @7068: indirect memory access is outside the resource projection
+cmt_decode_msgpack.c::create_exp_histogram_instance: Unknown (predicted Safe)
+    unsupported @7138: indirect memory access is outside the resource projection
+cmt_decode_msgpack.c::create_gauge_instance: Unknown (predicted Safe)
+    unsupported @7082: indirect memory access is outside the resource projection
+cmt_decode_msgpack.c::create_histogram_instance: Unknown (predicted Safe)
+    unsupported @7124: indirect memory access is outside the resource projection
+cmt_decode_msgpack.c::create_summary_instance: Unknown (predicted Safe)
+    unsupported @7110: indirect memory access is outside the resource projection
+cmt_decode_msgpack.c::create_untyped_instance: Unknown (predicted Safe)
+    unsupported @7096: indirect memory access is outside the resource projection
+cmt_encode_opentelemetry.c::append_attribute_to_exponential_histogram_data_point: Unknown (predicted Safe)
+    unsupported @8634: unrecognized assignment destination
+cmt_encode_opentelemetry.c::append_attribute_to_histogram_data_point: Unknown (predicted Safe)
+    unsupported @8618: unrecognized assignment destination
+cmt_encode_opentelemetry.c::append_attribute_to_numerical_data_point: Unknown (predicted Safe)
+    unsupported @8586: unrecognized assignment destination
+cmt_encode_opentelemetry.c::append_attribute_to_summary_data_point: Unknown (predicted Safe)
+    unsupported @8602: unrecognized assignment destination
+cmt_encode_opentelemetry.c::append_metric_to_scope_metrics: Unknown (predicted Safe)
+    unsupported @8189: unrecognized assignment destination
+ctr_encode_opentelemetry.c::otel_span_set_name: Unknown (predicted Safe)
+    unsupported @9048: indirect memory access is outside the resource projection
+ctr_encode_opentelemetry.c::otel_span_set_trace_state: Unknown (predicted Safe)
+    unsupported @9053: indirect memory access is outside the resource projection
+ctr_link.c::ctr_link_set_attributes: Unknown (predicted Safe)
+    unsupported @6823: indirect memory access is outside the resource projection
+ctr_link.c::ctr_link_set_trace_state: Unknown (predicted Safe)
+    unsupported @6812: indirect memory access is outside the resource projection
+mk_core/mk_iov.c::mk_iov_consume: Unknown (predicted Safe)
+    unsupported @2206: indirect memory access is outside the resource projection
+mk_server/mk_http_parser.c::request_set: Unknown (predicted Safe)
+    unsupported @5525: indirect memory access is outside the resource projection
+nanopb/pb_decode.c::decode_pointer_field: Unknown (predicted Safe)
+    unsupported @708: unmodeled call, aggregate or indirect access in return expression
+rdbuf.c::rd_segment_init: Unknown (predicted Unknown (alias))
+    unsupported @3406: indirect memory access is outside the resource projection
+    unknown_alias @3407: unresolved resource identity `seg`
+rdkafka_assignment.c::rd_kafka_assignment_init: Unknown (predicted Safe)
+    unsupported @20780: indirect memory access is outside the resource projection
+    unsupported @20781: indirect memory access is outside the resource projection
+    unsupported @20783: indirect memory access is outside the resource projection
+    unsupported @20785: indirect memory access is outside the resource projection
+rdkafka_buf.c::rd_kafka_bufq_init: Safe (predicted Safe)
+rdkafka_conf.c::rd_kafka_confval_disable: Unknown (predicted Safe)
+    unsupported @25488: indirect memory access is outside the resource projection
+rdkafka_coord.c::rd_kafka_coord_cache_init: Safe (predicted Safe)
+rdkafka_coord.c::rd_kafka_coord_reqs_init: Safe (predicted Safe)
+rdkafka_fetcher.c::rd_kafkap_Fetch_reply_tags_set_topic_cnt: Unknown (predicted Safe)
+    unsupported @20407: indirect memory access is outside the resource projection
+rdkafka_mock.c::rd_kafka_mock_partition_push_leader_response0: Unknown (predicted Unknown (alias))
+    unknown_alias @21774: unresolved resource identity `leader_response`
+    unknown_alias @21775: unresolved resource identity `leader_response`
+    unsupported @21776: indirect memory access is outside the resource projection
+    unsupported @21776: unrecognized assignment destination
+rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegrps_init: Safe (predicted Safe)
+rdkafka_msg.c::rd_kafka_message_timestamp: Unknown (predicted Unknown (alias))
+    unsupported @20645: store through `*tstype` without an out-parameter contract
+    unknown_alias @20650: unresolved resource identity `rkm`
+    unknown_alias @20650: unresolved resource identity `tstype`
+rdkafka_partition.c::rd_kafka_topic_partition_set_metadata_from_rktp_stored: Unknown (predicted Safe)
+    unsupported @21766: indirect memory access is outside the resource projection
+rdkafka_pattern.c::rd_kafka_pattern_add: Unknown (predicted Safe)
+    unsupported @19573: indirect memory access is outside the resource projection
+    unsupported @19573: unrecognized assignment destination
+rdkafka_timer.c::rd_kafka_timer_unschedule: Unknown (predicted Safe)
+    unsupported @19582: indirect memory access is outside the resource projection
+rdmap.c::rd_map_iter_begin: Unknown (predicted Safe)
+    unsupported @3045: indirect memory access is outside the resource projection
+snappy.c::init_snappy_decompressor: Unknown (predicted Safe)
+    unsupported @20180: indirect memory access is outside the resource projection
+snappy.c::rd_kafka_snappy_init_env: Unknown (predicted Safe)
+    unsupported @20543: indirect memory access is outside the resource projection
+snappy.c::writer_set_expected_length: Unknown (predicted Safe)
+    unsupported @19832: indirect memory access is outside the resource projection
+{'Unknown': 33, 'Safe': 4}

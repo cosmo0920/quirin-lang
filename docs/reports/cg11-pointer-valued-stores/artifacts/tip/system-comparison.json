@@ -1,0 +1,32 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 200,
+   "Safe": 32,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 199,
+   "Safe": 33,
+   "Unsafe": 2
+  }
+ },
+ "moves": [
+  {
+   "unit": "src/flb_task.c",
+   "function": "map_free_task_id",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 1
+ },
+ "same_status_functions_with_changed_diagnostics": 1,
+ "leaf_delta": {
+  "unsupported: indirect memory access is outside the resource projection": -2
+ }
+}
