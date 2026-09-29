@@ -1,0 +1,13 @@
+{
+  "note": "CG10-COMMON-TYPED-PLACE integration gate on integrate/w48-cg-r2 1ae1c38f (main 0691a1cc, W48-QR-SCALAR-TYPES-R3 landed, merged with the card tip f6795927), script private/gate-int.sh, logs private/int-cg10/gate of the quirin-spec-cards-compass worktree: submodule 0; run_test_binaries.py 369 units, 382 summaries, 6,590 passed, 0 failed, 11 ignored (exit 0); fmt, clippy, both reevaluation probes 0; 229 Lean audits (R3's AuditScalarPositions and CG10's AuditTypedPlace); python first run 1 failure, the merged matrix's stale lean_audits 228 against 229 on disk, corrected by this regeneration and rerun; docs index 0. The first arbiter attempt exited 2 because no release quirin-audit was built in this worktree; after `cargo build --release -p qcore-audit --bin quirin-audit` (0) the corpus arbiter exited 0 with resource-diagnostics.json b63c1b57..., byte-identical to the card's AFTER (527 / 10 / 4,297). providers/ unchanged, so the provider gate was not due. Clang 21.1.8.",
+  "workspace_tests": 6590,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 229,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
