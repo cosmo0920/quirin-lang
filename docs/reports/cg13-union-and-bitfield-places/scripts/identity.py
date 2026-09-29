@@ -17,7 +17,7 @@ def digest(path):
 def main():
     runs = pathlib.Path(sys.argv[1])
     out = {}
-    for run in ("before", "after1", "after2"):
+    for run in ("before", "after1", "after2", "before-main", "after-main"):
         directory = runs / run
         out[run] = {
             path.name: digest(path)
@@ -30,7 +30,8 @@ def main():
         "corpus arbiter scripts/run_pinned_audit.py 66910c10 --jobs 8 over "
         "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19; BEFORE at base f19204fa; after1 at "
         "ee4ed806; after2 at 5785fcb0 (rule 10w plus its parity rows). after1 and after2 are "
-        "byte-identical in every artifact."
+        "byte-identical in every artifact. before-main: release binary built at main cb20c28e; after-main: "
+        "the merged tip (d8085cbe and later)."
     )
     with open(sys.argv[2], "w") as handle:
         json.dump(out, handle, indent=1, sort_keys=True)

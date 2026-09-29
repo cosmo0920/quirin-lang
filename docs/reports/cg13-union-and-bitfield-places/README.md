@@ -1,7 +1,9 @@
 # CG13-UNION-AND-BITFIELD-PLACES: union-member and bit-field place steps
 
 Card CG13 of the [Clang gap card queue](../../plans/clang-gap-cards/README.md)
-(wave 48, round 3; base `f19204fa` = local `main` = origin/main at dispatch).
+(wave 48, round 3; base `f19204fa` = local `main` = origin/main at dispatch;
+main `cb20c28e`, carrying CG11-POINTER-VALUED-STORES, merged before finishing
+and every measurement retaken on it, §3.0).
 Gap entries M06 (unions) and M07 (bit-fields); evidence Q16, Q33 and example E
 of the [analysis](../../reviews/clang-gap-2026-09-29/supplied/). Route **G**
 (the custody gateway) and the **core** `disjoint_footprint` model; route T is
@@ -69,6 +71,16 @@ units) is **not** admitted here, since field disjointness is CG18's. The layout
 is read only on that path (a second Clang run, parity text only), so it costs
 nothing where no such pair exists.
 
+**Composition with CG11** (rule 10v, merged from main `cb20c28e`). CG11 reads a
+pointer-typed store's destination with `typed_place::read_place`, which now
+reads a union step, and then asks `Reader::path` with `pointer_store_target`.
+There the union step is decided as `Access::PointerStore` and refused whatever
+value CG11 classified: a null, a string or a function pointer stored through a
+union member stays refused, because no contract fixes the view of overlapping
+storage. On the merged corpus this happens in 69 consultations. Before the
+merge the same stores were refused by `read_place` itself, so neither card's
+figures move from the composition.
+
 **Shared items added** (additive only, for composing with CG03 and CG11):
 
 - `typed_access_path.rs`: fields `StatementIndex::records`, `AstIndex::records`,
@@ -99,6 +111,30 @@ nothing where no such pair exists.
 | CG00: 1,629 leaves on 467 Unknown functions; 55 alone (48 strict) | **Re-derived on this base: 1,629 / 467; 61 alone / 48 strict** (six functions freed of another blocker by CG10/CG02, none moved; [population-before.json](artifacts/population-before.json)). |
 
 ## 3. Prediction against outcome
+
+### 3.0 On main `cb20c28e` (after CG11), the published figures
+
+BEFORE was retaken on the merged base. The release binary was built at main
+`cb20c28e` itself and run into `private/cg13/before-main` (exit 0). It
+reproduces CG11's AFTER byte for byte: `resource-diagnostics.json`
+`a6dc500b…`, 548 / 10 / 4,276. AFTER is this card's merged tip
+(`private/cg13/after-main`, exit 0). See
+[corpus-comparison-main.json](artifacts/corpus-comparison-main.json),
+[identity.json](artifacts/identity.json) and
+[decisions-main.json](artifacts/decisions-main.json).
+
+| Route | BEFORE | AFTER | Moves |
+|---|---|---|---|
+| corpus (`66910c10`) | 548 / 10 / 4,276 | **554 / 10 / 4,270** (`97107d95…`) | the same **6** Unknown → Safe as at the card's base (§3.1), with identical leaf deltas; 200 Unknown functions change diagnostics; sidecars byte-identical |
+| system (`046accf6`) | 33 / 2 / 199 | **33 / 2 / 199** | none; 1 function's diagnostics change |
+| tail-pause slice (`90978ac6`) | 26 / 1 / 242 / 1 Pending | **26 / 1 / 242 / 1 Pending** | none; 3 functions' diagnostics change |
+
+There is no correction, no Safe → non-Safe move, and no added leak or
+violation on any route. Rule 10w's decisions on the merged corpus: 670
+admitted and 173 refused, of which 104 are punned pointer reads and 69 are
+pointer stores through a union member that reach it through CG11.
+
+### 3.1 At the card's base `f19204fa`
 
 Corpus arbiter (`--jobs 8`): BEFORE `private/cg13/before`, AFTER
 `private/cg13/after2`, both exit 0 (after1, the same rule without the parity
@@ -271,7 +307,7 @@ fix is introduced; an unsequenced bit-field pair stays refused.
 - **Premises stated, not proved.** Faithful Clang extraction of field owners,
   widths and record layouts (trust boundary 28), and `union-live-member-view`.
 
-## 6. Ledger (623 → 623)
+## 6. Ledger (627 → 627 on main `cb20c28e`; 623 → 623 at the card's base)
 
 - **Retired:**
   - `CG13-UNION-AND-BITFIELD-PLACES`. Every DISCHARGE clause holds: BEFORE
@@ -293,11 +329,14 @@ fix is introduced; an unsequenced bit-field pair stays refused.
     at 1 leaf in `mk_socket_ip_str`, unchanged.
   - `CG11-POINTER-VALUED-STORES`: 229 pointer-store leaves through a union;
     rule 10w's pointer-store refusal.
+  - `CG11-UNREAD-POINTER-PLACES`: its union part is now read and decided
+    (refused by rule 10w, 69 consultations on the merged corpus). The cast,
+    array, call and volatile parts stand.
   - `CG18-FOOTPRINT-CONNECTION`: the bit-field connection exists; admitting a
     disjoint pair is CG18's.
 - **Registered:**
-  - `CG13-UNION-PUNNING-FLOW-INSENSITIVE`, with its size from
-    [decisions-after.json](artifacts/decisions-after.json);
+  - `CG13-UNION-PUNNING-FLOW-INSENSITIVE`, 104 consultations over 17
+    function names ([decisions-main.json](artifacts/decisions-main.json));
   - `CG13-UNION-LEAVES-OTHER-CAUSES`: 1,201 M06 leaves (891 union-only) over
     405 Unknown functions, by class.
 
@@ -315,7 +354,9 @@ See [gate.json](gate.json) and `gate/`.
   their source lines.
 - [residuals.py](scripts/residuals.py): the remaining M06 leaves by class.
 - [punned.py](scripts/punned.py): rule 10w's decisions in a parity stream.
-- [update_ledger.py](scripts/update_ledger.py): the ledger edits.
+- [update_ledger.py](scripts/update_ledger.py): the ledger edits, applied to
+  main's matrix after the merge.
+- [identity.py](scripts/identity.py): the arbiter runs' digests.
 - [gate.sh](scripts/gate.sh): the standing gate.
 - The comparison is CG02's
   [`compare.py`](../cg02-elaboration-core/scripts/compare.py), unchanged.

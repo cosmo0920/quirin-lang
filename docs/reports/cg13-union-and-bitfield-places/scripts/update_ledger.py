@@ -5,8 +5,8 @@ usage: update_ledger.py MATRIX_JSON PUNNED_JSON
 
 Retires CG13-UNION-AND-BITFIELD-PLACES and the absorbed W46-UNION-MEMBER-PATH,
 amends W44-CHAIN-INCOMPLETE-RECORD (its union part), W43-LIBC-GETPEERNAME-
-SOCKADDR-UNION (the decision), CG11-POINTER-VALUED-STORES and
-CG18-FOOTPRINT-CONNECTION, registers the card's residuals with their measured
+SOCKADDR-UNION (the decision), CG11-POINTER-VALUED-STORES,
+CG11-UNREAD-POINTER-PLACES and CG18-FOOTPRINT-CONNECTION, registers the card's residuals with their measured
 sizes (PUNNED_JSON is `punned.py`'s output), and keeps
 `dimensions.named_followups` equal to the list length. Writes the matrix back
 in its own form (indent=1, ensure_ascii=False, trailing newline).
@@ -114,6 +114,16 @@ def main():
         if entry_id not in ids:
             raise SystemExit(f"{entry_id} missing (already applied?)")
     followups[:] = [entry for entry in followups if entry["id"] not in retired]
+    union_stores = punned["step_outcomes"].get("union pointer-store refused-pointer-store", 0)
+    AMEND["CG11-UNREAD-POINTER-PLACES"] = (
+        " AMENDED by CG13-UNION-AND-BITFIELD-PLACES (rule 10w): `typed_place::read_place` now reads a union-member "
+        "and a bit-field step, so a pointer-typed store through a union member reaches rule 10v's value reading, "
+        "and rule 10w's table then refuses it whatever its value (no contract fixes the view of overlapping "
+        f"storage): {union_stores} such consultations on the corpus at CG13's merged tip (parity "
+        "`position: union-bitfield`, step `union pointer-store refused-pointer-store`, deduplicated). The union "
+        "part of this entry is therefore decided (refused by rule), not unread; the cast, array, call and "
+        "volatile parts stand."
+    )
     for entry in followups:
         if entry["id"] in AMEND:
             entry["why"] += AMEND[entry["id"]]
