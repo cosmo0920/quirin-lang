@@ -381,12 +381,18 @@ and a copy bind copies it. Two things must survive refactors.
   (they bind only `i32`s and refuse the record and conversion statements that
   are the only sources of another type); every other type lives in
   `BufferEvaluation::typed`, a name is in at most one of the two, and
-  `scalar_value` is the one typing function. An index, a stored byte, a lend
-  bound and a loop bound take an `i32`, and a name of another type is refused
-  by name there (`Q052`), never widened — the lend projection's
-  lowering-visible tier and the loop's `LoweringConstants` hold `i32`
-  constants only, so a typed name at a bound stays their existing
-  `BOUND-FROM-FIELD` refusal.
+  `scalar_value` is the one typing function. An index, a stored byte and a
+  lend bound take an `i32`, and a name of another type is refused by name
+  there (`Q052`), never widened — the lend projection's lowering-visible tier
+  holds `i32` constants only. A loop bound is the one position that takes
+  every integer type (card `W48-QR-SCALAR-TYPES-R5`): `LoweringConstants`
+  folds conversions and value statements over its own values with the shared
+  `scalar_values::Decider` — never a second rule — the index takes the bound's
+  type, and the checker re-derives the count from the bound's value
+  (`LoopIndex::Typed`, `source_loop::index_admits`); a bound read out of a
+  byte, a field or a copy stays outside the tier. The composed string/buffer
+  route binds only `i32`s and refuses a conversion, a value statement or a
+  typed loop at any depth (`Q077`).
 * **An `i32` keeps its representation.** `FieldValue::Scalar(i32)`,
   `RecordConstruction::fields` and `RecordProjection` carry `i32`s exactly as
   before; every other type is `FieldValue::Typed`, published beside them

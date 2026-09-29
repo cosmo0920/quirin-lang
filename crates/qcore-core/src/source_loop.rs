@@ -60,8 +60,11 @@
 //!   such type exists;
 //! * a zero-iteration loop (`LOOP-ZERO-BOUND`), refused because its body would
 //!   never be checked and the construct would admit an unchecked statement;
-//! * arithmetic on the index (`LOOP-INDEX-ARITHMETIC`) — the index is a scalar
-//!   binding and this revision has no expression tier.
+//! * arithmetic on the index as an expression — since card
+//!   `W48-QR-SCALAR-TYPES-R5` the admitting route's one-operation value
+//!   statement computes on the index (decided at every iteration), and the
+//!   bound and index may be of any integer type ([`typed_bound`]); a nested
+//!   expression is `W48-QR-VALUE-STATEMENT-EXPRESSIONS`.
 
 use std::collections::BTreeMap;
 

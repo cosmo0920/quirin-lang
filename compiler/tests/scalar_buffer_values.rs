@@ -212,6 +212,13 @@ fn every_operation_at_every_boundary_is_decided_as_the_reference() {
         }
     }
     assert!(values > 1000 && faults > 400, "{values} {faults}");
+    #[cfg(unix)]
+    native::publish(
+        "checker-table",
+        &[format!(
+            "{{\"position\": \"checker-table\", \"values\": {values}, \"faults\": {faults}}}"
+        )],
+    );
 }
 
 /// Every comparison over every pair of boundary values of every type, one
