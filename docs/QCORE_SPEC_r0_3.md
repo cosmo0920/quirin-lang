@@ -779,9 +779,45 @@ implemented grammars §G02t, §G02a, §G02j). On the scoped-task route:
 * The route MAY perform the value statement of the extern and task routes. Its
   operands are always known at check time, so each statement MUST be decided
   then: a fault MUST refuse, and nothing on the route raises.
-* A route that composes this route's statements and binds only `i32` values
-  MUST refuse a conversion, a value statement or a loop of another index type
-  rather than emit it.
+* A route that composes this route's statements MUST either decide and emit
+  them by this route's rules, over this route's typed environment, or refuse
+  them rather than emit them (card R5 refused them on the composed
+  string/buffer route; card R6 decides them there, below).
+
+**Typed payloads, the epoch task half, fixed-width outcomes and the composed
+string route** (card `W48-QR-SCALAR-TYPES-R6`, implemented grammars §G02t,
+§G02b, §G02c, §G02f, §G07.9):
+
+* A Buffer's payload type is part of its type: `own<Buffer<T>>` (and
+  `borrow<…>`, `lend<…>`) holds one value of the §G02t type `T`, and
+  `own<Buffer>` is `own<Buffer<i32>>`. The payload type is fixed at
+  acquisition by the initializer's type; a read yields a value of it, a write
+  MUST take exactly one, and a capture, loan or lease MUST deliver a Buffer of
+  the parameter's own payload type — nothing converts.
+* A range write lease's byte extent, and a byte access's, MUST be the payload
+  type's size — `isize`/`usize` the recorded width's, never guessed — and never
+  an assumed four. The `WRITE-LEND-TASKS` exclusivity MUST hold over those
+  extents: at every point of every spawn/join interleaving no byte has two
+  write authorities, and every leased byte is a byte of the payload. A byte
+  write into a `bool` payload MUST be refused, since a byte other than 0 or 1
+  is not a `bool`.
+* An error variant's payload stays the `i32` Buffer; a typed payload in an
+  error variant MUST be refused at the declaration.
+* `protected TYPE` protects one value of the type's size; `protected i32` is
+  `protected 4`. A write into a `protected bool` MUST leave it a `bool`.
+* The composed epoch route's task half admits the task route's whole
+  fixed-width surface. The epoch's derived shape MUST NOT read a scalar type,
+  its byte figures stay declared, a worker's `ArithmeticError` is a
+  join-failure edge of the recovery plan, and a creator's raising statement is
+  an exit the scope rule admits only with no child outstanding.
+* The F02 observable alphabet includes the fixed-width worker outcome. A trace
+  without one MUST relate exactly as before; a typed payload event stays
+  outside the alphabet and a run carrying one MUST be refused by the encoding
+  rather than narrowed.
+* The composed string/buffer route decides a conversion, a value statement and
+  a loop of any integer index type by `source.buffer.v1`'s rules over its typed
+  environment, and a typed statement MUST NOT change the borrow window's
+  decision, which only stores and releases reach.
 
 ### L14.1. Unchecked linkage
 
@@ -1362,8 +1398,10 @@ its assumptions (`recorded target: …` in the declared-assumption list of
 `W48-QR-SCALAR-TYPES-R3`: the scalar, byte-buffer, extern and composed
 extern + io routes; card `W48-QR-SCALAR-TYPES-R4`: the scoped-task route, alone
 or composed with rendered lines; card `W48-QR-SCALAR-TYPES-R5`: a byte-buffer
-loop whose index is `isize` or `usize`). A result that names neither type carries no
-such assumption.
+loop whose index is `isize` or `usize`; card `W48-QR-SCALAR-TYPES-R6`: an
+`isize`/`usize` Buffer payload, a `protected isize`/`usize` payload, the
+composed epoch route's task half and the composed string/buffer route). A
+result that names neither type carries no such assumption.
 
 **Safe** means that the named property is established for the identified subject, scope, and assumptions with complete coverage under the selected profile. **Unsafe** means a validated defect or counterexample under that profile. **Unknown** means the requested property was not established, including unsupported behavior, incomplete imports, missing premises, invalid evidence, or exhausted analysis bounds. **Pending** (card W45-USER-CONTRACT-PLUGINS, approved 2026-09-26) means the requested property was not decided by the tool and awaits a named human act: a review edit (`awaiting-human-review`), a re-pin after review (`contract-pin-mismatch`) or a checkable certificate for a checker plugin's claim (`plugin-claim-uncertified`). Pending is not Safe, stays in every denominator exactly as Unknown does, and is produced only by one of those named reasons (§L21.2).
 
@@ -1502,6 +1540,22 @@ operand it cannot render. The read of every `extern fn` declaration widens
 the OrdinaryTypes `Q020` condition to a declaration's parameter or result
 outside the §C04.1 vocabulary, on every route of an executable or library
 module.
+
+`W48-QR-SCALAR-TYPES-R6` allocates no code. On the scoped-task route it widens
+the OrdinaryTypes `Q020` condition (a payload type in a Buffer, loan or lease
+type; an `isize`/`usize` payload with no recorded target; a local annotation of
+another payload type; a capture of a Buffer of another payload type than the
+parameter's), the task route's shape `Q500` (a Buffer write of a value
+of another type than its payload's), the TypedErrors `Q300` condition (a typed
+payload in an error variant) and the checker's `Q600` (a lease or a byte read
+past the payload type's size, a byte write into a `bool` payload); on `source.mutex.guard.v1` the lowering's `Q600` (a
+`protected isize`/`usize` with no recorded target); on the composed
+string/buffer route `Q077` (a typed name at an `i32` position; the buffer
+route's own typed refusals under this route's code), and it **narrows** that
+code's R5 condition: a conversion, a value statement and a typed loop are
+admitted there. The composed epoch route's `Q600` blanket refusal of a
+fixed-width task half is discharged (a narrowing). The F02 parser admits the
+fixed-width outcome line; no code moves.
 
 `W48-QR-SCALAR-TYPES-R5` allocates no code. On `source.buffer.v1` it widens
 `Q051` (a value statement of more than one operation, a malformed one, a target

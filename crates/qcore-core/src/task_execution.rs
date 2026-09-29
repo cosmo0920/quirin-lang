@@ -1656,7 +1656,7 @@ fn check_function(
                         }
                         state.slots.insert(*handle, AbstractSlot::Consumed);
                         if let Some(slot) = outcome_slot {
-                            let value = normal.then(|| match (returned, worker.result) {
+                            let value = normal.then_some(match (returned, worker.result) {
                                 (Some(resource), ScalarType::OwnedBuffer(payload)) => {
                                     AbstractValue::Owned(resource, payload)
                                 }

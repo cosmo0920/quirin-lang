@@ -397,12 +397,15 @@ composed extern + io routes (§G02d, §G02i). Widened by card
 captures, value statements in every task function, and the composed tasks + io
 operands (§G02a, §G02j). Widened by card `W48-QR-SCALAR-TYPES-R5` (below):
 loop bounds and indices (§G07.12) and the value statement on
-`source.buffer.v1` (§G02k). Every other position that takes `i32` keeps its
-existing refusal and is a named follow-up: the `Buffer` and `protected N` payloads (§G02b,
-§G02c, `W48-QR-TYPES-PAYLOADS`), the composed epoch route's task half (§G02f,
-`W48-QR-TYPES-EPOCH-TASKS`), and an executable entry result other than
-`i32`/`unit` (C's `main` returns `int`; the entry's value is published, never
-returned; a task entry's likewise). A typed `let` beside an `std.io` line is
+`source.buffer.v1` (§G02k). Widened by card `W48-QR-SCALAR-TYPES-R6` (below):
+the `Buffer` payload and the `protected` payload (§G02b, §G02c), the composed
+epoch route's task half (§G02f), the fixed-width worker outcome in the F02
+observable alphabet, and the whole tier on the composed string/buffer route
+(§G07.9). Every other position that takes `i32` keeps its existing refusal
+and is a named follow-up: an error variant's payload, which stays the `i32`
+Buffer (§G02bc, `W48-QR-TYPES-ERROR-PAYLOAD`), and an executable entry result
+other than `i32`/`unit` (C's `main` returns `int`; the entry's value is
+published, never returned; a task entry's likewise). A typed `let` beside an `std.io` line is
 scalar-call syntax, so such a module reaches this route and needs no change
 to `source.std-io.v1`. A conversion written on one of those routes was
 refused at `Q013` before this card (name resolution collected the type name);
@@ -540,9 +543,91 @@ convertible, copyable, a loop bound when its operands are of the constant
 tier, and refused at an `i32` position unless it is an `i32`. The emitted C
 calls §G02t's shared `q_scalar_*` helpers, whose fault test is a witness the
 checker proved never taken, and makes each comparison through a two-parameter
-function. The composed string/buffer route (§G07.9) binds only `i32` values: a
-conversion, a value statement or a loop of another index type refuses there by
-name at any depth (`Q077`).
+function. Card R5 refused the tier on the composed string/buffer route
+(§G07.9) by name (`Q077`); card R6 admits it there (below).
+
+**Typed payloads** (card `W48-QR-SCALAR-TYPES-R6`, `W48-QR-TYPES-PAYLOADS`,
+§G02b, §G02c). The payload type is part of a Buffer's type:
+
+```ebnf
+buffer_type = ("own" | "borrow" | "lend"), "<", "Buffer", ["<", SCALAR, ">"], ">" ;
+protected   = "let", NAME, "=", "protected", (NAT | SCALAR), ";" ;
+```
+
+`own<Buffer>` is `own<Buffer<i32>>` — every Buffer before the card, with its
+bytes unchanged — and `own<Buffer<T>>` holds one value of any §G02t type `T`
+(likewise `borrow<…>` and `lend<…>`). The payload type is named at
+acquisition by the initializer: `qcore_buffer_new(VALUE)` holds a payload of
+`VALUE`'s own type (an `i32` literal, or a binding of any type); a whole
+read yields a value of the payload type and a whole write takes exactly one,
+a literal ranged against it. Types are compared exactly at every boundary: a
+capture, a lend and a lease deliver a Buffer of the parameter's payload type
+and nothing converts. A range write lease's byte extent — and an owner's byte
+read's — is the payload type's **size** (`bool` 1, `i8`/`u8` 1, … `i64`/`u64`
+8, `isize`/`usize` the recorded width over 8, never guessed), not a fixed
+four; a lease past it refuses at the capture (`Q600`), and so does a byte
+index past it. A byte **write** into a `bool` payload refuses (`Q600`): a byte
+other than 0 or 1 is not a `bool`, so a `bool` payload's byte view is
+read-only. An error variant's payload stays `own<Buffer>`, the `i32` payload;
+`V(own<Buffer<T>>)` refuses at the declaration (`Q300`,
+`W48-QR-TYPES-ERROR-PAYLOAD`). The `WRITE-LEND-TASKS` exclusivity holds over
+typed extents — no byte has two write authorities, and every leased byte is a
+payload byte (`QCore.ScalarPayloads`). The emitted C holds a typed payload in
+its own member beside the historical `int32_t`, `_Static_assert`s each payload
+type's size, and logs a typed payload event under a `=TYPE` name through an
+adapter arm installed only where needed; its trace line is the historical one
+with `TYPE NUMBER` for the number (`QCORE_BUFFER_ALLOC 0 1 U16 258`), so every
+`i32`-payload program keeps its bytes and its F02 trace. The F02 alphabet has
+no typed payload event, so such a run is refused by the reference encoding
+rather than narrowed (`W48-QR-F02-TYPED-PAYLOADS`). `protected TYPE` declares
+a mutex-protected payload of the type's size (`protected i32` is
+`protected 4`, byte for byte); the route has no value position, and a write
+into a `protected bool` stores the fill's low bit, so the cell is a `bool`
+after every write. `isize`/`usize` payloads need the recorded target, which
+the result names.
+
+**The composed epoch route's task half** (card `W48-QR-SCALAR-TYPES-R6`,
+`W48-QR-TYPES-EPOCH-TASKS`, §G02f). The task half of `source.epoch.tasks.v1`
+admits the whole task-route tier — worker parameters and results of every
+type, `copy` captures of any scalar, typed payloads and the value statement —
+under the recorded target the builder records. The epoch's derived shape reads
+no scalar type (a `copy` of any type is `copy;`; a result of an owned Buffer of
+any payload type is retained), every byte figure stays declared, and a
+worker's `ArithmeticError` is the join-failure edge the recovery plan already
+carries. A creator's raising statement is a creator exit, admitted by the
+scope rule only with no child of the scope outstanding (`ScopeBusy`
+otherwise), so it abandons no credit (`QCore.ScalarEpochTasks`).
+
+**Fixed-width outcomes in F02** (card `W48-QR-SCALAR-TYPES-R6`,
+`W48-QR-F02-FIXED-OUTCOMES`). The F02 observable alphabet gains the
+fixed-width worker outcome, parsed from `QCORE_TASK_RESULT TASK TYPE NUMBER`
+(`true`/`false` for `BOOL`; a number outside its type, and an unknown type
+name, do not parse). A run whose worker returns one is encoded and related,
+not refused; a trace without one relates exactly as before, and no pinned
+digest moves (`QCore.TaskTraceFixedOutcomes`).
+
+**The composed string/buffer route** (card `W48-QR-SCALAR-TYPES-R6`,
+`W48-QR-TYPES-COMPOSED-STRING`, §G07.9). A composed module — one holding a
+buffer — reads a top-level conversion and value statement with
+`source.buffer.v1`'s reader, and its loops (any integer index type, typed
+bounds of the lowering's tier) and their bodies' conversions and value
+statements as before; all of them are decided by that route's runner over its
+typed environment, under the recorded target. A typed name renders at its type
+at the top level and in a body, and refuses at an `i32` position of this route
+(a slice bound, a composed piece) by name (`Q077`); every other refusal is the
+buffer route's own under this route's `Q077`. A typed statement stores no byte,
+so the borrow window is decided exactly as for an `i32` program
+(`QCore.ScalarComposedString`). The emitter keeps one typed environment for
+the whole entry and defines each helper once.
+
+**Emitted C under `-Werror`** (card `W48-QR-SCALAR-TYPES-R6`). A scalar binding
+of `source.buffer.v1` that nothing after it in its block reads — a loop bound
+whose `i32` loop is written against its literal count, a body binding no later
+body statement reads — is followed by `(void) NAME;`, as the string route
+already did (`W48-QR-LOOP-BOUND-NAME-UNUSED-C`); every value-statement
+comparison on the scalar, extern and task routes is the shared two-parameter
+function `q_scalar_CMP_T`, so a value compared with itself builds
+(`W48-QR-INLINE-COMPARISON-WERROR`).
 
 **Every extern declaration is read** (card `W48-QR-SCALAR-TYPES-R3`,
 `W48-INERT-EXTERN-DECLARATION-TYPES`). An executable or library module's
@@ -713,7 +798,8 @@ establish general C11/shared-memory or cross-platform refinement. See the
 
 `ScopedOwnedTasksV1` extends G02a with one concrete builtin type:
 `own<Buffer>`. Each Buffer is a malloc-backed allocation with a fresh generation
-and one immutable i32 payload. Its resource identity is separate from source
+and one i32 payload — or, since card `W48-QR-SCALAR-TYPES-R6`, one payload of
+any §G02t type, `own<Buffer<T>>` (§G02t, "Typed payloads"). Its resource identity is separate from source
 slot and scalar identities. This is not arbitrary `own<T>` elaboration.
 
 ```qcore
@@ -1090,7 +1176,7 @@ fn main() -> unit {
 module      = { error_declaration } , entry ;
 entry       = "fn" , NAME , "(" , ")" , "->" , "unit" , "{" , scope , "}" ;
 scope       = "thread" , "scope" , NAME , "{" , { outer } , "}" ;
-outer       = "let" , NAME , "=" , "protected" , NAT , ";"
+outer       = "let" , NAME , "=" , "protected" , ( NAT | SCALAR ) , ";"
             | "let" , NAME , "=" , "mutex" , "guards" , NAME , ";"
             | "let" , NAME , "=" , "mutex" , "rank" , NAT , "guards" , NAME , ";"
             | "let" , NAME , "=" , "fact" , NAME , ";"

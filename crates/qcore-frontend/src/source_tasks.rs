@@ -410,7 +410,7 @@ fn signature(
         } else if group.len() >= 8
             && let Some(Scalar::OwnedBuffer(payload)) = scalar(&group[2..group.len() - 2])
             && word(group.get(group.len() - 2), "use")
-            && word(group.get(group.len() - 1), "one")
+            && word(group.last(), "one")
             && parameter
                 .usage
                 .as_ref()

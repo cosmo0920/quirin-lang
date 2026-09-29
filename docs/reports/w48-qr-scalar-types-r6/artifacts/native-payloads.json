@@ -1,0 +1,13 @@
+[
+  {"type": "bool", "values": 2, "programs_per_build": 4, "runs": 12, "lines": 156, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "i16", "values": 7, "programs_per_build": 14, "runs": 42, "lines": 735, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "i32", "values": 7, "programs_per_build": 14, "runs": 42, "lines": 777, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "i64", "values": 7, "programs_per_build": 14, "runs": 42, "lines": 861, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "i8", "values": 7, "programs_per_build": 14, "runs": 42, "lines": 567, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "isize", "values": 7, "programs_per_build": 14, "runs": 42, "lines": 861, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "u16", "values": 4, "programs_per_build": 8, "runs": 24, "lines": 420, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "u32", "values": 4, "programs_per_build": 8, "runs": 24, "lines": 444, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "u64", "values": 4, "programs_per_build": 8, "runs": 24, "lines": 492, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "u8", "values": 4, "programs_per_build": 8, "runs": 24, "lines": 324, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "usize", "values": 4, "programs_per_build": 8, "runs": 24, "lines": 492, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0}
+]

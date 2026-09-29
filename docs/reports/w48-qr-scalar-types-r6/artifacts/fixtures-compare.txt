@@ -1,0 +1,4 @@
+before quirin 11891c958c01b411…, after quirin 6564711f5ae6253f…
+examples/scalar/fixed_width.qr: emit stdout_sha256 2ec53efe66689318fd02847ebc74455ad493c25e3595d1a1a81d0c0cccac5c1e -> 0cf6fab94ab679c9e0ee16b3cf40a040774c2c10bffaaf3f0d76a2b635dbeefb
+examples/scalar/typed_workers.qr: emit stdout_sha256 7bedd7a1f0b80d792845a4f426d6074f3d0c5f307a3856e784403395fb430ab2 -> 2f0d4f4241877af1d1c78ecbe555c7cb68ed95281823404caa54368036f4d615
+632 files, 2 differing field(s)

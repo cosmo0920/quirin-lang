@@ -1,0 +1,56 @@
+{
+ "retired": [
+  {
+   "id": "W48-QR-TYPES-PAYLOADS",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R6 item 1: the payload type is part of a Buffer's type — own<Buffer<T>>, borrow<Buffer<T>>, lend<Buffer<T>> for every G02t type T, own<Buffer> = own<Buffer<i32>> byte for byte — named at acquisition by qcore_buffer_new's initializer type; task_execution::ScalarType::{OwnedBuffer, ReadLoan, WriteLease} carry it, a whole read yields it and a whole write takes exactly it, and every capture, loan and lease delivers the parameter's own payload type. A lease's byte extent and an owner byte read's are the payload type's size (scalar_types::ScalarType::size_bytes, task_execution::payload_extent: bool 1, isize/usize the recorded width / 8), never an assumed four; a byte write into a bool payload is refused (Q600). The reference execution stores typed payload cells (object_bytes/from_object_bytes); the emitted C holds a typed payload in its own union member beside the historical int32_t, _Static_asserts each payload type's size, and logs typed payload events under =TYPE names through an adapter arm installed only where needed (QCORE_BUFFER_ALLOC 0 1 U16 258), so all 632 fixtures other than the two item-5 comparison examples are byte-identical and the F02 traces do not move. protected TYPE on source.mutex.guard.v1 declares a payload of the type's size (protected i32 = protected 4 byte for byte), a protected bool write stores the fill's low bit, and isize/usize take the recorded target, published as the named assumption. Lean QCore.ScalarPayloads (15 theorems): the size table, every integer byte pattern a value and a bool byte not, the typed lease admission a sub-relation of WRITE-LEND-TASKS' ledger so no byte has two write authorities (no_byte_has_two_write_authorities_typed) and every held byte a payload byte, at i32 the four-byte rule. Native: every type x every boundary value through move/read/write/join/loan and every type's payload split between two disjoint byte leases, 3 builds, stdout equal to the reference, 0 sanitizer reports; a spawn-failure control; every protected TYPE under the mutex observation.",
+   "source": "docs/reports/w48-qr-scalar-types-r6/README.md"
+  },
+  {
+   "id": "W48-QR-TYPES-EPOCH-TASKS",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R6 item 2: source_epoch_tasks::ledger no longer refuses a fixed-width task half; the recorded target is threaded to the composed epoch route's task half (compile_task_source(..., target)) and published (CompiledModule::target_assumption). The derived shape reads no scalar type (a copy of any type is copy;, an owned Buffer result of any payload type is retained), byte figures stay declared, a worker's ArithmeticError is the join-failure edge CT23's recovery plan carries, and a creator's raising statement is a creator exit the scope rule admits only with no child outstanding (a raise with a child outstanding is refused at Q600 ScopeBusy, exercised). Lean QCore.ScalarEpochTasks: the derived shape and the plan-ledger agreement are type-blind, a raising worker is a join-failure edge, an admitted creator exit abandons no child credit. Native: u64, i8, usize epoch task halves with fixed-width workers, a typed payload move and the overflow case through join, 3 builds, stdout equal to the reference.",
+   "source": "docs/reports/w48-qr-scalar-types-r6/README.md"
+  },
+  {
+   "id": "W48-QR-F02-FIXED-OUTCOMES",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R6 item 3: task_trace_relation::ObservedOutcome::Fixed { ty, value }; reference_trace encodes TaskOutcome::Fixed instead of refusing it, and parse_observed_trace reads QCORE_TASK_RESULT TASK TYPE NUMBER (true/false for BOOL; a number outside its type and an unknown name do not parse). Lean QCore.TaskTraceFixedOutcomes: the production relation TaskTraceWrites.relate is invariant under every faithful injective renaming of completion outcomes (relate_is_invariant_under_faithful_renaming, through all sixteen flags), the extended relation over an injective faithful encoding does not depend on the encoding chosen, fixed-free traces relate exactly as before, and non-vacuity both ways (another number, the same number at another type, an i32 in its place: class 3). The adapter was deliberately not unified: its fixed-result arm stays installed only where needed, so no F02 C digest moved. Native: every non-i32 type's worker outcome relates under 3 builds.",
+   "source": "docs/reports/w48-qr-scalar-types-r6/README.md"
+  },
+  {
+   "id": "W48-QR-TYPES-COMPOSED-STRING",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R6 item 4: the composed string/buffer route reads a top-level conversion and value statement with source.buffer.v1's reader (source_std_buffer::value_statement), decides them, typed loops and body statements with that route's runner over its typed environment under the recorded target (check_string_program_for_target, lower_source_string_for_target), renders a typed name at its type, refuses a typed name at an i32 position by name (Q077), and publishes the typed environment and target in StringCertificate (rechecked). The emitter keeps one std_buffer_c_emit::EmbeddedTyped for the whole entry and defines every helper once. Lean QCore.ScalarComposedString: the decision is the buffer route's, per statement and per iteration, and the borrow window ignores typed statements at every iteration. Native: every integer type's program (top-level conversion, value statement, comparison, typed loops with body statements, a loan window around a typed loop), 3 builds, both streams equal to the reference.",
+   "source": "docs/reports/w48-qr-scalar-types-r6/README.md"
+  },
+  {
+   "id": "W48-QR-LOOP-BOUND-NAME-UNUSED-C",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R6 item 5: std_buffer_c_emit::emit_events discards (`(void) s_NAME;`) every scalar its own C block never names after the declaration, decided on the emitted text, so an i32 loop bound named only by its loop, an unused top-level binding and an unused body binding build under -Wall -Wextra -Werror -pedantic on source.buffer.v1 and on the composed string/buffer route; a program whose every binding is read keeps its bytes. Measured: every one of the 154 tracked fixtures whose emit exits 0 compiles under -Werror at base and at tip (werror_census.py), and the R5 shape plus the unused-binding shapes build and run under 3 builds.",
+   "source": "docs/reports/w48-qr-scalar-types-r6/README.md"
+  },
+  {
+   "id": "W48-QR-INLINE-COMPARISON-WERROR",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R6 item 5: scalar_calls_c_emit::Helper::Compare(cmp, ty), `static bool q_scalar_CMP_T(T a, T b)`, is the comparison of every value statement on the scalar, extern and task routes, so a value compared with itself builds under -Werror; a self-comparison on each route builds and runs under 3 builds. Two examples' emitted C moved (examples/scalar/fixed_width.qr, examples/scalar/typed_workers.qr: an inline comparison became the helper call), attributed in the fixture comparison.",
+   "source": "docs/reports/w48-qr-scalar-types-r6/README.md"
+  }
+ ],
+ "registered": [
+  {
+   "id": "W48-QR-TYPES-ERROR-PAYLOAD",
+   "title": "Admit a typed Buffer as an error variant's payload",
+   "why": "W48-QR-SCALAR-TYPES-R6 typed the Buffer payload everywhere a Buffer is a value (own/borrow/lend<Buffer<T>>) but kept G02bc's error payload the i32 Buffer: an error declaration `V(own<Buffer<T>>);` refuses at Q300 by name, and a raise of a typed Buffer as a payload refuses in the checker. Size: a per-tag payload type in TaskFunction::error_payloads and ErrorType, the payload type carried through AbstractSlot::Error/Result/Handle and TaskOutcome::ErrorWithBuffer, the take's binding at that type, the ERROR_BUFFER trace line, native runs; 0 fixtures move. DISCHARGE: a worker raising an error that carries own<Buffer<T>> for every G02t type, collected and taken by its creator, checked, run natively, with Lean parity.",
+   "source": "docs/reports/w48-qr-scalar-types-r6/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R6"
+  },
+  {
+   "id": "W48-QR-F02-TYPED-PAYLOADS",
+   "title": "Give the F02 observable alphabet typed Buffer payload events",
+   "why": "W48-QR-SCALAR-TYPES-R6 gave Buffers typed payloads and the F02 alphabet fixed-width outcomes, but ObservedEvent::{Allocated, Read, Written} carry an i32 payload, so reference_trace refuses a run with a TypedBufferAllocated/Read/Written event (UnsupportedObservedEvent, fail-closed, never narrowed) and parse_observed_trace refuses the `TYPE NUMBER` payload lines; such a program's native evidence is the byte comparison of the maintained trace. Size: typed payload variants in ObservedEvent and their lines in the parser, the payload conjunct (class 8) over typed values, a conservativity theorem on QCore.TaskTraceFixedOutcomes' renaming method; 0 fixtures move. DISCHARGE: a typed-payload run encoded, related natively and refused on a changed value, with the conservativity theorem.",
+   "source": "docs/reports/w48-qr-scalar-types-r6/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R6"
+  }
+ ],
+ "amended": [
+  {
+   "id": "W48-QR-TYPES-MSVC-NATIVE",
+   "amendment": "W48-QR-SCALAR-TYPES-R6 adds the typed Buffer payload runtime (union qcore_buffer_typed, qcore_buffer_*_T, the memcpy bit copy), the size assertions, the comparison helpers q_scalar_CMP_T and the (void) discards to what no MSVC build has run; the discharge now also covers compiler/tests/scalar_payloads.rs, scalar_epoch_tasks.rs, scalar_f02_outcomes.rs, scalar_composed_string.rs and emitted_c_werror.rs under /W4 /WX."
+  }
+ ]
+}

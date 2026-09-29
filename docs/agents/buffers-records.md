@@ -391,8 +391,14 @@ and a copy bind copies it. Two things must survive refactors.
   type, and the checker re-derives the count from the bound's value
   (`LoopIndex::Typed`, `source_loop::index_admits`); a bound read out of a
   byte, a field or a copy stays outside the tier. The composed string/buffer
-  route binds only `i32`s and refuses a conversion, a value statement or a
-  typed loop at any depth (`Q077`).
+  route decides a conversion, a value statement and a typed loop with this
+  route's runner over this environment (card `W48-QR-SCALAR-TYPES-R6`; R5
+  refused them at `Q077`), and its emitter keeps **one**
+  `std_buffer_c_emit::EmbeddedTyped` for the whole entry, so every helper is
+  defined once; a typed statement stores nothing, so the borrow window never
+  sees it. `emit_events` discards (`(void) s_NAME;`) a scalar its own block
+  never reads afterwards, decided on the emitted text, so an unused binding
+  builds under `-Werror` and a read one keeps its bytes.
 * **An `i32` keeps its representation.** `FieldValue::Scalar(i32)`,
   `RecordConstruction::fields` and `RecordProjection` carry `i32`s exactly as
   before; every other type is `FieldValue::Typed`, published beside them

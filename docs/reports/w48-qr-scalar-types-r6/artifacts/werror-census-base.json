@@ -1,0 +1,2061 @@
+{
+ "counts": {
+  "built": 154,
+  "emitted": 154,
+  "failed": 0
+ },
+ "files": {
+  "compiler/tests/fixtures/bitfield_concurrency/addressable.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/bitfield_concurrency/adjacent.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/bitfield_concurrency/distinct_units.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/bitwise/masked_condition.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/bitwise/negated_condition.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/bitwise/negated_condition_twin.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/branch/conditional_release.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/branch/unbranched_twin.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/branch_arms/call_else_arm.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/branch_arms/call_then_arm.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/branch_arms/early_return.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/compose/borrowed_render.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/compose/chain.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/compose/chain_hand_written.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/connectives/short_circuit_or.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/connectives/short_circuit_or_twin.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/contract_inherit_adoption/resource_memory_hand_written.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/contract_inherit_adoption/resource_string_written_out.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/contract_inherit_qcore_provider/librdkafka_memory_hand_written.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/contract_inherit_qcore_provider/monkey_memory_hand_written.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/contracts/alloc_acquire.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT01/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT02/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT03/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT04/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT04/write_after_joins.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT05/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT05/remainder_fits.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT06/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT06/copy_read_first.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT06/no_copy.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT07/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT07/loan_index_out_of_extent.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT07/out_of_extent_lend.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT07/overlapping_leases.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT07/overlapping_lends.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT07/past_extent_read.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT07/past_range_byte.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT07/read_loan.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT07/sequential_write_halves.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT08/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT08/disjoint.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT08/no_loan.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT09/bad_field.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT09/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT10/addressable.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT10/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT10/distinct_units.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT11/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT11/write_after_alias.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT11/write_before_alias.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT12/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT13/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT13/unjoined_failure.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT14/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT14/drop_before_join.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT14/read_before_join.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT15/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT16/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT16/unclean_allocation_failure.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT16/unclean_worker.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT17/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT17/undelivered_payload.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT17/unreleased_payload.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT18/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT18/owned_payload.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT19/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT19/joined_sibling.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT20/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT20/undropped.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT20/unjoined.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT21/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT21/discharged.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT21/unopened.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT22/acquiring.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT22/before_join.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT22/both_models.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT22/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT22/no_discharge.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT22/no_open.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT22/no_region.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT22/spawn_after.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT22/spent_out.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT22/wrong_region.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT23/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT23/minted.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT23/no_arm.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT23/partial.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT23/restored.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT23/spent.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT24/after_join.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT24/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT24/double_discharge.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT24/in_error_arm.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT24/independent_owner.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT24/missing_join.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT24/nested_if.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT24/nested_loop.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT24/unsupported_body.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT25/adopt_and_acquire.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT25/adopt_scalar.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT25/adopt_twice.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT25/adopt_unknown.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT25/adopted_then_dropped.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT25/before_join.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT25/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT25/live_share_drop.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT26/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT27/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT27/disjoint_payloads.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT28/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT28/child_unlocks.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT28/own_acquisition.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT29/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT29/restored.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT30/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT30/escaped_borrow.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT30/released.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT31/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT31/performed.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT32/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT32/joined_outside.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT33/ascending_nesting.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT33/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT33/unranked.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT34/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT34/growth_onto_unprotected.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT34/growth_over_own_footprint.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT34/growth_then_guarded_access.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT35/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT35/repeated_entry.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT35/two_cells.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT36/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT36/maximized_allocation.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT36/summed_allocation.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT37/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT37/unconsumed_result.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT37/undropped_result.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT38/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT38/split_within_total.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT39/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT39/work_bound_only.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT40/contracts.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT42/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT42/closed_custodian.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT42/datagram_pair.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT42/listener_question.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT42/not_a_socket.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT42/two_connections.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT43/contracts.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT44/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT44/drop_after_join.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT44/frame_exit_before_join.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT44/move_before_join.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT44/scalar_capture_drop.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT45/contracts.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT45/destructor_contract.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT46/absent_protocol.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT46/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT46/guard_local.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT46/mismatched_protocol.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT46/no_crossing.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT46/share_generation.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT46/unguarded_reach.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT47/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT47/modeless.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT47/move_transfer.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT47/read_share.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT47/write_lease.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT48/case.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT48/never_asserted.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT48/reasserted.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT49/ambiguous_alphabet.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT49/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT49/parent_only.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT50/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/ct/CT50/stale_drop.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/ct/CT50/stale_read.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/after_join.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/before_join.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/epoch_credit/CT24_COMPOSITION/independent_owner.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/epoch_credit/CT25/case.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/epoch_credit/CT25/colliding_owner.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/epoch_credit/CT25/dropped_owner.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/epoch_credit/CT25/no_discharge_duty.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/epoch_credit/CT25/no_open_duty.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/epoch_credit/CT25/outer_drop.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/epoch_credit/CT25/sequenced_owners.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/epoch_credit/CT25/two_owners.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/extern_calls/contracts/buffer_api.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/extern_calls/out_slot.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/extern_calls/realloc.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/extern_calls/realloc_failure.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/extern_calls/released.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/extern_calls/round_trip.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/extern_calls/scalar_result.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/extern_calls/stored.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/extern_calls/stored_failure.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/f02/concurrent_round_trip.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/native_library/buffer_lib.qrlib": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/native_library/buffer_lib_decorated.qrlib": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/native_library/buffer_lib_header.qrlib": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/native_library/contracts/buffer_lib.qv": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/native_library/unchecked_demo.qrlib": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/pipe/lines_piped.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/pipe/realloc_piped.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/pipe/round_trip_piped.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/pipe/scalar_result_piped.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/region/discharged_pack.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/region/hand_written_twin.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/resource_helpers/round_trip.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/slice_permissions/disjoint_halves.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/slice_permissions/overlapping_write.qr": {
+   "emit": 1
+  },
+  "compiler/tests/fixtures/source_loop/copy.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/source_record/point.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/std_buffer/bytes.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/std_buffer/silent.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/std_modules/lines.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/std_modules/logger_only.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/std_string/composed.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/std_string/silent.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/std_string/slices.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/std_string/text.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/task_worker_allocations/sequential_completion_payload.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/task_worker_allocations/sequential_worker_error.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/unsafe_linkage/round_trip.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "compiler/tests/fixtures/write_lend_tasks_exercise/disjoint_exercise.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "contract/profiles/libevent-core/libevent_memory.qv": {
+   "emit": 1
+  },
+  "crates/qcore-audit/tests/fixtures/alloc_acquire.qv": {
+   "emit": 1
+  },
+  "crates/qcore-audit/tests/fixtures/alloc_release.qv": {
+   "emit": 1
+  },
+  "crates/qcore-audit/tests/fixtures/revision_mode/queue.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/address_of_member_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/alias_aggregate_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/borrow_residuals.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/c02p_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/cg04_condition.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/chained_tail_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/clang_gap.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/constructor_residuals_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/derived_result_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/descriptor_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_callees.qr": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/hash_contracts_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/neighbours_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_callees.qr": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_arms_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qr": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_callees.qr": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b09b10_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_path.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_read_bound_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_callees.qr": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/o04_trace_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/prod_contracts_generic.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/q_base.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/q_container_remove.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/q_container_store.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/q_internal_make.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/q_nullable.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/q_realloc.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/q_rich_modes.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/r_return_call.qv": {
+   "emit": 1
+  },
+  "crates/qcore-c-gateway/tests/fixtures/contracts/z_reach.qv": {
+   "emit": 1
+  },
+  "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-app/contracts/app/chain.qv": {
+   "emit": 1
+  },
+  "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-cfl/contracts/cfl/table.qv": {
+   "emit": 1
+  },
+  "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/hand_written.qv": {
+   "emit": 1
+  },
+  "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-fluent-bit/contracts/fluent_bit/wrappers.qv": {
+   "emit": 1
+  },
+  "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/heap.qv": {
+   "emit": 1
+  },
+  "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/internal.qv": {
+   "emit": 1
+  },
+  "crates/qcore-contract/tests/fixtures/contract_inherit/quirin-provider-libc/contracts/libc/string.qv": {
+   "emit": 1
+  },
+  "crates/qcore-verification/tests/fixtures/generic_source/cleanup.qv": {
+   "emit": 1
+  },
+  "crates/qcore-verification/tests/fixtures/generic_source/counter.qv": {
+   "emit": 1
+  },
+  "crates/qcore-verification/tests/fixtures/generic_source/destructor.qv": {
+   "emit": 1
+  },
+  "crates/qcore-verification/tests/fixtures/generic_source/unlink.qv": {
+   "emit": 1
+  },
+  "docs/reports/ct-ctwin-lane/artifacts/ct41-shapes/contracts.qv": {
+   "emit": 1
+  },
+  "docs/reports/remaining-d01/probes/P21_span_line4.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-d01/probes/P22_span_dupaxis.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-d01/probes/P25_multifile_dimension.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-d01/probes/P26_multifile_badaxis.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-d01/probes/P27_multifile_goodaxis.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-d01/probes/P28_byte_offsets.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-d01/probes/d01_boundary_first.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-d01/probes/d01_boundary_second.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-g03/libevent-core/libevent_memory.qv": {
+   "emit": 1
+  },
+  "docs/reports/remaining-p06/ctraces_span_dropped_counts.qv": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t03/fixtures/CT26/case.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t03/fixtures/CT27/case.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t03/fixtures/CT29/case.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t03/fixtures/CT29/restored.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t03/fixtures/CT30/case.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t03/fixtures/CT30/released.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t04/fixtures/CT24/case.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t04/fixtures/CT25/case.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t05/fixtures/CT03/case.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t05/fixtures/CT04/case.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t05/fixtures/CT05/case.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-t05/fixtures/CT11/case.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S01_bool_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S02_u32_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S03_unknown_named_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S04_own_buffer_result_sequential.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S05_own_item_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S06_nested_own_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S07_i32_positive.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v03/probes/S08_unit_positive.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v03/probes/S09_missing_return.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S10_call_result_mismatch.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S11_call_with_argument.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S12_function_typed_parameter.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S13_unknown_parameter_type.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S14_unit_returns_value.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S15_i32_bare_return.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S16_missing_result_annotation.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S17_unknown_param_used.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S18_owned_param_unconsumed.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S19_uncalled_bad_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S20_helper_missing_return.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S21_structured_control_flow.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S22_unknown_let_annotation.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S23_acquire_positive.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v03/probes/S24_unknown_annotation_leak.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S25_i32_annotation_on_resource.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S26_library_mode_unknown_types.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S27_move_out_with_i32_result.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v03/probes/S28_move_out_with_unit_result.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v03/probes/S29_unknown_error_type.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S30_call_unknown_function.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S31_return_after_return.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S32_callee_result_in_return.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S33_callee_bad_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S34_result_generic_type.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/S35_callee_payload_escape.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T01_owned_roundtrip_positive.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T02_scalar_worker_positive.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T03_worker_returns_scalar.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T04_worker_returns_buffer_for_i32.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T05_inconsistent_exits.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T06_capture_type_mismatch.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T07_capture_arity_mismatch.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T08_worker_own_item_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T09_worker_own_item_parameter.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T10_nested_own_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T11_join_result_annotation_mismatch.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T12_worker_bool_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T13_worker_unknown_parameter_type.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T14_task_entry_parameters.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T15_unit_entry_returns_value.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T16_unit_entry_positive.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T17_unknown_local_annotation.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T18_scalar_annotation_on_buffer.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T19_move_buffer_into_i32_param.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T20_copy_buffer_into_owned_param.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/T21_unknown_worker.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X01_tuple_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X02_array_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X03_slice_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X04_pointer_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X05_never_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X06_borrow_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X07_quant_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X08_function_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X09_task_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X10_mutex_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X11_own_empty.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X12_own_no_args.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X13_deep_nested_own.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X14_function_typed_param_helper.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v03/probes/X15_empty_result.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P01-unknown-dim-nouse.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P02-unknown-dim-use.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P03-dup-axis-nouse.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P04-dup-axis-use.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P05-nominal-count-nouse.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v04/probes/P06-nominal-count-use.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v04/probes/P07-valid-named-nouse.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v04/probes/P08-valid-named-use.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P09-forward-dim-ref.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v04/probes/P10-decl-after-use-site.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P11-dup-dimension-nouse.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P12-dup-dimension-use.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P13-axis-self-reference.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P14-axis-refs-other-axis.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P15-count-of-unknown.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v04/probes/P16-unknown-mechanism.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P17-cost-profile-unknown.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P18-library-mode-unused.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P19-contract-mode-unused.qv": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P20-two-bad-axes.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P21-span-line4.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P22-span-line4-dupaxis.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P23-parse-error-later-line.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P24-no-axis-declarations.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v04/probes/P25-multifile-a.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P26-multifile-b-badaxis.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P27-multifile-b-splitdim.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v04/probes/P28-byte-offset-divergence.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a01_requires.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a02_ensures.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a03_quant.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a04_first_main.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v07/probes/a04_second_bound.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a05_referenced_uncalled.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a06_never_referenced.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a07_empty_contract_control.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v07/probes/a11_library_mode.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a12_contract_mode.qv": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a13_extern_contract_control.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v07/probes/a14_verify_scope.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a15_task_second_file_bound.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/a15_task_second_file_main.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b01_outer_resolution.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b02_binder_equals_outer.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b03_header_unresolved.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b04_binder_escape.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b05_sibling_leak.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b06_binder_masks_unresolved.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b07_thread_scope_escape.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b08_duplicate_binding.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b09_binder_used_in_body.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b10_cross_file_first.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/b10_cross_file_second.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/c01_scope_without_marker.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/c02_nested_worker.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/c03_spawn_outer_scope.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/c04_unjoined_scope_exit.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/c05_contract_on_worker.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/c06_contract_on_uncalled_in_task_module.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/c07_empty_contract_in_task_module.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/c08_nested_scope_control.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/c09_guard_in_task_module.qr": {
+   "emit": 1
+  },
+  "docs/reports/remaining-v07/probes/d01_boundary_first.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v07/probes/d01_boundary_second.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/remaining-v07/probes/d02_boundary_record.qr": {
+   "emit": 1
+  },
+  "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-effects-comma.qr": {
+   "emit": 1
+  },
+  "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-empty-contract.qr": {
+   "emit": 1
+  },
+  "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-header-bypass.qr": {
+   "emit": 1
+  },
+  "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-bytes.qr": {
+   "emit": 1
+  },
+  "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-type-split-i32.qr": {
+   "emit": 1
+  },
+  "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-interval.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/resource-boundaries-integration/review-probes/qcore-resource-usage-numeric.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "docs/reports/w43-descriptor-resource-tracking/measurement/drafts.qv": {
+   "emit": 1
+  },
+  "docs/reports/w43-libc-printf-family/measurement/family9.qv": {
+   "emit": 1
+  },
+  "docs/reports/w43-libc-result-alias/measurement/new13.qv": {
+   "emit": 1
+  },
+  "docs/reports/w43-libc-result-alias/measurement/restrict14.qv": {
+   "emit": 1
+  },
+  "docs/reports/w44-libc-residuals/measurement/residuals8.qv": {
+   "emit": 1
+  },
+  "docs/reports/w44-libc-residuals/measurement/stage3-names.qv": {
+   "emit": 1
+  },
+  "docs/reports/w44-libc-residuals/measurement/stage4-names.qv": {
+   "emit": 1
+  },
+  "docs/reports/w44-libc-residuals/measurement/valist4.qv": {
+   "emit": 1
+  },
+  "docs/reports/w5-configured-audit/demo/memory.qv": {
+   "emit": 1
+  },
+  "docs/reports/w5-configured-process-audit/second-codebase/alloc.qv": {
+   "emit": 1
+  },
+  "docs/reports/w5-configured-process-audit/second-codebase/frame.qv": {
+   "emit": 1
+  },
+  "docs/reports/w5-configured-process-audit/second-codebase/policy.qv": {
+   "emit": 1
+  },
+  "docs/reports/w5-configured-process-audit/second-codebase/rules.qv": {
+   "emit": 1
+  },
+  "docs/reports/w6-native-source-tasks/native-copy.qr": {
+   "emit": 1
+  },
+  "docs/reports/w6-owned-source-tasks/sanitizer-child-drop.qr": {
+   "emit": 1
+  },
+  "docs/reports/w6-owned-source-tasks/sanitizer-child-error.qr": {
+   "emit": 1
+  },
+  "examples/branching/condition_tier.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/branching/conditional_release.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/branching/early_return.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/cycle12.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/events/self_pipe.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/events/socket_server.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/events/wake_payload.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/events/write_interest.qr": {
+   "emit": 1
+  },
+  "examples/extern/borrowed_render.qr": {
+   "emit": 1
+  },
+  "examples/extern/buffer_round_trip.qr": {
+   "emit": 1
+  },
+  "examples/extern/contracts/buffer_api.qv": {
+   "emit": 1
+  },
+  "examples/extern/scalar_results.qr": {
+   "emit": 1
+  },
+  "examples/http/computed_length.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/http/exchange.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/http/raw_request.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/loops/buffer_copy.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/loops/lend_fill.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/pipes/rendered_lines.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/pipes/scalar_stages.qr": {
+   "emit": 1
+  },
+  "examples/pipes/scalar_stages_hand_written.qr": {
+   "emit": 1
+  },
+  "examples/records/owned_field.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/records/pixel_writes.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/records/point.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/scalar/calls.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/scalar/fixed_width.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/scalar/printing.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/scalar/record_fields.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/scalar/typed_errors.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/scalar/typed_loops.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/scalar/typed_workers.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/sockets/inet_v4_echo.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/sockets/inet_v6_echo.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/sockets/tcp_echo.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/sockets/udp_echo.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/stdio/barrier.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/stdio/pipeline.qr": {
+   "emit": 1
+  },
+  "examples/stdio/renderings.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/stdio/severities.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/strings/computed_length.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/strings/looped_fill.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/strings/status_line.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/threads/core_context.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/threads/owned_buffer.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/threads/shared_readers.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/threads/two_workers.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/unsafe-linkage/unchecked_calls.qr": {
+   "compile": 0,
+   "emit": 0
+  },
+  "examples/unsafe-linkage/unchecked_demo.qrlib": {
+   "emit": 1
+  },
+  "providers/conformance/tests/fixtures/configured_boolean_source/sample.qv": {
+   "emit": 1
+  },
+  "providers/conformance/tests/fixtures/configured_boolean_source/sample_reset.qv": {
+   "emit": 1
+  },
+  "providers/conformance/tests/fixtures/configured_boolean_source/sample_with_helper.qv": {
+   "emit": 1
+  },
+  "providers/conformance/tests/fixtures/configured_boolean_source/source_projection.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/chunk_destructor.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/chunk_residency.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/chunk_sizes.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/constructor_failure_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/context_destructor.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/counters.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/error_frame.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/error_state.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/file_close.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/file_close_delete.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_attempts.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_chunk_close.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_constructor_failure_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_attempt.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_delete_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_descriptor_failure_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_existing_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_integrity_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_constructor_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_os_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_outcomes.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_reopen_failure_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_sync_failure_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_teardown_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_transition_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/filesystem_unmap_failure_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/import_composition.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/list_unlink.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/lock_state.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/memory_backend.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/memory_close.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/nested_cleanup.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/nested_memory_teardown.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/parent_teardown.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/resource_open_close.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/stream_destructor.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/teardown_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/teardown_traversal.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/unmap_wrapper.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_close.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/chunkio/unsupported_constructor_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-chunkio/contracts/fluent_bit/busy_state.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-cmetrics/contracts/cmetrics/context_lifetime.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-cmetrics/contracts/cmetrics/counter_reset.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-cmetrics/contracts/cmetrics/mpack_utils.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-ctraces/contracts/ctraces/context_lifetime.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/callback_binding.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/callback_task_handoff.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/composition.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/cycle18_composition.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/descriptor_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/event_payload.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/intrusive_list.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/logging.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/memory.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/native_platform_matrix.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/timeout_teardown.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/wait_failure_policy.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/wait_identity_policy.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/wait_source_policy.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-libevent/contracts/monkey/wrapper_paths.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-librdkafka/contracts/librdkafka/memory.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-librdkafka/contracts/librdkafka/queue_destructor.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-librdkafka/contracts/librdkafka/refcount.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv": {
+   "emit": 1
+  },
+  "providers/qcore-provider-librdkafka/contracts/librdkafka/typed_queue.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-cfl/contracts/cfl/arena_lifetime.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-cfl/contracts/cfl/intrusive_list.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-cfl/contracts/cfl/sds_lifetime.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-cfl/contracts/cfl/time.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/hash_table_publication.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_destroy_direct_routes.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_helpers.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_is_up.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_name.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_sizes.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_chunk_total_size.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/input_instance.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/lib_engine_thread.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/logging.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/loop_owner.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/memory.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_flush_id.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/output_singleplex.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_memory.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/resource_string.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/routes_mask.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/storage_backlog.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_route_queries.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/task_users.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/dirent.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/dlfcn.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/errno.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/math.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/memory.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/process.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/pthread_mutex.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/pthread_sync.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/regex.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/socket.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/stdio.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/stdlib.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/string.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/sys_stat.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/threads.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/time.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-libc/contracts/libc/unistd.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-mpack/contracts/mpack/writer.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-msgpack/contracts/msgpack/packer.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-plugin/tests/fixtures/example-user-crate/quirin-provider-acme/contracts/acme/pool.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-shared/contracts/language/quantified_indices.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-shared/contracts/library/custody_evidence.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-shared/contracts/library/descriptor_native_observation.qv": {
+   "emit": 1
+  },
+  "providers/quirin-provider-shared/contracts/library/source_projection.qv": {
+   "emit": 1
+  }
+ },
+ "flags": "-std=c11 -Wall -Wextra -Werror -pedantic -c",
+ "quirin_sha256": "11891c958c01b4116bd172731fa1652566035f01e9aa6336b8c50438813cc03e"
+}
