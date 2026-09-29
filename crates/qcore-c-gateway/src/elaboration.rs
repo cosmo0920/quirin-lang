@@ -103,6 +103,10 @@ impl Place {
 
 /// One effect or custody event of an evaluation.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[allow(
+    dead_code,
+    reason = "Branch, Merge and the lifetime events are the vocabulary cards CG06, CG07 and CG14 emit"
+)]
 pub(crate) enum Event {
     /// A value computation that reads a place.
     Read(Place),
@@ -261,67 +265,64 @@ pub(crate) struct Elaboration<F> {
     pub(crate) facts: BTreeMap<EventId, F>,
     /// Every event of each call's designator and actuals, by call event.
     pub(crate) actuals: BTreeMap<EventId, Vec<EventId>>,
+    /// Route G discharges each `Access` through the instruction it lowers
+    /// the event to and each `Contract` through the existing classifier of the
+    /// piece; the list is the interface CG03's single application point reads.
+    #[allow(dead_code, reason = "read by the tests; CG03 reads it")]
     pub(crate) obligations: Vec<Obligation>,
+    #[allow(dead_code, reason = "read by the tests; CG20 reads it")]
     pub(crate) assumptions: Vec<Assumption>,
 }
 
 /// A named refusal, with the card that owns the form.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum Refusal {
-    ValueConnective(&'static str),
-    Conditional,
-    NestedCall,
+    /// A form [`FORM_TABLE`] refuses, with the card that owns it.
+    Form(&'static str, &'static str),
+    /// A call unordered with another event (card CG05).
     UnorderedCall(String),
+    /// A call whose actuals carry side effects, outside a sequenced piece
+    /// (card CG03 owns applying its contract).
     EffectfulActual(String),
-    IndirectCallee,
+    /// A same-place write/write or write/read pair left unordered.
     UnsequencedConflict(String),
-    PointerStore,
-    PointerArithmetic,
-    TypeQuery,
+    /// A cast kind outside the scalar set (card CG08).
     Cast(String),
-    GenericOrStatementExpression(&'static str),
-    AggregateValue(&'static str),
-    Qualified(&'static str),
+    /// The route's place reader refused the place (card CG10).
     Place(String),
     Declaration(&'static str),
     Unlisted(&'static str),
     UnlistedKind(String),
 }
 
+/// The refusal of a form [`FORM_TABLE`] lists as refused.
+pub(crate) fn refused(form: &'static str) -> Refusal {
+    match disposition(form) {
+        Some(Disposition::Refused(card)) => Refusal::Form(form, card),
+        _ => Refusal::UnlistedKind(form.to_owned()),
+    }
+}
+
 impl Refusal {
     /// The refusal's text: the form, then the owning card.
     pub(crate) fn reason(&self) -> String {
         match self {
-            Refusal::ValueConnective(op) => format!("value `{op}` (CG06)"),
-            Refusal::Conditional => "value `?:` (CG06)".into(),
-            Refusal::NestedCall => "call inside a call's actual (CG05)".into(),
+            Refusal::Form(form, card) => format!("{form} ({card})"),
             Refusal::UnorderedCall(callee) => {
                 format!("call `{callee}` unsequenced with another event (CG05)")
             }
             Refusal::EffectfulActual(callee) => {
                 format!("call `{callee}` whose actuals carry effects (CG03)")
             }
-            Refusal::IndirectCallee => "call through a callee expression (CG22)".into(),
             Refusal::UnsequencedConflict(place) => format!(
                 "unsequenced write/write or write/read on `{place}` (C undefined behaviour)"
             ),
-            Refusal::PointerStore => "pointer-valued store (CG11)".into(),
-            Refusal::PointerArithmetic => "pointer arithmetic (CG16)".into(),
-            Refusal::TypeQuery => "type query with an operand (CG08)".into(),
             Refusal::Cast(cast) => format!("cast `{cast}` (CG08)"),
-            Refusal::GenericOrStatementExpression(form) => format!("{form} (CG07)"),
-            Refusal::AggregateValue(form) => format!("{form} (CG14)"),
-            Refusal::Qualified(qualifier) => format!("{qualifier} access (CG15/CG19)"),
             Refusal::Place(reason) => format!("place: {reason} (CG10)"),
             Refusal::Declaration(reason) => format!("declaration: {reason}"),
             Refusal::Unlisted(form) => format!("unlisted form: {form}"),
             Refusal::UnlistedKind(kind) => format!("unlisted form `{kind}`"),
         }
-    }
-
-    /// The prefixed text a route records.
-    pub(crate) fn describe(&self) -> String {
-        format!("elaboration refused: {}", self.reason())
     }
 }
 
@@ -339,7 +340,7 @@ pub(crate) enum Disposition {
 
 /// Every form the elaborator names, with its disposition. A form not listed is
 /// refused as unlisted.
-pub(crate) const FORM_TABLE: [(&str, Disposition); 27] = [
+pub(crate) const FORM_TABLE: [(&str, Disposition); 28] = [
     ("literal", Disposition::Admitted),
     ("object read", Disposition::Admitted),
     ("path read", Disposition::Admitted),
@@ -367,6 +368,7 @@ pub(crate) const FORM_TABLE: [(&str, Disposition); 27] = [
     ("statement expression", Disposition::Refused("CG07")),
     ("compound literal", Disposition::Refused("CG14")),
     ("volatile access", Disposition::Refused("CG15")),
+    ("atomic access", Disposition::Refused("CG19")),
 ];
 
 /// The disposition of a form, `None` for an unlisted one.
@@ -394,6 +396,13 @@ pub(crate) fn value_form(node: &Value) -> Option<&'static str> {
         ("UnaryOperator", Some("--")) => Some("pre decrement"),
         _ => None,
     }
+}
+
+/// Route T's refusal of a value form: no consumer that imports through T
+/// decides one (card CG01's census of every `SourceExpression` reader), so T
+/// reads none and names the form.
+pub(crate) fn t_refusal(form: &str) -> String {
+    format!("typed-source value form `{form}` is decided by no typed-source consumer (CG02)")
 }
 
 /// What the elaborator asks of the route.
@@ -486,9 +495,9 @@ struct Elaborator<'a, C: Context> {
 fn qualified(node: &Value) -> Option<&'static str> {
     let text = crate::typed_access_path::qual(node).unwrap_or("");
     if text.contains("volatile") {
-        Some("volatile")
+        Some("volatile access")
     } else if text.contains("_Atomic") {
-        Some("atomic")
+        Some("atomic access")
     } else {
         None
     }
@@ -497,7 +506,7 @@ fn qualified(node: &Value) -> Option<&'static str> {
 impl<C: Context> Elaborator<'_, C> {
     fn value(&self, node: &Value) -> Result<bool, Refusal> {
         if let Some(qualifier) = qualified(node) {
-            return Err(Refusal::Qualified(qualifier));
+            return Err(refused(qualifier));
         }
         if self.context.scalar(node) {
             Ok(false)
@@ -543,7 +552,7 @@ impl<C: Context> Elaborator<'_, C> {
     fn lvalue(&mut self, node: &Value, store: bool) -> Result<(Place, Vec<EventId>, Option<C::Facts>), Refusal> {
         let bare = strip_parens(node);
         if let Some(qualifier) = qualified(bare) {
-            return Err(Refusal::Qualified(qualifier));
+            return Err(refused(qualifier));
         }
         match kind(bare) {
             "DeclRefExpr" => Ok((Self::object(bare)?, Vec::new(), None)),
@@ -650,18 +659,18 @@ impl<C: Context> Elaborator<'_, C> {
                         source: ValueSource::Computed,
                     }))
                 } else {
-                    Err(Refusal::TypeQuery)
+                    Err(refused("type query operand"))
                 }
             }
             "UnaryOperator" => self.unary(node),
             "BinaryOperator" => self.binary(node),
             "CompoundAssignOperator" => self.compound(node),
             "CallExpr" => self.call(node),
-            "ConditionalOperator" | "BinaryConditionalOperator" => Err(Refusal::Conditional),
-            "GenericSelectionExpr" => Err(Refusal::GenericOrStatementExpression("generic selection")),
-            "StmtExpr" => Err(Refusal::GenericOrStatementExpression("statement expression")),
-            "CompoundLiteralExpr" => Err(Refusal::AggregateValue("compound literal")),
-            "InitListExpr" => Err(Refusal::AggregateValue("initializer list")),
+            "ConditionalOperator" | "BinaryConditionalOperator" => Err(refused("conditional")),
+            "GenericSelectionExpr" => Err(refused("generic selection")),
+            "StmtExpr" => Err(refused("statement expression")),
+            "CompoundLiteralExpr" => Err(refused("compound literal")),
+            "InitListExpr" => Err(refused("compound literal")),
             other => Err(Refusal::UnlistedKind(other.to_owned())),
         }
     }
@@ -692,7 +701,7 @@ impl<C: Context> Elaborator<'_, C> {
                 }
                 self.expression(inner)
             }
-            "FunctionToPointerDecay" => Err(Refusal::IndirectCallee),
+            "FunctionToPointerDecay" => Err(refused("indirect call")),
             other => Err(Refusal::Cast(other.to_owned())),
         }
     }
@@ -703,7 +712,7 @@ impl<C: Context> Elaborator<'_, C> {
             "+" | "-" | "!" | "~" => {
                 let part = self.expression(operand)?;
                 if part.pointer() {
-                    return Err(Refusal::PointerArithmetic);
+                    return Err(refused("pointer arithmetic"));
                 }
                 self.computed(node, part.all, part.values)
             }
@@ -712,7 +721,7 @@ impl<C: Context> Elaborator<'_, C> {
                 let (place, mut events, facts) = self.lvalue(operand, true)?;
                 let pointer = self.value(operand)?;
                 if pointer {
-                    return Err(Refusal::PointerArithmetic);
+                    return Err(refused("pointer arithmetic"));
                 }
                 let read = self.graph.push(Event::Read(place.clone()));
                 self.record(read, &facts);
@@ -760,11 +769,19 @@ impl<C: Context> Elaborator<'_, C> {
                 for &event in &second.all {
                     self.graph.order(&first.all, event);
                 }
+                // The comma's value is available only after its left operand
+                // completed: with no value event on the right (a literal),
+                // the left operand's events stand for that point.
+                let values = if second.values.is_empty() {
+                    first.all.clone()
+                } else {
+                    second.values
+                };
                 let mut all = first.all;
                 all.extend(second.all);
                 Ok(Part {
                     all,
-                    values: second.values,
+                    values,
                     result: second.result,
                     arithmetic: first.arithmetic || second.arithmetic,
                 })
@@ -800,14 +817,14 @@ impl<C: Context> Elaborator<'_, C> {
                     arithmetic: value.arithmetic,
                 })
             }
-            "&&" => Err(Refusal::ValueConnective("&&")),
-            "||" => Err(Refusal::ValueConnective("||")),
+            "&&" => Err(refused("value &&")),
+            "||" => Err(refused("value ||")),
             "+" | "-" | "*" | "/" | "%" | "<<" | ">>" | "&" | "|" | "^" | "==" | "!=" | "<"
             | ">" | "<=" | ">=" => {
                 let first = self.expression(left)?;
                 let second = self.expression(right)?;
                 if first.pointer() || second.pointer() {
-                    return Err(Refusal::PointerArithmetic);
+                    return Err(refused("pointer arithmetic"));
                 }
                 self.graph
                     .unsequenced
@@ -828,7 +845,7 @@ impl<C: Context> Elaborator<'_, C> {
         };
         let (place, mut events, facts) = self.lvalue(left, true)?;
         if self.value(left)? {
-            return Err(Refusal::PointerArithmetic);
+            return Err(refused("pointer arithmetic"));
         }
         // The place is evaluated once: one read of it, then (after the right
         // operand's value) one write back.
@@ -837,7 +854,7 @@ impl<C: Context> Elaborator<'_, C> {
         self.graph.order(&events, read);
         let value = self.expression(right)?;
         if value.pointer() {
-            return Err(Refusal::PointerArithmetic);
+            return Err(refused("pointer arithmetic"));
         }
         let mut left_all = events.clone();
         left_all.push(read);
@@ -870,12 +887,12 @@ impl<C: Context> Elaborator<'_, C> {
 
     fn call(&mut self, node: &Value) -> Result<Part, Refusal> {
         if self.in_actual {
-            return Err(Refusal::NestedCall);
+            return Err(refused("nested call"));
         }
         let (callee, actuals) = children(node)
             .split_first()
             .ok_or(Refusal::Unlisted("call without a callee"))?;
-        let name = direct_callee(callee).ok_or(Refusal::IndirectCallee)?;
+        let name = direct_callee(callee).ok_or_else(|| refused("indirect call"))?;
         self.in_actual = true;
         let mut operands = Vec::new();
         let mut all = Vec::new();
@@ -1034,8 +1051,8 @@ pub(crate) fn path_place(node: &Value) -> Result<Place, Refusal> {
     }
 }
 
-/// Every event of an admitted graph, split by what a route lowers: the
-/// place reads and writes, and the calls. Used by the routes and the tests.
+/// The call events of a graph (tests).
+#[cfg(test)]
 pub(crate) fn calls(graph: &EvalGraph) -> Vec<(EventId, &str)> {
     graph
         .events
@@ -1048,7 +1065,8 @@ pub(crate) fn calls(graph: &EvalGraph) -> Vec<(EventId, &str)> {
         .collect()
 }
 
-/// The unordered pairs of a graph, for tests and the parity record.
+/// The unordered pairs of a graph (tests).
+#[cfg(test)]
 pub(crate) fn unordered_pairs(graph: &EvalGraph) -> Vec<(EventId, EventId)> {
     let mut pairs = Vec::new();
     for a in 0..graph.events.len() {

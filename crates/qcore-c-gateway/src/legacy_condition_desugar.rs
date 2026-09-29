@@ -472,6 +472,22 @@ impl Parser<'_> {
     /// that is not used restores the classifier's counters.
     pub(super) fn planned_condition(
         &mut self,
+        line: usize,
+        condition: &[Token],
+        position: Position,
+        refused: bool,
+    ) -> Option<Box<ConditionPlan>> {
+        let plan = self.planned_condition_routes(line, condition, position, refused);
+        // Card CG02-ELABORATION-CORE (rule 10s): asked last, only where every
+        // route above refused.
+        if plan.is_none() && refused && !self.opaque_callee(condition) {
+            return self.elaborated_condition(condition, line, position);
+        }
+        plan
+    }
+
+    fn planned_condition_routes(
+        &mut self,
         _line: usize,
         condition: &[Token],
         position: Position,

@@ -255,6 +255,8 @@ pub(crate) struct StatementPlan {
 
 /// An AST and the exact token rendering handed to Clang. This is created
 /// lazily, only after a statement has reached an access-related refusal.
+/// Cloning shares every table (card CG02-ELABORATION-CORE).
+#[derive(Clone)]
 pub(crate) struct StatementIndex {
     pub(crate) source: Arc<String>,
     pub(crate) function: Arc<Value>,

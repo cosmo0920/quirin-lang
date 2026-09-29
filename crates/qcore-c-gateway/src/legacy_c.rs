@@ -131,6 +131,12 @@ mod typed_positions;
 #[path = "legacy_typed_roots.rs"]
 mod typed_roots;
 
+// Card CG02-ELABORATION-CORE (rule 10s): the elaborator's route-G adapter, a
+// fallback after every existing route of a statement, a `return` and a
+// call-free controlling expression. The hooks below naming the card are thin.
+#[path = "legacy_elaboration.rs"]
+mod elaboration_route;
+
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the P3 residual shapes
 // C's evaluation order admits. Hooks are thin.
 #[path = "legacy_typed_residuals.rs"]
@@ -6124,6 +6130,43 @@ impl Parser<'_> {
             Some("return") => {
                 self.cursor += 1;
                 let expression = self.consume_to_semicolon()?;
+                let statement = self.return_statement(expression.clone(), line);
+                // Card CG02-ELABORATION-CORE (rule 10s): asked last, only for
+                // a refused return.
+                if return_refused(&statement)
+                    && let Some(elaborated) = self.elaborated_return(&expression, line)
+                {
+                    return Ok(elaborated);
+                }
+                Ok(statement)
+            }
+            Some("{") => Ok(Statement::Block(self.parse_block()?)),
+            Some(name)
+                if is_identifier(name)
+                    && self
+                        .tokens
+                        .get(self.cursor + 1)
+                        .map(|token| token.text.as_str())
+                        == Some(":") =>
+            {
+                let name = name.to_owned();
+                self.cursor += 2;
+                Ok(Statement::Label { line, name })
+            }
+            Some(_) => {
+                let tokens = self.consume_to_semicolon()?;
+                Ok(self.expression_statement(&tokens, line))
+            }
+            None => Err(line),
+        }
+    }
+
+    /// The lowering of `return EXPRESSION;`, `expression` without `return`
+    /// and `;`. Card CG02-ELABORATION-CORE: also the lowering of the value
+    /// operand the elaborator hands back after sequencing a comma (rule 10s).
+    fn return_statement(&mut self, expression: Vec<Token>, line: usize) -> Statement {
+        {
+            {
                 let texts = expression
                     .iter()
                     .map(|token| token.text.as_str())
@@ -6139,10 +6182,7 @@ impl Parser<'_> {
                 ) {
                     cast_return::CastReturn::Operand(start) => expression[start..].to_vec(),
                     cast_return::CastReturn::Refuse => {
-                        return Ok(cast_return::refusal(
-                            line,
-                            self.expression_writes(&expression),
-                        ));
+                        return cast_return::refusal(line, self.expression_writes(&expression));
                     }
                     cast_return::CastReturn::PreCard => expression,
                 };
@@ -6176,13 +6216,13 @@ impl Parser<'_> {
                     && returned_evaluation.is_none()
                     && let Some(desugared) = self.typed_connective_return(&expression, line)
                 {
-                    return Ok(desugared);
+                    return desugared;
                 }
                 #[cfg(feature = "indirect-census")]
                 if !strict && !untracked_pointer && returned_evaluation.is_none() {
                     self.census_return(line, &texts);
                 }
-                Ok(Statement::Return {
+                Statement::Return {
                     line,
                     writes: self.expression_writes(&expression),
                     expression_supported: strict || untracked_pointer,
@@ -6198,57 +6238,54 @@ impl Parser<'_> {
                         .is_some_and(|(_, escapes)| escapes),
                     returns_null_constant: self.admit_derived_returns
                         && return_call::is_null_pointer_constant(&texts),
-                })
-            }
-            Some("{") => Ok(Statement::Block(self.parse_block()?)),
-            Some(name)
-                if is_identifier(name)
-                    && self
-                        .tokens
-                        .get(self.cursor + 1)
-                        .map(|token| token.text.as_str())
-                        == Some(":") =>
-            {
-                let name = name.to_owned();
-                self.cursor += 2;
-                Ok(Statement::Label { line, name })
-            }
-            Some(_) => {
-                let tokens = self.consume_to_semicolon()?;
-                // Card W45-CONTAINER-ROOT-REACH: keep an element binding only
-                // when it is the statement's final instruction.
-                self.element_origins.clear();
-                let instruction = self.classify_simple(&tokens);
-                self.element_origins.settle(&tokens, &instruction);
-                #[cfg(feature = "indirect-census")]
-                self.census_statement(line, &tokens, &instruction);
-                #[cfg(feature = "indirect-census")]
-                self.census_traversal_statement(line, "statement", &tokens, &instruction);
-                // Card W45-SUB-OBJECT-STORES: the sub-object store census.
-                #[cfg(feature = "indirect-census")]
-                self.census_sub_object_store(line, &tokens, &instruction);
-                if let Some(sequence) = self.stepped_access(&tokens, &instruction) {
-                    return Ok(Statement::Block(
-                        sequence
-                            .into_iter()
-                            .map(|instruction| Statement::Instruction(instruction, line))
-                            .collect(),
-                    ));
                 }
-                // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: a call whose actuals
-                // the gate refused, lowered to its actuals' reads and the call.
-                if let Some(sequence) = self.call_argument_access(&tokens, &instruction) {
-                    return Ok(Statement::Block(
-                        sequence
-                            .into_iter()
-                            .map(|instruction| Statement::Instruction(instruction, line))
-                            .collect(),
-                    ));
-                }
-                Ok(Statement::Instruction(instruction, line))
             }
-            None => Err(line),
         }
+    }
+
+    /// One expression or declaration statement, `tokens` without its `;`.
+    /// Card CG02-ELABORATION-CORE: the statement walker's lowering, also the
+    /// lowering of every sequenced piece the elaborator hands back (rule 10s).
+    fn expression_statement(&mut self, tokens: &[Token], line: usize) -> Statement {
+        // Card W45-CONTAINER-ROOT-REACH: keep an element binding only
+        // when it is the statement's final instruction.
+        self.element_origins.clear();
+        let instruction = self.classify_simple(tokens);
+        self.element_origins.settle(tokens, &instruction);
+        #[cfg(feature = "indirect-census")]
+        self.census_statement(line, tokens, &instruction);
+        #[cfg(feature = "indirect-census")]
+        self.census_traversal_statement(line, "statement", tokens, &instruction);
+        // Card W45-SUB-OBJECT-STORES: the sub-object store census.
+        #[cfg(feature = "indirect-census")]
+        self.census_sub_object_store(line, tokens, &instruction);
+        if let Some(sequence) = self.stepped_access(tokens, &instruction) {
+            return Statement::Block(
+                sequence
+                    .into_iter()
+                    .map(|instruction| Statement::Instruction(instruction, line))
+                    .collect(),
+            );
+        }
+        // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: a call whose actuals
+        // the gate refused, lowered to its actuals' reads and the call.
+        if let Some(sequence) = self.call_argument_access(tokens, &instruction) {
+            return Statement::Block(
+                sequence
+                    .into_iter()
+                    .map(|instruction| Statement::Instruction(instruction, line))
+                    .collect(),
+            );
+        }
+        // Card CG02-ELABORATION-CORE (rule 10s): asked last, only for a
+        // refusal.
+        if let LegacyInstruction::Unknown { description, .. } = &instruction
+            && let Some(elaborated) = self.elaborated_statement(tokens, line, description)
+        {
+            self.element_origins.clear();
+            return elaborated;
+        }
+        Statement::Instruction(instruction, line)
     }
 
     fn parse_statement_body(&mut self) -> Result<Vec<Statement>, usize> {
@@ -8359,6 +8396,19 @@ fn contains_call(tokens: &[Token]) -> bool {
 /// Card W43-INDEX-TRAVERSAL consults a recognised step of a non-formal, or a
 /// stepped access none of whose stepped names is a formal, after it.
 const FORMAL_MUTATION_REFUSAL: &str = "unmodeled expression may mutate a formal resource identity";
+
+/// Card CG02-ELABORATION-CORE: whether a lowered `return` is the position's
+/// generic refusal (not a cast-return refusal, which stays).
+fn return_refused(statement: &Statement) -> bool {
+    matches!(
+        statement,
+        Statement::Return {
+            expression_supported: false,
+            returned_evaluation: None,
+            ..
+        }
+    )
+}
 /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: the plain name an element place
 /// is renamed to while the ordinary classifier reads the call around it. A
 /// reserved-looking identifier no C program of the corpus declares.

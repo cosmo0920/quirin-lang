@@ -1,0 +1,811 @@
+//! Card **CG02-ELABORATION-CORE** (gateway rule 10s): the elaborator of
+//! [`crate::elaboration`] connected to the custody gateway (route G).
+//!
+//! Every hook here is a **fallback**: it is consulted only where every
+//! existing route of its position refused, so an answer an older route gives
+//! is never decided by different code (hard invariant 3), and a declined
+//! answer leaves the refusal byte for byte (the classifier's site and element
+//! counters are restored). Each consultation is recorded in the
+//! `QCORE_TYPED_PATH_PARITY` stream with `position: "elaboration-…"`.
+//!
+//! * **Statements** (`expression_statement`'s last step). The statement is
+//!   matched to one Clang node by its line and exact tokens and elaborated;
+//!   the whole graph must pass the order model. It is then lowered in
+//!   sequenced **pieces**: every operand of a top-level comma, and the inner
+//!   assignment of a `NAME = (NAME2 = …)` chain, is a statement of its own,
+//!   decided first by the existing statement lowering (so a call keeps its one
+//!   contract application) and only then by the elaborator's own events. A
+//!   declaration or assignment whose value is a comma sequences the leading
+//!   operands and then declares or assigns the last one.
+//! * **Events.** A piece the existing lowering refuses is lowered from its
+//!   events in the graph's order, which an admitted graph makes one of its
+//!   permitted serialisations with the same outcome: a scalar object write is
+//!   `ForgetScalar`, a path read or write is the typed access-path reader's
+//!   `IndirectScalarAccess` (its dereference obligations checked by `transfer`
+//!   exactly as for W46's statements), a scalar object read is nothing. A call
+//!   outside a piece, a pointer-valued store, a write to an object the gateway
+//!   does not read as a scalar local, a protected formal or a tracked
+//!   descriptor refuse the whole statement.
+//! * **Returns.** Leading comma operands are pieces; the last operand is
+//!   handed to the existing `return` lowering. An assignment `NAME = E` is
+//!   the piece `NAME = E` then `return NAME`. Otherwise a scalar value of a
+//!   scalar-result function is its events then a `NoOp` exit: nothing escapes.
+//! * **Conditions.** A call-free controlling expression holding one of this
+//!   card's value forms and no connective is its events, then a branch that
+//!   refines nothing. A pointer-valued condition stays refused (its null
+//!   refinement is the older routes').
+
+use std::collections::BTreeSet;
+
+use serde_json::{Value, json};
+
+use super::condition_desugar::{ConditionPlan, PlanNode, Position, Target};
+use super::{
+    LegacyInstruction, Parser, RefusedWrites, Statement, Token, contains_braces, contains_call,
+    is_identifier,
+};
+use crate::elaboration::{
+    self, Context, Elaboration, Event, Operand, Place, Refusal, strip_parens,
+};
+use crate::typed_access_path::{StatementIndex, StatementPlan, is_pointer, is_scalar, record_row};
+use crate::typed_c_ast::{children, kind};
+
+/// The G context: the typed access-path reader answers places, the function's
+/// AST answers aliasing.
+struct GContext<'a> {
+    index: &'a StatementIndex,
+    never_bound: &'a dyn Fn(&str) -> bool,
+    /// Declaration ids of automatic locals and formals of the function.
+    automatic: BTreeSet<String>,
+    /// Declaration ids whose address a `&` takes somewhere in the function.
+    address_taken: BTreeSet<String>,
+}
+
+impl Context for GContext<'_> {
+    type Facts = StatementPlan;
+
+    fn scalar(&self, node: &Value) -> bool {
+        is_scalar(node)
+            || self.index.enums.is_enum(node)
+            || crate::typed_position_shapes::anonymous_enum_member(&self.index.enums, node)
+    }
+
+    fn pointer(&self, node: &Value) -> bool {
+        is_pointer(node)
+    }
+
+    fn place(&self, node: &Value, store: bool) -> Result<StatementPlan, Refusal> {
+        let mut reader = self.index.reader(self.never_bound);
+        reader
+            .path(node, store, false)
+            .ok_or_else(|| Refusal::Place("the typed access-path reader refused it".into()))?;
+        Ok(reader.plan)
+    }
+
+    fn unaliased(&self, decl: &str) -> bool {
+        self.automatic.contains(decl) && !self.address_taken.contains(decl)
+    }
+}
+
+/// Walk a function's AST once for its automatic objects and taken addresses.
+fn aliasing(function: &Value) -> (BTreeSet<String>, BTreeSet<String>) {
+    fn walk(node: &Value, automatic: &mut BTreeSet<String>, taken: &mut BTreeSet<String>) {
+        match kind(node) {
+            "ParmVarDecl" | "VarDecl" if node["storageClass"].as_str().is_none() => {
+                if let Some(id) = node["id"].as_str() {
+                    automatic.insert(id.to_owned());
+                }
+            }
+            "UnaryOperator" if node["opcode"].as_str() == Some("&") => {
+                if let Some(operand) = children(node).first() {
+                    let operand = strip_parens(operand);
+                    if kind(operand) == "DeclRefExpr"
+                        && let Some(id) = operand["referencedDecl"]["id"].as_str()
+                    {
+                        taken.insert(id.to_owned());
+                    }
+                }
+            }
+            _ => {}
+        }
+        for child in children(node) {
+            walk(child, automatic, taken);
+        }
+    }
+    let mut automatic = BTreeSet::new();
+    let mut taken = BTreeSet::new();
+    walk(function, &mut automatic, &mut taken);
+    (automatic, taken)
+}
+
+/// Whether a node holds one of this card's value forms.
+fn holds_value_form(node: &Value) -> bool {
+    elaboration::value_form(node).is_some() || children(node).iter().any(holds_value_form)
+}
+
+/// The operands of a (possibly parenthesised) comma chain, in order.
+fn comma_operands(node: &Value) -> Vec<&Value> {
+    let bare = strip_parens(node);
+    if kind(bare) == "BinaryOperator"
+        && bare["opcode"].as_str() == Some(",")
+        && let [left, right] = children(bare)
+    {
+        let mut operands = comma_operands(left);
+        operands.extend(comma_operands(right));
+        return operands;
+    }
+    vec![bare]
+}
+
+fn named_object(node: &Value) -> Option<(&str, &str)> {
+    let bare = strip_parens(node);
+    (kind(bare) == "DeclRefExpr"
+        && matches!(
+            bare["referencedDecl"]["kind"].as_str(),
+            Some("VarDecl" | "ParmVarDecl")
+        ))
+    .then(|| {
+        Some((
+            bare["referencedDecl"]["id"].as_str()?,
+            bare["referencedDecl"]["name"].as_str()?,
+        ))
+    })
+    .flatten()
+}
+
+/// One sequenced step of a lowered statement.
+enum Step<'a> {
+    /// A sub-expression statement.
+    Piece(&'a Value),
+    /// `DECLARATION = VALUE` with the declaration's own tokens before `=`.
+    Declare(&'a Value, &'a Value),
+    /// `LEFT = VALUE`.
+    Assign(&'a Value, &'a Value),
+}
+
+/// Where the elaborator is asked.
+#[derive(Clone, Copy)]
+enum Site {
+    Statement,
+    Return,
+    Condition,
+}
+
+impl Site {
+    fn label(self) -> &'static str {
+        match self {
+            Site::Statement => "elaboration-statement",
+            Site::Return => "elaboration-return",
+            Site::Condition => "elaboration-condition",
+        }
+    }
+}
+
+fn texts(tokens: &[Token]) -> Vec<&str> {
+    tokens.iter().map(|token| token.text.as_str()).collect()
+}
+
+impl Parser<'_> {
+    /// The function's Clang index, shared (it owns only `Arc`s), so the
+    /// lowering below may call back into the statement walker.
+    fn elaboration_index(&self) -> Option<StatementIndex> {
+        self.typed_positions_index().cloned()
+    }
+
+    /// The unique outermost node on `line` whose tokens are `wanted` and whose
+    /// kind `accept` takes. A match's own sub-nodes (implicit wrappers) are the
+    /// same text and are not visited; two separate matches are ambiguous and
+    /// answer nothing.
+    fn elaboration_node<'i>(
+        index: &'i StatementIndex,
+        line: usize,
+        wanted: &[&str],
+        accept: &dyn Fn(&Value) -> bool,
+    ) -> Option<&'i Value> {
+        fn walk<'i>(
+            index: &StatementIndex,
+            node: &'i Value,
+            line: usize,
+            wanted: &[&str],
+            accept: &dyn Fn(&Value) -> bool,
+            out: &mut Vec<&'i Value>,
+        ) {
+            if accept(node)
+                && index.node_line(node) == Some(line)
+                && index.node_tokens(node).is_some_and(|found| {
+                    found.iter().map(String::as_str).eq(wanted.iter().copied())
+                })
+            {
+                out.push(node);
+                return;
+            }
+            for child in children(node) {
+                walk(index, child, line, wanted, accept, out);
+            }
+        }
+        let mut found = Vec::new();
+        walk(index, &index.function, line, wanted, accept, &mut found);
+        match found.as_slice() {
+            [node] => Some(node),
+            _ => None,
+        }
+    }
+
+    fn elaboration_context<'i>(
+        index: &'i StatementIndex,
+        never_bound: &'i dyn Fn(&str) -> bool,
+    ) -> GContext<'i> {
+        let (automatic, address_taken) = aliasing(&index.function);
+        GContext {
+            index,
+            never_bound,
+            automatic,
+            address_taken,
+        }
+    }
+
+    /// Premises every site shares before any AST is read.
+    fn elaboration_declines(&self, tokens: &[Token]) -> bool {
+        let texts = texts(tokens);
+        tokens.is_empty()
+            || contains_braces(tokens)
+            || self.opaque_callee(tokens)
+            || texts
+                .iter()
+                .any(|text| is_identifier(text) && self.descriptor_names.contains(text))
+            || (!self.list_frames.is_empty() && self.list_iteration_refusal(&texts).is_some())
+    }
+
+    fn record_elaboration(
+        &self,
+        site: Site,
+        line: usize,
+        tokens: &[Token],
+        old: &str,
+        refusal: Option<&Refusal>,
+    ) {
+        record_row(json!({
+            "function": self.typed_path_function,
+            "line": line,
+            "texts": texts(tokens),
+            "position": site.label(),
+            "old_route": "old_refusal",
+            "old_refusal": old,
+            "old_admitted": false,
+            "new_admitted": refusal.is_none(),
+            "new_refusal": refusal.map(Refusal::reason),
+            "disagreement": refusal.is_none(),
+        }));
+    }
+
+    /// Hook: a statement every existing route refused (`old` is its
+    /// refusal). `None` keeps the refusal byte for byte.
+    pub(super) fn elaborated_statement(
+        &mut self,
+        tokens: &[Token],
+        line: usize,
+        old: &str,
+    ) -> Option<Statement> {
+        if self.elaboration_declines(tokens) {
+            return None;
+        }
+        let index = self.elaboration_index()?;
+        let saved = (self.next_site, self.element_lowerings);
+        let outcome = self.elaborate_statement(&index, tokens, line);
+        self.record_elaboration(Site::Statement, line, tokens, old, outcome.as_ref().err());
+        match outcome {
+            Ok(statements) => Some(Statement::Block(statements)),
+            Err(_) => {
+                (self.next_site, self.element_lowerings) = saved;
+                None
+            }
+        }
+    }
+
+    fn elaborate_statement(
+        &mut self,
+        index: &StatementIndex,
+        tokens: &[Token],
+        line: usize,
+    ) -> Result<Vec<Statement>, Refusal> {
+        let wanted = texts(tokens);
+        let node = Self::elaboration_node(index, tokens[0].line, &wanted, &|node| {
+            !matches!(
+                kind(node),
+                "ReturnStmt"
+                    | "CompoundStmt"
+                    | "IfStmt"
+                    | "WhileStmt"
+                    | "DoStmt"
+                    | "ForStmt"
+                    | "SwitchStmt"
+                    | "CaseStmt"
+                    | "DefaultStmt"
+                    | "LabelStmt"
+            )
+        })
+        .ok_or(Refusal::Unlisted("no unique Clang node for the statement"))?;
+        if !holds_value_form(node) {
+            return Err(Refusal::Unlisted("no value form of this card"));
+        }
+        // The whole statement passes the order model before any piece is
+        // lowered.
+        {
+            let never_bound = |name: &str| self.joined_never_bound(name);
+            let context = Self::elaboration_context(index, &never_bound);
+            elaboration::elaborate(node, &context)?;
+        }
+        let steps = self.steps(node)?;
+        let mut statements = Vec::new();
+        for step in &steps {
+            statements.extend(self.lower_step(index, step, tokens, line, true)?);
+        }
+        Ok(statements)
+    }
+
+    /// The sequenced steps of a statement node.
+    fn steps<'n>(&self, node: &'n Value) -> Result<Vec<Step<'n>>, Refusal> {
+        let bare = strip_parens(node);
+        if kind(bare) == "DeclStmt" {
+            let [declaration] = children(bare) else {
+                return Err(Refusal::Declaration("not exactly one declarator"));
+            };
+            let name = declaration["name"].as_str().unwrap_or_default();
+            if self.formal_parameters.contains(name) {
+                return Err(Refusal::Declaration("may shadow a formal"));
+            }
+            let [initializer] = children(declaration) else {
+                return Err(Refusal::Declaration("no single initializer"));
+            };
+            let operands = comma_operands(initializer);
+            let Some((last, leading)) = operands.split_last() else {
+                return Err(Refusal::Declaration("no initializer"));
+            };
+            if leading.is_empty() {
+                return Ok(vec![Step::Piece(bare)]);
+            }
+            let mut steps = Vec::new();
+            for operand in leading {
+                steps.extend(self.steps(operand)?);
+            }
+            steps.push(Step::Declare(bare, last));
+            return Ok(steps);
+        }
+        let operands = comma_operands(bare);
+        if operands.len() > 1 {
+            let mut steps = Vec::new();
+            for operand in operands {
+                steps.extend(self.steps(operand)?);
+            }
+            return Ok(steps);
+        }
+        if kind(bare) == "BinaryOperator"
+            && bare["opcode"].as_str() == Some("=")
+            && let [left, right] = children(bare)
+        {
+            let operands = comma_operands(right);
+            if let Some((last, leading)) = operands.split_last()
+                && !leading.is_empty()
+            {
+                let mut steps = Vec::new();
+                for operand in leading {
+                    steps.extend(self.steps(operand)?);
+                }
+                steps.push(Step::Assign(left, last));
+                return Ok(steps);
+            }
+            // `LEFT = (NAME = VALUE)`: the inner assignment, then `LEFT = NAME`.
+            // The two objects are distinct, so their unsequenced stores commute.
+            let inner = strip_parens(right);
+            if kind(inner) == "BinaryOperator"
+                && inner["opcode"].as_str() == Some("=")
+                && let [name, _] = children(inner)
+                && let Some((inner_id, _)) = named_object(name)
+                && named_object(left).is_some_and(|(outer_id, _)| outer_id != inner_id)
+            {
+                let mut steps = self.steps(inner)?;
+                steps.push(Step::Assign(left, name));
+                return Ok(steps);
+            }
+        }
+        Ok(vec![Step::Piece(bare)])
+    }
+
+    fn node_texts(index: &StatementIndex, node: &Value) -> Result<Vec<String>, Refusal> {
+        index
+            .node_tokens(node)
+            .ok_or(Refusal::Unlisted("node without tokens"))
+    }
+
+    /// The tokens of `wanted` as they stand in `statement` (their own lines),
+    /// or synthesised on the statement's first line when they are not one run
+    /// of it.
+    fn step_tokens(statement: &[Token], wanted: &[String], line: usize) -> Vec<Token> {
+        if !wanted.is_empty() {
+            for start in 0..statement.len() {
+                let end = start + wanted.len();
+                if end <= statement.len()
+                    && statement[start..end]
+                        .iter()
+                        .zip(wanted)
+                        .all(|(token, text)| &token.text == text)
+                {
+                    return statement[start..end].to_vec();
+                }
+            }
+        }
+        let at = statement.first().map_or(line, |token| token.line);
+        wanted
+            .iter()
+            .map(|text| Token {
+                text: text.clone(),
+                line: at,
+            })
+            .collect()
+    }
+
+    /// Lower one step. `refused` says the enclosing statement's own tokens
+    /// were already refused by the statement lowering, so a step spelling all
+    /// of them goes straight to its events.
+    fn lower_step(
+        &mut self,
+        index: &StatementIndex,
+        step: &Step<'_>,
+        statement: &[Token],
+        line: usize,
+        refused: bool,
+    ) -> Result<Vec<Statement>, Refusal> {
+        let (wanted, synthetic) = match step {
+            Step::Piece(node) => (Self::node_texts(index, node)?, (*node).clone()),
+            Step::Declare(declaration, value) => {
+                // The declaration's own tokens up to its top-level `=`.
+                let whole = Self::node_texts(index, declaration)?;
+                let equal = whole
+                    .iter()
+                    .position(|text| text == "=")
+                    .ok_or(Refusal::Declaration("no initializer"))?;
+                let mut wanted = whole[..=equal].to_vec();
+                wanted.extend(Self::node_texts(index, value)?);
+                let mut synthetic = (*declaration).clone();
+                synthetic["inner"][0]["inner"] = json!([(*value).clone()]);
+                (wanted, synthetic)
+            }
+            Step::Assign(left, value) => {
+                let mut wanted = Self::node_texts(index, left)?;
+                wanted.push("=".to_owned());
+                wanted.extend(Self::node_texts(index, value)?);
+                let value = if kind(strip_parens(value)) == "DeclRefExpr" {
+                    // A named object used as a value is read.
+                    json!({
+                        "kind": "ImplicitCastExpr",
+                        "castKind": "LValueToRValue",
+                        "type": value["type"].clone(),
+                        "inner": [(*value).clone()],
+                    })
+                } else {
+                    (*value).clone()
+                };
+                let synthetic = json!({
+                    "kind": "BinaryOperator",
+                    "opcode": "=",
+                    "type": left["type"].clone(),
+                    "inner": [(*left).clone(), value],
+                });
+                (wanted, synthetic)
+            }
+        };
+        let tokens = Self::step_tokens(statement, &wanted, line);
+        let whole = refused && texts(&tokens) == texts(statement);
+        if !whole {
+            let saved = (self.next_site, self.element_lowerings);
+            let lowered = self.expression_statement(&tokens, line);
+            if !refuses(&lowered) {
+                return Ok(vec![lowered]);
+            }
+            (self.next_site, self.element_lowerings) = saved;
+        }
+        let instructions = self.event_instructions(index, &synthetic, Site::Statement)?;
+        Ok(instructions
+            .into_iter()
+            .map(|instruction| Statement::Instruction(instruction, line))
+            .collect())
+    }
+
+    /// Elaborate `node` and lower its events in the graph's order.
+    fn event_instructions(
+        &self,
+        index: &StatementIndex,
+        node: &Value,
+        site: Site,
+    ) -> Result<Vec<LegacyInstruction>, Refusal> {
+        let statement_never_bound = |name: &str| self.joined_never_bound(name);
+        let position_never_bound = |name: &str| self.position_never_bound(name);
+        let never_bound: &dyn Fn(&str) -> bool = match site {
+            Site::Statement => &statement_never_bound,
+            Site::Return | Site::Condition => &position_never_bound,
+        };
+        let context = Self::elaboration_context(index, never_bound);
+        let elaborated = elaboration::elaborate(node, &context)?;
+        self.lower_events(&elaborated)
+    }
+
+    fn lower_events(
+        &self,
+        elaborated: &Elaboration<StatementPlan>,
+    ) -> Result<Vec<LegacyInstruction>, Refusal> {
+        let mut instructions = Vec::new();
+        for (id, event) in elaborated.graph.events.iter().enumerate() {
+            match event {
+                Event::Read(Place::Object { .. }) => {}
+                Event::Write {
+                    place: Place::Object { name, .. },
+                    pointer: false,
+                } => {
+                    if self.protected_formals.contains(name)
+                        || !crate::typed_field_access::is_scalar_initializer(
+                            name,
+                            &["1"],
+                            &self.typed_model,
+                            &self.typed_types,
+                        )
+                    {
+                        return Err(Refusal::Unlisted(
+                            "write to an object the gateway does not read as a scalar local",
+                        ));
+                    }
+                    instructions.push(LegacyInstruction::ForgetScalar {
+                        destination: name.clone(),
+                    });
+                }
+                Event::Read(Place::Path { .. })
+                | Event::Write {
+                    place: Place::Path { .. },
+                    pointer: false,
+                } => {
+                    let plan = elaborated
+                        .facts
+                        .get(&id)
+                        .ok_or(Refusal::Unlisted("path event without facts"))?;
+                    let write = matches!(event, Event::Write { .. });
+                    instructions.push(self.path_instruction(plan, write));
+                }
+                Event::Write { pointer: true, .. } => {
+                    return Err(elaboration::refused("pointer store"));
+                }
+                Event::Call { callee } => {
+                    let effectful = elaborated.actuals.get(&id).is_some_and(|events| {
+                        events.iter().any(|&event| {
+                            !matches!(elaborated.graph.events[event], Event::Read(_))
+                        })
+                    });
+                    return Err(if effectful {
+                        Refusal::EffectfulActual(callee.clone())
+                    } else {
+                        Refusal::UnorderedCall(callee.clone())
+                    });
+                }
+                _ => return Err(Refusal::Unlisted("event outside this card's lowering")),
+            }
+        }
+        Ok(instructions)
+    }
+
+    /// The typed access-path reader's instruction for one path event, as
+    /// `typed_path_statement` lowers a W46 statement.
+    fn path_instruction(&self, plan: &StatementPlan, write: bool) -> LegacyInstruction {
+        LegacyInstruction::IndirectScalarAccess {
+            alias_reads: plan
+                .scalar
+                .record_bases
+                .iter()
+                .filter_map(|base| self.read_alias(Some(base)))
+                .collect(),
+            bases: plan.scalar.bases.clone(),
+            destination: None,
+            frame: (write && plan.scalar.writes_through_pointer)
+                .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
+            chains: plan.chains.clone(),
+            borrowed_destination: false,
+        }
+    }
+
+    /// Hook: a `return` every existing route refused. `None` keeps the
+    /// refusal.
+    pub(super) fn elaborated_return(
+        &mut self,
+        expression: &[Token],
+        line: usize,
+    ) -> Option<Statement> {
+        if self.elaboration_declines(expression) {
+            return None;
+        }
+        let index = self.elaboration_index()?;
+        let saved = (self.next_site, self.element_lowerings);
+        let outcome = self.elaborate_return(&index, expression, line);
+        self.record_elaboration(
+            Site::Return,
+            line,
+            expression,
+            "unmodeled call, aggregate or indirect access in return expression",
+            outcome.as_ref().err(),
+        );
+        match outcome {
+            Ok(statements) => Some(Statement::Block(statements)),
+            Err(_) => {
+                (self.next_site, self.element_lowerings) = saved;
+                None
+            }
+        }
+    }
+
+    fn elaborate_return(
+        &mut self,
+        index: &StatementIndex,
+        expression: &[Token],
+        line: usize,
+    ) -> Result<Vec<Statement>, Refusal> {
+        let mut wanted = vec!["return"];
+        wanted.extend(texts(expression));
+        let statement = Self::elaboration_node(index, expression[0].line, &wanted, &|node| {
+            kind(node) == "ReturnStmt"
+        })
+        .ok_or(Refusal::Unlisted("no unique Clang node for the return"))?;
+        let [node] = children(statement) else {
+            return Err(Refusal::Unlisted("return without one value"));
+        };
+        if !holds_value_form(node) {
+            return Err(Refusal::Unlisted("no value form of this card"));
+        }
+        let result = {
+            let never_bound = |name: &str| self.position_never_bound(name);
+            let context = Self::elaboration_context(index, &never_bound);
+            elaboration::elaborate(node, &context)?.result
+        };
+        let operands = comma_operands(node);
+        let Some((&last, leading)) = operands.split_last() else {
+            return Err(Refusal::Unlisted("empty return"));
+        };
+        let mut statements = Vec::new();
+        for operand in leading {
+            for step in self.steps(operand)? {
+                statements.extend(self.lower_step(index, &step, expression, line, false)?);
+            }
+        }
+        // `return NAME = VALUE`: the assignment, then `return NAME`.
+        if kind(last) == "BinaryOperator"
+            && last["opcode"].as_str() == Some("=")
+            && let [left, _] = children(last)
+            && let Some((_, name)) = named_object(left)
+        {
+            for step in self.steps(last)? {
+                statements.extend(self.lower_step(index, &step, expression, line, false)?);
+            }
+            let name = Self::step_tokens(expression, &[name.to_owned()], line);
+            let returned = self.return_statement(name, line);
+            if super::return_refused(&returned) {
+                return Err(Refusal::Unlisted("the assigned object's return is refused"));
+            }
+            statements.push(returned);
+            return Ok(statements);
+        }
+        if !leading.is_empty() {
+            let wanted = Self::node_texts(index, last)?;
+            let tokens = Self::step_tokens(expression, &wanted, line);
+            let saved = (self.next_site, self.element_lowerings);
+            let returned = self.return_statement(tokens, line);
+            if !super::return_refused(&returned) {
+                statements.push(returned);
+                return Ok(statements);
+            }
+            (self.next_site, self.element_lowerings) = saved;
+        }
+        // A scalar value's events, then an exit that escapes nothing.
+        if !matches!(result, Operand::Value { pointer: false, .. })
+            || !self.return_facts.scalar_result
+        {
+            return Err(Refusal::Unlisted("a returned value that is not a scalar"));
+        }
+        let instructions = self.event_instructions(index, last, Site::Return)?;
+        statements.extend(
+            instructions
+                .into_iter()
+                .map(|instruction| Statement::Instruction(instruction, line)),
+        );
+        statements.push(Statement::Return {
+            line,
+            writes: self.expression_writes(expression),
+            expression_supported: true,
+            returned_place: None,
+            returned_evaluation: None,
+            returned_evaluation_escapes: false,
+            returns_null_constant: false,
+        });
+        Ok(statements)
+    }
+
+    /// Hook: a call-free controlling expression every existing route refused.
+    /// `None` keeps the refusal.
+    pub(super) fn elaborated_condition(
+        &mut self,
+        condition: &[Token],
+        line: usize,
+        position: Position,
+    ) -> Option<Box<ConditionPlan>> {
+        if self.elaboration_declines(condition) || contains_call(condition) {
+            return None;
+        }
+        let index = self.elaboration_index()?;
+        let outcome = self.elaborate_condition(&index, condition);
+        self.record_elaboration(
+            Site::Condition,
+            line,
+            condition,
+            position.refusal(),
+            outcome.as_ref().err(),
+        );
+        outcome.ok().map(Box::new)
+    }
+
+    fn elaborate_condition(
+        &self,
+        index: &StatementIndex,
+        condition: &[Token],
+    ) -> Result<ConditionPlan, Refusal> {
+        let wanted = texts(condition);
+        let node = Self::elaboration_node(index, condition[0].line, &wanted, &|node| {
+            !kind(node).ends_with("Stmt") && !kind(node).ends_with("Decl")
+        })
+        .ok_or(Refusal::Unlisted("no unique Clang node for the condition"))?;
+        if !holds_value_form(node) {
+            return Err(Refusal::Unlisted("no value form of this card"));
+        }
+        let never_bound = |name: &str| self.position_never_bound(name);
+        let context = Self::elaboration_context(index, &never_bound);
+        let elaborated = elaboration::elaborate(node, &context)?;
+        if !matches!(elaborated.result, Operand::Value { pointer: false, .. }) {
+            return Err(Refusal::Unlisted("a condition that is not a scalar value"));
+        }
+        let instructions = self.lower_events(&elaborated)?;
+        // The events in order, then one branch that refines nothing.
+        let mut nodes = instructions
+            .into_iter()
+            .enumerate()
+            .map(|(at, instruction)| PlanNode {
+                instruction,
+                successors: vec![Target::Node(at + 1)],
+            })
+            .collect::<Vec<_>>();
+        nodes.push(PlanNode {
+            instruction: LegacyInstruction::NoOp,
+            successors: vec![Target::True, Target::False],
+        });
+        Ok(ConditionPlan { nodes, entry: 0 })
+    }
+}
+
+impl Position {
+    /// The refusal the position's lowering pushes (recorded beside the
+    /// elaborator's answer).
+    fn refusal(self) -> &'static str {
+        match self {
+            Position::Branch => "unmodeled call, aggregate or indirect access in branch condition",
+            Position::Loop => "unmodeled call, aggregate or indirect access in loop condition",
+            Position::ForLoop => {
+                "unmodeled call, aggregate or indirect access in for-loop condition"
+            }
+            Position::DoWhile => {
+                "unmodeled call, aggregate or indirect access in do-while condition"
+            }
+            Position::Switch => "unmodeled call, aggregate or indirect access in switch expression",
+        }
+    }
+}
+
+/// Whether a lowered statement is a refusal (anywhere inside a block).
+fn refuses(statement: &Statement) -> bool {
+    match statement {
+        Statement::Instruction(LegacyInstruction::Unknown { .. }, _) => true,
+        Statement::Block(statements) => statements.iter().any(refuses),
+        _ => false,
+    }
+}

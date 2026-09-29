@@ -856,6 +856,11 @@ impl Importer<'_> {
         ty: String,
         depth: usize,
     ) -> Result<Expr, String> {
+        // CG02-ELABORATION-CORE (rule 10s): a value form is named. No route-T
+        // consumer decides one (CG01's census), so none is read.
+        if let Some(form) = crate::elaboration::value_form(node) {
+            return Err(crate::elaboration::t_refusal(form));
+        }
         let Some(spelling) = typed_source_nodes::expression_spelling(node) else {
             return Err(format!("unmodeled callback expression {}", kind(node)));
         };
