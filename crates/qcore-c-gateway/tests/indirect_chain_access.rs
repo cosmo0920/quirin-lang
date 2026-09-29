@@ -263,8 +263,15 @@ fn typed_extended_paths_preserve_unlisted_refusals() {
     }
 }
 
+/// Deliberate pin update, card CG10-COMMON-TYPED-PLACE (rule 10t). Before it
+/// a mixed path under a tracked root refused ("no place proof"). The common
+/// typed place now reads `b->item->inline_leaf.weight` as the chain
+/// `b -> item` (a direct member link) followed by an embedded selection, with
+/// the chain's own obligations: `b` one live identity and `b->item` the live
+/// child the admitted store linked. Both hold, so the store certifies; the
+/// same access after the child's release refuses.
 #[test]
-fn a_mixed_path_under_a_tracked_root_still_refuses() {
+fn a_mixed_path_under_a_tracked_root_carries_the_link_evidence() {
     if !clang_available() {
         return;
     }
@@ -274,9 +281,22 @@ fn a_mixed_path_under_a_tracked_root_still_refuses() {
         b = c_make(n); if (!b) { c_release(it); return; } \
         b->item = it; b->item->inline_leaf.weight = 1; \
         c_release(it); c_drop(b); }";
-    let (status, keys) = outcome(body);
+    assert_eq!(outcome(body), safe());
+    let released = "void w(int n) { \
+        struct c_item *it; struct c_box *b; \
+        it = c_take(n); if (!it) { return; } \
+        b = c_make(n); if (!b) { c_release(it); return; } \
+        b->item = it; c_release(it); b->item->inline_leaf.weight = 1; \
+        c_drop(b); }";
+    let (status, keys) = outcome(released);
+    assert_ne!(status, "Safe", "{keys:?}");
+    assert!(!keys.is_empty(), "a released child has no place proof");
+    let unlinked = "void w(int n) { struct c_box *b; \
+        b = c_make(n); if (!b) { return; } \
+        b->item->inline_leaf.weight = 1; c_drop(b); }";
+    let (status, keys) = outcome(unlinked);
     assert_eq!(status, "Unknown", "{keys:?}");
-    assert!(!keys.is_empty(), "tracked mixed path has no place proof");
+    assert!(keys.contains(&"unknown_alias:b->item".to_owned()), "{keys:?}");
 }
 
 #[test]

@@ -1363,7 +1363,7 @@ mod tests {
     }
 
     #[test]
-    fn mixed_embedded_and_indexed_path_needs_untracked_root() {
+    fn mixed_embedded_and_indexed_path_carries_per_hop_obligations() {
         let source = "struct I { int value; }; struct S { struct I inner; struct I *items; }; int f(struct S *p, int i) { int x = p->inner.value + p->items[i].value; return 0; }";
         let _scope = enter_source(source, CCompilerDialect::C11, None);
         let index = StatementIndex::read("f").expect("typed function");
@@ -1377,7 +1377,23 @@ mod tests {
             .expect("untracked path");
         assert_eq!(plan.accesses, 2);
         assert!(plan.chains.iter().all(|chain| chain.links.is_empty()));
-        assert!(index.statement(&texts, 1, |name| name != "p").is_none());
+        // Card CG10 (rule 10t): on a root the closure does not prove never
+        // bound, the common typed place carries the per-hop obligations the
+        // flow checks: the root alone for the embedded member, and the root
+        // plus the direct member place `p->items` for the indexed element.
+        let tracked = index
+            .statement(&texts, 1, |name| name != "p")
+            .expect("tracked-root place");
+        assert_eq!(tracked.accesses, 2);
+        assert!(tracked.chains.iter().all(|chain| !chain.root_never_bound));
+        assert_eq!(
+            tracked
+                .chains
+                .iter()
+                .map(|chain| chain.links.clone())
+                .collect::<Vec<_>>(),
+            [Vec::<String>::new(), vec!["items".to_owned()]]
+        );
     }
 
     #[test]
