@@ -218,7 +218,19 @@ move (the census publishes none), no correction.
 **Arbiters** ([`arbiters.py`](../w47-loop-owner-typed-dispatch/scripts/arbiters.py),
 `--jobs 8`, compared with the round-7 archive by
 [`identity.py`](../w47-loop-owner-predefined-macro-arms/scripts/identity.py)):
-see [artifacts/arbiters/](artifacts/arbiters/). ARBITERS_PLACEHOLDER
+run once, AFTER only, at `cd21bfbf` (binary `quirin-audit` in
+[artifacts/arbiters/binary.sha256](artifacts/arbiters/binary.sha256)), every
+exit 0. The corpus `resource-diagnostics.json` is **byte-identical to the
+archive** (`ae17152b…`); the system and slice `resource-diagnostics.json`
+differ only in the lines that carry the checkout root (45 and 48 lines after
+the root alias, as W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS found for its own
+BEFORE); every contracts sidecar is identical with the root alias. Composed
+with the archive: corpus 526 / 10 / 4,298, system 31 / 2 / 201, slice 24 / 1
+/ 244 / 1 Pending, 0 mismatches each ([artifacts/arbiters/](artifacts/arbiters/)).
+No BEFORE arbiter run was made: the archive is the baseline the predecessor
+reproduced at this base, and nothing on an audit route changed (the census
+modules are read by the census examples alone). No new baseline is
+archived, since nothing moved.
 
 **Prediction against outcome** ([PREDICTION.md](PREDICTION.md)):
 
@@ -231,7 +243,7 @@ see [artifacts/arbiters/](artifacts/arbiters/). ARBITERS_PLACEHOLDER
 | other sites | unchanged (85%) | **as predicted** |
 | raw readings | equal but the reason text (80%) | **as predicted** (previous raw byte-identical) |
 | edges / functions / seeds | unchanged (90%) | **as predicted** |
-| corpus / system / slice | byte-identical sidecars (95%) | see §5 arbiters |
+| corpus / system / slice | byte-identical sidecars (95%) | **as predicted** (corpus byte-identical; system and slice but their root lines; 0 mismatches) |
 | follow-up | amended, not retired (60%) | **retired**: the closure's macro-made calls were derived too (the name-keyed part registered as a residual) |
 
 ## 6. Premises of the three discharged sites
@@ -287,7 +299,7 @@ invocation's expansion under the unit's table:
 ## 8. Follow-ups
 
 [`followups.json`](followups.json), applied by the idempotent
-[`scripts/update_ledger.py`](scripts/update_ledger.py): LEDGER_PLACEHOLDER.
+[`scripts/update_ledger.py`](scripts/update_ledger.py): 568 → 569 (a second run changes nothing).
 
 - **Retired:** `W47-LOOP-OWNER-REGION-MACRO-CALLS`: its DISCHARGE clause is
   met: the region counts the functions an invoked macro names, resolved by
@@ -304,7 +316,22 @@ invocation's expansion under the unit's table:
 
 ## 9. Gate
 
-GATE_PLACEHOLDER
+[`scripts/gate.py`](scripts/gate.py) runs `rust`, then `records`. Exits are
+in [gate/](gate/) and figures in [gate.json](gate.json). Every step exited
+0, on the first run:
+
+- submodule (`git submodule update --init third_party/libevent`: the only
+  submodule; `--recursive` was refused by this session's permission layer);
+  fmt clean; the Rust suite: 356 units / 369 summaries, **6,375 passed, 0
+  failed**, 11 ignored (`private/test-binaries/20260929T060258Z-3518047/`);
+  clippy clean; both probes 0;
+- **224 Lean audits** (`AuditLoopOwner.lean` 81 → 101 theorems, no new audit
+  module);
+- `providers/` is unchanged, so the provider gate is not due and was not run
+  (the matrix's provider figure, 129, is carried from the predecessor's
+  record);
+- the `records` phase, after the ledger, matrix and index regeneration: 365
+  Python tests OK, docs index 0, Clang 21.1.8 recorded.
 
 **Files likely to conflict:**
 
