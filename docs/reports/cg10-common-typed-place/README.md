@@ -197,5 +197,14 @@ narrows an extracted fact `AggregateStore` already models
 
 ## 8. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (exits captured to files, no step
-piped; `scripts/gate.sh`).
+[`scripts/gate.sh`](scripts/gate.sh), exits in [gate/](gate/), figures in
+[gate.json](gate.json); logs in `private/cg10/gate`. Submodule 0; fmt 0;
+`run_test_binaries.py` 6,569 passed, 1 failed, 11 ignored (367 units): the
+failure is `cycle20_verifier_plugins::vp04_vp07_vp08_…`, a wall-clock
+`elapsed < 500 ms` assertion under a load average of 28–36 (three cards
+running), unrelated to the gateway; it failed again at load 28 (`03b`, 101)
+and passed 20/20 at load 20 (`03c`, 0). Clippy 0; both reevaluation probes 0;
+`check_lean_audits.py` 228 passed; Python tests 365 OK (and again after the
+matrix regeneration, `13-python.exit`); docs index 0; `cargo clean --profile
+dev` 0. `providers/` is unchanged: no provider gate. The tip binary was
+rebuilt and the corpus arbiter re-run at the tip (`tip`); see §4.
