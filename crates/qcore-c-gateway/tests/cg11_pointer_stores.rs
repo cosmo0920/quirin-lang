@@ -65,6 +65,17 @@ fn a_tailq_init_expansion_on_a_formals_member_is_admitted() {
 }
 
 #[test]
+fn an_untagged_typedef_root_is_read_by_its_declaration() {
+    if !clang_available() {
+        return;
+    }
+    // W45-SUB-OBJECT-STORE-ROOT-UNRESOLVED: W45's reader resolves no tag for
+    // an untagged typedef; rule 10v reads the root by its Clang declaration.
+    let run = gs("typedef struct { void *p; int x; } U; void subject(U *u) { u->p = 0; u->x = 1; }");
+    assert!(run.safe(), "{run:?}");
+}
+
+#[test]
 fn a_list_head_pointing_at_itself_is_admitted() {
     if !clang_available() {
         return;
