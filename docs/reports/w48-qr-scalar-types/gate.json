@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-SCALAR-TYPES card gate at base d389700a, logs private/w48-qr-scalar-types/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 359 units, 372 summaries, 6,433 passed, 0 failed, 11 ignored (private/test-binaries/20260929T075249Z-4024297/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 225 audits passed (new AuditScalarTypes.lean, 23 theorems); clean-dev 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried from the W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS record. The records phase ran after the ledger (580 -> 588), matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8). No gate step failed. Exits in gate/.",
+  "workspace_tests": 6433,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 225,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -69,7 +69,7 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
       type, and as a capture's first word), so `let lend = 5;` is still a
       program; and `borrow_utf8`/`qcore_buffer_write`/`qcore_buffer_read` select
       their form by **arity** rather than by a new word.
-    * **Three name-resolution exclusions, and one deliberate non-exclusion.**
+    * **Four name-resolution exclusions, and one deliberate non-exclusion.**
       `NATIVE-LIBRARY-SOURCE-BINDING` excluded binding spans from both
       whole-token-stream route selectors (`module_imports::concurrency_span`,
       `source_tasks::has_source_tasks`), so a library named `spawn`, `join` or
@@ -87,6 +87,17 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
       reserved, so no exclusion was carved out of `referenced_names` and both
       clause **names** stay genuine references (an unbound one refuses at
       `Q013`), measured rather than asserted.
+    * `W48-QR-SCALAR-TYPES` claims a **position** and no word, and adds a
+      fourth name-resolution exclusion: in `lexical_references`, a word that is
+      a scalar type name (`bool`, `i8` … `usize`) immediately after the
+      already-reserved `as` is not collected, so the conversion `EXPR as TYPE`
+      resolves. Both sides are contextual — neither `as` nor any type name
+      became a global word — and a `with lock m as g` binder is a different
+      word in the same position. The census
+      (`docs/reports/w48-qr-scalar-types/census_spelling.py`) found **0** `as`
+      followed by a scalar type name across the 625 tracked
+      `.qr`/`.qv`/`.qrlib` files. A conversion written on a route that does not
+      admit it now refuses at that route's own reader rather than at `Q013`.
 
     **Method, twice corrected by its own findings.** A wave's entry is settled
     by **measuring the seam**, not by reading the cards' reports: the wave-37
@@ -110,7 +121,7 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     `region-credit-joins`, `region-joins-duties`,
     `slice-permissions-write-lend`, `write-lend-tasks`,
     `mutex-share-cross`, `write-lend-tasks-exercise`, `aggregate-owned-field`,
-    `ct42-cell-route`, `loops-on-composed-routes`.
+    `ct42-cell-route`, `loops-on-composed-routes`, `w48-qr-scalar-types`.
 <!-- preserved:constraint-14:end -->
 
 <a id="constraint-15"></a>
