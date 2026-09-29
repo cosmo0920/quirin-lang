@@ -1858,6 +1858,112 @@ theorem the_route_is_dropped_only_through_read_macros_and_an_opaque_holder {α :
     exact ⟨hop, hcopy, a_derived_region_head_is_the_programs_one_creation hcreating⟩
   · simp [holderDerivation, hop] at hcreating
 
+/-! #### The census graph's macro-made calls
+
+The region's roots reach over the census graph; the program also runs the
+calls macros make in the functions they reach. The census adds those calls
+as edges and refuses a root that reaches a hazard only through one
+(`closureCheck`); a root that passes reaches a hazard over the program's
+graph only when the census graph already says so, so it was counted
+(`a_passing_root_reaches_a_hazard_only_as_counted`). -/
+
+/-- A hazard reached within `n` steps over `next`. -/
+def reachesWithin {α : Type} (next : α → List α) (hazard : α → Bool) : Nat → α → Bool
+  | 0, a => hazard a
+  | n + 1, a => hazard a || (next a).any (reachesWithin next hazard n)
+
+/-- The census's check: no root reaches a hazard over the census graph and
+the macro-made calls unless it does over the census graph. -/
+def closureCheck {α : Type} (census made : α → List α) (hazard : α → Bool) (n : Nat)
+    (roots : List α) : Bool :=
+  roots.all fun r =>
+    reachesWithin census hazard n r || !reachesWithin (fun a => census a ++ made a) hazard n r
+
+theorem a_passing_root_reaches_a_hazard_only_as_counted {α : Type}
+    {census made : α → List α} {hazard : α → Bool} {n : Nat} {roots : List α} {r : α}
+    (hcheck : closureCheck census made hazard n roots = true) (hr : r ∈ roots)
+    (hprog : reachesWithin (fun a => census a ++ made a) hazard n r = true) :
+    reachesWithin census hazard n r = true := by
+  have h := List.all_eq_true.mp hcheck r hr
+  simp only [Bool.or_eq_true, Bool.not_eq_true'] at h
+  rcases h with h | h
+  · exact h
+  · rw [hprog] at h; exact absurd h (by simp)
+
+theorem reachesWithin_more_edges {α : Type} {next more : α → List α} {hazard : α → Bool} :
+    ∀ (n : Nat) (a : α), reachesWithin next hazard n a = true →
+      reachesWithin (fun b => next b ++ more b) hazard n a = true := by
+  intro n
+  induction n with
+  | zero => intro a h; simpa [reachesWithin] using h
+  | succ n ih =>
+    intro a h
+    simp only [reachesWithin, Bool.or_eq_true, List.any_eq_true] at h ⊢
+    rcases h with h | ⟨b, hb, hreach⟩
+    · exact Or.inl h
+    · exact Or.inr ⟨b, List.mem_append_left _ hb, ih b hreach⟩
+
+/-- A root reaching a hazard only through a macro-made call fails the check. -/
+theorem a_root_reaching_only_through_a_macro_call_refuses {α : Type}
+    {census made : α → List α} {hazard : α → Bool} {n : Nat} {roots : List α} {r : α}
+    (hr : r ∈ roots) (hcensus : reachesWithin census hazard n r = false)
+    (hprog : reachesWithin (fun a => census a ++ made a) hazard n r = true) :
+    closureCheck census made hazard n roots = false := by
+  rw [Bool.eq_false_iff]
+  intro hcheck
+  have := a_passing_root_reaches_a_hazard_only_as_counted hcheck hr hprog
+  rw [hcensus] at this
+  exact absurd this (by simp)
+
+/-! #### The holder's instance runs its copy's callback
+
+An instance's plugin and user pointer are written by the constructor (from
+its arguments, never the holder, which escapes only through the
+installation) and by the installation, which writes both. So whenever the
+user pointer is the holder, the plugin is the copy
+(`the_holder_instance_runs_its_copy`): a dispatch `X->p->F(…, X->data)`
+hands the holder only to the copy's `F`. -/
+
+/-- A write of one instance's plugin and user pointer. -/
+inductive InstanceWrite where
+  /-- The constructor: a plugin and a user pointer from its arguments. -/
+  | construct (p data : Nat)
+  /-- The installation of the copy and the holder. -/
+  | install
+  deriving DecidableEq, Repr
+
+structure InstanceState where
+  p : Nat
+  data : Nat
+  deriving DecidableEq, Repr
+
+def applyWrite (copy holder : Nat) (_s : InstanceState) : InstanceWrite → InstanceState
+  | .construct p data => { p := p, data := data }
+  | .install => { p := copy, data := holder }
+
+/-- The pairing the dispatch rests on. -/
+def holderPaired (copy holder : Nat) (s : InstanceState) : Prop :=
+  s.data = holder → s.p = copy
+
+theorem the_holder_instance_runs_its_copy {copy holder : Nat} :
+    ∀ (writes : List InstanceWrite) (s : InstanceState),
+      (∀ p d, InstanceWrite.construct p d ∈ writes → d ≠ holder) →
+      holderPaired copy holder s →
+      holderPaired copy holder (writes.foldl (applyWrite copy holder) s) := by
+  intro writes
+  induction writes with
+  | nil => intro s _ h; exact h
+  | cons w rest ih =>
+    intro s hctor h
+    simp only [List.foldl_cons]
+    apply ih
+    · intro p d hm; exact hctor p d (List.mem_cons_of_mem _ hm)
+    · cases w with
+      | construct p d =>
+        intro hd
+        exact absurd hd (hctor p d List.mem_cons_self)
+      | install => intro _; rfl
+
 /-- The old test's collector operations run on the test thread whatever the
 region's macros or the holder derive. -/
 theorem the_old_test_path_is_never_discharged_whatever_the_region {owners : Owners}

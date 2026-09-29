@@ -195,3 +195,7 @@ correspondence are trust boundary 28's premises, pinned by
 #print axioms QCore.LoopOwner.a_data_reader_that_writes_the_flag_keeps_the_route
 #print axioms QCore.LoopOwner.the_route_is_dropped_only_through_read_macros_and_an_opaque_holder
 #print axioms QCore.LoopOwner.the_old_test_path_is_never_discharged_whatever_the_region
+#print axioms QCore.LoopOwner.a_passing_root_reaches_a_hazard_only_as_counted
+#print axioms QCore.LoopOwner.reachesWithin_more_edges
+#print axioms QCore.LoopOwner.a_root_reaching_only_through_a_macro_call_refuses
+#print axioms QCore.LoopOwner.the_holder_instance_runs_its_copy
