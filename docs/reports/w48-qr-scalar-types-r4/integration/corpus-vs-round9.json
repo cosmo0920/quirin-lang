@@ -1,0 +1,213 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4298,
+   "Safe": 526,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4281,
+   "Safe": 543,
+   "Unsafe": 10
+  }
+ },
+ "moves": [
+  {
+   "unit": "cJSON.c",
+   "function": "cJSON_SetNumberHelper",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "cJSON.c",
+   "function": "parse_hex4",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -3
+   }
+  },
+  {
+   "unit": "chunkio.c",
+   "function": "cio_disable_file_trimming",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unrecognized assignment destination": -1
+   }
+  },
+  {
+   "unit": "chunkio.c",
+   "function": "cio_enable_file_trimming",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unrecognized assignment destination": -1
+   }
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4HC_literalsPrice",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unrecognized assignment destination": -1
+   }
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4HC_sequencePrice",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `LZ4HC_literalsPrice`": -1,
+    "unsupported: unrecognized assignment destination": -1
+   }
+  },
+  {
+   "unit": "rdhdrhistogram.c",
+   "function": "rd_hdr_histogram_record",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled increment or decrement expression": -3
+   }
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_is_modified",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -2
+   }
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "function": "rd_kafka_coord_req_keep",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled increment or decrement expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -2
+   }
+  },
+  {
+   "unit": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_poll_clear",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unrecognized assignment destination": -1
+   }
+  },
+  {
+   "unit": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_poll_set",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unrecognized assignment destination": -1
+   }
+  },
+  {
+   "unit": "rdxxhash.c",
+   "function": "XXH32_avalanche",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: local declaration may shadow a formal resource identity": -2
+   }
+  },
+  {
+   "unit": "rdxxhash.c",
+   "function": "XXH32_round",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unrecognized assignment destination": -1,
+    "unsupported: local declaration may shadow a formal resource identity": -1
+   }
+  },
+  {
+   "unit": "rdxxhash.c",
+   "function": "XXH64_avalanche",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: local declaration may shadow a formal resource identity": -2
+   }
+  },
+  {
+   "unit": "rdxxhash.c",
+   "function": "XXH64_mergeRound",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `XXH64_round`": -1
+   }
+  },
+  {
+   "unit": "rdxxhash.c",
+   "function": "XXH64_round",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unrecognized assignment destination": -1,
+    "unsupported: local declaration may shadow a formal resource identity": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 17
+ },
+ "same_status_functions_with_changed_diagnostics": 979,
+ "leaf_delta": {
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1656,
+  "unsupported: indirect memory access is outside the resource projection": -608,
+  "unsupported: unrecognized assignment destination": -296,
+  "unsupported: unmodeled increment or decrement expression": -148,
+  "unsupported: unmodeled call, aggregate or indirect access in loop condition": -144,
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -42,
+  "unsupported: call to uncontracted function `XXH64_round`": -33,
+  "unsupported: unmodeled expression may mutate a formal resource identity": -20,
+  "unsupported: unsupported assignment expression": -16,
+  "unsupported: unmodeled call, aggregate or indirect access in switch expression": -11,
+  "unsupported: call to uncontracted function `rd_hdr_histogram_record`": -8,
+  "unsupported: call to uncontracted function `XXH32_round`": -8,
+  "unsupported: call to uncontracted function `XXH64_mergeRound`": -8,
+  "unsupported: call to uncontracted function `XXH64_avalanche`": -8,
+  "unsupported: C operator `sizeof` requires type/operand analysis": -7,
+  "unsupported: local declaration may shadow a formal resource identity": -6,
+  "unsupported: unmodeled call, aggregate or indirect access in do-while condition": -4,
+  "unsupported: call to uncontracted function `XXH32_avalanche`": -4,
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": -3,
+  "unsupported: call to uncontracted function `rd_kafka_enq_once_add_source`": -3,
+  "unsupported: call to uncontracted function `parse_hex4`": -2,
+  "unsupported: call to uncontracted function `LZ4HC_literalsPrice`": -2,
+  "unsupported: call to uncontracted function `mk_stream_input_consume`": -2,
+  "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": -2,
+  "unsupported: call to uncontracted function `rd_kafka_anyconf_is_modified`": -2,
+  "unsupported: call to uncontracted function `rd_kafkap_leader_discovery_tmpabuf_add_alloc_topics`": -2,
+  "unsupported: call to uncontracted function `LZ4HC_sequencePrice`": -1,
+  "unsupported: call to uncontracted function `rd_kafka_coord_req_keep`": -1,
+  "unsupported: call to uncontracted function `rd_kafka_transport_poll_set`": -1,
+  "unsupported: call to uncontracted function `rd_kafka_transport_poll_clear`": -1,
+  "unsupported: nested call `XXH_readLE32_align` inside a modeled call is outside the resource projection": 4,
+  "unsupported: nested call `XXH_readLE32` inside a modeled call is outside the resource projection": 4,
+  "unsupported: nested call `XXH_readLE64` inside a modeled call is outside the resource projection": 4,
+  "unsupported: nested call `XXH_readLE64_align` inside a modeled call is outside the resource projection": 28,
+  "unknown_alias: unresolved resource identity": 2917
+ }
+}

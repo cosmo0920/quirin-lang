@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG02-ELABORATION-CORE card gate at tip a6b3e43e (base e182d403, main f1ba8da2 merged), logs private/cg02/gate2 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 370 units, 383 summaries, 6,605 passed, 0 failed, 11 ignored (private/test-binaries/20260929T135327Z-2683079/summary.json, rerun at a6b3e43e after the clippy fix; the first run at b8e5797f was also 6,605 / 0); fmt 0; clippy 0 (a first run failed on two single-element loops in re-pinned tests, fixed in a6b3e43e); both reevaluation probes exit 0; check_lean_audits.py 230 audits passed (229 + AuditElaborationCore.lean); python tests after the matrix validation edit (09-python.exit); docs index. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE on the merged base (binary at CG10 integration tip 1ae1c38f, code-identical to main f1ba8da2) resource-diagnostics.json b63c1b57 byte-identical to CG10's AFTER; AFTER 963d7c9f, 527/10/4,297 -> 543/10/4,281. Exits in gate/.",
-  "workspace_tests": 6605,
+  "note": "W48-QR-SCALAR-TYPES-R4 integration gate on integrate/w48-r4 db0677be (main f19204fa with CG10 and CG02, plus the card at 0fca9c5e), script merged-gate-r4.sh, logs private/w48-int-r4/gate-db0677be of the implementation-wave-47 worktree: submodule 0; run_test_binaries.py 371 units, 384 summaries, 6,617 passed, 1 failed (cycle20_verifier_plugins vp04_vp07_vp08, wall-clock elapsed < 500ms under load average 20-40 from other sessions), exit 101; that binary rerun alone failed once more at load ~20 and passed 20/20 at load 14 (gate/rerun1-cycle20.exit 0), so 6,618 tests pass. fmt, clippy, both reevaluation probes 0; 231 Lean audits; python first run 1 failure (the matrix's stale lean_audits 230 against 231 on disk), corrected by this regeneration; docs index 0. Provider tests first run exit 101: configured_audit's two tests failed under load and cargo stopped at that binary; rerun alone 7/7, then the whole provider suite with --no-fail-fast 129 passed, 0 failed, 1 ignored (exit 0). Provider fmt, clippy, contracts check, package build, 5 verifies and provider python (24 OK) 0. Arbiters: system and slice moves against round 9 equal CG02's recorded system/slice comparisons exactly (32/2/200; 26/1/242/1 Pending); corpus 543/10/4,281, whose 17 moves against round 9 are exactly CG02's 16 plus CG10's rd_kafka_anyconf_is_modified, so this card moves nothing. Clang 21.1.8.",
+  "workspace_tests": 6618,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 230,
+  "lean_audits": 231,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6935,6 +6935,7 @@
    "AuditScalarObservationContracts.lean",
    "AuditScalarPositions.lean",
    "AuditScalarRouteExitEdge.lean",
+   "AuditScalarTasks.lean",
    "AuditScalarTypedErrors.lean",
    "AuditScalarTypes.lean",
    "AuditSingleEmissionRoute.lean",
@@ -6996,7 +6997,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg02-elaboration-core/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r4/integration/gate.json)"
  },
  "named_followups": [
   {
