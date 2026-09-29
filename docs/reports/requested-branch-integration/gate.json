@@ -1,0 +1,237 @@
+{
+  "base": "fe603d49ca9d79657f6eeb6504da5a879d829455",
+  "measured_tip": "b640fefc457b4634873b5deb15b2afe10405523b",
+  "merge_sha": "b640fefc457b4634873b5deb15b2afe10405523b",
+  "scope": "Requested branch integration; runtime, provider and proof sources byte-identical to base. Documentation recorded after measurement.",
+  "steps": [
+    {
+      "step": "submodules",
+      "command": [
+        "git",
+        "submodule",
+        "update",
+        "--init",
+        "--recursive"
+      ],
+      "exit": 128,
+      "seconds": 0.02,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/submodules.log"
+    },
+    {
+      "step": "clang-version",
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit": 0,
+      "seconds": 0.02,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/clang-version.log"
+    },
+    {
+      "step": "rust",
+      "command": [
+        "python3",
+        "scripts/run_test_binaries.py"
+      ],
+      "exit": 101,
+      "seconds": 828.32,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/rust.log"
+    },
+    {
+      "step": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 15.1,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/fmt.log"
+    },
+    {
+      "step": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 118.68,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/clippy.log"
+    },
+    {
+      "step": "probe",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_probe"
+      ],
+      "exit": 0,
+      "seconds": 0.5,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/probe.log"
+    },
+    {
+      "step": "followup",
+      "command": [
+        "cargo",
+        "run",
+        "-p",
+        "qcore-compiler",
+        "--example",
+        "reevaluation_followup"
+      ],
+      "exit": 0,
+      "seconds": 0.94,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/followup.log"
+    },
+    {
+      "step": "lean",
+      "command": [
+        "python3",
+        "scripts/check_lean_audits.py"
+      ],
+      "exit": 0,
+      "seconds": 275.33,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/lean.log"
+    },
+    {
+      "step": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests"
+      ],
+      "exit": 0,
+      "seconds": 113.96,
+      "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/python.log"
+    }
+  ],
+  "submodule_retry": {
+    "command": "git submodule update --init --recursive",
+    "exit": 0,
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/submodules-retry.log",
+    "reason": "Initial exit 128: read-only Git metadata in sandbox; retry with authorized metadata access."
+  },
+  "rust_initial": {
+    "exit": 101,
+    "units": 355,
+    "totals": {
+      "passed": 6248,
+      "failed": 107,
+      "ignored": 11,
+      "measured": 0,
+      "filtered": 0,
+      "summaries": 368
+    },
+    "failed_units": [
+      "qcore-audit::test::checkpoint_cli",
+      "qcore-compiler::test::aggregate_owned_field",
+      "qcore-compiler::test::bitwise_conditions",
+      "qcore-compiler::test::branch_arms",
+      "qcore-compiler::test::branch_statement",
+      "qcore-compiler::test::checked_mutex_guards",
+      "qcore-compiler::test::compose_event_lines",
+      "qcore-compiler::test::ct_corpus",
+      "qcore-compiler::test::error_payload_tasks",
+      "qcore-compiler::test::examples_suite",
+      "qcore-compiler::test::extern_calls",
+      "qcore-compiler::test::http_computed_length",
+      "qcore-compiler::test::logical_connectives",
+      "qcore-compiler::test::loop_unroll_budget",
+      "qcore-compiler::test::loops_on_composed_routes",
+      "qcore-compiler::test::obs_reordering",
+      "qcore-compiler::test::pipe_intrinsic_stage",
+      "qcore-compiler::test::pipe_operator",
+      "qcore-compiler::test::quant_region",
+      "qcore-compiler::test::resource_helper_functions",
+      "qcore-compiler::test::scoped_read_loans",
+      "qcore-compiler::test::scoped_read_shares",
+      "qcore-compiler::test::slice_permissions",
+      "qcore-compiler::test::socket_event_compose",
+      "qcore-compiler::test::source_loop",
+      "qcore-compiler::test::source_record",
+      "qcore-compiler::test::source_scalar_calls",
+      "qcore-compiler::test::std_buffer",
+      "qcore-compiler::test::std_event",
+      "qcore-compiler::test::std_http",
+      "qcore-compiler::test::std_io_compose",
+      "qcore-compiler::test::std_modules",
+      "qcore-compiler::test::std_socket",
+      "qcore-compiler::test::std_socket_inet",
+      "qcore-compiler::test::std_string",
+      "qcore-compiler::test::string_concat",
+      "qcore-compiler::test::string_slice_io",
+      "qcore-compiler::test::task_io_compose",
+      "qcore-compiler::test::thread_examples",
+      "qcore-compiler::test::unsafe_linkage",
+      "qcore-compiler::test::write_lend",
+      "qcore-compiler::test::write_lend_tasks",
+      "qcore-compiler::test::write_lend_tasks_exercise",
+      "qcore-core::lib::qcore_core",
+      "qcore-verifier-host::test::confined_process_execution",
+      "qcore-verifier-host::test::execution_quota"
+    ],
+    "summary": "/home/cosmo/Documents/GitHub/qcore-c/private/test-binaries/20260929T043030Z-48/summary.json"
+  },
+  "rust_retry": {
+    "command": "python3 private/requested-branch-integration-20260929/retry_failed.py",
+    "exit": 0,
+    "units": 46,
+    "totals": {
+      "passed": 2374,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered": 0,
+      "summaries": 46
+    },
+    "summary": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/rust-retry/summary.json",
+    "log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/rust-retry.log",
+    "method": "All failed binaries replayed sequentially outside the sandbox with the exact cargo-captured argv, cwd and environment; no rebuild or source edit. Original passing units were not rerun.",
+    "reasons": "LeakSanitizer ptrace restriction, denied user/network namespaces, and one checkpoint timeout under the parallel run."
+  },
+  "rust_final_observations": {
+    "passed": 6355,
+    "failed": 0,
+    "ignored": 11,
+    "measured": 0,
+    "filtered": 0,
+    "units": 355,
+    "summaries": 368
+  },
+  "rust_final_observations_note": "Per-unit results combining original passing units and successful retries; not a single clean full-suite invocation.",
+  "lean_audits": 224,
+  "python_tests": 365,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)",
+  "provider_gate": "Not rerun: providers, contracts, manifests and runtime implementation are byte-identical to starting main.",
+  "corpus": "Not rerun; no coverage or verdict change claimed.",
+  "additional_checks": {
+    "script_syntax_exit": 0,
+    "script_syntax_log": "/home/cosmo/Documents/GitHub/qcore-c/private/requested-branch-integration-20260929/evidence-scripts-syntax.log",
+    "branch_ancestry_checks": 9,
+    "branch_ancestry_exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "docs_index_check_exit": 0,
+    "git_diff_check_exit": 0
+  }
+}

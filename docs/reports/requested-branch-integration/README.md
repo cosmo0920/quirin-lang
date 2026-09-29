@@ -1,0 +1,17 @@
+# Requested branch integration
+
+Starting main: `fe603d49ca9d79657f6eeb6504da5a879d829455`. Measured merge tip: `b640fefc457b4634873b5deb15b2afe10405523b`. The nine requested branches were merged individually in the user's order; [branches.json](branches.json) records their exact tips, merge commits and successful ancestry checks.
+
+Eight branches already had their effective changes integrated on main. Their merges change no tracked bytes. Conflicts retain the completed validation reports, current extension-migration decision, strict streamed-AST root/numeric validation, later typed access rules, runtime-import parser, repaired dual-extension fixtures, centralized compatibility validation and the frontend's dependency boundary. The obsolete frontend `serde_json` development dependency was not reintroduced. Current normative specifications and recorded migration corrections remain intact.
+
+The W46 access-statements branch adds two previously absent evidence-processing scripts: `attribute_final.py` and `replay_corpus_sources.py` in the original card's `scripts/` directory. Their final review and measurement artifacts were already present. The scripts join changed diagnostics to unit-bound parity coordinates and replay archived preprocessing requests, respectively. Their historical `/usr/bin/clang` and archived-input requirements remain explicit. This merge does not rerun their historical corpus measurement or claim fresh attribution results.
+
+`git diff --exit-code fe603d49 b640fefc -- crates compiler providers proof scripts` exits 0. No analyzer, contract, provider, Lean definition, coverage count, acceptance-matrix entry or archived measurement changes. No additional provider-package or corpus run is due for the unchanged implementation. Both new Python scripts parse successfully. This is a branch integration, not a wave close or retirement of tracked follow-ups.
+
+## Validation
+
+The standing gate runs against the merged tree. The command-by-command record, counts, prior failures and private log paths are in [gate.json](gate.json). Private run directory: `private/requested-branch-integration-20260929/`. The first submodule step exited 128 because the sandbox made Git metadata read-only; the authorized retry exited 0. No test failure is hidden by that retry.
+
+Formatting, Clippy, both reevaluation probes, 224 Lean audits and 365 Python tests pass (exit 0). The initial Rust run completes all 355 units / 368 summaries: 6,248 passed, 107 failed, 11 ignored (exit 101). Native sanitizer runs report the sandbox's LeakSanitizer/ptrace restriction; process-confinement rows report denied user/network namespaces; the checkpoint interruption test times out under the parallel run. All 46 failed binaries are then replayed one at a time outside the sandbox with their exact captured argv, cwd and environment: 2,374 passed, 0 failed (exit 0), including all seven checkpoint tests and both confinement binaries. No source, assertion or timeout was changed.
+
+The final per-unit observation set therefore contains **6,355 passed, 0 failed, 11 ignored**, covering the same 355 units / 368 summaries. This combines the original passing units with the passing retries; it is not a claim of a single clean full-suite run. The original full-suite logs are in `private/test-binaries/20260929T043030Z-48/`; retry logs and the replay harness are in `private/requested-branch-integration-20260929/`. Clang was recorded in this checkout, with its output retained beside the gate. Report-index validation and `git diff --check` also exit 0.

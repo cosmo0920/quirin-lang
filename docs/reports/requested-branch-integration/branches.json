@@ -1,0 +1,56 @@
+[
+  {
+    "branch": "codex/audit-pinned-replay-cli",
+    "tip": "3e99d74a2d344678e786ab3e423351c7ee67796d",
+    "ancestor_exit": 0,
+    "merge": "304b9fc9227e3861f3d1161447e41e4788dd9f29"
+  },
+  {
+    "branch": "codex/audit-prepare-progress",
+    "tip": "b5c6dc8ff2372db86352f68df602493ebbe8f4cf",
+    "ancestor_exit": 0,
+    "merge": "a0d0bf94e94d3b87542b43ffbcabf38f7cbba3a6"
+  },
+  {
+    "branch": "codex/audit-typed-index",
+    "tip": "8f1d851747db9723605b194cf4cbcb797c9728d6",
+    "ancestor_exit": 0,
+    "merge": "a5700531e9e60c9e461b411f7a4b7773bfc98516"
+  },
+  {
+    "branch": "codex/contract-check-load-path",
+    "tip": "6593b365cb49fb873f160287e81a2f9745885dd6",
+    "ancestor_exit": 0,
+    "merge": "978fb88138402cb7ddd1d5eb23da6712a5c7e7e3"
+  },
+  {
+    "branch": "codex/extension-provider-readers",
+    "tip": "c77826a8ae845a06980fb26348a75c594c9fefbb",
+    "ancestor_exit": 0,
+    "merge": "17c98c985a65398efbb97473e9946db432b4dabf"
+  },
+  {
+    "branch": "codex/extension-contract-physical",
+    "tip": "f92e5df610e395f5ce2e9681b24ac0830e9643a5",
+    "ancestor_exit": 0,
+    "merge": "9fff0772bf9c01fa223ce3a0c5b547ef3a2e992a"
+  },
+  {
+    "branch": "codex/extension-contract-readers",
+    "tip": "857251603f764555515786e2594be5760149d5b2",
+    "ancestor_exit": 0,
+    "merge": "652039004290972f671438da6585c3117db09062"
+  },
+  {
+    "branch": "codex/extension-runtime-abi",
+    "tip": "3604cf2a98ebc50d2783bcdc5f3dc344271cb407",
+    "ancestor_exit": 0,
+    "merge": "2a27ff77d9c5ca044e9d1c8e478f25642bb2abe3"
+  },
+  {
+    "branch": "codex/w46-access-statements",
+    "tip": "19994fa05b89e858a4667f8648d19b25c4062ced",
+    "ancestor_exit": 0,
+    "merge": "b640fefc457b4634873b5deb15b2afe10405523b"
+  }
+]

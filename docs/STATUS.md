@@ -118,14 +118,19 @@ latest completed integration measurement.
 
 ## Latest validated gate
 
-The latest completed gate is [runtime source imports and contract checks](reports/runtime-source-imports/gate.json)
-at `70d29367`: **6,122 core Rust passed, 0 failed, 11 ignored over 339 units /
-352 summaries; 216 Lean audits; 365 root Python tests**. All nine gate steps
-exit 0, including formatting, Clippy and both reevaluation probes. The first
-failed run and exact corrections are retained in the report. Clang 21.1.8 was
-recorded in this worktree. The unchanged provider workspace carries the
-EXT-02/03 measurement: 129 Rust passed, zero failed, one ignored, five packages
-built and verified; this card makes no new provider-run claim.
+The latest completed validation is [requested branch integration](reports/requested-branch-integration/gate.json)
+at `b640fefc`: **6,355 core Rust passed, 0 failed, 11 ignored over 355 units /
+368 summaries; 224 Lean audits; 365 root Python tests**. Rust figures combine
+309 units passing in the full run with 46 failed binaries passing on isolated,
+unrestricted retries; they are not a single clean full-suite invocation. The
+initial full run records 6,248 passed / 107 failed: sanitizer and namespace
+restrictions plus one checkpoint timeout. No assertion or source was changed.
+Formatting, Clippy and both reevaluation probes exit 0; the submodule check
+passes after a retry with writable Git metadata. Commands, all attempts and
+private logs are recorded in the report. Clang 21.1.8 was recorded in this
+worktree. This merge adds two historical evidence scripts; runtime, provider
+and Lean sources are byte-identical to its starting main. The provider workspace
+retains its preceding measurement; no new provider-package run is claimed.
 
 The five provider crates own **73** canonical contract modules; **48** shared or
 application-level modules live in six `providers/quirin-provider-*` crates: five

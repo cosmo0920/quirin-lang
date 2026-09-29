@@ -692,6 +692,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [remaining-wave3-ct-integration](remaining-wave3-ct-integration/README.md) | wave3-CT — integrating the T05 and T06 CT mappings |
 
+| [requested-branch-integration](requested-branch-integration/README.md) | Requested branch integration |
+
 | [resource-boundaries-integration](resource-boundaries-integration/README.md) | Resource-boundary integration |
 
 | [resource-helper-functions](resource-helper-functions/README.md) | Bounded resource-aware helper functions |
