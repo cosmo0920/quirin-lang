@@ -1,0 +1,60 @@
+{
+ "retired": [
+  {
+   "id": "W48-QR-TYPES-RECORD-FIELDS",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R3 item 1: `field = NAME \":\" (SCALAR | \"bytes\")` on source.buffer.v1, construct-then-read; each field value is a literal range-checked against its field's type (Q053), true/false at a bool field, or a name of exactly that type (Q052, no implicit conversion); a field read binds a value of that type into the route's now-typed environment, and every position checks the type it takes (index, stored byte, lend bound, loop bound take i32; a rendering takes any type at its own type); the route's one operation is the conversion `let NAME = OPERAND as TYPE;`, decided at check time; isize/usize fields need the recorded target (Q051), a named assumption; each record emits one C struct with <stdint.h>/<stdbool.h>/<stddef.h> member types. The route carries no arithmetic and never did (registered as W48-QR-BUFFER-ROUTE-ARITHMETIC). Native: every type as a field (112 lines) and 371 admitted boundary conversions per build, Clang -O0/-O2 UBSan and -O2, 0 sanitizer reports; QCore.ScalarPositions (fieldValue_lit_iff, fieldValue_name_same_type, construct_well_typed, project_well_typed, i32Operand_refuses_other_types, convertStmt_succeeds_iff, ...) with its vectors replayed through the checker; all existing fixtures byte-identical."
+  },
+  {
+   "id": "W48-QR-TYPES-EXTERN-VALUES",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R3 item 2: a bound extern scalar result has its declared result's G02t type and the extern route gains the value statement (one operation per statement: arithmetic, comparison, negation, `as`); over values the source determined (a literal, a declared `succeeds INTEGER` now read at any width and range-checked, a statement over such values) it is folded at check time and a fault refuses at Q024 naming the variant; over a run-time value an operation that can fault needs the row's throws<ArithmeticError> (else Q024) and takes the typed path (q_scalar_try_* helpers, exit 80 + tag); an argument at a declared scalar parameter is a value, or a literal in range, of exactly the parameter's type (Q024). The composed extern + io route renders a determined value of every type at its type; an undetermined one still refuses (Q043). Native: known path 2,475 lines per build over the ten integer types (1,210 admitted operation cases rendered dec and hex plus the comparisons, the 415 faulting cases refused at check time), dynamic path 150 binaries per build, 1,561 reference values and 614 typed raises (exit 80 + tag), 0 exits 86, 0 sanitizer reports under Clang -O0/-O2 UBSan and -O2; QCore.ScalarPositions (decideBinary_known_iff, decideBinary_refusal_is_raise, decideBinary_raises_needs_permission, argumentAdmitted_type, ...) with its vectors replayed through the checker."
+  },
+  {
+   "id": "W48-INERT-EXTERN-DECLARATION-TYPES",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R3 item 2: every `extern fn` declaration of an executable or library module is read after the admitting route's own passes, called or not, against the C04.1 ABI vocabulary (G02t scalars, the three custody pointers, unit as a result), and anything else refuses at Q020 naming the parameter or result; a contract module is exempt, its declarations being the contract surface read by the contract loader. Measured on every tracked fixture: exactly remaining-v04 P08 and P10 move (admission to refusal), corrected beside the frozen report (docs/reports/remaining-v04/CORRECTIONS.md); four tests that pinned the same unread shape were corrected (quant_index_contracts.rs x2, logical_connectives.rs, std_string.rs)."
+  }
+ ],
+ "registered": [
+  {
+   "id": "W48-QR-BUFFER-ROUTE-ARITHMETIC",
+   "title": "Give the byte-buffer route checked arithmetic over its typed values",
+   "why": "W48-QR-SCALAR-TYPES-R3 typed source.buffer.v1's value environment and gave it the one conversion `let NAME = OPERAND as TYPE;`, but the route has no arithmetic statement and never had one, so a typed field can be converted, rendered, stored as an index once converted and copied, and nothing more (W48-QR-TYPES-RECORD-FIELDS' discharge named 'checked arithmetic and conversions on the admitting route'; the conversion half landed). Size: a value statement on the buffer route like the extern route's (one operation over bound values and literals), folded at check time because every value there is a check-time constant (a fault refuses at Q053), emitted through the shared scalar helpers, the lend and loop tiers kept i32-only; 0 fixtures move. DISCHARGE: arithmetic and comparisons over typed buffer-route values, checked at check time, emitted and run natively under UBSan, with Lean parity.",
+   "source": "docs/reports/w48-qr-scalar-types-r3/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R3"
+  },
+  {
+   "id": "W48-QR-VALUE-STATEMENT-EXPRESSIONS",
+   "title": "Admit nested expressions in the extern route's value statements",
+   "why": "W48-QR-SCALAR-TYPES-R3's extern value statement performs exactly one operation (`let z = a OP b;`, `a CMP b`, `-a`, `a as T`); a longer computation is a sequence of bindings, each checked on its own. G02s's expression grammar (precedence, parentheses, chained arithmetic) is not admitted there. Size: the scalar route's expression parser and bidirectional typing reused on the extern route's value namespace, the known/run-time split per subexpression, one try-helper call per operation in the emitted C; 0 fixtures move. DISCHARGE: nested expressions over extern values with the same fold, permission and typed-error rules, and native runs.",
+   "source": "docs/reports/w48-qr-scalar-types-r3/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R3"
+  },
+  {
+   "id": "W48-QR-EXTERN-VALUE-BRANCHES",
+   "title": "Branch on an extern value's bool",
+   "why": "W48-QR-TYPES-EXTERN-VALUES was titled 'arithmetic, rendering and branches'; W48-QR-SCALAR-TYPES-R3 discharged arithmetic, comparisons, conversions and rendering, and a comparison produces a bool value, but the extern route has no `if` (G02i's source branching construct is the sequential route's), so no statement can branch on it. Size: admitting G02i's `if` on the extern route over a bool value of the namespace, a run-time condition needing both arms checked against the custody ledger (the extern route's error arms are the precedent), emission of the branch; 0 fixtures move. DISCHARGE: an `if` on an extern bool value, both arms checked and emitted, with native runs of each arm.",
+   "source": "docs/reports/w48-qr-scalar-types-r3/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R3"
+  },
+  {
+   "id": "W48-QR-EXTERN-TARGET-WIDTH-OUTCOME",
+   "title": "Range-check an isize/usize declared outcome with no recorded target",
+   "why": "W48-QR-SCALAR-TYPES-R3 range-checks every `succeeds INTEGER` against the declared result's type, except an isize/usize result with no recorded target, whose outcome is carried unchecked exactly as before the card (the extern route admitted target-width results without a record, and refusing them would move that surface); any value statement or rendering reading it refuses for want of the width, and the emitted program still compares the real result and exits 70 on disagreement, so no run publishes a number it did not return. Size: refuse such an outcome without a record, or check it against the narrowest width, after a census of the tracked extern fixtures; 0 fixtures expected to move. DISCHARGE: every declared outcome is checked against its type's range, or refused for want of a width.",
+   "source": "docs/reports/w48-qr-scalar-types-r3/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R3"
+  }
+ ],
+ "amended": [
+  {
+   "id": "W48-QR-TYPES-MSVC-NATIVE",
+   "amendment": "W48-QR-SCALAR-TYPES-R3 adds the buffer route's typed struct members and conversion helpers (abort witnesses) and the extern route's value statements (the shared q_scalar_* and q_scalar_try_* helpers, `80 + tag`) to what no MSVC build has run; the discharge now also covers scalar_positions.rs and scalar_extern_values.rs under /W4 /WX."
+  },
+  {
+   "id": "W48-QR-TYPES-LOOP-BOUNDS",
+   "amendment": "W48-QR-SCALAR-TYPES-R3 typed source.buffer.v1's environment: a name of another type at a loop bound is refused by the lowering's existing BOUND-FROM-FIELD tier (a field read and a conversion contribute no bound), and the index is an i32. What remains is exactly a typed bound and index (the loop reader, LoweringConstants and the unrolling), not the environment."
+  },
+  {
+   "id": "W48-QR-TYPES-TASK-CAPTURES",
+   "amendment": "W48-QR-SCALAR-TYPES-R3 did not reach this item (it stopped after item 2). Measured for sizing: the task route has no arithmetic or conversion statement in a worker (G02a: general expressions reject in every definition), so a worker's ArithmeticError needs a value statement there first (the extern route's is the precedent) before it can be collected through join as a typed worker error."
+  }
+ ]
+}
