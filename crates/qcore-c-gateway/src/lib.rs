@@ -68,6 +68,8 @@ mod typed_access_positions;
 mod typed_position_shapes;
 // Card CG10-COMMON-TYPED-PLACE (rule 10t): the common typed place.
 mod typed_place;
+// Card CG11-POINTER-VALUED-STORES (rule 10v): pointer-valued stores.
+mod pointer_store;
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l).
 pub mod typed_c_ast;
 // Card W47-LOOP-OWNER-TYPED-DISPATCH (rule 10p amendment): the record type
