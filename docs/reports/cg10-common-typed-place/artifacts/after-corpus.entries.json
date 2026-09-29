@@ -1,0 +1,50 @@
+{
+ "leaves": {
+  "I04 | expressible-path-on-a-shared-line | gone, unknown_alias at the line": 144,
+  "I04 | expressible-path-on-a-shared-line | kept": 1024,
+  "I04 | name-identity | kept": 35,
+  "M01 | expressible-path-premise | gone": 2,
+  "M01 | expressible-path-premise | gone, unknown_alias at the line": 1281,
+  "M01 | expressible-path-premise | kept": 7637,
+  "M01 | unrecognized-place | gone, unknown_alias at the line": 31,
+  "M01 | unrecognized-place | kept": 32
+ },
+ "functions_with_a_gone_leaf": {
+  "I04 -> Unknown": 114,
+  "M01 -> Unknown": 506,
+  "M01 -> Unsafe": 3
+ },
+ "place_decisions_admitted_by_shape": {
+  "arrow/dot": 4614,
+  "arrow/arrow/dot": 1504,
+  "arrow/dot/dot": 649,
+  "index-pointer/dot": 413,
+  "arrow/arrow/arrow/dot": 317,
+  "arrow/index-array": 242,
+  "arrow/index-pointer": 237,
+  "arrow/index-pointer/dot": 147,
+  "arrow/arrow/arrow/dot/dot": 103,
+  "arrow/arrow/dot/dot": 95,
+  "arrow/index-array/dot": 77,
+  "arrow/index-pointer/dot/index-pointer/dot": 62,
+  "arrow/dot/dot/dot": 51,
+  "arrow/dot/dot/dot/dot": 47,
+  "arrow/arrow/arrow/arrow/dot": 35,
+  "arrow/deref-pointer": 30,
+  "arrow/dot/index-array": 30,
+  "arrow/index-pointer/dot/dot": 18,
+  "deref-pointer/dot": 16,
+  "arrow/dot/dot/deref-array": 12,
+  "arrow/deref-array": 10,
+  "arrow/arrow/index-pointer": 9,
+  "arrow/arrow/dot/arrow": 6,
+  "arrow/index-pointer/dot/index-pointer": 6,
+  "arrow/index-pointer/dot/index-pointer/dot/index-pointer": 4
+ },
+ "place_decisions_refused_by_cause": {
+  "array-root": 366,
+  "element-place": 245,
+  "deeper-place": 177,
+  "identity": 12
+ }
+}

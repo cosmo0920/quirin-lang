@@ -296,7 +296,10 @@ fn a_mixed_path_under_a_tracked_root_carries_the_link_evidence() {
         b->item->inline_leaf.weight = 1; c_drop(b); }";
     let (status, keys) = outcome(unlinked);
     assert_eq!(status, "Unknown", "{keys:?}");
-    assert!(keys.contains(&"unknown_alias:b->item".to_owned()), "{keys:?}");
+    assert!(
+        keys.contains(&"unknown_alias:b->item".to_owned()),
+        "{keys:?}"
+    );
 }
 
 #[test]
