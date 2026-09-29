@@ -1,6 +1,6 @@
-//! The paired start/stop lifecycle over one program (card
-//! **W47-FLB-LIB-LIFECYCLE**, gateway rule 10q as amended, contract
-//! specification §C04.11).
+//! The strictly paired start/stop lifecycle over one program (cards
+//! **W47-FLB-LIB-LIFECYCLE** and **W47-FLB-LIB-STRICT-PAIRING**, gateway rule
+//! 10q as amended, contract specification §C04.11).
 //!
 //! The declared lifecycle obligations (`requires resource_lifecycle(ctx,
 //! start|stop|destroy)`, read from the owning provider's contract module)
@@ -8,17 +8,23 @@
 //! bodies and the callers ([`qcore_c_gateway::condvar_census::read_program_lifecycle`]);
 //! this adapter decides with [`qcore_core::paired_lifecycle`]:
 //!
-//! * **each clause against the bodies** ([`ClauseCheck`]): the four effect
-//!   clauses from the declared stop run in each clause's state, the two
-//!   preconditions in force by construction. Only an in-force clause may be
-//!   applied; a refuted one is withdrawn from every caller (rule 10g) and
-//!   reported as a candidate upstream path, a held one applies nowhere;
+//! * **each body clause against the bodies** ([`ClauseCheck`]): L2 from the
+//!   declared stop run after a successful start, L7 from the declared start's
+//!   own paths that return nonzero; the five preconditions are in force by
+//!   construction. A refuted body clause is reported as a candidate upstream
+//!   path, a held one applies nowhere;
+//! * **what a stop's body does outside the contract** ([`Observation`]): the
+//!   stop run from the states the strict pair forbids (never started, after a
+//!   stop, after a failed start). Reported, never a clause: a caller that
+//!   reaches such a state has already violated a precondition;
 //! * **each caller against the contract** ([`CallCheck`]): the context's state
-//!   before each declared call on every path, the precondition it violates if
-//!   any, and the clauses that govern its effect;
-//! * **each release** ([`release_violations`]): the violations on the paths
-//!   reaching it, which [`qcore_core::paired_lifecycle::lifecycle_gate`] turns
-//!   into a refusal. Nothing here ever discharges a release.
+//!   before each declared call on every path, the precondition it violates or
+//!   leaves not established, and the clauses that govern its effect;
+//! * **each release** ([`release_violations`], [`release_split`]): the
+//!   refusals on the paths reaching it, which
+//!   [`qcore_core::paired_lifecycle::lifecycle_gate`] turns into a refusal,
+//!   and the paths that keep the lifecycle, on which the release can be
+//!   decided apart. Nothing here ever discharges a release.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -28,8 +34,8 @@ use qcore_c_gateway::condvar_census::{
 };
 use qcore_contract::contract_loader::{DeclaredLifecycle, LifecycleOperation};
 use qcore_core::paired_lifecycle::{
-    BodyJoin, BodyPath, Clause, ClauseStatus, Operation, StartOutcome, State, ends_started_status,
-    no_effect_status, precondition_status, step,
+    BodyJoin, BodyPath, Clause, ClauseStatus, Operation, Refusal, StartOutcome, StartPath, State,
+    ends_started_status, failed_start_status, precondition_status, step,
 };
 
 /// The creators whose result starts a context's history (a binding table of
@@ -58,9 +64,33 @@ pub struct ClauseCheck {
     /// The declared start the scenario ran first, if any.
     pub start: Option<String>,
     pub status: ClauseStatus,
+    /// L2's stop paths.
     pub paths: Vec<BodyPath>,
+    /// L7's start paths that return nonzero.
+    pub start_paths: Vec<StartPath>,
     /// What the start's own run left open (reported, and part of a hold).
     pub start_unresolved: BTreeSet<String>,
+}
+
+/// What a declared stop's body does from a state the strict pair forbids:
+/// an observation of the library outside the contract, never a clause.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Observation {
+    pub function: String,
+    /// The forbidding precondition.
+    pub forbidden_by: Clause,
+    /// The declared start the scenario ran first, if any.
+    pub start: Option<String>,
+    pub paths: Vec<BodyPath>,
+}
+
+impl Observation {
+    /// Whether every followed path joins something (the static counterpart
+    /// of the native observations of W47-FB-DOUBLE-STOP-OBSERVATION).
+    #[must_use]
+    pub fn every_path_joins(&self) -> bool {
+        !self.paths.is_empty() && self.paths.iter().all(|p| !p.joins.is_empty())
+    }
 }
 
 /// One declared call checked against the contract.
@@ -71,8 +101,11 @@ pub struct CallCheck {
     pub states: BTreeSet<&'static str>,
     /// The preconditions the call violates on some path.
     pub violations: BTreeSet<String>,
+    /// The preconditions the call leaves not established on some path (the
+    /// start's returned value is not derived).
+    pub not_established: BTreeSet<String>,
     /// Some path's state before the call is not derived (no history, a
-    /// history without its creation, or one after an earlier violation).
+    /// history without its creation, or one after an earlier refusal).
     pub undetermined: bool,
     /// Why, per kind of undetermined path.
     pub undetermined_reasons: BTreeSet<String>,
@@ -81,8 +114,8 @@ pub struct CallCheck {
     pub governed: BTreeSet<(Clause, ClauseStatus)>,
 }
 
-/// Per clause and declared stop (or `None` for a precondition): the status a
-/// caller's call is governed by.
+/// Per clause and declared function (or `None` for a precondition): the
+/// status a caller's call is governed by.
 pub type ClauseStatuses = BTreeMap<(Clause, Option<String>), ClauseStatus>;
 
 /// The lifecycle decisions of one program.
@@ -90,9 +123,10 @@ pub type ClauseStatuses = BTreeMap<(Clause, Option<String>), ClauseStatus>;
 pub struct LifecycleCensus {
     pub roles: LifecycleRoles,
     pub clauses: Vec<ClauseCheck>,
-    /// Per clause and declared stop (or `None` for a precondition): the
+    /// Per clause and declared function (or `None` for a precondition): the
     /// status a caller's call is governed by.
     pub status: ClauseStatuses,
+    pub observations: Vec<Observation>,
     pub calls: Vec<CallCheck>,
     /// The declared destroys run after a successful start: whether a body
     /// joins anything (the precondition L6 is load-bearing where none does).
@@ -126,6 +160,13 @@ fn body_path(reading: &BodyPathReading, start_unresolved: &BTreeSet<String>) -> 
     }
 }
 
+fn start_path(reading: &BodyPathReading) -> StartPath {
+    StartPath {
+        left_unjoined: reading.left_unjoined.clone(),
+        unresolved: reading.unresolved.clone(),
+    }
+}
+
 /// Combine one clause's statuses over several declared starts: in force only
 /// if in force with every one; refuted only if refuted with every one.
 fn combine(statuses: &[ClauseStatus]) -> ClauseStatus {
@@ -152,20 +193,31 @@ fn combine(statuses: &[ClauseStatus]) -> ClauseStatus {
         })
 }
 
-/// Decide every clause from the body readings.
-fn check_clauses(bodies: &[LifecycleBodyReading]) -> (Vec<ClauseCheck>, ClauseStatuses) {
+/// The five preconditions, in order.
+const PRECONDITIONS: [Clause; 5] = [
+    Clause::StartRequiresCreated,
+    Clause::NoStopAfterStop,
+    Clause::NoStopAfterFailedStart,
+    Clause::NoStopOfUnstarted,
+    Clause::DestroyRequiresNotRunning,
+];
+
+/// Decide every clause from the body readings, and record what the stop does
+/// outside the contract.
+fn check_clauses(
+    bodies: &[LifecycleBodyReading],
+) -> (Vec<ClauseCheck>, ClauseStatuses, Vec<Observation>) {
     let mut checks = Vec::new();
+    let mut observations = Vec::new();
     let mut per: BTreeMap<(Clause, Option<String>), Vec<ClauseStatus>> = BTreeMap::new();
-    for clause in [
-        Clause::StartRequiresUnstarted,
-        Clause::DestroyRequiresUnstarted,
-    ] {
+    for clause in PRECONDITIONS {
         checks.push(ClauseCheck {
             clause,
             function: None,
             start: None,
             status: precondition_status(),
             paths: Vec::new(),
+            start_paths: Vec::new(),
             start_unresolved: BTreeSet::new(),
         });
         per.entry((clause, None))
@@ -173,42 +225,66 @@ fn check_clauses(bodies: &[LifecycleBodyReading]) -> (Vec<ClauseCheck>, ClauseSt
             .push(precondition_status());
     }
     for body in bodies {
-        let (clause, start) = match &body.scenario {
-            LifecycleScenario::Unstarted => (Clause::StopUnstartedNoEffect, None),
-            LifecycleScenario::AfterStart { start } => (Clause::StopEndsStarted, Some(start)),
-            LifecycleScenario::AfterStop { start } => (Clause::StopAfterStopNoEffect, Some(start)),
-            LifecycleScenario::AfterFailedStart { start } => {
-                (Clause::StopAfterFailedStartNoEffect, Some(start))
+        let paths = || -> Vec<BodyPath> {
+            body.paths
+                .iter()
+                .map(|p| body_path(p, &body.start_unresolved))
+                .collect()
+        };
+        let (forbidden_by, start) = match &body.scenario {
+            LifecycleScenario::AfterStart { start } => {
+                let paths = paths();
+                let status = ends_started_status(&paths);
+                per.entry((Clause::StopEndsStarted, Some(body.function.clone())))
+                    .or_default()
+                    .push(status.clone());
+                checks.push(ClauseCheck {
+                    clause: Clause::StopEndsStarted,
+                    function: Some(body.function.clone()),
+                    start: Some(start.clone()),
+                    status,
+                    paths,
+                    start_paths: Vec::new(),
+                    start_unresolved: body.start_unresolved.clone(),
+                });
+                continue;
+            }
+            LifecycleScenario::FailedStartReturn { start } => {
+                let start_paths: Vec<StartPath> = body.paths.iter().map(start_path).collect();
+                let status = failed_start_status(&start_paths);
+                per.entry((Clause::FailedStartLeavesNoThread, Some(start.clone())))
+                    .or_default()
+                    .push(status.clone());
+                checks.push(ClauseCheck {
+                    clause: Clause::FailedStartLeavesNoThread,
+                    function: Some(start.clone()),
+                    start: Some(start.clone()),
+                    status,
+                    paths: Vec::new(),
+                    start_paths,
+                    start_unresolved: body.start_unresolved.clone(),
+                });
+                continue;
             }
             LifecycleScenario::DestroyAfterStart { .. } => continue,
+            LifecycleScenario::Unstarted => (Clause::NoStopOfUnstarted, None),
+            LifecycleScenario::AfterStop { start } => (Clause::NoStopAfterStop, Some(start)),
+            LifecycleScenario::AfterFailedStart { start } => {
+                (Clause::NoStopAfterFailedStart, Some(start))
+            }
         };
-        let paths: Vec<BodyPath> = body
-            .paths
-            .iter()
-            .map(|p| body_path(p, &body.start_unresolved))
-            .collect();
-        let status = if clause == Clause::StopEndsStarted {
-            ends_started_status(&paths)
-        } else {
-            no_effect_status(&paths)
-        };
-        per.entry((clause, Some(body.function.clone())))
-            .or_default()
-            .push(status.clone());
-        checks.push(ClauseCheck {
-            clause,
-            function: Some(body.function.clone()),
+        observations.push(Observation {
+            function: body.function.clone(),
+            forbidden_by,
             start: start.cloned(),
-            status,
-            paths,
-            start_unresolved: body.start_unresolved.clone(),
+            paths: paths(),
         });
     }
     let status = per
         .into_iter()
         .map(|(key, statuses)| (key, combine(&statuses)))
         .collect();
-    (checks, status)
+    (checks, status, observations)
 }
 
 fn operation(op: LifecycleOperation) -> Operation {
@@ -227,26 +303,30 @@ fn outcome(result: ReadStartResult) -> StartOutcome {
     }
 }
 
+fn event(event: &ReadLifeEvent) -> Option<(Operation, StartOutcome)> {
+    match event {
+        ReadLifeEvent::Create => None,
+        ReadLifeEvent::Start(result) => Some((Operation::Start, outcome(*result))),
+        ReadLifeEvent::Stop => Some((Operation::Stop, StartOutcome::Undecided)),
+        ReadLifeEvent::Destroy => Some((Operation::Destroy, StartOutcome::Undecided)),
+    }
+}
+
 /// Where a history leads: `Ok(Some(state))` when derived, `Ok(None)` when
-/// not (no creation first), `Err(violation)` at its first violation, with the
-/// violating event's site.
-fn run_history(history: &LifeHistory) -> Result<Option<State>, String> {
+/// not (no creation first, or an event on a destroyed instance's key),
+/// `Err((refusal, site))` at its first refusal.
+fn run_history(history: &LifeHistory) -> Result<Option<State>, (Refusal, String)> {
     let mut events = history.iter();
     match events.next() {
         Some((ReadLifeEvent::Create, _)) => {}
         _ => return Ok(None),
     }
     let mut state = State::Created;
-    for (event, site) in events {
-        let (op, result) = match event {
-            // A second creation starts a new instance under the same key.
-            ReadLifeEvent::Create => {
-                state = State::Created;
-                continue;
-            }
-            ReadLifeEvent::Start(result) => (Operation::Start, outcome(*result)),
-            ReadLifeEvent::Stop => (Operation::Stop, StartOutcome::Undecided),
-            ReadLifeEvent::Destroy => (Operation::Destroy, StartOutcome::Undecided),
+    for (read, site) in events {
+        // A second creation starts a new instance under the same key.
+        let Some((op, result)) = event(read) else {
+            state = State::Created;
+            continue;
         };
         // A destroyed context's key names no instance any more
         // (P-LIFECYCLE-INSTANCE): a later event on the key is either a use of
@@ -258,24 +338,128 @@ fn run_history(history: &LifeHistory) -> Result<Option<State>, String> {
         }
         match step(state, op, result) {
             Ok(transition) => state = transition.next,
-            Err(violation) => return Err(format!("{violation} at {site}")),
+            Err(refusal) => return Err((refusal, site.clone())),
         }
     }
     Ok(Some(state))
 }
 
-/// The lifecycle violations on the paths reaching one release.
+fn refusals_of(histories: &[(String, LifeHistory)]) -> BTreeSet<String> {
+    histories
+        .iter()
+        .filter_map(|(key, history)| {
+            run_history(history)
+                .err()
+                .map(|(refusal, site)| format!("`{key}`: {refusal} at {site}"))
+        })
+        .collect()
+}
+
+/// The lifecycle refusals (violations and preconditions not established) on
+/// the paths reaching one release.
 #[must_use]
 pub fn release_violations(release: &ReleaseReading) -> BTreeSet<String> {
-    let mut violations = BTreeSet::new();
-    for contexts in &release.lifecycle {
-        for (key, history) in contexts {
-            if let Err(violation) = run_history(history) {
-                violations.insert(format!("`{key}`: {violation}"));
-            }
-        }
+    release
+        .lifecycle
+        .iter()
+        .flat_map(|contexts| refusals_of(contexts))
+        .collect()
+}
+
+/// The paths reaching one release split by the lifecycle (card
+/// W47-FLB-LIB-STRICT-PAIRING).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ReleaseSplit {
+    /// The release read over the **conforming** paths only: every keyed
+    /// context's history on the path is derived (it starts with a creation
+    /// and no event follows a destroy) and none is refused. `None` when no
+    /// path conforms.
+    pub conforming: Option<ReleaseReading>,
+    pub conforming_paths: usize,
+    /// Paths on which no history is refused but some is not derived, or no
+    /// keyed context exists: they decide nothing, so they are neither.
+    pub undetermined_paths: usize,
+    /// Paths on which some context's history is refused (a violation or a
+    /// precondition not established).
+    pub refused_paths: usize,
+}
+
+/// Split the paths reaching one release by the lifecycle; `None` when the
+/// reading carries no per-path states (no lifecycle roles were given).
+#[must_use]
+pub fn release_split(release: &ReleaseReading) -> Option<ReleaseSplit> {
+    if release.paths.is_empty() {
+        return None;
     }
-    violations
+    let mut conforming = ReleaseReading {
+        root: release.root.clone(),
+        file: release.file.clone(),
+        line: release.line,
+        function: release.function.clone(),
+        what: release.what.clone(),
+        live: BTreeMap::new(),
+        unresolved: BTreeSet::new(),
+        lifecycle: BTreeSet::new(),
+        paths: BTreeSet::new(),
+    };
+    let (mut kept, mut open, mut refused) = (0, 0, 0);
+    for path in &release.paths {
+        let runs: Vec<_> = path.histories.iter().map(|(_, h)| run_history(h)).collect();
+        if runs.iter().any(Result::is_err) {
+            refused += 1;
+            continue;
+        }
+        if runs.is_empty() || runs.iter().any(|run| !matches!(run, Ok(Some(_)))) {
+            open += 1;
+            continue;
+        }
+        kept += 1;
+        conforming
+            .unresolved
+            .extend(path.unresolved.iter().cloned());
+        conforming.lifecycle.insert(path.histories.clone());
+        for (thread, evidence) in &path.live {
+            conforming
+                .live
+                .entry(thread.clone())
+                .or_default()
+                .insert(evidence.clone());
+        }
+        conforming.paths.insert(path.clone());
+    }
+    Some(ReleaseSplit {
+        conforming: (kept > 0).then_some(conforming),
+        conforming_paths: kept,
+        undetermined_paths: open,
+        refused_paths: refused,
+    })
+}
+
+/// The status a caller's call is governed by for `clause`: a precondition's
+/// own; a body clause's with the callee's body (L2), or combined over every
+/// declared start (L7, which a destroy rests on).
+fn governing_status(status: &ClauseStatuses, clause: Clause, callee: &str) -> ClauseStatus {
+    if clause.is_precondition() {
+        return status
+            .get(&(clause, None))
+            .cloned()
+            .unwrap_or_else(precondition_status);
+    }
+    if let Some(found) = status.get(&(clause, Some(callee.to_owned()))) {
+        return found.clone();
+    }
+    let all: Vec<ClauseStatus> = status
+        .iter()
+        .filter(|((c, _), _)| *c == clause)
+        .map(|(_, s)| s.clone())
+        .collect();
+    if all.is_empty() {
+        ClauseStatus::Held {
+            reason: "no body reading for this clause".to_owned(),
+        }
+    } else {
+        combine(&all)
+    }
 }
 
 fn check_call(reading: &LifecycleCallReading, status: &ClauseStatuses) -> CallCheck {
@@ -283,6 +467,7 @@ fn check_call(reading: &LifecycleCallReading, status: &ClauseStatuses) -> CallCh
         reading: reading.clone(),
         states: BTreeSet::new(),
         violations: BTreeSet::new(),
+        not_established: BTreeSet::new(),
         undetermined: false,
         undetermined_reasons: BTreeSet::new(),
         governed: BTreeSet::new(),
@@ -294,29 +479,24 @@ fn check_call(reading: &LifecycleCallReading, status: &ClauseStatuses) -> CallCh
                 match step(state, operation(reading.operation), StartOutcome::Undecided) {
                     Ok(transition) => {
                         for clause in transition.governed_by {
-                            let function = if clause.is_precondition() {
-                                None
-                            } else {
-                                Some(reading.callee.clone())
-                            };
-                            let clause_status = status
-                                .get(&(clause, function))
-                                .cloned()
-                                .unwrap_or_else(|| ClauseStatus::Held {
-                                    reason: "no body reading for this clause".to_owned(),
-                                });
-                            check.governed.insert((clause, clause_status));
+                            check.governed.insert((
+                                clause,
+                                governing_status(status, clause, &reading.callee),
+                            ));
                         }
                     }
-                    Err(violation) => {
-                        check.violations.insert(violation);
+                    Err(refusal) if refusal.is_violation() => {
+                        check.violations.insert(refusal.to_string());
+                    }
+                    Err(refusal) => {
+                        check.not_established.insert(refusal.to_string());
                     }
                 }
                 continue;
             }
             None => "the context's key has no history on a path".to_owned(),
-            Some((_, Err(violation))) => {
-                format!("an earlier call on the key violated the lifecycle: {violation}")
+            Some((_, Err((refusal, site)))) => {
+                format!("an earlier call on the key was refused: {refusal} at {site}")
             }
             Some((history, Ok(_))) => match history
                 .iter()
@@ -335,9 +515,9 @@ fn check_call(reading: &LifecycleCallReading, status: &ClauseStatuses) -> CallCh
     check
 }
 
-/// The clause that governed each stop on the paths reaching one release, with
-/// its status: an in-force clause is what a stop may be read with; a refuted
-/// or held one was withdrawn there, and the stop was read from its body.
+/// How each stop on the paths reaching one release was governed: by L2 with
+/// its status, or refused (the strict pair's precondition it violates or
+/// leaves not established).
 #[must_use]
 pub fn governing_at(release: &ReleaseReading, census: &LifecycleCensus) -> BTreeSet<String> {
     let mut out = BTreeSet::new();
@@ -348,39 +528,40 @@ pub fn governing_at(release: &ReleaseReading, census: &LifecycleCensus) -> BTree
                 continue;
             }
             let mut state = State::Created;
-            for (event, site) in events {
-                let (op, result) = match event {
-                    ReadLifeEvent::Create => {
-                        state = State::Created;
-                        continue;
-                    }
-                    ReadLifeEvent::Start(result) => (Operation::Start, outcome(*result)),
-                    ReadLifeEvent::Stop => (Operation::Stop, StartOutcome::Undecided),
-                    ReadLifeEvent::Destroy => (Operation::Destroy, StartOutcome::Undecided),
+            for (read, site) in events {
+                let Some((op, result)) = event(read) else {
+                    state = State::Created;
+                    continue;
                 };
-                let Ok(transition) = step(state, op, result) else {
+                if state == State::Destroyed {
                     break;
-                };
-                if op == Operation::Stop {
-                    for clause in &transition.governed_by {
-                        let status = census
-                            .status
-                            .iter()
-                            .find(|((c, _), _)| c == clause)
-                            .map_or("held", |(_, s)| s.label());
-                        let applied = if status == "in force" {
-                            "may be read with the clause"
-                        } else {
-                            "withdrawn: read from the body"
-                        };
-                        out.insert(format!(
-                            "`{key}` stop at {site} from `{}`: {} ({status}; {applied})",
-                            state.label(),
-                            clause.name()
-                        ));
+                }
+                match step(state, op, result) {
+                    Ok(transition) => {
+                        if op == Operation::Stop {
+                            for clause in &transition.governed_by {
+                                // A stop's L2 status combined over the declared stops.
+                                let status = governing_status(&census.status, *clause, "");
+                                out.insert(format!(
+                                    "`{key}` stop at {site} from `{}`: {} ({})",
+                                    state.label(),
+                                    clause.name(),
+                                    status.label()
+                                ));
+                            }
+                        }
+                        state = transition.next;
+                    }
+                    Err(refusal) => {
+                        if op == Operation::Stop {
+                            out.insert(format!(
+                                "`{key}` stop at {site} from `{}`: refused ({refusal})",
+                                state.label()
+                            ));
+                        }
+                        break;
                     }
                 }
-                state = transition.next;
             }
         }
     }
@@ -390,7 +571,7 @@ pub fn governing_at(release: &ReleaseReading, census: &LifecycleCensus) -> BTree
 /// Decide the clauses and the calls of one reading.
 #[must_use]
 pub fn decide(reading: &SyncReading, roles: &LifecycleRoles) -> LifecycleCensus {
-    let (clauses, status) = check_clauses(&reading.lifecycle_bodies);
+    let (clauses, status, observations) = check_clauses(&reading.lifecycle_bodies);
     let calls = reading
         .lifecycle_calls
         .iter()
@@ -406,6 +587,7 @@ pub fn decide(reading: &SyncReading, roles: &LifecycleRoles) -> LifecycleCensus 
         roles: roles.clone(),
         clauses,
         status,
+        observations,
         calls,
         destroy_bodies,
     }

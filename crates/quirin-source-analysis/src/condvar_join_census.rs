@@ -65,6 +65,25 @@ pub struct ReleaseVerdict {
     /// Card W47-FLB-LIB-LIFECYCLE: the paired-lifecycle preconditions some
     /// path reaching the release violated (its gate refuses the release).
     pub lifecycle_violations: BTreeSet<String>,
+    /// Card W47-FLB-LIB-STRICT-PAIRING: the release decided apart on the
+    /// paths that keep the lifecycle, when lifecycle roles were given.
+    pub lifecycle_split: Option<LifecycleSplitVerdict>,
+}
+
+/// A release decided on the paths that conform to the strict pair (card
+/// W47-FLB-LIB-STRICT-PAIRING). The release's own verdict is the join over
+/// every path; this only says what the conforming paths alone decide.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct LifecycleSplitVerdict {
+    pub conforming_paths: usize,
+    pub undetermined_paths: usize,
+    pub refused_paths: usize,
+    /// The verdict over the conforming paths (`None` when none conforms).
+    pub conforming_verdict: Option<SyncVerdict>,
+    /// The conforming paths' release site (their live threads, descendants
+    /// and unresolved reasons) and the premises its decision names.
+    pub conforming_site: Option<ReleaseSite>,
+    pub conforming_premises: BTreeSet<&'static str>,
 }
 
 /// Which live threads a release concerns (binding premise P-RETAIN, stated):
@@ -717,12 +736,30 @@ fn census_inner(
             let verdict = qcore_core::paired_lifecycle::lifecycle_gate(&lifecycle_violations)
                 .join(release_verdict(&site));
             let premises = release_premises(&site);
+            // Card W47-FLB-LIB-STRICT-PAIRING: the conforming paths decided
+            // apart.
+            let lifecycle_split =
+                crate::lifecycle_census::release_split(reading_release).map(|split| {
+                    let conforming_site = split.conforming.as_ref().map(&release_site);
+                    LifecycleSplitVerdict {
+                        conforming_paths: split.conforming_paths,
+                        undetermined_paths: split.undetermined_paths,
+                        refused_paths: split.refused_paths,
+                        conforming_verdict: conforming_site.as_ref().map(release_verdict),
+                        conforming_premises: conforming_site
+                            .as_ref()
+                            .map(release_premises)
+                            .unwrap_or_default(),
+                        conforming_site,
+                    }
+                });
             ReleaseVerdict {
                 reading: reading_release.clone(),
                 site,
                 verdict,
                 premises,
                 lifecycle_violations,
+                lifecycle_split,
             }
         })
         .collect();

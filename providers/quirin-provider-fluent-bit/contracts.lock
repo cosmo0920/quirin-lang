@@ -140,7 +140,7 @@
     {
       "function": "flb_destroy",
       "module": "fluent_bit/lib_engine_thread.qv",
-      "contract_sha256": "bf50e0053363be0f17ca87bda7e716d4f214ba41547c461140575c97ddde9f81",
+      "contract_sha256": "3511e033ebd8f76a730f4e51f0d0f16a7b44fca86b04b6a32cbf7bbb9aceb269",
       "identities": [
         {
           "reviewed_at": [
@@ -1365,7 +1365,7 @@
     {
       "function": "flb_start",
       "module": "fluent_bit/lib_engine_thread.qv",
-      "contract_sha256": "2d36b84d796515cffed883b999094141d07f3b2d77399379e2d93d1e512ac37d",
+      "contract_sha256": "ebcddad54cdd362c0c8a17e714ca9941e5a29b1bea33d2ca5ed8b8c08645b1a5",
       "identities": [
         {
           "reviewed_at": [
@@ -1401,7 +1401,7 @@
     {
       "function": "flb_stop",
       "module": "fluent_bit/lib_engine_thread.qv",
-      "contract_sha256": "25bfbafddc354a038cc2578155c0d0d737e29b11fd4521905f7f6f521b51f9d2",
+      "contract_sha256": "e0813580e091c1036c6b34c352e3a284eb280f476bb4716c80f38b96b5283ce5",
       "identities": [
         {
           "reviewed_at": [

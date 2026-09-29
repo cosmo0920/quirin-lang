@@ -1633,3 +1633,36 @@ which is not a second authority.
     conforms, and its C5 stays not discharged by the body's repeated join.
     `QCore.CondvarJoin` (section `Lifecycle`);
     [report](../reports/w47-flb-lib-lifecycle/README.md).
+    **Amendment (W47-FLB-LIB-STRICT-PAIRING): the lifecycle is a strict
+    pair; the stop's "no effect" clauses become caller preconditions.** On the
+    user's decision of 2026-09-29 (a double join hits memory issues, so
+    `flb_stop` is not idempotent), the state machine of contract
+    specification C04.11 is: a start only from created (L1; a restart is not
+    derived from any body, so it is refused); a stop only from started-ok, a
+    start that returned 0, and once (L3 no stop after a stop, L4 none after a
+    failed start, L5 none of a never-started context: caller preconditions,
+    not effects); a destroy from created, start-failed or stopped (L6). A stop
+    or destroy after a start whose value the reader does not derive is **not
+    established** and refused like a violation. L2 (the first stop after a
+    successful start joins that start's thread once) stays a body clause, and
+    L7 (a start that returns nonzero leaves no thread it began unjoined, the
+    body fact behind L6's start-failed admission) is added as one; both are in
+    force only where every followed path satisfies them. What the stop's body
+    does from a forbidden state is reported as an observation outside the
+    contract, never a clause. Each release additionally reports its paths
+    split into conforming (every history derived, none refused), undetermined
+    and refused, and the verdict over the conforming paths alone
+    (`release_split`); the release's own verdict stays the join over every
+    path. **Do not** read a stop from a state the strict pair forbids as
+    anything but a caller violation, admit a restart without a body
+    derivation, count a path whose history is not derived as conforming, or
+    let a conforming-path verdict replace the release's own. At the three
+    trees L2 is in force and L7 held (the reader cannot tell a failed
+    `mk_utils_worker_spawn`); in the in_tail test roots 50 of 280 declared-call
+    readings violate (L4, 5 also L5) over 46 roots, each a candidate against
+    the test, never a library defect; no release verdict moves. The fixed
+    test's failed-start path is refused and its conforming paths stay not
+    discharged (the status branch's unchecked first join and unresolved
+    descendants); the old test stays not discharged. `QCore.CondvarJoin`
+    (section `Lifecycle`, rewritten);
+    [report](../reports/w47-flb-lib-strict-pairing/README.md).

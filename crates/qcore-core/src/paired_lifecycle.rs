@@ -1,46 +1,48 @@
-//! A paired start/stop lifecycle, checked against its bodies (card
-//! **W47-FLB-LIB-LIFECYCLE**, gateway rule 10q as amended, contract
-//! specification §C04.11).
+//! A strictly paired start/stop lifecycle, checked against its bodies (cards
+//! **W47-FLB-LIB-LIFECYCLE** and **W47-FLB-LIB-STRICT-PAIRING**, gateway rule
+//! 10q as amended, contract specification §C04.11).
 //!
 //! # The contract, as a specification to check
 //!
-//! A context is **created**, then **started** by a start that returns 0 (its
-//! worker thread live), or left in a **failed start** by one that does not;
-//! a stop moves either to **stopped**, and a destroy ends it. The stated API
-//! (the user's, 2026-09-29) is that starts and stops come in pairs: a start
-//! is permitted only from created or stopped, every stop after the first has
-//! no effect, and — this module's answer for the two cases the statement
-//! leaves open — a stop after a failed start and a stop of a never-started
-//! context have no effect either, and a destroy is permitted only from created
-//! or stopped. [`step`] is that state machine; a transition it refuses is a
-//! **violation** at the caller.
+//! A context is **created**, then **started-ok** by a start that returns 0
+//! (its worker thread live), or left **start-failed** by one that does not; a
+//! stop moves started-ok to **stopped**, and a destroy ends it. The stated API
+//! (the user's decision of 2026-09-29, which supersedes the earlier "a stop
+//! after the first has no effect") is a **strict pair**:
 //!
-//! Six clauses ([`Clause`]) spell it out. Two are **preconditions** on the
-//! caller ([`Clause::StartRequiresUnstarted`], [`Clause::DestroyRequiresUnstarted`]):
-//! they only restrict, so they are in force by construction and can only
-//! refuse. Four describe a stop's **effect**, and each is in force only where
-//! the declared body satisfies it on every path the reader follows
-//! ([`no_effect_status`], [`ends_started_status`]):
+//! * a stop is permitted **only after a successful start, exactly once**: a
+//!   second stop, a stop after a failed start and a stop of a never-started
+//!   context are caller violations (L3, L4, L5);
+//! * after a failed start the caller calls only the destroy;
+//! * a start is permitted only from created (L1): whether a body supports a
+//!   start after a stop is not derived, so a restart is refused, fail-closed;
+//! * a destroy is permitted from created, start-failed and stopped (L6).
 //!
-//! * the first stop after a successful start joins the thread that start
-//!   began, exactly once;
-//! * a stop after a stop, after a failed start, or of a never-started context
-//!   joins no thread.
+//! [`step`] is that state machine; a transition it refuses is a [`Refusal`]
+//! at the caller: a **violation** where the derived state contradicts the
+//! precondition, **not established** where the state the precondition needs
+//! is not derived on the path (a start whose returned value is undecided).
+//! Either refuses every release the path reaches ([`lifecycle_gate`]).
 //!
-//! A clause the body **refutes** (every followed path contradicts it) is
-//! withdrawn from every caller, in the sense of rule 10g: a caller's stop is
-//! then read from the body, never from the clause ([`governed_joins`]), and
-//! the refutation is reported as a candidate upstream path, never as a
-//! verified defect. A clause some path contradicts but not every one, or one
-//! whose reading is unresolved, is **held**: unchecked, applied nowhere.
+//! Seven clauses ([`Clause`]) spell it out. Five are **preconditions** on the
+//! caller (L1, L3–L6): they only restrict, so they are in force by
+//! construction and can only refuse. Two describe what a declared body does
+//! and are in force only where the body satisfies them on every path the
+//! reader follows:
 //!
-//! # What the gate adds to a release
+//! * L2 ([`ends_started_status`]): the first stop after a successful start
+//!   joins the thread that start began, exactly once;
+//! * L7 ([`failed_start_status`]): a start that returns nonzero leaves no
+//!   thread it began unjoined, the body fact behind L6's admission of a
+//!   destroy after a failed start (reported; the release's own join reading
+//!   decides every thread still live at a destroy).
 //!
-//! The path reader keys a thread by its entry, so two workers a second start
-//! spawns collapse into one; a destroy while the worker is live frees what it
-//! retains. A release on a path where the caller violated a precondition is
-//! therefore refused ([`lifecycle_gate`]); it never discharges because the
-//! contract says so.
+//! A body clause the body **refutes** (every followed path contradicts it) is
+//! reported as a candidate upstream path, never as a verified defect; one some
+//! path contradicts but not every one, or one whose reading is unresolved, is
+//! **held**: unchecked, applied nowhere. What a stop's body does from a state
+//! the contract forbids is outside the contract: reported as an observation,
+//! never a clause.
 //!
 //! Premises stated, not proved: a context is named by one key per instance
 //! (a field key of its declared struct type, or a frame-local name), and a
@@ -48,6 +50,7 @@
 //! (P-LIFECYCLE-INSTANCE).
 
 use std::collections::BTreeSet;
+use std::fmt;
 
 use crate::condvar_join::SyncVerdict;
 
@@ -98,54 +101,61 @@ impl State {
     pub const fn label(self) -> &'static str {
         match self {
             Self::Created => "created",
-            Self::Started(StartOutcome::Succeeded) => "started",
-            Self::Started(StartOutcome::Failed) => "failed start",
-            Self::Started(StartOutcome::Undecided) => "started or failed start",
+            Self::Started(StartOutcome::Succeeded) => "started-ok",
+            Self::Started(StartOutcome::Failed) => "start-failed",
+            Self::Started(StartOutcome::Undecided) => "start outcome undecided",
             Self::Stopped => "stopped",
             Self::Destroyed => "destroyed",
         }
     }
 }
 
-/// The six clauses of the paired lifecycle.
+/// The seven clauses of the strict pair.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Clause {
-    /// L1: a start only from created or stopped (caller precondition).
-    StartRequiresUnstarted,
+    /// L1: a start only from created (caller precondition; a restart is not
+    /// derived).
+    StartRequiresCreated,
     /// L2: the first stop after a successful start joins the thread that
-    /// start began, exactly once.
+    /// start began, exactly once (body).
     StopEndsStarted,
-    /// L3: a stop after a stop joins nothing.
-    StopAfterStopNoEffect,
-    /// L4: a stop after a failed start joins nothing.
-    StopAfterFailedStartNoEffect,
-    /// L5: a stop of a never-started context joins nothing.
-    StopUnstartedNoEffect,
-    /// L6: a destroy only from created or stopped (caller precondition).
-    DestroyRequiresUnstarted,
+    /// L3: no stop after a stop (caller precondition).
+    NoStopAfterStop,
+    /// L4: no stop after a failed start (caller precondition).
+    NoStopAfterFailedStart,
+    /// L5: no stop of a never-started context (caller precondition).
+    NoStopOfUnstarted,
+    /// L6: a destroy only from created, start-failed or stopped (caller
+    /// precondition).
+    DestroyRequiresNotRunning,
+    /// L7: a start that returns nonzero leaves no thread it began unjoined
+    /// (body).
+    FailedStartLeavesNoThread,
 }
 
 impl Clause {
     /// Every clause, in order.
-    pub const ALL: [Self; 6] = [
-        Self::StartRequiresUnstarted,
+    pub const ALL: [Self; 7] = [
+        Self::StartRequiresCreated,
         Self::StopEndsStarted,
-        Self::StopAfterStopNoEffect,
-        Self::StopAfterFailedStartNoEffect,
-        Self::StopUnstartedNoEffect,
-        Self::DestroyRequiresUnstarted,
+        Self::NoStopAfterStop,
+        Self::NoStopAfterFailedStart,
+        Self::NoStopOfUnstarted,
+        Self::DestroyRequiresNotRunning,
+        Self::FailedStartLeavesNoThread,
     ];
 
     /// A stable name for reports.
     #[must_use]
     pub const fn name(self) -> &'static str {
         match self {
-            Self::StartRequiresUnstarted => "L1 start-requires-unstarted",
+            Self::StartRequiresCreated => "L1 start-requires-created",
             Self::StopEndsStarted => "L2 stop-ends-started",
-            Self::StopAfterStopNoEffect => "L3 stop-after-stop-no-effect",
-            Self::StopAfterFailedStartNoEffect => "L4 stop-after-failed-start-no-effect",
-            Self::StopUnstartedNoEffect => "L5 stop-unstarted-no-effect",
-            Self::DestroyRequiresUnstarted => "L6 destroy-requires-unstarted",
+            Self::NoStopAfterStop => "L3 no-stop-after-stop",
+            Self::NoStopAfterFailedStart => "L4 no-stop-after-failed-start",
+            Self::NoStopOfUnstarted => "L5 no-stop-of-unstarted",
+            Self::DestroyRequiresNotRunning => "L6 destroy-requires-not-running",
+            Self::FailedStartLeavesNoThread => "L7 failed-start-leaves-no-thread",
         }
     }
 
@@ -153,82 +163,150 @@ impl Clause {
     /// effect.
     #[must_use]
     pub const fn is_precondition(self) -> bool {
-        matches!(
+        !matches!(
             self,
-            Self::StartRequiresUnstarted | Self::DestroyRequiresUnstarted
-        )
-    }
-
-    /// A no-effect clause: the stop joins no thread.
-    #[must_use]
-    pub const fn is_no_effect(self) -> bool {
-        matches!(
-            self,
-            Self::StopAfterStopNoEffect
-                | Self::StopAfterFailedStartNoEffect
-                | Self::StopUnstartedNoEffect
+            Self::StopEndsStarted | Self::FailedStartLeavesNoThread
         )
     }
 }
 
-/// What one call does to the state: the next state and the effect clauses
-/// that govern it.
+/// What one call does to the state: the next state and the clauses that
+/// govern it.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Transition {
     pub next: State,
     pub governed_by: Vec<Clause>,
 }
 
-/// One step of the state machine. A start's outcome is the value it returned
+/// A transition the strict pair refuses.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum Refusal {
+    /// The derived state contradicts the precondition (`clause`; `None` for a
+    /// call after a destroy, which no clause needs to name).
+    Violation {
+        clause: Option<Clause>,
+        reason: String,
+    },
+    /// The state the precondition needs is not derived on the path.
+    NotEstablished { clause: Clause, reason: String },
+}
+
+impl Refusal {
+    /// The precondition refused, when one is named.
+    #[must_use]
+    pub const fn clause(&self) -> Option<Clause> {
+        match self {
+            Self::Violation { clause, .. } => *clause,
+            Self::NotEstablished { clause, .. } => Some(*clause),
+        }
+    }
+
+    /// Whether the derived state contradicts the precondition (as opposed to
+    /// the state not being established).
+    #[must_use]
+    pub const fn is_violation(&self) -> bool {
+        matches!(self, Self::Violation { .. })
+    }
+}
+
+impl fmt::Display for Refusal {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Violation { reason, .. } => f.write_str(reason),
+            Self::NotEstablished { reason, .. } => {
+                write!(f, "precondition not established: {reason}")
+            }
+        }
+    }
+}
+
+/// One step of the strict pair. A start's outcome is the value it returned
 /// on this path ([`StartOutcome`]); other operations ignore it.
 ///
 /// # Errors
 ///
-/// The violated precondition, as a caller-facing reason.
+/// The refused precondition, as a caller-facing [`Refusal`].
 pub fn step(
     state: State,
     operation: Operation,
     outcome: StartOutcome,
-) -> Result<Transition, String> {
+) -> Result<Transition, Refusal> {
     let pass = |next: State, governed_by: Vec<Clause>| Ok(Transition { next, governed_by });
+    let violation = |clause: Clause, reason: String| {
+        Err(Refusal::Violation {
+            clause: Some(clause),
+            reason: format!("{reason} ({})", clause.name()),
+        })
+    };
+    let not_established = |clause: Clause, reason: String| {
+        Err(Refusal::NotEstablished {
+            clause,
+            reason: format!("{reason} ({})", clause.name()),
+        })
+    };
     match (operation, state) {
-        (_, State::Destroyed) => Err(format!("{} of a destroyed context", operation.spelling())),
-        (Operation::Start, State::Created | State::Stopped) => pass(
+        (_, State::Destroyed) => Err(Refusal::Violation {
+            clause: None,
+            reason: format!("{} of a destroyed context", operation.spelling()),
+        }),
+        (Operation::Start, State::Created) => pass(
             State::Started(outcome),
-            vec![Clause::StartRequiresUnstarted],
+            vec![Clause::StartRequiresCreated],
         ),
-        (Operation::Start, State::Started(_)) => Err(format!(
-            "start of a context in state `{}` without a stop ({})",
-            state.label(),
-            Clause::StartRequiresUnstarted.name()
-        )),
-        (Operation::Stop, State::Created) => {
-            pass(State::Created, vec![Clause::StopUnstartedNoEffect])
-        }
+        (Operation::Start, State::Stopped) => violation(
+            Clause::StartRequiresCreated,
+            "start of a stopped context: a restart is not derived from the bodies, \
+             so a start is permitted only from `created`"
+                .to_owned(),
+        ),
+        (Operation::Start, State::Started(_)) => violation(
+            Clause::StartRequiresCreated,
+            format!(
+                "start of a context in state `{}` without a stop",
+                state.label()
+            ),
+        ),
         (Operation::Stop, State::Started(StartOutcome::Succeeded)) => {
             pass(State::Stopped, vec![Clause::StopEndsStarted])
         }
-        (Operation::Stop, State::Started(StartOutcome::Failed)) => {
-            pass(State::Stopped, vec![Clause::StopAfterFailedStartNoEffect])
+        (Operation::Stop, State::Stopped) => violation(
+            Clause::NoStopAfterStop,
+            "a second stop: stop of a context in state `stopped`".to_owned(),
+        ),
+        (Operation::Stop, State::Started(StartOutcome::Failed)) => violation(
+            Clause::NoStopAfterFailedStart,
+            "stop after a failed start: stop of a context in state `start-failed`".to_owned(),
+        ),
+        (Operation::Stop, State::Started(StartOutcome::Undecided)) => not_established(
+            Clause::NoStopAfterFailedStart,
+            "stop of a context whose start's returned value is not derived, so \
+             `started-ok` is not established"
+                .to_owned(),
+        ),
+        (Operation::Stop, State::Created) => violation(
+            Clause::NoStopOfUnstarted,
+            "stop of a never-started context: stop of a context in state `created`".to_owned(),
+        ),
+        (Operation::Destroy, State::Created | State::Stopped) => {
+            pass(State::Destroyed, vec![Clause::DestroyRequiresNotRunning])
         }
-        (Operation::Stop, State::Started(StartOutcome::Undecided)) => pass(
-            State::Stopped,
+        (Operation::Destroy, State::Started(StartOutcome::Failed)) => pass(
+            State::Destroyed,
             vec![
-                Clause::StopEndsStarted,
-                Clause::StopAfterFailedStartNoEffect,
+                Clause::DestroyRequiresNotRunning,
+                Clause::FailedStartLeavesNoThread,
             ],
         ),
-        (Operation::Stop, State::Stopped) => {
-            pass(State::Stopped, vec![Clause::StopAfterStopNoEffect])
-        }
-        (Operation::Destroy, State::Created | State::Stopped) => {
-            pass(State::Destroyed, vec![Clause::DestroyRequiresUnstarted])
-        }
-        (Operation::Destroy, State::Started(_)) => Err(format!(
-            "destroy of a context in state `{}` before its stop ({})",
-            state.label(),
-            Clause::DestroyRequiresUnstarted.name()
-        )),
+        (Operation::Destroy, State::Started(StartOutcome::Succeeded)) => violation(
+            Clause::DestroyRequiresNotRunning,
+            "destroy of a context in state `started-ok` before its stop".to_owned(),
+        ),
+        (Operation::Destroy, State::Started(StartOutcome::Undecided)) => not_established(
+            Clause::DestroyRequiresNotRunning,
+            "destroy of a context whose start's returned value is not derived, so \
+             neither `start-failed` nor a stop is established"
+                .to_owned(),
+        ),
     }
 }
 
@@ -260,11 +338,19 @@ impl BodyJoin {
 }
 
 /// One followed path of a declared stop's body, run from the state a clause
-/// speaks about: the joins it executed (with their sites) and what the reader
-/// left open on it.
+/// (or an observation) speaks about: the joins it executed (with their sites)
+/// and what the reader left open on it.
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct BodyPath {
     pub joins: Vec<(BodyJoin, String)>,
+    pub unresolved: BTreeSet<String>,
+}
+
+/// One followed path of a declared start that returned nonzero: the threads
+/// it began and left without a join, and what the reader left open on it.
+#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct StartPath {
+    pub left_unjoined: BTreeSet<String>,
     pub unresolved: BTreeSet<String>,
 }
 
@@ -292,41 +378,14 @@ impl ClauseStatus {
     }
 }
 
-fn describe(joins: &[(BodyJoin, String)]) -> String {
+/// The joins of one path, for a report.
+#[must_use]
+pub fn describe(joins: &[(BodyJoin, String)]) -> String {
     joins
         .iter()
         .map(|(join, site)| format!("{} at {site}", join.label()))
         .collect::<Vec<_>>()
         .join(", ")
-}
-
-/// A no-effect clause (L3–L5): in force only where no followed path joins
-/// anything and none is unresolved; refuted where every followed path joins.
-/// The reader follows every arm it cannot decide, so its paths over-approximate
-/// the feasible ones: only a contradiction on every path is a refutation.
-#[must_use]
-pub fn no_effect_status(paths: &[BodyPath]) -> ClauseStatus {
-    if paths.is_empty() {
-        return ClauseStatus::Held {
-            reason: "no followed path of the body reaches this state".to_owned(),
-        };
-    }
-    if paths.iter().all(|path| !path.joins.is_empty()) {
-        return ClauseStatus::Refuted {
-            witness: describe(&paths[0].joins),
-        };
-    }
-    if let Some(path) = paths.iter().find(|path| !path.joins.is_empty()) {
-        return ClauseStatus::Held {
-            reason: format!("a followed path joins ({})", describe(&path.joins)),
-        };
-    }
-    if let Some(reason) = paths.iter().flat_map(|path| path.unresolved.iter()).next() {
-        return ClauseStatus::Held {
-            reason: reason.clone(),
-        };
-    }
-    ClauseStatus::InForce
 }
 
 /// Whether one followed path of a first stop ends the started thread: exactly
@@ -381,35 +440,51 @@ pub fn ends_started_status(paths: &[BodyPath]) -> ClauseStatus {
     ClauseStatus::InForce
 }
 
+/// L7: in force only where every followed path of the start that returns
+/// nonzero leaves no thread it began unjoined and none is unresolved; refuted
+/// where every such path leaves one unjoined.
+#[must_use]
+pub fn failed_start_status(paths: &[StartPath]) -> ClauseStatus {
+    if paths.is_empty() {
+        return ClauseStatus::Held {
+            reason: "no followed path of the start returns nonzero".to_owned(),
+        };
+    }
+    let unjoined = |path: &StartPath| path.left_unjoined.iter().cloned().collect::<Vec<_>>();
+    if paths.iter().all(|path| !path.left_unjoined.is_empty()) {
+        return ClauseStatus::Refuted {
+            witness: format!("returns nonzero with {} unjoined", unjoined(&paths[0]).join(", ")),
+        };
+    }
+    if let Some(path) = paths.iter().find(|path| !path.left_unjoined.is_empty()) {
+        return ClauseStatus::Held {
+            reason: format!(
+                "a followed path returns nonzero with {} unjoined",
+                unjoined(path).join(", ")
+            ),
+        };
+    }
+    if let Some(reason) = paths.iter().flat_map(|path| path.unresolved.iter()).next() {
+        return ClauseStatus::Held {
+            reason: reason.clone(),
+        };
+    }
+    ClauseStatus::InForce
+}
+
 /// The status of a precondition: in force by construction (it only refuses).
 #[must_use]
 pub const fn precondition_status() -> ClauseStatus {
     ClauseStatus::InForce
 }
 
-/// The joins a caller's stop is read with: the clause's (none) only where a
-/// no-effect clause is in force, the body's otherwise. A withdrawn (refuted)
-/// or held clause is never applied.
-#[must_use]
-pub fn governed_joins(
-    clause: Clause,
-    status: &ClauseStatus,
-    body: &[(BodyJoin, String)],
-) -> Vec<(BodyJoin, String)> {
-    if clause.is_no_effect() && *status == ClauseStatus::InForce {
-        Vec::new()
-    } else {
-        body.to_vec()
-    }
-}
-
-/// The lifecycle's gate on a release: a path that violated a precondition
-/// never discharges it.
+/// The lifecycle's gate on a release: a path that violated a precondition, or
+/// on which one is not established, never discharges it.
 #[must_use]
 pub fn lifecycle_gate(violations: &BTreeSet<String>) -> SyncVerdict {
     match violations.iter().next() {
         Some(violation) => SyncVerdict::not_discharged(format!(
-            "the paired lifecycle is violated on a path: {violation}"
+            "the strictly paired lifecycle is not kept on a path: {violation}"
         )),
         None => SyncVerdict::Discharged,
     }

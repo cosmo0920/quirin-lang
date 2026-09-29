@@ -471,17 +471,21 @@ pub struct DeclaredThreadSync {
 /// The thread-synchronization precondition's name.
 pub const THREAD_SYNC_CLAUSE: &str = "resource_thread_sync";
 
-/// Which transition of a paired start/stop lifecycle a declared call is (card
-/// **W47-FLB-LIB-LIFECYCLE**, §C04.11).
+/// Which transition of a strictly paired start/stop lifecycle a declared
+/// call is (cards **W47-FLB-LIB-LIFECYCLE** and
+/// **W47-FLB-LIB-STRICT-PAIRING**, §C04.11).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LifecycleOperation {
-    /// Starts the context's worker: permitted only from created or stopped.
+    /// Starts the context's worker: permitted only from created (a restart is
+    /// not derived).
     Start,
-    /// Stops it: the first stop after a start ends what the start began; a
-    /// later stop, a stop after a failed start and a stop of a never-started
-    /// context have no effect.
+    /// Stops it: permitted only after a start that returned 0, once; the
+    /// first stop ends what the start began. A later stop, a stop after a
+    /// failed start and a stop of a never-started context are caller
+    /// violations.
     Stop,
-    /// Destroys the context: permitted only from created or stopped.
+    /// Destroys the context: permitted from created, after a failed start,
+    /// or after the stop.
     Destroy,
 }
 
@@ -499,10 +503,10 @@ impl LifecycleOperation {
 
 /// `requires resource_lifecycle(ctx, start|stop|destroy);` (card
 /// **W47-FLB-LIB-LIFECYCLE**, §C04.11): the call is that transition of the
-/// paired lifecycle of the context at `parameter`. The clauses the state
-/// machine implies are *specifications to check*: the census checks each
-/// against the declared function's body and applies only those in force,
-/// withdrawing a refuted one from every caller. No per-unit resource route
+/// strictly paired lifecycle of the context at `parameter`. The clauses the
+/// state machine implies are *specifications to check*: the census holds each
+/// caller to the preconditions and checks the body clauses against the
+/// declared bodies, applying only those in force. No per-unit resource route
 /// derives a context's lifecycle state, so there the declaration is never
 /// applied.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]

@@ -1,17 +1,20 @@
-//! W47-FLB-LIB-LIFECYCLE — the paired start/stop lifecycle over fixtures
-//! built from `flb_create`, `do_start`, `flb_stop` and `mk_utils_worker_spawn`
-//! in miniature (the stop-path card's library), declared through
-//! `requires resource_lifecycle(ctx, start|stop|destroy)`. Negative controls
-//! first:
+//! W47-FLB-LIB-LIFECYCLE and W47-FLB-LIB-STRICT-PAIRING — the strictly
+//! paired start/stop lifecycle over fixtures built from `flb_create`,
+//! `do_start`, `flb_stop` and `mk_utils_worker_spawn` in miniature (the
+//! stop-path card's library), declared through `requires
+//! resource_lifecycle(ctx, start|stop|destroy)`. Negative controls first:
 //!
+//! * a stop after a failed start is a caller violation (L4) and the release
+//!   it reaches never discharges;
+//! * a double stop is a caller violation (L3);
+//! * start, stop, destroy conforms, L2 is in force and the release is the
+//!   census's without the lifecycle;
+//! * a failed start then destroy conforms;
 //! * a double start is refused (the path reader alone would have discharged
 //!   it: the second engine thread collapses into the first);
-//! * a stop that joins again after a failed start refutes L4, and the release
-//!   stays not discharged;
-//! * a stop of a never-started context is permitted and governed by L5, which
-//!   a stop that joins anyway refutes;
-//! * a destroy before the stop is refused;
-//! * the fixed shape conforms, L2 is in force and the release is unchanged.
+//! * a stop regardless of the start's result (the fixed test's shape) is
+//!   refused on the failed-start path and decided apart on the conforming
+//!   paths.
 
 use std::collections::BTreeMap;
 
@@ -20,11 +23,11 @@ use qcore_contract::contract_loader::{
     LifecycleOperation, lifecycle_obligations, load_resource_contract_sources,
 };
 use qcore_core::condvar_join::SyncVerdict;
-use qcore_core::paired_lifecycle::{Clause, ClauseStatus};
+use qcore_core::paired_lifecycle::{BodyJoin, Clause, ClauseStatus};
 use quirin_source_analysis::condvar_join_census::{
     Census, FLUENT_BIT_SYNC, ReleaseVerdict, census, census_with_lifecycle,
 };
-use quirin_source_analysis::lifecycle_census::{LifecycleCensus, governing_at};
+use quirin_source_analysis::lifecycle_census::{CallCheck, LifecycleCensus};
 use quirin_source_analysis::loop_owner_census::FLUENT_BIT_HOPS;
 
 const WRAPPER: &str = r#"
@@ -282,8 +285,119 @@ void test_case(void)
     )
 }
 
-const FIXED: &str =
-    "    ret = start(e, &b, 0);\n    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }";
+/// Start, then stop only after a successful start and check its result.
+const GUARDED: &str = "    ret = start(e, &b, 0);\n    if (ret == 0) {\n        ret = stop(e);\n        \
+                       if (ret != 0) {\n            exit(1);\n        }\n    }";
+
+fn refused_with(verdict: &SyncVerdict, words: &str) {
+    not_discharged_with(verdict, "strictly paired lifecycle is not kept");
+    not_discharged_with(verdict, words);
+}
+
+fn call<'a>(census: &'a Census, callee: &str) -> Vec<&'a CallCheck> {
+    lifecycle(census)
+        .calls
+        .iter()
+        .filter(|c| c.reading.root.ends_with("test_case") && c.reading.callee == callee)
+        .collect()
+}
+
+#[test]
+fn nc_a_stop_after_a_failed_start_is_a_violation() {
+    let census = run(
+        &shape(
+            "    ret = start_failing(e, &b, 1);\n    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }",
+        ),
+        "stop",
+    );
+    let stops = call(&census, "stop");
+    assert!(
+        stops
+            .iter()
+            .any(|c| c.violations.iter().any(|v| v.contains("L4"))),
+        "{stops:#?}"
+    );
+    let unlink = release(&census, "`unlink`");
+    refused_with(&unlink.verdict, "stop after a failed start");
+    let split = unlink.lifecycle_split.as_ref().expect("roles were given");
+    assert!(split.refused_paths > 0, "{split:#?}");
+    // What the stop's body does there is outside the contract: an
+    // observation, not a clause.
+    let observed = lifecycle(&census)
+        .observations
+        .iter()
+        .find(|o| o.forbidden_by == Clause::NoStopAfterFailedStart)
+        .expect("the body is observed from the forbidden state");
+    assert!(observed.every_path_joins(), "{observed:#?}");
+}
+
+#[test]
+fn nc_a_double_stop_is_a_violation() {
+    let body = "    ret = start(e, &b, 0);\n    if (ret == 0) {\n        ret = stop(e);\n        \
+                ret = stop(e);\n        if (ret != 0) {\n            exit(1);\n        }\n    }";
+    let census = run(&shape(body), "stop");
+    let second = call(&census, "stop")
+        .into_iter()
+        .find(|c| c.violations.iter().any(|v| v.contains("a second stop")))
+        .unwrap_or_else(|| panic!("{:#?}", lifecycle(&census).calls));
+    assert!(second.states.contains("stopped"), "{second:#?}");
+    refused_with(&release(&census, "`unlink`").verdict, "L3");
+}
+
+#[test]
+fn nc_start_stop_destroy_conforms() {
+    let body = format!("{GUARDED}\n    flb_destroy(e);");
+    let plain = census(&files(&shape(&body)), &FLUENT_BIT_HOPS, &FLUENT_BIT_SYNC);
+    let census = run(&shape(&body), "stop");
+    for callee in ["start", "stop", "flb_destroy"] {
+        for check in call(&census, callee) {
+            assert!(check.violations.is_empty(), "{check:#?}");
+            assert!(check.not_established.is_empty(), "{check:#?}");
+        }
+    }
+    assert_eq!(
+        status(&census, Clause::StopEndsStarted, Some("stop")),
+        ClauseStatus::InForce,
+        "{:#?}",
+        lifecycle(&census).clauses
+    );
+    // The lifecycle adds nothing: the release is the census's without it,
+    // and the conforming paths alone decide the same.
+    let before = release(&plain, "`unlink`");
+    let after = release(&census, "`unlink`");
+    assert_eq!(before.verdict, after.verdict);
+    assert!(after.lifecycle_violations.is_empty());
+    let split = after.lifecycle_split.as_ref().expect("roles were given");
+    assert_eq!(split.refused_paths, 0);
+    assert!(split.conforming_paths > 0);
+    assert_eq!(split.conforming_verdict.as_ref(), Some(&after.verdict));
+}
+
+#[test]
+fn nc_a_failed_start_then_destroy_conforms() {
+    // Only the destroy after a start that returned nonzero.
+    let census = run(
+        &shape("    ret = start_failing(e, &b, 1);\n    if (ret != 0) {\n        flb_destroy(e);\n    }"),
+        "stop",
+    );
+    let destroys = call(&census, "flb_destroy");
+    assert!(!destroys.is_empty());
+    for check in &destroys {
+        assert!(check.violations.is_empty(), "{check:#?}");
+        assert!(
+            check
+                .governed
+                .iter()
+                .any(|(clause, _)| *clause == Clause::DestroyRequiresNotRunning),
+            "{check:#?}"
+        );
+    }
+    assert!(
+        release(&census, "`flb_destroy`")
+            .lifecycle_violations
+            .is_empty()
+    );
+}
 
 #[test]
 fn nc_a_double_start_is_refused() {
@@ -297,7 +411,7 @@ fn nc_a_double_start_is_refused() {
     // Under the declared lifecycle the second start violates L1.
     let census = run(&shape(body), "stop");
     let unlink = release(&census, "`unlink`");
-    not_discharged_with(&unlink.verdict, "paired lifecycle is violated");
+    refused_with(&unlink.verdict, "L1");
     assert!(
         unlink
             .lifecycle_violations
@@ -305,68 +419,58 @@ fn nc_a_double_start_is_refused() {
             .any(|v| v.contains("without a stop")),
         "{unlink:#?}"
     );
-    let second = lifecycle(&census)
-        .calls
-        .iter()
-        .find(|c| c.reading.callee == "start" && !c.violations.is_empty())
+    let second = call(&census, "start")
+        .into_iter()
+        .find(|c| !c.violations.is_empty())
         .expect("the second start is a violating call");
-    assert!(second.states.contains("started"), "{second:#?}");
+    assert!(second.states.contains("started-ok"), "{second:#?}");
 }
 
 #[test]
-fn nc_a_stop_that_joins_again_after_a_failed_start_refutes_l4() {
-    let census = run(
-        &shape(
-            "    ret = start_failing(e, &b, 1);\n    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }",
-        ),
-        "stop",
-    );
-    assert!(
-        matches!(
-            status(&census, Clause::StopAfterFailedStartNoEffect, Some("stop")),
-            ClauseStatus::Refuted { .. }
-        ),
-        "{:#?}",
-        lifecycle(&census).clauses
-    );
-    // Withdrawn: the stop is read from its body, and the second join stands.
+fn a_stop_regardless_of_the_start_is_refused_there_and_decided_apart_elsewhere() {
+    // The fixed test's shape: the stop runs whatever the start returned.
+    let unguarded =
+        "    ret = start(e, &b, 0);\n    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }";
+    let census = run(&shape(unguarded), "stop");
     let unlink = release(&census, "`unlink`");
-    not_discharged_with(&unlink.verdict, "joined a second time");
-    assert!(unlink.lifecycle_violations.is_empty(), "{unlink:#?}");
-    let stops = governing_at(&unlink.reading, lifecycle(&census));
-    assert!(
-        stops
-            .iter()
-            .any(|s| s.contains("L4") && s.contains("withdrawn: read from the body")),
-        "{stops:#?}"
-    );
+    refused_with(&unlink.verdict, "stop after a failed start");
+    let split = unlink.lifecycle_split.as_ref().expect("roles were given");
+    assert!(split.refused_paths > 0, "{split:#?}");
+    assert!(split.conforming_paths > 0, "{split:#?}");
+    // On its conforming paths the release decides as a shape that reaches it
+    // only after a successful start does.
+    let started = "    ret = start(e, &b, 0);\n    if (ret != 0) {\n        exit(1);\n    }\n    \
+                   ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }";
+    let only_started = run(&shape(started), "stop");
+    let kept = release(&only_started, "`unlink`");
+    assert!(kept.lifecycle_violations.is_empty(), "{kept:#?}");
+    assert_eq!(split.conforming_verdict.as_ref(), Some(&kept.verdict));
 }
 
 #[test]
-fn nc_a_stop_of_a_never_started_context_is_governed_by_l5() {
+fn nc_a_stop_of_a_never_started_context_is_a_violation() {
     let census = run(
         &shape("    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }"),
         "stop",
     );
-    // The stop joins the identifier no start produced: L5 is refuted.
-    match status(&census, Clause::StopUnstartedNoEffect, Some("stop")) {
-        ClauseStatus::Refuted { witness } => {
-            assert!(witness.contains("no start began"), "{witness}");
-        }
-        other => panic!("{other:?}"),
-    }
-    // The call itself is permitted: created, no violation.
-    let call = lifecycle(&census)
-        .calls
-        .iter()
-        .find(|c| c.reading.callee == "stop")
-        .expect("the stop is read");
-    assert!(call.violations.is_empty(), "{call:#?}");
-    assert!(call.states.contains("created"), "{call:#?}");
+    let stop = call(&census, "stop");
     assert!(
-        call.governed
+        stop.iter()
+            .any(|c| c.violations.iter().any(|v| v.contains("L5"))),
+        "{stop:#?}"
+    );
+    // The body joins the identifier no start produced: outside the contract.
+    let observed = lifecycle(&census)
+        .observations
+        .iter()
+        .find(|o| o.forbidden_by == Clause::NoStopOfUnstarted)
+        .expect("observed");
+    assert!(
+        observed
+            .paths
             .iter()
-            .any(|(clause, _)| *clause == Clause::StopUnstartedNoEffect)
+            .all(|p| p.joins.iter().any(|(j, _)| *j == BodyJoin::NotStarted)),
+        "{observed:#?}"
     );
 }
 
@@ -384,61 +488,63 @@ void test_case(void)
         return;
     }
     ret = start(e, &b, 0);
-    flb_destroy(e);
+    if (ret == 0) {
+        flb_destroy(e);
+    }
 }
 "#;
     let census = run(test, "stop");
     let destroy = release(&census, "`flb_destroy`");
-    not_discharged_with(&destroy.verdict, "before its stop");
+    refused_with(&destroy.verdict, "before its stop");
 }
 
 #[test]
-fn a_stop_that_joins_on_some_paths_only_holds_its_clause() {
-    // `stop_once` returns early unless started; the reader follows both arms
-    // of the status test, so after a stop some followed paths join again and
-    // some do not: neither in force nor refuted.
-    let census = run(
-        &shape(
-            "    ret = start(e, &b, 0);\n    ret = stop_once(e);\n    if (ret != 0) {\n        exit(1);\n    }",
-        ),
-        "stop_once",
-    );
+fn a_restart_after_a_stop_is_refused() {
+    let body = format!("{GUARDED}\n    ret = start(e, &b, 0);");
+    let census = run(&shape(&body), "stop");
     assert!(
-        matches!(
-            status(&census, Clause::StopAfterStopNoEffect, Some("stop_once")),
-            ClauseStatus::Held { .. }
-        ),
+        call(&census, "start")
+            .iter()
+            .any(|c| c.violations.iter().any(|v| v.contains("restart"))),
         "{:#?}",
-        lifecycle(&census).clauses
+        lifecycle(&census).calls
     );
 }
 
 #[test]
-fn the_fixed_shape_conforms_and_its_release_is_unchanged() {
-    let plain = census(&files(&shape(FIXED)), &FLUENT_BIT_HOPS, &FLUENT_BIT_SYNC);
-    let census = run(&shape(FIXED), "stop");
-    let before = release(&plain, "`unlink`");
-    let after = release(&census, "`unlink`");
-    assert_eq!(before.verdict, after.verdict);
-    assert!(after.lifecycle_violations.is_empty());
-    assert_eq!(
-        status(&census, Clause::StopEndsStarted, Some("stop")),
-        ClauseStatus::InForce,
-        "{:#?}",
-        lifecycle(&census).clauses
+fn the_failed_start_clause_is_checked_against_the_start() {
+    // `start_failing` joins the thread it spawned before its failure return,
+    // but the reader cannot tell the spawn wrapper's own failure from a
+    // spawn, so one nonzero return leaves the entry unjoined: held, not in
+    // force, never assumed.
+    let census = run(&shape(GUARDED), "stop");
+    let held = status(&census, Clause::FailedStartLeavesNoThread, Some("start_failing"));
+    assert!(matches!(held, ClauseStatus::Held { .. }), "{held:?}");
+    let check = lifecycle(&census)
+        .clauses
+        .iter()
+        .find(|c| {
+            c.clause == Clause::FailedStartLeavesNoThread
+                && c.function.as_deref() == Some("start_failing")
+        })
+        .expect("L7 is checked for every declared start");
+    assert!(
+        check.start_paths.iter().any(|p| p.left_unjoined.is_empty()),
+        "the join before the failure return is read: {check:#?}"
     );
-    assert!(matches!(
-        status(&census, Clause::StopAfterStopNoEffect, Some("stop")),
-        ClauseStatus::Refuted { .. }
-    ));
-    assert_eq!(
-        status(&census, Clause::StartRequiresUnstarted, None),
-        ClauseStatus::InForce
-    );
-    for call in &lifecycle(&census).calls {
-        if call.reading.root.ends_with("test_case") {
-            assert!(call.violations.is_empty(), "{call:#?}");
-        }
+}
+
+#[test]
+fn the_preconditions_are_in_force() {
+    let census = run(&shape(GUARDED), "stop");
+    for clause in [
+        Clause::StartRequiresCreated,
+        Clause::NoStopAfterStop,
+        Clause::NoStopAfterFailedStart,
+        Clause::NoStopOfUnstarted,
+        Clause::DestroyRequiresNotRunning,
+    ] {
+        assert_eq!(status(&census, clause, None), ClauseStatus::InForce);
     }
 }
 

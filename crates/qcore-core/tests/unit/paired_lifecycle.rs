@@ -10,7 +10,14 @@ fn path(joins: &[(BodyJoin, &str)]) -> BodyPath {
     }
 }
 
-fn run(operations: &[(Operation, StartOutcome)]) -> Result<State, String> {
+fn start_path(unjoined: &[&str]) -> StartPath {
+    StartPath {
+        left_unjoined: unjoined.iter().map(|t| (*t).to_owned()).collect(),
+        unresolved: BTreeSet::new(),
+    }
+}
+
+fn run(operations: &[(Operation, StartOutcome)]) -> Result<State, Refusal> {
     operations
         .iter()
         .try_fold(State::Created, |state, (operation, outcome)| {
@@ -18,121 +25,193 @@ fn run(operations: &[(Operation, StartOutcome)]) -> Result<State, String> {
         })
 }
 
-// Negative controls first.
+const OUTCOMES: [StartOutcome; 3] = [
+    StartOutcome::Succeeded,
+    StartOutcome::Failed,
+    StartOutcome::Undecided,
+];
+
+// Negative controls first (card W47-FLB-LIB-STRICT-PAIRING).
+
+#[test]
+fn a_stop_after_a_failed_start_is_a_violation() {
+    let refusal = run(&[
+        (Operation::Start, StartOutcome::Failed),
+        (Operation::Stop, StartOutcome::Undecided),
+    ])
+    .unwrap_err();
+    assert!(refusal.is_violation(), "{refusal}");
+    assert_eq!(refusal.clause(), Some(Clause::NoStopAfterFailedStart));
+    assert!(refusal.to_string().contains("L4"), "{refusal}");
+}
+
+#[test]
+fn a_double_stop_is_a_violation() {
+    let refusal = run(&[
+        (Operation::Start, StartOutcome::Succeeded),
+        (Operation::Stop, StartOutcome::Undecided),
+        (Operation::Stop, StartOutcome::Undecided),
+    ])
+    .unwrap_err();
+    assert!(refusal.is_violation(), "{refusal}");
+    assert_eq!(refusal.clause(), Some(Clause::NoStopAfterStop));
+}
+
+#[test]
+fn a_stop_of_a_never_started_context_is_a_violation() {
+    let refusal = run(&[(Operation::Stop, StartOutcome::Undecided)]).unwrap_err();
+    assert!(refusal.is_violation(), "{refusal}");
+    assert_eq!(refusal.clause(), Some(Clause::NoStopOfUnstarted));
+}
+
+#[test]
+fn start_stop_destroy_conforms() {
+    assert_eq!(
+        run(&[
+            (Operation::Start, StartOutcome::Succeeded),
+            (Operation::Stop, StartOutcome::Undecided),
+            (Operation::Destroy, StartOutcome::Undecided),
+        ]),
+        Ok(State::Destroyed)
+    );
+}
+
+#[test]
+fn a_failed_start_then_destroy_conforms() {
+    let started = step(State::Created, Operation::Start, StartOutcome::Failed).unwrap();
+    assert_eq!(started.next, State::Started(StartOutcome::Failed));
+    let destroyed = step(started.next, Operation::Destroy, StartOutcome::Undecided).unwrap();
+    assert_eq!(destroyed.next, State::Destroyed);
+    // The admission names the body fact it rests on.
+    assert_eq!(
+        destroyed.governed_by,
+        vec![
+            Clause::DestroyRequiresNotRunning,
+            Clause::FailedStartLeavesNoThread
+        ]
+    );
+}
 
 #[test]
 fn a_double_start_is_refused() {
-    for outcome in [
-        StartOutcome::Succeeded,
-        StartOutcome::Failed,
-        StartOutcome::Undecided,
-    ] {
-        let error = run(&[
+    for outcome in OUTCOMES {
+        let refusal = run(&[
             (Operation::Start, outcome),
             (Operation::Start, StartOutcome::Succeeded),
         ])
         .unwrap_err();
-        assert!(error.contains("without a stop"), "{error}");
-        assert!(error.contains("L1"), "{error}");
+        assert!(refusal.to_string().contains("without a stop"), "{refusal}");
+        assert_eq!(refusal.clause(), Some(Clause::StartRequiresCreated));
     }
 }
 
 #[test]
-fn a_destroy_before_stop_is_refused() {
-    for outcome in [
-        StartOutcome::Succeeded,
-        StartOutcome::Failed,
-        StartOutcome::Undecided,
-    ] {
-        let error = run(&[
-            (Operation::Start, outcome),
-            (Operation::Destroy, StartOutcome::Undecided),
+fn a_restart_after_a_stop_is_refused() {
+    let refusal = run(&[
+        (Operation::Start, StartOutcome::Succeeded),
+        (Operation::Stop, StartOutcome::Undecided),
+        (Operation::Start, StartOutcome::Succeeded),
+    ])
+    .unwrap_err();
+    assert!(refusal.is_violation());
+    assert!(refusal.to_string().contains("restart"), "{refusal}");
+}
+
+#[test]
+fn a_destroy_of_a_running_context_is_refused() {
+    let refusal = run(&[
+        (Operation::Start, StartOutcome::Succeeded),
+        (Operation::Destroy, StartOutcome::Undecided),
+    ])
+    .unwrap_err();
+    assert!(refusal.is_violation());
+    assert!(refusal.to_string().contains("before its stop"), "{refusal}");
+}
+
+#[test]
+fn an_undecided_start_establishes_neither_a_stop_nor_a_destroy() {
+    for operation in [Operation::Stop, Operation::Destroy] {
+        let refusal = run(&[
+            (Operation::Start, StartOutcome::Undecided),
+            (operation, StartOutcome::Undecided),
         ])
         .unwrap_err();
-        assert!(error.contains("before its stop"), "{error}");
+        assert!(!refusal.is_violation(), "{refusal}");
+        assert!(
+            refusal.to_string().starts_with("precondition not established"),
+            "{refusal}"
+        );
     }
 }
 
 #[test]
 fn anything_after_a_destroy_is_refused() {
     for operation in [Operation::Start, Operation::Stop, Operation::Destroy] {
-        let error = run(&[
+        let refusal = run(&[
             (Operation::Destroy, StartOutcome::Undecided),
             (operation, StartOutcome::Succeeded),
         ])
         .unwrap_err();
-        assert!(error.contains("destroyed context"), "{error}");
+        assert!(
+            refusal.to_string().contains("destroyed context"),
+            "{refusal}"
+        );
+        assert_eq!(refusal.clause(), None);
     }
 }
 
 #[test]
-fn a_stop_that_joins_again_after_a_failed_start_refutes_its_clause() {
-    // `do_start` joined on its failure return; the stop joins again.
-    let status = no_effect_status(&[
-        path(&[(BodyJoin::Repeated, "src/flb_lib.c:1058")]),
-        path(&[(BodyJoin::Repeated, "src/flb_lib.c:1077")]),
-    ]);
-    assert!(matches!(status, ClauseStatus::Refuted { .. }), "{status:?}");
-    // Withdrawn: the caller's stop is read from the body, repeated join and all.
-    let body = [(BodyJoin::Repeated, "src/flb_lib.c:1058".to_owned())];
-    assert_eq!(
-        governed_joins(Clause::StopAfterFailedStartNoEffect, &status, &body),
-        body.to_vec()
-    );
+fn only_a_started_ok_context_admits_a_stop() {
+    let states = [
+        State::Created,
+        State::Started(StartOutcome::Succeeded),
+        State::Started(StartOutcome::Failed),
+        State::Started(StartOutcome::Undecided),
+        State::Stopped,
+        State::Destroyed,
+    ];
+    for state in states {
+        let admitted = step(state, Operation::Stop, StartOutcome::Undecided).is_ok();
+        assert_eq!(
+            admitted,
+            state == State::Started(StartOutcome::Succeeded),
+            "{state:?}"
+        );
+    }
+    let stop = step(
+        State::Started(StartOutcome::Succeeded),
+        Operation::Stop,
+        StartOutcome::Undecided,
+    )
+    .unwrap();
+    assert_eq!(stop.next, State::Stopped);
+    assert_eq!(stop.governed_by, vec![Clause::StopEndsStarted]);
 }
 
 #[test]
-fn a_stop_of_a_never_started_context_is_decided_from_the_body() {
-    // Permitted by the contract (created stays created), governed by L5.
-    let transition = step(State::Created, Operation::Stop, StartOutcome::Undecided).unwrap();
-    assert_eq!(transition.next, State::Created);
-    assert_eq!(transition.governed_by, vec![Clause::StopUnstartedNoEffect]);
-    // A body that joins an identifier no start began refutes L5.
-    let status = no_effect_status(&[path(&[(BodyJoin::NotStarted, "src/flb_lib.c:1058")])]);
-    assert!(matches!(status, ClauseStatus::Refuted { .. }));
-    // A body that joins nothing satisfies it.
-    assert_eq!(no_effect_status(&[path(&[])]), ClauseStatus::InForce);
+fn a_destroy_is_admitted_from_created_start_failed_and_stopped_only() {
+    for state in [
+        State::Created,
+        State::Started(StartOutcome::Failed),
+        State::Stopped,
+    ] {
+        assert_eq!(
+            step(state, Operation::Destroy, StartOutcome::Undecided)
+                .unwrap()
+                .next,
+            State::Destroyed
+        );
+    }
+    for state in [
+        State::Started(StartOutcome::Succeeded),
+        State::Started(StartOutcome::Undecided),
+        State::Destroyed,
+    ] {
+        assert!(step(state, Operation::Destroy, StartOutcome::Undecided).is_err());
+    }
 }
 
-#[test]
-fn a_contradiction_on_some_paths_only_is_held_not_refuted() {
-    let status = no_effect_status(&[
-        path(&[]),
-        path(&[(BodyJoin::Repeated, "src/flb_lib.c:1058")]),
-    ]);
-    assert!(matches!(status, ClauseStatus::Held { .. }), "{status:?}");
-    assert_eq!(
-        governed_joins(
-            Clause::StopAfterStopNoEffect,
-            &status,
-            &[(BodyJoin::Repeated, "x".to_owned())]
-        )
-        .len(),
-        1
-    );
-}
-
-#[test]
-fn an_unresolved_reading_holds_the_clause() {
-    let mut open = path(&[]);
-    open.unresolved
-        .insert("a hop the reader does not follow".to_owned());
-    assert!(matches!(
-        no_effect_status(&[open.clone()]),
-        ClauseStatus::Held { .. }
-    ));
-    let mut first = path(&[(BodyJoin::FirstOfStarted, "src/flb_lib.c:1077")]);
-    first.unresolved = open.unresolved;
-    assert!(matches!(
-        ends_started_status(&[first]),
-        ClauseStatus::Held { .. }
-    ));
-    assert!(matches!(no_effect_status(&[]), ClauseStatus::Held { .. }));
-    assert!(matches!(
-        ends_started_status(&[]),
-        ClauseStatus::Held { .. }
-    ));
-}
+// The body clauses.
 
 #[test]
 fn a_first_stop_that_joins_once_keeps_its_clause_in_force() {
@@ -156,102 +235,72 @@ fn a_first_stop_that_joins_once_keeps_its_clause_in_force() {
 }
 
 #[test]
-fn an_in_force_idempotent_stop_adds_no_join() {
-    let body = [(BodyJoin::Repeated, "x".to_owned())];
-    for clause in [
-        Clause::StopAfterStopNoEffect,
-        Clause::StopAfterFailedStartNoEffect,
-        Clause::StopUnstartedNoEffect,
-    ] {
-        assert!(governed_joins(clause, &ClauseStatus::InForce, &body).is_empty());
-    }
-    // L2 is not a no-effect clause: the body's join stands.
-    assert_eq!(
-        governed_joins(Clause::StopEndsStarted, &ClauseStatus::InForce, &body).len(),
-        1
-    );
+fn an_unresolved_reading_holds_the_body_clauses() {
+    let mut first = path(&[(BodyJoin::FirstOfStarted, "src/flb_lib.c:1077")]);
+    first
+        .unresolved
+        .insert("a hop the reader does not follow".to_owned());
+    assert!(matches!(
+        ends_started_status(&[first]),
+        ClauseStatus::Held { .. }
+    ));
+    assert!(matches!(
+        ends_started_status(&[]),
+        ClauseStatus::Held { .. }
+    ));
+    let mut open = start_path(&[]);
+    open.unresolved.insert("an unread callee".to_owned());
+    assert!(matches!(
+        failed_start_status(&[open]),
+        ClauseStatus::Held { .. }
+    ));
+    assert!(matches!(
+        failed_start_status(&[]),
+        ClauseStatus::Held { .. }
+    ));
 }
 
 #[test]
-fn the_paired_sequences_are_accepted() {
-    for outcome in [
-        StartOutcome::Succeeded,
-        StartOutcome::Failed,
-        StartOutcome::Undecided,
-    ] {
-        // The fixed test: create, start, stop, destroy.
-        assert_eq!(
-            run(&[
-                (Operation::Start, outcome),
-                (Operation::Stop, StartOutcome::Undecided),
-                (Operation::Destroy, StartOutcome::Undecided),
-            ]),
-            Ok(State::Destroyed)
-        );
-        // Stop twice, then restart after the stop.
-        assert_eq!(
-            run(&[
-                (Operation::Start, outcome),
-                (Operation::Stop, StartOutcome::Undecided),
-                (Operation::Stop, StartOutcome::Undecided),
-                (Operation::Start, StartOutcome::Succeeded),
-            ]),
-            Ok(State::Started(StartOutcome::Succeeded))
-        );
-    }
-    // A destroy of a never-started context.
+fn a_failed_start_that_joins_what_it_began_keeps_l7_in_force() {
     assert_eq!(
-        run(&[(Operation::Destroy, StartOutcome::Undecided)]),
-        Ok(State::Destroyed)
+        failed_start_status(&[start_path(&[]), start_path(&[])]),
+        ClauseStatus::InForce
     );
-}
-
-#[test]
-fn the_governing_clauses_follow_the_start_outcome() {
-    let governed = |outcome| {
-        step(
-            State::Started(outcome),
-            Operation::Stop,
-            StartOutcome::Undecided,
-        )
-        .unwrap()
-        .governed_by
-    };
-    assert_eq!(
-        governed(StartOutcome::Succeeded),
-        vec![Clause::StopEndsStarted]
-    );
-    assert_eq!(
-        governed(StartOutcome::Failed),
-        vec![Clause::StopAfterFailedStartNoEffect]
-    );
-    assert_eq!(
-        governed(StartOutcome::Undecided),
-        vec![
-            Clause::StopEndsStarted,
-            Clause::StopAfterFailedStartNoEffect
-        ]
-    );
-    assert_eq!(
-        step(State::Stopped, Operation::Stop, StartOutcome::Undecided)
-            .unwrap()
-            .governed_by,
-        vec![Clause::StopAfterStopNoEffect]
-    );
+    // One path leaving the worker unjoined holds it; every path refutes it.
+    assert!(matches!(
+        failed_start_status(&[start_path(&[]), start_path(&["flb_lib_worker"])]),
+        ClauseStatus::Held { .. }
+    ));
+    assert!(matches!(
+        failed_start_status(&[start_path(&["flb_lib_worker"])]),
+        ClauseStatus::Refuted { .. }
+    ));
 }
 
 #[test]
 fn preconditions_are_in_force_and_only_refuse() {
-    assert!(Clause::StartRequiresUnstarted.is_precondition());
-    assert!(Clause::DestroyRequiresUnstarted.is_precondition());
+    let preconditions: Vec<Clause> = Clause::ALL
+        .into_iter()
+        .filter(|c| c.is_precondition())
+        .collect();
+    assert_eq!(
+        preconditions,
+        vec![
+            Clause::StartRequiresCreated,
+            Clause::NoStopAfterStop,
+            Clause::NoStopAfterFailedStart,
+            Clause::NoStopOfUnstarted,
+            Clause::DestroyRequiresNotRunning,
+        ]
+    );
     assert_eq!(precondition_status(), ClauseStatus::InForce);
-    assert_eq!(Clause::ALL.len(), 6);
+    assert_eq!(Clause::ALL.len(), 7);
 }
 
 #[test]
 fn a_violation_blocks_the_release_and_none_adds_nothing() {
     assert!(lifecycle_gate(&BTreeSet::new()).admits());
-    let gate = lifecycle_gate(&BTreeSet::from(["start of a started context".to_owned()]));
+    let gate = lifecycle_gate(&BTreeSet::from(["stop after a failed start".to_owned()]));
     assert_eq!(gate.label(), "not discharged");
     // Joined with a discharged release, the violation wins.
     assert!(!gate.join(SyncVerdict::Discharged).admits());
