@@ -71,7 +71,8 @@ fn an_untagged_typedef_root_is_read_by_its_declaration() {
     }
     // W45-SUB-OBJECT-STORE-ROOT-UNRESOLVED: W45's reader resolves no tag for
     // an untagged typedef; rule 10v reads the root by its Clang declaration.
-    let run = gs("typedef struct { void *p; int x; } U; void subject(U *u) { u->p = 0; u->x = 1; }");
+    let run =
+        gs("typedef struct { void *p; int x; } U; void subject(U *u) { u->p = 0; u->x = 1; }");
     assert!(run.safe(), "{run:?}");
 }
 
