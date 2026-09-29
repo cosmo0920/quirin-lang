@@ -947,13 +947,16 @@ fn the_published_example_matches_its_page() {
     assert_eq!(err, block("<!-- transcript: typed_workers stderr -->"));
 }
 
+/// One Lean task vector: operation, type, operands, collected outcome.
+type Vector = (Op, ScalarType, i128, i128, Result<i128, ArithmeticError>);
+
 /// `QCore.ScalarTasks.taskAgreement`, replayed through the task route: each
 /// vector is a worker computing on two captured values, joined by the entry;
 /// the collected outcome the reference execution records is the vector's.
 #[test]
 fn lean_task_vectors_match_the_reference_run() {
     use ScalarType::*;
-    let vectors: [(Op, ScalarType, i128, i128, Result<i128, ArithmeticError>); 10] = [
+    let vectors: [Vector; 10] = [
         (Op::Add, U8, 200, 55, Ok(255)),
         (Op::Add, U8, 200, 56, Err(ArithmeticError::Overflow)),
         (Op::Sub, U16, 0, 1, Err(ArithmeticError::Overflow)),

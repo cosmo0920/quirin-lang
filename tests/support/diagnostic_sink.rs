@@ -5,6 +5,7 @@ use qcore_compiler::diagnostic_log_c_emit::{
     diagnostic_stdout_adapter_definition_with_fixed_results,
 };
 
+#[allow(dead_code)]
 pub fn instrument(source: &str) -> String {
     format!(
         "{}\n{source}\n{DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION}",

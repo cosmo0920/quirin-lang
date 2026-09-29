@@ -152,4 +152,4 @@ the fixed-width types are [§G02t](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md
 and [their evidence](../../docs/reports/w48-qr-scalar-types/README.md); the typed
 error is [its evidence](../../docs/reports/w48-qr-scalar-types-r2/README.md), and
 the typed record fields are [card R3's](../../docs/reports/w48-qr-scalar-types-r3/README.md), and the
-typed task values [card R4's](../../docs/reports/w48-qr-scalar-types-r4/README.md).
+typed task values are [card R4's](../../docs/reports/w48-qr-scalar-types-r4/README.md).

@@ -196,9 +196,9 @@ boundary tables, not an extraction theorem.
 | existing tests changed | only pins of a widened refusal, 60% | **one** frontend row (the widened entry arithmetic) and the transfer pins |
 | transferability pins | counts 16 → 17 only, 75% | **as predicted** (five Rust tables, the Lean module and one audit name) |
 | native tables under UBSan | all agree, 0 reports, 75% | **2,175 × 3 through threads, all agree, 614 raises through join, 0 reports** |
-| Lean | 80% | **GATE_LEAN audits** (15 new theorems) |
-| corpus arbiter | byte-identical `ae17152b…`, 97% | **ARBITER** |
-| standing gate | green, new tests only, 70% | **GATE_TESTS** |
+| Lean | 80% | **229 audits** (15 new theorems) |
+| corpus arbiter | byte-identical `ae17152b…`, 97% | **byte-identical** (`ae17152b…`) |
+| standing gate | green, new tests only, 70% | **green** after one load-sensitive rerun and one clippy fix; 6,581 → 6,594 (+13, the new test file) |
 | items completed | 1 (70%), 2 (20%), 3 (5%), buffer arithmetic (10%) | **1**; 2, 3 and the buffer arithmetic not done |
 
 Not predicted: the first full-suite run moved the two F02-pinned C digests,
@@ -211,11 +211,38 @@ program).
 
 ## Gate
 
-GATE_TABLE
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | (rerun after the clippy fix: 0) |
+| tests | `python3 scripts/run_test_binaries.py` | first 101 | 370 units, 383 summaries; **6,593 passed, 1 failed, 11 ignored** (`private/test-binaries/20260929T140022Z-2844237/summary.json`); the failure is constraint 16's load-sensitive `cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets` (`elapsed < 500ms`) under a load average of ~40 from other sessions: rerun alone while the gate's clippy step still ran, 19/20 again (exit 101), and once after it, **20/20** (exit 0) — **6,594** pass |
+| clippy | `cargo clippy --all-targets -- -D warnings` | first 101, rerun 0 | first run: dead code on the shared sink's historical `instrument()` in the one test binary that uses only the fixed-width variant, and `type_complexity` on a test-local tuple; fixed (`#[allow(dead_code)]`, a type alias), `scalar_tasks` rerun 13 passed |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **229 audits** (228 + `AuditScalarTasks.lean`) |
+| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qr-scalar-types-r4/gate.json` | 0 | after the ledger, 622 → 623 |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | **365 tests OK** (after the matrix regeneration) |
+| clean | `cargo clean --profile dev` | 0 | |
+
+Exits in [gate/](gate/) (first runs as `*.first.exit`, reruns as
+`*.rerun*.exit`), record in [gate.json](gate.json); logs under
+`private/w48-r4/gate/`. The test count rose 6,581 (the R3 integration's) →
+6,594: `scalar_tasks.rs`'s 13 tests. `providers/` is unchanged, so the provider
+gate is not due. Clang 21.1.8 recorded in this worktree
+([gate/clang-version.txt](gate/clang-version.txt)). The AFTER fixture freeze
+was taken with the tip's debug `quirin` (`3070b9cd…`).
 
 ## Corpus arbiter
 
-ARBITER_TEXT
+`QCORE_TYPED_PATH_PARITY=OUT/parity.jsonl python3 scripts/run_pinned_audit.py
+OUT 66910c10 --inputs-root …/build/cycle19 --jobs 8`, AFTER only, with this
+card's release `quirin-audit` (`916292d7…`, built at `3d4d9945`; later commits
+touch tests and records only): exit 0. `resource-diagnostics.json` sha256
+`ae17152b05516be7…` is **byte-identical** to the archived baseline, and so are
+`resource-diagnostics.chunk-contracts.json` (`cbbcfd9c…`) and
+`monkey-source.json` (`57acfc58…`) ([identity](artifacts/arbiter-corpus.identity)).
+No C-audit path was touched.
 
 ## Follow-ups
 
