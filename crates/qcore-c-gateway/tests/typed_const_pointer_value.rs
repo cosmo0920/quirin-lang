@@ -314,33 +314,23 @@ fn a_comparator_summary_is_withdrawn_where_its_own_row_refuses() {
         "static int w(const void *_a, const void *_b, void *opaque) { return cmp(_a, _b); }",
     );
     let rows = &program(&result).functions;
-    assert_eq!(format!("{:?}", rows["w"].status), "Unknown");
-    assert_eq!(
-        rows["w"]
-            .diagnostics
-            .iter()
-            .map(|diagnostic| format!("{:?}", diagnostic.kind))
-            .collect::<Vec<_>>(),
-        vec![format!(
-            "{:?}",
-            LegacyDiagnosticKind::Unsupported {
-                description: "call to uncontracted function `cmp`".into()
-            }
-        )]
+    // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): the
+    // comparator's row under its summary no longer refuses (the `?:` arm's
+    // reads of the bound copies are read on their own edge), so rule 4b
+    // validates the summary on the premises that row reads and the wrapper's
+    // call is contracted. BEFORE: the wrapper refused the uncontracted call
+    // and the comparator's contract-free row carried four `unknown_alias`
+    // leaves (`_a`, `_b`, `a`, `b`).
+    assert_eq!(format!("{:?}", rows["cmp"].status), "Safe");
+    assert!(
+        rows["cmp"].diagnostics.is_empty(),
+        "{:?}",
+        rows["cmp"].diagnostics
     );
-    // With no summary in force the comparator's row is its contract-free
-    // analysis: the formals and their copies are unresolved identities, and
-    // the return family's refusal it showed under the summary is gone.
-    assert_eq!(format!("{:?}", rows["cmp"].status), "Unknown");
-    assert_eq!(
-        rows["cmp"]
-            .diagnostics
-            .iter()
-            .map(|diagnostic| match &diagnostic.kind {
-                LegacyDiagnosticKind::UnknownAlias { variable } => variable.as_str(),
-                other => panic!("unexpected comparator leaf {other:?}"),
-            })
-            .collect::<Vec<_>>(),
-        vec!["_a", "_b", "a", "b"]
+    assert_eq!(format!("{:?}", rows["w"].status), "Safe");
+    assert!(
+        rows["w"].diagnostics.is_empty(),
+        "{:?}",
+        rows["w"].diagnostics
     );
 }

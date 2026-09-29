@@ -385,17 +385,22 @@ fn protected_and_bound_opaque_getter_bases_stay_refused() {
 }
 
 /// `OpaqueValue` covers one complete direct member read, not a conditional
-/// choice of pointer results. The latter still needs branch-sensitive value
-/// identity and remains refused.
+/// choice of pointer results; that choice needs branch-sensitive value
+/// identity, which rule 10z's branching gives it.
 #[test]
 fn a_conditional_opaque_pointer_result_stays_refused() {
     if !clang_available() {
         return;
     }
+    // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): the
+    // branch-sensitive value identity is the branch itself. Each edge's
+    // `return getter->value;` / `return (z_opaque_t *)0;` is decided alone by
+    // the routes above (BEFORE: the return refusal).
     let measured = run("z_opaque_t *subject(const z_getter_t *getter, int flag) { \
          return flag ? getter->value : (z_opaque_t *)0; }");
-    assert!(measured.refuses_return(), "{:?}", measured.unsupported());
-    assert_ne!(measured.status, AnalysisStatus::Safe);
+    assert!(!measured.refuses_return(), "{:?}", measured.unsupported());
+    let direct = run("z_opaque_t *subject(const z_getter_t *getter) { return getter->value; }");
+    assert_eq!(measured.status, direct.status);
 }
 
 /// Every shape outside the premises, each keeping the refusal it already had.

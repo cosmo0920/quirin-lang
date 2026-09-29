@@ -142,7 +142,6 @@ fn row<'a>(
     (status.as_str(), keys.iter().map(String::as_str).collect())
 }
 
-const UNCONTRACTED_CMP: &str = "unsupported:call to uncontracted function `cmp`";
 const UNCONTRACTED_GET: &str = "unsupported:call to uncontracted function `get`";
 const UNCONTRACTED_MID: &str = "unsupported:call to uncontracted function `mid`";
 
@@ -167,9 +166,17 @@ fn a_summary_validated_through_a_copy_of_a_protected_formal_serves_no_caller() {
         return;
     }
     let rows = rows(COMPARATOR);
-    assert_eq!(row(&rows, "w"), ("Unknown", vec![UNCONTRACTED_CMP]));
-    let (status, keys) = row(&rows, "cmp");
-    assert_eq!(status, "Unknown", "{keys:?}");
+    // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): under the
+    // summary the comparator's own row no longer refuses. The return family
+    // refused `RD_CMP`'s reads of the bound copies `a`/`b` because they stood
+    // in a `?:` arm; rule 10z branches on the deciding comparison (read
+    // unconditionally, as C does) and each edge's return reads them
+    // unconditionally. The summary is validated on exactly the premises its
+    // reported row reads (rule 4b holds), and that row is `Safe`, so the
+    // wrapper's call is contracted. The other controls of this file keep a
+    // refusing own row.
+    assert_eq!(row(&rows, "cmp"), ("Safe", vec![]));
+    assert_eq!(row(&rows, "w"), ("Safe", vec![]));
 }
 
 /// The same shape with one formal, whose copy is read in a `Borrowed` actual.

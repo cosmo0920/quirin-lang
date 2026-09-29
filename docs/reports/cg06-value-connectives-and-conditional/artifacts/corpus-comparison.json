@@ -1,0 +1,195 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4260,
+   "Safe": 564,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4242,
+   "Safe": 582,
+   "Unsafe": 10
+  }
+ },
+ "moves": [
+  {
+   "unit": "flb_input_chunk.c",
+   "function": "flb_chunk_route_plugin_matches",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ConfigResource_cmp",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_needs_persistent_connection",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_mk_brokername",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "rdkafka_buf.c",
+   "function": "rd_kafka_buf_calc_timeout",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_conf_validate_partitioner",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafka_toppar_fetch_decide_start_from_next_fetch_start",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_broker_cmp",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -4
+   }
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_broker_internal_cmp",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -4
+   }
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_partition_internal_cmp",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -4
+   }
+  },
+  {
+   "unit": "rdkafka_sasl_plain.c",
+   "function": "rd_kafka_sasl_plain_conf_validate",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_acknowledgement_mode_is_explicit",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_acknowledgement_mode_is_implicit",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "get_client_rack",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "get_group_id",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "get_group_instance_id",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "get_transactional_id",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "function": "ut_build_record_v2",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -2
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 18
+ },
+ "same_status_functions_with_changed_diagnostics": 158,
+ "leaf_delta": {
+  "unsupported: indirect memory access is outside the resource projection": -103,
+  "unsupported: unsupported assignment expression": -84,
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": -13,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -12,
+  "unsupported: call to uncontracted function `rd_kafka_op_set_replyq`": -3,
+  "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": -2,
+  "unsupported: unmodeled expression may mutate a formal resource identity": -2,
+  "unsupported: nested call `fabs` inside a modeled call is outside the resource projection": -1,
+  "unsupported: call to uncontracted function `rd_kafkap_str_cmp`": -1,
+  "unsupported: unrecognized assignment destination": -1,
+  "unknown_alias: unresolved resource identity": 113
+ }
+}

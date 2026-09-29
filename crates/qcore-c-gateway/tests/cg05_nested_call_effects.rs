@@ -133,11 +133,14 @@ fn unlisted_forms_keep_the_nested_refusal() {
     // A reallocated inner result.
     let run = g("void subject(void) { void *p = q_alloc(); q_free(q_realloc(p, 8)); }");
     assert!(run.refused(&nested("q_realloc")), "{run:?}");
-    // A conditional inside the actual (CG06).
+    // A conditional inside the actual: FLIPPED by
+    // CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z), which lowers it by
+    // branching on `c` (the call applied on its own edge, `cg_sink(0)` on the
+    // other); rule 10y still does not read it.
     let run = g(
         "void subject(int c) { void *p = q_alloc(); cg_sink(c ? r_borrow_code(p) : 0); q_free(p); }",
     );
-    assert!(!run.safe(), "{run:?}");
+    assert!(run.safe(), "{run:?}");
 }
 
 /// A body that spells the reserved place keeps every refusal.

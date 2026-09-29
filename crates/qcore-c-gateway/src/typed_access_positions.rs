@@ -256,7 +256,10 @@ impl StatementIndex {
             [node] => Some(node),
             // Rule 10n: several nodes carry the tokens; only those inside a
             // controlling expression or a returned value can be the operand.
-            [_, _, ..] => crate::typed_position_shapes::controlling_scope(body, &matched),
+            [_, _, ..] => crate::typed_position_shapes::controlling_scope(body, &matched)
+                // Card CG06 (rule 10z): asked after rule 10n, the one inside
+                // the value region's deciding operand being lowered.
+                .or_else(|| crate::value_connective::deciding_candidate(body, &matched)),
             [] => None,
         }
     }
@@ -330,6 +333,9 @@ impl StatementIndex {
                 return None;
             }
             let actual = actuals.get(index)?;
+            // Card CG06 (rule 10z): on a branch edge, a value region at the
+            // actual is the arm C evaluates there.
+            let actual = crate::value_connective::edge_node(actual).unwrap_or(actual);
             (self.node_line(actual) == Some(line)
                 && self.node_tokens(actual).is_some_and(|found| found == texts))
             .then_some(actual)

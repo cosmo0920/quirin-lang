@@ -1198,7 +1198,8 @@ which is not a second authority.
     `return` with a `NoOp` exit. **Do not** admit a pointer-valued `?:`
     return, a call or an assignment in a return, an array-decay return, a
     `?:` actual (its arms need a branching call lowering) or a nested call
-    actual under this rule; each keeps its refusal. Premises stated, not
+    actual under this rule; each keeps its refusal here (rule 10z lowers the
+    pointer `?:` return and the `?:` actual by branching). Premises stated, not
     proved: faithful Clang extraction and node matching (trust boundary 28).
     Parity runs record every refused position's shape
     (`position: "residual-shape"`, its unread constructs and whether every
@@ -1917,7 +1918,8 @@ which is not a second authority.
     object is C undefined behaviour and refuses; a pair on places not proved
     disjoint (two paths) refuses without that claim; a call unordered with any
     event refuses (CG05). Every form outside `FORM_TABLE`'s admitted rows refuses by name
-    with its owning card (value `&&` `||` `?:` CG06, nested call CG05, pointer
+    with its owning card (value `&&` `||` `?:`: branch regions since rule
+    10z; nested call CG05, pointer
     store CG11, pointer arithmetic CG16, type query operand CG08, `_Generic`
     and statement expression CG07, compound literal CG14, volatile CG15, atomic
     CG19, indirect call CG22). **Route G** (1) lowers a refused statement that
@@ -2308,3 +2310,67 @@ which is not a second authority.
     `a_non_commuting_pair_is_refused`), bound to `OVERLAP_VECTORS` and
     `ORDER_VECTORS` by shared-vector tests; `QCore.CallInstantiation`'s passed
     row; [report](../reports/cg05-nested-call-effects/README.md).
+
+
+<a id="constraint-10z"></a>
+
+10z. **A value `&&`, `||`, `?:` or GNU `X ?: B` outside a controlling
+    expression is lowered by branching on what decides it, with only the
+    evaluated arm on each edge.** Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL
+    (`value_connective.rs`, the route-G adapter `legacy_value_connective.rs`,
+    thin hooks in `legacy_c.rs` (the statement's and `return`'s last step),
+    `legacy_elaboration.rs` (`leaf_events`), `typed_access_positions.rs`
+    (`argument_node`, `expression_node`) and `elaboration.rs`). It amends
+    rule 10s (the three value rows of `FORM_TABLE` are `Branching`, plus the
+    omitted-middle row) and rule 10n's pointer-`?:`-return and `?:`-actual
+    refusals; every other refusal of theirs stands. (1) **The elaborator.** A
+    value region is its deciding operand's events, `Event::Branch`, each
+    arm's events after the branch (`A && B`: `[B]`/`[]`; `A || B`: `[]`/`[B]`;
+    `C ? A : B`: `[A]`/`[B]`; `X ?: B`: `[]`/`[B]`, `X` once), then
+    `Event::Merge`. The two arms are exclusive: the order check never pairs
+    them, and checks each against every event outside the region it is
+    unordered with. `Branch`/`Merge` touch no storage. (2) **Regions.** In a
+    statement, a one-declarator declaration or a `return` every older route
+    refused, a region is a connective or conditional C evaluates as part of
+    the full expression, found through parentheses, casts, unary and binary
+    operators, a direct call's actuals, a member or subscript base and the
+    root's `=`/`op=` operands (`TRANSPARENT`); a nested one inside an arm is
+    a region of that arm; one in a deciding operand is the condition CFG's;
+    one under `sizeof` is no region; one under a comma, a nested assignment,
+    a statement expression, an initializer list, `_Generic` or an indirect
+    callee refuses by name. (3) **Order.** The lowering evaluates the
+    deciding operand first; C leaves it unsequenced only with the region's
+    siblings (subexpressions off the root-to-region path), so every sibling
+    must be free of calls, stores, increments and volatile accesses, and a
+    deciding operand with a call needs every sibling inert (a literal, a
+    designation, or a read of an automatic object whose address is never
+    taken). `X ?: B` is admitted only when `X` is reads only: the lowering
+    reads `X` again on the non-zero edge, which C's single evaluation
+    permits only then. At most 8 leaves. (4) **The lowering.** The first
+    region's deciding operand (`C`, `X`, or the whole connective, whose
+    short circuit is rule 5h's condition CFG) is an `if` condition lowered
+    by the `if` statement's own routes; each edge carries the expression
+    with the region replaced by the arm C evaluates there (`1`/`0` for a
+    connective, `X` for `X ?: B`), lowered as its own statement or `return`
+    by the position's older routes, a refused statement edge then from its
+    Clang node with the arm substituted, lowered from its elaborated events
+    as a rule-10s piece; on an edge a call actual's typed reader reads the
+    arm's node, and among several nodes with an operand's tokens the one
+    inside the deciding operand. Any refused condition or edge declines the
+    whole expression, byte for byte. (5) **Merge.** The edges join at the
+    `if`'s join: two owned identities become one binding with two targets,
+    and a release through it is refused (never resolved to one); every
+    obligation of either edge is carried. **Do not** duplicate a connective
+    in a controlling expression, serialise a deciding operand before a
+    sibling with an effect, re-read an `X` with an effect, pick one identity
+    of a merged binding, or consult this rule before an older route of the
+    position (hard invariant 3). Parity runs record each consultation
+    (`position: "value-connective-statement"`/`"-return"`, its regions and
+    refusal). Route T is unchanged: no typed-source consumer decides a value
+    connective. Premises stated, not proved: faithful Clang extraction and
+    node matching (trust boundary 28), and that an edge's older route decides
+    its statement as it would the same statement written in source.
+    `QCore.ValueConnectives` (short circuit, selection, single evaluation,
+    the re-read, order, merge, forms and positions), bound to
+    `ADMISSION_VECTORS`, `TRANSPARENT`, the elaborator and route G by
+    shared-vector tests; [report](../reports/cg06-value-connectives-and-conditional/README.md).

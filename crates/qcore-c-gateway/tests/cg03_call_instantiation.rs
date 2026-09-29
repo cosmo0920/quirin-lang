@@ -115,11 +115,6 @@ fn k12_the_return_operand_keeps_every_refusal_of_the_condition_leaf() {
             "int subject(void *p, void *q) { return r_release_code(p) + r_borrow_code(q); }",
             "unsequenced effects",
         ),
-        // A connective is card CG06's value form.
-        (
-            "int subject(void *p, int n) { return r_borrow_code(p) && n; }",
-            "value connective",
-        ),
         // A callee in the caller's recursive component may carry a
         // provisional summary.
         (
@@ -136,6 +131,12 @@ fn k12_the_return_operand_keeps_every_refusal_of_the_condition_leaf() {
         let run = gs(body);
         assert!(!run.safe(), "{why}: {run:?}");
     }
+    // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): a
+    // connective return, CG03's "value connective" refusal row, is lowered by
+    // branching on the connective (the condition CFG applies the call once on
+    // the edge C evaluates it), each edge returning `1` or `0`.
+    let run = gs("int subject(void *p, int n) { return r_borrow_code(p) && n; }");
+    assert!(run.safe(), "{run:?}");
     // A pointer-result function's return is not a scalar operand.
     let run = gs("char *subject(char *s) { return s + r_borrow_code(s); }");
     assert!(!run.safe(), "{run:?}");

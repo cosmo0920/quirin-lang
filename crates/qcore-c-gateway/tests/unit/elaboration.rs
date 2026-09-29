@@ -81,7 +81,10 @@ fn subject(function: &Value) -> Value {
             || kind(node) == "CallExpr"
             || matches!(
                 kind(node),
-                "ConditionalOperator" | "StmtExpr" | "GenericSelectionExpr"
+                "ConditionalOperator"
+                    | "BinaryConditionalOperator"
+                    | "StmtExpr"
+                    | "GenericSelectionExpr"
             )
             || (kind(node) == "BinaryOperator"
                 && matches!(node["opcode"].as_str(), Some("&&" | "||")))
@@ -340,19 +343,11 @@ fn cg02_unlisted_and_out_of_scope_forms_are_refused_by_name() {
     if !clang_available() {
         return;
     }
+    // Card CG06 (rule 10z) flipped the three value-connective rows that stood
+    // here (`value &&`, `value ||`, `conditional`, each refused by name as
+    // CG06's): they are elaborated as branch regions, pinned by
+    // `cg06_region_vectors_match_the_elaborator`.
     for (source, form) in [
-        (
-            "int subject(int a, int b) { int x = 0; x = (a && b); return x; }",
-            "value &&",
-        ),
-        (
-            "int subject(int a, int b) { int x = 0; x = (a || b); return x; }",
-            "value ||",
-        ),
-        (
-            "int subject(int a, int b) { int x = 0; x = a ? b : 1; return x; }",
-            "conditional",
-        ),
         (
             "int subject(int *p) { p++; int x = 0; x = *p++; return x; }",
             "pointer arithmetic",
@@ -459,6 +454,8 @@ fn cg02_lean_vectors_match_the_rust_tables() {
                 Disposition::Admitted
             } else if rest.contains(".sequenced") {
                 Disposition::Sequenced
+            } else if rest.contains(".branching") {
+                Disposition::Branching
             } else {
                 let card = rest.split('"').nth(3).unwrap();
                 Disposition::Refused(
@@ -529,4 +526,146 @@ fn cg02_lean_vectors_match_the_rust_tables() {
         count += 1;
     }
     assert_eq!(count, 10);
+}
+
+/// Card CG06 (rule 10z): the mechanical binding of
+/// `proof/QCore/ValueConnectives.lean`'s `regionVectors`, `exclusiveVectors`
+/// and `controlVectors` to `elaborate` and `commutes`.
+#[test]
+fn cg06_region_vectors_match_the_elaborator() {
+    let lean = include_str!("../../../../proof/QCore/ValueConnectives.lean");
+    let block = |start: &str| {
+        let body = lean.split(start).nth(1).expect(start);
+        body[..body.find("\n]").unwrap()].to_owned()
+    };
+    // controlVectors: Branch and Merge commute with every event kind.
+    let place = Place::Object {
+        decl: "0".into(),
+        name: "v0".into(),
+    };
+    let event = |name: &str| match name {
+        "branch" => Event::Branch,
+        "merge" => Event::Merge,
+        "read" => Event::Read(place.clone()),
+        "write" => Event::Write {
+            place: place.clone(),
+            pointer: false,
+        },
+        "call" => Event::Call { callee: "f".into() },
+        other => panic!("unknown Lean event {other}"),
+    };
+    let mut count = 0;
+    for line in block("def controlVectors : List (String × String × Bool) := [").lines() {
+        let fields = line.split('"').collect::<Vec<_>>();
+        if fields.len() < 5 {
+            continue;
+        }
+        let expected = fields[4].contains("true");
+        for (a, b) in [(fields[1], fields[3]), (fields[3], fields[1])] {
+            let decided = commutes(&event(a), &event(b), &|_| true) == Commutation::Commutes;
+            assert_eq!(decided, expected, "{line}");
+        }
+        count += 1;
+    }
+    assert_eq!(count, 4);
+    if !clang_available() {
+        return;
+    }
+    // regionVectors: the one region's form and its event counts.
+    let mut count = 0;
+    for row in block("def regionVectors : List (String × String × Nat × Nat × Nat) := [")
+        .split("\n  (\"")
+        .skip(1)
+    {
+        let (source, rest) = row.split_once('"').unwrap();
+        let form = rest.split('"').nth(1).unwrap();
+        let numbers = rest
+            .rsplit('"')
+            .next()
+            .unwrap()
+            .split(|c: char| !c.is_ascii_digit())
+            .filter(|n| !n.is_empty())
+            .map(|n| n.parse::<usize>().unwrap())
+            .collect::<Vec<_>>();
+        let elaborated = run(source).unwrap_or_else(|e| panic!("{source}: {e:?}"));
+        let [region] = elaborated.branches.as_slice() else {
+            panic!("{source}: {:?}", elaborated.branches);
+        };
+        assert_eq!(region.form, form, "{source}");
+        assert_eq!(
+            [
+                region.condition.len(),
+                region.arms[0].len(),
+                region.arms[1].len()
+            ],
+            [numbers[0], numbers[1], numbers[2]],
+            "{source}"
+        );
+        // The branch follows the deciding operand, each arm follows the
+        // branch, and the merge follows both arms.
+        let graph = &elaborated.graph;
+        assert!(
+            region
+                .condition
+                .iter()
+                .all(|&e| graph.sequenced(e, region.branch))
+        );
+        for arm in &region.arms {
+            assert!(arm.iter().all(|&e| graph.sequenced(region.branch, e)));
+            assert!(arm.iter().all(|&e| graph.sequenced(e, region.merge)));
+        }
+        for &a in &region.arms[0] {
+            for &b in &region.arms[1] {
+                assert!(graph.excluded(a, b), "{source}");
+            }
+        }
+        assert!(matches!(elaborated.result, Operand::Value { .. }));
+        count += 1;
+    }
+    assert_eq!(count, 5);
+    // exclusiveVectors: the order check's admission.
+    let mut count = 0;
+    for row in block("def exclusiveVectors : List (String × Bool) := [")
+        .split("\n  (\"")
+        .skip(1)
+    {
+        let (source, rest) = row.split_once('"').unwrap();
+        let expected = rest.contains("true");
+        assert_eq!(
+            run(source).is_ok(),
+            expected,
+            "{source}: {:?}",
+            run(source).err()
+        );
+        count += 1;
+    }
+    assert_eq!(count, 4);
+}
+
+/// Card CG06 (rule 10z): the GNU omitted middle operand is evaluated once:
+/// its events precede the branch and no arm repeats them.
+#[test]
+fn cg06_omitted_middle_evaluates_once() {
+    if !clang_available() {
+        return;
+    }
+    let elaborated =
+        run("int f(void); int subject(int a) { int x = 0; x = a ?: f(); return x; }").unwrap();
+    let [region] = elaborated.branches.as_slice() else {
+        panic!("{:?}", elaborated.branches);
+    };
+    assert_eq!(region.form, "omitted-middle conditional");
+    let reads_of_a = elaborated
+        .graph
+        .events
+        .iter()
+        .filter(|event| object("a")(event))
+        .count();
+    assert_eq!(reads_of_a, 1, "{:?}", elaborated.graph.events);
+    assert!(region.arms[0].is_empty());
+    assert!(
+        region.arms[1]
+            .iter()
+            .any(|&e| matches!(elaborated.graph.events[e], Event::Call { .. }))
+    );
 }

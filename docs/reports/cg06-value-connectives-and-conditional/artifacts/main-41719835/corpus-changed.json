@@ -1,0 +1,1687 @@
+[
+ {
+  "unit": "cJSON.c",
+  "function": "cJSON_Compare",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cJSON.c",
+  "function": "compare_double",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: nested call `fabs` inside a modeled call is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cJSON.c",
+  "function": "print_array",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cJSON.c",
+  "function": "print_number",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cJSON.c",
+  "function": "print_object",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 4,
+   "unsupported: indirect memory access is outside the resource projection": -3
+  }
+ },
+ {
+  "unit": "cmt_decode_opentelemetry.c",
+  "function": "decode_exponential_histogram_data_point",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 8,
+   "unsupported: indirect memory access is outside the resource projection": -4
+  }
+ },
+ {
+  "unit": "cmt_decode_opentelemetry.c",
+  "function": "get_or_create_data_point_metadata_context",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry.c",
+  "function": "kvlist_fetch_bool",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -3
+  }
+ },
+ {
+  "unit": "crc32c.c",
+  "function": "crc32c_init_sw",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -8
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_chunk_route_plugin_matches",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "input_chunk_collect_output_references",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -4
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_compress_generic_validated",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_hash5",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4frame.c",
+  "function": "LZ4F_compressBound_internal",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "lz4frame.c",
+  "function": "LZ4F_decodeHeader",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4frame.c",
+  "function": "LZ4F_decompress",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 6,
+   "unsupported: unsupported assignment expression": -3
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4HC_InsertAndGetWiderMatch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 6,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unsupported assignment expression": -4
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4HC_compress_generic_internal",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "nanopb/pb_decode.c",
+  "function": "pb_decode_varint32_eof",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "do_unittest_write_read_payload_correctness",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_erase",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_segment_write_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_ListGroups_resp_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_committed",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_kafka_op_set_replyq`": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_list_groups",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_share_commit_async_fanout_op",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_share_fetch_fanout_op",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_share_poll",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_stats_emit_toppar",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ConfigResource_cmp",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeCluster_result_authorized_operations",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_conn_closed",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_handle_ApiVersion",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_handle_SaslHandshake",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_needs_persistent_connection",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_producer_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled increment or decrement expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_update_reconnect_backoff",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_mk_brokername",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_buf.c",
+  "function": "rd_kafka_buf_calc_timeout",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_buf.c",
+  "function": "rd_kafka_buf_new_request0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_buf.c",
+  "function": "rd_kafka_buf_retry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_consumer_handle_Metadata_op",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_consumer_handle_next_assignment",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_group_assignment_modify",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_group_assignment_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_JoinGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `rd_kafkap_str_cmp`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_metadata_refresh",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_set_member_id",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_consumer_group_metadata_write",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_anyconf_warn_deprecated",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_finalize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -3
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_properties_show",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_validate_partitioner",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "unittest_conf",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_share_fetch_reply_handle",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_toppar_fetch_backoff",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_toppar_fetch_decide",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_toppar_fetch_decide_next_fetch_start_pos",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_toppar_fetch_decide_start_from_next_fetch_start",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_idempotence.c",
+  "function": "rd_kafka_idemp_broker_any",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_lz4.c",
+  "function": "rd_kafka_lz4_decompress",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_kafka_op_set_replyq`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_broker_cmp",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -4
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_broker_internal_cmp",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -4
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_leader_query_tmr_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_partition_internal_cmp",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -4
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_refresh_known_topics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_topic_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_topic_update_merge_partitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_commit_offset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_classic_elect_leader",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_classic_rebalance",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_consumer_member_find_by_instance_id",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_consumer_member_needs_revocation",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_buf_write_Metadata_Topic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_Fetch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 4,
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ListOffsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_Metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_OffsetCommit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ShareFetch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_pid_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_check_produce",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_produce_batch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "ut_verify_msgq_order",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_reader.c",
+  "function": "rd_kafka_msgset_reader_msgs_v2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_reader.c",
+  "function": "rd_kafka_msgset_reader_peek_msg_version",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_reader.c",
+  "function": "rd_kafka_msgset_reader_v2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_alloc_buf",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unmodeled expression may mutate a formal resource identity": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_write_msg_v2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_write_msgq",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_op.c",
+  "function": "rd_kafka_op_error_reply",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_op.c",
+  "function": "rd_kafka_op_print",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_op.c",
+  "function": "rd_kafka_op_reply",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_op.c",
+  "function": "rd_kafka_op_req0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_kafka_op_set_replyq`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_list_get_leaders",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_list_grow",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_toppar_broker_migrate",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_toppar_is_on_cgrp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "setupRackAwareAssignment0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testMultipleConsumersMixedTopicSubscriptions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testOneConsumerMultipleTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testOneConsumerNoTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testOneConsumerNonexistentTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testOneConsumerOneTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testTwoConsumersOneTopicOnePartition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testTwoConsumersOneTopicTwoPartitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testTwoConsumersTwoTopicsSixPartitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_ConsumerGroupHeartbeatRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 6,
+   "unsupported: indirect memory access is outside the resource projection": -5,
+   "unsupported: unmodeled expression may mutate a formal resource identity": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_ProduceRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_ShareGroupHeartbeatRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -3
+  }
+ },
+ {
+  "unit": "rdkafka_sasl.c",
+  "function": "rd_kafka_share_oauthbearer_set_token",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_cyrus.c",
+  "function": "rd_kafka_sasl_cyrus_cb_getsimple",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_plain.c",
+  "function": "rd_kafka_sasl_plain_conf_validate",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_scram.c",
+  "function": "rd_kafka_sasl_scram_conf_validate",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_acknowledge_all_if_implicit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_acknowledge_offset0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_acknowledgement_mode_is_explicit",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_acknowledgement_mode_is_implicit",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_ensure_all_acknowledged_if_explicit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ConsumerPair_cmp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "setupRackAwareAssignment0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testAddRemoveConsumerOneTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testAddRemoveTopicTwoConsumers",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -3
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testAllConsumersReachExpectedQuotaAndAreConsideredFilled",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testAssignmentUpdatedForDeletedTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testEnsurePartitionsAssignedToHighestGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testLargeAssignmentWithMultipleConsumersLeaving",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testMoveExistingAssignments",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testMoveExistingAssignments_j",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testMultipleConsumersMixedTopicSubscriptions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testNewSubscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testNoExceptionThrownWhenOnlySubscribedTopicDeleted",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testNoReassignmentOnCurrentMembers",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOneConsumerMultipleTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOneConsumerNoTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOneConsumerNonexistentTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOneConsumerOneTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithMultipleGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithNoGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithStaleGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testPoorRoundRobinAssignmentScenario",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testReassignmentAfterOneConsumerAdded",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testReassignmentAfterOneConsumerLeaves",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testSameSubscriptions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testStickiness",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testStickiness2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testStickiness_j",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testTwoConsumersOneTopicOnePartition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testTwoConsumersOneTopicTwoPartitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testTwoConsumersTwoTopicsSixPartitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry.c",
+  "function": "rd_kafka_handle_push_telemetry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry.c",
+  "function": "rd_kafka_match_requested_metrics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 4,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry.c",
+  "function": "rd_kafka_send_push_telemetry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_encode.c",
+  "function": "get_client_rack",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_encode.c",
+  "function": "get_group_id",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_encode.c",
+  "function": "get_group_instance_id",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_encode.c",
+  "function": "get_transactional_id",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_encode.c",
+  "function": "rd_kafka_telemetry_encode_metrics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 4,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_timer.c",
+  "function": "rd_kafka_timer_start0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_topic_partition_available",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_toppar_broker_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_toppar_leader_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_zstd.c",
+  "function": "rd_kafka_zstd_decompress",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unrecognized assignment destination": -1
+  }
+ },
+ {
+  "unit": "rdmap.c",
+  "function": "unittest_untyped_map",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "rdstring.c",
+  "function": "_rd_strcasestr",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_fetcher_share_filter_forward",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "ut_build_record_v2",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH_readLE32_align",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH_readLE64_align",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "get_u32_at_offset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "refill_tag",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ }
+]

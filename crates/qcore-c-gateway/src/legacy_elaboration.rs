@@ -581,6 +581,17 @@ impl Parser<'_> {
         self.lower_events(&elaborated)
     }
 
+    /// Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): the events of
+    /// one edge's statement node (its value regions substituted by the arm C
+    /// evaluates on that edge), lowered as a refused piece's are.
+    pub(super) fn leaf_events(
+        &self,
+        index: &StatementIndex,
+        node: &Value,
+    ) -> Result<Vec<LegacyInstruction>, Refusal> {
+        self.event_instructions(index, node, Site::Statement)
+    }
+
     fn lower_events(
         &self,
         elaborated: &Elaboration<StatementPlan>,

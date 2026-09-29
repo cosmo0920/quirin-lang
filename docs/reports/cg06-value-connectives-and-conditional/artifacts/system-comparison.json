@@ -1,0 +1,34 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 199,
+   "Safe": 33,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 198,
+   "Safe": 34,
+   "Unsafe": 2
+  }
+ },
+ "moves": [
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_chunk_route_plugin_matches",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 1
+ },
+ "same_status_functions_with_changed_diagnostics": 3,
+ "leaf_delta": {
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -4,
+  "unsupported: indirect memory access is outside the resource projection": -3,
+  "unknown_alias: unresolved resource identity": 2
+ }
+}
