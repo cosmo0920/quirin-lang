@@ -322,8 +322,31 @@ extraction (trust boundary 28).
 
 ## 9. Gate
 
-See [gate/](gate/) for every exit and [gate.json](gate.json). Commands and
-counts are in the increment paragraph and the card's reply.
+[scripts/gate.sh](scripts/gate.sh) at tip `fa23b3c5`, logs
+`private/cg04/gate2`; every exit in [gate/](gate/), figures in
+[gate.json](gate.json).
+
+| Step | Exit | Count |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 101 | 374 units, 387 summaries, 6,673 passed, **2 failed**, 11 ignored |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 234 audits (233 + `AuditConditionAcquisition.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then **0** after the matrix validation regeneration (`09b`) | 365 |
+| `python3 scripts/build_docs_index.py` | 0 | |
+
+The two failed rows are constraint 16's load-sensitive rows, run while other
+sessions held the host at a load average of about 45; each was verified in
+isolation and neither was weakened: `qcore-audit::checkpoint_cli` passed 7/7
+(`iso-checkpoint_cli.exit` 0); `qcore-compiler::cycle20_verifier_plugins`
+(its `elapsed < 500 ms` row) failed 3 of 4 isolated runs under the same load
+and passed 20/20 on one (`iso-cycle20_verifier_plugins-1.exit` 0). Both passed
+in the full runner of the first gate at `416f7abb` (`private/cg04/gate`),
+whose only two failures were this card's own re-pins, flipped by name in
+`fa23b3c5` (§7). `providers/` is unchanged, so the provider gate was not due.
+Clang 21.1.8 recorded in [gate/clang-version.txt](gate/clang-version.txt).
 
 ## 10. Ledger
 
