@@ -1,0 +1,13 @@
+{
+ "note": "W47-FLB-LIB-STRICT-PAIRING card gate at base fe603d49. Rust, Lean and provider steps ran on the tree of a4594134 (private/sp/gate-2; later commits change only the report, gate records and exits): submodule update --init --recursive 0; run_test_binaries.py 355 units, 368 summaries, 6,364 passed, 0 failed, 11 ignored (private/test-binaries/, summary.json of the gate-2 run); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 224 audits passed (AuditCondvarJoin.lean 69 -> 79 theorems). Provider gate: contracts.py check 0, package build 0 and verify 0 (qcore.libevent), provider Python 24 tests OK, provider cargo test 129 passed / 0 failed / 1 ignored (43 summaries), provider fmt and clippy clean. quirin-audit pin --check of quirin-provider-fluent-bit exit 0 at 66910c10 and 046accf6 (66 recorded each); at the 90978ac6 export (synthetic 34155955) exit 1: 15 recorded, 51 in force through their 046accf6/66910c10 identity but never recorded at 34155955, 0 not in force, 0 stale, exactly the base's pre-existing condition (W47-FB-PIN-EXPORT-IDENTITIES); this card re-pinned only flb_start, flb_stop and flb_destroy, whose three-function pin --check is 0 at all three trees (private/sp/pin-1). pin --verify-contracts over every crate 0. A first attempt (private/sp/gate-1, tree 67ef2878) failed cargo fmt --check and the provider fmt check on formatting of this card's Rust files only (every other step as here); rustfmt was applied (a4594134) and the whole rust phase rerun. The acceptance matrix and index were regenerated before the records phase; Python suite 365 tests OK and docs-index check 0 after them (private/sp/gate-records). Clang 21.1.8 recorded in this worktree.",
+ "workspace_tests": 6364,
+ "provider_tests": 129,
+ "python_evidence_validator_tests": 365,
+ "reevaluation_probe_exit": 0,
+ "reevaluation_followup_exit": 0,
+ "cargo_fmt": "clean",
+ "cargo_clippy": "clean",
+ "standing_gate": "complete",
+ "lean_audits": 224,
+ "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

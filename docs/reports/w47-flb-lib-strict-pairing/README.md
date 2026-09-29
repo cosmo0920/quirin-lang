@@ -303,7 +303,40 @@ restart not derived).
 
 ## 11. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) ([`scripts/gate.sh`](scripts/gate.sh)).
+[`scripts/gate.sh`](scripts/gate.sh) `rust` then `records`; exits in
+[gate/](gate/), figures in [gate.json](gate.json), logs under
+`private/sp/gate-2/` and `private/sp/gate-records/` of this worktree. The
+Rust, Lean and provider steps ran on the tree of `a4594134`: submodule
+(`--recursive`) 0; Rust suite **355 units / 368 summaries, 6,364 passed, 0
+failed, 11 ignored**; fmt and clippy 0; both probes 0; **224 Lean audits**
+passed; provider gate: contracts check, package build and verify
+(`qcore.libevent`) 0, **24** provider Python tests OK, **129** provider tests
+passed (0 failed, 1 ignored), provider fmt and clippy 0; `pin
+--verify-contracts` 0. `pin --check` of the Fluent Bit crate: 0 at
+`66910c10` and `046accf6` (66 recorded each); **1 at the `90978ac6` export**:
+15 recorded, 0 not in force, 0 stale, 51 in force only through their
+`046accf6`/`66910c10` identity, exactly the base's condition
+(`W47-FB-PIN-EXPORT-IDENTITIES`). A first attempt (`private/sp/gate-1`, tree
+`67ef2878`) failed only `cargo fmt --check` and the provider fmt check on
+this card's own files; rustfmt was applied and the whole phase rerun. The
+records phase (after the matrix and index regeneration): Python suite **365
+tests OK**, docs-index check 0; Clang 21.1.8 recorded.
+
+**Files likely to conflict with a parallel card:** `docs/agents/gateway.md`
+(an amendment appended to 10q), `docs/agents/README.md` (the 10q row),
+`docs/QCORE_CONTRACT_SPEC_r0_3.md` (§C04.11), `docs/STATUS.md` (the 10q and
+engine-thread rows), `docs/development/increments/wave-47.md`, the
+acceptance matrix, `docs/reports/INDEX.md`,
+`crates/qcore-core/src/paired_lifecycle.rs` and its unit tests,
+`crates/qcore-c-gateway/src/condvar_census.rs` (`ReleaseReading`, the release
+hook) and `condvar_census/lifecycle.rs`,
+`crates/quirin-source-analysis/src/{lifecycle_census,condvar_join_census}.rs`,
+the census example and `tests/condvar_join_lifecycle.rs`,
+`crates/qcore-contract/src/contract_loader.rs` (doc comments only),
+`proof/QCore/CondvarJoin.lean` and `proof/AuditCondvarJoin.lean`, and the
+Fluent Bit crate's `lib_engine_thread.qv`, `contracts.lock` (three
+`contract_sha256`) and README. No count pin moves (v1 declarations, held
+declarations, clause rows and module counts unchanged).
 
 ## Reproduce
 
