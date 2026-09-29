@@ -39,5 +39,36 @@ recursion, generics or indirect calls. The closed entry must be evaluable within
 the declared bounds. A library's type check does not claim overflow freedom for
 all possible arguments.
 
+## Fixed-width types
+
+[fixed_width.qr](fixed_width.qr) uses the fixed-width scalar table (card
+`W48-QR-SCALAR-TYPES`): `bool`, `i8` … `i64`, `u8` … `u64`, and `isize`/`usize`
+when the builder supplies a recorded target (`--recorded-target FILE`). Every
+operand of one operation has one type, every conversion is written with `as`,
+and every operation is checked, so `u8` values 250 and 240 are averaged
+through `u16` rather than overflowing. It renders through `std.fmt`, `std.io`
+and `std.logger` — `print dec|hex X;`, `log LEVEL dec|hex X;`, `flush;` — never
+through `print(…)`, which stays the `i32`-only form above:
+
+<!-- transcript: fixed_width stdout -->
+```text
+245
+0xF5
+0xFFFFFFFFFFFFFFFF
+true
+```
+
+<!-- transcript: fixed_width stderr -->
+```text
+[INFO] true
+```
+
+`hex` renders the type's own width (`u8` two digits, `i64` sixteen); a `bool`
+renders `true`/`false` and has no `hex`. An overflow, a zero divisor, a
+conversion whose value does not fit, or a literal outside its type refuses the
+module at check time.
+
 See [the exact grammar](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1)
-and [implementation evidence](../../docs/reports/source-scalar-calls-v1/README.md).
+and [implementation evidence](../../docs/reports/source-scalar-calls-v1/README.md);
+the fixed-width types are [§G02t](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02t-fixed-width-scalar-types)
+and [their evidence](../../docs/reports/w48-qr-scalar-types/README.md).

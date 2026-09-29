@@ -651,6 +651,36 @@ the common IO prelude is deduplicated by fragment key. This mechanism does not
 admit calls across source execution profiles. Ownership-bearing calls, runtime
 control flow and general effect/contract elaboration remain unsupported.
 
+**Fixed-width scalar types** (card `W48-QR-SCALAR-TYPES`, implemented
+grammars §G02t). The profile's values are the §G05 `scalar_abi` table: `bool`,
+`i8`, `i16`, `i32`, `i64`, `isize`, `u8`, `u16`, `u32`, `u64`, `usize`. The
+following are normative for every route that admits them:
+
+* A value of an integer type is a mathematical integer in that type's range;
+  arithmetic computes the exact result and MUST fault when it lies outside the
+  range, on a zero divisor, and on `MIN / -1` or `MIN % -1` of a signed type.
+  No operation wraps, and emitted C MUST decide each fault from the operands
+  before performing the operation, so no signed overflow or other undefined
+  behaviour is evaluated. A fault the checker can decide — every operation of a
+  closed entry, and every literal-only subexpression — MUST refuse at check
+  time; where an operand is not determined at check time the fault is a typed
+  error (no route admits such an operand in this revision).
+* There is no implicit conversion. Operands of one operation MUST have one
+  type, and a binding, argument or result MUST have the type its position
+  names. `EXPR as TYPE` is the only conversion: total when every source value
+  is a target value, otherwise checked, faulting exactly when the value does not
+  fit. Nothing converts to or from `bool`.
+* `bool` is distinct from the integers: comparisons produce it, it has equality
+  but no ordering, no arithmetic and no conversion. An integer literal takes
+  the type its context names, defaults to `i32`, and MUST be in range.
+* `isize` and `usize` have the width of the builder's **recorded target** and
+  no other. Without a record a program naming either MUST be refused; with one,
+  that width is a named assumption of the result (§L20) and the emitted C MUST
+  fail to build for any other width.
+* `std.fmt` renders every type: `dec` as the number itself, `hex` as `0x` and
+  the type's own bit pattern in upper-case digits, a quarter of the width in
+  length; `bool` as `true`/`false` under `dec`, with no `hex` rendering.
+
 ### L14.1. Unchecked linkage
 
 An external library that has **no contract at all** MAY be linked, under an
@@ -1223,6 +1253,11 @@ Every verification claim MUST identify
 
 This is a reporting requirement; the complete tuple is not already one universally implemented record across all current APIs.
 
+A result that depends on the width of `isize`/`usize` (§L14.0) names the
+builder's recorded target — pointer width, target triple and compiler — among
+its assumptions (`recorded target: …` in the declared-assumption list of
+`quirin check`). A result that names neither type carries no such assumption.
+
 **Safe** means that the named property is established for the identified subject, scope, and assumptions with complete coverage under the selected profile. **Unsafe** means a validated defect or counterexample under that profile. **Unknown** means the requested property was not established, including unsupported behavior, incomplete imports, missing premises, invalid evidence, or exhausted analysis bounds. **Pending** (card W45-USER-CONTRACT-PLUGINS, approved 2026-09-26) means the requested property was not decided by the tool and awaits a named human act: a review edit (`awaiting-human-review`), a re-pin after review (`contract-pin-mismatch`) or a checkable certificate for a checker plugin's claim (`plugin-claim-uncertified`). Pending is not Safe, stays in every denominator exactly as Unknown does, and is produced only by one of those named reasons (§L21.2).
 
 These words MUST NOT be repurposed to mean successful parsing, a green build, contract loading, or observed cleanup in a few fixtures. Rejection of malformed source is a compilation result, not necessarily a semantic counterexample to a well-formed program.
@@ -1314,6 +1349,20 @@ cycles, syntax/execution bounds, and checked arithmetic failure on the closed
 entry, plus a missing `std.io` import or an effect row that excludes derived IO.
 Nonempty source contracts retain Q021 and an empty contract remains admissible.
 No diagnostic code is allocated; existing routes retain their codes.
+
+`W48-QR-SCALAR-TYPES` extends the same Q020 conditions, allocating no code, to
+the fixed-width table of §L14.0: an unknown type name, a literal outside its
+type, mixed-type operands, a binding/argument/result of another type, `bool`
+arithmetic, ordering or conversion, a `hex` rendering of `bool`, a failing
+conversion, an arithmetic fault of every type (on the closed entry, or folded
+from a literal-only subexpression of any function), a builtin `print(…)` in a
+module using the table's new forms, an entry result other than `i32`/`unit`,
+and `isize`/`usize` without a recorded target. The `std.io` line statements
+that route admits keep `source.std-io.v1`'s own shape refusal `Q030` and its
+`borrow` refusal `Q028` (the same conditions reached by a new route); their
+imports keep `Q015`. A conversion written on any other route, refused at
+`Q013` before the card because name resolution collected its type name, now
+reaches that route's own reader and keeps a refusal at that route's code.
 
 `SOURCE-ANNOTATION-ENFORCEMENT` extends Q020 to executable local annotation
 compatibility, unsupported explicit local types, malformed local heads before

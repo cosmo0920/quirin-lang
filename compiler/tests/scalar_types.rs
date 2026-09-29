@@ -332,6 +332,25 @@ fn lines_logs_flushes_and_pipes_render_through_std_io() {
             "err: [INFO] true"
         ]
     );
+    // The page publishes the same lines, per stream.
+    let page = include_str!("../../examples/scalar/README.md");
+    for (stream, marker) in [("out", "fixed_width stdout"), ("err", "fixed_width stderr")] {
+        let block = page
+            .split(&format!("<!-- transcript: {marker} -->"))
+            .nth(1)
+            .and_then(|rest| rest.split("```text\n").nth(1))
+            .and_then(|rest| rest.split("```").next())
+            .unwrap_or_else(|| panic!("the page has no `{marker}` transcript"));
+        let published = block
+            .lines()
+            .map(|line| format!("{stream}: {line}"))
+            .collect::<Vec<_>>();
+        let observed = lines(&m)
+            .into_iter()
+            .filter(|line| line.starts_with(&format!("{stream}: ")))
+            .collect::<Vec<_>>();
+        assert_eq!(published, observed, "{marker}");
+    }
     let piped = admitted(&format!(
         "{HEADER}fn twice(x: u16) -> u16 {{ return x * 2; }}\nfn main() -> unit {{ let v: u16 = 300; v |> twice |> print hex; v |> log fatal dec; return; }}"
     ));
@@ -643,6 +662,26 @@ fn modules_the_std_io_route_admits_keep_that_route() {
     };
     assert!(!checked.is_widened());
     assert!(!m.c_source.unwrap().contains("stdbool"));
+}
+
+/// Every other route keeps a refusal for a conversion. Before the card each of
+/// these refused at name resolution (`Q013`, the type name collected as an
+/// unknown reference); each now reaches its route's own reader and is refused
+/// there, which is the attributed change of the contextual `as` rule.
+#[test]
+fn a_conversion_on_another_route_stays_refused() {
+    for source in [
+        "error Failure { Failed; }\nfn main() -> i32 { let p = qcore_acquire(1, true, Failure); let y = 5 as u8; drop p; return 0; }",
+        "error Failure { Failed; }\nfn main() -> i32 { let p = qcore_acquire(1, true, Failure); drop p; return 5 as i32; }",
+        "#import std.buffer;\nfn main() -> unit effects { alloc, mut } { let b = bytes(4); let x = 5 as u8; drop b; return; }",
+        "#import std.buffer;\nfn main() -> unit effects { alloc, mut } { let b = bytes(4); for i in 0..4 { let z = i as u8; } drop b; return; }",
+        "#import std.fmt;\n#import std.io;\nfn main() -> unit effects { io } { let x = 5; print dec x as u8; return; }",
+        "fn main() -> i32 { if (1 as i32 < 2) { return 0; } else { return 1; } }",
+        "type P { x: i32 }\nfn main() -> unit { let p = P { x: 1 as i32 }; return; }",
+    ] {
+        let e = compile_for(source, Some(&host_target())).expect_err(source);
+        assert!(e.iter().all(|d| d.code != "Q013"), "{source}\n{e:?}");
+    }
 }
 
 // --- Native execution ---------------------------------------------------

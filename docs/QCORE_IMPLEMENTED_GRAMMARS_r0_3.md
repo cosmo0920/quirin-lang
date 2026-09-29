@@ -153,30 +153,46 @@ selected after specialized profiles and before the legacy standard-IO route
 when retained tokens contain the function-style `print(` form. Otherwise a
 nonliteral return/local, an annotated local, or an argument-taking statement
 call to a declared source function selects it. Sequential resource intrinsics
-retain their previous route. It adds no tokens or reserved words and does not
-widen the other profiles.
+retain their previous route. Card `W48-QR-SCALAR-TYPES` adds one more door: a
+module with `std.io` line statements **and** the scalar-call syntax above
+reaches this route when the `source.std-io.v1` lowering refuses it; every module
+that lowering admits keeps that route byte for byte. It adds no tokens or
+reserved words and does not widen the other profiles.
 
 ```ebnf
 function = "fn", NAME, "(", [parameter, {",", parameter}], ")", "->", result,
            ["effects", "{", ["io"], "}"], ["contract", "{", "}"],
            "{", {statement}, "return", [expression], ";", "}" ;
-parameter = NAME, ":", "i32" ;
-result = "i32" | "unit" ;
-statement = "let", NAME, [":", "i32"], "=", expression, ";"
+parameter = NAME, ":", SCALAR ;
+result = SCALAR | "unit" ;
+SCALAR = "bool" | "i8" | "i16" | "i32" | "i64" | "isize"
+       | "u8" | "u16" | "u32" | "u64" | "usize" ;               (* §G02t *)
+statement = "let", NAME, [":", SCALAR], "=", expression, ";"
           | call, ";"
-          | "print", "(", expression, ")", ";" ;
-expression = product, {("+" | "-"), product} ;
-product = unary, {("*" | "/" | "%"), unary} ;
-unary = "-", unary | NAT | NAME | call | "(", expression, ")" ;
+          | "print", "(", expression, ")", ";"                  (* i32 only *)
+          | "print", RENDERING, OPERAND, ";"                    (* §G02g's reader *)
+          | "log", LEVEL, RENDERING, OPERAND, ";"
+          | "flush", ";" ;
+expression = sum, [CMP, sum] ;                                  (* non-associative *)
+sum = product, {("+" | "-"), product} ;
+product = cast, {("*" | "/" | "%"), cast} ;
+cast = unary, {"as", SCALAR} ;
+unary = "-", unary | NAT | "true" | "false" | NAME | call | "(", expression, ")" ;
+CMP = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
 call = FUNCTION_NAME, "(", [expression, {",", expression}], ")" ;
 ```
 
-Every parameter/local is i32; unit calls cannot occupy an integer position.
+Every parameter, local and result has one type of the §G02t table (a result
+may also be `unit`); unit calls cannot occupy a scalar position. The typing,
+arithmetic, conversion and rendering rules of the table are §G02t's; a program
+that names only `i32` types and uses none of the forms above that card added
+checks, runs and emits exactly as before it.
 Every definition is checked, including uncalled bodies. Calls must be direct
 and the entire graph acyclic. Locals are immutable, nonshadowing within each
 function, and initializers resolve before binding. All functions end with one
 explicit return. Operands/arguments evaluate left to right; binary operators
-associate left. Literal magnitudes must fit signed i32, including -2147483648.
+associate left. Literal magnitudes must fit their type, including -2147483648
+for `i32`.
 
 `print(EXPRESSION);` evaluates one i32 expression and writes its decimal value
 followed by one newline to standard output. The source file must declare
@@ -185,15 +201,32 @@ has no rendering selector. An absent effect row infers `io` from a direct print
 or transitively from a called function. `effects {io}` explicitly permits it,
 while `effects {}` explicitly excludes it and therefore refuses any direct or
 transitive IO. Every other effect name is outside this profile. Output follows
-ordinary statement order and the left-to-right argument order above.
+ordinary statement order and the left-to-right argument order above. The
+builtin form stays `i32`-only and is refused in a module that uses any §G02t
+form (a non-`i32` type, a comparison, a conversion, `bool` or a line
+statement): such a module renders through `print dec|hex X;`.
+
+The line statements are `source.std-io.v1`'s own (§G02g), read by that route's
+own reader over the statement's tokens, so a line one route admits and the
+other refuses is not expressible, and a pipe sink (`x |> print dec;`, §G02h)
+desugars to one. They may stand in any function; a line derives `io` exactly
+as a builtin print does. `OPERAND` is an integer literal (an `i32`) or a scalar
+name this function bound; `borrow NAME` refuses at `Q028` because this route
+has no custody model, and `log_level` refuses at `Q030` because this route
+installs no system-trace adapter. The per-stream line trace is published
+beside the entry's value, as `source.std-io.v1` publishes its own.
 
 Arithmetic is checked: overflow and zero division refuse the closed entry at
-check time. MIN/-1 division and remainder both refuse. Division truncates toward
-zero. Emitted C retains calls and guards arithmetic, exiting 86 on a fault;
+check time, and a subexpression whose leaves are all literals is folded while it
+is typed, so a constant fault refuses even in a function no entry calls (a
+library module included). MIN/-1 division and remainder both refuse. Division
+truncates toward zero. Emitted C retains calls and guards arithmetic, exiting 86
+on a fault;
 a fault writes nothing to either stream, and a source program without a print
 writes nothing. A library check makes no claim that every possible argument is
-overflow-free. An executable entry has no parameters. Library modules check
-definitions but publish neither a closed observation nor standalone C.
+overflow-free. An executable entry has no parameters and returns `i32` or
+`unit`. Library modules check definitions but publish neither a closed
+observation nor standalone C.
 
 The C backend exposes file-scope fragments plus an entry-body contribution.
 Those fragments contain no entry-point definition; the shared
@@ -211,6 +244,93 @@ ownership, usage annotations, generic/indirect calls, and cross-profile call
 composition remain outside this subset. Unsupported ordinary forms use Q020;
 nonempty contracts retain Q021.
 [Implementation and evidence](reports/source-scalar-calls-v1/README.md).
+
+<a id="g02t-fixed-width-scalar-types"></a>
+
+## G02t. Fixed-width scalar types
+
+Card `W48-QR-SCALAR-TYPES` makes the §G05 `scalar_abi` table first-class values
+of `.qr` sources. It is implemented on `source.scalar-calls.v1` (§G02s) and
+rendered through `std.fmt`/`std.io`/`std.logger` (§G02g); every other position
+keeps its existing refusal (table below). The definitions are
+`crates/qcore-core/src/scalar_types.rs`, stated in Lean as `QCore.ScalarTypes`.
+
+| Type | Values | C11 | `dec` | `hex` |
+|---|---|---|---|---|
+| `bool` | `false`, `true` | `bool` (`<stdbool.h>`) | `false` / `true` | refused |
+| `i8` `i16` `i32` `i64` | two's-complement range of the width | `int8_t` … `int64_t` | signed decimal | `0x` + 2/4/8/16 digits |
+| `u8` `u16` `u32` `u64` | `0 ..= 2^w - 1` | `uint8_t` … `uint64_t` | unsigned decimal | `0x` + 2/4/8/16 digits |
+| `isize` | signed range of the recorded width `W` | `ptrdiff_t` | signed decimal | `0x` + `W/4` digits |
+| `usize` | `0 ..= 2^W - 1` | `size_t` | unsigned decimal | `0x` + `W/4` digits |
+
+* **Typing.** No implicit conversion exists anywhere. An arithmetic or
+  comparison operand pair has one type; two different types refuse ("mixed-type
+  operands"), and so does a `let`, argument or return whose type differs from
+  the expression's. An integer literal takes its type from its context and
+  defaults to `i32`, which is what keeps every existing program's typing
+  unchanged; it must be a value of that type (the minimum included), else it
+  refuses.
+* **Checked arithmetic.** `+ - * / %` and unary `-` are defined on the ten
+  integer types and compute the exact mathematical result, which must be a
+  value of the type; otherwise the operation faults. A zero divisor faults, and
+  so do `MIN / -1` and `MIN % -1` of a signed type. Division truncates toward
+  zero. Unary `-` is `0 - x`, so on an unsigned type it succeeds only at `0`.
+  There is no wrapping operation. On this route every operand of an executable
+  entry is a check-time constant of its closed evaluation and every
+  literal-only subexpression is folded while it is typed, so the fault is
+  decided at check time and refuses (`Q020`); the emitted C still tests the
+  operands against the type's limits **before** each operation, with explicit
+  range tests rather than compiler builtins, and exits 86 on a fault.
+* **Conversions.** `EXPR as TYPE` is the one spelling. It is **total** when
+  every value of the source type is a value of the target (a widening), and
+  then it is a plain cast; otherwise it is **checked** — the same number at the
+  new type, or the fault when the number does not fit — never a truncation or a
+  reinterpretation. There is no conversion to or from `bool`. `as` binds
+  tighter than every binary operator and looser than unary `-`. The word `as`
+  was already reserved, and a scalar type name after it is not collected as a
+  reference by name resolution; the constraint-14 census
+  (`docs/reports/w48-qr-scalar-types/census_spelling.py`) found no `as` followed
+  by a scalar type name in any of the 625 tracked `.qr`/`.qv`/`.qrlib` files.
+* **`bool`.** Comparisons produce `bool`. `bool` has `==` and `!=`, no ordering,
+  no arithmetic, no conversion and no `hex` rendering.
+* **`isize`/`usize` and the recorded target.** Their width is the builder's
+  recorded target (`quirin --recorded-target FILE`, a closed three-key record:
+  `pointer_width` 32 or 64, `triple`, `compiler`; total or reject). A program
+  naming either type with no record refuses; nothing guesses a width. With one,
+  the program is checked for exactly that width, the result carries it as a
+  named assumption (`recorded target: …` among the declared assumptions), and
+  the emitted C `_Static_assert`s `SIZE_MAX`, `PTRDIFF_MIN` and `PTRDIFF_MAX`
+  against it, so a C compiler for another width refuses to build it. A program
+  naming neither is unaffected by a record.
+* **Rendering.** `print dec|hex X;` and `log LEVEL dec|hex X;` render every
+  type: `dec` the number itself, `hex` the type's own bit pattern (two's
+  complement for a negative value) in upper-case digits zero-padded to a
+  quarter of the width, which for `i32` is the established `0x000000FF`. A
+  `bool` renders `true`/`false` under `dec` and refuses `hex`.
+
+**Positions.** Widened by this card: parameters, results, annotated and
+inferred locals, literals, arithmetic, comparisons and conversions on
+`source.scalar-calls.v1`, its line statements, and the `|>` sinks that
+desugar to them. Every other position that takes `i32` keeps its existing
+refusal and is a named follow-up: record fields (§G07.13,
+`W48-QR-TYPES-RECORD-FIELDS`), loop bounds and indices (§G07.12,
+`W48-QR-TYPES-LOOP-BOUNDS`), extern results as values and the composed
+extern + io route (§G02d, §G02i, `W48-QR-TYPES-EXTERN-VALUES`), task
+workers, `copy` captures and the composed tasks + io route (§G02a, §G02j,
+`W48-QR-TYPES-TASK-CAPTURES`), the `Buffer` and `protected N` payloads
+(§G02b, §G02c, `W48-QR-TYPES-PAYLOADS`), and an executable entry result
+other than `i32`/`unit` (C's `main` returns `int`; the entry's value is
+published, never returned). A typed `let` beside an `std.io` line is
+scalar-call syntax, so such a module reaches this route and needs no change
+to `source.std-io.v1`. A conversion written on one of those routes was
+refused at `Q013` before this card (name resolution collected the type name);
+it now reaches that route's own reader and is refused at that route's own code.
+
+**Diagnostics.** No code is allocated. Every new refusal on this route is a
+widened condition of `Q020` (type, literal-range, mixed-type, `bool`,
+conversion, recorded-target and fault refusals); a line statement's shape keeps
+`source.std-io.v1`'s `Q030`, a `borrow` operand its `Q028`, and a missing
+import the gate's `Q015`.
 
 <a id="g02r-resource-aware-functions-sourceresource-callsv1"></a>
 
@@ -1615,6 +1735,12 @@ supplied the identity **and** holds it live at that statement, which
 `borrow NAME` written on it refuses at `Q028` — structurally, for want of a
 model, rather than by a rule the route states. §G02i is where the form is
 reachable, and the liveness rule is that route's join.
+
+Card `W48-QR-SCALAR-TYPES`: the three line statements are also read, by the
+reader above, on `source.scalar-calls.v1`, where their operand is a scalar of
+any §G02t type and `dec`/`hex` render it at its own type. A module reaches that
+route only when this route's lowering refuses it and it uses scalar-call
+syntax (§G02s), so every module this route admits keeps it byte for byte.
 
 `borrow` was **already** a reserved source word (the checked mutex-guard
 profile's), so the form adds none and moves no pinned surface. The marker is
