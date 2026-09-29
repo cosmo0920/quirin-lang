@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG10-COMMON-TYPED-PLACE integration gate on integrate/w48-cg-r2 1ae1c38f (main 0691a1cc, W48-QR-SCALAR-TYPES-R3 landed, merged with the card tip f6795927), script private/gate-int.sh, logs private/int-cg10/gate of the quirin-spec-cards-compass worktree: submodule 0; run_test_binaries.py 369 units, 382 summaries, 6,590 passed, 0 failed, 11 ignored (exit 0); fmt, clippy, both reevaluation probes 0; 229 Lean audits (R3's AuditScalarPositions and CG10's AuditTypedPlace); python first run 1 failure, the merged matrix's stale lean_audits 228 against 229 on disk, corrected by this regeneration and rerun; docs index 0. The first arbiter attempt exited 2 because no release quirin-audit was built in this worktree; after `cargo build --release -p qcore-audit --bin quirin-audit` (0) the corpus arbiter exited 0 with resource-diagnostics.json b63c1b57..., byte-identical to the card's AFTER (527 / 10 / 4,297). providers/ unchanged, so the provider gate was not due. Clang 21.1.8.",
-  "workspace_tests": 6590,
+  "note": "CG02-ELABORATION-CORE card gate at tip a6b3e43e (base e182d403, main f1ba8da2 merged), logs private/cg02/gate2 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 370 units, 383 summaries, 6,605 passed, 0 failed, 11 ignored (private/test-binaries/20260929T135327Z-2683079/summary.json, rerun at a6b3e43e after the clippy fix; the first run at b8e5797f was also 6,605 / 0); fmt 0; clippy 0 (a first run failed on two single-element loops in re-pinned tests, fixed in a6b3e43e); both reevaluation probes exit 0; check_lean_audits.py 230 audits passed (229 + AuditElaborationCore.lean); python tests after the matrix validation edit (09-python.exit); docs index. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE on the merged base (binary at CG10 integration tip 1ae1c38f, code-identical to main f1ba8da2) resource-diagnostics.json b63c1b57 byte-identical to CG10's AFTER; AFTER 963d7c9f, 527/10/4,297 -> 543/10/4,281. Exits in gate/.",
+  "workspace_tests": 6605,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 229,
+  "lean_audits": 230,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6838,6 +6838,7 @@
    "AuditDerivedTextAdmission.lean",
    "AuditDescriptorNativeObservation.lean",
    "AuditDisjointFootprint.lean",
+   "AuditElaborationCore.lean",
    "AuditEnumerationAttribution.lean",
    "AuditEpochAccounting.lean",
    "AuditEpochSourceLowering.lean",
@@ -6995,7 +6996,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg10-common-typed-place/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg02-elaboration-core/gate.json)"
  },
  "named_followups": [
   {

@@ -77,6 +77,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg01-t-operator-closure](cg01-t-operator-closure/README.md) | CG01-T-OPERATOR-CLOSURE: route T's operators and literals, admitted per consumer |
 
+| [cg02-elaboration-core](cg02-elaboration-core/README.md) | CG02-ELABORATION-CORE: the common expression elaborator and its order model |
+
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |

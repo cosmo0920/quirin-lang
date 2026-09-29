@@ -454,8 +454,28 @@ Script: [scripts/update_ledger.py](scripts/update_ledger.py).
 
 ## 9. Gate
 
-See [gate.json](gate.json) and [gate/](gate/). Logs are under
-`private/cg02/gate/`.
+At tip `a6b3e43e` (main `f1ba8da2` merged), [scripts/gate.sh](scripts/gate.sh);
+exits in [gate/](gate/), record [gate.json](gate.json), logs under
+`private/cg02/gate2/`.
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 370 units, 383 summaries; **6,605 passed**, 0 failed, 11 ignored (`private/test-binaries/20260929T135327Z-2683079/`) |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | the first run (101) flagged two single-element loops in re-pinned tests, fixed in `a6b3e43e`; tests and fmt re-run after it |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **230 audits** (229 + `AuditElaborationCore.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK, after the matrix validation was regenerated from `gate.json` (before it: 1, the derived `lean_audits`) |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+
+A pre-merge gate at the card's base tip (`private/cg02/gate/`) ran 6,571
+passed and 5 failed: four older pins the elaborator moves, re-pinned
+deliberately in `b962cc1b` (`indirect_scalar_access`'s `(*n)++`, two
+`scalar_member_store` rows, `legacy_c`'s increment positions,
+`return_position_modeled_call`'s comma return), each with its reason in the
+test. `providers/` is unchanged, so the provider gate is not due.
 
 ## 10. Scripts
 

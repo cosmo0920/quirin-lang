@@ -1,0 +1,13 @@
+{
+  "note": "CG02-ELABORATION-CORE card gate at tip a6b3e43e (base e182d403, main f1ba8da2 merged), logs private/cg02/gate2 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 370 units, 383 summaries, 6,605 passed, 0 failed, 11 ignored (private/test-binaries/20260929T135327Z-2683079/summary.json, rerun at a6b3e43e after the clippy fix; the first run at b8e5797f was also 6,605 / 0); fmt 0; clippy 0 (a first run failed on two single-element loops in re-pinned tests, fixed in a6b3e43e); both reevaluation probes exit 0; check_lean_audits.py 230 audits passed (229 + AuditElaborationCore.lean); python tests after the matrix validation edit (09-python.exit); docs index. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE on the merged base (binary at CG10 integration tip 1ae1c38f, code-identical to main f1ba8da2) resource-diagnostics.json b63c1b57 byte-identical to CG10's AFTER; AFTER 963d7c9f, 527/10/4,297 -> 543/10/4,281. Exits in gate/.",
+  "workspace_tests": 6605,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 230,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
