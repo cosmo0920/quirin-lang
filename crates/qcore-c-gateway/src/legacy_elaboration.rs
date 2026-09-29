@@ -823,6 +823,26 @@ impl Parser<'_> {
         outcome.ok().map(Box::new)
     }
 
+    /// Card CG04-CONDITION-ACQUISITION (rule 10x): one call-free leaf of a
+    /// desugared condition, decided as the hook above decides a whole
+    /// call-free condition, under the same premises. Its events in order; the
+    /// caller adds the leaf's branch, which refines nothing.
+    pub(super) fn elaborated_leaf(&self, leaf: &[Token]) -> Option<Vec<LegacyInstruction>> {
+        if self.elaboration_declines(leaf) || contains_call(leaf) {
+            return None;
+        }
+        let index = self.elaboration_index()?;
+        let mut plan = self.elaborate_condition(&index, leaf).ok()?;
+        // The last node is the branch that refines nothing.
+        plan.nodes.pop();
+        Some(
+            plan.nodes
+                .into_iter()
+                .map(|node| node.instruction)
+                .collect(),
+        )
+    }
+
     fn elaborate_condition(
         &self,
         index: &StatementIndex,

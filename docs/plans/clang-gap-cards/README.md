@@ -88,7 +88,7 @@ High for anything that could publish a wrong Safe, Medium for measurement.
 | CG01-T-OPERATOR-CLOSURE | E01 E02 E03(T) E14 | T | High | none |
 | CG02-ELABORATION-CORE | E03(values) E04 E05 E08 E12(order model) | G, T | High | CG00 |
 | CG03-CALL-SUMMARY-INSTANTIATION | K12 K03 | G, T | High | CG02 |
-| CG04-CONDITION-ACQUISITION | E09 E13 | G | High | CG02, CG03 |
+| CG04-CONDITION-ACQUISITION | E09 E13 | G | High | CG02, CG03 (landed, wave 48 round 4) |
 | CG05-NESTED-CALL-EFFECTS | E10 E11 E12 | G | High | CG02, CG03 |
 | CG06-VALUE-CONNECTIVES-AND-CONDITIONAL | E06 E07 | G, T | High | CG02 |
 | CG07-GENERIC-AND-STATEMENT-EXPRESSIONS | E17 E19 | G, T | High | CG02 |
@@ -146,6 +146,12 @@ High for anything that could publish a wrong Safe, Medium for measurement.
   - *Absorbs:* W44-CONDITION-CALL-ASSIGNMENT, -FREE-OPERAND, -TYPE-OPERATOR,
     -REFUSED-SHAPES, W44-CONDITION-DISCARDED-DERIVED-RESULT,
     W43-INDEX-TRAVERSAL-CONDITION-WRITE and CONDITION-DESUGAR-REFUSAL-ARMS-UNPINNED.
+  - *Status (wave 48, round 4).* Landed on route G (gateway rule 10x): the
+    NULL/sentinel split through `ResultUse::TestedSplit`, refused on any node
+    a CFG cycle may pass through (`CG04-LOOP-SITE-GENERATIONS`, a soundness
+    defect of the statement form, registered); type operators and increments
+    decided per leaf. +1 Unknown → Safe in the corpus arbiter, no correction.
+    [Report](../../reports/cg04-condition-acquisition/README.md).
 - **CG05: nested-call effects.**
   - *Example B:* `sink(release_and_status(p))`. Inner non-identity effects
     (Owned, Released, Consumed, Out) apply inside-out before the outer call.

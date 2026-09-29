@@ -81,7 +81,7 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg03-call-summary-instantiation](cg03-call-summary-instantiation/README.md) | CG03-CALL-SUMMARY-INSTANTIATION: one call-contract application point |
 
-| [cg06-value-connectives-and-conditional](cg06-value-connectives-and-conditional/README.md) | CG06-VALUE-CONNECTIVES-AND-CONDITIONAL: value `&&`, `&#124;&#124;` and `?:` by branching |
+| [cg04-condition-acquisition](cg04-condition-acquisition/README.md) | CG04-CONDITION-ACQUISITION: acquisitions in conditions and complex condition leaves |
 
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 

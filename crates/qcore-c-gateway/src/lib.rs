@@ -30,6 +30,9 @@ pub mod destination_suffix_census;
 // acceptance and the typed per-formal substitution; the G hooks are in
 // `legacy_call_instantiation.rs`.
 mod call_instantiation;
+// Card CG04-CONDITION-ACQUISITION (rule 10x): acquisitions in conditions and
+// complex condition leaves; the G hooks are in `legacy_condition_acquisition.rs`.
+mod condition_acquisition;
 // Card CG02-ELABORATION-CORE (rule 10s): the common expression elaborator and
 // its order model; the G hooks are in `legacy_elaboration.rs`.
 mod elaboration;

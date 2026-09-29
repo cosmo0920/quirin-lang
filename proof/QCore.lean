@@ -283,5 +283,6 @@ import QCore.CallInstantiation
 import QCore.ValueConnectives
 import QCore.PointerStore
 import QCore.UnionBitfieldPlace
+import QCore.ConditionAcquisition
 
 /-! The executable formal core of QCore-C revision 0.1. -/

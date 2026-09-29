@@ -62,6 +62,9 @@ inductive Use where
   | tested
   | returned
   | passed
+  /-- Card CG04-CONDITION-ACQUISITION (rule 10x): stored in its destination
+  and tested there against the contract's failure value (the NULL split). -/
+  | testedSplit
   deriving DecidableEq, Repr
 
 inductive Decision where
@@ -92,6 +95,7 @@ def accept (s : Standing) (r : ResultClass) (identity : Bool) (u : Use) : Decisi
       | .owned => .accept
       | _ => .returnedAlias
     | .passed => if identity && r == .none then .accept else .notIdentity
+    | .testedSplit => .accept
 
 /-- `ACCEPTANCE_VECTORS` of `call_instantiation.rs`, row by row. -/
 def acceptanceVectors : List (Standing × ResultClass × Bool × Use × Decision) := [
@@ -109,7 +113,12 @@ def acceptanceVectors : List (Standing × ResultClass × Bool × Use × Decision
   (.declared, .reallocated, false, .returned, .returnedAlias),
   (.declared, .none, true, .passed, .accept),
   (.declared, .none, false, .passed, .notIdentity),
-  (.declared, .derived, true, .passed, .notIdentity)
+  (.declared, .derived, true, .passed, .notIdentity),
+  (.declared, .owned, false, .testedSplit, .accept),
+  (.validated, .reallocated, false, .testedSplit, .accept),
+  (.declared, .derived, true, .testedSplit, .accept),
+  (.declared, .none, true, .testedSplit, .accept),
+  (.recursive, .owned, false, .testedSplit, .recursiveLocal)
 ]
 
 theorem acceptance_vectors_hold :

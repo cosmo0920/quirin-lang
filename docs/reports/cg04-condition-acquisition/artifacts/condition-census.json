@@ -1,0 +1,94 @@
+{
+ "CallRefused: indirect memory access is outside the resource projection": {
+  "consultations": 2702,
+  "functions": 739
+ },
+ "admitted": {
+  "consultations": 2334,
+  "functions": 1116
+ },
+ "CallRefused: call to uncontracted function `_`": {
+  "consultations": 975,
+  "functions": 609
+ },
+ "AssignmentShape": {
+  "consultations": 222,
+  "functions": 89
+ },
+ "admitted:elaborated_leaf": {
+  "consultations": 123,
+  "functions": 55
+ },
+ "CallFreeLeafRefused": {
+  "consultations": 68,
+  "functions": 47
+ },
+ "ResidualRefused": {
+  "consultations": 32,
+  "functions": 29
+ },
+ "RecursiveLocalCallee": {
+  "consultations": 31,
+  "functions": 18
+ },
+ "IndirectCallee": {
+  "consultations": 30,
+  "functions": 24
+ },
+ "Braces": {
+  "consultations": 22,
+  "functions": 21
+ },
+ "AssignmentDestination": {
+  "consultations": 12,
+  "functions": 10
+ },
+ "admitted:type_operator": {
+  "consultations": 10,
+  "functions": 9
+ },
+ "CallRefused: nested call `_` inside a modeled call is outside the resource projection": {
+  "consultations": 7,
+  "functions": 5
+ },
+ "CallRefused: call to `_` outside its declared literal-argument premise": {
+  "consultations": 5,
+  "functions": 5
+ },
+ "LeafShape(IncrementBesideCall)": {
+  "consultations": 5,
+  "functions": 4
+ },
+ "CallRefused: call to `_` whose declared contract was withdrawn against its C declaration in this translation unit (abi-return-type-disagreement": {
+  "consultations": 5,
+  "functions": 5
+ },
+ "CallRefused: local declaration may shadow a formal resource identity": {
+  "consultations": 4,
+  "functions": 3
+ },
+ "CallRefused: call has an unmodeled formal address or borrowed expression": {
+  "consultations": 4,
+  "functions": 3
+ },
+ "admitted:split": {
+  "consultations": 4,
+  "functions": 4
+ },
+ "LeafShape(ConnectiveBesideCall)": {
+  "consultations": 3,
+  "functions": 3
+ },
+ "LeafShape(AcquisitionOnCycle)": {
+  "consultations": 2,
+  "functions": 2
+ },
+ "CallRefused: arguments beyond the declared parameters of `_` are outside the resource projection": {
+  "consultations": 1,
+  "functions": 1
+ },
+ "admitted:split+type_operator": {
+  "consultations": 1,
+  "functions": 1
+ }
+}

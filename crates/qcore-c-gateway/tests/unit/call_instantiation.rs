@@ -32,6 +32,7 @@ fn use_of(code: &str) -> ResultUse {
         "tested" => ResultUse::Tested,
         "returned" => ResultUse::Returned,
         "passed" => ResultUse::Passed,
+        "tested-split" => ResultUse::TestedSplit,
         other => panic!("unknown use {other}"),
     }
 }

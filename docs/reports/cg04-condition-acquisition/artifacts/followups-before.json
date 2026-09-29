@@ -1,0 +1,44 @@
+{
+ "classes": {
+  "no-consultation": {
+   "leaves": 2832,
+   "functions": 1220,
+   "sole": 47
+  },
+  "elaboration-refused": {
+   "leaves": 1162,
+   "functions": 430,
+   "sole": 6
+  }
+ },
+ "followups": {
+  "W44-CONDITION-CALL-ASSIGNMENT": {
+   "leaves": 0,
+   "functions": 0,
+   "sole": 0,
+   "classes": {}
+  },
+  "W44-CONDITION-CALL-FREE-OPERAND": {
+   "leaves": 0,
+   "functions": 0,
+   "sole": 0,
+   "classes": {}
+  },
+  "W44-CONDITION-CALL-TYPE-OPERATOR": {
+   "leaves": 0,
+   "functions": 0,
+   "sole": 0,
+   "classes": {}
+  },
+  "W44-CONDITION-CALL-REFUSED-SHAPES": {
+   "leaves": 0,
+   "functions": 0,
+   "sole": 0,
+   "classes": {}
+  }
+ },
+ "condition_writes": {
+  "leaves": 172,
+  "functions": 103
+ }
+}
