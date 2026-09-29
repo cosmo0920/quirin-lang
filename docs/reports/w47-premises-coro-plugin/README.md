@@ -219,6 +219,13 @@ byte-identical):
 | `90978ac6~1` raw | 8 / 132 / 7, unchanged | 33,466 → 33,493 | 2,902 |
 | both controls (configured without the predefined facts) | unchanged | +27 each | |
 
+The AFTER JSONs differ from BEFORE in `typed.premises` (new), `edges`, and
+the coroutine bodies the kept routes add (15 → 42 at `90978ac6` configured;
+9 of the 27 new bodies reach a yield and gain the post-yield reason,
+`typed.yield_paths`) — no site's verdict or first reason
+([`scripts/json_keys_diff.py`](scripts/json_keys_diff.py); `fixed-configured`
+`67851ab5…`, `previous-configured` `0ec65d23…`, archived).
+
 **Attribution** ([`scripts/attribute_edges.py`](scripts/attribute_edges.py),
 archived in [artifacts/census/](artifacts/census/)): no site moves (verdict
 or first reason) in any reading; every added edge, 27 per reading, is
@@ -240,13 +247,45 @@ W47-FLB-LIB-LIFECYCLE archive once the worktree root is aliased
 exit 0); the old test's C5 status is unchanged. That census has no typed
 reading, so none of this card's derivations runs there.
 
+**Prediction against outcome** ([PREDICTION.md](PREDICTION.md)):
+
+| Measure | Predicted | Measured |
+|---|---|---|
+| P-CORO-HANDLE | derived but for the running coroutine's own handle (70%) | **as predicted** (residual P-CURRENT-HANDLE, 25 sites) |
+| P-PLUGIN-DIR (a) | derived; only the Go proxy's fresh write (65%) | **as predicted** |
+| P-PLUGIN-DIR (b) | derived for the 8 discharged sites' registrants (50%) | **as predicted** (61 of 88 registrants; the 27 others hold no discharged site) |
+| threaded flag | 3 writers; residual over the 4 non-literal setter calls (60%) | **as predicted**, the 2 creation writes also listed in the residual |
+| fixed test ×3 | stay discharged (60%) | **as predicted** |
+| old test ×8 | stay not discharged (97%) | **as predicted** |
+| other sites | no move except as named (65%) | **as predicted**: none moves |
+| raw readings | move as the configured ones (60%) | **as predicted** (no site moves); their derivations read 4 fewer files |
+| negative controls | each withholds the discharge (90%) | **as predicted** |
+| edges | not predicted | **+27 per reading**, all kept routes of underived registrations |
+| corpus / system / slice | byte-identical sidecars (90%) | **as predicted** |
+| condvar/lifecycle census | untouched (95%) | **as predicted** |
+
 ## 6. Corpus, system and tail-pause slice
 
 The per-unit routes read no census. [`arbiters.py`](../w47-loop-owner-typed-dispatch/scripts/arbiters.py)
 (`--jobs 8`) and [`identity.py`](../w47-loop-owner-predefined-macro-arms/scripts/identity.py)
 against `w47-flb-lib-lifecycle/integration/artifacts`, then compose3:
 
-ARBITER_RESULT
+- **BEFORE** at `3623c02e` (the base's code; release `quirin-audit`
+  `2fde7bc3…`): the corpus `resource-diagnostics.json` is byte-identical to
+  the archive; the system and slice differ only in the checkout-root digests
+  (`resource_contract_sources`, `inventory_sha256`) and module paths; all
+  three compose with 0 mismatches.
+- **AFTER** at `902e50b1` (the final code; binary `1bf579a7…`): every
+  `resource-diagnostics*.json` sidecar of the corpus, system and slice is
+  **byte-identical to BEFORE**; only `run.json`, `audit.log`, `console.log`
+  and `invocation.json` (paths, timings, commit, binary digest) differ, and
+  the corpus parity stream is equal once sorted (`104bcda6…`). Composed with
+  the archive: corpus 526 / 10 / 4,298, system 31 / 2 / 201, slice 24 / 1 /
+  244 / 1 Pending, 0 mismatches each. Nothing moves: the census is on no
+  audit route. No Safe → non-Safe move, no leak or violation added or
+  removed, no new baseline archived.
+
+Logs: [artifacts/arbiters/](artifacts/arbiters/).
 
 ## 7. Premises of the three discharged sites
 

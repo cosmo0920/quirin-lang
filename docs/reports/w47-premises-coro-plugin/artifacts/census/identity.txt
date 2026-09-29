@@ -1,0 +1,6 @@
+fixed-configured: exits 0/0; before 719a7d0d (archive-equal); after 67851ab5 (differs)
+previous-configured: exits 0/0; before 418a9251 (archive-equal); after 0ec65d23 (differs)
+fixed: exits 0/0; before 983c74b9 (archive-equal); after 679fa164 (differs)
+previous: exits 0/0; before d05ebc0e (archive-equal); after cc3b0808 (differs)
+fixed-configured-control: exits 0/0; before 4955a12d (archive-equal); after b16e3d30 (differs)
+previous-configured-control: exits 0/0; before a5edf1ed (archive-equal); after 6994e616 (differs)

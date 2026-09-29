@@ -1,0 +1,4 @@
+fixed: raw differs; with the worktree root aliased identical
+previous: raw differs; with the worktree root aliased identical
+system: raw differs; with the worktree root aliased identical
+corpus: raw differs; with the worktree root aliased identical

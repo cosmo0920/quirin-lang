@@ -1,0 +1,52 @@
+{
+ "attribution.txt": {
+  "file": "attribution.txt",
+  "bytes": 26997,
+  "sha256": "109334b35aca4687aed17b99f38083875324c7e5e210f78d619169ecd5ea0542"
+ },
+ "binaries.sha256": {
+  "file": "binaries.sha256",
+  "bytes": 323,
+  "sha256": "bf787f4c5a608aca0c26c2647ae477fd8a94dea1f1e7f7a37b8f21e6e671fbdf"
+ },
+ "condvar-identity.txt": {
+  "file": "condvar-identity.txt",
+  "bytes": 249,
+  "sha256": "fc91ae427938360a6331125b8379de9fa898ec96204586bfc5c46f1e6d03f96f"
+ },
+ "facts-diff.txt": {
+  "file": "facts-diff.txt",
+  "bytes": 443,
+  "sha256": "1b7433070f7b95fe5a576e873db7c4849f11e443fe2376c05b2fed1a640a6977"
+ },
+ "fixed-configured.json": {
+  "file": "fixed-configured.json.gz",
+  "bytes": 986003,
+  "sha256": "67851ab5d6b357a1e52a58db01f1170f92eca25a1da5a4bf748ad192594e0a9a"
+ },
+ "identity.txt": {
+  "file": "identity.txt",
+  "bytes": 525,
+  "sha256": "94f49ae928d91d7aeb02994504e257c634cc4bc4bd41c277dd4e27c8a7f92e15"
+ },
+ "inputs.sha256": {
+  "file": "inputs.sha256",
+  "bytes": 1278,
+  "sha256": "83840e8f739adda6185efdecbf2bb0a4548cce47e28307ce2154c5b2ada39641"
+ },
+ "previous-configured.json": {
+  "file": "previous-configured.json.gz",
+  "bytes": 972409,
+  "sha256": "0ec65d2321b0ee37c9d90817606984f3bd7460c6c6f02e93c137a801b5a09a4d"
+ },
+ "site-diff.txt": {
+  "file": "site-diff.txt",
+  "bytes": 5099,
+  "sha256": "69979ddfd9a150d805a7dc4237adcdc8138f4b4593c99815af55a27f507ac1bc"
+ },
+ "summary.txt": {
+  "file": "summary.txt",
+  "bytes": 10448,
+  "sha256": "56aaecd3faa19ad0ee81f49158beccd39cad95fa3b431905eb1fa9c270bb4de5"
+ }
+}

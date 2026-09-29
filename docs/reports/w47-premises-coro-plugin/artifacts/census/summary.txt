@@ -1,0 +1,86 @@
+fixed-configured: discharged 11 / not 130 / unresolved 7; edges 33556, functions 11932, seeds 2852
+  == P-CORO-HANDLE
+     derived
+     `struct flb_input_coro::coro` accessed only in `flb_input_coro_collect` (read), `flb_input_coro_create` (write), `flb_input_coro_destroy` (read), `flb_input_coro_resume` (read)
+     `struct flb_libco_in_params::coro` accessed only in `input_params_set` (write), `input_pre_cb_collect` (read)
+     `struct flb_libco_in_params::coll` accessed only in `input_params_set` (write), `input_pre_cb_collect` (read)
+     `input_coro_list` is only initialised and appended to
+     `flb_input_coro_create` and `input_params_set` are called only inside the set
+     inside `flb_coro_destroy`, `flb_coro_resume`, `flb_input_coro_collect`, `flb_input_coro_create`, `flb_input_coro_destroy`, `flb_input_coro_resume`, `input_params_set`, `input_pre_cb_collect` a handle is only dereferenced, tested, stored into a handle member or passed on within the set
+  == P-PLUGIN-DIR descriptor flags
+     derived
+     `flb_proxy_register_input` writes `flags` into its fresh allocation `in` at src/flb_plugin_proxy.c:405 before naming it anywhere else
+     `runs_in_coroutine` is written by `flb_input_new` alone
+     rests on P-REGISTERED-DESCRIPTORS (the registered plugins are the build's descriptors) and P-DESCRIPTOR-FLAGS-BY-MEMBER (a descriptor's flags are written only through member accesses)
+     every `flb_input_coro_collect` call stands in the then-arm of a test of its collector's `runs_in_coroutine`
+  == P-PLUGIN-DIR registrations
+     plugins/in_ebpf/in_ebpf.c::in_ebpf_collect: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_etw/etw.c::etw_loss_metrics_collect: not derived (the registration in `plugins/in_etw/etw.c::configure_loss_metrics` does not pass a variable)
+     plugins/in_forward/fw.c::in_fw_collect: not derived (the registration in `plugins/in_forward/fw.c::in_fw_start_tcp_listener` does not pass a variable)
+     plugins/in_podman_metrics/podman_metrics.c::cb_metrics_collect_runtime: not derived (no caller passes `plugins/in_podman_metrics/podman_metrics.c::in_metrics_init` an instance)
+     plugins/in_tcp/tcp.c::in_tcp_collect: not derived (the registration in `plugins/in_tcp/tcp.c::in_tcp_start_listener` does not pass a variable)
+     plugins/in_udp/udp.c::in_udp_collect: not derived (the registration in `plugins/in_udp/udp.c::in_udp_start_listener` does not pass a variable)
+     plugins/in_unix_socket/unix_socket.c::in_unix_socket_collect: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_cpu_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_os_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_net_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_logical_disk_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_cs_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_cache_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_wmi_thermalzone_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_wmi_cpu_info_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_wmi_logon_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_wmi_system_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_wmi_service_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_wmi_memory_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_wmi_paging_file_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_wmi_process_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_wmi_tcp_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::we_timer_performancecounter_metrics_cb: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_windows_exporter_metrics/we.c::cb_we_collect: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_winevtlog/in_winevtlog.c::in_winevtlog_collect: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_winlog/in_winlog.c::in_winlog_collect: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     plugins/in_winstat/winstat.c::in_winstat_collect: not derived (P-CALLBACK-INSTANCE is not derived: the dispatch of `cb_init` at plugins/in_node_exporter_metrics/ne.c:157 does not pass the instance whose `p` it goes through)
+     (61 of 88 registrants derived)
+  == immutable threaded flag
+     derived
+     `flb_input_set_property` writes `is_threaded` only in its `threaded` arm (src/flb_input.c:1002)
+     31 `flb_input_set_property` calls pass another literal key and cannot write it
+  == residual P-CURRENT-HANDLE
+     include/fluent-bit/flb_coro.h:121 `co_active`
+     include/fluent-bit/flb_input.h:719 `co_active`
+     include/fluent-bit/flb_input.h:773 `flb_coro_get`
+     include/fluent-bit/flb_output.h:1264 `co_active`
+     include/fluent-bit/flb_output.h:1434 `flb_coro_get`
+     include/fluent-bit/flb_scheduler.h:227 `flb_coro_get`
+     include/fluent-bit/flb_time_utils.h:52 `flb_coro_get`
+     lib/monkey/include/monkey/mk_thread_libco.h:96 `co_active`
+     lib/monkey/mk_server/mk_http_thread.c:216 `co_active`
+     src/flb_downstream.c:104 `flb_coro_get`
+     src/flb_downstream.c:116 `flb_coro_get`
+     src/flb_downstream.c:510 `flb_coro_get`
+     src/flb_downstream.c:660 `flb_coro_get`
+     src/flb_downstream.c:700 `flb_coro_get`
+     src/flb_downstream.c:770 `co_active`
+     src/flb_downstream.c:840 `co_active`
+     src/flb_downstream.c:893 `flb_coro_get`
+     src/flb_downstream.c:916 `flb_coro_get`
+     src/flb_io.c:291 `flb_coro_get`
+     src/flb_io.c:788 `flb_coro_get`
+     src/flb_io.c:839 `flb_coro_get`
+     src/flb_network.c:1168 `flb_coro_get`
+     src/flb_scheduler.c:498 `co_active`
+     src/flb_upstream.c:679 `flb_coro_get`
+     src/flb_upstream.c:685 `flb_coro_get`
+  == residual P-THREADED-SET-BEFORE-START
+     plugins/custom_calyptia/calyptia.c:264 `set_fleet_input_properties` (key argument 1 not one literal)
+     src/flb_chunk_trace.c:189 `trace_chunk_pipeline_thread` (a fresh instance from `flb_input_new`, no collector registered before the write)
+     src/flb_config.c:1384 `src/flb_config.c::configure_plugins_type` (key argument 1 not one literal)
+     src/flb_config.c:1388 `src/flb_config.c::configure_plugins_type` (key argument 1 not one literal)
+     src/flb_input.c:631 `flb_input_new` (a fresh instance from `flb_calloc`, no collector registered before the write)
+     src/flb_lib.c:328 `flb_input_set` (key argument 1 not one literal)
+previous-configured: discharged 8 / not 136 / unresolved 7; edges 33530, functions 11930, seeds 2852
+fixed: discharged 8 / not 126 / unresolved 10; edges 33520, functions 11964, seeds 2902
+previous: discharged 8 / not 132 / unresolved 7; edges 33493, functions 11962, seeds 2902
+fixed-configured-control: discharged 8 / not 130 / unresolved 10; edges 33600, functions 11951, seeds 2854
+previous-configured-control: discharged 8 / not 136 / unresolved 7; edges 33573, functions 11949, seeds 2854
