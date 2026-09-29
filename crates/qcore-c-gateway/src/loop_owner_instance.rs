@@ -1415,6 +1415,10 @@ impl StepB<'_> {
         }
         // Card W47-PREMISES-HOLDER-REGION: every macro invocation on the
         // region, read from its unit's own expansion.
+        // With the facts, the functions the roots reach and those that reach a
+        // hazard over the census graph and its macro-made calls.
+        let mut macro_closure = BTreeSet::new();
+        let mut macro_reaching = BTreeSet::new();
         let macro_unmodelled = match self.region_macros {
             None => Vec::new(),
             Some(view) => {
@@ -1429,6 +1433,16 @@ impl StepB<'_> {
                     Err(why) => return not_tied(why),
                 };
                 roots.extend(read.roots.iter().copied());
+                // The census graph the region reaches over: the macro-made
+                // calls of every function a root reaches.
+                match self.closure_macro_calls(view, &roots, &reaching) {
+                    Ok(widened) => {
+                        self.notes.borrow_mut().insert(widened.note);
+                        macro_closure = widened.closure;
+                        macro_reaching = widened.reaching;
+                    }
+                    Err(why) => return not_tied(why),
+                }
                 let mut unmodelled = read.unmodelled.clone();
                 unmodelled.extend(self.own_indirect_calls(typed, &own));
                 self.notes.borrow_mut().insert(format!(
@@ -1449,6 +1463,7 @@ impl StepB<'_> {
         // unit it read) is not part of the program.
         let mut closure = self.reach.closure(roots.iter().copied());
         closure.extend(keyed_in_place.iter().copied());
+        closure.extend(macro_closure.iter().copied());
         let unmodelled = closure
             .iter()
             .copied()
@@ -1480,7 +1495,7 @@ impl StepB<'_> {
                 .reach
                 .wild
                 .iter()
-                .filter(|(id, _)| reaching.contains(id))
+                .filter(|(id, _)| reaching.contains(id) || macro_reaching.contains(id))
                 .collect::<Vec<_>>();
             if let Some((id, why)) = wild.first() {
                 let targets = BTreeMap::from([(*first, String::new())]);
@@ -1514,7 +1529,7 @@ impl StepB<'_> {
                 .reach
                 .wild
                 .iter()
-                .filter(|(id, _)| reaching.contains(id))
+                .filter(|(id, _)| reaching.contains(id) || macro_reaching.contains(id))
                 .collect::<Vec<_>>();
             if let Some((id, why)) = wild.first() {
                 blockers.push(format!(
@@ -1604,6 +1619,9 @@ impl StepB<'_> {
             ));
         };
         let flag = self.descriptors_flag(&literal)?;
+        // Card W47-PREMISES-HOLDER-REGION: the literal the copy's source was
+        // created from.
+        self.copy_literal.replace(Some(literal.clone()));
         self.notes.borrow_mut().insert(format!(
             "list-head instance: the one creation `{creator_name}(…, \"{literal}\", …)` at \
              {path}:{line} on the context `{maker}` returns (P-HEAD-INSTANCE, \
@@ -1816,11 +1834,11 @@ impl StepB<'_> {
                 ));
             }
         }
-        // Card W47-PREMISES-HOLDER-REGION: P-HOLDER-OPAQUE derived.
-        let opaque = self.holder_opaque(g, member)?;
+        // Card W47-PREMISES-HOLDER-REGION: P-HOLDER-OPAQUE is derived once
+        // the instance's creation is (`holder_opaque`, from `copy_flag`).
         self.notes.borrow_mut().insert(format!(
             "holder escape: `{root}` (`struct {tag}`, named only in {path}) escapes into the \
-             installed instance's `{}`; {opaque}",
+             installed instance's `{}`",
             tables.instance_data_field,
         ));
         Ok(())

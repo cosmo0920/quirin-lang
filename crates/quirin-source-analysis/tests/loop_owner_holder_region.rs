@@ -708,6 +708,10 @@ fn a_dump_line_reads_its_expansion_and_spelling() {
     .expect("a token");
     assert_eq!(literal.text, "\"a != 0\"");
     assert_eq!(dumped_token("In file included from x.c:1:"), None);
+    // A raw spelling across a line splice, joined by the reader.
+    let unclean = dumped_token("r_brace '}'\t [LeadingSpace] [UnClean='\\\n}']\tLoc=</r/t.c:3:1>")
+        .expect("a token");
+    assert_eq!(unclean.text, "}");
 }
 
 #[test]
@@ -842,6 +846,44 @@ fn nc_a_macro_field_dispatch_is_refused() {
     route_kept(
         &run_region(&fixture, Some(view)),
         "expands to a field dispatch",
+    );
+}
+
+#[test]
+fn nc_a_macro_made_call_in_the_closure_is_refused() {
+    // The service hook, reached from the maker's `flb_service_set`, creates an
+    // input through a macro: the census graph holds no edge for it.
+    let service = r#"
+#include "fluent-bit/flb_input.h"
+#include "macros.h"
+void service_hook(struct flb_lib_ctx *ctx)
+{
+    MAKE_CORO(ctx);
+}
+"#;
+    let fixture = make_fixture(
+        "region-closure",
+        &with_macros(INCLUDE_CENSUS, "", ""),
+        &[
+            ("include/macros.h", MACROS),
+            ("src/report.c", REPORT),
+            ("src/service.c", service),
+        ],
+    );
+    let without = run_region(&fixture, None);
+    assert_eq!(flag(&without).0, Some(false), "{}", flag(&without).1);
+    // Facts for the region's files alone: the hook's file is read by every
+    // read file's definition of the macro.
+    let (view, _) = region_facts(&fixture, &["tests/runtime/in_tail.c", "src/flb_lib.c"]);
+    route_kept(
+        &run_region(&fixture, Some(view)),
+        "through a macro-made call the census graph does not hold",
+    );
+    // With the hook's own unit read, its expansion says the same.
+    let (view, _) = region_facts(&fixture, &[]);
+    route_kept(
+        &run_region(&fixture, Some(view)),
+        "through a macro-made call the census graph does not hold",
     );
 }
 
@@ -1002,7 +1044,8 @@ int flb_input_init_all(struct flb_input_instance *ins, void *config)
 }
 "#;
 
-fn init_plugin(body: &str) -> String {
+/// An input plugin named `name` whose init callback runs `body`.
+fn init_plugin(name: &str, body: &str) -> String {
     format!(
         r#"
 #include "fluent-bit/flb_input.h"
@@ -1013,7 +1056,7 @@ static int in_init_cb(struct flb_input_instance *ins, void *config, void *data)
     return 0;
 }}
 struct flb_input_plugin in_init_plugin = {{
-    .name = "init",
+    .name = "{name}",
     .cb_init = in_init_cb,
     .flags = 0
 }};
@@ -1064,9 +1107,12 @@ void peek(struct flb_input_instance *ins)
     );
 }
 
+// The tail instance's init is its copy's: a second descriptor named "tail"
+// (matched ignoring case, as the creation matches) whose init misuses its data.
+
 #[test]
 fn nc_an_init_callback_that_hands_its_data_to_a_library_function_keeps_the_route() {
-    let plugin = init_plugin("    memset(data, 0, 4);");
+    let plugin = init_plugin("tail", "    memset(data, 0, 4);");
     let fixture = holder_fixture(
         "memset",
         &[("src/init.c", INIT), ("plugins/in_init/init.c", &plugin)],
@@ -1079,7 +1125,7 @@ fn nc_an_init_callback_that_hands_its_data_to_a_library_function_keeps_the_route
 
 #[test]
 fn nc_an_init_callback_that_stores_its_data_keeps_the_route() {
-    let plugin = init_plugin("    ins->context = data;");
+    let plugin = init_plugin("tail", "    ins->context = data;");
     let fixture = holder_fixture(
         "store",
         &[("src/init.c", INIT), ("plugins/in_init/init.c", &plugin)],
@@ -1090,6 +1136,7 @@ fn nc_an_init_callback_that_stores_its_data_keeps_the_route() {
 #[test]
 fn an_init_callback_and_a_reader_that_only_read_derive_the_holder_opaque() {
     let plugin = init_plugin(
+        "tail",
         "    struct cbs { int (*pause)(void *, void *); void *data; } *c = data;\n    \
          (void) data;\n    if (c != NULL && c->pause != NULL) {\n        c->pause(c->data, config);\n    }",
     );
@@ -1102,5 +1149,24 @@ fn an_init_callback_and_a_reader_that_only_read_derive_the_holder_opaque() {
     assert_eq!(derived, Some(false), "{reason}");
     assert!(reason.contains("P-HOLDER-OPAQUE derived"), "{reason}");
     assert!(reason.contains("flb_input_init_all"), "{reason}");
+    discharged_on_the_owners(&verdicts(&census, "cb_tail_pause_test"));
+}
+
+#[test]
+fn another_plugins_init_is_not_the_holder_instances_callback() {
+    // `ins->p->cb_init(ins, …, ins->data)` on the holder's instance runs its
+    // copy's `cb_init`; another descriptor's init never receives the holder.
+    let plugin = init_plugin("init", "    ins->context = data;\n    memset(data, 0, 4);");
+    let fixture = holder_fixture(
+        "other-init",
+        &[("src/init.c", INIT), ("plugins/in_init/init.c", &plugin)],
+    );
+    let census = run_region(&fixture, None);
+    let (derived, reason) = flag(&census);
+    assert_eq!(derived, Some(false), "{reason}");
+    assert!(
+        reason.contains("1 read(s) passed to the instance's own callback, the copy's"),
+        "{reason}"
+    );
     discharged_on_the_owners(&verdicts(&census, "cb_tail_pause_test"));
 }

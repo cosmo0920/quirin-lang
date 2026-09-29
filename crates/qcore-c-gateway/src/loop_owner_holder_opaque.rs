@@ -191,6 +191,263 @@ fn flow_of(texts: &[&str], start: usize, end: usize) -> Flow {
 }
 
 impl StepB<'_> {
+    /// The names a `typedef` gives the instance's record (or a pointer to it)
+    /// in the read files.
+    fn instance_aliases(&self) -> BTreeSet<String> {
+        let tag = self
+            .flow
+            .instance_record
+            .strip_prefix("struct ")
+            .unwrap_or(self.flow.instance_record);
+        let mut aliases = BTreeSet::new();
+        for file in 0..self.files.len() {
+            let texts = self.texts(file);
+            for k in 0..texts.len().saturating_sub(3) {
+                if texts[k] == "typedef" && texts[k + 1] == "struct" && texts[k + 2] == tag {
+                    let mut j = k + 3;
+                    while texts.get(j) == Some(&"*") {
+                        j += 1;
+                    }
+                    if let Some(name) = texts.get(j).filter(|t| is_identifier(t)) {
+                        aliases.insert((*name).to_owned());
+                    }
+                }
+            }
+        }
+        aliases
+    }
+
+    /// Whether the `data` member at `k` (a function without a typed reading)
+    /// belongs to an object `R` of `R -> data` / `R . data` that the function
+    /// declares with a record type other than the instance's.
+    fn declared_other_record(
+        &self,
+        definition: &Definition,
+        k: usize,
+        aliases: &BTreeSet<String>,
+    ) -> bool {
+        let texts = self.texts(definition.file);
+        let tag = self
+            .flow
+            .instance_record
+            .strip_prefix("struct ")
+            .unwrap_or(self.flow.instance_record);
+        let object = if texts[k - 1] == "." { k - 2 } else { k - 3 };
+        let root = texts[object];
+        if !is_identifier(root) || matches!(texts[object - 1], "." | ">") {
+            return false;
+        }
+        for j in definition.header..definition.body.1 {
+            if texts[j] != root || !matches!(texts[j + 1], "," | ")" | ";" | "=" | "[") {
+                continue;
+            }
+            let mut t = j - 1;
+            while matches!(
+                texts[t],
+                "*" | "const" | "volatile" | "restrict" | "__restrict"
+            ) {
+                t -= 1;
+            }
+            if t == j - 1 && texts[t] != ")" && !is_identifier(texts[t]) {
+                continue;
+            }
+            let word = texts[t];
+            if !is_identifier(word) || matches!(word, "return" | "sizeof" | "case" | "goto") {
+                continue;
+            }
+            if matches!(texts[t - 1], "struct" | "union") {
+                return word != tag;
+            }
+            if texts[t - 1] == "enum" {
+                return true;
+            }
+            // A typedef name: another record unless it names the instance's.
+            return !aliases.contains(word) && word != "void";
+        }
+        false
+    }
+
+    /// The carriers a value passed at `index` to function `id` starts.
+    fn parameter_carriers(
+        &self,
+        id: usize,
+        index: usize,
+        site: &str,
+    ) -> Result<Vec<(usize, String)>, String> {
+        let mut out = Vec::new();
+        for d in self.definitions_of(id) {
+            if self
+                .typed
+                .is_some_and(|typed| self.in_build(typed, d) == Some(false))
+            {
+                continue;
+            }
+            let parameters =
+                super::loop_owner_instance::ordered_parameters(&self.texts(d.file), d.header);
+            let Some(name) = parameters.get(index) else {
+                return Err(format!(
+                    "P-HOLDER-OPAQUE is not derived: {site}: passed to `{}` beyond its named \
+                     parameters",
+                    self.functions[id]
+                ));
+            };
+            out.push((id, name.clone()));
+        }
+        Ok(out)
+    }
+
+    /// The functions the holder's copy holds in `callback`, when the dispatch
+    /// at `position` of `from` calls the callback of instance `x` itself
+    /// (`x->p->F(…)`, or `Q->F(…)` after `Q = x->p`, `x` not reassigned
+    /// between): whenever `x->data` is the holder, `x->p` is the copy (the
+    /// two are installed together and each has no other writer but the
+    /// constructor), so the dispatch runs the copy's `F`. That is the function
+    /// the installing function stores in the copy's `F`, or the `F` the
+    /// creating descriptor's initializer designates (the whole copy's source).
+    /// `None` when the shape or a source is not read.
+    fn copy_callbacks(
+        &self,
+        g: &Definition,
+        root: &str,
+        member: &str,
+        from: &Definition,
+        x: &str,
+        callback: &str,
+        position: usize,
+    ) -> Option<BTreeSet<usize>> {
+        let texts = self.texts(from.file);
+        let plugin_field = self.hops.instance_plugin_field;
+        let k = position;
+        let direct = k >= 6
+            && texts[k - 1] == ">"
+            && texts[k - 2] == "-"
+            && texts[k - 3] == plugin_field
+            && texts[k - 4] == ">"
+            && texts[k - 5] == "-"
+            && texts[k - 6] == x
+            && !matches!(texts[k - 7], "." | ">");
+        let through_local = k >= 3
+            && texts[k - 1] == ">"
+            && texts[k - 2] == "-"
+            && is_identifier(texts[k - 3])
+            && !matches!(texts[k - 4], "." | ">")
+            && {
+                let q = texts[k - 3];
+                let assigned = super::loop_owner_instance::assignments(&texts, from.body, q);
+                let declared = (from.body.0..k).filter(|&i| {
+                    texts[i] == q
+                        && texts.get(i + 1) == Some(&"=")
+                        && texts.get(i + 2) != Some(&"=")
+                        && texts[i - 1] == "*"
+                });
+                let sites = assigned
+                    .iter()
+                    .copied()
+                    .chain(declared)
+                    .collect::<BTreeSet<_>>();
+                matches!(sites.iter().copied().collect::<Vec<_>>()[..], [at] if at < k
+                    && texts.get(at + 2) == Some(&x)
+                    && texts.get(at + 3) == Some(&"-")
+                    && texts.get(at + 4) == Some(&">")
+                    && texts.get(at + 5) == Some(&plugin_field)
+                    && texts.get(at + 6) == Some(&";")
+                    && !super::loop_owner_instance::address_taken(&texts, from.body, q)
+                    && super::loop_owner_instance::assignments(&texts, (at, k), x).is_empty())
+            };
+        if !(direct || through_local) {
+            return None;
+        }
+        let mut targets = BTreeSet::new();
+        // The installing function's stores: `root . member . F = f ;`.
+        let g_texts = self.texts(g.file);
+        for i in g.body.0..g.body.1 {
+            if g_texts[i] == root
+                && g_texts.get(i + 1) == Some(&".")
+                && g_texts.get(i + 2) == Some(&member)
+                && g_texts.get(i + 3) == Some(&".")
+                && g_texts.get(i + 4) == Some(&callback)
+                && g_texts.get(i + 5) == Some(&"=")
+                && g_texts.get(i + 6) != Some(&"=")
+            {
+                let value = g_texts.get(i + 6)?;
+                if g_texts.get(i + 7) != Some(&";") || !is_identifier(value) {
+                    return None;
+                }
+                targets.extend(self.resolve_name(g.file, value));
+            }
+        }
+        // The creating descriptors' designated initializers.
+        let literal = self.copy_literal.borrow().clone()?;
+        let typed = self.typed?;
+        let prefix = format!(
+            "struct {}|{}|",
+            self.hops.plugin_descriptor, self.hops.plugin_name_field
+        );
+        let objects = typed
+            .named_objects
+            .iter()
+            .filter_map(|(key, objects)| {
+                let name = key.strip_prefix(&prefix)?;
+                name.eq_ignore_ascii_case(&literal).then_some(objects)
+            })
+            .flatten()
+            .collect::<BTreeSet<_>>();
+        if objects.is_empty() {
+            return None;
+        }
+        for object in objects {
+            let mut found = false;
+            for file in 0..self.files.len() {
+                let t = self.texts(file);
+                for i in 1..t.len().saturating_sub(2) {
+                    if t[i] != object.as_str() || t[i + 1] != "=" || t[i + 2] != "{" {
+                        continue;
+                    }
+                    found = true;
+                    let mut depth = 0usize;
+                    let mut j = i + 2;
+                    loop {
+                        // Every element is designated: a positional one leaves
+                        // the slots unread.
+                        if depth == 1
+                            && matches!(t.get(j - 1).copied(), Some("{" | ","))
+                            && !matches!(t.get(j).copied(), Some("." | "}"))
+                        {
+                            return None;
+                        }
+                        match t.get(j).copied()? {
+                            "{" => depth += 1,
+                            "}" => {
+                                depth -= 1;
+                                if depth == 0 {
+                                    break;
+                                }
+                            }
+                            "." if depth == 1
+                                && t.get(j + 1) == Some(&callback)
+                                && t.get(j + 2) == Some(&"=") =>
+                            {
+                                let value = t.get(j + 3)?;
+                                if !is_identifier(value)
+                                    || !matches!(t.get(j + 4), Some(&"," | &"}"))
+                                {
+                                    return None;
+                                }
+                                targets.extend(self.resolve_name(file, value));
+                            }
+                            _ => {}
+                        }
+                        j += 1;
+                    }
+                }
+            }
+            if !found {
+                return None;
+            }
+        }
+        Some(targets)
+    }
+
     fn definitions_of(&self, id: usize) -> Vec<&Definition> {
         self.definitions
             .iter()
@@ -211,6 +468,14 @@ impl StepB<'_> {
         let place = |id: usize, index: usize| -> Result<Vec<(usize, String)>, String> {
             let mut out = Vec::new();
             for d in self.definitions_of(id) {
+                // A definition the build does not compile (a `.c` file no
+                // command names) is not part of the program.
+                if self
+                    .typed
+                    .is_some_and(|typed| self.in_build(typed, d) == Some(false))
+                {
+                    continue;
+                }
                 let parameters =
                     super::loop_owner_instance::ordered_parameters(&self.texts(d.file), d.header);
                 let Some(name) = parameters.get(index) else {
@@ -366,7 +631,12 @@ impl StepB<'_> {
 
     /// Derive P-HOLDER-OPAQUE for the holder of type `struct TAG`, declared in
     /// the test's file (that of `g`), whose member `member` is the copy.
-    pub(super) fn holder_opaque(&self, g: &Definition, member: &str) -> Result<String, String> {
+    pub(super) fn holder_opaque(
+        &self,
+        g: &Definition,
+        root: &str,
+        member: &str,
+    ) -> Result<String, String> {
         let tables = self.flow;
         let typed = self
             .typed
@@ -431,6 +701,8 @@ impl StepB<'_> {
             }
             readers.insert(function.to_owned());
         }
+        let aliases = self.instance_aliases();
+        let mut other_records = 0usize;
         for definition in self.definitions {
             let id = self.index[&definition.census_name];
             if self.in_build(typed, definition).is_some() {
@@ -441,6 +713,12 @@ impl StepB<'_> {
                 if texts[k] == field
                     && (texts[k - 1] == "." || (texts[k - 1] == ">" && texts[k - 2] == "-"))
                 {
+                    // A member of an object declared with another record type
+                    // is not the instance's (C's effective-type rule).
+                    if self.declared_other_record(definition, k, &aliases) {
+                        other_records += 1;
+                        continue;
+                    }
                     if self.reach.unstructured.contains(&id) {
                         return underived(format!(
                             "`{}` (a file this reader cannot structure) names `{field}` and has \
@@ -455,6 +733,7 @@ impl StepB<'_> {
         }
         // Each site's value, then every carrier to a fixed point.
         let mut work: Vec<(usize, String)> = Vec::new();
+        let mut narrowed = 0usize;
         for (definition, k) in &sites {
             let texts = self.texts(definition.file);
             // The chain `X (-> F | . F)* -> data`.
@@ -484,7 +763,27 @@ impl StepB<'_> {
                 self.scans[definition.file].tokens[*k].line,
                 self.functions[self.index[&definition.census_name]]
             );
-            match self.carriers_of(definition, flow_of(&texts, start, *k), &site) {
+            let flow = flow_of(&texts, start, *k);
+            // The instance's own callback: the holder's instance runs its copy.
+            if let Flow::Dispatch(callback, position, index) = &flow
+                && start + 3 == *k
+                && let Some(targets) = self.copy_callbacks(
+                    g,
+                    root,
+                    member,
+                    definition,
+                    texts[start],
+                    callback,
+                    *position,
+                )
+            {
+                narrowed += 1;
+                for id in targets {
+                    work.extend(self.parameter_carriers(id, *index, &site)?);
+                }
+                continue;
+            }
+            match self.carriers_of(definition, flow, &site) {
                 Ok(carriers) => work.extend(carriers),
                 Err(why) => return underived(why),
             }
@@ -503,14 +802,25 @@ impl StepB<'_> {
                 }
             }
         }
-        Ok(format!(
+        let summary = format!(
             "P-HOLDER-OPAQUE derived: {} read(s) of `{field}` by {}; the holder's pointer reaches \
-             {} carrier(s) in {} function(s), none writing through it outside {}",
+             {} carrier(s) in {} function(s) ({}), none writing through it outside {} ({} read(s) \
+             passed to the instance's own callback, the copy's; {} untyped `{field}` member(s) \
+             of objects declared with another record type)",
             sites.len(),
             readers.into_iter().collect::<Vec<_>>().join(", "),
             seen.len(),
             functions.len(),
-            self.files[g.file].path
-        ))
+            functions
+                .keys()
+                .map(|id| self.functions[*id].as_str())
+                .collect::<Vec<_>>()
+                .join(", "),
+            self.files[g.file].path,
+            narrowed,
+            other_records
+        );
+        self.notes.borrow_mut().insert(summary.clone());
+        Ok(summary)
     }
 }

@@ -86,9 +86,11 @@ pub struct ExpansionToken {
     pub identifier: bool,
 }
 
-/// One outermost macro invocation in the unit's own file.
+/// One outermost macro invocation in a census file the unit read.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Invocation {
+    /// The census file it stands in (the unit's own file, or a header).
+    pub file: String,
     pub line: usize,
     pub column: usize,
     /// The macro's name as the source spells it there.
@@ -119,6 +121,9 @@ pub struct UnitExpansions {
     pub compiler: String,
     /// SHA-256 of the text the unit read.
     pub source_sha256: String,
+    /// Every other census file the unit read, with the SHA-256 of its text.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub headers: BTreeMap<String, String>,
     pub invocations: Vec<Invocation>,
     /// Every function a region name may reach through the unit's own
     /// definitions (closed over the names of those outside the census).
@@ -182,8 +187,10 @@ pub struct DumpedToken {
     spelling: Option<Place>,
 }
 
-/// Read one line of `-Xclang -dump-tokens`:
-/// `KIND 'SPELLING'\tFLAGS\tLoc=<FILE:L:C[ <Spelling=FILE:L:C>]>`.
+/// Read one entry of `-Xclang -dump-tokens`:
+/// `KIND 'SPELLING'\tFLAGS\tLoc=<FILE:L:C[ <Spelling=FILE:L:C>]>`. An entry
+/// whose token was spelled across a line splice carries its raw spelling
+/// (`[UnClean='…']`) over several lines; the reader joins them first.
 #[must_use]
 pub fn dumped_token(line: &str) -> Option<DumpedToken> {
     let at = line.rfind("\tLoc=<")?;
@@ -191,7 +198,8 @@ pub fn dumped_token(line: &str) -> Option<DumpedToken> {
     let location = location.strip_suffix('>')?;
     let (kind, rest) = left.split_once(' ')?;
     let rest = rest.strip_prefix('\'')?;
-    let close = rest.rfind('\'')?;
+    // The spelling ends at the quote before the flags' tab.
+    let close = rest.find("'\t")?;
     let text = rest[..close].to_owned();
     let (expansion, spelling) = match location.split_once(" <Spelling=") {
         Some((expansion, spelling)) => (expansion, Some(spelling.strip_suffix('>')?)),
@@ -259,25 +267,30 @@ fn name_at(text: &str, line: usize, column: usize) -> String {
 #[must_use]
 pub fn read_dump(
     tokens: &[DumpedToken],
-    main: &str,
-    source: &str,
     names: &dyn Fn(&str) -> String,
     census: &BTreeSet<String>,
+    text: &dyn Fn(&str) -> Option<String>,
 ) -> (Vec<Invocation>, BTreeMap<String, UnitDefinition>) {
     let mut invocations: Vec<Invocation> = Vec::new();
     let mut last: Option<Place> = None;
+    let mut named: BTreeMap<String, String> = BTreeMap::new();
+    let mut texts: BTreeMap<String, Option<String>> = BTreeMap::new();
     for token in tokens {
         let Some(spelling) = &token.spelling else {
             last = None;
             continue;
         };
-        if token.expansion.file != main {
+        let file = named
+            .entry(token.expansion.file.clone())
+            .or_insert_with(|| names(&token.expansion.file))
+            .clone();
+        if !census.contains(&file) {
             last = None;
             continue;
         }
-        // A token spelled in the unit's own file after the invocation's name
-        // is one of its arguments; anything else is a replacement list's.
-        let argument = spelling.file == main
+        // A token spelled in the invocation's own file after its name is one
+        // of its arguments; anything else is a replacement list's.
+        let argument = spelling.file == token.expansion.file
             && (spelling.line, spelling.column) > (token.expansion.line, token.expansion.column);
         let expansion = ExpansionToken {
             text: token.text.clone(),
@@ -291,10 +304,14 @@ pub fn read_dump(
             continue;
         }
         last = Some(token.expansion.clone());
+        let source = texts.entry(file.clone()).or_insert_with(|| text(&file));
         invocations.push(Invocation {
+            file,
             line: token.expansion.line,
             column: token.expansion.column,
-            name: name_at(source, token.expansion.line, token.expansion.column),
+            name: source.as_deref().map_or_else(String::new, |source| {
+                name_at(source, token.expansion.line, token.expansion.column)
+            }),
             tokens: vec![expansion],
         });
     }
@@ -426,6 +443,7 @@ fn body_names(tokens: &[DumpedToken]) -> BTreeSet<String> {
 
 /// Run one unit's token dump and read it.
 fn derive_unit(
+    key: &str,
     compiler: &str,
     directory: &Path,
     flags: &[String],
@@ -433,7 +451,7 @@ fn derive_unit(
     file: &Path,
     root: &Path,
     census: &BTreeSet<String>,
-) -> Result<(String, Vec<Invocation>, BTreeMap<String, UnitDefinition>), String> {
+) -> Result<UnitExpansions, String> {
     let source = std::fs::read(file).map_err(|e| format!("{}: {e}", file.display()))?;
     let digest = qcore_schemas::digest::sha256_hex(&source);
     let source = String::from_utf8_lossy(&source).into_owned();
@@ -457,16 +475,30 @@ fn derive_unit(
     let stderr = child.stderr.take().ok_or("no stderr")?;
     let mut tokens = Vec::new();
     let mut unread = None;
+    // An entry ends with its location; a line without one continues onto
+    // the next (a raw spelling across a line splice).
+    let mut entry = String::new();
     for line in BufReader::new(stderr).lines() {
         let line = line.map_err(|e| format!("dump: {e}"))?;
-        match dumped_token(&line) {
+        if !entry.is_empty() {
+            entry.push('\n');
+        }
+        entry.push_str(&line);
+        if !line.contains("\tLoc=<") {
+            continue;
+        }
+        match dumped_token(&entry) {
             Some(token) => tokens.push(token),
             None => {
                 if unread.is_none() {
-                    unread = Some(line);
+                    unread = Some(entry.clone());
                 }
             }
         }
+        entry.clear();
+    }
+    if !entry.is_empty() && unread.is_none() {
+        unread = Some(entry);
     }
     let status = child.wait().map_err(|e| format!("dump: {e}"))?;
     if !status.success() {
@@ -485,9 +517,43 @@ fn derive_unit(
         .find(|f| normalize(&directory.join(f)) == normalize(file))
         .cloned()
         .unwrap_or_else(|| file.to_string_lossy().into_owned());
-    let names = |name: &str| census_name(name, directory, root);
-    let (invocations, definitions) = read_dump(&tokens, &main, &source, &names, census);
-    Ok((digest, invocations, definitions))
+    let names = |name: &str| {
+        if name == main {
+            key.to_owned()
+        } else {
+            census_name(name, directory, root)
+        }
+    };
+    let text = |path: &str| -> Option<String> {
+        if path == key {
+            return Some(source.clone());
+        }
+        std::fs::read(root.join(path))
+            .ok()
+            .map(|bytes| String::from_utf8_lossy(&bytes).into_owned())
+    };
+    let (invocations, definitions) = read_dump(&tokens, &names, census, &text);
+    let mut headers = BTreeMap::new();
+    for file in tokens
+        .iter()
+        .map(|t| &t.expansion.file)
+        .collect::<BTreeSet<_>>()
+    {
+        let path = names(file);
+        if path != key && census.contains(&path) {
+            let bytes = std::fs::read(root.join(&path)).map_err(|e| format!("{path}: {e}"))?;
+            headers.insert(path, qcore_schemas::digest::sha256_hex(&bytes));
+        }
+    }
+    Ok(UnitExpansions {
+        key: key.to_owned(),
+        compiler: compiler.to_owned(),
+        source_sha256: digest,
+        headers,
+        invocations,
+        definitions,
+        failure: None,
+    })
 }
 
 /// Derive the region-macro facts of the selected commands and the extras.
@@ -571,6 +637,7 @@ pub fn derive_facts(request: &FactsRequest) -> Result<RegionMacroFacts, String> 
                             ))
                         }
                         (Some((flags, language)), Some(_)) => derive_unit(
+                            key,
                             compiler,
                             directory,
                             flags,
@@ -581,14 +648,7 @@ pub fn derive_facts(request: &FactsRequest) -> Result<RegionMacroFacts, String> 
                         ),
                     };
                     let unit = match outcome {
-                        Ok((digest, invocations, definitions)) => UnitExpansions {
-                            key: key.clone(),
-                            compiler: compiler.clone(),
-                            source_sha256: digest,
-                            invocations,
-                            definitions,
-                            failure: None,
-                        },
+                        Ok(unit) => unit,
                         Err(failure) => UnitExpansions {
                             key: key.clone(),
                             compiler: compiler.clone(),
@@ -704,18 +764,31 @@ impl RegionMacros {
     ///
     /// # Errors
     /// No unit read the path, or one of its units failed.
-    pub fn units(&self, path: &str) -> Result<&[UnitExpansions], String> {
-        let units = self
-            .units
-            .get(path)
-            .ok_or_else(|| format!("no unit's expansion facts read {path}"))?;
-        if let Some(failed) = units.iter().find(|u| u.failure.is_some()) {
-            return Err(format!(
-                "the expansion of {path} failed: {}",
-                failed.failure.as_deref().unwrap_or("")
-            ));
+    pub fn units(&self, path: &str) -> Result<Vec<(&UnitExpansions, &str)>, String> {
+        let mut found = Vec::new();
+        for unit in self.units.values().flatten() {
+            let digest = if unit.key == path {
+                Some(unit.source_sha256.as_str())
+            } else {
+                unit.headers.get(path).map(String::as_str)
+            };
+            // A failed unit of the file, or any failed unit for a header (it
+            // may have read it), leaves the path unread.
+            if unit.failure.is_some() && (unit.key == path || !self.units.contains_key(path)) {
+                return Err(format!(
+                    "the expansion of {} failed: {}",
+                    unit.key,
+                    unit.failure.as_deref().unwrap_or("")
+                ));
+            }
+            if let Some(digest) = digest {
+                found.push((unit, digest));
+            }
         }
-        Ok(units)
+        if found.is_empty() {
+            return Err(format!("no unit's expansion facts read {path}"));
+        }
+        Ok(found)
     }
 
     /// The census paths with facts.
@@ -758,6 +831,16 @@ pub(super) struct RegionMacroReach {
     pub invocations: usize,
     /// Macro names read (for the note).
     pub names: BTreeSet<String>,
+}
+
+/// The census graph with its macro-made calls (card
+/// W47-PREMISES-HOLDER-REGION): the functions the region's roots reach and
+/// those that reach a hazard.
+#[derive(Debug, Default)]
+pub(super) struct WidenedReach {
+    pub note: String,
+    pub closure: BTreeSet<usize>,
+    pub reaching: BTreeSet<usize>,
 }
 
 /// One region part: a file, a token range and the ranges it skips.
@@ -868,6 +951,17 @@ impl StepB<'_> {
         let hidden = self.hidden_definitions();
         let tables = self.flow;
         let mut reach = RegionMacroReach::default();
+        // Every part's file must have been read: name them all.
+        let unread = parts
+            .iter()
+            .map(|(file, _, _)| self.files[*file].path.as_str())
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            .filter_map(|path| view.units(path).err())
+            .collect::<Vec<_>>();
+        if !unread.is_empty() {
+            return Err(unread.join("; "));
+        }
         for (file, range, skipped) in parts {
             let path = &self.files[*file].path;
             let units = view.units(path)?;
@@ -882,12 +976,12 @@ impl StepB<'_> {
                 let entry = lines.entry(token.line).or_insert(true);
                 *entry &= inside;
             }
-            for unit in units {
-                if unit.source_sha256 != digest {
+            for (unit, read) in units {
+                if read != digest {
                     return Err(format!("the expansion facts of {path} read another text"));
                 }
                 for invocation in &unit.invocations {
-                    if lines.get(&invocation.line) != Some(&false) {
+                    if invocation.file != *path || lines.get(&invocation.line) != Some(&false) {
                         continue;
                     }
                     reach.invocations += 1;
@@ -968,6 +1062,183 @@ impl StepB<'_> {
             }
         }
         Ok(reach)
+    }
+
+    /// The calls the census graph misses: each function's macro invocations
+    /// (from its unit's expansion where a derived unit read its file, else
+    /// every read file's definition of the invoked macro, through nested
+    /// macros) as edges. A region root that reaches a hazard only through one
+    /// refuses; a name a unit's expansion cannot resolve counts as reaching.
+    pub(super) fn closure_macro_calls(
+        &self,
+        view: &RegionMacros,
+        roots: &BTreeSet<usize>,
+        reaching: &BTreeSet<usize>,
+    ) -> Result<WidenedReach, String> {
+        let hidden = self.hidden_definitions();
+        // Every invocation by the census file it stands in.
+        let mut by_file: BTreeMap<&str, Vec<(&UnitExpansions, &Invocation)>> = BTreeMap::new();
+        for path in view.paths() {
+            let Ok(units) = view.units(&path) else {
+                continue;
+            };
+            for (unit, _) in units {
+                for invocation in &unit.invocations {
+                    by_file
+                        .entry(invocation.file.as_str())
+                        .or_default()
+                        .push((unit, invocation));
+                }
+            }
+        }
+        let read_files = view
+            .units
+            .values()
+            .flatten()
+            .filter(|u| u.failure.is_none())
+            .flat_map(|u| {
+                std::iter::once(u.key.as_str()).chain(u.headers.keys().map(String::as_str))
+            })
+            .collect::<BTreeSet<_>>();
+        let mut extra: BTreeMap<usize, BTreeSet<usize>> = BTreeMap::new();
+        let mut poisoned: BTreeMap<usize, String> = BTreeMap::new();
+        let mut memo: BTreeMap<(usize, String), BTreeSet<usize>> = BTreeMap::new();
+        let mut edges = 0usize;
+        for definition in self.definitions {
+            let id = self.index[&definition.census_name];
+            let path = self.files[definition.file].path.as_str();
+            let tokens = &self.scans[definition.file].tokens;
+            let mut found = BTreeSet::new();
+            if read_files.contains(path) {
+                let lines = tokens[definition.body.0].line..=tokens[definition.body.1].line;
+                for (unit, invocation) in by_file.get(path).into_iter().flatten() {
+                    if !lines.contains(&invocation.line) {
+                        continue;
+                    }
+                    for t in invocation.tokens.iter().filter(|t| t.body && t.identifier) {
+                        let mut seen = BTreeSet::new();
+                        let mut unmodelled = Vec::new();
+                        if let Err(why) = self.resolve_in_unit(
+                            unit,
+                            &t.text,
+                            &hidden,
+                            &mut found,
+                            &mut unmodelled,
+                            &mut seen,
+                        ) {
+                            poisoned.entry(id).or_insert(why);
+                        }
+                    }
+                }
+            } else {
+                let texts = self.texts(definition.file);
+                for k in definition.body.0..=definition.body.1 {
+                    let text = texts[k];
+                    if !self.macro_bodies.contains_key(text) || matches!(texts[k - 1], "." | ">") {
+                        continue;
+                    }
+                    let callees = memo
+                        .entry((definition.file, text.to_owned()))
+                        .or_insert_with(|| {
+                            let mut callees = self.macro_callees(definition.file, text);
+                            // Every read file's definition of the macro, every
+                            // arm: a target no compiled unit defines is not
+                            // part of the program.
+                            callees.retain(|id| !self.compiled_by_no_unit(*id));
+                            callees
+                        });
+                    found.extend(callees.iter().copied());
+                }
+            }
+            found.remove(&id);
+            let direct = self.reach.next.get(&id);
+            edges += found
+                .iter()
+                .filter(|to| direct.is_none_or(|d| !d.contains(to)))
+                .count();
+            if !found.is_empty() {
+                extra.entry(id).or_default().extend(found);
+            }
+        }
+        // Reaching over the census graph and the macro-made calls.
+        let mut back: BTreeMap<usize, Vec<usize>> = BTreeMap::new();
+        for (from, tos) in self.reach.next.iter().chain(extra.iter()) {
+            for to in tos {
+                back.entry(*to).or_default().push(*from);
+            }
+        }
+        let mut widened = reaching.clone();
+        widened.extend(poisoned.keys().copied());
+        let mut stack = widened.iter().copied().collect::<Vec<_>>();
+        while let Some(at) = stack.pop() {
+            for from in back.get(&at).into_iter().flatten() {
+                if widened.insert(*from) {
+                    stack.push(*from);
+                }
+            }
+        }
+        if let Some(root) = roots
+            .iter()
+            .find(|r| !reaching.contains(r) && widened.contains(r))
+        {
+            let why = poisoned
+                .iter()
+                .map(|(id, why)| format!("`{}`: {why}", self.functions[*id]))
+                .next()
+                .unwrap_or_default();
+            return Err(format!(
+                "`{}` reaches a hazard through a macro-made call the census graph does not \
+                 hold{}",
+                self.functions[*root],
+                if why.is_empty() {
+                    String::new()
+                } else {
+                    format!(" (or an unresolved one, first {why})")
+                }
+            ));
+        }
+        // The functions the roots reach over both.
+        let mut closure = BTreeSet::new();
+        let mut stack = roots.iter().copied().collect::<Vec<_>>();
+        while let Some(at) = stack.pop() {
+            if closure.insert(at) {
+                stack.extend(self.reach.next.get(&at).into_iter().flatten().copied());
+                stack.extend(extra.get(&at).into_iter().flatten().copied());
+            }
+        }
+        Ok(WidenedReach {
+            note: format!(
+                "closure macro calls: {edges} macro-made call(s) of the read files (the units' \
+                 expansions for the {} file(s) they read, every read file's definition \
+                 elsewhere) added to the census graph; no call of the region reaches a hazard \
+                 through one",
+                read_files.len()
+            ),
+            closure,
+            reaching: widened,
+        })
+    }
+
+    /// Every definition of `id` is in a `.c` file each of whose units the
+    /// typed reading read without failure, and none of them defines it: no
+    /// compiled unit holds it.
+    fn compiled_by_no_unit(&self, id: usize) -> bool {
+        let Some(typed) = self.typed else {
+            return false;
+        };
+        let definitions = self
+            .definitions
+            .iter()
+            .filter(|d| self.index[&d.census_name] == id)
+            .collect::<Vec<_>>();
+        !definitions.is_empty()
+            && definitions.iter().all(|d| {
+                let path = &self.files[d.file].path;
+                path.ends_with(".c")
+                    && typed.units.contains(path)
+                    && !typed.failures.contains_key(path)
+                    && !typed.functions.contains(&format!("{path}|{}", d.name))
+            })
     }
 
     /// The indirect calls the typed reading records in a function read in
