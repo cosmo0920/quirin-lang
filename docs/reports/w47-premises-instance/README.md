@@ -227,12 +227,39 @@ No site moves from Safe to non-Safe (the census publishes no `Safe`), so no
 correction is named. No leak or violation is added.
 
 **Condvar/join and lifecycle census.** `w47-flb-lib-lifecycle`'s
-`census.sh` was compared with the archive using `condvar_identity.py`; the
-exits are in §5. The old test's C5 status does not depend on this card.
+`census.sh` was compared with the archive using `condvar_identity.py`: all
+four JSONs are equal once the worktree root is aliased, so the old test's C5
+status is unchanged.
 
 ## 5. Corpus, system and tail-pause slice
 
-ARBITERS
+[`arbiters.py`](../w47-loop-owner-typed-dispatch/scripts/arbiters.py) ran
+with `--jobs 8` at `71da7a82`, the code this card lands, using binary
+`e924aa89…`. Its results are archived in
+[artifacts/arbiters/](artifacts/arbiters/). The predefined-macro card's
+`identity.py` compared each file with the round-7 baseline
+(`w47-flb-lib-lifecycle/integration/artifacts`) and composed it with
+compose3.
+
+- **Corpus** (185 units, `66910c10`): `resource-diagnostics.json` is
+  **byte-identical** (`ae17152b…`). Composed: 526 / 10 / 4,298, 0
+  mismatches.
+- **System** (`046accf6`): `resource-diagnostics.json` differs only in 30
+  `resource_contract_sources` and 15 `inventory_sha256` lines
+  ([`line_kinds.py`](scripts/line_kinds.py)). These are the checkout-root
+  hashes every card records. Composed: 31 / 2 / 201, 0 mismatches.
+- **Tail-pause slice** (`90978ac6`): the same, 32 + 16 lines. Composed:
+  24 / 1 / 244 / 1 Pending, 0 mismatches.
+
+Nothing moves, and the census is on no audit route. No BEFORE arbiter was
+run: AFTER equals the archived baseline, which the base's last census card
+reproduced at `f269c231` on the same audit code. The only other difference
+is the census-only gateway modules, which no per-unit route calls. No new
+baseline is archived.
+
+The condvar/join and lifecycle census has 5 exits, all 0. All four of its
+JSONs are identical to the archive once the worktree root is aliased
+([condvar-identity.txt](artifacts/arbiters/condvar-identity.txt)).
 
 ## 6. Premises of the three discharged sites
 
@@ -338,8 +365,8 @@ The new theorems:
 | edges, functions, seeds | unchanged (90%) | **as predicted** |
 | control readings | byte-identical (90%) | **as predicted** (all six) |
 | typed facts | earlier kinds identical (85%) | **as predicted** |
-| corpus / system / slice | unchanged (95%) | see §5 |
-| condvar/lifecycle | untouched (95%) | see §4 |
+| corpus / system / slice | unchanged (95%) | **as predicted** (§5) |
+| condvar/lifecycle | untouched (95%) | **as predicted** (§4) |
 
 The exploratory reading of the fifth row was run before the final binary,
 with the violation classification as first written. It is disclosed here
@@ -363,7 +390,37 @@ and was not archived as a result.
 
 ## 10. Gate
 
-GATE
+[`scripts/gate.py`](scripts/gate.py) runs `rust`, then `records`. Exits are
+in [gate/](gate/) and figures in [gate.json](gate.json).
+
+- **First rust run** (`private/pi/gate-1`, exits in
+  [gate/first-run/](gate/first-run/)). It ran under a load average near 50,
+  from parallel cards and this card's arbiters. The Rust suite ran 356
+  units / 369 summaries: 6,373 passed, **2 failed**, 11 ignored. Both
+  failures are wall-clock assertions in code this card does not touch:
+  - `qcore-audit` `checkpoint_cli::interrupted_run_preserves_completed_units_for_resume`
+    ("no unit checkpoint before timeout");
+  - `qcore-compiler`
+    `cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
+    ("elapsed < 500ms").
+
+  Every other step exited 0.
+- **Second rust run** (`private/pi/gate-2`), on the same code after the
+  arbiters finished:
+  - the Rust suite: **6,375 passed, 0 failed**, 11 ignored;
+  - fmt and clippy clean;
+  - both probes 0;
+  - **224 Lean audits** (`AuditLoopOwner.lean` 81 → 104 theorems, no new
+    audit module).
+- **Provider tests.** `providers/` is unchanged, so the provider gate is not
+  due, but provider `cargo test` was run for the record:
+  - The first run exited 101. One conformance test failed under load
+    (`configured_audit::pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_adapter`:
+    `checked_function_contracts` was 0, not 2); rerun alone, that binary
+    passed 7/7.
+  - The full rerun passed **129, with 0 failed** and 1 ignored.
+- **Records phase**, after the ledger, matrix and index regeneration: **365
+  Python tests OK**, docs index 0, Clang 21.1.8 recorded.
 
 **Files likely to conflict:**
 
