@@ -55,10 +55,9 @@ use crate::typed_c_ast::{children, kind};
 struct GContext<'a> {
     index: &'a StatementIndex,
     never_bound: &'a dyn Fn(&str) -> bool,
-    /// Declaration ids of automatic locals and formals of the function.
-    automatic: BTreeSet<String>,
-    /// Declaration ids whose address a `&` takes somewhere in the function.
-    address_taken: BTreeSet<String>,
+    /// Declaration ids of the function's automatic locals and formals, and
+    /// those whose address a `&` takes somewhere in it; read on first use.
+    aliasing: std::cell::OnceCell<(BTreeSet<String>, BTreeSet<String>)>,
 }
 
 impl Context for GContext<'_> {
@@ -83,7 +82,8 @@ impl Context for GContext<'_> {
     }
 
     fn unaliased(&self, decl: &str) -> bool {
-        self.automatic.contains(decl) && !self.address_taken.contains(decl)
+        let (automatic, taken) = self.aliasing.get_or_init(|| aliasing(&self.index.function));
+        automatic.contains(decl) && !taken.contains(decl)
     }
 }
 
@@ -121,6 +121,18 @@ fn aliasing(function: &Value) -> (BTreeSet<String>, BTreeSet<String>) {
 /// Whether a node holds one of this card's value forms.
 fn holds_value_form(node: &Value) -> bool {
     elaboration::value_form(node).is_some() || children(node).iter().any(holds_value_form)
+}
+
+/// Whether a statement holds one of this card's forms: a compound
+/// assignment, an increment, a comma, or an assignment *used as a value*. A
+/// statement's own top-level `=` is a plain store, whose refusals belong to
+/// the older routes and to other cards (a type query is CG08's).
+fn statement_holds_value_form(node: &Value) -> bool {
+    let bare = strip_parens(node);
+    if kind(bare) == "BinaryOperator" && bare["opcode"].as_str() == Some("=") {
+        return children(bare).iter().any(holds_value_form);
+    }
+    holds_value_form(bare)
 }
 
 /// The operands of a (possibly parenthesised) comma chain, in order.
@@ -210,6 +222,13 @@ impl Parser<'_> {
             accept: &dyn Fn(&Value) -> bool,
             out: &mut Vec<&'i Value>,
         ) {
+            // A subtree whose known range lies wholly before or after the
+            // line holds no candidate.
+            if index.node_line(node).is_some_and(|begin| begin > line)
+                || index.node_end_line(node).is_some_and(|end| end < line)
+            {
+                return;
+            }
             if accept(node)
                 && index.node_line(node) == Some(line)
                 && index.node_tokens(node).is_some_and(|found| {
@@ -235,12 +254,10 @@ impl Parser<'_> {
         index: &'i StatementIndex,
         never_bound: &'i dyn Fn(&str) -> bool,
     ) -> GContext<'i> {
-        let (automatic, address_taken) = aliasing(&index.function);
         GContext {
             index,
             never_bound,
-            automatic,
-            address_taken,
+            aliasing: std::cell::OnceCell::new(),
         }
     }
 
@@ -325,7 +342,7 @@ impl Parser<'_> {
             )
         })
         .ok_or(Refusal::Unlisted("no unique Clang node for the statement"))?;
-        if !holds_value_form(node) {
+        if !statement_holds_value_form(node) {
             return Err(Refusal::Unlisted("no value form of this card"));
         }
         // The whole statement passes the order model before any piece is
@@ -504,6 +521,13 @@ impl Parser<'_> {
             }
             (self.next_site, self.element_lowerings) = saved;
         }
+        // A piece that holds none of this card's forms keeps the older
+        // routes' refusal (a plain store's refusal is theirs).
+        if matches!(step, Step::Piece(_)) && !statement_holds_value_form(&synthetic) {
+            return Err(Refusal::Unlisted(
+                "a sequenced piece outside this card's forms",
+            ));
+        }
         let instructions = self.event_instructions(index, &synthetic, Site::Statement)?;
         Ok(instructions
             .into_iter()
@@ -574,9 +598,9 @@ impl Parser<'_> {
                 }
                 Event::Call { callee } => {
                     let effectful = elaborated.actuals.get(&id).is_some_and(|events| {
-                        events.iter().any(|&event| {
-                            !matches!(elaborated.graph.events[event], Event::Read(_))
-                        })
+                        events
+                            .iter()
+                            .any(|&event| !matches!(elaborated.graph.events[event], Event::Read(_)))
                     });
                     return Err(if effectful {
                         Refusal::EffectfulActual(callee.clone())

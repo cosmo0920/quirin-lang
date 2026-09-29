@@ -79,7 +79,10 @@ fn subject(function: &Value) -> Value {
     fn interesting(node: &Value) -> bool {
         value_form(node).is_some()
             || kind(node) == "CallExpr"
-            || matches!(kind(node), "ConditionalOperator" | "StmtExpr" | "GenericSelectionExpr")
+            || matches!(
+                kind(node),
+                "ConditionalOperator" | "StmtExpr" | "GenericSelectionExpr"
+            )
             || (kind(node) == "BinaryOperator"
                 && matches!(node["opcode"].as_str(), Some("&&" | "||")))
             || children(node).iter().any(interesting)
@@ -108,9 +111,11 @@ fn run(source: &str) -> Result<Elaboration<()>, Refusal> {
 
 fn object(name: &str) -> impl Fn(&Event) -> bool + '_ {
     move |event| match event {
-        Event::Read(Place::Object { name: n, .. }) | Event::Write { place: Place::Object { name: n, .. }, .. } => {
-            n == name
-        }
+        Event::Read(Place::Object { name: n, .. })
+        | Event::Write {
+            place: Place::Object { name: n, .. },
+            ..
+        } => n == name,
         _ => false,
     }
 }
@@ -176,7 +181,11 @@ fn cg02_disjoint_and_read_only_groups_are_admitted() {
     // A path through a pointer may reach an object whose address is taken.
     let taken = "struct S { int a; }; int subject(struct S *s, int i) { int *q = &i; \
                  s->a = i++; return *q; }";
-    assert!(matches!(run(taken), Err(Refusal::UnsequencedConflict(_))), "{:?}", run(taken));
+    assert!(
+        matches!(run(taken), Err(Refusal::UnsequencedConflict(_))),
+        "{:?}",
+        run(taken)
+    );
 }
 
 #[test]
@@ -187,8 +196,14 @@ fn cg02_pre_and_post_values_are_kept_apart() {
     for (source, old) in [
         ("int subject(int i) { int j = 0; j = i++; return j; }", true),
         ("int subject(int i) { int j = 0; j = i--; return j; }", true),
-        ("int subject(int i) { int j = 0; j = ++i; return j; }", false),
-        ("int subject(int i) { int j = 0; j = --i; return j; }", false),
+        (
+            "int subject(int i) { int j = 0; j = ++i; return j; }",
+            false,
+        ),
+        (
+            "int subject(int i) { int j = 0; j = --i; return j; }",
+            false,
+        ),
     ] {
         let function = function(source);
         let node = subject(&function);
@@ -207,8 +222,14 @@ fn cg02_pre_and_post_values_are_kept_apart() {
         }
         // One read then one write of `i`, the write after the read.
         let events = &elaborated.graph.events;
-        let read = events.iter().position(|e| matches!(e, Event::Read(_))).unwrap();
-        let write = events.iter().position(|e| matches!(e, Event::Write { .. })).unwrap();
+        let read = events
+            .iter()
+            .position(|e| matches!(e, Event::Read(_)))
+            .unwrap();
+        let write = events
+            .iter()
+            .position(|e| matches!(e, Event::Write { .. }))
+            .unwrap();
         assert!(elaborated.graph.sequenced(read, write));
         assert_eq!(events.len(), 2);
     }
@@ -224,7 +245,14 @@ fn cg02_compound_assignment_evaluates_its_place_once() {
     let elaborated = run(source).unwrap();
     let events = &elaborated.graph.events;
     let path = |event: &Event| {
-        matches!(event, Event::Read(Place::Path { .. }) | Event::Write { place: Place::Path { .. }, .. })
+        matches!(
+            event,
+            Event::Read(Place::Path { .. })
+                | Event::Write {
+                    place: Place::Path { .. },
+                    ..
+                }
+        )
     };
     // The address reads `s` and `k` once, the place is read once and written once,
     // and the right operand reads `k`.
@@ -238,14 +266,20 @@ fn cg02_compound_assignment_evaluates_its_place_once() {
     assert_eq!(write, events.len() - 1);
     for before in 0..write {
         assert!(
-            elaborated.graph.sequenced(before, write) || !matches!(events[before], Event::Read(Place::Path { .. })),
+            elaborated.graph.sequenced(before, write)
+                || !matches!(events[before], Event::Read(Place::Path { .. })),
             "{events:?}"
         );
     }
     // The place read and the right operand's read are unsequenced, and commute.
     assert!(!unordered_pairs(&elaborated.graph).is_empty());
     assert_eq!(elaborated.assumptions, vec![Assumption::NoNumericClaim]);
-    assert!(elaborated.obligations.iter().any(|o| matches!(o, Obligation::Access(Place::Path { .. }))));
+    assert!(
+        elaborated
+            .obligations
+            .iter()
+            .any(|o| matches!(o, Obligation::Access(Place::Path { .. })))
+    );
 }
 
 #[test]
@@ -260,7 +294,9 @@ fn cg02_comma_orders_every_left_event_first() {
     let k_write = graph
         .events
         .iter()
-        .position(|e| matches!(e, Event::Write { place: Place::Object { name, .. }, .. } if name == "k"))
+        .position(
+            |e| matches!(e, Event::Write { place: Place::Object { name, .. }, .. } if name == "k"),
+        )
         .unwrap();
     // Every event of `g(i++)`, the increment included, precedes `k++`, which
     // precedes the final read of `i` and the declaration's write.
@@ -283,22 +319,55 @@ fn cg02_unlisted_and_out_of_scope_forms_are_refused_by_name() {
         return;
     }
     for (source, form) in [
-        ("int subject(int a, int b) { int x = 0; x = (a && b); return x; }", "value &&"),
-        ("int subject(int a, int b) { int x = 0; x = (a || b); return x; }", "value ||"),
-        ("int subject(int a, int b) { int x = 0; x = a ? b : 1; return x; }", "conditional"),
-        ("int subject(int *p) { p++; int x = 0; x = *p++; return x; }", "pointer arithmetic"),
-        ("int subject(void (*f)(int), int a) { int x = 0; x = (f(a), a); return x; }", "indirect call"),
-        ("int subject(volatile int v) { int x = 0; x = v++; return x; }", "volatile access"),
-        ("int subject(int a) { int x = 0; x = _Generic(a, int: a++, default: 0); return x; }", "generic selection"),
-        ("int subject(int a) { int x = 0; x = ({ a++; a; }); return x; }", "statement expression"),
-        ("struct P { int a; }; int subject(int a) { int x = 0; x = (struct P){ a++ }.a; return x; }", "compound literal"),
+        (
+            "int subject(int a, int b) { int x = 0; x = (a && b); return x; }",
+            "value &&",
+        ),
+        (
+            "int subject(int a, int b) { int x = 0; x = (a || b); return x; }",
+            "value ||",
+        ),
+        (
+            "int subject(int a, int b) { int x = 0; x = a ? b : 1; return x; }",
+            "conditional",
+        ),
+        (
+            "int subject(int *p) { p++; int x = 0; x = *p++; return x; }",
+            "pointer arithmetic",
+        ),
+        (
+            "int subject(void (*f)(int), int a) { int x = 0; x = (f(a), a); return x; }",
+            "indirect call",
+        ),
+        (
+            "int subject(volatile int v) { int x = 0; x = v++; return x; }",
+            "volatile access",
+        ),
+        (
+            "int subject(int a) { int x = 0; x = _Generic(a, int: a++, default: 0); return x; }",
+            "generic selection",
+        ),
+        (
+            "int subject(int a) { int x = 0; x = ({ a++; a; }); return x; }",
+            "statement expression",
+        ),
+        (
+            "struct P { int a; }; int subject(int a) { int x = 0; x = (struct P){ a++ }.a; return x; }",
+            "compound literal",
+        ),
     ] {
         assert_eq!(run(source).unwrap_err(), refused(form), "{source}");
         assert!(matches!(disposition(form), Some(Disposition::Refused(_))));
     }
     // A pointer-valued store is elaborated with its class; route G refuses it.
     let pointer = run("int subject(int *p, int *q) { int *r; r = (p = q); return 0; }").unwrap();
-    assert!(pointer.graph.events.iter().any(|e| matches!(e, Event::Write { pointer: true, .. })));
+    assert!(
+        pointer
+            .graph
+            .events
+            .iter()
+            .any(|e| matches!(e, Event::Write { pointer: true, .. }))
+    );
 }
 
 #[test]
@@ -308,11 +377,23 @@ fn cg02_route_t_names_each_value_form() {
         return;
     }
     for (source, form) in [
-        ("int subject(int a) { int x; int y; x = (y = a); return x; }", "assignment value"),
-        ("int subject(int a) { int j = a++; return j; }", "post increment"),
-        ("int subject(int a) { int j = --a; return j; }", "pre decrement"),
+        (
+            "int subject(int a) { int x; int y; x = (y = a); return x; }",
+            "assignment value",
+        ),
+        (
+            "int subject(int a) { int j = a++; return j; }",
+            "post increment",
+        ),
+        (
+            "int subject(int a) { int j = --a; return j; }",
+            "pre decrement",
+        ),
         ("int subject(int a, int b) { return (a, b); }", "comma"),
-        ("int subject(int a) { int x = 1; return x += a; }", "compound assignment value"),
+        (
+            "int subject(int a) { int x = 1; return x += a; }",
+            "compound assignment value",
+        ),
     ] {
         let results = import_source_functions(
             &C11TranslationUnit {
@@ -330,7 +411,9 @@ fn cg02_route_t_names_each_value_form() {
         )
         .unwrap();
         match results.into_iter().next() {
-            Some(SourceResult::Unknown { reason, .. }) => assert_eq!(reason, t_refusal(form), "{source}"),
+            Some(SourceResult::Unknown { reason, .. }) => {
+                assert_eq!(reason, t_refusal(form), "{source}")
+            }
             other => panic!("{source}: {other:?}"),
         }
     }
@@ -356,10 +439,15 @@ fn cg02_lean_vectors_match_the_rust_tables() {
                 Disposition::Sequenced
             } else {
                 let card = rest.split('"').nth(3).unwrap();
-                Disposition::Refused(FORM_TABLE.iter().find_map(|(_, d)| match d {
-                    Disposition::Refused(c) if *c == card => Some(*c),
-                    _ => None,
-                }).unwrap_or_else(|| panic!("unknown card {card}")))
+                Disposition::Refused(
+                    FORM_TABLE
+                        .iter()
+                        .find_map(|(_, d)| match d {
+                            Disposition::Refused(c) if *c == card => Some(*c),
+                            _ => None,
+                        })
+                        .unwrap_or_else(|| panic!("unknown card {card}")),
+                )
             };
             (form.to_owned(), disposition)
         })
@@ -381,7 +469,10 @@ fn cg02_lean_vectors_match_the_rust_tables() {
         };
         match kind {
             "read" => Event::Read(place),
-            "write" => Event::Write { place, pointer: false },
+            "write" => Event::Write {
+                place,
+                pointer: false,
+            },
             other => panic!("unknown Lean event {other}"),
         }
     };
@@ -393,7 +484,8 @@ fn cg02_lean_vectors_match_the_rust_tables() {
         }
         let fields = line.trim_end_matches(')').split(", ").collect::<Vec<_>>();
         let expected = fields[2] == "true";
-        let decided = commutes(&event(fields[0]), &event(fields[1]), &|_| true) == Commutation::Commutes;
+        let decided =
+            commutes(&event(fields[0]), &event(fields[1]), &|_| true) == Commutation::Commutes;
         assert_eq!(decided, expected, "{line}");
         count += 1;
     }
@@ -406,7 +498,11 @@ fn cg02_lean_vectors_match_the_rust_tables() {
     let mut count = 0;
     for row in vectors.split("\n  (\"").skip(1) {
         let (source, rest) = row.split_once('"').unwrap();
-        let expected = rest.trim_end().trim_end_matches(',').trim_end_matches(')').ends_with("true");
+        let expected = rest
+            .trim_end()
+            .trim_end_matches(',')
+            .trim_end_matches(')')
+            .ends_with("true");
         assert_eq!(run(source).is_ok(), expected, "{source}: {:?}", run(source));
         count += 1;
     }

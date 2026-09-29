@@ -251,8 +251,10 @@ fn e05_value_producing_increments_are_refused() {
     assert!(gs("void subject(void) { char *p = q_alloc(); char *q = p; q++; q_free(p); }").safe());
     // A pointer step inside a larger value stays refused (pointer arithmetic,
     // CG16); the older stepped-access route owns `int c = *q++;` itself.
-    let run = gs("int subject(void) { char *p = q_alloc(); char *q = p; int c = 0; \
-                  c = q[0] + *q++; q_free(p); return c; }");
+    let run = gs(
+        "int subject(void) { char *p = q_alloc(); char *q = p; int c = 0; \
+                  c = q[0] + *q++; q_free(p); return c; }",
+    );
     assert!(!run.safe(), "{run:?}");
 }
 

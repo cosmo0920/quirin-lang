@@ -112,11 +112,16 @@ pub(crate) enum Event {
     Read(Place),
     /// A side effect that stores into a place; `pointer` is the stored value's
     /// class (a pointer-valued store is card CG11's).
-    Write { place: Place, pointer: bool },
+    Write {
+        place: Place,
+        pointer: bool,
+    },
     /// A direct call of a named function; its contract is applied by the
     /// route's existing contract application (card CG03 owns the single
     /// application point).
-    Call { callee: String },
+    Call {
+        callee: String,
+    },
     /// A control split and join (value `&&`, `||`, `?:`: card CG06). Not
     /// emitted by this card's forms, which refuse those operators by name.
     Branch,
@@ -424,7 +429,10 @@ pub(crate) trait Context {
 }
 
 /// Elaborate one full expression or one-declarator declaration.
-pub(crate) fn elaborate<C: Context>(node: &Value, context: &C) -> Result<Elaboration<C::Facts>, Refusal> {
+pub(crate) fn elaborate<C: Context>(
+    node: &Value,
+    context: &C,
+) -> Result<Elaboration<C::Facts>, Refusal> {
     let mut elaborator = Elaborator {
         context,
         graph: EvalGraph::default(),
@@ -438,9 +446,7 @@ pub(crate) fn elaborate<C: Context>(node: &Value, context: &C) -> Result<Elabora
     } else {
         elaborator.expression(node)?
     };
-    elaborator
-        .graph
-        .check(&|decl| context.unaliased(decl))?;
+    elaborator.graph.check(&|decl| context.unaliased(decl))?;
     let has_arithmetic = part.arithmetic;
     Ok(Elaboration {
         result: part.result,
@@ -482,6 +488,10 @@ impl Part {
     }
 }
 
+/// An lvalue: its place, the events of its address computation, and the
+/// route's facts when it is a path.
+type Lvalue<F> = (Place, Vec<EventId>, Option<F>);
+
 struct Elaborator<'a, C: Context> {
     context: &'a C,
     graph: EvalGraph,
@@ -517,7 +527,12 @@ impl<C: Context> Elaborator<'_, C> {
         }
     }
 
-    fn computed(&self, node: &Value, all: Vec<EventId>, values: Vec<EventId>) -> Result<Part, Refusal> {
+    fn computed(
+        &self,
+        node: &Value,
+        all: Vec<EventId>,
+        values: Vec<EventId>,
+    ) -> Result<Part, Refusal> {
         Ok(Part {
             all,
             values,
@@ -549,7 +564,7 @@ impl<C: Context> Elaborator<'_, C> {
 
     /// An lvalue: a named object (no address events) or a path the context
     /// admits, with the reads of its address computation.
-    fn lvalue(&mut self, node: &Value, store: bool) -> Result<(Place, Vec<EventId>, Option<C::Facts>), Refusal> {
+    fn lvalue(&mut self, node: &Value, store: bool) -> Result<Lvalue<C::Facts>, Refusal> {
         let bare = strip_parens(node);
         if let Some(qualifier) = qualified(bare) {
             return Err(refused(qualifier));
@@ -562,7 +577,7 @@ impl<C: Context> Elaborator<'_, C> {
         }
     }
 
-    fn path(&mut self, node: &Value, store: bool) -> Result<(Place, Vec<EventId>, Option<C::Facts>), Refusal> {
+    fn path(&mut self, node: &Value, store: bool) -> Result<Lvalue<C::Facts>, Refusal> {
         let place = path_place(node)?;
         let facts = self.context.place(node, store)?;
         let mut reads = Vec::new();
@@ -632,12 +647,20 @@ impl<C: Context> Elaborator<'_, C> {
 
     fn expression(&mut self, node: &Value) -> Result<Part, Refusal> {
         match kind(node) {
-            "ParenExpr" => self.expression(children(node).first().ok_or(Refusal::Unlisted("empty parentheses"))?),
-            "IntegerLiteral" | "CharacterLiteral" | "FloatingLiteral" => Ok(Part::empty(Operand::Value {
-                pointer: false,
-                source: ValueSource::Computed,
-            })),
-            "DeclRefExpr" if node["referencedDecl"]["kind"].as_str() == Some("EnumConstantDecl") => {
+            "ParenExpr" => self.expression(
+                children(node)
+                    .first()
+                    .ok_or(Refusal::Unlisted("empty parentheses"))?,
+            ),
+            "IntegerLiteral" | "CharacterLiteral" | "FloatingLiteral" => {
+                Ok(Part::empty(Operand::Value {
+                    pointer: false,
+                    source: ValueSource::Computed,
+                }))
+            }
+            "DeclRefExpr"
+                if node["referencedDecl"]["kind"].as_str() == Some("EnumConstantDecl") =>
+            {
                 Ok(Part::empty(Operand::Value {
                     pointer: false,
                     source: ValueSource::Computed,
@@ -645,15 +668,27 @@ impl<C: Context> Elaborator<'_, C> {
             }
             "ImplicitCastExpr" => self.implicit_cast(node),
             "CStyleCastExpr" => {
-                let inner = children(node).first().ok_or(Refusal::Unlisted("empty cast"))?;
+                let inner = children(node)
+                    .first()
+                    .ok_or(Refusal::Unlisted("empty cast"))?;
                 if self.context.scalar(node) && self.context.scalar(inner) {
                     self.expression(inner)
                 } else {
-                    Err(Refusal::Cast(node["castKind"].as_str().unwrap_or("?").to_owned()))
+                    Err(Refusal::Cast(
+                        node["castKind"].as_str().unwrap_or("?").to_owned(),
+                    ))
                 }
             }
             "UnaryExprOrTypeTraitExpr" => {
-                if children(node).is_empty() && self.context.scalar(node) {
+                // A query of a named, non-array type: never evaluated (a
+                // variably modified type's is, and refuses). Its value is a
+                // custody-neutral scalar; no size is claimed (CG08).
+                if children(node).is_empty()
+                    && self.context.scalar(node)
+                    && node["argType"]["qualType"]
+                        .as_str()
+                        .is_some_and(|ty| !ty.contains('['))
+                {
                     Ok(Part::empty(Operand::Value {
                         pointer: false,
                         source: ValueSource::Computed,
@@ -676,7 +711,9 @@ impl<C: Context> Elaborator<'_, C> {
     }
 
     fn implicit_cast(&mut self, node: &Value) -> Result<Part, Refusal> {
-        let inner = children(node).first().ok_or(Refusal::Unlisted("empty cast"))?;
+        let inner = children(node)
+            .first()
+            .ok_or(Refusal::Unlisted("empty cast"))?;
         match node["castKind"].as_str().unwrap_or("") {
             "LValueToRValue" => {
                 let pointer = self.value(node)?;
@@ -697,7 +734,9 @@ impl<C: Context> Elaborator<'_, C> {
             }
             "NoOp" | "IntegralCast" => {
                 if !self.context.scalar(node) {
-                    return Err(Refusal::Cast(node["castKind"].as_str().unwrap_or("?").to_owned()));
+                    return Err(Refusal::Cast(
+                        node["castKind"].as_str().unwrap_or("?").to_owned(),
+                    ));
                 }
                 self.expression(inner)
             }
@@ -707,7 +746,9 @@ impl<C: Context> Elaborator<'_, C> {
     }
 
     fn unary(&mut self, node: &Value) -> Result<Part, Refusal> {
-        let operand = children(node).first().ok_or(Refusal::Unlisted("empty unary"))?;
+        let operand = children(node)
+            .first()
+            .ok_or(Refusal::Unlisted("empty unary"))?;
         match node["opcode"].as_str().unwrap_or("") {
             "+" | "-" | "!" | "~" => {
                 let part = self.expression(operand)?;
@@ -920,11 +961,12 @@ impl<C: Context> Elaborator<'_, C> {
         self.actuals.insert(call, all.clone());
         self.obligations.push(Obligation::Contract(name.to_owned()));
         all.push(call);
-        let pointer = if kind(node) == "CallExpr" && crate::typed_access_path::qual(node) == Some("void") {
-            None
-        } else {
-            Some(self.value(node)?)
-        };
+        let pointer =
+            if kind(node) == "CallExpr" && crate::typed_access_path::qual(node) == Some("void") {
+                None
+            } else {
+                Some(self.value(node)?)
+            };
         Ok(Part {
             all,
             values: vec![call],
@@ -973,7 +1015,11 @@ pub(crate) fn direct_callee(callee: &Value) -> Option<&str> {
 /// lvalue-to-rvalue conversion inside it (a pointer root, an index, a pointer
 /// member read on the way). `outer` marks the place node itself, whose own
 /// access is the caller's event. A side effect inside an address refuses.
-fn address_reads<'a>(node: &'a Value, outer: bool, out: &mut Vec<&'a Value>) -> Result<(), Refusal> {
+fn address_reads<'a>(
+    node: &'a Value,
+    outer: bool,
+    out: &mut Vec<&'a Value>,
+) -> Result<(), Refusal> {
     match kind(node) {
         "CallExpr" | "StmtExpr" | "CompoundAssignOperator" => {
             return Err(Refusal::Place("effectful address".into()));

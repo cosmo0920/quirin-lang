@@ -662,6 +662,13 @@ impl StatementIndex {
         node_line(node, self.source.len(), &self.line_starts)
     }
 
+    /// Card CG02-ELABORATION-CORE: the line a node's range ends on.
+    pub(crate) fn node_end_line(&self, node: &Value) -> Option<usize> {
+        let offset = offset(&node["range"]["end"])?;
+        (offset <= self.source.len())
+            .then(|| self.line_starts.partition_point(|&start| start <= offset))
+    }
+
     pub(crate) fn node_tokens(&self, node: &Value) -> Option<Vec<String>> {
         let start = offset(&node["range"]["begin"])?;
         let end = offset(&node["range"]["end"])?
