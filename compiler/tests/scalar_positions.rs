@@ -610,6 +610,7 @@ fn the_record_fields_example_publishes_its_transcript() {
 
 /// The two stream projections a page publishes.
 #[derive(Default)]
+#[cfg_attr(not(unix), allow(dead_code))]
 struct PublishedStreams {
     out: String,
     err: String,

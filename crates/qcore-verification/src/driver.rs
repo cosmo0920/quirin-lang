@@ -1507,27 +1507,27 @@ fn compile_elaborated_source(
     // with an explicit source-derived layout. Falling through would discard
     // the record storage-unit identity and refuse for the generic route's
     // shallower reason rather than deciding the concurrent writes.
-    if qcore_frontend::source_bitfield_concurrency::has_source_bitfield_tasks(&parsed) {
-        return compile_bitfield_task_source(&parsed, &typed, mode, options, &ranges);
+    if qcore_frontend::source_bitfield_concurrency::has_source_bitfield_tasks(parsed) {
+        return compile_bitfield_task_source(parsed, typed, mode, options, ranges);
     }
-    if qcore_frontend::source_epoch_tasks::has_composed_epoch(&parsed) {
+    if qcore_frontend::source_epoch_tasks::has_composed_epoch(parsed) {
         // Selected before the pure epoch route: a module carrying both an epoch
         // scope and the scoped-task profile's own marker is accounting for a
         // real task region, and must not be handed to a route whose workers are
         // declarations with no bodies.
-        return compile_composed_epoch_source(&parsed, mode, options, &ranges);
+        return compile_composed_epoch_source(parsed, mode, options, ranges);
     }
-    if qcore_frontend::source_epoch::has_source_epoch(&parsed) {
+    if qcore_frontend::source_epoch::has_source_epoch(parsed) {
         // Selected before every other concurrent route: an epoch scope is also
         // a `thread scope`, and a module that declares a quantitative epoch
         // must not be handed to a route that models no accounting at all.
-        return compile_epoch_source(&parsed, &typed, mode, options, &ranges);
+        return compile_epoch_source(parsed, typed, mode, options, ranges);
     }
-    if qcore_frontend::source_mutex::has_source_mutex(&parsed) {
+    if qcore_frontend::source_mutex::has_source_mutex(parsed) {
         // Selected before the task route: a `thread scope` alone also selects
         // scoped tasks, and a module declaring a mutex generation must not be
         // handed to a route that models no mutex at all.
-        return compile_mutex_source(&parsed, &typed, mode, options, &ranges);
+        return compile_mutex_source(parsed, typed, mode, options, ranges);
     }
     // Selected after every *more specific* concurrent route and before the task
     // route it composes (card `COMPOSE-CONCURRENCY`). The order is what keeps
@@ -1535,11 +1535,11 @@ fn compile_elaborated_source(
     // generation never reaches this line, and a module that also extern-calls
     // fails this conjunction and falls through to the task route with its
     // existing `Q600`.
-    if qcore_frontend::source_composed_tasks::has_source_composed_tasks(&parsed) {
-        return compile_composed_task_source(&parsed, &typed, mode, options, &ranges);
+    if qcore_frontend::source_composed_tasks::has_source_composed_tasks(parsed) {
+        return compile_composed_task_source(parsed, typed, mode, options, ranges);
     }
-    if qcore_frontend::source_tasks::has_source_tasks(&parsed) {
-        return compile_task_source(&parsed, &typed, mode, options, &ranges);
+    if qcore_frontend::source_tasks::has_source_tasks(parsed) {
+        return compile_task_source(parsed, typed, mode, options, ranges);
     }
     // Selected after every concurrent route and before both routes it composes
     // (card `STD-IO-COMPOSE`). The order is what makes the composition safe to
@@ -1547,14 +1547,14 @@ fn compile_elaborated_source(
     // never reaches here, so both concurrency exclusions keep their existing
     // refusals; and a module using one of the two composed feature sets fails
     // this conjunction and falls through to that route byte for byte.
-    if qcore_frontend::source_composed::has_source_composed(&parsed) {
+    if qcore_frontend::source_composed::has_source_composed(parsed) {
         return compile_composed_source(parsed, typed, mode, options, ranges, target);
     }
     // Selected after the concurrent routes on purpose: a module that both
     // spawns and calls an extern function stays with the task route, which
     // keeps its existing refusal. Lifting that is a separate card, because a
     // task worker is a separate checked model (design §3.4).
-    if qcore_frontend::source_extern::has_source_extern(&parsed) {
+    if qcore_frontend::source_extern::has_source_extern(parsed) {
         return compile_extern_source(parsed, typed, mode, options, ranges, target);
     }
     // Card `STD-EVENT`. Selected after every concurrent route and after the
@@ -1583,13 +1583,13 @@ fn compile_elaborated_source(
     // `HTTP-V1-EVENT-COMPOSE`). Every concurrent route and the extern route are
     // selected above all of it, so a module that dispatches, sockets and spawns
     // still keeps its `Q600`.
-    if qcore_frontend::source_event::has_source_event(&parsed)
-        && qcore_frontend::source_socket::has_source_socket(&parsed)
-        && !qcore_frontend::source_std_buffer::has_source_buffer(&parsed)
-        && !qcore_frontend::source_std_string::has_source_string(&parsed)
-        && !qcore_frontend::source_http::has_source_http(&parsed)
+    if qcore_frontend::source_event::has_source_event(parsed)
+        && qcore_frontend::source_socket::has_source_socket(parsed)
+        && !qcore_frontend::source_std_buffer::has_source_buffer(parsed)
+        && !qcore_frontend::source_std_string::has_source_string(parsed)
+        && !qcore_frontend::source_http::has_source_http(parsed)
     {
-        return compile_socket_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+        return compile_socket_source(parsed, typed, mode, options, ranges).and_then(|module| {
             refuse_unmodeled_functions(
                 module,
                 EntryOnlyRoute {
@@ -1597,13 +1597,13 @@ fn compile_elaborated_source(
                     code: "Q080",
                     pass: SemanticPass::StandardSocket,
                 },
-                &parsed,
-                &ranges,
+                parsed,
+                ranges,
             )
         });
     }
-    if qcore_frontend::source_event::has_source_event(&parsed) {
-        return compile_event_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+    if qcore_frontend::source_event::has_source_event(parsed) {
+        return compile_event_source(parsed, typed, mode, options, ranges).and_then(|module| {
             refuse_unmodeled_functions(
                 module,
                 EntryOnlyRoute {
@@ -1611,8 +1611,8 @@ fn compile_elaborated_source(
                     code: "Q058",
                     pass: SemanticPass::Event,
                 },
-                &parsed,
-                &ranges,
+                parsed,
+                ranges,
             )
         });
     }
@@ -1651,8 +1651,8 @@ fn compile_elaborated_source(
     // route and that route's existing refusal — which is to say every program
     // written before this card travels an identical code path, and the one new
     // door is opened only by the one new spelling.
-    if qcore_frontend::source_std_string::has_source_string_bridge(&parsed) {
-        return compile_string_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+    if qcore_frontend::source_std_string::has_source_string_bridge(parsed) {
+        return compile_string_source(parsed, typed, mode, options, ranges).and_then(|module| {
             refuse_unmodeled_functions(
                 module,
                 EntryOnlyRoute {
@@ -1660,8 +1660,8 @@ fn compile_elaborated_source(
                     code: "Q068",
                     pass: SemanticPass::StandardString,
                 },
-                &parsed,
-                &ranges,
+                parsed,
+                ranges,
             )
         });
     }
@@ -1680,13 +1680,13 @@ fn compile_elaborated_source(
     // selected above it, so a module that declares a record and spawns, calls
     // out or dispatches keeps that route's existing refusal — measured, not
     // assumed.
-    if qcore_frontend::source_resource_calls::has_resource_calls(&parsed) {
-        return compile_resource_call_source(&parsed, &typed, mode, options, &ranges);
+    if qcore_frontend::source_resource_calls::has_resource_calls(parsed) {
+        return compile_resource_call_source(parsed, typed, mode, options, ranges);
     }
-    if qcore_frontend::source_std_buffer::has_source_buffer(&parsed)
-        || qcore_frontend::source_record::has_source_record(&parsed)
+    if qcore_frontend::source_std_buffer::has_source_buffer(parsed)
+        || qcore_frontend::source_record::has_source_record(parsed)
     {
-        return compile_buffer_source(&parsed, &typed, mode, options, &ranges, target).and_then(
+        return compile_buffer_source(parsed, typed, mode, options, ranges, target).and_then(
             |module| {
                 refuse_unmodeled_functions(
                     module,
@@ -1695,8 +1695,8 @@ fn compile_elaborated_source(
                         code: "Q051",
                         pass: SemanticPass::StandardBuffer,
                     },
-                    &parsed,
-                    &ranges,
+                    parsed,
+                    ranges,
                 )
             },
         );
@@ -1752,8 +1752,8 @@ fn compile_elaborated_source(
     // does HTTP stays with `source.event.v1` (`HTTP-V1-EVENT-COMPOSE`); the
     // extern route is above all of them, and every concurrent route above that,
     // so a module that does HTTP and spawns keeps its `Q600`.
-    if qcore_frontend::source_http::has_source_http(&parsed) {
-        return compile_http_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+    if qcore_frontend::source_http::has_source_http(parsed) {
+        return compile_http_source(parsed, typed, mode, options, ranges).and_then(|module| {
             refuse_unmodeled_functions(
                 module,
                 EntryOnlyRoute {
@@ -1761,13 +1761,13 @@ fn compile_elaborated_source(
                     code: "Q090",
                     pass: SemanticPass::StandardHttp,
                 },
-                &parsed,
-                &ranges,
+                parsed,
+                ranges,
             )
         });
     }
-    if qcore_frontend::source_std_string::has_source_string(&parsed) {
-        return compile_string_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+    if qcore_frontend::source_std_string::has_source_string(parsed) {
+        return compile_string_source(parsed, typed, mode, options, ranges).and_then(|module| {
             refuse_unmodeled_functions(
                 module,
                 EntryOnlyRoute {
@@ -1775,8 +1775,8 @@ fn compile_elaborated_source(
                     code: "Q068",
                     pass: SemanticPass::StandardString,
                 },
-                &parsed,
-                &ranges,
+                parsed,
+                ranges,
             )
         });
     }
@@ -1806,8 +1806,8 @@ fn compile_elaborated_source(
     // two is the named follow-on `SOCKET-EVENT-COMPOSE`. The extern route is
     // selected above all four, and every concurrent route above that, so a module
     // that sockets and spawns keeps its `Q600`.
-    if qcore_frontend::source_socket::has_source_socket(&parsed) {
-        return compile_socket_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+    if qcore_frontend::source_socket::has_source_socket(parsed) {
+        return compile_socket_source(parsed, typed, mode, options, ranges).and_then(|module| {
             refuse_unmodeled_functions(
                 module,
                 EntryOnlyRoute {
@@ -1815,13 +1815,13 @@ fn compile_elaborated_source(
                     code: "Q080",
                     pass: SemanticPass::StandardSocket,
                 },
-                &parsed,
-                &ranges,
+                parsed,
+                ranges,
             )
         });
     }
-    if qcore_frontend::source_scalar_calls::has_print_calls(&parsed) {
-        return compile_scalar_calls(&parsed, &typed, mode, options, &ranges, target);
+    if qcore_frontend::source_scalar_calls::has_print_calls(parsed) {
+        return compile_scalar_calls(parsed, typed, mode, options, ranges, target);
     }
     // Card `W48-QR-SCALAR-TYPES`, and the whole of the route-selection change
     // it makes. A module with `std.io` lines and scalar-call syntax reaches the
@@ -1831,14 +1831,14 @@ fn compile_elaborated_source(
     // byte — including an std.io entry beside an ignored helper function,
     // which that route admits today — so the door opens only for modules that
     // were refused.
-    if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
-        if qcore_frontend::source_scalar_calls::has_scalar_calls(&parsed)
-            && (std_io_lowering_refuses(&parsed, &typed, mode, options)
-                || has_unmodeled_function(&parsed, &typed, mode, options))
+    if qcore_frontend::source_std_io::has_source_std_io(parsed) {
+        if qcore_frontend::source_scalar_calls::has_scalar_calls(parsed)
+            && (std_io_lowering_refuses(parsed, typed, mode, options)
+                || has_unmodeled_function(parsed, typed, mode, options))
         {
-            return compile_scalar_calls(&parsed, &typed, mode, options, &ranges, target);
+            return compile_scalar_calls(parsed, typed, mode, options, ranges, target);
         }
-        return compile_std_io_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+        return compile_std_io_source(parsed, typed, mode, options, ranges).and_then(|module| {
             refuse_unmodeled_functions(
                 module,
                 EntryOnlyRoute {
@@ -1846,19 +1846,19 @@ fn compile_elaborated_source(
                     code: "Q030",
                     pass: SemanticPass::StandardIo,
                 },
-                &parsed,
-                &ranges,
+                parsed,
+                ranges,
             )
         });
     }
-    if qcore_frontend::source_scalar_calls::has_scalar_calls(&parsed) {
-        return compile_scalar_calls(&parsed, &typed, mode, options, &ranges, target);
+    if qcore_frontend::source_scalar_calls::has_scalar_calls(parsed) {
+        return compile_scalar_calls(parsed, typed, mode, options, ranges, target);
     }
     // Card `W48-QR-SCALAR-TYPES-R2`, item 0: the sequential route checks
     // every parameter annotation it admits, after its own passes so that
     // every refusal it gave before keeps its bytes.
-    compile_sequential_source(&parsed, &typed, mode, options, &ranges)
-        .and_then(|module| check_sequential_parameters(&parsed, target, &ranges).map(|()| module))
+    compile_sequential_source(parsed, typed, mode, options, ranges)
+        .and_then(|module| check_sequential_parameters(parsed, target, ranges).map(|()| module))
 }
 
 /// Card `W48-QR-SCALAR-TYPES-R2`, item 0 (`W48-SEQUENTIAL-UNCHECKED-PARAMETER-TYPES`).

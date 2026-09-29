@@ -57,6 +57,7 @@ fn host_target() -> RecordedTarget {
 }
 
 /// The ABI spelling the extern backend declares a value of `ty` at.
+#[cfg(unix)]
 fn abi_c(ty: ScalarType) -> &'static str {
     match ty {
         ScalarType::Bool => "_Bool",
@@ -91,6 +92,7 @@ fn declarations(types: &[ScalarType]) -> String {
 
 /// The callees: `q_seq_T` returns the next number of the `QSEQ` environment
 /// list, `q_expect_T` exits 99 unless its argument is the next one.
+#[cfg(unix)]
 fn callees_c() -> String {
     let mut text = String::from(
         "#include <stdbool.h>\n#include <stddef.h>\n#include <stdint.h>\n#include <stdlib.h>\n#include <string.h>\n\nstatic const char *q_next(void)\n{\n    static const char *cursor = NULL;\n    static int started = 0;\n    if (!started) {\n        cursor = getenv(\"QSEQ\");\n        started = 1;\n    }\n    if (cursor == NULL || *cursor == '\\0') {\n        exit(98);\n    }\n    const char *token = cursor;\n    const char *comma = strchr(cursor, ',');\n    cursor = comma != NULL ? comma + 1 : cursor + strlen(cursor);\n    return token;\n}\n",
@@ -365,6 +367,11 @@ fn known_programs_run_natively_as_the_reference_under_three_builds() {
 
 // --- Dynamic path: undeclared results through the typed error ----------------
 
+/// One dynamic-path binary: its label, its source, and each run as the `QSEQ`
+/// list with the exit status the reference expects.
+#[cfg(unix)]
+type DynamicJob = (String, String, Vec<(String, i32)>);
+
 /// One binary per (type, operation), its operands undeclared call results;
 /// every boundary pair is one run, the pair and the reference result supplied
 /// through `QSEQ`.
@@ -373,7 +380,7 @@ fn known_programs_run_natively_as_the_reference_under_three_builds() {
 fn dynamic_values_take_the_reference_value_or_the_typed_error_under_three_builds() {
     let target = host_target();
     let rows = std::sync::Mutex::new(Vec::new());
-    let mut jobs: Vec<(String, String, Vec<(String, i32)>)> = Vec::new();
+    let mut jobs: Vec<DynamicJob> = Vec::new();
     for ty in INTEGERS {
         let values = boundary(ty, Some(&target));
         let decl = declarations(&[ty]);
