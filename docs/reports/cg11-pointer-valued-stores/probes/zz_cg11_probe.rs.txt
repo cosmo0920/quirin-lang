@@ -1,0 +1,85 @@
+// CG11-POINTER-VALUED-STORES probe, run as a temporary
+// crates/qcore-c-gateway/tests/ target at 9d7c88d1/b96e3c25 and removed
+// (`cargo test -p qcore-c-gateway --test zz_cg11_probe -- --nocapture`).
+// The two row sets were run one after the other; the recorded output of each
+// is under its rows.
+
+#[path = "support/clang_gap.rs"]
+mod clang_gap;
+use clang_gap::*;
+
+#[test]
+fn probe_function_pointer_parameter_and_w45_null_callee() {
+    if !clang_available() {
+        return;
+    }
+    let rows = [
+        ("fp-param scalar", "struct S { int a; void *p; }; void subject(struct S *s, void (*g)(void)) { s->a = 1; }", "subject"),
+        ("fp-param none", "struct S { int a; void *p; }; void subject(struct S *s) { s->a = 1; }", "subject"),
+        ("w45 null callee", "struct T { void *p; }; void clr(struct T *s) { s->p = 0; }", "clr"),
+        ("w45 null caller", "struct T { void *p; }; void clr(struct T *s) { s->p = 0; }\nvoid subject(void) { struct T *t = q_alloc(); void *c = q_alloc(); t->p = c; clr(t); q_free(t->p); q_free(t); }", "subject"),
+        ("w45 null caller2", "struct T { void *p; }; void clr(struct T *s) { s->p = 0; }\nvoid subject(void) { struct T *t = q_alloc(); clr(t); q_free(t); }", "subject"),
+    ];
+    for (label, source, function) in rows {
+        let run = g_function(source, function);
+        println!("PROBE {label}: {:?} {:?}", run.status, run.diagnostics);
+    }
+}
+// PROBE fp-param scalar: Unknown ["UnknownAlias { variable: \"s\" }"]
+// PROBE fp-param none: Safe []
+// PROBE w45 null callee: Safe []
+// PROBE w45 null caller: Unknown ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+// PROBE w45 null caller2: Safe []
+
+#[test]
+fn probe_field_link_overwritten_by_a_w45_callee() {
+    if !clang_available() {
+        return;
+    }
+    let pre = "struct C; struct T { struct C *p; int n; }; void clr(struct T *s) { s->p = 0; }\n";
+    let rows = [
+        ("link only", "void subject(void) { struct T *t = q_alloc(); struct C *c = q_alloc(); t->p = c; q_free(t->p); q_free(t); }", "subject"),
+        ("clr callee", "", "clr"),
+        ("link clr free-member", "void subject(void) { struct T *t = q_alloc(); struct C *c = q_alloc(); t->p = c; clr(t); q_free(t->p); q_free(t); }", "subject"),
+        ("link clr observe", "void subject(void) { struct T *t = q_alloc(); struct C *c = q_alloc(); t->p = c; clr(t); q_observe(t->p); q_free(c); q_free(t); }", "subject"),
+        ("link clr leak", "void subject(void) { struct T *t = q_alloc(); struct C *c = q_alloc(); t->p = c; clr(t); q_free(t); }", "subject"),
+        ("void child", "void subject(void) { struct T *t = q_alloc(); void *c = q_alloc(); t->p = c; q_free(t->p); q_free(t); }", "subject"),
+    ];
+    for (label, body, function) in rows {
+        let run = g_function(&format!("{pre}{body}"), function);
+        println!("PROBE {label}: {:?} {:?}", run.status, run.diagnostics);
+    }
+}
+// PROBE link only: Safe []
+// PROBE clr callee: Safe []
+// PROBE link clr free-member: Unknown ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+// PROBE link clr observe: Safe []
+// PROBE link clr leak: Unsafe ["Leak { acquisition_line: 13 }"]
+// (the `void child` row was run in the first version of this set, with the
+// member declared `void *p`: Unknown with the gate's refusal on `t->p = c`.)
+//
+// Reading: a field link forms only for a declared record pointer of the
+// member's type (Q18 reproduced). A W45 null-store callee's derived summary
+// is used by its caller, but no custody-taking read of the overwritten member
+// is admitted after the call (`q_free(t->p)` refuses) and the leak stays
+// reported, so no wrong Safe was found; a borrowed read of the member after
+// the call is admitted on the caller's stale binding, which names a live
+// object and moves no custody. Rule 10v withholds the summary of its own
+// bodies regardless (`has_pointer_store`).
+
+// Third set (same `pre`, `subject` only), custody-taking reads of the
+// overwritten member:
+//   link transfer:            `t->p = c; q_transfer(t->p); q_free(t);`
+//   link clr transfer:        `t->p = c; clr(t); q_transfer(t->p); q_free(t);`
+//   link clr consume:         `t->p = c; clr(t); q_consume(t->p); q_free(t);`
+//   link clr free-member:     `t->p = c; clr(t); q_free(t->p); q_free(t);`
+//   link free-member:         `t->p = c; q_free(t->p); q_free(t);`
+//   link clr observe free c:  `t->p = c; clr(t); q_observe(t->p); q_free(c); q_free(t);`
+// PROBE link transfer: Safe []
+// PROBE link clr transfer: Unknown ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+// PROBE link clr consume: Unknown ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+// PROBE link clr free-member: Unknown ["Unsupported { description: \"indirect memory access is outside the resource projection\" }"]
+// PROBE link free-member: Safe []
+// PROBE link clr observe free c: Safe []
+// Every custody-taking read of the member after the callee refuses; only a
+// borrowed read is admitted, which releases and moves nothing.

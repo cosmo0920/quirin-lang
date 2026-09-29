@@ -1,0 +1,69 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4281,
+   "Safe": 543,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4276,
+   "Safe": 548,
+   "Unsafe": 10
+  }
+ },
+ "moves": [
+  {
+   "unit": "chunkio.c",
+   "function": "cio_options_init",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -5
+   }
+  },
+  {
+   "unit": "rdkafka_buf.c",
+   "function": "rd_kafka_bufq_init",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "function": "rd_kafka_coord_cache_init",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "function": "rd_kafka_coord_reqs_init",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sharegrps_init",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 5
+ },
+ "same_status_functions_with_changed_diagnostics": 45,
+ "leaf_delta": {
+  "unsupported: indirect memory access is outside the resource projection": -74,
+  "unsupported: unrecognized assignment destination": -1
+ }
+}
