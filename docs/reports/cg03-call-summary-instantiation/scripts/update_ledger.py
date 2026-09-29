@@ -12,7 +12,7 @@ sizes, amends CG04 and CG05 with the instantiation API, and keeps
 in its own form (indent=1, ensure_ascii=False, trailing newline).
 
 Sizes are the parity rows of the AFTER corpus arbiter on the merged base
-(main cb20c28e, run private/cg03/after-main), de-duplicated by
+(main ab317406, run private/cg03/after-main2), de-duplicated by
 scripts/parity_census.py and scripts/position_rows.py.
 """
 
@@ -31,7 +31,7 @@ REGISTER = [
         "why": (
             "Found by CG03-CALL-SUMMARY-INSTANTIATION (gateway rule 10u): the scalar `return` operand route lowers a "
             "refused return that is one condition leaf exactly as the same leaf in an `if`. On the corpus arbiter at "
-            "main cb20c28e it is consulted 81 times (de-duplicated parity rows `position: call-instantiation`, "
+            "main ab317406 it is consulted 81 times (de-duplicated parity rows `position: call-instantiation`, "
             "`consumer: return`), admits 10 and refuses 71 over 54 functions: 19 a callee with no contract in force in "
             "the caller's unit (an Unknown local body, or a body in another unit: cross-unit summaries are K14, not "
             "carded), 19 a value connective or a connective below the leaf (CG06), 11 a residual the condition leaf "
@@ -48,7 +48,7 @@ REGISTER = [
             "Found by CG03-CALL-SUMMARY-INSTANTIATION: rule 10u's acceptance refuses a callee in the caller's recursive "
             "component in every use (constraint 4's provisional summary is not admission evidence), as the condition "
             "desugaring and B01 already did. The statement consumer and the whole-call return (W4) keep their older "
-            "admission of such calls (the fixed point's own use); parity rows at main cb20c28e: statement discarded 35 "
+            "admission of such calls (the fixed point's own use); parity rows at main ab317406: statement discarded 35 "
             "rows over 23 functions, statement stored 50 over 38, whole-call return 38 over 16; and 3 whole-call "
             "returns of a derived result under the derived-return CFG (returned-alias, 3 functions). Nothing is widened "
             "or narrowed. DISCHARGE: a measured decision whether a provisional summary is admission evidence outside "
@@ -58,13 +58,13 @@ REGISTER = [
     },
     {
         "id": "CG03-TYPED-SUBSTITUTION-RESIDUALS",
-        "title": "Call statements whose typed substitution is refused (17 consultations over 12 functions)",
+        "title": "Call statements whose typed substitution is refused (18 consultations over 13 functions)",
         "why": (
             "Found by CG03-CALL-SUMMARY-INSTANTIATION: the typed per-formal substitution (value -> identity -> formal, "
-            "rule 10u) is consulted for 22 call statements whose lexical substitution was refused or incomplete on the "
-            "corpus at main cb20c28e; it admits 5 (a pointer cast of a named object, a `sizeof` operand read as a "
-            "name) and refuses 17 over 12 functions: 14 pointer arithmetic in an actual (`memcpy(key + n, ...)`, "
-            "`(char *)base + i * n`, `dst + (size - 3)`: CG16) and 3 `rd_kafka_curr_msgs_get(rk, &cnt, &size)`, "
+            "rule 10u) is consulted for 23 call statements whose lexical substitution was refused or incomplete on the "
+            "corpus at main ab317406; it admits 5 (a pointer cast of a named object, a `sizeof` operand read as a "
+            "name) and refuses 18 over 13 functions: 14 pointer arithmetic in an actual (`memcpy(key + n, ...)`, "
+            "`(char *)base + i * n`, `dst + (size - 3)`: CG16) and 4 an automatic's address at a derived custody formal (3 `rd_kafka_curr_msgs_get(rk, &cnt, &size)`, 1 `metric_data_point_count(metric, &count)`), "
             "whose derived summary makes the dereferenced out-pointer formals custody-taking, so an automatic's "
             "address meets a custody formal (W44-CALL-ARGUMENT-CUSTODY-POSITION by design). DISCHARGE: CG16 reads "
             "offset pointers with extents; a derivation that states a written-through scalar out-pointer as `Out` "
@@ -80,10 +80,10 @@ AMEND = {
         "class, identity, use) with a typed substitution vocabulary (identity, address, data, place), so a call "
         "admitted in a statement, a condition leaf, a return operand or an elaborated piece is one `ContractCall` "
         "decided by one table (`QCore.CallInstantiation`); every consultation and every older admission the table "
-        "declines is a parity row (`position: call-instantiation`: 103 consultations (15 admitted), 126 declined older-admission rows, "
+        "declines is a parity row (`position: call-instantiation`: 104 consultations (15 admitted), 126 declined older-admission rows, "
         "CG03-RECURSIVE-COMPONENT-ADMISSIONS). The access-plan vocabularies stay distinct. Re-measured on the corpus "
-        "at main cb20c28e (scripts/position_rows.py, de-duplicated): condition-access 1,303 / 196 rows typed "
-        "admitting / refusing beside the older admission, return-family 266 / 141, call-argument 230 / 491 (211 / "
+        "at main ab317406 (scripts/position_rows.py, de-duplicated): condition-access 1,303 / 196 rows typed "
+        "admitting / refusing beside the older admission, return-family 275 / 132, call-argument 230 / 491 (211 / "
         "455 before CG03: the condition and return consumers now ask the W44 argument reads). The 25,432 / 147 "
         "identical-plan figures are carried, not re-run. No route is retired and no parity is claimed."
     ),

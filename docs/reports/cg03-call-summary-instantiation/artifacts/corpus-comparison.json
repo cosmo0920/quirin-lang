@@ -1,13 +1,13 @@
 {
  "totals": {
   "before": {
-   "Unknown": 4276,
-   "Safe": 548,
+   "Unknown": 4270,
+   "Safe": 554,
    "Unsafe": 10
   },
   "after": {
-   "Unknown": 4266,
-   "Safe": 558,
+   "Unknown": 4260,
+   "Safe": 564,
    "Unsafe": 10
   }
  },
@@ -106,9 +106,9 @@
  "move_counts": {
   "Unknown -> Safe": 10
  },
- "same_status_functions_with_changed_diagnostics": 66,
+ "same_status_functions_with_changed_diagnostics": 68,
  "leaf_delta": {
-  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -67,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -69,
   "unsupported: unmodeled call, aggregate or indirect access in return expression": -7,
   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -6,
   "unsupported: call has an unmodeled formal address or borrowed expression": -2,
@@ -118,6 +118,6 @@
   "unsupported: arguments do not match resource contract for `rd_free`": -1,
   "unsupported: arguments do not match resource contract for `rd_strtup_destroy`": -1,
   "unsupported: nullable resource `out` used by a non-null contract": 1,
-  "unknown_alias: unresolved resource identity": 18
+  "unknown_alias: unresolved resource identity": 19
  }
 }

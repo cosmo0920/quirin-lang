@@ -75,12 +75,14 @@ this acceptance, and the older route is still asked first.
 
 **A call whose actuals carry effects** (`effectful_call_piece`, a hook in
 CG02's statement-piece lowering). A piece that is exactly one direct call is
-lowered in two parts:
+lowered in three parts. The piece is either the call itself or
+`NAME = CALL(…)` with a non-pointer `NAME`.
 
-- first its elaborated events, which C sequences before the call
-  (`ForgetScalar`, typed path accesses);
-- then the call, with each effectful actual replaced by data at a `Borrowed`
-  formal.
+- First come its elaborated events, which C sequences before the call
+  (`ForgetScalar`, typed path accesses with their obligations).
+- Then comes the call. Each scalar actual at a `Borrowed` formal is replaced
+  by data, since its reads and writes were already lowered.
+- Last comes the destination's write, if there is one.
 
 A pointer-valued effectful actual, a custody formal and a nested call all
 refuse. This closes CG02's `Refusal::EffectfulActual` for `cg_sink(i++)`.
@@ -152,27 +154,29 @@ input's claims:
 
 ## 3. Measurements
 
-### 3.1 On the merged base (main `cb20c28e`): the published figures
+### 3.1 On the merged base (main `ab317406`): the published figures
 
-CG11-POINTER-VALUED-STORES landed while the card ran, so main was merged
-(`3308bb44`) and every measurement was retaken on it.
+CG11-POINTER-VALUED-STORES and then CG13-UNION-AND-BITFIELD-PLACES landed
+while the card ran. Main was merged twice (`3308bb44`, then `4d11cfd3` at
+`ab317406`), and every measurement was retaken on the final merge.
 
 **BEFORE.**
 
-- Binary: the release `quirin-audit` built at `cb20c28e`
-  (`private/cg03/quirin-audit-main`, `412f5cb5…`).
-- Runs: `private/cg03/before-main{,-system}` and the shared slice attempt's
-  `cg03-before-main`, all exit 0.
-- Identity: it reproduces CG11's AFTER byte for byte
-  (`resource-diagnostics.json` `a6dc500b…`; 548 / 10 / 4,276). The system
-  is `c6fab2ce…` (33 / 2 / 199) and the slice `e9c0d776…`
+- Binary: the release `quirin-audit` built at `ab317406`
+  (`private/cg03/quirin-audit-main2`, `d60a5a44…`).
+- Runs: `private/cg03/before-main2{,-system}` and the shared slice attempt's
+  `cg03-before-main2`, all exit 0.
+- Identity: it reproduces CG13's AFTER byte for byte
+  (`resource-diagnostics.json` `97107d95…`; 554 / 10 / 4,270). The system
+  is `94b66ea8…` (33 / 2 / 199) and the slice `561e6727…`
   (26 / 1 / 242 / 1 Pending).
 
 **AFTER.**
 
-- Binary: the tip's release binary (`c1d28456…`, built at `5aabb0f2`,
-  code-identical to the final tip).
-- Runs: `private/cg03/after-main*`, all exit 0.
+- Binary: the tip's release binary (`fd7fd89f…`, built at the merge
+  `4d11cfd3`). The only later code change, `8449fcca`'s clippy boxing, came
+  before the merge. The records commits after it change no code.
+- Runs: `private/cg03/after-main2*`, all exit 0.
 - Comparisons: [corpus-comparison.json](artifacts/corpus-comparison.json),
   [corpus-changed.json](artifacts/corpus-changed.json),
   [system-comparison.json](artifacts/system-comparison.json),
@@ -180,9 +184,14 @@ CG11-POINTER-VALUED-STORES landed while the card ran, so main was merged
 
 | Route | BEFORE | AFTER | Moves |
 |---|---|---|---|
-| corpus (`66910c10`) | 548 / 10 / 4,276 | **558 / 10 / 4,266** (`f5e15b80…`) | **+10 Unknown → Safe**; 66 more Unknown functions change diagnostics; sidecars byte-identical |
-| system (`046accf6`) | 33 / 2 / 199 | **33 / 2 / 199** (`610badca…`) | no status move; 11 functions: −12 branch-condition leaves, +10 `unknown_alias` |
-| tail-pause slice (`90978ac6`) | 26 / 1 / 242 / 1 Pending | **26 / 1 / 242 / 1 Pending** (`c6039e1d…`) | no status move; 34 functions: −4 branch-condition leaves, +137 `unknown_alias` |
+| corpus (`66910c10`) | 554 / 10 / 4,270 | **564 / 10 / 4,260** (`7393fd21…`) | **+10 Unknown → Safe**; 68 more Unknown functions change diagnostics; sidecars byte-identical |
+| system (`046accf6`) | 33 / 2 / 199 | **33 / 2 / 199** (`6df70a4b…`) | no status move; 11 functions: −12 branch-condition leaves, +10 `unknown_alias` |
+| tail-pause slice (`90978ac6`) | 26 / 1 / 242 / 1 Pending | **26 / 1 / 242 / 1 Pending** (`27463450…`) | no status move; 34 functions: −4 branch-condition leaves, +137 `unknown_alias` |
+
+On the intermediate merge with `cb20c28e` (CG11 only), the numbers were:
+
+- BEFORE `a6dc500b…` (548 / 10 / 4,276), byte-identical to CG11's AFTER;
+- AFTER `f5e15b80…` (558 / 10 / 4,266), with the same ten moves.
 
 **The ten moves, each attributed by reading.**
 
@@ -207,14 +216,14 @@ CG11-POINTER-VALUED-STORES landed while the card ran, so main was merged
 **Leaf deltas** (corpus):
 
 - Removed:
-  - −67 branch-condition leaves, −6 for-loop condition, −1 loop condition;
+  - −69 branch-condition leaves, −6 for-loop condition, −1 loop condition;
   - −7 return;
   - −2 K03;
   - −3 argument-shape;
   - −1 `call to uncontracted function rd_hdr_highestEquivalentValue` (the
     cascade).
 - Added:
-  - +18 `unknown_alias`: the newly admitted reads' own obligations failing
+  - +19 `unknown_alias`: the newly admitted reads' own obligations failing
     at the flow, on a base the flow cannot resolve;
   - +1 `nullable resource out used by a non-null contract`
     (`rd_kafka_conf_kv_split`). The typed substitution read
@@ -237,7 +246,7 @@ line keeps one refusal leaf. No status moves.
 
 - **Return operand:** 81 consultations, 10 admitted. The refused rows are
   `CG03-RETURN-OPERAND-RESIDUALS`.
-- **Typed substitution:** 22 consultations, 5 admitted. The refused rows are
+- **Typed substitution:** 23 consultations, 5 admitted. The refused rows are
   `CG03-TYPED-SUBSTITUTION-RESIDUALS`.
 - **Effectful actual:** the 11 elaborator rows are unchanged. The 3 CG03 rows
   keep an uncontracted callee.
@@ -272,7 +281,7 @@ Measured before the merge, for identity:
 | The four alias-held functions stay Unknown | **Held.** |
 | K03 pointer-arithmetic functions stay Unknown | **Held** (14 consultations, CG16). |
 | `cmt_create`, `rd_kafka_conf_kv_split`, `rd_kafka_ApiVersions_copy` at most move | **Partly.** The first two lose their K03 leaf and keep other leaves (Unknown). `rd_kafka_ApiVersions_copy` keeps its leaf: `*dstp = rd_memdup(…)` is not the statement shape the substitution reads. |
-| `rd_kafka_curr_msgs_get` callers | **Stay Unknown:** an address at a custody formal, by design. |
+| `rd_kafka_curr_msgs_get` callers | **Stay Unknown:** an address at a custody formal, by design. A fourth such site appears on the merged base (`metric_data_point_count(metric, &data_point_count)`). |
 | Beyond CG00's list: further moves possible | **3 more:** `ctr_id_cmp` and the two `consumer_group_*_code`, from aligning the condition consumer with the W44 argument reads. |
 | 1. No Safe → non-Safe | **Held.** |
 | 2. Added leaks/violations classified | **None added.** The one new Unknown-class `nullable resource` row is read above. |
@@ -335,7 +344,7 @@ refused shapes are an owned result tested (CG04), a non-identity nested call
 
 `QCore.CallInstantiation`, `proof/AuditCallInstantiation.lean`, **26
 theorems**, no placeholders and no project axioms. `check_lean_audits.py`
-passes 232 audits (231 on main + this one).
+passes 233 audits (232 on main + this one).
 
 - **Acceptance.**
   - `acceptance_vectors_hold` (bound to the Rust table);
@@ -383,7 +392,7 @@ whose models are the older ones.
 - **Absorbed, resized:** `W46-ACCESS-PATH-PARITY`.
   - Its plan-vocabulary part for call positions is answered by one
     application point and one acceptance/substitution vocabulary.
-  - Re-measured: condition-access 1,303 / 196, return-family 266 / 141,
+  - Re-measured: condition-access 1,303 / 196, return-family 275 / 132,
     call-argument 230 / 491 (211 / 455 before). The identical-plan figures
     are carried.
   - The access-plan vocabularies stay distinct, and no route is retired.
@@ -391,7 +400,7 @@ whose models are the older ones.
   - `CG03-RETURN-OPERAND-RESIDUALS`: 71 consultations over 54 functions;
   - `CG03-RECURSIVE-COMPONENT-ADMISSIONS`: statement 61 functions,
     whole-call return 16, derived returns 3;
-  - `CG03-TYPED-SUBSTITUTION-RESIDUALS`: 17 over 12.
+  - `CG03-TYPED-SUBSTITUTION-RESIDUALS`: 18 over 13.
 - **Amended:** CG04 and CG05, with the API they call.
 - Ledger 627 → 629. Script: [scripts/update_ledger.py](scripts/update_ledger.py).
 

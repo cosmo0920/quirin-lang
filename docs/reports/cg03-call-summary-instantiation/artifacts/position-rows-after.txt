@@ -1,34 +1,34 @@
     230 rows    111 functions  call-argument|call-argument-access|typed=admitted
     491 rows    220 functions  call-argument|call-argument-access|typed=refused
-    766 rows    364 functions  call-argument|old_refusal|typed=admitted
-   5316 rows    973 functions  call-argument|old_refusal|typed=refused
+    846 rows    400 functions  call-argument|old_refusal|typed=admitted
+   5240 rows    943 functions  call-argument|old_refusal|typed=refused
      18 rows     18 functions  call-instantiation|old_refusal|typed=admitted
-     98 rows     84 functions  call-instantiation|old_refusal|typed=refused
+     99 rows     85 functions  call-instantiation|old_refusal|typed=refused
     106 rows     91 functions  condition-assignment|old_refusal|typed=admitted
      13 rows     11 functions  condition-assignment|old_refusal|typed=refused
    1303 rows    592 functions  condition|condition-access|typed=admitted
     196 rows    134 functions  condition|condition-access|typed=refused
-   6157 rows   1882 functions  condition|old_refusal|typed=admitted
-   1917 rows    610 functions  condition|old_refusal|typed=refused
-    120 rows     52 functions  elaboration-condition|old_refusal|typed=admitted
-   1814 rows    542 functions  elaboration-condition|old_refusal|typed=refused
+   6288 rows   1902 functions  condition|old_refusal|typed=admitted
+   1803 rows    558 functions  condition|old_refusal|typed=refused
+    121 rows     53 functions  elaboration-condition|old_refusal|typed=admitted
+   1717 rows    496 functions  elaboration-condition|old_refusal|typed=refused
       8 rows      8 functions  elaboration-return|old_refusal|typed=admitted
-    399 rows    343 functions  elaboration-return|old_refusal|typed=refused
-    662 rows    420 functions  elaboration-statement|old_refusal|typed=admitted
-  31988 rows   4390 functions  elaboration-statement|old_refusal|typed=refused
-   7531 rows   1505 functions  residual-shape|old_refusal|typed=refused
+    391 rows    337 functions  elaboration-return|old_refusal|typed=refused
+    669 rows    426 functions  elaboration-statement|old_refusal|typed=admitted
+  31658 rows   4377 functions  elaboration-statement|old_refusal|typed=refused
+   7333 rows   1454 functions  residual-shape|old_refusal|typed=refused
       6 rows      6 functions  return-connective|old_refusal|typed=admitted
       1 rows      1 functions  return-connective|old_refusal|typed=refused
-     32 rows     30 functions  return|old_refusal|typed=admitted
-    296 rows    249 functions  return|old_refusal|typed=refused
-    266 rows    225 functions  return|return-family|typed=admitted
-    141 rows    130 functions  return|return-family|typed=refused
+     40 rows     36 functions  return|old_refusal|typed=admitted
+    288 rows    243 functions  return|old_refusal|typed=refused
+    275 rows    233 functions  return|return-family|typed=admitted
+    132 rows    122 functions  return|return-family|typed=refused
      48 rows     46 functions  statement|chain|typed=admitted
       2 rows      2 functions  statement|chain|typed=refused
     260 rows     92 functions  statement|index_traversal|typed=refused
       9 rows      9 functions  statement|indexed_element|typed=admitted
      12 rows     10 functions  statement|indexed_element|typed=refused
-   6190 rows   1607 functions  statement|old_refusal|typed=admitted
+   6465 rows   1695 functions  statement|old_refusal|typed=admitted
      88 rows     45 functions  statement|scalar_field_noop|typed=admitted
       4 rows      4 functions  statement|scalar_field_noop|typed=refused
     506 rows    195 functions  statement|scalar_member_store|typed=admitted
@@ -38,11 +38,12 @@
      17 rows     17 functions  statement|sub_object_store_call|typed=refused
     447 rows    238 functions  statement|sub_object_store|typed=admitted
     593 rows    157 functions  statement|sub_object_store|typed=refused
-   2839 rows    895 functions  typed-place|old_refusal|typed=admitted
-    481 rows    215 functions  typed-place|old_refusal|typed=refused
+   3156 rows    997 functions  typed-place|old_refusal|typed=admitted
+    545 rows    251 functions  typed-place|old_refusal|typed=refused
     148 rows without the W47 keys  call-instantiation
    9820 rows without the W47 keys  pointer-store
    2009 rows without the W47 keys  pointer-store-flow
-  17751 rows without the W47 keys  root-declarations
-     82 rows without the W47 keys  summary-premises
+  17746 rows without the W47 keys  root-declarations
+     83 rows without the W47 keys  summary-premises
     186 rows without the W47 keys  summary-premises-graph
+   3205 rows without the W47 keys  union-bitfield

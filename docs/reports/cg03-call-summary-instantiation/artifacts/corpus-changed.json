@@ -361,6 +361,15 @@
  },
  {
   "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListOffsets_handle_result",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
   "function": "ut_verify_ListConsumerGroups_result",
   "before": "Unknown",
   "after": "Unknown",
@@ -430,6 +439,16 @@
   "after": "Safe",
   "leaf_delta": {
    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_defer_offset_commit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
   }
  },
  {
