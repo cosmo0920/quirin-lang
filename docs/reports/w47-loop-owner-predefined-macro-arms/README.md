@@ -165,8 +165,10 @@ typed facts byte-identical to BEFORE but the previous copy's path;
 | `~1` raw | 8 / 132 / 7, unchanged | 33,466 | | 2,902 | byte-identical (`d05ebc0e…`) |
 | both configured, without the facts (control) | unchanged | | | | byte-identical to BEFORE (`4955a12d…`, `a5edf1ed…`) |
 
-The unstructured files are unchanged (4): the files the locator of
-PREDICTION.md structured are headers, which no reading decides here.
+The unstructured files are unchanged (4): the two the locator of
+PREDICTION.md structured (libevent's `bufferevent_sock.c`, lib/monkey's
+`acutest.h`) are compiled and read by no unit of the build, so nothing
+decides them.
 
 **Attribution** ([`site_diff.py`](scripts/site_diff.py),
 [`attribute.py`](scripts/attribute.py); archived in
@@ -224,6 +226,21 @@ status is unchanged.
 
 Logs: [artifacts/arbiters/](artifacts/arbiters/). No new baseline is
 archived, since nothing moved.
+
+**Prediction against outcome** ([PREDICTION.md](PREDICTION.md)):
+
+| Measure | Predicted | Measured |
+|---|---|---|
+| derived facts | every command derives with the recorded Clang; `_WIN32` undefined, `__linux__` defined; no file `#define`s `_WIN32` (80%) | **partly**: identity, `_WIN32` and `__linux__` as predicted, but 34 derivations fail on ungenerated sources (fail-closed: their files and every header undecided) |
+| fixed test ×3, configured | discharged on both owners (75%) | **as predicted**, by `#if defined (__linux__)` and `#ifndef _WIN32` decided true |
+| old test, configured | not discharged (95%); site verdicts and first reasons byte-identical (60%) | **as predicted**: not discharged, no site moves |
+| other sites | no change (70%) | **as predicted** |
+| raw readings | byte-identical (95%) | **as predicted** |
+| edges / seeds | fall near the locator's amount (70%) | **fall less**: 33,573 → 33,529 (locator 33,405), seeds 2,854 → 2,852 (locator 2,806), because no header is decided |
+| unstructured files | fall from 4 (50%) | **not as predicted**: unchanged (the two are read by no unit) |
+| corpus / system / slice | unchanged (95%) | **as predicted** |
+| condvar/lifecycle census | untouched (95%) | **as predicted** (equal modulo the module's path) |
+| follow-up | retired (70%) | **retired** |
 
 ## 6. Premises of the three discharged sites
 
@@ -300,7 +317,19 @@ Sizes: [`residuals.py`](scripts/residuals.py).
 
 ## 9. Gate
 
-GATE
+[`scripts/gate.py`](scripts/gate.py) runs `rust`, then `records`. Exits are
+in [gate/](gate/) and figures in [gate.json](gate.json). Every step exited
+0, on the first run:
+
+- submodule; fmt clean; the Rust suite: 355 units / 368 summaries, **6,355
+  passed, 0 failed**, 11 ignored; clippy clean; both probes 0;
+- **224 Lean audits** (`AuditLoopOwner.lean` 66 → 81 theorems, no new audit
+  module);
+- `providers/` is unchanged, so the provider gate is not due; provider
+  `cargo test` was run for the gate record: 129 passed / 0 failed / 1
+  ignored;
+- the `records` phase, after the ledger, matrix and index regeneration: 365
+  Python tests OK, docs index 0, Clang 21.1.8 recorded.
 
 **Files likely to conflict:**
 
