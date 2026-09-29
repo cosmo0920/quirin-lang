@@ -1,7 +1,9 @@
 # CG02-ELABORATION-CORE: the common expression elaborator and its order model
 
 Card CG02 of the [Clang gap card queue](../../plans/clang-gap-cards/README.md)
-(wave 48, round 2; base `e182d403`, local `main` = origin/main at dispatch). Gap
+(wave 48, round 2; base `e182d403`, local `main` = origin/main at dispatch;
+main `f1ba8da2`, carrying W48-QR-SCALAR-TYPES-R3 and CG10-COMMON-TYPED-PLACE,
+merged before finishing and every measurement retaken on it, §5.0). Gap
 entries E03 (values), E04, E05, E08 and E12 (the order model); evidence Q11,
 Q12, Q14, Q19, Q24, Q38, Q40. Routes **G** (the custody gateway) and **T**
 (`typed_source.rs`). Rule: [gateway 10s](../../agents/gateway.md#constraint-10s).
@@ -190,6 +192,29 @@ unaffected: `monkey-source.json` is byte-identical.
 
 ## 5. Prediction against outcome
 
+### 5.0 On main `f1ba8da2` (after CG10), the published figures
+
+BEFORE is retaken on the merged base: the release binary built at CG10's
+integration tip `1ae1c38f` (code-identical to main `f1ba8da2`), run into
+`private/cg02/before-cg10`, exit 0, reproduces CG10's AFTER byte for byte
+(`resource-diagnostics.json` `b63c1b57…`; 527 / 10 / 4,297). AFTER is this
+card's merged tip (`private/cg02/after-main`, exit 0):
+[corpus-comparison-main.json](artifacts/corpus-comparison-main.json).
+
+| Route | BEFORE | AFTER | Moves |
+|---|---|---|---|
+| corpus (`66910c10`) | 527 / 10 / 4,297 | **543 / 10 / 4,281** | the same **16** Unknown → Safe as at the card's base (§5.1); unsupported 33,416 → 32,728 (−688), unknown_alias +372, leaks 36 → 36; 359 Unknown functions change diagnostics; sidecars byte-identical |
+| system (`046accf6`) | 31 / 2 / 201 | **32 / 2 / 200** | `ipow`, as at the base |
+| tail-pause slice (`90978ac6`) | 24 / 1 / 244 / 1 Pending | **26 / 1 / 242 / 1 Pending** | `flb_input_rate_gate_collect_backpressure` as at the base, and **`in_tail_pre_run`**, a cascade that needs both cards: its callee `tail_signal_manager` (`tail_signal.h`) is admitted only when CG10 reads `ctx->ch_manager[1]` (a mixed path on the tracked formal) and CG02 reads `ctx->ch_writes++`; its validated summary removes the caller's `call to uncontracted function` leaf and the alias leaf with it. CG10 alone moves no slice status (`cg10-after1`). |
+
+System and slice BEFORE are the archived baselines
+(`w47-flb-lib-strict-pairing/artifacts/after/{system,slice}`), which CG10's
+report shows unmoved by CG10. [system-comparison.json](artifacts/system-comparison.json),
+[slice-comparison.json](artifacts/slice-comparison.json). No correction, no
+Safe → non-Safe move and no added leak or violation on any route.
+
+### 5.1 At the card's base `e182d403`
+
 Corpus arbiter: BEFORE is `private/cg02/before`, AFTER is `private/cg02/after3`,
 both exit 0. Identity and comparison: [corpus-comparison.json](artifacts/corpus-comparison.json).
 
@@ -260,26 +285,27 @@ baseline `w47-flb-lib-strict-pairing/artifacts/after/system`:
   move.
 - [slice-comparison.json](artifacts/slice-comparison.json).
 
-System and slice runs: `private/cg02/after3-system/` and
+System and slice runs at the base: `private/cg02/after3-system/` and
 `…/private/w47-tail/attempt-1/cg02-after3/`, both exit 0.
 
-**Elaborator consultations** at the final tip
+**Elaborator consultations** at the final tip on main `f1ba8da2`
 ([parity-census.json](artifacts/parity-census.json), deduplicated per
-function, line and text):
+function, line and text; with CG10 more statements reach the typed reader, so
+fewer are refused as CG10's):
 
 | Position | Consultations | Admitted | Functions with an admission |
 |---|---:|---:|---:|
-| Statements | 34,383 | 587 | 287 |
-| Conditions | 2,903 | 120 | 52 |
-| Returns | 408 | 8 | 3 |
+| Statements | 33,331 | 662 | 335 |
+| Conditions | 1,934 | 120 | 52 |
+| Returns | 407 | 8 | 3 |
 
-- **Most refusals are not this card's form**: 33,287 have no value form.
+- **Most refusals are not this card's form**: 31,739 have no value form.
 - **The rest are refused by name**:
-  - CG10: 519 (the typed reader refuses the place);
-  - CG08: 166;
+  - CG10: 420 (the place, or two places not proved disjoint);
+  - CG08: 165;
   - CG16: 151;
-  - CG05: 97;
-  - CG06: 79;
+  - CG05: 98;
+  - CG06: 72 (41 of them value `&&` in a condition);
   - CG22: 6;
   - CG03: 3.
 - **Unsequenced pairs.** Eight refusals first recorded as undefined behaviour
@@ -401,7 +427,7 @@ through Clang and `elaborate`, comparing the admission.
 - The model's places are named objects. Rust's path rules are *stricter* than
   the model's: two paths never commute.
 
-## 8. Ledger (622 → 623 on main 0691a1cc; 621 → 622 at the card's base)
+## 8. Ledger (622 → 623 on main `f1ba8da2`; 621 → 622 at the card's base)
 
 - **Retired**:
   - `CG02-ELABORATION-CORE`. Every DISCHARGE clause holds: BEFORE reproduces,

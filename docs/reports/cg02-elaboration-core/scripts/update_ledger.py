@@ -23,7 +23,7 @@ REGISTER = [
         "title": "Comma returns the elaborator splits but whose operands stay refused by other cards' forms (67 leaves over 32 Unknown functions)",
         "why": (
             "Re-registers W43-RETURN-COMMA-MACRO (absorbed and retired by CG02-ELABORATION-CORE, gateway rule 10s). "
-            "Re-measured on the corpus arbiter at CG02's final tip from the elaborator's parity rows "
+            "Re-measured on the corpus arbiter at CG02's final tip on main f1ba8da2 from the elaborator's parity rows "
             "(`position: elaboration-return`, deduplicated): 67 comma returns over 32 Unknown functions "
             "(W43's 67/32; W45's 69/34 counted two brace leaves outside this population), 0 admitted. Every one "
             "is nanopb's PB_RETURN_ERROR in a `bool` function, `return (stream->errmsg = stream->errmsg ? "
@@ -70,29 +70,29 @@ AMEND = {
         "reading."
     ),
     "CG03-CALL-SUMMARY-INSTANTIATION": (
-        " MEASURED by CG02-ELABORATION-CORE (rule 10s; parity rows at its final tip): the elaborator refuses 3 "
+        " MEASURED by CG02-ELABORATION-CORE (rule 10s; parity rows at its final tip on main f1ba8da2): the elaborator refuses 3 "
         "statement consultations as a call whose actuals carry effects (`cg_sink(i++)`, CG03), and every call in "
         "a sequenced piece keeps the older classifier's application; the elaborator's `Obligation::Contract` "
         "list is the interface this card's single application point reads."
     ),
     "CG04-CONDITION-ACQUISITION": (
         " MEASURED by CG02-ELABORATION-CORE: rule 10s admits call-free controlling expressions without "
-        "connectives (120 consultations over 52 functions); the condition desugar still refuses an increment "
+        "connectives (120 consultations over 52 functions on the corpus at main f1ba8da2); the condition desugar still refuses an increment "
         "anywhere in a connective condition before it splits leaves, so E13's increment inside a leaf is left "
-        "to this card (48 consultations refused as value `&&`, 4 as `?:`)."
+        "to this card (41 consultations refused as value `&&`, 4 as `?:`)."
     ),
     "CG05-NESTED-CALL-EFFECTS": (
-        " MEASURED by CG02-ELABORATION-CORE: the elaborator refuses 97 consultations as a call unsequenced with "
+        " MEASURED by CG02-ELABORATION-CORE: the elaborator refuses 98 consultations as a call unsequenced with "
         "another event or nested in an actual (CG05), mostly `P = f(...)` where P's address read is unsequenced "
         "with the call; the order model (`EvalGraph::check`, `QCore.ElaborationCore.interleave_run`) is the "
         "base this card extends with contract footprints."
     ),
     "CG06-VALUE-CONNECTIVES-AND-CONDITIONAL": (
-        " MEASURED by CG02-ELABORATION-CORE: the elaborator refuses 79 consultations by name as value `&&`, `||` "
+        " MEASURED by CG02-ELABORATION-CORE: the elaborator refuses 72 consultations by name as value `&&`, `||` "
         "or `?:` (CG06); `Event::Branch` and `Event::Merge` are reserved in its vocabulary for this card."
     ),
     "CG08-CASTS-AND-TYPE-QUERIES": (
-        " MEASURED by CG02-ELABORATION-CORE: the elaborator refuses 166 consultations by a cast kind (CG08), 67 "
+        " MEASURED by CG02-ELABORATION-CORE: the elaborator refuses 165 consultations by a cast kind (CG08), 67 "
         "of them the `IntegralToBoolean` of nanopb's comma return (`CG02-COMMA-OPERAND-RESIDUALS`)."
     ),
 }

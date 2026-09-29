@@ -7,13 +7,23 @@
    "Unsafe": 1
   },
   "after": {
-   "Unknown": 243,
-   "Safe": 25,
+   "Unknown": 242,
+   "Safe": 26,
    "Pending": 1,
    "Unsafe": 1
   }
  },
  "moves": [
+  {
+   "unit": "plugins/in_tail/tail.c",
+   "function": "in_tail_pre_run",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -1,
+    "unsupported: call to uncontracted function `tail_signal_manager`": -1
+   }
+  },
   {
    "unit": "src/flb_input.c",
    "function": "flb_input_rate_gate_collect_backpressure",
@@ -25,13 +35,17 @@
   }
  ],
  "move_counts": {
-  "Unknown -> Safe": 1
+  "Unknown -> Safe": 2
  },
- "same_status_functions_with_changed_diagnostics": 5,
+ "same_status_functions_with_changed_diagnostics": 25,
  "leaf_delta": {
+  "unsupported: indirect memory access is outside the resource projection": -20,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -17,
+  "unsupported: unrecognized assignment destination": -4,
   "unsupported: unmodeled expression may mutate a formal resource identity": -2,
   "unsupported: call to uncontracted function `flb_input_rate_gate_collect_backpressure`": -2,
-  "unsupported: unrecognized assignment destination": -1,
-  "unknown_alias: unresolved resource identity": 1
+  "unsupported: call to uncontracted function `tail_signal_manager`": -1,
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": -1,
+  "unknown_alias: unresolved resource identity": 49
  }
 }

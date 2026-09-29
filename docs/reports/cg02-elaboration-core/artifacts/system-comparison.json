@@ -26,12 +26,14 @@
  "move_counts": {
   "Unknown -> Safe": 1
  },
- "same_status_functions_with_changed_diagnostics": 4,
+ "same_status_functions_with_changed_diagnostics": 22,
  "leaf_delta": {
+  "unsupported: indirect memory access is outside the resource projection": -22,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -15,
   "unsupported: C operator `sizeof` requires type/operand analysis": -6,
   "unsupported: unrecognized assignment destination": -5,
   "unsupported: unmodeled expression may mutate a formal resource identity": -2,
   "unsupported: local declaration may shadow a formal resource identity": -1,
-  "unknown_alias: unresolved resource identity": 1
+  "unknown_alias: unresolved resource identity": 37
  }
 }
