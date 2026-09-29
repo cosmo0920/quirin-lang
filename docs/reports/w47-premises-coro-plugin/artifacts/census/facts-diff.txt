@@ -1,0 +1,6 @@
+library.json argument_lists: +36 -0 ~0; outside this card's options: []
+library.json literal_calls: +31 -0 ~0; outside this card's options: []
+library.json member_accesses: +7 -0 ~0; outside this card's options: []
+library.json member_fields_read: +7 -0 ~0; outside this card's options: []
+fixed-test.json member_accesses: +5 -0 ~0; outside this card's options: []
+fixed-test.json member_fields_read: +7 -0 ~0; outside this card's options: []

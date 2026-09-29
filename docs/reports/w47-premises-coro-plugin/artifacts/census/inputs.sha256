@@ -1,0 +1,9 @@
+008e32fc3e73ad30a17bdd782387c8c97a612a0c943e77c9e19d2639beebacbb  /home/cosmo/Documents/GitHub/qcore-c/private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source/tests/runtime/in_tail.c
+676563e15c4d3854b0b48ac5114dc89da3a48c1bdef3c4874292e084d8476863  /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-source/tests/runtime/in_tail.c
+faf446759b31f892c9ffe03c76719875e9910682515cdd9acc908dc5142f8157  /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/prep/fluent-bit-clang-production/compile_commands.json
+3af5fb8c67854f04b55dcf494c8bac7942f9e16c24e77bc84c55616a63583183  private/cp/after-typed/library.json
+96aaf7b093230ab57efaec2cb031631478980c066c7a22d5e52ef995918e32a2  private/cp/after-typed/fixed-test.json
+de1c22b3fee5fd234a0ec6dc9b3c910f8b4bef52c916a1baf61f0ba882a55e75  private/cp/after-typed/previous-test.json
+9dd8bb7384de2bfa0b2e8dd74c082bd098080e05643ea4b4faacb3e3488c4c0b  private/cp/after-predef/fixed.json
+9dd8bb7384de2bfa0b2e8dd74c082bd098080e05643ea4b4faacb3e3488c4c0b  private/cp/after-predef/previous.json
+fb3e89ebc309e987601065fff428bc8b7eabe2a5c115af55fe7108a64f1f073a  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aa0ba0694f51a9035/private/cp/after-bin/loop_owner_census

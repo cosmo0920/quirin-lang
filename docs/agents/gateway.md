@@ -1499,6 +1499,57 @@ which is not a second authority.
     every arm, `-U` undefining, a file's directive winning and the old test's
     path refused whatever the arms;
     [report](../reports/w47-loop-owner-predefined-macro-arms/README.md).
+    **Amendment (W47-PREMISES-CORO-PLUGIN): P-CORO-HANDLE, P-PLUGIN-DIR and
+    the immutable threaded flag derived.** With a typed reading the census
+    derives the three premises from the program (`loop_owner_coro_plugin.rs`,
+    child of `thread_entry_census.rs`; typed member accesses of
+    `struct flb_input_coro::coro`, `struct flb_libco_in_params::{coro,coll}`,
+    both `input_coro_list`s, `struct flb_input_plugin::flags` and
+    `struct flb_input_instance::is_threaded`, and the setter's key literals)
+    and withholds what rests on one it does not derive. P-CORO-HANDLE:
+    every access of the handle members stands in the coroutine's closed set
+    (constructor, hand-off, entry, wrapper, `flb_coro_resume`, destruction);
+    inside it a handle is only dereferenced, tested, stored into a handle
+    member or local, or passed to a listed parameter; the creation and the
+    hand-off are called only inside it; `input_coro_list` is only initialised
+    and appended to; an unmatched-record access, or a function a unit Clang
+    could not read may compile naming the member, fails it; not derived ⇒
+    every coroutine entry unresolved and no route dropped. P-PLUGIN-DIR: a
+    descriptor's `flags` is written only into a fresh allocation before it
+    is named anywhere else, `runs_in_coroutine` only by the constructor, and
+    every coroutine construction stands in `if (C->instance->runs_in_coroutine)
+    {…}` on its own collector argument; not derived ⇒ no directory or Step B
+    flag is used and no route dropped; and per registrant registered only in
+    `plugins/D`, every registration's instance is an unassigned parameter
+    chained through direct calls to a callback stored only in `D`'s
+    descriptor initializers (P-CALLBACK-INSTANCE derived for those fields, an
+    instance's `p` written only by the constructor or by installing a copy of
+    its own plugin into which no plugin function is stored) or to a collector
+    callback of `D` so registered whose dispatches pass `C->instance`; not
+    derived ⇒ that registrant keeps the coroutine route. The immutable
+    threaded flag: every `is_threaded` write is the property setter's in its
+    `threaded`-keyed arm (its key parameter unassigned), or into an instance
+    its writer created itself from an allocator or the constructor; not
+    derived ⇒ every mode-fixing edge's callee is unresolved. A reading
+    without typed facts derives none and keeps the earlier statements (no
+    measured reading is untyped). The census prints each derivation
+    (`typed.premises`). **Do not** drop a coroutine route, use a directory's
+    flag or fix a mode on an underived premise, count a setter call with an
+    unread key as unable to write the flag, or treat a header a failed unit
+    may compile as outside the build. Premises narrowed (trust boundary 28):
+    P-CORO-HANDLE to **P-CURRENT-HANDLE** (no thread resumes a coroutine
+    while it runs through the running coroutine's handle of itself,
+    `flb_coro_get()`/`co_active()`; 25 sites listed); the threaded flag to
+    **P-THREADED-SET-BEFORE-START** (the listed creation writes and setter
+    calls whose key is not one other literal run before the instance they
+    write starts; 6 sites); P-PLUGIN-DIR to P-REGISTERED-DESCRIPTORS and
+    **P-DESCRIPTOR-FLAGS-BY-MEMBER** (a descriptor's flags are written only
+    through member accesses). `QCore.LoopOwner.CoroPlugin` proves an escaping
+    handle never discharged and a census discharge covering every possible
+    resumer, a run-time flags write or a registration on another plugin's
+    instance keeping the route, no write after start fixing the flag, and
+    the old test's path refused whatever the premises;
+    [report](../reports/w47-premises-coro-plugin/README.md).
 
 <a id="constraint-10q"></a>
 

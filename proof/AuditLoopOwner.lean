@@ -1,4 +1,5 @@
 import QCore.LoopOwner
+import QCore.LoopOwnerCoroPlugin
 
 /-! Card **W47-LOOP-OWNER-CONTRACTS** (gateway rule 10p, contract
 specification §C04.9): the loop-owner obligation over derived thread
@@ -176,3 +177,20 @@ correspondence are trust boundary 28's premises, pinned by
 #print axioms QCore.LoopOwner.keptArms_all_unknown
 #print axioms QCore.LoopOwner.a_compiler_mismatch_keeps_every_arm
 #print axioms QCore.LoopOwner.the_old_test_path_is_never_discharged_whatever_the_arms
+
+-- P-CORO-HANDLE, P-PLUGIN-DIR and the immutable threaded flag derived (card
+-- W47-PREMISES-CORO-PLUGIN).
+#print axioms QCore.LoopOwner.CoroPlugin.a_confined_handle_has_only_derived_resumers
+#print axioms QCore.LoopOwner.CoroPlugin.an_escaping_handle_never_discharges
+#print axioms QCore.LoopOwner.CoroPlugin.a_use_outside_the_set_escapes
+#print axioms QCore.LoopOwner.CoroPlugin.a_census_discharge_covers_every_possible_resumer
+#print axioms QCore.LoopOwner.CoroPlugin.a_parameter_chain_keeps_the_directory
+#print axioms QCore.LoopOwner.CoroPlugin.a_runtime_flags_write_keeps_the_route
+#print axioms QCore.LoopOwner.CoroPlugin.a_registration_on_another_plugins_instance_keeps_the_route
+#print axioms QCore.LoopOwner.CoroPlugin.a_derived_directory_drops_the_route
+#print axioms QCore.LoopOwner.CoroPlugin.valueAt_before_all
+#print axioms QCore.LoopOwner.CoroPlugin.valueAt_after_all
+#print axioms QCore.LoopOwner.CoroPlugin.no_write_after_start_fixes_the_flag
+#print axioms QCore.LoopOwner.CoroPlugin.another_literal_key_cannot_write_the_flag
+#print axioms QCore.LoopOwner.CoroPlugin.a_runtime_threaded_write_never_discharges
+#print axioms QCore.LoopOwner.CoroPlugin.the_old_test_path_is_never_discharged_whatever_the_premises

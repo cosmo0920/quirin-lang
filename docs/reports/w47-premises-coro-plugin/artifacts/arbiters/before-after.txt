@@ -1,0 +1,26 @@
+corpus/audit.log: DIFFERS (1 line(s); 1218 vs 1218)
+corpus/monkey-source.json: identical
+corpus/parity.jsonl: DIFFERS (153173 line(s); 153414 vs 153414)
+corpus/parity.jsonl.contexts.jsonl: identical
+corpus/resource-diagnostics.chunk-contracts.json: identical
+corpus/resource-diagnostics.contracts.json: identical
+corpus/resource-diagnostics.json: identical
+corpus/resource-diagnostics.source-effects.json: identical
+corpus/run.json: DIFFERS (6 line(s); 24 vs 24)
+system/console.log: DIFFERS (1 line(s); 98 vs 98)
+system/exit: identical
+system/resource-diagnostics.chunk-contracts.json: identical
+system/resource-diagnostics.contracts.json: identical
+system/resource-diagnostics.invocation.json: DIFFERS (2 line(s); 83 vs 83)
+system/resource-diagnostics.json: identical
+system/resource-diagnostics.source-effects.json: identical
+system/run.json: DIFFERS (5 line(s); 25 vs 25)
+system/stderr.log: identical
+slice/console.log: DIFFERS (1 line(s); 104 vs 104)
+slice/exit: identical
+slice/resource-diagnostics.chunk-contracts.json: identical
+slice/resource-diagnostics.contracts.json: identical
+slice/resource-diagnostics.invocation.json: DIFFERS (2 line(s); 88 vs 88)
+slice/resource-diagnostics.json: identical
+slice/resource-diagnostics.source-effects.json: identical
+slice/stderr.log: identical
