@@ -290,7 +290,10 @@ fn a_repeated_field_name_is_refused() {
 /// so the unmodelled spelling is now one outside that table.
 #[test]
 fn a_field_type_this_revision_does_not_model_is_refused() {
-    let source = module("type Point { x: f64 }", "    let a = 1;\n    print dec a;\n");
+    let source = module(
+        "type Point { x: f64 }",
+        "    let a = 1;\n    print dec a;\n",
+    );
     assert_eq!(codes(&source), ["Q051"]);
     assert!(messages(&source).contains("AGGREGATE-FIELD-TYPES"));
     assert!(!messages(&source).contains("AGGREGATE-OWNED-FIELD"));
