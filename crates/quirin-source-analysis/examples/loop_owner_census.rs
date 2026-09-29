@@ -491,6 +491,11 @@ fn main() {
         if !result.reading.property_keys.is_empty() {
             report["typed"]["property_keys"] = serde_json::json!(result.reading.property_keys);
         }
+        // Card W47-PREMISES-CORO-PLUGIN: what each premise derived, and the
+        // named residuals' sites.
+        if !result.reading.premises.is_empty() {
+            report["typed"]["premises"] = serde_json::json!(result.reading.premises);
+        }
     }
     println!("{}", serde_json::to_string_pretty(&report).expect("json"));
 }

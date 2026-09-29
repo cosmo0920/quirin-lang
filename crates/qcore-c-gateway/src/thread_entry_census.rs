@@ -157,6 +157,10 @@ pub struct CensusReading {
     /// (`NAME=defined` / `NAME=undefined`), where the configured reading
     /// alone left it undecided.
     pub predefined_decisions: BTreeMap<String, BTreeSet<String>>,
+    /// Card W47-PREMISES-CORO-PLUGIN: P-CORO-HANDLE, P-PLUGIN-DIR and the
+    /// immutable threaded flag as derived from the typed reading, with the
+    /// named residuals and their sites (empty without a typed reading).
+    pub premises: BTreeMap<String, Vec<String>>,
 }
 
 impl CensusReading {
@@ -187,6 +191,12 @@ pub use loop_owner_property_keys::{FLUENT_BIT_PROPERTY_KEYS, PropertyKeyTables};
 // recorded compiler, for the configured reading.
 #[path = "loop_owner_predefined_macros.rs"]
 pub mod predefined_macros;
+
+// Card W47-PREMISES-CORO-PLUGIN: P-CORO-HANDLE, P-PLUGIN-DIR and the
+// immutable threaded flag, derived from the program.
+#[path = "loop_owner_coro_plugin.rs"]
+mod loop_owner_coro_plugin;
+pub use loop_owner_coro_plugin::{CoroPluginTables, FLUENT_BIT_CORO_PLUGIN};
 
 /// The closed hop vocabulary of one program family.
 #[derive(Clone, Copy, Debug)]
@@ -340,6 +350,14 @@ impl HopTables {
                 .map(|(wrapper, argument)| ((*wrapper).to_owned(), *argument)),
         );
         options.member_fields = flow.member_fields(self);
+        // Card W47-PREMISES-CORO-PLUGIN: the members and the setter key this
+        // card's derivations read.
+        options
+            .member_fields
+            .extend(FLUENT_BIT_CORO_PLUGIN.member_fields(self));
+        options
+            .literal_calls
+            .extend(FLUENT_BIT_CORO_PLUGIN.literal_calls());
         options
     }
 
@@ -355,6 +373,10 @@ impl HopTables {
         let mut options = self.instance_flow_options(flow);
         options.argument_calls = keys.argument_calls();
         options.key_tables = keys.key_tables.iter().map(|t| (*t).to_owned()).collect();
+        // Card W47-PREMISES-CORO-PLUGIN: the property setter's arm keys.
+        options
+            .argument_calls
+            .extend(FLUENT_BIT_CORO_PLUGIN.argument_calls());
         options
     }
 }
@@ -1939,12 +1961,31 @@ pub fn read_program_typed(
     };
     let instance_flags = derive_instance_flags(&step_b);
     let property_keys = step_b.property_readings.take();
+    // Card W47-PREMISES-CORO-PLUGIN: the premises the route drop, the
+    // directory flags and the fixed modes rest on. An underived P-CORO-HANDLE
+    // leaves every coroutine entry unresolved and keeps every route.
+    let premises = step_b.coro_plugin_premises(&FLUENT_BIT_CORO_PLUGIN);
+    let _ = step_b.notes.take();
+    let route_may_be_dropped = premises.route_may_be_dropped();
+    let flags_derived = typed.is_none() || matches!(premises.descriptor_flags, Some(Ok(_)));
+    if let Some(Err(why)) = &premises.coro_handle {
+        let ids = entries.keys().copied().collect::<Vec<_>>();
+        escape(&ids, format!("P-CORO-HANDLE is not derived: {why}"));
+    }
     // Which inputs run their collectors in a coroutine, from their plugin
     // directory's descriptor flags, else from Step B; undecided when a
     // registration is outside a plugin directory and Step B does not derive
     // it, or the directory's descriptors disagree.
     let runs_in_coroutine = |id: usize| -> Option<bool> {
         let from_directory = || {
+            // Card W47-PREMISES-CORO-PLUGIN: with a typed reading, a
+            // directory's flag decides only a registrant registered on its
+            // own plugins' instances, under derived descriptor flags.
+            if typed.is_some()
+                && (!flags_derived || !matches!(premises.registrations.get(&id), Some(Ok(_))))
+            {
+                return None;
+            }
             let mut value = None;
             for path in collector_sites.get(&id)? {
                 for flag in descriptor_flags.get(&plugin_dir(path)?)? {
@@ -1957,7 +1998,12 @@ pub fn read_program_typed(
             }
             value
         };
-        from_directory().or_else(|| instance_flags.get(&id).and_then(|flag| flag.derived))
+        from_directory().or_else(|| {
+            instance_flags
+                .get(&id)
+                .and_then(|flag| flag.derived)
+                .filter(|_| flags_derived)
+        })
     };
     // Field dispatch edges (hops V, V*, R, L), keyed by record type when the
     // typed reading names both the dispatch and the registration.
@@ -2013,7 +2059,11 @@ pub fn read_program_typed(
             }
             // An input whose descriptors run no coroutine is never
             // dispatched from a coroutine entry.
-            if body && field == hops.collector_field && runs_in_coroutine(*callee) == Some(false) {
+            if body
+                && field == hops.collector_field
+                && route_may_be_dropped
+                && runs_in_coroutine(*callee) == Some(false)
+            {
                 continue;
             }
             for from in &callers {
@@ -2145,6 +2195,24 @@ pub fn read_program_typed(
             .copied()
             .collect::<Vec<_>>();
         escape(&ids, format!("field `{field}` read as a value at {at}"));
+    }
+    // Card W47-PREMISES-CORO-PLUGIN: an underived immutable threaded flag
+    // fixes no mode: every edge that fixes one leaves its callee unresolved.
+    if let Some(Err(why)) = &premises.threaded_flag {
+        let ids = edges
+            .iter()
+            .filter(|edge| edge.effect != ReadEffect::Keep)
+            .map(|edge| edge.callee)
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            .collect::<Vec<_>>();
+        escape(
+            &ids,
+            format!("the threaded flag is not derived immutable after start: {why}"),
+        );
+    }
+    if typed.is_some() {
+        program.premises = premises.report(&program.functions);
     }
     program.edges = edges.into_iter().collect();
     program.spawns = spawns.into_iter().collect();
