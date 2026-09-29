@@ -1065,6 +1065,11 @@ impl CompiledModule {
             // `usize`, alone or composed with rendered lines.
             CheckedSourceModule::ScopedTasks(checked) => checked.target_assumption(),
             CheckedSourceModule::ComposedTasks(module) => module.tasks().target_assumption(),
+            // Card `W48-QR-SCALAR-TYPES-R6`: the composed string/buffer route
+            // (`W48-QR-TYPES-COMPOSED-STRING`).
+            CheckedSourceModule::StandardString(module) => {
+                module.certificate.target_assumption.as_ref()
+            }
             // Card `W48-QR-SCALAR-TYPES-R6`: the composed epoch route's task
             // half (`W48-QR-TYPES-EPOCH-TASKS`), and a `protected isize`/`usize`
             // payload.
@@ -1663,18 +1668,20 @@ fn compile_elaborated_source(
     // written before this card travels an identical code path, and the one new
     // door is opened only by the one new spelling.
     if qcore_frontend::source_std_string::has_source_string_bridge(parsed) {
-        return compile_string_source(parsed, typed, mode, options, ranges).and_then(|module| {
-            refuse_unmodeled_functions(
-                module,
-                EntryOnlyRoute {
-                    name: "source.string.v1",
-                    code: "Q068",
-                    pass: SemanticPass::StandardString,
-                },
-                parsed,
-                ranges,
-            )
-        });
+        return compile_string_source(parsed, typed, mode, options, ranges, target).and_then(
+            |module| {
+                refuse_unmodeled_functions(
+                    module,
+                    EntryOnlyRoute {
+                        name: "source.string.v1",
+                        code: "Q068",
+                        pass: SemanticPass::StandardString,
+                    },
+                    parsed,
+                    ranges,
+                )
+            },
+        );
     }
     // Card `AGGREGATES-V1`, and **the whole of the route-selection change it
     // makes**: a module that declares a record type reaches the buffer route,
@@ -1778,18 +1785,20 @@ fn compile_elaborated_source(
         });
     }
     if qcore_frontend::source_std_string::has_source_string(parsed) {
-        return compile_string_source(parsed, typed, mode, options, ranges).and_then(|module| {
-            refuse_unmodeled_functions(
-                module,
-                EntryOnlyRoute {
-                    name: "source.string.v1",
-                    code: "Q068",
-                    pass: SemanticPass::StandardString,
-                },
-                parsed,
-                ranges,
-            )
-        });
+        return compile_string_source(parsed, typed, mode, options, ranges, target).and_then(
+            |module| {
+                refuse_unmodeled_functions(
+                    module,
+                    EntryOnlyRoute {
+                        name: "source.string.v1",
+                        code: "Q068",
+                        pass: SemanticPass::StandardString,
+                    },
+                    parsed,
+                    ranges,
+                )
+            },
+        );
     }
     // Card `QUIRIN-SOCKET-V1`, selected after the buffer and string routes above
     // and before the standard-IO route below. All three neighbours are
@@ -6731,6 +6740,7 @@ fn compile_string_source(
     mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     if mode != SourceModuleMode::Executable {
         return Err(vec![plain_diagnostic(
@@ -6739,32 +6749,37 @@ fn compile_string_source(
         )]);
     }
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
-    let lowered = qcore_frontend::source_std_string::lower_source_string(parsed, typed, &entry)
+    // Card `W48-QR-SCALAR-TYPES-R6`: the recorded target reaches the composed
+    // string/buffer route's typed tier, as it reaches `source.buffer.v1`'s.
+    let lowered = qcore_frontend::source_std_string::lower_source_string_for_target(
+        parsed, typed, &entry, target,
+    )
+    .map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
+    let certificate = std_string::check_string_program_for_target(&lowered.program, target)
         .map_err(|errors| {
             errors
                 .into_iter()
-                .map(|error| map_diagnostic(error, ranges))
+                .map(|error| {
+                    let span = lowered
+                        .event_spans
+                        .get(error.event())
+                        .copied()
+                        .unwrap_or(lowered.scope_span);
+                    map_raw_diagnostic(
+                        error.code(),
+                        SemanticPass::StandardString,
+                        span,
+                        error.to_string(),
+                        ranges,
+                    )
+                })
                 .collect::<Vec<_>>()
         })?;
-    let certificate = std_string::check_string_program(&lowered.program).map_err(|errors| {
-        errors
-            .into_iter()
-            .map(|error| {
-                let span = lowered
-                    .event_spans
-                    .get(error.event())
-                    .copied()
-                    .unwrap_or(lowered.scope_span);
-                map_raw_diagnostic(
-                    error.code(),
-                    SemanticPass::StandardString,
-                    span,
-                    error.to_string(),
-                    ranges,
-                )
-            })
-            .collect::<Vec<_>>()
-    })?;
     // The driver never publishes a certificate it did not independently
     // re-derive from the same lowered program.
     std_string::recheck_string_certificate(&lowered.program, &certificate).map_err(|failure| {

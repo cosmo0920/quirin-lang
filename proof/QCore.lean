@@ -246,6 +246,7 @@ import QCore.ScalarBufferValues
 import QCore.ScalarPayloads
 import QCore.ScalarEpochTasks
 import QCore.TaskTraceFixedOutcomes
+import QCore.ScalarComposedString
 import QCore.ResourceCalls
 
 import QCore.MonkeyWaitSourcePolicy

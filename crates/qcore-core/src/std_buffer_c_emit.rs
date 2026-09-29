@@ -770,36 +770,133 @@ pub fn buffer_loop_block(
     scalars: &mut BTreeMap<String, String>,
     extents: &mut BTreeMap<String, u32>,
 ) -> Result<String, BufferEmissionRefusal> {
-    if !matches!(event, BufferEvent::Repeat { .. }) {
-        return Err(BufferEmissionRefusal::UnemittableLoop { event: index });
+    EmbeddedTyped::new(None).loop_block(index, event, scalars, extents)
+}
+
+/// The typed half of this route's emission, for a route that **embeds** this
+/// route's statements across a whole entry (card `W48-QR-SCALAR-TYPES-R6`,
+/// `W48-QR-TYPES-COMPOSED-STRING`: the composed string/buffer route).
+///
+/// [`buffer_loop_block`] emits one `for` with a fresh environment, which is
+/// exactly right for an `i32` program and is why card R5 refused the typed
+/// tier on the composed route: a conversion or a value statement inside a body
+/// called a helper nothing defined. This keeps **one** environment for the
+/// whole entry — the typed names and their C objects, the checked
+/// conversions, §G02t's shared helpers and the comparison functions the
+/// statements use — so a top-level statement and a loop body see the same
+/// typed names, and [`EmbeddedTyped::prelude`] defines every helper once.
+/// With no typed statement it is empty and emits nothing, so every program
+/// before the card keeps its bytes.
+pub struct EmbeddedTyped {
+    records: RecordEnvironment,
+}
+
+impl EmbeddedTyped {
+    #[must_use]
+    pub fn new(target: Option<st::RecordedTarget>) -> Self {
+        Self {
+            records: RecordEnvironment {
+                types: BTreeMap::new(),
+                bound: BTreeMap::new(),
+                field_extents: BTreeMap::new(),
+                live_fields: BTreeMap::new(),
+                typed: BTreeMap::new(),
+                conversions: BTreeSet::new(),
+                helpers: BTreeSet::new(),
+                comparisons: BTreeSet::new(),
+                target,
+            },
+        }
     }
-    let lends = BTreeMap::new();
-    let mut loans = BTreeMap::new();
-    let mut records = RecordEnvironment {
-        types: BTreeMap::new(),
-        bound: BTreeMap::new(),
-        field_extents: BTreeMap::new(),
-        live_fields: BTreeMap::new(),
-        typed: BTreeMap::new(),
-        conversions: BTreeSet::new(),
-        helpers: BTreeSet::new(),
-        comparisons: BTreeSet::new(),
-        target: None,
-    };
-    let mut source = String::new();
-    emit_events(
-        std::slice::from_ref(event),
-        "    ",
-        index,
-        false,
-        scalars,
-        extents,
-        &mut loans,
-        &lends,
-        &mut records,
-        &mut source,
-    )?;
-    Ok(source)
+
+    /// One `for` block at the entry's indent, in this environment.
+    pub fn loop_block(
+        &mut self,
+        index: usize,
+        event: &BufferEvent,
+        scalars: &mut BTreeMap<String, String>,
+        extents: &mut BTreeMap<String, u32>,
+    ) -> Result<String, BufferEmissionRefusal> {
+        if !matches!(event, BufferEvent::Repeat { .. }) {
+            return Err(BufferEmissionRefusal::UnemittableLoop { event: index });
+        }
+        self.events(index, event, scalars, extents)
+    }
+
+    /// One top-level conversion or value statement, in this environment.
+    pub fn statement(
+        &mut self,
+        index: usize,
+        event: &BufferEvent,
+        scalars: &mut BTreeMap<String, String>,
+        extents: &mut BTreeMap<String, u32>,
+    ) -> Result<String, BufferEmissionRefusal> {
+        if !matches!(
+            event,
+            BufferEvent::Convert { .. } | BufferEvent::Compute { .. }
+        ) {
+            return Err(BufferEmissionRefusal::UnemittableConversion { event: index });
+        }
+        self.events(index, event, scalars, extents)
+    }
+
+    fn events(
+        &mut self,
+        index: usize,
+        event: &BufferEvent,
+        scalars: &mut BTreeMap<String, String>,
+        extents: &mut BTreeMap<String, u32>,
+    ) -> Result<String, BufferEmissionRefusal> {
+        let lends = BTreeMap::new();
+        let mut loans = BTreeMap::new();
+        let mut source = String::new();
+        emit_events(
+            std::slice::from_ref(event),
+            "    ",
+            index,
+            false,
+            scalars,
+            extents,
+            &mut loans,
+            &lends,
+            &mut self.records,
+            &mut source,
+        )?;
+        Ok(source)
+    }
+
+    /// The C object and type of a typed (non-`i32`) name, if it is one.
+    #[must_use]
+    pub fn typed(&self, name: &str) -> Option<(String, ScalarType)> {
+        self.records.typed.get(name).cloned()
+    }
+
+    /// The recorded target's width assertions and every helper the entry's
+    /// typed statements used, each once — the empty string when none did.
+    pub fn prelude(&self) -> Result<String, BufferEmissionRefusal> {
+        let target = self.records.target.as_ref();
+        let mut text = String::new();
+        if let Some(target) = target {
+            text.push('\n');
+            text.push_str(&st::c_target_assertions(target));
+        }
+        for (from, to) in &self.records.conversions {
+            match conversion_helper(*from, *to, target) {
+                Some(helper) => text.push_str(&helper),
+                None => return Err(BufferEmissionRefusal::UnemittableConversion { event: 0 }),
+            }
+        }
+        for helper in &self.records.helpers {
+            text.push('\n');
+            text.push_str(&crate::scalar_calls_c_emit::scalar_helper_definition(
+                *helper, target,
+            ));
+        }
+        for (cmp, ty) in &self.records.comparisons {
+            text.push_str(&comparison_helper(*cmp, *ty));
+        }
+        Ok(text)
+    }
 }
 
 /// Emit one sequence of events at `indent`.

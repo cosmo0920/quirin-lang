@@ -436,6 +436,14 @@ pub struct StringCertificate {
     pub flushes: usize,
     /// The renderings actually used.
     pub renderings: BTreeSet<Rendering>,
+    /// Card `W48-QR-SCALAR-TYPES-R6` (`W48-QR-TYPES-COMPOSED-STRING`): the
+    /// final environment of every scalar of a §G02t type other than `i32` —
+    /// a conversion or value statement of the composed entry. Empty for
+    /// every program before the card.
+    pub typed: BTreeMap<String, (crate::scalar_types::ScalarType, i128)>,
+    /// The recorded target, exactly when the program names `isize` or
+    /// `usize` — a named assumption of the result, as on `source.buffer.v1`.
+    pub target_assumption: Option<crate::scalar_types::RecordedTarget>,
 }
 
 /// Why a quoted token is not a string value this route can construct.
@@ -1295,6 +1303,19 @@ impl Evaluation<'_> {
                         name: name.clone(),
                     });
                 }
+                // Card `W48-QR-SCALAR-TYPES-R6`: a name of another §G02t type
+                // at a position of this route that takes an `i32` (a slice
+                // bound, a composed piece) is refused naming its type — there
+                // is no implicit conversion; `as` makes it an `i32`.
+                if let Some((ty, _)) = self.buffer.typed.get(name) {
+                    return Err(StringError::Composition {
+                        event,
+                        reason: format!(
+                            "`{name}` is a `{ty}` and this position takes an `i32`; convert it \
+                             with `as` (nothing converts implicitly)"
+                        ),
+                    });
+                }
                 self.buffer
                     .scalars
                     .get(name)
@@ -1550,7 +1571,42 @@ fn register_refused_view(evaluation: &mut Evaluation<'_>, binding: &str) {
 pub fn check_string_program(
     program: &StringProgram,
 ) -> Result<StringCertificate, Vec<StringError>> {
+    check_string_program_for_target(program, None)
+}
+
+/// Whether the program names `isize` or `usize` anywhere — a conversion's
+/// target, a value statement's result or a loop's index (card
+/// `W48-QR-SCALAR-TYPES-R6`). A program naming neither never reads a target.
+pub fn names_target_width(program: &StringProgram) -> bool {
+    let buffer = crate::std_buffer::BufferProgram {
+        entry: program.entry.clone(),
+        declared_effects: program.declared_effects.clone(),
+        records: Vec::new(),
+        events: program
+            .events
+            .iter()
+            .filter_map(|event| match event {
+                StringEvent::Buffer(event) => Some(event.clone()),
+                _ => None,
+            })
+            .collect(),
+    };
+    crate::std_buffer::names_target_width(&buffer)
+}
+
+/// [`check_string_program`] for the builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES-R6`), which alone gives `isize`/`usize` a width on
+/// the composed string/buffer route; with none such a program is refused.
+pub fn check_string_program_for_target(
+    program: &StringProgram,
+    target: Option<&crate::scalar_types::RecordedTarget>,
+) -> Result<StringCertificate, Vec<StringError>> {
     let mut errors = Vec::new();
+    let target_assumption = if names_target_width(program) {
+        target.cloned()
+    } else {
+        None
+    };
 
     for (index, payload) in program.literals.iter().enumerate() {
         if payload.len() > MAX_STRING_BYTES as usize {
@@ -1593,7 +1649,10 @@ pub fn check_string_program(
         literals: &program.literals,
         composed: Vec::new(),
         views: BTreeMap::new(),
-        buffer: BufferEvaluation::new(),
+        buffer: BufferEvaluation {
+            target: target_assumption.clone(),
+            ..BufferEvaluation::new()
+        },
     };
     let mut views = Vec::new();
     let mut slices = Vec::new();
@@ -2087,32 +2146,15 @@ pub fn check_string_program(
                     ..
                 } = buffer_event
                 {
-                    // Card `W48-QR-SCALAR-TYPES-R5`: this route binds only
-                    // `i32`s, and its emitter carries no typed environment
-                    // (`buffer_loop_block` keeps no conversion helper), so a
-                    // statement of the §G02t value tier is refused by name at
-                    // any depth — a conversion, and a loop whose index is of
-                    // another type. Before the card a conversion in a body
-                    // reached `check` and `emit` and the emitted C did not
-                    // compile (it called a helper nothing defined).
-                    if buffer_event.any(&|inner| {
-                        matches!(
-                            inner,
-                            BufferEvent::Convert { .. } | BufferEvent::Compute { .. }
-                        )
-                            || matches!(inner, BufferEvent::Repeat { index, .. } if *index != crate::std_buffer::LoopIndex::I32)
-                    }) {
-                        errors.push(StringError::Composition {
-                            event: index,
-                            reason: "this `for` computes a value of the fixed-width scalar \
-                                     table (a conversion, a value statement, or an index of a \
-                                     type other than `i32`); the composed string/buffer entry binds only `i32` \
-                                     values and refuses such a statement by name at any depth \
-                                     (`W48-QR-TYPES-COMPOSED-STRING`)"
-                                .to_owned(),
-                        });
-                        continue;
-                    }
+                    // Card `W48-QR-SCALAR-TYPES-R6` (`W48-QR-TYPES-COMPOSED-STRING`)
+                    // discharges card R5's refusal of the typed tier here: a
+                    // conversion, a value statement and a loop of any index
+                    // type run through `source.buffer.v1`'s own runner below,
+                    // over its typed environment, under the recorded target,
+                    // and the emitter carries that route's typed environment
+                    // and helpers across the whole entry. A typed statement
+                    // stores no byte and releases nothing, so it adds no
+                    // conflict to the window question decided next.
                     if buffer_event.any(&|inner| matches!(inner, BufferEvent::Lend { .. })) {
                         errors.push(StringError::Composition {
                             event: index,
@@ -2332,6 +2374,34 @@ pub fn check_string_program(
                     rendering, operand, ..
                 } => {
                     renderings.insert(*rendering);
+                    // Card `W48-QR-SCALAR-TYPES-R6`: a name of the typed
+                    // environment renders at its own type — `source.buffer.v1`'s
+                    // rendering, framed by the one framing every route shares;
+                    // every other operand takes the path it always took.
+                    if let StdIoOperand::Scalar(name) = operand
+                        && let Some((ty, value)) = evaluation.buffer.typed.get(name).copied()
+                        && !evaluation.views.contains_key(name)
+                    {
+                        let level = match line {
+                            StdIoEvent::Log { level, .. } => Some(*level),
+                            _ => None,
+                        };
+                        match crate::scalar_types::render(
+                            *rendering == Rendering::Hex,
+                            ty,
+                            value,
+                            evaluation.buffer.target.as_ref(),
+                        ) {
+                            Some(body) => lines.push(rendered_text_line(level, &body)),
+                            None => errors.push(StringError::Composition {
+                                event: index,
+                                reason: format!(
+                                    "`{name}` is a `{ty}`, which has no `hex` rendering"
+                                ),
+                            }),
+                        }
+                        continue;
+                    }
                     match line_operand(&evaluation, index, operand) {
                         Ok(value) => lines.push(
                             rendered_line(line, value)
@@ -2420,6 +2490,8 @@ pub fn check_string_program(
             lines,
             flushes,
             renderings,
+            typed: evaluation.buffer.typed,
+            target_assumption,
         })
     } else {
         Err(errors)
@@ -2496,7 +2568,9 @@ pub fn recheck_string_certificate(
     program: &StringProgram,
     certificate: &StringCertificate,
 ) -> Result<(), StringRecheckFailure> {
-    let rederived = check_string_program(program).map_err(|_| StringRecheckFailure::Refused)?;
+    let rederived =
+        check_string_program_for_target(program, certificate.target_assumption.as_ref())
+            .map_err(|_| StringRecheckFailure::Refused)?;
     if rederived.entry != certificate.entry {
         return Err(StringRecheckFailure::Entry);
     }
@@ -2538,6 +2612,11 @@ pub fn recheck_string_certificate(
     }
     if rederived.renderings != certificate.renderings {
         return Err(StringRecheckFailure::Renderings);
+    }
+    if rederived.typed != certificate.typed
+        || rederived.target_assumption != certificate.target_assumption
+    {
+        return Err(StringRecheckFailure::Scalars);
     }
     Ok(())
 }

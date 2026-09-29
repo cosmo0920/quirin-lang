@@ -1062,8 +1062,20 @@ fn lower_let(
 /// partially lowered middle state.
 pub fn lower_source_string(
     parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+) -> Result<LoweredStringModule, Vec<SourceDiagnostic>> {
+    lower_source_string_for_target(parsed, typed, entry, None)
+}
+
+/// [`lower_source_string`] under the builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES-R6`), which the lowering's constant tier reads to fold
+/// an `isize`/`usize` loop bound of a composed module.
+pub fn lower_source_string_for_target(
+    parsed: &SourceProgram,
     _typed: &TypedSourceProgram,
     entry: &str,
+    target: Option<&qcore_core::scalar_types::RecordedTarget>,
 ) -> Result<LoweredStringModule, Vec<SourceDiagnostic>> {
     let tokens = parsed.lexical_tokens();
     let mut diagnostics = Vec::new();
@@ -1176,6 +1188,7 @@ pub fn lower_source_string(
     // bound may name, kept by `source.buffer.v1`'s own environment so the
     // bound is resolved in that route's tier and no other.
     let mut constants = crate::source_std_buffer::LoweringConstants::new();
+    constants.target = target.cloned();
 
     for statement in &body.statements {
         let span = statement.span;
@@ -1284,6 +1297,30 @@ pub fn lower_source_string(
         // `bytes(…)`, `extent(…)` and a **colon-free** bracket, and this
         // route's own `let` forms are a quoted literal, `len(…)`, `concat(…)`,
         // `borrow_utf8(…)`, an integer and a colon-bearing bracket.
+        // Card `W48-QR-SCALAR-TYPES-R6` (`W48-QR-TYPES-COMPOSED-STRING`): a
+        // conversion or a value statement of a composed module is
+        // `source.buffer.v1`'s statement, read by that route's reader — the one
+        // the extern and task routes share — so the composed entry reads the
+        // fixed-width tier exactly as the buffer route does. It claims only
+        // those two shapes, and none of this route's own `let` forms (a quoted
+        // literal, `len`, `concat`, `borrow_utf8`, an integer, a slice) is
+        // one, so it steals nothing; before the card the shape refused here
+        // at `Q068`.
+        if holds_a_buffer
+            && head == "let"
+            && string_use(&window).is_none()
+            && let Some(read) = crate::source_std_buffer::value_statement(parsed, span)
+        {
+            match read {
+                Ok(buffer_event) => {
+                    constants.observe(&buffer_event);
+                    events.push(StringEvent::Buffer(buffer_event));
+                    event_spans.push(span);
+                }
+                Err(message) => diagnostics.push(diagnostic("Q077", span, message)),
+            }
+            continue;
+        }
         let buffer_read = if !holds_a_buffer
             || head.is_empty()
             || matches!(head, PRINT_KEYWORD | LOG_KEYWORD | FLUSH_KEYWORD | "return")

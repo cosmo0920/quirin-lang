@@ -324,20 +324,17 @@ fn a_typed_index_is_a_value_of_its_type() {
     );
 }
 
-/// The composed string/buffer route binds only `i32`s: a typed loop, and a
-/// conversion in a loop body, refuse there by name.
+/// Card `W48-QR-SCALAR-TYPES-R6` (`W48-QR-TYPES-COMPOSED-STRING`) discharged
+/// the refusal this test pinned for card R5: a typed loop and a conversion in
+/// a loop body are admitted on the composed string/buffer route
+/// (`compiler/tests/scalar_composed_string.rs` runs them natively).
 #[test]
-fn the_composed_string_route_refuses_typed_loops() {
+fn the_composed_string_route_admits_typed_loops() {
     let target = host_target();
     let conversion = "#import std.string;\n#import std.buffer;\n#import std.io;\nfn main() -> unit effects { io, alloc, mut } {\n    let b = bytes(4);\n    for i in 0..4 {\n        let j = i as u8;\n        b[i] = 97;\n    }\n    let all = borrow_utf8(b);\n    print all;\n    drop b;\n    return;\n}\n";
-    refused_at(
-        conversion,
-        Some(&target),
-        "Q077",
-        "W48-QR-TYPES-COMPOSED-STRING",
-    );
+    compile_for(conversion, Some(&target)).expect("a conversion in a composed loop body");
     let typed = "#import std.string;\n#import std.buffer;\n#import std.io;\nfn main() -> unit effects { io, alloc, mut } {\n    let b = bytes(4);\n    for i in 0..1 {\n        let k = 2;\n        let n = k as u8;\n        for j in 0..n {\n            b[0] = 97;\n        }\n    }\n    let all = borrow_utf8(b);\n    print all;\n    drop b;\n    return;\n}\n";
-    refused_at(typed, Some(&target), "Q077", "W48-QR-TYPES-COMPOSED-STRING");
+    compile_for(typed, Some(&target)).expect("a typed loop on the composed route");
 }
 
 fn repeat_program(index: LoopIndex, count: u32) -> BufferProgram {

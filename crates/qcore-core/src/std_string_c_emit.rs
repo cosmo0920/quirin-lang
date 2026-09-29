@@ -351,8 +351,14 @@ pub fn emit_string_c11(
     // Refuse before emitting anything if the certificate is not this program's.
     let _ = interpret_string_program(program, certificate)?;
 
-    let fragments = preamble(program, certificate);
+    let mut fragments = preamble(program, certificate);
     let mut source = String::new();
+    // Card `W48-QR-SCALAR-TYPES-R6` (`W48-QR-TYPES-COMPOSED-STRING`): one
+    // typed environment for the whole entry — `source.buffer.v1`'s own — so a
+    // top-level conversion or value statement and every loop body see the
+    // same typed names, and each helper they use is defined once below. Empty,
+    // and so invisible, for every program before the card.
+    let mut embedded = std_buffer_c_emit::EmbeddedTyped::new(certificate.target_assumption.clone());
 
     // Which bindings a later event actually consumes. A binding nothing
     // consumes is still emitted — the program said to bind it — and then
@@ -514,18 +520,29 @@ pub fn emit_string_c11(
             // writes is the loop the uncomposed route writes, character for
             // character.
             StringEvent::Buffer(buffer_event @ BufferEvent::Repeat { .. }) => {
-                match std_buffer_c_emit::buffer_loop_block(
-                    index,
-                    buffer_event,
-                    &mut scalars,
-                    &mut extents,
-                ) {
+                match embedded.loop_block(index, buffer_event, &mut scalars, &mut extents) {
                     Ok(block) => source.push_str(&block),
                     Err(_) => {
                         return Err(StringEmissionRefusal::UnplaceableView { event: index });
                     }
                 }
             }
+            // Card `W48-QR-SCALAR-TYPES-R6`: a top-level conversion or value
+            // statement, written by `source.buffer.v1`'s own statement emitter
+            // in the entry's typed environment, and discarded when nothing
+            // reads it, as every other binding of this route is.
+            StringEvent::Buffer(
+                buffer_event @ (BufferEvent::Convert { binding, .. }
+                | BufferEvent::Compute { binding, .. }),
+            ) => match embedded.statement(index, buffer_event, &mut scalars, &mut extents) {
+                Ok(statement) => {
+                    source.push_str(&statement);
+                    discard(&mut source, binding, &scalar_name(binding));
+                }
+                Err(_) => {
+                    return Err(StringEmissionRefusal::UnplaceableView { event: index });
+                }
+            },
             StringEvent::Buffer(buffer_event) => {
                 match std_buffer_c_emit::buffer_event_statement(
                     index,
@@ -600,6 +617,44 @@ pub fn emit_string_c11(
                 scalars.insert(binding.clone(), emitted.clone());
                 discard(&mut source, binding, &emitted);
             }
+            // Card `W48-QR-SCALAR-TYPES-R6`: a name of the typed environment
+            // renders at its own type — §G02t's conversion over its C object,
+            // framed like every line (the composed extern and task routes'
+            // precedent).
+            StringEvent::Line(
+                line @ (StdIoEvent::Print {
+                    rendering,
+                    operand: crate::std_io::StdIoOperand::Scalar(name),
+                }
+                | StdIoEvent::Log {
+                    rendering,
+                    operand: crate::std_io::StdIoOperand::Scalar(name),
+                    ..
+                }),
+            ) if embedded.typed(name).is_some() => {
+                let (object, ty) = embedded.typed(name).expect("a typed name");
+                let level = match line {
+                    StdIoEvent::Log { level, .. } => Some(*level),
+                    _ => None,
+                };
+                let (stream, prefix) = line_framing(level);
+                let Some((conversion, operand)) = crate::scalar_types::c_rendering(
+                    *rendering == crate::std_io::Rendering::Hex,
+                    ty,
+                    &object,
+                    certificate.target_assumption.as_ref(),
+                ) else {
+                    return Err(StringEmissionRefusal::Unbound {
+                        event: index,
+                        name: name.clone(),
+                    });
+                };
+                let _ = writeln!(
+                    source,
+                    "    {}",
+                    io_emit::write_line(stream, &format!("{prefix}{conversion}"), &[&operand])
+                );
+            }
             StringEvent::Line(line) => {
                 // The rendering itself — the conversion, the level tag, the
                 // stream, the `fflush` — is decided by `source.std-io.v1`'s own
@@ -668,8 +723,46 @@ pub fn emit_string_c11(
         }
     }
 
+    // Card `W48-QR-SCALAR-TYPES-R6`: the typed environment's headers and its
+    // helpers, each once — no fragment at all for a program with none.
+    let typed_prelude = embedded
+        .prelude()
+        .map_err(|_| StringEmissionRefusal::UnplaceableView { event: 0 })?;
+    if uses_typed_scalars(program) {
+        fragments.push(Fragment::new(
+            Section::Includes,
+            "scalar-types.includes",
+            "#include <stdbool.h>\n#include <stddef.h>\n",
+        ));
+    }
+    if !typed_prelude.is_empty() {
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "string.scalar-types",
+            typed_prelude,
+        ));
+    }
     let source = c_program::assemble(&fragments, &c_program::Entry::source_route(source));
     Ok(StringCEmission { source })
+}
+
+/// Whether the composed entry uses the fixed-width tier at all (card
+/// `W48-QR-SCALAR-TYPES-R6`): `source.buffer.v1`'s own test over its embedded
+/// statements.
+fn uses_typed_scalars(program: &StringProgram) -> bool {
+    std_buffer_c_emit::uses_typed_scalars(&crate::std_buffer::BufferProgram {
+        entry: program.entry.clone(),
+        declared_effects: program.declared_effects.clone(),
+        records: Vec::new(),
+        events: program
+            .events
+            .iter()
+            .filter_map(|event| match event {
+                StringEvent::Buffer(event) => Some(event.clone()),
+                _ => None,
+            })
+            .collect(),
+    })
 }
 
 /// The file-scope text `source.string.v1` contributes to a program it is part

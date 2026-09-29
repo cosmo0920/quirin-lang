@@ -1014,6 +1014,48 @@ fn lower_store(
 ///
 /// `None` means the statement is not one this route spells at all.
 #[must_use]
+/// A conversion or a value statement embedded in a composing route's entry
+/// (card `W48-QR-SCALAR-TYPES-R6`, `W48-QR-TYPES-COMPOSED-STRING`): `let NAME =
+/// OPERAND as TYPE;` or one arithmetic operation, comparison or negation,
+/// read by **this** route's `lower_let` — so the composed string/buffer route
+/// reads the statement exactly as this route and the extern and task routes
+/// read it. It claims only those two shapes: a bare literal, a name, and
+/// every other `let` form fall through (`None`) to the composing route's own
+/// reader, and like the conversion here it is not a `buffer_use`, so it
+/// selects no route.
+pub fn value_statement(parsed: &SourceProgram, span: Span) -> Option<Result<BufferEvent, String>> {
+    let tokens = parsed.lexical_tokens();
+    let window = window(tokens, span);
+    if word(&window, 0) != Some("let") || !symbol(&window, 2, Symbol::Equal) {
+        return None;
+    }
+    let conversion = operand(&window, 3).is_some_and(|(_, next)| word(&window, next) == Some("as"));
+    let rest: Vec<Token> = window[3..].iter().map(|token| (*token).clone()).collect();
+    let expression = crate::source_value_statement::parse_value_expression(&rest, |name: &str| {
+        Some(name.to_owned())
+    })
+    .is_some();
+    if !conversion && !expression {
+        return None;
+    }
+    let mut diagnostics = Vec::new();
+    match lower_let(
+        &window,
+        span,
+        &LoweringConstants::default(),
+        &mut diagnostics,
+    ) {
+        Some(event @ (BufferEvent::Convert { .. } | BufferEvent::Compute { .. })) => {
+            Some(Ok(event))
+        }
+        Some(_) => None,
+        None => Some(Err(diagnostics.into_iter().next().map_or_else(
+            || "this is not a statement `source.buffer.v1` models".to_owned(),
+            |diagnostic| diagnostic.message,
+        ))),
+    }
+}
+
 pub fn buffer_statement(parsed: &SourceProgram, span: Span) -> Option<Result<BufferEvent, String>> {
     let tokens = parsed.lexical_tokens();
     let window = window(tokens, span);
