@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG00-CLANG-GAP-BASELINE card gate at tip (base d3508e10 with main 7e7ba401 merged), logs private/cg00/gate2 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 367 units, 380 summaries, 6,561 passed, 0 failed, 11 ignored (private/test-binaries/20260929T113425Z-1044802/summary.json; +106 CG00 controls over CG01's 6,455); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 227 audits passed (no Lean change); python tests after the matrix edit (10-python.exit); docs index and clean-dev (11/12). A pre-merge run at base (private/cg00/gate) was also green: 6,551 passed, 226 audits. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter BEFORE (base binary) and AFTER (tip binary) (--jobs 8): resource-diagnostics.json ae17152b byte-identical in both. Exits in gate/.",
-  "workspace_tests": 6561,
+  "note": "W48-QR-SCALAR-TYPES-R3 integration gate on integrate/w48-r3 4cfc4d32 (main e182d403, CG00/CG01 landed, plus the card at 05f0aefb), script merged-gate-r3.sh, logs private/w48-int-r3/gate-4cfc4d32 of the implementation-wave-47 worktree: submodule 0; run_test_binaries.py 369 units, 382 summaries, 6,579 passed, 2 failed, 11 ignored (exit 101; private/test-binaries/20260929T121351Z-1547079). The two failures were load-sensitive under load average ~30: cycle20_verifier_plugins vp04_vp07_vp08 (elapsed < 500ms) and package_identity a_removed_executable_is_refused_at_the_next_spawn (spawn ETXTBSY 'Text file busy'); each rerun alone passed (20/20 and 10/10, exits 0, gate/rerun-*.exit), so 6,581 tests pass. fmt, clippy, both reevaluation probes 0; 228 Lean audits (CG01's AuditTypedSourceOperators and the card's AuditScalarPositions); python first run 1 failure, the matrix's stale lean_audits 227 against 228 on disk, corrected by this regeneration and rerun; docs index 0; provider gate 0 (129 passed, 0 failed, 1 ignored; contracts check, package build and 5 verifies 0; provider python 24 OK). Corpus arbiter resource-diagnostics.json byte-identical (ae17152b); system and slice resource-diagnostics.json identical to round 9's (private/w47-int-l/gate-6cacfb1b) after checkout-path normalization. Clang 21.1.8.",
+  "workspace_tests": 6581,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 227,
+  "lean_audits": 228,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6932,6 +6932,7 @@
    "AuditScalarCalls.lean",
    "AuditScalarMemberStore.lean",
    "AuditScalarObservationContracts.lean",
+   "AuditScalarPositions.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditScalarTypedErrors.lean",
    "AuditScalarTypes.lean",
@@ -6993,7 +6994,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg00-clang-gap-baseline/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r3/integration/gate.json)"
  },
  "named_followups": [
   {
