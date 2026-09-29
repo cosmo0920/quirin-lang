@@ -346,27 +346,69 @@ impl Parser<'_> {
         elaborated: &Elaboration<StatementPlan>,
         line: usize,
     ) -> Result<Option<Vec<LegacyInstruction>>, String> {
-        let call = strip_parens(node);
-        if kind(call) != "CallExpr" {
-            return Ok(None);
-        }
-        // The call is the graph's last event and its only call.
-        let Some((last, Event::Call { callee })) =
-            elaborated.graph.events.iter().enumerate().last()
-        else {
+        // `CALL(…)`, its value discarded, or `NAME = CALL(…)` with `NAME` a
+        // named non-pointer object whose write is the graph's last event.
+        let bare = strip_parens(node);
+        let (call, destination) = match kind(bare) {
+            "CallExpr" => (bare, None),
+            "BinaryOperator" if bare["opcode"].as_str() == Some("=") => {
+                let [left, right] = children(bare) else {
+                    return Ok(None);
+                };
+                let left = strip_parens(left);
+                let right = strip_parens(right);
+                if kind(right) != "CallExpr"
+                    || kind(left) != "DeclRefExpr"
+                    || crate::typed_access_path::is_pointer(left)
+                {
+                    return Ok(None);
+                }
+                let Some(name) = left["referencedDecl"]["name"].as_str() else {
+                    return Ok(None);
+                };
+                (right, Some(name.to_owned()))
+            }
+            _ => return Ok(None),
+        };
+        let events = &elaborated.graph.events;
+        let call_event = match destination {
+            None => events.len().checked_sub(1),
+            Some(_) => events.len().checked_sub(2),
+        };
+        let Some(call_event) = call_event else {
             return Ok(None);
         };
-        if elaborated.graph.events[..last]
+        let Event::Call { callee } = &events[call_event] else {
+            return Ok(None);
+        };
+        if destination.is_some()
+            && !matches!(
+                events.last(),
+                Some(Event::Write {
+                    place: crate::elaboration::Place::Object { .. },
+                    pointer: false
+                })
+            )
+        {
+            return Ok(None);
+        }
+        // The call is the graph's only call.
+        if events
             .iter()
-            .any(|event| matches!(event, Event::Call { .. }))
+            .enumerate()
+            .any(|(id, event)| id != call_event && matches!(event, Event::Call { .. }))
         {
             return Ok(None);
         }
         let callee = callee.clone();
-        let actual_events = elaborated.actuals.get(&last).cloned().unwrap_or_default();
+        let actual_events = elaborated
+            .actuals
+            .get(&call_event)
+            .cloned()
+            .unwrap_or_default();
         if !actual_events
             .iter()
-            .any(|&event| !matches!(elaborated.graph.events[event], Event::Read(_)))
+            .any(|&event| !matches!(events[event], Event::Read(_)))
         {
             return Ok(None);
         }
@@ -377,9 +419,10 @@ impl Parser<'_> {
         if actuals.len() != contract.parameters.len() {
             return Err(format!("call `{callee}`: actuals do not match the formals"));
         }
-        // Every event before the call, lowered as the elaborator lowers it.
+        // Every event before the call, lowered as the elaborator lowers it:
+        // the actuals' reads (with their obligations) and writes.
         let mut instructions = Vec::new();
-        for id in 0..last {
+        for id in 0..call_event {
             if let Some(instruction) = self
                 .lower_event(elaborated, id)
                 .map_err(|refusal| refusal.reason())?
@@ -387,18 +430,29 @@ impl Parser<'_> {
                 instructions.push(instruction);
             }
         }
-        // The call's tokens with each effectful actual replaced by a neutral
-        // literal: its value is data at a `Borrowed` formal.
-        let mut tokens = vec![
-            Token {
-                text: callee.clone(),
+        // The call's tokens with each scalar actual at a `Borrowed` formal
+        // replaced by a neutral literal: its value is data, and its reads and
+        // writes were lowered above. A pointer actual keeps its spelling, so
+        // the classifier substitutes it; an effectful one refuses.
+        let mut tokens = Vec::new();
+        if let Some(name) = &destination {
+            tokens.push(Token {
+                text: name.clone(),
                 line,
-            },
-            Token {
-                text: "(".to_owned(),
+            });
+            tokens.push(Token {
+                text: "=".to_owned(),
                 line,
-            },
-        ];
+            });
+        }
+        tokens.push(Token {
+            text: callee.clone(),
+            line,
+        });
+        tokens.push(Token {
+            text: "(".to_owned(),
+            line,
+        });
         for (formal, actual) in actuals.iter().enumerate() {
             if formal > 0 {
                 tokens.push(Token {
@@ -406,21 +460,20 @@ impl Parser<'_> {
                     line,
                 });
             }
-            let effectful = holds_effect(actual);
-            if effectful {
-                if !matches!(
-                    contract.parameters[formal],
-                    qcore_schemas::contract::ResourceParameterMode::Borrowed
-                ) || crate::typed_access_path::is_pointer(actual)
-                {
-                    return Err(format!(
-                        "call `{callee}`: an effectful actual at a formal that is not data"
-                    ));
-                }
+            let pointer = crate::typed_access_path::is_pointer(actual);
+            let borrowed = matches!(
+                contract.parameters[formal],
+                qcore_schemas::contract::ResourceParameterMode::Borrowed
+            );
+            if !pointer && borrowed {
                 tokens.push(Token {
                     text: "0".to_owned(),
                     line,
                 });
+            } else if holds_effect(actual) {
+                return Err(format!(
+                    "call `{callee}`: an effectful actual at a formal that is not data"
+                ));
             } else {
                 let texts = index
                     .node_tokens(actual)
@@ -435,10 +488,27 @@ impl Parser<'_> {
         if !matches!(elaborated.result, Operand::Void | Operand::Value { .. }) {
             return Ok(None);
         }
+        let use_ = if destination.is_some() {
+            ResultUse::Stored
+        } else {
+            ResultUse::Discarded
+        };
         let saved = (self.next_site, self.element_lowerings);
-        match self.instantiate_call(&callee, &tokens, None, ResultUse::Discarded) {
+        match self.instantiate_call(&callee, &tokens, destination.as_deref(), use_) {
             Ok(sequence) => {
                 instructions.extend(sequence);
+                // The destination's write, as the elaborator lowers it (a
+                // scalar local's old facts are forgotten).
+                if destination.is_some() {
+                    match self.lower_event(elaborated, events.len() - 1) {
+                        Ok(Some(write)) => instructions.push(write),
+                        Ok(None) => {}
+                        Err(refusal) => {
+                            (self.next_site, self.element_lowerings) = saved;
+                            return Err(refusal.reason());
+                        }
+                    }
+                }
                 Ok(Some(instructions))
             }
             Err(refusal) => {

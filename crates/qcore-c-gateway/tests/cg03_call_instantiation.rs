@@ -165,6 +165,17 @@ fn an_effectful_scalar_actual_is_sequenced_before_the_call() {
     assert!(run.safe(), "{run:?}");
     let run = gs("void subject(void) { int i = 0; int j = 0; cg_sink2(i++, j += 2); cg_sink(j); }");
     assert!(run.safe(), "{run:?}");
+    // A scalar path actual beside it: its read keeps its obligation.
+    let run = gs("void subject(struct S *s) { int i = 0; cg_sink2(i++, s->a); }");
+    assert!(run.safe(), "{run:?}");
+    let run = gs(
+        "void subject(void) { struct S *s = q_alloc(); int i = 0; q_free(s); cg_sink2(i++, s->a); }",
+    );
+    assert!(!run.safe(), "{run:?}");
+    // The value stored into a scalar local.
+    let run = gs("static int twice(int v) { return v * 2; } \
+         void subject(void) { int i = 0; int r = 0; r = twice(i++); cg_sink(r); }");
+    assert!(run.safe(), "{run:?}");
     // An unsequenced write/read pair on one object is C undefined behaviour.
     let run = gs("void subject(void) { int i = 0; cg_sink2(i++, i); }");
     assert!(!run.safe(), "{run:?}");

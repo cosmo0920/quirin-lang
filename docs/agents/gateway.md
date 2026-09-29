@@ -1989,3 +1989,82 @@ which is not a second authority.
     line are the analysed source's (trust boundary 28).
     `QCore.TypedPlace`, bound to the Rust decision table by a shared-vector
     test; [report](../reports/cg10-common-typed-place/README.md).
+
+<a id="constraint-10u"></a>
+
+10u. **A call contract is instantiated once, and a consumer takes the
+    instantiated call by the use C makes of its value, never by where it
+    stands.** Card CG03-CALL-SUMMARY-INSTANTIATION (`call_instantiation.rs`,
+    the route-G adapter `legacy_call_instantiation.rs`, thin hooks in
+    `legacy_c.rs`, `legacy_condition_desugar.rs` and `legacy_elaboration.rs`).
+
+    (1) **The application point.** `Parser::instantiate_call(callee,
+    statement, destination, use)` is the one place a consumer asks for a
+    contract. It runs the classifier's one lookup and per-formal substitution
+    into the `ContractCall` the flow applies once. A call whose actuals the
+    lexical gate refused arrives with the statement position's typed
+    argument reads (W44's `IndirectScalarAccess`/`ArgumentReads`) before it.
+    The standing is read before the classifier runs.
+
+    (2) **Acceptance** (`call_instantiation::accept`) is a function of the
+    callee's standing, the result class, identity, and the value's use:
+    - a callee in the caller's recursive component is refused in every use
+      (constraint 4's provisional summary);
+    - a discarded or tested value (a condition leaf, a scalar `return`
+      operand) must own nothing;
+    - a stored value is the classifier's own;
+    - a whole returned value carries only fresh custody;
+    - a passed value is the identity with no result.
+
+    The condition desugaring asks it for every leaf call with identical
+    refusals.
+
+    (3) **Three fallbacks, each asked after every older route of its
+    position:**
+    - **A scalar `return` operand.** In a scalar-result function, a refused
+      `return` that is one condition leaf (negations allowed, no connective)
+      is lowered exactly as the same leaf in an `if` would be: its calls
+      (two only if each is the identity), then an exit that escapes nothing.
+      It keeps rule 5j's premise (no unary `&` outside the calls' actuals)
+      and the reserved-place guard.
+    - **Effectful actuals.** A statement piece that is exactly one direct
+      call whose actuals carry effects is its elaborated events (sequenced
+      before the call by C) and then the call, with each effectful actual
+      data at a `Borrowed` formal. This is the elaborator's
+      `EffectfulActual`.
+    - **Typed substitution.** A call statement whose lexical substitution
+      was refused (`call has an unmodeled formal address or borrowed
+      expression`) or left a custody formal empty (`arguments do not match
+      resource contract`) is read from Clang's AST (value → identity →
+      formal):
+      - a named pointer object, through parentheses and value-preserving
+        pointer conversions, is its identity;
+      - `&x` at an `Out` formal is the slot;
+      - an expression whose evaluated reads are scalar (a `sizeof` operand
+        unevaluated) is data.
+
+      The call is reclassified with those actuals and admitted only if every
+      custody formal is bound to exactly the identity the AST names.
+
+    **Do not:**
+    - admit a place, an address or a scalar at a custody-taking formal
+      (`W44-CALL-ARGUMENT-CUSTODY-POSITION` stays by design; a scalar
+      custody actual is the descriptor route's);
+    - read pointer arithmetic (CG16), a nested or unordered call (CG05), a
+      value connective or conditional (CG06) or any other cast (CG08) as a
+      substitution;
+    - widen a use's acceptance for one consumer only;
+    - consult a fallback before an older route (hard invariant 3).
+
+    The statement and whole-call `return` consumers keep their older
+    admission of a recursive-component callee (the fixed point's own use).
+    Every such call, and every older admission the acceptance declines, is a
+    parity row (`position: "call-instantiation"`), as is every consultation.
+
+    Premises stated, not proved: faithful Clang extraction, that a bit cast
+    between object pointers keeps the address (C11 6.3.2.3p7), and the
+    token/AST node match (trust boundary 28).
+
+    `QCore.CallInstantiation`, bound to `ACCEPTANCE_VECTORS` and
+    `SUBSTITUTION_VECTORS` by shared-vector tests;
+    [report](../reports/cg03-call-summary-instantiation/README.md).
