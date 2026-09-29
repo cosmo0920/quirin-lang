@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG11-POINTER-VALUED-STORES card gate at tip 6a1a2b2d (base f19204fa), script docs/reports/cg11-pointer-valued-stores/scripts/gate.sh, logs private/cg11/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 371 units, 384 summaries, 6,624 passed, 0 failed, 11 ignored (private/test-binaries/20260929T152108Z-3367872/summary.json); a first run exited 101 because compiler/examples/alias_aggregate_probe.rs matches LegacyInstruction exhaustively and lacked the new PointerStore arm (clippy failed on the same error); fixed in 6a1a2b2d, clippy rerun 0 and the test runner rerun 0; fmt 0 (rechecked after the fix); both reevaluation probes exit 0; check_lean_audits.py 231 audits passed (230 + AuditPointerStore.lean); python tests 365 OK; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE on the base resource-diagnostics.json 963d7c9f byte-identical to CG02's AFTER; AFTER (9d7c88d1) and tip (binary d00075ea at eae253a9/9a46fe9c, code-identical to 6a1a2b2d for the analyzer) a6dc500b, 543/10/4,281 -> 548/10/4,276; system 32/2/200 -> 33/2/199; tail-pause slice unchanged. Exits in gate/.",
-  "workspace_tests": 6624,
+  "note": "CG13-UNION-AND-BITFIELD-PLACES card gate at tip 8252e21c (base f19204fa, main cb20c28e merged), script docs/reports/cg13-union-and-bitfield-places/scripts/gate.sh, logs private/cg13/gate2 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 372 units, 385 summaries, 6,640 passed, 0 failed, 11 ignored (private/test-binaries/20260929T162051Z-4130235/summary.json); a first run (private/cg13/gate, tip 9cf7752e) exited 101 with 13 failed: older cards' union/bit-field pins and the workspace layering guard, each flipped by name or updated deliberately in 8252e21c (report section 4); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 232 audits passed (231 + AuditUnionBitfieldPlace.lean); python tests 365 OK; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE on the merged base (binary built at main cb20c28e) resource-diagnostics.json a6dc500b byte-identical to CG11's AFTER; AFTER 97107d95, 548/10/4,276 -> 554/10/4,270; system 33/2/199 and tail-pause slice unchanged. At the card's base f19204fa: BEFORE 963d7c9f, AFTER 4b5bb59b, 543/10/4,281 -> 549/10/4,275. Exits in gate/.",
+  "workspace_tests": 6640,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 232,
@@ -6998,7 +6998,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg11-pointer-valued-stores/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg13-union-and-bitfield-places/gate.json)"
  },
  "named_followups": [
   {

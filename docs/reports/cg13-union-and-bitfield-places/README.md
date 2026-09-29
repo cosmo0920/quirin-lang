@@ -386,7 +386,23 @@ fix is introduced; an unsequenced bit-field pair stays refused.
 
 ## 7. Gate
 
-See [gate.json](gate.json) and `gate/`.
+The gate ran at tip `8252e21c` with [scripts/gate.sh](scripts/gate.sh), logs in
+`private/cg13/gate2`, exits in `gate/`, record in [gate.json](gate.json). Every
+step exited 0:
+
+- submodule step;
+- `run_test_binaries.py`: 372 units, 385 summaries, **6,640 passed, 0
+  failed**, 11 ignored
+  (`private/test-binaries/20260929T162051Z-4130235/summary.json`);
+- fmt and clippy;
+- both reevaluation probes;
+- `check_lean_audits.py`: **232** audits (231 + `AuditUnionBitfieldPlace.lean`);
+- Python tests: 365 OK, rerun after the matrix validation edit;
+- docs index.
+
+The first run (`private/cg13/gate`, tip `9cf7752e`) exited 101 on 13
+failures, each resolved in §4. `providers/` is unchanged, so the provider
+gate is not due. Clang 21.1.8 is recorded in `gate/clang-version.txt`.
 
 ## 8. Scripts
 
