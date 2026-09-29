@@ -51,3 +51,20 @@ Main moved to `ab317406` (CG13-UNION-AND-BITFIELD-PLACES) before landing. It was
 - **Lean:** 233 audits.
 - **Provider:** every provider step failed on **main's own stale `providers/Cargo.lock`**. CG13 added `qcore-core` to `qcore-c-gateway` without updating the lock, so every `--locked` step refused. `f588793a` adds the one missing dependency line, and the whole provider gate then passed (`exits-f82fd68a/provider-rerun_*`): 129 / 0 / 1, with clippy, package build and all verifies at 0.
 - **Python:** passed after the matrix was regenerated.
+
+## Targeted check after CG03 landed
+
+Main moved to `27dc7c9a` (CG03-CALL-SUMMARY-INSTANTIATION, C gateway only) before landing. It was merged in as `4b0d2257`; the only code both sides touched was `proof/QCore.lean`, which auto-merged.
+
+Under the user's landing-race policy (2026-09-30), this merge got a **targeted check, not a full gate**:
+
+| Check | Result |
+|---|---|
+| fmt, workspace clippy `--locked` | 0 |
+| `qcore-c-gateway` tests | 1,981 passed, 0 failed |
+| The six scalar test binaries | 61 passed |
+| Lean | 234 audits |
+| Provider tests `--locked` | 129 / 0 / 1 |
+| Provider clippy, package build and 5 verifies | 0 |
+
+The full `run_test_binaries.py` was not re-run on this merge. Its last full run is the `f82fd68a` gate above: 6,653 passed, 0 failed. Exits are in `exits-targeted-4b0d2257/`.
