@@ -55,6 +55,19 @@ route is dropped only through one non-coroutine creation, such an escape and a
 non-coroutine copy. The old test's resolved test-thread context is never
 discharged.
 
+**The list-head instance's premises** (card W47-PREMISES-INSTANCE). A
+derived config initializer leaves the empty list the list-head derivation
+starts from, and one without its list initialisation derives none; a
+creation over a read registration derives a flag only with a registered
+match, every instance it makes then runs no coroutine, and an unread
+registration keeps the route; a straight-line constructor block either
+returns a null pointer or appends, so a non-null creation is on the list,
+while a failed one leaves the fresh list empty (the stated
+P-CREATIONS-SUCCEED); a collector written only by its constructor names its
+registration's instance; a refuted P-INSTANCE is never discharged, the
+premised verdict never adds a discharge, and the old test's path stays
+refused; a byte or whole-object write keeps the route.
+
 **Predefined-macro arms** (card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS). A
 reserved macro decided from the recorded compiler, per command, agrees with
 its definedness at every point of every unit of the file, so it behaves as an
@@ -194,3 +207,27 @@ correspondence are trust boundary 28's premises, pinned by
 #print axioms QCore.LoopOwner.CoroPlugin.another_literal_key_cannot_write_the_flag
 #print axioms QCore.LoopOwner.CoroPlugin.a_runtime_threaded_write_never_discharges
 #print axioms QCore.LoopOwner.CoroPlugin.the_old_test_path_is_never_discharged_whatever_the_premises
+-- The list-head instance's premises (card W47-PREMISES-INSTANCE).
+#print axioms QCore.LoopOwner.initStep_initList
+#print axioms QCore.LoopOwner.initStep_other
+#print axioms QCore.LoopOwner.initStep_others
+#print axioms QCore.LoopOwner.a_derived_fresh_context_is_empty
+#print axioms QCore.LoopOwner.initStep_none_without_init
+#print axioms QCore.LoopOwner.an_initializer_without_its_list_init_is_not_fresh
+#print axioms QCore.LoopOwner.a_fresh_context_starts_the_head_derivation
+#print axioms QCore.LoopOwner.an_unread_registration_derives_nothing
+#print axioms QCore.LoopOwner.a_derived_registration_has_a_match
+#print axioms QCore.LoopOwner.every_created_instance_runs_no_coroutine
+#print axioms QCore.LoopOwner.an_unread_registration_keeps_the_route
+#print axioms QCore.LoopOwner.a_straight_block_appends_or_returns_null
+#print axioms QCore.LoopOwner.a_non_null_creation_is_on_the_list
+#print axioms QCore.LoopOwner.listStep_others
+#print axioms QCore.LoopOwner.a_failed_creation_leaves_the_fresh_list_empty
+#print axioms QCore.LoopOwner.a_constructor_only_collector_names_its_registration
+#print axioms QCore.LoopOwner.a_repointed_collector_may_name_another
+#print axioms QCore.LoopOwner.a_refuted_instance_is_never_discharged
+#print axioms QCore.LoopOwner.the_premises_never_add_a_discharge
+#print axioms QCore.LoopOwner.a_derived_premise_keeps_the_verdict
+#print axioms QCore.LoopOwner.the_old_test_path_is_never_discharged_under_the_premises
+#print axioms QCore.LoopOwner.allowed_member_writes_keep_the_derivation
+#print axioms QCore.LoopOwner.a_non_member_write_keeps_the_route

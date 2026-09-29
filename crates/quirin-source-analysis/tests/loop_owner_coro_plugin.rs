@@ -439,10 +439,10 @@ fn verdicts<'a>(census: &'a Census, function: &str) -> Vec<&'a OwnerVerdict> {
 fn premise(census: &Census, name: &str) -> Vec<String> {
     census
         .reading
-        .premises
+        .coro_plugin_premises
         .get(name)
         .cloned()
-        .unwrap_or_else(|| panic!("no premise {name}: {:#?}", census.reading.premises))
+        .unwrap_or_else(|| panic!("no premise {name}: {:#?}", census.reading.coro_plugin_premises))
 }
 
 fn not_derived(census: &Census, name: &str, needle: &str) {
@@ -727,7 +727,7 @@ fn every_premise_derives_and_the_plugin_site_discharges() {
             premise(&census, name)[0],
             "derived",
             "{name}: {:#?}",
-            census.reading.premises
+            census.reading.coro_plugin_premises
         );
     }
     let registrations = premise(&census, "P-PLUGIN-DIR registrations");
@@ -752,5 +752,5 @@ fn every_premise_derives_and_the_plugin_site_discharges() {
 fn an_untyped_reading_derives_nothing_and_reports_nothing() {
     let fixture = make_fixture("untyped", &dummy_plugin("", "", ""), &test_file(""), &[]);
     let census = census_typed(&fixture.files, &obligations(), &FLUENT_BIT_HOPS, None, None);
-    assert!(census.reading.premises.is_empty());
+    assert!(census.reading.coro_plugin_premises.is_empty());
 }

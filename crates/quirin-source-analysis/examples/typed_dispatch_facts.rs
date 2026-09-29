@@ -20,7 +20,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use qcore_c_gateway::thread_entry_census::{
-    FLUENT_BIT_HOPS, FLUENT_BIT_INSTANCE_FLOW, FLUENT_BIT_PROPERTY_KEYS,
+    FLUENT_BIT_HOPS, FLUENT_BIT_INSTANCE_FLOW, FLUENT_BIT_INSTANCE_PREMISES,
+    FLUENT_BIT_PROPERTY_KEYS,
 };
 use qcore_c_gateway::typed_dispatch_census::{TypedUnit, read_units};
 
@@ -170,8 +171,13 @@ fn main() {
     }
     // Card W47-LOOP-OWNER-INSTANCE-FLOW: with the instance-flow facts; card
     // W47-SERVICE-PROPERTY-KEYS: and the property-key facts.
-    let mut options =
-        FLUENT_BIT_HOPS.property_key_options(&FLUENT_BIT_INSTANCE_FLOW, &FLUENT_BIT_PROPERTY_KEYS);
+    // Card W47-PREMISES-INSTANCE: the premise facts (an input instance's
+    // list link, the records' non-member uses) besides the earlier kinds.
+    let mut options = FLUENT_BIT_HOPS.premise_options(
+        &FLUENT_BIT_INSTANCE_FLOW,
+        &FLUENT_BIT_PROPERTY_KEYS,
+        &FLUENT_BIT_INSTANCE_PREMISES,
+    );
     if !extras.is_empty() {
         let like = like.expect("--extra needs --like");
         let template = by_relative

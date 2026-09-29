@@ -1,0 +1,13 @@
+{
+  "note": "W47-PREMISES-INSTANCE card gate at base fe603d49. The rust phase ran twice on the code of 71da7a82 (the final code). First run (private/pi/gate-1, exits in gate/first-run/) under a load average near 50 (parallel cards and this card's arbiters): run_test_binaries.py 356 units, 369 summaries, 6,373 passed, 2 failed, 11 ignored; the two failures are wall-clock assertions (qcore-audit checkpoint_cli interrupted_run_preserves_completed_units_for_resume 'no unit checkpoint before timeout'; qcore-compiler cycle20_verifier_plugins vp04_vp07_vp08 'elapsed < 500ms'), in code this card does not touch; every other step 0. Second run (private/pi/gate-2, exits in gate/), after the arbiters finished: 356 units, 369 summaries, 6,375 passed, 0 failed, 11 ignored (private/test-binaries/20260929T051725Z-2994357/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 224 audits passed (AuditLoopOwner.lean 81 -> 104 theorems, no new audit module). providers/ is unchanged, so the provider gate is not due; provider cargo test was run for this record: the first run (13-provider-tests, exit 101) failed 1 test under load (qcore-provider-conformance configured_audit pinned_second_codebase_runs_configured_process_checks_without_a_rust_import_adapter: checked_function_contracts 0 != 2; that binary passed 7/7 rerun alone), the full rerun (14-provider-tests-rerun) 129 passed / 0 failed / 1 ignored across 43 result lines; provider clean-dev 0 after each. The records phase (private/pi/gate-records-2) ran after the ledger (568 -> 572), matrix and index regeneration: 365 Python tests OK, docs index 0. Clang 21.1.8 recorded in this worktree.",
+  "workspace_tests": 6375,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 224,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

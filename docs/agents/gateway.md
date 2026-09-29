@@ -1550,6 +1550,64 @@ which is not a second authority.
     instance keeping the route, no write after start fixing the flag, and
     the old test's path refused whatever the premises;
     [report](../reports/w47-premises-coro-plugin/README.md).
+    **Amendment (W47-PREMISES-INSTANCE): the list-head instance's premises
+    derived.** The premised census (`--derive-premises`,
+    `loop_owner_premises_instance.rs`, child of `thread_entry_census.rs`)
+    derives what the list-head derivation stated, or its flag is underived:
+    **P-FRESH-CONTEXT** (the context constructor stores the one config
+    initializer result in the context it returns; the initializer returns its
+    one allocation, from an allocator returning only a null pointer or
+    `calloc(…)`, after `mk_list_init` of the input and registered-plugin lists
+    at its top level, `mk_list_init` read as leaving an empty list);
+    **P-REGISTERED-DESCRIPTORS** (the build's generated registration, read from
+    the generated root and resolved to by every compile command of the
+    initializer's file through its `-I` order, is exactly allocate /
+    `memcpy(V, &OBJ, …)` / `mk_list_add(&V->_head, &CFG->in_plugins)` blocks,
+    called once at the initializer's top level after the list's
+    initialisation; every registered descriptor's name is read and the
+    creation's literal matches one); and the checkable part of
+    **P-INSTANCE-FIELDS-BY-MEMBER** (the typed reading records every whole
+    assignment, copy-initialised or by-value object, initializer list and
+    pointer conversion of `struct flb_input_instance` and `struct
+    flb_input_collector`; one assignment, copy, initializer list, byte
+    function or character view refutes it). A generated function naming an
+    input list, another caller of the registration, an unlink or re-link of
+    an input instance (`_head` used other than by the constructor's append)
+    and a listed-member mutation in a function the census does not read are
+    hazards. **P-HEAD-INSTANCE** is narrowed: the constructor returns a
+    non-null instance only after appending its one allocation (every other
+    return null, no jump between); stated: **P-CREATIONS-SUCCEED** (the
+    context's and the one creation's constructors return non-null; the test
+    does not check them before its read). **P-INSTANCE** is checked per
+    obligated collector operation: derived where the instance argument is its
+    function's unassigned first parameter, every edge into the function a
+    loop dispatch `C->cb_collect(C->instance, …)` and a collector's `instance`
+    written only by its constructor through member writes; a refuted part
+    (another instance dispatched, the parameter reassigned, a collector
+    re-pointed or written bytewise) makes a discharged site unresolved; any
+    other form stays stated and is named per site (`ctx->ins`:
+    P-INSTANCE-CONTEXT; a coroutine entry's dispatch: P-CORO-HANDLE's).
+    **Do not** read a generated file the includer's search path does not
+    resolve to, take an unread registration or an unmatched literal as the
+    build's descriptors, count a function the census does not read as
+    hazard-free, discharge a site whose P-INSTANCE is refuted, or read a
+    conversion to `void *` as a member access. Premises added (trust boundary
+    28): P-CREATIONS-SUCCEED; the residual of P-INSTANCE-FIELDS-BY-MEMBER (a
+    pointer converted to `void *` or an integer is not written through
+    bytewise, one converted to another object type is not used to access an
+    instance, under C's effective-type rule, and no offset from another
+    member's address reaches these members); P-INSTANCE-CONTEXT; that the
+    generated root's file is the one the build compiled. At the export the
+    fixed test's 3 sites stay **discharged at this path under these derived
+    premises**, P-INSTANCE derived at each; the old test's stay not
+    discharged. `QCore.LoopOwner` proves a derived initializer leaving the
+    empty list the head derivation starts from, a registered creation's
+    instances running no coroutine and an unread registration keeping the
+    route, a straight-line constructor block appending or returning null, a
+    failed creation leaving the fresh list empty, a refuted P-INSTANCE never
+    discharged with the premised verdict adding none, and a non-member write
+    keeping the route;
+    [report](../reports/w47-premises-instance/README.md).
 
 <a id="constraint-10q"></a>
 

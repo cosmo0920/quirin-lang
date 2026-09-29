@@ -160,7 +160,10 @@ pub struct CensusReading {
     /// Card W47-PREMISES-CORO-PLUGIN: P-CORO-HANDLE, P-PLUGIN-DIR and the
     /// immutable threaded flag as derived from the typed reading, with the
     /// named residuals and their sites (empty without a typed reading).
-    pub premises: BTreeMap<String, Vec<String>>,
+    pub coro_plugin_premises: BTreeMap<String, Vec<String>>,
+    /// Card W47-PREMISES-INSTANCE: the premised census's report (`None`
+    /// outside it).
+    pub premises: Option<PremiseReport>,
 }
 
 impl CensusReading {
@@ -197,6 +200,14 @@ pub mod predefined_macros;
 #[path = "loop_owner_coro_plugin.rs"]
 mod loop_owner_coro_plugin;
 pub use loop_owner_coro_plugin::{CoroPluginTables, FLUENT_BIT_CORO_PLUGIN};
+// Card W47-PREMISES-INSTANCE: the list-head instance's premises and
+// P-INSTANCE, derived from the pinned source.
+#[path = "loop_owner_premises_instance.rs"]
+mod loop_owner_premises_instance;
+pub use loop_owner_premises_instance::{
+    FLUENT_BIT_INSTANCE_PREMISES, FieldsByMember, GeneratedFile, InstancePremiseTables,
+    PremiseInputs, PremiseReport, SitePremise,
+};
 
 /// The closed hop vocabulary of one program family.
 #[derive(Clone, Copy, Debug)]
@@ -332,6 +343,7 @@ impl HopTables {
             member_fields: Vec::new(),
             argument_calls: Vec::new(),
             key_tables: Vec::new(),
+            record_views: Vec::new(),
         }
     }
 
@@ -377,6 +389,25 @@ impl HopTables {
         options
             .argument_calls
             .extend(FLUENT_BIT_CORO_PLUGIN.argument_calls());
+        options
+    }
+
+    /// [`HopTables::property_key_options`] with the premise facts (card
+    /// W47-PREMISES-INSTANCE): an input instance's list link, and the listed
+    /// records' non-member uses.
+    #[must_use]
+    pub fn premise_options(
+        &self,
+        flow: &InstanceFlowTables,
+        keys: &PropertyKeyTables,
+        premises: &InstancePremiseTables,
+    ) -> crate::typed_dispatch_census::TypedOptions {
+        let mut options = self.property_key_options(flow, keys);
+        options.member_fields.push((
+            flow.instance_record.to_owned(),
+            premises.instance_link.to_owned(),
+        ));
+        options.record_views = premises.records.iter().map(|r| (*r).to_owned()).collect();
         options
     }
 }
@@ -1299,6 +1330,21 @@ pub fn read_program_typed(
     configuration: Option<&BuildConfiguration>,
     typed: Option<&crate::typed_dispatch_census::TypedFacts>,
 ) -> CensusReading {
+    read_program_premised(files, hops, configuration, typed, None)
+}
+
+/// [`read_program_typed`] as the premised census (card
+/// W47-PREMISES-INSTANCE) when `premises` is given: Step B's list-head
+/// premises are derived or its flag is underived, and P-INSTANCE is reported
+/// per listed collector operation ([`CensusReading::premises`]).
+#[must_use]
+pub fn read_program_premised(
+    files: &[CensusFile],
+    hops: &HopTables,
+    configuration: Option<&BuildConfiguration>,
+    typed: Option<&crate::typed_dispatch_census::TypedFacts>,
+    premises: Option<&PremiseInputs>,
+) -> CensusReading {
     let macros = files
         .iter()
         .map(|source| macro_definitions(&source.text))
@@ -1958,17 +2004,18 @@ pub fn read_program_typed(
         keys: &FLUENT_BIT_PROPERTY_KEYS,
         macro_bodies: &macro_bodies,
         property_readings: std::cell::RefCell::new(BTreeMap::new()),
+        premises,
     };
     let instance_flags = derive_instance_flags(&step_b);
     let property_keys = step_b.property_readings.take();
     // Card W47-PREMISES-CORO-PLUGIN: the premises the route drop, the
     // directory flags and the fixed modes rest on. An underived P-CORO-HANDLE
     // leaves every coroutine entry unresolved and keeps every route.
-    let premises = step_b.coro_plugin_premises(&FLUENT_BIT_CORO_PLUGIN);
+    let coro_premises = step_b.coro_plugin_premises(&FLUENT_BIT_CORO_PLUGIN);
     let _ = step_b.notes.take();
-    let route_may_be_dropped = premises.route_may_be_dropped();
-    let flags_derived = typed.is_none() || matches!(premises.descriptor_flags, Some(Ok(_)));
-    if let Some(Err(why)) = &premises.coro_handle {
+    let route_may_be_dropped = coro_premises.route_may_be_dropped();
+    let flags_derived = typed.is_none() || matches!(coro_premises.descriptor_flags, Some(Ok(_)));
+    if let Some(Err(why)) = &coro_premises.coro_handle {
         let ids = entries.keys().copied().collect::<Vec<_>>();
         escape(&ids, format!("P-CORO-HANDLE is not derived: {why}"));
     }
@@ -1982,7 +2029,7 @@ pub fn read_program_typed(
             // directory's flag decides only a registrant registered on its
             // own plugins' instances, under derived descriptor flags.
             if typed.is_some()
-                && (!flags_derived || !matches!(premises.registrations.get(&id), Some(Ok(_))))
+                && (!flags_derived || !matches!(coro_premises.registrations.get(&id), Some(Ok(_))))
             {
                 return None;
             }
@@ -2198,7 +2245,7 @@ pub fn read_program_typed(
     }
     // Card W47-PREMISES-CORO-PLUGIN: an underived immutable threaded flag
     // fixes no mode: every edge that fixes one leaves its callee unresolved.
-    if let Some(Err(why)) = &premises.threaded_flag {
+    if let Some(Err(why)) = &coro_premises.threaded_flag {
         let ids = edges
             .iter()
             .filter(|edge| edge.effect != ReadEffect::Keep)
@@ -2212,7 +2259,7 @@ pub fn read_program_typed(
         );
     }
     if typed.is_some() {
-        program.premises = premises.report(&program.functions);
+        program.coro_plugin_premises = coro_premises.report(&program.functions);
     }
     program.edges = edges.into_iter().collect();
     program.spawns = spawns.into_iter().collect();
@@ -2224,6 +2271,39 @@ pub fn read_program_typed(
     program.dispatch_typing = dispatch_typing_tally;
     program.instance_flags = instance_flags;
     program.property_keys = property_keys;
+    // Card W47-PREMISES-INSTANCE: P-INSTANCE over the final edges, read by a
+    // Step B view that needs neither the direct edges nor the spawns.
+    if premises.is_some() {
+        let (no_edges, no_spawns) = (BTreeSet::new(), BTreeSet::new());
+        let view = StepB {
+            files,
+            hops,
+            typed,
+            definitions: &definitions,
+            scans: &scans,
+            index: &index,
+            registrants: &registrants,
+            collector_registrations: &collector_registrations,
+            field_stores: &field_stores,
+            direct_edges: &no_edges,
+            spawns: &no_spawns,
+            taken: &taken,
+            flag_writers: &flag_writers,
+            descriptor_objects: &descriptor_objects,
+            numeric_macros: &numeric_macros,
+            functions: &program.functions,
+            flow: &FLUENT_BIT_INSTANCE_FLOW,
+            reach: &reach,
+            dispatch_sites: &dispatch_sites,
+            notes: std::cell::RefCell::new(BTreeSet::new()),
+            keys: &FLUENT_BIT_PROPERTY_KEYS,
+            macro_bodies: &macro_bodies,
+            property_readings: std::cell::RefCell::new(BTreeMap::new()),
+            premises,
+        };
+        let report = view.instance_premises(&program);
+        program.premises = Some(report);
+    }
     let dispatcher = |mode: ReadMode| {
         let (name, _) = hops.loop_dispatchers.iter().find(|(_, m)| *m == mode)?;
         let ids = by_name
@@ -2396,6 +2476,8 @@ struct StepB<'a> {
     keys: &'a PropertyKeyTables,
     macro_bodies: &'a BTreeMap<String, BTreeSet<String>>,
     property_readings: std::cell::RefCell<BTreeMap<String, Vec<String>>>,
+    /// Card W47-PREMISES-INSTANCE: the premised census's inputs.
+    premises: Option<&'a PremiseInputs>,
 }
 
 /// A flag derivation's value: `Some(false)` no coroutine, `Some(true)` the

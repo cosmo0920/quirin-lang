@@ -1,0 +1,32 @@
+{
+ "compare.txt": {
+  "bytes": 7877,
+  "file": "compare.txt.gz",
+  "sha256": "41059c5f78e711da4752b5c83177743b490c0a78ce5eac3428b2f60ac907285a"
+ },
+ "fixed-configured-premised.json": {
+  "bytes": 1016012,
+  "file": "fixed-configured-premised.json.gz",
+  "sha256": "492f47b2929571de65683cff2e73201ba6ff10f7f867fa4469c4cad4aba8f746"
+ },
+ "fixed-premised.json": {
+  "bytes": 964304,
+  "file": "fixed-premised.json.gz",
+  "sha256": "f17a339d3d9d751f9095f4416f244bf10d771225910c9a06e502dbf5b729ac5c"
+ },
+ "inputs.sha256": {
+  "bytes": 1661,
+  "file": "inputs.sha256.gz",
+  "sha256": "223373998c6fc261ee764f8427e7ccbb479afead2f1ddd4445e080c1ed33b497"
+ },
+ "previous-configured-premised.json": {
+  "bytes": 1001484,
+  "file": "previous-configured-premised.json.gz",
+  "sha256": "0d729fb9b220a2ebfa2cfd11f7227cabcff323ca9dce2511692be3e3645f3624"
+ },
+ "previous-premised.json": {
+  "bytes": 959507,
+  "file": "previous-premised.json.gz",
+  "sha256": "5cf59027176abceb1345f80f8ef271925cde9b9988ecbba5de6f39c1b488127f"
+ }
+}

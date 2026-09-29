@@ -98,6 +98,9 @@ pub struct TypedOptions {
     /// Card W47-SERVICE-PROPERTY-KEYS: file-scope arrays of records whose
     /// initializer is recorded element by element (a property key table).
     pub key_tables: Vec<String>,
+    /// Card W47-PREMISES-INSTANCE: records (`struct NAME`) whose non-member
+    /// uses are recorded ([`TypedFacts::record_views`]).
+    pub record_views: Vec<String>,
 }
 
 /// A call whose arguments the typed reading records (card
@@ -198,6 +201,18 @@ pub struct TypedFacts {
     /// each reading of its initializer: one descriptor list per element.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub key_tables: BTreeMap<String, BTreeSet<Vec<Vec<String>>>>,
+    /// Card W47-PREMISES-INSTANCE: `RECORD` → `FILE|LINE|FUNCTION|KIND` for
+    /// each use of a listed record that is not a member access: `assign` (a
+    /// whole-object assignment), `init` (a copy-initialised object),
+    /// `param` (a by-value parameter), `init-list` (an initializer list of
+    /// the record), and `conv:DEST|CONTEXT` (a pointer to the record
+    /// converted to `DEST`, as the argument of the named call, `arg:CALLEE`,
+    /// or `value`).
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub record_views: BTreeMap<String, BTreeSet<String>>,
+    /// The records whose non-member uses were recorded.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub record_views_read: BTreeSet<String>,
 }
 
 /// The key of a member's accesses.
@@ -263,6 +278,10 @@ impl TypedFacts {
         for (key, readings) in other.key_tables {
             self.key_tables.entry(key).or_default().extend(readings);
         }
+        for (key, sites) in other.record_views {
+            self.record_views.entry(key).or_default().extend(sites);
+        }
+        self.record_views_read.extend(other.record_views_read);
     }
 }
 
@@ -802,6 +821,7 @@ impl<'o> Reader<'o> {
                 .iter()
                 .map(|(record, field)| member_key(record, field))
                 .collect(),
+            record_views_read: options.record_views.iter().cloned().collect(),
             ..TypedFacts::default()
         };
         Self {
@@ -844,6 +864,9 @@ impl<'o> Reader<'o> {
     /// Card W47-LOOP-OWNER-INSTANCE-FLOW: record each listed member access
     /// with its use, and each function-pointer member read as a value.
     fn accesses<'n>(&mut self, node: &'n Node, function: Option<&str>, role: Use<'n>) {
+        if !self.options.record_views.is_empty() {
+            self.record_view(node, function, role);
+        }
         let count = node.inner.len();
         let children = |role: Use<'n>| vec![role; count];
         let roles: Vec<Use<'n>> = match node.kind.as_str() {
@@ -965,7 +988,14 @@ impl<'o> Reader<'o> {
             "BinaryOperator" if node.opcode.as_deref() == Some("=") => {
                 self.assignment(node, function);
             }
-            "InitListExpr" => self.initializer(node, object),
+            "InitListExpr" => {
+                // Card W47-PREMISES-INSTANCE: an initializer list of a listed
+                // record, at any scope.
+                if let Some(record) = self.viewed_record(node, false) {
+                    self.view(&record, node.begin, function, "init-list".to_owned());
+                }
+                self.initializer(node, object);
+            }
             "VarDecl" if function.is_none() => self.key_table(node),
             _ => {}
         }
@@ -1374,6 +1404,98 @@ fn called_function(node: &Node) -> Option<&str> {
                 return (decl.kind == "FunctionDecl").then_some(decl.name.as_str());
             }
             _ => return None,
+        }
+    }
+}
+
+/// A type's spelling without qualifiers or white space (`const struct T *` →
+/// `structT*`), to compare with a listed record.
+fn bare_type(text: &str) -> String {
+    text.split(|c: char| c.is_whitespace() || c == '*')
+        .filter(|word| {
+            !word.is_empty() && !matches!(*word, "const" | "volatile" | "restrict" | "__restrict")
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
+        + &"*".repeat(text.matches('*').count())
+}
+
+impl Reader<'_> {
+    /// Card W47-PREMISES-INSTANCE: the listed record a node's type is (or,
+    /// with `pointer`, points to once).
+    fn viewed_record(&self, node: &Node, pointer: bool) -> Option<String> {
+        let spelled = [node.desugared.as_deref(), node.qual_type.as_deref()];
+        self.options
+            .record_views
+            .iter()
+            .find(|record| {
+                let want = if pointer {
+                    format!("{record}*")
+                } else {
+                    (*record).clone()
+                };
+                spelled.iter().flatten().any(|text| bare_type(text) == want)
+            })
+            .cloned()
+    }
+
+    fn view(&mut self, record: &str, place: Option<Place>, function: Option<&str>, kind: String) {
+        let Some((file, line)) = self.place(place) else {
+            return;
+        };
+        self.facts
+            .record_views
+            .entry(record.to_owned())
+            .or_default()
+            .insert(format!("{file}|{line}|{}|{kind}", function.unwrap_or("")));
+    }
+
+    /// Card W47-PREMISES-INSTANCE: record a non-member use of a listed record.
+    fn record_view(&mut self, node: &Node, function: Option<&str>, role: Use<'_>) {
+        match node.kind.as_str() {
+            "ImplicitCastExpr" | "CStyleCastExpr" => {
+                let Some(operand) = node.inner.first() else {
+                    return;
+                };
+                let Some(record) = self.viewed_record(operand, true) else {
+                    return;
+                };
+                if self.viewed_record(node, true).as_deref() == Some(record.as_str()) {
+                    return;
+                }
+                let destination = node
+                    .desugared
+                    .as_deref()
+                    .or(node.qual_type.as_deref())
+                    .map_or_else(|| "?".to_owned(), bare_type);
+                let context = match role {
+                    Use::Argument(callee) => format!("arg:{callee}"),
+                    Use::Compare => "compare".to_owned(),
+                    _ => "value".to_owned(),
+                };
+                self.view(
+                    &record,
+                    node.begin,
+                    function,
+                    format!("conv:{destination}|{context}"),
+                );
+            }
+            "BinaryOperator" if node.opcode.as_deref() == Some("=") => {
+                if let Some(record) = self.viewed_record(node, false) {
+                    self.view(&record, node.begin, function, "assign".to_owned());
+                }
+            }
+            "VarDecl" if !node.inner.is_empty() => {
+                if let Some(record) = self.viewed_record(node, false) {
+                    self.view(&record, node.begin, function, "init".to_owned());
+                }
+            }
+            "ParmVarDecl" => {
+                if let Some(record) = self.viewed_record(node, false) {
+                    self.view(&record, node.begin, function, "param".to_owned());
+                }
+            }
+            _ => {}
         }
     }
 }

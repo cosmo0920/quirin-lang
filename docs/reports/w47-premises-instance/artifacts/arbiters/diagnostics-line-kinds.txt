@@ -1,0 +1,2 @@
+system {'"resource_contract_sources"': 30, '"inventory_sha256"': 15}
+slice {'"resource_contract_sources"': 32, '"inventory_sha256"': 16}
