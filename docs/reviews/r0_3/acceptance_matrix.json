@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG03-CALL-SUMMARY-INSTANTIATION card gate at tip 3b97868c (base f19204fa, main ab317406 merged at 4d11cfd3), script docs/reports/cg03-call-summary-instantiation/scripts/gate.sh, logs private/cg03/gate3 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 373 units, 386 summaries, 6,653 passed, 0 failed, 11 ignored (private/test-binaries/20260929T165911Z-505435/summary.json); fmt 0; clippy 0 (an earlier gate at 3da5aa66/d2e8dfac failed clippy on a large Err variant and a single-element loop in a re-pinned test, fixed in 8449fcca); both reevaluation probes exit 0; check_lean_audits.py 233 audits passed (232 + AuditCallInstantiation.lean); python tests: the gate run failed only on the matrix's derived lean_audits (232 against 233 on disk), corrected by this validation regeneration and rerun (09b-python.exit); docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE on main ab317406 (binary built at ab317406) resource-diagnostics.json 97107d95 byte-identical to CG13's AFTER; AFTER (binary fd7fd89f at 4d11cfd3) 7393fd21, 554/10/4,270 -> 564/10/4,260; system 33/2/199 and tail-pause slice 26/1/242/1 Pending unmoved. Exits in gate/.",
-  "workspace_tests": 6653,
+  "note": "CG05-NESTED-CALL-EFFECTS card gate at tip cd72cdca (base 27dc7c9a), steps run one by one (scripts/gate.sh's commands), logs private/cg05/gate of this worktree: submodule `git submodule update --init third_party/libevent` 0 (the --recursive form was refused by this session's sandbox; third_party/libevent is the only submodule, at d82464a2); run_test_binaries.py first run 6,666 passed, 1 failed (qcore-audit checkpoint_cli::interrupted_run_preserves_completed_units_for_resume, a 30 s wall-clock deadline under load; it passes alone in 7.8 s, 03b), rerun exit 0: 374 units, 387 summaries, 6,667 passed, 0 failed, 11 ignored (private/test-binaries/20260929T183803Z-1438657/summary.json); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 234 audits passed (233 + AuditNestedCallEffects.lean); python tests after this validation regeneration; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE (binary d305eb08 at 27dc7c9a) resource-diagnostics.json 7393fd21 byte-identical to CG03's AFTER; AFTER (binary 52041842 at 6787ea86; later commits change tests, Lean, records and formatting only) 3b38d897, 564/10/4,260 -> 566/10/4,258; system 33/2/199 and tail-pause slice 26/1/242/1 Pending unmoved. Exits in gate/.",
+  "workspace_tests": 6667,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 233,
+  "lean_audits": 234,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6889,6 +6889,7 @@
    "AuditNativeLibraryHeaderDecoration.lean",
    "AuditNativeLibrarySourceBinding.lean",
    "AuditNativePlatformMatrix.lean",
+   "AuditNestedCallEffects.lean",
    "AuditNeutralExpressionPosition.lean",
    "AuditNeutralFrameRecursion.lean",
    "AuditNeutralPrefixPreservation.lean",
@@ -6999,7 +7000,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a01dc9dee570e7795/docs/reports/cg03-call-summary-instantiation/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg05-nested-call-effects/gate.json)"
  },
  "named_followups": [
   {

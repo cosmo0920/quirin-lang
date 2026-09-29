@@ -244,7 +244,7 @@ The corpus sidecars (`monkey-source.json`, `*.contracts.json`,
 
 **New controls.**
 
-- `tests/cg05_nested_call_effects.rs`, 8 tests. Each admission is paired
+- `tests/cg05_nested_call_effects.rs`, 9 tests. Each admission is paired
   with its fail-closed controls. They cover:
   - example B;
   - an owned inner result released by the outer call, and one only borrowed
@@ -253,7 +253,11 @@ The corpus sidecars (`monkey-source.json`, `*.contracts.json`,
   - partial data;
   - scalar stores;
   - whole-call and data returns;
-  - siblings with fresh results (admitted) and the refusal controls.
+  - siblings with fresh results (admitted) and the refusal controls;
+  - a nested owned result in a loop. Its reserved place is cleared each
+    iteration, so an owned value the outer call does not take is reported
+    and never hidden behind a later generation of the same site
+    (`CG04-LOOP-SITE-GENERATIONS`).
 - `tests/unit/nested_call_effects.rs`: the overlap vectors both ways, the
   order vectors read by Clang, the refusal reasons, inside-out order and
   sequencing, and the two Lean bindings.
@@ -380,7 +384,25 @@ Ledger 629 → 630 ([scripts/update_ledger.py](scripts/update_ledger.py)).
 
 ## 8. Gate
 
-GATE_SECTION
+The gate ran step by step at tip `cd72cdca` (the commands of
+[scripts/gate.sh](scripts/gate.sh); this session's sandbox refuses a script
+launch). The exits are in [gate/](gate/), the record is [gate.json](gate.json),
+and the logs are under `private/cg05/gate/`.
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init third_party/libevent` | 0 | the `--recursive` form was refused by the sandbox; libevent is the only submodule (`d82464a2`) |
+| tests | `python3 scripts/run_test_binaries.py` | 101, then **0** | First run: 6,666 passed and 1 failed. The failure was `qcore-audit` `checkpoint_cli::interrupted_run_preserves_completed_units_for_resume`, a 30 s wall-clock deadline under load; alone it passes in 7.8 s (`03b`). Rerun (`03c`): 374 units, 387 summaries, **6,667 passed**, 0 failed, 11 ignored (`private/test-binaries/20260929T183803Z-1438657/`). |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | a single-element loop in a re-pinned O04 test was fixed first (`cd72cdca`) |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **234 audits** (233 + `AuditNestedCallEffects.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK, after the matrix validation was regenerated from `gate.json` (`remaining-d02/build_matrix.py --gate`) |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+
+`providers/` is unchanged, so the provider gate is not due. Clang 21.1.8 is
+recorded in `gate/clang-version.txt`.
 
 ## 9. Scripts
 

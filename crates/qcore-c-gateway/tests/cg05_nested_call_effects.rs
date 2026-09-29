@@ -198,3 +198,24 @@ fn a_return_composes_its_nested_calls() {
     );
     assert!(!run.safe(), "{run:?}");
 }
+
+/// `CG04-LOOP-SITE-GENERATIONS`: one abstract site per acquisition node. A
+/// nested owned result in a loop is either taken by the outer call in the same
+/// iteration or left owned and reported; the reserved place is cleared, so
+/// no later generation can stand in for an earlier one.
+#[test]
+fn a_nested_owned_result_in_a_loop_is_never_hidden() {
+    if !clang_available() {
+        return;
+    }
+    let run = g(
+        "void subject(int n) { void *p = q_alloc(); for (int i = 0; i < n; i++) { \
+         q_observe(r_wrap(p)); } q_free(p); }",
+    );
+    assert!(!run.safe(), "{run:?}");
+    let run = g(
+        "void subject(int n) { void *p = q_alloc(); for (int i = 0; i < n; i++) { \
+         q_free(r_wrap(p)); } q_free(p); }",
+    );
+    assert!(!run.unsafe_(), "{run:?}");
+}

@@ -1,0 +1,13 @@
+{
+  "note": "CG05-NESTED-CALL-EFFECTS card gate at tip cd72cdca (base 27dc7c9a), steps run one by one (scripts/gate.sh's commands), logs private/cg05/gate of this worktree: submodule `git submodule update --init third_party/libevent` 0 (the --recursive form was refused by this session's sandbox; third_party/libevent is the only submodule, at d82464a2); run_test_binaries.py first run 6,666 passed, 1 failed (qcore-audit checkpoint_cli::interrupted_run_preserves_completed_units_for_resume, a 30 s wall-clock deadline under load; it passes alone in 7.8 s, 03b), rerun exit 0: 374 units, 387 summaries, 6,667 passed, 0 failed, 11 ignored (private/test-binaries/20260929T183803Z-1438657/summary.json); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 234 audits passed (233 + AuditNestedCallEffects.lean); python tests after this validation regeneration; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE (binary d305eb08 at 27dc7c9a) resource-diagnostics.json 7393fd21 byte-identical to CG03's AFTER; AFTER (binary 52041842 at 6787ea86; later commits change tests, Lean, records and formatting only) 3b38d897, 564/10/4,260 -> 566/10/4,258; system 33/2/199 and tail-pause slice 26/1/242/1 Pending unmoved. Exits in gate/.",
+  "workspace_tests": 6667,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 234,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
