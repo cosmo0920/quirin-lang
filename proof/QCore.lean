@@ -167,6 +167,7 @@ import QCore.TypedRootDeclarations
 import QCore.TypedConstPointerValue
 import QCore.LexicalClosureNestedAssignment
 import QCore.LoopOwner
+import QCore.LoopOwnerCoroPlugin
 import QCore.CondvarJoin
 import QCore.SummaryValidationPremises
 import QCore.AssignmentDestinationSuffix
