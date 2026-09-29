@@ -330,6 +330,9 @@ impl StatementIndex {
                 return None;
             }
             let actual = actuals.get(index)?;
+            // Card CG06 (rule 10z): on a branch edge, a value region at the
+            // actual is the arm C evaluates there.
+            let actual = crate::value_connective::edge_node(actual).unwrap_or(actual);
             (self.node_line(actual) == Some(line)
                 && self.node_tokens(actual).is_some_and(|found| found == texts))
             .then_some(actual)

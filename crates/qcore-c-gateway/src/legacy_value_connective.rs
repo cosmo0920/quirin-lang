@@ -410,8 +410,12 @@ impl Parser<'_> {
         choices: &[(&'a Value, Choice<'a>)],
     ) -> Result<Statement, Decline> {
         let line = lowering.line;
+        let edge = choices
+            .iter()
+            .map(|(region, choice)| (*region, value_connective::chosen_child(region, *choice)))
+            .collect::<Vec<_>>();
         LOWERING.set(true);
-        let lowered = match lowering.site {
+        let lowered = value_connective::on_edge(&edge, || match lowering.site {
             Site::Statement => {
                 let saved = (self.next_site, self.element_lowerings);
                 let statement = self.expression_statement(&run, line, None);
@@ -442,7 +446,7 @@ impl Parser<'_> {
                     self.instantiated_return(&run, line)
                 }
             }
-        };
+        });
         LOWERING.set(false);
         lowered.ok_or(Decline::Leaf)
     }

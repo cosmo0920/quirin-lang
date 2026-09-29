@@ -207,6 +207,82 @@ pub(crate) fn substitute(node: &Value, choices: &[(&Value, Choice<'_>)]) -> Valu
     copy
 }
 
+thread_local! {
+    /// The regions chosen on the edge whose expression an older route is
+    /// lowering: each region node's address and the child C evaluates there.
+    static EDGE: std::cell::RefCell<Vec<(usize, usize)>> =
+        const { std::cell::RefCell::new(Vec::new()) };
+}
+
+fn address(node: &Value) -> usize {
+    std::ptr::from_ref(node) as usize
+}
+
+/// The child of `region` a choice names, when it names a node.
+pub(crate) fn chosen_child(region: &Value, choice: Choice<'_>) -> Option<usize> {
+    match choice {
+        Choice::Node(arm) => children(region)
+            .iter()
+            .position(|child| std::ptr::eq(child, arm)),
+        Choice::Literal(_) => None,
+    }
+}
+
+/// Run `body` with `edge` (region node, chosen child) as the current edge.
+pub(crate) fn on_edge<T>(edge: &[(&Value, Option<usize>)], body: impl FnOnce() -> T) -> T {
+    let chosen = edge
+        .iter()
+        .filter_map(|(region, child)| child.map(|child| (address(region), child)))
+        .collect::<Vec<_>>();
+    let previous = EDGE.with(|cell| std::mem::replace(&mut *cell.borrow_mut(), chosen));
+    let result = body();
+    EDGE.with(|cell| *cell.borrow_mut() = previous);
+    result
+}
+
+/// The node C evaluates at `actual` on the current edge: through parentheses
+/// and value-preserving implicit conversions (`NoOp`, `BitCast`,
+/// `IntegralCast`), a region chosen on the edge is the arm C evaluates there.
+/// `None` when no chosen region stands at `actual`. A call actual's typed
+/// reader (rule 10k) asks this before matching the actual's tokens, so an
+/// edge's call statement reads the arm the edge evaluates.
+pub(crate) fn edge_node(actual: &Value) -> Option<&Value> {
+    EDGE.with(|cell| {
+        let edge = cell.borrow();
+        if edge.is_empty() {
+            return None;
+        }
+        let mut node = actual;
+        let mut moved = false;
+        loop {
+            let mut bare = node;
+            loop {
+                match kind(bare) {
+                    "ParenExpr" => {}
+                    "ImplicitCastExpr"
+                        if matches!(
+                            bare["castKind"].as_str(),
+                            Some("NoOp" | "BitCast" | "IntegralCast")
+                        ) => {}
+                    _ => break,
+                }
+                match children(bare).first() {
+                    Some(inner) => bare = inner,
+                    None => break,
+                }
+            }
+            match edge.iter().find(|(region, _)| *region == address(bare)) {
+                Some(&(_, child)) => {
+                    node = children(bare).get(child)?;
+                    moved = true;
+                }
+                None => break,
+            }
+        }
+        moved.then_some(node)
+    })
+}
+
 /// The most leaves one full expression is lowered into.
 pub(crate) const MAX_LEAVES: usize = 8;
 
