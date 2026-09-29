@@ -621,6 +621,57 @@ fn lower_let(
             to,
         });
     }
+    // `let NAME = VALUE_EXPRESSION ;` — **the value statement** (card
+    // `W48-QR-SCALAR-TYPES-R5`, `W48-QR-BUFFER-ROUTE-ARITHMETIC`): one
+    // arithmetic operation, comparison or negation, read by the reader the
+    // extern and task routes share (`source_value_statement`), so the three
+    // routes read one grammar. Its `as` form is this route's conversion,
+    // already read above; a shape the reader does not claim (a bare name, a
+    // literal) falls through to the forms below, unchanged. Like the
+    // conversion it is **not** a `buffer_use`, so it selects no route.
+    {
+        let rest: Vec<Token> = window[3..].iter().map(|token| (*token).clone()).collect();
+        match crate::source_value_statement::parse_value_expression(&rest, |name: &str| {
+            Some(name.to_owned())
+        }) {
+            Some(Ok(syntax)) => {
+                use crate::source_value_statement::{
+                    ValueExpressionSyntax as Syntax, ValueOperandSyntax as Operand,
+                };
+                use qcore_core::std_buffer::{ValueOperand, ValueOperation};
+                let operand = |operand: Operand<String>| match operand {
+                    Operand::Value(name) => ValueOperand::Name(name),
+                    Operand::Integer(value) => ValueOperand::Integer(value),
+                    Operand::Bool(value) => ValueOperand::Bool(value),
+                };
+                let operation = match syntax {
+                    Syntax::Binary(op, a, b) => ValueOperation::Binary(op, operand(a), operand(b)),
+                    Syntax::Compare(cmp, a, b) => {
+                        ValueOperation::Compare(cmp, operand(a), operand(b))
+                    }
+                    Syntax::Negate(a) => ValueOperation::Negate(operand(a)),
+                    Syntax::Convert(..) => {
+                        diagnostics.push(diagnostic(
+                            "Q051",
+                            span,
+                            "`source.buffer.v1` converts one operand per statement, `let NAME = \
+                             OPERAND as TYPE;`, where OPERAND is an `i32` literal or a bound name",
+                        ));
+                        return None;
+                    }
+                };
+                return Some(BufferEvent::Compute {
+                    binding: binding.to_owned(),
+                    operation,
+                });
+            }
+            Some(Err(message)) => {
+                diagnostics.push(diagnostic("Q051", span, message));
+                return None;
+            }
+            None => {}
+        }
+    }
     // `let NAME = NAME ;` — **the copy bind** (card `OWNED-FIELD-ROUTE-REACH`,
     // wave 41).
     //
@@ -1368,6 +1419,46 @@ impl LoweringConstants {
             // conversion of a byte, a field or a copy is still outside it —
             // its operand is — and a bound spelled through one is refused by
             // name, as before.
+            // Card `W48-QR-SCALAR-TYPES-R5`: a value statement over values of
+            // the tier is folded by the shared decision, as a conversion is.
+            BufferEvent::Compute { binding, operation } => {
+                use qcore_core::std_buffer::{ValueOperand, ValueOperation};
+                use qcore_core::scalar_values::{Operand, Operation};
+                let operand = |operand: &ValueOperand| -> Option<Operand> {
+                    Some(match operand {
+                        ValueOperand::Name(name) => {
+                            let (ty, value) = self.known(name)?;
+                            Operand::Typed {
+                                ty,
+                                known: Some(value),
+                            }
+                        }
+                        ValueOperand::Integer(value) => Operand::Integer(*value),
+                        ValueOperand::Bool(value) => Operand::Bool(*value),
+                    })
+                };
+                let shared = match operation {
+                    ValueOperation::Binary(op, a, b) => operand(a)
+                        .zip(operand(b))
+                        .map(|(a, b)| Operation::Binary(*op, a, b)),
+                    ValueOperation::Compare(cmp, a, b) => operand(a)
+                        .zip(operand(b))
+                        .map(|(a, b)| Operation::Compare(*cmp, a, b)),
+                    ValueOperation::Negate(a) => operand(a).map(Operation::Negate),
+                };
+                match shared.and_then(|shared| self.fold(shared)) {
+                    Some((ty, value)) => self.bind_known(binding, ty, value),
+                    None => {
+                        let widthless = operation
+                            .names()
+                            .into_iter()
+                            .find_map(|name| self.widthless.get(name).copied());
+                        if let Some(ty) = widthless {
+                            self.bind_widthless(binding, ty);
+                        }
+                    }
+                }
+            }
             BufferEvent::Convert {
                 binding,
                 operand,

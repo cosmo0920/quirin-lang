@@ -99,6 +99,11 @@ pub enum BufferEmissionRefusal {
     /// which only [`emit_events`]'s typed environment knows. The one caller
     /// without it is the composed string/buffer route, which lowers none.
     UnemittableConversion { event: usize },
+    /// A value statement reached a caller that cannot emit one (card
+    /// `W48-QR-SCALAR-TYPES-R5`), for the conversion's reason: its operands
+    /// may be names of any §G02t type, which only [`emit_events`]'s typed
+    /// environment knows. The composed string/buffer route refuses one first.
+    UnemittableValueStatement { event: usize },
     /// A certificate whose lines disagree with the program's.
     CertificateDisagrees,
 }
@@ -364,6 +369,9 @@ pub fn uses_typed_scalars(program: &BufferProgram) -> bool {
             // Card `W48-QR-SCALAR-TYPES-R5`: a loop with an index of another
             // type declares it at that type's C spelling.
             BufferEvent::Repeat { index, .. } => index.ty() != ScalarType::I32,
+            // Card `W48-QR-SCALAR-TYPES-R5`: a value statement may produce a
+            // `bool` (a comparison).
+            BufferEvent::Compute { .. } => true,
             _ => false,
         })
 }
@@ -620,6 +628,11 @@ pub fn buffer_event_statement(
         BufferEvent::Convert { .. } => {
             return Err(BufferEmissionRefusal::UnemittableConversion { event: index });
         }
+        // **Refused, not skipped** — see
+        // [`BufferEmissionRefusal::UnemittableValueStatement`].
+        BufferEvent::Compute { .. } => {
+            return Err(BufferEmissionRefusal::UnemittableValueStatement { event: index });
+        }
         // **Refused, not skipped.** A loop is a block, not a statement, and
         // this function returns one statement's text. `emit_events` handles a
         // `Repeat` in its own arm and never reaches here; a caller that cannot
@@ -676,6 +689,7 @@ pub fn emit_buffer_c11(
         live_fields: BTreeMap::new(),
         typed: BTreeMap::new(),
         conversions: BTreeSet::new(),
+        helpers: BTreeSet::new(),
         target: certificate.target_assumption.clone(),
     };
 
@@ -711,6 +725,18 @@ pub fn emit_buffer_c11(
             Some(helper) => typed_prelude.push_str(&helper),
             None => return Err(BufferEmissionRefusal::UnemittableConversion { event: 0 }),
         }
+    }
+    // Card `W48-QR-SCALAR-TYPES-R5`: the shared checked helpers the value
+    // statements call — §G02t's own definitions, whose operand tests are
+    // witnesses here: every value statement on this route was folded by the
+    // checker, which refused each one that faults, so the `exit(86)` inside
+    // is provably never taken.
+    for helper in &records.helpers {
+        typed_prelude.push('\n');
+        typed_prelude.push_str(&crate::scalar_calls_c_emit::scalar_helper_definition(
+            *helper,
+            certificate.target_assumption.as_ref(),
+        ));
     }
     if !typed_prelude.is_empty() {
         fragments.push(Fragment::new(
@@ -752,6 +778,7 @@ pub fn buffer_loop_block(
         live_fields: BTreeMap::new(),
         typed: BTreeMap::new(),
         conversions: BTreeSet::new(),
+        helpers: BTreeSet::new(),
         target: None,
     };
     let mut source = String::new();
@@ -811,6 +838,9 @@ struct RecordEnvironment {
     typed: BTreeMap<String, (String, ScalarType)>,
     /// The checked conversions the program uses, each emitted as one helper.
     conversions: BTreeSet<(ScalarType, ScalarType)>,
+    /// Card `W48-QR-SCALAR-TYPES-R5`: §G02t's shared checked helpers the
+    /// program's value statements call, each emitted once.
+    helpers: BTreeSet<crate::scalar_calls_c_emit::Helper>,
     /// The recorded target, when the certificate depends on one.
     target: Option<st::RecordedTarget>,
 }
@@ -1018,6 +1048,19 @@ fn emit_events(
                 let emitted = scalar_name(binding);
                 records.typed.insert(binding.clone(), (emitted.clone(), ty));
                 let _ = writeln!(source, "{indent}{} {emitted} = {from_c};", st::c_type(ty));
+            }
+            // Card `W48-QR-SCALAR-TYPES-R5`: the value statement. Arithmetic
+            // and negation call §G02t's shared checked helper, a comparison is
+            // plain C; the result is declared at its own type.
+            BufferEvent::Compute { binding, operation } => {
+                let (ty, expression) = value_statement_expression(records, scalars, index, operation)?;
+                let emitted = scalar_name(binding);
+                if ty == ScalarType::I32 {
+                    scalars.insert(binding.clone(), emitted.clone());
+                } else {
+                    records.typed.insert(binding.clone(), (emitted.clone(), ty));
+                }
+                let _ = writeln!(source, "{indent}{} {emitted} = {expression};", st::c_type(ty));
             }
             // Card `W48-QR-SCALAR-TYPES-R3`: the conversion. Total, it is a
             // plain cast; checked, it calls the helper whose test the checker
@@ -1382,6 +1425,60 @@ fn emit_events(
         }
     }
     Ok(())
+}
+
+/// The result type and C expression of one value statement (card
+/// `W48-QR-SCALAR-TYPES-R5`). The operands' one type is a named operand's
+/// (the checker proved every named operand of one type), `bool` for a `bool`
+/// literal, `i32` for two integer literals; a literal is that type's C
+/// constant.
+fn value_statement_expression(
+    records: &mut RecordEnvironment,
+    scalars: &BTreeMap<String, String>,
+    event: usize,
+    operation: &std_buffer::ValueOperation,
+) -> Result<(ScalarType, String), BufferEmissionRefusal> {
+    use crate::scalar_calls_c_emit::Helper;
+    use std_buffer::{ValueOperand, ValueOperation};
+    let mut ty = None;
+    for operand in operation.operands() {
+        match operand {
+            ValueOperand::Name(name) => {
+                let (_, found) = records.scalar(scalars, event, name)?;
+                ty.get_or_insert(found);
+            }
+            ValueOperand::Bool(_) => {
+                ty.get_or_insert(ScalarType::Bool);
+            }
+            ValueOperand::Integer(_) => {}
+        }
+    }
+    let ty = ty.unwrap_or(ScalarType::I32);
+    let c = |operand: &ValueOperand| -> Result<String, BufferEmissionRefusal> {
+        Ok(match operand {
+            ValueOperand::Name(name) => records.scalar(scalars, event, name)?.0,
+            ValueOperand::Integer(value) => st::c_literal(ty, *value),
+            ValueOperand::Bool(value) => st::c_literal(ScalarType::Bool, i128::from(*value)),
+        })
+    };
+    Ok(match operation {
+        ValueOperation::Binary(op, a, b) => {
+            let (a, b) = (c(a)?, c(b)?);
+            let helper = Helper::Op(*op, ty);
+            records.helpers.insert(helper);
+            (ty, format!("{}({a}, {b})", helper.name()))
+        }
+        ValueOperation::Negate(a) => {
+            let a = c(a)?;
+            let helper = Helper::Neg(ty);
+            records.helpers.insert(helper);
+            (ty, format!("{}({a})", helper.name()))
+        }
+        ValueOperation::Compare(cmp, a, b) => {
+            let (a, b) = (c(a)?, c(b)?);
+            (ScalarType::Bool, format!("({a} {} {b})", cmp.c_operator()))
+        }
+    })
 }
 
 /// The file-scope text `source.buffer.v1` contributes to a program it is part

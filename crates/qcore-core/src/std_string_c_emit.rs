@@ -214,6 +214,13 @@ fn buffer_consumers(event: &BufferEvent, consumed: &mut BTreeMap<String, bool>) 
             operand: BufferOperand::Literal(_),
             ..
         } => {}
+        // Card `W48-QR-SCALAR-TYPES-R5`: a value statement reads its operands
+        // — refused by this route before emission, and total anyway.
+        BufferEvent::Compute { operation, .. } => {
+            for name in operation.names() {
+                consumed.insert(name.to_owned(), true);
+            }
+        }
         BufferEvent::Field { record, .. } => {
             consumed.insert(record.clone(), true);
         }

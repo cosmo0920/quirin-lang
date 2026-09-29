@@ -175,6 +175,53 @@ impl From<BufferOperand> for FieldOperand {
     }
 }
 
+/// One operand of a value statement on this route (card
+/// `W48-QR-SCALAR-TYPES-R5`, `W48-QR-BUFFER-ROUTE-ARITHMETIC`): a name this
+/// entry bound to a scalar of any §G02t type, an integer literal typed by the
+/// other operand (`i32` when both are literals), or `true`/`false`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ValueOperand {
+    Name(String),
+    Integer(i128),
+    Bool(bool),
+}
+
+/// The one §G02t operation a value statement performs on this route (card
+/// `W48-QR-SCALAR-TYPES-R5`). The fourth, `as`, is [`BufferEvent::Convert`],
+/// the statement card `W48-QR-SCALAR-TYPES-R3` gave the route.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ValueOperation {
+    /// `a OP b`, checked at the operands' one type.
+    Binary(st::Op, ValueOperand, ValueOperand),
+    /// `a CMP b`, producing a `bool`.
+    Compare(st::Cmp, ValueOperand, ValueOperand),
+    /// `-a`, checked.
+    Negate(ValueOperand),
+}
+
+impl ValueOperation {
+    /// The operands, in order.
+    #[must_use]
+    pub fn operands(&self) -> Vec<&ValueOperand> {
+        match self {
+            Self::Binary(_, a, b) | Self::Compare(_, a, b) => vec![a, b],
+            Self::Negate(a) => vec![a],
+        }
+    }
+
+    /// The names the statement reads.
+    #[must_use]
+    pub fn names(&self) -> Vec<&str> {
+        self.operands()
+            .into_iter()
+            .filter_map(|operand| match operand {
+                ValueOperand::Name(name) => Some(name.as_str()),
+                _ => None,
+            })
+            .collect()
+    }
+}
+
 /// The index type of one `for` (card `W48-QR-SCALAR-TYPES-R5`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum LoopIndex {
@@ -216,6 +263,19 @@ pub enum BufferEvent {
         binding: String,
         operand: BufferOperand,
         to: ScalarType,
+    },
+    /// `let BINDING = VALUE_EXPRESSION;` — §G02t's value statement (card
+    /// `W48-QR-SCALAR-TYPES-R5`, `W48-QR-BUFFER-ROUTE-ARITHMETIC`): one
+    /// arithmetic operation, comparison or negation over bound scalars and
+    /// literals, read by the shared reader (`source_value_statement`) and
+    /// decided by the shared decision (`scalar_values::Decider`). Every value
+    /// on this route is a check-time constant — a loop index is one per
+    /// iteration — so every statement is **folded**: a fault is refused at
+    /// check time (`Q053`), naming the variant the typed path would raise, and
+    /// never happens at run time. Not a `buffer_use`: it selects no route.
+    Compute {
+        binding: String,
+        operation: ValueOperation,
     },
     /// `let NAME = bytes(INTEGER);` — acquire an owned buffer of `extent`
     /// zero-initialised bytes. The custody obligation opens here.
@@ -900,6 +960,12 @@ pub enum TypedRefusal {
     NoRecordedTarget { ty: ScalarType },
     /// `Q052`: `hex` of a `bool`, which has no bit pattern to render.
     NoHexRendering { name: String },
+    /// A value statement the shared decision refuses (card
+    /// `W48-QR-SCALAR-TYPES-R5`), at the condition its fault is: `Q053` a
+    /// fault decided now or a literal outside its type (the range condition),
+    /// `Q051` a target width with no record, `Q052` every typing refusal —
+    /// mixed operand types, `bool` arithmetic, negation or ordering.
+    Value(crate::scalar_values::ValueRefusal),
 }
 
 impl TypedRefusal {
@@ -911,6 +977,16 @@ impl TypedRefusal {
                 "Q052"
             }
             Self::ConversionOutOfRange { .. } => "Q053",
+            Self::Value(refusal) => {
+                use crate::scalar_values::ValueRefusal;
+                match refusal {
+                    ValueRefusal::NoRecordedTarget { .. } => "Q051",
+                    ValueRefusal::StaticFault { .. } | ValueRefusal::LiteralOutOfRange { .. } => {
+                        "Q053"
+                    }
+                    _ => "Q052",
+                }
+            }
         }
     }
 }
@@ -946,6 +1022,7 @@ impl fmt::Display for TypedRefusal {
                 "`{name}` is a `bool`, which renders `true`/`false` under `dec` and has no `hex` \
                  rendering"
             ),
+            Self::Value(refusal) => refusal.fmt(f),
         }
     }
 }
@@ -1021,6 +1098,9 @@ pub fn derived_effects(program: &BufferProgram) -> EffectRow {
                 | BufferEvent::FieldExtent { .. }
                 | BufferEvent::Bind { .. }
                 | BufferEvent::Convert { .. }
+                // Card `W48-QR-SCALAR-TYPES-R5`: a value statement derives
+                // nothing, for the conversion's reason.
+                | BufferEvent::Compute { .. }
                 | BufferEvent::CopyBind { .. }
                 | BufferEvent::Lend { .. }
                 | BufferEvent::Load { .. }
@@ -1383,6 +1463,7 @@ pub fn custody_operations_with_gates(
                     // scalar and binds one, so it is in that class too.
                     BufferEvent::Bind { .. }
                     | BufferEvent::Convert { .. }
+                    | BufferEvent::Compute { .. }
                     | BufferEvent::CopyBind { .. }
                     | BufferEvent::Line(_)
                     | BufferEvent::Return => {}
@@ -1505,6 +1586,13 @@ fn custody_names_at_any_depth<'a>(event: &'a BufferEvent, into: &mut Vec<WindowN
             operand: BufferOperand::Literal(_),
             ..
         } => {}
+        // Card `W48-QR-SCALAR-TYPES-R5`: a value statement names each of its
+        // operands, pushed for the conversion's reason.
+        BufferEvent::Compute { operation, .. } => {
+            for name in operation.names() {
+                into.push(WindowName::Binding(name));
+            }
+        }
         BufferEvent::Repeat { body, .. } => {
             for event in body {
                 custody_names_at_any_depth(event, into);
@@ -1909,6 +1997,8 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                     // an index spelled through one stays rangeless here, the
                     // refusing direction, as a copy of a byte read does.
                     BufferEvent::Convert { .. } => {}
+                    // Card `W48-QR-SCALAR-TYPES-R5`: a value statement likewise.
+                    BufferEvent::Compute { .. } => {}
                     // Card `OWNED-FIELD-ROUTE-REACH`: the copy bind reaches
                     // this projection too, because an entry may both lend and
                     // copy. The question is the same one the flat walk asks —
@@ -2102,6 +2192,7 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                         | BufferEvent::Lend { .. }
                         | BufferEvent::Construct { .. }
                         | BufferEvent::Convert { .. }
+                        | BufferEvent::Compute { .. }
                         | BufferEvent::Field { .. }
                         | BufferEvent::FieldStore { .. }
                         | BufferEvent::FieldLoad { .. }
@@ -2356,6 +2447,16 @@ impl BufferEvaluation {
                 };
                 match source.and_then(|(from, value)| self.convert(index, from, *to, value)) {
                     Ok(value) => self.bind(binding, *to, value),
+                    Err(error) => step.errors.push(error),
+                }
+            }
+            // Card `W48-QR-SCALAR-TYPES-R5`: the value statement, decided by
+            // the shared decision over this route's typed environment. Every
+            // operand here is known, so the decision folds: its value is
+            // bound, and a fault is a refusal now.
+            BufferEvent::Compute { binding, operation } => {
+                match self.compute(index, operation) {
+                    Ok((ty, value)) => self.bind(binding, ty, value),
                     Err(error) => step.errors.push(error),
                 }
             }
@@ -2987,6 +3088,52 @@ impl BufferEvaluation {
         } else {
             self.typed.insert(binding.to_owned(), (ty, value));
         }
+    }
+
+    /// One value statement's result, decided now by the shared decision (card
+    /// `W48-QR-SCALAR-TYPES-R5`): its type and its number, or the refusal.
+    pub fn compute(
+        &self,
+        event: usize,
+        operation: &ValueOperation,
+    ) -> Result<(ScalarType, i128), BufferError> {
+        use crate::scalar_values::{Decider, Operand, Operation};
+        let operand = |operand: &ValueOperand| -> Result<Operand, BufferError> {
+            Ok(match operand {
+                ValueOperand::Name(name) => {
+                    let (ty, value) = self.scalar_value(event, name)?;
+                    Operand::Typed {
+                        ty,
+                        known: Some(value),
+                    }
+                }
+                ValueOperand::Integer(value) => Operand::Integer(*value),
+                ValueOperand::Bool(value) => Operand::Bool(*value),
+            })
+        };
+        let shared = match operation {
+            ValueOperation::Binary(op, a, b) => Operation::Binary(*op, operand(a)?, operand(b)?),
+            ValueOperation::Compare(cmp, a, b) => {
+                Operation::Compare(*cmp, operand(a)?, operand(b)?)
+            }
+            ValueOperation::Negate(a) => Operation::Negate(operand(a)?),
+        };
+        let refused = |refusal| BufferError::Typed {
+            event,
+            refusal: TypedRefusal::Value(refusal),
+        };
+        let decision = Decider::default()
+            .decide(shared, false, self.target.as_ref())
+            .map_err(refused)?;
+        // Every operand is known, so the decision folded; a statement it left
+        // unfolded would be a value this route cannot hold, refused rather
+        // than bound.
+        let value = decision.known.ok_or_else(|| {
+            refused(crate::scalar_values::ValueRefusal::NeedsPermission {
+                ty: decision.operand_ty,
+            })
+        })?;
+        Ok((decision.ty, value))
     }
 
     /// `value as to`, from `from`, decided now (card `W48-QR-SCALAR-TYPES-R3`):
@@ -3903,7 +4050,9 @@ impl BufferRun {
             | BufferEvent::CopyBind { .. }
             // Card `W48-QR-SCALAR-TYPES-R3`: a conversion binds a value and
             // reaches the same stepper.
-            | BufferEvent::Convert { .. } => {
+            | BufferEvent::Convert { .. }
+            // Card `W48-QR-SCALAR-TYPES-R5`: so does a value statement.
+            | BufferEvent::Compute { .. } => {
                 let step = evaluation.apply(index, event);
                 errors.extend(step.errors);
                 acquisitions.extend(step.acquisition);
@@ -4185,7 +4334,9 @@ fn body_bindings(events: &[BufferEvent]) -> BTreeSet<String> {
                 // and it is body-local exactly as every other binding is.
                 | BufferEvent::CopyBind { binding, .. }
                 // Card `W48-QR-SCALAR-TYPES-R3`: so does a conversion.
-                | BufferEvent::Convert { binding, .. } => {
+                | BufferEvent::Convert { binding, .. }
+                // Card `W48-QR-SCALAR-TYPES-R5`: and a value statement.
+                | BufferEvent::Compute { binding, .. } => {
                     names.insert(binding.clone());
                 }
                 BufferEvent::Acquire { name, .. } => {
