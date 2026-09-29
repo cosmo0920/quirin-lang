@@ -1,0 +1,50 @@
+== fixed.json -> fixed.json
+   before 983c74b96a649269: discharged 8 / not 126 / unresolved 10; edges 33493; functions 11964; seeds 2902
+   after  56f9ad24b103d3c2: discharged 8 / not 126 / unresolved 10; edges 33493; functions 11964; seeds 2902
+   equal but the instance flags' reasons: True
+   sites moved: 0
+   FLAG tests/runtime/in_tail.c::cb_tail_pause_test: None -> None
+      after: the instance `ins` read as a list head at tests/runtime/in_tail.c:2552 is not derived to be the one creation's: `flb_config_task_map_resize` at src/flb_config.c:531 may be defined only in src/flb_config.c, a file this reader cannot structure; derived nonetheless: P-CALLBACK-INSTANCE derived: every dispatch of the copy's callback field passes the instance whose plugin it goes through, and a collector's instance is its registration's; holder escape: `test` (`struct tail_pause_test`, named only in tests/runtime/in_tail.c) escapes into the installed instance's `data`
+== fixed-configured-control.json -> fixed-configured-control.json
+   before 4955a12dcd75c783: discharged 8 / not 130 / unresolved 10; edges 33573; functions 11951; seeds 2854
+   after  a6c5006496d89222: discharged 8 / not 130 / unresolved 10; edges 33573; functions 11951; seeds 2854
+   equal but the instance flags' reasons: True
+   sites moved: 0
+   FLAG tests/runtime/in_tail.c::cb_tail_pause_test: None -> None
+      after: the instance `ins` read as a list head at tests/runtime/in_tail.c:2552 is not derived to be the one creation's: `include/fluent-bit/flb_output.h::output_pre_cb_flush` (its address is taken or it is named in a macro) reaches a hazard (include/fluent-bit/flb_output.h::output_pre_cb_flush > plugins/out_arvancloud_cloudlogs/arvancloud_cloudlogs.c::cb_arvancloud_flush > flb_http_do > flb_http_client_debug_cb > flb_callback_do > lib/monkey/mk_core/deps/libevent/http.c::evhttp_send_done > evhttp_request_free > evbuffer_free: its file (lib/monkey/mk_core/deps/libevent/buffer.c) has a conditional group
+== fixed-configured.json -> fixed-configured-predefined.json
+   before 719a7d0d761c9375: discharged 11 / not 130 / unresolved 7; edges 33529; functions 11932; seeds 2852
+   after  9b029d3b6bd98cd4: discharged 11 / not 130 / unresolved 7; edges 33529; functions 11932; seeds 2852
+   equal but the instance flags' reasons: True
+   sites moved: 0
+   FLAG tests/runtime/in_tail.c::cb_tail_pause_test: False -> False
+      after: the copy's flags and its instance's creating plugin derive no coroutine; P-CALLBACK-INSTANCE derived: every dispatch of the copy's callback field passes the instance whose plugin it goes through, and a collector's instance is its registration's; P-HOLDER-OPAQUE derived: 7 read(s) of `data` by cb_emitter_init, cb_emitter_pause, cb_tail_pause_test, cb_tail_pause_test_pre_run, flb_input_instance_init, input_thread; the holder's pointer reaches 5 carrier(s) in 5 function(s) (plugins/in_emitter/emitter.c::cb_emitter_init, plugins/in_emitter/emitter.c::cb_emitter_pause, plugins/in_tail/tail.c::in_ta
+== fixed-configured.json -> fixed-configured.json
+   before 719a7d0d761c9375: discharged 11 / not 130 / unresolved 7; edges 33529; functions 11932; seeds 2852
+   after  8a7a09262761f802: discharged 11 / not 130 / unresolved 7; edges 33529; functions 11932; seeds 2852
+   equal but the instance flags' reasons: True
+   sites moved: 0
+   FLAG tests/runtime/in_tail.c::cb_tail_pause_test: False -> False
+      after: the copy's flags and its instance's creating plugin derive no coroutine; P-CALLBACK-INSTANCE derived: every dispatch of the copy's callback field passes the instance whose plugin it goes through, and a collector's instance is its registration's; P-HOLDER-OPAQUE derived: 7 read(s) of `data` by cb_emitter_init, cb_emitter_pause, cb_tail_pause_test, cb_tail_pause_test_pre_run, flb_input_instance_init, input_thread; the holder's pointer reaches 5 carrier(s) in 5 function(s) (plugins/in_emitter/emitter.c::cb_emitter_init, plugins/in_emitter/emitter.c::cb_emitter_pause, plugins/in_tail/tail.c::in_ta
+   region_macros: read=True 
+== previous.json -> previous.json
+   before d05ebc0ede689951: discharged 8 / not 132 / unresolved 7; edges 33466; functions 11962; seeds 2902
+   after  d05ebc0ede689951: discharged 8 / not 132 / unresolved 7; edges 33466; functions 11962; seeds 2902
+   equal but the instance flags' reasons: True
+   sites moved: 0
+== previous-configured-control.json -> previous-configured-control.json
+   before a5edf1eda1af361c: discharged 8 / not 136 / unresolved 7; edges 33546; functions 11949; seeds 2854
+   after  a5edf1eda1af361c: discharged 8 / not 136 / unresolved 7; edges 33546; functions 11949; seeds 2854
+   equal but the instance flags' reasons: True
+   sites moved: 0
+== previous-configured.json -> previous-configured-predefined.json
+   before 418a9251cf029d44: discharged 8 / not 136 / unresolved 7; edges 33503; functions 11930; seeds 2852
+   after  418a9251cf029d44: discharged 8 / not 136 / unresolved 7; edges 33503; functions 11930; seeds 2852
+   equal but the instance flags' reasons: True
+   sites moved: 0
+== previous-configured.json -> previous-configured.json
+   before 418a9251cf029d44: discharged 8 / not 136 / unresolved 7; edges 33503; functions 11930; seeds 2852
+   after  9ab57667e3c9d6fc: discharged 8 / not 136 / unresolved 7; edges 33503; functions 11930; seeds 2852
+   equal but the instance flags' reasons: True
+   sites moved: 0
+   region_macros: read=True 

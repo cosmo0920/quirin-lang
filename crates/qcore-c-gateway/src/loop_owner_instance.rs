@@ -666,7 +666,7 @@ impl StepB<'_> {
     /// compile command names and no read unit includes, `None` otherwise (a
     /// header function no unit defined, a definition Clang did not see in a
     /// file it read, or a unit Clang could not read).
-    fn in_build(&self, typed: &TypedFacts, definition: &Definition) -> Option<bool> {
+    pub(super) fn in_build(&self, typed: &TypedFacts, definition: &Definition) -> Option<bool> {
         let path = &self.files[definition.file].path;
         if typed
             .functions
@@ -1261,6 +1261,8 @@ impl StepB<'_> {
         // Card W47-SERVICE-PROPERTY-KEYS: setters and property functions read
         // in place for a keyed call.
         let mut keyed_in_place = BTreeSet::new();
+        // Card W47-PREMISES-HOLDER-REGION: the keyed bodies as scanned.
+        let mut keyed_parts = Vec::new();
         let mut part = 0;
         while part < region.len() {
             let (file, range, extents, skip, pruned, propagate) = region[part].clone();
@@ -1311,6 +1313,7 @@ impl StepB<'_> {
                                 keyed.keys.join("; ")
                             ));
                             keyed_in_place.extend(keyed.in_place.iter().copied());
+                            keyed_parts.extend(keyed.parts.iter().cloned());
                             for root in keyed.roots {
                                 roots.insert(root);
                                 if !reaching.contains(&root) {
@@ -1411,11 +1414,54 @@ impl StepB<'_> {
             .into_iter()
             .chain(inlined.iter().copied())
             .chain(keyed_in_place.iter().copied());
-        for id in own {
-            if let Some(why) = hazards.get(&id) {
-                blockers.push(format!("`{}`, read in place, {why}", self.functions[id]));
+        let own = own.collect::<BTreeSet<_>>();
+        for id in &own {
+            if let Some(why) = hazards.get(id) {
+                blockers.push(format!("`{}`, read in place, {why}", self.functions[*id]));
             }
         }
+        // Card W47-PREMISES-HOLDER-REGION: every macro invocation on the
+        // region, read from its unit's own expansion.
+        // With the facts, the functions the roots reach and those that reach a
+        // hazard over the census graph and its macro-made calls.
+        let mut macro_closure = BTreeSet::new();
+        let mut macro_reaching = BTreeSet::new();
+        let macro_unmodelled = match self.region_macros {
+            None => Vec::new(),
+            Some(view) => {
+                let parts = region
+                    .iter()
+                    .map(|(file, range, _, _, pruned, _)| (*file, *range, pruned.clone()))
+                    .chain(keyed_parts.iter().cloned())
+                    .collect::<Vec<_>>();
+                let witness = |id: usize| self.witness(id, &hazards);
+                let read = match self.region_macro_calls(view, &parts, &reaching, &witness) {
+                    Ok(read) => read,
+                    Err(why) => return not_tied(why),
+                };
+                roots.extend(read.roots.iter().copied());
+                // The census graph the region reaches over: the macro-made
+                // calls of every function a root reaches.
+                match self.closure_macro_calls(view, &roots, &reaching) {
+                    Ok(widened) => {
+                        self.notes.borrow_mut().insert(widened.note);
+                        macro_closure = widened.closure;
+                        macro_reaching = widened.reaching;
+                    }
+                    Err(why) => return not_tied(why),
+                }
+                let mut unmodelled = read.unmodelled.clone();
+                unmodelled.extend(self.own_indirect_calls(typed, &own));
+                self.notes.borrow_mut().insert(format!(
+                    "region macros: {} invocation(s) of {} macro(s) on the list-head region read \
+                     from their units' expansions, none naming or carrying a function that \
+                     reaches a hazard (P-RECORDED-COMPILER, P-DUMP-TOKENS-COMPLETE)",
+                    read.invocations,
+                    read.names.len()
+                ));
+                unmodelled
+            }
+        };
         // An unmodelled call (through a function pointer the census does not
         // read) reaches only an escaped function; it matters only where the
         // region's closure makes one, or has a function the typed reading
@@ -1424,6 +1470,7 @@ impl StepB<'_> {
         // unit it read) is not part of the program.
         let mut closure = self.reach.closure(roots.iter().copied());
         closure.extend(keyed_in_place.iter().copied());
+        closure.extend(macro_closure.iter().copied());
         let unmodelled = closure
             .iter()
             .copied()
@@ -1455,7 +1502,7 @@ impl StepB<'_> {
                 .reach
                 .wild
                 .iter()
-                .filter(|(id, _)| reaching.contains(id))
+                .filter(|(id, _)| reaching.contains(id) || macro_reaching.contains(id))
                 .collect::<Vec<_>>();
             if let Some((id, why)) = wild.first() {
                 let targets = BTreeMap::from([(*first, String::new())]);
@@ -1481,6 +1528,23 @@ impl StepB<'_> {
                         .map(|id| self.functions[*id].as_str())
                         .collect::<Vec<_>>()
                         .join(", "),
+                ));
+            }
+        }
+        if !macro_unmodelled.is_empty() {
+            let wild = self
+                .reach
+                .wild
+                .iter()
+                .filter(|(id, _)| reaching.contains(id) || macro_reaching.contains(id))
+                .collect::<Vec<_>>();
+            if let Some((id, why)) = wild.first() {
+                blockers.push(format!(
+                    "`{}` ({why}) reaches a hazard ({}) and may be called through a pointer \
+                     from the region: {}",
+                    self.functions[**id],
+                    self.witness(**id, &hazards),
+                    macro_unmodelled.join("; ")
                 ));
             }
         }
@@ -1562,6 +1626,9 @@ impl StepB<'_> {
             ));
         };
         let flag = self.descriptors_flag(&literal)?;
+        // Card W47-PREMISES-HOLDER-REGION: the literal the copy's source was
+        // created from.
+        self.copy_literal.replace(Some(literal.clone()));
         // Card W47-PREMISES-INSTANCE: in the premised census the premises the
         // note names are derived, or the head is not tied.
         if self.premises.is_some() {
@@ -1788,16 +1855,12 @@ impl StepB<'_> {
                 ));
             }
         }
-        let readers = accesses(typed, tables.instance_record, tables.instance_data_field)
-            .iter()
-            .filter(|a| reads_only(a.use_label, &[]))
-            .map(|a| a.function.to_owned())
-            .collect::<BTreeSet<_>>();
+        // Card W47-PREMISES-HOLDER-REGION: P-HOLDER-OPAQUE is derived once
+        // the instance's creation is (`holder_opaque`, from `copy_flag`).
         self.notes.borrow_mut().insert(format!(
             "holder escape: `{root}` (`struct {tag}`, named only in {path}) escapes into the \
-             installed instance's `{}`, read by {} (P-HOLDER-OPAQUE)",
+             installed instance's `{}`",
             tables.instance_data_field,
-            readers.into_iter().collect::<Vec<_>>().join(", ")
         ));
         Ok(())
     }

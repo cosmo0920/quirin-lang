@@ -17,6 +17,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use qcore_c_gateway::thread_entry_census::predefined_macros::{PredefinedFacts, PredefinedMacros};
+use qcore_c_gateway::thread_entry_census::region_macros::{RegionMacroFacts, RegionMacros};
 use qcore_c_gateway::thread_entry_census::{
     BuildConfiguration, CensusFile, GeneratedFile, PremiseInputs, SitePremise,
 };
@@ -283,6 +284,10 @@ fn main() {
     // (written by the `predefined_macro_facts` example) decides reserved
     // macros from the recorded compiler, per command.
     let mut predefined_path = None;
+    // Card W47-PREMISES-HOLDER-REGION: `--region-macros=PATH` (written by the
+    // `region_macro_facts` example) reads the list-head region's macro
+    // invocations from their units' own expansions.
+    let mut region_path = None;
     // `--list-functions=PATH`: every census function and edge, one per line
     // (attribution of a reading's movement).
     let mut list_path = None;
@@ -304,6 +309,10 @@ fn main() {
         }
         if let Some(path) = argument.strip_prefix("--predefined-macros=") {
             predefined_path = Some(path.to_owned());
+            return false;
+        }
+        if let Some(path) = argument.strip_prefix("--region-macros=") {
+            region_path = Some(path.to_owned());
             return false;
         }
         if let Some(path) = argument.strip_prefix("--compile-commands=") {
@@ -388,6 +397,7 @@ fn main() {
             owned_prefixes: prefixes.clone(),
             defined_elsewhere,
             predefined: None,
+            region_macros: None,
         }
     });
     // The predefined-macro facts decide only when they match the database
@@ -427,6 +437,39 @@ fn main() {
                 report
             }
             Err(reason) => serde_json::json!({"decided": false, "reason": reason}),
+        };
+    }
+    // The region-macro facts are read only when they match the database and
+    // the recorded compiler; otherwise the region's invocations stay unread
+    // and the reason is reported.
+    let mut region_report = serde_json::Value::Null;
+    if let Some(path) = &region_path {
+        let derived = match (&database, configuration.as_ref()) {
+            (Some(database), Some(_)) => {
+                let facts = fs::read_to_string(path)
+                    .map_err(|e| format!("{path}: {e}"))
+                    .and_then(|text| {
+                        serde_json::from_str::<RegionMacroFacts>(&text)
+                            .map_err(|e| format!("{path}: {e}"))
+                    });
+                let database_text = fs::read_to_string(database).expect("compile database");
+                facts.and_then(|facts| RegionMacros::derive(&facts, &database_text, &root))
+            }
+            _ => Err("no compile database: the reading is not configured".to_owned()),
+        };
+        region_report = match derived {
+            Ok(view) => {
+                let report = serde_json::json!({
+                    "read": true,
+                    "paths": view.paths(),
+                    "compilers": view.compilers,
+                });
+                if let Some(configuration) = configuration.as_mut() {
+                    configuration.region_macros = Some(view);
+                }
+                report
+            }
+            Err(reason) => serde_json::json!({"read": false, "reason": reason}),
         };
     }
     // Repeatable: the library's facts and the test's are read separately.
@@ -592,6 +635,9 @@ fn main() {
                 "harmless": premise_report.fields_by_member.harmless,
             },
         });
+    }
+    if region_path.is_some() {
+        report["region_macros"] = region_report;
     }
     if let Some(path) = &list_path {
         let program = &result.program;

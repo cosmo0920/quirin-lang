@@ -921,6 +921,7 @@ fn run_configured(fixture: &Fixture, predefined: Option<PredefinedMacros>) -> Ce
         owned_prefixes: vec!["FLB_".to_owned()],
         defined_elsewhere: BTreeSet::new(),
         predefined,
+        region_macros: None,
     };
     census_typed(
         &fixture.files,

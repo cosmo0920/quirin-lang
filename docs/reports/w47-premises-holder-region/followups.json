@@ -1,0 +1,16 @@
+[
+ {
+  "id": "W47-CLOSURE-MACRO-CALLS-NAME-KEYED",
+  "title": "Read the census graph's macro-made calls from every unit's own expansion",
+  "why": "W47-PREMISES-HOLDER-REGION adds every function's macro-made calls to the census graph Step B's list-head region reaches over (loop_owner_region_macros.rs, closure_macro_calls; gateway rule 10p's amendment). Only the 14 units of the region's 10 files (the test as an extra unit, src/flb_lib.c, src/flb_config.c, src/flb_input.c, lib/monkey/mk_core/mk_event.c, src/config_format/flb_config_format.c, src/flb_env.c, src/flb_hash_table.c, src/flb_router.c, src/flb_sds.c) are read from their recorded compiler's token dump, so the calls are the unit's own for the 145 census files those units read. Everywhere else the reading over-approximates by name: every read file's #define of the invoked macro in every conditional arm (a target no compiled unit defines dropped), and every registrant of a field a replacement list calls as a member. That keeps the reading sound where the macro is defined in a read file, but a macro defined only outside the read files (a system header, a generated header, tests/lib) is not expanded there: rule 10p's premise that nothing outside the read files names a read function carries it. At 90978ac6 configured 16,741 macro-made calls are added and no call of the region reaches a hazard through one; 0 sites move on this residual. DISCHARGE: the facts derivation covers every compile command whose file the widened closure reaches (the dump already records header invocations and unit-local definitions), so the name-keyed fallback is unused, measured on the census at both revisions with the old test still not discharged.",
+  "source": "docs/reports/w47-premises-holder-region/README.md",
+  "recorded_by": "W47-PREMISES-HOLDER-REGION"
+ },
+ {
+  "id": "W47-REGION-MACRO-FACTS-FILE-LIST",
+  "title": "Derive the region-macro facts' file list from the census instead of the script",
+  "why": "W47-PREMISES-HOLDER-REGION's region_facts.py names the list-head region's library files (REGION_FILES: src/flb_lib.c, src/flb_config.c, src/flb_input.c, lib/monkey/mk_core/mk_event.c, src/config_format/flb_config_format.c, src/flb_env.c, src/flb_hash_table.c, src/flb_router.c, src/flb_sds.c) from the census's own refusals (a region part in a file no derived unit read refuses, naming every such file). The census stays fail-closed on a stale list (a new region file is refused, never skipped), but the list is a measurement input maintained by hand. Size: 9 library files plus the test; 0 sites move. DISCHARGE: the census example writes the region's part files (or the facts example derives them from the census reading) and the script reads that list, measured to give the same facts.",
+  "source": "docs/reports/w47-premises-holder-region/README.md",
+  "recorded_by": "W47-PREMISES-HOLDER-REGION"
+ }
+]

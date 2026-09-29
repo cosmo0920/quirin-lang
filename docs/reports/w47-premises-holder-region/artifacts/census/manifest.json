@@ -1,0 +1,47 @@
+{
+ "census-fixed-configured-control.json": {
+  "bytes": 944017,
+  "file": "census-fixed-configured-control.json.gz",
+  "sha256": "a6c5006496d89222b60fe0786b8d8ce2af1a5b2c39a60a59e3bf81e3eb839ef7"
+ },
+ "census-fixed-configured-predefined.json": {
+  "bytes": 959251,
+  "file": "census-fixed-configured-predefined.json.gz",
+  "sha256": "9b029d3b6bd98cd404114ca9b73df75af568bd5e5f08e97876b457e84476d8bf"
+ },
+ "census-fixed-configured.json": {
+  "bytes": 960937,
+  "file": "census-fixed-configured.json.gz",
+  "sha256": "8a7a09262761f8021b49289d852af6b105f3f1bdb54499ceb1b4fc5eebec0bf2"
+ },
+ "census-fixed.json": {
+  "bytes": 910970,
+  "file": "census-fixed.json.gz",
+  "sha256": "56f9ad24b103d3c236028dd3651b0e4f60563f0dde8de346af4566f711b659b4"
+ },
+ "census-inputs.sha256": {
+  "bytes": 1099,
+  "file": "census-inputs.sha256.gz",
+  "sha256": "100933fd61452310c730663667c045805793107f421ed8dbd795f45bf7df18d9"
+ },
+ "census-previous-configured.json": {
+  "bytes": 946281,
+  "file": "census-previous-configured.json.gz",
+  "sha256": "9ab57667e3c9d6fc0a3a0e28be4f364cb3ab1afaff9bbc8a120543497b480ddd"
+ },
+ "region-facts-fixed.json": {
+  "bytes": 8478921,
+  "file": "region-facts-fixed.json.gz",
+  "sha256": "5fea6c3375d57a59e4fb86f72bb5d18967c4e1fd2f5b53e09530dd58bde33456"
+ },
+ "region-facts-inputs.sha256": {
+  "bytes": 1125,
+  "file": "region-facts-inputs.sha256.gz",
+  "sha256": "d4133e6b1de4ca78a28f830146496421af99ca518e153f2795440c11d3ddaf15"
+ },
+ "region-facts-previous.json": {
+  "bytes": 8504022,
+  "file": "region-facts-previous.json.gz",
+  "sha256": "6de8e0486b8d452383f35b730e9def6e0b3b41d2d6b85d6b0de6c4e2929b9d02"
+ }
+}

@@ -1003,6 +1003,7 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w47-loop-owner-typed-dispatch](w47-loop-owner-typed-dispatch/README.md) | W47-LOOP-OWNER-TYPED-DISPATCH: type-keyed field dispatch and a plugin copy's instance flag |
 
 | [w47-premises-coro-plugin](w47-premises-coro-plugin/README.md) | W47-PREMISES-CORO-PLUGIN: P-CORO-HANDLE, P-PLUGIN-DIR and the immutable threaded flag derived |
+| [w47-premises-holder-region](w47-premises-holder-region/README.md) | W47-PREMISES-HOLDER-REGION: the region's macro calls and the holder's opacity derived |
 | [w47-premises-instance](w47-premises-instance/README.md) | W47-PREMISES-INSTANCE: the list-head instance's premises, derived |
 
 | [w47-review-hold-concrete-reason](w47-review-hold-concrete-reason/README.md) | W47-REVIEW-HOLD-CONCRETE-REASON: a held row names the act it awaits |

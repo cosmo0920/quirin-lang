@@ -208,6 +208,12 @@ pub use loop_owner_premises_instance::{
     FLUENT_BIT_INSTANCE_PREMISES, FieldsByMember, GeneratedFile, InstancePremiseTables,
     PremiseInputs, PremiseReport, SitePremise,
 };
+// Card W47-PREMISES-HOLDER-REGION: the list-head region's macro invocations
+// read from the units' own expansions, and the holder's opacity derived.
+#[path = "loop_owner_holder_opaque.rs"]
+mod holder_opaque;
+#[path = "loop_owner_region_macros.rs"]
+pub mod region_macros;
 
 /// The closed hop vocabulary of one program family.
 #[derive(Clone, Copy, Debug)]
@@ -440,6 +446,9 @@ pub struct BuildConfiguration {
     /// Card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS: reserved macros the
     /// recorded compiler decides per command; `None` decides none.
     pub predefined: Option<predefined_macros::PredefinedMacros>,
+    /// Card W47-PREMISES-HOLDER-REGION: the units' own expansions of the
+    /// list-head region's macro invocations; `None` reads none.
+    pub region_macros: Option<region_macros::RegionMacros>,
 }
 
 /// A condition's value under a configuration.
@@ -2005,6 +2014,8 @@ pub fn read_program_premised(
         macro_bodies: &macro_bodies,
         property_readings: std::cell::RefCell::new(BTreeMap::new()),
         premises,
+        region_macros: configuration.and_then(|c| c.region_macros.as_ref()),
+        copy_literal: std::cell::RefCell::new(None),
     };
     let instance_flags = derive_instance_flags(&step_b);
     let property_keys = step_b.property_readings.take();
@@ -2300,6 +2311,8 @@ pub fn read_program_premised(
             macro_bodies: &macro_bodies,
             property_readings: std::cell::RefCell::new(BTreeMap::new()),
             premises,
+            region_macros: configuration.and_then(|c| c.region_macros.as_ref()),
+            copy_literal: std::cell::RefCell::new(None),
         };
         let report = view.instance_premises(&program);
         program.premises = Some(report);
@@ -2478,6 +2491,9 @@ struct StepB<'a> {
     property_readings: std::cell::RefCell<BTreeMap<String, Vec<String>>>,
     /// Card W47-PREMISES-INSTANCE: the premised census's inputs.
     premises: Option<&'a PremiseInputs>,
+    /// Card W47-PREMISES-HOLDER-REGION.
+    region_macros: Option<&'a region_macros::RegionMacros>,
+    copy_literal: std::cell::RefCell<Option<String>>,
 }
 
 /// A flag derivation's value: `Some(false)` no coroutine, `Some(true)` the
@@ -2612,6 +2628,7 @@ impl StepB<'_> {
         };
         // Card W47-LOOP-OWNER-INSTANCE-FLOW: every descriptor the name matches,
         // ignoring ASCII case as `check_protocol` compares.
+        self.copy_literal.replace(Some(literal.clone()));
         self.descriptors_flag(literal)
     }
 
@@ -2783,10 +2800,19 @@ impl StepB<'_> {
             }
         }
         let installed = installed.iter().collect::<Vec<_>>();
+        self.copy_literal.replace(None);
         let instance = match installed[..] {
             [instance] => self.instance_flag(g, instance),
             _ => Err("the copy is not installed on exactly one instance".to_owned()),
         };
+        // Card W47-PREMISES-HOLDER-REGION: P-HOLDER-OPAQUE derived.
+        if !escapes.is_empty()
+            && blockers.is_empty()
+            && instance.is_ok()
+            && let Err(why) = self.holder_opaque(g, root, base[1])
+        {
+            blockers.push(why);
+        }
         if sources.is_empty() {
             blockers.push("the copy is never initialized".to_owned());
         }

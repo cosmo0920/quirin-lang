@@ -1608,6 +1608,76 @@ which is not a second authority.
     discharged with the premised verdict adding none, and a non-member write
     keeping the route;
     [report](../reports/w47-premises-instance/README.md).
+    **Amendment (W47-PREMISES-HOLDER-REGION): the region's macro invocations
+    and the holder's opacity derived.** (1) With region-macro facts
+    (`region_macros`, `loop_owner_region_macros.rs`, child of
+    `thread_entry_census.rs`; written by the `region_macro_facts` example),
+    each unit of the list-head region's files is run with its recorded
+    compiler and flags under Clang's token dump, and every outermost
+    invocation in a census file the unit read is recorded with its whole
+    expansion (each token a replacement list's or an argument's) and the
+    unit's own function definitions (one outside the census's files with
+    its body's names). Step B reads every invocation on the region's lines
+    (the test up to the read, the maker, the constructors read in place, a
+    keyed setter's bodies but the arms no key selects) from those facts: a
+    replacement list's `return`, `goto` or unmatched `break`/`continue`, a
+    field dispatch, or a listed member (`inputs`, `in_plugins`, a written
+    `config`) refuses; a replacement-list name is resolved in the unit (its
+    definition in a read file; one outside the census read through its
+    body's names; else an external definition, a name only an unstructured
+    file may define refusing), an argument name as the lexical region
+    resolves it; a resolved function that reaches a hazard refuses (a call
+    an expansion makes, drops, repeats or loops). The region's own
+    functions' typed indirect calls, and a unit function under the source
+    root without a typed reading or with an indirect call, are unmodelled
+    calls. The census graph the region reaches over gains every function's
+    macro-made calls, from the units' expansions for the files they read,
+    else every read file's definition of the invoked macro (every arm; a
+    target no compiled unit defines dropped) and every registrant of a field
+    its replacement list calls; a root that reaches a hazard only through one
+    refuses, and the widened closure and reach feed the unmodelled-call
+    blocker. A region file no derived unit read, a failed unit, or a text
+    other than the facts' refuses; the facts decide nothing unless the
+    database's SHA-256, every command of a derived file and the recorded
+    compiler's version match. Without the facts the reading is unchanged
+    and the premise stays stated. (2) P-HOLDER-OPAQUE is derived: every read
+    of `struct flb_input_instance::data` the typed reading records (a
+    function without a typed reading read lexically, a member of an object
+    it declares with another record type set aside) is followed as the
+    holder's pointer: compared, copied into a local, or passed whole to a
+    read function's parameter or through a field dispatch to its
+    registrants' (the dispatch of the instance's own callback, `X->p->F(…,
+    X->data)` or through `Q = X->p`, reaches only the copy's `F`: the
+    installing function's store or the creating descriptors' designated
+    initializer, since the plugin and the user pointer are installed
+    together and have no other writer but the constructor); a carrier may be
+    compared, read through or passed on, and in the holder's file a member
+    other than the copy may be written. A write, an address or a dereference
+    through a carrier outside the holder's file, the copy written, a carrier
+    returned, stored or passed to a function the reading does not read, or a
+    use it does not classify leaves the flag underived. **Do not** expand a
+    region macro by name across the read files, read an invocation from
+    another unit's expansion or text, treat a macro-made call as absent from
+    the census graph, admit a carrier write outside the holder's file, or
+    take another plugin's callback for the holder instance's. Premises added
+    (trust boundary 28): **P-DUMP-TOKENS-COMPLETE** (Clang's token dump
+    prints every token the unit's preprocessor produces with its expansion
+    and spelling locations); P-INSTANCE-FIELDS-BY-MEMBER extended to reads
+    of `data` (no whole-instance copy or byte access carries it); C's
+    effective-type rule for a member of an object declared with another
+    record type; and, outside the units' files, rule 10p's premise that a
+    macro defined only outside the read files names no read function. At
+    the export the fixed test's 3 sites stay **discharged at this path under
+    these derived premises** with P-HOLDER-OPAQUE and the region-macro
+    premise now derived (206 invocations of 43 macros on the region, 16,741
+    macro-made calls added to the graph, the holder's pointer reaching 5
+    carriers); the old test's stay not discharged. `QCore.LoopOwner` proves
+    a read region deriving what the expansion runs, an unexpandable or loud
+    invocation refusing, the unit's own definition read, a root reaching a
+    hazard only through a macro-made call refused, an opaque holder keeping
+    the derivation, a writing carrier keeping the route and the holder's
+    instance running its copy's callback;
+    [report](../reports/w47-premises-holder-region/README.md).
 
 <a id="constraint-10q"></a>
 

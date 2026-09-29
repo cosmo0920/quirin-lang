@@ -1799,4 +1799,461 @@ theorem a_non_member_write_keeps_the_route {α : Type} {registrants : List α} {
   rw [this]
   exact an_underived_part_keeps_the_route (Or.inl rfl) hr
 
+/-! ### The list-head region's macro invocations and the holder's opacity
+(card W47-PREMISES-HOLDER-REGION)
+
+**Region macros.** The lexical region sees a macro invocation only as a name
+(`lexicalPath`); the program runs its expansion (`expandedPath`), under the
+unit's own preprocessor table (`Expander`, from the unit's token dump). The
+census reads every invocation from that table (`regionReading`): an
+invocation the table cannot expand refuses, and so does one whose expansion
+does anything but leave the list alone; otherwise the invocation adds
+nothing to the lexical events. A read region then derives exactly what the
+expansion runs (`the_region_reading_derives_what_the_expansion_runs`), so a
+derived head is the one creation of the program's own path. The table is the
+unit's: an invocation reads the definition the unit includes, whatever
+another read file defines under the same name
+(`the_included_definition_is_the_one_read`).
+
+**The holder's opacity.** Each carrier of the holder's pointer (a read of the
+instance's user pointer, a local, a parameter it is passed to) has uses; the
+derivation admits comparison, reading through, passing on and, in the
+holder's own file, writing a member other than the copy. An opaque holder
+writes neither the flag nor the instance's plugin and none of the copy's
+bytes, so the escape keeps the derivation
+(`an_opaque_holder_keeps_the_derivation`); a carrier that writes the flag,
+the copy or a holder byte elsewhere, or hands the pointer to code the reading
+does not read, leaves it underived and keeps the route
+(`a_carrier_that_writes_keeps_the_route`). The route is dropped only through
+a read region whose expansion creates once from a non-coroutine descriptor
+and an opaque holder
+(`the_route_is_dropped_only_through_read_macros_and_an_opaque_holder`). -/
+
+/-- One item of the region as the lexical reader sees it. -/
+inductive RegionItem where
+  /-- A call the lexical reading counts. -/
+  | call (event : PathEvent)
+  /-- A macro invocation: a name to the lexical reading. -/
+  | invoke (name : String)
+  deriving DecidableEq, Repr
+
+/-- A unit's preprocessor table: each name's expansion as the events it
+runs; `none` for a name the unit cannot expand (no facts, a failed unit, a
+definition the census did not read). -/
+abbrev Expander := String → Option (List PathEvent)
+
+/-- The events the program runs: every invocation replaced by its expansion. -/
+def expandedPath (ex : Expander) : List RegionItem → Option (List PathEvent)
+  | [] => some []
+  | .call e :: rest => (expandedPath ex rest).map (e :: ·)
+  | .invoke n :: rest =>
+    match ex n with
+    | none => none
+    | some es => (expandedPath ex rest).map (es ++ ·)
+
+/-- The lexical reading, which drops invocations. -/
+def lexicalPath : List RegionItem → List PathEvent
+  | [] => []
+  | .call e :: rest => e :: lexicalPath rest
+  | .invoke _ :: rest => lexicalPath rest
+
+/-- An expansion that leaves the list alone. -/
+def quietExpansion (es : List PathEvent) : Bool := es.all (· == .other)
+
+/-- The census's reading: an unexpandable or non-quiet invocation refuses. -/
+def regionReading (ex : Expander) : List RegionItem → Option (List PathEvent)
+  | [] => some []
+  | .call e :: rest => (regionReading ex rest).map (e :: ·)
+  | .invoke n :: rest =>
+    match ex n with
+    | none => none
+    | some es => if quietExpansion es then regionReading ex rest else none
+
+theorem an_unexpandable_invocation_refuses {ex : Expander} {n : String}
+    (h : ex n = none) : ∀ items : List RegionItem, RegionItem.invoke n ∈ items →
+      regionReading ex items = none := by
+  intro items
+  induction items with
+  | nil => simp
+  | cons item rest ih =>
+    intro hmem
+    rcases List.mem_cons.mp hmem with heq | hrest
+    · subst heq; simp [regionReading, h]
+    · cases item with
+      | call e => simp [regionReading, ih hrest]
+      | invoke m =>
+        simp only [regionReading]
+        split
+        · rfl
+        · split
+          · exact ih hrest
+          · rfl
+
+theorem a_loud_expansion_refuses {ex : Expander} {n : String} {es : List PathEvent}
+    (h : ex n = some es) (hloud : quietExpansion es = false) :
+    ∀ items : List RegionItem, RegionItem.invoke n ∈ items →
+      regionReading ex items = none := by
+  intro items
+  induction items with
+  | nil => simp
+  | cons item rest ih =>
+    intro hmem
+    rcases List.mem_cons.mp hmem with heq | hrest
+    · subst heq; simp [regionReading, h, hloud]
+    · cases item with
+      | call e => simp [regionReading, ih hrest]
+      | invoke m =>
+        simp only [regionReading]
+        split
+        · rfl
+        · split
+          · exact ih hrest
+          · rfl
+
+theorem created_quiet {es : List PathEvent} (h : quietExpansion es = true) :
+    created es = [] := by
+  induction es with
+  | nil => rfl
+  | cons e rest ih =>
+    simp only [quietExpansion, List.all_cons, Bool.and_eq_true, beq_iff_eq] at h
+    obtain ⟨he, hr⟩ := h
+    subst he
+    exact ih hr
+
+theorem mutates_quiet {es : List PathEvent} (h : quietExpansion es = true) :
+    mutates es = false := by
+  induction es with
+  | nil => rfl
+  | cons e rest ih =>
+    simp only [quietExpansion, List.all_cons, Bool.and_eq_true, beq_iff_eq] at h
+    obtain ⟨he, hr⟩ := h
+    subst he
+    simpa [mutates] using ih hr
+
+theorem created_append (a b : List PathEvent) : created (a ++ b) = created a ++ created b := by
+  induction a with
+  | nil => rfl
+  | cons e rest ih => cases e <;> simp [created, ih]
+
+theorem mutates_append (a b : List PathEvent) :
+    mutates (a ++ b) = (mutates a || mutates b) := by
+  simp [mutates, List.any_append]
+
+/-- A read region runs the events it read, plus quiet expansions only: the
+same creations and the same mutations. -/
+theorem the_region_reading_derives_what_the_expansion_runs {ex : Expander} :
+    ∀ {items : List RegionItem} {evs : List PathEvent}, regionReading ex items = some evs →
+      ∃ run, expandedPath ex items = some run ∧ created run = created evs ∧
+        mutates run = mutates evs := by
+  intro items
+  induction items with
+  | nil =>
+    intro evs h
+    simp [regionReading] at h
+    subst h
+    exact ⟨[], rfl, rfl, rfl⟩
+  | cons item rest ih =>
+    intro evs h
+    cases item with
+    | call e =>
+      simp only [regionReading, Option.map_eq_some_iff] at h
+      obtain ⟨evs', hr, rfl⟩ := h
+      obtain ⟨run, hrun, hc, hm⟩ := ih hr
+      refine ⟨e :: run, by simp [expandedPath, hrun], ?_, ?_⟩
+      · cases e <;> simp [created, hc]
+      · unfold mutates at hm ⊢
+        simp only [List.any_cons, hm]
+    | invoke n =>
+      simp only [regionReading] at h
+      cases hn : ex n with
+      | none => simp [hn] at h
+      | some es =>
+        simp only [hn] at h
+        split at h
+        · rename_i hq
+          obtain ⟨run, hrun, hc, hm⟩ := ih h
+          refine ⟨es ++ run, by simp [expandedPath, hn, hrun], ?_, ?_⟩
+          · rw [created_append, created_quiet hq, hc]; rfl
+          · rw [mutates_append, mutates_quiet hq, hm]; rfl
+        · simp at h
+
+/-- The derivation the census makes on a read region. -/
+def regionDerivation (ex : Expander) (items : List RegionItem) : Option Bool :=
+  (regionReading ex items).bind headDerivation
+
+/-- A derived region head is the one creation of the program's own path. -/
+theorem a_derived_region_head_is_the_programs_one_creation {ex : Expander}
+    {items : List RegionItem} {flag : Bool} (h : regionDerivation ex items = some flag) :
+    ∃ run, expandedPath ex items = some run ∧ listAfter run = some [flag] := by
+  unfold regionDerivation at h
+  cases hr : regionReading ex items with
+  | none => simp [hr] at h
+  | some evs =>
+    simp only [hr, Option.bind] at h
+    obtain ⟨run, hrun, hc, hm⟩ := the_region_reading_derives_what_the_expansion_runs hr
+    refine ⟨run, hrun, a_derived_head_is_the_one_creation ?_⟩
+    unfold headDerivation at h ⊢
+    rw [hc, hm]
+    exact h
+
+/-- Without invocations the reading is the lexical one. -/
+theorem a_region_without_invocations_reads_lexically {ex : Expander} :
+    ∀ {items : List RegionItem}, (∀ n, RegionItem.invoke n ∉ items) →
+      regionReading ex items = some (lexicalPath items) := by
+  intro items
+  induction items with
+  | nil => intro _; rfl
+  | cons item rest ih =>
+    intro h
+    cases item with
+    | call e =>
+      have hrest : ∀ n, RegionItem.invoke n ∉ rest := fun n hn => h n (List.mem_cons_of_mem _ hn)
+      simp [regionReading, lexicalPath, ih hrest]
+    | invoke n => exact absurd (by simp : RegionItem.invoke n ∈ RegionItem.invoke n :: rest) (h n)
+
+/-- A unit's table from the headers it includes, in order: the last
+definition of a name wins (a redefinition follows an `#undef`). -/
+def tableOf (included : List (List (String × List PathEvent))) : Expander := fun n =>
+  ((included.flatten).reverse.find? (·.1 == n)).map (·.2)
+
+/-- The definition the unit includes is the one read: an invocation of a
+name the unit defines quietly is admitted, while a table that also held
+another file's creating definition of the same name (as a name-keyed reading
+across the read files would) refuses it. -/
+theorem the_included_definition_is_the_one_read {n : String} {es : List PathEvent}
+    (hq : quietExpansion es = true) :
+    regionReading (tableOf [[(n, es)]]) [.invoke n] = some [] ∧
+      regionReading (tableOf [[(n, es)], [(n, [PathEvent.create true])]]) [.invoke n] =
+        none := by
+  constructor
+  · simp [regionReading, tableOf, hq]
+  · simp [regionReading, tableOf, quietExpansion]
+
+/-- A carrier's use of the holder's pointer. -/
+inductive HolderUse where
+  | compare
+  | readThrough
+  | passOn
+  /-- A member written or its address taken; `copy` when it is the copy. -/
+  | writeMember (copy : Bool)
+  | writeFlag
+  | writeInstance
+  /-- Handed to code the reading does not read, returned or stored. -/
+  | unread
+  deriving DecidableEq, Repr
+
+structure Carrier where
+  /-- The carrier is in the holder's own file (the only one naming its type). -/
+  inHolderFile : Bool
+  uses : List HolderUse
+  deriving DecidableEq, Repr
+
+def useAdmitted (c : Carrier) : HolderUse → Bool
+  | .compare | .readThrough | .passOn => true
+  | .writeMember copy => c.inHolderFile && !copy
+  | _ => false
+
+def holderOpaque (cs : List Carrier) : Bool := cs.all fun c => c.uses.all (useAdmitted c)
+
+/-- What the carriers can do to the route's facts. -/
+def escapeOf (cs : List Carrier) : EscapeReach :=
+  { writesFlag := cs.any (fun c => c.uses.any (· == .writeFlag)),
+    writesInstance := cs.any (fun c => c.uses.any (· == .writeInstance)) }
+
+/-- The derivation after the holder: underived unless the holder is opaque. -/
+def holderDerivation (cs : List Carrier) (derived : Option Bool) : Option Bool :=
+  if holderOpaque cs then afterEscape derived (escapeOf cs) else none
+
+theorem an_opaque_holder_writes_nothing_the_route_reads {cs : List Carrier}
+    (h : holderOpaque cs = true) : ∀ c ∈ cs, ∀ u ∈ c.uses,
+      u ≠ .writeFlag ∧ u ≠ .writeInstance ∧ u ≠ .writeMember true ∧ u ≠ .unread ∧
+        (∀ b, u = .writeMember b → c.inHolderFile = true) := by
+  intro c hc u hu
+  have hadm : useAdmitted c u = true :=
+    List.all_eq_true.mp (List.all_eq_true.mp h c hc) u hu
+  cases u with
+  | compare => simp
+  | readThrough => simp
+  | passOn => simp
+  | writeMember b =>
+    simp only [useAdmitted, Bool.and_eq_true, Bool.not_eq_true'] at hadm
+    refine ⟨by simp, by simp, ?_, by simp, ?_⟩
+    · intro heq; cases heq; simp at hadm
+    · intro b' _; exact hadm.1
+  | writeFlag => simp [useAdmitted] at hadm
+  | writeInstance => simp [useAdmitted] at hadm
+  | unread => simp [useAdmitted] at hadm
+
+theorem an_opaque_holder_keeps_the_derivation {cs : List Carrier} (derived : Option Bool)
+    (h : holderOpaque cs = true) : holderDerivation cs derived = derived := by
+  have hw := an_opaque_holder_writes_nothing_the_route_reads h
+  have hf : (cs.any fun c => c.uses.any (· == .writeFlag)) = false := by
+    rw [Bool.eq_false_iff]
+    intro hany
+    obtain ⟨c, hc, hu⟩ := List.any_eq_true.mp hany
+    obtain ⟨u, hu, he⟩ := List.any_eq_true.mp hu
+    exact (hw c hc u hu).1 (by simpa using he)
+  have hi : (cs.any fun c => c.uses.any (· == .writeInstance)) = false := by
+    rw [Bool.eq_false_iff]
+    intro hany
+    obtain ⟨c, hc, hu⟩ := List.any_eq_true.mp hany
+    obtain ⟨u, hu, he⟩ := List.any_eq_true.mp hu
+    exact (hw c hc u hu).2.1 (by simpa using he)
+  simp [holderDerivation, h, escapeOf, afterEscape, hf, hi]
+
+theorem a_carrier_that_writes_keeps_the_route {α : Type} {registrants : List α} {r : α}
+    {cs : List Carrier} {c : Carrier} {u : HolderUse} {derived copy : Option Bool}
+    (hc : c ∈ cs) (hu : u ∈ c.uses) (hbad : useAdmitted c u = false) (hr : r ∈ registrants) :
+    r ∈ coroutineDispatched (fun _ => instanceFlag (holderDerivation cs derived) copy)
+      registrants := by
+  have hnot : holderOpaque cs = false := by
+    rw [Bool.eq_false_iff]
+    intro hall
+    have := List.all_eq_true.mp (List.all_eq_true.mp hall c hc) u hu
+    simp [hbad] at this
+  have : holderDerivation cs derived = none := by simp [holderDerivation, hnot]
+  rw [this]
+  exact an_underived_part_keeps_the_route (Or.inl rfl) hr
+
+/-- A `->data` reader that writes the flag keeps the route. -/
+theorem a_data_reader_that_writes_the_flag_keeps_the_route {α : Type}
+    {registrants : List α} {r : α} {cs : List Carrier} {c : Carrier}
+    {derived copy : Option Bool} (hc : c ∈ cs) (hu : HolderUse.writeFlag ∈ c.uses)
+    (hr : r ∈ registrants) :
+    r ∈ coroutineDispatched (fun _ => instanceFlag (holderDerivation cs derived) copy)
+      registrants :=
+  a_carrier_that_writes_keeps_the_route hc hu rfl hr
+
+/-- The route is dropped only through a read region whose program path
+creates once from a non-coroutine descriptor, an opaque holder, and a copy
+that runs none. -/
+theorem the_route_is_dropped_only_through_read_macros_and_an_opaque_holder {α : Type}
+    {registrants : List α} {r : α} {ex : Expander} {items : List RegionItem}
+    {cs : List Carrier} {copy : Option Bool} (hr : r ∈ registrants)
+    (hdropped : r ∉ coroutineDispatched
+      (fun _ => instanceFlag (holderDerivation cs (regionDerivation ex items)) copy)
+      registrants) :
+    holderOpaque cs = true ∧ copy = some false ∧
+      ∃ run, expandedPath ex items = some run ∧ listAfter run = some [false] := by
+  obtain ⟨hcreating, hcopy⟩ := the_route_is_dropped_only_when_both_derive_none hr hdropped
+  by_cases hop : holderOpaque cs = true
+  · rw [an_opaque_holder_keeps_the_derivation _ hop] at hcreating
+    exact ⟨hop, hcopy, a_derived_region_head_is_the_programs_one_creation hcreating⟩
+  · simp [holderDerivation, hop] at hcreating
+
+/-! #### The census graph's macro-made calls
+
+The region's roots reach over the census graph; the program also runs the
+calls macros make in the functions they reach. The census adds those calls
+as edges and refuses a root that reaches a hazard only through one
+(`closureCheck`); a root that passes reaches a hazard over the program's
+graph only when the census graph already says so, so it was counted
+(`a_passing_root_reaches_a_hazard_only_as_counted`). -/
+
+/-- A hazard reached within `n` steps over `next`. -/
+def reachesWithin {α : Type} (next : α → List α) (hazard : α → Bool) : Nat → α → Bool
+  | 0, a => hazard a
+  | n + 1, a => hazard a || (next a).any (reachesWithin next hazard n)
+
+/-- The census's check: no root reaches a hazard over the census graph and
+the macro-made calls unless it does over the census graph. -/
+def closureCheck {α : Type} (census made : α → List α) (hazard : α → Bool) (n : Nat)
+    (roots : List α) : Bool :=
+  roots.all fun r =>
+    reachesWithin census hazard n r || !reachesWithin (fun a => census a ++ made a) hazard n r
+
+theorem a_passing_root_reaches_a_hazard_only_as_counted {α : Type}
+    {census made : α → List α} {hazard : α → Bool} {n : Nat} {roots : List α} {r : α}
+    (hcheck : closureCheck census made hazard n roots = true) (hr : r ∈ roots)
+    (hprog : reachesWithin (fun a => census a ++ made a) hazard n r = true) :
+    reachesWithin census hazard n r = true := by
+  have h := List.all_eq_true.mp hcheck r hr
+  simp only [Bool.or_eq_true, Bool.not_eq_true'] at h
+  rcases h with h | h
+  · exact h
+  · rw [hprog] at h; exact absurd h (by simp)
+
+theorem reachesWithin_more_edges {α : Type} {next more : α → List α} {hazard : α → Bool} :
+    ∀ (n : Nat) (a : α), reachesWithin next hazard n a = true →
+      reachesWithin (fun b => next b ++ more b) hazard n a = true := by
+  intro n
+  induction n with
+  | zero => intro a h; simpa [reachesWithin] using h
+  | succ n ih =>
+    intro a h
+    simp only [reachesWithin, Bool.or_eq_true, List.any_eq_true] at h ⊢
+    rcases h with h | ⟨b, hb, hreach⟩
+    · exact Or.inl h
+    · exact Or.inr ⟨b, List.mem_append_left _ hb, ih b hreach⟩
+
+/-- A root reaching a hazard only through a macro-made call fails the check. -/
+theorem a_root_reaching_only_through_a_macro_call_refuses {α : Type}
+    {census made : α → List α} {hazard : α → Bool} {n : Nat} {roots : List α} {r : α}
+    (hr : r ∈ roots) (hcensus : reachesWithin census hazard n r = false)
+    (hprog : reachesWithin (fun a => census a ++ made a) hazard n r = true) :
+    closureCheck census made hazard n roots = false := by
+  rw [Bool.eq_false_iff]
+  intro hcheck
+  have := a_passing_root_reaches_a_hazard_only_as_counted hcheck hr hprog
+  rw [hcensus] at this
+  exact absurd this (by simp)
+
+/-! #### The holder's instance runs its copy's callback
+
+An instance's plugin and user pointer are written by the constructor (from
+its arguments, never the holder, which escapes only through the
+installation) and by the installation, which writes both. So whenever the
+user pointer is the holder, the plugin is the copy
+(`the_holder_instance_runs_its_copy`): a dispatch `X->p->F(…, X->data)`
+hands the holder only to the copy's `F`. -/
+
+/-- A write of one instance's plugin and user pointer. -/
+inductive InstanceWrite where
+  /-- The constructor: a plugin and a user pointer from its arguments. -/
+  | construct (p data : Nat)
+  /-- The installation of the copy and the holder. -/
+  | install
+  deriving DecidableEq, Repr
+
+structure InstanceState where
+  p : Nat
+  data : Nat
+  deriving DecidableEq, Repr
+
+def applyWrite (copy holder : Nat) (_s : InstanceState) : InstanceWrite → InstanceState
+  | .construct p data => { p := p, data := data }
+  | .install => { p := copy, data := holder }
+
+/-- The pairing the dispatch rests on. -/
+def holderPaired (copy holder : Nat) (s : InstanceState) : Prop :=
+  s.data = holder → s.p = copy
+
+theorem the_holder_instance_runs_its_copy {copy holder : Nat} :
+    ∀ (writes : List InstanceWrite) (s : InstanceState),
+      (∀ p d, InstanceWrite.construct p d ∈ writes → d ≠ holder) →
+      holderPaired copy holder s →
+      holderPaired copy holder (writes.foldl (applyWrite copy holder) s) := by
+  intro writes
+  induction writes with
+  | nil => intro s _ h; exact h
+  | cons w rest ih =>
+    intro s hctor h
+    simp only [List.foldl_cons]
+    apply ih
+    · intro p d hm; exact hctor p d (List.mem_cons_of_mem _ hm)
+    · cases w with
+      | construct p d =>
+        intro hd
+        exact absurd hd (hctor p d List.mem_cons_self)
+      | install => intro _; rfl
+
+/-- The old test's collector operations run on the test thread whatever the
+region's macros or the holder derive. -/
+theorem the_old_test_path_is_never_discharged_whatever_the_region {owners : Owners}
+    {contexts : List Context} {unresolved : Bool} {t : Thread} {list : List Thread}
+    (hc : { thread := t, mode := .either } ∈ contexts)
+    (hl : candidates owners .either = some list) (hn : t ∉ list) :
+    siteVerdict owners contexts unresolved ≠ .discharged :=
+  the_old_test_path_is_never_discharged hc hl hn
+
 end QCore.LoopOwner

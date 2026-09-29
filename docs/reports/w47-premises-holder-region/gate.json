@@ -1,0 +1,13 @@
+{
+  "note": "W47-PREMISES-HOLDER-REGION card gate at base fe603d49. The rust phase ran on the tree of 3379dc82 (code identical to cd21bfbf, the measured census and arbiter code), logs private/hr/gate of this worktree: submodule (--init third_party/libevent) 0; run_test_binaries.py 356 units, 369 summaries, 6,375 passed, 0 failed, 11 ignored (private/test-binaries/20260929T060258Z-3518047/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 224 audits passed (AuditLoopOwner.lean 81 -> 101 theorems, no new audit module); clean-dev 0 twice. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried from W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS record. The records phase (private/hr/gate-records) ran after the ledger (568 -> 569), matrix and index regeneration. Clang 21.1.8 recorded in this worktree. Arbiters (AFTER only, --jobs 8, private/hr/arb-after): corpus resource-diagnostics.json byte-identical to the round-7 archive; system and slice differ only in checkout-root lines; 0 mismatches composed. No gate step failed. Exits in gate/.",
+  "workspace_tests": 6375,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 224,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
