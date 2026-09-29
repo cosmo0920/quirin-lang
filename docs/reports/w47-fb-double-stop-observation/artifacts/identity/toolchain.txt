@@ -1,0 +1,7 @@
+Ubuntu clang version 21.1.8 (6ubuntu1)
+cmake version 4.2.3
+1.13.2
+ldd (Ubuntu GLIBC 2.43-2ubuntu2.4) 2.43
+GNU gdb (Ubuntu 17.1-2ubuntu1) 17.1
+GNU addr2line (GNU Binutils for Ubuntu) 2.46
+Linux 7.0.0-31-generic x86_64

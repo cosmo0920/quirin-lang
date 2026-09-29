@@ -1,0 +1,9 @@
+HARNESS service_set fips_mode ret=0
+HARNESS before-start status=0 worker=0
+[2026/09/29 11:38:15.958] [error] [fips] failed to load OpenSSL FIPS provider
+[2026/09/29 11:38:15.958] [error] [fips] OpenSSL error: error:12800067:DSO support routines::could not load the shared library
+[2026/09/29 11:38:15.958] [error] [fips] OpenSSL error: error:12800067:DSO support routines::could not load the shared library
+[2026/09/29 11:38:15.958] [error] [fips] OpenSSL error: error:07880025:common libcrypto routines::reason(37)
+HARNESS flb_start ret=-1
+HARNESS before-stop1 status=0 worker=0
+JOINLOG join-enter seq=0 self=0x7b419641a4c0 thread=0 frames=libfluent-bit.so+0x1776a2;harness+0x15bf;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;

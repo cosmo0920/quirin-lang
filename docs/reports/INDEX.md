@@ -982,6 +982,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-condvar-join-stop-paths](w47-condvar-join-stop-paths/README.md) | W47-CONDVAR-JOIN-STOP-PATHS: flb_stop's paths, unchecked joins and descendants (C5) |
 
+| [w47-fb-double-stop-observation](w47-fb-double-stop-observation/README.md) | W47-FB-DOUBLE-STOP-OBSERVATION: native joins of the engine thread |
+
 | [w47-flb-lib-lifecycle](w47-flb-lib-lifecycle/README.md) | W47-FLB-LIB-LIFECYCLE: the library lifecycle as a checked contract (C5) |
 
 | [w47-lexical-closure-nested-assignment](w47-lexical-closure-nested-assignment/README.md) | W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT |

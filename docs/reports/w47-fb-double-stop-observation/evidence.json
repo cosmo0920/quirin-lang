@@ -1,0 +1,107 @@
+{
+  "card": "W47-FB-DOUBLE-STOP-OBSERVATION",
+  "kind": "native_observation_only",
+  "label": "native observation at the pinned build under the stated inducer; not a proof; no Quirin verdict moves; not an upstream defect claim",
+  "quirin_base": {
+    "main": "f269c231416bf332c37a90372d440fa9360548ef",
+    "worktree_head_at_run": "f269c231416bf332c37a90372d440fa9360548ef",
+    "note": "no analyzer, contract, provider, gateway-rule or Lean change; no arbiter run, since nothing an arbiter reads changed"
+  },
+  "sources": {
+    "90978ac6": {
+      "revision": "90978ac6a59e96d19621108f63e115eb4cd1c576",
+      "copy": "private/w47-dstop/attempt-1/src-90978ac6, extracted from private/w47-tail/attempt-1/export.tar (git archive 90978ac6, W47-TAIL-PAUSE-BINDINGS)",
+      "export_tar_sha256": "04a0fbeeb6a74b37d82d6a2c2c956974f033196325d3e7d81e73df61e563eab8",
+      "export_tar_sha256_verified_before_extract": true,
+      "file_manifest_sha256": "f031a05a0c1088e2f75e63f712829e8f202ea00808abf6b9c9f5be0fa0a525b9",
+      "files": 12188
+    },
+    "046accf6": {
+      "revision": "046accf6aded7906f66a1baf0202da349e521736",
+      "copy": "private/w47-dstop/attempt-1/src-046accf6, a tar copy of the working tree of private/w45-fb/w46-external-callee-contracts/attempt-1/fluent-bit-clang-source (the quirin-audit prepare clone at 046accf6; .git and ./build excluded)",
+      "file_manifest_sha256": "1de77600829af1c1509b5479ad4a1b09081f57ac915cc50b40a86add9825ded4",
+      "files": 12183,
+      "caveat": "the copied working tree was not re-verified against the commit's tree object here (git on another repository is outside this worktree's isolation); it is the tree the system slice's pins read"
+    },
+    "observed_files_identical": "artifacts/identity/compare.txt: src/flb_lib.c, flb_engine.c, flb_fips.c, flb_input.c, flb_config.c, flb_utils.c, include/fluent-bit/flb_lib.h, flb_config.h, lib/monkey/mk_core/mk_utils.c, in_dummy, out_null, in_lib, out_lib byte-identical; plugins/in_tail differs (unused by the harness)",
+    "user_checkouts_touched": false,
+    "fluent_bit_sources_or_tests_modified": false
+  },
+  "build": {
+    "toolchain": "artifacts/identity/toolchain.txt (Ubuntu clang 21.1.8, cmake 4.2.3, ninja 1.13.2, glibc 2.43, gdb 17.1, binutils 2.46, Linux 7.0.0-31-generic x86_64)",
+    "configure": "cmake -G Ninja -DCMAKE_C_COMPILER=/usr/lib/llvm-21/bin/clang -DCMAKE_CXX_COMPILER=/usr/lib/llvm-21/bin/clang++ -DCMAKE_BUILD_TYPE=Debug -DFLB_DEBUG=On -DFLB_RELEASE=Off -DFLB_SHARED_LIB=On -DFLB_BINARY=Off -DFLB_EXAMPLES=Off -DFLB_TESTS_RUNTIME=Off -DFLB_TESTS_INTERNAL=Off -DCMAKE_C_FLAGS='-O0 -g -fno-omit-frame-pointer' [+ -DSANITIZE_THREAD=On for tsan]",
+    "target": "cmake --build BUILD --target fluent-bit-shared -j 12 (timeout 5400)",
+    "script": "scripts/build.sh TREE VARIANT; scripts/build_harness.sh TREE VARIANT",
+    "exits": "artifacts/identity/build-exits.txt (configure, build, harness and interposer: 0 for all three variants)",
+    "variants": {
+      "90978ac6-debug": {"libfluent-bit.so": "1f90b4f5585a70623d822264c039fb06600ad7f26bcc1941f20d92686a0a5709", "harness": "e42a06dd89bf615dddc653fe37f374aea1767d147a015921c69a8c60b8d90593", "joinlog.so": "9089e03c8b61f478f6a43b512c6305344fe12315e2055f891a5d36813d38dce4"},
+      "046accf6-debug": {"libfluent-bit.so": "6290d41e661332fa1ed1b28480fcd3b5bc88e437daa8826d24060c8bafac13e7", "harness": "654974acfaf3e7af5019571965a4e95dff0c39e21a3e3e24d60788b824254e96", "joinlog.so": "f450a04ca3e36498629d77de0f54bee7174527b944bc28c89177ccdd883a06b4"},
+      "90978ac6-tsan": {"libfluent-bit.so": "45c3c61687bcd2ef6a3d081a951e6cfefee0bbc8c4ccbd8f97dc29a96591c2c6", "harness": "e976003d393b6e1f3dffa9948e00f2b35eaf221676dce80874d4a54e6d3dce5d", "joinlog.so (built, not preloaded)": "96944ef28321345f26ee3eaa306732f765690f2cf3de4e38f8479e5ee41099a3"}
+    },
+    "cosmetic_note": "the library's banner reports commit=f269c23141: Fluent Bit's CMake takes FLB_GIT_HASH from `git rev-parse` in the source directory, which, being an unversioned copy under this repository's ignored private/, resolved to the enclosing Quirin repository's HEAD. It is a version string only; the sources are identified by the manifests above"
+  },
+  "harness": {
+    "source": "scripts/harness.c (copied into and built in attempt-1/harness-TREE-VARIANT/)",
+    "api_only": true,
+    "service": "Flush 1, Grace 1, Log_Level info",
+    "pipeline": "dummy (tag test, rate 10) -> null (match *)",
+    "scenarios": {
+      "control": "flb_create, flb_start (expect 0), 300 ms, flb_stop once, flb_destroy",
+      "v": "as control with flb_stop twice",
+      "i": "dummy additionally given qcore_undeclared_property=1: the engine thread's flb_input_init_all fails the config-map check, flb_engine_start returns -1, flb_lib_worker writes FLB_ENGINE_FAILED, do_start joins (src/flb_lib.c:999) and returns -1; then flb_stop, flb_destroy",
+      "iii": "flb_service_set security.fips_mode=on; this host has no OpenSSL FIPS provider (ossl-modules holds legacy.so only), so flb_fips_init returns -1 at src/flb_lib.c:963-966, before the spawn; then flb_stop, flb_destroy"
+    },
+    "inducers_are_public_api": true,
+    "interposer": "scripts/joinlog.c, LD_PRELOAD in the debug variant: logs every pthread_create (identifier, creating stack) and pthread_join (identifier before the call, value after it) with object+offset frames, resolved offline by addr2line (scripts/summarize.py); calls the next definition unchanged",
+    "engine_thread_identification": "the thread whose creating stack passes through do_start (the spawn at src/flb_lib.c:969); the harness also prints ctx->config->worker before every call",
+    "gdb_cross_check": "scripts/run_gdb.sh with scripts/gdb_joins.gdb, one run per scenario per tree, no interposer: breakpoint on pthread_join printing the argument and the caller"
+  },
+  "watchdog": "timeout -k 5 60 per run (gdb: timeout -k 5 120); ulimit -c 0; watchdog fired 0 times in the recorded campaigns",
+  "campaigns": {
+    "runs-90978ac6-debug": {
+      "command": "scripts/campaign.sh 90978ac6 debug 20 runs-90978ac6-debug",
+      "summary": "artifacts/runs-90978ac6-debug.summary.json",
+      "summary_sha256": "c09c7eb810b31e619acaef2d28cba54c28d7cd0dd5281fd150fe71b076a0df92",
+      "control": {"runs": 20, "exit_0": 20, "flb_start_ret": "0 x20", "engine_joins": "1 per run: flb_stop :1077 ret 0", "engine_identifier_reused": 0},
+      "v": {"runs": 20, "exit_0": 20, "flb_start_ret": "0 x20", "flb_stop_ret": "0, 0 x20", "engine_joins": "2 per run: flb_stop :1077 ret 0, then flb_stop :1058 ret 0", "engine_identifier_reused": 0},
+      "i": {"runs": 20, "exit_0": 20, "flb_start_ret": "-1 x20", "flb_stop_ret": "0 x20", "engine_joins": "2 per run: do_start :999 ret 0, then flb_stop :1058 ret 0", "engine_identifier_reused": 0},
+      "iii": {"runs": 20, "exit_139_SIGSEGV": 20, "flb_start_ret": "-1 x20", "engine_creates": 0, "joins": "1 per run: flb_stop :1058 on identifier 0, no return (the process died inside pthread_join)"}
+    },
+    "runs-046accf6-debug": {
+      "command": "scripts/campaign.sh 046accf6 debug 20 runs-046accf6-debug",
+      "summary": "artifacts/runs-046accf6-debug.summary.json",
+      "summary_sha256": "073ca538bf50e523ffcb5d665b7a4eef17ae954a98603d76097cc44c8e2dcba3",
+      "outcome": "identical per scenario to runs-90978ac6-debug: control 1 join (:1077) 20/20 exit 0; v 2 joins (:1077, :1058) 20/20 exit 0; i 2 joins (:999, :1058) 20/20 exit 0; iii join of 0 at :1058, SIGSEGV 20/20"
+    },
+    "runs-90978ac6-tsan": {
+      "command": "scripts/campaign.sh 90978ac6 tsan 20 runs-90978ac6-tsan",
+      "summary": "artifacts/runs-90978ac6-tsan.summary.json",
+      "summary_sha256": "a50e145935e6499bdcf9a1f26e048dd22c01634e16f93943b2d3cc56d7a408eb",
+      "tsan_options": "halt_on_error=0:second_deadlock_stack=1",
+      "control": {"runs": 20, "exit_0": 20, "tsan_reports": 0},
+      "v": {"runs": 20, "exit_66": 20, "report": "ThreadSanitizer: CHECK failed: sanitizer_thread_registry.cpp:363 ((t)) != (0) in ThreadRegistry::ConsumeThreadUserId from pthread_join called at src/flb_lib.c:1058 (the second stop)"},
+      "i": {"runs": 20, "exit_66": 20, "report": "the same CHECK at src/flb_lib.c:1058 (flb_stop after the failed start)"},
+      "iii": {"runs": 20, "exit_66": 20, "report": "the same CHECK at src/flb_lib.c:1058 (identifier 0)"}
+    },
+    "gdb-90978ac6": {"summary": "artifacts/gdb-90978ac6.summary.json", "summary_sha256": "cc1653670d089edb3a00455e4b5461fe4d8d34bc0cf9f6ce26bd26d8e76137e2", "gdb_exit_note": "gdb -batch exits 1 when its final `bt` finds no process after a normal exit (control, v, i); the inferior outcome is in each log"},
+    "gdb-046accf6": {"summary": "artifacts/gdb-046accf6.summary.json", "summary_sha256": "c8234efd6272d504da0106578d30e3f629181d321b7e8d72877790c667b5f698"}
+  },
+  "logs": "the first run of each scenario per campaign and every gdb log are archived under artifacts/logs/; every other run log stays at private/w47-dstop/attempt-1/<campaign>/ with its SHA-256 in the campaign summary",
+  "superseded_runs": [
+    {"dir": "private/w47-dstop/attempt-1/trial-1", "what": "one run per scenario (90978ac6 debug) and one gdb pass while developing the harness, before `ulimit -c 0` was added to run.sh; same outcomes as the campaign; not counted"},
+    {"dir": "private/w47-dstop/attempt-1/trial-tsan-1", "what": "one TSan run of v while developing summarize.py's CHECK parsing; same outcome; not counted"}
+  ],
+  "candidates": {
+    "i": {"status": "observed", "inducer": "undeclared dummy property (engine start failure after the spawn)", "trees": ["90978ac6", "046accf6"]},
+    "iii": {"status": "observed for the flb_fips_init arm", "inducer": "security.fips_mode=on without a FIPS provider (failure before the spawn)", "not_exercised": "the mk_utils_worker_spawn failure arm (pthread_create or malloc failing): not reachable from the public API without fault injection", "trees": ["90978ac6", "046accf6"]},
+    "v": {"status": "observed", "inducer": "none: a second flb_stop after a successful start and stop", "trees": ["90978ac6", "046accf6"]},
+    "ii": {"status": "not exercised"},
+    "iv": {"status": "not exercised"}
+  },
+  "what_is_not_shown": [
+    "that the second join, or the join of identifier 0, is anything more than what this glibc and this TSan runtime do on this host; POSIX leaves joining a joined thread undefined, and glibc 2.43 returned 0 here",
+    "anything about the fixed in_tail test's own run: the harness is not the test, and the test's C5 status is unchanged",
+    "any Quirin verdict: none moves; the census's refutations of L3-L5 already stood",
+    "an upstream defect: each remains a candidate"
+  ]
+}

@@ -1,0 +1,149 @@
+{
+ "control": {
+  "gdb_exit": 1,
+  "joins": [
+   {
+    "thread": "0x7ffff51f16c0",
+    "caller": "flb_stop",
+    "at": "src/flb_lib.c:1077"
+   },
+   {
+    "thread": "0x7fffeffff6c0",
+    "caller": "flb_output_thread_pool_destroy",
+    "at": "src/flb_output_thread.c:646"
+   },
+   {
+    "thread": "0x7ffff49f06c0",
+    "caller": "flb_log_destroy",
+    "at": "src/flb_log.c:1347"
+   }
+  ],
+  "harness_worker": [
+   [
+    "before-start",
+    "0"
+   ],
+   [
+    "before-stop1",
+    "0x7ffff51f16c0"
+   ],
+   [
+    "before-destroy",
+    "0x7ffff51f16c0"
+   ]
+  ],
+  "inferior": [
+   "exited normally"
+  ],
+  "log_sha256": "72cfa90df587a2d5071575425af192c7d17b537b8a345327127a322a712d07c8"
+ },
+ "i": {
+  "gdb_exit": 1,
+  "joins": [
+   {
+    "thread": "0x7ffff51f16c0",
+    "caller": "do_start",
+    "at": "src/flb_lib.c:999"
+   },
+   {
+    "thread": "0x7ffff51f16c0",
+    "caller": "flb_stop",
+    "at": "src/flb_lib.c:1058"
+   },
+   {
+    "thread": "0x7ffff49f06c0",
+    "caller": "flb_log_destroy",
+    "at": "src/flb_log.c:1347"
+   }
+  ],
+  "harness_worker": [
+   [
+    "before-start",
+    "0"
+   ],
+   [
+    "before-stop1",
+    "0x7ffff51f16c0"
+   ],
+   [
+    "before-destroy",
+    "0x7ffff51f16c0"
+   ]
+  ],
+  "inferior": [
+   "exited normally"
+  ],
+  "log_sha256": "4683798a291e5ecc90f6b6a635b24b4fc1517898c4c93f38dcf3e779fdce809d"
+ },
+ "iii": {
+  "gdb_exit": 0,
+  "joins": [
+   {
+    "thread": "0",
+    "caller": "flb_stop",
+    "at": "src/flb_lib.c:1058"
+   }
+  ],
+  "harness_worker": [
+   [
+    "before-start",
+    "0"
+   ],
+   [
+    "before-stop1",
+    "0"
+   ]
+  ],
+  "inferior": [
+   "SIGSEGV"
+  ],
+  "log_sha256": "fc716e4bf2ee099b0621d935d58392c9911acb8b7b648b6280662cad40746591"
+ },
+ "v": {
+  "gdb_exit": 1,
+  "joins": [
+   {
+    "thread": "0x7ffff51f16c0",
+    "caller": "flb_stop",
+    "at": "src/flb_lib.c:1077"
+   },
+   {
+    "thread": "0x7fffeffff6c0",
+    "caller": "flb_output_thread_pool_destroy",
+    "at": "src/flb_output_thread.c:646"
+   },
+   {
+    "thread": "0x7ffff51f16c0",
+    "caller": "flb_stop",
+    "at": "src/flb_lib.c:1058"
+   },
+   {
+    "thread": "0x7ffff49f06c0",
+    "caller": "flb_log_destroy",
+    "at": "src/flb_log.c:1347"
+   }
+  ],
+  "harness_worker": [
+   [
+    "before-start",
+    "0"
+   ],
+   [
+    "before-stop1",
+    "0x7ffff51f16c0"
+   ],
+   [
+    "before-stop2",
+    "0x7ffff51f16c0"
+   ],
+   [
+    "before-destroy",
+    "0x7ffff51f16c0"
+   ]
+  ],
+  "inferior": [
+   "exited normally"
+  ],
+  "log_sha256": "805b7212546147ea9b5db25e2bc9f2a0a0c6ae81b04c0421ea8060da34a9c418"
+ }
+}

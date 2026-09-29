@@ -1,0 +1,22 @@
+HARNESS input_set undeclared ret=0
+HARNESS before-start status=0 worker=0
+JOINLOG create seq=0 self=0x77a2d12ab4c0 thread=0x77a2d07f16c0 ret=0 frames=libfluent-bit.so+0x2f58ac;libfluent-bit.so+0x1790f9;libfluent-bit.so+0x179055;harness+0x1552;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+JOINLOG create seq=1 self=0x77a2d07f16c0 thread=0x77a2cfff06c0 ret=0 frames=libfluent-bit.so+0x2f58ac;libfluent-bit.so+0x1ef09c;libfluent-bit.so+0x17aa11;libfluent-bit.so+0x1d1337;libfluent-bit.so+0x1d004e;libfluent-bit.so+0x17959e;libfluent-bit.so+0x2f594e;libc.so.6+0xa3dfa;libc.so.6+0x1375cc;
+[2026/09/29 11:37:55.621] [ info] [fluent bit] version=5.1.3, commit=f269c23141, pid=2015250
+[2026/09/29 11:37:55.621] [ info] [storage] ver=1.5.4, type=memory, sync=normal, checksum=off, max_chunks_up=128
+[2026/09/29 11:37:55.621] [ info] [simd    ] SSE2
+[2026/09/29 11:37:55.621] [ info] [cmetrics] version=2.2.3
+[2026/09/29 11:37:55.621] [ info] [ctraces ] version=0.7.2
+[2026/09/29 11:37:55.621] [error] [config] dummy: unknown configuration property 'qcore_undeclared_property'. The following properties are allowed: samples, dummy, metadata, rate, interval_sec, interval_nsec, copies, start_time_sec, start_time_nsec, fixed_timestamp, flush_on_startup, and test_hang_on_exit.
+[2026/09/29 11:37:55.621] [error] [engine] input initialization failed
+JOINLOG join-enter seq=2 self=0x77a2d12ab4c0 thread=0x77a2d07f16c0 frames=libfluent-bit.so+0x17923f;libfluent-bit.so+0x179055;harness+0x1552;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+JOINLOG join-return seq=3 self=0x77a2d12ab4c0 thread=0x77a2d07f16c0 ret=0 frames=libfluent-bit.so+0x17923f;libfluent-bit.so+0x179055;harness+0x1552;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+HARNESS flb_start ret=-1
+HARNESS before-stop1 status=-1 worker=0x77a2d07f16c0
+JOINLOG join-enter seq=4 self=0x77a2d12ab4c0 thread=0x77a2d07f16c0 frames=libfluent-bit.so+0x1776a2;harness+0x15bf;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+JOINLOG join-return seq=5 self=0x77a2d12ab4c0 thread=0x77a2d07f16c0 ret=0 frames=libfluent-bit.so+0x1776a2;harness+0x15bf;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+HARNESS flb_stop1 ret=0
+HARNESS before-destroy status=-1 worker=0x77a2d07f16c0
+JOINLOG join-enter seq=6 self=0x77a2d12ab4c0 thread=0x77a2cfff06c0 frames=libfluent-bit.so+0x17b70f;libfluent-bit.so+0x1c093e;libfluent-bit.so+0x177822;harness+0x1604;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+JOINLOG join-return seq=7 self=0x77a2d12ab4c0 thread=0x77a2cfff06c0 ret=0 frames=libfluent-bit.so+0x17b70f;libfluent-bit.so+0x1c093e;libfluent-bit.so+0x177822;harness+0x1604;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+HARNESS flb_destroy done

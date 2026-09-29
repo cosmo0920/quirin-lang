@@ -1,0 +1,36 @@
+HARNESS before-start status=0 worker=0
+JOINLOG create seq=0 self=0x7901f601b4c0 thread=0x7901f5aae6c0 ret=0 frames=libfluent-bit.so+0x2f58ac;libfluent-bit.so+0x1790f9;libfluent-bit.so+0x179055;harness+0x1552;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+JOINLOG create seq=1 self=0x7901f5aae6c0 thread=0x7901f52ad6c0 ret=0 frames=libfluent-bit.so+0x2f58ac;libfluent-bit.so+0x1ef09c;libfluent-bit.so+0x17aa11;libfluent-bit.so+0x1d1337;libfluent-bit.so+0x1d004e;libfluent-bit.so+0x17959e;libfluent-bit.so+0x2f594e;libc.so.6+0xa3dfa;libc.so.6+0x1375cc;
+[2026/09/29 11:37:35.854] [ info] [fluent bit] version=5.1.3, commit=f269c23141, pid=2014990
+[2026/09/29 11:37:35.854] [ info] [storage] ver=1.5.4, type=memory, sync=normal, checksum=off, max_chunks_up=128
+[2026/09/29 11:37:35.854] [ info] [simd    ] SSE2
+[2026/09/29 11:37:35.854] [ info] [cmetrics] version=2.2.3
+[2026/09/29 11:37:35.854] [ info] [ctraces ] version=0.7.2
+[2026/09/29 11:37:35.854] [ info] [input:dummy:dummy.0] initializing
+[2026/09/29 11:37:35.854] [ info] [input:dummy:dummy.0] storage_strategy='memory' (memory only)
+[2026/09/29 11:37:35.855] [ info] [output:null:null.0] worker #0 started
+JOINLOG create seq=2 self=0x7901f5aae6c0 thread=0x7901f4aac6c0 ret=0 frames=libfluent-bit.so+0x2f58ac;libfluent-bit.so+0x1ef09c;libfluent-bit.so+0x208125;libfluent-bit.so+0x20827e;libfluent-bit.so+0x1bb284;libfluent-bit.so+0x1b4f9a;libfluent-bit.so+0x1b63ec;libfluent-bit.so+0x1d04b3;libfluent-bit.so+0x17959e;libfluent-bit.so+0x2f594e;
+HARNESS flb_start ret=0
+[2026/09/29 11:37:35.859] [ info] [sp] stream processor started
+[2026/09/29 11:37:35.859] [ info] [engine] Shutdown Grace Period=1, Shutdown Input Grace Period=0
+HARNESS before-stop1 status=1 worker=0x7901f5aae6c0
+JOINLOG join-enter seq=3 self=0x7901f601b4c0 thread=0x7901f5aae6c0 frames=libfluent-bit.so+0x177740;harness+0x15bf;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+[2026/09/29 11:37:36.159] [ warn] [engine] service will shutdown in max 1 seconds
+[2026/09/29 11:37:36.159] [ info] [engine] pausing all inputs..
+[2026/09/29 11:37:36.159] [ info] [input] pausing dummy.0
+[2026/09/29 11:37:36.555] [ info] [engine] service has stopped (0 pending tasks)
+[2026/09/29 11:37:36.555] [ info] [input] pausing dummy.0
+[2026/09/29 11:37:36.556] [ info] [output:null:null.0] thread worker #0 stopping...
+[2026/09/29 11:37:36.556] [ info] [output:null:null.0] thread worker #0 stopped
+JOINLOG join-enter seq=4 self=0x7901f5aae6c0 thread=0x7901f4aac6c0 frames=libfluent-bit.so+0x1bb214;libfluent-bit.so+0x1b3448;libfluent-bit.so+0x1d17e4;libfluent-bit.so+0x1d0e50;libfluent-bit.so+0x17959e;libfluent-bit.so+0x2f594e;libc.so.6+0xa3dfa;libc.so.6+0x1375cc;
+JOINLOG join-return seq=5 self=0x7901f5aae6c0 thread=0x7901f4aac6c0 ret=0 frames=libfluent-bit.so+0x1bb214;libfluent-bit.so+0x1b3448;libfluent-bit.so+0x1d17e4;libfluent-bit.so+0x1d0e50;libfluent-bit.so+0x17959e;libfluent-bit.so+0x2f594e;libc.so.6+0xa3dfa;libc.so.6+0x1375cc;
+JOINLOG join-return seq=6 self=0x7901f601b4c0 thread=0x7901f5aae6c0 ret=0 frames=libfluent-bit.so+0x177740;harness+0x15bf;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+HARNESS flb_stop1 ret=0
+HARNESS before-stop2 status=0 worker=0x7901f5aae6c0
+JOINLOG join-enter seq=7 self=0x7901f601b4c0 thread=0x7901f5aae6c0 frames=libfluent-bit.so+0x1776a2;harness+0x15bf;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+JOINLOG join-return seq=8 self=0x7901f601b4c0 thread=0x7901f5aae6c0 ret=0 frames=libfluent-bit.so+0x1776a2;harness+0x15bf;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+HARNESS flb_stop2 ret=0
+HARNESS before-destroy status=0 worker=0x7901f5aae6c0
+JOINLOG join-enter seq=9 self=0x7901f601b4c0 thread=0x7901f52ad6c0 frames=libfluent-bit.so+0x17b70f;libfluent-bit.so+0x1c093e;libfluent-bit.so+0x177822;harness+0x1604;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+JOINLOG join-return seq=10 self=0x7901f601b4c0 thread=0x7901f52ad6c0 ret=0 frames=libfluent-bit.so+0x17b70f;libfluent-bit.so+0x1c093e;libfluent-bit.so+0x177822;harness+0x1604;libc.so.6+0x2a601;libc.so.6+0x2a718;harness+0x1155;
+HARNESS flb_destroy done

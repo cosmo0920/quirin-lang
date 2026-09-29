@@ -1,0 +1,35 @@
+Function "pthread_join" not defined.
+Breakpoint 1 (pthread_join) pending.
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/x86_64-linux-gnu/libthread_db.so.1".
+HARNESS input_set undeclared ret=0
+HARNESS before-start status=0 worker=0
+[2026/09/29 11:42:45.017] [ info] [fluent bit] version=5.1.3, commit=f269c23141, pid=2020555
+[2026/09/29 11:42:45.017] [ info] [storage] ver=1.5.4, type=memory, sync=normal, checksum=off, max_chunks_up=128
+[2026/09/29 11:42:45.017] [ info] [simd    ] SSE2
+[2026/09/29 11:42:45.017] [ info] [cmetrics] version=2.2.3
+[2026/09/29 11:42:45.017] [ info] [ctraces ] version=0.7.2
+[2026/09/29 11:42:45.017] [error] [config] dummy: unknown configuration property 'qcore_undeclared_property'. The following properties are allowed: samples, dummy, metadata, rate, interval_sec, interval_nsec, copies, start_time_sec, start_time_nsec, fixed_timestamp, flush_on_startup, and test_hang_on_exit.
+[2026/09/29 11:42:45.017] [error] [engine] input initialization failed
+GDBJOIN thread=0x7ffff51f16c0
+#0  ___pthread_join (threadid=140737305843392, thread_return=0x0) at ./nptl/pthread_join.c:23
+#1  0x00007ffff6d7917f in do_start (ctx=0x55555558d180) at /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/src-046accf6/src/flb_lib.c:999
+#2  0x00007ffff6d78f95 in flb_start (ctx=0x55555558d180) at /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/src-046accf6/src/flb_lib.c:1016
+HARNESS flb_start ret=-1
+HARNESS before-stop1 status=-1 worker=0x7ffff51f16c0
+GDBJOIN thread=0x7ffff51f16c0
+#0  ___pthread_join (threadid=140737305843392, thread_return=0x0) at ./nptl/pthread_join.c:23
+#1  0x00007ffff6d775e2 in flb_stop (ctx=0x55555558d180) at /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/src-046accf6/src/flb_lib.c:1058
+#2  0x00005555555555bf in main (argc=2, argv=0x7fffffffdbc8) at /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/harness-046accf6-debug/harness.c:94
+HARNESS flb_stop1 ret=0
+HARNESS before-destroy status=-1 worker=0x7ffff51f16c0
+GDBJOIN thread=0x7ffff49f06c0
+#0  ___pthread_join (threadid=140737297450688, thread_return=0x0) at ./nptl/pthread_join.c:23
+#1  0x00007ffff6d7b64f in flb_log_destroy (log=0x7ffff0006080, config=0x55555558d1b0) at /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/src-046accf6/src/flb_log.c:1347
+#2  0x00007ffff6dc087e in flb_config_exit (config=0x55555558d1b0) at /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/src-046accf6/src/flb_config.c:587
+HARNESS flb_destroy done
+[Inferior 1 (process 2020555) exited normally]
+GDBEXIT
+The program being debugged is not being run.
+/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a4234b8ce613c9ea6/docs/reports/w47-fb-double-stop-observation/scripts/gdb_joins.gdb:19: Error in sourced command file:
+No stack.

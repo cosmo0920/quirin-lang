@@ -1,0 +1,22 @@
+HARNESS input_set undeclared ret=0
+HARNESS before-start status=0 worker=0
+[2026/09/29 11:42:03.852] [ info] [fluent bit] version=5.1.3, commit=f269c23141, pid=2019799
+[2026/09/29 11:42:03.853] [ info] [storage] ver=1.5.4, type=memory, sync=normal, checksum=off, max_chunks_up=128
+[2026/09/29 11:42:03.853] [ info] [simd    ] SSE2
+[2026/09/29 11:42:03.853] [ info] [cmetrics] version=2.2.3
+[2026/09/29 11:42:03.853] [ info] [ctraces ] version=0.7.2
+[2026/09/29 11:42:03.853] [error] [config] dummy: unknown configuration property 'qcore_undeclared_property'. The following properties are allowed: samples, dummy, metadata, rate, interval_sec, interval_nsec, copies, start_time_sec, start_time_nsec, fixed_timestamp, flush_on_startup, and test_hang_on_exit.
+[2026/09/29 11:42:03.853] [error] [engine] input initialization failed
+HARNESS flb_start ret=-1
+HARNESS before-stop1 status=-1 worker=0x7ffff13fe6c0
+ThreadSanitizer: CHECK failed: sanitizer_thread_registry.cpp:363 "((t)) != (0)" (0x0, 0x0) (tid=2019799)
+    #0 __tsan::CheckUnwind() <null> (harness+0xcfddf) (BuildId: a714b4836941a252f37185558615b1bf70cf7162)
+    #1 __sanitizer::CheckFailed(char const*, int, char const*, unsigned long long, unsigned long long) <null> (harness+0x46776) (BuildId: a714b4836941a252f37185558615b1bf70cf7162)
+    #2 __sanitizer::ThreadRegistry::ConsumeThreadUserId(unsigned long) <null> (harness+0x45567) (BuildId: a714b4836941a252f37185558615b1bf70cf7162)
+    #3 pthread_join <null> (harness+0x65970) (BuildId: a714b4836941a252f37185558615b1bf70cf7162)
+    #4 flb_stop /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/src-90978ac6/src/flb_lib.c:1058:9 (libfluent-bit.so+0x18048d) (BuildId: b27e95a252358f4414f4a6a07709d2a6396d98d0)
+    #5 main /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/harness-90978ac6-tsan/harness.c:94:15 (harness+0xea845) (BuildId: a714b4836941a252f37185558615b1bf70cf7162)
+    #6 __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:59:16 (libc.so.6+0x2a600) (BuildId: 066527e430a32768d82741e00b81eebb1a872294)
+    #7 __libc_start_main csu/../csu/libc-start.c:360:3 (libc.so.6+0x2a717) (BuildId: 066527e430a32768d82741e00b81eebb1a872294)
+    #8 _start <null> (harness+0x30414) (BuildId: a714b4836941a252f37185558615b1bf70cf7162)
+

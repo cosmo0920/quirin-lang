@@ -1,0 +1,12 @@
+build-046accf6-debug.exit 0
+build-90978ac6-debug.exit 0
+build-90978ac6-tsan.exit 0
+configure-046accf6-debug.exit 0
+configure-90978ac6-debug.exit 0
+configure-90978ac6-tsan.exit 0
+harness-046accf6-debug.exit 0
+harness-90978ac6-debug.exit 0
+harness-90978ac6-tsan.exit 0
+joinlog-046accf6-debug.exit 0
+joinlog-90978ac6-debug.exit 0
+joinlog-90978ac6-tsan.exit 0

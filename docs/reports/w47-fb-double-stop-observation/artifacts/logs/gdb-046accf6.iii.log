@@ -1,0 +1,28 @@
+Function "pthread_join" not defined.
+Breakpoint 1 (pthread_join) pending.
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/x86_64-linux-gnu/libthread_db.so.1".
+HARNESS service_set fips_mode ret=0
+HARNESS before-start status=0 worker=0
+[2026/09/29 11:42:46.491] [error] [fips] failed to load OpenSSL FIPS provider
+[2026/09/29 11:42:46.491] [error] [fips] OpenSSL error: error:12800067:DSO support routines::could not load the shared library
+[2026/09/29 11:42:46.491] [error] [fips] OpenSSL error: error:12800067:DSO support routines::could not load the shared library
+[2026/09/29 11:42:46.491] [error] [fips] OpenSSL error: error:07880025:common libcrypto routines::reason(37)
+HARNESS flb_start ret=-1
+HARNESS before-stop1 status=0 worker=0
+GDBJOIN thread=0
+#0  ___pthread_join (threadid=0, thread_return=0x0) at ./nptl/pthread_join.c:23
+#1  0x00007ffff6d775e2 in flb_stop (ctx=0x55555558d180) at /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/src-046accf6/src/flb_lib.c:1058
+#2  0x00005555555555bf in main (argc=2, argv=0x7fffffffdbc8) at /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/harness-046accf6-debug/harness.c:94
+
+Program received signal SIGSEGV, Segmentation fault.
+__pthread_clockjoin_ex (threadid=0, thread_return=0x0, clockid=0, abstime=0x0, cancel=<optimized out>) at ./nptl/pthread_join_common.c:47
+warning: 47	./nptl/pthread_join_common.c: そのようなファイルやディレクトリはありません
+GDBEXIT
+Last stopped for thread 1 (Thread 0x7ffff5ca74c0 (LWP 2020583)).
+	Using the running image of child process 2020583.
+Program stopped at 0x7ffff68a5de3.
+It stopped with signal SIGSEGV, Segmentation fault.
+#0  __pthread_clockjoin_ex (threadid=0, thread_return=0x0, clockid=0, abstime=0x0, cancel=<optimized out>) at ./nptl/pthread_join_common.c:47
+#1  0x00007ffff6d775e2 in flb_stop (ctx=0x55555558d180) at /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/src-046accf6/src/flb_lib.c:1058
+#2  0x00005555555555bf in main (argc=2, argv=0x7fffffffdbc8) at /home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/harness-046accf6-debug/harness.c:94

@@ -1,0 +1,1773 @@
+{
+ "run_dir": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/runs-90978ac6-tsan",
+ "variant": "tsan",
+ "aggregate": {
+  "control": {
+   "runs": 20,
+   "exit=0": 20,
+   "flb_start ret=0": 20,
+   "flb_stop1 ret=0": 20
+  },
+  "i": {
+   "runs": 20,
+   "exit=66": 20,
+   "tsan CHECK failed sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0) at src/flb_lib.c:1058": 20,
+   "flb_start ret=-1": 20
+  },
+  "iii": {
+   "runs": 20,
+   "exit=66": 20,
+   "tsan CHECK failed sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0) at src/flb_lib.c:1058": 20,
+   "flb_start ret=-1": 20
+  },
+  "v": {
+   "runs": 20,
+   "exit=66": 20,
+   "tsan CHECK failed sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0) at src/flb_lib.c:1058": 20,
+   "flb_start ret=0": 20,
+   "flb_stop1 ret=0": 20
+  }
+ },
+ "runs": [
+  {
+   "scenario": "control",
+   "run": "01",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "b797b2bbe000ff33104d093ffaa5343898e33cb5b0cc408622b9cd2067814ad6",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "02",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "e207011dc06818a00c0e93ae64484f9d7e03f9f9f1dba380acbc40cc213018f6",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "03",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "b3bda660675a3cfbe13e769500959accb934221ddb2ce1e4253aa81b89bda2f5",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "04",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "d610018b60485a0e8a5b3e71ee042b9075ba0c7cdeaa921b6cfcf4243639a0af",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "05",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "1adc495c8637baf09e9207c33f5b23bdea705c5d36750ef98b83654adc25a8d6",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "06",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "6841e9052fa9e24552fb0ccd34148b446b1f1488f3f263792fb469c88d084f15",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "07",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "fc7f27c5bf61b3517aad0b705cb5f68e6fd529e99930a5bbffeb3f7eda6dfe00",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "08",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "e0fa6a2aa2ef69c1a2907243fbc18a1a6cec8762ee92aef50187617201cdfe6d",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "09",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "066c82c01783867baaf524070e771f9afbc52efeb12183a29ee06c5a9c8591c2",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "10",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "007cec7e894cefde31420936652d9dc605b975f3aa8d91675f12552f8f864c57",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "11",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "6b12230517ac6179ad31ad96c1ad85b5accb66dfca3c04f051000451c79d24ea",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "12",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "233f26a8725e031ca00514a672430e76cdd08ce2312895dd79dce197e5c1c504",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "13",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "20cc376e61d0c27ab2b0167bc47bd8683ca3f3c0c961322a5a6bc4b43997ddbb",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "14",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "e7e45a9d19730da609ede8f08fce9a3976377fe9dec7d51b3b0fc8cedc7b464e",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "15",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "4440e38f4d09c7a2db0e31cce0adc2da0588e841c528795b2836d74d5e7f7913",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "16",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "534d5385c64e66ec6bc3307156af05a181e81954f92ed120f57c8e9cb62d6492",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "17",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "1d6783ad6b0a02aaf06863ac6a85d59f0758085ccc7f8613c01299929f304c3b",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "18",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "5487db6a783ce3ab935a3a2a2217b7bdb696538e2d5241e84a10a9dd15e761e1",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "19",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "0e32c8d5309195065dd9ccd1fb68bda4fb97655b156d6761a72302c118377a3a",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "control",
+   "run": "20",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "b50ff3ee807627380e0fc3c6d8d9722f051c9e784231c5f0aab8eac4ff9552c9",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ffff13fe6c0",
+    "flb_destroy done"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [],
+   "tsan_check_site": []
+  },
+  {
+   "scenario": "i",
+   "run": "01",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "b74972745d3a3acdca768c8d0c40592ad3e18ff61e7de9f908a796e0c394280b",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "02",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "e54f8c3fc341bb1cbf2d7b83458fa1e63000b4a176e83dcf27e3974e21d6c04b",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "03",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "bfc55e75e45ffe3428ab5c6ad0ffcf04f0e380777e2546fda536743dec589919",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "04",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "25d5d79228a241bfe916f308d9e4c6495e5d95a947d5368db2b3aaef3a6fe422",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "05",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "ad0de11c8286df83832e7891ce1bd8a914e09501753a83419cabc3236ca426f8",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "06",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "dd0b61d9003c69fc4eaaf61219bd6300d7bb5bf62ec5592ff3fc6399e3f1094a",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "07",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "9f477f4c16e163d3b66010a8a12b1c7b18cff480fea897a8943cafbb08cc7c41",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "08",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "1c3250448b6e9a220681924d2ec3c0a534613ca6755842425fb43455d9122c8c",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "09",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "04f75529d205798ad87279f0b93202b502911fba25b7981c197c78b1adc6be9c",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "10",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "b065b8aaacc8ee1560a84812cba4a8da47c950e394e2754810cf3254217b9c65",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "11",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "5f4088f7a1a9d62b08147da13907b6f8144440ccee82a9b243fd74bbd7b23c87",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7a69a21fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "12",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "9d359b8c985138b4e06a680653bdb80376937d42e17931e82898747755828a9d",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "13",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "b85c44adad7d189b6395b95130fb17471901386547f249ecb7193e886527637e",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "14",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "fce94bd53183786c26e38e961176d7e20ff605b47ca89e44a42972f395d8b90b",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "15",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "e431eb4b335a2181d170f395cf0075d84e5833b7a4b235524c9bde9b51ac6f7f",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "16",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "d066ce4294b9ca9c1373b307c43a4d6674b8209cfbc6ecf2ce237fe381a41bb9",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "17",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "79e153311c9213fd7ab62d941f959205c1ce27df14f4affc3a0de3f201ebb7a8",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "18",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "cc973228434fe04f818ad603c3baaefc9c624207d70f02ada37212546e98a83c",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "19",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "8f4b48ff4ed4fbbd55d8e2526bb7b74d1849fa32e13c7ee06f92ff234ffb79a8",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "i",
+   "run": "20",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "483669c8179bea2535724cada46e405f1ebf45827ef2c9f9290ac438e15a6585",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "01",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "e8197bdb5d9a3798bf8142be5aa4855b3e025f84cbd19e900d670db0b32728a4",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "02",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "4f15fa94649be293a2fed6653178f11ae4fa2dca0dbe14d8dd54ad22ec5973c8",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "03",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "c3bc25525918b7ad3e01c607692cf925fb3c4333720000feb65173c3838ee468",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "04",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "8911ddef00c4fe728fdd2b7daf70cc3abfc6daa0a4e78d9289cc2d405668c730",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "05",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "804d445a28577a2cffcfb82c31b6302e6c40cf30f1383beab8d3b04f4e001a7a",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "06",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "70c09b6375070377ac60181171343e0a1d08f1d6412264bd115c93aa81eb8f70",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "07",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "496288f815fa41e3b0ccdfe5d83efab708b4b0f879cccab9ac9141268fcbf96c",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "08",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "77c3331fc046ead748ccc800c77e9f40aaef2906a139b4a1c733295fda8c6c92",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "09",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "f4801c18ad302623a39ff45762c90192e5c926283537a3199802a15865bbd356",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "10",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "9598ca56999df9ef60482fc224314fbac58c92542f719358a2f350621d99d24b",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "11",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "521742016982c1f866c9e97776978dc07442d0a5c2aaf9bbe79b0887e4daed58",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "12",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "906c72a91d27400fa33ce8554f5208ae66198035231643e0665554d17ba505c5",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "13",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "0c070a40d9ef65a8ae99befaaf14e0b64d0de6dd28a34247029902460a7bd4f4",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "14",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "823868ea7916bf4d79f809661d4a3c3aa33da3f797d0f9fbc7b3eb84d86a7083",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "15",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "2d39e62fc5158ad88de8163f4dff73313cf619a8c67fc2146c8fecaf95b980e7",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "16",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "0891656819e5b739cbf4cabb7cd00938ffe1476cb0970d1b1b5c63ad73e314d6",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "17",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "108b51ab7dd5ebead4f3a22afef711ccd299b635c0016c524f58a69f9dd857c4",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "18",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "5715a63c2dfac908cdeea8812b892d8087bd6e008bd0ab1675b092ee6584428d",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "19",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "703f2c6e6fa5516672a7594c92dc787e81b97f000a99d1da7ff0255e29d596d4",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "iii",
+   "run": "20",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "e960122ea61c5cfdae1e5672e3b6370be78cc38aa59d220267b7d0d94cc016a4",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "01",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "9c3585f7f2baa1b1d7aea316a6babfc131682fe5a0c8de86cbfac31d89d8ffe8",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7a77dbffe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7a77dbffe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "02",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "608433a6e74edbad034f948f36ab677ee03be1bbe29a7f83ed16019a557271ee",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "03",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "0abe459ae58000f413a0f9f978f63886fe9d6a8ea0b4e48ef7e32db3251cbef8",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "04",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "61652b905e54f0cdb27a223a0db35c063743a702dbf4352fa5c13be50797f020",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "05",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "1b15ce83bdb431000b40fc10a24c0bd1a5fd3837cad68c3edc27c1ae247b7429",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "06",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "31bdfc0b97a27bc40abc6a0873693e672e6a4098192af37f084cae5cec64df73",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "07",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "0578a79a7d600a1ea0d2440b7e415afbccdaf26ad50822cf62d525bba15e9ddc",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "08",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "951202deeea4ad2feb67c741dd22de4e4ce6f7173bcb3530e5f5652aeb11787d",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "09",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "0730a604b9e06f1b185bde9847a4454367490f0bd987af5b2d3c5edfeb15716c",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "10",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "d888e304d3e8e1511eac4f1c114c9f4032fff4227e9682add18d056ba9b6973e",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "11",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "17acb227b76553af6ffac3e69de458ff1d73116cf8ed9643ec6cf394c3744375",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "12",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "081b3faac2e696df0744ea8695477ddd4b117539125ea38b2d28a0cfc3b1a437",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "13",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "5bbd79fa7bffeff322e9abf720b156b7e4bf4ec1571d6040e3fefecb9fcf92a7",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "14",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "6a9d1bc83b5939fd0c3f54ee8469efea3c9949b6d414b2bde85bc9f9a10b0404",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "15",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "8b7e7cc8cd39e37e9634a6131d3a4bb01fd03cbf5117c5a1a89c4cfa327ffdef",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "16",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "b8e74dbc0da9bbcb18993f70c041a6ea5b84a396c2ba6218e05aecbefd5d5670",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "17",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "7487252bf2cfe5e41070f3bf5381fbe662d424f3964201e507b270c9c7790182",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "18",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "2b2cc1104524e53a1b1a65b759f763907d5543fbfe19ab38caafe0099676e423",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "19",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "31311b8530056040dc151723b408bb7afa5f89d0766bd82732e51301a4f114c5",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  },
+  {
+   "scenario": "v",
+   "run": "20",
+   "exit": 66,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "2f5af9bcb1f858b5b44fa602e9f9f12a1a327e77a3284cbb1eb8621a4510bdf2",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ffff13fe6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ffff13fe6c0"
+   ],
+   "tsan_reports": [],
+   "tsan_summaries": [],
+   "tsan_check_failed": [
+    "sanitizer_thread_registry.cpp:363 \"((t)) != (0)\" (0x0, 0x0)"
+   ],
+   "tsan_check_site": [
+    "src/flb_lib.c:1058"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,2400 @@
+{
+ "run_dir": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-dstop/attempt-1/runs-046accf6-debug",
+ "variant": "debug",
+ "aggregate": {
+  "control": {
+   "runs": 20,
+   "exit=0": 20,
+   "joins engine:flb_stop@src/flb_lib.c:1077:ret=0": 20,
+   "engine_creates=1": 20,
+   "flb_start ret=0": 20,
+   "flb_stop1 ret=0": 20
+  },
+  "i": {
+   "runs": 20,
+   "exit=0": 20,
+   "joins engine:do_start@src/flb_lib.c:999:ret=0 -> engine:flb_stop@src/flb_lib.c:1058:ret=0": 20,
+   "engine_creates=1": 20,
+   "flb_start ret=-1": 20,
+   "flb_stop1 ret=0": 20
+  },
+  "iii": {
+   "runs": 20,
+   "exit=139": 20,
+   "joins 0 (never written):flb_stop@src/flb_lib.c:1058:ret=None": 20,
+   "engine_creates=0": 20,
+   "flb_start ret=-1": 20
+  },
+  "v": {
+   "runs": 20,
+   "exit=0": 20,
+   "joins engine:flb_stop@src/flb_lib.c:1077:ret=0 -> engine:flb_stop@src/flb_lib.c:1058:ret=0": 20,
+   "engine_creates=1": 20,
+   "flb_start ret=0": 20,
+   "flb_stop1 ret=0": 20,
+   "flb_stop2 ret=0": 20
+  }
+ },
+ "runs": [
+  {
+   "scenario": "control",
+   "run": "01",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "f462e74de6eec5d6e7fad066d14299d7826abc8f6b1c994bcea1a75001abc7ae",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x74f2c052a6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x74f2c052a6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x74f2c052a6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "02",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "d4130d799307ec1d00076d9d739774498e126564a874dcfd7c274b00c2684352",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x71b17cd346c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x71b17cd346c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x71b17cd346c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "03",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "969385c6aa213b7043df10fbd2407802f90b757386d37d8d689651d3cab4f024",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x78b7a7abb6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x78b7a7abb6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x78b7a7abb6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "04",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "5a2a9600daa4f444fe94df592a5a2bc8166459db734f7dbcee4a25c6b074cd9c",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x722e3f91d6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x722e3f91d6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x722e3f91d6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "05",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "7398a1499a742a833292814f0c477d753c8d70ef20cbb5c261c26108b7ed8b0b",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7907b959a6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7907b959a6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7907b959a6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "06",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "9d5202845c41a2cfca23f6e1390d6e7e32dd77f0aa76a9e2f7fe263364916f82",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x73e836d586c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x73e836d586c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x73e836d586c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "07",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "f92459a74222e64695d75f742fe28708a53c36eb6593b0215e016fd0079383ed",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x74ddc85cc6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x74ddc85cc6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x74ddc85cc6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "08",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "bf75d9e815d6ef8029842efee09a59cf62699e67c70f72ffbb0d53c96561d90f",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x756c733bf6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x756c733bf6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x756c733bf6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "09",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "1ceb2a8366e7a7a98e846f882b5965678f4d30ddce36f7ef4e493c848a11ed9a",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7842636c86c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7842636c86c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7842636c86c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "10",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "4a4ca6f3a693a1b911a09dcc3287fc305ed0925abd2a3f960b3d1e32e4d31682",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7914644726c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7914644726c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7914644726c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "11",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "0017ee3453198301544fe7848642d0c23aebd5b07d43957b68c6cceeebcc898e",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x76f0258f46c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x76f0258f46c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x76f0258f46c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "12",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "fcafb4723c05c54acb8ee39dc50a3cf23617f7ca7120179f07d94f95bf0bcc4f",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x73c5ad4ce6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x73c5ad4ce6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x73c5ad4ce6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "13",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "b669c703cfb2c56be3ec181f987a269abe1aaec03f77fb88c30ac623204b530e",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x765bf46c86c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x765bf46c86c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x765bf46c86c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "14",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "78f62429c4953fb8f651eb5bce54ad2f6b3477a7122c2fd4315f1d0d48b15ed9",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7c8c74efa6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7c8c74efa6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7c8c74efa6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "15",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "71cc8328873c57fa2be76f6ddd516d8f3faff9e0c6bc67457a43d5df2608c345",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7b6874f586c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7b6874f586c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7b6874f586c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "16",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "1fdc6b355b434c6fccaa669b01c704b5bfe3eb3a2090888ac6222797fb67bf6f",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7882309f16c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7882309f16c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7882309f16c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "17",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "35dfc5925870e3198e75fe39e625821caf841c0ed60d98bc071d5b8076150b4d",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7a2a45c576c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7a2a45c576c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7a2a45c576c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "18",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "e9022f7902af118152dd4e47cd6c53707f47a346cde2db538e16eb38edb92212",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7fab47ac86c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7fab47ac86c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7fab47ac86c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "19",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "0a34984e63cb514f9bdd07444858446f614c0f551765dc211b8665c3da511102",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7e20dc8fa6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7e20dc8fa6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7e20dc8fa6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "control",
+   "run": "20",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "00e6b48184890e466bae770d1599f89d9bc0f37a436a4fb5d9e2c4c3f3a91e03",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ebfbab476c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=0 worker=0x7ebfbab476c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7ebfbab476c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "i",
+   "run": "01",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "781085eff64140c6b29d4a1dd9968309325d1658eb85597f5e39469dbc5d48a1",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x73a688a976c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x73a688a976c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x73a688a976c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "02",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "6faec74b1b3f9e4281c1a04831ceb62b5233aaf59df917339a13d661559198d1",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7489c9fa06c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x7489c9fa06c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7489c9fa06c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "03",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "6a405583d09b862be644c3da5b982df8f868e65a064ac43bf05f68b35a753f55",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7b0590b346c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x7b0590b346c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7b0590b346c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "04",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "c612a3ffc9c4ce444095be14a8e28e8a3180bfbd8dd44616e0fd75a103616f28",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7af4e12176c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x7af4e12176c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7af4e12176c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "05",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "9fe38ec9435c51c6a76d6d6597c515c82a195ae7c9d6cbe0a87df73c16baf904",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x75be0c8976c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x75be0c8976c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x75be0c8976c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "06",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "abd8f5d3ad51f1c1a76a66349b7575ca1b27be870c575b5c46d06cddabf379d7",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x71fa2e9f16c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x71fa2e9f16c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x71fa2e9f16c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "07",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "21fa19e2f8e4670050090645e79d2b0823809f719693d997ff559be9f832241a",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7198d46596c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x7198d46596c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7198d46596c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "08",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "e3cc14114b0daf941114a33379a9e50590252ac81955cfa3fd97cc8694dc53af",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x77a8366346c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x77a8366346c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x77a8366346c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "09",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "6d3c1878a1b86937d0d5a679faf771f5fbe5a81e9fe5f29e27d8129e7a058033",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7be286d1d6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x7be286d1d6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7be286d1d6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "10",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "d10bacde780217423eb5ae65a1a031030f229695807cb388b6472dff992e52aa",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7a2435a976c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x7a2435a976c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7a2435a976c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "11",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "3ab804fef63c00194a25491449cdbbf1be6e56b47783924bfc98e890b76d38df",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7b9bdae956c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x7b9bdae956c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7b9bdae956c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "12",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "d42a5c7562b6e53f8689c3d412823b7afdca7cef8992d63646626deedcb0ac7a",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7881ab0fa6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x7881ab0fa6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7881ab0fa6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "13",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "24d896389377d1cd2f97918406224bc05792d9e178d5cb144f75e67b93c0c727",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x754bdc3d26c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x754bdc3d26c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x754bdc3d26c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "14",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "5e090a85f4bcfd114ed2125782db1630067fff2e2f15dccbb2fe58af779fdac0",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7cce633326c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x7cce633326c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7cce633326c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "15",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "010c2b3da0a2631e83526f10436bdb8d048824dcace9594854b7d18810937946",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x71ab9a9476c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x71ab9a9476c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x71ab9a9476c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "16",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "74a030e7758ba48f05f07dc7e2021f6b2525eb0c8c2f7c9b978974c9734f51d0",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x74d11d4ce6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x74d11d4ce6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x74d11d4ce6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "17",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "b9271b4694cf6fad460409b0d5cd53f8d4e26e4c929bfc190a791cc1245acbaa",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x74ee6d25f6c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x74ee6d25f6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x74ee6d25f6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "18",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "771df9cac91b255d9c1dcd74e54b2384f5e6d7e2ed8d3b88363f836f86b4c588",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x704b66b476c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x704b66b476c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x704b66b476c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "19",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "84d69a8986affa1c4ae5747aa14272b288992368d18af0722c5b6f7d75459c0d",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x7a7b05da66c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x7a7b05da66c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7a7b05da66c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "i",
+   "run": "20",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "4a1ba3f0400fb199014aeae5d5140e22dbd3a6a3e44fb660aaf68f3a391b0df1",
+   "harness": [
+    "input_set undeclared ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=-1 worker=0x71ad7bf586c0",
+    "flb_stop1 ret=0",
+    "before-destroy status=-1 worker=0x71ad7bf586c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x71ad7bf586c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "do_start@src/flb_lib.c:999",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 1
+  },
+  {
+   "scenario": "iii",
+   "run": "01",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "f07ea81f27a848f2698a3bf5181737b81ec077455d1c386a8c8291cb9fae5591",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "02",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "4ba0a7033c78063014a34aa08ef3203d8cb154922bf3ff2dfb2a85f85260cd2e",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "03",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "275f369641d83dde6b6bd5e974e411eafe5e69a9e88e89e2e36de0fa027a125b",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "04",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "0dc54b213ea2c4fd3123e654bad542dbdccddd8579960bdfc805ebd65917aa11",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "05",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "9738f6655d0ff78c727cdfcccf094b1f7bf8ecc7a6670863b0fb7f923c2cca0d",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "06",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "9f2c5909905ec90d3da749adc0691669edbbe31f7ba762d08a5d34a63e088939",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "07",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "436d982e8d8d96c1b35292de45a5ac62005e2c36a58f903c0fef4b273405a1e3",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "08",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "833158830c770cf754e56bdfbaa4e8f2376c4a339a15658d1a82ad8b4cd384d7",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "09",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "f774e1976fb0884f7d727097db459591046af929fdcee8fa3f0e87830a215737",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "10",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "9cc11bf60b9b6e1b08ab57fb2981ec54608a7d8e1d9ac5cab5a6642e10cbc2ba",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "11",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "943a065947026a8f4aa33ae87e430e028b35b40d381750ebbec66431ee17f535",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "12",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "f28a7eecac3d012e9d8b520f12438fbd4148c857a2bb0c86f546722452a4e98d",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "13",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "74cf551cb6f4f57e78aed0287ca2b85820bc46c5df57148ba0e2e4f8566c3ffe",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "14",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "ffaa43e481c13ef74adef11454652e7da7685fba8fc344a9fd3f8c35c850faea",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "15",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "a5b862bcd4e609c7740e13bb67a2dfa52f0ced73ff91143bf2bcc208a75873b2",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "16",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "902eb95205183511774e16bc41d187f35975fd7d8b95cfb9c77efbafaacf17f6",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "17",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "26d207849639988e4c06f2b10106299166db58890759631088c924082e5a3198",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "18",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "d815ec1f5ce8268d68cd4f122ec8f5564ff82f13bf0bf70c9d2a92af5c1b3584",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "19",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "f78cf6e7ab046c2a6de16dd8afd45c134ee940e714a9e282dffab3cf6ae8a28f",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "iii",
+   "run": "20",
+   "exit": 139,
+   "signal": 11,
+   "watchdog_fired": false,
+   "log_sha256": "e84ea339aa68f58de682691bd9e14ff68e2952f4be01af084ea69891555be9af",
+   "harness": [
+    "service_set fips_mode ret=0",
+    "before-start status=0 worker=0",
+    "flb_start ret=-1",
+    "before-stop1 status=0 worker=0"
+   ],
+   "engine_creates": 0,
+   "engine_thread": null,
+   "engine_or_zero_joins": [
+    {
+     "thread": "0 (never written)",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": null
+    }
+   ],
+   "other_joins": 0
+  },
+  {
+   "scenario": "v",
+   "run": "01",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "06757e5b8466840b2358aff820567da9e49cde53d6c92b30dd58d38f032fcc64",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7d2646fb76c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7d2646fb76c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7d2646fb76c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7d2646fb76c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "02",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "c55f50893d96c7ef3e1445ed6901b88161beebcf4ed4cffa5e026325edbd8c10",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x73645c9476c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x73645c9476c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x73645c9476c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x73645c9476c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "03",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "a896945e024a32fe86590ba1092f3dc35a98407a4922fe94e641a37bb820557a",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7c7dfe4486c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7c7dfe4486c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7c7dfe4486c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7c7dfe4486c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "04",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "f98da4502793c853b6c619bfc95cbe88217fa0f77d97602f03ac30c808a5703c",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x75f3b359c6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x75f3b359c6c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x75f3b359c6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x75f3b359c6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "05",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "fb352c95b54c3c3afdb431c5520596510f61b454d6081d9ded49faab602a4df6",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7dcb134ae6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7dcb134ae6c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7dcb134ae6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7dcb134ae6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "06",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "4b80d4082134475ab8f12b1bb55262a32f51efc2003c483bf67a8fe04e426ad0",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x796a72ef46c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x796a72ef46c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x796a72ef46c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x796a72ef46c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "07",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "013ae25a4db338f4a185a441635732ed8757260bc661018d4569d01d5693cd27",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x725bf94ae6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x725bf94ae6c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x725bf94ae6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x725bf94ae6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "08",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "79e8cf604e7e0ae4ca2fad06f9934388cedd0a12140c07dbf704bd66694554fb",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x758656e5f6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x758656e5f6c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x758656e5f6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x758656e5f6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "09",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "2730339a95ac0908ddc82695687d6bd9313dcec218358a443a2d220ee7b6c406",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x763cc1d586c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x763cc1d586c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x763cc1d586c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x763cc1d586c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "10",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "0d8acb7dc5302a27018f234add35d0bea40b53c7a949d49307373afac38d706b",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x758a0dc976c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x758a0dc976c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x758a0dc976c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x758a0dc976c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "11",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "060ea0893e26a013d4c903a361eb365994351e20498d1948c98279ce874b8e99",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x761c16cf46c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x761c16cf46c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x761c16cf46c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x761c16cf46c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "12",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "1020b645b68c02dfdbfe7f321a898ca254c66431534e6911f9fbb3753fa4d881",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7edce56726c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7edce56726c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7edce56726c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7edce56726c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "13",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "0cb71e5b2714a399e6424fc1f8b3eabd4db9976835e255b1d22b1b038e1b5c68",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7a73e4f266c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7a73e4f266c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7a73e4f266c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7a73e4f266c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "14",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "d0ce49d8108b42356b2c93e928d9e207971948db65ebe483054e27ad6077a64c",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7e5f050746c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7e5f050746c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7e5f050746c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7e5f050746c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "15",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "9af295fa39f0f5d974365105ff4590ae6857f26f248d74ff22a658bd7f377a59",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7b9e8cda06c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7b9e8cda06c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7b9e8cda06c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7b9e8cda06c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "16",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "8ba433a36270dd409b7d3f9df08e2ab81e46a6ca6fe4f1527bb2ae48c01adb0b",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7cf21ce5f6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7cf21ce5f6c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7cf21ce5f6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7cf21ce5f6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "17",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "3df225141f890197d3bdcac1a5e0e498e232b2529f549dc3a2cf62c05d898b76",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x71cbef81d6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x71cbef81d6c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x71cbef81d6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x71cbef81d6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "18",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "348c3a2f0a7e6317da652b48c53f8bf89b667033087dea330e38020c3ff32b83",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7ac00e6ae6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7ac00e6ae6c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7ac00e6ae6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7ac00e6ae6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "19",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "b49f3ce8a7197dfd2cfe600d2b1ecc946374c3a3a1fb87338893eefa12473459",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7a25369a06c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7a25369a06c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7a25369a06c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7a25369a06c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  },
+  {
+   "scenario": "v",
+   "run": "20",
+   "exit": 0,
+   "signal": null,
+   "watchdog_fired": false,
+   "log_sha256": "159388b11820c8813fb3fa7ab14080768701f59895f401c0e8194dec914c9531",
+   "harness": [
+    "before-start status=0 worker=0",
+    "flb_start ret=0",
+    "before-stop1 status=1 worker=0x7acd398ce6c0",
+    "flb_stop1 ret=0",
+    "before-stop2 status=0 worker=0x7acd398ce6c0",
+    "flb_stop2 ret=0",
+    "before-destroy status=0 worker=0x7acd398ce6c0",
+    "flb_destroy done"
+   ],
+   "engine_creates": 1,
+   "engine_thread": "0x7acd398ce6c0",
+   "engine_identifier_reused_by_later_create": false,
+   "engine_or_zero_joins": [
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1077",
+     "returned": 0
+    },
+    {
+     "thread": "engine",
+     "site": "flb_stop@src/flb_lib.c:1058",
+     "returned": 0
+    }
+   ],
+   "other_joins": 2
+  }
+ ]
+}
