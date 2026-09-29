@@ -137,6 +137,14 @@ mod typed_roots;
 #[path = "legacy_elaboration.rs"]
 mod elaboration_route;
 
+// Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): the one call-contract
+// application point and its new consumers (a scalar `return` operand, a call
+// whose actuals carry effects, a typed substitution), each a fallback after
+// every existing route of its position. The hooks below naming the card are
+// thin.
+#[path = "legacy_call_instantiation.rs"]
+mod call_instantiation_route;
+
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the P3 residual shapes
 // C's evaluation order admits. Hooks are thin.
 #[path = "legacy_typed_residuals.rs"]
@@ -6149,6 +6157,13 @@ impl Parser<'_> {
                 {
                     return Ok(elaborated);
                 }
+                // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): asked
+                // after the elaborator, only for a refused return.
+                if return_refused(&statement)
+                    && let Some(instantiated) = self.instantiated_return(&expression, line)
+                {
+                    return Ok(instantiated);
+                }
                 Ok(statement)
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
@@ -6308,6 +6323,25 @@ impl Parser<'_> {
             self.element_origins.clear();
             return elaborated;
         }
+        // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): asked last, only
+        // for a call whose lexical substitution was refused or incomplete.
+        if let Some(substituted) = self.substituted_call(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return Statement::Instruction(substituted, line);
+        }
+        if let LegacyInstruction::ContractCall { destination, .. } = &instruction {
+            let use_ = if destination.is_some() {
+                crate::call_instantiation::ResultUse::Stored
+            } else {
+                crate::call_instantiation::ResultUse::Discarded
+            };
+            self.record_instantiation_parity(
+                crate::call_instantiation::Consumer::Statement,
+                line,
+                &instruction,
+                use_,
+            );
+        }
         Statement::Instruction(instruction, line)
     }
 
@@ -6458,6 +6492,13 @@ impl Parser<'_> {
             return None;
         }
         if let Some(call) = self.return_call_instruction(expression, line) {
+            // Card CG03 (rule 10u): parity beside the whole-call admission.
+            self.record_instantiation_parity(
+                crate::call_instantiation::Consumer::Return,
+                line,
+                &call,
+                crate::call_instantiation::ResultUse::Returned,
+            );
             return Some((call, true));
         }
         if !return_call::place_is_unspelled(self.tokens, return_call::RETURN_RESULT_PLACE) {
@@ -6499,6 +6540,13 @@ impl Parser<'_> {
                     } if contract.result == ResourceReturnMode::None
                 );
                 if admitted {
+                    // Card CG03 (rule 10u): parity beside the B01 admission.
+                    self.record_instantiation_parity(
+                        crate::call_instantiation::Consumer::Return,
+                        line,
+                        &instruction,
+                        crate::call_instantiation::ResultUse::Tested,
+                    );
                     return Some((instruction, false));
                 }
                 self.next_site = restore;

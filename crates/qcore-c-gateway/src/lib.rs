@@ -26,6 +26,10 @@ pub mod condition_call_census;
 pub mod counter_source;
 #[cfg(feature = "indirect-census")]
 pub mod destination_suffix_census;
+// Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): the call-contract
+// acceptance and the typed per-formal substitution; the G hooks are in
+// `legacy_call_instantiation.rs`.
+mod call_instantiation;
 // Card CG02-ELABORATION-CORE (rule 10s): the common expression elaborator and
 // its order model; the G hooks are in `legacy_elaboration.rs`.
 mod elaboration;
