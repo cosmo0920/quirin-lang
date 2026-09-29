@@ -1,0 +1,48 @@
+{
+ "base": "docs/reports/w47-flb-lib-strict-pairing/artifacts/after/slice",
+ "diagnostic_counts": [
+  {
+   "counted_user": 1,
+   "unknown_alias": 1009,
+   "unsupported": 2857
+  },
+  {
+   "counted_user": 1,
+   "unknown_alias": 1009,
+   "unsupported": 2857
+  }
+ ],
+ "functions": [
+  {
+   "Pending": 1,
+   "Safe": 24,
+   "Unknown": 244,
+   "Unsafe": 1
+  },
+  {
+   "Pending": 1,
+   "Safe": 24,
+   "Unknown": 244,
+   "Unsafe": 1
+  }
+ ],
+ "identical": false,
+ "moved_functions": [],
+ "moved_units": [],
+ "route": "slice",
+ "run": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/cg10-before",
+ "sha256": [
+  "6bbac03d5128c3271f9dbad26c8db1d322724d9739c1f8305ea8dec40963c654",
+  "9c069d11fe1e88cbaa7ca38636a3d322b044e91d3f0624d14d01c7e77d4d5d3e"
+ ],
+ "units": [
+  {
+   "Unknown": 12,
+   "Unsafe": 1
+  },
+  {
+   "Unknown": 12,
+   "Unsafe": 1
+  }
+ ]
+}

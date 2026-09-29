@@ -1,0 +1,729 @@
+{
+ "base": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/cg10-before",
+ "diagnostic_counts": [
+  {
+   "counted_user": 1,
+   "unknown_alias": 1009,
+   "unsupported": 2857
+  },
+  {
+   "counted_user": 1,
+   "unknown_alias": 1087,
+   "unsupported": 2787
+  }
+ ],
+ "functions": [
+  {
+   "Pending": 1,
+   "Safe": 24,
+   "Unknown": 244,
+   "Unsafe": 1
+  },
+  {
+   "Pending": 1,
+   "Safe": 24,
+   "Unknown": 244,
+   "Unsafe": 1
+  }
+ ],
+ "identical": false,
+ "moved_functions": [
+  {
+   "function": "in_tail_collect_static",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `ctx`",
+     19451
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19451
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "plugins/in_tail/tail.c"
+  },
+  {
+   "function": "dormant_file_unchanged",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `previous`",
+     19612
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `previous`",
+     19617
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     19612
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in return expression",
+     19617
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "plugins/in_tail/tail_file.c"
+  },
+  {
+   "function": "flb_tail_file_append",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `dormant`",
+     20894
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `dormant`",
+     20931
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `file`",
+     20894
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `st`",
+     20894
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `st`",
+     20931
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20894
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20931
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "plugins/in_tail/tail_file.c"
+  },
+  {
+   "function": "flb_tail_file_chunk",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `file`",
+     21191
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `file`",
+     21299
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `file`",
+     21309
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "unrecognized assignment destination",
+     21191
+    ],
+    [
+     "unsupported",
+     "unrecognized assignment destination",
+     21299
+    ],
+    [
+     "unsupported",
+     "unrecognized assignment destination",
+     21309
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "plugins/in_tail/tail_file.c"
+  },
+  {
+   "function": "file_pending_flush",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `file`",
+     20362
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20362
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "plugins/in_tail/tail_multiline.c"
+  },
+  {
+   "function": "flb_tail_mult_process_first",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `ctx`",
+     20088
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `file`",
+     20099
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `file`",
+     20100
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `out_time`",
+     20088
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20099
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     20100
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     20088
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "plugins/in_tail/tail_multiline.c"
+  },
+  {
+   "function": "flb_input_instance_destroy",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     18748
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     18751
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     18754
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     18757
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     18846
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     18849
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     18852
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     18855
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     18748
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     18751
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     18754
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     18757
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     18846
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     18849
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     18852
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     18855
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_input.c"
+  },
+  {
+   "function": "flb_input_instance_init",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `config`",
+     19320
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     19320
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     19320
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_input.c"
+  },
+  {
+   "function": "flb_input_new",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `instance`",
+     18192
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `instance`",
+     18229
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `instance`",
+     18230
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18192
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18229
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18230
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_input.c"
+  },
+  {
+   "function": "input_instance_channel_events_init",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     18901
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18901
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_input.c"
+  },
+  {
+   "function": "flb_input_thread_collectors_signal_wait",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17631
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17631
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_input_thread.c"
+  },
+  {
+   "function": "flb_input_thread_instance_exit",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17501
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17501
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_input_thread.c"
+  },
+  {
+   "function": "flb_input_thread_instance_pause",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17463
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17463
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_input_thread.c"
+  },
+  {
+   "function": "flb_input_thread_instance_resume",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17480
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17480
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_input_thread.c"
+  },
+  {
+   "function": "input_thread_instance_create",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `ins`",
+     17307
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17285
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17295
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17306
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17307
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17285
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17295
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17306
+    ],
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     17307
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_input_thread.c"
+  },
+  {
+   "function": "input_thread_instance_destroy",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17240
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17243
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17246
+    ],
+    [
+     "unknown_alias",
+     "unresolved resource identity `thi`",
+     17249
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     17240
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     17243
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     17246
+    ],
+    [
+     "unsupported",
+     "unmodeled call, aggregate or indirect access in branch condition",
+     17249
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_input_thread.c"
+  },
+  {
+   "function": "flb_input_set_test",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `i_ins`",
+     18552
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18552
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_lib.c"
+  },
+  {
+   "function": "flb_lib_push",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `i_ins`",
+     18943
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18943
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_lib.c"
+  },
+  {
+   "function": "flb_output_set_http_test",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `o_ins`",
+     18573
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18573
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_lib.c"
+  },
+  {
+   "function": "flb_output_set_test_with_ctx_callback",
+   "leaves_added": [
+    [
+     "unknown_alias",
+     "unresolved resource identity `o_ins`",
+     18741
+    ]
+   ],
+   "leaves_removed": [
+    [
+     "unsupported",
+     "indirect memory access is outside the resource projection",
+     18741
+    ]
+   ],
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "unit": "src/flb_lib.c"
+  }
+ ],
+ "moved_units": [],
+ "route": "slice",
+ "run": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/cg10-after1",
+ "sha256": [
+  "9c069d11fe1e88cbaa7ca38636a3d322b044e91d3f0624d14d01c7e77d4d5d3e",
+  "e823515b0db6ffaa055a3157318e611e36330450e998903781a823821f33d78b"
+ ],
+ "units": [
+  {
+   "Unknown": 12,
+   "Unsafe": 1
+  },
+  {
+   "Unknown": 12,
+   "Unsafe": 1
+  }
+ ]
+}

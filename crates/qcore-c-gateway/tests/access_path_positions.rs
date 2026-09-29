@@ -219,11 +219,13 @@ fn a_condition_keeps_every_path_refusal() {
     ] {
         assert_eq!(outcome(body), unknown(&[BRANCH]), "{body}");
     }
+    // Card CG10 (rule 10t): the tracked mixed path is now read, and its
+    // `b->items` link, which no admitted store bound, refuses at the flow.
     let tracked = "int w(int n) { struct c_box *b = c_make(n); int r = 0; \
         if (b && b->items[0].count) r = 1; if (b) c_drop(b); return r; }";
     let (status, keys) = outcome(tracked);
     assert_eq!(status, "Unknown");
-    assert!(keys.contains(&BRANCH.to_owned()), "{keys:?}");
+    assert_eq!(keys, ["unknown_alias:b->items"], "{keys:?}");
 }
 
 /// One `NAME = PATH` operand is P2's borrowed read, then the existing null

@@ -1883,3 +1883,52 @@ which is not a second authority.
     node custody-neutral, and do not evaluate one outside `checked_binary`.
     `QCore.TypedSourceOperators`, bound to the Rust tables by a shared-vector
     test; [report](../reports/cg01-t-operator-closure/README.md).
+
+<a id="constraint-10t"></a>
+
+10t. **A mixed place on a root the closure does not prove never bound is read
+    only with the chain's own per-hop obligations, and a duplicate statement
+    only by its own occurrence.** Card CG10-COMMON-TYPED-PLACE
+    (`typed_place.rs`, thin hooks in `typed_access_path.rs`, `legacy_c.rs`,
+    `legacy_typed_positions.rs`, `typed_access_positions.rs`). (1) **The
+    place.** A common typed place is read from the Clang AST only: a root
+    `DeclRefExpr` naming a `ParmVarDecl` or `VarDecl` (its DeclID), then
+    `->F` / `.F` (FieldDecl id), `[I]` and `*`, each with Clang's type and
+    view; a subscript or indirection is a *hop* only through an
+    `LValueToRValue` pointer read, never through `ArrayToPointerDecay`. A
+    missing fact, a union or bit-field member, a `volatile`/`_Atomic` base,
+    any cast but those, a call, pointer arithmetic or any other form refuses.
+    (2) **The tracked root.** Where W46's mixed-path premise (a never-bound
+    root) fails, the place is admitted only on a pointer root that the
+    function declares exactly once as a parameter or automatic local, with no
+    reference to another object of its spelling, and only when its hops are
+    the root alone (`R->in.x`, `R->arr[i]`, `R[i].x`) or the root and the
+    direct member place `R->F` (`R->items[i].v`, `*R->p`, `R->F->in.x`). It
+    lowers to the existing chain obligation with `root_never_bound` false:
+    the root must be exactly one known, non-null, live identity, and `R->F`
+    must carry the admitted store's evidence (`chain_resolves`); a later hop
+    needs an untracked owner. A store through a subscript or indirection
+    keeps W43's refused-write frame; a non-pointer read or store changes no
+    custody, status, marker or field link; a pointer value read is P2's
+    target-free borrowed alias. (3) **Identity (I04).** Several Clang
+    statement candidates with one statement's line and tokens are told apart
+    only when the statement being classified is the run the parser consumed
+    (its stream index and length), the line's tokens equal the analysed
+    source's own, every candidate lies on that line at a distinct offset, and
+    the candidates number exactly the run's occurrences on the line; the k-th
+    occurrence is the k-th candidate in source order. A clause, operand,
+    desugared or rewritten run keeps the unique-match refusal. **Do not**
+    serve the never-bound premise from this route (a root with no binding, a
+    target-free or possibly-null root refuses at the flow), admit a pointer
+    loaded from a place deeper than `R->F` or from an element or pointee of
+    the root, admit a record-object, array, `static` or file-scope root, a
+    pointer-valued store (CG11), a custody-taking actual
+    (`W44-CALL-ARGUMENT-CUSTODY-POSITION`), or relax rule 10k's pointer-return
+    and pointer-actual premises; do not consult this route before an older
+    route of the position (hard invariant 3). Parity runs record every place
+    decision (`position: "typed-place"`, its root, steps, types and refusal).
+    Premises stated, not proved: faithful Clang extraction of types, field
+    and declaration ids and cast kinds, and that the gateway's tokens of a
+    line are the analysed source's (trust boundary 28).
+    `QCore.TypedPlace`, bound to the Rust decision table by a shared-vector
+    test; [report](../reports/cg10-common-typed-place/README.md).

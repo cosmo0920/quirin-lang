@@ -263,6 +263,8 @@ pub(crate) struct StatementIndex {
     by_line: Arc<BTreeMap<usize, Vec<Vec<usize>>>>,
     /// The unit's line starts: a node's line is found by binary search.
     line_starts: Arc<Vec<usize>>,
+    /// Card CG10 (I04): the analysed source's own tokens per line, read once.
+    line_tokens: Arc<OnceCell<BTreeMap<usize, Vec<String>>>>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -367,6 +369,7 @@ struct AstIndex {
     fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
     enums: Arc<EnumFacts>,
     line_starts: Arc<Vec<usize>>,
+    line_tokens: Arc<OnceCell<BTreeMap<usize, Vec<String>>>>,
 }
 
 struct FunctionEntry {
@@ -509,6 +512,7 @@ impl AstIndex {
             fields: Arc::new(retained.fields),
             enums: Arc::new(retained.enums),
             line_starts: Arc::new(line_starts(source)),
+            line_tokens: Arc::default(),
         })
     }
 
@@ -527,6 +531,7 @@ impl AstIndex {
             fields: Arc::new(retained.fields),
             enums: Arc::new(retained.enums),
             line_starts: Arc::new(line_starts(source)),
+            line_tokens: Arc::default(),
         }
     }
 }
@@ -613,28 +618,49 @@ impl StatementIndex {
                 enums: Arc::clone(&ast.enums),
                 by_line: Arc::clone(by_line),
                 line_starts: Arc::clone(&ast.line_starts),
+                line_tokens: Arc::clone(&ast.line_tokens),
             })
         })
     }
 
     /// Require a unique complete Clang statement whose tokens and internal
     /// line are exactly the gateway statement's tokens and line.
+    #[cfg(test)]
     pub(crate) fn statement(
         &self,
         texts: &[&str],
         line: usize,
         never_bound: impl Fn(&str) -> bool,
     ) -> Option<StatementPlan> {
-        let mut matched = self.by_line.get(&line)?.iter().filter_map(|path| {
-            let node = node_at_path(&self.function, path)?;
-            self.node_tokens(node)
-                .is_some_and(|found| found == texts)
-                .then_some(node)
-        });
-        let node = matched.next()?;
-        if matched.next().is_some() {
-            return None;
-        }
+        self.statement_with(texts, line, &|| None, never_bound)
+    }
+
+    /// [`Self::statement`], where several candidates are told apart by the
+    /// gateway's own `occurrence` of the run (card CG10, I04).
+    pub(crate) fn statement_with(
+        &self,
+        texts: &[&str],
+        line: usize,
+        occurrence: &dyn Fn() -> Option<crate::typed_place::Occurrence>,
+        never_bound: impl Fn(&str) -> bool,
+    ) -> Option<StatementPlan> {
+        let matched = self
+            .by_line
+            .get(&line)?
+            .iter()
+            .filter_map(|path| {
+                let node = node_at_path(&self.function, path)?;
+                self.node_tokens(node)
+                    .is_some_and(|found| found == texts)
+                    .then_some(node)
+            })
+            .collect::<Vec<_>>();
+        let node = match matched.as_slice() {
+            [node] => *node,
+            [_, _, ..] => self.by_occurrence(&matched, line, &occurrence()?)?,
+            [] => return None,
+        };
+        crate::typed_place::clear_decisions();
         let mut reader = self.reader(&never_bound);
         reader.statement(node)?;
         Some(reader.plan)
@@ -653,11 +679,41 @@ impl StatementIndex {
             fields: &self.fields,
             enums: &self.enums,
             never_bound,
+            function: Some(&self.function),
         }
     }
 
     pub(crate) fn node_line(&self, node: &Value) -> Option<usize> {
         node_line(node, self.source.len(), &self.line_starts)
+    }
+
+    /// Card CG10 (I04): the candidate the gateway's occurrence names.
+    pub(crate) fn by_occurrence<'a>(
+        &self,
+        candidates: &[&'a Value],
+        line: usize,
+        occurrence: &crate::typed_place::Occurrence,
+    ) -> Option<&'a Value> {
+        let original = self.line_tokens.get_or_init(|| {
+            let mut lines: BTreeMap<usize, Vec<String>> = BTreeMap::new();
+            for token in tokenize(&self.source) {
+                lines.entry(token.line).or_default().push(token.text);
+            }
+            lines
+        });
+        crate::typed_place::by_occurrence(
+            candidates,
+            occurrence,
+            original.get(&line).map_or(&[][..], Vec::as_slice),
+            line,
+            |node| {
+                let begin = offset(&node["range"]["begin"])?;
+                let end = offset(&node["range"]["end"])?;
+                let last = (end <= self.source.len())
+                    .then(|| self.line_starts.partition_point(|&start| start <= end))?;
+                Some((begin, self.node_line(node)?, last))
+            },
+        )
     }
 
     pub(crate) fn node_tokens(&self, node: &Value) -> Option<Vec<String>> {
@@ -860,6 +916,9 @@ pub(crate) struct Reader<'a> {
     fields: &'a BTreeMap<String, Option<FieldFacts>>,
     enums: &'a EnumFacts,
     pub(crate) never_bound: &'a dyn Fn(&str) -> bool,
+    /// Card CG10-COMMON-TYPED-PLACE (rule 10t): the function whose body the
+    /// reader reads, for the tracked-root place's DeclID identity.
+    function: Option<&'a Value>,
 }
 
 impl Reader<'_> {
@@ -1105,14 +1164,19 @@ impl Reader<'_> {
             || steps.iter().any(|step| step.0 == "*" && steps.len() != 1)
             || steps.iter().skip(1).any(|step| step.0 != "->");
         // The existing tracked field-link model names only direct `->`
-        // places. A path through embedded records or indexed objects has
-        // no tracked place representation, so it is admitted only when the
-        // custody closure proves the root can never bind a resource. Then
-        // every loaded pointer is outside this projection's tracked graph.
-        if mixed_path && !(self.never_bound)(root) {
-            return None;
-        }
-        if steps.len() > 1 || first.0 != "." {
+        // places. A path through embedded records or indexed objects under a
+        // never-bound root is admitted as before: every loaded pointer is
+        // outside this projection's tracked graph. Card CG10 (rule 10t): on
+        // any other root, the common typed place carries the per-hop
+        // obligations the chain model checks, or refuses.
+        let tracked = if mixed_path && !(self.never_bound)(root) {
+            Some(crate::typed_place::tracked_chain(node, self.fields, self.function).ok()?)
+        } else {
+            None
+        };
+        if let Some(tracked) = &tracked {
+            self.plan.chains.push(tracked.chain.clone());
+        } else if steps.len() > 1 || first.0 != "." {
             let members = steps.iter().map(|step| step.1.clone()).collect::<Vec<_>>();
             let links = if mixed_path {
                 Vec::new()
@@ -1129,7 +1193,12 @@ impl Reader<'_> {
                 member: members.last()?.clone(),
             });
         }
-        if store && matches!(first.0, "*" | "[]") {
+        if store
+            && (matches!(first.0, "*" | "[]")
+                || tracked
+                    .as_ref()
+                    .is_some_and(|tracked| tracked.through_element))
+        {
             self.plan.scalar.writes_through_pointer = true;
         }
         self.plan.accesses += 1;
@@ -1294,7 +1363,7 @@ mod tests {
     }
 
     #[test]
-    fn mixed_embedded_and_indexed_path_needs_untracked_root() {
+    fn mixed_embedded_and_indexed_path_carries_per_hop_obligations() {
         let source = "struct I { int value; }; struct S { struct I inner; struct I *items; }; int f(struct S *p, int i) { int x = p->inner.value + p->items[i].value; return 0; }";
         let _scope = enter_source(source, CCompilerDialect::C11, None);
         let index = StatementIndex::read("f").expect("typed function");
@@ -1308,7 +1377,23 @@ mod tests {
             .expect("untracked path");
         assert_eq!(plan.accesses, 2);
         assert!(plan.chains.iter().all(|chain| chain.links.is_empty()));
-        assert!(index.statement(&texts, 1, |name| name != "p").is_none());
+        // Card CG10 (rule 10t): on a root the closure does not prove never
+        // bound, the common typed place carries the per-hop obligations the
+        // flow checks: the root alone for the embedded member, and the root
+        // plus the direct member place `p->items` for the indexed element.
+        let tracked = index
+            .statement(&texts, 1, |name| name != "p")
+            .expect("tracked-root place");
+        assert_eq!(tracked.accesses, 2);
+        assert!(tracked.chains.iter().all(|chain| !chain.root_never_bound));
+        assert_eq!(
+            tracked
+                .chains
+                .iter()
+                .map(|chain| chain.links.clone())
+                .collect::<Vec<_>>(),
+            [Vec::<String>::new(), vec!["items".to_owned()]]
+        );
     }
 
     #[test]
