@@ -1,0 +1,37 @@
+{
+ "fixed-configured.json": {
+  "bytes": 958745,
+  "file": "fixed-configured.json.gz",
+  "sha256": "719a7d0d761c9375adca9eb89aac84264625e3c9706f3923488b14593c5266b6"
+ },
+ "fixed.attribution": {
+  "bytes": 10826,
+  "file": "fixed.attribution.gz",
+  "sha256": "5d917ba36b203b47a003cd956c09ec36617cbac642c819202b993b28c6847050"
+ },
+ "fixed.site-diff": {
+  "bytes": 1949,
+  "file": "fixed.site-diff.gz",
+  "sha256": "3d4be1f097abb0eb25ecb7fab18d948e3bf9c90d36b22572c2fe90c53ee3d67e"
+ },
+ "inputs.sha256": {
+  "bytes": 890,
+  "file": "inputs.sha256.gz",
+  "sha256": "a7db912091a1650f3deeed47bbd0b65c455fde172833afac9af4b3ddf99c6a72"
+ },
+ "previous-configured.json": {
+  "bytes": 945151,
+  "file": "previous-configured.json.gz",
+  "sha256": "418a9251cf029d442121e95565993591827bb712a7d8b472c861fe2005f3163d"
+ },
+ "previous.attribution": {
+  "bytes": 10696,
+  "file": "previous.attribution.gz",
+  "sha256": "456cdf09d334c59d2d042f6cb8b7cb99fab81b58f84edd32033c93a206602387"
+ },
+ "previous.site-diff": {
+  "bytes": 683,
+  "file": "previous.site-diff.gz",
+  "sha256": "f32080a8452ae26b5901f3bb1758e1718823d3717cc9805eeaf1c8dfbdba6e48"
+ }
+}

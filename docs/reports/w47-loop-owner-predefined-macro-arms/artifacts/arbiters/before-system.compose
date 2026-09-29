@@ -1,0 +1,6 @@
+merged functions: {'Unknown': 201, 'Safe': 31, 'Unsafe': 2}
+merged units: {'Unknown': 7, 'Unsafe': 1}
+merged diagnostic_counts: {'counted_user': 4, 'unknown_alias': 1020, 'unsupported': 2888}
+functions/leaves touched by both cards: 0 []
+mismatches: 0
+COMPOSES

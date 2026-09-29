@@ -1,0 +1,8 @@
+console.log: run 10ba0f06a5a09fda archive f2c42fd549f17597 DIFFERENT raw; with the root alias 1 line(s) differ (line count 104 vs 104)
+exit: run 9a271f2a916b0b6e archive 9a271f2a916b0b6e identical
+resource-diagnostics.chunk-contracts.json: run a97259087e4ad89a archive a97259087e4ad89a identical
+resource-diagnostics.contracts.json: run 5a17ce3015eb1117 archive b3cf79d09a808aef DIFFERENT raw; with the root alias identical (line count 5158 vs 5158)
+resource-diagnostics.invocation.json: run b2f34ca28d9d5a98 archive d502a4a674a47711 DIFFERENT raw; with the root alias 2 line(s) differ (line count 88 vs 88)
+resource-diagnostics.json: run 43ddc09203d784ce archive 20fd335ed6a9424b DIFFERENT raw; with the root alias 48 line(s) differ (line count 35153 vs 35153)
+resource-diagnostics.source-effects.json: run a97259087e4ad89a archive a97259087e4ad89a identical
+stderr.log: run e3b0c44298fc1c14 archive e3b0c44298fc1c14 identical

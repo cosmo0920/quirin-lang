@@ -1453,6 +1453,52 @@ which is not a second authority.
     prefix of the keys, a matched hazard staying read, case variants
     matching the same entries, and a read reach holding a hazard keeping the
     route; [report](../reports/w47-service-property-keys/README.md).
+    **Amendment (W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS): reserved macros
+    decided from the recorded compiler.** The configured reading may decide a
+    macro reserved to the implementation (C11 7.1.3: `__X`, `_` and an
+    uppercase letter) that a read file's conditional directive names
+    (`predefined_macros`, `loop_owner_predefined_macros.rs`, child of
+    `thread_entry_census.rs`; the facts written by the
+    `predefined_macro_facts` example). Each recorded compile command is run
+    with its own compiler and flags: a probe `#ifdef` per candidate at the
+    start of a unit (built-ins, then the command line's `-D`/`-U` in order),
+    the `-dM` listing (every listed candidate must probe defined), and `-E
+    -dD` of the command's file (every `#define`/`#undef` outside the
+    built-in and command-line segments, system headers included, and every
+    file it reads). The compiler's identity (path, resolved path, SHA-256,
+    `--version`) is recorded, and the facts decide nothing unless its
+    `--version` equals the build record's, the database's SHA-256 and each
+    command's file and compiler equal the census's database, and no
+    compiler is unavailable. A name is then **defined** in a file when every
+    command of that file starts with it and no directive of those units
+    `#undef`s it, **undefined** when none starts with it and none `#define`s
+    it; a file without a command is decided over every command, only when
+    some unit read it and no derivation failed; a failed derivation leaves
+    its own file undecided. A read file's `#define`/`#undef` and a generated
+    header's `#define` still win, the `FLB_` rules are unchanged, and a
+    value comparison (`__GNUC__ >= 4`) is never evaluated. The census reports
+    each decision per file (`predefined_macros.decisions`). **Do not** decide
+    a predefined macro from an assumed target, a compiler other than the
+    recorded one, or a derivation that failed, read a comparison of a
+    predefined value, or decide a header from its includers alone. Premises
+    added (trust boundary 28): P-RECORDED-COMPILER (the compiler at the
+    recorded path with the recorded version behaves as it did in the build)
+    and P-DD-COMPLETE (Clang's `-dD` prints every directive it processes, and
+    its line markers name every file a unit reads).
+    At the export the fixed test's 3 sites are **discharged at this path
+    under these derived premises** on `(flb_lib_worker, NonThreaded)` and
+    `(input_thread, Threaded)` (P-CORO-HANDLE, P-PLUGIN-DIR, P-HEAD-INSTANCE,
+    P-FRESH-CONTEXT, P-REGISTERED-DESCRIPTORS, P-HOLDER-OPAQUE,
+    P-INSTANCE-FIELDS-BY-MEMBER, P-KEY-FOLD, P-CALLBACK-INSTANCE derived,
+    typed-reading faithfulness, the region's unmodelled macro calls of
+    `W47-LOOP-OWNER-REGION-MACRO-CALLS`, and the two above), never a
+    verified fix; the old test's stay not discharged. `QCore.LoopOwner`
+    proves a decided macro agreeing with its definedness at every point of
+    every unit, the three-valued condition reading agreeing with the
+    preprocessor, a comparison keeping its arm, an absent derivation keeping
+    every arm, `-U` undefining, a file's directive winning and the old test's
+    path refused whatever the arms;
+    [report](../reports/w47-loop-owner-predefined-macro-arms/README.md).
 
 <a id="constraint-10q"></a>
 

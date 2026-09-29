@@ -992,6 +992,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-loop-owner-instance-flow](w47-loop-owner-instance-flow/README.md) | W47-LOOP-OWNER-INSTANCE-FLOW: the instance a plugin copy is installed on |
 
+| [w47-loop-owner-predefined-macro-arms](w47-loop-owner-predefined-macro-arms/README.md) | W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS: reserved macros from the recorded compiler |
+
 | [w47-loop-owner-typed-dispatch](w47-loop-owner-typed-dispatch/README.md) | W47-LOOP-OWNER-TYPED-DISPATCH: type-keyed field dispatch and a plugin copy's instance flag |
 
 | [w47-review-hold-concrete-reason](w47-review-hold-concrete-reason/README.md) | W47-REVIEW-HOLD-CONCRETE-REASON: a held row names the act it awaits |
