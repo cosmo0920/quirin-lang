@@ -1721,3 +1721,7 @@ mod short_circuit_tests;
 #[cfg(test)]
 #[path = "../tests/unit/source_symbols.rs"]
 mod symbol_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/source_operators_before.rs"]
+mod operators_before_tests;
