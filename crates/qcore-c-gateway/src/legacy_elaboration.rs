@@ -824,7 +824,12 @@ impl Parser<'_> {
         let mut plan = self.elaborate_condition(&index, leaf).ok()?;
         // The last node is the branch that refines nothing.
         plan.nodes.pop();
-        Some(plan.nodes.into_iter().map(|node| node.instruction).collect())
+        Some(
+            plan.nodes
+                .into_iter()
+                .map(|node| node.instruction)
+                .collect(),
+        )
     }
 
     fn elaborate_condition(

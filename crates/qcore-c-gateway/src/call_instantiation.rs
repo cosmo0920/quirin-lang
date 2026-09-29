@@ -274,7 +274,13 @@ pub(crate) const ACCEPTANCE_VECTORS: &[(&str, &str, bool, &str, &str)] = &[
     ("validated", "reallocated", false, "tested-split", "accept"),
     ("declared", "derived", true, "tested-split", "accept"),
     ("declared", "none", true, "tested-split", "accept"),
-    ("recursive", "owned", false, "tested-split", "recursive-local"),
+    (
+        "recursive",
+        "owned",
+        false,
+        "tested-split",
+        "recursive-local",
+    ),
 ];
 
 /// The typed form of one actual, read from Clang's AST.

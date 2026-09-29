@@ -283,6 +283,13 @@ fn an_assigned_scalar_result_is_the_c_programs_own_temporary() {
     assert_eq!(run.leaks(), 1);
 }
 
+/// Q47 of the Clang gap analysis. **Flipped by CG04-CONDITION-ACQUISITION
+/// (rule 10x):** an owned result assigned in a condition and split on its
+/// failure value is lowered where it stands (the acquisition, its binding to
+/// `p`, the null split and the merge together), so the function is decided as
+/// the statement pair `p = q_alloc(); if (p == 0) …` is. The regression half
+/// stands: the call is never hoisted out of the condition (it is one node of
+/// the condition's plan), and a discarded owned result keeps its refusal.
 #[test]
 fn an_owned_result_assigned_in_a_condition_keeps_todays_exact_lowering() {
     if !clang_available() {
@@ -290,13 +297,14 @@ fn an_owned_result_assigned_in_a_condition_keeps_todays_exact_lowering() {
     }
     let run =
         analyze("void subject(void) { void *p; if ((p = q_alloc()) == 0) { return; } q_free(p); }");
-    assert!(run.refused(BRANCH), "{run:?}");
-    assert_ne!(run.status, AnalysisStatus::Safe);
-    // The node is the unchanged refusal: no call was lifted out of it.
-    assert_eq!(run.calls("q_alloc"), 0);
+    assert!(!run.refused(BRANCH), "{run:?}");
+    assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
+    // One node applies the acquisition, in the condition's plan: nothing
+    // was hoisted or duplicated.
+    assert_eq!(run.calls("q_alloc"), 1);
     assert!(run.cfg.nodes.iter().any(|node| matches!(
         &node.instruction,
-        LegacyInstruction::Unknown { description, .. } if description == BRANCH
+        LegacyInstruction::BranchOnNull { source, true_is_null: true } if source == "p"
     )));
     // A discarded owned result stays refused too.
     let run = analyze(
@@ -341,10 +349,13 @@ fn shapes_outside_the_desugaring_keep_the_refusal() {
     for condition in [
         // A connective below a leaf.
         "(flag && r_borrow_code(p)) == 0",
-        // A type operator anywhere.
+        // A call inside a type operator's operand (C evaluates none of it).
         "flag && sizeof(r_borrow_code(p))",
-        // A write.
-        "flag++ && r_borrow_code(p)",
+        // A write beside a call in one leaf. (CG04-CONDITION-ACQUISITION
+        // flipped the former fixture `flag++ && r_borrow_code(p)`: the write
+        // in its own leaf is the elaborator's, sequenced by `&&`; see
+        // `a_write_in_its_own_leaf_is_sequenced_by_the_connective`.)
+        "r_borrow_code(p) == flag++",
         // GNU elvis.
         "r_borrow_code(p) ?: flag",
     ] {
@@ -354,6 +365,21 @@ fn shapes_outside_the_desugaring_keep_the_refusal() {
         assert!(run.refused(BRANCH), "{condition}: {run:?}");
         assert_ne!(run.status, AnalysisStatus::Safe, "{condition}");
     }
+}
+
+/// Flipped by CG04-CONDITION-ACQUISITION (rule 10x): a write in a call-free
+/// leaf of its own is decided by the elaborator (rule 10s), sequenced before
+/// the right operand by `&&`.
+#[test]
+fn a_write_in_its_own_leaf_is_sequenced_by_the_connective() {
+    if !clang_available() {
+        return;
+    }
+    let run = analyze(
+        "void subject(int flag) { void *p = q_alloc(); if (flag++ && r_borrow_code(p)) { } q_free(p); }",
+    );
+    assert!(!run.refused(BRANCH), "{run:?}");
+    assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
 }
 
 #[test]
@@ -484,12 +510,25 @@ fn a_descriptor_keeps_the_sentinel_validity_rules() {
     let run = run_with(&source, "w", &descriptor_contracts());
     assert!(!run.refused(BRANCH), "{run:?}");
     assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
-    // An owned descriptor result assigned in the condition keeps its refusal.
+    // Flipped by CG04-CONDITION-ACQUISITION (rule 10x): an owned descriptor
+    // result assigned in the condition and split on its sentinel is lowered
+    // where it stands, as the statement pair `fd = k_open(path); if (fd < 0)`.
     let source = format!(
         "{DESCRIPTOR_DECLARATIONS}\nvoid w(const char *path) {{ int fd; if ((fd = k_open(path)) < 0) {{ return; }} k_close(fd); }}\n"
     );
     let run = run_with(&source, "w", &descriptor_contracts());
-    assert!(run.refused(BRANCH), "{run:?}");
+    assert!(!run.refused(BRANCH), "{run:?}");
+    assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
+    // A comparison that refines nothing (`== 3`) is the statement pair's
+    // scalar decision: the early return leaks the descriptor, as the source
+    // does, and the close meets a possibly invalid one.
+    let source = format!(
+        "{DESCRIPTOR_DECLARATIONS}\nvoid w(const char *path) {{ int fd; if ((fd = k_open(path)) == 3) {{ return; }} k_close(fd); }}\n"
+    );
+    let run = run_with(&source, "w", &descriptor_contracts());
+    assert!(!run.refused(BRANCH), "{run:?}");
+    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
+    assert_eq!(run.leaks(), 1);
     // A descriptor read as data beside a call stays refused.
     let source = format!(
         "{DESCRIPTOR_DECLARATIONS}\nvoid w(const char *path, char *b, int flag) {{ int fd = k_open(path); if (flag && k_read(fd, b, 1) > fd) {{ }} if (fd >= 0) {{ k_close(fd); }} }}\n"

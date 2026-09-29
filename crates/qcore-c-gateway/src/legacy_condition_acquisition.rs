@@ -124,7 +124,133 @@ pub(super) fn leaf_features(texts: &[&str]) -> Option<LeafFeatures> {
     Some(features)
 }
 
+/// The token ranges of one function body that may lie on a CFG cycle.
+///
+/// Every node of a cycle lies between the target and the source of some
+/// backward edge of that cycle (the walk that crosses a position upwards must
+/// cross it downwards again, and only a backward edge does). The backward
+/// edges of a body are a loop's (`while`, `for`, `do`: header to body end) and
+/// a `goto` whose label precedes it, so the union of those ranges covers every
+/// cycle. A body extent this reader cannot bound, a `goto` whose label it does
+/// not find, a computed `goto` and `setjmp` make the whole body a cycle.
+#[derive(Clone, Debug, Default)]
+pub(super) struct CycleRanges {
+    whole_body: bool,
+    ranges: Vec<(usize, usize)>,
+}
+
+impl CycleRanges {
+    /// Read the ranges of the body whose `{` is at `body_start`.
+    pub(super) fn read(tokens: &[Token], body_start: usize) -> Self {
+        let Some(body_end) = super::matching(tokens, body_start, "{", "}") else {
+            return Self {
+                whole_body: true,
+                ranges: Vec::new(),
+            };
+        };
+        let text = |index: usize| tokens.get(index).map_or("", |token| token.text.as_str());
+        // The end of the innermost block holding `index`: a statement body
+        // without braces is bounded by it (an over-approximation).
+        let block_end = |index: usize| -> usize {
+            let mut depth = 0usize;
+            for at in index..body_end {
+                match text(at) {
+                    "{" => depth += 1,
+                    "}" => {
+                        if depth == 0 {
+                            return at;
+                        }
+                        depth -= 1;
+                    }
+                    _ => {}
+                }
+            }
+            body_end
+        };
+        let mut ranges = Vec::new();
+        let mut labels = std::collections::BTreeMap::new();
+        for at in body_start + 1..body_end {
+            if is_identifier(text(at))
+                && text(at + 1) == ":"
+                && matches!(text(at.wrapping_sub(1)), ";" | "{" | "}" | ":")
+            {
+                labels.entry(text(at).to_owned()).or_insert(at);
+            }
+        }
+        for at in body_start + 1..body_end {
+            match text(at) {
+                "while" | "for" if text(at + 1) == "(" => {
+                    let Some(close) = super::matching(tokens, at + 1, "(", ")") else {
+                        return Self::whole();
+                    };
+                    let end = if text(close + 1) == "{" {
+                        super::matching(tokens, close + 1, "{", "}").unwrap_or(body_end)
+                    } else {
+                        block_end(close + 1)
+                    };
+                    ranges.push((at, end));
+                }
+                "do" => {
+                    let end = if text(at + 1) == "{" {
+                        super::matching(tokens, at + 1, "{", "}")
+                            .and_then(|close| {
+                                (text(close + 1) == "while" && text(close + 2) == "(")
+                                    .then(|| super::matching(tokens, close + 2, "(", ")"))
+                                    .flatten()
+                            })
+                            .map_or(body_end, |close| close + 1)
+                    } else {
+                        block_end(at + 1)
+                    };
+                    ranges.push((at, end));
+                }
+                "goto" => {
+                    let Some(&label) = labels.get(text(at + 1)) else {
+                        return Self::whole();
+                    };
+                    if label < at {
+                        ranges.push((label, at));
+                    }
+                }
+                "setjmp" | "_setjmp" | "sigsetjmp" | "__sigsetjmp" | "__builtin_setjmp" => {
+                    return Self::whole();
+                }
+                _ => {}
+            }
+        }
+        Self {
+            whole_body: false,
+            ranges,
+        }
+    }
+
+    fn whole() -> Self {
+        Self {
+            whole_body: true,
+            ranges: Vec::new(),
+        }
+    }
+
+    /// Whether the token at `index` may lie on a cycle.
+    pub(super) fn contains(&self, index: usize) -> bool {
+        self.whole_body
+            || self
+                .ranges
+                .iter()
+                .any(|&(start, end)| (start..=end).contains(&index))
+    }
+}
+
 impl Parser<'_> {
+    /// Whether the controlling expression just read (the parser's cursor is
+    /// past it) may be evaluated on a CFG cycle.
+    pub(super) fn condition_on_cycle(&self, position: Position) -> bool {
+        !matches!(position, Position::Branch | Position::Switch)
+            || self
+                .condition_cycles
+                .contains(self.cursor.saturating_sub(1))
+    }
+
     /// The split the residual of a leaf makes on `name`, the destination of
     /// its one assigned call: the existing null test (`BranchOnNull`) or, for
     /// a descriptor, the existing validity test (`BranchOnValidity`).
@@ -148,6 +274,14 @@ impl Parser<'_> {
         outcome: Result<&ConditionPlan, String>,
         kept: bool,
     ) {
+        #[cfg(test)]
+        CONSULTATIONS.with(|consultations| {
+            consultations.borrow_mut().push(match &outcome {
+                Ok(_) if kept => "admitted".to_owned(),
+                Ok(_) => "not-kept".to_owned(),
+                Err(refusal) => refusal.clone(),
+            });
+        });
         if !crate::typed_access_path::parity_enabled() {
             return;
         }
@@ -186,39 +320,13 @@ impl Parser<'_> {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::{holds_real_call, leaf_features, type_operand_spans};
-    use crate::legacy_c::Token;
-
-    fn texts(text: &str) -> Vec<&str> {
-        text.split_whitespace().collect()
-    }
-
-    #[test]
-    fn a_type_operand_is_set_apart() {
-        assert_eq!(
-            type_operand_spans(&texts("n < sizeof ( buf ) + sizeof ( int )")),
-            Some(vec![(2, 5), (7, 10)])
-        );
-        assert_eq!(type_operand_spans(&texts("n < sizeof * p")), None);
-        let features = leaf_features(&texts("f ( p ) == sizeof ( int )")).unwrap();
-        assert!(features.call && !features.call_in_type_operand);
-        let features = leaf_features(&texts("n == sizeof ( f ( p ) )")).unwrap();
-        assert!(!features.call && features.call_in_type_operand);
-        let features = leaf_features(&texts("f ( a & & b ) == i ++")).unwrap();
-        assert!(features.call && features.increment && !features.connective);
-        let features = leaf_features(&texts("( a & & b ) == f ( x )")).unwrap();
-        assert!(features.call && features.connective);
-        let tokens = |text: &str| {
-            text.split_whitespace()
-                .map(|text| Token {
-                    text: text.to_owned(),
-                    line: 1,
-                })
-                .collect::<Vec<_>>()
-        };
-        assert!(!holds_real_call(&tokens("n < sizeof ( int )")));
-        assert!(holds_real_call(&tokens("f ( n ) < sizeof ( int )")));
-        assert!(holds_real_call(&tokens("n < sizeof * f ( p )")));
-    }
+thread_local! {
+    /// Test builds only: every consultation's answer, in order (`admitted` or
+    /// the refusal variant), so a unit test can pin which arm refused.
+    pub(super) static CONSULTATIONS: std::cell::RefCell<Vec<String>> =
+        const { std::cell::RefCell::new(Vec::new()) };
 }
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_condition_acquisition.rs"]
+mod tests;

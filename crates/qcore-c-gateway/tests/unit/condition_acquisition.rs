@@ -176,3 +176,30 @@ fn cg04_lean_leaf_vectors_match_the_rust_table() {
         );
     }
 }
+
+#[test]
+fn the_placement_vectors_hold() {
+    for (custody, on_cycle, expected) in PLACEMENT_VECTORS {
+        let decided = match placement(*custody, *on_cycle) {
+            Ok(()) => "accept",
+            Err(refusal) => refusal.code(),
+        };
+        assert_eq!(decided, *expected, "{custody} {on_cycle}");
+    }
+}
+
+#[test]
+fn cg04_lean_placement_vectors_match_the_rust_table() {
+    let rows = lean_rows("def placementVectors : List (Bool × Bool × PlacementDecision) := [");
+    assert_eq!(rows.len(), PLACEMENT_VECTORS.len());
+    for (row, (custody, on_cycle, decision)) in rows.iter().zip(PLACEMENT_VECTORS) {
+        assert_eq!(
+            row,
+            &[
+                custody.to_string(),
+                on_cycle.to_string(),
+                (*decision).to_owned()
+            ]
+        );
+    }
+}

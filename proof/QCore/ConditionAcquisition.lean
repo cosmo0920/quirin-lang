@@ -216,6 +216,44 @@ theorem the_obligation_follows_the_outcome (o : Outcome) :
     (feasible (edgeOf (bind o)) o && obligation o) = obligation o := by
   cases o <;> decide
 
+/-! ## Placement: no split acquisition on a cycle -/
+
+inductive PlacementDecision where
+  | accept
+  | acquisitionOnCycle
+  deriving DecidableEq, Repr
+
+/-- `placement`: a custody split only on a node no CFG cycle passes through. -/
+def placement (custody onCycle : Bool) : PlacementDecision :=
+  if custody && onCycle then .acquisitionOnCycle else .accept
+
+/-- `PLACEMENT_VECTORS` of `condition_acquisition.rs`, row by row. -/
+def placementVectors : List (Bool × Bool × PlacementDecision) := [
+  (true, false, .accept),
+  (true, true, .acquisitionOnCycle),
+  (false, true, .accept),
+  (false, false, .accept)
+]
+
+theorem placement_vectors_hold :
+    placementVectors.all (fun (c, o, d) => placement c o == d) = true := by
+  decide
+
+/-- The flow keeps one abstract site per acquisition node. On a path that
+visits no node twice (no cycle passes through it), that site stands for at
+most one runtime generation. -/
+theorem off_every_cycle_a_site_has_one_generation (path : List Nat) (node : Nat)
+    (h : path.Nodup) : path.count node ≤ 1 :=
+  List.nodup_iff_count.mp h node
+
+/-- Why the guard: on a cycle, a live earlier generation and the fresh one share
+the site. After a failed re-acquisition the refined failed edge carries nothing
+(`the_failed_edge_carries_nothing`), while the earlier generation is still live
+concretely: the merge would hide a leak. -/
+theorem a_merged_site_would_hide_a_live_generation :
+    carries .failed = false ∧ (1 + (if obligation .failure then 1 else 0)) = 1 := by
+  decide
+
 /-! ## Reallocation -/
 
 /-- Live obligations after a reallocation: the old identity and the new one. -/

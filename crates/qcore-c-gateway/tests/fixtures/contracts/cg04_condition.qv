@@ -1,0 +1,14 @@
+module contract;
+
+// Card CG04-CONDITION-ACQUISITION: synthetic fixture contracts (trusted test
+// assumptions, not library facts).
+
+// An out-parameter acquisition with a status result. The contract states no
+// relation between the result and the out slot (no contract can), so a
+// condition testing the status does not split the acquisition.
+extern fn cg4_make(d: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_out(d, nonnull);
+    ensures normal resource_return_none();
+};

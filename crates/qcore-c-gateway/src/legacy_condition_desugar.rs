@@ -824,6 +824,11 @@ impl Parser<'_> {
                 let result = crate::call_instantiation::ResultClass::of(contract.result);
                 acquisition_rule::carrier(result, contract.result_kind.is_integer(), split)
                     .map_err(Refusal::LeafShape)?;
+                acquisition_rule::placement(
+                    !result.resource_free(),
+                    self.condition_on_cycle(position),
+                )
+                .map_err(Refusal::LeafShape)?;
                 // A descriptor destination holds only its own acquisition.
                 if descriptor_destination.is_some()
                     && (result.resource_free() || !contract.result_kind.is_integer())
@@ -866,9 +871,9 @@ impl Parser<'_> {
             // name, or this one elsewhere, keeps the refusal.
             let own = split == Some(Split::Sentinel)
                 && descriptor_destination.is_some_and(|group| {
-                    residual_texts.iter().all(|text| {
-                        !self.descriptor_names.contains(text) || *text == group.name
-                    })
+                    residual_texts
+                        .iter()
+                        .all(|text| !self.descriptor_names.contains(text) || *text == group.name)
                 });
             if !own {
                 return Err(Refusal::DescriptorRead(name.to_owned()));
@@ -961,8 +966,7 @@ impl Parser<'_> {
         self.typed_position_uses.set(uses);
         // Card CG04-CONDITION-ACQUISITION (rule 10x): a leaf the elaborator
         // decided keeps the plan as a typed operand does.
-        let elaborated =
-            self.condition_widening.get() & acquisition::WIDENED_ELABORATED_LEAF != 0;
+        let elaborated = self.condition_widening.get() & acquisition::WIDENED_ELABORATED_LEAF != 0;
         if elaborated {
             self.record_condition_desugar(
                 condition,

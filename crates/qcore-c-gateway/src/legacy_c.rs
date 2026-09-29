@@ -3196,6 +3196,7 @@ fn build_function_cfg_with(
         typed_path_function: function.to_owned(),
         typed_position_uses: std::cell::Cell::new(0),
         condition_widening: std::cell::Cell::new(0),
+        condition_cycles: condition_acquisition_route::CycleRanges::read(tokens, body_start),
         typed_place_origin: std::cell::Cell::new(None),
         typed_root_declarations: std::cell::OnceCell::new(),
     };
@@ -4545,6 +4546,9 @@ struct Parser<'a> {
     /// Card CG04-CONDITION-ACQUISITION: the widenings of rule 10x a plan
     /// being built took (`condition_acquisition_route::WIDENED_*`).
     condition_widening: std::cell::Cell<u8>,
+    /// Card CG04-CONDITION-ACQUISITION: the body's token ranges that may lie
+    /// on a CFG cycle (a split acquisition there is refused).
+    condition_cycles: condition_acquisition_route::CycleRanges,
     /// Card CG10-COMMON-TYPED-PLACE (I04): the stream index and length of the
     /// statement being classified, set only around its `classify_simple`.
     typed_place_origin: std::cell::Cell<Option<(usize, usize)>>,

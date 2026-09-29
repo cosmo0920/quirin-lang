@@ -40,7 +40,11 @@
 //!
 //! [`leaf_use`] decides the use, [`carrier`] checks that the split tests the
 //! carrier the result is (a pointer's NULL, an integer descriptor's
-//! sentinel). An out-parameter acquisition (`if (f(&p) == 0)`) needs a
+//! sentinel), and [`placement`] refuses a custody split on a node a CFG cycle
+//! may pass through: the flow keeps one abstract site per acquisition node,
+//! so a later generation would merge with a live earlier one and the refuted
+//! failure edge would erase both (the statement form has the same defect,
+//! registered as `CG04-LOOP-SITE-GENERATIONS`). An out-parameter acquisition (`if (f(&p) == 0)`) needs a
 //! contract that states the result/out relation; no contract does, so its
 //! refusal is unchanged (CG23).
 //!
@@ -105,6 +109,12 @@ pub(crate) enum Refusal {
     IncrementBesideCall,
     /// A connective below a leaf holding a call (CG06).
     ConnectiveBesideCall,
+    /// A custody split on a node that may lie on a CFG cycle: the flow's
+    /// acquisition site is one abstract site for every generation
+    /// (`create_resource`), so a live earlier generation would be merged into
+    /// the fresh one and the refuted failure edge would erase both
+    /// (`CG04-LOOP-SITE-GENERATIONS`).
+    AcquisitionOnCycle,
 }
 
 impl Refusal {
@@ -115,6 +125,7 @@ impl Refusal {
             Self::CallInTypeOperand => "call-in-type-operand",
             Self::IncrementBesideCall => "increment-beside-call",
             Self::ConnectiveBesideCall => "connective-beside-call",
+            Self::AcquisitionOnCycle => "acquisition-on-cycle",
         }
     }
 }
@@ -129,6 +140,16 @@ pub(crate) fn carrier(result: ResultClass, integer: bool, split: Split) -> Resul
     match (integer, split) {
         (false, Split::Null) | (true, Split::Sentinel) => Ok(()),
         _ => Err(Refusal::CarrierMismatch),
+    }
+}
+
+/// Where a split acquisition may stand: a custody result is split only on a
+/// node no CFG cycle passes through. A resource-free result binds no site.
+pub(crate) fn placement(custody: bool, on_cycle: bool) -> Result<(), Refusal> {
+    if custody && on_cycle {
+        Err(Refusal::AcquisitionOnCycle)
+    } else {
+        Ok(())
     }
 }
 
@@ -205,6 +226,16 @@ pub(crate) const CARRIER_VECTORS: &[(&str, bool, &str, &str)] = &[
     ("reallocated", true, "null", "carrier-mismatch"),
     ("none", false, "null", "accept"),
     ("derived", false, "null", "accept"),
+];
+
+/// `(custody, on a cycle, decision)`, shared with
+/// `proof/QCore/ConditionAcquisition.lean` (`placementVectors`).
+#[cfg(test)]
+pub(crate) const PLACEMENT_VECTORS: &[(bool, bool, &str)] = &[
+    (true, false, "accept"),
+    (true, true, "acquisition-on-cycle"),
+    (false, true, "accept"),
+    (false, false, "accept"),
 ];
 
 /// `(call, call in type operand, increment, connective, decision)`, shared
