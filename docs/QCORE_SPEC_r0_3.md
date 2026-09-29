@@ -664,7 +664,7 @@ following are normative for every route that admits them:
   behaviour is evaluated. A fault the checker can decide — every operation of a
   closed entry, and every literal-only subexpression — MUST refuse at check
   time; where an operand is not determined at check time the fault is a typed
-  error (no route admits such an operand in this revision).
+  error (below).
 * There is no implicit conversion. Operands of one operation MUST have one
   type, and a binding, argument or result MUST have the type its position
   names. `EXPR as TYPE` is the only conversion: total when every source value
@@ -680,6 +680,36 @@ following are normative for every route that admits them:
 * `std.fmt` renders every type: `dec` as the number itself, `hex` as `0x` and
   the type's own bit pattern in upper-case digits, a quarter of the width in
   length; `bool` as `true`/`false` under `dec`, with no `hex` rendering.
+
+**The typed arithmetic error** (card `W48-QR-SCALAR-TYPES-R2`, implemented
+grammars §G02t). `ArithmeticError` is a builtin, payload-free error type with
+the variants `Overflow` (an exact result outside the type, including
+`MIN / -1` and `MIN % -1`), `DivisionByZero` (a zero divisor of `/` or `%`)
+and `OutOfRange` (a conversion whose value does not fit). It follows the
+typed-error discipline of §L21's effect rows exactly as the task profile's
+builtin errors do:
+
+* A function MAY raise it only when its declared effect row lists
+  `throws<ArithmeticError>`; the permission is never inferred, so an absent row
+  permits no error. In such a function, an operation whose operands are not all
+  check-time constants MUST raise the variant its fault is classified as, and
+  MUST NOT fault otherwise. A fault the checker decides from constants alone
+  MUST still refuse at check time, whatever the row permits, and a fault in a
+  function without the permission MUST remain the route's refusal.
+* A call of a function that may raise MUST be consumed: propagated with
+  `CALL?`, which requires the caller's own permission and leaves the caller at
+  once with the unchanged error, or handled by `match CALL { Result::Ok {
+  value: NAME } => BLOCK Result::Err { error: NAME } => BLOCK }`, which runs
+  exactly the arm the outcome names. An unconsumed call MUST be refused, and so
+  MUST `?` or `raise` in a function whose row does not permit the error.
+* `raise NAME;` re-raises an error an enclosing `Err` arm bound, and
+  `raise ArithmeticError::VARIANT;` raises one explicitly; both need the
+  permission.
+* The emitted program MUST decide every such fault from the operands before
+  the operation, return the variant to its caller rather than exit, and, when
+  an entry propagates it, publish it as the entry's error outcome and exit
+  with status `80 + tag` (`Overflow` 1, `DivisionByZero` 2, `OutOfRange` 3)
+  after the lines already written.
 
 ### L14.1. Unchecked linkage
 
@@ -1363,6 +1393,20 @@ that route admits keep `source.std-io.v1`'s own shape refusal `Q030` and its
 imports keep `Q015`. A conversion written on any other route, refused at
 `Q013` before the card because name resolution collected its type name, now
 reaches that route's own reader and keeps a refusal at that route's code.
+
+`W48-QR-SCALAR-TYPES-R2` allocates no code either. Its typed-error refusals —
+an unconsumed call of a function that may raise, `?` or `raise` without the
+`throws<ArithmeticError>` permission, `?` or `match` on a callee that cannot
+raise, a match without exactly one `Ok` and one `Err` arm or on a `unit`
+callee, an error row naming anything but `ArithmeticError`, and an unknown
+variant — are further conditions of the same Q020. Its annotation rule widens
+two existing conditions: the sequential route's Q020 refuses a parameter
+annotation outside the fixed-width table (and `isize`/`usize` without a
+recorded target), and each route that models its entry only
+(`source.std-io.v1` Q030, `source.buffer.v1` Q051, `source.event.v1` Q058,
+`source.string.v1` Q068, `source.socket.v1` Q080, `source.http.v1` Q090)
+refuses at its own existing "models the entry only" condition every function
+other than the entry, which it admitted unread before.
 
 `SOURCE-ANNOTATION-ENFORCEMENT` extends Q020 to executable local annotation
 compatibility, unsupported explicit local types, malformed local heads before

@@ -124,6 +124,14 @@ a nominal result type; annotations on its binding, including `own<T>`, refuse
 until the operation supplies that evidence. Error-region nesting does not bypass
 this check. Local usage annotations retain Q100.
 
+A parameter annotation is checked too (card `W48-QR-SCALAR-TYPES-R2`). This
+body path supplies no argument to any parameter — a direct call names a
+zero-parameter function and the emitted entry has none — so a parameter's type
+must be one of the §G02t scalar table (`isize`/`usize` only with a recorded
+target) and every other annotation (`Widget`, `fn() -> i32`, `own<T>`,
+`borrow<T>`, …) refuses at Q020. Before the card no parameter annotation was
+read at all (the named boundary B-1 of `docs/reports/remaining-v03`).
+
 `RESOURCE_ID` must fit `u32`. `ERROR_NAME` must be declared; when no error declarations exist the driver provides its default `Failure` case. Resource bindings must satisfy ownership and cleanup checks. A `move` transfers to the abstract result payload; it does not simply release an external endpoint. A unit result uses bare return, represented as zero in the reduced ABI. An i32 result requires its signed literal; the separate custody payload is explicitly identified in compilation result metadata.
 
 `qcore_acquire` and `qcore_check` take literal Boolean controls in this profile. They are model operations, not general malloc calls or arbitrary runtime conditions. General expressions, argument-taking calls, indirect calls, calls through a shadowing local, calls to extern declarations, nested source control flow, source lambdas and source threading are not accepted by this driver body path. Local `use` annotations are explicitly rejected here rather than ignored. A bounded extern call is accepted by the separate `source.extern-call.v1` path of §G02d, which is selected before this one and does not widen it: this body path still refuses every call whose target is not a zero-parameter source function.
@@ -161,14 +169,22 @@ reserved words and does not widen the other profiles.
 
 ```ebnf
 function = "fn", NAME, "(", [parameter, {",", parameter}], ")", "->", result,
-           ["effects", "{", ["io"], "}"], ["contract", "{", "}"],
-           "{", {statement}, "return", [expression], ";", "}" ;
+           ["effects", "{", [effect, {",", effect}], "}"], ["contract", "{", "}"],
+           block ;
+effect = "io" | "throws", "<", "ArithmeticError", ">" ;        (* each once *)
+block = "{", {statement}, end, "}" ;
+end = "return", [expression], ";"
+    | "raise", (NAME | "ArithmeticError", "::", VARIANT), ";"
+    | "match", call, "{", arm, arm, "}" ;                      (* one Ok, one Err *)
+arm = "Result", "::", "Ok", "{", "value", ":", NAME, "}", "=>", block
+    | "Result", "::", "Err", "{", "error", ":", NAME, "}", "=>", block ;
+VARIANT = "Overflow" | "DivisionByZero" | "OutOfRange" ;
 parameter = NAME, ":", SCALAR ;
 result = SCALAR | "unit" ;
 SCALAR = "bool" | "i8" | "i16" | "i32" | "i64" | "isize"
        | "u8" | "u16" | "u32" | "u64" | "usize" ;               (* §G02t *)
 statement = "let", NAME, [":", SCALAR], "=", expression, ";"
-          | call, ";"
+          | call, ["?"], ";"
           | "print", "(", expression, ")", ";"                  (* i32 only *)
           | "print", RENDERING, OPERAND, ";"                    (* §G02g's reader *)
           | "log", LEVEL, RENDERING, OPERAND, ";"
@@ -177,7 +193,8 @@ expression = sum, [CMP, sum] ;                                  (* non-associati
 sum = product, {("+" | "-"), product} ;
 product = cast, {("*" | "/" | "%"), cast} ;
 cast = unary, {"as", SCALAR} ;
-unary = "-", unary | NAT | "true" | "false" | NAME | call | "(", expression, ")" ;
+unary = "-", unary | NAT | "true" | "false" | NAME | call, ["?"]
+      | "(", expression, ")" ;
 CMP = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
 call = FUNCTION_NAME, "(", [expression, {",", expression}], ")" ;
 ```
@@ -200,7 +217,9 @@ followed by one newline to standard output. The source file must declare
 has no rendering selector. An absent effect row infers `io` from a direct print
 or transitively from a called function. `effects {io}` explicitly permits it,
 while `effects {}` explicitly excludes it and therefore refuses any direct or
-transitive IO. Every other effect name is outside this profile. Output follows
+transitive IO. The one other row entry is `throws<ArithmeticError>` (§G02t,
+card `W48-QR-SCALAR-TYPES-R2`), never inferred; every other effect or error
+name is outside this profile. Output follows
 ordinary statement order and the left-to-right argument order above. The
 builtin form stays `i32`-only and is refused in a module that uses any §G02t
 form (a non-`i32` type, a comparison, a conversion, `bool` or a line
@@ -308,11 +327,65 @@ keeps its existing refusal (table below). The definitions are
   quarter of the width, which for `i32` is the established `0x000000FF`. A
   `bool` renders `true`/`false` under `dec` and refuses `hex`.
 
+**The typed arithmetic error** (card `W48-QR-SCALAR-TYPES-R2`). The builtin,
+payload-free `ArithmeticError` has three variants: `Overflow` (an exact result
+outside the type, `MIN / -1` and `MIN % -1` included), `DivisionByZero` (a zero
+divisor of `/` or `%`) and `OutOfRange` (a conversion whose value does not fit).
+It is the task profile's error discipline (§G02a) on this route:
+
+* **Permission.** A function raises it only when its row lists
+  `throws<ArithmeticError>`; the permission is never inferred, so an absent row
+  permits no error and `effects { throws<ArithmeticError> }` alone excludes
+  `io`. Any other error name in a row refuses.
+* **Where it is raised.** In a function with the permission, an operation
+  whose operands are not all literals — a parameter, a local, a call result —
+  raises its fault's variant instead of faulting. A fault decided from
+  literals alone (the fold of §G02s) is refused at check time whatever the row
+  permits, and a function without the permission keeps the route's closed-entry
+  refusal. Each is the same fault: `QCore.ScalarTypedErrors.static_fault_variant`
+  and `static_fault_is_dynamic_raise` prove the fold's refusal is the raise the
+  dynamic path would take.
+* **Consumption.** A call of a function that may raise must be consumed:
+  `CALL?` propagates the error unchanged and needs the caller's permission
+  (`CALL?;` stands as a statement for a `unit` callee), and
+  `match CALL { Result::Ok { value: v } => { … } Result::Err { error: e } => { … } }`
+  runs the arm the outcome names — exactly one arm of each, in either order,
+  over a callee with a scalar result. Every block ends in `return`, `raise` or a
+  `match`, so no arm falls through; an arm's binding is in scope in that arm
+  only. `raise e;` re-raises a bound error and `raise ArithmeticError::VARIANT;`
+  raises one explicitly, both under the permission. An unconsumed call, and `?`
+  or `match` on a callee that cannot raise, refuse.
+* **Emission.** A function with the permission returns its error tag as an
+  `int` (`0` success; `Overflow` 1, `DivisionByZero` 2, `OutOfRange` 3) and its
+  value through a trailing pointer. Every operation in it — `i32` included —
+  calls a `q_scalar_try_*` helper that tests the operands before computing and
+  returns the tag instead of exiting 86, and the function returns that tag at
+  once; `match` branches on it. An entry that propagates the error publishes it
+  as its error outcome (`ArithmeticError::VARIANT` with its tag) and exits with
+  status `80 + tag` after the lines it already wrote. A function without the
+  permission emits exactly what it emitted before.
+* **Reservation.** No word is reserved. `match`, `raise`, `Result`, `value` and
+  `error` are the task profile's; `ArithmeticError` is skipped by name
+  resolution only where `::` follows it, and the constraint-14 census found it
+  in no tracked source file.
+
+**Annotations every route admits** (card `W48-QR-SCALAR-TYPES-R2`). Every
+route checks every annotation it admits. The sequential route checks
+parameters against this table (§G02). The six routes that model their entry
+only — `source.std-io.v1`, `source.buffer.v1` (with its record and loop
+forms), `source.string.v1`, `source.socket.v1`, `source.http.v1` and
+`source.event.v1` — used to admit any other function unread: its parameter,
+result and local annotations and its body. Each now refuses such a function at
+its own existing "models the entry only" code (`Q030`, `Q051`, `Q068`, `Q080`,
+`Q090`, `Q058`). A module with `std.io` lines, scalar-call syntax and a helper
+reaches this route instead, which checks every function.
+
 **Positions.** Widened by this card: parameters, results, annotated and
 inferred locals, literals, arithmetic, comparisons and conversions on
 `source.scalar-calls.v1`, its line statements, and the `|>` sinks that
 desugar to them. Every other position that takes `i32` keeps its existing
-refusal and is a named follow-up: record fields (§G07.13,
+refusal and is a named follow-up (card `W48-QR-SCALAR-TYPES-R2` widened none of
+them; its items 2–6 stayed open): record fields (§G07.13,
 `W48-QR-TYPES-RECORD-FIELDS`), loop bounds and indices (§G07.12,
 `W48-QR-TYPES-LOOP-BOUNDS`), extern results as values and the composed
 extern + io route (§G02d, §G02i, `W48-QR-TYPES-EXTERN-VALUES`), task
@@ -328,9 +401,11 @@ it now reaches that route's own reader and is refused at that route's own code.
 
 **Diagnostics.** No code is allocated. Every new refusal on this route is a
 widened condition of `Q020` (type, literal-range, mixed-type, `bool`,
-conversion, recorded-target and fault refusals); a line statement's shape keeps
+conversion, recorded-target and fault refusals, and card
+`W48-QR-SCALAR-TYPES-R2`'s typed-error refusals); a line statement's shape keeps
 `source.std-io.v1`'s `Q030`, a `borrow` operand its `Q028`, and a missing
-import the gate's `Q015`.
+import the gate's `Q015`. The annotation rule above widens the sequential
+route's `Q020` and each entry-only route's own code.
 
 <a id="g02r-resource-aware-functions-sourceresource-callsv1"></a>
 
