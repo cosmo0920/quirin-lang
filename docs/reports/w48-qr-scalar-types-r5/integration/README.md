@@ -14,3 +14,19 @@ Under the user's landing-race policy (2026-09-30), this merge got a **targeted c
 | Provider clippy, package build and 5 verifies | 0 |
 
 The full test run is the card's own gate at its base: 6,681 passed, 0 failed. Exits are in `exits/`.
+
+## Targeted check after CG05 landed
+
+Main moved to `41719835` (CG05-NESTED-CALL-EFFECTS, C gateway only) before landing. It was re-merged as `9fb8b1c3`, with the ledger at **631**.
+
+The targeted check passed:
+
+| Check | Result |
+|---|---|
+| Gateway tests | 2,018 passed, 0 failed |
+| Scalar, loop and buffer tests | 167 passed |
+| Lean | 238 audits |
+| Provider tests | 129 / 0 / 1 |
+| Clippy, packages | 0 |
+
+Exits are in `exits-9fb8b1c3/`.
