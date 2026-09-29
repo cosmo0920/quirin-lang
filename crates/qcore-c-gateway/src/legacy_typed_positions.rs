@@ -95,6 +95,13 @@ impl Parser<'_> {
         let plan = self
             .typed_positions_index()?
             .condition(&texts, line, |name| self.position_never_bound(name));
+        crate::typed_place::record_decisions(
+            &self.typed_path_function,
+            line,
+            &texts,
+            "condition",
+            plan.is_some(),
+        );
         record_position(
             &self.typed_path_function,
             line,
@@ -174,6 +181,13 @@ impl Parser<'_> {
             .assignment(&statement_texts, line, |candidate| {
                 self.position_never_bound(candidate)
             });
+        crate::typed_place::record_decisions(
+            &self.typed_path_function,
+            line,
+            &statement_texts,
+            "condition-assignment",
+            plan.is_some(),
+        );
         record_position(
             &self.typed_path_function,
             line,
@@ -258,6 +272,13 @@ impl Parser<'_> {
             |name| self.position_never_bound(name),
             |name| self.pointer_root(name),
         );
+        crate::typed_place::record_decisions(
+            &self.typed_path_function,
+            line,
+            &texts,
+            "return",
+            plan.is_some(),
+        );
         record_position(
             &self.typed_path_function,
             line,
@@ -286,6 +307,13 @@ impl Parser<'_> {
                 .argument(callee, index, arity, argument, line, |name| {
                     self.position_never_bound(name)
                 });
+        crate::typed_place::record_decisions(
+            &self.typed_path_function,
+            line,
+            argument,
+            "call-argument",
+            plan.is_some(),
+        );
         record_position(
             &self.typed_path_function,
             line,

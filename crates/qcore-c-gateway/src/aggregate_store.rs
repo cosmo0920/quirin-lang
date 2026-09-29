@@ -470,6 +470,18 @@ fn acquired_bindings(body: &[&str]) -> BTreeSet<String> {
         else {
             continue;
         };
+        // Card CG10-COMMON-TYPED-PLACE (W44-AGGREGATE-PREMISE3-MEMBER-NAME):
+        // a name after `.` or `->` is a member, never a binding of the
+        // same-named local. Refusing direction only: fewer acquisitions.
+        let before = |back: usize| {
+            equal
+                .checked_sub(back)
+                .and_then(|at| statement.get(at))
+                .copied()
+        };
+        if before(2) == Some(".") || (before(2) == Some(">") && before(3) == Some("-")) {
+            continue;
+        }
         if equal != statement.len().saturating_sub(1)
             && statement[equal + 1..]
                 .windows(2)
@@ -1068,6 +1080,19 @@ mod tests {
     fn a_singly_bound_local_aggregate_pointer_is_an_admissible_base() {
         let facts = facts("", "struct box * b ; b = make ( ) ; b -> flag = 1 ;", &[]);
         assert_eq!(facts.bases.names(), vec!["b"]);
+    }
+
+    /// Card CG10-COMMON-TYPED-PLACE (W44-AGGREGATE-PREMISE3-MEMBER-NAME): a
+    /// member name before `=` is not an acquisition of the same-named local.
+    #[test]
+    fn a_member_name_is_not_an_acquired_binding() {
+        for body in [
+            "struct box * kid ; struct box h ; h . kid = make ( ) ;",
+            "struct box * kid ; struct box * h ; h -> kid = make ( ) ;",
+        ] {
+            assert!(!acquired_bindings(&texts(body)).contains("kid"), "{body}");
+        }
+        assert!(acquired_bindings(&texts("struct box * kid ; kid = make ( ) ;")).contains("kid"));
     }
 
     #[test]

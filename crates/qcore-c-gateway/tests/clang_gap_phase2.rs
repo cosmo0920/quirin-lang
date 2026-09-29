@@ -20,30 +20,68 @@ fn gs(source: &str) -> G {
 // ---------------------------------------------------------------------------
 
 #[test]
-fn m01_mixed_paths_need_a_never_bound_root() {
+fn m01_mixed_paths_on_a_tracked_root_carry_per_hop_obligations() {
     if !clang_available() {
         return;
     }
-    // Tracked root (bound to an acquisition): embedded field and array element.
+    // CG10 flip (rule 10t): a tracked root (bound to an acquisition) reads
+    // its embedded field and array element with the root's own obligation.
+    // BEFORE: refused (IND), not Safe.
     let run = gs(
         "void subject(void) { struct S *s = q_alloc(); s->in.x = 1; s->arr[1] = 2; q_free(s); }",
     );
-    assert!(run.refused(IND), "{run:?}");
-    assert!(!run.safe());
-    // Never-bound formal root: the same mixed path is read.
+    assert!(run.safe(), "{run:?}");
+    // Never-bound formal root: the same mixed path is read, as before.
     assert!(gs("int subject(struct S *s) { return s->in.x + s->arr[1]; }").safe());
+    // Liveness comes from the custody state: after the release the place is
+    // not read as live (an accusation or an unresolved alias, never Safe).
+    let run = gs("void subject(void) { struct S *s = q_alloc(); q_free(s); s->in.x = 1; }");
+    assert!(!run.safe(), "{run:?}");
+    assert!(!run.refused(IND), "{run:?}");
+    // A possibly-null root is not read until a test refines it.
+    let run = gs(
+        "void subject(void) { struct S *s = q_maybe_alloc(); s->in.x = 1; q_nullable_free(s); }",
+    );
+    assert!(!run.safe(), "{run:?}");
+    let run = gs(
+        "void subject(void) { struct S *s = q_maybe_alloc(); if (s) { s->in.x = 1; } q_nullable_free(s); }",
+    );
+    assert!(run.safe(), "{run:?}");
+    // A pointer value read through the place is a borrowed alias with no
+    // custody: reading it is admitted, releasing it is not the owner's release.
+    let run = gs("void subject(void) { struct S *s = q_alloc(); void *q = s->in.p; q_free(s); }");
+    assert!(run.safe(), "{run:?}");
+    // A pointer-valued store stays refused (CG11).
+    let run = gs("void subject(void *q) { struct S *s = q_alloc(); s->in.p = q; q_free(s); }");
+    assert!(run.refused(IND), "{run:?}");
+    // A root bound to a target-free value (an opaque read) is refused at the
+    // flow, exactly as a direct `s->a` chain is.
+    let run = gs("void subject(struct S **v) { struct S *s = *v; s->in.x = 1; }");
+    assert!(!run.safe(), "{run:?}");
 }
 
 #[test]
-fn i04_one_line_identity_refuses_duplicate_candidates() {
+fn i04_one_line_identity_is_the_gateway_occurrence() {
     if !clang_available() {
         return;
     }
-    // Two identical statements on one line: no unique node.
+    // CG10 flip (I04): two identical statements on one line are told apart
+    // by the gateway's own occurrence of each. BEFORE: refused (IND).
     let run = gs("void subject(struct S *s) { s->in.x = 1; s->in.x = 1; }");
-    assert!(run.refused(IND), "{run:?}");
-    // The same statements on separate lines are read.
+    assert!(run.safe(), "{run:?}");
+    // The same statements on separate lines are read, as before.
     assert!(gs("void subject(struct S *s) {\n s->in.x = 1;\n s->in.x = 1;\n}").safe());
+    // Identical condition operands on one line keep the unique-match
+    // refusal: an operand is a copy with no stream occurrence (residual).
+    let run = gs(
+        "int subject(struct S *s, int t) { if (s->in.x == t) { cg_sink(1); } if (s->in.x == t) { cg_sink(2); } return 0; }",
+    );
+    assert!(run.refused(BRANCH), "{run:?}");
+    // A single such operand is read.
+    assert!(
+        gs("int subject(struct S *s, int t) { if (s->in.x == t) { cg_sink(1); } return 0; }")
+            .safe()
+    );
 }
 
 // ---------------------------------------------------------------------------

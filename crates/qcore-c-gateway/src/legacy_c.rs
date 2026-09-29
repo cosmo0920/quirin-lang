@@ -3161,6 +3161,7 @@ fn build_function_cfg_with(
         typed_path_index: std::cell::OnceCell::new(),
         typed_path_function: function.to_owned(),
         typed_position_uses: std::cell::Cell::new(0),
+        typed_place_origin: std::cell::Cell::new(None),
         typed_root_declarations: std::cell::OnceCell::new(),
     };
     // Card W47-TYPED-ROOT-DECLARATION-READER: parity runs only.
@@ -4506,6 +4507,9 @@ struct Parser<'a> {
     /// Card W47-ACCESS-PATH-POSITIONS: how many condition operands the typed
     /// reader decided so far; a call-free plan is kept only if it grew.
     typed_position_uses: std::cell::Cell<usize>,
+    /// Card CG10-COMMON-TYPED-PLACE (I04): the stream index and length of the
+    /// statement being classified, set only around its `classify_simple`.
+    typed_place_origin: std::cell::Cell<Option<(usize, usize)>>,
     /// Card W47-TYPED-ROOT-DECLARATION-READER: the AST reader's answers.
     typed_root_declarations: std::cell::OnceCell<crate::typed_root_declarations::RootDeclarations>,
     cursor: usize,
@@ -4629,10 +4633,17 @@ impl Parser<'_> {
             .get_or_init(|| crate::typed_access_path::StatementIndex::read(function))
             .as_ref()?;
         // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o): the join of
-        // the lexical and AST closures.
-        index.statement(&texts, tokens.first()?.line, |name| {
-            self.joined_never_bound(name)
-        })
+        // the lexical and AST closures. Card CG10 (rule 10t): several
+        // candidates are told apart by this run's own occurrence.
+        let line = tokens.first()?.line;
+        let plan = index.statement_with(
+            &texts,
+            line,
+            &|| crate::typed_place::occurrence(self.tokens, self.typed_place_origin.get(), tokens),
+            |name| self.joined_never_bound(name),
+        );
+        crate::typed_place::record_decisions(function, line, &texts, "statement", plan.is_some());
+        plan
     }
 
     fn typed_path_statement(&self, tokens: &[Token]) -> Option<LegacyInstruction> {
@@ -6214,11 +6225,15 @@ impl Parser<'_> {
                 Ok(Statement::Label { line, name })
             }
             Some(_) => {
+                let origin = self.cursor;
                 let tokens = self.consume_to_semicolon()?;
                 // Card W45-CONTAINER-ROOT-REACH: keep an element binding only
                 // when it is the statement's final instruction.
                 self.element_origins.clear();
+                // Card CG10 (I04): this run's own place in the stream.
+                self.typed_place_origin.set(Some((origin, tokens.len())));
                 let instruction = self.classify_simple(&tokens);
+                self.typed_place_origin.set(None);
                 self.element_origins.settle(&tokens, &instruction);
                 #[cfg(feature = "indirect-census")]
                 self.census_statement(line, &tokens, &instruction);

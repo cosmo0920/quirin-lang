@@ -239,6 +239,7 @@ impl Reader<'_> {
 impl StatementIndex {
     /// The unique expression node on `line` whose tokens are exactly `texts`.
     pub(crate) fn expression_node(&self, texts: &[&str], line: usize) -> Option<&Value> {
+        crate::typed_place::clear_decisions();
         let body = children(&self.function)
             .iter()
             .find(|node| kind(node) == "CompoundStmt")?;
@@ -349,6 +350,7 @@ impl StatementIndex {
         never_bound: impl Fn(&str) -> bool,
     ) -> Option<ArgumentPlan> {
         let actual = self.argument_node(callee, index, arity, texts, line)?;
+        crate::typed_place::clear_decisions();
         let mut reader = self.reader(&never_bound);
         // Rule 10n: an address `&PATH` is a pointer value, never a read.
         let pointer_valued = match strip_pointer_value(actual) {
