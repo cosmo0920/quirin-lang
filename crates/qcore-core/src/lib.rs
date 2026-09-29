@@ -196,4 +196,7 @@ pub mod paired_lifecycle;
 
 pub mod scalar_calls;
 
+// Card W48-QR-SCALAR-TYPES: the fixed-width scalar table of `.qr` sources.
+pub mod scalar_types;
+
 pub mod scalar_calls_c_emit;

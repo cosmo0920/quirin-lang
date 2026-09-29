@@ -7,13 +7,14 @@ use std::process::ExitCode;
 
 use qcore_compiler::verifier_plugin::ExecutionPolicy;
 use qcore_compiler::{
-    CompileOptions, PluginId, SourceFile, compile_files_with_filesystem,
-    compile_files_with_filesystem_with_registry, format_diagnostic, load_first_party_registry,
+    CompileOptions, PluginId, SourceFile, compile_files_with_filesystem_for_target,
+    compile_files_with_filesystem_with_registry_for_target, format_diagnostic,
+    load_first_party_registry,
 };
 use qcore_contract::contract_loader::{PublishedModuleRef, load_published_resource_contracts};
 use qcore_contract::load_path_manifest::{LoadPathManifest, load_contract_load_path_manifest};
 
-const USAGE: &str = "quirin 0.1.0 — the Quirin language driver\n\nUsage:\n  quirin check [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... FILE...\n  quirin check --contract-load-path MANIFEST FILE.qv\n  quirin emit [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  Extensions: .qv contracts; .qr runtime/library; .qrlib native ABI manifests.\n  Legacy .qcore/.qcorelib inputs remain supported with outdated-name warnings.\n  Contract load-path check validates trusted resource-v1 assumptions and published\n  includes; it does not check C bodies or establish a safety verdict.\n  quirin plugins list [--config CONFIG]\n  quirin plugins profile [--config CONFIG]\n  quirin plugins inspect PLUGIN_ID [--config CONFIG]\n  quirin plugins verify PACKAGE_DIR\n  quirin plugins enable PACKAGE_DIR --config CONFIG\n  quirin plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
+const USAGE: &str = "quirin 0.1.0 — the Quirin language driver\n\nUsage:\n  quirin check [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [--recorded-target FILE] FILE...\n  quirin check --contract-load-path MANIFEST FILE.qv\n  quirin emit [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [--recorded-target FILE] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  Extensions: .qv contracts; .qr runtime/library; .qrlib native ABI manifests.\n  Legacy .qcore/.qcorelib inputs remain supported with outdated-name warnings.\n  Contract load-path check validates trusted resource-v1 assumptions and published\n  includes; it does not check C bodies or establish a safety verdict.\n  quirin plugins list [--config CONFIG]\n  quirin plugins profile [--config CONFIG]\n  quirin plugins inspect PLUGIN_ID [--config CONFIG]\n  quirin plugins verify PACKAGE_DIR\n  quirin plugins enable PACKAGE_DIR --config CONFIG\n  quirin plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
 
 fn main() -> ExitCode {
     match run(env::args().skip(1).collect()) {
@@ -50,6 +51,7 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     let mut contract_load_path = None::<PathBuf>;
     let mut output = None::<PathBuf>;
     let mut manifests = Vec::<PathBuf>::new();
+    let mut recorded_target = None::<PathBuf>;
     let mut inputs = Vec::new();
     let mut index = 1;
     while index < arguments.len() {
@@ -84,6 +86,20 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                         .ok_or("--native-library requires a manifest path")?,
                 ));
             }
+            // Card `W48-QR-SCALAR-TYPES`: the builder's recorded target, which
+            // alone supplies the width of `isize`/`usize`. Selecting none is
+            // the default and changes nothing for a program naming neither.
+            "--recorded-target" => {
+                index += 1;
+                if recorded_target.is_some() {
+                    return Err("--recorded-target specified more than once".into());
+                }
+                recorded_target = Some(PathBuf::from(
+                    arguments
+                        .get(index)
+                        .ok_or("--recorded-target requires a file path")?,
+                ));
+            }
             "--entry" => {
                 index += 1;
                 entry = Some(
@@ -110,9 +126,14 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
         return Err("no input files were provided".into());
     }
     if let Some(path) = contract_load_path {
-        if inputs.len() != 1 || entry.is_some() || plugins.is_some() || !manifests.is_empty() {
+        if inputs.len() != 1
+            || entry.is_some()
+            || plugins.is_some()
+            || !manifests.is_empty()
+            || recorded_target.is_some()
+        {
             return Err(
-                "--contract-load-path requires exactly one contract input and cannot be combined with --entry, --plugins or --native-library"
+                "--contract-load-path requires exactly one contract input and cannot be combined with --entry, --plugins, --native-library or --recorded-target"
                     .into(),
             );
         }
@@ -211,11 +232,30 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
         native_libraries,
         native_library_headers,
     };
+    // A record that does not load is an error rather than an omission: a
+    // program naming `isize`/`usize` would otherwise be checked for no width
+    // at all, and nothing here guesses one.
+    let target = match &recorded_target {
+        None => None,
+        Some(path) => {
+            let text =
+                fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+            Some(
+                qcore_compiler::scalar_types::load_recorded_target(&text)
+                    .map_err(|error| format!("{}: {error}", path.display()))?,
+            )
+        }
+    };
     let compiled = if let Some(path) = plugins {
         let registry = plugin_config::registry(&path)?;
-        compile_files_with_filesystem_with_registry(&files, &options, &registry)
+        compile_files_with_filesystem_with_registry_for_target(
+            &files,
+            &options,
+            &registry,
+            target.as_ref(),
+        )
     } else {
-        compile_files_with_filesystem(&files, &options)
+        compile_files_with_filesystem_for_target(&files, &options, target.as_ref())
     };
     let module = compiled.map_err(|diagnostics| {
         diagnostics
@@ -227,9 +267,16 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     if command == "check" {
         if let Some(entry) = &module.entry {
             let profile = match module.execution_profile {
-                qcore_compiler::SourceExecutionProfile::ScalarCallsV1 => {
-                    "; source.scalar-calls.v1: i32/unit calls; checked arithmetic; explicit std.io; closed entry observation"
-                }
+                qcore_compiler::SourceExecutionProfile::ScalarCallsV1 => match &module.checked {
+                    qcore_compiler::CheckedSourceModule::ScalarCalls(checked)
+                        if checked.is_widened() =>
+                    {
+                        "; source.scalar-calls.v1: fixed-width scalar calls; checked arithmetic; explicit conversions; std.fmt/std.io/std.logger lines; closed entry observation"
+                    }
+                    _ => {
+                        "; source.scalar-calls.v1: i32/unit calls; checked arithmetic; explicit std.io; closed entry observation"
+                    }
+                },
                 qcore_compiler::SourceExecutionProfile::ResourceCallsV1 => {
                     "; source.resource-calls.v1: acyclic owned bytes moves and whole-buffer read/write loans"
                 }
@@ -404,10 +451,19 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
     };
 
     let assumptions = module.declared_assumptions();
-    if assumptions.is_empty() {
+    // Card `W48-QR-SCALAR-TYPES`: a program naming `isize`/`usize` holds only
+    // for the recorded target's width, and says so here beside the others.
+    let target = module.target_assumption();
+    if assumptions.is_empty() && target.is_none() {
         return;
     }
-    println!("under {} declared assumption(s):", assumptions.len());
+    println!(
+        "under {} declared assumption(s):",
+        assumptions.len() + usize::from(target.is_some())
+    );
+    if let Some(target) = target {
+        println!("  - recorded target: {target}");
+    }
     for assumption in assumptions {
         let line = match assumption {
             ExternAssumption::UncheckedLinkage { callee, signature } => format!(

@@ -31,6 +31,7 @@ pub use qcore_core::chunk_lifecycle;
 pub use qcore_core::cleanup_lowering;
 /// Typed diagnostic adapters for native verification harnesses using this facade.
 pub use qcore_core::diagnostic_log_c_emit;
+pub use qcore_core::scalar_types;
 pub use qcore_core::std_io;
 pub mod cleanup_outcome;
 pub use qcore_contract::contract_loader;
@@ -118,10 +119,12 @@ pub use driver::{
     BitfieldTaskAssumption, CheckedComposedModule, CheckedEpochModule, CheckedExternModule,
     CheckedMutexGuardModule, CheckedSourceModule, CheckedStdIoModule, CompileOptions,
     CompiledModule, ComposedEpochModule, ComposedRegionEvidence, CustodyPayloadProfile,
-    EmittedSourceMap, FileDiagnostic, SourceExecutionProfile, SourceFile, SourceLocation,
-    SourceResultProfile, compile_files, compile_files_with_filesystem,
-    compile_files_with_filesystem_with_registry, compile_files_with_registry,
-    compile_source_bundle_with_registry, format_diagnostic,
+    EmittedSourceMap, FileDiagnostic, RecordedTarget, SourceExecutionProfile, SourceFile,
+    SourceLocation, SourceResultProfile, compile_files, compile_files_for_target,
+    compile_files_with_filesystem, compile_files_with_filesystem_for_target,
+    compile_files_with_filesystem_with_registry,
+    compile_files_with_filesystem_with_registry_for_target, compile_files_with_registry,
+    compile_files_with_registry_for_target, compile_source_bundle_with_registry, format_diagnostic,
 };
 pub use error_region::{
     CleanupAction, CleanupBinding, CleanupEvent, CleanupPack, ErrorRegionError, QuantOpen,

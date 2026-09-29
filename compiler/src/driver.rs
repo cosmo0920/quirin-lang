@@ -29,3 +29,27 @@ pub fn compile_files_with_filesystem(
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     compile_files_with_filesystem_with_registry(files, options, &first_party_registry())
 }
+
+/// [`compile_files`] for a builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES`): the target supplies the width of `isize`/`usize`.
+pub fn compile_files_for_target(
+    files: &[SourceFile],
+    options: &CompileOptions,
+    target: Option<&RecordedTarget>,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    compile_files_with_registry_for_target(files, options, &first_party_registry(), target)
+}
+
+/// [`compile_files_with_filesystem`] for a builder's recorded target.
+pub fn compile_files_with_filesystem_for_target(
+    files: &[SourceFile],
+    options: &CompileOptions,
+    target: Option<&RecordedTarget>,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    compile_files_with_filesystem_with_registry_for_target(
+        files,
+        options,
+        &first_party_registry(),
+        target,
+    )
+}

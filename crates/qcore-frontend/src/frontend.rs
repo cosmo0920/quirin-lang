@@ -3021,10 +3021,21 @@ fn lexical_references(
             && tokens[..index]
                 .iter()
                 .any(|token| matches!(&token.kind, TokenKind::Word(w) if w == "spawn"));
+        // Card `W48-QR-SCALAR-TYPES`: the conversion `EXPR as TYPE` names a
+        // type, never a binding. Contextual on both sides — the already
+        // reserved `as` before it and a scalar type name — so no word is newly
+        // reserved; the constraint-14 census found no `as` followed by a
+        // scalar type name in any tracked source file, and a `with lock m as
+        // g` binder is a different word in the same position.
+        let conversion_type = matches!(
+            previous.map(|token| &token.kind),
+            Some(TokenKind::Word(previous)) if previous == "as"
+        ) && qcore_core::scalar_types::ScalarType::parse(word).is_some();
         if body_binder
             || length_query
             || lend_clause
             || lend_capture
+            || conversion_type
             || is_reserved_source_word(word)
             || matches!(
                 previous.map(|token| &token.kind),

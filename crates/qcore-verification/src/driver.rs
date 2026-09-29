@@ -23,6 +23,7 @@ use qcore_core::prelude::concurrency::{
     task_execution,
 };
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
+pub use qcore_core::scalar_types::RecordedTarget;
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorDeclarations, ErrorLedger, ErrorOp};
 use qcore_core::usage::{Usage, UsageExpr};
 use qcore_core::{ExecutionObservation, emit_c11_with_log_level, extern_c_emit, extern_call};
@@ -1040,6 +1041,17 @@ impl CompiledModule {
     /// `Safe`. Routes with no declared premise return the empty slice, which is
     /// the honest answer for them and not a placeholder.
     #[must_use]
+    /// The recorded target a `source.scalar-calls.v1` result depends on (card
+    /// `W48-QR-SCALAR-TYPES`): present exactly when the program names `isize`
+    /// or `usize`, whose width only the builder's record supplies. It is a
+    /// named assumption of the result, printed beside the declared ones.
+    pub fn target_assumption(&self) -> Option<&RecordedTarget> {
+        match &self.checked {
+            CheckedSourceModule::ScalarCalls(checked) => checked.target_assumption(),
+            _ => None,
+        }
+    }
+
     pub fn declared_assumptions(&self) -> &[extern_call::ExternAssumption] {
         match &self.checked {
             CheckedSourceModule::ExternCalls(module) => &module.certificate.assumptions,
@@ -1116,32 +1128,19 @@ pub fn compile_files_with_registry(
     options: &CompileOptions,
     registry: &VerifierRegistry,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
-    if files.is_empty() {
-        return Err(vec![plain_diagnostic(
-            "Q400",
-            "no input files were provided",
-        )]);
-    }
-    let roots = files
-        .iter()
-        .map(|file| file.path.clone())
-        .collect::<Vec<_>>();
-    compile_source_bundle_with_registry(
-        &roots,
-        files,
-        SourceLoading::SnapshotsOnly,
-        &ImportLimits::default(),
-        options,
-        registry,
-    )
+    compile_files_with_registry_for_target(files, options, registry, None)
 }
 
-/// Explicit filesystem variant. Supplied snapshots take precedence; imports
-/// absent from them are loaded once. The ordinary API never reads disk.
-pub fn compile_files_with_filesystem_with_registry(
+/// [`compile_files_with_registry`] for a builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES`). The target supplies the width of `isize`/`usize`;
+/// without one a program naming either refuses, and with one the width is a
+/// named assumption of the result ([`CompiledModule::target_assumption`]).
+/// A program that names neither is unaffected by the target.
+pub fn compile_files_with_registry_for_target(
     files: &[SourceFile],
     options: &CompileOptions,
     registry: &VerifierRegistry,
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     if files.is_empty() {
         return Err(vec![plain_diagnostic(
@@ -1153,13 +1152,53 @@ pub fn compile_files_with_filesystem_with_registry(
         .iter()
         .map(|file| file.path.clone())
         .collect::<Vec<_>>();
-    compile_source_bundle_with_registry(
+    compile_source_bundle_for_target(
+        &roots,
+        files,
+        SourceLoading::SnapshotsOnly,
+        &ImportLimits::default(),
+        options,
+        registry,
+        target,
+    )
+}
+
+/// Explicit filesystem variant. Supplied snapshots take precedence; imports
+/// absent from them are loaded once. The ordinary API never reads disk.
+pub fn compile_files_with_filesystem_with_registry(
+    files: &[SourceFile],
+    options: &CompileOptions,
+    registry: &VerifierRegistry,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    compile_files_with_filesystem_with_registry_for_target(files, options, registry, None)
+}
+
+/// [`compile_files_with_filesystem_with_registry`] for a builder's recorded
+/// target; see [`compile_files_with_registry_for_target`].
+pub fn compile_files_with_filesystem_with_registry_for_target(
+    files: &[SourceFile],
+    options: &CompileOptions,
+    registry: &VerifierRegistry,
+    target: Option<&RecordedTarget>,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    if files.is_empty() {
+        return Err(vec![plain_diagnostic(
+            "Q400",
+            "no input files were provided",
+        )]);
+    }
+    let roots = files
+        .iter()
+        .map(|file| file.path.clone())
+        .collect::<Vec<_>>();
+    compile_source_bundle_for_target(
         &roots,
         files,
         SourceLoading::FileSystem,
         &ImportLimits::default(),
         options,
         registry,
+        target,
     )
 }
 
@@ -1173,6 +1212,18 @@ pub fn compile_source_bundle_with_registry(
     limits: &ImportLimits,
     options: &CompileOptions,
     registry: &VerifierRegistry,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    compile_source_bundle_for_target(roots, snapshots, loading, limits, options, registry, None)
+}
+
+fn compile_source_bundle_for_target(
+    roots: &[String],
+    snapshots: &[SourceFile],
+    loading: SourceLoading,
+    limits: &ImportLimits,
+    options: &CompileOptions,
+    registry: &VerifierRegistry,
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     // Naming warnings accompany even a parser/resolver refusal. Preserve the
     // extension compatibility route's pre-validation warning behavior.
@@ -1192,7 +1243,7 @@ pub fn compile_source_bundle_with_registry(
             eprintln!("{warning}");
         }
     }
-    compile_files_with_registry_inner(&bundle, options, registry).map(|mut module| {
+    compile_files_with_registry_inner(&bundle, options, registry, target).map(|mut module| {
         module.extension_warnings = warnings;
         module.source_bundle = Some(bundle.evidence().clone());
         module
@@ -1203,6 +1254,7 @@ fn compile_files_with_registry_inner(
     bundle: &ResolvedSourceBundle,
     options: &CompileOptions,
     registry: &VerifierRegistry,
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     let files = &bundle.evidence().sources;
     qcore_frontend::source_extension::reject_alias_collisions(
@@ -1586,13 +1638,26 @@ fn compile_files_with_registry_inner(
         return compile_socket_source(&parsed, &typed, mode, options, &ranges);
     }
     if qcore_frontend::source_scalar_calls::has_print_calls(&parsed) {
-        return compile_scalar_calls(&parsed, &typed, mode, options, &ranges);
+        return compile_scalar_calls(&parsed, &typed, mode, options, &ranges, target);
     }
+    // Card `W48-QR-SCALAR-TYPES`, and the whole of the route-selection change
+    // it makes. A module with `std.io` lines and scalar-call syntax reaches the
+    // scalar route, which since that card renders those lines through
+    // `source.std-io.v1`'s own reader, **only when the std.io lowering refuses
+    // it**. Every module the std.io lowering admits keeps that route byte for
+    // byte — including an std.io entry beside an ignored helper function,
+    // which that route admits today — so the door opens only for modules that
+    // were refused.
     if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
+        if qcore_frontend::source_scalar_calls::has_scalar_calls(&parsed)
+            && std_io_lowering_refuses(&parsed, &typed, mode, options)
+        {
+            return compile_scalar_calls(&parsed, &typed, mode, options, &ranges, target);
+        }
         return compile_std_io_source(&parsed, &typed, mode, options, &ranges);
     }
     if qcore_frontend::source_scalar_calls::has_scalar_calls(&parsed) {
-        return compile_scalar_calls(&parsed, &typed, mode, options, &ranges);
+        return compile_scalar_calls(&parsed, &typed, mode, options, &ranges, target);
     }
     let error_names = parsed
         .declarations
@@ -5577,6 +5642,25 @@ fn compile_composed_source(
     })
 }
 
+/// Whether `compile_std_io_source` would refuse this module before its checker
+/// runs: an entry-free module, an entry it cannot select, or an entry its
+/// lowering refuses. Exactly the conditions under which that route returns a
+/// lowering-stage refusal, evaluated with the same functions it calls.
+fn std_io_lowering_refuses(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+) -> bool {
+    if mode != SourceModuleMode::Executable {
+        return true;
+    }
+    let Ok(entry) = select_entry(typed, options) else {
+        return true;
+    };
+    qcore_frontend::source_std_io::lower_source_std_io(parsed, typed, &entry).is_err()
+}
+
 /// Compile one `source.std-io.v1` module (card `STD-MODULES`).
 ///
 /// The route emits real C and has a real reference execution, and the two are
@@ -7168,6 +7252,7 @@ fn compile_scalar_calls(
     mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     use qcore_core::scalar_calls::{self, Type};
     let lowered = qcore_frontend::source_scalar_calls::lower(parsed)
@@ -7185,39 +7270,66 @@ fn compile_scalar_calls(
             ranges,
         )]
     };
-    let checked = scalar_calls::check(lowered.program).map_err(report)?;
+    let checked = scalar_calls::check_for_target(lowered.program, target).map_err(report)?;
+    // `ExecutableResultType` names the i32/unit results a caller can run; a
+    // function of another scalar type is checked but is not one of them.
     let scalar_results = lowered
         .names
         .iter()
         .cloned()
-        .zip(checked.program().functions.iter().map(|f| match f.result {
-            Type::I32 => ExecutableResultType::I32,
-            Type::Unit => ExecutableResultType::Unit,
-        }))
+        .zip(checked.program().functions.iter())
+        .filter_map(|(name, f)| match f.result {
+            Type::I32 => Some((name, ExecutableResultType::I32)),
+            Type::Unit => Some((name, ExecutableResultType::Unit)),
+            Type::Scalar(_) => None,
+        })
         .collect();
-    let (entry, c_source, reference_observation) = if mode == SourceModuleMode::Executable {
-        let name = select_entry(typed, options).map_err(|e| vec![e])?;
-        let id = lowered
-            .names
-            .iter()
-            .position(|n| n == &name)
-            .expect("selected source entry");
-        let value = checked.run(id, &[]).map_err(report)?.unwrap_or(0);
-        let c = qcore_core::scalar_calls_c_emit::emit(&checked, id).map_err(report)?;
-        (
-            Some(name),
-            Some(c),
-            Some(ExecutionObservation {
-                outcome: qcore_core::cfg::ExecutionOutcome::Ok {
-                    value,
-                    payload: Vec::new(),
-                },
-                trace: Vec::new(),
-            }),
-        )
-    } else {
-        (None, None, None)
-    };
+    let (entry, c_source, reference_observation, line_observation) =
+        if mode == SourceModuleMode::Executable {
+            let name = select_entry(typed, options).map_err(|e| vec![e])?;
+            let id = lowered
+                .names
+                .iter()
+                .position(|n| n == &name)
+                .expect("selected source entry");
+            let result = checked.program().functions[id].result;
+            if result != Type::I32 && result != Type::Unit {
+                return Err(report(scalar_calls::Refusal {
+                    function: id,
+                    message: format!(
+                        "an executable entry returns i32 or unit; `{name}` returns {result}"
+                    ),
+                }));
+            }
+            let observed = checked.observe_values(id, &[]).map_err(report)?;
+            let value = observed.value.unwrap_or(0);
+            let c = qcore_core::scalar_calls_c_emit::emit(&checked, id).map_err(report)?;
+            // The per-stream line trace, published beside the value exactly as
+            // `source.std-io.v1` publishes its own; absent when the program
+            // renders no line, so a module this route admitted before publishes
+            // what it published then.
+            let lines = (!observed.lines.is_empty()).then(|| {
+                observed
+                    .lines
+                    .iter()
+                    .map(|line| format!("{}: {}", line.stream.label(), line.text))
+                    .collect::<Vec<_>>()
+            });
+            (
+                Some(name),
+                Some(c),
+                Some(ExecutionObservation {
+                    outcome: qcore_core::cfg::ExecutionOutcome::Ok {
+                        value,
+                        payload: Vec::new(),
+                    },
+                    trace: Vec::new(),
+                }),
+                lines,
+            )
+        } else {
+            (None, None, None, None)
+        };
     Ok(CompiledModule {
         source_bundle: None,
         extension_warnings: Vec::new(),
@@ -7234,6 +7346,6 @@ fn compile_scalar_calls(
         c_source,
         reference_observation,
         source_map: Vec::new(),
-        extern_observation: None,
+        extern_observation: line_observation,
     })
 }

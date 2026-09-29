@@ -436,6 +436,16 @@ fn std_io_event(window: &[&Token], head: &str) -> Option<Result<StdIoEvent, &'st
     }
 }
 
+/// [`std_io_event`] over one statement's own tokens, in retained order (card
+/// `W48-QR-SCALAR-TYPES`). The scalar-call route reads its function bodies as
+/// token streams rather than statement spans, and a desugared pipeline's tokens
+/// keep their written positions, so a span would not recover the statement.
+#[must_use]
+pub fn std_io_statement_tokens(window: &[&Token]) -> Option<Result<StdIoEvent, &'static str>> {
+    let head = word(window, 0)?;
+    std_io_event(window, head)
+}
+
 /// [`std_io_event`] over one statement of a parsed program, by span.
 ///
 /// Published for the composed task route, which reads statements out of a task
