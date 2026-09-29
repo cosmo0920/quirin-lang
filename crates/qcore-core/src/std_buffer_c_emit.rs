@@ -1457,8 +1457,8 @@ fn comparison_helper_name(cmp: st::Cmp, ty: ScalarType) -> String {
 
 /// One comparison as a function of two parameters (card
 /// `W48-QR-SCALAR-TYPES-R5`). A comparison written inline would let the C
-/// compiler see a comparison of a name with itself (`x == x`) or of an
-/// unsigned value with `0` (`x < 0`) and warn that its result is fixed —
+/// compiler see a comparison of a name with itself (`x == x`) and warn
+/// that its result is fixed (`-Wtautological-compare`) —
 /// an error under `-Werror` for a statement the source legitimately writes;
 /// through parameters the compiler sees two values of the type and nothing
 /// else, and the result is the same `bool`.

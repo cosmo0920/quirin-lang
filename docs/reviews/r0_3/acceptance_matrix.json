@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 630
+  "named_followups": 631
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "TARGETED CHECK (user policy 2026-09-30: main moved with non-overlapping, already-gated commits) on integrate/w48-r4 4b0d2257: main 27dc7c9a (CG03-CALL-SUMMARY-INSTANTIATION, C gateway only; the only shared code file proof/QCore.lean auto-merged) merged in. Logs private/w48-int-r4/targeted-4b0d2257: fmt 0; workspace clippy --locked 0; qcore-c-gateway tests 1,981 passed, 0 failed, 7 ignored; the six scalar test binaries 61 passed; 234 Lean audits; provider tests --locked --no-fail-fast 129/0/1, provider clippy, package build and 5 verifies 0. The full run_test_binaries.py was NOT re-run on this merge; its last full run is the f82fd68a gate below (6,653 passed, 0 failed). PREVIOUS GATES: Final gate on integrate/w48-r4 f82fd68a + f588793a: main ab317406 (CG13-UNION-AND-BITFIELD-PLACES) merged in. Standing gate (gate-r4c.sh, logs private/w48-int-r4/gate-f82fd68a): run_test_binaries.py 373 units, 386 summaries, 6,653 passed, 0 failed, 11 ignored; fmt, clippy, both reevaluation probes 0; 233 Lean audits (CG13's audit added); python first run 1 failure (stale lean_audits 232 against 233), fixed by this regeneration; docs index 0. The provider steps failed on main's own stale providers/Cargo.lock (CG13 added qcore-core to qcore-c-gateway without updating it; every --locked step refused). f588793a records that one dependency line; the provider gate then re-ran whole (provider-rerun/): provider tests --locked --no-fail-fast 129 passed, 0 failed, 1 ignored; fmt, clippy, contracts check, package build, 5 package verifies, provider python 0. PREVIOUS GATES: Final gate on integrate/w48-r4 fa733dda: main cb20c28e (CG11-POINTER-VALUED-STORES landed after the first gate) merged into the R4 integration. Standing and provider gates re-run (gate-r4b.sh, logs private/w48-int-r4/gate-fa733dda): submodule 0; run_test_binaries.py 372 units, 385 summaries, 6,637 passed, 0 failed, 11 ignored; fmt, clippy, both reevaluation probes 0; 232 Lean audits (CG11's AuditPointerStore added); python first run 1 failure (stale lean_audits 231 against 232), fixed by this regeneration; docs index 0; provider tests first run: configured_audit's two tests failed under load average ~37 (the contract check reported 0 checked / 3 Unknown, i.e. failed closed on its budget) and cargo stopped there; the whole provider suite rerun with --no-fail-fast 129 passed, 0 failed, 1 ignored (exit 0); provider fmt, clippy, contracts check, package build, 5 verifies and provider python 0. Arbiters were not rerun for this merge: the first gate (db0677be, see below) showed the card moves no C-audit output, and CG11's own report measures its arbiters. FIRST GATE (db0677be): W48-QR-SCALAR-TYPES-R4 integration gate on integrate/w48-r4 db0677be (main f19204fa with CG10 and CG02, plus the card at 0fca9c5e), script merged-gate-r4.sh, logs private/w48-int-r4/gate-db0677be of the implementation-wave-47 worktree: submodule 0; run_test_binaries.py 371 units, 384 summaries, 6,617 passed, 1 failed (cycle20_verifier_plugins vp04_vp07_vp08, wall-clock elapsed < 500ms under load average 20-40 from other sessions), exit 101; that binary rerun alone failed once more at load ~20 and passed 20/20 at load 14 (gate/rerun1-cycle20.exit 0), so 6,618 tests pass. fmt, clippy, both reevaluation probes 0; 231 Lean audits; python first run 1 failure (the matrix's stale lean_audits 230 against 231 on disk), corrected by this regeneration; docs index 0. Provider tests first run exit 101: configured_audit's two tests failed under load and cargo stopped at that binary; rerun alone 7/7, then the whole provider suite with --no-fail-fast 129 passed, 0 failed, 1 ignored (exit 0). Provider fmt, clippy, contracts check, package build, 5 verifies and provider python (24 OK) 0. Arbiters: system and slice moves against round 9 equal CG02's recorded system/slice comparisons exactly (32/2/200; 26/1/242/1 Pending); corpus 543/10/4,281, whose 17 moves against round 9 are exactly CG02's 16 plus CG10's rd_kafka_anyconf_is_modified, so this card moves nothing. Clang 21.1.8.",
-  "workspace_tests": 6653,
+  "note": "W48-QR-SCALAR-TYPES-R5 card gate at e96cc3de (base 6883623c), script private/w48-r5/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-r5/gate: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 376 units, 389 summaries, 6,681 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260929T190052Z-1819959/summary.json; the two new test files add 16), no load-sensitive rerun needed; clippy 0; both reevaluation probes 0; check_lean_audits.py 236 audits passed (234 + AuditScalarLoopBounds.lean, 17 theorems, and AuditScalarBufferValues.lean, 11); the provider suite, run as the brief asks although providers/ is unchanged: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries), provider fmt 0, provider clippy 0. Matrix, docs index and Python after the ledger (630 -> 631). Commits after e96cc3de and before the records commit change one doc comment in std_buffer_c_emit.rs, the ledger text and records only. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8): resource-diagnostics.json byte-identical to the base's archive 7393fd21 (CG03's AFTER; the brief's ae17152b is superseded on main), sidecars byte-identical. Exits in gate/.",
+  "workspace_tests": 6681,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 234,
+  "lean_audits": 236,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6932,7 +6932,9 @@
    "AuditReturnRefusedCallLowering.lean",
    "AuditReviewHoldStanding.lean",
    "AuditRuntimeImports.lean",
+   "AuditScalarBufferValues.lean",
    "AuditScalarCalls.lean",
+   "AuditScalarLoopBounds.lean",
    "AuditScalarMemberStore.lean",
    "AuditScalarObservationContracts.lean",
    "AuditScalarPositions.lean",
@@ -7000,7 +7002,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r4/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r5/gate.json)"
  },
  "named_followups": [
   {
@@ -11366,7 +11368,7 @@
   {
    "id": "W48-QR-INLINE-COMPARISON-WERROR",
    "title": "Emit value-statement comparisons so -Werror accepts every admitted one",
-   "why": "W48-QR-SCALAR-TYPES-R5 measured at base 6883623c that on source.scalar-calls.v1 `let c = x == x;` over a u8 parameter checks and emits, and the emitted `bool t0 = (v0 == v0);` fails `-Werror` (-Wtautological-compare); an unsigned `x < 0` meets -Wtype-limits the same way. The extern and task routes also emit comparisons inline. R5's buffer-route comparisons go through two-parameter functions and are unaffected. Size: the same function form on the scalar, extern and task emitters, with the pinned emitted-C digests that contain an inline comparison re-pinned. DISCHARGE: a self-comparison and an unsigned comparison with 0 on each route, built under -Werror and run natively.",
+   "why": "W48-QR-SCALAR-TYPES-R5 measured at base 6883623c that on source.scalar-calls.v1 `let c = x == x;` over a u8 parameter checks and emits, and the emitted `bool t0 = (v0 == v0);` fails `-Werror` (-Wtautological-compare). The extern and task routes also emit comparisons inline. R5's buffer-route comparisons go through two-parameter functions and are unaffected. Size: the same function form on the scalar, extern and task emitters, with the pinned emitted-C digests that contain an inline comparison re-pinned. DISCHARGE: a self-comparison on each route, built under -Werror and run natively.",
    "source": "docs/reports/w48-qr-scalar-types-r5/README.md",
    "recorded_by": "W48-QR-SCALAR-TYPES-R5"
   }

@@ -101,8 +101,8 @@ not a `buffer_use` (it selects no route), names its operands for the lend
 windows, and is body-local in a loop. The emitter calls §G02t's shared
 `q_scalar_OP_T` / `q_scalar_neg_T` helpers — their `exit(86)` a witness the
 checker proved never taken — and makes each comparison through a two-parameter
-function (`qcore_buffer_lt_u8` …): an inline `x == x` or unsigned `x < 0` is a
-`-Werror` failure (`-Wtautological-compare`, `-Wtype-limits`), found by this
+function (`qcore_buffer_lt_u8` …): an inline `x == x` is a `-Werror` failure
+(`-Wtautological-compare`), found by this
 card's native table and measured on the scalar route too
 (`W48-QR-INLINE-COMPARISON-WERROR`).
 
@@ -157,7 +157,23 @@ both `check` and `emit`; the one difference is the new example
 `examples/scalar/typed_loops.qr` (check 0, emit 0). No existing refusal became
 an admission and no admission a refusal among tracked files.
 
-NATIVE_PLACEHOLDER
+**Native** (`compiler/tests/scalar_loop_bounds.rs`, `scalar_buffer_values.rs`;
+Clang 21.1.8, each program at `-O0` and `-O2` under
+`-fsanitize=undefined,integer -fno-sanitize-recover=all` and at plain `-O2`,
+all with `-Wall -Wextra -Werror -pedantic`; [summary](artifacts/native-boundary.json),
+folded by [`summarize_native.py`](summarize_native.py)):
+
+| Table | Per build | Result |
+|---|---|---|
+| every integer type's loop at 3 iterations and at `min(MAX, 4000)` (`i8` 127, `u8` 255, the rest 4000), the index rendered `dec` to stdout and `log info hex` to stderr | **20** programs, **64,824** lines | both streams byte-identical to an independent reference, exit 0, **0** sanitizer reports — the step at the top of `u8` and `i8` included |
+| every admitted boundary case of the checker table (**1,245** values) and every comparison over every boundary pair (**1,950**), one program per type; an index-arithmetic loop per type (`*`, `/`, `%`, `+`, `<` on the index, 60 iterations) | **20** programs, **3,245** statement sites, **4,395** lines | every line equal to the reference, exit 0 — so no helper's `exit(86)` witness fired — **0** sanitizer reports |
+| the published example `typed_loops.qr` | 1 program | the page's transcript, per stream |
+
+**Checker table.** Every integer type × every pair of boundary values × the
+five operations, and every negation: **1,245** admitted with the reference
+value and **435** refused at `Q053` naming the reference variant (1,680 cases;
+a signed type has seven boundary values and an unsigned one four). Every
+comparison is the reference `bool`.
 
 **Checker against the reference** (`compiler/tests/scalar_loop_bounds.rs`,
 `scalar_buffer_values.rs`). Every type's loop at 1, 3 and 127 iterations renders
@@ -187,15 +203,66 @@ Rust is the vector tables and the native tables, not an extraction theorem.
 
 ## Prediction and outcome
 
-PREDICTION_PLACEHOLDER
+| Measure | Predicted | Outcome |
+|---|---|---|
+| fixtures AFTER vs BEFORE (630) | byte-identical except new examples, 80% | **byte-identical**; the new example only |
+| existing tests changed | only `Repeat` constructions and pins of a widened refusal, 65% | **only the `Repeat` constructions** (13 sites, a new field); no pinned refusal moved — R3's typed-bound row reads a field, still outside the tier |
+| native tables under UBSan | all agree, 0 reports, 80% | **all agree, 0 reports** (after the comparison form below) |
+| Lean | new audit file, 85% | **two** audit files, **28** theorems |
+| corpus arbiter | byte-identical `ae17152b…`, 97% | **byte-identical** to the base's own archive, `7393fd21…` (CG03's AFTER; `ae17152b…` was superseded on main by the Clang-gap cards) |
+| standing gate | green, new tests only, 65% | **green** on the first run, the provider suite included; +16 tests |
+| items completed | 1 (85%), 2 (60%), 3 (15%), 4 (5%) | **1 and 2**; 3 and 4 not attempted |
+
+Not predicted: the first native run of the value table failed to build —
+an inline comparison of a name with itself is a `-Werror` failure — which is
+why comparisons go through functions, and the same shape on the scalar route
+was then measured at the base (`W48-QR-INLINE-COMPARISON-WERROR`); an `i32`
+loop bound named only by the loop emits an unused C variable at the base
+(`W48-QR-LOOP-BOUND-NAME-UNUSED-C`), which the typed loops avoid by comparing
+against the bound's C object; and a typed bound whose `isize`/`usize` number
+the lowering cannot fold without a target needed its own remembered state, so
+it refuses for the width rather than as unknown.
 
 ## Gate
 
-GATE_PLACEHOLDER
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 376 units, 389 summaries; **6,681 passed, 0 failed, 11 ignored** (`private/test-binaries/20260929T190052Z-1819959/summary.json`); no load-sensitive rerun was needed |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **236 audits** (234 + `AuditScalarLoopBounds.lean`, `AuditScalarBufferValues.lean`) |
+| provider tests | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **129 passed, 0 failed, 1 ignored** (43 summaries) — run as the brief asks; `providers/` is unchanged |
+| provider fmt | `cargo fmt --manifest-path providers/Cargo.toml --all -- --check` | 0 | |
+| provider clippy | `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 | |
+| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qr-scalar-types-r5/gate.json` | 0 | after the ledger, 630 → 631 |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | **365 tests OK** (after the matrix regeneration) |
+| clean | `cargo clean --profile dev` | 0 | |
+
+Exits in [gate/](gate/), record in [gate.json](gate.json); logs under
+`private/w48-r5/gate/`. The gate ran at `e96cc3de`; the commits after it change
+one doc comment in `std_buffer_c_emit.rs`, the ledger's wording and records
+only. This card's two test files add 16 tests; the base's full count was not
+remeasured here. Clang 21.1.8 recorded in this worktree
+([gate/clang-version.txt](gate/clang-version.txt)). The AFTER fixture freeze was
+taken with the tip's debug `quirin` (`8abbb6e3…`).
 
 ## Corpus arbiter
 
-ARBITER_PLACEHOLDER
+`QCORE_TYPED_PATH_PARITY=OUT/parity.jsonl python3 scripts/run_pinned_audit.py
+OUT 66910c10 --inputs-root …/build/cycle19 --jobs 8`, AFTER only, with this
+card's release `quirin-audit` (`df228714…`, built from the sources of
+`cf902a63`; later commits touch tests, comments and records only): exit 0.
+`resource-diagnostics.json` sha256 `7393fd21cf2d5f3f…` is **byte-identical** to
+the base's own archive — CG03-CALL-SUMMARY-INSTANTIATION's AFTER on main (564 /
+10 / 4,260), which superseded the brief's `ae17152b…` (the w47-round9 archive)
+when the Clang-gap cards moved corpus figures on main — and so are
+`resource-diagnostics.chunk-contracts.json` (`cbbcfd9c…`) and
+`monkey-source.json` (`57acfc58…`) ([identity](artifacts/arbiter-corpus.identity)).
+No C-audit path was touched.
 
 ## Follow-ups
 
