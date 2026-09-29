@@ -226,7 +226,7 @@ fn every_untyped_link_keeps_its_unknown_and_its_diagnostic() {
     }
     let cases: [(&str, &str); 7] = [
         (
-            "an intermediate link through a union is never admitted",
+            "an intermediate link through a union",
             "struct h_handle *w(struct h_shady *shady, int n) { struct h_handle *h; \
              h = h_open(shady->view->ctx, 0, n); h_close(h); return 0; }",
         ),
@@ -289,7 +289,11 @@ fn every_untyped_link_keeps_its_unknown_and_its_diagnostic() {
     }
 }
 
-const TYPED: [&str; 3] = [
+// Card CG13 (rule 10w) adds the union link: `view` is a union step, and the
+// pointer `ctx` read through it (unpunned) is a borrow at `h_open`'s borrowed
+// position. BEFORE: the gate's refusal.
+const TYPED: [&str; 4] = [
+    "an intermediate link through a union",
     "an intermediate link whose record body the reader refuses",
     "a chain longer than the bound is refused, not truncated",
     "a subscripted link is not a member selection",

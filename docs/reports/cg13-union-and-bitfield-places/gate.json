@@ -1,0 +1,13 @@
+{
+  "note": "CG13-UNION-AND-BITFIELD-PLACES card gate at tip 8252e21c (base f19204fa, main cb20c28e merged), script docs/reports/cg13-union-and-bitfield-places/scripts/gate.sh, logs private/cg13/gate2 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 372 units, 385 summaries, 6,640 passed, 0 failed, 11 ignored (private/test-binaries/20260929T162051Z-4130235/summary.json); a first run (private/cg13/gate, tip 9cf7752e) exited 101 with 13 failed: older cards' union/bit-field pins and the workspace layering guard, each flipped by name or updated deliberately in 8252e21c (report section 4); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 232 audits passed (231 + AuditUnionBitfieldPlace.lean); python tests 365 OK; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE on the merged base (binary built at main cb20c28e) resource-diagnostics.json a6dc500b byte-identical to CG11's AFTER; AFTER 97107d95, 548/10/4,276 -> 554/10/4,270; system 33/2/199 and tail-pause slice unchanged. At the card's base f19204fa: BEFORE 963d7c9f, AFTER 4b5bb59b, 543/10/4,281 -> 549/10/4,275. Exits in gate/.",
+  "workspace_tests": 6640,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 232,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -20,6 +20,9 @@ provenance-rounds-census = []
 
 [dependencies]
 qcore-contract = { path = "../qcore-contract", version = "0.1.0" }
+# Card CG13-UNION-AND-BITFIELD-PLACES: the bit-field storage-unit decision is
+# the core `disjoint_footprint` model's (L2 -> L1, no provider dependency).
+qcore-core = { path = "../qcore-core", version = "0.1.0" }
 qcore-schemas = { path = "../qcore-schemas", version = "17.0.0" }
 serde = { version = "1.0.229", features = ["derive"] }
 # `unbounded_depth` (no added crate): the typed dispatch reader streams

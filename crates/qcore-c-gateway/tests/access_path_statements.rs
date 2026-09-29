@@ -57,11 +57,22 @@ fn embedded_and_indexed_paths_have_untracked_scope() {
 
 #[test]
 fn pointer_store_and_union_still_refuse() {
+    // Card CG13-UNION-AND-BITFIELD-PLACES flips the three union rows (rule
+    // 10w): a scalar read through a union member, direct, typedef-hidden or
+    // through a member pointer to a union, is custody-neutral and certifies.
+    // BEFORE: each stayed Unknown with the indirect-access diagnostic.
     for source in [
-        "struct S { int *p; }; int subject(struct S *s, int *q) { s->p = q; return 0; }",
         "union U { int x; }; int subject(union U *u) { int x = u->x; return 0; }",
         "typedef union U { int x; int y; } U; int subject(U *u) { int x = u->x; return 0; }",
         "typedef union U { int x; int y; } U; typedef struct S { U *u; } S; int subject(S *s) { int x = s->u->x; return 0; }",
+    ] {
+        assert!(
+            matches!(run(source), UnrestrictedLegacyResult::Safe(_)),
+            "{source}"
+        );
+    }
+    for source in [
+        "struct S { int *p; }; int subject(struct S *s, int *q) { s->p = q; return 0; }",
         "typedef struct { int x; } A; struct H { A value; }; int subject(struct H *h) { h->value = h->value; return 0; }",
     ] {
         let result = run(source);

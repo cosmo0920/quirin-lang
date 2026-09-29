@@ -420,16 +420,21 @@ mod tests {
     }
 
     #[test]
-    fn union_bitfield_cast_and_call_operands_refuse() {
+    fn cast_and_call_operands_refuse_and_union_and_bitfield_operands_are_read() {
         let source = format!(
             "{S}int g(int); int f(struct S *p) {{ if (p->u.a) return 1; if (p->bits) return 2; if (*(int *)p->next) return 3; if (g(p->value)) return 4; return 0; }}"
         );
-        for operand in ["p->u.a", "p->bits", "*(int *)p->next", "g(p->value)"] {
+        for operand in ["*(int *)p->next", "g(p->value)"] {
             assert!(condition(&source, operand).is_none(), "{operand}");
+        }
+        // Card CG13 flip (rule 10w): a scalar union member and a bit-field
+        // are read as custody-neutral scalar operands. BEFORE: refused.
+        for operand in ["p->u.a", "p->bits"] {
+            assert!(condition(&source, operand).is_some(), "{operand}");
         }
         let hidden =
             "typedef union U { int x; int y; } U; int f(U *u) { if (u->x) return 1; return 0; }";
-        assert!(condition(hidden, "u->x").is_none());
+        assert!(condition(hidden, "u->x").is_some());
     }
 
     #[test]

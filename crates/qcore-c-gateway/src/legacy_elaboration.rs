@@ -85,6 +85,16 @@ impl Context for GContext<'_> {
         let (automatic, taken) = self.aliasing.get_or_init(|| aliasing(&self.index.function));
         automatic.contains(decl) && !taken.contains(decl)
     }
+
+    fn shared_bitfield_unit(&self, node: &Value, one: &str, other: &str) -> Option<u32> {
+        crate::union_bitfield::shared_unit_refusal(
+            node,
+            &self.index.records,
+            one,
+            other,
+            &crate::typed_access_path::record_layout_dump,
+        )
+    }
 }
 
 /// Walk a function's AST once for its automatic objects and taken addresses.

@@ -238,15 +238,39 @@ fn casts_calls_unions_bitfields_and_volatile_bases_refuse() {
     let source = "struct I { int x; }; struct S { struct I in; unsigned bf : 3; union { int u; } un; }; \
 struct S *get(void); int f(struct S *s, void *p, volatile struct S *w) {\n \
 int y = ((struct S *)p)->in.x + get()->in.x + s->un.u + s->bf + w->in.x;\n return y; }";
-    for spelling in [
-        "((struct S *)p)->in.x",
-        "get()->in.x",
-        "s->un.u",
-        "s->bf",
-        "w->in.x",
-    ] {
+    for spelling in ["((struct S *)p)->in.x", "get()->in.x", "w->in.x"] {
         assert!(place_of(source, spelling, 2).is_err(), "{spelling}");
     }
+    // Card CG13 flip (rule 10w): a union member and a bit-field are steps of
+    // a root-only place; `union_bitfield::decide` decides their access in
+    // the reader that asks. BEFORE: refused (`Refusal::Field`).
+    for spelling in ["s->un.u", "s->bf"] {
+        let place = place_of(source, spelling, 2).unwrap_or_else(|r| panic!("{spelling}: {r:?}"));
+        assert!(place.chain.links.is_empty(), "{spelling}");
+    }
+}
+
+/// Card CG13 (rule 10w): a pointer loaded from a union member's storage is
+/// never a link, so a hop after a union step refuses on a tracked root.
+#[test]
+fn a_hop_after_a_union_step_refuses() {
+    if crate::clang_command().is_err() {
+        return;
+    }
+    let source = "struct I { int x; }; union U { struct I *ip; long n; }; \
+struct S { union U u; union U *pu; }; int f(struct S *s, union U *v) {\n \
+int y = s->u.ip->x + v->ip->x + s->pu->n;\n return y; }";
+    assert_eq!(
+        place_of(source, "s->u.ip->x", 2).unwrap_err(),
+        Refusal::Decision(Decision::DeeperPlace)
+    );
+    assert_eq!(
+        place_of(source, "v->ip->x", 2).unwrap_err(),
+        Refusal::UnionHop
+    );
+    // A union reached through an ordinary member pointer is a direct member.
+    let place = place_of(source, "s->pu->n", 2).expect("direct member");
+    assert_eq!(place.chain.links, ["pu"]);
 }
 
 #[test]

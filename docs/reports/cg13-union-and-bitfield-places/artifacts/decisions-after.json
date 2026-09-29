@@ -1,0 +1,35 @@
+{
+ "all_consultations": {
+  "admitted": 670,
+  "refused": 104
+ },
+ "consultations": 104,
+ "functions": 17,
+ "punned_functions": [
+  "initialize_metric",
+  "otlp_any_value_destroy",
+  "otlp_any_value_initialize",
+  "pb_const_cast",
+  "rd_kafka_DeleteGroups_response_merge",
+  "rd_kafka_DeleteRecords_leaders_queried_cb",
+  "rd_kafka_DescribeConsumerGroups_response_merge",
+  "rd_kafka_ElectLeadersResponse_parse",
+  "rd_kafka_ListOffsets_leaders_queried_cb",
+  "rd_kafka_admin_fanout_worker",
+  "rd_kafka_admin_result_new",
+  "rd_kafka_buf_destroy_final",
+  "rd_kafka_cgrp_offsets_commit",
+  "rd_kafka_confval_set_type",
+  "rd_kafka_event_setup",
+  "rd_kafka_op_destroy",
+  "rd_kafka_poll_cb"
+ ],
+ "schema": "qcore.cg13-union-bitfield-decisions.v1",
+ "step_outcomes": {
+  "union pointer-read borrow": 173,
+  "union pointer-read refused-punned": 104,
+  "union scalar-read neutral": 248,
+  "union scalar-store framed": 184,
+  "union scalar-store neutral": 71
+ }
+}
