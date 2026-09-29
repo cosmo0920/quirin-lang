@@ -3031,6 +3031,16 @@ fn lexical_references(
             previous.map(|token| &token.kind),
             Some(TokenKind::Word(previous)) if previous == "as"
         ) && qcore_core::scalar_types::ScalarType::parse(word).is_some();
+        // Card `W48-QR-SCALAR-TYPES-R6`: `let NAME = protected TYPE;` names a
+        // typed protected payload, never a binding. Contextual on both sides —
+        // `protected` before it and a scalar type name — so no word is newly
+        // reserved; before the card the shape was refused here (`Q013`), and
+        // the constraint-14 census found `protected` followed by a scalar type
+        // name in no tracked source file.
+        let protected_type = matches!(
+            previous.map(|token| &token.kind),
+            Some(TokenKind::Word(previous)) if previous == "protected"
+        ) && qcore_core::scalar_types::ScalarType::parse(word).is_some();
         // Card `W48-QR-SCALAR-TYPES-R2`: `raise ArithmeticError::VARIANT;` names
         // the builtin typed arithmetic error, which no declaration introduces.
         // Contextual — the name immediately followed by `::` — so no word is
@@ -3047,6 +3057,7 @@ fn lexical_references(
             || lend_clause
             || lend_capture
             || conversion_type
+            || protected_type
             || is_reserved_source_word(word)
             || matches!(
                 previous.map(|token| &token.kind),

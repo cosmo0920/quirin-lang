@@ -164,12 +164,16 @@ use qcore_core::prelude::concurrency::mutex_invariant::{
 /// completion capsules have no representation in this model.
 const ROOT_TASK: u32 = 0;
 
-/// One protected resource declared by `let NAME = protected N;`.
+/// One protected resource declared by `let NAME = protected N;`, or by
+/// `let NAME = protected TYPE;` (card `W48-QR-SCALAR-TYPES-R6`).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct MutexSourceResource {
     pub name: String,
     pub resource: SharedResourceId,
     pub bytes: u32,
+    /// The payload's §G02t type for `protected TYPE`, whose size is `bytes`;
+    /// `None` for a `protected N` byte region, every resource before the card.
+    pub payload: Option<qcore_core::scalar_types::ScalarType>,
 }
 
 /// One mutex generation declared by `let NAME = mutex guards R;`, or by the
@@ -199,9 +203,22 @@ pub struct LoweredMutexModule {
     pub generations: Vec<MutexSourceGeneration>,
     /// `exit` id of an `ErrorExit` event to the raised source error name.
     pub error_exits: BTreeMap<u32, String>,
+    /// The builder's recorded target, exactly when a protected payload is an
+    /// `isize` or `usize` (card `W48-QR-SCALAR-TYPES-R6`): its width sizes the
+    /// payload, so it is a named assumption of the result.
+    pub target_assumption: Option<qcore_core::scalar_types::RecordedTarget>,
 }
 
 impl LoweredMutexModule {
+    /// The typed protected payloads, for the backend (card
+    /// `W48-QR-SCALAR-TYPES-R6`). Empty for a module declaring only
+    /// `protected N` regions.
+    pub fn payloads(&self) -> qcore_core::mutex_c_emit::ProtectedPayloads {
+        self.resources
+            .iter()
+            .filter_map(|resource| resource.payload.map(|payload| (resource.resource, payload)))
+            .collect()
+    }
     /// Present one core diagnostic at its own source span, under the code the
     /// core assigns it. The code is the core's; only the location is added.
     pub fn locate(&self, diagnostic: &MutexInvariantDiagnostic) -> SourceDiagnostic {
@@ -439,6 +456,8 @@ impl<'a> Frame<'a> {
 
 #[derive(Default)]
 struct Lowering {
+    /// The builder's recorded target (card `W48-QR-SCALAR-TYPES-R6`).
+    target: Option<qcore_core::scalar_types::RecordedTarget>,
     events: Vec<MutexInvariantEvent>,
     spans: Vec<Span>,
     resources: Vec<MutexSourceResource>,
@@ -525,14 +544,27 @@ pub fn lower_source_mutex(
     typed: &TypedSourceProgram,
     entry: &str,
 ) -> Result<LoweredMutexModule, Vec<SourceDiagnostic>> {
+    lower_source_mutex_for_target(source, typed, entry, None)
+}
+
+/// [`lower_source_mutex`] under the builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES-R6`), which alone sizes a `protected isize` or
+/// `protected usize` payload; with none such a declaration is refused.
+pub fn lower_source_mutex_for_target(
+    source: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+    target: Option<&qcore_core::scalar_types::RecordedTarget>,
+) -> Result<LoweredMutexModule, Vec<SourceDiagnostic>> {
     crate::module_imports::check_source_imports(source)?;
-    lower(source, typed, entry).map_err(|diagnostic| vec![diagnostic])
+    lower(source, typed, entry, target).map_err(|diagnostic| vec![diagnostic])
 }
 
 fn lower(
     source: &SourceProgram,
     typed: &TypedSourceProgram,
     entry: &str,
+    target: Option<&qcore_core::scalar_types::RecordedTarget>,
 ) -> Result<LoweredMutexModule, SourceDiagnostic> {
     let module_span = typed
         .declarations
@@ -622,6 +654,7 @@ fn lower(
         // would make a nested section's admission depend on where the
         // declaration happened to sit.
         ranked: declares_lock_rank(source),
+        target: target.cloned(),
         ..Lowering::default()
     };
     for statement in &scope_body.statements {
@@ -675,6 +708,16 @@ fn lower(
         events: state.events,
         lock_ranks: state.lock_ranks,
     };
+    let target_assumption = state
+        .resources
+        .iter()
+        .any(|resource| {
+            resource
+                .payload
+                .is_some_and(|payload| payload.is_target_width())
+        })
+        .then(|| target.cloned())
+        .flatten();
     Ok(LoweredMutexModule {
         entry: entry.to_owned(),
         program,
@@ -683,6 +726,7 @@ fn lower(
         resources: state.resources,
         generations: state.generations,
         error_exits: state.error_exits,
+        target_assumption,
     })
 }
 
@@ -1560,14 +1604,29 @@ fn lower_declaration(
                 "a shared resource declaration is exactly `let NAME = protected BYTES;`",
             ));
         }
-        let bytes = integer(tokens.get(4))
-            .filter(|bytes| *bytes > 0)
-            .ok_or_else(|| {
+        // Card `W48-QR-SCALAR-TYPES-R6`: `protected TYPE` declares one value
+        // of a §G02t type, whose byte extent is the type's size — decided
+        // here, once, and then exactly a `protected N` region's to the model.
+        let payload = name(tokens.get(4)).and_then(qcore_core::scalar_types::ScalarType::parse);
+        let bytes = if let Some(payload) = payload {
+            let size = payload.size_bytes(state.target.as_ref()).map_err(|_| {
                 failure(
                     span,
-                    "a shared resource needs a positive decimal byte length",
+                    qcore_core::scalar_values::ValueRefusal::NoRecordedTarget { ty: payload }
+                        .to_string(),
                 )
             })?;
+            u32::try_from(size).expect("a scalar is at most eight bytes")
+        } else {
+            integer(tokens.get(4))
+                .filter(|bytes| *bytes > 0)
+                .ok_or_else(|| {
+                    failure(
+                        span,
+                        "a shared resource needs a positive decimal byte length",
+                    )
+                })?
+        };
         let resource = state.resources.len() as SharedResourceId + 1;
         state.bytes_of.insert(resource, bytes);
         if state
@@ -1581,6 +1640,7 @@ fn lower_declaration(
             name: binding,
             resource,
             bytes,
+            payload,
         });
         return Ok(());
     }

@@ -1106,7 +1106,7 @@ fn ledger(checked: &CheckedTaskModule) -> Result<Vec<LedgerSpawn>, SourceDiagnos
                 }
             });
         }
-        let retains_result = worker_function.result == ScalarType::OwnedBuffer;
+        let retains_result = matches!(worker_function.result, ScalarType::OwnedBuffer(_));
         let disposal = if retains_result {
             Some(derive_disposal(creator, *handle_slot, span)?)
         } else {

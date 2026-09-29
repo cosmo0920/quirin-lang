@@ -358,11 +358,38 @@ fn admitted_growth(
     }
 }
 
+/// The payload type of each typed protected resource (card
+/// `W48-QR-SCALAR-TYPES-R6`, `protected TYPE`). A resource absent from it is a
+/// `protected N` byte region, exactly as before the card.
+pub type ProtectedPayloads = BTreeMap<SharedResourceId, crate::scalar_types::ScalarType>;
+
+/// The byte a write stores at `index` into a cell of `resource`. A `bool`
+/// payload's one byte is `0`/`1` — the low bit of the fill — so after every
+/// write every typed protected payload holds a value of its type (card
+/// `W48-QR-SCALAR-TYPES-R6`); every other cell takes the historical fill.
+fn write_fill(index: usize, resource: SharedResourceId, payloads: &ProtectedPayloads) -> u32 {
+    if payloads.get(&resource) == Some(&crate::scalar_types::ScalarType::Bool) {
+        fill_byte(index) & 1
+    } else {
+        fill_byte(index)
+    }
+}
+
 /// Reference execution of a checked trace. Mirrors the emitted C statement for
 /// statement; neither one is derived from the other's output.
 pub fn interpret_mutex_program(
     program: &MutexInvariantProgram,
     certificate: &MutexInvariantCertificate,
+) -> Result<MutexObservation, MutexEmissionRefusal> {
+    interpret_typed_mutex_program(program, certificate, &ProtectedPayloads::new())
+}
+
+/// [`interpret_mutex_program`] with the typed protected payloads of the
+/// source (card `W48-QR-SCALAR-TYPES-R6`). With none it is that function.
+pub fn interpret_typed_mutex_program(
+    program: &MutexInvariantProgram,
+    certificate: &MutexInvariantCertificate,
+    payloads: &ProtectedPayloads,
 ) -> Result<MutexObservation, MutexEmissionRefusal> {
     if certificate.profile != ConcurrencyProfile::CheckedMutexInvariantV1 {
         return Err(MutexEmissionRefusal::UncheckedProfile);
@@ -419,7 +446,7 @@ pub fn interpret_mutex_program(
                 match kind {
                     AccessKind::Write => {
                         for cell in cells.iter_mut() {
-                            *cell = fill_byte(index) as u8;
+                            *cell = write_fill(index, footprint.resource, payloads) as u8;
                         }
                         trace.push(format!(
                             "write {} {} {}",
@@ -507,14 +534,25 @@ pub fn emit_mutex_c11(
     program: &MutexInvariantProgram,
     certificate: &MutexInvariantCertificate,
 ) -> Result<MutexCEmission, MutexEmissionRefusal> {
+    emit_typed_mutex_c11(program, certificate, &ProtectedPayloads::new())
+}
+
+/// [`emit_mutex_c11`] with the typed protected payloads of the source (card
+/// `W48-QR-SCALAR-TYPES-R6`). With none it is that function, byte for byte;
+/// a typed payload changes only what a write into a `bool` cell stores.
+pub fn emit_typed_mutex_c11(
+    program: &MutexInvariantProgram,
+    certificate: &MutexInvariantCertificate,
+    payloads: &ProtectedPayloads,
+) -> Result<MutexCEmission, MutexEmissionRefusal> {
     if certificate.profile != ConcurrencyProfile::CheckedMutexInvariantV1 {
         return Err(MutexEmissionRefusal::UncheckedProfile);
     }
     let extents = resource_extents(program)?;
     match classify_trace(program) {
-        TraceShape::SingleTask => emit_single_task(program, certificate, extents),
+        TraceShape::SingleTask => emit_single_task(program, certificate, extents, payloads),
         TraceShape::ForkJoin { children } => {
-            emit_fork_join(program, certificate, extents, &children)
+            emit_fork_join(program, certificate, extents, &children, payloads)
         }
         TraceShape::Outside { event } => Err(MutexEmissionRefusal::UnsupportedEvent { event }),
     }
@@ -526,6 +564,7 @@ fn emit_single_task(
     program: &MutexInvariantProgram,
     certificate: &MutexInvariantCertificate,
     extents: BTreeMap<SharedResourceId, u32>,
+    payloads: &ProtectedPayloads,
 ) -> Result<MutexCEmission, MutexEmissionRefusal> {
     let mut source = String::new();
     for (resource, end) in &extents {
@@ -546,6 +585,7 @@ fn emit_single_task(
             index,
             event,
             Placement::Local,
+            payloads,
         )?;
     }
     for resource in extents.keys() {
@@ -582,6 +622,7 @@ fn render_event(
     index: usize,
     event: &MutexInvariantEvent,
     placement: Placement,
+    payloads: &ProtectedPayloads,
 ) -> Result<(), MutexEmissionRefusal> {
     match event {
         MutexInvariantEvent::CreateMutex { mutex, .. } => match placement {
@@ -648,7 +689,7 @@ fn render_event(
                         "    for (unsigned i = {start}u; i < {end}u; i++) \
                          r{resource}[i] = (unsigned char){};\n    \
                          qcore_diagnostic_log(QCORE_LOG_TRACE, QCORE_DIAG_RESOURCE_WRITE, {resource}, {start}, {end}, (const char *)0);",
-                        fill_byte(index)
+                        write_fill(index, resource, payloads)
                     )
                     .unwrap(),
                     // The sum is computed by C; retain the declared endpoint
@@ -754,6 +795,7 @@ fn emit_fork_join(
     certificate: &MutexInvariantCertificate,
     extents: BTreeMap<SharedResourceId, u32>,
     children: &[ChildSegment],
+    payloads: &ProtectedPayloads,
 ) -> Result<MutexCEmission, MutexEmissionRefusal> {
     let mut file_scope = String::from(
         "\n/* Card MUTEX-SHARE-CROSS-EMISSION: a checked fork/join mutex trace.\n   \
@@ -789,6 +831,7 @@ fn emit_fork_join(
                 index,
                 &program.events[index],
                 Placement::FileScope,
+                payloads,
             )?;
         }
         writeln!(
@@ -846,6 +889,7 @@ fn emit_fork_join(
             index,
             &program.events[index],
             Placement::FileScope,
+            payloads,
         )?;
         index += 1;
     }

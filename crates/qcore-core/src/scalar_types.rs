@@ -243,6 +243,36 @@ impl ScalarType {
         self.range(target)
             .is_ok_and(|(low, high)| low <= value && value <= high)
     }
+
+    /// The size in bytes of one value's object representation, which is the
+    /// byte extent of a payload of this type (card `W48-QR-SCALAR-TYPES-R6`,
+    /// `W48-QR-TYPES-PAYLOADS`): a quarter of the width in hex digits is half
+    /// of it in bytes, `bool` is one byte, and `isize`/`usize` take the
+    /// recorded target's width — never a guess. Every emitted program that
+    /// relies on a size `_Static_assert`s it ([`c_size_assertion`]), so the one
+    /// size C leaves to the implementation (`sizeof(bool)`) is checked by the
+    /// C compiler rather than assumed.
+    pub fn size_bytes(self, target: Option<&RecordedTarget>) -> Result<u64, WidthError> {
+        Ok(match self {
+            Self::Bool => 1,
+            _ => u64::from(self.bits(target)? / 8),
+        })
+    }
+}
+
+/// The `_Static_assert` binding [`ScalarType::size_bytes`] to the C
+/// compiler's own `sizeof` (card `W48-QR-SCALAR-TYPES-R6`): exact-width types
+/// have no padding, so this asserts what C11 already guarantees for them, and
+/// for `bool`, `ptrdiff_t` and `size_t` it turns the implementation-defined
+/// size into a build-time refusal on a compiler that disagrees. `None` when the
+/// size is unknown (`isize`/`usize` with no recorded target).
+#[must_use]
+pub fn c_size_assertion(ty: ScalarType, target: Option<&RecordedTarget>) -> Option<String> {
+    let size = ty.size_bytes(target).ok()?;
+    Some(format!(
+        "_Static_assert(sizeof({}) == {size}, \"a {ty} payload is {size} byte(s)\");\n",
+        c_type(ty)
+    ))
 }
 
 impl fmt::Display for ScalarType {
@@ -521,6 +551,69 @@ pub fn render(
         pattern,
         width = (bits / 4) as usize
     ))
+}
+
+/// The object representation of `value` at `ty` in this host's byte order
+/// (card `W48-QR-SCALAR-TYPES-R6`): the low [`ScalarType::size_bytes`] bytes of
+/// its two's-complement pattern, which is what C11 stores for an exact-width
+/// integer (no padding bits, 7.20.1.1), for `bool` (`0`/`1` in one byte, the
+/// size asserted by [`c_size_assertion`]) and for `ptrdiff_t`/`size_t` under
+/// the recorded width. The reference execution's byte view of a payload is
+/// this; a native byte access reads the same object, on the same host. `None`
+/// when the value is not one of the type's or the size is unknown.
+#[must_use]
+pub fn object_bytes(
+    ty: ScalarType,
+    value: i128,
+    target: Option<&RecordedTarget>,
+) -> Option<Vec<u8>> {
+    if !ty.contains(value, target) {
+        return None;
+    }
+    let size = usize::try_from(ty.size_bytes(target).ok()?).ok()?;
+    // `as` on an `i128` keeps the two's-complement pattern, so the low bytes
+    // of a negative value are its representation at every smaller width.
+    let mut bytes = (value as u128).to_le_bytes()[..size].to_vec();
+    if cfg!(target_endian = "big") {
+        bytes.reverse();
+    }
+    Some(bytes)
+}
+
+/// The value whose object representation at `ty` is `bytes` — the inverse of
+/// [`object_bytes`]. `None` when the length is not the type's size, or when
+/// the bytes are not a representation of any value of the type (a `bool` byte
+/// other than `0`/`1`), which is exactly why a byte write into a `bool`
+/// payload is refused.
+#[must_use]
+pub fn from_object_bytes(
+    ty: ScalarType,
+    bytes: &[u8],
+    target: Option<&RecordedTarget>,
+) -> Option<i128> {
+    let size = usize::try_from(ty.size_bytes(target).ok()?).ok()?;
+    if bytes.len() != size {
+        return None;
+    }
+    let mut little = bytes.to_vec();
+    if cfg!(target_endian = "big") {
+        little.reverse();
+    }
+    let mut wide = [0u8; 16];
+    wide[..size].copy_from_slice(&little);
+    let pattern = u128::from_le_bytes(wide);
+    let value = if ty.is_signed() && size < 16 {
+        let bits = (size * 8) as u32;
+        let sign = 1u128 << (bits - 1);
+        if pattern & sign != 0 {
+            (pattern as i128) - (1i128 << bits)
+        } else {
+            pattern as i128
+        }
+    } else {
+        pattern as i128
+    };
+    ty.contains(value, target).then_some(value)
 }
 
 /// The C11 spelling of a type.

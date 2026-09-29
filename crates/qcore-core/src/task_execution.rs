@@ -62,11 +62,18 @@ pub enum ScalarType {
     /// checker. A value of it is an immutable copy scalar exactly as an `i32`
     /// is — it has no identity and carries no custody.
     Fixed(st::ScalarType),
-    OwnedBuffer,
+    /// An owned Buffer whose payload is one value of the carried §G02t type
+    /// (card `W48-QR-SCALAR-TYPES-R6`, `W48-QR-TYPES-PAYLOADS`): the payload
+    /// type is part of the resource's type, so two Buffers of different
+    /// payload types are different types everywhere a type is compared — a
+    /// capture, a result, a join. `OwnedBuffer(i32)` is every Buffer written
+    /// before that card ([`Self::OWNED_BUFFER`]).
+    OwnedBuffer(st::ScalarType),
     /// A scoped read loan of a Buffer the creator keeps owning. It is not a
     /// value type: it cannot be a function result, an entry parameter, a copy
-    /// source, a move source or a re-loan source.
-    ReadLoan,
+    /// source, a move source or a re-loan source. It carries the lent
+    /// Buffer's payload type.
+    ReadLoan(st::ScalarType),
     /// A scoped **range write lease** of a Buffer the creator keeps owning
     /// (card `WRITE-LEND-TASKS`): write authority over `[low, high)` of the
     /// payload's [`BUFFER_PAYLOAD_BYTES`], transferred to one worker for
@@ -76,8 +83,34 @@ pub enum ScalarType {
     /// name: a worker body now **exercises** the authority, through
     /// [`TaskInstructionKind::WriteBufferByte`] and
     /// [`TaskInstructionKind::ReadBufferByte`], at an index relative to this
-    /// lease's own `low`.
-    WriteLease,
+    /// lease's own `low`. It carries the leased Buffer's payload type, whose
+    /// size — not a fixed four — is the extent a lease must stay inside.
+    WriteLease(st::ScalarType),
+}
+impl ScalarType {
+    /// The owned Buffer of an `i32` payload: `own<Buffer>`, every Buffer
+    /// written before card `W48-QR-SCALAR-TYPES-R6`.
+    pub const OWNED_BUFFER: Self = Self::OwnedBuffer(st::ScalarType::I32);
+    /// `borrow<Buffer>` of an `i32` payload.
+    pub const READ_LOAN: Self = Self::ReadLoan(st::ScalarType::I32);
+    /// `lend<Buffer>` of an `i32` payload.
+    pub const WRITE_LEASE: Self = Self::WriteLease(st::ScalarType::I32);
+    /// The payload type of a Buffer, a loan or a lease; `None` for a copy
+    /// scalar or `unit`.
+    pub fn payload(self) -> Option<st::ScalarType> {
+        match self {
+            Self::OwnedBuffer(ty) | Self::ReadLoan(ty) | Self::WriteLease(ty) => Some(ty),
+            Self::Unit | Self::I32 | Self::Fixed(_) => None,
+        }
+    }
+}
+
+/// The byte extent of a payload of type `ty` (card `W48-QR-SCALAR-TYPES-R6`):
+/// the type's size, which for `i32` is [`BUFFER_PAYLOAD_BYTES`]. `None` for an
+/// `isize`/`usize` payload with no recorded target, which is refused before
+/// any extent is asked for.
+pub fn payload_extent(ty: st::ScalarType, target: Option<&RecordedTarget>) -> Option<u64> {
+    ty.size_bytes(target).ok()
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ScalarOperand {
@@ -361,10 +394,24 @@ pub struct CheckedTaskModule {
     /// a disagreement is refused — so this is a fact about the module rather
     /// than about a path. The emitter and the composed route read it.
     slot_types: BTreeMap<(FunctionId, SlotId), ScalarType>,
+    /// The payload type of every Buffer, loan and lease slot the checker
+    /// bound, per function (card `W48-QR-SCALAR-TYPES-R6`), on the same
+    /// one-type-per-slot rule. The emitter reads it to type each payload
+    /// operation.
+    buffer_payloads: BTreeMap<(FunctionId, SlotId), st::ScalarType>,
     /// The recorded target, exactly when the module names `isize` or `usize`.
     target_assumption: Option<RecordedTarget>,
 }
 impl CheckedTaskModule {
+    /// The checked payload type of a Buffer, loan or lease slot (card
+    /// `W48-QR-SCALAR-TYPES-R6`), or `None` for a slot that holds none.
+    pub fn buffer_payload(&self, function: FunctionId, slot: SlotId) -> Option<st::ScalarType> {
+        self.buffer_payloads.get(&(function, slot)).copied()
+    }
+    /// Every payload type a Buffer of this module has, `i32` included.
+    pub fn payload_types(&self) -> BTreeSet<st::ScalarType> {
+        self.buffer_payloads.values().copied().collect()
+    }
     pub fn module(&self) -> &TaskModule {
         &self.module
     }
@@ -407,6 +454,13 @@ pub fn function_fixed_types(function: &TaskFunction) -> BTreeSet<st::ScalarType>
     let kind = |types: &mut BTreeSet<st::ScalarType>, kind: &ScalarType| {
         if let ScalarType::Fixed(ty) = kind {
             types.insert(*ty);
+        }
+        // Card `W48-QR-SCALAR-TYPES-R6`: a typed payload is part of the
+        // fixed-width surface — its reads are values of that type.
+        if let Some(ty) = kind.payload()
+            && ty != st::ScalarType::I32
+        {
+            types.insert(ty);
         }
     };
     let literal = |types: &mut BTreeSet<st::ScalarType>, operand: &ScalarOperand| {
@@ -513,33 +567,41 @@ fn targets(term: &TaskTerminatorKind) -> Vec<BlockId> {
 #[derive(Clone, Debug)]
 enum AbstractValue {
     Scalar(ScalarType),
-    Owned(ResourceId),
+    /// An owned Buffer and its payload type (card `W48-QR-SCALAR-TYPES-R6`).
+    /// The payload type is fixed at the identity's origin — an allocation's
+    /// initializer, a parameter's declared type, a worker's declared result —
+    /// and travels with every binding of it.
+    Owned(ResourceId, st::ScalarType),
     /// Read authority over a resource this frame does not own. In a worker
     /// frame the lender is outside the frame entirely, so the identity is not
     /// registered in this frame's ledger and carries no discharge duty.
-    Loan(ResourceId),
+    Loan(ResourceId, st::ScalarType),
     /// Range write authority over a resource this frame does not own (card
     /// `WRITE-LEND-TASKS`). Like a loan it is unregistered in the frame's
     /// ledger and carries no discharge duty. Unlike a loan it is not
     /// *whole-payload* readable: it carries authority over a byte range, and
     /// since card `WRITE-LEND-TASKS-EXERCISE` the operations that reach it are
     /// the byte access pair, never the whole-payload read or write.
-    Lease(ResourceId),
+    Lease(ResourceId, st::ScalarType),
 }
 impl AbstractValue {
     fn ty(&self) -> ScalarType {
         match self {
             Self::Scalar(ty) => *ty,
-            Self::Owned(_) => ScalarType::OwnedBuffer,
-            Self::Loan(_) => ScalarType::ReadLoan,
-            Self::Lease(_) => ScalarType::WriteLease,
+            Self::Owned(_, payload) => ScalarType::OwnedBuffer(*payload),
+            Self::Loan(_, payload) => ScalarType::ReadLoan(*payload),
+            Self::Lease(_, payload) => ScalarType::WriteLease(*payload),
         }
+    }
+    /// The payload type of a Buffer, a loan or a lease.
+    fn payload(&self) -> Option<st::ScalarType> {
+        self.ty().payload()
     }
     /// Owned identity only. A loan is never an owned identity, so it can never
     /// be returned, dropped or accounted for as one.
     fn resource(&self) -> Option<ResourceId> {
         match self {
-            Self::Owned(id) => Some(*id),
+            Self::Owned(id, _) => Some(*id),
             _ => None,
         }
     }
@@ -549,8 +611,8 @@ impl AbstractValue {
     /// accesses go through [`State::authority`] instead.
     fn readable(&self) -> Option<ResourceId> {
         match self {
-            Self::Owned(id) | Self::Loan(id) => Some(*id),
-            Self::Scalar(_) | Self::Lease(_) => None,
+            Self::Owned(id, _) | Self::Loan(id, _) => Some(*id),
+            Self::Scalar(_) | Self::Lease(..) => None,
         }
     }
 }
@@ -651,6 +713,9 @@ struct FunctionSummary {
     lease_footprint: Option<u64>,
     /// Card `W48-QR-SCALAR-TYPES-R4`: every copy-scalar slot's type.
     slot_types: BTreeMap<SlotId, ScalarType>,
+    /// Card `W48-QR-SCALAR-TYPES-R6`: every Buffer, loan and lease slot's
+    /// payload type.
+    buffer_payloads: BTreeMap<SlotId, st::ScalarType>,
 }
 #[derive(Clone)]
 struct State {
@@ -665,8 +730,24 @@ struct State {
     /// parameter, a buffer read and a joined outcome are known only at run
     /// time. It decides whether a value statement folds or raises.
     known: BTreeMap<SlotId, i128>,
+    /// The module's recorded target (card `W48-QR-SCALAR-TYPES-R6`), which
+    /// alone sizes an `isize`/`usize` payload.
+    target: Option<RecordedTarget>,
+    /// Every Buffer, loan and lease slot this path has bound, with its payload
+    /// type (card `W48-QR-SCALAR-TYPES-R6`). Never removed on consumption, so
+    /// the per-block record sees a slot bound and consumed inside one block.
+    bound_payloads: BTreeMap<SlotId, st::ScalarType>,
 }
 impl State {
+    /// The byte extent of a payload of type `payload` (card
+    /// `W48-QR-SCALAR-TYPES-R6`). The fixed-width validation already refused
+    /// a target width with no record, so a missing extent here is a malformed
+    /// module and refuses rather than defaulting.
+    fn extent(&self, payload: st::ScalarType) -> Result<u64, String> {
+        payload_extent(payload, self.target.as_ref()).ok_or_else(|| {
+            format!("a `{payload}` payload has no byte extent without the recorded target")
+        })
+    }
     fn value(&self, operand: &ScalarOperand) -> Result<AbstractValue, String> {
         match operand {
             ScalarOperand::Unit => Ok(AbstractValue::Scalar(ScalarType::Unit)),
@@ -679,7 +760,7 @@ impl State {
                 _ => Err(format!("slot {id} is not an initialized copy scalar")),
             },
             ScalarOperand::Move(id) => match self.slots.get(id) {
-                Some(AbstractSlot::Value(value @ AbstractValue::Owned(resource))) => {
+                Some(AbstractSlot::Value(value @ AbstractValue::Owned(resource, _))) => {
                     self.ledger
                         .use_resource(0, *resource)
                         .map_err(|e| format!("{e:?}"))?;
@@ -693,13 +774,13 @@ impl State {
             // with the exact amounts. A loan itself is never lendable: this
             // profile has no transitive or nested borrowing.
             ScalarOperand::Loan { slot, share } => match self.slots.get(slot) {
-                Some(AbstractSlot::Value(AbstractValue::Owned(resource))) => {
+                Some(AbstractSlot::Value(AbstractValue::Owned(resource, payload))) => {
                     if *share == 0 || *share > FULL_READ_AUTHORITY {
                         return Err(format!(
                             "a read share must be positive and at most {FULL_READ_AUTHORITY}"
                         ));
                     }
-                    Ok(AbstractValue::Loan(*resource))
+                    Ok(AbstractValue::Loan(*resource, *payload))
                 }
                 _ => Err(format!(
                     "slot {slot} is not an owned buffer this task may lend"
@@ -712,19 +793,30 @@ impl State {
             // scalar, a loan, a lease — is refused: this profile has no
             // transitive or nested leasing.
             ScalarOperand::Lease { slot, low, high } => match self.slots.get(slot) {
-                Some(AbstractSlot::Value(AbstractValue::Owned(resource))) => {
+                Some(AbstractSlot::Value(AbstractValue::Owned(resource, payload))) => {
                     if *low >= *high {
                         return Err(format!(
                             "a write lease must cover at least one byte: [{low}, {high}) is empty"
                         ));
                     }
-                    if *high > BUFFER_PAYLOAD_BYTES {
-                        return Err(format!(
-                            "a write lease must stay inside the payload's {BUFFER_PAYLOAD_BYTES} \
-                             bytes: [{low}, {high}) ends past it"
-                        ));
+                    // Card `W48-QR-SCALAR-TYPES-R6`: the extent is the
+                    // payload type's size, never an assumed four; an `i32`
+                    // payload keeps the message it always had.
+                    let extent = self.extent(*payload)?;
+                    if *high > extent {
+                        return Err(if *payload == st::ScalarType::I32 {
+                            format!(
+                                "a write lease must stay inside the payload's {BUFFER_PAYLOAD_BYTES} \
+                                 bytes: [{low}, {high}) ends past it"
+                            )
+                        } else {
+                            format!(
+                                "a write lease must stay inside the `{payload}` payload's {extent} \
+                                 byte(s): [{low}, {high}) ends past it"
+                            )
+                        });
                     }
-                    Ok(AbstractValue::Lease(*resource))
+                    Ok(AbstractValue::Lease(*resource, *payload))
                 }
                 _ => Err(format!(
                     "slot {slot} is not an owned buffer this task may lease for writing"
@@ -775,7 +867,7 @@ impl State {
     }
     fn buffer(&self, slot: SlotId) -> Result<ResourceId, String> {
         match self.value(&ScalarOperand::Move(slot))? {
-            AbstractValue::Owned(id) => Ok(id),
+            AbstractValue::Owned(id, _) => Ok(id),
             _ => unreachable!(),
         }
     }
@@ -791,7 +883,7 @@ impl State {
             return Err(unavailable());
         };
         let resource = value.readable().ok_or_else(unavailable)?;
-        if matches!(value, AbstractValue::Owned(_)) {
+        if matches!(value, AbstractValue::Owned(..)) {
             self.ledger
                 .read_resource(0, resource)
                 .map_err(|e| format!("{e:?}"))?;
@@ -803,15 +895,20 @@ impl State {
     /// moved-away or scalar slot reports what it always reported.
     fn authority(&self, slot: SlotId) -> Result<ByteAuthority, String> {
         match self.slots.get(&slot) {
-            Some(AbstractSlot::Value(AbstractValue::Owned(_))) => Ok(ByteAuthority::Owner),
-            Some(AbstractSlot::Value(AbstractValue::Lease(_))) => Ok(ByteAuthority::Lease),
-            Some(AbstractSlot::Value(AbstractValue::Loan(_))) => Ok(ByteAuthority::Loan),
+            Some(AbstractSlot::Value(AbstractValue::Owned(..))) => Ok(ByteAuthority::Owner),
+            Some(AbstractSlot::Value(AbstractValue::Lease(..))) => Ok(ByteAuthority::Lease),
+            Some(AbstractSlot::Value(AbstractValue::Loan(..))) => Ok(ByteAuthority::Loan),
             _ => Err(format!("slot {slot} is not an initialized owned buffer")),
         }
     }
     fn bind(&mut self, id: SlotId, value: AbstractSlot) -> Result<(), String> {
         if self.slots.contains_key(&id) {
             return Err(format!("slot {id} is written more than once"));
+        }
+        if let AbstractSlot::Value(value) = &value
+            && let Some(payload) = value.payload()
+        {
+            self.bound_payloads.insert(id, payload);
         }
         self.slots.insert(id, value);
         Ok(())
@@ -825,7 +922,7 @@ impl State {
                 s,
                 AbstractSlot::Handle { .. }
                     | AbstractSlot::Result { .. }
-                    | AbstractSlot::Value(AbstractValue::Owned(_))
+                    | AbstractSlot::Value(AbstractValue::Owned(..))
             )
         }) {
             return Err("return/error discards a handle, unconsumed Result or owned buffer".into());
@@ -1092,7 +1189,7 @@ fn check_function(
     if visited != function.blocks.len() {
         return Err(fail(function.span, "task CFG contains a cycle".into()));
     }
-    if id == module.entry && function.result == ScalarType::OwnedBuffer {
+    if id == module.entry && matches!(function.result, ScalarType::OwnedBuffer(_)) {
         return Err(fail(
             function.span,
             "owned task entry results have no external custodian in this profile".into(),
@@ -1102,13 +1199,13 @@ fn check_function(
     // outlive that creation's join, so it is refused at the type, before any
     // path is explored. A write lease is bound the same way, and refused the
     // same way.
-    if function.result == ScalarType::ReadLoan {
+    if matches!(function.result, ScalarType::ReadLoan(_)) {
         return Err(fail(
             function.span,
             "a read loan cannot be a task function result".into(),
         ));
     }
-    if function.result == ScalarType::WriteLease {
+    if matches!(function.result, ScalarType::WriteLease(_)) {
         return Err(fail(
             function.span,
             "a write lease cannot be a task function result".into(),
@@ -1118,7 +1215,7 @@ fn check_function(
         && function
             .parameters
             .iter()
-            .any(|(_, kind)| *kind == ScalarType::ReadLoan)
+            .any(|(_, kind)| matches!(kind, ScalarType::ReadLoan(_)))
     {
         return Err(fail(
             function.span,
@@ -1129,7 +1226,7 @@ fn check_function(
         && function
             .parameters
             .iter()
-            .any(|(_, kind)| *kind == ScalarType::WriteLease)
+            .any(|(_, kind)| matches!(kind, ScalarType::WriteLease(_)))
     {
         return Err(fail(
             function.span,
@@ -1162,11 +1259,13 @@ fn check_function(
         next_id: 1,
         resources: BTreeSet::new(),
         known: BTreeMap::new(),
+        target: module.target.clone(),
+        bound_payloads: BTreeMap::new(),
     };
     let mut inputs = BTreeMap::new();
     for (index, &(slot, ty)) in function.parameters.iter().enumerate() {
         let value = match ty {
-            ScalarType::OwnedBuffer => {
+            ScalarType::OwnedBuffer(payload) => {
                 let resource = state.next_id;
                 state.next_id += 1;
                 state
@@ -1175,24 +1274,27 @@ fn check_function(
                     .map_err(|e| fail(function.span, format!("{e:?}")))?;
                 state.resources.insert(resource);
                 inputs.insert(resource, index);
-                AbstractValue::Owned(resource)
+                AbstractValue::Owned(resource, payload)
             }
             // A loan is not registered in this frame's ledger and is not an
             // `input`: the borrower owes nothing at exit, and no worker exit
             // can report it as returned or dropped. A lease is on the same
             // footing.
-            ScalarType::ReadLoan => {
+            ScalarType::ReadLoan(payload) => {
                 let resource = state.next_id;
                 state.next_id += 1;
-                AbstractValue::Loan(resource)
+                AbstractValue::Loan(resource, payload)
             }
-            ScalarType::WriteLease => {
+            ScalarType::WriteLease(payload) => {
                 let resource = state.next_id;
                 state.next_id += 1;
-                AbstractValue::Lease(resource)
+                AbstractValue::Lease(resource, payload)
             }
             ScalarType::I32 | ScalarType::Unit | ScalarType::Fixed(_) => AbstractValue::Scalar(ty),
         };
+        if let Some(payload) = value.payload() {
+            state.bound_payloads.insert(slot, payload);
+        }
         state.slots.insert(slot, AbstractSlot::Value(value));
     }
     // At most one lease parameter: a creation supplies at most one lease, so a
@@ -1202,7 +1304,7 @@ fn check_function(
     if function
         .parameters
         .iter()
-        .filter(|(_, kind)| *kind == ScalarType::WriteLease)
+        .filter(|(_, kind)| matches!(kind, ScalarType::WriteLease(_)))
         .count()
         > 1
     {
@@ -1218,22 +1320,36 @@ fn check_function(
     let mut scope_stacks = BTreeMap::<BlockId, Vec<ScopeId>>::new();
     let mut count = 0usize;
     let mut slot_types = BTreeMap::<SlotId, ScalarType>::new();
-    let record =
-        |state: &State, slot_types: &mut BTreeMap<SlotId, ScalarType>| -> Result<(), String> {
-            for (slot, value) in &state.slots {
-                if let AbstractSlot::Value(AbstractValue::Scalar(ty)) = value
-                    && *ty != ScalarType::Unit
-                    && slot_types
-                        .insert(*slot, *ty)
-                        .is_some_and(|earlier| earlier != *ty)
-                {
-                    return Err(format!("slot {slot} has two types on two paths"));
-                }
+    let mut buffer_payloads = BTreeMap::<SlotId, st::ScalarType>::new();
+    let record = |state: &State,
+                  (slot_types, buffer_payloads): (
+        &mut BTreeMap<SlotId, ScalarType>,
+        &mut BTreeMap<SlotId, st::ScalarType>,
+    )|
+     -> Result<(), String> {
+        for (slot, payload) in &state.bound_payloads {
+            if buffer_payloads
+                .insert(*slot, *payload)
+                .is_some_and(|earlier| earlier != *payload)
+            {
+                return Err(format!("slot {slot} has two payload types on two paths"));
             }
-            Ok(())
-        };
+        }
+        for (slot, value) in &state.slots {
+            if let AbstractSlot::Value(AbstractValue::Scalar(ty)) = value
+                && *ty != ScalarType::Unit
+                && slot_types
+                    .insert(*slot, *ty)
+                    .is_some_and(|earlier| earlier != *ty)
+            {
+                return Err(format!("slot {slot} has two types on two paths"));
+            }
+        }
+        Ok(())
+    };
     while let Some((block_id, mut state)) = queue.pop() {
-        record(&state, &mut slot_types).map_err(|message| fail(function.span, message))?;
+        record(&state, (&mut slot_types, &mut buffer_payloads))
+            .map_err(|message| fail(function.span, message))?;
         count += 1;
         if count > MAX_CHECK_STATES {
             return Err(fail(
@@ -1287,14 +1403,42 @@ fn check_function(
                     }
                     TaskInstructionKind::ReadBuffer { buffer, value_slot } => {
                         state.readable(*buffer)?;
+                        // Card `W48-QR-SCALAR-TYPES-R6`: a read yields a value
+                        // of the payload type — `i32` for every Buffer before.
+                        let payload = state
+                            .slots
+                            .get(buffer)
+                            .and_then(|slot| match slot {
+                                AbstractSlot::Value(value) => value.payload(),
+                                _ => None,
+                            })
+                            .unwrap_or(st::ScalarType::I32);
                         state.bind(
                             *value_slot,
-                            AbstractSlot::Value(AbstractValue::Scalar(ScalarType::I32)),
+                            AbstractSlot::Value(AbstractValue::Scalar(task_type(payload))),
                         )?;
                     }
                     TaskInstructionKind::WriteBuffer { buffer, value } => {
-                        if state.value(value)?.ty() != ScalarType::I32 {
-                            return Err("buffer write requires a copy i32".into());
+                        let payload = match state.slots.get(buffer) {
+                            Some(AbstractSlot::Value(value)) => value.payload(),
+                            _ => None,
+                        };
+                        let written = state.value(value)?.ty();
+                        match payload {
+                            Some(payload) if payload != st::ScalarType::I32 => {
+                                if written != task_type(payload) {
+                                    return Err(format!(
+                                        "a write into a `{payload}` payload requires a copy \
+                                         `{payload}`: the payload type is part of the Buffer's \
+                                         type and nothing converts implicitly"
+                                    ));
+                                }
+                            }
+                            _ => {
+                                if written != ScalarType::I32 {
+                                    return Err("buffer write requires a copy i32".into());
+                                }
+                            }
                         }
                         // `buffer` demands exclusive authority, which the share
                         // ledger refuses while any read share is outstanding.
@@ -1311,6 +1455,21 @@ fn check_function(
                             return Err("a byte write requires a copy i32 value".into());
                         }
                         let index = constant_index(&state, index)?;
+                        // Card `W48-QR-SCALAR-TYPES-R6`: every byte of an
+                        // integer payload is a byte of some value of its type,
+                        // but a `bool` is one byte whose only values are 0 and
+                        // 1 — any other written byte would leave the payload
+                        // holding no `bool` at all.
+                        if let Some(AbstractSlot::Value(AbstractValue::Lease(
+                            _,
+                            st::ScalarType::Bool,
+                        ))) = state.slots.get(authority)
+                        {
+                            return Err("a byte write into a `bool` payload is refused: a byte \
+                                 other than 0 or 1 is not a `bool`, so the byte view of a \
+                                 `bool` payload is read-only"
+                                .into());
+                        }
                         match state.authority(*authority)? {
                             ByteAuthority::Lease => {
                                 lease_footprint = Some(lease_footprint.unwrap_or(0).max(index + 1));
@@ -1352,10 +1511,18 @@ fn check_function(
                                 // refused by the ledger rather than by a rule
                                 // written a second time here.
                                 state.readable(*authority)?;
-                                if index >= BUFFER_PAYLOAD_BYTES {
+                                // Card `W48-QR-SCALAR-TYPES-R6`: the payload
+                                // type's own extent.
+                                let payload = match state.slots.get(authority) {
+                                    Some(AbstractSlot::Value(value)) => value.payload(),
+                                    _ => None,
+                                }
+                                .unwrap_or(st::ScalarType::I32);
+                                let extent = state.extent(payload)?;
+                                if index >= extent {
                                     return Err(format!(
                                         "byte {index} is outside the payload's \
-                                         [0, {BUFFER_PAYLOAD_BYTES}) extent"
+                                         [0, {extent}) extent"
                                     ));
                                 }
                             }
@@ -1424,9 +1591,11 @@ fn check_function(
                                 payload: None,
                             },
                         );
+                        // A declared error payload is an `i32`-payload Buffer:
+                        // a typed error payload is refused at its raise below.
                         state.bind(
                             *buffer_slot,
-                            AbstractSlot::Value(AbstractValue::Owned(payload)),
+                            AbstractSlot::Value(AbstractValue::Owned(payload, st::ScalarType::I32)),
                         )?;
                     }
                     TaskInstructionKind::EnterScope { scope } => {
@@ -1487,10 +1656,14 @@ fn check_function(
                         }
                         state.slots.insert(*handle, AbstractSlot::Consumed);
                         if let Some(slot) = outcome_slot {
-                            let value = normal.then(|| {
-                                returned
-                                    .map(AbstractValue::Owned)
-                                    .unwrap_or(AbstractValue::Scalar(worker.result))
+                            let value = normal.then(|| match (returned, worker.result) {
+                                (Some(resource), ScalarType::OwnedBuffer(payload)) => {
+                                    AbstractValue::Owned(resource, payload)
+                                }
+                                (Some(resource), _) => {
+                                    AbstractValue::Owned(resource, st::ScalarType::I32)
+                                }
+                                (None, result) => AbstractValue::Scalar(result),
                             });
                             state.bind(
                                 *slot,
@@ -1509,7 +1682,8 @@ fn check_function(
             })();
             result.map_err(|message| fail(instruction.span, message))?;
         }
-        record(&state, &mut slot_types).map_err(|message| fail(block.terminator.span, message))?;
+        record(&state, (&mut slot_types, &mut buffer_payloads))
+            .map_err(|message| fail(block.terminator.span, message))?;
         let result: Result<(), String> = (|| {
             match &block.terminator.kind {
                 TaskTerminatorKind::Goto { target } => queue.push((*target, state)),
@@ -1551,9 +1725,16 @@ fn check_function(
                     success,
                     allocation_error,
                 } => {
-                    if state.value(initial)?.ty() != ScalarType::I32 {
-                        return Err("buffer initialization requires a copy i32".into());
-                    }
+                    // Card `W48-QR-SCALAR-TYPES-R6`: the initializer's type is
+                    // the payload type "named at acquisition" — an `i32` for
+                    // every Buffer before, any §G02t type now.
+                    let payload = match state.value(initial)?.ty() {
+                        ScalarType::I32 => st::ScalarType::I32,
+                        ScalarType::Fixed(ty) => ty,
+                        _ => {
+                            return Err("buffer initialization requires a copy i32".into());
+                        }
+                    };
                     queue.push((*allocation_error, state.clone()));
                     let resource = state.next_id;
                     state.next_id += 1;
@@ -1564,7 +1745,7 @@ fn check_function(
                     state.resources.insert(resource);
                     state.bind(
                         *value_slot,
-                        AbstractSlot::Value(AbstractValue::Owned(resource)),
+                        AbstractSlot::Value(AbstractValue::Owned(resource, payload)),
                     )?;
                     queue.push((*success, state));
                 }
@@ -1610,7 +1791,7 @@ fn check_function(
                             resources.push(resource);
                             captured.insert(index, resource);
                         }
-                        if let AbstractValue::Loan(resource) = &value {
+                        if let AbstractValue::Loan(resource, _) = &value {
                             let ScalarOperand::Loan { slot, share } = argument else {
                                 unreachable!()
                             };
@@ -1619,7 +1800,7 @@ fn check_function(
                             }
                             loans.push((*resource, *share));
                         }
-                        if let AbstractValue::Lease(resource) = &value {
+                        if let AbstractValue::Lease(resource, _) = &value {
                             let ScalarOperand::Lease { slot, low, high } = argument else {
                                 unreachable!()
                             };
@@ -1822,14 +2003,14 @@ fn check_function(
                                 // run tracks the type, not the number, and a
                                 // scalar outcome carries no custody.
                                 ScalarType::Fixed(ty) => TaskOutcome::Fixed { ty, value: 0 },
-                                ScalarType::OwnedBuffer => TaskOutcome::OwnedBuffer(
+                                ScalarType::OwnedBuffer(_) => TaskOutcome::OwnedBuffer(
                                     returned
                                         .ok_or("owned worker outcome has no checked identity")?,
                                 ),
-                                ScalarType::ReadLoan => {
+                                ScalarType::ReadLoan(_) => {
                                     return Err("a read loan is not a worker outcome".into());
                                 }
-                                ScalarType::WriteLease => {
+                                ScalarType::WriteLease(_) => {
                                     return Err("a write lease is not a worker outcome".into());
                                 }
                             }
@@ -1891,7 +2072,7 @@ fn check_function(
                         || (!declared_payloads
                             && value
                                 .as_ref()
-                                .is_some_and(|v| v.ty() != ScalarType::OwnedBuffer))
+                                .is_some_and(|v| !matches!(v.ty(), ScalarType::OwnedBuffer(_))))
                     {
                         let mut failed = state.clone();
                         failed.bind(
@@ -1993,8 +2174,22 @@ fn check_function(
                                 );
                             }
                             let value = state.take(operand)?;
-                            if value.ty() != ScalarType::OwnedBuffer {
-                                return Err("an error payload must be an owned Buffer".into());
+                            match value.ty() {
+                                ScalarType::OwnedBuffer(st::ScalarType::I32) => {}
+                                // Card `W48-QR-SCALAR-TYPES-R6`: a declared
+                                // error payload is `own<Buffer>`, the `i32`
+                                // payload; a typed one has no declaration
+                                // (`W48-QR-TYPES-ERROR-PAYLOAD`).
+                                ScalarType::OwnedBuffer(payload) => {
+                                    return Err(format!(
+                                        "an error payload is an `own<Buffer>` of an i32 \
+                                         payload; a `{payload}` payload is not one \
+                                         (W48-QR-TYPES-ERROR-PAYLOAD)"
+                                    ));
+                                }
+                                _ => {
+                                    return Err("an error payload must be an owned Buffer".into());
+                                }
                             }
                             value.resource()
                         }
@@ -2042,7 +2237,7 @@ fn check_function(
     // be wrong rather than conservative. Those functions keep their actual
     // checked exits, which is what an owned result already does.
     if id != module.entry
-        && function.result != ScalarType::OwnedBuffer
+        && !matches!(function.result, ScalarType::OwnedBuffer(_))
         && function.error_payloads.is_empty()
     {
         let dropped = inputs.values().copied().collect::<Vec<_>>();
@@ -2074,6 +2269,7 @@ fn check_function(
         exits,
         lease_footprint,
         slot_types,
+        buffer_payloads,
     })
 }
 
@@ -2162,6 +2358,11 @@ fn validate_fixed_width(module: &TaskModule, function: &TaskFunction) -> Result<
                 Err("the i32 type has one representation; Fixed(i32) is malformed".into())
             }
             ScalarType::Fixed(ty) => check_type(*ty),
+            // Card `W48-QR-SCALAR-TYPES-R6`: a typed payload's width is its
+            // type's, so an `isize`/`usize` payload needs the record too.
+            ScalarType::OwnedBuffer(ty) | ScalarType::ReadLoan(ty) | ScalarType::WriteLease(ty) => {
+                check_type(*ty)
+            }
             _ => Ok(()),
         }
     };
@@ -2270,6 +2471,15 @@ pub fn check_task_module(module: &TaskModule) -> Result<CheckedTaskModule, Vec<T
                 .flat_map(|(function, summary)| {
                     summary
                         .slot_types
+                        .iter()
+                        .map(|(slot, ty)| ((*function, *slot), *ty))
+                })
+                .collect(),
+            buffer_payloads: summaries
+                .iter()
+                .flat_map(|(function, summary)| {
+                    summary
+                        .buffer_payloads
                         .iter()
                         .map(|(slot, ty)| ((*function, *slot), *ty))
                 })

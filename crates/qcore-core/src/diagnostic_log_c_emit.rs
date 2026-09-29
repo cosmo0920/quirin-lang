@@ -159,6 +159,70 @@ pub fn diagnostic_stdout_adapter_definition_with_fixed_results() -> String {
     DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION.replace(anchor, &format!("{anchor}{FIXED_RESULT_ARM}"))
 }
 
+/// The typed-payload arm of one Buffer case of the hosted stdout adapter (card
+/// `W48-QR-SCALAR-TYPES-R6`). A Buffer event whose payload has a §G02t type
+/// other than `i32` is logged under the name `=TYPE` — no other Buffer event
+/// carries a name — with the payload's bit pattern in `value`: an unsigned
+/// number's `uint64_t` bits (read back by the always-defined signed-to-unsigned
+/// conversion), a signed number or a `bool` itself. The line is the historical
+/// one with `TYPE NUMBER` in place of the `i32` (`true`/`false` for `bool`).
+fn typed_payload_arm(tag: &str) -> String {
+    format!(
+        r#"        if (event->name != NULL && event->name[0] == '=') {{
+            if (event->name[1] == 'U')
+                (void)fprintf(stdout, "{tag} %" PRIu64 " %" PRIu64 " %s %" PRIu64 "\n",
+                    event->subject, event->related, event->name + 1, (uint64_t)event->value);
+            else if (event->name[1] == 'B')
+                (void)fprintf(stdout, "{tag} %" PRIu64 " %" PRIu64 " BOOL %s\n",
+                    event->subject, event->related, event->value != 0 ? "true" : "false");
+            else
+                (void)fprintf(stdout, "{tag} %" PRIu64 " %" PRIu64 " %s %" PRId64 "\n",
+                    event->subject, event->related, event->name + 1, event->value);
+            return;
+        }}
+"#
+    )
+}
+
+/// The hosted stdout adapter for a task program, with the fixed-width
+/// result arm when `fixed_results` (card `W48-QR-SCALAR-TYPES-R4`) and the
+/// typed-payload arms of the allocation, read and write cases when
+/// `typed_payloads` (card `W48-QR-SCALAR-TYPES-R6`). With neither it is
+/// [`DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION`] byte for byte: an arm is installed
+/// only in a program that can reach it.
+#[must_use]
+pub fn diagnostic_stdout_adapter_definition_for(
+    fixed_results: bool,
+    typed_payloads: bool,
+) -> String {
+    let mut text = if fixed_results {
+        diagnostic_stdout_adapter_definition_with_fixed_results()
+    } else {
+        DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION.to_owned()
+    };
+    if typed_payloads {
+        for (case, tag) in [
+            (
+                "    case QCORE_DIAG_RESOURCE_ACQUIRE:\n",
+                "QCORE_BUFFER_ALLOC",
+            ),
+            ("    case QCORE_DIAG_RESOURCE_READ:\n", "QCORE_BUFFER_READ"),
+            (
+                "    case QCORE_DIAG_RESOURCE_WRITE:\n",
+                "QCORE_BUFFER_WRITE",
+            ),
+        ] {
+            assert_eq!(
+                text.matches(case).count(),
+                1,
+                "the adapter has one {tag} case"
+            );
+            text = text.replace(case, &format!("{case}{}", typed_payload_arm(tag)));
+        }
+    }
+    text
+}
+
 /// Install the hosted stdout adapter before [`DIAGNOSTIC_LOG_PRELUDE`]. The
 /// source-level `log_level` declaration is the only production route that uses
 /// it; ordinary emission never includes stdio through this module.

@@ -776,7 +776,7 @@ fn refusal(module: &TaskModule) -> String {
 fn the_ir_refuses_an_owner_byte_write() {
     let module = module_with_worker(byte_access_function(
         "worker",
-        vec![(0, ScalarType::OwnedBuffer)],
+        vec![(0, ScalarType::OWNED_BUFFER)],
         vec![TaskInstructionKind::WriteBufferByte {
             authority: 0,
             index: ScalarOperand::I32(0),
@@ -796,7 +796,7 @@ fn the_ir_refuses_an_owner_byte_write() {
 fn the_ir_refuses_a_byte_read_through_a_read_share() {
     let module = module_with_worker(byte_access_function(
         "worker",
-        vec![(0, ScalarType::ReadLoan)],
+        vec![(0, ScalarType::READ_LOAN)],
         vec![TaskInstructionKind::ReadBufferByte {
             authority: 0,
             index: ScalarOperand::I32(0),
@@ -816,7 +816,7 @@ fn the_ir_refuses_a_byte_read_through_a_read_share() {
 fn the_ir_refuses_a_byte_write_through_a_read_share() {
     let module = module_with_worker(byte_access_function(
         "worker",
-        vec![(0, ScalarType::ReadLoan)],
+        vec![(0, ScalarType::READ_LOAN)],
         vec![TaskInstructionKind::WriteBufferByte {
             authority: 0,
             index: ScalarOperand::I32(0),
@@ -836,7 +836,7 @@ fn the_ir_refuses_a_byte_write_through_a_read_share() {
 fn the_ir_refuses_a_second_write_lease_parameter() {
     let module = module_with_worker(byte_access_function(
         "worker",
-        vec![(0, ScalarType::WriteLease), (1, ScalarType::WriteLease)],
+        vec![(0, ScalarType::WRITE_LEASE), (1, ScalarType::WRITE_LEASE)],
         vec![],
     ));
     let message = refusal(&module);
@@ -849,7 +849,7 @@ fn the_ir_refuses_a_second_write_lease_parameter() {
 fn the_ir_refuses_an_owner_byte_read_past_the_extent() {
     let module = module_with_worker(byte_access_function(
         "worker",
-        vec![(0, ScalarType::OwnedBuffer)],
+        vec![(0, ScalarType::OWNED_BUFFER)],
         vec![TaskInstructionKind::ReadBufferByte {
             authority: 0,
             index: ScalarOperand::I32(BUFFER_PAYLOAD_BYTES as i32),

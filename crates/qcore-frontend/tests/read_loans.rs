@@ -115,7 +115,7 @@ fn one_scoped_read_loan_checks_and_returns_authority_at_join() {
         .find(|function| function.name == "reader")
         .expect("the worker is lowered");
     assert_eq!(worker.parameters.len(), 1);
-    assert_eq!(worker.parameters[0].1, ScalarType::ReadLoan);
+    assert_eq!(worker.parameters[0].1, ScalarType::READ_LOAN);
 
     // Successful creation: the parent reads its own buffer while the child
     // holds the loan, the join closes it, and only then is the buffer released.

@@ -142,16 +142,19 @@ struct ErrorType {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Scalar {
-    OwnedBuffer,
+    /// `own<Buffer>` — or, since card `W48-QR-SCALAR-TYPES-R6`,
+    /// `own<Buffer<T>>` for any §G02t type `T`: the payload type is part of
+    /// the Buffer's type, and `own<Buffer>` is `own<Buffer<i32>>`.
+    OwnedBuffer(FixedType),
     /// `borrow<Buffer>`: a scoped read loan. Only a worker parameter can have
     /// this type, and only a `read … share FULL` capture can produce one.
-    ReadLoan,
+    ReadLoan(FixedType),
     /// `lend<Buffer>`: a scoped range write lease (card `WRITE-LEND-TASKS`).
     /// Only a worker parameter can have this type, and only a
     /// `lend PLACE LOW..HIGH` capture can produce one. `lend` stays
     /// contextual: it is recognised only immediately before `<Buffer>` in a
     /// task parameter type, a spelling that refused before this card.
-    WriteLease,
+    WriteLease(FixedType),
     I32,
     /// Every other type of the §G02t fixed-width table (card
     /// `W48-QR-SCALAR-TYPES-R4`); `i32` keeps its own variant.
@@ -173,35 +176,62 @@ fn table_scalar(name: &str) -> Option<Scalar> {
     })
 }
 
+/// The payload of a Buffer type's argument: `Buffer` is the `i32` payload
+/// every Buffer had before card `W48-QR-SCALAR-TYPES-R6`, and `Buffer<T>`
+/// names any §G02t type `T` (`Buffer<i32>` is the same type as `Buffer`).
+fn buffer_payload(tokens: &[Token]) -> Option<FixedType> {
+    match tokens {
+        [buffer] if word(Some(buffer), "Buffer") => Some(FixedType::I32),
+        [buffer, lt, ty, gt]
+            if word(Some(buffer), "Buffer")
+                && symbol(Some(lt), Symbol::Less)
+                && symbol(Some(gt), Symbol::Greater) =>
+        {
+            name(Some(ty)).and_then(FixedType::parse)
+        }
+        _ => None,
+    }
+}
+
 fn scalar(tokens: &[Token]) -> Option<Scalar> {
     match tokens {
-        [own, lt, buffer, gt]
-            if word(Some(own), "own")
-                && symbol(Some(lt), Symbol::Less)
-                && word(Some(buffer), "Buffer")
-                && symbol(Some(gt), Symbol::Greater) =>
+        [kind, lt, inner @ .., gt]
+            if symbol(Some(lt), Symbol::Less) && symbol(Some(gt), Symbol::Greater) =>
         {
-            Some(Scalar::OwnedBuffer)
-        }
-        [borrow, lt, buffer, gt]
-            if word(Some(borrow), "borrow")
-                && symbol(Some(lt), Symbol::Less)
-                && word(Some(buffer), "Buffer")
-                && symbol(Some(gt), Symbol::Greater) =>
-        {
-            Some(Scalar::ReadLoan)
-        }
-        [lend, lt, buffer, gt]
-            if word(Some(lend), "lend")
-                && symbol(Some(lt), Symbol::Less)
-                && word(Some(buffer), "Buffer")
-                && symbol(Some(gt), Symbol::Greater) =>
-        {
-            Some(Scalar::WriteLease)
+            let payload = buffer_payload(inner)?;
+            if word(Some(kind), "own") {
+                Some(Scalar::OwnedBuffer(payload))
+            } else if word(Some(kind), "borrow") {
+                Some(Scalar::ReadLoan(payload))
+            } else if word(Some(kind), "lend") {
+                Some(Scalar::WriteLease(payload))
+            } else {
+                None
+            }
         }
         [t] if word(Some(t), "unit") => Some(Scalar::Unit),
         [t] => name(Some(t)).and_then(table_scalar),
         _ => None,
+    }
+}
+
+impl Scalar {
+    /// The `i32`-payload Buffer, `own<Buffer>`.
+    const OWNED_BUFFER: Self = Self::OwnedBuffer(FixedType::I32);
+    /// The payload type of a Buffer, a loan or a lease.
+    fn payload(self) -> Option<FixedType> {
+        match self {
+            Self::OwnedBuffer(ty) | Self::ReadLoan(ty) | Self::WriteLease(ty) => Some(ty),
+            _ => None,
+        }
+    }
+    /// The copy scalar holding one value of a §G02t type.
+    fn of(ty: FixedType) -> Self {
+        if ty == FixedType::I32 {
+            Self::I32
+        } else {
+            Self::Fixed(ty)
+        }
     }
 }
 
@@ -270,12 +300,31 @@ fn error_declarations(
             // `V;` is payload-free; `V(own<Buffer>);` carries exactly one owned
             // Buffer. Nothing else is admitted, so a scalar, a borrow, several
             // fields and an empty list each reject rather than degrade.
+            // Card `W48-QR-SCALAR-TYPES-R6`: a typed payload in an error
+            // variant (`V(own<Buffer<T>>);`) is refused by name — the error
+            // payload stays the `i32` Buffer (`W48-QR-TYPES-ERROR-PAYLOAD`).
+            if symbol(inner.get(cursor + 1), Symbol::LeftParen)
+                && inner.len() > cursor + 10
+                && matches!(
+                    scalar(&inner[cursor + 2..cursor + 9]),
+                    Some(Scalar::OwnedBuffer(ty)) if ty != FixedType::I32
+                )
+                && symbol(inner.get(cursor + 9), Symbol::RightParen)
+            {
+                return Err(failure(
+                    declaration.span,
+                    SemanticPass::TypedErrors,
+                    "an error variant's payload is `own<Buffer>`, the i32 payload; a typed \
+                     payload `own<Buffer<T>>` in an error is not admitted \
+                     (W48-QR-TYPES-ERROR-PAYLOAD)",
+                ));
+            }
             let payload = if symbol(inner.get(cursor + 1), Symbol::Semicolon) {
                 cursor += 2;
                 false
             } else if symbol(inner.get(cursor + 1), Symbol::LeftParen)
                 && inner.len() > cursor + 7
-                && scalar(&inner[cursor + 2..cursor + 6]) == Some(Scalar::OwnedBuffer)
+                && scalar(&inner[cursor + 2..cursor + 6]) == Some(Scalar::OWNED_BUFFER)
                 && symbol(inner.get(cursor + 6), Symbol::RightParen)
                 && symbol(inner.get(cursor + 7), Symbol::Semicolon)
             {
@@ -358,26 +407,28 @@ fn signature(
         {
             // Card `W48-QR-SCALAR-TYPES-R4`: every §G02t type, `i32` as before.
             kind
-        } else if group.len() == 8
-            && scalar(&group[2..6]) == Some(Scalar::OwnedBuffer)
-            && word(group.get(6), "use")
-            && word(group.get(7), "one")
+        } else if group.len() >= 8
+            && let Some(Scalar::OwnedBuffer(payload)) = scalar(&group[2..group.len() - 2])
+            && word(group.get(group.len() - 2), "use")
+            && word(group.get(group.len() - 1), "one")
             && parameter
                 .usage
                 .as_ref()
                 .is_some_and(|usage| usage.value == qcore_core::usage::Usage::ONE)
         {
-            Scalar::OwnedBuffer
-        } else if group.len() == 6
-            && scalar(&group[2..6]) == Some(Scalar::ReadLoan)
+            // Card `W48-QR-SCALAR-TYPES-R6`: `own<Buffer>` or
+            // `own<Buffer<T>>`, the payload type part of the parameter's type.
+            Scalar::OwnedBuffer(payload)
+        } else if group.len() >= 6
+            && let Some(Scalar::ReadLoan(payload)) = scalar(&group[2..])
             && parameter.usage.is_none()
         {
             // A read loan carries no usage grade in this profile: the borrower
             // may read it any number of times and may do nothing else with it.
             // Grading loan reads is deliberately left open.
-            Scalar::ReadLoan
-        } else if group.len() == 6
-            && scalar(&group[2..6]) == Some(Scalar::WriteLease)
+            Scalar::ReadLoan(payload)
+        } else if group.len() >= 6
+            && let Some(Scalar::WriteLease(payload)) = scalar(&group[2..])
             && parameter.usage.is_none()
         {
             // A write lease carries no usage grade either: in this first
@@ -385,7 +436,7 @@ fn signature(
             // authority is held and enforced against the owner, and the
             // worker-side range write is the named residual
             // `WRITE-LEND-TASKS-EXERCISE`.
-            Scalar::WriteLease
+            Scalar::WriteLease(payload)
         } else {
             return Err(bad(
                 "task parameters require i32, own<Buffer> use one, an ungraded borrow<Buffer>, \
@@ -404,7 +455,7 @@ fn signature(
         .find_map(|(i, t)| word(Some(t), "effects").then_some(i))
         .unwrap_or(tokens.len());
     let result = scalar(&tokens[close + 2..result_end])
-        .filter(|kind| *kind != Scalar::ReadLoan && *kind != Scalar::WriteLease)
+        .filter(|kind| !matches!(kind, Scalar::ReadLoan(_) | Scalar::WriteLease(_)))
         .ok_or_else(|| bad("task functions support i32, unit and own<Buffer> results"))?;
     let mut cursor = result_end;
     let mut effects = ParsedEffects::default();
@@ -521,9 +572,9 @@ use qcore_core::prelude::concurrency::task_execution::{
 impl Scalar {
     fn core(self) -> ScalarType {
         match self {
-            Self::OwnedBuffer => ScalarType::OwnedBuffer,
-            Self::ReadLoan => ScalarType::ReadLoan,
-            Self::WriteLease => ScalarType::WriteLease,
+            Self::OwnedBuffer(payload) => ScalarType::OwnedBuffer(payload),
+            Self::ReadLoan(payload) => ScalarType::ReadLoan(payload),
+            Self::WriteLease(payload) => ScalarType::WriteLease(payload),
             Self::I32 => ScalarType::I32,
             Self::Fixed(ty) => ScalarType::Fixed(ty),
             Self::Unit => ScalarType::Unit,
@@ -638,9 +689,12 @@ fn transfer_kind(scalar: Scalar) -> qcore_core::transfer::TransferKind {
         Scalar::I32 => TransferKind::I32,
         Scalar::Fixed(_) => TransferKind::FixedScalar,
         Scalar::Unit => TransferKind::Unit,
-        Scalar::OwnedBuffer => TransferKind::OwnedBuffer,
-        Scalar::ReadLoan => TransferKind::ReadLoan,
-        Scalar::WriteLease => TransferKind::WriteLease,
+        // Card `W48-QR-SCALAR-TYPES-R6`: the payload type does not change how
+        // a Buffer crosses — custody, a counted share or a disjoint lease —
+        // so every payload is the same transfer kind.
+        Scalar::OwnedBuffer(_) => TransferKind::OwnedBuffer,
+        Scalar::ReadLoan(_) => TransferKind::ReadLoan,
+        Scalar::WriteLease(_) => TransferKind::WriteLease,
     }
 }
 
@@ -697,14 +751,23 @@ fn transfer_mode(mode: &SourceCaptureMode) -> qcore_core::transfer::TransferMode
 
 /// The source spelling of an executable scalar, for the judgment's refusal
 /// messages. Total over `Scalar`.
-fn scalar_spelling(scalar: Scalar) -> &'static str {
+fn scalar_spelling(scalar: Scalar) -> String {
+    // Card `W48-QR-SCALAR-TYPES-R6`: an `i32` payload keeps its historical
+    // spelling, so every message written before the card is unchanged.
+    let buffer = |kind: &str, payload: FixedType| {
+        if payload == FixedType::I32 {
+            format!("`{kind}<Buffer>`")
+        } else {
+            format!("`{kind}<Buffer<{payload}>>`")
+        }
+    };
     match scalar {
-        Scalar::I32 => "`i32`",
-        Scalar::Fixed(ty) => fixed_spelling(ty),
-        Scalar::Unit => "`unit`",
-        Scalar::OwnedBuffer => "`own<Buffer>`",
-        Scalar::ReadLoan => "`borrow<Buffer>`",
-        Scalar::WriteLease => "`lend<Buffer>`",
+        Scalar::I32 => "`i32`".to_owned(),
+        Scalar::Fixed(ty) => fixed_spelling(ty).to_owned(),
+        Scalar::Unit => "`unit`".to_owned(),
+        Scalar::OwnedBuffer(payload) => buffer("own", payload),
+        Scalar::ReadLoan(payload) => buffer("borrow", payload),
+        Scalar::WriteLease(payload) => buffer("lend", payload),
     }
 }
 
@@ -799,12 +862,12 @@ fn transfer_refusal_message(
                 match qcore_core::transfer::admits(transfer_kind(place), transfer_mode(mode)) {
                     Ok(admitted) => {
                         match qcore_core::transfer::received_kind(transfer_kind(place), admitted) {
-                            TransferKind::ReadLoan => "`borrow<Buffer>`",
-                            TransferKind::WriteLease => "`lend<Buffer>`",
-                            _ => kind,
+                            TransferKind::ReadLoan => "`borrow<Buffer>`".to_owned(),
+                            TransferKind::WriteLease => "`lend<Buffer>`".to_owned(),
+                            _ => kind.clone(),
                         }
                     }
-                    Err(_) => kind,
+                    Err(_) => kind.clone(),
                 };
             format!(
                 "the transferability judgment refuses this capture: {asked} of {kind} is \
@@ -1693,11 +1756,15 @@ impl<'a> Builder<'a> {
         Ok(found)
     }
 
+    /// The initializer of `qcore_buffer_new(VALUE)` and the payload type it
+    /// names (card `W48-QR-SCALAR-TYPES-R6`): the initializer's own type — an
+    /// `i32` literal or binding as before, or a binding of any other §G02t
+    /// type. The payload type is named at acquisition, by the value.
     fn allocation_input(
         &self,
         tokens: &[Token],
         span: Span,
-    ) -> Result<Option<ScalarOperand>, SourceDiagnostic> {
+    ) -> Result<Option<(ScalarOperand, FixedType)>, SourceDiagnostic> {
         if !word(tokens.first(), "qcore_buffer_new") {
             return Ok(None);
         }
@@ -1718,10 +1785,12 @@ impl<'a> Builder<'a> {
             ));
         }
         let (initial, kind) = self.scalar_operand(&tokens[2..tokens.len() - 1], span)?;
-        if kind != Scalar::I32 {
-            return Err(self.bad(span, "buffer constructor requires i32"));
-        }
-        Ok(Some(initial))
+        let payload = match kind {
+            Scalar::I32 => FixedType::I32,
+            Scalar::Fixed(ty) => ty,
+            _ => return Err(self.bad(span, "buffer constructor requires i32")),
+        };
+        Ok(Some((initial, payload)))
     }
 
     fn buffer_initializer(
@@ -1737,7 +1806,7 @@ impl<'a> Builder<'a> {
                     "buffer allocation requires ? or explicit Result match",
                 ));
             }
-            let initial = self
+            let (initial, payload) = self
                 .allocation_input(&tokens[..tokens.len() - 1], span)?
                 .unwrap();
             if !self.signature.effects.errors.contains("AllocError") {
@@ -1760,7 +1829,7 @@ impl<'a> Builder<'a> {
                 },
             );
             self.current = success;
-            return Ok(Some(ValueType::Scalar(Scalar::OwnedBuffer)));
+            return Ok(Some(ValueType::Scalar(Scalar::OwnedBuffer(payload))));
         }
         if word(tokens.first(), "qcore_buffer_write") {
             // `qcore_buffer_write(BUFFER, VALUE)` evaluates to `unit`. Only an
@@ -1801,16 +1870,36 @@ impl<'a> Builder<'a> {
                 .filter(|_| comma == 3)
                 .ok_or_else(|| self.bad(span, "buffer write requires an exact buffer name"))?;
             let (id, kind) = self.lookup(target, span)?;
-            if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
+            let ValueType::Scalar(Scalar::OwnedBuffer(payload)) = kind else {
                 return Err(self.bad(
                     span,
                     "buffer write requires own<Buffer>; a read loan grants no write authority",
                 ));
-            }
-            let (value, value_kind) =
-                self.scalar_operand(&tokens[comma + 1..tokens.len() - 1], span)?;
-            if value_kind != Scalar::I32 {
-                return Err(self.bad(span, "buffer write requires an i32 value"));
+            };
+            let value_tokens = &tokens[comma + 1..tokens.len() - 1];
+            // Card `W48-QR-SCALAR-TYPES-R6`: the value is exactly the payload
+            // type — a literal takes it (range-checked), a binding must have
+            // it; an `i32` payload is unchanged.
+            let (value, value_kind) = if payload != FixedType::I32
+                && let Some(literal) = self.fixed_literal(value_tokens, payload, span)
+            {
+                (literal?, Scalar::Fixed(payload))
+            } else {
+                self.scalar_operand(value_tokens, span)?
+            };
+            if value_kind != Scalar::of(payload) {
+                return Err(self.bad(
+                    span,
+                    if payload == FixedType::I32 {
+                        "buffer write requires an i32 value".to_owned()
+                    } else {
+                        format!(
+                            "a write into an `own<Buffer<{payload}>>` requires a `{payload}` \
+                             value: the payload type is part of the Buffer's type and nothing \
+                             converts implicitly"
+                        )
+                    },
+                ));
             }
             self.instruction(
                 span,
@@ -1848,12 +1937,10 @@ impl<'a> Builder<'a> {
             let (id, kind) = self.lookup(buffer, span)?;
             // A read is the one operation a loan admits, and the one operation
             // an owner keeps while its buffer is lent out.
-            if !matches!(
-                kind,
-                ValueType::Scalar(Scalar::OwnedBuffer | Scalar::ReadLoan)
-            ) {
+            let ValueType::Scalar(Scalar::OwnedBuffer(payload) | Scalar::ReadLoan(payload)) = kind
+            else {
                 return Err(self.bad(span, "buffer read requires own<Buffer> or borrow<Buffer>"));
-            }
+            };
             self.instruction(
                 span,
                 TaskInstructionKind::ReadBuffer {
@@ -1861,7 +1948,8 @@ impl<'a> Builder<'a> {
                     value_slot: slot,
                 },
             );
-            return Ok(Some(ValueType::Scalar(Scalar::I32)));
+            // Card `W48-QR-SCALAR-TYPES-R6`: a value of the payload type.
+            return Ok(Some(ValueType::Scalar(Scalar::of(payload))));
         }
         // Card T06. `qcore_error_payload(e)` moves the owned Buffer out of a
         // bound typed error and into a new owned binding. It is the only way a
@@ -1906,7 +1994,7 @@ impl<'a> Builder<'a> {
                     payload: false,
                 },
             );
-            return Ok(Some(ValueType::Scalar(Scalar::OwnedBuffer)));
+            return Ok(Some(ValueType::Scalar(Scalar::OWNED_BUFFER)));
         }
         Ok(None)
     }
@@ -1949,7 +2037,7 @@ impl<'a> Builder<'a> {
             .filter(|_| commas[0] == 3)
             .ok_or_else(|| self.bad(span, "a byte write requires an exact lease name"))?;
         let (id, kind) = self.lookup(target, span)?;
-        if kind != ValueType::Scalar(Scalar::WriteLease) {
+        if !matches!(kind, ValueType::Scalar(Scalar::WriteLease(_))) {
             return Err(self.bad(
                 span,
                 "a byte write requires lend<Buffer>: the owner's write footprint is the \
@@ -2006,7 +2094,7 @@ impl<'a> Builder<'a> {
         let (id, kind) = self.lookup(target, span)?;
         if !matches!(
             kind,
-            ValueType::Scalar(Scalar::OwnedBuffer | Scalar::WriteLease)
+            ValueType::Scalar(Scalar::OwnedBuffer(_) | Scalar::WriteLease(_))
         ) {
             return Err(self.bad(
                 span,
@@ -2085,13 +2173,13 @@ impl<'a> Builder<'a> {
                         "a scalar expression cannot copy a handle, result, or scope",
                     ));
                 };
-                if scalar == Scalar::OwnedBuffer {
+                if matches!(scalar, Scalar::OwnedBuffer(_)) {
                     return Err(self.bad(
                         span,
                         "owned buffers require explicit move or a checked buffer read",
                     ));
                 }
-                if scalar == Scalar::ReadLoan {
+                if matches!(scalar, Scalar::ReadLoan(_)) {
                     return Err(self.bad(
                         span,
                         "a read loan cannot be copied; it admits only a checked buffer read",
@@ -2194,12 +2282,14 @@ impl<'a> Builder<'a> {
             // borrower receives `borrow<Buffer>`. A write lease (card
             // `WRITE-LEND-TASKS`) is the second: the lessor keeps
             // `own<Buffer>` and the worker receives `lend<Buffer>`.
-            let place_type =
-                if *parameter_type == Scalar::ReadLoan || *parameter_type == Scalar::WriteLease {
-                    Scalar::OwnedBuffer
-                } else {
-                    *parameter_type
-                };
+            // Card `W48-QR-SCALAR-TYPES-R6`: the lent or leased Buffer has the
+            // payload type the worker declares — no conversion at the boundary.
+            let place_type = match *parameter_type {
+                Scalar::ReadLoan(payload) | Scalar::WriteLease(payload) => {
+                    Scalar::OwnedBuffer(payload)
+                }
+                other => other,
+            };
             // Card CT46-SENDSYNC. A non-scalar binding has no transferable
             // kind, and the check just below already refuses it. This guard
             // states that agreement rather than assuming it: if the judgment
@@ -2235,9 +2325,11 @@ impl<'a> Builder<'a> {
                 (SourceCaptureMode::Copy, Scalar::I32 | Scalar::Fixed(_)) => {
                     Some(EnumeratedCapture::Copy)
                 }
-                (SourceCaptureMode::Move, Scalar::OwnedBuffer) => Some(EnumeratedCapture::Move),
-                (SourceCaptureMode::Read { .. }, Scalar::ReadLoan) => Some(EnumeratedCapture::Lend),
-                (SourceCaptureMode::LendWrite { .. }, Scalar::WriteLease) => {
+                (SourceCaptureMode::Move, Scalar::OwnedBuffer(_)) => Some(EnumeratedCapture::Move),
+                (SourceCaptureMode::Read { .. }, Scalar::ReadLoan(_)) => {
+                    Some(EnumeratedCapture::Lend)
+                }
+                (SourceCaptureMode::LendWrite { .. }, Scalar::WriteLease(_)) => {
                     Some(EnumeratedCapture::LendWrite)
                 }
                 _ => None,
@@ -2315,15 +2407,37 @@ impl<'a> Builder<'a> {
                             ),
                         ));
                     }
-                    if high_value > qcore_core::task_execution::BUFFER_PAYLOAD_BYTES {
+                    // Card `W48-QR-SCALAR-TYPES-R6`: the extent is the payload
+                    // type's size — never an assumed four. An `i32` payload
+                    // keeps its message byte for byte.
+                    let payload = place_type.payload().unwrap_or(FixedType::I32);
+                    let extent = qcore_core::task_execution::payload_extent(payload, self.target)
+                        .ok_or_else(|| {
+                        failure(
+                            capture.span,
+                            SemanticPass::OrdinaryTypes,
+                            qcore_core::scalar_values::ValueRefusal::NoRecordedTarget {
+                                ty: payload,
+                            }
+                            .to_string(),
+                        )
+                    })?;
+                    if high_value > extent {
                         return Err(failure(
                             capture.span,
                             SemanticPass::Concurrency,
-                            format!(
-                                "a write lend must stay inside the payload's {} bytes: \
-                                 [{low_value}, {high_value}) ends past it",
-                                qcore_core::task_execution::BUFFER_PAYLOAD_BYTES
-                            ),
+                            if payload == FixedType::I32 {
+                                format!(
+                                    "a write lend must stay inside the payload's {} bytes: \
+                                     [{low_value}, {high_value}) ends past it",
+                                    qcore_core::task_execution::BUFFER_PAYLOAD_BYTES
+                                )
+                            } else {
+                                format!(
+                                    "a write lend must stay inside the `{payload}` payload's \
+                                     {extent} byte(s): [{low_value}, {high_value}) ends past it"
+                                )
+                            },
                         ));
                     }
                     leases += 1;
@@ -2558,7 +2672,7 @@ impl<'a> Builder<'a> {
             }
             None => {
                 let scrutinee = tokens_for(self.source, syntax.scrutinee_span);
-                let initial = self
+                let (initial, payload) = self
                     .allocation_input(&scrutinee, span)?
                     .ok_or_else(|| self.bad(span, "unsupported Result match scrutinee"))?;
                 self.finish(
@@ -2571,7 +2685,7 @@ impl<'a> Builder<'a> {
                     },
                 );
                 (
-                    ValueType::Scalar(Scalar::OwnedBuffer),
+                    ValueType::Scalar(Scalar::OwnedBuffer(payload)),
                     ValueType::KnownError("AllocError".into()),
                 )
             }
@@ -2964,7 +3078,7 @@ impl<'a> Builder<'a> {
                         return Err(self.bad(statement.span, "buffer drop requires one exact name"));
                     }
                     let (id, kind) = self.lookup(place, statement.span)?;
-                    if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
+                    if !matches!(kind, ValueType::Scalar(Scalar::OwnedBuffer(_))) {
                         return Err(self.bad(statement.span, "drop requires an owned buffer"));
                     }
                     self.instruction(
@@ -3022,12 +3136,12 @@ impl<'a> Builder<'a> {
                             self.bad(statement.span, "owned return requires a name")
                         })?;
                         let (id, kind) = self.lookup(buffer, statement.span)?;
-                        if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
+                        let ValueType::Scalar(returned @ Scalar::OwnedBuffer(_)) = kind else {
                             return Err(
                                 self.bad(statement.span, "move return requires own<Buffer>")
                             );
-                        }
-                        (ScalarOperand::Move(id.0 as usize), Scalar::OwnedBuffer)
+                        };
+                        (ScalarOperand::Move(id.0 as usize), returned)
                     } else if tokens.len() == 2 {
                         (ScalarOperand::Unit, Scalar::Unit)
                     } else if let Scalar::Fixed(ty) = self.signature.result
@@ -3150,7 +3264,9 @@ impl<'a> Builder<'a> {
                             // A loan, a scalar and a Result each fail here: the
                             // payload has to be an owned Buffer this frame may
                             // give away, and the raise consumes it.
-                            if kind != ValueType::Scalar(Scalar::OwnedBuffer) {
+                            // Card `W48-QR-SCALAR-TYPES-R6`: exactly the
+                            // `i32` Buffer a payload variant declares.
+                            if kind != ValueType::Scalar(Scalar::OWNED_BUFFER) {
                                 return Err(self
                                     .bad(statement.span, "an error payload requires own<Buffer>"));
                             }

@@ -564,6 +564,18 @@ pub fn reference_trace(
                     buffer: *buffer,
                     value: *value,
                 },
+                // Card `W48-QR-SCALAR-TYPES-R6`: the observable alphabet's
+                // payloads are `i32` (`ObservedEvent::Allocated`, `Read`,
+                // `Written`), so a typed payload event is refused rather than
+                // encoded — never narrowed to an `i32` or dropped. Such a
+                // program sits outside F02 relational comparison, as a
+                // fixed-width worker outcome does, and its native evidence is
+                // the byte comparison of the maintained trace.
+                TaskEvent::TypedBufferAllocated { .. }
+                | TaskEvent::TypedBufferRead { .. }
+                | TaskEvent::TypedBufferWritten { .. } => {
+                    return Err(ReferenceTraceError::UnsupportedObservedEvent { index });
+                }
                 TaskEvent::BufferLeased { .. } | TaskEvent::BufferLeaseReturned { .. } => {
                     return Err(ReferenceTraceError::UnsupportedObservedEvent { index });
                 }

@@ -160,6 +160,16 @@ fn scalar(value: &ScalarOperand) -> String {
     }
 }
 
+/// The C expression of a copy-scalar operand at its checked type (card
+/// `W48-QR-SCALAR-TYPES-R6`): a slot of a fixed-width type is its union
+/// member, every other operand what [`scalar`] spells.
+fn typed_operand(operand: &ScalarOperand, types: &SlotTypes) -> String {
+    match operand {
+        ScalarOperand::Slot(slot) => slot_expression(*slot, types),
+        other => scalar(other),
+    }
+}
+
 /// A move, a loan and a lease all hand the callee the same pointer value —
 /// which is what makes two borrowers of one allocation two readers of one
 /// object rather than two copies, and two lease holders two writers-in-waiting
@@ -382,18 +392,27 @@ pub fn emit_task_c11_with_source_lines(
             _ => None,
         })
         .collect::<BTreeSet<_>>();
+    // Card `W48-QR-SCALAR-TYPES-R6`: every payload type other than `i32` a
+    // Buffer of this module has. Such a type is in `fixed` too, so a module
+    // with a typed payload always takes the fixed-width runtime.
+    let payloads = checked
+        .payload_types()
+        .into_iter()
+        .filter(|payload| *payload != st::ScalarType::I32)
+        .collect::<BTreeSet<_>>();
     let mut helpers = BTreeSet::new();
     if fixed_width {
         for fragment in &mut fragments {
             if fragment.key == "task.runtime" {
-                fragment.text = fixed_width_runtime(&fixed, &fixed_results);
+                fragment.text = fixed_width_runtime(&fixed, &fixed_results, &payloads);
             }
             if fragment.key == diagnostic_log_c_emit::ADAPTER_DEFINITION_KEY
-                && !fixed_results.is_empty()
+                && (!fixed_results.is_empty() || !payloads.is_empty())
             {
-                fragment.text =
-                    diagnostic_log_c_emit::diagnostic_stdout_adapter_definition_with_fixed_results(
-                    );
+                fragment.text = diagnostic_log_c_emit::diagnostic_stdout_adapter_definition_for(
+                    !fixed_results.is_empty(),
+                    !payloads.is_empty(),
+                );
             }
         }
     }
@@ -415,6 +434,17 @@ pub fn emit_task_c11_with_source_lines(
         writeln!(source, "static struct qcore_task_result qcore_task_fn_{id}(const struct qcore_task_value *args, struct qcore_task_context *context) {{").unwrap();
         source.push_str("    (void)args; (void)context;\n");
         let types: SlotTypes = checked.function_slot_types(*id);
+        // Card `W48-QR-SCALAR-TYPES-R6`: the payload type of a Buffer, loan
+        // or lease slot when it is not `i32`, which selects the payload
+        // type's own runtime helpers.
+        let typed_payload = |slot: usize| {
+            checked
+                .buffer_payload(*id, slot)
+                .filter(|payload| *payload != st::ScalarType::I32)
+        };
+        let typed_suffix = |slot: usize| {
+            typed_payload(slot).map_or_else(String::new, |payload| format!("_{payload}"))
+        };
         let mut slots = function
             .parameters
             .iter()
@@ -488,7 +518,7 @@ pub fn emit_task_c11_with_source_lines(
         let lease_slots = function
             .parameters
             .iter()
-            .filter(|(_, kind)| *kind == ScalarType::WriteLease)
+            .filter(|(_, kind)| matches!(kind, ScalarType::WriteLease(_)))
             .map(|(slot, _)| *slot)
             .collect::<BTreeSet<_>>();
         let base = |slot: &usize| {
@@ -597,16 +627,37 @@ pub fn emit_task_c11_with_source_lines(
                         )
                         .unwrap();
                     }
+                    // Card `W48-QR-SCALAR-TYPES-R6`: a typed payload's
+                    // operations are its own type's helpers; an `i32` payload
+                    // keeps the historical calls byte for byte.
                     InstructionKind::ReadBuffer { buffer, value_slot } => {
-                        writeln!(source, "    s_{value_slot}.value.scalar = qcore_buffer_read(s_{buffer}.value.buffer, context);").unwrap();
+                        if let Some(payload) = typed_payload(*buffer) {
+                            writeln!(
+                                source,
+                                "    {} = qcore_buffer_read_{payload}(s_{buffer}.value.buffer, context);",
+                                slot_expression(*value_slot, &types)
+                            )
+                            .unwrap();
+                        } else {
+                            writeln!(source, "    s_{value_slot}.value.scalar = qcore_buffer_read(s_{buffer}.value.buffer, context);").unwrap();
+                        }
                     }
                     InstructionKind::WriteBuffer { buffer, value } => {
-                        writeln!(
-                            source,
-                            "    qcore_buffer_write(s_{buffer}.value.buffer, {}, context);",
-                            scalar(value)
-                        )
-                        .unwrap();
+                        if let Some(payload) = typed_payload(*buffer) {
+                            writeln!(
+                                source,
+                                "    qcore_buffer_write_{payload}(s_{buffer}.value.buffer, {}, context);",
+                                typed_operand(value, &types)
+                            )
+                            .unwrap();
+                        } else {
+                            writeln!(
+                                source,
+                                "    qcore_buffer_write(s_{buffer}.value.buffer, {}, context);",
+                                scalar(value)
+                            )
+                            .unwrap();
+                        }
                     }
                     InstructionKind::WriteBufferByte {
                         authority,
@@ -615,8 +666,9 @@ pub fn emit_task_c11_with_source_lines(
                     } => {
                         writeln!(
                             source,
-                            "    qcore_buffer_byte_write(s_{authority}.value.buffer, \
+                            "    qcore_buffer_byte_write{}(s_{authority}.value.buffer, \
                              {} + UINT64_C({}), {}, context);",
+                            typed_suffix(*authority),
                             base(authority),
                             byte_index(index),
                             scalar(value)
@@ -631,8 +683,9 @@ pub fn emit_task_c11_with_source_lines(
                         writeln!(
                             source,
                             "    s_{value_slot}.value.scalar = \
-                             qcore_buffer_byte_read(s_{authority}.value.buffer, \
+                             qcore_buffer_byte_read{}(s_{authority}.value.buffer, \
                              {} + UINT64_C({}), context);",
+                            typed_suffix(*authority),
                             base(authority),
                             byte_index(index)
                         )
@@ -783,7 +836,11 @@ pub fn emit_task_c11_with_source_lines(
                     success,
                     allocation_error,
                 } => {
-                    writeln!(source, "    s_{value_slot}.value.buffer = qcore_buffer_new({}, context);\n    if (s_{value_slot}.value.buffer == NULL) goto qcore_block_{allocation_error};\n    goto qcore_block_{success};", scalar(initial)).unwrap();
+                    let (suffix, operand) = match typed_payload(*value_slot) {
+                        Some(payload) => (format!("_{payload}"), typed_operand(initial, &types)),
+                        None => (String::new(), scalar(initial)),
+                    };
+                    writeln!(source, "    s_{value_slot}.value.buffer = qcore_buffer_new{suffix}({operand}, context);\n    if (s_{value_slot}.value.buffer == NULL) goto qcore_block_{allocation_error};\n    goto qcore_block_{success};").unwrap();
                 }
                 TerminatorKind::TryOutcome {
                     result_slot,
@@ -844,11 +901,11 @@ pub fn emit_task_c11_with_source_lines(
                         ScalarType::Unit => 0,
                         ScalarType::I32 => 1,
                         ScalarType::Fixed(ty) => fixed_kind(ty),
-                        ScalarType::OwnedBuffer => 2,
-                        ScalarType::ReadLoan => {
+                        ScalarType::OwnedBuffer(_) => 2,
+                        ScalarType::ReadLoan(_) => {
                             unreachable!("a checked result is never a read loan")
                         }
-                        ScalarType::WriteLease => {
+                        ScalarType::WriteLease(_) => {
                             unreachable!("a checked result is never a write lease")
                         }
                     };
@@ -918,13 +975,31 @@ pub fn emit_task_c11_with_source_lines(
             Fragment::new(
                 Section::Includes,
                 "task.scalar-types.includes",
-                "#include <stdbool.h>\n#include <stddef.h>\n",
+                if payloads.is_empty() {
+                    "#include <stdbool.h>\n#include <stddef.h>\n"
+                } else {
+                    // The typed payload's unsigned event bits are copied with
+                    // `memcpy` (card `W48-QR-SCALAR-TYPES-R6`).
+                    "#include <stdbool.h>\n#include <stddef.h>\n#include <string.h>\n"
+                },
             ),
         );
         let mut text = String::new();
         if let Some(target) = checked.target_assumption() {
             text.push('\n');
             text.push_str(&st::c_target_assertions(target));
+        }
+        // Card `W48-QR-SCALAR-TYPES-R6`: every typed payload's byte extent is
+        // the size the checker decided leases against, asserted to the C
+        // compiler — for `bool`, `ptrdiff_t` and `size_t` the one check that
+        // turns an implementation-defined size into a build refusal.
+        if !payloads.is_empty() {
+            text.push('\n');
+            for payload in &payloads {
+                if let Some(assertion) = st::c_size_assertion(*payload, target) {
+                    text.push_str(&assertion);
+                }
+            }
         }
         if !helpers.is_empty() {
             text.push('\n');
@@ -945,6 +1020,20 @@ pub fn emit_task_c11_with_source_lines(
     let mut prologue = String::from(
         "    (void)&qcore_task_start; (void)&qcore_task_collect; (void)&qcore_buffer_new; (void)&qcore_buffer_read; (void)&qcore_buffer_write; (void)&qcore_buffer_byte_write; (void)&qcore_buffer_byte_read; (void)&qcore_buffer_drop;\n",
     );
+    if !payloads.is_empty() {
+        prologue.push_str("    (void)&qcore_buffer_typed_event; (void)&qcore_buffer_acquire; (void)&qcore_buffer_bits;\n");
+        for payload in &payloads {
+            write!(
+                prologue,
+                "    (void)&qcore_buffer_new_{payload}; (void)&qcore_buffer_read_{payload}; (void)&qcore_buffer_write_{payload}; (void)&qcore_buffer_byte_read_{payload};"
+            )
+            .unwrap();
+            if *payload != st::ScalarType::Bool {
+                write!(prologue, " (void)&qcore_buffer_byte_write_{payload};").unwrap();
+            }
+            prologue.push('\n');
+        }
+    }
     for id in module.functions.keys() {
         writeln!(prologue, "    (void)&qcore_task_fn_{id};").unwrap();
     }
@@ -1032,6 +1121,7 @@ pub fn preamble(
 fn fixed_width_runtime(
     fixed: &BTreeSet<st::ScalarType>,
     results: &BTreeSet<st::ScalarType>,
+    payloads: &BTreeSet<st::ScalarType>,
 ) -> String {
     let value = "struct qcore_task_value { int32_t scalar; struct qcore_buffer *buffer; };\n";
     let tail = "    } else abort();\n}\nstatic int qcore_task_trampoline";
@@ -1078,8 +1168,150 @@ fn fixed_width_runtime(
         .unwrap();
     }
     arms.push_str(" else abort();\n}\nstatic int qcore_task_trampoline");
-    RUNTIME.replace(value, &widened).replace(tail, &arms)
+    let runtime = RUNTIME.replace(value, &widened).replace(tail, &arms);
+    if payloads.is_empty() {
+        runtime
+    } else {
+        typed_payload_runtime(&runtime, payloads)
+    }
 }
+
+/// The task runtime of a module whose Buffers carry typed payloads (card
+/// `W48-QR-SCALAR-TYPES-R6`, `W48-QR-TYPES-PAYLOADS`).
+///
+/// `struct qcore_buffer` gains a union with one member per payload type the
+/// module names beside the historical `int32_t payload`, so an `i32` Buffer
+/// is unchanged and a typed one lives in its member; each payload type gets
+/// its own allocation, read, write and byte-access helpers, whose byte extent
+/// is `sizeof` of the member — the type's size, asserted equal to the extent
+/// the checker decided leases against — never the `int32_t`'s four. A typed
+/// event carries its bits and a `=TYPE` name through the worker's private
+/// event array, which the maintained sink's typed-payload arm renders; a
+/// `bool` payload has no byte-write helper, because the checker refuses every
+/// byte write into one.
+fn typed_payload_runtime(runtime: &str, payloads: &BTreeSet<st::ScalarType>) -> String {
+    let buffer = "struct qcore_buffer { uint64_t generation; int32_t payload; };\n";
+    let event = "struct qcore_buffer_event { int kind; uint64_t generation; int32_t payload; };\n";
+    let event_init = "    struct qcore_buffer_event event = {kind, generation, payload};\n";
+    let logged = "        (int64_t)event.payload, (const char *)0);\n";
+    for (needle, what) in [
+        (buffer, "the Buffer"),
+        (event, "the Buffer event"),
+        (event_init, "the event initializer"),
+        (logged, "the event log call"),
+    ] {
+        assert_eq!(runtime.matches(needle).count(), 1, "{what} is written once");
+    }
+    let mut union = String::from("union qcore_buffer_typed {");
+    for payload in payloads {
+        write!(union, " {} {};", st::c_type(*payload), member(*payload)).unwrap();
+    }
+    union.push_str(" };\n");
+    let mut text = runtime
+        .replace(
+            buffer,
+            &format!(
+                "{union}struct qcore_buffer {{ uint64_t generation; int32_t payload; union qcore_buffer_typed typed; }};\n"
+            ),
+        )
+        .replace(
+            event,
+            "struct qcore_buffer_event { int kind; uint64_t generation; int32_t payload; int64_t bits; const char *name; };\n",
+        )
+        .replace(
+            event_init,
+            "    struct qcore_buffer_event event = {kind, generation, payload, INT64_C(0), (const char *)0};\n",
+        )
+        .replace(
+            logged,
+            "        event.name != NULL ? event.bits : (int64_t)event.payload, event.name);\n",
+        );
+    text.push_str(TYPED_PAYLOAD_COMMON);
+    for payload in payloads {
+        let c = st::c_type(*payload);
+        let name = payload.name();
+        let label = name.to_ascii_uppercase();
+        let field = format!("buffer->typed.{}", member(*payload));
+        let bits = if payload.is_integer() && !payload.is_signed() {
+            "qcore_buffer_bits((uint64_t)payload)".to_owned()
+        } else {
+            "(int64_t)payload".to_owned()
+        };
+        write!(
+            text,
+            "static struct qcore_buffer *qcore_buffer_new_{name}({c} payload, struct qcore_task_context *context) {{\n    \
+             struct qcore_buffer *buffer = qcore_buffer_acquire(context);\n    \
+             if (buffer == NULL) return NULL;\n    \
+             {field} = payload;\n    \
+             qcore_buffer_typed_event(context, 0, buffer->generation, {bits}, \"={label}\");\n    \
+             return buffer;\n}}\n\
+             static {c} qcore_buffer_read_{name}(const struct qcore_buffer *buffer, struct qcore_task_context *context) {{\n    \
+             if (buffer == NULL) abort();\n    \
+             {c} payload = {field};\n    \
+             qcore_buffer_typed_event(context, 2, buffer->generation, {bits}, \"={label}\");\n    \
+             return payload;\n}}\n\
+             static void qcore_buffer_write_{name}(struct qcore_buffer *buffer, {c} payload, struct qcore_task_context *context) {{\n    \
+             if (buffer == NULL) abort();\n    \
+             {field} = payload;\n    \
+             qcore_buffer_typed_event(context, 4, buffer->generation, {bits}, \"={label}\");\n}}\n\
+             static int32_t qcore_buffer_byte_read_{name}(const struct qcore_buffer *buffer, uint64_t index, struct qcore_task_context *context) {{\n    \
+             if (buffer == NULL || index >= sizeof {field}) abort();\n    \
+             unsigned char byte = ((const unsigned char *)&{field})[index];\n    \
+             qcore_buffer_event(context, 6, buffer->generation, (int32_t)((index << 8) | byte));\n    \
+             return (int32_t)byte;\n}}\n"
+        )
+        .unwrap();
+        if *payload != st::ScalarType::Bool {
+            write!(
+                text,
+                "static void qcore_buffer_byte_write_{name}(struct qcore_buffer *buffer, uint64_t index, int32_t value, struct qcore_task_context *context) {{\n    \
+                 if (buffer == NULL || index >= sizeof {field}) abort();\n    \
+                 unsigned char byte = (unsigned char)(value & INT32_C(255));\n    \
+                 ((unsigned char *)&{field})[index] = byte;\n    \
+                 qcore_buffer_event(context, 5, buffer->generation, (int32_t)((index << 8) | byte));\n}}\n"
+            )
+            .unwrap();
+        }
+    }
+    text
+}
+
+/// The helpers every typed payload shares (card `W48-QR-SCALAR-TYPES-R6`):
+/// the typed event (the historical event's dispatch, carrying bits and a
+/// name), the allocation without a payload store (the historical allocation's
+/// identity and failure discipline, verbatim), and the unsigned bit copy — a
+/// `memcpy`, because converting a `uint64_t` above `INT64_MAX` to `int64_t` is
+/// implementation-defined in C11 while copying its object representation is
+/// not.
+const TYPED_PAYLOAD_COMMON: &str = r#"/* Card W48-QR-SCALAR-TYPES-R6: typed Buffer payloads. */
+static void qcore_buffer_typed_event(struct qcore_task_context *context, int kind, uint64_t generation, int64_t bits, const char *name) {
+    struct qcore_buffer_event event = {kind, generation, INT32_C(0), bits, name};
+    if (context->identity == 0) qcore_buffer_log_event(0, event);
+    else {
+        if (context->event_count >= QCORE_BUFFER_EVENT_CAPACITY) abort();
+        context->events[context->event_count++] = event;
+    }
+}
+static int64_t qcore_buffer_bits(uint64_t value) {
+    int64_t bits;
+    memcpy(&bits, &value, sizeof bits);
+    return bits;
+}
+static struct qcore_buffer *qcore_buffer_acquire(struct qcore_task_context *context) {
+    if (context->identity > UINT32_MAX || context->next_buffer == 0 ||
+        context->next_buffer > UINT32_MAX || context->allocation_attempt == UINT64_MAX) abort();
+    ++context->allocation_attempt;
+    struct qcore_buffer *buffer = QCORE_BUFFER_MALLOC_FOR_TASK(
+        sizeof(*buffer), context->identity, context->allocation_attempt);
+    if (buffer == NULL) {
+        qcore_buffer_event(context, 1, 0, 0);
+        return NULL;
+    }
+    buffer->generation = context->identity * UINT64_C(4294967296) + context->next_buffer++;
+    buffer->payload = INT32_C(0);
+    return buffer;
+}
+"#;
 
 /// The runtime's headers, kept separate from [`RUNTIME`] so the single printing
 /// route can be installed between them.

@@ -77,6 +77,31 @@ pub enum TaskEvent {
         task: u64,
         buffer: ResourceId,
     },
+    /// A Buffer allocated with a payload of a §G02t type other than `i32`
+    /// (card `W48-QR-SCALAR-TYPES-R6`). An `i32` payload is always
+    /// [`TaskEvent::BufferAllocated`], so one allocation has one event shape
+    /// and every trace written before the card keeps its bytes; `ty` is never
+    /// `i32`. Rendered `QCORE_BUFFER_ALLOC TASK BUFFER TYPE VALUE`.
+    TypedBufferAllocated {
+        task: u64,
+        buffer: ResourceId,
+        ty: st::ScalarType,
+        value: i128,
+    },
+    /// [`TaskEvent::BufferRead`] of a typed payload.
+    TypedBufferRead {
+        task: u64,
+        buffer: ResourceId,
+        ty: st::ScalarType,
+        value: i128,
+    },
+    /// [`TaskEvent::BufferWritten`] of a typed payload.
+    TypedBufferWritten {
+        task: u64,
+        buffer: ResourceId,
+        ty: st::ScalarType,
+        value: i128,
+    },
     Spawn {
         task: u64,
         worker: FunctionId,
@@ -168,7 +193,9 @@ struct Runtime<'a> {
     decision: usize,
     worker_allocations: &'a BTreeMap<u64, Vec<bool>>,
     allocation_decisions: BTreeMap<u64, usize>,
-    buffers: BTreeMap<ResourceId, i32>,
+    /// Each live Buffer's payload: its type and its value (card
+    /// `W48-QR-SCALAR-TYPES-R6`; an `i32` for every Buffer before it).
+    buffers: BTreeMap<ResourceId, (st::ScalarType, i128)>,
     buffer_events: BTreeMap<u64, Vec<TaskEvent>>,
     next_task: u64,
     next_reservation: u64,
@@ -251,6 +278,7 @@ fn byte_offset(
     slots: &BTreeMap<SlotId, Value>,
     index: &ScalarOperand,
     base: u64,
+    extent: u64,
 ) -> Result<u64, String> {
     let ScalarOperand::I32(value) = index else {
         // Touch the slot so an unavailable one reports as unavailable rather
@@ -262,13 +290,32 @@ fn byte_offset(
         return Err("reference byte index is negative".into());
     }
     let offset = base + *value as u64;
-    if offset >= BUFFER_PAYLOAD_BYTES {
+    if offset >= extent {
         return Err(format!(
             "reference byte {offset} is outside the payload's \
-             [0, {BUFFER_PAYLOAD_BYTES}) extent"
+             [0, {extent}) extent"
         ));
     }
     Ok(offset)
+}
+
+/// A payload value as the scalar a read yields: an `i32` keeps its own
+/// variant, every other type is `Fixed` (card `W48-QR-SCALAR-TYPES-R6`).
+fn payload_scalar(ty: st::ScalarType, value: i128) -> Result<ScalarValue, String> {
+    Ok(if ty == st::ScalarType::I32 {
+        ScalarValue::I32(i32::try_from(value).map_err(|_| "reference i32 payload range")?)
+    } else {
+        ScalarValue::Fixed { ty, value }
+    })
+}
+
+/// The payload type and value a copy scalar would store.
+fn scalar_payload(value: &ScalarValue) -> Option<(st::ScalarType, i128)> {
+    match value {
+        ScalarValue::I32(value) => Some((st::ScalarType::I32, i128::from(*value))),
+        ScalarValue::Fixed { ty, value } => Some((*ty, *value)),
+        _ => None,
+    }
 }
 
 /// The identity a reference read is performed against, owned or borrowed.
@@ -491,22 +538,33 @@ impl Runtime<'_> {
                             self.ledger
                                 .read_resource(task, resource)
                                 .map_err(|e| format!("{e:?}"))?;
-                            let value = *self
+                            let (ty, value) = *self
                                 .buffers
                                 .get(&resource)
                                 .ok_or("reference buffer payload missing")?;
+                            let read = payload_scalar(ty, value)?;
                             self.buffer_event(
                                 task,
-                                TaskEvent::BufferRead {
-                                    task,
-                                    buffer: resource,
-                                    value,
+                                match read {
+                                    ScalarValue::I32(value) => TaskEvent::BufferRead {
+                                        task,
+                                        buffer: resource,
+                                        value,
+                                    },
+                                    _ => TaskEvent::TypedBufferRead {
+                                        task,
+                                        buffer: resource,
+                                        ty,
+                                        value,
+                                    },
                                 },
                             );
-                            slots.insert(*value_slot, Value::Scalar(ScalarValue::I32(value)));
+                            slots.insert(*value_slot, Value::Scalar(read));
                         }
                         TaskInstructionKind::WriteBuffer { buffer, value } => {
-                            let ScalarValue::I32(written) = scalar(&slots, value)? else {
+                            let Some((written_ty, written)) =
+                                scalar_payload(&scalar(&slots, value)?)
+                            else {
                                 return Err("reference buffer write requires i32".into());
                             };
                             // Independently of the checker: a write demands
@@ -520,16 +578,30 @@ impl Runtime<'_> {
                             self.ledger
                                 .use_resource(task, resource)
                                 .map_err(|e| format!("{e:?}"))?;
-                            *self
+                            let cell = self
                                 .buffers
                                 .get_mut(&resource)
-                                .ok_or("reference buffer payload missing")? = written;
+                                .ok_or("reference buffer payload missing")?;
+                            // Independently of the checker: the value is of
+                            // the payload's own type.
+                            if cell.0 != written_ty {
+                                return Err("reference buffer write of another payload type".into());
+                            }
+                            cell.1 = written;
                             self.buffer_event(
                                 task,
-                                TaskEvent::BufferWritten {
-                                    task,
-                                    buffer: resource,
-                                    value: written,
+                                match payload_scalar(written_ty, written)? {
+                                    ScalarValue::I32(value) => TaskEvent::BufferWritten {
+                                        task,
+                                        buffer: resource,
+                                        value,
+                                    },
+                                    _ => TaskEvent::TypedBufferWritten {
+                                        task,
+                                        buffer: resource,
+                                        ty: written_ty,
+                                        value: written,
+                                    },
                                 },
                             );
                         }
@@ -546,21 +618,30 @@ impl Runtime<'_> {
                             else {
                                 return Err("reference byte write requires a write lease".into());
                             };
-                            let offset = byte_offset(&slots, index, low)?;
+                            let target = self.module.target.as_ref();
                             let payload = self
                                 .buffers
                                 .get_mut(&resource)
                                 .ok_or("reference buffer payload missing")?;
+                            let extent = payload_extent(payload.0, target)
+                                .ok_or("reference payload has no extent")?;
+                            let offset = byte_offset(&slots, index, low, extent)?;
                             // The payload's own object representation, which
                             // is what the emitted C indexes. Reference and C
                             // therefore agree by construction on any host;
                             // a program whose *observation* depends on that
                             // representation is the recorded boundary
                             // `WRITE-LEND-EXERCISE-BYTE-ORDER`.
-                            let mut bytes = payload.to_ne_bytes();
+                            let mut bytes = st::object_bytes(payload.0, payload.1, target)
+                                .ok_or("reference payload has no object representation")?;
                             let byte = (written & 0xff) as u8;
                             bytes[offset as usize] = byte;
-                            *payload = i32::from_ne_bytes(bytes);
+                            // A byte of no value of the type (a `bool` byte
+                            // other than 0/1) is refused here as well as by
+                            // the checker, rather than stored.
+                            payload.1 = st::from_object_bytes(payload.0, &bytes, target).ok_or(
+                                "reference byte write leaves no value of the payload type",
+                            )?;
                             self.buffer_event(
                                 task,
                                 TaskEvent::BufferByteWritten {
@@ -576,10 +657,20 @@ impl Runtime<'_> {
                             index,
                             value_slot,
                         } => {
+                            let target = self.module.target.as_ref();
+                            let extent_of = |resource: ResourceId| -> Result<u64, String> {
+                                let (ty, _) = self
+                                    .buffers
+                                    .get(&resource)
+                                    .ok_or("reference buffer payload missing")?;
+                                payload_extent(*ty, target)
+                                    .ok_or_else(|| "reference payload has no extent".to_string())
+                            };
                             let (resource, offset) = match authority_value(&slots, *authority)? {
-                                ScalarValue::WriteLease { resource, low } => {
-                                    (resource, byte_offset(&slots, index, low)?)
-                                }
+                                ScalarValue::WriteLease { resource, low } => (
+                                    resource,
+                                    byte_offset(&slots, index, low, extent_of(resource)?)?,
+                                ),
                                 ScalarValue::OwnedBuffer(resource) => {
                                     // Independently of the checker: the
                                     // owner's byte read takes the same
@@ -589,7 +680,10 @@ impl Runtime<'_> {
                                     self.ledger
                                         .read_resource(task, resource)
                                         .map_err(|e| format!("{e:?}"))?;
-                                    (resource, byte_offset(&slots, index, 0)?)
+                                    (
+                                        resource,
+                                        byte_offset(&slots, index, 0, extent_of(resource)?)?,
+                                    )
                                 }
                                 _ => {
                                     return Err(
@@ -599,11 +693,13 @@ impl Runtime<'_> {
                                     );
                                 }
                             };
-                            let payload = *self
+                            let (ty, payload) = *self
                                 .buffers
                                 .get(&resource)
                                 .ok_or("reference buffer payload missing")?;
-                            let byte = payload.to_ne_bytes()[offset as usize];
+                            let byte = st::object_bytes(ty, payload, target)
+                                .ok_or("reference payload has no object representation")?
+                                [offset as usize];
                             self.buffer_event(
                                 task,
                                 TaskEvent::BufferByteRead {
@@ -807,7 +903,8 @@ impl Runtime<'_> {
                         success,
                         allocation_error,
                     } => {
-                        let ScalarValue::I32(initial) = scalar(&slots, initial)? else {
+                        let Some((initial_ty, initial)) = scalar_payload(&scalar(&slots, initial)?)
+                        else {
                             return Err("reference allocation requires i32".into());
                         };
                         let choices = if task == 0 {
@@ -827,17 +924,25 @@ impl Runtime<'_> {
                             self.ledger
                                 .acquire(task, resource)
                                 .map_err(|e| format!("{e:?}"))?;
-                            self.buffers.insert(resource, initial);
+                            self.buffers.insert(resource, (initial_ty, initial));
                             slots.insert(
                                 *value_slot,
                                 Value::Scalar(ScalarValue::OwnedBuffer(resource)),
                             );
                             self.buffer_event(
                                 task,
-                                TaskEvent::BufferAllocated {
-                                    task,
-                                    buffer: resource,
-                                    initial,
+                                match payload_scalar(initial_ty, initial)? {
+                                    ScalarValue::I32(initial) => TaskEvent::BufferAllocated {
+                                        task,
+                                        buffer: resource,
+                                        initial,
+                                    },
+                                    _ => TaskEvent::TypedBufferAllocated {
+                                        task,
+                                        buffer: resource,
+                                        ty: initial_ty,
+                                        value: initial,
+                                    },
                                 },
                             );
                             block_id = *success;
@@ -1267,6 +1372,18 @@ pub fn render_task_observation(observation: &TaskExecutionObservation) -> String
 /// concatenation of this over the observation's events, which is what makes
 /// "the composed program's standard output with its source lines removed **is**
 /// the task rendering" a fact rather than an agreement between two renderers.
+/// `TYPE NUMBER` of a typed payload event: the type's name in upper case and
+/// the number itself (`true`/`false` for `bool`) — the fixed-width result's
+/// spelling (card `W48-QR-SCALAR-TYPES-R4`), reused.
+fn typed_payload(ty: st::ScalarType, value: i128) -> String {
+    let number = if ty == st::ScalarType::Bool {
+        if value == 1 { "true" } else { "false" }.to_owned()
+    } else {
+        value.to_string()
+    };
+    format!("{} {number}", ty.name().to_ascii_uppercase())
+}
+
 pub fn render_task_event(event: &TaskEvent) -> String {
     let mut output = String::new();
     use std::fmt::Write;
@@ -1293,6 +1410,42 @@ pub fn render_task_event(event: &TaskEvent) -> String {
             TaskEvent::BufferDropped { task, buffer } => {
                 writeln!(output, "QCORE_BUFFER_DROP {task} {buffer}").unwrap()
             }
+            // Card `W48-QR-SCALAR-TYPES-R6`: a typed payload event names its
+            // type between the identity and the number, as the maintained
+            // sink's typed-payload arm prints it.
+            TaskEvent::TypedBufferAllocated {
+                task,
+                buffer,
+                ty,
+                value,
+            } => writeln!(
+                output,
+                "QCORE_BUFFER_ALLOC {task} {buffer} {}",
+                typed_payload(*ty, *value)
+            )
+            .unwrap(),
+            TaskEvent::TypedBufferRead {
+                task,
+                buffer,
+                ty,
+                value,
+            } => writeln!(
+                output,
+                "QCORE_BUFFER_READ {task} {buffer} {}",
+                typed_payload(*ty, *value)
+            )
+            .unwrap(),
+            TaskEvent::TypedBufferWritten {
+                task,
+                buffer,
+                ty,
+                value,
+            } => writeln!(
+                output,
+                "QCORE_BUFFER_WRITE {task} {buffer} {}",
+                typed_payload(*ty, *value)
+            )
+            .unwrap(),
             TaskEvent::Spawn { task, worker } => {
                 writeln!(output, "QCORE_TASK_SPAWN {task} {worker}").unwrap()
             }

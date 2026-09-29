@@ -1065,6 +1065,10 @@ impl CompiledModule {
             // `usize`, alone or composed with rendered lines.
             CheckedSourceModule::ScopedTasks(checked) => checked.target_assumption(),
             CheckedSourceModule::ComposedTasks(module) => module.tasks().target_assumption(),
+            // Card `W48-QR-SCALAR-TYPES-R6`: a `protected isize`/`usize` payload.
+            CheckedSourceModule::CheckedMutexGuards(module) => {
+                module.lowered.target_assumption.as_ref()
+            }
             _ => None,
         }
     }
@@ -1531,7 +1535,7 @@ fn compile_elaborated_source(
         // Selected before the task route: a `thread scope` alone also selects
         // scoped tasks, and a module declaring a mutex generation must not be
         // handed to a route that models no mutex at all.
-        return compile_mutex_source(parsed, typed, mode, options, ranges);
+        return compile_mutex_source(parsed, typed, mode, options, ranges, target);
     }
     // Selected after every *more specific* concurrent route and before the task
     // route it composes (card `COMPOSE-CONCURRENCY`). The order is what keeps
@@ -4662,7 +4666,7 @@ fn task_route(
         function
             .parameters
             .iter()
-            .any(|(_, kind)| *kind == ScalarType::ReadLoan)
+            .any(|(_, kind)| matches!(kind, ScalarType::ReadLoan(_)))
     });
     let read_share_profile = checked.module().functions.values().any(|function| {
         function.blocks.values().any(|block| {
@@ -4686,7 +4690,7 @@ fn task_route(
         function
             .parameters
             .iter()
-            .any(|(_, kind)| *kind == ScalarType::WriteLease)
+            .any(|(_, kind)| matches!(kind, ScalarType::WriteLease(_)))
             || function
                 .blocks
                 .values()
@@ -4706,11 +4710,11 @@ fn task_route(
         .values()
         .any(|function| !function.error_payloads.is_empty());
     let owned_profile = checked.module().functions.values().any(|function| {
-        function.result == ScalarType::OwnedBuffer
+        matches!(function.result, ScalarType::OwnedBuffer(_))
             || function
                 .parameters
                 .iter()
-                .any(|(_, kind)| *kind == ScalarType::OwnedBuffer)
+                .any(|(_, kind)| matches!(kind, ScalarType::OwnedBuffer(_)))
             || function.blocks.values().any(|block| {
                 matches!(
                     block.terminator.kind,
@@ -4735,7 +4739,9 @@ fn task_route(
                     // `WriteLease` are additionally refused as results by the
                     // checker, so this arm is a total match, not a silent
                     // reclassification.
-                    ScalarType::OwnedBuffer | ScalarType::ReadLoan | ScalarType::WriteLease => {
+                    ScalarType::OwnedBuffer(_)
+                    | ScalarType::ReadLoan(_)
+                    | ScalarType::WriteLease(_) => {
                         return None;
                     }
                 };
@@ -4746,7 +4752,7 @@ fn task_route(
             .module()
             .functions
             .values()
-            .filter(|function| function.result == ScalarType::OwnedBuffer)
+            .filter(|function| matches!(function.result, ScalarType::OwnedBuffer(_)))
             .map(|function| function.name.clone())
             .collect(),
         custody_payloads: if owned_profile || error_payload_profile {
@@ -6942,6 +6948,7 @@ fn compile_mutex_source(
     mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     if mode != SourceModuleMode::Executable {
         return Err(vec![plain_diagnostic(
@@ -6950,14 +6957,16 @@ fn compile_mutex_source(
         )]);
     }
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
-    let lowered = qcore_frontend::source_mutex::lower_source_mutex(parsed, typed, &entry).map_err(
-        |errors| {
-            errors
-                .into_iter()
-                .map(|error| map_diagnostic(error, ranges))
-                .collect::<Vec<_>>()
-        },
-    )?;
+    // Card `W48-QR-SCALAR-TYPES-R6`: the recorded target sizes a
+    // `protected isize`/`protected usize` payload.
+    let lowered =
+        qcore_frontend::source_mutex::lower_source_mutex_for_target(parsed, typed, &entry, target)
+            .map_err(|errors| {
+                errors
+                    .into_iter()
+                    .map(|error| map_diagnostic(error, ranges))
+                    .collect::<Vec<_>>()
+            })?;
     let certificate =
         mutex_invariant::check_mutex_invariant_program(&lowered.program).map_err(|errors| {
             errors
@@ -7005,14 +7014,17 @@ fn compile_mutex_source(
     // backend did not produce and never a silent success that dropped events.
     let c_source = match mutex_c_emit::classify_trace(&lowered.program) {
         mutex_c_emit::TraceShape::SingleTask | mutex_c_emit::TraceShape::ForkJoin { .. } => {
-            let emission = mutex_c_emit::emit_mutex_c11(&lowered.program, &certificate).map_err(
-                |refusal| {
-                    vec![plain_diagnostic(
-                        "Q600",
-                        format!("the checked mutex backend refused this trace: {refusal:?}"),
-                    )]
-                },
-            )?;
+            let emission = mutex_c_emit::emit_typed_mutex_c11(
+                &lowered.program,
+                &certificate,
+                &lowered.payloads(),
+            )
+            .map_err(|refusal| {
+                vec![plain_diagnostic(
+                    "Q600",
+                    format!("the checked mutex backend refused this trace: {refusal:?}"),
+                )]
+            })?;
             Some(emission.source)
         }
         mutex_c_emit::TraceShape::Outside { .. } => None,
