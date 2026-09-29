@@ -1,0 +1,31 @@
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+#import std.logger;
+
+// A counted loop over a `u8` bound: the index is a `u8` too, so it renders at
+// two hex digits, and arithmetic on it is checked `u8` arithmetic. Every value
+// here is known when the program is checked — the index once per iteration —
+// so a step that would overflow refuses the module rather than run.
+fn main() -> unit effects { io, alloc, mut } {
+    let b = bytes(4);
+    let four = 4;
+    let n = four as u8;
+    let base = 250 as u8;
+    for i in 0..n {
+        let v = base + i;
+        let odd = i % 2;
+        let is_odd = odd == 1;
+        print hex v;
+        log info dec is_odd;
+        let at = i as i32;
+        b[at] = 1;
+    }
+    let last = b[3];
+    let top = base + 5;
+    print dec top;
+    print dec last;
+    drop b;
+    flush;
+    return;
+}

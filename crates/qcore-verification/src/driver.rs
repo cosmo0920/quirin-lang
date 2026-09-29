@@ -6269,13 +6269,15 @@ fn compile_buffer_source(
         )]);
     }
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
-    let lowered = qcore_frontend::source_std_buffer::lower_source_buffer(parsed, typed, &entry)
-        .map_err(|errors| {
-            errors
-                .into_iter()
-                .map(|error| map_diagnostic(error, ranges))
-                .collect::<Vec<_>>()
-        })?;
+    let lowered = qcore_frontend::source_std_buffer::lower_source_buffer_for_target(
+        parsed, typed, &entry, target,
+    )
+    .map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
     // Card `W48-QR-SCALAR-TYPES-R3`: the builder's recorded target gives
     // `isize`/`usize` fields and conversions their width; a program naming
     // neither is checked exactly as before.

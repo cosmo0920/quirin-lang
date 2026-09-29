@@ -175,6 +175,79 @@ impl From<BufferOperand> for FieldOperand {
     }
 }
 
+/// One operand of a value statement on this route (card
+/// `W48-QR-SCALAR-TYPES-R5`, `W48-QR-BUFFER-ROUTE-ARITHMETIC`): a name this
+/// entry bound to a scalar of any §G02t type, an integer literal typed by the
+/// other operand (`i32` when both are literals), or `true`/`false`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ValueOperand {
+    Name(String),
+    Integer(i128),
+    Bool(bool),
+}
+
+/// The one §G02t operation a value statement performs on this route (card
+/// `W48-QR-SCALAR-TYPES-R5`). The fourth, `as`, is [`BufferEvent::Convert`],
+/// the statement card `W48-QR-SCALAR-TYPES-R3` gave the route.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ValueOperation {
+    /// `a OP b`, checked at the operands' one type.
+    Binary(st::Op, ValueOperand, ValueOperand),
+    /// `a CMP b`, producing a `bool`.
+    Compare(st::Cmp, ValueOperand, ValueOperand),
+    /// `-a`, checked.
+    Negate(ValueOperand),
+}
+
+impl ValueOperation {
+    /// The operands, in order.
+    #[must_use]
+    pub fn operands(&self) -> Vec<&ValueOperand> {
+        match self {
+            Self::Binary(_, a, b) | Self::Compare(_, a, b) => vec![a, b],
+            Self::Negate(a) => vec![a],
+        }
+    }
+
+    /// The names the statement reads.
+    #[must_use]
+    pub fn names(&self) -> Vec<&str> {
+        self.operands()
+            .into_iter()
+            .filter_map(|operand| match operand {
+                ValueOperand::Name(name) => Some(name.as_str()),
+                _ => None,
+            })
+            .collect()
+    }
+}
+
+/// The index type of one `for` (card `W48-QR-SCALAR-TYPES-R5`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum LoopIndex {
+    /// An `i32` index: a literal bound, or a name of the lowering's `i32`
+    /// tier — every loop written before the card.
+    I32,
+    /// An index of another integer type, whose bound is the name `bound` of
+    /// that type. A literal bound is an `i32`, so a bound of another type is
+    /// always a name, and the checker compares the name's value against the
+    /// count the lowering decided (a disagreement refuses), while the emitted
+    /// C compares the index against the name's own C object, so a native run
+    /// checks the lowering's fold as well.
+    Typed { ty: ScalarType, bound: String },
+}
+
+impl LoopIndex {
+    /// The index's §G02t type.
+    #[must_use]
+    pub fn ty(&self) -> ScalarType {
+        match self {
+            Self::I32 => ScalarType::I32,
+            Self::Typed { ty, .. } => *ty,
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum BufferEvent {
     /// `let NAME = INTEGER;` — an ordinary integer binding.
@@ -190,6 +263,19 @@ pub enum BufferEvent {
         binding: String,
         operand: BufferOperand,
         to: ScalarType,
+    },
+    /// `let BINDING = VALUE_EXPRESSION;` — §G02t's value statement (card
+    /// `W48-QR-SCALAR-TYPES-R5`, `W48-QR-BUFFER-ROUTE-ARITHMETIC`): one
+    /// arithmetic operation, comparison or negation over bound scalars and
+    /// literals, read by the shared reader (`source_value_statement`) and
+    /// decided by the shared decision (`scalar_values::Decider`). Every value
+    /// on this route is a check-time constant — a loop index is one per
+    /// iteration — so every statement is **folded**: a fault is refused at
+    /// check time (`Q053`), naming the variant the typed path would raise, and
+    /// never happens at run time. Not a `buffer_use`: it selects no route.
+    Compute {
+        binding: String,
+        operation: ValueOperation,
     },
     /// `let NAME = bytes(INTEGER);` — acquire an owned buffer of `extent`
     /// zero-initialised bytes. The custody obligation opens here.
@@ -270,9 +356,17 @@ pub enum BufferEvent {
     /// number — rather than by a fixed point over a back edge. See
     /// [`crate::source_loop`]'s header for why an over-approximation is not an
     /// option on a route whose evidence is a byte comparison.
+    ///
+    /// Card `W48-QR-SCALAR-TYPES-R5`: `index` is the bound's §G02t type, and
+    /// so the index's — the low end `0` is a literal and takes it. An `i32`
+    /// loop ([`LoopIndex::I32`]) is exactly the loop before the card; a loop
+    /// of any other integer type names its bound ([`LoopIndex::Typed`]) and
+    /// binds the index at that type, each value `0 … COUNT-1` a value of it
+    /// ([`crate::source_loop::typed_bound`]).
     Repeat {
         variable: String,
         count: u32,
+        index: LoopIndex,
         body: Vec<BufferEvent>,
     },
     /// `let NAME = TYPE { FIELD: OPERAND, … };` — construct a record value
@@ -866,6 +960,12 @@ pub enum TypedRefusal {
     NoRecordedTarget { ty: ScalarType },
     /// `Q052`: `hex` of a `bool`, which has no bit pattern to render.
     NoHexRendering { name: String },
+    /// A value statement the shared decision refuses (card
+    /// `W48-QR-SCALAR-TYPES-R5`), at the condition its fault is: `Q053` a
+    /// fault decided now or a literal outside its type (the range condition),
+    /// `Q051` a target width with no record, `Q052` every typing refusal —
+    /// mixed operand types, `bool` arithmetic, negation or ordering.
+    Value(crate::scalar_values::ValueRefusal),
 }
 
 impl TypedRefusal {
@@ -877,6 +977,16 @@ impl TypedRefusal {
                 "Q052"
             }
             Self::ConversionOutOfRange { .. } => "Q053",
+            Self::Value(refusal) => {
+                use crate::scalar_values::ValueRefusal;
+                match refusal {
+                    ValueRefusal::NoRecordedTarget { .. } => "Q051",
+                    ValueRefusal::StaticFault { .. } | ValueRefusal::LiteralOutOfRange { .. } => {
+                        "Q053"
+                    }
+                    _ => "Q052",
+                }
+            }
         }
     }
 }
@@ -912,6 +1022,7 @@ impl fmt::Display for TypedRefusal {
                 "`{name}` is a `bool`, which renders `true`/`false` under `dec` and has no `hex` \
                  rendering"
             ),
+            Self::Value(refusal) => refusal.fmt(f),
         }
     }
 }
@@ -987,6 +1098,9 @@ pub fn derived_effects(program: &BufferProgram) -> EffectRow {
                 | BufferEvent::FieldExtent { .. }
                 | BufferEvent::Bind { .. }
                 | BufferEvent::Convert { .. }
+                // Card `W48-QR-SCALAR-TYPES-R5`: a value statement derives
+                // nothing, for the conversion's reason.
+                | BufferEvent::Compute { .. }
                 | BufferEvent::CopyBind { .. }
                 | BufferEvent::Lend { .. }
                 | BufferEvent::Load { .. }
@@ -1279,6 +1393,7 @@ pub fn custody_operations_with_gates(
                         variable,
                         count,
                         body,
+                        ..
                     } => {
                         // Every buffer this body binds is body-local, so each
                         // iteration's is a distinct binding and carries its own
@@ -1348,6 +1463,7 @@ pub fn custody_operations_with_gates(
                     // scalar and binds one, so it is in that class too.
                     BufferEvent::Bind { .. }
                     | BufferEvent::Convert { .. }
+                    | BufferEvent::Compute { .. }
                     | BufferEvent::CopyBind { .. }
                     | BufferEvent::Line(_)
                     | BufferEvent::Return => {}
@@ -1470,6 +1586,13 @@ fn custody_names_at_any_depth<'a>(event: &'a BufferEvent, into: &mut Vec<WindowN
             operand: BufferOperand::Literal(_),
             ..
         } => {}
+        // Card `W48-QR-SCALAR-TYPES-R5`: a value statement names each of its
+        // operands, pushed for the conversion's reason.
+        BufferEvent::Compute { operation, .. } => {
+            for name in operation.names() {
+                into.push(WindowName::Binding(name));
+            }
+        }
         BufferEvent::Repeat { body, .. } => {
             for event in body {
                 custody_names_at_any_depth(event, into);
@@ -1853,6 +1976,7 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                         variable,
                         count,
                         body,
+                        ..
                     } => self.repeat(variable, *count, body, &mut operations),
                     // Unreachable from the route: `check_buffer_program` —
                     // card `AGGREGATE-OWNED-FIELD` — refuses an owned-field
@@ -1873,6 +1997,8 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                     // an index spelled through one stays rangeless here, the
                     // refusing direction, as a copy of a byte read does.
                     BufferEvent::Convert { .. } => {}
+                    // Card `W48-QR-SCALAR-TYPES-R5`: a value statement likewise.
+                    BufferEvent::Compute { .. } => {}
                     // Card `OWNED-FIELD-ROUTE-REACH`: the copy bind reaches
                     // this projection too, because an entry may both lend and
                     // copy. The question is the same one the flat walk asks —
@@ -2056,6 +2182,7 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                             variable,
                             count,
                             body,
+                            ..
                         } => self.repeat(variable, *count, body, operations),
                         // An owned-field statement inside a body is refused
                         // by name before this projection runs
@@ -2065,6 +2192,7 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                         | BufferEvent::Lend { .. }
                         | BufferEvent::Construct { .. }
                         | BufferEvent::Convert { .. }
+                        | BufferEvent::Compute { .. }
                         | BufferEvent::Field { .. }
                         | BufferEvent::FieldStore { .. }
                         | BufferEvent::FieldLoad { .. }
@@ -2322,6 +2450,14 @@ impl BufferEvaluation {
                     Err(error) => step.errors.push(error),
                 }
             }
+            // Card `W48-QR-SCALAR-TYPES-R5`: the value statement, decided by
+            // the shared decision over this route's typed environment. Every
+            // operand here is known, so the decision folds: its value is
+            // bound, and a fault is a refusal now.
+            BufferEvent::Compute { binding, operation } => match self.compute(index, operation) {
+                Ok((ty, value)) => self.bind(binding, ty, value),
+                Err(error) => step.errors.push(error),
+            },
             BufferEvent::Acquire { name, extent } => {
                 if *extent == 0 || *extent > MAX_EXTENT {
                     step.errors.push(BufferError::ExtentOutOfRange {
@@ -2952,6 +3088,52 @@ impl BufferEvaluation {
         }
     }
 
+    /// One value statement's result, decided now by the shared decision (card
+    /// `W48-QR-SCALAR-TYPES-R5`): its type and its number, or the refusal.
+    pub fn compute(
+        &self,
+        event: usize,
+        operation: &ValueOperation,
+    ) -> Result<(ScalarType, i128), BufferError> {
+        use crate::scalar_values::{Decider, Operand, Operation};
+        let operand = |operand: &ValueOperand| -> Result<Operand, BufferError> {
+            Ok(match operand {
+                ValueOperand::Name(name) => {
+                    let (ty, value) = self.scalar_value(event, name)?;
+                    Operand::Typed {
+                        ty,
+                        known: Some(value),
+                    }
+                }
+                ValueOperand::Integer(value) => Operand::Integer(*value),
+                ValueOperand::Bool(value) => Operand::Bool(*value),
+            })
+        };
+        let shared = match operation {
+            ValueOperation::Binary(op, a, b) => Operation::Binary(*op, operand(a)?, operand(b)?),
+            ValueOperation::Compare(cmp, a, b) => {
+                Operation::Compare(*cmp, operand(a)?, operand(b)?)
+            }
+            ValueOperation::Negate(a) => Operation::Negate(operand(a)?),
+        };
+        let refused = |refusal| BufferError::Typed {
+            event,
+            refusal: TypedRefusal::Value(refusal),
+        };
+        let decision = Decider::default()
+            .decide(shared, false, self.target.as_ref())
+            .map_err(refused)?;
+        // Every operand is known, so the decision folded; a statement it left
+        // unfolded would be a value this route cannot hold, refused rather
+        // than bound.
+        let value = decision.known.ok_or_else(|| {
+            refused(crate::scalar_values::ValueRefusal::NeedsPermission {
+                ty: decision.operand_ty,
+            })
+        })?;
+        Ok((decision.ty, value))
+    }
+
     /// `value as to`, from `from`, decided now (card `W48-QR-SCALAR-TYPES-R3`):
     /// §G02t's one conversion, refused when the target width is unrecorded,
     /// when either side is `bool`, and when the number does not fit.
@@ -3310,10 +3492,13 @@ pub fn names_target_width(program: &BufferProgram) -> bool {
                 .scalar()
                 .is_some_and(ScalarType::is_target_width)
         })
-    }) || any_event(
-        &program.events,
-        |event| matches!(event, BufferEvent::Convert { to, .. } if to.is_target_width()),
-    )
+    }) || any_event(&program.events, |event| match event {
+        BufferEvent::Convert { to, .. } => to.is_target_width(),
+        // Card `W48-QR-SCALAR-TYPES-R5`: a loop whose index is `isize` or
+        // `usize` depends on the target too.
+        BufferEvent::Repeat { index, .. } => index.ty().is_target_width(),
+        _ => false,
+    })
 }
 
 /// [`check_buffer_program`] for the builder's recorded target (card
@@ -3792,10 +3977,11 @@ impl BufferRun {
         if let BufferEvent::Repeat {
             variable,
             count,
+            index: loop_index,
             body,
         } = event
         {
-            self.repeat(variable, *count, body, index);
+            self.repeat_typed(variable, *count, loop_index, body, index);
             return;
         }
         let Self {
@@ -3862,7 +4048,9 @@ impl BufferRun {
             | BufferEvent::CopyBind { .. }
             // Card `W48-QR-SCALAR-TYPES-R3`: a conversion binds a value and
             // reaches the same stepper.
-            | BufferEvent::Convert { .. } => {
+            | BufferEvent::Convert { .. }
+            // Card `W48-QR-SCALAR-TYPES-R5`: so does a value statement.
+            | BufferEvent::Compute { .. } => {
                 let step = evaluation.apply(index, event);
                 errors.extend(step.errors);
                 acquisitions.extend(step.acquisition);
@@ -3959,6 +4147,23 @@ impl BufferRun {
     ///    emitted C to agree by coincidence about which of two values survives
     ///    the loop, and a refusal is the fail-closed answer.
     pub fn repeat(&mut self, variable: &str, count: u32, body: &[BufferEvent], index: usize) {
+        self.repeat_typed(variable, count, &LoopIndex::I32, body, index);
+    }
+
+    /// [`Self::repeat`] with the index at its own §G02t type (card
+    /// `W48-QR-SCALAR-TYPES-R5`). The count is checked against the index type
+    /// again here — [`source_loop::index_admits`] — so a loop whose index
+    /// cannot hold every value it takes, or its final step, is refused rather
+    /// than iterated; each iteration binds the index at that type.
+    pub fn repeat_typed(
+        &mut self,
+        variable: &str,
+        count: u32,
+        loop_index: &LoopIndex,
+        body: &[BufferEvent],
+        index: usize,
+    ) {
+        let index_type = loop_index.ty();
         // Card `W48-QR-SCALAR-TYPES-R3`: the environment is typed, and both of
         // its parts are scoped and shadow-checked by the one rule — a scalar
         // name is a scalar name whatever its type.
@@ -4000,11 +4205,41 @@ impl BufferRun {
                     BoundRefusal::Zero
                 } else {
                     BoundRefusal::TooLarge {
-                        value: i64::from(count),
+                        value: i128::from(count),
                     }
                 }),
             });
             return;
+        }
+        if let Err(refusal) =
+            source_loop::index_admits(count, index_type, self.evaluation.target.as_ref())
+        {
+            self.errors.push(BufferError::Loop {
+                event: index,
+                refusal: LoopRefusal::Bound(refusal),
+            });
+            return;
+        }
+        // Card `W48-QR-SCALAR-TYPES-R5`: a typed bound is a name, and the
+        // lowering decided the count from its value in the lowering's tier.
+        // The checker's own environment must agree — same type, same number
+        // — or the loop is refused: the count is decided in the lowering, and
+        // this is the second place that re-derives it rather than trusts it.
+        if let LoopIndex::Typed { ty, bound } = loop_index {
+            match self.evaluation.scalar_value(index, bound) {
+                Ok((found, value)) if found == *ty && value == i128::from(count) => {}
+                Ok(_) | Err(_) => {
+                    self.errors.push(BufferError::Loop {
+                        event: index,
+                        refusal: LoopRefusal::Bound(BoundRefusal::BoundDisagrees {
+                            bound: bound.clone(),
+                            count,
+                            ty: *ty,
+                        }),
+                    });
+                    return;
+                }
+            }
         }
 
         // Shadowing is decided **before** the body runs, because afterwards the
@@ -4029,10 +4264,16 @@ impl BufferRun {
         }
 
         for iteration in 0..count {
-            self.evaluation.scalars.insert(
-                variable.to_owned(),
-                i32::try_from(iteration).expect("MAX_ITERATIONS is far inside i32"),
-            );
+            if index_type == ScalarType::I32 {
+                self.evaluation.scalars.insert(
+                    variable.to_owned(),
+                    i32::try_from(iteration).expect("MAX_ITERATIONS is far inside i32"),
+                );
+            } else {
+                self.evaluation
+                    .typed
+                    .insert(variable.to_owned(), (index_type, i128::from(iteration)));
+            }
             let before = self.errors.len();
             self.walk(body, index, false);
             // **One refusal per loop, not one per failing iteration.** The
@@ -4091,7 +4332,9 @@ fn body_bindings(events: &[BufferEvent]) -> BTreeSet<String> {
                 // and it is body-local exactly as every other binding is.
                 | BufferEvent::CopyBind { binding, .. }
                 // Card `W48-QR-SCALAR-TYPES-R3`: so does a conversion.
-                | BufferEvent::Convert { binding, .. } => {
+                | BufferEvent::Convert { binding, .. }
+                // Card `W48-QR-SCALAR-TYPES-R5`: and a value statement.
+                | BufferEvent::Compute { binding, .. } => {
                     names.insert(binding.clone());
                 }
                 BufferEvent::Acquire { name, .. } => {

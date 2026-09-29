@@ -234,6 +234,7 @@ fn the_depth_contribution_is_empty_for_every_event() {
             StringEvent::Buffer(BufferEvent::Repeat {
                 variable: name("i"),
                 count: 2,
+                index: qcore_core::std_buffer::LoopIndex::I32,
                 body: vec![
                     BufferEvent::Store {
                         name: name("b"),
@@ -243,6 +244,7 @@ fn the_depth_contribution_is_empty_for_every_event() {
                     BufferEvent::Repeat {
                         variable: name("j"),
                         count: 2,
+                        index: qcore_core::std_buffer::LoopIndex::I32,
                         body: vec![BufferEvent::Load {
                             binding: name("x"),
                             name: name("b"),
@@ -620,9 +622,11 @@ fn a_field_path_is_refused_by_the_window_functions_own_gate() {
             BufferEvent::Repeat {
                 variable: "i".to_owned(),
                 count: 2,
+                index: qcore_core::std_buffer::LoopIndex::I32,
                 body: vec![BufferEvent::Repeat {
                     variable: "j".to_owned(),
                     count: 2,
+                    index: qcore_core::std_buffer::LoopIndex::I32,
                     body: vec![event.clone()],
                 }],
             },
@@ -760,6 +764,7 @@ fn the_lean_window_model_and_the_rust_window_function_agree_on_shared_vectors() 
                         events.push(BufferEvent::Repeat {
                             variable: "i".to_owned(),
                             count,
+                            index: qcore_core::std_buffer::LoopIndex::I32,
                             body,
                         });
                     }

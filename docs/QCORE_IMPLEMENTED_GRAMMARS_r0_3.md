@@ -395,9 +395,10 @@ environment (§G07.13, §G02k), and extern results as values on the extern and
 composed extern + io routes (§G02d, §G02i). Widened by card
 `W48-QR-SCALAR-TYPES-R4` (below): task worker parameters and results, `copy`
 captures, value statements in every task function, and the composed tasks + io
-operands (§G02a, §G02j). Every other position that takes `i32` keeps its
-existing refusal and is a named follow-up: loop bounds and indices (§G07.12,
-`W48-QR-TYPES-LOOP-BOUNDS`), the `Buffer` and `protected N` payloads (§G02b,
+operands (§G02a, §G02j). Widened by card `W48-QR-SCALAR-TYPES-R5` (below):
+loop bounds and indices (§G07.12) and the value statement on
+`source.buffer.v1` (§G02k). Every other position that takes `i32` keeps its
+existing refusal and is a named follow-up: the `Buffer` and `protected N` payloads (§G02b,
 §G02c, `W48-QR-TYPES-PAYLOADS`), the composed epoch route's task half (§G02f,
 `W48-QR-TYPES-EPOCH-TASKS`), and an executable entry result other than
 `i32`/`unit` (C's `main` returns `int`; the entry's value is published, never
@@ -416,8 +417,9 @@ position checks the type it takes — an index, a stored byte, a lend bound and
 a loop bound take an `i32` and refuse a name of any other type (`Q052`, "`x`
 is a `u8` and this position takes an `i32`"); a field value takes exactly its
 field's type; a rendering operand takes any type and renders it at that type.
-The route has **no arithmetic** — it never had an expression — so the one
-operation it gains is the conversion statement `let NAME = OPERAND as TYPE;`
+The route had **no arithmetic** — it never had an expression — so the one
+operation this card gave it is the conversion statement (card
+`W48-QR-SCALAR-TYPES-R5` adds the value statement, below) `let NAME = OPERAND as TYPE;`
 (one operand: an `i32` literal or a bound name). Every value on this route is a
 check-time constant, so a conversion that does not fit is refused at check
 time (`Q053`, the range condition) and the emitted C calls a helper whose
@@ -497,6 +499,50 @@ fixed-width worker outcome has no spelling in the F02 observable alphabet, so
 such a program sits outside F02 relational comparison (`reference_trace`
 refuses it) and its native evidence is the byte comparison of the maintained
 trace, whose sink prints `QCORE_TASK_RESULT TASK TYPE NUMBER`.
+
+**Typed loops and the buffer route's value statement** (card
+`W48-QR-SCALAR-TYPES-R5`, §G07.12, §G02k). On `source.buffer.v1` a `for` bound
+may be a value of any integer type of the table, and the **index has the
+bound's type**: the low end is the literal `0`, which takes the bound's type as
+every literal takes its context's, so a range has one type and no mixed-type
+range is expressible. A literal bound is an `i32`, so a bound of another type
+is a name of the lowering's constant tier (§G07.12), which now also holds a
+conversion or a value statement over the tier's own values, folded by the
+shared decision (`qcore_core::scalar_values`) under the recorded target. The
+bound is decided at every type by the loop's own rules, in `LOOP-V1`'s order —
+a `bool` bound, an `isize`/`usize` bound with no recorded target, a negative
+bound, a zero bound and a bound above 4096 refuse (`Q098`), and the count must
+be a value of the index type — and the budget is unchanged. Because the count
+is at most the ceiling and a value of the type, every index value
+`0 … count-1` and the final step's `count` are values of it: the emitted
+`i += 1` never overflows or truncates, and the loop runs exactly `count` times
+(`QCore.ScalarLoopBounds.the_loop_runs_exactly_count_times`); a `u64` near its
+maximum and a signed bound near `MIN` or `MAX` are refused by the ceiling or
+the sign rule before any index exists. The checker re-derives the count from
+the bound's value in its own typed environment and binds the index at its type
+per iteration; a typed index is refused at an `i32` position (`Q052`) and is
+converted with `as` to be one. The emitted loop is
+`for (T i = 0; i < BOUND; i += 1)` at the type, against the bound's own C
+object; a loop over a literal, a literal `let` or an `extent` is exactly the
+`i32` loop it was.
+
+The route also gains the **value statement** of the extern and task routes —
+`let NAME = A OP B;`, `A CMP B` or `-NAME`, one operation, read by the same
+reader and decided by the same decision (its `as` form is the route's existing
+conversion). Every value on this route is known at check time, the loop index
+once per iteration, so every statement is folded: a fault refuses (`Q053`,
+naming the variant the typed path would raise), a literal outside its type
+refuses (`Q053`), mixed operand types and `bool` arithmetic, negation or
+ordering refuse (`Q052`), a target width with no record refuses (`Q051`), and
+a chained expression refuses (`Q051`). Nothing on the route raises, so it needs
+no `throws<ArithmeticError>`. The result is a value of its type: renderable,
+convertible, copyable, a loop bound when its operands are of the constant
+tier, and refused at an `i32` position unless it is an `i32`. The emitted C
+calls §G02t's shared `q_scalar_*` helpers, whose fault test is a witness the
+checker proved never taken, and makes each comparison through a two-parameter
+function. The composed string/buffer route (§G07.9) binds only `i32` values: a
+conversion, a value statement or a loop of another index type refuses there by
+name at any depth (`Q077`).
 
 **Every extern declaration is read** (card `W48-QR-SCALAR-TYPES-R3`,
 `W48-INERT-EXTERN-DECLARATION-TYPES`). An executable or library module's
@@ -3334,10 +3380,14 @@ BOUND  = INTEGER | NAME ;
 ```
 
 * **`BOUND` is a check-time constant** the *lowering* can compute: an integer
-  literal, a name bound by a literal `let`, or a name bound by `extent(NAME)`.
-  A bound read out of a byte is refused (`Q098`, `LOOP-BOUND-FROM-BYTE`), and so
-  is a bound of zero, a negative bound, a bound above 4096, and an entry whose
-  unrolled event total is above 8192.
+  literal, a name bound by a literal `let`, or a name bound by `extent(NAME)` —
+  and, since card `W48-QR-SCALAR-TYPES-R5`, a name bound by a conversion or a
+  value statement over such values, of any integer type of §G02t, the index
+  then taking the bound's type (§G02t, "Typed loops"). A bound read out of a
+  byte, a field or a copy is refused (`Q098`, `LOOP-BOUND-FROM-BYTE`), and so
+  is a `bool` bound, an `isize`/`usize` bound with no recorded target, a bound
+  of zero, a negative bound, a bound above 4096, and an entry whose unrolled
+  event total is above 8192.
 * **The bound is held to a three-layer budget** (card `LOOP-UNROLL-BUDGET`).
   Layer one is the **absolute ceiling**, 4096, which no declaration may raise.
   Layer two is the **default budget**, 256: a `for` with no `attr` may count at

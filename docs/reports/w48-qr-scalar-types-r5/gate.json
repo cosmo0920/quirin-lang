@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-SCALAR-TYPES-R5 card gate at e96cc3de (base 6883623c), script private/w48-r5/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-r5/gate: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 376 units, 389 summaries, 6,681 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260929T190052Z-1819959/summary.json; the two new test files add 16), no load-sensitive rerun needed; clippy 0; both reevaluation probes 0; check_lean_audits.py 236 audits passed (234 + AuditScalarLoopBounds.lean, 17 theorems, and AuditScalarBufferValues.lean, 11); the provider suite, run as the brief asks although providers/ is unchanged: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries), provider fmt 0, provider clippy 0. Matrix, docs index and Python after the ledger (630 -> 631). Commits after e96cc3de and before the records commit change one doc comment in std_buffer_c_emit.rs, the ledger text and records only. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8): resource-diagnostics.json byte-identical to the base's archive 7393fd21 (CG03's AFTER; the brief's ae17152b is superseded on main), sidecars byte-identical. Exits in gate/.",
+  "workspace_tests": 6681,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 236,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

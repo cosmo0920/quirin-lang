@@ -60,12 +60,16 @@
 //!   such type exists;
 //! * a zero-iteration loop (`LOOP-ZERO-BOUND`), refused because its body would
 //!   never be checked and the construct would admit an unchecked statement;
-//! * arithmetic on the index (`LOOP-INDEX-ARITHMETIC`) — the index is a scalar
-//!   binding and this revision has no expression tier.
+//! * arithmetic on the index as an expression — since card
+//!   `W48-QR-SCALAR-TYPES-R5` the admitting route's one-operation value
+//!   statement computes on the index (decided at every iteration), and the
+//!   bound and index may be of any integer type ([`typed_bound`]); a nested
+//!   expression is `W48-QR-VALUE-STATEMENT-EXPRESSIONS`.
 
 use std::collections::BTreeMap;
 
 use crate::ownership::{Footprint, OwnershipError, OwnershipOp, OwnershipState, execute_ownership};
+use crate::scalar_types::{RecordedTarget, ScalarType};
 
 /// The largest iteration count this construct admits — **the absolute
 /// ceiling**, layer one of the three-layer budget (card `LOOP-UNROLL-BUDGET`).
@@ -146,6 +150,75 @@ pub fn display_owner(owner: &str) -> &str {
     owner
         .split_once(ITERATION_SCOPE_SEPARATOR)
         .map_or(owner, |(name, _)| name)
+}
+
+/// The bound decision at every §G02t type (card `W48-QR-SCALAR-TYPES-R5`):
+/// the number of iterations a `for NAME in 0..BOUND` counts when `BOUND` is
+/// the check-time number `value` of type `ty`, or the refusal.
+///
+/// The low end `0` is a literal, and a literal takes its context's type, so
+/// the range has **one** type — the bound's — and so does the index. The
+/// decision is the `LOOP-V1` one at every width, in the same order: a `bool`
+/// is not an integer, an `isize`/`usize` needs the recorded target, then a
+/// negative bound, a zero bound and a bound above [`MAX_ITERATIONS`] refuse.
+/// What makes it sound at every width is that the admitted count is at most
+/// the ceiling **and** a value of `ty` (it is the bound's own number): the
+/// index takes `0 … count-1`, every one a value of `ty`, and the step from
+/// the last of them reaches `count`, which is a value of `ty` too — so
+/// `i + 1` never faults and the loop runs exactly `count` times
+/// (`QCore.ScalarLoopBounds`). A `u64` near its maximum, or a signed bound
+/// near `MIN`, is refused by the ceiling or the sign rule before any index
+/// exists.
+pub fn typed_bound(
+    spelling: &str,
+    ty: ScalarType,
+    value: i128,
+    target: Option<&RecordedTarget>,
+) -> Result<u32, BoundRefusal> {
+    if ty == ScalarType::Bool {
+        return Err(BoundRefusal::NotAnInteger {
+            spelling: spelling.to_owned(),
+        });
+    }
+    if ty.is_target_width() && target.is_none() {
+        return Err(BoundRefusal::NeedsRecordedTarget { ty });
+    }
+    if value < 0 {
+        return Err(BoundRefusal::Negative { value });
+    }
+    if value == 0 {
+        return Err(BoundRefusal::Zero);
+    }
+    if value > i128::from(MAX_ITERATIONS) {
+        return Err(BoundRefusal::TooLarge { value });
+    }
+    let count = u32::try_from(value).expect("the bound is inside 1..=MAX_ITERATIONS");
+    index_admits(count, ty, target)?;
+    Ok(count)
+}
+
+/// Whether a loop counting `count` iterations may have an index of type `ty`
+/// (card `W48-QR-SCALAR-TYPES-R5`): the index's values `0 … count-1` and the
+/// final step's `count` must all be values of `ty`, which — the range being
+/// an interval containing `0` — is exactly `count` being one. The checker
+/// asks this again of every lowered loop, so a count the lowering produced
+/// for an index type that cannot hold it is refused rather than iterated.
+pub fn index_admits(
+    count: u32,
+    ty: ScalarType,
+    target: Option<&RecordedTarget>,
+) -> Result<(), BoundRefusal> {
+    if ty == ScalarType::Bool {
+        return Err(BoundRefusal::CountOutsideIndex { count, ty });
+    }
+    if ty.is_target_width() && target.is_none() {
+        return Err(BoundRefusal::NeedsRecordedTarget { ty });
+    }
+    if ty.contains(i128::from(count), target) {
+        Ok(())
+    } else {
+        Err(BoundRefusal::CountOutsideIndex { count, ty })
+    }
 }
 
 /// The header of one `for NAME in 0..BOUND { … }` statement.
@@ -277,13 +350,16 @@ pub fn budget_refusal(bound: u32, budget: LoopBudget) -> Option<BoundRefusal> {
 pub enum BoundRefusal {
     /// The bound is not a check-time constant this entry bound.
     NotConstant { spelling: String },
-    /// The bound is negative.
-    Negative { value: i32 },
+    /// The bound is negative. Card `W48-QR-SCALAR-TYPES-R5`: the value is
+    /// the bound's own number at its own type, so it is carried at the full
+    /// width of the §G02t table (`i64::MIN` included).
+    Negative { value: i128 },
     /// The bound is zero: the body would never run, so it would never be
     /// checked, and the construct would admit an unchecked statement.
     Zero,
-    /// The bound is above [`MAX_ITERATIONS`].
-    TooLarge { value: i64 },
+    /// The bound is above [`MAX_ITERATIONS`] — at any width, `u64::MAX`
+    /// included (card `W48-QR-SCALAR-TYPES-R5`).
+    TooLarge { value: i128 },
     /// The entry's unrolled event total is above [`MAX_UNROLLED_EVENTS`].
     Budget { unrolled: usize },
     /// Card `LOOP-UNROLL-BUDGET`, layer two: the loop carries no unrolling
@@ -303,6 +379,26 @@ pub enum BoundRefusal {
     /// clause list alone: reporting it as a violated condition would have to
     /// name a bound, and the reader has not read one yet.
     LicenseLicensesNothing { limit: u32 },
+    /// Card `W48-QR-SCALAR-TYPES-R5`: the bound is a `bool`, which is not an
+    /// integer and counts nothing — there is no conversion to make it one.
+    NotAnInteger { spelling: String },
+    /// Card `W48-QR-SCALAR-TYPES-R5`: an `isize`/`usize` bound (and index)
+    /// with no recorded target, whose width — and so whose range — nothing
+    /// states. Refused, never guessed.
+    NeedsRecordedTarget { ty: ScalarType },
+    /// Card `W48-QR-SCALAR-TYPES-R5`: the count is not a value of the index
+    /// type the loop declares — unreachable for a lowered program, whose count
+    /// is the bound's own number, and refused by the checker rather than
+    /// iterated on an index the type cannot hold.
+    CountOutsideIndex { count: u32, ty: ScalarType },
+    /// Card `W48-QR-SCALAR-TYPES-R5`: the checker's value of a typed bound is
+    /// not the `ty` number `count` the lowering decided. Unreachable while the
+    /// two fold with the one shared decision; refused rather than trusted.
+    BoundDisagrees {
+        bound: String,
+        count: u32,
+        ty: ScalarType,
+    },
 }
 
 impl std::fmt::Display for BoundRefusal {
@@ -362,6 +458,29 @@ impl std::fmt::Display for BoundRefusal {
                 "`#bound < {limit}` licenses no bound at all — `source.loop.v1` counts at least \
                  one iteration — so this clause list refuses the loop it was written to permit; \
                  the smallest condition that licenses anything is `#bound < 2`"
+            ),
+            Self::NotAnInteger { spelling } => write!(
+                f,
+                "`{spelling}` is a `bool`, and a counted loop counts an integer; `bool` is not an \
+                 integer and nothing converts it to one"
+            ),
+            Self::NeedsRecordedTarget { ty } => write!(
+                f,
+                "this bound is a `{ty}`, which takes its width from a recorded target, none of \
+                 which was supplied; the index would be a `{ty}` too, and its width is never \
+                 guessed (supply one with `--recorded-target FILE`)"
+            ),
+            Self::BoundDisagrees { bound, count, ty } => write!(
+                f,
+                "the loop was lowered to count {count} iterations from the `{ty}` bound \
+                 `{bound}`, and the checker's value of `{bound}` is not that number of that \
+                 type; the count is re-derived rather than trusted, so the loop is refused"
+            ),
+            Self::CountOutsideIndex { count, ty } => write!(
+                f,
+                "a loop counting {count} iterations cannot have a `{ty}` index; its last value \
+                 {} and its final step {count} must both be values of the index type",
+                i64::from(*count) - 1
             ),
         }
     }

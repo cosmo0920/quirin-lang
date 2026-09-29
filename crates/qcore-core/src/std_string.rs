@@ -981,6 +981,9 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
                 // and this route lowers none (`buffer_use` does not claim the
                 // shape), so the arm is total rather than reachable.
                 | BufferEvent::Convert { .. }
+                // Card `W48-QR-SCALAR-TYPES-R5`: a value statement derives
+                // nothing either; this route refuses one at any depth.
+                | BufferEvent::Compute { .. }
                 // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind derives nothing
                 // — an admitted copy binds a value that already exists. This
                 // route lowers none (`buffer_use` does not claim the shape),
@@ -1199,6 +1202,8 @@ fn view_uses_at_any_depth(event: &StringEvent) -> Vec<&str> {
             // Card `W48-QR-SCALAR-TYPES-R3`: a conversion names no view, and
             // this route lowers none; listed for the tripwire.
             | BufferEvent::Convert { .. }
+            // Card `W48-QR-SCALAR-TYPES-R5`: nor does a value statement.
+            | BufferEvent::Compute { .. }
             | BufferEvent::Return => Vec::new(),
         }
     }
@@ -1698,6 +1703,7 @@ pub fn check_string_program(
                         variable,
                         count,
                         body,
+                        ..
                     } => {
                         if let Some(conflict) =
                             loop_body_conflict(live, &env, extents, variable, *count, body)
@@ -1724,7 +1730,9 @@ pub fn check_string_program(
                     // Card `W48-QR-SCALAR-TYPES-R3`: a conversion's binding
                     // leaves the tier too, in the refusing direction; this
                     // route lowers none.
-                    BufferEvent::Convert { binding, .. } => {
+                    BufferEvent::Convert { binding, .. }
+                    // Card `W48-QR-SCALAR-TYPES-R5`: a value statement's too.
+                    | BufferEvent::Compute { binding, .. } => {
                         env.remove(binding);
                     }
                     BufferEvent::Acquire { .. }
@@ -2076,8 +2084,35 @@ pub fn check_string_program(
                     variable,
                     count,
                     body,
+                    ..
                 } = buffer_event
                 {
+                    // Card `W48-QR-SCALAR-TYPES-R5`: this route binds only
+                    // `i32`s, and its emitter carries no typed environment
+                    // (`buffer_loop_block` keeps no conversion helper), so a
+                    // statement of the §G02t value tier is refused by name at
+                    // any depth — a conversion, and a loop whose index is of
+                    // another type. Before the card a conversion in a body
+                    // reached `check` and `emit` and the emitted C did not
+                    // compile (it called a helper nothing defined).
+                    if buffer_event.any(&|inner| {
+                        matches!(
+                            inner,
+                            BufferEvent::Convert { .. } | BufferEvent::Compute { .. }
+                        )
+                            || matches!(inner, BufferEvent::Repeat { index, .. } if *index != crate::std_buffer::LoopIndex::I32)
+                    }) {
+                        errors.push(StringError::Composition {
+                            event: index,
+                            reason: "this `for` computes a value of the fixed-width scalar \
+                                     table (a conversion, a value statement, or an index of a \
+                                     type other than `i32`); the composed string/buffer entry binds only `i32` \
+                                     values and refuses such a statement by name at any depth \
+                                     (`W48-QR-TYPES-COMPOSED-STRING`)"
+                                .to_owned(),
+                        });
+                        continue;
+                    }
                     if buffer_event.any(&|inner| matches!(inner, BufferEvent::Lend { .. })) {
                         errors.push(StringError::Composition {
                             event: index,

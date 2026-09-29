@@ -146,10 +146,40 @@ true
 [WARN] 4611686018427387904
 ```
 
+## Typed loops and arithmetic on the byte-buffer route
+
+[typed_loops.qr](typed_loops.qr) counts a `for` loop over a `u8` bound (card
+`W48-QR-SCALAR-TYPES-R5`): the bound is a conversion of a known `i32`, so it
+is known when the program is checked, and the index has the bound's type —
+here `u8`. The byte-buffer route also gains this page's value statements —
+one arithmetic, comparison or negation per `let` — and since every value on
+that route, the index included, is known at check time, each is decided then:
+`250 + i` fits `u8` for every index this loop takes, and a bound one larger
+would refuse the module rather than overflow:
+
+<!-- transcript: typed_loops stdout -->
+```text
+0xFA
+0xFB
+0xFC
+0xFD
+255
+1
+```
+
+<!-- transcript: typed_loops stderr -->
+```text
+[INFO] false
+[INFO] true
+[INFO] false
+[INFO] true
+```
+
 See [the exact grammar](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1)
 and [implementation evidence](../../docs/reports/source-scalar-calls-v1/README.md);
 the fixed-width types are [§G02t](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02t-fixed-width-scalar-types)
 and [their evidence](../../docs/reports/w48-qr-scalar-types/README.md); the typed
 error is [its evidence](../../docs/reports/w48-qr-scalar-types-r2/README.md), and
 the typed record fields are [card R3's](../../docs/reports/w48-qr-scalar-types-r3/README.md), and the
-typed task values are [card R4's](../../docs/reports/w48-qr-scalar-types-r4/README.md).
+typed task values are [card R4's](../../docs/reports/w48-qr-scalar-types-r4/README.md), and the
+typed loops and buffer-route arithmetic are [card R5's](../../docs/reports/w48-qr-scalar-types-r5/README.md).

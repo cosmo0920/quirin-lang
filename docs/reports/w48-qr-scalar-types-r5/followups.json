@@ -1,0 +1,51 @@
+{
+ "retired": [
+  {
+   "id": "W48-QR-TYPES-LOOP-BOUNDS",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R5 item 1: on source.buffer.v1 a `for NAME in 0..BOUND` bound may be a value of any integer type of G02t and the index has the bound's type (the low end `0` is a literal and takes it, so a range has one type and a mixed-type range is not expressible). The lowering's constant tier (LoweringConstants) gains the conversions and value statements over its own values, folded by the shared decision scalar_values::Decider under the recorded target (threaded into lower_source_buffer_for_target); the bound is decided by the core's source_loop::typed_bound, total over the table in LOOP-V1's order: a bool bound (Q098), an isize/usize bound with no recorded target (Q098, never guessed), a negative, zero or above-4096 bound (Q098, values widened to i128 so u64::MAX and i64::MIN are named exactly), then source_loop::index_admits (the count a value of the index type); the three-layer budget unchanged. BufferEvent::Repeat carries LoopIndex::{I32, Typed{ty, bound}}; the checker re-checks index_admits and re-derives the count from the bound's own value in its typed environment (BoundDisagrees refuses), binds the index at its type per iteration, and publishes the recorded target when the index is isize/usize. The emitter writes `for (T i = 0; i < s_BOUND; i += 1)` at the type against the bound's own C object, so a native run checks the lowering's fold; an `i32` loop over a literal, a literal `let` or an `extent` emits the bytes it always did (630/630 fixtures byte-identical). Lean QCore.ScalarLoopBounds: every index is a value of the type, the step `i + 1` is the checked addition and never faults, the loop run with it terminates after exactly `count` iterations visiting 0..count-1 (the_loop_runs_exactly_count_times), u64 near its maximum and signed bounds near MIN/MAX decided, on i32 exactly LOOP-V1 (i32_is_loop_v1), 32 boundary vectors replayed through typed_bound and through source programs. Native (Clang 21.1.8, -O0/-O2 UBSan and -O2): every integer type's loop at 3 and at min(MAX, 4000) iterations, both streams equal to the reference, 0 sanitizer reports.",
+   "source": "docs/reports/w48-qr-scalar-types-r5/README.md"
+  },
+  {
+   "id": "W48-QR-BUFFER-ROUTE-ARITHMETIC",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R5 item 2: source.buffer.v1 gains the value statement the extern and task routes share (`let NAME = A OP B;`, `A CMP B`, `-NAME`; its `as` form is the route's existing conversion), read by source_value_statement::parse_value_expression and decided by scalar_values::Decider over the route's typed environment (BufferEvent::Compute, BufferEvaluation::compute). Every operand on the route is known at check time — the loop index once per iteration — so every statement folds: a fault refuses at Q053 naming the variant the typed path would raise, a literal outside its type at Q053, a target width with no record at Q051, mixed types and bool arithmetic/negation/ordering at Q052; one operation per statement (Q051). A result is a typed value of the route (renderable, convertible, copyable, a loop bound when its operands are of the lowering's tier; refused at an i32 position unless it is an i32). Emission calls G02t's shared q_scalar_OP_T / q_scalar_neg_T helpers (witnesses the checker proved never fire) and emits each comparison as a two-parameter function, so `x == x` compiles under -Werror. Lean QCore.ScalarBufferValues: admitted iff the checked operation succeeds, never raises, the refusal is the classified raise, inside a loop the unrolled decision admits exactly when every index value succeeds and the admitted helper never faults, 17 vectors replayed through source programs. Checker table: 10 types x boundary pairs x 5 operations plus negations, each admitted with the reference value or refused with the reference variant, every comparison the reference bool; native: every admitted case, comparison and negation per type and an index-arithmetic loop per type, 3 builds, 0 sanitizer reports, exit 0.",
+   "source": "docs/reports/w48-qr-scalar-types-r5/README.md"
+  }
+ ],
+ "registered": [
+  {
+   "id": "W48-QR-TYPES-COMPOSED-STRING",
+   "title": "Admit fixed-width values on the composed string/buffer route",
+   "why": "W48-QR-SCALAR-TYPES-R5 found that the composed string/buffer route (source.string.v1 with embedded buffer statements) lowered a conversion inside a `for` body through the buffer route's reader and admitted it in check and emit, while its emitter (buffer_loop_block) keeps no conversion helper, so the emitted C called an undefined qcore_buffer_as_* and did not compile. R5 refuses every statement of the fixed-width tier on that route by name at any depth (Q077: a conversion, a value statement, a loop whose index is not i32). Size: a typed environment for the composed route's own scalars, the conversion/value-statement helpers carried through buffer_loop_block, the composed borrow-window and consumer scans over typed names, native runs; 0 tracked fixtures move. DISCHARGE: conversions, value statements and typed loops on the composed string/buffer route, checked, emitted and run natively, with Lean parity.",
+   "source": "docs/reports/w48-qr-scalar-types-r5/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R5"
+  },
+  {
+   "id": "W48-QR-LOOP-BOUND-NAME-UNUSED-C",
+   "title": "Keep an i32 loop bound's name used in the emitted C",
+   "why": "W48-QR-SCALAR-TYPES-R5 measured at base 6883623c that `let n = 3; for i in 0..n { … }` on source.buffer.v1, with `n` named nowhere else, checks and emits, but the emitted C declares `int32_t s_n = INT32_C(3);` and writes the loop against the literal count, so `-Wall -Wextra -Werror` refuses it (unused variable). R5's typed loops compare against the bound's C object and do not have the defect; the i32 path was left byte-identical. Size: emit the i32 loop against the bound's name when it is one (re-pinning the loop fixtures' emitted C) or discard the binding; the loop fixtures' C digests move. DISCHARGE: every admitted loop's emitted C builds under -Werror, measured over the loop fixtures.",
+   "source": "docs/reports/w48-qr-scalar-types-r5/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R5"
+  },
+  {
+   "id": "W48-QR-INLINE-COMPARISON-WERROR",
+   "title": "Emit value-statement comparisons so -Werror accepts every admitted one",
+   "why": "W48-QR-SCALAR-TYPES-R5 measured at base 6883623c that on source.scalar-calls.v1 `let c = x == x;` over a u8 parameter checks and emits, and the emitted `bool t0 = (v0 == v0);` fails `-Werror` (-Wtautological-compare). The extern and task routes also emit comparisons inline. R5's buffer-route comparisons go through two-parameter functions and are unaffected. Size: the same function form on the scalar, extern and task emitters, with the pinned emitted-C digests that contain an inline comparison re-pinned. DISCHARGE: a self-comparison on each route, built under -Werror and run natively.",
+   "source": "docs/reports/w48-qr-scalar-types-r5/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R5"
+  }
+ ],
+ "amended": [
+  {
+   "id": "W48-QR-TYPES-PAYLOADS",
+   "amendment": "W48-QR-SCALAR-TYPES-R5 did not reach this item (it stopped after item 2, W48-QR-BUFFER-ROUTE-ARITHMETIC). Measured for sizing: the owned Buffer's payload is a single int32_t (task_execution.rs BUFFER_PAYLOAD_BYTES = 4, qcore_buffer_new/read/write in task_c_emit.rs), and a range write lease's byte extent is that payload's four bytes, so a typed payload changes the lease footprint arithmetic as well as the cell type; the protected payload is mutex_invariant.rs's cell (42 sites) and source_mutex.rs's declaration (27)."
+  },
+  {
+   "id": "W48-QR-TYPES-MSVC-NATIVE",
+   "amendment": "W48-QR-SCALAR-TYPES-R5 adds the typed loop header (`for (T i = ((T)(UINT64_C(0))); i < s_n; i += ((T)(UINT64_C(1))))`), the buffer route's q_scalar_* helpers and its comparison functions to what no MSVC build has run; the discharge now also covers compiler/tests/scalar_loop_bounds.rs and scalar_buffer_values.rs under /W4 /WX."
+  },
+  {
+   "id": "W48-QR-VALUE-STATEMENT-EXPRESSIONS",
+   "amendment": "W48-QR-SCALAR-TYPES-R5 gave source.buffer.v1 the same one-operation value statement through the shared reader and decision, so nested expressions, when admitted, apply to three routes at once; on the buffer route every operand is known at check time, so each operation of a nested expression would fold on its own."
+  }
+ ]
+}

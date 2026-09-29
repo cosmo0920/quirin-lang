@@ -1231,6 +1231,7 @@ fn the_models_own_loop_arm_runs_a_repeat_through_the_buffer_routes_runner() {
             StringEvent::Buffer(BufferEvent::Repeat {
                 variable: "i".to_owned(),
                 count: 2,
+                index: qcore_core::std_buffer::LoopIndex::I32,
                 body: vec![BufferEvent::Store {
                     name: "b".to_owned(),
                     index: BufferOperand::Scalar("i".to_owned()),

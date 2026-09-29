@@ -766,6 +766,23 @@ implemented grammars §G02t, §G02a, §G02j). On the scoped-task route:
 * A composed rendering (§G02j) of a value of any type renders it at its type,
   in the parent or in a worker.
 
+**Typed loops and the buffer route's value statement** (card
+`W48-QR-SCALAR-TYPES-R5`, implemented grammars §G02t, §G07.12, §G02k). On
+`source.buffer.v1`:
+
+* A counted loop's bound MAY be a check-time value of any integer type, and
+  its index MUST have the bound's type; a `bool` bound and an `isize`/`usize`
+  bound with no recorded target MUST be refused, and the bound MUST satisfy the
+  loop's own rules at every type (positive, at most the ceiling, within the
+  budget). The loop MUST then count exactly the bound's number of iterations,
+  each index value a value of the type and the step to the next never faulting.
+* The route MAY perform the value statement of the extern and task routes. Its
+  operands are always known at check time, so each statement MUST be decided
+  then: a fault MUST refuse, and nothing on the route raises.
+* A route that composes this route's statements and binds only `i32` values
+  MUST refuse a conversion, a value statement or a loop of another index type
+  rather than emit it.
+
 ### L14.1. Unchecked linkage
 
 An external library that has **no contract at all** MAY be linked, under an
@@ -1344,7 +1361,8 @@ its assumptions (`recorded target: …` in the declared-assumption list of
 `quirin check`), on every route that admits them (card
 `W48-QR-SCALAR-TYPES-R3`: the scalar, byte-buffer, extern and composed
 extern + io routes; card `W48-QR-SCALAR-TYPES-R4`: the scoped-task route, alone
-or composed with rendered lines). A result that names neither type carries no
+or composed with rendered lines; card `W48-QR-SCALAR-TYPES-R5`: a byte-buffer
+loop whose index is `isize` or `usize`). A result that names neither type carries no
 such assumption.
 
 **Safe** means that the named property is established for the identified subject, scope, and assumptions with complete coverage under the selected profile. **Unsafe** means a validated defect or counterexample under that profile. **Unknown** means the requested property was not established, including unsupported behavior, incomplete imports, missing premises, invalid evidence, or exhausted analysis bounds. **Pending** (card W45-USER-CONTRACT-PLUGINS, approved 2026-09-26) means the requested property was not decided by the tool and awaits a named human act: a review edit (`awaiting-human-review`), a re-pin after review (`contract-pin-mismatch`) or a checkable certificate for a checker plugin's claim (`plugin-claim-uncertified`). Pending is not Safe, stays in every denominator exactly as Unknown does, and is produced only by one of those named reasons (§L21.2).
@@ -1484,6 +1502,17 @@ operand it cannot render. The read of every `extern fn` declaration widens
 the OrdinaryTypes `Q020` condition to a declaration's parameter or result
 outside the §C04.1 vocabulary, on every route of an executable or library
 module.
+
+`W48-QR-SCALAR-TYPES-R5` allocates no code. On `source.buffer.v1` it widens
+`Q051` (a value statement of more than one operation, a malformed one, a target
+width with no record in one), `Q052` (mixed operand types, `bool` arithmetic,
+negation or ordering in a value statement) and `Q053` (a value statement that
+faults on its known operands, naming the variant; a literal outside its
+operand's type); the loop's `Q098` (a `bool` bound, an `isize`/`usize` bound
+with no recorded target, a count that is not a value of the index type or that
+disagrees with its bound's value); and the composed string/buffer route's
+`Q077` (a conversion, a value statement or a loop of a non-`i32` index at any
+depth).
 
 `W48-QR-SCALAR-TYPES-R4` allocates no code. On the scoped-task route it widens
 the OrdinaryTypes `Q020` condition (a literal outside its type, mixed operand

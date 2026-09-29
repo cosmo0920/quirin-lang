@@ -580,6 +580,7 @@ fn the_inherited_checker_refuses_a_repeated_release_on_its_own() {
             BufferEvent::Repeat {
                 variable: "i".to_owned(),
                 count: 2,
+                index: qcore_core::std_buffer::LoopIndex::I32,
                 body: vec![BufferEvent::Release {
                     name: "b".to_owned(),
                 }],
@@ -670,6 +671,7 @@ fn the_body_is_unrolled_exactly_and_its_bindings_are_per_iteration() {
             BufferEvent::Repeat {
                 variable: "i".to_owned(),
                 count: 2,
+                index: qcore_core::std_buffer::LoopIndex::I32,
                 body: vec![
                     BufferEvent::Acquire {
                         name: "c".to_owned(),
@@ -710,6 +712,7 @@ fn the_unrolled_event_count_is_the_cost_the_budget_bounds() {
         BufferEvent::Repeat {
             variable: "i".to_owned(),
             count: 4,
+            index: qcore_core::std_buffer::LoopIndex::I32,
             body: vec![
                 BufferEvent::Store {
                     name: "b".to_owned(),
@@ -719,6 +722,7 @@ fn the_unrolled_event_count_is_the_cost_the_budget_bounds() {
                 BufferEvent::Repeat {
                     variable: "j".to_owned(),
                     count: 3,
+                    index: qcore_core::std_buffer::LoopIndex::I32,
                     body: vec![BufferEvent::Store {
                         name: "b".to_owned(),
                         index: BufferOperand::Literal(0),

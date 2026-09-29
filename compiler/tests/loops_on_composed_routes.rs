@@ -538,6 +538,7 @@ fn the_projection_unrolls_the_body_inside_the_borrow_node() {
             BufferEvent::Repeat {
                 variable: "i".to_owned(),
                 count: 3,
+                index: qcore_core::std_buffer::LoopIndex::I32,
                 body: vec![BufferEvent::Store {
                     name: "part".to_owned(),
                     index: BufferOperand::Scalar("i".to_owned()),
@@ -646,6 +647,7 @@ fn a_body_release_under_a_live_loan_is_refused_by_the_model_by_name() {
             StringEvent::Buffer(BufferEvent::Repeat {
                 variable: "i".to_owned(),
                 count: 1,
+                index: qcore_core::std_buffer::LoopIndex::I32,
                 body: vec![BufferEvent::Release {
                     name: "b".to_owned(),
                 }],
@@ -708,6 +710,7 @@ fn a_body_store_after_the_release_is_the_inherited_use_after_drop() {
             StringEvent::Buffer(BufferEvent::Repeat {
                 variable: "i".to_owned(),
                 count: 1,
+                index: qcore_core::std_buffer::LoopIndex::I32,
                 body: vec![BufferEvent::Store {
                     name: "b".to_owned(),
                     index: BufferOperand::Literal(0),
