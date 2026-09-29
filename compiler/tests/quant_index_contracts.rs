@@ -35,12 +35,29 @@ fn shorthand_and_vector_where_bindings_elaborate_to_dimensioned_values() {
         );
         assert_eq!(quant.fields["memory"].dimension().to_string(), "Bytes");
         assert!(parsed.syntax_equivalent(&parse_source_program(&parsed.to_string()).unwrap()));
-        compile_files(
-            &[SourceFile::new("where.qcore", source)],
-            &CompileOptions::default(),
-        )
-        .unwrap();
+        // Card `W48-QR-SCALAR-TYPES-R3` (`W48-INERT-EXTERN-DECLARATION-TYPES`):
+        // the uncalled declaration is read, and a `quant<…>` parameter is no
+        // type an extern declaration can state, so the module refuses at
+        // `Q020` after every earlier pass — the elaboration above included —
+        // admitted it. `remaining-v04`'s P08 and P10 are this shape.
+        assert_inert_declaration_refusal(&source, "where.qcore");
     }
+}
+
+/// The one refusal an executable module declaring an uncalled `extern fn` with
+/// a quantity parameter now receives (card `W48-QR-SCALAR-TYPES-R3`).
+fn assert_inert_declaration_refusal(source: &str, path: &str) {
+    let errors = compile_files(
+        &[SourceFile::new(path, source.to_owned())],
+        &CompileOptions::default(),
+    )
+    .expect_err("an unread quant parameter is refused");
+    assert_eq!(
+        errors.iter().map(|d| d.code.as_str()).collect::<Vec<_>>(),
+        ["Q020"],
+        "{errors:?}"
+    );
+    assert!(errors[0].message.contains("parameter `q` of `extern fn f`"));
 }
 
 #[test]
@@ -186,11 +203,7 @@ fn bracket_alias_elaborates_identically_to_the_angle_form() {
         assert_eq!(angle_quant.fields, bracket_quant.fields, "{bracket}");
         assert_eq!(angle_quant.bindings, bracket_quant.bindings, "{bracket}");
         assert!(parsed.syntax_equivalent(&parse_source_program(&parsed.to_string()).unwrap()));
-        compile_files(
-            &[SourceFile::new("alias.qcore", source(bracket))],
-            &CompileOptions::default(),
-        )
-        .unwrap();
+        assert_inert_declaration_refusal(&source(bracket), "alias.qcore");
     }
 }
 

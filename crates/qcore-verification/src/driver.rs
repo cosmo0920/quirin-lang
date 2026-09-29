@@ -1053,6 +1053,14 @@ impl CompiledModule {
             CheckedSourceModule::StandardBuffer(module) => {
                 module.certificate.target_assumption.as_ref()
             }
+            // The extern route's value statements and declared outcomes, alone
+            // or composed with rendered lines.
+            CheckedSourceModule::ExternCalls(module) => {
+                module.certificate.target_assumption.as_ref()
+            }
+            CheckedSourceModule::Composed(module) => {
+                module.certificate.externs.target_assumption.as_ref()
+            }
             _ => None,
         }
     }
@@ -1403,6 +1411,97 @@ fn compile_files_with_registry_inner(
             .map(|diagnostic| map_diagnostic(diagnostic, &ranges))
             .collect::<Vec<_>>()
     })?;
+    // Card `W48-QR-SCALAR-TYPES-R3` (`W48-INERT-EXTERN-DECLARATION-TYPES`):
+    // every admitted module's `extern fn` declarations are read, called or
+    // not. Run after the route's own passes, on an admitted module only, so
+    // every refusal given before keeps its bytes and only an admission can
+    // become a refusal.
+    //
+    // A **contract** module is exempt, and not by omission: its `extern fn`
+    // declarations are the contract surface itself, written in the resource
+    // contract language (whose type vocabulary is wider than §C04.1's — `f64`,
+    // `Buffer`, quantity types) and read by the contract loader whenever a
+    // program selects them; it declares nothing callable here.
+    let module = compile_elaborated_source(&parsed, &typed, mode, options, &ranges, target)?;
+    if mode != SourceModuleMode::Contract {
+        check_extern_declaration_signatures(&parsed, &ranges)?;
+    }
+    Ok(module)
+}
+
+/// Card `W48-QR-SCALAR-TYPES-R3` (`W48-INERT-EXTERN-DECLARATION-TYPES`).
+///
+/// An `extern fn` declaration that no body calls used to be read by nothing
+/// but name resolution on every route that admitted it: its parameter and
+/// result annotations were never looked at, so `extern fn f(x: Widget) ->
+/// Widget;` beside a sequential entry was admitted (card
+/// `W48-QR-SCALAR-TYPES-R2`'s finding). Every declaration of an admitted
+/// module is now read here against the C04.1 ABI vocabulary a declaration can
+/// state — the §G02t scalars, the three custody pointers and `unit` as a
+/// result — and every other spelling refuses at `Q020`, naming the parameter
+/// or the result. A called declaration already met the stricter equality with
+/// its selected contract; this check adds nothing for it.
+fn check_extern_declaration_signatures(
+    parsed: &SourceProgram,
+    ranges: &[FileRange],
+) -> Result<(), Vec<FileDiagnostic>> {
+    use qcore_core::extern_call::AbiType;
+    let mut refusals = Vec::new();
+    for declaration in &parsed.declarations {
+        if declaration.value.kind != DeclarationKind::ExternFunction {
+            continue;
+        }
+        let name = &declaration.value.name;
+        for parameter in &declaration.value.parameters {
+            let written = parameter.type_source.trim();
+            if AbiType::parse(written).is_some_and(|abi| abi != AbiType::Unit) {
+                continue;
+            }
+            refusals.push(map_raw_diagnostic(
+                "Q020",
+                SemanticPass::OrdinaryTypes,
+                parameter.type_span,
+                format!(
+                    "parameter `{}` of `extern fn {name}` is `{written}`, which is not a type an extern declaration can state; a parameter is a fixed-width scalar (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize) or one of the custody pointers ptr<mut, u8>, ptr<const, u8>, ptr<mut, ptr<mut, u8>> (§C04.1), and every declaration is read whether or not a body calls it",
+                    parameter.name.value
+                ),
+                ranges,
+            ));
+        }
+        if let Some(result) = &declaration.value.result_type {
+            let written = result.source.trim();
+            if AbiType::parse(written).is_none() {
+                refusals.push(map_raw_diagnostic(
+                    "Q020",
+                    SemanticPass::OrdinaryTypes,
+                    result.span,
+                    format!(
+                        "the result of `extern fn {name}` is `{written}`, which is not a type an extern declaration can state; a result is `unit`, a fixed-width scalar or one of the custody pointers (§C04.1), and every declaration is read whether or not a body calls it"
+                    ),
+                    ranges,
+                ));
+            }
+        }
+    }
+    if refusals.is_empty() {
+        Ok(())
+    } else {
+        Err(refusals)
+    }
+}
+
+/// The route selection and every route, over one elaborated module (split out
+/// of [`compile_files_with_registry_inner`] by card `W48-QR-SCALAR-TYPES-R3`
+/// so a module-wide check can follow whichever route admitted it; the body is
+/// unchanged).
+fn compile_elaborated_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     // `source.bitfield-concurrency.v1`: selected before the generic task route
     // because it composes the task parser's real `write OBJECT.FIELD` captures
     // with an explicit source-derived layout. Falling through would discard
@@ -1449,14 +1548,14 @@ fn compile_files_with_registry_inner(
     // refusals; and a module using one of the two composed feature sets fails
     // this conjunction and falls through to that route byte for byte.
     if qcore_frontend::source_composed::has_source_composed(&parsed) {
-        return compile_composed_source(&parsed, &typed, mode, options, &ranges);
+        return compile_composed_source(parsed, typed, mode, options, ranges, target);
     }
     // Selected after the concurrent routes on purpose: a module that both
     // spawns and calls an extern function stays with the task route, which
     // keeps its existing refusal. Lifting that is a separate card, because a
     // task worker is a separate checked model (design §3.4).
     if qcore_frontend::source_extern::has_source_extern(&parsed) {
-        return compile_extern_source(&parsed, &typed, mode, options, &ranges);
+        return compile_extern_source(parsed, typed, mode, options, ranges, target);
     }
     // Card `STD-EVENT`. Selected after every concurrent route and after the
     // extern route, and **before** the standard-IO and buffer routes, on the
@@ -5503,6 +5602,7 @@ fn compile_extern_source(
     mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     use qcore_frontend::source_extern;
 
@@ -5516,14 +5616,22 @@ fn compile_extern_source(
     let admitted = admit_extern_callees(parsed, options, ranges)?;
     let callees = admitted.callees;
 
-    let lowered =
-        source_extern::lower_source_extern(parsed, typed, &entry, &callees, &admitted.libraries)
-            .map_err(|errors| {
-                errors
-                    .into_iter()
-                    .map(|error| map_diagnostic(error, ranges))
-                    .collect::<Vec<_>>()
-            })?;
+    // Card `W48-QR-SCALAR-TYPES-R3`: the recorded target gives `isize`/`usize`
+    // values their width in the value statements and declared outcomes.
+    let lowered = source_extern::lower_source_extern_for_target(
+        parsed,
+        typed,
+        &entry,
+        &callees,
+        &admitted.libraries,
+        target,
+    )
+    .map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
     let certificate = extern_call::check_extern_program(&lowered.program).map_err(|errors| {
         errors
             .into_iter()
@@ -5669,6 +5777,7 @@ fn compile_composed_source(
     mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     use qcore_frontend::source_composed;
 
@@ -5681,12 +5790,13 @@ fn compile_composed_source(
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
     let admitted = admit_extern_callees(parsed, options, ranges)?;
     let callees = admitted.callees;
-    let lowered = source_composed::lower_source_composed(
+    let lowered = source_composed::lower_source_composed_for_target(
         parsed,
         typed,
         &entry,
         &callees,
         &admitted.libraries,
+        target,
     )
     .map_err(|errors| {
         errors

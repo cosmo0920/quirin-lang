@@ -32,8 +32,13 @@ use std::fmt::Write;
 /// A per-type helper the program needs. Only needed helpers are emitted, so
 /// `-Wunused-function` has nothing to report. The `Try*` helpers return the
 /// typed error's tag instead of exiting.
+///
+/// Public since card `W48-QR-SCALAR-TYPES-R3`, so another route that computes
+/// a §G02t operation (the extern route's value statements) emits **these**
+/// helpers — [`Helper::name`] and [`scalar_helper_definition`] — rather than a
+/// second implementation of the same tests.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-enum Helper {
+pub enum Helper {
     Op(Op, ScalarType),
     Neg(ScalarType),
     Convert(ScalarType, ScalarType),
@@ -326,6 +331,29 @@ impl Emitter<'_> {
 /// The definition of one helper. Every test is decided on the operands, before
 /// the operation, so no signed overflow is ever evaluated.
 fn helper_definition(helper: Helper, checked: &Checked) -> String {
+    scalar_helper_definition(helper, checked.target())
+}
+
+impl Helper {
+    /// The C name of the helper [`scalar_helper_definition`] defines.
+    #[must_use]
+    pub fn name(self) -> String {
+        match self {
+            Self::Op(op, ty) => format!("q_scalar_{}_{ty}", op_name(op)),
+            Self::Neg(ty) => format!("q_scalar_neg_{ty}"),
+            Self::Convert(from, to) => format!("q_scalar_as_{from}_{to}"),
+            Self::TryOp(op, ty) => format!("q_scalar_try_{}_{ty}", op_name(op)),
+            Self::TryNeg(ty) => format!("q_scalar_try_neg_{ty}"),
+            Self::TryConvert(from, to) => format!("q_scalar_try_as_{from}_{to}"),
+        }
+    }
+}
+
+/// The definition of one helper for the recorded target `target`. Every test is
+/// decided on the operands, before the operation, so no signed overflow is ever
+/// evaluated.
+#[must_use]
+pub fn scalar_helper_definition(helper: Helper, target: Option<&st::RecordedTarget>) -> String {
     let fault = "{ exit(86); }";
     match helper {
         Helper::Op(op, ty) => {
@@ -347,7 +375,7 @@ fn helper_definition(helper: Helper, checked: &Checked) -> String {
             let (from_c, to_c) = (st::c_type(from), st::c_type(to));
             format!(
                 "static {to_c} q_scalar_as_{from}_{to}({from_c} v) {{\n    if ({}) {fault}\n    return ({to_c})v;\n}}\n",
-                conversion_test(from, to, checked)
+                conversion_test(from, to, target)
             )
         }
         Helper::TryOp(op, ty) => {
@@ -394,7 +422,7 @@ fn helper_definition(helper: Helper, checked: &Checked) -> String {
             let (from_c, to_c) = (st::c_type(from), st::c_type(to));
             format!(
                 "static int q_scalar_try_as_{from}_{to}({from_c} v, {to_c} *r) {{\n    if ({}) {{ return {}; }}\n    *r = ({to_c})v;\n    return 0;\n}}\n",
-                conversion_test(from, to, checked),
+                conversion_test(from, to, target),
                 ArithmeticError::OutOfRange.tag()
             )
         }
@@ -439,8 +467,12 @@ fn negation_test(ty: ScalarType) -> (String, &'static str) {
     }
 }
 
-fn conversion_test(from: ScalarType, to: ScalarType, checked: &Checked) -> String {
-    st::c_conversion_test(from, to, checked.target()).expect("a checked width")
+fn conversion_test(
+    from: ScalarType,
+    to: ScalarType,
+    target: Option<&st::RecordedTarget>,
+) -> String {
+    st::c_conversion_test(from, to, target).expect("a checked width")
 }
 
 /// The `_Static_assert`s that bind the emitted program to the recorded

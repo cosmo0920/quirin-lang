@@ -1,4 +1,5 @@
 import QCore.ScalarTypes
+import QCore.ScalarTypedErrors
 
 /-! The fixed-width scalar table at the positions card `W48-QR-SCALAR-TYPES`
 left at `i32` (card `W48-QR-SCALAR-TYPES-R3`).
@@ -36,6 +37,7 @@ theorem. -/
 namespace QCore.ScalarPositions
 
 open QCore.ScalarTypes
+open QCore.ScalarTypedErrors
 
 /-- A value of the typed environment: its type and its number (`bool` is
 `0`/`1`). -/
@@ -281,6 +283,127 @@ def fieldAgreement : List (Ty × Int × Bool) := [
 
 theorem fieldAgreement_holds :
     fieldAgreement.all (fun (ty, n, b) => (fieldValue (some .w64) ty (.lit n)).isSome == b) = true := by
+  decide
+
+/-! Item 2: an extern result is a value (`W48-QR-TYPES-EXTERN-VALUES`). A value
+of the extern route's namespace is **known** — a literal, a declared
+`succeeds INTEGER` outcome, or a statement over known values — or known only at
+run time. A statement over known operands is decided at check time exactly as
+`QCore.ScalarTypes.checked` decides it, and refused when it faults; a statement
+over a run-time operand is admitted only under the row's
+`throws<ArithmeticError>`, and then runs the typed path of
+`QCore.ScalarTypedErrors`. -/
+
+/-- What the checker knows of a value's number. -/
+inductive Known where
+  | known (n : Int)
+  | dynamic
+  deriving DecidableEq, Repr
+
+/-- The check-time decision for `a OP b` at `ty` under the row's permission
+`perm`: the known result, the dynamic result (marked as able to raise), or
+`none` — the refusal. -/
+def decideBinary (t : Option Width) (perm : Bool) (op : Op) (ty : Ty) :
+    Known → Known → Option (Known × Bool)
+  | .known a, .known b => (checked t op ty a b).map fun v => (.known v, false)
+  | _, _ => if perm = true ∧ ty ≠ .bool then some (.dynamic, true) else none
+
+/-- **A statement over known operands is admitted exactly when the checked
+operation succeeds, with its value**, and it never raises. -/
+theorem decideBinary_known_iff {t : Option Width} {perm : Bool} {op : Op} {ty : Ty}
+    {a b v : Int} :
+    decideBinary t perm op ty (.known a) (.known b) = some (.known v, false) ↔
+      checked t op ty a b = some v := by
+  simp only [decideBinary]
+  cases h : checked t op ty a b <;> simp
+
+/-- **The static refusal is the dynamic raise**: a statement over known
+operands that the checker refuses is one whose typed path raises, and raises
+the classified variant. -/
+theorem decideBinary_refusal_is_raise {t : Option Width} {perm : Bool} {op : Op} {ty : Ty}
+    {a b : Int} (h : decideBinary t perm op ty (.known a) (.known b) = none) :
+    checkedE t op ty a b = .error (classify op b) := by
+  simp only [decideBinary] at h
+  cases hc : checked t op ty a b with
+  | none => simp [checkedE, hc]
+  | some v => simp [hc] at h
+
+/-- **A statement that can raise is admitted only under the permission**, and
+only over a run-time operand. -/
+theorem decideBinary_raises_needs_permission {t : Option Width} {perm : Bool} {op : Op}
+    {ty : Ty} {x y : Known} {r : Known} (h : decideBinary t perm op ty x y = some (r, true)) :
+    perm = true ∧ (x = .dynamic ∨ y = .dynamic) := by
+  cases x with
+  | known a =>
+    cases y with
+    | known b =>
+      simp only [decideBinary] at h
+      cases hc : checked t op ty a b <;> simp [hc] at h
+    | dynamic =>
+      simp only [decideBinary] at h
+      split at h
+      · rename_i hp
+        exact ⟨hp.1, .inr rfl⟩
+      · contradiction
+  | dynamic =>
+    simp only [decideBinary] at h
+    split at h
+    · rename_i hp
+      exact ⟨hp.1, .inl rfl⟩
+    · contradiction
+
+/-- Without the permission, nothing over a run-time operand is admitted. -/
+theorem decideBinary_without_permission {t : Option Width} {op : Op} {ty : Ty} {y : Known} :
+    decideBinary t false op ty .dynamic y = none := by
+  cases y <;> simp [decideBinary]
+
+/-- A known result is a value of its type. -/
+theorem decideBinary_known_in_range {t : Option Width} {perm : Bool} {op : Op} {ty : Ty}
+    {a b v : Int} (h : decideBinary t perm op ty (.known a) (.known b) = some (.known v, false)) :
+    fits t ty v = true :=
+  checked_in_range (decideBinary_known_iff.mp h)
+
+/-- A declared outcome is admitted exactly when it is a value of the declared
+result's type (with the recorded target's width for `isize`/`usize`). -/
+def outcomeAdmitted (t : Option Width) (ty : Ty) (n : Int) : Bool := fits t ty n
+
+/-- An argument is admitted at a declared parameter only at the parameter's own
+type: there is no implicit conversion at the extern boundary either. -/
+def argumentAdmitted (declared : Ty) (v : TVal) : Bool := decide (v.ty = declared)
+
+theorem argumentAdmitted_type {declared : Ty} {v : TVal} (h : argumentAdmitted declared v = true) :
+    v.ty = declared := by
+  simpa [argumentAdmitted] using h
+
+/-- A comparison produces a `bool` and never raises; `bool` has no ordering. -/
+def decideCompare (cmp : Cmp) (ty : Ty) : Known → Known → Option Known
+  | .known a, .known b => (compare cmp ty a b).map fun r => .known (if r then 1 else 0)
+  | _, _ => if ty = .bool ∧ cmp ≠ .eq ∧ cmp ≠ .ne then none else some .dynamic
+
+theorem decideCompare_bool_is_bool {cmp : Cmp} {ty : Ty} {a b n : Int}
+    (h : decideCompare cmp ty (.known a) (.known b) = some (.known n)) :
+    fits none .bool n = true := by
+  simp only [decideCompare] at h
+  cases hc : compare cmp ty a b with
+  | none => simp [hc] at h
+  | some r =>
+    simp [hc] at h
+    subst h
+    cases r <;> simp [fits, Ty.range]
+
+/-- The extern-value vectors: `(operation, type, a, b, admitted known value)`
+at the 64-bit target, the known path; replayed through the Rust checker by
+`lean_extern_value_vectors_match_the_checker`. -/
+def externAgreement : List (Op × Ty × Int × Int × Option Int) := [
+  (.add, .u8, 200, 55, some 255), (.add, .u8, 200, 56, none), (.sub, .u16, 0, 1, none),
+  (.mul, .i64, 3037000499, 3037000499, some 9223372030926249001), (.mul, .i64, 3037000500, 3037000500, none),
+  (.div, .i32, -2147483648, -1, none), (.rem, .u32, 7, 0, none), (.div, .usize, 10, 3, some 3),
+  (.add, .u64, 18446744073709551614, 1, some 18446744073709551615), (.add, .isize, 9223372036854775807, 1, none)]
+
+theorem externAgreement_holds :
+    externAgreement.all (fun (op, ty, a, b, v) =>
+      (decideBinary (some .w64) false op ty (.known a) (.known b)).map Prod.fst ==
+        v.map Known.known) = true := by
   decide
 
 end QCore.ScalarPositions

@@ -44,8 +44,10 @@ use crate::ResourceId;
 use crate::c_program::{self, Fragment, Section};
 use crate::extern_call::{
     AbiType, CallParameter, ExternArgument, ExternCallCertificate, ExternCallee, ExternEvent,
-    ExternProgram, ValueId,
+    ExternProgram, ValueComputation, ValueId, ValueOperand, ValueOperation, ValueStatement,
 };
+use crate::scalar_calls_c_emit::{Helper, scalar_helper_definition};
+use crate::scalar_types::{self as st, ScalarType};
 
 fn c_string(value: &str) -> String {
     let mut result = String::from("\"");
@@ -168,7 +170,7 @@ fn value_observation(
     callee: &ExternCallee,
     arguments: &[ExternArgument],
     value: ValueId,
-    outcome: Option<i32>,
+    outcome: Option<i128>,
 ) -> String {
     format!(
         "value {} {}{}{}",
@@ -316,7 +318,12 @@ pub fn trace_extern_events(
             // Card `EXTERN-SCALAR-LITERAL`: a literal binding calls nothing and
             // is observed as nothing. The number is in the source and on the
             // certificate; printing it would add an observation no call made.
-            ExternEvent::Bind(_) => {}
+            // Card `W48-QR-SCALAR-TYPES-R3`: a value statement likewise calls
+            // nothing and is observed as nothing. A run whose value statement
+            // raises at run time exits `80 + tag` there and writes no later
+            // line, so this trace is the observation of a run that does not
+            // raise — the partial-correctness reading every route here has.
+            ExternEvent::Bind(_) | ExternEvent::Compute(_) => {}
             ExternEvent::Return => trace.push("return".to_owned()),
         }
         parts.push((index, trace));
@@ -418,9 +425,199 @@ pub fn emit_extern_c11(
     for (_, statements) in emit_extern_statements(program, certificate)? {
         body.push_str(&statements);
     }
+    let mut fragments = preamble(program);
+    fragments.extend(scalar_fragments(program, certificate)?);
     Ok(ExternCEmission {
-        source: c_program::assemble(&preamble(program), &c_program::Entry::source_route(body)),
+        source: c_program::assemble(&fragments, &c_program::Entry::source_route(body)),
     })
+}
+
+/// The one helper a value statement's operation calls, if any (card
+/// `W48-QR-SCALAR-TYPES-R3`): the scalar route's own, so the extern route
+/// emits the same operand-first tests. A statement that can raise calls the
+/// `try` helper, whose tag the entry turns into `80 + tag`; one whose operands
+/// the checker knew calls the checked helper, whose `exit(86)` the checker
+/// proved never taken. A comparison and a total conversion call none.
+fn computation_helper(
+    statement: &ValueStatement,
+    computation: &ValueComputation,
+    target: Option<&st::RecordedTarget>,
+) -> Option<Helper> {
+    let ty = computation.operand_ty;
+    match statement.operation {
+        ValueOperation::Binary(op, ..) => Some(if computation.raises {
+            Helper::TryOp(op, ty)
+        } else {
+            Helper::Op(op, ty)
+        }),
+        ValueOperation::Negate(_) => Some(if computation.raises {
+            Helper::TryNeg(ty)
+        } else {
+            Helper::Neg(ty)
+        }),
+        ValueOperation::Convert(_, to) => {
+            if st::conversion_is_total(ty, to, target).unwrap_or(false) {
+                None
+            } else if computation.raises {
+                Some(Helper::TryConvert(ty, to))
+            } else {
+                Some(Helper::Convert(ty, to))
+            }
+        }
+        ValueOperation::Compare(..) => None,
+    }
+}
+
+/// The certificate's decision about the value statement `statement`.
+fn computation_for<'a>(
+    certificate: &'a ExternCallCertificate,
+    statement: &ValueStatement,
+    event: usize,
+) -> Result<&'a ValueComputation, ExternEmissionRefusal> {
+    certificate
+        .computations
+        .iter()
+        .find(|computation| computation.value == statement.value)
+        .ok_or(ExternEmissionRefusal::UnboundValue {
+            event,
+            value: statement.value,
+        })
+}
+
+/// The file-scope fragments a program with value statements needs (card
+/// `W48-QR-SCALAR-TYPES-R3`), empty for every program before the card: the
+/// headers, the recorded target's width assertions — also binding the ABI's
+/// `intptr_t`/`uintptr_t` to the `ptrdiff_t`/`size_t` a statement computes
+/// at — and each helper the statements call, once.
+pub fn scalar_fragments(
+    program: &ExternProgram,
+    certificate: &ExternCallCertificate,
+) -> Result<Vec<Fragment>, ExternEmissionRefusal> {
+    let target = certificate.target_assumption.as_ref();
+    let mut helpers = std::collections::BTreeSet::new();
+    let mut computes = false;
+    for (index, event) in program.events.iter().enumerate() {
+        if let ExternEvent::Compute(statement) = event {
+            computes = true;
+            let computation = computation_for(certificate, statement, index)?;
+            if let Some(helper) = computation_helper(statement, computation, target) {
+                helpers.insert(helper);
+            }
+        }
+    }
+    let mut fragments = Vec::new();
+    if !computes {
+        return Ok(fragments);
+    }
+    fragments.push(Fragment::new(
+        Section::Includes,
+        "extern.scalar-types.includes",
+        "#include <stdbool.h>\n#include <stddef.h>\n#include <stdlib.h>\n",
+    ));
+    let mut text = String::new();
+    if let Some(target) = target {
+        text.push('\n');
+        text.push_str(&st::c_target_assertions(target));
+        text.push_str(
+            "_Static_assert(UINTPTR_MAX == SIZE_MAX, \"the ABI's uintptr_t is the recorded target's size_t\");\n_Static_assert(INTPTR_MAX == PTRDIFF_MAX && INTPTR_MIN == PTRDIFF_MIN, \"the ABI's intptr_t is the recorded target's ptrdiff_t\");\n",
+        );
+    }
+    if !helpers.is_empty() {
+        text.push('\n');
+    }
+    for helper in helpers {
+        text.push_str(&scalar_helper_definition(helper, target));
+    }
+    if !text.is_empty() {
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "extern.scalar-helpers",
+            text,
+        ));
+    }
+    Ok(fragments)
+}
+
+/// The C expression of one value-statement operand at the operation's type.
+fn value_operand_expression(operand: ValueOperand, ty: ScalarType) -> String {
+    match operand {
+        ValueOperand::Value(value) => value_name(value),
+        ValueOperand::Integer(literal) => st::c_literal(ty, literal),
+        ValueOperand::Bool(value) => st::c_literal(ScalarType::Bool, i128::from(value)),
+    }
+}
+
+/// The C statements of one checked value statement (card
+/// `W48-QR-SCALAR-TYPES-R3`).
+fn value_statement_text(
+    statement: &ValueStatement,
+    computation: &ValueComputation,
+    target: Option<&st::RecordedTarget>,
+) -> String {
+    let name = value_name(statement.value);
+    let result = st::c_type(computation.ty);
+    let ty = computation.operand_ty;
+    let operands: Vec<String> = match statement.operation {
+        ValueOperation::Binary(_, a, b) | ValueOperation::Compare(_, a, b) => vec![
+            value_operand_expression(a, ty),
+            value_operand_expression(b, ty),
+        ],
+        ValueOperation::Negate(a) | ValueOperation::Convert(a, _) => {
+            vec![value_operand_expression(a, ty)]
+        }
+    };
+    let mut source = String::new();
+    match (
+        computation_helper(statement, computation, target),
+        statement.operation,
+    ) {
+        (Some(helper), _) if computation.raises => {
+            // The typed error path: the helper returns the tag, and a nonzero
+            // tag ends the run with `80 + tag` after the lines already
+            // written — the entry's published error outcome.
+            let _ = writeln!(source, "    {result} {name} = 0;");
+            let _ = writeln!(
+                source,
+                "    int qe_{name} = {}({}, &{name});",
+                helper.name(),
+                operands.join(", ")
+            );
+            let _ = writeln!(
+                source,
+                "    if (qe_{name} != 0) {{\n        \
+                 qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_RUN_OUTCOME, UINT64_C(0), UINT64_C(0), (int64_t)qe_{name}, \"raise ArithmeticError\");\n        \
+                 return 80 + qe_{name};\n    }}"
+            );
+        }
+        (Some(helper), _) => {
+            let _ = writeln!(
+                source,
+                "    {result} {name} = {}({});",
+                helper.name(),
+                operands.join(", ")
+            );
+        }
+        (None, ValueOperation::Compare(cmp, ..)) => {
+            let _ = writeln!(
+                source,
+                "    {result} {name} = ({} {} {});",
+                operands[0],
+                cmp.c_operator(),
+                operands[1]
+            );
+        }
+        (None, ValueOperation::Convert(_, to)) => {
+            let _ = writeln!(
+                source,
+                "    {result} {name} = ({})({});",
+                st::c_type(to),
+                operands[0]
+            );
+        }
+        (None, _) => unreachable!("an arithmetic statement always calls a helper"),
+    }
+    let _ = writeln!(source, "    (void) {name};");
+    source
 }
 
 /// The file-scope text `source.extern-call.v1` contributes to a program it is
@@ -670,9 +867,22 @@ pub fn emit_extern_statements(
                             // disagreeing run therefore exits without writing
                             // the line at all.
                             if let Some(outcome) = binding.outcome {
+                                // Card `W48-QR-SCALAR-TYPES-R3`: a number
+                                // outside `int32_t` — a declared outcome of a
+                                // wider type — is spelled as its type's own C
+                                // constant; every other number is written as
+                                // it always was.
+                                let spelled = if i32::try_from(outcome).is_ok() {
+                                    outcome.to_string()
+                                } else {
+                                    callee.result_abi.scalar().map_or_else(
+                                        || outcome.to_string(),
+                                        |ty| st::c_literal(ty, outcome),
+                                    )
+                                };
                                 let _ = writeln!(
                                     source,
-                                    "    if ({name} != {outcome}) {{\n        \
+                                    "    if ({name} != {spelled}) {{\n        \
                                      qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_EXTERN_OUTCOME, {}, UINT64_C(0), (int64_t){name}, {});\n        return 70;\n    }}",
                                     value, c_string(&format!("declared outcome violated: {}", callee.name))
                                 );
@@ -712,6 +922,33 @@ pub fn emit_extern_statements(
                 let _ = writeln!(source, "    int32_t {name} = INT32_C({});", literal.literal);
                 let _ = writeln!(source, "    (void) {name};");
                 bound_values.insert(literal.value);
+            }
+            // Card `W48-QR-SCALAR-TYPES-R3`: a value statement, emitted from
+            // what the checker decided about it.
+            ExternEvent::Compute(statement) => {
+                let operands = match statement.operation {
+                    ValueOperation::Binary(_, a, b) | ValueOperation::Compare(_, a, b) => {
+                        vec![a, b]
+                    }
+                    ValueOperation::Negate(a) | ValueOperation::Convert(a, _) => vec![a],
+                };
+                for operand in operands {
+                    if let ValueOperand::Value(value) = operand
+                        && !bound_values.contains(&value)
+                    {
+                        return Err(ExternEmissionRefusal::UnboundValue {
+                            event: index,
+                            value,
+                        });
+                    }
+                }
+                let computation = computation_for(certificate, statement, index)?;
+                source.push_str(&value_statement_text(
+                    statement,
+                    computation,
+                    certificate.target_assumption.as_ref(),
+                ));
+                bound_values.insert(statement.value);
             }
             ExternEvent::Return => source.push_str("    qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_RUN_OUTCOME, UINT64_C(0), UINT64_C(0), INT64_C(0), \"return\");\n"),
         }

@@ -53,8 +53,9 @@ use crate::source_extern::{self, LoweredExternModule};
 use crate::source_std_io::{
     self, FLUSH_KEYWORD, LOG_KEYWORD, LOG_LEVEL_KEYWORD, LoweredStdIoModule, PRINT_KEYWORD,
 };
-use qcore_core::composed_std_io::{ComposedProgram, ComposedStep, RENDERABLE_ABI};
+use qcore_core::composed_std_io::{ComposedProgram, ComposedStep};
 use qcore_core::extern_call::ExternCallee;
+use qcore_core::scalar_types::{RecordedTarget, ScalarType};
 
 /// A complete lowering of one composed entry. None of the three fields is
 /// evidence on its own: the core composed checker still has to validate
@@ -135,6 +136,19 @@ pub fn lower_source_composed(
     callees: &BTreeMap<String, ExternCallee>,
     libraries: &[qcore_core::native_library::SourceLibraryBinding],
 ) -> Result<LoweredComposedModule, Vec<SourceDiagnostic>> {
+    lower_source_composed_for_target(parsed, typed, entry, callees, libraries, None)
+}
+
+/// [`lower_source_composed`] for the builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES-R3`).
+pub fn lower_source_composed_for_target(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+    callees: &BTreeMap<String, ExternCallee>,
+    libraries: &[qcore_core::native_library::SourceLibraryBinding],
+    target: Option<&RecordedTarget>,
+) -> Result<LoweredComposedModule, Vec<SourceDiagnostic>> {
     debug_assert_eq!(
         (PRINT_KEYWORD, LOG_KEYWORD, LOG_LEVEL_KEYWORD, FLUSH_KEYWORD),
         ("print", "log", "log_level", "flush"),
@@ -181,6 +195,7 @@ pub fn lower_source_composed(
         callees,
         libraries,
         &skip_for_extern,
+        target,
     )?;
 
     // Resolve every rendering operand against that namespace before the
@@ -188,6 +203,7 @@ pub fn lower_source_composed(
     // refuses rather than why this route's own literal binding is missing.
     let mut diagnostics = Vec::new();
     let mut scalars: BTreeMap<String, i32> = BTreeMap::new();
+    let mut typed_scalars: BTreeMap<String, (ScalarType, i128)> = BTreeMap::new();
     let mut operand_values = BTreeMap::new();
     for (span, name) in source_std_io::rendered_scalar_operands(parsed, entry) {
         let Some((value, number)) = externs.scalar_values.get(&name).copied() else {
@@ -202,20 +218,22 @@ pub fn lower_source_composed(
             // and the standard-IO route's `Q028` refuses it again.
             continue;
         };
-        match externs.value_abi.get(&value) {
-            Some(abi) if *abi == RENDERABLE_ABI => {}
-            Some(abi) => {
-                diagnostics.push(diagnostic(
-                    span,
-                    format!(
-                        "`{name}` is declared `{}`, which `source.std-io.v1` does not render; its \
-                         two renderings are total on `int32_t` and on nothing else",
-                        abi.c_spelling()
-                    ),
-                ));
-                continue;
-            }
-            None => continue,
+        // Card `W48-QR-SCALAR-TYPES-R3`: a value of every §G02t type renders,
+        // at its own type; before the card only an `i32` did. The type is the
+        // extern checker's, so a value statement's result renders at the type
+        // the checker gave it.
+        let Some(ty) = externs.value_types.get(&value).copied() else {
+            continue;
+        };
+        if ty.is_target_width() && target.is_none() {
+            diagnostics.push(diagnostic(
+                span,
+                format!(
+                    "`{name}` is a `{ty}`, whose width only a recorded target supplies, and none \
+                     was supplied; the rendering is refused rather than guessed"
+                ),
+            ));
+            continue;
         }
         let Some(number) = number else {
             diagnostics.push(diagnostic(
@@ -229,7 +247,14 @@ pub fn lower_source_composed(
             ));
             continue;
         };
-        scalars.insert(name.clone(), number);
+        if ty == ScalarType::I32 {
+            let Ok(number) = i32::try_from(number) else {
+                continue;
+            };
+            scalars.insert(name.clone(), number);
+        } else {
+            typed_scalars.insert(name.clone(), (ty, number));
+        }
         operand_values.insert(name, value);
     }
 
@@ -278,6 +303,11 @@ pub fn lower_source_composed(
         &skip_for_io,
         &scalars,
         &identities,
+        &source_std_io::ComposedValues {
+            typed: typed_scalars,
+            target: target.cloned(),
+            admit_arithmetic_error: externs.program.raises,
+        },
     )?;
 
     // The interleaving. Both lowerings publish one span per event, so the

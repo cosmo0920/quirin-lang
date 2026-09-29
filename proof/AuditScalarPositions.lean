@@ -13,3 +13,11 @@ import QCore.ScalarPositions
 #print axioms QCore.ScalarPositions.convertStmt_succeeds_iff
 #print axioms QCore.ScalarPositions.no_target_no_field
 #print axioms QCore.ScalarPositions.fieldAgreement_holds
+#print axioms QCore.ScalarPositions.decideBinary_known_iff
+#print axioms QCore.ScalarPositions.decideBinary_refusal_is_raise
+#print axioms QCore.ScalarPositions.decideBinary_raises_needs_permission
+#print axioms QCore.ScalarPositions.decideBinary_without_permission
+#print axioms QCore.ScalarPositions.decideBinary_known_in_range
+#print axioms QCore.ScalarPositions.argumentAdmitted_type
+#print axioms QCore.ScalarPositions.decideCompare_bool_is_bool
+#print axioms QCore.ScalarPositions.externAgreement_holds

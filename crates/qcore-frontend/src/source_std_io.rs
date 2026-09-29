@@ -478,7 +478,17 @@ fn ends_with_semicolon(window: &[&Token], cursor: usize) -> bool {
 /// The entry's declared `effects { … }` row. An absent suffix is the empty
 /// row, which admits nothing, so the opt-in stays visible exactly as it does
 /// on the extern-call route.
-fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, SourceDiagnostic> {
+///
+/// Optionally skips `throws<ArithmeticError>` —
+/// the extern model's permission for its value statements (card
+/// `W48-QR-SCALAR-TYPES-R3`), which a composed entry's one row carries and
+/// which is no effect of this model. On `source.std-io.v1` itself it is never
+/// skipped, so the word keeps the refusal it has always had there.
+fn declared_effect_row_admitting(
+    tokens: &[TokenKind],
+    span: Span,
+    admit_arithmetic_error: bool,
+) -> Result<EffectRow, SourceDiagnostic> {
     let Some(index) = tokens
         .iter()
         .position(|token| matches!(token, TokenKind::Word(word) if word == "effects"))
@@ -500,6 +510,23 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
     loop {
         match tokens.get(cursor) {
             Some(TokenKind::Symbol(Symbol::RightBrace)) => break,
+            Some(TokenKind::Word(name))
+                if admit_arithmetic_error
+                    && name == "throws"
+                    && matches!(
+                        (tokens.get(cursor + 1), tokens.get(cursor + 2), tokens.get(cursor + 3)),
+                        (
+                            Some(TokenKind::Symbol(Symbol::Less)),
+                            Some(TokenKind::Word(error)),
+                            Some(TokenKind::Symbol(Symbol::Greater)),
+                        ) if error == "ArithmeticError"
+                    ) =>
+            {
+                cursor += 4;
+                if matches!(tokens.get(cursor), Some(TokenKind::Symbol(Symbol::Comma))) {
+                    cursor += 1;
+                }
+            }
             Some(TokenKind::Word(name)) => {
                 let effect = match name.as_str() {
                     "io" => Effect::Io,
@@ -545,7 +572,19 @@ pub fn lower_source_std_io(
         &[],
         &BTreeMap::new(),
         &BTreeMap::new(),
+        &ComposedValues::default(),
     )
+}
+
+/// What a composing route supplies beyond `i32` scalars and identities (card
+/// `W48-QR-SCALAR-TYPES-R3`): the values of the other §G02t types it
+/// determined, the recorded target, and whether the one row may carry the
+/// extern model's `throws<ArithmeticError>`. Empty on `source.std-io.v1`.
+#[derive(Clone, Debug, Default)]
+pub struct ComposedValues {
+    pub typed: BTreeMap<String, (qcore_core::scalar_types::ScalarType, i128)>,
+    pub target: Option<qcore_core::scalar_types::RecordedTarget>,
+    pub admit_arithmetic_error: bool,
 }
 
 /// [`lower_source_std_io`] with a set of entry-body statement spans left to
@@ -580,6 +619,7 @@ pub fn lower_source_std_io_skipping(
     skip: &[Span],
     provided_scalars: &BTreeMap<String, i32>,
     provided_identities: &BTreeMap<String, i32>,
+    composed: &ComposedValues,
 ) -> Result<LoweredStdIoModule, Vec<SourceDiagnostic>> {
     let tokens = parsed.lexical_tokens();
     let mut diagnostics = Vec::new();
@@ -649,7 +689,11 @@ pub fn lower_source_std_io_skipping(
         ));
     }
 
-    let declared_effects = match declared_effect_row(&declaration.value.tokens, scope_span) {
+    let declared_effects = match declared_effect_row_admitting(
+        &declaration.value.tokens,
+        scope_span,
+        composed.admit_arithmetic_error,
+    ) {
         Ok(row) => row,
         Err(error) => {
             diagnostics.push(error);
@@ -754,7 +798,9 @@ pub fn lower_source_std_io_skipping(
         };
         let span = event_spans.get(index).copied().unwrap_or(scope_span);
         match operand {
-            StdIoOperand::Scalar(name) if !scalars.contains_key(name) => {
+            StdIoOperand::Scalar(name)
+                if !scalars.contains_key(name) && !composed.typed.contains_key(name) =>
+            {
                 diagnostics.push(diagnostic(
                     "Q028",
                     span,
@@ -795,6 +841,8 @@ pub fn lower_source_std_io_skipping(
             entry: entry.to_owned(),
             scalars,
             identities,
+            typed_scalars: composed.typed.clone(),
+            target: composed.target.clone(),
             declared_effects,
             events,
         },

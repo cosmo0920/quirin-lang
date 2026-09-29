@@ -318,6 +318,8 @@ pub fn std_io_projection(program: &ComposedTaskProgram) -> StdIoProgram {
         entry: program.tasks.entry.to_string(),
         scalars: BTreeMap::new(),
         identities: BTreeMap::new(),
+        typed_scalars: BTreeMap::new(),
+        target: None,
         declared_effects: if program.declares_io {
             EffectRow::new([Effect::Io])
         } else {

@@ -371,10 +371,17 @@ fn every_admitted_scalar_crosses_and_the_table_is_not_vacuous() {
     for spelling in [
         "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize",
     ] {
-        let source = ROUND_TRIP.replace(
+        let mut source = ROUND_TRIP.replace(
             "unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;",
             &format!("unsafe extern fn k_unchecked_add(a: {spelling}, b: i32) -> {spelling};"),
         );
+        // Card `W48-QR-SCALAR-TYPES-R3`: a literal at a declared scalar
+        // parameter is range-checked against its type, so the fixture's `2`
+        // at a `bool` parameter — an implicit integer-to-`bool` conversion the
+        // C call performed — is refused; the `bool` row passes `1`.
+        if spelling == "bool" {
+            source = source.replace("k_unchecked_add(2, 40)", "k_unchecked_add(1, 40)");
+        }
         assert!(
             compile_with(&source, None).is_ok(),
             "`{spelling}` is a §C04.1 scalar and must cross"

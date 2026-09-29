@@ -92,6 +92,7 @@ use crate::extern_call::{
     recheck_extern_certificate,
 };
 use crate::ownership::ResourceId;
+use crate::scalar_types::ScalarType;
 use crate::std_io::{
     StdIoCertificate, StdIoEvent, StdIoOperand, StdIoProgram, check_std_io_program,
     recheck_std_io_certificate,
@@ -134,13 +135,11 @@ pub struct ComposedProgram {
     pub operand_identities: BTreeMap<String, ResourceId>,
 }
 
-/// The one ABI spelling `source.std-io.v1` renders.
-///
-/// Both of its renderings are total on `i32` — `dec` is the signed decimal and
-/// `hex` the unsigned reinterpretation of the *same 32 bits* — so a value of
-/// any other width would be rendered through a conversion specifier that does
-/// not describe it. Refusing is the fail-closed answer; widening the renderable
-/// set is a separate card with its own conversion table.
+/// The ABI spelling `source.std-io.v1` rendered before card
+/// `W48-QR-SCALAR-TYPES-R3`, which widened the composed rendering to every
+/// §G02t type through §G02t's own conversion table (`scalar_types::render`
+/// and `scalar_types::c_rendering`). Kept as the name of the one type whose
+/// rendering is `source.std-io.v1`'s own, byte for byte.
 pub const RENDERABLE_ABI: AbiType = AbiType::I32;
 
 /// Refusals this composition owns. Everything else a composed module can be
@@ -155,12 +154,13 @@ pub enum ComposedError {
     OperandBoundLater { step: usize, name: String },
     /// `Q043`: a rendering names a scalar whose number no model determined.
     OperandNotDetermined { step: usize, name: String },
-    /// `Q043`: a rendering names a value of a width this profile does not
-    /// render.
+    /// `Q043`: a rendering names a value this profile cannot render: since
+    /// card `W48-QR-SCALAR-TYPES-R3`, an `isize`/`usize` with no recorded
+    /// target (every other §G02t type renders).
     OperandNotRenderable {
         step: usize,
         name: String,
-        abi: AbiType,
+        ty: ScalarType,
     },
     /// `Q043`: a borrowed rendering names something this module binds no
     /// custody identity for (card `STD-FMT-BORROW`).
@@ -210,11 +210,10 @@ impl fmt::Display for ComposedError {
                  rendering it would publish a line no model computed; declare the result with \
                  `succeeds INTEGER` or render a value this entry determines"
             ),
-            Self::OperandNotRenderable { name, abi, .. } => write!(
+            Self::OperandNotRenderable { name, ty, .. } => write!(
                 f,
-                "`{name}` is declared `{}`, which `source.std-io.v1` does not render; its two \
-                 renderings are total on `int32_t` and on nothing else",
-                abi.c_spelling()
+                "`{name}` is a `{ty}`, whose width only a recorded target supplies, and none was \
+                 supplied; the rendering is refused rather than guessed"
             ),
             Self::BorrowUnknown { name, .. } => write!(
                 f,
@@ -266,6 +265,9 @@ pub struct ComposedCertificate {
     /// the renderings read them. A reader can see which numbers crossed from
     /// the extern model into the rendered lines.
     pub rendered_values: Vec<(String, i32)>,
+    /// The same, for values of every other §G02t type, with the type (card
+    /// `W48-QR-SCALAR-TYPES-R3`). Empty for every program before the card.
+    pub typed_rendered_values: Vec<(String, ScalarType, i128)>,
     /// Every borrowed rendering, as `(name, identity)` in composed order, with
     /// the identity the extern model's ledger held live at that step (card
     /// `STD-FMT-BORROW`). Published separately from `rendered_values` because
@@ -354,6 +356,12 @@ fn positions(program: &ComposedProgram) -> (BTreeMap<ValueId, usize>, Vec<usize>
                 } else if let Some(ExternEvent::Bind(literal)) = program.externs.events.get(*index)
                 {
                     bound_at.insert(literal.value, position);
+                } else if let Some(ExternEvent::Compute(statement)) =
+                    program.externs.events.get(*index)
+                {
+                    // Card `W48-QR-SCALAR-TYPES-R3`: a value statement binds
+                    // at its own step.
+                    bound_at.insert(statement.value, position);
                 }
             }
             ComposedStep::Io(index) => {
@@ -417,6 +425,7 @@ pub fn check_composed_program(
     let (bound_at, io_positions) = positions(program);
     let live = live_before(program, &extern_certificate);
     let mut rendered_values = Vec::new();
+    let mut typed_rendered_values = Vec::new();
     let mut borrowed_renders = Vec::new();
     for (index, event) in program.io.events.iter().enumerate() {
         let operand = match event {
@@ -469,16 +478,11 @@ pub fn check_composed_program(
             });
             continue;
         };
-        match program.value_abi.get(&value) {
-            Some(abi) if *abi == RENDERABLE_ABI => {}
-            Some(abi) => {
-                errors.push(ComposedError::OperandNotRenderable {
-                    step,
-                    name: name.clone(),
-                    abi: *abi,
-                });
-                continue;
-            }
+        // Card `W48-QR-SCALAR-TYPES-R3`: every §G02t type renders, read off
+        // the extern checker's own typing of its namespace; only a
+        // target-width type with no recorded target is refused.
+        let ty = match extern_certificate.value_types.get(&value) {
+            Some(ty) => *ty,
             None => {
                 errors.push(ComposedError::OperandNotDetermined {
                     step,
@@ -486,6 +490,14 @@ pub fn check_composed_program(
                 });
                 continue;
             }
+        };
+        if ty.is_target_width() && program.io.target.is_none() {
+            errors.push(ComposedError::OperandNotRenderable {
+                step,
+                name: name.clone(),
+                ty,
+            });
+            continue;
         }
         match bound_at.get(&value) {
             Some(binding_step) if *binding_step < step => {}
@@ -502,12 +514,24 @@ pub fn check_composed_program(
         // model. Absence here is the "no model computed a number" case and is
         // already a refusal of that projection's checker; it is repeated rather
         // than assumed away.
-        match program.io.scalars.get(name) {
-            Some(number) => rendered_values.push((name.clone(), *number)),
-            None => errors.push(ComposedError::OperandNotDetermined {
-                step,
-                name: name.clone(),
-            }),
+        if ty == ScalarType::I32 {
+            match program.io.scalars.get(name) {
+                Some(number) => rendered_values.push((name.clone(), *number)),
+                None => errors.push(ComposedError::OperandNotDetermined {
+                    step,
+                    name: name.clone(),
+                }),
+            }
+        } else {
+            match program.io.typed_scalars.get(name) {
+                Some((rendered, number)) if *rendered == ty => {
+                    typed_rendered_values.push((name.clone(), ty, *number));
+                }
+                _ => errors.push(ComposedError::OperandNotDetermined {
+                    step,
+                    name: name.clone(),
+                }),
+            }
         }
     }
     // The union of the two derived rows, against the one row the entry
@@ -532,6 +556,7 @@ pub fn check_composed_program(
             order: program.order.clone(),
             effects,
             rendered_values,
+            typed_rendered_values,
             borrowed_renders,
         })
     } else {
@@ -595,7 +620,9 @@ pub fn recheck_composed_certificate(
     if rederived.effects != certificate.effects {
         return Err(ComposedRecheckFailure::Effects);
     }
-    if rederived.rendered_values != certificate.rendered_values {
+    if rederived.rendered_values != certificate.rendered_values
+        || rederived.typed_rendered_values != certificate.typed_rendered_values
+    {
         return Err(ComposedRecheckFailure::RenderedValues);
     }
     if rederived.borrowed_renders != certificate.borrowed_renders {

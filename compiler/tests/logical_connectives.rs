@@ -498,7 +498,24 @@ fn the_quant_index_alias_is_untouched_by_the_retable() {
                   quant axis memory : credit<Bytes>; \
                   extern fn f(q: quant[|n where n := 5|] use one, tail: i32) -> unit; \
                   fn main() -> i32 { return 0; }";
-    compile(source).expect("a quant-index bracket-alias program must still check");
+    // Card `W48-QR-SCALAR-TYPES-R3` (`W48-INERT-EXTERN-DECLARATION-TYPES`):
+    // an uncalled `extern fn` is now read, and a `quant[| … |]` parameter is
+    // no type an extern declaration can state, so the module refuses at
+    // `Q020` — the same correction as `remaining-v04`'s P08 and P10, whose
+    // shape this is. What this test measures is unchanged: the alias lexes,
+    // parses and elaborates, so the one refusal is that declaration check,
+    // after every earlier pass admitted the program.
+    let refused = compile(source).expect_err("an unread quant parameter is refused");
+    assert_eq!(
+        refused.iter().map(|d| d.code.as_str()).collect::<Vec<_>>(),
+        ["Q020"],
+        "{refused:?}"
+    );
+    assert!(
+        refused[0]
+            .message
+            .contains("parameter `q` of `extern fn f`")
+    );
     // …and the two coexist in one file: the bracket alias and an or-condition
     // in the same compilation input, so the retable is exercised beside the
     // delimiters it could have collided with rather than only away from them.
@@ -508,7 +525,12 @@ fn the_quant_index_alias_is_untouched_by_the_retable() {
          let a = qcore_acquire(1, true, Failure); \
          if (3 < 5 || 2 == 2) { drop a; } else { drop a; } return 0; }",
     );
-    compile(&together).expect("a bracket alias and an or-condition must coexist");
+    let refused = compile(&together).expect_err("the same declaration check refuses");
+    assert_eq!(
+        refused.iter().map(|d| d.code.as_str()).collect::<Vec<_>>(),
+        ["Q020"],
+        "a bracket alias and an or-condition coexist up to the declaration check: {refused:?}"
+    );
 }
 
 #[test]
