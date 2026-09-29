@@ -341,6 +341,106 @@ pub fn negate(ty: ScalarType, a: i128, target: Option<&RecordedTarget>) -> Optio
     checked(Op::Sub, ty, 0, a, target)
 }
 
+/// The typed arithmetic error (card `W48-QR-SCALAR-TYPES-R2`): what a checked
+/// operation at a position the checker could not decide raises, through the
+/// `throws<E>` / `?` / `match … Result::Err` machinery, instead of faulting.
+/// Payload-free, like `SpawnError` and `AllocError`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ArithmeticError {
+    /// The exact result of `+ - *` or of unary `-` is not a value of the type,
+    /// or the operation is `MIN / -1` or `MIN % -1` of a signed type.
+    Overflow,
+    /// A `/` or `%` whose divisor is zero.
+    DivisionByZero,
+    /// `x as T` where the value of `x` is not a value of `T`.
+    OutOfRange,
+}
+
+impl ArithmeticError {
+    /// The builtin error type's source name, as `throws<ArithmeticError>` spells it.
+    pub const NAME: &'static str = "ArithmeticError";
+    pub const ALL: [ArithmeticError; 3] = [
+        ArithmeticError::Overflow,
+        ArithmeticError::DivisionByZero,
+        ArithmeticError::OutOfRange,
+    ];
+
+    pub fn variant(self) -> &'static str {
+        match self {
+            Self::Overflow => "Overflow",
+            Self::DivisionByZero => "DivisionByZero",
+            Self::OutOfRange => "OutOfRange",
+        }
+    }
+
+    pub fn parse_variant(name: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|error| error.variant() == name)
+    }
+
+    /// The emitted C's tag: `0` is success, so the variants are `1`, `2`, `3`.
+    pub fn tag(self) -> u8 {
+        match self {
+            Self::Overflow => 1,
+            Self::DivisionByZero => 2,
+            Self::OutOfRange => 3,
+        }
+    }
+
+    pub fn from_tag(tag: u8) -> Option<Self> {
+        Self::ALL.into_iter().find(|error| error.tag() == tag)
+    }
+
+    /// The exit status of an emitted program whose entry propagates the error:
+    /// `80 + tag`, distinct from the route's untyped fault status 86 and from
+    /// the extern route's outcome-disagreement status 70.
+    pub fn exit_status(self) -> i32 {
+        80 + i32::from(self.tag())
+    }
+}
+
+impl fmt::Display for ArithmeticError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}::{}", Self::NAME, self.variant())
+    }
+}
+
+/// [`checked`] with its fault classified: a zero divisor of `/` or `%` is
+/// `DivisionByZero`, every other fault (including `MIN / -1` and `MIN % -1`)
+/// is `Overflow`. Defined on operands that are values of an integer type, the
+/// only ones a checked program produces.
+pub fn checked_error(
+    op: Op,
+    ty: ScalarType,
+    a: i128,
+    b: i128,
+    target: Option<&RecordedTarget>,
+) -> Result<i128, ArithmeticError> {
+    checked(op, ty, a, b, target).ok_or(if matches!(op, Op::Div | Op::Rem) && b == 0 {
+        ArithmeticError::DivisionByZero
+    } else {
+        ArithmeticError::Overflow
+    })
+}
+
+/// [`negate`] with its fault classified: always `Overflow`.
+pub fn negate_error(
+    ty: ScalarType,
+    a: i128,
+    target: Option<&RecordedTarget>,
+) -> Result<i128, ArithmeticError> {
+    negate(ty, a, target).ok_or(ArithmeticError::Overflow)
+}
+
+/// [`convert`] with its fault classified: always `OutOfRange`.
+pub fn convert_error(
+    from: ScalarType,
+    to: ScalarType,
+    value: i128,
+    target: Option<&RecordedTarget>,
+) -> Result<i128, ArithmeticError> {
+    convert(from, to, value, target).ok_or(ArithmeticError::OutOfRange)
+}
+
 /// Whether every value of `from` is a value of `to`, so that `x as to` can
 /// never fail. `bool` converts to nothing and nothing converts to it.
 pub fn conversion_is_total(

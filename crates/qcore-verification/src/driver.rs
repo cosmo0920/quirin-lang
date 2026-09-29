@@ -1485,10 +1485,32 @@ fn compile_files_with_registry_inner(
         && !qcore_frontend::source_std_string::has_source_string(&parsed)
         && !qcore_frontend::source_http::has_source_http(&parsed)
     {
-        return compile_socket_source(&parsed, &typed, mode, options, &ranges);
+        return compile_socket_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+            refuse_unmodeled_functions(
+                module,
+                EntryOnlyRoute {
+                    name: "source.socket.v1",
+                    code: "Q080",
+                    pass: SemanticPass::StandardSocket,
+                },
+                &parsed,
+                &ranges,
+            )
+        });
     }
     if qcore_frontend::source_event::has_source_event(&parsed) {
-        return compile_event_source(&parsed, &typed, mode, options, &ranges);
+        return compile_event_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+            refuse_unmodeled_functions(
+                module,
+                EntryOnlyRoute {
+                    name: "source.event.v1",
+                    code: "Q058",
+                    pass: SemanticPass::Event,
+                },
+                &parsed,
+                &ranges,
+            )
+        });
     }
     // Selected last among the special routes, on the same principle as the
     // extern route above: a module that both prints and spawns stays with the
@@ -1526,7 +1548,18 @@ fn compile_files_with_registry_inner(
     // written before this card travels an identical code path, and the one new
     // door is opened only by the one new spelling.
     if qcore_frontend::source_std_string::has_source_string_bridge(&parsed) {
-        return compile_string_source(&parsed, &typed, mode, options, &ranges);
+        return compile_string_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+            refuse_unmodeled_functions(
+                module,
+                EntryOnlyRoute {
+                    name: "source.string.v1",
+                    code: "Q068",
+                    pass: SemanticPass::StandardString,
+                },
+                &parsed,
+                &ranges,
+            )
+        });
     }
     // Card `AGGREGATES-V1`, and **the whole of the route-selection change it
     // makes**: a module that declares a record type reaches the buffer route,
@@ -1549,7 +1582,18 @@ fn compile_files_with_registry_inner(
     if qcore_frontend::source_std_buffer::has_source_buffer(&parsed)
         || qcore_frontend::source_record::has_source_record(&parsed)
     {
-        return compile_buffer_source(&parsed, &typed, mode, options, &ranges);
+        return compile_buffer_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+            refuse_unmodeled_functions(
+                module,
+                EntryOnlyRoute {
+                    name: "source.buffer.v1",
+                    code: "Q051",
+                    pass: SemanticPass::StandardBuffer,
+                },
+                &parsed,
+                &ranges,
+            )
+        });
     }
     // Card `STRING-SLICE`, selected after the buffer route above and before the
     // standard-IO route below. Both neighbours are deliberate, on exactly the
@@ -1603,10 +1647,32 @@ fn compile_files_with_registry_inner(
     // extern route is above all of them, and every concurrent route above that,
     // so a module that does HTTP and spawns keeps its `Q600`.
     if qcore_frontend::source_http::has_source_http(&parsed) {
-        return compile_http_source(&parsed, &typed, mode, options, &ranges);
+        return compile_http_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+            refuse_unmodeled_functions(
+                module,
+                EntryOnlyRoute {
+                    name: "source.http.v1",
+                    code: "Q090",
+                    pass: SemanticPass::StandardHttp,
+                },
+                &parsed,
+                &ranges,
+            )
+        });
     }
     if qcore_frontend::source_std_string::has_source_string(&parsed) {
-        return compile_string_source(&parsed, &typed, mode, options, &ranges);
+        return compile_string_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+            refuse_unmodeled_functions(
+                module,
+                EntryOnlyRoute {
+                    name: "source.string.v1",
+                    code: "Q068",
+                    pass: SemanticPass::StandardString,
+                },
+                &parsed,
+                &ranges,
+            )
+        });
     }
     // Card `QUIRIN-SOCKET-V1`, selected after the buffer and string routes above
     // and before the standard-IO route below. All three neighbours are
@@ -1635,7 +1701,18 @@ fn compile_files_with_registry_inner(
     // selected above all four, and every concurrent route above that, so a module
     // that sockets and spawns keeps its `Q600`.
     if qcore_frontend::source_socket::has_source_socket(&parsed) {
-        return compile_socket_source(&parsed, &typed, mode, options, &ranges);
+        return compile_socket_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+            refuse_unmodeled_functions(
+                module,
+                EntryOnlyRoute {
+                    name: "source.socket.v1",
+                    code: "Q080",
+                    pass: SemanticPass::StandardSocket,
+                },
+                &parsed,
+                &ranges,
+            )
+        });
     }
     if qcore_frontend::source_scalar_calls::has_print_calls(&parsed) {
         return compile_scalar_calls(&parsed, &typed, mode, options, &ranges, target);
@@ -1650,15 +1727,167 @@ fn compile_files_with_registry_inner(
     // were refused.
     if qcore_frontend::source_std_io::has_source_std_io(&parsed) {
         if qcore_frontend::source_scalar_calls::has_scalar_calls(&parsed)
-            && std_io_lowering_refuses(&parsed, &typed, mode, options)
+            && (std_io_lowering_refuses(&parsed, &typed, mode, options)
+                || has_unmodeled_function(&parsed, &typed, mode, options))
         {
             return compile_scalar_calls(&parsed, &typed, mode, options, &ranges, target);
         }
-        return compile_std_io_source(&parsed, &typed, mode, options, &ranges);
+        return compile_std_io_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
+            refuse_unmodeled_functions(
+                module,
+                EntryOnlyRoute {
+                    name: "source.std-io.v1",
+                    code: "Q030",
+                    pass: SemanticPass::StandardIo,
+                },
+                &parsed,
+                &ranges,
+            )
+        });
     }
     if qcore_frontend::source_scalar_calls::has_scalar_calls(&parsed) {
         return compile_scalar_calls(&parsed, &typed, mode, options, &ranges, target);
     }
+    // Card `W48-QR-SCALAR-TYPES-R2`, item 0: the sequential route checks
+    // every parameter annotation it admits, after its own passes so that
+    // every refusal it gave before keeps its bytes.
+    compile_sequential_source(&parsed, &typed, mode, options, &ranges)
+        .and_then(|module| check_sequential_parameters(&parsed, target, &ranges).map(|()| module))
+}
+
+/// Card `W48-QR-SCALAR-TYPES-R2`, item 0 (`W48-SEQUENTIAL-UNCHECKED-PARAMETER-TYPES`).
+///
+/// The sequential route supplies no argument to any parameter — a direct call
+/// names a zero-parameter function and the emitted entry has none — so before
+/// this card it never read a parameter annotation at all, and admitted
+/// `x: Widget`, `f: fn() -> i32` and `x: usize` with no recorded target. It now
+/// checks each one against the §G02t scalar table, with `isize`/`usize`
+/// requiring the recorded target exactly as everywhere else, and refuses every
+/// other type. Run after the route's own passes, so every refusal it gave before
+/// keeps its bytes and only an admission can become a refusal.
+fn check_sequential_parameters(
+    parsed: &SourceProgram,
+    target: Option<&RecordedTarget>,
+    ranges: &[FileRange],
+) -> Result<(), Vec<FileDiagnostic>> {
+    use qcore_core::scalar_types::ScalarType;
+    let mut refusals = Vec::new();
+    for declaration in &parsed.declarations {
+        if declaration.value.kind != DeclarationKind::Function {
+            continue;
+        }
+        for parameter in &declaration.value.parameters {
+            let written = parameter.type_source.trim();
+            let message = match ScalarType::parse(written) {
+                Some(ty) if ty.is_target_width() && target.is_none() => format!(
+                    "parameter `{}` is `{written}`, and `isize` and `usize` take their width from a recorded target, none of which was supplied; the width is never guessed (supply one with `--recorded-target FILE`)",
+                    parameter.name.value
+                ),
+                Some(_) => continue,
+                None => format!(
+                    "parameter `{}` is `{written}`: the sequential route supplies no argument to any parameter and checks a parameter annotation against the fixed-width scalar table (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize) only; `{written}` is not a type it supports",
+                    parameter.name.value
+                ),
+            };
+            refusals.push(map_raw_diagnostic(
+                "Q020",
+                SemanticPass::OrdinaryTypes,
+                parameter.type_span,
+                message,
+                ranges,
+            ));
+        }
+    }
+    if refusals.is_empty() {
+        Ok(())
+    } else {
+        Err(refusals)
+    }
+}
+
+/// One entry-only route's name and its own "models the entry only" code.
+#[derive(Clone, Copy)]
+struct EntryOnlyRoute {
+    name: &'static str,
+    code: &'static str,
+    pass: SemanticPass,
+}
+
+/// Card `W48-QR-SCALAR-TYPES-R2`, item 0. Six routes model the entry and
+/// nothing else: `source.std-io.v1`, `source.buffer.v1` (with its record and
+/// loop forms), `source.string.v1`, `source.socket.v1`, `source.http.v1` and
+/// `source.event.v1`. Each already refused a helper function that carried one
+/// of its own constructs, and admitted every other helper **unread** — its
+/// parameter, result and local annotations and its body — so
+/// `fn h(x: Widget) -> Widget { let q: usize = 7; return 0; }` beside an
+/// admitted entry was admitted. That route's existing entry-only condition is
+/// widened here, with its own code, to every function it does not model.
+/// Applied to an admitted module only, so a module refused before keeps its
+/// refusal byte for byte.
+fn refuse_unmodeled_functions(
+    module: CompiledModule,
+    route: EntryOnlyRoute,
+    parsed: &SourceProgram,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    let Some(entry) = module.entry.as_deref() else {
+        return Ok(module);
+    };
+    let refusals = parsed
+        .declarations
+        .iter()
+        .filter(|declaration| {
+            declaration.value.kind == DeclarationKind::Function && declaration.value.name != entry
+        })
+        .map(|declaration| {
+            map_raw_diagnostic(
+                route.code,
+                route.pass,
+                declaration.span,
+                format!(
+                    "`{}` models the entry only; `{}` is not the entry `{entry}`, and this route does not check its signature or body, so it is refused rather than admitted unread",
+                    route.name, declaration.value.name
+                ),
+                ranges,
+            )
+        })
+        .collect::<Vec<_>>();
+    if refusals.is_empty() {
+        Ok(module)
+    } else {
+        Err(refusals)
+    }
+}
+
+/// Whether an executable module has a function besides its entry: the
+/// `source.std-io.v1` route refuses such a module (item 0 above), so one with
+/// scalar-call syntax reaches the scalar route, which checks every function.
+fn has_unmodeled_function(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+) -> bool {
+    if mode != SourceModuleMode::Executable {
+        return false;
+    }
+    let Ok(entry) = select_entry(typed, options) else {
+        return false;
+    };
+    parsed.declarations.iter().any(|declaration| {
+        declaration.value.kind == DeclarationKind::Function && declaration.value.name != entry
+    })
+}
+/// The sequential cleanup route (§G02), extracted unchanged from
+/// `compile_files_with_registry_inner` so that card `W48-QR-SCALAR-TYPES-R2`
+/// can check its parameter annotations after it.
+fn compile_sequential_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     let error_names = parsed
         .declarations
         .iter()
@@ -1670,22 +1899,22 @@ fn compile_files_with_registry_inner(
     } else {
         error_names
     };
-    let mut semantics = synthesize_semantics(&parsed, &typed, &error_names)
-        .map_err(|diagnostic| vec![map_diagnostic(diagnostic, &ranges)])?;
+    let mut semantics = synthesize_semantics(parsed, typed, &error_names)
+        .map_err(|diagnostic| vec![map_diagnostic(diagnostic, ranges)])?;
     mark_recursive_contracts(&mut semantics);
     let semantic_calls = semantics
         .iter()
         .map(|function| (function.symbol, function.calls.clone()))
         .collect::<BTreeMap<_, _>>();
     let checked = check_whole_program(
-        &typed,
+        typed,
         &ErrorDeclarations::new(error_names.iter().cloned()),
         semantics,
     )
     .map_err(|diagnostics| {
         diagnostics
             .into_iter()
-            .map(|diagnostic| map_diagnostic(diagnostic, &ranges))
+            .map(|diagnostic| map_diagnostic(diagnostic, ranges))
             .collect::<Vec<_>>()
     })?;
 
@@ -1724,18 +1953,18 @@ fn compile_files_with_registry_inner(
             extern_observation: None,
         });
     }
-    let entry = select_entry(&typed, options).map_err(|diagnostic| vec![diagnostic])?;
+    let entry = select_entry(typed, options).map_err(|diagnostic| vec![diagnostic])?;
     let symbol = typed.globals[&entry];
     let function = &checked.functions[&symbol];
     validate_emittable_calls(symbol, &semantic_calls, &checked)
-        .map_err(|diagnostic| vec![map_diagnostic(diagnostic, &ranges)])?;
+        .map_err(|diagnostic| vec![map_diagnostic(diagnostic, ranges)])?;
     if !function.source.parameters.is_empty() {
         return Err(vec![map_raw_diagnostic(
             "Q020",
             SemanticPass::OrdinaryTypes,
             function.source.span,
             "the emitted entry function must not have parameters".into(),
-            &ranges,
+            ranges,
         )]);
     }
     let reference_observation = qcore_core::interpret_cfg(&function.cfg).map_err(|error| {
@@ -1744,20 +1973,20 @@ fn compile_files_with_registry_inner(
             SemanticPass::CleanupLowering,
             function.source.span,
             error.to_string(),
-            &ranges,
+            ranges,
         )]
     })?;
-    let log_level = qcore_frontend::source_std_io::entry_log_level(&parsed, &entry);
+    let log_level = qcore_frontend::source_std_io::entry_log_level(parsed, &entry);
     let raw_c = emit_c11_with_log_level(&function.cfg, log_level).map_err(|error| {
         vec![map_raw_diagnostic(
             "Q500",
             SemanticPass::CEmission,
             function.source.span,
             error.to_string(),
-            &ranges,
+            ranges,
         )]
     })?;
-    let source_location = locate(function.source.span.start, &ranges);
+    let source_location = locate(function.source.span.start, ranges);
     let (c_source, source_map) = add_source_mapping(raw_c, &entry, source_location);
     Ok(CompiledModule {
         source_bundle: None,
@@ -7315,14 +7544,23 @@ fn compile_scalar_calls(
                     .map(|line| format!("{}: {}", line.stream.label(), line.text))
                     .collect::<Vec<_>>()
             });
+            // Card `W48-QR-SCALAR-TYPES-R2`: an entry that propagated
+            // `ArithmeticError` publishes it as the outcome, with its tag.
+            let outcome = match observed.error {
+                Some(error) => qcore_core::cfg::ExecutionOutcome::Error {
+                    name: error.to_string(),
+                    tag: u32::from(error.tag()),
+                },
+                None => qcore_core::cfg::ExecutionOutcome::Ok {
+                    value,
+                    payload: Vec::new(),
+                },
+            };
             (
                 Some(name),
                 Some(c),
                 Some(ExecutionObservation {
-                    outcome: qcore_core::cfg::ExecutionOutcome::Ok {
-                        value,
-                        payload: Vec::new(),
-                    },
+                    outcome,
                     trace: Vec::new(),
                 }),
                 lines,

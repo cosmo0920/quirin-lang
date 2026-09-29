@@ -636,17 +636,29 @@ fn negative_controls_refuse() {
 
 #[test]
 fn modules_the_std_io_route_admits_keep_that_route() {
-    // An std.io entry beside a helper the std.io lowering ignores: admitted by
-    // `source.std-io.v1` before this card, and still.
+    // An std.io entry alone keeps `source.std-io.v1`.
     let m = compile_files(
         &[SourceFile::new(
             "keep.qr",
-            "#import std.fmt;\n#import std.io;\nfn h(x: i32) -> i32 { return x + 1; }\nfn main() -> unit effects { io } { let x = 5; print dec x; return; }",
+            "#import std.fmt;\n#import std.io;\nfn main() -> unit effects { io } { let x = 5; print dec x; return; }",
         )],
         &CompileOptions::default(),
     )
     .unwrap();
     assert_eq!(m.execution_profile, SourceExecutionProfile::StandardIoV1);
+    // Card `W48-QR-SCALAR-TYPES-R2` (item 0) corrected the entry-beside-a-helper
+    // case: `source.std-io.v1` admitted that helper unread, and now refuses a
+    // function it does not model, so a module with scalar-call syntax reaches
+    // this route, which checks the helper too.
+    let m = compile_files(
+        &[SourceFile::new(
+            "helper.qr",
+            "#import std.fmt;\n#import std.io;\nfn h(x: i32) -> i32 { return x + 1; }\nfn main() -> unit effects { io } { let x = 5; print dec x; return; }",
+        )],
+        &CompileOptions::default(),
+    )
+    .unwrap();
+    assert_eq!(m.execution_profile, SourceExecutionProfile::ScalarCallsV1);
     // The established i32 scalar route's check line and C are unchanged: a
     // module using nothing new is not reported as widened.
     let m = compile_files(

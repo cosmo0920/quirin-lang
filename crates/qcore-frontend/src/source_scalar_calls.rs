@@ -1,7 +1,10 @@
 //! SOURCE-SCALAR-CALLS-V1 reads the retained, post-desugaring token stream.
 use crate::frontend::{DeclarationKind, SemanticPass, SourceDiagnostic, SourceProgram};
 use crate::lexer::{Span, Symbol, Token, TokenKind};
-use qcore_core::scalar_calls::{self as ir, Expr, Function, Line, Op, Program, Statement, Type};
+use qcore_core::scalar_calls::{
+    self as ir, ArithmeticError, Arm, Block, End, Expr, Function, Line, Match, Op, Pattern,
+    Program, Raise, Statement, Type,
+};
 use qcore_core::scalar_types::Cmp;
 use qcore_core::std_io::{StdIoEvent, StdIoOperand};
 use std::collections::BTreeMap;
@@ -29,6 +32,16 @@ pub fn has_scalar_calls(p: &SourceProgram) -> bool {
         .any(|t| word(t).is_some_and(|w| matches!(w, "qcore_acquire" | "qcore_check")))
     {
         return false;
+    }
+    // Card `W48-QR-SCALAR-TYPES-R2`: a function that declares
+    // `throws<ArithmeticError>` is scalar-call syntax — no other route spells
+    // that row — so a module whose statements are all `match`es still arrives.
+    if p.lexical_tokens().windows(3).any(|ts| {
+        word(&ts[0]) == Some("throws")
+            && symbol(&ts[1], Symbol::Less)
+            && word(&ts[2]) == Some(ArithmeticError::NAME)
+    }) {
+        return true;
     }
     p.declarations.iter().any(|d| {
         d.value.kind == DeclarationKind::Function
@@ -76,7 +89,14 @@ struct Reader<'a> {
     tokens: Vec<&'a Token>,
     at: usize,
     span: Span,
+    /// The scalar names in scope and their slots. An arm's bindings leave
+    /// scope with the arm; slots are numbered in source order across the whole
+    /// function (`next_local`), which is the order the checker binds them in.
     locals: BTreeMap<String, usize>,
+    next_local: usize,
+    /// The `Result::Err { error: NAME }` bindings in scope and their slots.
+    errors: BTreeMap<String, usize>,
+    next_error: usize,
     functions: &'a BTreeMap<String, usize>,
 }
 impl Reader<'_> {
@@ -245,7 +265,13 @@ impl Reader<'_> {
                 }
             }
             self.need(Symbol::RightParen)?;
-            Ok(Expr::Call(id, args))
+            let call = Expr::Call(id, args);
+            // Card `W48-QR-SCALAR-TYPES-R2`: `CALL?` propagates the callee's
+            // `ArithmeticError`.
+            if self.take(Symbol::Question) {
+                return Ok(Expr::Try(Box::new(call)));
+            }
+            Ok(call)
         } else {
             Ok(Expr::Local(
                 *self
@@ -254,6 +280,184 @@ impl Reader<'_> {
                     .ok_or_else(|| self.bad("unbound scalar local"))?,
             ))
         }
+    }
+    /// `{ {statement} end }`. A block ends in `return`, in `raise` or in a
+    /// `match` whose arms are blocks (card `W48-QR-SCALAR-TYPES-R2`), so no
+    /// arm falls through and a function body is a tree.
+    fn block(&mut self, depth: usize) -> Result<Block, SourceDiagnostic> {
+        if depth > ir::MAX_DEPTH {
+            return Err(self.bad("match nesting bound exceeded"));
+        }
+        self.need(Symbol::LeftBrace)?;
+        let mut statements = Vec::new();
+        let end = loop {
+            match self.tokens.get(self.at).and_then(|t| word(t)) {
+                Some("return") => {
+                    self.at += 1;
+                    let returned = if self.peek(Symbol::Semicolon) {
+                        None
+                    } else {
+                        Some(self.expression(0, 0)?)
+                    };
+                    self.need(Symbol::Semicolon)?;
+                    break End::Return(returned);
+                }
+                Some("raise") => {
+                    self.at += 1;
+                    let name = self.name()?;
+                    let raised = if self.take(Symbol::ColonColon) {
+                        if name != ArithmeticError::NAME {
+                            return Err(self.bad(
+                                "`raise` names `ArithmeticError::VARIANT` or an error an enclosing `Result::Err` arm bound",
+                            ));
+                        }
+                        let variant = self.name()?;
+                        Raise::Variant(ArithmeticError::parse_variant(&variant).ok_or_else(
+                            || self.bad("`ArithmeticError`'s variants are `Overflow`, `DivisionByZero` and `OutOfRange`"),
+                        )?)
+                    } else {
+                        Raise::Bound(*self.errors.get(&name).ok_or_else(|| {
+                            self.bad("`raise NAME;` re-raises an error an enclosing `Result::Err { error: NAME }` arm bound")
+                        })?)
+                    };
+                    self.need(Symbol::Semicolon)?;
+                    break End::Raise(raised);
+                }
+                Some("match") => {
+                    self.at += 1;
+                    break End::Match(Box::new(self.match_statement(depth)?));
+                }
+                Some("print")
+                    if self
+                        .tokens
+                        .get(self.at + 1)
+                        .is_some_and(|t| symbol(t, Symbol::LeftParen)) =>
+                {
+                    self.at += 1;
+                    self.need(Symbol::LeftParen)?;
+                    let e = self.expression(0, 0)?;
+                    self.need(Symbol::RightParen)?;
+                    self.need(Symbol::Semicolon)?;
+                    statements.push(Statement::Print(e));
+                }
+                Some(
+                    crate::source_std_io::PRINT_KEYWORD
+                    | crate::source_std_io::LOG_KEYWORD
+                    | crate::source_std_io::LOG_LEVEL_KEYWORD
+                    | crate::source_std_io::FLUSH_KEYWORD,
+                ) => {
+                    statements.push(self.line_statement()?);
+                }
+                Some("let") => {
+                    self.at += 1;
+                    let name = self.name()?;
+                    self.unbound(&name)?;
+                    let annotation = if self.take(Symbol::Colon) {
+                        let ty = self.ty()?;
+                        if ty == Type::Unit {
+                            return Err(self.bad("locals require a scalar type, not unit"));
+                        }
+                        Some(ty)
+                    } else {
+                        None
+                    };
+                    self.need(Symbol::Equal)?;
+                    let e = self.expression(0, 0)?;
+                    self.need(Symbol::Semicolon)?;
+                    let id = self.next_local;
+                    self.next_local += 1;
+                    self.locals.insert(name, id);
+                    statements.push(Statement::Let(annotation, e));
+                }
+                Some(_) => {
+                    let e = self.expression(0, 0)?;
+                    if !matches!(e, Expr::Call(..) | Expr::Try(..)) {
+                        return Err(self.bad("only calls may be discarded"));
+                    }
+                    self.need(Symbol::Semicolon)?;
+                    statements.push(Statement::Evaluate(e));
+                }
+                _ => return Err(self.bad("a final explicit return is required")),
+            }
+        };
+        self.need(Symbol::RightBrace)?;
+        Ok(Block { statements, end })
+    }
+    /// A name a `let` or an arm binds must not already be in scope, as a
+    /// scalar or as an error.
+    fn unbound(&self, name: &str) -> Result<(), SourceDiagnostic> {
+        if self.locals.contains_key(name) || self.errors.contains_key(name) {
+            return Err(self.bad("duplicate or shadowing local"));
+        }
+        Ok(())
+    }
+    /// `match CALL { ARM ARM }` after the `match` keyword: exactly one
+    /// `Result::Ok { value: NAME } => BLOCK` and one
+    /// `Result::Err { error: NAME } => BLOCK`, in either order. Each arm's
+    /// binding is in scope in that arm only.
+    fn match_statement(&mut self, depth: usize) -> Result<Match, SourceDiagnostic> {
+        let call = self.expression(0, 0)?;
+        if !matches!(call, Expr::Call(..)) {
+            return Err(self.bad(
+                "a `match` scrutinee is a call of a function that may raise `ArithmeticError`",
+            ));
+        }
+        self.need(Symbol::LeftBrace)?;
+        let mut arms = Vec::new();
+        while !self.peek(Symbol::RightBrace) {
+            if arms.len() == 2 {
+                return Err(self
+                    .bad("a `match` has exactly one `Result::Ok` arm and one `Result::Err` arm"));
+            }
+            if self.name()? != "Result" {
+                return Err(self.bad("a `match` arm is `Result::Ok { value: NAME }` or `Result::Err { error: NAME }`"));
+            }
+            self.need(Symbol::ColonColon)?;
+            let variant = self.name()?;
+            let field = match variant.as_str() {
+                "Ok" => "value",
+                "Err" => "error",
+                _ => {
+                    return Err(self.bad("a `match` arm is `Result::Ok { value: NAME }` or `Result::Err { error: NAME }`"));
+                }
+            };
+            self.need(Symbol::LeftBrace)?;
+            if self.name()? != field {
+                return Err(self.bad("a `match` arm is `Result::Ok { value: NAME }` or `Result::Err { error: NAME }`"));
+            }
+            self.need(Symbol::Colon)?;
+            let name = self.name()?;
+            self.need(Symbol::RightBrace)?;
+            self.need(Symbol::FatArrow)?;
+            self.unbound(&name)?;
+            let (saved_locals, saved_errors) = (self.locals.clone(), self.errors.clone());
+            let pattern = if field == "value" {
+                let slot = self.next_local;
+                self.next_local += 1;
+                self.locals.insert(name, slot);
+                Pattern::Ok(slot)
+            } else {
+                let slot = self.next_error;
+                self.next_error += 1;
+                self.errors.insert(name, slot);
+                Pattern::Err(slot)
+            };
+            let body = self.block(depth + 1)?;
+            self.locals = saved_locals;
+            self.errors = saved_errors;
+            arms.push(Arm { pattern, body });
+        }
+        self.need(Symbol::RightBrace)?;
+        let oks = arms
+            .iter()
+            .filter(|arm| matches!(arm.pattern, Pattern::Ok(_)))
+            .count();
+        if arms.len() != 2 || oks != 1 {
+            return Err(
+                self.bad("a `match` has exactly one `Result::Ok` arm and one `Result::Err` arm")
+            );
+        }
+        Ok(Match { call, arms })
     }
     /// A `source.std-io.v1` line statement, read by that route's own reader
     /// over this statement's span, so a line one route admits and the other
@@ -339,6 +543,9 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
             at: 0,
             span: d.span,
             locals: BTreeMap::new(),
+            next_local: 0,
+            errors: BTreeMap::new(),
+            next_error: 0,
             functions: &ids,
         };
         if d.value.kind != DeclarationKind::Function {
@@ -370,10 +577,11 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
                 if ty == Type::Unit {
                     return Err(r.bad("parameters require a scalar type, not unit"));
                 }
-                let id = r.locals.len();
+                let id = r.next_local;
                 if r.locals.insert(name, id).is_some() {
                     return Err(r.bad("duplicate parameter"));
                 }
+                r.next_local += 1;
                 parameters.push(ty);
                 if !r.take(Symbol::Comma) {
                     break;
@@ -384,15 +592,37 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
         r.need(Symbol::Arrow)?;
         let result = r.ty()?;
         let mut declared_io = None;
+        let mut throws = false;
         if r.tokens.get(r.at).and_then(|t| word(t)) == Some("effects") {
             r.at += 1;
             r.need(Symbol::LeftBrace)?;
             declared_io = Some(false);
+            // Card `W48-QR-SCALAR-TYPES-R2`: the row lists `io` and/or
+            // `throws<ArithmeticError>`, each at most once, in either order.
             if !r.peek(Symbol::RightBrace) {
-                if r.name()? != "io" {
-                    return Err(r.bad("only the io effect is supported"));
+                loop {
+                    match r.name()?.as_str() {
+                        "io" if declared_io != Some(true) => declared_io = Some(true),
+                        "throws" if !throws => {
+                            r.need(Symbol::Less)?;
+                            if r.name()? != ArithmeticError::NAME {
+                                return Err(r.bad(
+                                    "the only error this route raises is `ArithmeticError`, so `throws<ArithmeticError>` is the only error row it admits",
+                                ));
+                            }
+                            r.need(Symbol::Greater)?;
+                            throws = true;
+                        }
+                        _ => {
+                            return Err(r.bad(
+                                "only the io effect and `throws<ArithmeticError>` are supported, each at most once",
+                            ));
+                        }
+                    }
+                    if !r.take(Symbol::Comma) {
+                        break;
+                    }
                 }
-                declared_io = Some(true);
             }
             r.need(Symbol::RightBrace)?;
         }
@@ -401,84 +631,16 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
             r.need(Symbol::LeftBrace)?;
             r.need(Symbol::RightBrace)?;
         }
-        r.need(Symbol::LeftBrace)?;
-        let mut statements = Vec::new();
-        let returned;
-        loop {
-            match r.tokens.get(r.at).and_then(|t| word(t)) {
-                Some("return") => {
-                    r.at += 1;
-                    returned = if r.peek(Symbol::Semicolon) {
-                        None
-                    } else {
-                        Some(r.expression(0, 0)?)
-                    };
-                    r.need(Symbol::Semicolon)?;
-                    r.need(Symbol::RightBrace)?;
-                    break;
-                }
-                Some("print")
-                    if r.tokens
-                        .get(r.at + 1)
-                        .is_some_and(|t| symbol(t, Symbol::LeftParen)) =>
-                {
-                    r.at += 1;
-                    r.need(Symbol::LeftParen)?;
-                    let e = r.expression(0, 0)?;
-                    r.need(Symbol::RightParen)?;
-                    r.need(Symbol::Semicolon)?;
-                    statements.push(Statement::Print(e));
-                }
-                Some(
-                    crate::source_std_io::PRINT_KEYWORD
-                    | crate::source_std_io::LOG_KEYWORD
-                    | crate::source_std_io::LOG_LEVEL_KEYWORD
-                    | crate::source_std_io::FLUSH_KEYWORD,
-                ) => {
-                    statements.push(r.line_statement()?);
-                }
-                Some("let") => {
-                    r.at += 1;
-                    let name = r.name()?;
-                    if r.locals.contains_key(&name) {
-                        return Err(r.bad("duplicate or shadowing local"));
-                    }
-                    let annotation = if r.take(Symbol::Colon) {
-                        let ty = r.ty()?;
-                        if ty == Type::Unit {
-                            return Err(r.bad("locals require a scalar type, not unit"));
-                        }
-                        Some(ty)
-                    } else {
-                        None
-                    };
-                    r.need(Symbol::Equal)?;
-                    let e = r.expression(0, 0)?;
-                    r.need(Symbol::Semicolon)?;
-                    let id = r.locals.len();
-                    r.locals.insert(name, id);
-                    statements.push(Statement::Let(annotation, e));
-                }
-                Some(_) => {
-                    let e = r.expression(0, 0)?;
-                    if !matches!(e, Expr::Call(..)) {
-                        return Err(r.bad("only calls may be discarded"));
-                    }
-                    r.need(Symbol::Semicolon)?;
-                    statements.push(Statement::Evaluate(e));
-                }
-                _ => return Err(r.bad("a final explicit return is required")),
-            }
-        }
+        let body = r.block(0)?;
         if r.at != r.tokens.len() {
             return Err(r.bad("unsupported tokens or statements after return"));
         }
         functions.push(Function {
             declared_io,
+            throws,
             parameters,
             result,
-            statements,
-            returned,
+            body,
         });
         spans.push(d.span);
     }

@@ -133,11 +133,21 @@ fn a_length_query_without_the_import_refuses() {
         "    return;",
         "}",
     ]);
-    // With the import this is admitted; the point of the pair below is that
-    // each capability is gated, so measure the same body without it.
-    assert!(compile(&source).is_ok());
-    let without = source.replace("#import std.string;\n", "");
+    // Card `W48-QR-SCALAR-TYPES-R2` (item 0) corrected this module: the helper
+    // is a function `source.string.v1` does not model, and it used to be
+    // admitted unread; the route's own entry-only condition now refuses it.
+    assert_eq!(codes(&source), ["Q068"]);
+    // Without the helper the module is admitted; the point of the pair below
+    // is that each capability is gated, so measure the same body without it.
+    let entry_only = source.replace("fn helper() -> unit {\n    return;\n}\n\n", "");
+    assert!(compile(&entry_only).is_ok());
+    let without = entry_only.replace("#import std.string;\n", "");
     assert_eq!(codes(&without), ["Q015"]);
+    // The import gate precedes the route: the helper does not change it.
+    assert_eq!(
+        codes(&source.replace("#import std.string;\n", "")),
+        ["Q015"]
+    );
 }
 
 #[test]
