@@ -121,10 +121,37 @@ fn whole_statement_consumption_rejects_ignored_suffixes_and_multiple_tasks() {
         "thread scope s junk { let h = spawn s worker(copy x)?; let r = join move h?; return r; }",
         "thread scope s { let h = spawn s worker(copy x)?; let r = join move h? + 1; return r; }",
         "thread scope s { let h = spawn s worker(copy x)?; return join move h?; }",
-        "let y = x + 1; return y;",
+        // A chained expression is still refused: a value statement is one
+        // operation (card `W48-QR-SCALAR-TYPES-R4`).
+        "let y = x + 1 + 2; return y;",
     ] {
         assert!(lower(&module(body)).is_err(), "accepted {body}");
     }
+    // Card `W48-QR-SCALAR-TYPES-R4` deliberately widens one shape this test
+    // pinned as refused: `let y = x + 1;` over the entry's known `x` is a value
+    // statement, folded at check time to one instruction with no error edge.
+    let widened = lower(&module("let y = x + 1; return y;")).unwrap();
+    check_task_module(&widened).unwrap();
+    assert!(
+        widened.functions[&widened.entry]
+            .blocks
+            .values()
+            .any(|block| block
+                .instructions
+                .iter()
+                .any(|i| matches!(i.kind, TaskInstructionKind::Compute { .. })))
+    );
+    // Over a run-time value (the worker's parameter) it needs the row's
+    // `throws<ArithmeticError>`, and without it stays refused.
+    let run_time = module("return x;").replace(
+        "fn worker(x: i32) -> i32 { return x; }",
+        "fn worker(x: i32) -> i32 { let y = x + 1; return y; }",
+    );
+    assert!(
+        lower(&run_time)
+            .unwrap_err()
+            .contains("throws<ArithmeticError>")
+    );
 }
 
 #[test]

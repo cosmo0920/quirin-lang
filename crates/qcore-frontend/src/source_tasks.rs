@@ -153,7 +153,24 @@ enum Scalar {
     /// task parameter type, a spelling that refused before this card.
     WriteLease,
     I32,
+    /// Every other type of the §G02t fixed-width table (card
+    /// `W48-QR-SCALAR-TYPES-R4`); `i32` keeps its own variant.
+    Fixed(FixedType),
     Unit,
+}
+
+use qcore_core::scalar_types::{RecordedTarget, ScalarType as FixedType};
+
+/// A §G02t type name as a task scalar: `i32` is [`Scalar::I32`], every other
+/// name of the table [`Scalar::Fixed`].
+fn table_scalar(name: &str) -> Option<Scalar> {
+    FixedType::parse(name).map(|ty| {
+        if ty == FixedType::I32 {
+            Scalar::I32
+        } else {
+            Scalar::Fixed(ty)
+        }
+    })
 }
 
 fn scalar(tokens: &[Token]) -> Option<Scalar> {
@@ -182,8 +199,8 @@ fn scalar(tokens: &[Token]) -> Option<Scalar> {
         {
             Some(Scalar::WriteLease)
         }
-        [t] if word(Some(t), "i32") => Some(Scalar::I32),
         [t] if word(Some(t), "unit") => Some(Scalar::Unit),
+        [t] => name(Some(t)).and_then(table_scalar),
         _ => None,
     }
 }
@@ -209,6 +226,18 @@ fn error_declarations(
     let mut errors = BTreeMap::from([
         ("AllocError".to_owned(), builtin("AllocError")),
         ("SpawnError".to_owned(), builtin("SpawnError")),
+        // Card `W48-QR-SCALAR-TYPES-R4`: the §G02t builtin, payload-free, one
+        // tag per variant — what a value statement raises on a fault.
+        (
+            qcore_core::scalar_types::ArithmeticError::NAME.to_owned(),
+            ErrorType {
+                variants: qcore_core::scalar_types::ArithmeticError::ALL
+                    .iter()
+                    .map(|error| error.to_string())
+                    .collect(),
+                payloads: BTreeSet::new(),
+            },
+        ),
     ]);
     for declaration in &source.declarations {
         if declaration.value.kind != DeclarationKind::ErrorType {
@@ -323,8 +352,12 @@ fn signature(
         {
             return Err(bad("task parameters require explicit types"));
         }
-        let kind = if group.len() == 3 && word(group.get(2), "i32") && parameter.usage.is_none() {
-            Scalar::I32
+        let kind = if group.len() == 3
+            && let Some(kind) = name(group.get(2)).and_then(table_scalar)
+            && parameter.usage.is_none()
+        {
+            // Card `W48-QR-SCALAR-TYPES-R4`: every §G02t type, `i32` as before.
+            kind
         } else if group.len() == 8
             && scalar(&group[2..6]) == Some(Scalar::OwnedBuffer)
             && word(group.get(6), "use")
@@ -492,6 +525,7 @@ impl Scalar {
             Self::ReadLoan => ScalarType::ReadLoan,
             Self::WriteLease => ScalarType::WriteLease,
             Self::I32 => ScalarType::I32,
+            Self::Fixed(ty) => ScalarType::Fixed(ty),
             Self::Unit => ScalarType::Unit,
         }
     }
@@ -602,6 +636,7 @@ fn transfer_kind(scalar: Scalar) -> qcore_core::transfer::TransferKind {
     use qcore_core::transfer::TransferKind;
     match scalar {
         Scalar::I32 => TransferKind::I32,
+        Scalar::Fixed(_) => TransferKind::FixedScalar,
         Scalar::Unit => TransferKind::Unit,
         Scalar::OwnedBuffer => TransferKind::OwnedBuffer,
         Scalar::ReadLoan => TransferKind::ReadLoan,
@@ -665,10 +700,29 @@ fn transfer_mode(mode: &SourceCaptureMode) -> qcore_core::transfer::TransferMode
 fn scalar_spelling(scalar: Scalar) -> &'static str {
     match scalar {
         Scalar::I32 => "`i32`",
+        Scalar::Fixed(ty) => fixed_spelling(ty),
         Scalar::Unit => "`unit`",
         Scalar::OwnedBuffer => "`own<Buffer>`",
         Scalar::ReadLoan => "`borrow<Buffer>`",
         Scalar::WriteLease => "`lend<Buffer>`",
+    }
+}
+
+/// The source spelling of a fixed-width type, for the judgment's refusal
+/// messages.
+fn fixed_spelling(ty: FixedType) -> &'static str {
+    match ty {
+        FixedType::Bool => "`bool`",
+        FixedType::I8 => "`i8`",
+        FixedType::I16 => "`i16`",
+        FixedType::I32 => "`i32`",
+        FixedType::I64 => "`i64`",
+        FixedType::Isize => "`isize`",
+        FixedType::U8 => "`u8`",
+        FixedType::U16 => "`u16`",
+        FixedType::U32 => "`u32`",
+        FixedType::U64 => "`u64`",
+        FixedType::Usize => "`usize`",
     }
 }
 
@@ -830,7 +884,18 @@ pub fn lower_source_tasks(
     typed: &TypedSourceProgram,
     entry: &str,
 ) -> Result<TaskModule, Vec<SourceDiagnostic>> {
-    lower(source, typed, entry, false)
+    lower_source_tasks_for_target(source, typed, entry, None)
+}
+
+/// [`lower_source_tasks`] under the builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES-R4`), which alone gives `isize`/`usize` a width.
+pub fn lower_source_tasks_for_target(
+    source: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+    target: Option<&RecordedTarget>,
+) -> Result<TaskModule, Vec<SourceDiagnostic>> {
+    lower(source, typed, entry, false, target)
         .map(|lowered| lowered.tasks)
         .map_err(|error| vec![error])
 }
@@ -861,7 +926,17 @@ pub fn lower_source_composed_tasks(
     typed: &TypedSourceProgram,
     entry: &str,
 ) -> Result<LoweredComposedTaskModule, Vec<SourceDiagnostic>> {
-    lower(source, typed, entry, true).map_err(|error| vec![error])
+    lower_source_composed_tasks_for_target(source, typed, entry, None)
+}
+
+/// [`lower_source_composed_tasks`] under the builder's recorded target.
+pub fn lower_source_composed_tasks_for_target(
+    source: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+    target: Option<&RecordedTarget>,
+) -> Result<LoweredComposedTaskModule, Vec<SourceDiagnostic>> {
+    lower(source, typed, entry, true, target).map_err(|error| vec![error])
 }
 
 fn lower(
@@ -869,6 +944,7 @@ fn lower(
     typed: &TypedSourceProgram,
     entry: &str,
     composing: bool,
+    target: Option<&RecordedTarget>,
 ) -> Result<LoweredComposedTaskModule, SourceDiagnostic> {
     let span = Span {
         start: 0,
@@ -924,6 +1000,8 @@ fn lower(
                 | "qcore_buffer_write"
                 | "qcore_error_payload"
                 | "AllocError"
+                // Card `W48-QR-SCALAR-TYPES-R4`: the builtin §G02t error type.
+                | "ArithmeticError"
         ) {
             return Err(failure(
                 declaration.span,
@@ -998,6 +1076,18 @@ fn lower(
             "task execution entry must have no parameters",
         ));
     }
+    // Card `W48-QR-SCALAR-TYPES-R4`: the entry's result is published, never a
+    // value a caller receives, so it stays `i32`/`unit` (card 0's rule); a
+    // fixed-width value is a worker's result, collected by `join`.
+    if let Scalar::Fixed(ty) = signatures[&entry].result {
+        return Err(failure(
+            span,
+            SemanticPass::OrdinaryTypes,
+            format!(
+                "a task entry returns i32 or unit; `{ty}` is a worker's result, collected by join"
+            ),
+        ));
+    }
     let mut functions = BTreeMap::new();
     let mut sites = Vec::new();
     for declaration in source
@@ -1021,6 +1111,7 @@ fn lower(
         );
         builder.composing = composing;
         builder.function = resolved.symbol.0 as usize;
+        builder.target = target;
         if !builder.block(body, &resolved.statements)? {
             return Err(failure(
                 body.span,
@@ -1107,6 +1198,32 @@ fn lower(
              program never runs has no thread to attribute it to and no window to place it in",
         ));
     }
+    let module = TaskModule {
+        entry: entry.0 as usize,
+        functions,
+        source_len: source.source().len(),
+        target: target.cloned(),
+    };
+    // Card `W48-QR-SCALAR-TYPES-R4`: `isize`/`usize` take their width from the
+    // recorded target, and a function naming either with none is refused —
+    // the width is never guessed.
+    if target.is_none() {
+        for function in module.functions.values() {
+            if let Some(ty) = qcore_core::task_execution::function_fixed_types(function)
+                .into_iter()
+                .find(|ty| ty.is_target_width())
+            {
+                return Err(failure(
+                    Span {
+                        start: function.span.start,
+                        end: function.span.end,
+                    },
+                    SemanticPass::OrdinaryTypes,
+                    qcore_core::scalar_values::ValueRefusal::NoRecordedTarget { ty }.to_string(),
+                ));
+            }
+        }
+    }
     Ok(LoweredComposedTaskModule {
         declares_io: signatures[&entry].effects.io,
         worker_io: signatures
@@ -1114,11 +1231,7 @@ fn lower(
             .filter(|signature| signature.id != entry && signature.effects.io)
             .map(|signature| signature.id.0 as usize)
             .collect(),
-        tasks: TaskModule {
-            entry: entry.0 as usize,
-            functions,
-            source_len: source.source().len(),
-        },
+        tasks: module,
         sites,
     })
 }
@@ -1180,6 +1293,15 @@ struct Builder<'a> {
     /// entry could carry a line, and the flag was a Boolean.
     function: usize,
     sites: Vec<TaskIoSite>,
+    /// The builder's recorded target (card `W48-QR-SCALAR-TYPES-R4`).
+    target: Option<&'a RecordedTarget>,
+    /// The number of every binding known at check time (card
+    /// `W48-QR-SCALAR-TYPES-R4`): a literal, a copy of a known binding, a value
+    /// statement over known operands. A binding identity is unique in its
+    /// function, so this map needs no scoping. It decides, with the shared
+    /// decision, whether a value statement folds or raises — the core decides
+    /// the same thing again, independently.
+    known: BTreeMap<SymbolId, i128>,
 }
 
 impl<'a> Builder<'a> {
@@ -1211,7 +1333,176 @@ impl<'a> Builder<'a> {
             composing: false,
             function: 0,
             sites: Vec::new(),
+            target: None,
+            known: BTreeMap::new(),
         }
+    }
+
+    /// Whether this function's row permits raising `ArithmeticError`.
+    fn raises_arithmetic(&self) -> bool {
+        qcore_core::scalar_types::ArithmeticError::ALL
+            .iter()
+            .all(|error| self.signature.effects.errors.contains(&error.to_string()))
+    }
+
+    /// A literal written where a fixed-width type `ty` is expected — a typed
+    /// `let` or a worker's `return` (card `W48-QR-SCALAR-TYPES-R4`): `INTEGER`,
+    /// `- INTEGER`, `true` or `false`, range-checked against `ty`. `None` when
+    /// the tokens are not a literal.
+    fn fixed_literal(
+        &self,
+        tokens: &[Token],
+        ty: FixedType,
+        span: Span,
+    ) -> Option<Result<ScalarOperand, SourceDiagnostic>> {
+        let value = match tokens {
+            [
+                Token {
+                    kind: TokenKind::Integer(text),
+                    ..
+                },
+            ] => text.parse::<i128>().ok()?,
+            [
+                Token {
+                    kind: TokenKind::Symbol(Symbol::Minus),
+                    ..
+                },
+                Token {
+                    kind: TokenKind::Integer(text),
+                    ..
+                },
+            ] => -text.parse::<i128>().ok()?,
+            [t] if word(Some(t), "true") || word(Some(t), "false") => {
+                let value = i128::from(word(Some(t), "true"));
+                return Some(if ty == FixedType::Bool {
+                    Ok(ScalarOperand::Fixed { ty, value })
+                } else {
+                    Err(failure(
+                        span,
+                        SemanticPass::OrdinaryTypes,
+                        format!("`{ty}` is not `bool`; there is no conversion from bool"),
+                    ))
+                });
+            }
+            _ => return None,
+        };
+        let refused = |refusal: qcore_core::scalar_values::ValueRefusal| {
+            failure(span, SemanticPass::OrdinaryTypes, refusal.to_string())
+        };
+        Some(
+            qcore_core::scalar_values::Decider::default()
+                .literal_at(value, ty, self.target)
+                .map(|value| ScalarOperand::Fixed { ty, value })
+                .map_err(refused),
+        )
+    }
+
+    /// `let NAME = VALUE_EXPRESSION;` (card `W48-QR-SCALAR-TYPES-R4`): one
+    /// §G02t operation, decided by the shared decision. A statement that can
+    /// raise at run time lowers to the checked terminator whose error edge is
+    /// this route's ordinary error exit; any other to one instruction.
+    fn value_statement(
+        &mut self,
+        syntax: crate::source_value_statement::ValueExpressionSyntax<(SymbolId, Scalar)>,
+        span: Span,
+        binding: SymbolId,
+    ) -> Result<ValueType, SourceDiagnostic> {
+        use crate::source_value_statement::{
+            ValueExpressionSyntax as Syntax, ValueOperandSyntax as Operand,
+        };
+        use qcore_core::prelude::concurrency::task_execution::{
+            TaskValueOperand, TaskValueOperation,
+        };
+        use qcore_core::scalar_values::{self, Decider, ValueRefusal};
+        let shared = |operand: Operand<(SymbolId, Scalar)>, known: &BTreeMap<SymbolId, i128>| {
+            match operand {
+                Operand::Value((symbol, scalar)) => scalar_values::Operand::Typed {
+                    ty: match scalar {
+                        Scalar::Fixed(ty) => ty,
+                        _ => FixedType::I32,
+                    },
+                    known: known.get(&symbol).copied(),
+                },
+                Operand::Integer(literal) => scalar_values::Operand::Integer(literal),
+                Operand::Bool(value) => scalar_values::Operand::Bool(value),
+            }
+        };
+        let operation = match syntax {
+            Syntax::Binary(op, a, b) => {
+                scalar_values::Operation::Binary(op, shared(a, &self.known), shared(b, &self.known))
+            }
+            Syntax::Compare(cmp, a, b) => scalar_values::Operation::Compare(
+                cmp,
+                shared(a, &self.known),
+                shared(b, &self.known),
+            ),
+            Syntax::Negate(a) => scalar_values::Operation::Negate(shared(a, &self.known)),
+            Syntax::Convert(a, to) => scalar_values::Operation::Convert(shared(a, &self.known), to),
+        };
+        let decision = Decider::default()
+            .decide(operation, self.raises_arithmetic(), self.target)
+            .map_err(|refusal| match refusal {
+                ValueRefusal::NeedsPermission { ty } => failure(
+                    span,
+                    SemanticPass::TypedErrors,
+                    format!(
+                        "this `{ty}` operation reads a value known only at run time and can \
+                         fault; the function's row must declare `throws<ArithmeticError>` for \
+                         the fault to be raised as a typed error, and without it the operation \
+                         is refused"
+                    ),
+                ),
+                other => failure(span, SemanticPass::OrdinaryTypes, other.to_string()),
+            })?;
+        // A literal takes the operation's own type, as the decision typed it.
+        let lower_operand = |operand: Operand<(SymbolId, Scalar)>| match operand {
+            Operand::Value((symbol, _)) => TaskValueOperand::Slot(symbol.0 as usize),
+            Operand::Integer(value) => TaskValueOperand::Literal {
+                ty: decision.operand_ty,
+                value,
+            },
+            Operand::Bool(value) => TaskValueOperand::Literal {
+                ty: FixedType::Bool,
+                value: i128::from(value),
+            },
+        };
+        let operation = match syntax {
+            Syntax::Binary(op, a, b) => {
+                TaskValueOperation::Binary(op, lower_operand(a), lower_operand(b))
+            }
+            Syntax::Compare(cmp, a, b) => {
+                TaskValueOperation::Compare(cmp, lower_operand(a), lower_operand(b))
+            }
+            Syntax::Negate(a) => TaskValueOperation::Negate(lower_operand(a)),
+            Syntax::Convert(a, to) => TaskValueOperation::Convert(lower_operand(a), to),
+        };
+        let slot = binding.0 as usize;
+        if decision.raises {
+            let success = self.block_id(span)?;
+            let error_slot = self.temporary(span)?;
+            let error = self.error_block(span, ErrorOperand::Slot(error_slot))?;
+            self.finish(
+                span,
+                TaskTerminatorKind::TryCompute {
+                    slot,
+                    operation,
+                    error_slot,
+                    success,
+                    error,
+                },
+            );
+            self.current = success;
+        } else {
+            self.instruction(span, TaskInstructionKind::Compute { slot, operation });
+        }
+        if let Some(known) = decision.known {
+            self.known.insert(binding, known);
+        }
+        Ok(ValueType::Scalar(if decision.ty == FixedType::I32 {
+            Scalar::I32
+        } else {
+            Scalar::Fixed(decision.ty)
+        }))
     }
 
     /// Record one `source.std-io.v1` event at the position the emitted program
@@ -1252,7 +1543,30 @@ impl<'a> Builder<'a> {
                 }
                 StdIoOperand::Scalar(name) => {
                     let (id, kind) = self.lookup(name, span)?;
-                    if kind != ValueType::Scalar(Scalar::I32) {
+                    // Card `W48-QR-SCALAR-TYPES-R4`: a value of every §G02t
+                    // type renders at its type; `bool` has no `hex`.
+                    if let ValueType::Scalar(Scalar::Fixed(ty)) = kind {
+                        let hex = matches!(
+                            &event,
+                            StdIoEvent::Print {
+                                rendering: qcore_core::std_io::Rendering::Hex,
+                                ..
+                            } | StdIoEvent::Log {
+                                rendering: qcore_core::std_io::Rendering::Hex,
+                                ..
+                            }
+                        );
+                        if hex && ty == FixedType::Bool {
+                            return Err(failure(
+                                span,
+                                SemanticPass::ComposedTasks,
+                                format!(
+                                    "`{name}` is a `bool`, which renders `true`/`false` under \
+                                     `dec` and has no `hex` rendering"
+                                ),
+                            ));
+                        }
+                    } else if kind != ValueType::Scalar(Scalar::I32) {
                         return Err(failure(
                             span,
                             SemanticPass::ComposedTasks,
@@ -1750,6 +2064,14 @@ impl<'a> Builder<'a> {
                     Scalar::I32,
                 ))
             }
+            // Card `W48-QR-SCALAR-TYPES-R4`: `true`/`false` are `bool` literals.
+            [token] if word(Some(token), "true") || word(Some(token), "false") => Ok((
+                ScalarOperand::Fixed {
+                    ty: FixedType::Bool,
+                    value: i128::from(word(Some(token), "true")),
+                },
+                Scalar::Fixed(FixedType::Bool),
+            )),
             [
                 Token {
                     kind: TokenKind::Word(name),
@@ -1910,7 +2232,9 @@ impl<'a> Builder<'a> {
             // The existing enumeration, as a decision rather than an early
             // return, so that the two can be compared on refusals too.
             let enumerated = match (&capture.mode, parameter_type) {
-                (SourceCaptureMode::Copy, Scalar::I32) => Some(EnumeratedCapture::Copy),
+                (SourceCaptureMode::Copy, Scalar::I32 | Scalar::Fixed(_)) => {
+                    Some(EnumeratedCapture::Copy)
+                }
                 (SourceCaptureMode::Move, Scalar::OwnedBuffer) => Some(EnumeratedCapture::Move),
                 (SourceCaptureMode::Read { .. }, Scalar::ReadLoan) => Some(EnumeratedCapture::Lend),
                 (SourceCaptureMode::LendWrite { .. }, Scalar::WriteLease) => {
@@ -2555,8 +2879,61 @@ impl<'a> Builder<'a> {
                             &errors,
                             error_payload,
                         )?
+                    } else if let Some(Scalar::Fixed(ty)) = annotation
+                        && let Some(literal) = self.fixed_literal(rhs, ty, statement.span)
+                    {
+                        // Card `W48-QR-SCALAR-TYPES-R4`: a literal takes the
+                        // annotation's type, range-checked against it.
+                        let value = literal?;
+                        if let ScalarOperand::Fixed { value, .. } = value {
+                            self.known.insert(id, value);
+                        }
+                        self.instruction(
+                            statement.span,
+                            TaskInstructionKind::BindScalar {
+                                slot: id.0 as usize,
+                                value,
+                            },
+                        );
+                        ValueType::Scalar(Scalar::Fixed(ty))
+                    } else if let Some(parsed) = {
+                        let environment = &self.environment;
+                        crate::source_value_statement::parse_value_expression(
+                            &tokens[equal + 1..],
+                            |name| {
+                                environment
+                                    .iter()
+                                    .rev()
+                                    .find_map(|scope| scope.get(name))
+                                    .and_then(|(symbol, kind)| match kind {
+                                        ValueType::Scalar(
+                                            scalar @ (Scalar::I32 | Scalar::Fixed(_)),
+                                        ) => Some((*symbol, *scalar)),
+                                        _ => None,
+                                    })
+                            },
+                        )
+                    } {
+                        // Card `W48-QR-SCALAR-TYPES-R4`: a value statement. A
+                        // shape it cannot read is this route's shape refusal.
+                        let syntax = parsed.map_err(|message| self.bad(statement.span, message))?;
+                        self.value_statement(syntax, statement.span, id)?
                     } else {
                         let (value, scalar) = self.scalar_operand(rhs, statement.span)?;
+                        // A copy of a known binding is known.
+                        let known = match &value {
+                            ScalarOperand::I32(value) => Some(i128::from(*value)),
+                            ScalarOperand::Fixed { value, .. } => Some(*value),
+                            ScalarOperand::Slot(slot) => self
+                                .known
+                                .iter()
+                                .find(|(symbol, _)| symbol.0 as usize == *slot)
+                                .map(|(_, value)| *value),
+                            _ => None,
+                        };
+                        if let Some(known) = known {
+                            self.known.insert(id, known);
+                        }
                         self.instruction(
                             statement.span,
                             TaskInstructionKind::BindScalar {
@@ -2653,6 +3030,13 @@ impl<'a> Builder<'a> {
                         (ScalarOperand::Move(id.0 as usize), Scalar::OwnedBuffer)
                     } else if tokens.len() == 2 {
                         (ScalarOperand::Unit, Scalar::Unit)
+                    } else if let Scalar::Fixed(ty) = self.signature.result
+                        && let Some(literal) =
+                            self.fixed_literal(&tokens[1..tokens.len() - 1], ty, statement.span)
+                    {
+                        // Card `W48-QR-SCALAR-TYPES-R4`: a returned literal
+                        // takes the declared result's type.
+                        (literal?, Scalar::Fixed(ty))
                     } else {
                         self.scalar_operand(&tokens[1..tokens.len() - 1], statement.span)?
                     };

@@ -33,6 +33,9 @@ pub mod source_std_buffer;
 pub mod source_std_io;
 pub mod source_std_string;
 pub mod source_tasks;
+// Card W48-QR-SCALAR-TYPES-R4: the value statement's reader, shared by the
+// extern and task routes.
+pub mod source_value_statement;
 
 pub use parser::parse_program;
 

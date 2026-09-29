@@ -22,6 +22,8 @@
 //! raises them and holds nothing — and the task entry declares none, because it
 //! has no external custodian. Several payloads, borrowed payloads, scalar
 //! payloads and payload-carrying rethrow of a bound error stay outside.
+use crate::scalar_types::{self as st, ArithmeticError, RecordedTarget};
+use crate::scalar_values::{self, Decider, ValueRefusal};
 pub use crate::scoped_tasks::{FULL_READ_AUTHORITY, LeaseRange, MAX_READERS, MAX_WRITERS, ScopeId};
 use crate::scoped_tasks::{
     ResourceId, ResourceState, ScopedTaskLedger, TaskId, TaskLedgerError, TaskOutcome,
@@ -53,6 +55,13 @@ pub struct TaskSpan {
 pub enum ScalarType {
     Unit,
     I32,
+    /// Every other type of the §G02t fixed-width table (card
+    /// `W48-QR-SCALAR-TYPES-R4`): `bool`, `i8`, `i16`, `i64`, `isize`, `u8`,
+    /// `u16`, `u32`, `u64`, `usize`. `i32` keeps its own variant, so one type
+    /// has one representation: `Fixed(i32)` is malformed and refused by the
+    /// checker. A value of it is an immutable copy scalar exactly as an `i32`
+    /// is — it has no identity and carries no custody.
+    Fixed(st::ScalarType),
     OwnedBuffer,
     /// A scoped read loan of a Buffer the creator keeps owning. It is not a
     /// value type: it cannot be a function result, an entry parameter, a copy
@@ -74,6 +83,13 @@ pub enum ScalarType {
 pub enum ScalarOperand {
     Unit,
     I32(i32),
+    /// A literal of a [`ScalarType::Fixed`] type (card
+    /// `W48-QR-SCALAR-TYPES-R4`): `value` must be a value of `ty`, and `ty` is
+    /// never `i32`, whose literals are [`ScalarOperand::I32`]. `bool` is `0`/`1`.
+    Fixed {
+        ty: st::ScalarType,
+        value: i128,
+    },
     Slot(SlotId),
     Move(SlotId),
     /// Lend `share` of an owned Buffer's read authority to one child for the
@@ -114,6 +130,44 @@ pub struct TaskModule {
     pub entry: FunctionId,
     pub functions: BTreeMap<FunctionId, TaskFunction>,
     pub source_len: usize,
+    /// The builder's recorded target (card `W48-QR-SCALAR-TYPES-R4`), which
+    /// alone gives `isize`/`usize` a width. A module naming either type with
+    /// no record is refused; a module naming neither never reads it.
+    pub target: Option<RecordedTarget>,
+}
+
+/// The one §G02t operation a task value statement performs (card
+/// `W48-QR-SCALAR-TYPES-R4`) — the scalar route's arithmetic, comparison,
+/// negation and `as`, one operation per statement as on the extern route. Its
+/// operands are copy scalars: a literal (typed by the lowering from its
+/// context) or a slot. What it may do wrong is decided by
+/// [`crate::scalar_values::Decider`], the decision the extern route uses.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TaskValueOperation {
+    Binary(st::Op, TaskValueOperand, TaskValueOperand),
+    Compare(st::Cmp, TaskValueOperand, TaskValueOperand),
+    Negate(TaskValueOperand),
+    Convert(TaskValueOperand, st::ScalarType),
+}
+
+/// An operand of a [`TaskValueOperation`]: a copy scalar slot or a literal of
+/// one §G02t type. Here an `i32` literal is `Literal { ty: I32, .. }` — the one
+/// place a task literal carries its type explicitly, because a value
+/// statement's literal is typed by its context.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TaskValueOperand {
+    Slot(SlotId),
+    Literal { ty: st::ScalarType, value: i128 },
+}
+
+impl TaskValueOperation {
+    /// Every operand, in source order.
+    pub fn operands(&self) -> Vec<TaskValueOperand> {
+        match *self {
+            Self::Binary(_, a, b) | Self::Compare(_, a, b) => vec![a, b],
+            Self::Negate(a) | Self::Convert(a, _) => vec![a],
+        }
+    }
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskFunction {
@@ -209,6 +263,15 @@ pub enum TaskInstructionKind {
         error_slot: SlotId,
         buffer_slot: SlotId,
     },
+    /// `let NAME = VALUE_EXPRESSION;` that cannot raise (card
+    /// `W48-QR-SCALAR-TYPES-R4`): every operand known at check time (folded,
+    /// a fault refused), a comparison, or a total conversion. An operation
+    /// that can raise at run time is [`TaskTerminatorKind::TryCompute`]; the
+    /// checker refuses either form where the other is the right one.
+    Compute {
+        slot: SlotId,
+        operation: TaskValueOperation,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskTerminator {
@@ -251,6 +314,21 @@ pub enum TaskTerminatorKind {
         /// is never a copy, a scalar or a borrowed identity.
         payload: Option<ScalarOperand>,
     },
+    /// A value statement that raises `ArithmeticError` at run time (card
+    /// `W48-QR-SCALAR-TYPES-R4`): an operand is known only at run time and the
+    /// operation can fault, which the function's row must permit. On success
+    /// `slot` holds the result and control reaches `success`; on a fault
+    /// `error_slot` holds the classified `ArithmeticError::VARIANT` — a bound
+    /// typed error exactly like a `TryOutcome`'s — and control reaches
+    /// `error`, whose block the lowering makes the route's ordinary error
+    /// exit (scope exits, then `raise`).
+    TryCompute {
+        slot: SlotId,
+        operation: TaskValueOperation,
+        error_slot: SlotId,
+        success: BlockId,
+        error: BlockId,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskDiagnostic {
@@ -278,11 +356,123 @@ impl std::error::Error for TaskDiagnostic {}
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CheckedTaskModule {
     module: TaskModule,
+    /// The type of every copy-scalar slot the checker bound, per function
+    /// (card `W48-QR-SCALAR-TYPES-R4`). One slot has one type on every path —
+    /// a disagreement is refused — so this is a fact about the module rather
+    /// than about a path. The emitter and the composed route read it.
+    slot_types: BTreeMap<(FunctionId, SlotId), ScalarType>,
+    /// The recorded target, exactly when the module names `isize` or `usize`.
+    target_assumption: Option<RecordedTarget>,
 }
 impl CheckedTaskModule {
     pub fn module(&self) -> &TaskModule {
         &self.module
     }
+    /// The checked type of a copy-scalar slot, or `None` for a slot that holds
+    /// none (a buffer, a loan, a handle, a Result, an error).
+    pub fn slot_type(&self, function: FunctionId, slot: SlotId) -> Option<ScalarType> {
+        self.slot_types.get(&(function, slot)).copied()
+    }
+    /// Every copy-scalar slot type of one function.
+    pub fn function_slot_types(&self, function: FunctionId) -> BTreeMap<SlotId, ScalarType> {
+        self.slot_types
+            .iter()
+            .filter(|((owner, _), _)| *owner == function)
+            .map(|((_, slot), ty)| (*slot, *ty))
+            .collect()
+    }
+    /// The recorded target this result depends on (card
+    /// `W48-QR-SCALAR-TYPES-R4`): present exactly when the module names
+    /// `isize` or `usize`. A named assumption of the verdict.
+    pub fn target_assumption(&self) -> Option<&RecordedTarget> {
+        self.target_assumption.as_ref()
+    }
+}
+
+/// Every §G02t type other than `i32` the module names anywhere: parameter and
+/// result types, typed literals, conversion targets, and `bool` for a
+/// comparison. A computed value's type is always one of these, so this is the
+/// module's whole fixed-width surface.
+pub fn fixed_types(module: &TaskModule) -> BTreeSet<st::ScalarType> {
+    module
+        .functions
+        .values()
+        .flat_map(function_fixed_types)
+        .collect()
+}
+
+/// [`fixed_types`] of one function.
+pub fn function_fixed_types(function: &TaskFunction) -> BTreeSet<st::ScalarType> {
+    let mut types = BTreeSet::new();
+    let kind = |types: &mut BTreeSet<st::ScalarType>, kind: &ScalarType| {
+        if let ScalarType::Fixed(ty) = kind {
+            types.insert(*ty);
+        }
+    };
+    let literal = |types: &mut BTreeSet<st::ScalarType>, operand: &ScalarOperand| {
+        if let ScalarOperand::Fixed { ty, .. } = operand {
+            types.insert(*ty);
+        }
+    };
+    let operation = |types: &mut BTreeSet<st::ScalarType>, operation: &TaskValueOperation| {
+        for operand in operation.operands() {
+            if let TaskValueOperand::Literal { ty, .. } = operand
+                && ty != st::ScalarType::I32
+            {
+                types.insert(ty);
+            }
+        }
+        match operation {
+            TaskValueOperation::Convert(_, to) if *to != st::ScalarType::I32 => {
+                types.insert(*to);
+            }
+            TaskValueOperation::Compare(..) => {
+                types.insert(st::ScalarType::Bool);
+            }
+            _ => {}
+        }
+    };
+    {
+        kind(&mut types, &function.result);
+        for (_, parameter) in &function.parameters {
+            kind(&mut types, parameter);
+        }
+        for block in function.blocks.values() {
+            for instruction in &block.instructions {
+                match &instruction.kind {
+                    TaskInstructionKind::BindScalar { value, .. } => literal(&mut types, value),
+                    TaskInstructionKind::Compute { operation: op, .. } => operation(&mut types, op),
+                    _ => {}
+                }
+            }
+            match &block.terminator.kind {
+                TaskTerminatorKind::TryCompute { operation: op, .. } => operation(&mut types, op),
+                TaskTerminatorKind::Return { value } => literal(&mut types, value),
+                TaskTerminatorKind::TrySpawn { arguments, .. } => {
+                    for argument in arguments {
+                        literal(&mut types, argument);
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    types
+}
+
+/// Whether the module uses the fixed-width surface at all — a type other than
+/// `i32`, or any value statement (whose `i32` arithmetic calls the shared
+/// checked helpers). This is the one condition under which a module's
+/// emission differs from the task route's historical bytes.
+pub fn uses_fixed_width(module: &TaskModule) -> bool {
+    !fixed_types(module).is_empty()
+        || module.functions.values().any(|function| {
+            function.blocks.values().any(|block| {
+                block.instructions.iter().any(|instruction| {
+                    matches!(instruction.kind, TaskInstructionKind::Compute { .. })
+                }) || matches!(block.terminator.kind, TaskTerminatorKind::TryCompute { .. })
+            })
+        })
 }
 
 fn problem(function: FunctionId, span: TaskSpan, message: impl Into<String>) -> TaskDiagnostic {
@@ -315,6 +505,7 @@ fn targets(term: &TaskTerminatorKind) -> Vec<BlockId> {
             allocation_error,
             ..
         } => vec![*success, *allocation_error],
+        TaskTerminatorKind::TryCompute { success, error, .. } => vec![*success, *error],
         _ => vec![],
     }
 }
@@ -458,6 +649,8 @@ struct WorkerExit {
 struct FunctionSummary {
     exits: Vec<WorkerExit>,
     lease_footprint: Option<u64>,
+    /// Card `W48-QR-SCALAR-TYPES-R4`: every copy-scalar slot's type.
+    slot_types: BTreeMap<SlotId, ScalarType>,
 }
 #[derive(Clone)]
 struct State {
@@ -466,12 +659,21 @@ struct State {
     scopes: Vec<ScopeId>,
     next_id: u64,
     resources: BTreeSet<ResourceId>,
+    /// The number of every copy-scalar slot whose value is known at check
+    /// time on this path (card `W48-QR-SCALAR-TYPES-R4`): a literal binding, a
+    /// copy of a known slot, or a value statement over known operands. A
+    /// parameter, a buffer read and a joined outcome are known only at run
+    /// time. It decides whether a value statement folds or raises.
+    known: BTreeMap<SlotId, i128>,
 }
 impl State {
     fn value(&self, operand: &ScalarOperand) -> Result<AbstractValue, String> {
         match operand {
             ScalarOperand::Unit => Ok(AbstractValue::Scalar(ScalarType::Unit)),
             ScalarOperand::I32(_) => Ok(AbstractValue::Scalar(ScalarType::I32)),
+            // Its range and representation were validated for the whole
+            // function before any path was explored.
+            ScalarOperand::Fixed { ty, .. } => Ok(AbstractValue::Scalar(ScalarType::Fixed(*ty))),
             ScalarOperand::Slot(id) => match self.slots.get(id) {
                 Some(AbstractSlot::Value(value @ AbstractValue::Scalar(_))) => Ok(value.clone()),
                 _ => Err(format!("slot {id} is not an initialized copy scalar")),
@@ -528,6 +730,40 @@ impl State {
                     "slot {slot} is not an owned buffer this task may lease for writing"
                 )),
             },
+        }
+    }
+    /// The number a copy-scalar operand is known to hold at check time, if any.
+    fn known_number(&self, operand: &ScalarOperand) -> Option<i128> {
+        match operand {
+            ScalarOperand::I32(value) => Some(i128::from(*value)),
+            ScalarOperand::Fixed { value, .. } => Some(*value),
+            ScalarOperand::Slot(slot) => self.known.get(slot).copied(),
+            _ => None,
+        }
+    }
+    /// A value-statement operand as the shared decision sees it.
+    fn value_operand(&self, operand: &TaskValueOperand) -> Result<scalar_values::Operand, String> {
+        match operand {
+            TaskValueOperand::Literal { ty, value } => Ok(scalar_values::Operand::Typed {
+                ty: *ty,
+                known: Some(*value),
+            }),
+            TaskValueOperand::Slot(slot) => {
+                let ty = match self.value(&ScalarOperand::Slot(*slot))? {
+                    AbstractValue::Scalar(ScalarType::I32) => st::ScalarType::I32,
+                    AbstractValue::Scalar(ScalarType::Fixed(ty)) => ty,
+                    _ => {
+                        return Err(format!(
+                            "slot {slot} is not a value of the fixed-width table, so no value \
+                             statement reads it"
+                        ));
+                    }
+                };
+                Ok(scalar_values::Operand::Typed {
+                    ty,
+                    known: self.known.get(slot).copied(),
+                })
+            }
         }
     }
     fn take(&mut self, operand: &ScalarOperand) -> Result<AbstractValue, String> {
@@ -779,6 +1015,7 @@ fn check_function(
                 TaskInstructionKind::ReadBuffer { value_slot, .. } => Some(*value_slot),
                 TaskInstructionKind::UnwrapInfallible { value_slot, .. } => Some(*value_slot),
                 TaskInstructionKind::TakeErrorPayload { buffer_slot, .. } => Some(*buffer_slot),
+                TaskInstructionKind::Compute { slot, .. } => Some(*slot),
                 TaskInstructionKind::Join { outcome_slot, .. } => {
                     effects.join = true;
                     effects.may_block = true;
@@ -807,6 +1044,9 @@ fn check_function(
                 error_slot,
                 ..
             } => vec![*value_slot, *error_slot],
+            TaskTerminatorKind::TryCompute {
+                slot, error_slot, ..
+            } => vec![*slot, *error_slot],
             _ => vec![],
         };
         for slot in defined {
@@ -896,12 +1136,32 @@ fn check_function(
             "the task entry has no lessor, so it cannot take a write lease".into(),
         ));
     }
+    // Card `W48-QR-SCALAR-TYPES-R4`: the fixed-width surface of this
+    // function, validated once for every path — each type has one
+    // representation, each literal is a value of its type, and `isize`/`usize`
+    // have a width only under the recorded target.
+    validate_fixed_width(module, function).map_err(|message| fail(function.span, message))?;
+    if id == module.entry && matches!(function.result, ScalarType::Fixed(_)) {
+        return Err(fail(
+            function.span,
+            "a task entry returns i32, unit or its error; a fixed-width value is \
+             returned by a worker and collected by join"
+                .into(),
+        ));
+    }
+    // The error row's permission to raise `ArithmeticError`: every variant of
+    // the builtin type, which `throws<ArithmeticError>` declares together.
+    let raises_permitted = ArithmeticError::ALL
+        .iter()
+        .all(|error| function.errors.contains(&error.to_string()));
+    let target = module.target.as_ref();
     let mut state = State {
         slots: BTreeMap::new(),
         ledger: ScopedTaskLedger::default(),
         scopes: vec![],
         next_id: 1,
         resources: BTreeSet::new(),
+        known: BTreeMap::new(),
     };
     let mut inputs = BTreeMap::new();
     for (index, &(slot, ty)) in function.parameters.iter().enumerate() {
@@ -931,7 +1191,7 @@ fn check_function(
                 state.next_id += 1;
                 AbstractValue::Lease(resource)
             }
-            ScalarType::I32 | ScalarType::Unit => AbstractValue::Scalar(ty),
+            ScalarType::I32 | ScalarType::Unit | ScalarType::Fixed(_) => AbstractValue::Scalar(ty),
         };
         state.slots.insert(slot, AbstractSlot::Value(value));
     }
@@ -957,7 +1217,23 @@ fn check_function(
     let mut reached = BTreeSet::new();
     let mut scope_stacks = BTreeMap::<BlockId, Vec<ScopeId>>::new();
     let mut count = 0usize;
+    let mut slot_types = BTreeMap::<SlotId, ScalarType>::new();
+    let record =
+        |state: &State, slot_types: &mut BTreeMap<SlotId, ScalarType>| -> Result<(), String> {
+            for (slot, value) in &state.slots {
+                if let AbstractSlot::Value(AbstractValue::Scalar(ty)) = value
+                    && *ty != ScalarType::Unit
+                    && slot_types
+                        .insert(*slot, *ty)
+                        .is_some_and(|earlier| earlier != *ty)
+                {
+                    return Err(format!("slot {slot} has two types on two paths"));
+                }
+            }
+            Ok(())
+        };
     while let Some((block_id, mut state)) = queue.pop() {
+        record(&state, &mut slot_types).map_err(|message| fail(function.span, message))?;
         count += 1;
         if count > MAX_CHECK_STATES {
             return Err(fail(
@@ -980,9 +1256,34 @@ fn check_function(
         for instruction in &block.instructions {
             let result: Result<(), String> = (|| {
                 match &instruction.kind {
-                    TaskInstructionKind::BindScalar { slot, value } => {
-                        let value = state.take(value)?;
+                    TaskInstructionKind::BindScalar {
+                        slot,
+                        value: operand,
+                    } => {
+                        let known = state.known_number(operand);
+                        let value = state.take(operand)?;
                         state.bind(*slot, AbstractSlot::Value(value))?;
+                        if let Some(known) = known {
+                            state.known.insert(*slot, known);
+                        }
+                    }
+                    TaskInstructionKind::Compute { slot, operation } => {
+                        let decision = decide_value(&state, operation, raises_permitted, target)?;
+                        if decision.raises {
+                            return Err(
+                                "this value statement reads a value known only at run time and \
+                                 can raise ArithmeticError, so it must take the checked form \
+                                 whose error edge raises it"
+                                    .into(),
+                            );
+                        }
+                        state.bind(
+                            *slot,
+                            AbstractSlot::Value(AbstractValue::Scalar(task_type(decision.ty))),
+                        )?;
+                        if let Some(known) = decision.known {
+                            state.known.insert(*slot, known);
+                        }
                     }
                     TaskInstructionKind::ReadBuffer { buffer, value_slot } => {
                         state.readable(*buffer)?;
@@ -1208,9 +1509,42 @@ fn check_function(
             })();
             result.map_err(|message| fail(instruction.span, message))?;
         }
+        record(&state, &mut slot_types).map_err(|message| fail(block.terminator.span, message))?;
         let result: Result<(), String> = (|| {
             match &block.terminator.kind {
                 TaskTerminatorKind::Goto { target } => queue.push((*target, state)),
+                TaskTerminatorKind::TryCompute {
+                    slot,
+                    operation,
+                    error_slot,
+                    success,
+                    error,
+                } => {
+                    let decision = decide_value(&state, operation, raises_permitted, target)?;
+                    if !decision.raises {
+                        return Err(
+                            "this value statement cannot raise ArithmeticError here — its \
+                             operands are known at check time, or the operation cannot fault — \
+                             so it takes no error edge"
+                                .into(),
+                        );
+                    }
+                    let variants = raisable_variants(&state, operation)?;
+                    let mut failed = state.clone();
+                    failed.bind(
+                        *error_slot,
+                        AbstractSlot::Error {
+                            errors: variants,
+                            payload: None,
+                        },
+                    )?;
+                    queue.push((*error, failed));
+                    state.bind(
+                        *slot,
+                        AbstractSlot::Value(AbstractValue::Scalar(task_type(decision.ty))),
+                    )?;
+                    queue.push((*success, state));
+                }
                 TaskTerminatorKind::TryAllocateBuffer {
                     initial,
                     value_slot,
@@ -1484,6 +1818,10 @@ fn check_function(
                             match callee.result {
                                 ScalarType::Unit => TaskOutcome::Unit,
                                 ScalarType::I32 => TaskOutcome::I32(0),
+                                // Like `I32(0)`, a placeholder: the abstract
+                                // run tracks the type, not the number, and a
+                                // scalar outcome carries no custody.
+                                ScalarType::Fixed(ty) => TaskOutcome::Fixed { ty, value: 0 },
                                 ScalarType::OwnedBuffer => TaskOutcome::OwnedBuffer(
                                     returned
                                         .ok_or("owned worker outcome has no checked identity")?,
@@ -1735,7 +2073,165 @@ fn check_function(
     Ok(FunctionSummary {
         exits,
         lease_footprint,
+        slot_types,
     })
+}
+
+/// The task type of a §G02t type: `i32` keeps its own variant.
+fn task_type(ty: st::ScalarType) -> ScalarType {
+    if ty == st::ScalarType::I32 {
+        ScalarType::I32
+    } else {
+        ScalarType::Fixed(ty)
+    }
+}
+
+/// The shared value-statement decision over this path's state.
+fn decide_value(
+    state: &State,
+    operation: &TaskValueOperation,
+    raises_permitted: bool,
+    target: Option<&RecordedTarget>,
+) -> Result<scalar_values::Decision, String> {
+    let operation = shared_operation(state, operation)?;
+    Decider::default()
+        .decide(operation, raises_permitted, target)
+        .map_err(|refusal| value_refusal_message(&refusal))
+}
+
+fn shared_operation(
+    state: &State,
+    operation: &TaskValueOperation,
+) -> Result<scalar_values::Operation, String> {
+    Ok(match operation {
+        TaskValueOperation::Binary(op, a, b) => {
+            scalar_values::Operation::Binary(*op, state.value_operand(a)?, state.value_operand(b)?)
+        }
+        TaskValueOperation::Compare(cmp, a, b) => scalar_values::Operation::Compare(
+            *cmp,
+            state.value_operand(a)?,
+            state.value_operand(b)?,
+        ),
+        TaskValueOperation::Negate(a) => scalar_values::Operation::Negate(state.value_operand(a)?),
+        TaskValueOperation::Convert(a, to) => {
+            scalar_values::Operation::Convert(state.value_operand(a)?, *to)
+        }
+    })
+}
+
+/// The `ArithmeticError` tags a raising statement's error edge can carry.
+fn raisable_variants(
+    state: &State,
+    operation: &TaskValueOperation,
+) -> Result<BTreeSet<String>, String> {
+    let shared = shared_operation(state, operation)?;
+    let operand_ty = match shared {
+        scalar_values::Operation::Binary(_, scalar_values::Operand::Typed { ty, .. }, _)
+        | scalar_values::Operation::Compare(_, scalar_values::Operand::Typed { ty, .. }, _)
+        | scalar_values::Operation::Negate(scalar_values::Operand::Typed { ty, .. })
+        | scalar_values::Operation::Convert(scalar_values::Operand::Typed { ty, .. }, _) => ty,
+        _ => return Err("a task value operand is always typed".into()),
+    };
+    Ok(scalar_values::raisable(shared, operand_ty)
+        .into_iter()
+        .map(|error| error.to_string())
+        .collect())
+}
+
+/// The task route's words for a refused value statement. The conditions are
+/// the shared decision's; only the permission's wording is this route's, whose
+/// raise is an ordinary typed worker error rather than an exit status.
+fn value_refusal_message(refusal: &ValueRefusal) -> String {
+    match refusal {
+        ValueRefusal::NeedsPermission { ty } => format!(
+            "this `{ty}` operation reads a value known only at run time and can fault; the \
+             function's row must declare `throws<ArithmeticError>` for the fault to be raised as \
+             a typed error, and without it the operation is refused"
+        ),
+        other => other.to_string(),
+    }
+}
+
+/// Validate the fixed-width surface of one function (card
+/// `W48-QR-SCALAR-TYPES-R4`): `Fixed(i32)` is malformed — `i32` has its own
+/// representation — every typed literal is a value of its type, and
+/// `isize`/`usize` need the recorded target.
+fn validate_fixed_width(module: &TaskModule, function: &TaskFunction) -> Result<(), String> {
+    let target = module.target.as_ref();
+    let check_type = |ty: st::ScalarType| -> Result<(), String> {
+        if ty.is_target_width() && target.is_none() {
+            return Err(ValueRefusal::NoRecordedTarget { ty }.to_string());
+        }
+        Ok(())
+    };
+    let check_kind = |kind: &ScalarType| -> Result<(), String> {
+        match kind {
+            ScalarType::Fixed(st::ScalarType::I32) => {
+                Err("the i32 type has one representation; Fixed(i32) is malformed".into())
+            }
+            ScalarType::Fixed(ty) => check_type(*ty),
+            _ => Ok(()),
+        }
+    };
+    let check_literal = |ty: st::ScalarType, value: i128| -> Result<(), String> {
+        check_type(ty)?;
+        if !ty.contains(value, target) {
+            return Err(ValueRefusal::LiteralOutOfRange { literal: value, ty }.to_string());
+        }
+        Ok(())
+    };
+    let check_operand = |operand: &ScalarOperand| -> Result<(), String> {
+        match operand {
+            ScalarOperand::Fixed {
+                ty: st::ScalarType::I32,
+                ..
+            } => Err("an i32 literal has one representation; Fixed { i32 } is malformed".into()),
+            ScalarOperand::Fixed { ty, value } => check_literal(*ty, *value),
+            _ => Ok(()),
+        }
+    };
+    let check_operation = |operation: &TaskValueOperation| -> Result<(), String> {
+        for operand in operation.operands() {
+            if let TaskValueOperand::Literal { ty, value } = operand {
+                check_literal(ty, value)?;
+            }
+        }
+        if let TaskValueOperation::Convert(_, to) = operation {
+            check_type(*to)?;
+        }
+        Ok(())
+    };
+    check_kind(&function.result)?;
+    for (_, kind) in &function.parameters {
+        check_kind(kind)?;
+    }
+    for block in function.blocks.values() {
+        for instruction in &block.instructions {
+            match &instruction.kind {
+                TaskInstructionKind::BindScalar { value, .. }
+                | TaskInstructionKind::WriteBuffer { value, .. } => check_operand(value)?,
+                TaskInstructionKind::WriteBufferByte { index, value, .. } => {
+                    check_operand(index)?;
+                    check_operand(value)?;
+                }
+                TaskInstructionKind::ReadBufferByte { index, .. } => check_operand(index)?,
+                TaskInstructionKind::Compute { operation, .. } => check_operation(operation)?,
+                _ => {}
+            }
+        }
+        match &block.terminator.kind {
+            TaskTerminatorKind::TryAllocateBuffer { initial, .. } => check_operand(initial)?,
+            TaskTerminatorKind::TrySpawn { arguments, .. } => {
+                for argument in arguments {
+                    check_operand(argument)?;
+                }
+            }
+            TaskTerminatorKind::Return { value } => check_operand(value)?,
+            TaskTerminatorKind::TryCompute { operation, .. } => check_operation(operation)?,
+            _ => {}
+        }
+    }
+    Ok(())
 }
 
 pub fn check_task_module(module: &TaskModule) -> Result<CheckedTaskModule, Vec<TaskDiagnostic>> {
@@ -1767,9 +2263,26 @@ pub fn check_task_module(module: &TaskModule) -> Result<CheckedTaskModule, Vec<T
             Err(error) => errors.push(error),
         }
     }
+    // Card `W48-QR-SCALAR-TYPES-R4`: the recorded target is an assumption of
+    // the result exactly when the module names `isize` or `usize`.
+    let target_assumption = if fixed_types(module).iter().any(|ty| ty.is_target_width()) {
+        module.target.clone()
+    } else {
+        None
+    };
     if errors.is_empty() {
         Ok(CheckedTaskModule {
             module: module.clone(),
+            slot_types: summaries
+                .iter()
+                .flat_map(|(function, summary)| {
+                    summary
+                        .slot_types
+                        .iter()
+                        .map(|(slot, ty)| ((*function, *slot), *ty))
+                })
+                .collect(),
+            target_assumption,
         })
     } else {
         Err(errors)

@@ -146,6 +146,14 @@ impl ResourceState {
 pub enum TaskOutcome {
     Unit,
     I32(i32),
+    /// A value of another type of the §G02t fixed-width table (card
+    /// `W48-QR-SCALAR-TYPES-R4`): never `i32`, whose outcome is
+    /// [`TaskOutcome::I32`]. Like `I32` it carries no custody; the ledger
+    /// stores it and hands it to the joining creator unchanged.
+    Fixed {
+        ty: crate::scalar_types::ScalarType,
+        value: i128,
+    },
     OwnedBuffer(ResourceId),
     Error(String),
     /// Card T06: an explicitly tagged error carrying exactly one owned Buffer.

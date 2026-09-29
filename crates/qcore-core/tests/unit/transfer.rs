@@ -1,9 +1,10 @@
 //! Card `CT46-SENDSYNC`: the transferability judgment.
 //!
 //! These tests pin totality over the kind vocabulary, the per-kind
-//! classification, the whole 16 x 6 admission matrix (13 x 4 before card
-//! `WRITE-LEND-TASKS` grew both vocabularies by one, and 14 x 5 before card
-//! `MUTEX-SHARE-CROSS` grew them by two and one), and the negative properties
+//! classification, the whole 17 x 6 admission matrix (13 x 4 before card
+//! `WRITE-LEND-TASKS` grew both vocabularies by one, 14 x 5 before card
+//! `MUTEX-SHARE-CROSS` grew them by two and one, and 16 x 6 before card
+//! `W48-QR-SCALAR-TYPES-R4` added the fixed-width scalar kind), and the negative properties
 //! that make the judgment worth having: it never admits a kind whose class
 //! refuses it, each sharing protocol is reachable by exactly one mode, and no
 //! kind is *lent* under the mutex protocol.
@@ -24,8 +25,9 @@ fn kind_inventory_is_complete_and_duplicate_free() {
     assert_eq!(seen.len(), TransferKind::ALL.len());
     // Card `MUTEX-SHARE-CROSS`: 14 -> 16, adding the checked-mutex route's
     // payload (`ProtectedResource`) and what a mutex-mediated crossing
-    // delivers (`MutexShare`).
-    assert_eq!(TransferKind::ALL.len(), 16);
+    // delivers (`MutexShare`). Card `W48-QR-SCALAR-TYPES-R4`: 16 -> 17,
+    // adding the fixed-width scalars other than `i32` (`FixedScalar`).
+    assert_eq!(TransferKind::ALL.len(), 17);
 }
 
 #[test]
@@ -91,6 +93,7 @@ fn per_kind_classification_is_pinned() {
     let expected = [
         (TransferKind::Unit, Never(ResultPositionOnly)),
         (TransferKind::I32, Duplicated),
+        (TransferKind::FixedScalar, Duplicated),
         (
             TransferKind::OwnedBuffer,
             MovedOnly {
@@ -137,6 +140,9 @@ fn send_and_sync_directions_separate_exactly_one_kind() {
         sendable,
         vec![
             TransferKind::I32,
+            // Card `W48-QR-SCALAR-TYPES-R4`: the other fixed-width scalars,
+            // on `i32`'s footing.
+            TransferKind::FixedScalar,
             TransferKind::OwnedBuffer,
             // Card `MUTEX-SHARE-CROSS`: the checked-mutex route's payload is
             // the second sendable kind. Custody of it really moves in the
@@ -189,6 +195,7 @@ fn admission_matrix_is_pinned() {
         admitted,
         vec![
             (TransferKind::I32, Copy),
+            (TransferKind::FixedScalar, Copy),
             (TransferKind::OwnedBuffer, Move),
             (TransferKind::OwnedBuffer, Lend),
             (TransferKind::OwnedBuffer, LendWrite),
@@ -198,7 +205,7 @@ fn admission_matrix_is_pinned() {
             (TransferKind::ProtectedResource, Move),
             (TransferKind::ProtectedResource, ShareUnderMutex),
         ],
-        "exactly the six admitted capture forms"
+        "exactly the seven admitted capture forms"
     );
     assert_eq!(
         admits(TransferKind::ProtectedResource, ShareUnderMutex),
@@ -396,8 +403,9 @@ fn received_kind_is_pinned() {
     );
 }
 
-/// The whole three-way boundary decision: 16 x 6 x 16 = 1,536 cells, of which
-/// exactly six admit (980 and four before card `MUTEX-SHARE-CROSS`). This is
+/// The whole three-way boundary decision: 17 x 6 x 17 = 1,734 cells, of which
+/// exactly seven admit (980 and four before card `MUTEX-SHARE-CROSS`; 1,536
+/// and six before card `W48-QR-SCALAR-TYPES-R4`). This is
 /// the function the frontend cross-checks against, so its admitted set is the
 /// load-bearing claim.
 #[test]
@@ -417,6 +425,11 @@ fn capture_admission_matrix_is_pinned() {
         admitted,
         vec![
             (TransferKind::I32, TransferMode::Copy, TransferKind::I32),
+            (
+                TransferKind::FixedScalar,
+                TransferMode::Copy,
+                TransferKind::FixedScalar
+            ),
             (
                 TransferKind::OwnedBuffer,
                 TransferMode::Move,
@@ -448,7 +461,7 @@ fn capture_admission_matrix_is_pinned() {
                 TransferKind::MutexShare
             ),
         ],
-        "exactly the six admitted capture forms, and nothing else in 1,536 cells"
+        "exactly the seven admitted capture forms, and nothing else in 1,734 cells"
     );
 }
 
