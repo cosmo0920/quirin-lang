@@ -418,6 +418,38 @@ fn admitted_value_statements_run_natively_as_the_reference() {
     native::publish("values", &rows);
 }
 
+/// The published example's lines are the ones its page shows, per stream, and
+/// its native run under the three builds writes exactly those.
+#[test]
+fn the_typed_loops_example_publishes_its_transcript() {
+    let m = buffer_admitted(include_str!("../../examples/scalar/typed_loops.qr"));
+    let page = include_str!("../../examples/scalar/README.md");
+    let mut expected = Vec::new();
+    for (stream, marker) in [("out", "typed_loops stdout"), ("err", "typed_loops stderr")] {
+        let block = page
+            .split(&format!("<!-- transcript: {marker} -->"))
+            .nth(1)
+            .and_then(|rest| rest.split("```text\n").nth(1))
+            .and_then(|rest| rest.split("```").next())
+            .unwrap_or_else(|| panic!("the page has no `{marker}` transcript"));
+        let observed = lines(&m)
+            .into_iter()
+            .filter(|line| line.starts_with(&format!("{stream}: ")))
+            .collect::<Vec<_>>();
+        let shown = block
+            .lines()
+            .map(|line| format!("{stream}: {line}"))
+            .collect::<Vec<_>>();
+        assert_eq!(shown, observed, "{marker}");
+        expected.extend(shown);
+    }
+    #[cfg(unix)]
+    {
+        let mut rows = Vec::new();
+        run_native(&m, &expected, "typed_loops example", &mut rows, 3);
+    }
+}
+
 #[cfg(unix)]
 fn run_native(m: &CompiledModule, expected: &[String], label: &str, rows: &mut Vec<String>, n: usize) {
     let stdout: String = expected
