@@ -1,0 +1,285 @@
+[
+ {
+  "unit": "cJSON.c",
+  "function": "get_object_item",
+  "predicted": "Unknown",
+  "base": "Unknown",
+  "leaves": {
+   "unresolved resource identity `current_element`": 4,
+   "unmodeled call, aggregate or indirect access in loop condition": 1
+  }
+ },
+ {
+  "unit": "cmt_cat.c",
+  "function": "counter_lookup",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "cmt_cat.c",
+  "function": "exp_histogram_lookup",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "cmt_cat.c",
+  "function": "gauge_lookup",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "cmt_cat.c",
+  "function": "histogram_lookup",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "cmt_cat.c",
+  "function": "summary_lookup",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "cmt_cat.c",
+  "function": "untyped_lookup",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "cmt_filter.c",
+  "function": "filter_get_label_index",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "cmt_filter.c",
+  "function": "metrics_check_label_value_existence",
+  "predicted": "Unknown",
+  "base": "Unknown",
+  "leaves": {
+   "unresolved resource identity `label`": 2,
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "cmt_map.c",
+  "function": "map_lock",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in loop condition": 1
+  }
+ },
+ {
+  "unit": "cmt_metric.c",
+  "function": "cmt_metric_exp_hist_lock",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in loop condition": 1
+  }
+ },
+ {
+  "unit": "ctr_id.c",
+  "function": "ctr_id_cmp",
+  "predicted": "Safe",
+  "base": "Safe",
+  "leaves": {}
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_lookup",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "mk_server/mk_socket.c",
+  "function": "mk_socket_set_nonblocking",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "nanopb/pb_decode.c",
+  "function": "pb_decode_svarint",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "nanopb/pb_decode.c",
+  "function": "pb_decode_tag",
+  "predicted": "Unknown",
+  "base": "Unknown",
+  "leaves": {
+   "unresolved resource identity `wire_type`": 2,
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "nanopb/pb_decode.c",
+  "function": "pb_skip_varint",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "nanopb/pb_encode.c",
+  "function": "pb_encode",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 3,
+   "unmodeled call, aggregate or indirect access in do-while condition": 1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_consumer_group_state_code",
+  "predicted": "Safe",
+  "base": "Safe",
+  "leaves": {}
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_consumer_group_type_code",
+  "predicted": "Safe",
+  "base": "Safe",
+  "leaves": {}
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_test_fatal_error",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "rd_kafka_assignor_rebalance_protocol_check",
+  "predicted": "Unknown",
+  "base": "Unknown",
+  "leaves": {
+   "unresolved resource identity `RD_KAFKA_REBALANCE_PROTOCOL_NONE`": 1,
+   "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+   "unresolved resource identity `rkas`": 3
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_prop_find",
+  "predicted": "Unknown",
+  "base": "Unknown",
+  "leaves": {
+   "unresolved resource identity `prop`": 5,
+   "unresolved resource identity `rd_kafka_properties`": 1,
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "rdkafka_feature.c",
+  "function": "rd_kafka_ApiVersion_is_queryable",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_share_find_entry_for_offset",
+  "predicted": "Unknown",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+   "unresolved resource identity `entry`": 1
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafkap_Fetch_reply_tags_parse",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_list_set_offset",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafkap_Produce_reply_tags_parse",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_find_ack_batch",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry.c",
+  "function": "rd_kafka_filter_broker_by_GetTelemetrySubscription",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "rd_kafka_snappy_uncompressed_length",
+  "predicted": "Safe",
+  "base": "Unknown",
+  "leaves": {
+   "unmodeled call, aggregate or indirect access in branch condition": 1
+  }
+ }
+]

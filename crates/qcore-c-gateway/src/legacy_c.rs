@@ -145,6 +145,12 @@ mod elaboration_route;
 #[path = "legacy_call_instantiation.rs"]
 mod call_instantiation_route;
 
+// Card CG04-CONDITION-ACQUISITION (rule 10x): ownership-producing calls in
+// controlling expressions and complex condition leaves, decided inside the
+// condition desugaring (rule 5h). The hooks naming the card are thin.
+#[path = "legacy_condition_acquisition.rs"]
+mod condition_acquisition_route;
+
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the P3 residual shapes
 // C's evaluation order admits. Hooks are thin.
 #[path = "legacy_typed_residuals.rs"]
@@ -3189,6 +3195,8 @@ fn build_function_cfg_with(
         typed_path_index: std::cell::OnceCell::new(),
         typed_path_function: function.to_owned(),
         typed_position_uses: std::cell::Cell::new(0),
+        condition_widening: std::cell::Cell::new(0),
+        condition_cycles: condition_acquisition_route::CycleRanges::read(tokens, body_start),
         typed_place_origin: std::cell::Cell::new(None),
         typed_root_declarations: std::cell::OnceCell::new(),
     };
@@ -4535,6 +4543,12 @@ struct Parser<'a> {
     /// Card W47-ACCESS-PATH-POSITIONS: how many condition operands the typed
     /// reader decided so far; a call-free plan is kept only if it grew.
     typed_position_uses: std::cell::Cell<usize>,
+    /// Card CG04-CONDITION-ACQUISITION: the widenings of rule 10x a plan
+    /// being built took (`condition_acquisition_route::WIDENED_*`).
+    condition_widening: std::cell::Cell<u8>,
+    /// Card CG04-CONDITION-ACQUISITION: the body's token ranges that may lie
+    /// on a CFG cycle (a split acquisition there is refused).
+    condition_cycles: condition_acquisition_route::CycleRanges,
     /// Card CG10-COMMON-TYPED-PLACE (I04): the stream index and length of the
     /// statement being classified, set only around its `classify_simple`.
     typed_place_origin: std::cell::Cell<Option<(usize, usize)>>,

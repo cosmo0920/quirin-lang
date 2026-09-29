@@ -1,0 +1,23 @@
+  2702   739  CallRefused: indirect memory access is outside the resource projection
+  2334  1116  admitted
+   975   609  CallRefused: call to uncontracted function `_`
+   222    89  AssignmentShape
+   123    55  admitted:elaborated_leaf
+    68    47  CallFreeLeafRefused
+    32    29  ResidualRefused
+    31    18  RecursiveLocalCallee
+    30    24  IndirectCallee
+    22    21  Braces
+    12    10  AssignmentDestination
+    10     9  admitted:type_operator
+     7     5  CallRefused: nested call `_` inside a modeled call is outside the resource projection
+     5     5  CallRefused: call to `_` outside its declared literal-argument premise
+     5     4  LeafShape(IncrementBesideCall)
+     5     5  CallRefused: call to `_` whose declared contract was withdrawn against its C declaration in this translation unit (abi-return-type-disagreement
+     4     3  CallRefused: local declaration may shadow a formal resource identity
+     4     3  CallRefused: call has an unmodeled formal address or borrowed expression
+     4     4  admitted:split
+     3     3  LeafShape(ConnectiveBesideCall)
+     2     2  LeafShape(AcquisitionOnCycle)
+     1     1  CallRefused: arguments beyond the declared parameters of `_` are outside the resource projection
+     1     1  admitted:split+type_operator

@@ -1,0 +1,21 @@
+  1768   708   21  CallRefused: indirect memory access is outside the resource projection
+   876   520   12  CallRefused: call to uncontracted function `_`
+   776   394    6  elaboration-refused
+   219    89    1  AssignmentShape
+   129    86    1  no-consultation
+    63    44    0  CallFreeLeafRefused
+    31    18    0  RecursiveLocalCallee
+    31    28    2  ResidualRefused
+    29    23    2  IndirectCallee
+    22    21    0  Braces
+    15    13    1  CallRefused: other
+    12    10    0  AssignmentDestination
+     4     4    0  LeafShape(IncrementBesideCall)
+     2     2    0  LeafShape(AcquisitionOnCycle)
+     2     2    0  admitted
+
+W44-CONDITION-CALL-ASSIGNMENT: 231 leaves / 95 functions, 1 sole  {'AssignmentDestination': 12, 'AssignmentShape': 219}
+W44-CONDITION-CALL-FREE-OPERAND: 63 leaves / 44 functions, 0 sole  {'CallFreeLeafRefused': 63}
+W44-CONDITION-CALL-TYPE-OPERATOR: 0 leaves / 0 functions, 0 sole  {}
+W44-CONDITION-CALL-REFUSED-SHAPES: 72 leaves / 62 functions, 3 sole  {'IndirectCallee': 29, 'Braces': 22, 'LeafShape(IncrementBesideCall)': 4, 'LeafShape(AcquisitionOnCycle)': 2, 'CallRefused: other': 15}
+call-free condition leaves that write: {'leaves': 71, 'functions': 62}

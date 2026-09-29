@@ -63,9 +63,15 @@ fn refusals_stay_byte_for_byte() {
     if !clang_available() {
         return;
     }
-    // A value connective in a condition with an increment (CG06): the loop's
-    // own refusal stays.
+    // Flipped by CG04-CONDITION-ACQUISITION (rule 10x): an increment in a
+    // call-free leaf of a connective condition is this elaborator's, leaf by
+    // leaf, sequenced by `&&`; the connective itself is the desugaring's edge,
+    // not a value `&&` (CG06 keeps value connectives outside conditions).
     let run = gs("int subject(int n, int m) { int c = 0; while (n-- > 0 && m) c++; return c; }");
+    assert!(!run.refused(LOOP_REFUSAL), "{run:?}");
+    assert!(run.safe(), "{run:?}");
+    // A connective below one leaf that increments stays refused.
+    let run = gs("int subject(int n, int m) { int c = 0; while ((n-- && m) > 0) c++; return c; }");
     assert!(run.refused(LOOP_REFUSAL), "{run:?}");
     // A call beside an increment in a condition (CG04/CG05).
     let run =

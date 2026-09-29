@@ -1,0 +1,36 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4260,
+   "Safe": 564,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4259,
+   "Safe": 565,
+   "Unsafe": 10
+  }
+ },
+ "moves": [
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_cluster_op_io",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in loop condition": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 1
+ },
+ "same_status_functions_with_changed_diagnostics": 13,
+ "leaf_delta": {
+  "unknown_alias: unresolved resource identity": -15,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -12,
+  "unsupported: unmodeled call, aggregate or indirect access in loop condition": -3,
+  "unsupported: nullable resource `dir` used by a non-null contract": 1,
+  "unsupported: nullable resource `seg` used by a non-null contract": 1
+ }
+}

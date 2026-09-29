@@ -1,0 +1,18 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 199,
+   "Safe": 33,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 199,
+   "Safe": 33,
+   "Unsafe": 2
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 0,
+ "leaf_delta": {}
+}

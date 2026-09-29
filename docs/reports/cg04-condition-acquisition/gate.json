@@ -1,0 +1,13 @@
+{
+  "note": "CG04-CONDITION-ACQUISITION card gate at tip fa23b3c5 (base 27dc7c9a; main moved to 6883623c during the card and is not merged), script docs/reports/cg04-condition-acquisition/scripts/gate.sh, logs private/cg04/gate2 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 374 units, 387 summaries, 6,673 passed, 2 failed, 11 ignored (private/test-binaries/20260929T182543Z-1106587/summary.json): both failures are constraint 16's load-sensitive rows, run under a host load average of about 45 from other sessions, and each was verified in isolation, not weakened: qcore-audit checkpoint_cli 7 passed (iso-checkpoint_cli.exit 0); qcore-compiler cycle20_verifier_plugins' `elapsed < 500 ms` row failed 3 of 4 isolated runs under the same load and passed 20/20 on one (iso-cycle20_verifier_plugins-1.exit 0); both passed in the full runner of the first gate at 416f7abb (private/cg04/gate, whose only 2 failures were this card's own re-pins, flipped by name in fa23b3c5). fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 234 audits passed (233 + AuditConditionAcquisition.lean); python tests: the gate run failed only on the matrix's derived lean_audits (233 against 234 on disk), corrected by this validation regeneration and rerun (09b-python.exit); docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE (binary built at 27dc7c9a) resource-diagnostics.json 7393fd21 byte-identical to CG03's AFTER; AFTER (binary built at 6728d9dd; later commits change tests, records and comments only) 24571074, 564/10/4,260 -> 565/10/4,259; system 33/2/199 (4597b90c) and tail-pause slice 26/1/242/1 Pending (a6c01e91) byte-identical. Exits in gate/.",
+  "workspace_tests": 6675,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 234,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
