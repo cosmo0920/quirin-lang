@@ -147,17 +147,156 @@ fn a_call_with_the_wrong_number_of_actuals_is_refused_whole() {
     if crate::clang_command().is_err() {
         return;
     }
-    let source = "void take2(void *x, void *y); void f(void *p) {\n take2(p, p);\n}";
+    let source = "void take2(void *x, void *y); void f(void *p, void *q) {\n take2(p, &q);\n}";
     let _scope = enter_source(source, CCompilerDialect::C11, None);
     let index = StatementIndex::read("f").expect("typed function");
-    let tokens = tokenize("take2(p, p)");
+    let tokens = tokenize("take2(p, &q)");
     let texts = tokens.iter().map(|t| t.text.as_str()).collect::<Vec<_>>();
     let node = index.expression_node(&texts, 2).expect("node");
     assert_eq!(
         substitute(node, &[ResourceParameterMode::Borrowed], &index.fields),
         Err((0, SubstitutionRefusal::Arity))
     );
-    // One refused formal refuses the whole call.
+    // One refused formal refuses the whole call: `&q` at a released formal.
     let released = ResourceParameterMode::Released { nullable: false };
-    assert!(substitute(node, &[released, released], &index.fields).is_ok());
+    assert_eq!(
+        substitute(node, &[released, released], &index.fields),
+        Err((1, SubstitutionRefusal::CustodyPosition("address")))
+    );
+    let substituted = substitute(
+        node,
+        &[released, ResourceParameterMode::Borrowed],
+        &index.fields,
+    )
+    .expect("both formals substituted");
+    assert_eq!(substituted.len(), 2);
+    assert_eq!(
+        substituted[0].actual,
+        Actual::Identity {
+            name: "p".into(),
+            cast: false
+        }
+    );
+}
+
+/// A Lean constructor name as the Rust code spells it: `.recursiveLocal` is
+/// `recursive-local`.
+fn lean_code(name: &str) -> String {
+    let name = name.trim().trim_start_matches('.');
+    let mut code = String::new();
+    for character in name.chars() {
+        if character.is_ascii_uppercase() {
+            code.push('-');
+            code.push(character.to_ascii_lowercase());
+        } else {
+            code.push(character);
+        }
+    }
+    code
+}
+
+fn lean_table<'a>(lean: &'a str, header: &str) -> Vec<&'a str> {
+    let table = lean.split(header).nth(1).expect("table header");
+    let table = &table[..table.find("\n]").expect("end of table")];
+    table
+        .lines()
+        .map(str::trim)
+        .filter(|line| line.starts_with('('))
+        .collect()
+}
+
+const LEAN: &str = include_str!("../../../../proof/QCore/CallInstantiation.lean");
+
+/// The mechanical binding of `QCore.CallInstantiation.acceptanceVectors`.
+#[test]
+fn cg03_lean_acceptance_vectors_match_the_rust_table() {
+    let rows = lean_table(
+        LEAN,
+        "def acceptanceVectors : List (Standing × ResultClass × Bool × Use × Decision) := [",
+    );
+    assert_eq!(rows.len(), ACCEPTANCE_VECTORS.len());
+    for (row, vector) in rows.iter().zip(ACCEPTANCE_VECTORS) {
+        let fields = row
+            .trim_end_matches(',')
+            .trim_start_matches('(')
+            .trim_end_matches(')')
+            .split(',')
+            .map(lean_code)
+            .collect::<Vec<_>>();
+        assert_eq!(
+            fields,
+            [
+                vector.0.to_owned(),
+                vector.1.to_owned(),
+                vector.2.to_string(),
+                vector.3.to_owned(),
+                vector.4.to_owned()
+            ],
+            "{row}"
+        );
+    }
+}
+
+/// The mechanical binding of `QCore.CallInstantiation.substitutionVectors`:
+/// the spelling, the formal's mode, and the Rust reading or refusal as the
+/// Lean actual and substitution.
+#[test]
+fn cg03_lean_substitution_vectors_match_the_rust_table() {
+    let rows = lean_table(
+        LEAN,
+        "def substitutionVectors : List (String × Mode × Actual × Subst) := [",
+    );
+    assert_eq!(rows.len(), SUBSTITUTION_VECTORS.len());
+    for (row, (spelling, mode, expected)) in rows.iter().zip(SUBSTITUTION_VECTORS) {
+        let rest = row.strip_prefix("(\"").expect("a spelling");
+        let mut literal = String::new();
+        let mut chars = rest.char_indices();
+        let mut end = 0;
+        while let Some((at, character)) = chars.next() {
+            match character {
+                '\\' => {
+                    if let Some((_, escaped)) = chars.next() {
+                        literal.push(escaped);
+                    }
+                }
+                '"' => {
+                    end = at + 1;
+                    break;
+                }
+                other => literal.push(other),
+            }
+        }
+        assert_eq!(literal, *spelling);
+        let fields = rest[end..]
+            .trim_end_matches(',')
+            .trim_end_matches(')')
+            .trim_start_matches(',')
+            .split(',')
+            .map(str::trim)
+            .collect::<Vec<_>>();
+        assert_eq!(lean_code(fields[0]), *mode, "{row}");
+        let actual = fields[1].split_whitespace().collect::<Vec<_>>();
+        let subst = lean_code(fields[2].split_whitespace().next().expect("subst"));
+        let lean_reading = match actual.as_slice() {
+            [".identity", _, "false"] => "identity".to_owned(),
+            [".identity", _, "true"] => "identity-cast".to_owned(),
+            [constructor, ..] => lean_code(constructor),
+            [] => panic!("{row}: no actual"),
+        };
+        if expected.starts_with("form:") {
+            // A form another card owns: the Lean reading is `other`.
+            assert_eq!(lean_reading, "other", "{row}");
+            assert_eq!(subst, "reject", "{row}");
+        } else if let Some(what) = expected.strip_prefix("custody-position:") {
+            let reading = match what {
+                "value" => "data",
+                other => other,
+            };
+            assert_eq!(lean_reading, reading, "{row}");
+            assert_eq!(subst, "reject", "{row}");
+        } else {
+            assert_eq!(lean_reading, *expected, "{row}");
+            assert_ne!(subst, "reject", "{row}");
+        }
+    }
 }
