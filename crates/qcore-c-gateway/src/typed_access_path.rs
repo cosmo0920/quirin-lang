@@ -262,6 +262,9 @@ pub(crate) struct StatementIndex {
     pub(crate) function: Arc<Value>,
     pub(crate) fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
     pub(crate) enums: Arc<EnumFacts>,
+    /// Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): union and bit-field
+    /// record facts.
+    pub(crate) records: Arc<crate::union_bitfield::RecordFacts>,
     by_line: Arc<BTreeMap<usize, Vec<Vec<usize>>>>,
     /// The unit's line starts: a node's line is found by binary search.
     line_starts: Arc<Vec<usize>>,
@@ -370,6 +373,7 @@ struct AstIndex {
     functions: BTreeMap<String, Vec<FunctionEntry>>,
     fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
     enums: Arc<EnumFacts>,
+    records: Arc<crate::union_bitfield::RecordFacts>,
     line_starts: Arc<Vec<usize>>,
     line_tokens: Arc<OnceCell<BTreeMap<usize, Vec<String>>>>,
 }
@@ -384,12 +388,14 @@ struct RetainedDeclarations {
     functions: BTreeMap<String, Vec<FunctionEntry>>,
     fields: BTreeMap<String, Option<FieldFacts>>,
     enums: EnumFacts,
+    records: crate::union_bitfield::RecordFacts,
 }
 
 impl RetainedDeclarations {
     fn accept(&mut self, node: Value) {
         collect_field_facts(&node, &mut self.fields);
         EnumFacts::collect(&node, &mut self.enums);
+        crate::union_bitfield::RecordFacts::collect(&node, &mut self.records);
         if kind(&node) == "FunctionDecl"
             && children(&node)
                 .iter()
@@ -513,6 +519,7 @@ impl AstIndex {
             functions: retained.functions,
             fields: Arc::new(retained.fields),
             enums: Arc::new(retained.enums),
+            records: Arc::new(retained.records),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         })
@@ -532,6 +539,7 @@ impl AstIndex {
             functions: retained.functions,
             fields: Arc::new(retained.fields),
             enums: Arc::new(retained.enums),
+            records: Arc::new(retained.records),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         }
@@ -577,6 +585,25 @@ impl Drop for SourceScope {
     }
 }
 
+/// Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): Clang's record layout
+/// dump of the analysed translation unit, with the frontend request the AST
+/// was read with. `None` outside an analysed source or on any Clang failure.
+pub(crate) fn record_layout_dump() -> Option<String> {
+    ANALYSED_SOURCE.with(|cell| {
+        let borrow = cell.borrow();
+        let context = borrow.as_ref()?;
+        let unit = C11TranslationUnit {
+            source: &context.source,
+            include_paths: context.request.include_paths.clone(),
+            definitions: context.request.definitions.clone(),
+            preprocessor_options: context.request.preprocessor_options.clone(),
+            dialect: context.dialect,
+            ..C11TranslationUnit::default()
+        };
+        crate::typed_c_ast::record_layout_dump(&context.source, &unit).ok()
+    })
+}
+
 impl StatementIndex {
     pub(crate) fn read(function: &str) -> Option<Self> {
         ANALYSED_SOURCE.with(|cell| {
@@ -618,6 +645,7 @@ impl StatementIndex {
                 function: Arc::clone(&function.ast),
                 fields: Arc::clone(&ast.fields),
                 enums: Arc::clone(&ast.enums),
+                records: Arc::clone(&ast.records),
                 by_line: Arc::clone(by_line),
                 line_starts: Arc::clone(&ast.line_starts),
                 line_tokens: Arc::clone(&ast.line_tokens),
@@ -680,6 +708,7 @@ impl StatementIndex {
             },
             fields: &self.fields,
             enums: &self.enums,
+            records: &self.records,
             never_bound,
             function: Some(&self.function),
         }
@@ -924,6 +953,8 @@ pub(crate) struct Reader<'a> {
     pub(crate) address_target: bool,
     fields: &'a BTreeMap<String, Option<FieldFacts>>,
     enums: &'a EnumFacts,
+    /// Card CG13 (rule 10w): union and bit-field record facts.
+    records: &'a crate::union_bitfield::RecordFacts,
     pub(crate) never_bound: &'a dyn Fn(&str) -> bool,
     /// Card CG10-COMMON-TYPED-PLACE (rule 10t): the function whose body the
     /// reader reads, for the tracked-root place's DeclID identity.
@@ -1096,18 +1127,19 @@ impl Reader<'_> {
             return None;
         }
         let mut steps = Vec::new();
+        // Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): the union-member
+        // and bit-field steps, each with whether a pointer is read from
+        // memory after it (`seen_hop`, walking from the outermost step in).
+        let mut member_steps = Vec::new();
+        let mut seen_hop = false;
         let mut cursor = node;
         loop {
             cursor = strip(cursor)?;
             match kind(cursor) {
                 "MemberExpr" => {
-                    let field = self
-                        .fields
-                        .get(cursor["referencedMemberDecl"].as_str()?)?
-                        .as_ref()?;
-                    if field.union_owner || field.bitfield {
-                        return None;
-                    }
+                    let field_id = cursor["referencedMemberDecl"].as_str()?;
+                    let field = self.fields.get(field_id)?.as_ref()?;
+                    let storage = self.records.storage(field, field_id);
                     let member = cursor["name"].as_str()?.to_owned();
                     let base = children(cursor).first()?;
                     let arrow = cursor["isArrow"].as_bool() == Some(true);
@@ -1115,7 +1147,8 @@ impl Reader<'_> {
                     let (base, arrow) =
                         crate::typed_position_shapes::arrow_through_address(base, arrow);
                     let base_type = qual(base)?;
-                    if base_type.contains("union ")
+                    if (base_type.contains("union ")
+                        && storage != crate::union_bitfield::MemberStorage::Union)
                         || base_type.contains("volatile")
                         || base_type.contains("_Atomic")
                     {
@@ -1127,6 +1160,21 @@ impl Reader<'_> {
                     if !arrow && base_type.trim_end().ends_with('*') {
                         return None;
                     }
+                    if storage != crate::union_bitfield::MemberStorage::Ordinary {
+                        member_steps.push(crate::union_bitfield::MemberStep {
+                            storage,
+                            field: field_id.to_owned(),
+                            record: self.records.union_owner.get(field_id).cloned(),
+                            union_type: if arrow {
+                                base_type.trim_end().trim_end_matches('*').trim_end()
+                            } else {
+                                base_type
+                            }
+                            .to_owned(),
+                            hop_after: seen_hop,
+                        });
+                    }
+                    seen_hop |= arrow;
                     steps.push((if arrow { "->" } else { "." }, member));
                     cursor = base;
                 }
@@ -1136,10 +1184,12 @@ impl Reader<'_> {
                         return None;
                     }
                     self.expression(&pair[1])?;
+                    seen_hop |= crate::union_bitfield::subscript_hop(&pair[0]);
                     steps.push(("[]", String::new()));
                     cursor = &pair[0];
                 }
                 "UnaryOperator" if cursor["opcode"].as_str() == Some("*") => {
+                    seen_hop = true;
                     steps.push(("*", String::new()));
                     cursor = children(cursor).first()?;
                 }
@@ -1157,6 +1207,22 @@ impl Reader<'_> {
         if steps.is_empty() {
             return None;
         }
+        // Card CG13 (rule 10w): decide every union-member and bit-field step;
+        // a store through a union that can hold a pointer carries W43's
+        // refused-write frame.
+        let union_frame = if member_steps.is_empty() {
+            false
+        } else {
+            let access = if store {
+                crate::union_bitfield::Access::ScalarStore
+            } else if !address && pointer_read && pointer_value(node) {
+                crate::union_bitfield::Access::PointerRead
+            } else {
+                crate::union_bitfield::Access::ScalarRead
+            };
+            crate::union_bitfield::decide_path(&member_steps, access, self.records, self.function)
+                .ok()?
+        };
         steps.reverse();
         let first = steps.first()?;
         if matches!(first.0, "->" | "*" | "[]") {
@@ -1204,6 +1270,7 @@ impl Reader<'_> {
         }
         if store
             && (matches!(first.0, "*" | "[]")
+                || union_frame
                 || tracked
                     .as_ref()
                     .is_some_and(|tracked| tracked.through_element))
@@ -1318,15 +1385,14 @@ mod tests {
     }
 
     #[test]
-    fn unsupported_pointer_store_union_cast_and_call_refuse() {
+    fn unsupported_pointer_store_cast_and_call_refuse() {
+        // Card CG13 flip (rule 10w): the union row of this table
+        // (`int x = p->value` through `union U *p`) is now a custody-neutral
+        // scalar read; see `union_member_reads_are_decided_by_rule_10w`.
         let cases = [
             (
                 "struct S { int *next; }; int f(struct S *p, int *q) { p->next = q; return 0; }",
                 "p->next = q",
-            ),
-            (
-                "union U { int value; }; int f(union U *p) { int x = p->value; return 0; }",
-                "int x = p->value",
             ),
             (
                 "int f(int *p) { int x = *(int *)p; return 0; }",
@@ -1406,13 +1472,50 @@ mod tests {
     }
 
     #[test]
-    fn field_owner_refuses_typedef_union_but_accepts_typedef_struct() {
+    fn union_member_reads_are_decided_by_rule_10w() {
+        // Card CG13 flip (rule 10w): a typedef-hidden union is still found by
+        // its field's owner, and its scalar member is read as a union step.
+        // BEFORE: both refused.
+        let direct = "union U { int value; }; int f(union U *p) { int x = p->value; return 0; }";
+        assert!(plan(direct, "int x = p->value").is_some());
         let union = "typedef union U { int x; int y; } U; int f(U *u) { int x = u->x; return 0; }";
-        assert!(plan(union, "int x = u->x").is_none());
+        assert!(plan(union, "int x = u->x").is_some());
         let nested = "typedef union U { int x; int y; } U; typedef struct S { U *u; } S; int f(S *s) { int x = s->u->x; return 0; }";
-        assert!(plan(nested, "int x = s->u->x").is_none());
+        assert!(plan(nested, "int x = s->u->x").is_some());
         let accepted = "typedef struct S { int x; } S; int f(S *s) { int x = s->x; return 0; }";
         assert!(plan(accepted, "int x = s->x").is_some());
+        // A pointer read through a union the function stores through another
+        // member of is refused (punning); unpunned, it is a borrowed alias.
+        let pointer = "union P { long n; int *p; }; int f(union P *u) { int *q = u->p; return 0; }";
+        assert!(
+            plan(pointer, "int *q = u->p")
+                .expect("borrow")
+                .borrowed_destination
+        );
+        let punned =
+            "union P { long n; int *p; }; int f(union P *u) { u->n = 1; int *q = u->p; return 0; }";
+        assert!(plan(punned, "int *q = u->p").is_none());
+        // A store through a union that can hold a pointer writes with the
+        // refused-write frame; through a custody-free union it has none.
+        let framed = plan(
+            "union P { long n; int *p; }; int f(union P *u) { u->n = 1; return 0; }",
+            "u->n = 1",
+        )
+        .expect("framed store");
+        assert!(framed.scalar.writes_through_pointer);
+        let free = plan(
+            "union N { long n; double d; }; int f(union N *u) { u->n = 1; return 0; }",
+            "u->n = 1",
+        )
+        .expect("neutral store");
+        assert!(!free.scalar.writes_through_pointer);
+        // A bit-field store is a scalar store with no frame.
+        let bits = plan(
+            "struct B { unsigned a : 3; unsigned b : 5; }; int f(struct B *s) { s->a = 1; return 0; }",
+            "s->a = 1",
+        )
+        .expect("unit write");
+        assert!(!bits.scalar.writes_through_pointer);
     }
 
     #[test]

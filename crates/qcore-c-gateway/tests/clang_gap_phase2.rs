@@ -158,29 +158,49 @@ fn m05_readback_from_a_void_field_is_refused() {
 // CG13 — unions and bit-fields (M06 M07)
 // ---------------------------------------------------------------------------
 
-/// Partial correction to the input: G refuses union and bit-field *stores*,
-/// but reads a scalar union member and a bit-field through a never-bound root
-/// as custody-neutral scalars (no overlap or storage-unit fact is carried).
+/// CG00's partial correction to the input: G refused union and bit-field
+/// *stores* and read a scalar union member and a bit-field through a
+/// never-bound root as custody-neutral scalars.
+///
+/// CG13 flip (rule 10w): a scalar store through a union member is admitted,
+/// with W43's refused-write frame because `union U` can hold a pointer, and a
+/// union member in a member chain is a place step. BEFORE: the store was
+/// refused (IND). A pointer-valued store through the union stays refused.
+/// Route T is unchanged: no typed-source consumer decides a union member.
 #[test]
-fn m06_union_stores_are_refused_and_reads_are_neutral() {
+fn m06_union_member_steps_are_read_by_rule_10w() {
     if !clang_available() {
         return;
     }
     const U: &str = "union U { int i; void *p; };";
-    assert!(gs(&format!("{U} void subject(union U *u) {{ u->i = 1; }}")).refused(IND));
+    assert!(gs(&format!("{U} void subject(union U *u) {{ u->i = 1; }}")).safe());
     assert!(gs(&format!("{U} int subject(union U *u) {{ return u->i; }}")).safe());
+    assert!(
+        gs(&format!(
+            "{U} struct W {{ union U u; }}; void subject(struct W *w) {{ w->u.i = 1; }}"
+        ))
+        .safe()
+    );
+    assert!(
+        gs(&format!(
+            "{U} void subject(union U *u) {{ u->p = q_alloc(); }}"
+        ))
+        .refused(IND)
+    );
     assert_eq!(
         t_refusal("union U { int i; float f; }; int subject(union U *u) { return u->i; }"),
         "field is not a direct ordinary field of a selected record"
     );
 }
 
+/// CG13 flip (rule 10w): a bit-field store is a read-modify-write of its
+/// storage unit, custody-neutral. BEFORE: refused (IND). Route T unchanged.
 #[test]
-fn m07_bitfield_stores_are_refused_and_reads_are_neutral() {
+fn m07_bitfield_steps_are_unit_accesses() {
     if !clang_available() {
         return;
     }
-    assert!(gs("void subject(struct S *s) { s->bf = 1; }").refused(IND));
+    assert!(gs("void subject(struct S *s) { s->bf = 1; }").safe());
     assert!(gs("int subject(struct S *s) { return s->bf; }").safe());
     // T drops bit-fields from its record field table.
     assert_eq!(

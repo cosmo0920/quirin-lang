@@ -310,6 +310,10 @@ pub(crate) enum Refusal {
     /// An unordered write/write or write/read pair on places not proved
     /// disjoint (card CG10 owns field-level disjointness).
     NotDisjoint(String, String),
+    /// Card CG13 (rule 10w): an unordered pair of two bit-fields the core
+    /// footprint model places in one storage unit (Q661): one C11 memory
+    /// location, whatever their bit ranges.
+    SharedBitfieldUnit(String, String, u32),
     /// A cast kind outside the scalar set (card CG08).
     Cast(String),
     /// The route's place reader refused the place (card CG10).
@@ -344,6 +348,9 @@ impl Refusal {
             Refusal::NotDisjoint(one, other) => {
                 format!("unsequenced access of `{one}` and `{other}`, not proved disjoint (CG10)")
             }
+            Refusal::SharedBitfieldUnit(one, other, unit) => format!(
+                "unsequenced access of `{one}` and `{other}`, one bit-field storage unit {unit} (Q661, CG13)"
+            ),
             Refusal::Cast(cast) => format!("cast `{cast}` (CG08)"),
             Refusal::Place(reason) => format!("place: {reason} (CG10)"),
             Refusal::Declaration(reason) => format!("declaration: {reason}"),
@@ -448,6 +455,13 @@ pub(crate) trait Context {
     /// this declaration id: an automatic local or formal whose address is
     /// never taken.
     fn unaliased(&self, decl: &str) -> bool;
+    /// Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): the core footprint
+    /// model's storage unit when the unordered places `one` and `other` of
+    /// `node` are two bit-fields of one object in one unit; it only names a
+    /// refusal the graph check already made.
+    fn shared_bitfield_unit(&self, _node: &Value, _one: &str, _other: &str) -> Option<u32> {
+        None
+    }
 }
 
 /// Elaborate one full expression or one-declarator declaration.
@@ -469,7 +483,19 @@ pub(crate) fn elaborate<C: Context>(
     } else {
         elaborator.expression(node)?
     };
-    elaborator.graph.check(&|decl| context.unaliased(decl))?;
+    elaborator
+        .graph
+        .check(&|decl| context.unaliased(decl))
+        .map_err(|refusal| match refusal {
+            // Card CG13 (rule 10w): name a bit-field pair of one unit.
+            Refusal::NotDisjoint(one, other) => {
+                match context.shared_bitfield_unit(node, &one, &other) {
+                    Some(unit) => Refusal::SharedBitfieldUnit(one, other, unit),
+                    None => Refusal::NotDisjoint(one, other),
+                }
+            }
+            other => other,
+        })?;
     let has_arithmetic = part.arithmetic;
     Ok(Elaboration {
         result: part.result,
