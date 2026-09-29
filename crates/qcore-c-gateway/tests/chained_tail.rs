@@ -302,15 +302,13 @@ fn every_non_conforming_tail_shape_keeps_its_refusal() {
     // untracked formals (an indexed byte, a sibling of a bitfield, a
     // typedef-spelled link, an embedded record, a chain past this rule's
     // bound). They move to `TYPED` below; the rest keep their refusal.
-    let rows: [(&str, &str); 6] = [
+    let rows: [(&str, &str); 5] = [
         // The chain is not the whole actual.
         ("&storage->leaf->label", INDIRECT),
         // Card CG10 (rule 10t): the tracked-root place reads it; the flow
         // refuses the root, which the body may bind and does not track.
         ("*storage->leaf->label", "UnknownAlias:storage"),
         ("storage->flag = 1", INDIRECT),
-        // A link the reader did not fully type: a union stays refused.
-        ("uh->view->leaf", INDIRECT),
         // A chain whose base this body may bind: the base is laundered by a
         // whole-object address-of elsewhere in the same body. Since W47 the
         // typed actual reads the chain and the flow obligation refuses the
@@ -324,7 +322,11 @@ fn every_non_conforming_tail_shape_keeps_its_refusal() {
         // load-bearing fact is that the shape is refused, unchanged.
         ("y_id(storage->leaf)", INDIRECT),
     ];
-    const TYPED: [&str; 5] = [
+    // Card CG13 (rule 10w) moves `uh->view->leaf` here deliberately: the
+    // union link is a union step, and the pointer read through it (unpunned)
+    // is a target-free borrow in the declared tail. BEFORE: refused.
+    const TYPED: [&str; 6] = [
+        "uh->view->leaf",
         "storage->leaf->label[0]",
         "bh->bits->label",
         "td->leaf->label",

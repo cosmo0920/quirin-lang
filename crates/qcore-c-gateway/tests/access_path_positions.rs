@@ -212,13 +212,21 @@ fn a_condition_keeps_every_path_refusal() {
     if !clang_available() {
         return;
     }
+    // Card CG13 flip (rule 10w): a scalar read through the typedef-hidden
+    // union, bare or behind a scalar cast, is a custody-neutral condition
+    // operand. BEFORE: both refused (BRANCH).
     for body in [
         "int w(struct c_box *b) { if (b->hidden->x) return 1; return 0; }",
-        "int w(struct c_box *b, int i) { if (b->items[c_count(b)].count) return 1; return 0; }",
         "int w(struct c_box *b, int i) { if (b->items[i].count > (int)b->hidden->f) return 1; return 0; }",
     ] {
-        assert_eq!(outcome(body), unknown(&[BRANCH]), "{body}");
+        assert_eq!(outcome(body), safe(), "{body}");
     }
+    assert_eq!(
+        outcome(
+            "int w(struct c_box *b, int i) { if (b->items[c_count(b)].count) return 1; return 0; }"
+        ),
+        unknown(&[BRANCH])
+    );
     // Card CG10 (rule 10t): the tracked mixed path is now read, and its
     // `b->items` link, which no admitted store bound, refuses at the flow.
     let tracked = "int w(int n) { struct c_box *b = c_make(n); int r = 0; \
@@ -376,10 +384,12 @@ fn an_enumeration_member_is_a_scalar_on_positive_evidence() {
     let unguarded = "int w(int n) { struct c_box *b = c_make(n); int r = 0; \
         if (b || b->mode == C_ON) r = 1; if (b) c_drop(b); return r; }";
     assert_eq!(outcome(unguarded), unknown(&["unknown_alias:b"]));
+    // Card CG13 flip (rule 10w): the typedef-hidden union beside it is read
+    // too. BEFORE: refused (BRANCH).
     assert_eq!(
         outcome(
             "int w(struct c_box *b) { if (b->mode == C_ON && b->hidden->x) return 1; return 0; }"
         ),
-        unknown(&[BRANCH])
+        safe()
     );
 }

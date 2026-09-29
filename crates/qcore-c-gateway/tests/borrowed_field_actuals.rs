@@ -461,6 +461,38 @@ fn every_other_refused_shape_keeps_its_unknown_and_its_diagnostic() {
         "a parenthesized actual is not a bare member read",
     ];
     for (label, body) in cases {
+        // Card CG13 (rule 10w) moves the union-link and union-base rows
+        // deliberately (the base row keeps its label as written): `view`
+        // is a union step and `cio` read through it a borrow at `b_open`'s
+        // borrowed position, so the gate refusal gives way to the fixture's
+        // own obligation (`chunk` used without a null test). Still Unknown,
+        // never Safe.
+        if matches!(
+            label,
+            "a chain through a link the reader did not type is not a direct member read"
+                | "a union base is never admitted"
+        ) {
+            let result = analyze(body, "w");
+            assert!(
+                !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+                "{label}"
+            );
+            let w = function(program(&result), "w");
+            assert_eq!(w.status, AnalysisStatus::Unknown, "{label}");
+            assert!(
+                w.diagnostics.iter().all(|diagnostic| !matches!(
+                    &diagnostic.kind,
+                    LegacyDiagnosticKind::Unsupported { description } if description == INDIRECT
+                )) && w.diagnostics.iter().any(|diagnostic| matches!(
+                    &diagnostic.kind,
+                    LegacyDiagnosticKind::Unsupported { description }
+                        if description == "nullable resource `chunk` used by a non-null contract"
+                )),
+                "{label}: the typed actual exposes the unguarded result, got {:?}",
+                w.diagnostics
+            );
+            continue;
+        }
         if MOVED.contains(&label) {
             refused_by_the_obligation(label, body, "storage");
         } else {

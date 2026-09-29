@@ -232,10 +232,11 @@ fn an_arrow_through_an_address_and_an_address_comparison_read() {
     ] {
         assert_eq!(outcome(body), safe(), "{body}");
     }
-    // A union field behind the address keeps P2's refusal.
+    // Card CG13 flip (rule 10w): a union field behind the address is a
+    // custody-neutral scalar read. BEFORE: P2's refusal (BRANCH).
     assert_eq!(
         outcome("int w(struct c_q *q) { if ((&q->lock)->word) return 1; return 0; }"),
-        unknown(&[BRANCH])
+        safe()
     );
 }
 

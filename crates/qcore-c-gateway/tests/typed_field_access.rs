@@ -301,20 +301,6 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
             "void subject(struct doc *d, struct pane *n) { void *p = q_alloc(); \
              d->pane = n; q_free(p); }",
         ),
-        // A union member can overlap a pointer.
-        (
-            "union base",
-            "void subject(union overlay *o) { void *p = q_alloc(); o->cursor = 1; q_free(p); }",
-        ),
-        // A scalar field on a struct remains independent of its distinct
-        // anonymous-union member; direct union fields stay refused above.
-        // The bitfield itself remains refused, while the distinct `dirty`
-        // field is admitted by the positive control above.
-        (
-            "bitfield member",
-            "void subject(struct bitfield_doc *d) { void *p = q_alloc(); \
-             d->cursor = 1; q_free(p); }",
-        ),
         // A distinct scalar field on a callback record certifies above;
         // pointer-valued stores remain refused by the pointer-field control.
         // `volatile` carries side effects the projection does not model.
@@ -350,6 +336,17 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
              d->cursor = q_width(); q_free(p); }",
         ),
     ];
+    // Card CG13-UNION-AND-BITFIELD-PLACES moves the "union base" and
+    // "bitfield member" rows out of this table deliberately (rule 10w): a
+    // scalar store through a member of a union that can overlap a pointer is
+    // admitted with the refused-write frame, and a bit-field store is a
+    // read-modify-write of its storage unit. BEFORE: both refused.
+    for body in [
+        "void subject(union overlay *o) { void *p = q_alloc(); o->cursor = 1; q_free(p); }",
+        "void subject(struct bitfield_doc *d) { void *p = q_alloc(); d->cursor = 1; q_free(p); }",
+    ] {
+        certified(body);
+    }
     for (case, body) in cases {
         let reasons = unknown_reasons(body);
         assert!(
@@ -493,8 +490,13 @@ fn a_certificate_resting_on_the_classification_is_rederived_from_source() {
         let result = check_legacy_safety_certificate(&certificate);
         assert!(
             result == Err(SUMMARY_MISMATCH.to_owned())
-                || (*case == "the record gains a bitfield the reader refuses"
-                    && result
+                // Card CG13 (rule 10w): the union version is now read too (a
+                // framed store), so its re-derived program differs.
+                || (matches!(
+                    *case,
+                    "the record gains a bitfield the reader refuses"
+                        | "the accessed record becomes a union"
+                ) && result
                         == Err("program summary does not match the preprocessed source".to_owned())),
             "{case}: the certificate must not survive the substitution: {result:?}"
         );

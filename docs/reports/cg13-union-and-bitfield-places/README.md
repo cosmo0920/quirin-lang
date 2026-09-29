@@ -252,6 +252,48 @@ which agrees with M07's 0 leaves. The punned refusals are registered as
 - `typed_place::casts_calls_unions_bitfields_and_volatile_bases_refuse`:
   `s->un.u` and `s->bf` are now root-only places (BEFORE: `Refusal::Field`).
 
+The first gate run (exit 101, 13 failed of 6,640) found older cards' pins
+whose only refusal was the union or bit-field step. Each is flipped by name,
+with its BEFORE in a comment:
+
+- `access_path_statements::pointer_store_and_union_still_refuse`: its three
+  union rows now certify. The pointer-store and aggregate rows stay.
+- `access_path_positions::a_condition_keeps_every_path_refusal`: the
+  typedef-hidden union operand, bare and behind a scalar cast, is now Safe.
+  `…an_enumeration_member_is_a_scalar_on_positive_evidence`: the union beside
+  the enumeration is now Safe.
+- `access_path_position_residuals::an_arrow_through_an_address_and_an_address_comparison_read`:
+  `(&q->lock)->word` is now Safe.
+- `chained_tail::every_non_conforming_tail_shape_keeps_its_refusal`:
+  `uh->view->leaf` moves to its `TYPED` rows (an unpunned borrow in the
+  declared tail).
+- `o04_arms::every_untyped_link_keeps_its_unknown_and_its_diagnostic`, and
+  `o04_constructor_caller::ambiguous_actual_shapes_keep_their_unknown` and
+  `borrowed_field_actuals::every_other_refused_shape_keeps_its_unknown_and_its_diagnostic`
+  (union link and union base rows): the actual through the union is read at
+  the borrowed position. The gate refusal gives way to the fixture's own
+  obligation (a nullable result used without a test), so these stay Unknown,
+  never Safe. This is the W47 re-pin pattern these files already use.
+- `indirect_chain_access::typed_extended_paths_preserve_unlisted_refusals`:
+  `o->u->x = 1` through a union pointee is now Safe.
+- `address_of_member::every_other_refused_member_shape_keeps_its_unknown_and_its_diagnostic`:
+  `&hold->lock.tag` (a scalar member of the custody-free `a_lock_t` union)
+  certifies at the borrowed position. Its only refusal was the union: rule
+  10n's typed address fallback already hands a continued selection through a
+  struct. A callee writing through the address reaches only the union's
+  storage, and no union member is ever linked (O04-B09B10's premise). So
+  this address carries no frame, and needs none.
+- `typed_field_access`: the `union base` and `bitfield member` rows of
+  `ambiguous_accesses_keep_their_existing_unknown_and_diagnostic` now certify.
+  In `a_certificate_resting_on_the_classification_is_rederived_from_source`,
+  the union substitution fails the program-summary gate instead of the
+  containment gate, and the certificate still does not survive.
+- `compiler/tests/workspace_layering.rs`: `qcore-c-gateway` may depend on
+  `qcore-core`. This is a deliberate pin update for the
+  `disjoint_footprint` connection. The edge points down (L2 → L1), and the
+  gateway already reached the kernel through `qcore-contract`.
+  `docs/development/architecture.md` says so.
+
 **Refusal controls added** (`tests/union_bitfield_places.rs`, route G):
 
 - concurrent (unsequenced) stores to two bit-fields of one unit, and of two

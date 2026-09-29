@@ -15,9 +15,14 @@ const ALLOWED: &[(&str, &[&str])] = &[
         "crates/qcore-contract",
         &["qcore-core", "qcore-frontend", "qcore-schemas"],
     ),
+    // Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w) adds `qcore-core`
+    // deliberately: the gateway asks the kernel's `disjoint_footprint` model
+    // about bit-field storage units instead of re-deriving it. The edge points
+    // down (L2 -> L1), and the gateway already depended on the kernel through
+    // `qcore-contract`.
     (
         "crates/qcore-c-gateway",
-        &["qcore-contract", "qcore-schemas"],
+        &["qcore-contract", "qcore-core", "qcore-schemas"],
     ),
     (
         "crates/qcore-verifier-host",

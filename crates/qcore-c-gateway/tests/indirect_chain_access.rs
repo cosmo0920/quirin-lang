@@ -242,8 +242,9 @@ fn typed_extended_paths_preserve_unlisted_refusals() {
             "void w(struct c_box *b) { ((struct c_leaf *)b->item->leaf->any)->weight = 1; }",
             "Unknown",
         ),
-        // A union pointee.
-        ("void w(struct c_odd *o) { o->u->x = 1; }", "Unknown"),
+        // A union pointee: card CG13 (rule 10w) reads the scalar store
+        // through the union step. BEFORE: Unknown.
+        ("void w(struct c_odd *o) { o->u->x = 1; }", "Safe"),
         // The new typed path is not limited to four selections.
         (
             "void w(struct c_box *b) { b->next->next->next->next->flag = 0; }",
