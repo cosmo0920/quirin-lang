@@ -1,15 +1,15 @@
 //! Declared Monkey syntax bounds for the shared typed C path importer.
 //! Calls remain opaque; source projection does not establish custody or safety.
 use crate::legacy_c::C11TranslationUnit;
-use crate::typed_source::{
-    import_source_functions_from_profile, import_source_functions_from_profile_admitting,
-};
-use qcore_c_gateway::typed_source_nodes::{Classification, NodeAdmission};
 pub use crate::typed_source::{SourceExpression, SourceOperation, SourceRegion, SourceValue};
 pub use crate::typed_source::{
     SourcePath as MonkeySourcePath, SourceResult as MonkeySourceResult,
     SourceSummary as MonkeySourceSummary,
 };
+use crate::typed_source::{
+    import_source_functions_from_profile, import_source_functions_from_profile_admitting,
+};
+use qcore_c_gateway::typed_source_nodes::{Classification, NodeAdmission};
 use qcore_schemas::profile::ImportRole;
 
 // Q5: source-contract text remains an interpreter input. Its declaration order

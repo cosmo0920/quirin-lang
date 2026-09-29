@@ -181,7 +181,8 @@ fn value(value: &SourceValue) -> Result<CleanupReplayValueRecord, String> {
         // admission, so they cannot reach it; were they to, they are refused.
         SourceExpression::Floating { .. } | SourceExpression::Character { .. } => {
             return Err(
-                "cleanup replay projection does not classify CG01 floating/character literals".into(),
+                "cleanup replay projection does not classify CG01 floating/character literals"
+                    .into(),
             );
         }
     };

@@ -10,9 +10,8 @@ pub(super) const E01_BINARY: [&str; 6] = ["-", "<=", ">=", "^", "<<", ">>"];
 /// Unary operators E02 names.
 pub(super) const E02_UNARY: [&str; 2] = ["+", "~"];
 /// Compound assignments E03 names for T, plus `|=` (int-only at the base).
-pub(super) const E03_COMPOUND: [&str; 10] = [
-    "+=", "-=", "*=", "/=", "%=", "<<=", ">>=", "&=", "^=", "|=",
-];
+pub(super) const E03_COMPOUND: [&str; 10] =
+    ["+=", "-=", "*=", "/=", "%=", "<<=", ">>=", "&=", "^=", "|="];
 
 /// (position, source) for a binary operator spelled `@`.
 pub(super) fn binary_positions(op: &str) -> Vec<(&'static str, String)> {
@@ -70,9 +69,17 @@ pub(super) fn compound_positions(op: &str) -> Vec<(&'static str, String)> {
 pub(super) fn literal_positions() -> Vec<(&'static str, &'static str, String)> {
     [
         ("float", "argument", "void g(double);void f(void){g(1.5);}"),
-        ("float", "argument-f", "void g(float);void f(void){g(2.5f);}"),
+        (
+            "float",
+            "argument-f",
+            "void g(float);void f(void){g(2.5f);}",
+        ),
         ("char", "return", "int f(int c){return c == 'x';}"),
-        ("char", "branch", "int f(int c){if(c == 'x')return 1;return 0;}"),
+        (
+            "char",
+            "branch",
+            "int f(int c){if(c == 'x')return 1;return 0;}",
+        ),
         ("char", "index", "int f(int *p){return p['a'];}"),
         ("char", "argument", "void g(int);void f(void){g('x');}"),
     ]

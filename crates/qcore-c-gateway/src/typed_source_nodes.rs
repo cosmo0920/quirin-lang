@@ -192,9 +192,8 @@ impl NodeAdmission {
     /// Check the rows against the node table.
     pub fn validate(&self) -> Result<(), String> {
         for (index, (spelling, class)) in self.rows.iter().enumerate() {
-            let facts = facts(spelling).ok_or_else(|| {
-                format!("{}: `{spelling}` is not a CG01 node", self.consumer)
-            })?;
+            let facts = facts(spelling)
+                .ok_or_else(|| format!("{}: `{spelling}` is not a CG01 node", self.consumer))?;
             if self.rows[..index].iter().any(|(seen, _)| seen == spelling) {
                 return Err(format!("{}: `{spelling}` is listed twice", self.consumer));
             }
@@ -245,9 +244,8 @@ pub(crate) fn expression_spelling(node: &Value) -> Option<String> {
 /// The CG01 spelling of a Clang compound-assignment node, if it is one.
 pub(crate) fn compound_spelling(node: &Value) -> Option<String> {
     let opcode = node["opcode"].as_str()?;
-    (node["kind"] == "CompoundAssignOperator"
-        && facts(&format!("compound {opcode}")).is_some())
-    .then(|| format!("compound {opcode}"))
+    (node["kind"] == "CompoundAssignOperator" && facts(&format!("compound {opcode}")).is_some())
+        .then(|| format!("compound {opcode}"))
 }
 
 /// Refuse a CG01 operator node unless its result and operand types are
@@ -263,7 +261,11 @@ pub(crate) fn check_integer_types(
     }
     let comparison = matches!(spelling, "binary <=" | "binary >=");
     let result_ok = OPERAND_TYPES.contains(&result) && (!comparison || result == "int");
-    if !result_ok || operands.iter().any(|ty| !OPERAND_TYPES.contains(&ty.as_str())) {
+    if !result_ok
+        || operands
+            .iter()
+            .any(|ty| !OPERAND_TYPES.contains(&ty.as_str()))
+    {
         return Err(format!(
             "`{spelling}` requires promoted integer operands (result {result}, operands {})",
             operands.join(", ")

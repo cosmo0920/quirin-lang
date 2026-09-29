@@ -3,8 +3,7 @@
 // refusals. Rows are the shared vectors the BEFORE test executed at base.
 use super::*;
 use crate::typed_source_nodes::{
-    Classification, Fault, NODE_TABLE, NodeAdmission, checked_binary, classification_allowed,
-    facts,
+    Classification, Fault, NODE_TABLE, NodeAdmission, checked_binary, classification_allowed, facts,
 };
 #[path = "source_operators_vectors.rs"]
 mod vectors;
@@ -80,7 +79,9 @@ fn spellings(summary: &SourceSummary) -> Vec<String> {
     let mut visit = |value: &SourceValue| {
         let _ = visit_value(value, |value| {
             match &value.expression {
-                SourceExpression::Binary { operator, .. } => found.push(format!("binary {operator}")),
+                SourceExpression::Binary { operator, .. } => {
+                    found.push(format!("binary {operator}"))
+                }
                 SourceExpression::Unary { operator, .. } => found.push(format!("unary {operator}")),
                 SourceExpression::Floating { .. } => found.push("literal floating".into()),
                 SourceExpression::Character { .. } => found.push("literal character".into()),
@@ -160,15 +161,23 @@ fn cg01_admitting_route_imports_every_node_in_every_position() {
     for op in E01_BINARY {
         for (position, c) in binary_positions(op) {
             let s = summary(&c);
-            assert!(spellings(&s).contains(&format!("binary {op}")), "{position}: {c}");
-            s.paths().iter().for_each(|p| check_path_symbols(p).unwrap());
+            assert!(
+                spellings(&s).contains(&format!("binary {op}")),
+                "{position}: {c}"
+            );
+            s.paths()
+                .iter()
+                .for_each(|p| check_path_symbols(p).unwrap());
             rows += 1;
         }
     }
     for op in E02_UNARY {
         for (position, c) in unary_positions(op) {
             let s = summary(&c);
-            assert!(spellings(&s).contains(&format!("unary {op}")), "{position}: {c}");
+            assert!(
+                spellings(&s).contains(&format!("unary {op}")),
+                "{position}: {c}"
+            );
             rows += 1;
         }
     }
@@ -179,7 +188,10 @@ fn cg01_admitting_route_imports_every_node_in_every_position() {
         } else {
             "literal character"
         };
-        assert!(spellings(&s).iter().any(|found| found == spelling), "{position}: {c}");
+        assert!(
+            spellings(&s).iter().any(|found| found == spelling),
+            "{position}: {c}"
+        );
         rows += 1;
     }
     for op in E03_COMPOUND {
@@ -233,10 +245,17 @@ fn cg01_compound_reads_once_converts_and_writes_back() {
     assert_eq!(*read, *written, "the place is evaluated once");
     assert_eq!(read.c_type, "short");
     // short -> int (computation), `-` at int, int -> short (writeback).
-    let SourceExpression::Cast { cast, value: result } = &stored.expression else {
+    let SourceExpression::Cast {
+        cast,
+        value: result,
+    } = &stored.expression
+    else {
         panic!("conversion back to the place type: {stored:?}")
     };
-    assert_eq!((cast.as_str(), stored.c_type.as_str()), ("IntegralCast", "short"));
+    assert_eq!(
+        (cast.as_str(), stored.c_type.as_str()),
+        ("IntegralCast", "short")
+    );
     let SourceExpression::Binary { operator, left, .. } = &result.expression else {
         panic!()
     };
@@ -245,7 +264,10 @@ fn cg01_compound_reads_once_converts_and_writes_back() {
         panic!("old value converted to the computation type: {left:?}")
     };
     assert!(matches!(old.expression, SourceExpression::Symbol { .. }));
-    assert_eq!((left.c_type.as_str(), old.c_type.as_str()), ("int", "short"));
+    assert_eq!(
+        (left.c_type.as_str(), old.c_type.as_str()),
+        ("int", "short")
+    );
 }
 
 /// `int |= int` takes the CG01 route under an admission and the legacy route

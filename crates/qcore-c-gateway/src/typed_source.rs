@@ -408,8 +408,7 @@ pub fn import_source_functions_admitting(
                     &fields,
                     &constants,
                     &arrays,
-                    profile,
-                    admission,
+                    (profile, admission),
                 )
             });
             match result {
@@ -880,9 +879,7 @@ impl Importer<'_> {
                 Box::new(self.expression(child, depth + 1)?),
             )),
             ("FloatingLiteral", []) => {
-                let literal = node["value"]
-                    .as_str()
-                    .ok_or("missing floating literal")?;
+                let literal = node["value"].as_str().ok_or("missing floating literal")?;
                 Ok(Expr::Literal(value(
                     ty,
                     SourceExpression::Floating {
@@ -914,8 +911,8 @@ impl Importer<'_> {
         right: &Value,
         depth: usize,
     ) -> Result<Stmt, String> {
-        let spelling = typed_source_nodes::compound_spelling(node)
-            .ok_or("unmodeled compound assignment")?;
+        let spelling =
+            typed_source_nodes::compound_spelling(node).ok_or("unmodeled compound assignment")?;
         self.admission.admit(&spelling)?;
         let place = c_type(left)?;
         let compute_lhs = qual_type(&node["computeLHSType"])?;
@@ -1843,8 +1840,7 @@ fn derive(
     fields: &BTreeMap<(String, String), String>,
     constants: &BTreeMap<String, SourceValue>,
     arrays: &BTreeSet<String>,
-    profile: &SourceImportProfile<'_>,
-    admission: &NodeAdmission,
+    (profile, admission): (&SourceImportProfile<'_>, &NodeAdmission),
 ) -> Result<SourceSummary, String> {
     let expected_signature = profile
         .signature_constraints
