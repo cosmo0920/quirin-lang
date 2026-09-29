@@ -888,6 +888,51 @@ void service_hook(struct flb_lib_ctx *ctx)
 }
 
 #[test]
+fn nc_a_macro_made_dispatch_in_the_closure_is_refused() {
+    // The hook dispatches through a field in a macro; a registrant of that
+    // field creates an input.
+    let service = r#"
+#include "fluent-bit/flb_input.h"
+#define INIT_ALL(i) (i)->p->cb_init((i), 0, 0)
+void service_hook(struct flb_lib_ctx *ctx)
+{
+    struct flb_input_instance *first = 0;
+    INIT_ALL(first);
+}
+"#;
+    let creator = r#"
+#include "fluent-bit/flb_input.h"
+static int in_make_init(struct flb_input_instance *ins, void *config, void *data)
+{
+    flb_input((struct flb_lib_ctx *) data, (char *) "coro", NULL);
+    return 0;
+}
+struct flb_input_plugin in_make_plugin = {
+    .name = "make",
+    .cb_init = in_make_init,
+    .flags = 0
+};
+"#;
+    let fixture = make_fixture(
+        "region-closure-dispatch",
+        &with_macros(INCLUDE_CENSUS, "", ""),
+        &[
+            ("include/macros.h", MACROS),
+            ("src/report.c", REPORT),
+            ("src/service.c", service),
+            ("plugins/in_make/make.c", creator),
+        ],
+    );
+    let without = run_region(&fixture, None);
+    assert_eq!(flag(&without).0, Some(false), "{}", flag(&without).1);
+    let (view, _) = region_facts(&fixture, &["tests/runtime/in_tail.c", "src/flb_lib.c"]);
+    route_kept(
+        &run_region(&fixture, Some(view)),
+        "(macro) plugins/in_make/make.c::in_make_init",
+    );
+}
+
+#[test]
 fn nc_a_unit_function_outside_the_census_that_creates_is_refused() {
     let fixture = macro_fixture("unread-helper", INCLUDE_BOTH, "    HELPER(ctx->flb);", "");
     let (view, _) = region_facts(&fixture, &[]);

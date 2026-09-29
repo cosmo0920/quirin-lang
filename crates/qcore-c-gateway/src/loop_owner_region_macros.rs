@@ -443,8 +443,7 @@ fn body_names(tokens: &[DumpedToken]) -> BTreeSet<String> {
 
 /// Run one unit's token dump and read it.
 fn derive_unit(
-    key: &str,
-    compiler: &str,
+    (key, compiler): (&str, &str),
     directory: &Path,
     flags: &[String],
     language: &str,
@@ -637,8 +636,7 @@ pub fn derive_facts(request: &FactsRequest) -> Result<RegionMacroFacts, String> 
                             ))
                         }
                         (Some((flags, language)), Some(_)) => derive_unit(
-                            key,
-                            compiler,
+                            (key, compiler),
                             directory,
                             flags,
                             language,
@@ -831,6 +829,62 @@ pub(super) struct RegionMacroReach {
     pub invocations: usize,
     /// Macro names read (for the note).
     pub names: BTreeSet<String>,
+}
+
+/// Per macro name, the fields any read file's definition of it calls as a
+/// member: `-> F (` or `. F (` in its replacement list (continuation lines
+/// joined, comments dropped).
+fn member_calls_by_macro(files: &[super::CensusFile]) -> BTreeMap<String, BTreeSet<String>> {
+    let mut calls: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for file in files {
+        let mut logical = String::new();
+        for line in file.text.lines() {
+            if logical.is_empty() {
+                let trimmed = line.trim_start();
+                let Some(rest) = trimmed.strip_prefix('#') else {
+                    continue;
+                };
+                if !rest.trim_start().starts_with("define") {
+                    continue;
+                }
+            }
+            if let Some(stripped) = line.strip_suffix('\\') {
+                logical.push_str(stripped);
+                logical.push(' ');
+                continue;
+            }
+            logical.push_str(line);
+            while let Some(start) = logical.find("/*") {
+                let end = logical[start + 2..]
+                    .find("*/")
+                    .map_or(logical.len(), |e| start + 2 + e + 2);
+                logical.replace_range(start..end, " ");
+            }
+            if let Some(start) = logical.find("//") {
+                logical.truncate(start);
+            }
+            let body = logical.trim_start().trim_start_matches('#').trim_start();
+            let body = body.strip_prefix("define").unwrap_or(body).trim_start();
+            let name_end = body
+                .find(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+                .unwrap_or(body.len());
+            let name = body[..name_end].to_owned();
+            let (tokens, _) = crate::legacy_c::tokenize_with_conditionals(&body[name_end..]);
+            let texts = tokens.iter().map(|t| t.text.as_str()).collect::<Vec<_>>();
+            for k in 1..texts.len() {
+                let member =
+                    texts[k - 1] == "." || (texts[k - 1] == ">" && k >= 2 && texts[k - 2] == "-");
+                if member && is_identifier(texts[k]) && texts.get(k + 1) == Some(&"(") {
+                    calls
+                        .entry(name.clone())
+                        .or_default()
+                        .insert(texts[k].to_owned());
+                }
+            }
+            logical.clear();
+        }
+    }
+    calls
 }
 
 /// The census graph with its macro-made calls (card
@@ -1104,6 +1158,8 @@ impl StepB<'_> {
         let mut poisoned: BTreeMap<usize, String> = BTreeMap::new();
         let mut memo: BTreeMap<(usize, String), BTreeSet<usize>> = BTreeMap::new();
         let mut edges = 0usize;
+        let mut dispatches = 0usize;
+        let member_calls = member_calls_by_macro(self.files);
         for definition in self.definitions {
             let id = self.index[&definition.census_name];
             let path = self.files[definition.file].path.as_str();
@@ -1114,6 +1170,27 @@ impl StepB<'_> {
                 for (unit, invocation) in by_file.get(path).into_iter().flatten() {
                     if !lines.contains(&invocation.line) {
                         continue;
+                    }
+                    // A field dispatch a replacement list makes reaches every
+                    // registrant of the field.
+                    let expansion = &invocation.tokens;
+                    for (i, t) in expansion.iter().enumerate() {
+                        let member = i > 0 && matches!(expansion[i - 1].text.as_str(), "." | "->");
+                        let called = expansion.get(i + 1).is_some_and(|n| n.text == "(");
+                        if member
+                            && called
+                            && t.identifier
+                            && (t.body || expansion[i - 1].body || expansion[i + 1].body)
+                        {
+                            found.extend(
+                                self.registrants
+                                    .get(&t.text)
+                                    .into_iter()
+                                    .flat_map(BTreeMap::keys)
+                                    .copied(),
+                            );
+                            dispatches += 1;
+                        }
                     }
                     for t in invocation.tokens.iter().filter(|t| t.body && t.identifier) {
                         let mut seen = BTreeSet::new();
@@ -1145,6 +1222,17 @@ impl StepB<'_> {
                             // arm: a target no compiled unit defines is not
                             // part of the program.
                             callees.retain(|id| !self.compiled_by_no_unit(*id));
+                            // A field a replacement list calls (`->F (` or
+                            // `.F (`): every registrant of it.
+                            for word in self.macro_member_calls(text, &member_calls) {
+                                callees.extend(
+                                    self.registrants
+                                        .get(&word)
+                                        .into_iter()
+                                        .flat_map(BTreeMap::keys)
+                                        .copied(),
+                                );
+                            }
                             callees
                         });
                     found.extend(callees.iter().copied());
@@ -1186,10 +1274,53 @@ impl StepB<'_> {
                 .map(|(id, why)| format!("`{}`: {why}", self.functions[*id]))
                 .next()
                 .unwrap_or_default();
+            // A shortest path to a hazard or an unresolved function, the
+            // macro-made steps marked.
+            let mut parent: BTreeMap<usize, (usize, bool)> = BTreeMap::new();
+            let mut queue = std::collections::VecDeque::from([*root]);
+            let mut seen = BTreeSet::from([*root]);
+            let mut end = None;
+            while let Some(at) = queue.pop_front() {
+                if reaching.contains(&at) || poisoned.contains_key(&at) {
+                    end = Some(at);
+                    break;
+                }
+                let steps = self
+                    .reach
+                    .next
+                    .get(&at)
+                    .into_iter()
+                    .flatten()
+                    .map(|to| (*to, false))
+                    .chain(extra.get(&at).into_iter().flatten().map(|to| (*to, true)));
+                for (to, made) in steps {
+                    if widened.contains(&to) && seen.insert(to) {
+                        parent.insert(to, (at, made));
+                        queue.push_back(to);
+                    }
+                }
+            }
+            let mut path = Vec::new();
+            let mut cursor = end;
+            while let Some(at) = cursor {
+                let step = parent.get(&at);
+                path.push(format!(
+                    "{}{}",
+                    if step.is_some_and(|(_, made)| *made) {
+                        "(macro) "
+                    } else {
+                        ""
+                    },
+                    self.functions[at]
+                ));
+                cursor = step.map(|(from, _)| *from);
+            }
+            path.reverse();
             return Err(format!(
                 "`{}` reaches a hazard through a macro-made call the census graph does not \
-                 hold{}",
+                 hold ({}){}",
                 self.functions[*root],
+                path.join(" > "),
                 if why.is_empty() {
                     String::new()
                 } else {
@@ -1208,15 +1339,40 @@ impl StepB<'_> {
         }
         Ok(WidenedReach {
             note: format!(
-                "closure macro calls: {edges} macro-made call(s) of the read files (the units' \
-                 expansions for the {} file(s) they read, every read file's definition \
-                 elsewhere) added to the census graph; no call of the region reaches a hazard \
-                 through one",
+                "closure macro calls: {edges} macro-made call(s) of the read files ({dispatches} \
+                 field dispatch(es) of the units' expansions to every registrant; the units' \
+                 expansions for the {} file(s) they read, every read file's definition and \
+                 every registrant of a field it calls elsewhere) added to the census graph; no \
+                 call of the region reaches a hazard through one",
                 read_files.len()
             ),
             closure,
             reaching: widened,
         })
+    }
+
+    /// The fields the read files' definitions of macro `name` call as
+    /// members (`->F (` / `.F (`), through nested macros.
+    fn macro_member_calls(
+        &self,
+        name: &str,
+        member_calls: &BTreeMap<String, BTreeSet<String>>,
+    ) -> BTreeSet<String> {
+        let mut fields = BTreeSet::new();
+        let mut seen = BTreeSet::new();
+        let mut stack = vec![name.to_owned()];
+        while let Some(macro_name) = stack.pop() {
+            if !seen.insert(macro_name.clone()) {
+                continue;
+            }
+            fields.extend(member_calls.get(&macro_name).into_iter().flatten().cloned());
+            for word in self.macro_bodies.get(&macro_name).into_iter().flatten() {
+                if self.macro_bodies.contains_key(word) {
+                    stack.push(word.clone());
+                }
+            }
+        }
+        fields
     }
 
     /// Every definition of `id` is in a `.c` file each of whose units the

@@ -307,9 +307,7 @@ impl StepB<'_> {
     /// `None` when the shape or a source is not read.
     fn copy_callbacks(
         &self,
-        g: &Definition,
-        root: &str,
-        member: &str,
+        (g, root, member): (&Definition, &str, &str),
         from: &Definition,
         x: &str,
         callback: &str,
@@ -768,9 +766,7 @@ impl StepB<'_> {
             if let Flow::Dispatch(callback, position, index) = &flow
                 && start + 3 == *k
                 && let Some(targets) = self.copy_callbacks(
-                    g,
-                    root,
-                    member,
+                    (g, root, member),
                     definition,
                     texts[start],
                     callback,
