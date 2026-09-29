@@ -690,6 +690,7 @@ pub fn emit_buffer_c11(
         typed: BTreeMap::new(),
         conversions: BTreeSet::new(),
         helpers: BTreeSet::new(),
+        comparisons: BTreeSet::new(),
         target: certificate.target_assumption.clone(),
     };
 
@@ -738,6 +739,9 @@ pub fn emit_buffer_c11(
             certificate.target_assumption.as_ref(),
         ));
     }
+    for (cmp, ty) in &records.comparisons {
+        typed_prelude.push_str(&comparison_helper(*cmp, *ty));
+    }
     if !typed_prelude.is_empty() {
         fragments.push(Fragment::new(
             Section::Prelude,
@@ -779,6 +783,7 @@ pub fn buffer_loop_block(
         typed: BTreeMap::new(),
         conversions: BTreeSet::new(),
         helpers: BTreeSet::new(),
+        comparisons: BTreeSet::new(),
         target: None,
     };
     let mut source = String::new();
@@ -841,6 +846,10 @@ struct RecordEnvironment {
     /// Card `W48-QR-SCALAR-TYPES-R5`: §G02t's shared checked helpers the
     /// program's value statements call, each emitted once.
     helpers: BTreeSet<crate::scalar_calls_c_emit::Helper>,
+    /// Card `W48-QR-SCALAR-TYPES-R5`: the comparisons the program's value
+    /// statements make, each emitted once as a function (see
+    /// [`comparison_helper`]).
+    comparisons: BTreeSet<(st::Cmp, ScalarType)>,
     /// The recorded target, when the certificate depends on one.
     target: Option<st::RecordedTarget>,
 }
@@ -1427,6 +1436,36 @@ fn emit_events(
     Ok(())
 }
 
+/// The C name of the comparison function for `cmp` at `ty` (card
+/// `W48-QR-SCALAR-TYPES-R5`).
+fn comparison_helper_name(cmp: st::Cmp, ty: ScalarType) -> String {
+    let name = match cmp {
+        st::Cmp::Eq => "eq",
+        st::Cmp::Ne => "ne",
+        st::Cmp::Lt => "lt",
+        st::Cmp::Le => "le",
+        st::Cmp::Gt => "gt",
+        st::Cmp::Ge => "ge",
+    };
+    format!("qcore_buffer_{name}_{ty}")
+}
+
+/// One comparison as a function of two parameters (card
+/// `W48-QR-SCALAR-TYPES-R5`). A comparison written inline would let the C
+/// compiler see a comparison of a name with itself (`x == x`) or of an
+/// unsigned value with `0` (`x < 0`) and warn that its result is fixed —
+/// an error under `-Werror` for a statement the source legitimately writes;
+/// through parameters the compiler sees two values of the type and nothing
+/// else, and the result is the same `bool`.
+fn comparison_helper(cmp: st::Cmp, ty: ScalarType) -> String {
+    let c = st::c_type(ty);
+    format!(
+        "\nstatic bool {}({c} a, {c} b)\n{{\n    return a {} b;\n}}\n",
+        comparison_helper_name(cmp, ty),
+        cmp.c_operator()
+    )
+}
+
 /// The result type and C expression of one value statement (card
 /// `W48-QR-SCALAR-TYPES-R5`). The operands' one type is a named operand's
 /// (the checker proved every named operand of one type), `bool` for a `bool`
@@ -1476,7 +1515,11 @@ fn value_statement_expression(
         }
         ValueOperation::Compare(cmp, a, b) => {
             let (a, b) = (c(a)?, c(b)?);
-            (ScalarType::Bool, format!("({a} {} {b})", cmp.c_operator()))
+            records.comparisons.insert((*cmp, ty));
+            (
+                ScalarType::Bool,
+                format!("{}({a}, {b})", comparison_helper_name(*cmp, ty)),
+            )
         }
     })
 }
