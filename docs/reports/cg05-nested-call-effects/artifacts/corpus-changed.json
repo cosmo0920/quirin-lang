@@ -1,0 +1,157 @@
+[
+ {
+  "unit": "cJSON.c",
+  "function": "compare_double",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "cio_file_unix.c",
+  "function": "cio_file_native_compose_path",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: nested call `strlen` inside a modeled call is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_splunk_hec.c",
+  "function": "format_context_common",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: resource call with a formal embedded in an unmodeled expression": -3
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4HC_Insert",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `LZ4HC_hashPtr`": -1
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4HC_hashPtr",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_load_all",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: nested call `strlen` inside a modeled call is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: resource call with a formal embedded in an unmodeled expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: resource call with a formal embedded in an unmodeled expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_error.c",
+  "function": "rd_kafka_error_new_v",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: resource call with a formal embedded in an unmodeled expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "create_jws_compact_serialization",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: nested call `strlen` inside a modeled call is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "rd_kafka_oidc_assertion_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: nested call `strlen` inside a modeled call is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "rd_kafka_oidc_jwt_bearer_build_request_body",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: nested call `strlen` inside a modeled call is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: nested call `strlen` inside a modeled call is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "toppar_sort_by_list_cnt",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: nested call `rd_list_cnt` inside a modeled call is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "compress_fragment",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `hash`": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "hash",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: nested call `get_unaligned32` inside a modeled call is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "unaligned_copy64",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: nested call `get_unaligned32` inside a modeled call is outside the resource projection": -2,
+   "unsupported: nested call `get_unaligned64` inside a modeled call is outside the resource projection": -1
+  }
+ }
+]

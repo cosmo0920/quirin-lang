@@ -83,7 +83,7 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg04-condition-acquisition](cg04-condition-acquisition/README.md) | CG04-CONDITION-ACQUISITION: acquisitions in conditions and complex condition leaves |
 
-| [cg06-value-connectives-and-conditional](cg06-value-connectives-and-conditional/README.md) | CG06-VALUE-CONNECTIVES-AND-CONDITIONAL: value `&&`, `&#124;&#124;` and `?:` by branching |
+| [cg05-nested-call-effects](cg05-nested-call-effects/README.md) | CG05-NESTED-CALL-EFFECTS: nested and sibling call effects |
 
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 

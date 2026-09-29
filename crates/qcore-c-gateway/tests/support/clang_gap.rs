@@ -39,6 +39,7 @@ int r_release_code(void *p); int r_consume_code(void *p); int r_borrow_code(void
 void *r_wrap(void *p);
 int k_open(const char *path); int k_close(int fd);
 void cg_sink(int value); void cg_sink2(int left, int right); void cg_log(const char *format, ...);
+void cg_pair(void *p, int value);
 int opaque(void);
 ";
 

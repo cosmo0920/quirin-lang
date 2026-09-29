@@ -73,6 +73,8 @@ inductive Decision where
   | custodyResult
   | returnedAlias
   | notIdentity
+  /-- Card CG05-NESTED-CALL-EFFECTS: a passed reallocated result. -/
+  | passedReallocation
   deriving DecidableEq, Repr
 
 /-- Owns nothing: no result, or a derived pointer. -/
@@ -94,7 +96,10 @@ def accept (s : Standing) (r : ResultClass) (identity : Bool) (u : Use) : Decisi
       | .none => .accept
       | .owned => .accept
       | _ => .returnedAlias
-    | .passed => if identity && r == .none then .accept else .notIdentity
+    | .passed =>
+      if identity && r == .none then .accept
+      else if r != .reallocated then .accept
+      else .passedReallocation
     | .testedSplit => .accept
 
 /-- `ACCEPTANCE_VECTORS` of `call_instantiation.rs`, row by row. -/
@@ -112,13 +117,16 @@ def acceptanceVectors : List (Standing × ResultClass × Bool × Use × Decision
   (.declared, .derived, true, .returned, .returnedAlias),
   (.declared, .reallocated, false, .returned, .returnedAlias),
   (.declared, .none, true, .passed, .accept),
-  (.declared, .none, false, .passed, .notIdentity),
-  (.declared, .derived, true, .passed, .notIdentity),
+  (.declared, .none, false, .passed, .accept),
+  (.declared, .derived, true, .passed, .accept),
   (.declared, .owned, false, .testedSplit, .accept),
   (.validated, .reallocated, false, .testedSplit, .accept),
   (.declared, .derived, true, .testedSplit, .accept),
   (.declared, .none, true, .testedSplit, .accept),
-  (.recursive, .owned, false, .testedSplit, .recursiveLocal)
+  (.recursive, .owned, false, .testedSplit, .recursiveLocal),
+  (.validated, .owned, false, .passed, .accept),
+  (.declared, .reallocated, false, .passed, .passedReallocation),
+  (.recursive, .owned, false, .passed, .recursiveLocal)
 ]
 
 theorem acceptance_vectors_hold :
@@ -185,10 +193,19 @@ theorem a_custody_result_is_refused_where_it_is_tested (s : Standing) (identity 
       accept s .owned identity .discarded = .custodyResult := by
   cases s <;> simp_all [accept, ResultClass.resourceFree]
 
-/-- A passed value must be the identity with no result (card B04; CG05's to widen). -/
-theorem a_passed_value_is_the_identity (s : Standing) (r : ResultClass) (identity : Bool)
-    (h : accept s r identity .passed = .accept) : identity = true ∧ r = .none := by
+/-- Card CG05-NESTED-CALL-EFFECTS widened the passed row: a passed value is
+accepted unless its callee is recursive or its result is a reallocation (the
+nested-call consumer binds it to a fresh reserved place, or reads it as data,
+and applies it inside-out under its footprint order check,
+`QCore.NestedCallEffects`). -/
+theorem a_passed_value_is_not_a_reallocation (s : Standing) (r : ResultClass) (identity : Bool)
+    (h : accept s r identity .passed = .accept) : s ≠ .recursive ∧ r ≠ .reallocated := by
   cases s <;> cases r <;> cases identity <;> simp_all [accept] <;> revert h <;> decide
+
+/-- Every B04 admission (the identity with no result) stands. -/
+theorem every_b04_admission_stands (s : Standing) (hs : s ≠ .recursive) :
+    accept s .none true .passed = .accept := by
+  cases s <;> simp_all [accept]
 
 /-! ## Instantiation: one summary, one substitution, total or rejected -/
 

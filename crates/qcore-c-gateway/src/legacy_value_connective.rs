@@ -438,13 +438,24 @@ impl Parser<'_> {
                 }
             }
             Site::Return => {
+                // The `return` statement's own chain, in `parse_statement`'s
+                // order (CG02, CG03, then CG05's nested-call return).
                 let statement = self.return_statement(run.clone(), line);
-                let lowered = if !super::return_refused(&statement) {
-                    Some(statement)
-                } else if let Some(elaborated) = self.elaborated_return(&run, line) {
+                let refused = super::return_refused(&statement);
+                let lowered = if let Some(elaborated) = refused
+                    .then(|| self.elaborated_return(&run, line))
+                    .flatten()
+                {
                     Some(elaborated)
+                } else if let Some(instantiated) = refused
+                    .then(|| self.instantiated_return(&run, line))
+                    .flatten()
+                {
+                    Some(instantiated)
+                } else if let Some(nested) = self.nested_call_return(&run, line, &statement) {
+                    Some(nested)
                 } else {
-                    self.instantiated_return(&run, line)
+                    (!refused).then_some(statement)
                 };
                 // An edge lowered to an explicit refusal (a refused call
                 // kept as its own `Unknown` step) declines too.

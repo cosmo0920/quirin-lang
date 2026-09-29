@@ -284,5 +284,6 @@ import QCore.ValueConnectives
 import QCore.PointerStore
 import QCore.UnionBitfieldPlace
 import QCore.ConditionAcquisition
+import QCore.NestedCallEffects
 
 /-! The executable formal core of QCore-C revision 0.1. -/

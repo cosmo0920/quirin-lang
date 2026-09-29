@@ -144,6 +144,10 @@ mod elaboration_route;
 // thin.
 #[path = "legacy_call_instantiation.rs"]
 mod call_instantiation_route;
+// Card CG05-NESTED-CALL-EFFECTS (rule 10y): nested and sibling calls with
+// non-identity effects, through the one application point.
+#[path = "legacy_nested_call.rs"]
+mod nested_call_route;
 
 // Card CG04-CONDITION-ACQUISITION (rule 10x): ownership-producing calls in
 // controlling expressions and complex condition leaves, decided inside the
@@ -6218,6 +6222,11 @@ impl Parser<'_> {
                 {
                     return Ok(instantiated);
                 }
+                // Card CG05-NESTED-CALL-EFFECTS (rule 10y): asked last, only
+                // for a refused return or the nested-call refusal.
+                if let Some(nested) = self.nested_call_return(&expression, line, &statement) {
+                    return Ok(nested);
+                }
                 // Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z):
                 // asked last, only for a refused return.
                 if return_refused(&statement)
@@ -6390,6 +6399,17 @@ impl Parser<'_> {
             self.element_origins.clear();
             return Statement::Block(
                 substituted
+                    .into_iter()
+                    .map(|instruction| Statement::Instruction(instruction, line))
+                    .collect(),
+            );
+        }
+        // Card CG05-NESTED-CALL-EFFECTS (rule 10y): asked last, only for the
+        // nested-call refusal.
+        if let Some(nested) = self.nested_call_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return Statement::Block(
+                nested
                     .into_iter()
                     .map(|instruction| Statement::Instruction(instruction, line))
                     .collect(),

@@ -681,9 +681,16 @@ fn a_nested_call_producing_custody_is_never_admitted() {
            v_log(\"%p\", v_grab(b)); v_drop(b); return 0; }",
         "v_use",
     );
+    // Re-pinned by CG05-NESTED-CALL-EFFECTS (gateway rule 10y): the owned
+    // result is bound to a reserved place and handed to the data tail, which
+    // takes no custody, so it is reported as a leak rather than refused.
     assert!(
-        unsupported(&summary).contains(&nested_refusal("v_grab").as_str()),
-        "an owned nested result keeps the refusal: {:?}",
+        unsupported(&summary).contains(&nested_refusal("v_grab").as_str())
+            || summary
+                .diagnostics
+                .iter()
+                .any(|diagnostic| matches!(diagnostic.kind, LegacyDiagnosticKind::Leak { .. })),
+        "an owned nested result is refused or reported: {:?}",
         summary.diagnostics
     );
     assert_ne!(summary.status, AnalysisStatus::Safe);
@@ -699,11 +706,18 @@ fn two_level_nesting_is_never_admitted() {
     let body = "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
         v_log(\"%d\", v_size(v_make(n))); v_drop(b); return 0; }";
     let summary = generic_summary(body, "v_use");
+    // Re-pinned by CG05-NESTED-CALL-EFFECTS (gateway rule 10y): two levels are
+    // composed inside-out; `v_make`'s owned result, only borrowed by
+    // `v_size`, is reported as a leak.
     assert!(
         unsupported(&summary)
             .iter()
-            .any(|description| description.starts_with("nested call")),
-        "a call inside a nested call keeps the refusal: {:?}",
+            .any(|description| description.starts_with("nested call"))
+            || summary
+                .diagnostics
+                .iter()
+                .any(|diagnostic| matches!(diagnostic.kind, LegacyDiagnosticKind::Leak { .. })),
+        "a call inside a nested call is refused or reported: {:?}",
         summary.diagnostics
     );
     assert_ne!(summary.status, AnalysisStatus::Safe);
@@ -760,21 +774,28 @@ fn a_partial_nested_call_expression_is_never_admitted() {
     if !clang_available() {
         return;
     }
-    for body in [
-        // Arithmetic around the call: not a whole argument.
+    // Flipped by CG05-NESTED-CALL-EFFECTS (gateway rule 10y): arithmetic
+    // around a borrowed `None` call in a data tail is a data actual, composed.
+    let summary = generic_summary(
         "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
            v_log(\"%d\", v_size(b) + 1); v_drop(b); return 0; }",
-        // A nested call at a *custody* position of the outer contract.
-        "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
-           v_eat(v_grab(b)); v_drop(b); return 0; }",
-    ] {
-        let summary = generic_summary(body, "v_use");
-        assert!(
-            !summary.diagnostics.is_empty(),
-            "the shape keeps its refusal: {body}"
-        );
-        assert_ne!(summary.status, AnalysisStatus::Safe, "{body}");
-    }
+        "v_use",
+    );
+    assert_eq!(
+        summary.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        summary.diagnostics
+    );
+    // A nested call at a *custody* position of the outer contract.
+    let body = "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
+           v_eat(v_grab(b)); v_drop(b); return 0; }";
+    let summary = generic_summary(body, "v_use");
+    assert!(
+        !summary.diagnostics.is_empty(),
+        "the shape keeps its refusal: {body}"
+    );
+    assert_ne!(summary.status, AnalysisStatus::Safe, "{body}");
 }
 
 /// **Adversarial row 5 — an address inside the nested call's own arguments.**
