@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """CG02-ELABORATION-CORE: attribute every verdict move between two corpus runs.
 
-Usage: compare.py BEFORE_DIR AFTER_DIR [--json OUT]
+Usage: compare.py BEFORE AFTER [--json OUT]   (a run directory or a diagnostics file, .gz accepted)
 
 Reads each run's resource-diagnostics.json and reports, per function keyed by
 (unit, function): the status move, and the change in each diagnostic kind and
@@ -11,12 +11,21 @@ description; with --json, writes the same as a record.
 
 import argparse
 import collections
+import gzip
 import json
 import pathlib
 
 
 def load(run: pathlib.Path):
-    data = json.loads((run / "resource-diagnostics.json").read_text())
+    """A run directory, or a resource-diagnostics.json file (gzip accepted)."""
+    if run.is_dir():
+        run = run / "resource-diagnostics.json"
+        if not run.exists():
+            run = run.with_name("resource-diagnostics.json.gz")
+    raw = run.read_bytes()
+    if run.suffix == ".gz":
+        raw = gzip.decompress(raw)
+    data = json.loads(raw)
     functions = {}
     for unit in data["units"]:
         name = unit["file"]
