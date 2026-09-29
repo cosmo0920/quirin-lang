@@ -1,6 +1,6 @@
 {
-  "note": "CG05-NESTED-CALL-EFFECTS card gate at tip cd72cdca (base 27dc7c9a), steps run one by one (scripts/gate.sh's commands), logs private/cg05/gate of this worktree: submodule `git submodule update --init third_party/libevent` 0 (the --recursive form was refused by this session's sandbox; third_party/libevent is the only submodule, at d82464a2); run_test_binaries.py first run 6,666 passed, 1 failed (qcore-audit checkpoint_cli::interrupted_run_preserves_completed_units_for_resume, a 30 s wall-clock deadline under load; it passes alone in 7.8 s, 03b), rerun exit 0: 374 units, 387 summaries, 6,667 passed, 0 failed, 11 ignored (private/test-binaries/20260929T183803Z-1438657/summary.json); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 234 audits passed (233 + AuditNestedCallEffects.lean); python tests after this validation regeneration; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE (binary d305eb08 at 27dc7c9a) resource-diagnostics.json 7393fd21 byte-identical to CG03's AFTER; AFTER (binary 52041842 at 6787ea86; later commits change tests, Lean, records and formatting only) 3b38d897, 564/10/4,260 -> 566/10/4,258; system 33/2/199 and tail-pause slice 26/1/242/1 Pending unmoved. Exits in gate/.",
-  "workspace_tests": 6667,
+  "note": "CG05-NESTED-CALL-EFFECTS card gate at tip 9d5cde95 (base 27dc7c9a, main c0ccc66a merged at 32635478), steps run one by one (scripts/gate.sh's commands), logs private/cg05/gate2 of this worktree: submodule `git submodule update --init third_party/libevent` 0 (the --recursive form was refused by this session's sandbox; libevent is the only submodule, d82464a2); run_test_binaries.py exit 0: 376 units, 389 summaries, 6,703 passed, 0 failed, 11 ignored (private/test-binaries/20260929T193830Z-2080891/summary.json); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 236 audits passed (235 on main + AuditNestedCallEffects.lean); python tests after this validation regeneration; docs index 0. The first card gate at cd72cdca (before the merges, private/cg05/gate) passed the same steps: tests 6,667 passed on a rerun (the first run's one failure, checkpoint_cli::interrupted_run_preserves_completed_units_for_resume, is a 30 s wall-clock deadline under load that passes alone), Lean 234, python 365. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8) on the merged base: BEFORE (binary fd3b7932 at c0ccc66a) resource-diagnostics.json 24571074 byte-identical to CG04's AFTER, 565/10/4,259; AFTER (binary 209485a4 at 32635478) 8642ec02, 567/10/4,257; system 33/2/199 and tail-pause slice 26/1/242/1 Pending unmoved. At the base: 7393fd21 564/10/4,260 -> 3b38d897 566/10/4,258, the same two moves. Exits in gate/.",
+  "workspace_tests": 6703,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "reevaluation_probe_exit": 0,
@@ -8,6 +8,6 @@
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
   "standing_gate": "complete",
-  "lean_audits": 234,
+  "lean_audits": 236,
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }

@@ -406,25 +406,30 @@ Ledger 629 → 630 ([scripts/update_ledger.py](scripts/update_ledger.py)).
 
 ## 8. Gate
 
-The gate ran step by step at tip `cd72cdca` (the commands of
-[scripts/gate.sh](scripts/gate.sh); this session's sandbox refuses a script
-launch). The exits are in [gate/](gate/), the record is [gate.json](gate.json),
-and the logs are under `private/cg05/gate/`.
+The final gate ran step by step at tip `9d5cde95` (main `c0ccc66a` merged),
+using the commands of [scripts/gate.sh](scripts/gate.sh); this session's
+sandbox refuses a script launch. The exits are in [gate/](gate/), the record is
+[gate.json](gate.json), and the logs are under `private/cg05/gate2/`.
 
 | Step | Command | Exit | Count |
 |---|---|---|---|
 | submodule | `git submodule update --init third_party/libevent` | 0 | the `--recursive` form was refused by the sandbox; libevent is the only submodule (`d82464a2`) |
-| tests | `python3 scripts/run_test_binaries.py` | 101, then **0** | First run: 6,666 passed and 1 failed. The failure was `qcore-audit` `checkpoint_cli::interrupted_run_preserves_completed_units_for_resume`, a 30 s wall-clock deadline under load; alone it passes in 7.8 s (`03b`). Rerun (`03c`): 374 units, 387 summaries, **6,667 passed**, 0 failed, 11 ignored (`private/test-binaries/20260929T183803Z-1438657/`). |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 376 units, 389 summaries, **6,703 passed**, 0 failed, 11 ignored (`private/test-binaries/20260929T193830Z-2080891/`) |
 | fmt | `cargo fmt --all -- --check` | 0 | |
-| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | a single-element loop in a re-pinned O04 test was fixed first (`cd72cdca`) |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | |
 | probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
 | follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
-| Lean | `python3 scripts/check_lean_audits.py` | 0 | **234 audits** (233 + `AuditNestedCallEffects.lean`) |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **236 audits** (235 on main + `AuditNestedCallEffects.lean`) |
 | Python | `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK, after the matrix validation was regenerated from `gate.json` (`remaining-d02/build_matrix.py --gate`) |
 | docs index | `python3 scripts/build_docs_index.py` | 0 | |
 
-`providers/` is unchanged, so the provider gate is not due. Clang 21.1.8 is
-recorded in `gate/clang-version.txt`.
+The first card gate ran at `cd72cdca`, before the merges (`private/cg05/gate/`,
+its test exits kept as `gate/first-gate-*`). It passed the same steps: 6,667 tests on a
+rerun, Lean 234, Python 365. The test runner's first run there failed one
+test, `qcore-audit` `checkpoint_cli::interrupted_run_preserves_completed_units_for_resume`.
+That test has a 30 s wall-clock deadline and ran under load; alone it passes
+in 7.8 s (`gate/first-gate-03b-checkpoint-rerun.exit`). `providers/` is unchanged, so the provider gate is not
+due. Clang 21.1.8 is recorded in `gate/clang-version.txt`.
 
 ## 9. Scripts
 
