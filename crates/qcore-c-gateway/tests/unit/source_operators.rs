@@ -440,3 +440,101 @@ fn cg01_checked_binary_matches_c_integer_faults() {
         );
     }
 }
+
+/// The mechanical binding of `proof/QCore/TypedSourceOperators.lean`: its
+/// grammar lists, node table and kernel vectors are the Rust ones.
+#[test]
+fn cg01_lean_vectors_match_the_rust_tables() {
+    use crate::typed_source_nodes::{LEGACY_BINARY, LEGACY_UNARY};
+    let lean = include_str!("../../../../proof/QCore/TypedSourceOperators.lean");
+    let section = |start: &str| {
+        let body = lean.split(start).nth(1).expect(start);
+        body[..body.find("]\n").unwrap() + 1].to_owned()
+    };
+    let quoted = |text: &str| {
+        text.split('"')
+            .skip(1)
+            .step_by(2)
+            .map(str::to_owned)
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(
+        quoted(&section("def legacyBinary : List String :=")),
+        LEGACY_BINARY
+    );
+    assert_eq!(
+        quoted(&section("def legacyUnary : List String :=")),
+        LEGACY_UNARY
+    );
+    let fault = |name: &str| match name.trim().trim_start_matches('.') {
+        "signedOverflow" => Fault::SignedOverflow,
+        "divisionByZero" => Fault::DivisionByZero,
+        "quotientOverflow" => Fault::QuotientOverflow,
+        "shiftCount" => Fault::ShiftCount,
+        "negativeLeftShift" => Fault::NegativeLeftShift,
+        other => panic!("unknown Lean fault {other}"),
+    };
+    let table = lean
+        .split("def nodeTable : List Facts := [")
+        .nth(1)
+        .unwrap();
+    let table = &table[..table.find("\n]").unwrap()];
+    let rows = table
+        .split('⟨')
+        .skip(1)
+        .map(|row| {
+            let (spelling, rest) = row.trim_start_matches('"').split_once('"').unwrap();
+            let (faults, rest) = rest.split_once('[').unwrap().1.split_once(']').unwrap();
+            let faults = faults
+                .split(',')
+                .filter(|name| !name.trim().is_empty())
+                .map(fault)
+                .collect::<Vec<_>>();
+            (spelling.to_owned(), faults, rest.contains("true"))
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(rows.len(), NODE_TABLE.len());
+    for ((spelling, faults, store), facts) in rows.iter().zip(NODE_TABLE) {
+        assert_eq!(
+            (spelling.as_str(), faults.as_slice(), *store),
+            (facts.spelling, facts.faults, facts.store)
+        );
+    }
+    let vectors = lean.split("def kernelVectors").nth(1).unwrap();
+    let vectors = &vectors[..vectors.find("\n]").unwrap()];
+    let mut count = 0;
+    for row in vectors.split("\n  (.").skip(1) {
+        let fields = row
+            .trim_end_matches([',', ')'])
+            .split(", ")
+            .collect::<Vec<_>>();
+        let op = match fields[0] {
+            "add" => "+",
+            "sub" => "-",
+            "mul" => "*",
+            "div" => "/",
+            "rem" => "%",
+            "shl" => "<<",
+            "shr" => ">>",
+            other => panic!("unknown Lean operation {other}"),
+        };
+        let number = |text: &str| text.trim_matches(['(', ')']).parse::<i128>().unwrap();
+        let expected = match fields[5] {
+            "none" => None,
+            some => Some(number(some.strip_prefix("some ").unwrap())),
+        };
+        assert_eq!(
+            checked_binary(
+                op,
+                fields[1].parse().unwrap(),
+                fields[2] == "true",
+                number(fields[3]),
+                number(fields[4]),
+            ),
+            expected,
+            "{row}"
+        );
+        count += 1;
+    }
+    assert_eq!(count, 19);
+}

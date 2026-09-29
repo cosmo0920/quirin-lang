@@ -274,5 +274,6 @@ import QCore.ScalarObservationContracts
 import QCore.ReviewHoldStanding
 
 import QCore.SourceExtensions
+import QCore.TypedSourceOperators
 
 /-! The executable formal core of QCore-C revision 0.1. -/

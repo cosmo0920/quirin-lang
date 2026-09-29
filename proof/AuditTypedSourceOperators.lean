@@ -1,0 +1,23 @@
+import QCore.TypedSourceOperators
+#print axioms QCore.TypedSourceOperators.unlisted_binary_refused
+#print axioms QCore.TypedSourceOperators.unlisted_unary_refused
+#print axioms QCore.TypedSourceOperators.read_binary_node
+#print axioms QCore.TypedSourceOperators.comma_refused
+#print axioms QCore.TypedSourceOperators.assignment_refused
+#print axioms QCore.TypedSourceOperators.increment_refused
+#print axioms QCore.TypedSourceOperators.xor_is_a_node
+#print axioms QCore.TypedSourceOperators.legacy_admits_nothing
+#print axioms QCore.TypedSourceOperators.unlisted_node_refused
+#print axioms QCore.TypedSourceOperators.invalid_admission_refuses
+#print axioms QCore.TypedSourceOperators.admit_sound
+#print axioms QCore.TypedSourceOperators.compound_reads_once_writes_once
+#print axioms QCore.TypedSourceOperators.neutral_leaves_frame
+#print axioms QCore.TypedSourceOperators.faulty_not_neutral
+#print axioms QCore.TypedSourceOperators.spellings_unique
+#print axioms QCore.TypedSourceOperators.checked_some_exact
+#print axioms QCore.TypedSourceOperators.division_by_zero_refused
+#print axioms QCore.TypedSourceOperators.quotient_overflow_refused
+#print axioms QCore.TypedSourceOperators.shift_count_refused
+#print axioms QCore.TypedSourceOperators.negative_left_shift_refused
+#print axioms QCore.TypedSourceOperators.signed_result_in_range
+#print axioms QCore.TypedSourceOperators.kernel_vectors_hold

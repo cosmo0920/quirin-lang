@@ -113,3 +113,7 @@ pub(crate) fn wrapper_source_order() -> Result<Vec<String>, String> {
         .map(|decl| decl.value.name)
         .collect())
 }
+
+#[cfg(test)]
+#[path = "../../tests/unit/monkey_source.rs"]
+mod tests;
