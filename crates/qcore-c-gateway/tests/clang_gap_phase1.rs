@@ -90,9 +90,15 @@ fn e03_t_legacy_consumer_admits_only_int_or_assign() {
 }
 
 /// Correction to the input: the analysis says G "already has scalar compound
-/// assignments". On local scalars eight of the ten do; `*=` and `&=` are
-/// refused as an unrecognized destination, and every one of them is refused
-/// (IND) once its right operand reads a field.
+/// assignments". On local scalars eight of the ten did; `*=` and `&=` were
+/// refused as an unrecognized destination, and every one of them was refused
+/// (IND) once its right operand read a field.
+///
+/// **Flipped by CG02-ELABORATION-CORE (rule 10s):** the elaborator is asked
+/// after those refusals, so `x *= a`, `x &= a`, `x op= s->a` for all ten, and
+/// the field destination `s->a += 1` are now admitted (a single place
+/// evaluation: one typed read, one typed write). The eight older admissions
+/// keep their older route.
 #[test]
 fn e03_g_scalar_compound_assignments_are_partial() {
     if !clang_available() {
@@ -104,21 +110,25 @@ fn e03_g_scalar_compound_assignments_are_partial() {
         ));
         assert!(run.safe(), "{operator}: {run:?}");
     }
+    // CG02 flip: formerly `DESTINATION`.
     for operator in ["*=", "&="] {
         let run = gs(&format!(
             "int subject(int a) {{ int x = 1; x {operator} a; return x; }}"
         ));
-        assert!(run.refused(DESTINATION), "{operator}: {run:?}");
-        assert!(!run.safe());
+        assert!(run.safe(), "{operator}: {run:?}");
     }
+    // CG02 flip: formerly `IND`.
     for operator in ["+=", "-=", "*=", "/=", "%=", "<<=", ">>=", "&=", "^=", "|="] {
         let run = gs(&format!(
             "int subject(struct S *s) {{ int x = 1; x {operator} s->a; return x; }}"
         ));
-        assert!(run.refused(IND), "{operator}: {run:?}");
+        assert!(run.safe(), "{operator}: {run:?}");
     }
-    // A field destination is refused too.
-    assert!(gs("void subject(struct S *s) { s->a += 1; }").refused(DESTINATION));
+    // CG02 flip: a field destination, formerly `DESTINATION`.
+    assert!(gs("void subject(struct S *s) { s->a += 1; }").safe());
+    // The typed obligations still stand: a released base refuses the access.
+    let run = gs("void subject(void) { struct S *s = q_alloc(); q_free(s); s->a += 1; }");
+    assert!(!run.safe(), "{run:?}");
     // Pointer steps by a literal are the admitted pointer form.
     assert!(
         gs("void subject(void) { char *p = q_alloc(); char *q = p; q += 1; q_free(p); }").safe()
@@ -160,6 +170,18 @@ fn e14_g_reads_literals_except_a_character_initializer() {
 // CG02 — elaboration core (E03 values, E04, E05, E08, E12 order model)
 // ---------------------------------------------------------------------------
 
+/// The refusal route T gives a value form after CG02 (rule 10s): named, since
+/// no typed-source consumer decides one.
+fn t_value_form(form: &str) -> String {
+    format!("typed-source value form `{form}` is decided by no typed-source consumer (CG02)")
+}
+
+/// **Flipped by CG02-ELABORATION-CORE:** T now names the form; G admits both
+/// chains and the returned assignment. `p = (q = q_alloc())` lowers to the
+/// classifier's own `q = q_alloc()` then `p = q` (the two stores are to
+/// distinct objects, so their unsequenced order is immaterial), and
+/// `return (p = q_alloc())` to `p = q_alloc()` then `return p`, which escapes
+/// the acquired object exactly as the two statements would.
 #[test]
 fn e04_assignment_as_a_value_is_refused_on_both_routes() {
     if !clang_available() {
@@ -167,30 +189,40 @@ fn e04_assignment_as_a_value_is_refused_on_both_routes() {
     }
     assert_eq!(
         t_refusal("int subject(int a) { int x; int y; x = (y = a); return x; }"),
-        "unmodeled callback expression BinaryOperator"
+        t_value_form("assignment value")
     );
     assert_eq!(
         t_refusal("int subject(int a) { int x; return (x = a); }"),
-        "unmodeled callback expression BinaryOperator"
+        t_value_form("assignment value")
     );
     // G: a chained owned assignment, and an assignment returned as a value.
     let run = gs("void subject(void) { void *p; void *q; p = (q = q_alloc()); q_free(p); }");
-    assert!(
-        run.refused("unmodeled expression may mutate a formal resource identity"),
-        "{run:?}"
-    );
-    assert!(!run.safe());
+    assert!(run.safe(), "{run:?}");
+    // CFG nodes are pushed last statement first.
+    assert_eq!(run.calls, ["q_free", "q_alloc"]);
     let run = gs("void *subject(void) { void *p; return (p = q_alloc()); }");
-    assert!(run.refused(RETURN), "{run:?}");
-    // A scalar chain beside a live resource is refused the same way.
+    assert!(run.safe(), "{run:?}");
+    // A scalar chain beside a live resource.
     let run = gs("int subject(void) { void *p = q_alloc(); int x; int y; \
                   x = (y = r_borrow_code(p)); q_free(p); return x; }");
-    assert!(
-        run.refused("unmodeled expression may mutate a formal resource identity"),
-        "{run:?}"
-    );
+    assert!(run.safe(), "{run:?}");
+    // The obligations of the pieces stand: the chain's acquisition leaks.
+    let run = gs("void subject(void) { void *p; void *q; p = (q = q_alloc()); }");
+    assert!(!run.safe(), "{run:?}");
+    // The same place on both sides of an unsequenced pair stays refused.
+    let run = gs("int subject(struct S *s) { s->a = (s->a = 1); return s->a; }");
+    assert!(!run.safe(), "{run:?}");
+    // Finding (CG02-OLDER-SCALAR-ROUTE-UNSEQUENCED): the older scalar route
+    // admits `x = (x = 1)` as one scalar write before the elaborator is asked.
+    // It is custody-neutral, so no custody verdict rests on it.
+    assert!(gs("int subject(int x) { x = (x = 1); return x; }").safe());
 }
 
+/// **Flipped by CG02-ELABORATION-CORE** where the value is a scalar and no
+/// call takes it: `int j = i++;` (a `ForgetScalar` for `i`, then for `j`) and
+/// `int j = s->a++;` (the typed read and write of `s->a`, then `j`). T names
+/// the form. `cg_sink(i++)` keeps its refusal: applying a contract to a call
+/// whose actual carries an effect is CG03's single application point.
 #[test]
 fn e05_value_producing_increments_are_refused() {
     if !clang_available() {
@@ -198,29 +230,35 @@ fn e05_value_producing_increments_are_refused() {
     }
     assert_eq!(
         t_refusal("int subject(int a) { int j = a++; return j; }"),
-        "unmodeled callback expression UnaryOperator"
+        t_value_form("post increment")
     );
     assert_eq!(
         t_refusal("int subject(int a) { int j = ++a; return j; }"),
-        "unmodeled callback expression UnaryOperator"
+        t_value_form("pre increment")
     );
     assert!(t("int subject(int a) { a++; return a; }").is_ok());
-    // G: the value of `i++` in an initializer, an actual and a field.
-    for body in ["int j = i++;", "cg_sink(i++);"] {
-        let run = gs(&format!(
-            "void subject(void) {{ void *p = q_alloc(); int i = 0; {body} q_free(p); }}"
-        ));
-        assert!(run.refused(INCREMENT), "{body}: {run:?}");
-    }
-    assert!(gs("int subject(struct S *s) { int j = s->a++; return j; }").refused(INCREMENT));
+    // G: the value of `i++` in an initializer (flipped) and an actual (kept).
+    let run = gs("void subject(void) { void *p = q_alloc(); int i = 0; int j = i++; q_free(p); }");
+    assert!(run.safe(), "{run:?}");
+    let run = gs("void subject(void) { void *p = q_alloc(); int i = 0; cg_sink(i++); q_free(p); }");
+    assert!(run.refused(INCREMENT), "{run:?}");
+    assert!(gs("int subject(struct S *s) { int j = s->a++; return j; }").safe());
     // Standalone scalar and pointer steps are admitted.
     assert!(
         gs("void subject(void) { void *p = q_alloc(); int i = 0; i++; ++i; i--; q_free(p); }")
             .safe()
     );
     assert!(gs("void subject(void) { char *p = q_alloc(); char *q = p; q++; q_free(p); }").safe());
+    // A pointer step inside a larger value stays refused (pointer arithmetic,
+    // CG16); the older stepped-access route owns `int c = *q++;` itself.
+    let run = gs("int subject(void) { char *p = q_alloc(); char *q = p; int c = 0; \
+                  c = q[0] + *q++; q_free(p); return c; }");
+    assert!(!run.safe(), "{run:?}");
 }
 
+/// **Flipped by CG02-ELABORATION-CORE:** each comma operand is a statement of
+/// its own, decided by the existing lowering, in order; the last one gives the
+/// value. T names the form.
 #[test]
 fn e08_comma_is_refused_in_value_positions() {
     if !clang_available() {
@@ -228,18 +266,41 @@ fn e08_comma_is_refused_in_value_positions() {
     }
     assert_eq!(
         t_refusal("int subject(int a, int b) { return (a, b); }"),
-        "unmodeled callback expression BinaryOperator"
+        t_value_form("comma")
     );
     let run =
         gs("void subject(void) { void *p = q_alloc(); int x = (q_observe(p), 1); q_free(p); }");
-    assert!(
-        run.refused("resource call with a formal embedded in an unmodeled expression"),
-        "{run:?}"
-    );
+    assert!(run.safe(), "{run:?}");
+    assert_eq!(run.calls, ["q_free", "q_observe", "q_alloc"]);
     let run = gs("int subject(void) { void *p = q_alloc(); return (q_free(p), 0); }");
-    assert!(run.refused(RETURN), "{run:?}");
+    assert!(run.safe(), "{run:?}");
     let run = gs("void subject(void) { void *p = q_alloc(); q_observe(p), q_free(p); }");
-    assert!(run.refused(&nested("q_free")), "{run:?}");
+    assert!(run.safe(), "{run:?}");
+    assert_eq!(run.calls, ["q_free", "q_observe", "q_alloc"]);
+    // The sequence is checked: a use after the release in the right operand.
+    let run = gs("void subject(void) { void *p = q_alloc(); q_free(p), q_observe(p); }");
+    assert!(!run.safe(), "{run:?}");
+    // A returned comma whose left operand releases the returned object.
+    let run = gs("void *subject(void) { void *p = q_alloc(); return (q_free(p), p); }");
+    assert!(!run.safe(), "{run:?}");
+}
+
+/// CG02's refusal controls: C leaves these pairs unsequenced on one object
+/// (undefined behaviour), so the order model refuses them and G keeps its
+/// refusal byte for byte (`elaboration::tests` pins the model's reason).
+#[test]
+fn e12_unsequenced_same_place_pairs_stay_refused() {
+    if !clang_available() {
+        return;
+    }
+    let run = gs("int subject(int i) { i = i++; return i; }");
+    assert!(run.refused(INCREMENT), "{run:?}");
+    let run = gs("int subject(int i, int *a) { a[i] = i++; return i; }");
+    assert!(run.refused(INCREMENT), "{run:?}");
+    let run = gs("int cg_f(int, int); int subject(int x) { return cg_f(x++, x); }");
+    assert!(!run.safe(), "{run:?}");
+    // The disjoint pair is admitted.
+    assert!(gs("int subject(int i) { int j = 0; j = i++; return j + i; }").safe());
 }
 
 #[test]

@@ -1046,6 +1046,8 @@ pub(crate) fn path_place(node: &Value) -> Result<Place, Refusal> {
                     indirect,
                 });
             }
+            "CompoundLiteralExpr" => return Err(refused("compound literal")),
+            "StmtExpr" => return Err(refused("statement expression")),
             other => return Err(Refusal::Place(format!("path through {other}"))),
         }
     }

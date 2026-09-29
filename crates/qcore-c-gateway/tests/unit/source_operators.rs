@@ -296,7 +296,11 @@ fn cg01_refusal_controls() {
     for (c, expected) in [
         // Unsequenced: `i++` is no expression of T, and a call beside a read
         // or in a compound assignment has no invented order.
-        ("void f(int *a,int i){a[i] -= i++;}", "UnaryOperator"),
+        // (CG02 names the form: formerly `… UnaryOperator`.)
+        (
+            "void f(int *a,int i){a[i] -= i++;}",
+            "typed-source value form `post increment`",
+        ),
         (
             "int g(void);void f(int *p){*p += g();}",
             "unsequenced call/read operands",
@@ -321,10 +325,11 @@ fn cg01_refusal_controls() {
             "int g(void);int f(int a){if((a << 1) >= g())return 1;return 0;}",
             "unsequenced call/read operands",
         ),
-        // A compound assignment used as a value is CG02.
+        // A compound assignment used as a value is CG02's, which names it
+        // (flipped from `unmodeled callback expression CompoundAssignOperator`).
         (
             "int f(int a){int x = a; return x += 1;}",
-            "unmodeled callback expression CompoundAssignOperator",
+            "typed-source value form `compound assignment value`",
         ),
         // Pointer arithmetic and comparison (M15/M16) and floating arithmetic.
         (

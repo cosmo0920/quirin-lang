@@ -275,5 +275,6 @@ import QCore.ReviewHoldStanding
 
 import QCore.SourceExtensions
 import QCore.TypedSourceOperators
+import QCore.ElaborationCore
 
 /-! The executable formal core of QCore-C revision 0.1. -/
