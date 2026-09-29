@@ -977,6 +977,10 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
                 // be right rather than absent.
                 | BufferEvent::Construct { .. }
                 | BufferEvent::Field { .. }
+                // Card `W48-QR-SCALAR-TYPES-R3`: a conversion derives nothing,
+                // and this route lowers none (`buffer_use` does not claim the
+                // shape), so the arm is total rather than reachable.
+                | BufferEvent::Convert { .. }
                 // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind derives nothing
                 // — an admitted copy binds a value that already exists. This
                 // route lowers none (`buffer_use` does not claim the shape),
@@ -1192,6 +1196,9 @@ fn view_uses_at_any_depth(event: &StringEvent) -> Vec<&str> {
             // `let t = s;` keeps the `Q068` it always had. Listed rather than
             // omitted so the exhaustive match stays the tripwire it is.
             | BufferEvent::CopyBind { .. }
+            // Card `W48-QR-SCALAR-TYPES-R3`: a conversion names no view, and
+            // this route lowers none; listed for the tripwire.
+            | BufferEvent::Convert { .. }
             | BufferEvent::Return => Vec::new(),
         }
     }
@@ -1712,6 +1719,12 @@ pub fn check_string_program(
                     // and it is written in the refusing direction (an
                     // unresolvable index is not provably disjoint).
                     BufferEvent::CopyBind { binding, .. } => {
+                        env.remove(binding);
+                    }
+                    // Card `W48-QR-SCALAR-TYPES-R3`: a conversion's binding
+                    // leaves the tier too, in the refusing direction; this
+                    // route lowers none.
+                    BufferEvent::Convert { binding, .. } => {
                         env.remove(binding);
                     }
                     BufferEvent::Acquire { .. }

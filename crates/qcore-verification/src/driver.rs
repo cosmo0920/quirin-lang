@@ -1048,6 +1048,11 @@ impl CompiledModule {
     pub fn target_assumption(&self) -> Option<&RecordedTarget> {
         match &self.checked {
             CheckedSourceModule::ScalarCalls(checked) => checked.target_assumption(),
+            // Card `W48-QR-SCALAR-TYPES-R3`: a buffer-route program naming
+            // `isize` or `usize` (a field type or a conversion) depends on it.
+            CheckedSourceModule::StandardBuffer(module) => {
+                module.certificate.target_assumption.as_ref()
+            }
             _ => None,
         }
     }
@@ -1582,18 +1587,20 @@ fn compile_files_with_registry_inner(
     if qcore_frontend::source_std_buffer::has_source_buffer(&parsed)
         || qcore_frontend::source_record::has_source_record(&parsed)
     {
-        return compile_buffer_source(&parsed, &typed, mode, options, &ranges).and_then(|module| {
-            refuse_unmodeled_functions(
-                module,
-                EntryOnlyRoute {
-                    name: "source.buffer.v1",
-                    code: "Q051",
-                    pass: SemanticPass::StandardBuffer,
-                },
-                &parsed,
-                &ranges,
-            )
-        });
+        return compile_buffer_source(&parsed, &typed, mode, options, &ranges, target).and_then(
+            |module| {
+                refuse_unmodeled_functions(
+                    module,
+                    EntryOnlyRoute {
+                        name: "source.buffer.v1",
+                        code: "Q051",
+                        pass: SemanticPass::StandardBuffer,
+                    },
+                    &parsed,
+                    &ranges,
+                )
+            },
+        );
     }
     // Card `STRING-SLICE`, selected after the buffer route above and before the
     // standard-IO route below. Both neighbours are deliberate, on exactly the
@@ -6128,6 +6135,7 @@ fn compile_buffer_source(
     mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     if mode != SourceModuleMode::Executable {
         return Err(vec![plain_diagnostic(
@@ -6143,36 +6151,41 @@ fn compile_buffer_source(
                 .map(|error| map_diagnostic(error, ranges))
                 .collect::<Vec<_>>()
         })?;
-    let certificate = std_buffer::check_buffer_program(&lowered.program).map_err(|errors| {
-        errors
-            .into_iter()
-            .map(|error| {
-                let span = lowered
-                    .event_spans
-                    .get(error.event())
-                    .copied()
-                    .unwrap_or(lowered.scope_span);
-                map_raw_diagnostic(
-                    error.code(),
-                    SemanticPass::StandardBuffer,
-                    span,
-                    error.to_string(),
-                    ranges,
-                )
-            })
-            .collect::<Vec<_>>()
-    })?;
+    // Card `W48-QR-SCALAR-TYPES-R3`: the builder's recorded target gives
+    // `isize`/`usize` fields and conversions their width; a program naming
+    // neither is checked exactly as before.
+    let certificate = std_buffer::check_buffer_program_for_target(&lowered.program, target)
+        .map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| {
+                    let span = lowered
+                        .event_spans
+                        .get(error.event())
+                        .copied()
+                        .unwrap_or(lowered.scope_span);
+                    map_raw_diagnostic(
+                        error.code(),
+                        SemanticPass::StandardBuffer,
+                        span,
+                        error.to_string(),
+                        ranges,
+                    )
+                })
+                .collect::<Vec<_>>()
+        })?;
     // The driver never publishes a certificate it did not independently
     // re-derive from the same lowered program.
-    std_buffer::recheck_buffer_certificate(&lowered.program, &certificate).map_err(|failure| {
-        vec![map_raw_diagnostic(
-            "Q056",
-            SemanticPass::StandardBuffer,
-            lowered.scope_span,
-            format!("the byte-buffer certificate failed its independent recheck: {failure}"),
-            ranges,
-        )]
-    })?;
+    std_buffer::recheck_buffer_certificate_for_target(&lowered.program, &certificate, target)
+        .map_err(|failure| {
+            vec![map_raw_diagnostic(
+                "Q056",
+                SemanticPass::StandardBuffer,
+                lowered.scope_span,
+                format!("the byte-buffer certificate failed its independent recheck: {failure}"),
+                ranges,
+            )]
+        })?;
 
     let reference_observation =
         std_buffer_c_emit::interpret_buffer_program(&lowered.program, &certificate).map_err(

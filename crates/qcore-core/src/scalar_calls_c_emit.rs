@@ -440,37 +440,14 @@ fn negation_test(ty: ScalarType) -> (String, &'static str) {
 }
 
 fn conversion_test(from: ScalarType, to: ScalarType, checked: &Checked) -> String {
-    let target = checked.target();
-    let (to_min, to_max) = st::c_limits(to);
-    let (from_low, from_high) = from.range(target).expect("a checked width");
-    let (to_low, to_high) = to.range(target).expect("a checked width");
-    let mut tests = Vec::new();
-    if from_low < to_low {
-        tests.push(if to.is_signed() {
-            format!("v < {to_min}")
-        } else {
-            "v < 0".into()
-        });
-    }
-    if from_high > to_high {
-        tests.push(if from.is_signed() == to.is_signed() {
-            format!("v > {to_max}")
-        } else {
-            format!("(uintmax_t)v > (uintmax_t){to_max}")
-        });
-    }
-    tests.join(" || ")
+    st::c_conversion_test(from, to, checked.target()).expect("a checked width")
 }
 
 /// The `_Static_assert`s that bind the emitted program to the recorded
 /// target's width: a C compiler whose `size_t`/`ptrdiff_t` differ refuses to
 /// build it.
 fn target_assertions(checked: &Checked) -> Option<String> {
-    let target = checked.target_assumption()?;
-    let bits = target.pointer_width.bits();
-    Some(format!(
-        "_Static_assert(SIZE_MAX == UINT{bits}_MAX, \"usize is the recorded target's {bits}-bit size_t\");\n_Static_assert(PTRDIFF_MAX == INT{bits}_MAX && PTRDIFF_MIN == INT{bits}_MIN, \"isize is the recorded target's {bits}-bit ptrdiff_t\");\n"
-    ))
+    checked.target_assumption().map(st::c_target_assertions)
 }
 
 /// The C signature of function `id`. A throwing function returns its error

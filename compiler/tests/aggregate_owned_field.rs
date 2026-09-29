@@ -157,7 +157,7 @@ fn a_record_of_scalars_still_contributes_no_operation() {
             BufferEvent::Construct {
                 binding: "p".to_owned(),
                 type_name: "Point".to_owned(),
-                fields: vec![("x".to_owned(), BufferOperand::Literal(1))],
+                fields: vec![("x".to_owned(), BufferOperand::Literal(1).into())],
             },
             BufferEvent::Field {
                 binding: "a".to_owned(),
