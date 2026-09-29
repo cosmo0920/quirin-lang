@@ -541,6 +541,10 @@ mod native {
     }
 }
 
+/// A harness case: function id, arguments, result type, expected outcome.
+#[cfg(unix)]
+type Case = (usize, Vec<i128>, ScalarType, Result<i128, ArithmeticError>);
+
 /// One harness per integer type: the program's own **throwing** functions (the
 /// five operations, negation, and a conversion to every other integer type),
 /// called on every boundary case from a harness `main` that compares the
@@ -582,7 +586,7 @@ fn native_dynamic_boundary_table_returns_the_reference_value_or_variant() {
                 let values = boundary(ty);
                 let lit = |t: ScalarType, v: i128| st::c_literal(t, v);
                 // (function id, arguments, result type, expected)
-                let mut cases: Vec<(usize, Vec<i128>, ScalarType, Result<i128, ArithmeticError>)> = Vec::new();
+                let mut cases: Vec<Case> = Vec::new();
                 for (id, op) in Op::ALL.into_iter().enumerate() {
                     for &a in &values {
                         for &b in &values {

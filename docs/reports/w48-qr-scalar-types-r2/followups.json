@@ -1,0 +1,41 @@
+{
+ "retired": [
+  {
+   "id": "W48-SEQUENTIAL-UNCHECKED-PARAMETER-TYPES",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R2 item 0: the sequential route checks every parameter annotation against the G02t table (isize/usize only under a recorded target) and refuses the rest at Q020; the six entry-only routes refuse a function they do not model at their own codes. Measured on every tracked fixture: exactly S13 and X14 (the remaining-v03 B-1 probes) move, admission to refusal; a helper appended to each admitted .qr fixture under examples/, compiler/tests/fixtures/ and docs/reports/ is admitted with an unread `Widget`, `fn() -> i32` or target-less `usize` parameter by 0 fixtures after (88 before), and with an unread result or local annotation by 0 after (47 before)."
+  },
+  {
+   "id": "W48-QR-TYPED-ARITHMETIC-ERROR",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R2 item 1: builtin ArithmeticError { Overflow, DivisionByZero, OutOfRange } on source.scalar-calls.v1 through throws<ArithmeticError>, `?` and `match … Result::Err`, `raise`; an operation with a non-constant operand raises in a permitted function, a constant fault still refuses, an unconsumed or unpermitted raise refuses; the emitted try-helpers return the tag (never exit 86) on every case of the dynamic boundary table under Clang -O0/-O2 UBSan and -O2 with 0 sanitizer reports; QCore.ScalarTypedErrors (20 theorems) proves the typed path agrees with the fault semantics and the static refusal names the variant the dynamic path raises. The extern and task positions that will produce undetermined operands (W48-QR-TYPES-EXTERN-VALUES, W48-QR-TYPES-TASK-CAPTURES) stay open and reuse it."
+  }
+ ],
+ "registered": [
+  {
+   "id": "W48-INERT-EXTERN-DECLARATION-TYPES",
+   "title": "Check or refuse the signature of an extern declaration no route calls",
+   "why": "Found by W48-QR-SCALAR-TYPES-R2 while closing W48-SEQUENTIAL-UNCHECKED-PARAMETER-TYPES: an `extern fn` declaration that no body calls is admitted on the sequential route with its parameter and result annotations unread (`extern fn f(x: Widget) -> Widget; fn main() -> i32 { return 0; }` checks). The extern routes (G02d, G02i) read every declaration they call and refuse any helper function at Q026; an uncalled declaration on another route is read by nothing but name resolution. Two tracked probes rely on it: docs/reports/remaining-v04/probes/P08-valid-named-use.qr and P10-decl-after-use-site.qr declare `extern fn f(q: quant<n where n := 5>) -> unit;` to show quantity-name resolution, so refusing unread declarations would move both (admission to refusal) and change what those frozen probes measure. Size: a declaration check on the sequential route (and any other route admitting an uncalled declaration) against the C04.1 ABI vocabulary or the quantity forms name resolution already reads; 2 fixtures move. DISCHARGE: every admitted extern declaration's annotations are read by the admitting route or refused, with P08/P10 attributed.",
+   "source": "docs/reports/w48-qr-scalar-types-r2/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R2"
+  },
+  {
+   "id": "W48-QR-TYPED-ERROR-CONTINUING-ARMS",
+   "title": "Let a match arm on the typed error continue after the match",
+   "why": "W48-QR-SCALAR-TYPES-R2's `match CALL { Result::Ok … Result::Err … }` on source.scalar-calls.v1 is always the last thing its block does: each arm ends in `return`, `raise` or another `match`, so a function body is a tree and no join is modeled. The task profile's arms may continue with outer identities; a scalar arm that falls through (binding a fallback value and continuing) is refused by the grammar. Size: a join of the two arms' local slots in the scalar IR, the checker and the closed evaluator (scalar_calls.rs), C emission of the continuation after an if/else (scalar_calls_c_emit.rs), the parser's block end (source_scalar_calls.rs), Lean for the join; 0 fixtures move. DISCHARGE: an arm that ends without a terminator continues after the match with only outer bindings in scope, checked, evaluated and emitted, with native runs.",
+   "source": "docs/reports/w48-qr-scalar-types-r2/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R2"
+  },
+  {
+   "id": "W48-QR-ERROR-VARIANT-INSPECTION",
+   "title": "Let a handler inspect which ArithmeticError variant it caught",
+   "why": "W48-QR-SCALAR-TYPES-R2's `Result::Err { error: e }` arm can only re-raise `e` (`raise e;`) or discard it: there is no match on the variant and no rendering of an error, so a program cannot tell Overflow from DivisionByZero from OutOfRange except by propagating it out of the entry (exit 80 + tag). Size: a variant pattern or an error-to-scalar conversion on the scalar route, its evaluation and emission (the C tag is already an int), a std.fmt rendering if one is wanted; 0 fixtures move. DISCHARGE: a handler that branches on or renders the variant, checked, evaluated and emitted, with Lean parity and native runs.",
+   "source": "docs/reports/w48-qr-scalar-types-r2/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R2"
+  }
+ ],
+ "amended": [
+  {
+   "id": "W48-QR-TYPES-MSVC-NATIVE",
+   "amendment": "W48-QR-SCALAR-TYPES-R2 adds the q_scalar_try_* helpers and the `80 + tag` entry exit to what no MSVC build has run; the discharge now also covers the dynamic boundary harness (scalar_typed_errors.rs) under /W4 /WX."
+  }
+ ]
+}

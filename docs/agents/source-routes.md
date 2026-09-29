@@ -69,7 +69,7 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
       type, and as a capture's first word), so `let lend = 5;` is still a
       program; and `borrow_utf8`/`qcore_buffer_write`/`qcore_buffer_read` select
       their form by **arity** rather than by a new word.
-    * **Four name-resolution exclusions, and one deliberate non-exclusion.**
+    * **Five name-resolution exclusions, and one deliberate non-exclusion.**
       `NATIVE-LIBRARY-SOURCE-BINDING` excluded binding spans from both
       whole-token-stream route selectors (`module_imports::concurrency_span`,
       `source_tasks::has_source_tasks`), so a library named `spawn`, `join` or
@@ -98,6 +98,14 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
       followed by a scalar type name across the 625 tracked
       `.qr`/`.qv`/`.qrlib` files. A conversion written on a route that does not
       admit it now refuses at that route's own reader rather than at `Q013`.
+    * `W48-QR-SCALAR-TYPES-R2` claims a **position** and no word, and adds a
+      fifth exclusion: `ArithmeticError` immediately followed by `::` is not
+      collected, so `raise ArithmeticError::VARIANT;` names the builtin typed
+      error that no declaration introduces. `match`, `raise`, `Result`, `value`
+      and `error` are the task profile's and were already handled. The census
+      (`docs/reports/w48-qr-scalar-types-r2/census_error_name.py`) found
+      `ArithmeticError` in no tracked `.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` file
+      but the card's own example, and the qualified shape in none.
 
     **Method, twice corrected by its own findings.** A wave's entry is settled
     by **measuring the seam**, not by reading the cards' reports: the wave-37
@@ -121,7 +129,8 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
     `region-credit-joins`, `region-joins-duties`,
     `slice-permissions-write-lend`, `write-lend-tasks`,
     `mutex-share-cross`, `write-lend-tasks-exercise`, `aggregate-owned-field`,
-    `ct42-cell-route`, `loops-on-composed-routes`, `w48-qr-scalar-types`.
+    `ct42-cell-route`, `loops-on-composed-routes`, `w48-qr-scalar-types`,
+    `w48-qr-scalar-types-r2`.
 <!-- preserved:constraint-14:end -->
 
 <a id="constraint-15"></a>
