@@ -7,8 +7,8 @@
 //! source-side controls are in `crates/qcore-c-gateway/tests/clang_gap_phase*.rs`.
 
 use qcore_core::disjoint_footprint::{
-    ElementShape, FieldLayout, FieldStorage, FootprintDiagnostic, FootprintEvent,
-    FootprintProgram, LayoutContract, UnsupportedFootprint, check_disjoint_footprint_program,
+    ElementShape, FieldLayout, FieldStorage, FootprintDiagnostic, FootprintEvent, FootprintProgram,
+    LayoutContract, UnsupportedFootprint, check_disjoint_footprint_program,
 };
 use qcore_core::scalar_types::{self as st, Op, ScalarType};
 use qcore_core::weak_memory::{
@@ -67,7 +67,10 @@ fn core_footprint_refuses_every_listed_construct() {
     ] {
         assert_eq!(
             refused_construct(construct),
-            vec![FootprintDiagnostic::UnsupportedFootprintConstruct { event: 1, construct }],
+            vec![FootprintDiagnostic::UnsupportedFootprintConstruct {
+                event: 1,
+                construct
+            }],
             "{construct:?}"
         );
     }
@@ -82,17 +85,22 @@ fn m21_core_refuses_disjointness_across_allocations() {
             allocate(2, 1, 4),
             slice(10, 1, 1),
             slice(11, 2, 1),
-            FootprintEvent::AssertDisjoint { left: 10, right: 11 },
+            FootprintEvent::AssertDisjoint {
+                left: 10,
+                right: 11,
+            },
         ],
     })
     .expect_err("two allocation identities are not assumed disjoint");
     assert_eq!(
         diagnostics,
-        vec![FootprintDiagnostic::CrossAllocationDisjointnessUnsupported {
-            event: 4,
-            left: 1,
-            right: 2,
-        }]
+        vec![
+            FootprintDiagnostic::CrossAllocationDisjointnessUnsupported {
+                event: 4,
+                left: 1,
+                right: 2,
+            }
+        ]
     );
 }
 
@@ -124,9 +132,20 @@ fn m07_core_keeps_one_bitfield_unit_one_memory_location() {
                 count: 1,
             },
             slice(10, 1, 1),
-            FootprintEvent::DeriveField { handle: 20, base: 10, field: 0 },
-            FootprintEvent::DeriveField { handle: 21, base: 10, field: 1 },
-            FootprintEvent::AssertDisjoint { left: 20, right: 21 },
+            FootprintEvent::DeriveField {
+                handle: 20,
+                base: 10,
+                field: 0,
+            },
+            FootprintEvent::DeriveField {
+                handle: 21,
+                base: 10,
+                field: 1,
+            },
+            FootprintEvent::AssertDisjoint {
+                left: 20,
+                right: 21,
+            },
         ],
     })
     .expect_err("different bit ranges of one unit are not disjoint");
@@ -155,7 +174,10 @@ fn m20_core_retires_handles_of_a_reallocated_generation() {
                 count: 8,
             },
             slice(11, 1, 2),
-            FootprintEvent::AssertDisjoint { left: 10, right: 11 },
+            FootprintEvent::AssertDisjoint {
+                left: 10,
+                right: 11,
+            },
         ],
     })
     .expect_err("a handle of a retired generation is stale");
@@ -174,22 +196,37 @@ fn m20_core_retires_handles_of_a_reallocated_generation() {
 #[test]
 fn n04_core_arithmetic_refuses_where_c_wraps() {
     // C: `UINT_MAX + 1u == 0`. The core: a typed fault.
-    assert_eq!(st::checked(Op::Add, ScalarType::U32, u32::MAX.into(), 1, None), None);
+    assert_eq!(
+        st::checked(Op::Add, ScalarType::U32, u32::MAX.into(), 1, None),
+        None
+    );
     // C: signed overflow is undefined. The core: the same fault, not a value.
-    assert_eq!(st::checked(Op::Add, ScalarType::I32, i32::MAX.into(), 1, None), None);
+    assert_eq!(
+        st::checked(Op::Add, ScalarType::I32, i32::MAX.into(), 1, None),
+        None
+    );
 }
 
 #[test]
 fn n03_core_conversion_never_truncates() {
     // C: `(unsigned char)300 == 44`. The core: out of range.
-    assert_eq!(st::convert(ScalarType::I32, ScalarType::U8, 300, None), None);
-    assert_eq!(st::convert(ScalarType::I32, ScalarType::I8, -129, None), None);
+    assert_eq!(
+        st::convert(ScalarType::I32, ScalarType::U8, 300, None),
+        None
+    );
+    assert_eq!(
+        st::convert(ScalarType::I32, ScalarType::I8, -129, None),
+        None
+    );
 }
 
 #[test]
 fn n05_core_division_faults_are_typed_not_obligations() {
     assert_eq!(st::checked(Op::Div, ScalarType::I32, 1, 0, None), None);
-    assert_eq!(st::checked(Op::Rem, ScalarType::I32, i32::MIN.into(), -1, None), None);
+    assert_eq!(
+        st::checked(Op::Rem, ScalarType::I32, i32::MIN.into(), -1, None),
+        None
+    );
 }
 
 #[test]
@@ -249,19 +286,38 @@ fn event(id: u32, thread: u32, kind: MemoryEventKind) -> MemoryEvent {
 fn w07_core_accepts_one_graph_not_the_program() {
     const FLAG: u32 = 1;
     const DATA: u32 = 9;
-    let init = event(0, 0, MemoryEventKind::AtomicInit { location: FLAG, value: 0 });
+    let init = event(
+        0,
+        0,
+        MemoryEventKind::AtomicInit {
+            location: FLAG,
+            value: 0,
+        },
+    );
     let write = event(1, 1, MemoryEventKind::NonAtomicWrite { location: DATA });
     let publish = event(
         2,
         1,
-        MemoryEventKind::AtomicStore { location: FLAG, value: 1, order: MemoryOrder::Relaxed },
+        MemoryEventKind::AtomicStore {
+            location: FLAG,
+            value: 1,
+            order: MemoryOrder::Relaxed,
+        },
     );
     let quiet = C11Execution {
         events: vec![
             init.clone(),
             write.clone(),
             publish.clone(),
-            event(3, 2, MemoryEventKind::AtomicLoad { location: FLAG, value: 0, order: MemoryOrder::Relaxed }),
+            event(
+                3,
+                2,
+                MemoryEventKind::AtomicLoad {
+                    location: FLAG,
+                    value: 0,
+                    order: MemoryOrder::Relaxed,
+                },
+            ),
         ],
         reads_from: vec![RelationEdge::new(0, 3)],
         modification_order: vec![RelationEdge::new(0, 2)],
@@ -275,7 +331,15 @@ fn w07_core_accepts_one_graph_not_the_program() {
             init,
             write,
             publish,
-            event(3, 2, MemoryEventKind::AtomicLoad { location: FLAG, value: 1, order: MemoryOrder::Relaxed }),
+            event(
+                3,
+                2,
+                MemoryEventKind::AtomicLoad {
+                    location: FLAG,
+                    value: 1,
+                    order: MemoryOrder::Relaxed,
+                },
+            ),
             event(4, 2, MemoryEventKind::NonAtomicRead { location: DATA }),
         ],
         reads_from: vec![RelationEdge::new(2, 3)],
@@ -286,7 +350,9 @@ fn w07_core_accepts_one_graph_not_the_program() {
     };
     let errors = check_c11_execution(&racy).expect_err("the flag-set graph races");
     assert!(
-        errors.iter().any(|e| matches!(e, WeakMemoryError::DataRace { .. })),
+        errors
+            .iter()
+            .any(|e| matches!(e, WeakMemoryError::DataRace { .. })),
         "{errors:?}"
     );
 }

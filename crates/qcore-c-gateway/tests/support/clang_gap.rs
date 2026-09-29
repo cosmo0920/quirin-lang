@@ -55,14 +55,38 @@ pub const INCREMENT: &str = "unmodeled increment or decrement expression";
 pub fn contracts() -> ResourceContracts {
     let file = |name: &str, text: &str| (name.to_owned(), text.to_owned());
     load_resource_contract_sources(&BTreeMap::from([
-        file("q_base.qcore", include_str!("../fixtures/contracts/q_base.qv")),
-        file("q_rich_modes.qcore", include_str!("../fixtures/contracts/q_rich_modes.qv")),
-        file("q_realloc.qcore", include_str!("../fixtures/contracts/q_realloc.qv")),
-        file("q_nullable.qcore", include_str!("../fixtures/contracts/q_nullable.qv")),
-        file("q_container_store.qcore", include_str!("../fixtures/contracts/q_container_store.qv")),
-        file("r_return_call.qcore", include_str!("../fixtures/contracts/r_return_call.qv")),
-        file("descriptor_generic.qcore", include_str!("../fixtures/contracts/descriptor_generic.qv")),
-        file("clang_gap.qcore", include_str!("../fixtures/contracts/clang_gap.qv")),
+        file(
+            "q_base.qcore",
+            include_str!("../fixtures/contracts/q_base.qv"),
+        ),
+        file(
+            "q_rich_modes.qcore",
+            include_str!("../fixtures/contracts/q_rich_modes.qv"),
+        ),
+        file(
+            "q_realloc.qcore",
+            include_str!("../fixtures/contracts/q_realloc.qv"),
+        ),
+        file(
+            "q_nullable.qcore",
+            include_str!("../fixtures/contracts/q_nullable.qv"),
+        ),
+        file(
+            "q_container_store.qcore",
+            include_str!("../fixtures/contracts/q_container_store.qv"),
+        ),
+        file(
+            "r_return_call.qcore",
+            include_str!("../fixtures/contracts/r_return_call.qv"),
+        ),
+        file(
+            "descriptor_generic.qcore",
+            include_str!("../fixtures/contracts/descriptor_generic.qv"),
+        ),
+        file(
+            "clang_gap.qcore",
+            include_str!("../fixtures/contracts/clang_gap.qv"),
+        ),
     ]))
     .expect("the CG00 fixture contracts load")
 }

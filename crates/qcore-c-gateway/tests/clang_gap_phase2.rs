@@ -25,7 +25,9 @@ fn m01_mixed_paths_need_a_never_bound_root() {
         return;
     }
     // Tracked root (bound to an acquisition): embedded field and array element.
-    let run = gs("void subject(void) { struct S *s = q_alloc(); s->in.x = 1; s->arr[1] = 2; q_free(s); }");
+    let run = gs(
+        "void subject(void) { struct S *s = q_alloc(); s->in.x = 1; s->arr[1] = 2; q_free(s); }",
+    );
     assert!(run.refused(IND), "{run:?}");
     assert!(!run.safe());
     // Never-bound formal root: the same mixed path is read.
@@ -55,9 +57,13 @@ fn m02_general_pointer_valued_stores_are_refused() {
     }
     // Example C's store `s->p = q`, a slot and an element.
     assert!(gs("void subject(struct S *s, void *q) { s->p = q; }").refused(IND));
-    assert!(gs("void subject(void **slot, void *p) { *slot = p; }")
-        .refused("store through `*slot` without an out-parameter contract"));
-    assert!(gs("void subject(void **slots, int i, void *p) { slots[i] = p; }").refused(DESTINATION));
+    assert!(
+        gs("void subject(void **slot, void *p) { *slot = p; }")
+            .refused("store through `*slot` without an out-parameter contract")
+    );
+    assert!(
+        gs("void subject(void **slots, int i, void *p) { slots[i] = p; }").refused(DESTINATION)
+    );
     // Controls: the limited forms that exist — a local copy, a contracted
     // store, an Out hand-off of a fresh acquisition.
     assert!(gs("void subject(void) { void *a = q_alloc(); void *b = a; q_free(b); }").safe());
@@ -73,7 +79,9 @@ fn m03_field_stores_through_formals_and_local_owners_are_refused() {
     let run = gs("void subject(struct S *s) { void *q = q_alloc(); s->p = q; }");
     assert!(run.refused(IND), "{run:?}");
     // A local owner acquired here is refused too in this shape.
-    let run = gs("void subject(void) { struct S *s = q_alloc(); void *q = q_alloc(); s->p = q; q_free(s->p); q_free(s); }");
+    let run = gs(
+        "void subject(void) { struct S *s = q_alloc(); void *q = q_alloc(); s->p = q; q_free(s->p); q_free(s); }",
+    );
     assert!(run.refused(IND), "{run:?}");
 }
 
@@ -101,7 +109,9 @@ fn m05_readback_from_a_void_field_is_refused() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(void) { struct S *s = q_alloc(); s->v = q_alloc(); char *c = s->v; q_free(c); q_free(s); }");
+    let run = gs(
+        "void subject(void) { struct S *s = q_alloc(); s->v = q_alloc(); char *c = s->v; q_free(c); q_free(s); }",
+    );
     assert!(run.refused(IND), "{run:?}");
     assert!(run.has("UnknownAlias { variable: \"c\" }"));
 }
@@ -164,17 +174,22 @@ fn m09_braced_initializers_are_refused() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(void) { void *q = q_alloc(); struct S s = { .p = q }; q_free(s.p); }");
+    let run =
+        gs("void subject(void) { void *q = q_alloc(); struct S s = { .p = q }; q_free(s.p); }");
     assert!(run.refused(INITIALIZER), "{run:?}");
     assert!(gs("int subject(void) { struct S s = { .a = 1 }; return s.a; }").refused(INITIALIZER));
     assert_eq!(
-        t_refusal("struct R { int a; int b; }; int subject(void) { struct R r = { .a = 1 }; return 0; }"),
+        t_refusal(
+            "struct R { int a; int b; }; int subject(void) { struct R r = { .a = 1 }; return 0; }"
+        ),
         "local outside scalar/pointer callback profile"
     );
     // T's one initializer is the two-field `struct timeval`, and only with its
     // record selected.
     assert_eq!(
-        t_refusal("struct timeval { long tv_sec; long tv_usec; }; int subject(void) { struct timeval t = { 1, 2 }; return 0; }"),
+        t_refusal(
+            "struct timeval { long tv_sec; long tv_usec; }; int subject(void) { struct timeval t = { 1, 2 }; return 0; }"
+        ),
         "record initializer outside fixed timeval profile"
     );
 }
@@ -184,10 +199,14 @@ fn m10_compound_literals_have_no_identity() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(void) { void *q = q_alloc(); q_observe(&(struct S){ .p = 0 }); q_free(q); }");
+    let run = gs(
+        "void subject(void) { void *q = q_alloc(); q_observe(&(struct S){ .p = 0 }); q_free(q); }",
+    );
     assert!(run.refused(INITIALIZER), "{run:?}");
     assert_eq!(
-        t_refusal("struct R { int a; int b; }; int f(struct R *); int subject(void) { return f(&(struct R){1, 2}); }"),
+        t_refusal(
+            "struct R { int a; int b; }; int f(struct R *); int subject(void) { return f(&(struct R){1, 2}); }"
+        ),
         "unmodeled callback expression CompoundLiteralExpr"
     );
 }

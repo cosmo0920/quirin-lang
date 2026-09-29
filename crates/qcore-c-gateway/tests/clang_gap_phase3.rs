@@ -65,7 +65,9 @@ fn m17_one_past_formation_is_not_separated_from_dereference() {
     // Formed and dereferenced one past `a + n`: custody-Safe.
     assert!(gs("int subject(int *a, int n) { int *e = a + n; return *e; }").safe());
     // Formed from an embedded array: refused (IND), not classified.
-    assert!(gs("int subject(struct S *s) { int *e = s->arr + 4; return e == s->arr; }").refused(IND));
+    assert!(
+        gs("int subject(struct S *s) { int *e = s->arr + 4; return e == s->arr; }").refused(IND)
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -87,9 +89,15 @@ fn m12_variable_length_arrays_are_refused() {
     );
     for body in ["int a[n];", "int a[n]; a[0] = 1;"] {
         let run = gs(&format!("void subject(int n) {{ {body} }}"));
-        assert!(run.refused("local declaration may shadow a formal resource identity"), "{body}: {run:?}");
+        assert!(
+            run.refused("local declaration may shadow a formal resource identity"),
+            "{body}: {run:?}"
+        );
     }
-    assert!(gs("unsigned long subject(int n) { unsigned long z = sizeof(int[n]); return z; }").refused(IND));
+    assert!(
+        gs("unsigned long subject(int n) { unsigned long z = sizeof(int[n]); return z; }")
+            .refused(IND)
+    );
 }
 
 #[test]
@@ -114,7 +122,9 @@ fn e18_offsetof_and_container_of_are_refused() {
         return;
     }
     assert_eq!(
-        t_refusal("struct R { int a; int b; }; unsigned long subject(void) { return __builtin_offsetof(struct R, b); }"),
+        t_refusal(
+            "struct R { int a; int b; }; unsigned long subject(void) { return __builtin_offsetof(struct R, b); }"
+        ),
         "unmodeled callback expression OffsetOfExpr"
     );
     assert!(gs("unsigned long subject(void) { unsigned long o = __builtin_offsetof(struct S, b); return o; }")
@@ -134,12 +144,21 @@ fn m20_stale_aliases_are_unresolved_not_generation_checked() {
     }
     // A copy used after the release: an unresolved identity, not a
     // use-after-release judgement.
-    let run = gs("void subject(void) { char *p = q_alloc(); char *q = p; q_free(p); q_observe(q); }");
-    assert!(run.unknown() && run.has("UnknownAlias { variable: \"q\" }"), "{run:?}");
+    let run =
+        gs("void subject(void) { char *p = q_alloc(); char *q = p; q_free(p); q_observe(q); }");
+    assert!(
+        run.unknown() && run.has("UnknownAlias { variable: \"q\" }"),
+        "{run:?}"
+    );
     // The old pointer after a successful reallocation.
-    let run = gs("void subject(void) { void *p = q_alloc(); void *n = q_realloc(p, 8); \
-                  if (!n) { q_free(p); return; } q_observe(p); q_free(n); }");
-    assert!(run.unknown() && run.has("UnknownAlias { variable: \"p\" }"), "{run:?}");
+    let run = gs(
+        "void subject(void) { void *p = q_alloc(); void *n = q_realloc(p, 8); \
+                  if (!n) { q_free(p); return; } q_observe(p); q_free(n); }",
+    );
+    assert!(
+        run.unknown() && run.has("UnknownAlias { variable: \"p\" }"),
+        "{run:?}"
+    );
 }
 
 #[test]
@@ -173,7 +192,10 @@ fn m26_memcpy_byte_semantics_are_a_contract_boundary() {
     }
     let run = gs("void *memcpy(void *d, const void *s, size_t n); \
                   void subject(void) { char *p = q_alloc(); memcpy(p, p + 1, 4); q_free(p); }");
-    assert!(run.refused("call to uncontracted function `memcpy`"), "{run:?}");
+    assert!(
+        run.refused("call to uncontracted function `memcpy`"),
+        "{run:?}"
+    );
 }
 
 #[test]
@@ -181,7 +203,9 @@ fn w08_field_updates_carry_no_lock_invariant() {
     if !clang_available() {
         return;
     }
-    assert!(gs("struct M { int lock; int count; }; void subject(struct M *m) { m->count++; }").safe());
+    assert!(
+        gs("struct M { int lock; int count; }; void subject(struct M *m) { m->count++; }").safe()
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -204,8 +228,10 @@ fn w01_atomic_accesses_do_not_reach_the_atomic_model() {
     // G: an `_Atomic` load is a neutral scalar; an atomic builtin is an
     // uncontracted call.
     assert!(gs("int subject(_Atomic int *a) { return *a; }").safe());
-    assert!(gs("int subject(_Atomic int *a) { return __c11_atomic_load(a, 5); }")
-        .refused("call to uncontracted function `__c11_atomic_load`"));
+    assert!(
+        gs("int subject(_Atomic int *a) { return __c11_atomic_load(a, 5); }")
+            .refused("call to uncontracted function `__c11_atomic_load`")
+    );
 }
 
 #[test]
@@ -213,6 +239,11 @@ fn w09_general_publication_is_not_derived_from_source() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(_Atomic int *flag, int *data) { *data = 1; __c11_atomic_store(flag, 1, 3); }");
-    assert!(run.refused("call to uncontracted function `__c11_atomic_store`"), "{run:?}");
+    let run = gs(
+        "void subject(_Atomic int *flag, int *data) { *data = 1; __c11_atomic_store(flag, 1, 3); }",
+    );
+    assert!(
+        run.refused("call to uncontracted function `__c11_atomic_store`"),
+        "{run:?}"
+    );
 }

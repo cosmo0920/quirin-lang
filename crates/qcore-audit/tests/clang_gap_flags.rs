@@ -43,16 +43,27 @@ fn i01_dialects_outside_the_four_are_refused() {
     let Some(driver) = driver() else { return };
     for flag in ["-std=c17", "-std=c23", "-std=gnu23", "-std=c2y"] {
         let error = options(&driver, flag).expect_err(flag);
-        assert!(!error.contains("configured Clang executable"), "{flag}: {error}");
+        assert!(
+            !error.contains("configured Clang executable"),
+            "{flag}: {error}"
+        );
     }
 }
 
 #[test]
 fn i02_target_and_abi_flags_are_refused() {
     let Some(driver) = driver() else { return };
-    for flag in ["--target=x86_64-pc-linux-gnu", "-target x86_64-pc-linux-gnu", "-mabi=lp64", "-m32"] {
+    for flag in [
+        "--target=x86_64-pc-linux-gnu",
+        "-target x86_64-pc-linux-gnu",
+        "-mabi=lp64",
+        "-m32",
+    ] {
         let error = options(&driver, flag).expect_err(flag);
-        assert!(!error.contains("configured Clang executable"), "{flag}: {error}");
+        assert!(
+            !error.contains("configured Clang executable"),
+            "{flag}: {error}"
+        );
     }
 }
 
@@ -61,6 +72,9 @@ fn i06_extension_flags_are_refused() {
     let Some(driver) = driver() else { return };
     for flag in ["-fopenmp", "-fblocks", "-fms-extensions"] {
         let error = options(&driver, flag).expect_err(flag);
-        assert!(!error.contains("configured Clang executable"), "{flag}: {error}");
+        assert!(
+            !error.contains("configured Clang executable"),
+            "{flag}: {error}"
+        );
     }
 }

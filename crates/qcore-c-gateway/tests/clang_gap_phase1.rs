@@ -49,8 +49,10 @@ fn e01_t_refuses_six_binary_operators_that_g_reads() {
     // Control: `+` is in T's allowlist.
     assert!(t("int subject(int a, int b) { return a + b; }").is_ok());
     // G: the typed scalar reader takes all six over a never-bound field root.
-    let run = gs("int subject(struct S *s) { int x = s->a - s->b; x = s->a <= s->b; \
-                  x = s->a >= s->b; x = s->a ^ s->b; x = s->a << s->b; x = s->a >> s->b; return x; }");
+    let run = gs(
+        "int subject(struct S *s) { int x = s->a - s->b; x = s->a <= s->b; \
+                  x = s->a >= s->b; x = s->a ^ s->b; x = s->a << s->b; x = s->a >> s->b; return x; }",
+    );
     assert!(run.safe(), "{run:?}");
 }
 
@@ -119,7 +121,9 @@ fn e03_g_scalar_compound_assignments_are_partial() {
     // A field destination is refused too.
     assert!(gs("void subject(struct S *s) { s->a += 1; }").refused(DESTINATION));
     // Pointer steps by a literal are the admitted pointer form.
-    assert!(gs("void subject(void) { char *p = q_alloc(); char *q = p; q += 1; q_free(p); }").safe());
+    assert!(
+        gs("void subject(void) { char *p = q_alloc(); char *q = p; q += 1; q_free(p); }").safe()
+    );
 }
 
 #[test]
@@ -172,14 +176,20 @@ fn e04_assignment_as_a_value_is_refused_on_both_routes() {
     );
     // G: a chained owned assignment, and an assignment returned as a value.
     let run = gs("void subject(void) { void *p; void *q; p = (q = q_alloc()); q_free(p); }");
-    assert!(run.refused("unmodeled expression may mutate a formal resource identity"), "{run:?}");
+    assert!(
+        run.refused("unmodeled expression may mutate a formal resource identity"),
+        "{run:?}"
+    );
     assert!(!run.safe());
     let run = gs("void *subject(void) { void *p; return (p = q_alloc()); }");
     assert!(run.refused(RETURN), "{run:?}");
     // A scalar chain beside a live resource is refused the same way.
     let run = gs("int subject(void) { void *p = q_alloc(); int x; int y; \
                   x = (y = r_borrow_code(p)); q_free(p); return x; }");
-    assert!(run.refused("unmodeled expression may mutate a formal resource identity"), "{run:?}");
+    assert!(
+        run.refused("unmodeled expression may mutate a formal resource identity"),
+        "{run:?}"
+    );
 }
 
 #[test]
@@ -197,10 +207,7 @@ fn e05_value_producing_increments_are_refused() {
     );
     assert!(t("int subject(int a) { a++; return a; }").is_ok());
     // G: the value of `i++` in an initializer, an actual and a field.
-    for body in [
-        "int j = i++;",
-        "cg_sink(i++);",
-    ] {
+    for body in ["int j = i++;", "cg_sink(i++);"] {
         let run = gs(&format!(
             "void subject(void) {{ void *p = q_alloc(); int i = 0; {body} q_free(p); }}"
         ));
@@ -208,7 +215,10 @@ fn e05_value_producing_increments_are_refused() {
     }
     assert!(gs("int subject(struct S *s) { int j = s->a++; return j; }").refused(INCREMENT));
     // Standalone scalar and pointer steps are admitted.
-    assert!(gs("void subject(void) { void *p = q_alloc(); int i = 0; i++; ++i; i--; q_free(p); }").safe());
+    assert!(
+        gs("void subject(void) { void *p = q_alloc(); int i = 0; i++; ++i; i--; q_free(p); }")
+            .safe()
+    );
     assert!(gs("void subject(void) { char *p = q_alloc(); char *q = p; q++; q_free(p); }").safe());
 }
 
@@ -221,8 +231,12 @@ fn e08_comma_is_refused_in_value_positions() {
         t_refusal("int subject(int a, int b) { return (a, b); }"),
         "unmodeled callback expression BinaryOperator"
     );
-    let run = gs("void subject(void) { void *p = q_alloc(); int x = (q_observe(p), 1); q_free(p); }");
-    assert!(run.refused("resource call with a formal embedded in an unmodeled expression"), "{run:?}");
+    let run =
+        gs("void subject(void) { void *p = q_alloc(); int x = (q_observe(p), 1); q_free(p); }");
+    assert!(
+        run.refused("resource call with a formal embedded in an unmodeled expression"),
+        "{run:?}"
+    );
     let run = gs("int subject(void) { void *p = q_alloc(); return (q_free(p), 0); }");
     assert!(run.refused(RETURN), "{run:?}");
     let run = gs("void subject(void) { void *p = q_alloc(); q_observe(p), q_free(p); }");
@@ -257,7 +271,9 @@ fn k12_one_contract_is_accepted_in_one_position_and_refused_in_another() {
         return;
     }
     // `r_wrap` (borrowed parameter, owned result) as a statement: applied.
-    let run = gs("void subject(void) { void *p = q_alloc(); void *q = r_wrap(p); q_free(q); q_free(p); }");
+    let run = gs(
+        "void subject(void) { void *p = q_alloc(); void *q = r_wrap(p); q_free(q); q_free(p); }",
+    );
     assert!(run.safe(), "{run:?}");
     // Returned: applied (the leak of `p` is real).
     let run = gs("void *subject(void) { void *p = q_alloc(); return r_wrap(p); }");
@@ -297,15 +313,25 @@ fn e09_an_owned_acquisition_in_a_condition_is_refused_and_not_hoisted() {
     }
     for (body, refusal) in [
         ("void *p; if ((p = q_alloc()) != 0) { q_free(p); }", BRANCH),
-        ("void *p; if ((p = q_maybe_alloc()) != 0) { q_free(p); }", BRANCH),
+        (
+            "void *p; if ((p = q_maybe_alloc()) != 0) { q_free(p); }",
+            BRANCH,
+        ),
         ("void *p; while ((p = q_alloc()) != 0) { q_free(p); }", LOOP),
-        ("int fd; if ((fd = k_open(\"x\")) >= 0) { k_close(fd); }", BRANCH),
+        (
+            "int fd; if ((fd = k_open(\"x\")) >= 0) { k_close(fd); }",
+            BRANCH,
+        ),
     ] {
         let run = gs(&format!("void subject(void) {{ {body} }}"));
         assert!(run.refused(refusal), "{body}: {run:?}");
         assert!(!run.safe());
         // The acquisition was not lifted out of the condition.
-        assert!(!run.calls.iter().any(|c| c == "q_alloc" || c == "q_maybe_alloc" || c == "k_open"));
+        assert!(
+            !run.calls
+                .iter()
+                .any(|c| c == "q_alloc" || c == "q_maybe_alloc" || c == "k_open")
+        );
     }
     // The normalised form is admitted.
     assert!(gs("void subject(void) { void *p = q_alloc(); if (p != 0) { q_free(p); } }").safe());
@@ -331,7 +357,8 @@ fn e13_condition_leaf_composition_is_partial() {
         ));
         assert!(run.refused(BRANCH), "{condition}: {run:?}");
     }
-    let run = gs("void subject(int (*f)(void *)) { void *p = q_alloc(); if (f(p)) { } q_free(p); }");
+    let run =
+        gs("void subject(int (*f)(void *)) { void *p = q_alloc(); if (f(p)) { } q_free(p); }");
     assert!(run.refused(BRANCH), "{run:?}");
     for condition in [
         "(long)r_borrow_code(p)",
@@ -364,7 +391,10 @@ fn e10_non_identity_effects_of_a_nested_call_are_refused() {
     let run = gs("void subject(void) { void *p = q_alloc(); q_free(r_wrap(p)); q_free(p); }");
     assert!(run.refused(&nested("r_wrap")), "{run:?}");
     // Control: a borrowed inner call with a `None` result is composed.
-    assert!(gs("void subject(void) { void *p = q_alloc(); cg_sink(r_borrow_code(p)); q_free(p); }").safe());
+    assert!(
+        gs("void subject(void) { void *p = q_alloc(); cg_sink(r_borrow_code(p)); q_free(p); }")
+            .safe()
+    );
 }
 
 #[test]
@@ -372,9 +402,12 @@ fn e11_deeper_and_partial_nested_calls_are_refused() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(void) { void *p = q_alloc(); cg_sink(r_borrow_code(r_wrap(p))); q_free(p); }");
+    let run = gs(
+        "void subject(void) { void *p = q_alloc(); cg_sink(r_borrow_code(r_wrap(p))); q_free(p); }",
+    );
     assert!(run.refused(&nested("r_borrow_code")), "{run:?}");
-    let run = gs("void subject(void) { void *p = q_alloc(); cg_sink(r_borrow_code(p) + 1); q_free(p); }");
+    let run =
+        gs("void subject(void) { void *p = q_alloc(); cg_sink(r_borrow_code(p) + 1); q_free(p); }");
     assert!(run.refused(&nested("r_borrow_code")), "{run:?}");
 }
 
@@ -383,15 +416,21 @@ fn e12_g_sibling_calls_compose_only_as_identity_effects() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(void) { void *p = q_alloc(); void *q = q_alloc(); \
-                  cg_sink2(r_release_code(p), r_release_code(q)); }");
+    let run = gs(
+        "void subject(void) { void *p = q_alloc(); void *q = q_alloc(); \
+                  cg_sink2(r_release_code(p), r_release_code(q)); }",
+    );
     assert!(run.refused(&nested("r_release_code")), "{run:?}");
-    let run = gs("void subject(void) { void *p = q_alloc(); cg_sink2(r_release_code(p), r_borrow_code(p)); }");
+    let run = gs(
+        "void subject(void) { void *p = q_alloc(); cg_sink2(r_release_code(p), r_borrow_code(p)); }",
+    );
     assert!(run.refused(&nested("r_release_code")), "{run:?}");
     // Two identity siblings as actuals are admitted.
     assert!(gs("void subject(void) { void *p = q_alloc(); cg_sink2(r_borrow_code(p), r_borrow_code(p)); q_free(p); }").safe());
     // Under an operator in an initializer they are refused.
-    let run = gs("int subject(void) { void *p = q_alloc(); int x = r_borrow_code(p) + r_borrow_code(p); q_free(p); return x; }");
+    let run = gs(
+        "int subject(void) { void *p = q_alloc(); int x = r_borrow_code(p) + r_borrow_code(p); q_free(p); return x; }",
+    );
     assert!(run.refused(&nested("r_borrow_code")), "{run:?}");
 }
 
@@ -405,17 +444,36 @@ fn e06_short_circuit_values_are_refused_outside_conditions() {
         return;
     }
     const VALUES: &str = "short-circuit values require a supported branch condition";
-    assert_eq!(t_refusal("int subject(int a, int b) { int ok = a && b; return ok; }"), VALUES);
-    assert_eq!(t_refusal("int subject(int a, int b) { return a || b; }"), VALUES);
+    assert_eq!(
+        t_refusal("int subject(int a, int b) { int ok = a && b; return ok; }"),
+        VALUES
+    );
+    assert_eq!(
+        t_refusal("int subject(int a, int b) { return a || b; }"),
+        VALUES
+    );
     assert!(t("int subject(int a, int b) { if (a && b) return 1; return 0; }").is_ok());
-    let run = gs("void subject(int flag) { void *p = q_alloc(); int ok = flag && r_borrow_code(p); q_free(p); }");
-    assert!(run.refused("resource call with a formal embedded in an unmodeled expression"), "{run:?}");
-    let run = gs("void subject(int flag) { void *p = q_alloc(); cg_sink(flag || r_borrow_code(p)); q_free(p); }");
+    let run = gs(
+        "void subject(int flag) { void *p = q_alloc(); int ok = flag && r_borrow_code(p); q_free(p); }",
+    );
+    assert!(
+        run.refused("resource call with a formal embedded in an unmodeled expression"),
+        "{run:?}"
+    );
+    let run = gs(
+        "void subject(int flag) { void *p = q_alloc(); cg_sink(flag || r_borrow_code(p)); q_free(p); }",
+    );
     assert!(run.refused(&nested("r_borrow_code")), "{run:?}");
-    let run = gs("int subject(int flag) { void *p = q_alloc(); q_free(p); return flag && opaque(); }");
+    let run =
+        gs("int subject(int flag) { void *p = q_alloc(); q_free(p); return flag && opaque(); }");
     assert!(run.refused(RETURN), "{run:?}");
     // Control: the same connective in a condition.
-    assert!(gs("void subject(int a) { void *p = q_alloc(); if (a && r_borrow_code(p)) { } q_free(p); }").safe());
+    assert!(
+        gs(
+            "void subject(int a) { void *p = q_alloc(); if (a && r_borrow_code(p)) { } q_free(p); }"
+        )
+        .safe()
+    );
 }
 
 #[test]
@@ -431,15 +489,22 @@ fn e07_conditional_values_are_refused_outside_conditions() {
         t_refusal("int subject(int a, int b) { return a ?: b; }"),
         "unmodeled callback expression BinaryConditionalOperator"
     );
-    let run = gs("void subject(int flag) { void *p = q_alloc(); void *q = flag ? p : 0; q_free(p); }");
+    let run =
+        gs("void subject(int flag) { void *p = q_alloc(); void *q = flag ? p : 0; q_free(p); }");
     assert!(run.refused(ASSIGNMENT), "{run:?}");
-    let run = gs("int subject(int flag) { void *p = q_alloc(); return flag ? r_release_code(p) : r_consume_code(p); }");
+    let run = gs(
+        "int subject(int flag) { void *p = q_alloc(); return flag ? r_release_code(p) : r_consume_code(p); }",
+    );
     assert!(run.refused(RETURN), "{run:?}");
-    let run = gs("void subject(int flag) { void *p = q_alloc(); cg_sink(flag ? r_borrow_code(p) : 0); q_free(p); }");
+    let run = gs(
+        "void subject(int flag) { void *p = q_alloc(); cg_sink(flag ? r_borrow_code(p) : 0); q_free(p); }",
+    );
     assert!(run.refused(&nested("r_borrow_code")), "{run:?}");
     // Controls: a top-level condition and a scalar GNU `?:` initializer.
     assert!(gs("void subject(int flag) { void *p = q_alloc(); if (flag ? r_release_code(p) : r_consume_code(p)) { } }").safe());
-    assert!(gs("void subject(int flag) { void *p = q_alloc(); int x = flag ?: 1; q_free(p); }").safe());
+    assert!(
+        gs("void subject(int flag) { void *p = q_alloc(); int x = flag ?: 1; q_free(p); }").safe()
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -455,10 +520,20 @@ fn e17_only_selection_invariant_generics_are_read() {
         t_refusal("int subject(int a) { return _Generic(a, int: 1, default: 2); }"),
         "unmodeled callback expression GenericSelectionExpr"
     );
-    let run = gs("void subject(void) { void *p = q_alloc(); int x = _Generic(0, int: r_borrow_code(p), default: 0); q_free(p); }");
-    assert!(run.refused("call to uncontracted function `_Generic`"), "{run:?}");
-    let run = gs("void subject(int a) { void *p = q_alloc(); int x = _Generic(a, int: r_release_code(p), default: 0); }");
-    assert!(run.refused("call to uncontracted function `_Generic`"), "{run:?}");
+    let run = gs(
+        "void subject(void) { void *p = q_alloc(); int x = _Generic(0, int: r_borrow_code(p), default: 0); q_free(p); }",
+    );
+    assert!(
+        run.refused("call to uncontracted function `_Generic`"),
+        "{run:?}"
+    );
+    let run = gs(
+        "void subject(int a) { void *p = q_alloc(); int x = _Generic(a, int: r_release_code(p), default: 0); }",
+    );
+    assert!(
+        run.refused("call to uncontracted function `_Generic`"),
+        "{run:?}"
+    );
     // Control: identical associations.
     assert!(gs("void subject(void) { void *p = q_alloc(); int x = _Generic(0, int: r_borrow_code(p), default: r_borrow_code(p)); q_free(p); }").safe());
 }
@@ -491,15 +566,29 @@ fn e15_t_cast_kinds_outside_the_six_are_refused() {
         return;
     }
     for (source, reason) in [
-        ("unsigned long subject(void *p) { return (unsigned long)p; }", "unmodeled callback expression CStyleCastExpr"),
-        ("int subject(int a) { return (_Bool)a; }", "unmodeled callback expression CStyleCastExpr"),
-        ("int subject(int a) { return (int)(double)a; }", "unmodeled callback expression CStyleCastExpr"),
-        ("int f(int); int subject(int a) { (void)f(a); return 0; }", "unmodeled callback statement CStyleCastExpr"),
+        (
+            "unsigned long subject(void *p) { return (unsigned long)p; }",
+            "unmodeled callback expression CStyleCastExpr",
+        ),
+        (
+            "int subject(int a) { return (_Bool)a; }",
+            "unmodeled callback expression CStyleCastExpr",
+        ),
+        (
+            "int subject(int a) { return (int)(double)a; }",
+            "unmodeled callback expression CStyleCastExpr",
+        ),
+        (
+            "int f(int); int subject(int a) { (void)f(a); return 0; }",
+            "unmodeled callback statement CStyleCastExpr",
+        ),
     ] {
         assert_eq!(t_refusal(source), reason, "{source}");
     }
     // G refuses pointer<->integer casts in assignments.
-    let run = gs("unsigned long subject(void) { void *p = q_alloc(); unsigned long v = (unsigned long)p; q_free(p); return v; }");
+    let run = gs(
+        "unsigned long subject(void) { void *p = q_alloc(); unsigned long v = (unsigned long)p; q_free(p); return v; }",
+    );
     assert!(run.refused(ASSIGNMENT), "{run:?}");
     let run = gs("void subject(unsigned long v) { void *p = (void *)v; q_free(p); }");
     assert!(run.refused(ASSIGNMENT), "{run:?}");
@@ -521,11 +610,19 @@ fn e16_type_queries_are_read_only_in_fixed_shapes() {
         "unmodeled callback expression UnaryExprOrTypeTraitExpr"
     );
     assert!(t("unsigned long subject(void) { return sizeof(int); }").is_ok());
-    assert!(gs("void subject(struct S *s) { void *p = q_alloc(); cg_sink(sizeof(*s)); q_free(p); }").safe());
-    assert!(gs("unsigned long subject(struct S *s) { unsigned long z = sizeof(*s); return z; }").refused(IND));
+    assert!(
+        gs("void subject(struct S *s) { void *p = q_alloc(); cg_sink(sizeof(*s)); q_free(p); }")
+            .safe()
+    );
+    assert!(
+        gs("unsigned long subject(struct S *s) { unsigned long z = sizeof(*s); return z; }")
+            .refused(IND)
+    );
     assert!(gs("unsigned long subject(struct S *s) { return sizeof(*s); }").refused(RETURN));
     // An evaluated VLA operand is refused.
-    let run = gs("unsigned long subject(int n) { void *p = q_alloc(); unsigned long z = sizeof(int[n]); q_free(p); return z; }");
+    let run = gs(
+        "unsigned long subject(int n) { void *p = q_alloc(); unsigned long z = sizeof(int[n]); q_free(p); return z; }",
+    );
     assert!(run.refused(IND), "{run:?}");
 }
 
@@ -538,7 +635,10 @@ fn n11_type_queries_carry_no_evaluated_value() {
     // host-evaluated number.
     let summary = t("unsigned long subject(void) { return sizeof(int); }").expect("admitted");
     let rendered = format!("{:?}", summary.paths());
-    assert!(rendered.contains("SizeOf { argument_type: \"int\" }"), "{rendered}");
+    assert!(
+        rendered.contains("SizeOf { argument_type: \"int\" }"),
+        "{rendered}"
+    );
     assert!(!rendered.contains("Integer { value: \"4\" }"), "{rendered}");
 }
 
@@ -592,7 +692,9 @@ fn c01_t_has_no_general_loops() {
         "do loop requires a literal zero condition"
     );
     // G has general loop CFGs.
-    assert!(gs("void subject(int n) { void *p = q_alloc(); while (n > 0) { n--; } q_free(p); }").safe());
+    assert!(
+        gs("void subject(int n) { void *p = q_alloc(); while (n > 0) { n--; } q_free(p); }").safe()
+    );
 }
 
 #[test]
@@ -620,5 +722,8 @@ fn c03_t_has_no_jumps() {
         t_refusal("int subject(int a) { int i; for (i = 0; i < a; i++) { break; } return a; }"),
         "unmodeled callback statement BreakStmt"
     );
-    assert!(gs("void subject(int n) { void *p = q_alloc(); if (n) goto out; n = 1; out: q_free(p); }").safe());
+    assert!(
+        gs("void subject(int n) { void *p = q_alloc(); if (n) goto out; n = 1; out: q_free(p); }")
+            .safe()
+    );
 }

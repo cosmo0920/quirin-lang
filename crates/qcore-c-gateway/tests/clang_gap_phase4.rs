@@ -9,7 +9,9 @@ use std::collections::BTreeMap;
 
 use qcore_c_gateway::legacy_c::{C11TranslationUnit, CCompilerDialect, analyze_unrestricted_c11};
 use qcore_contract::contract_loader::load_resource_contract_sources;
-use qcore_schemas::contract::{DerivedExtent, ResourceKind, ResourceParameterMode, ResourceReturnMode};
+use qcore_schemas::contract::{
+    DerivedExtent, ResourceKind, ResourceParameterMode, ResourceReturnMode,
+};
 
 #[path = "support/clang_gap.rs"]
 mod clang_gap;
@@ -45,7 +47,10 @@ fn n01_n02_n03_t_keeps_conversions_as_named_casts_only() {
     ] {
         let summary = t(source).unwrap_or_else(|reason| panic!("{source}: {reason}"));
         let rendered = format!("{:?}", summary.paths());
-        assert!(rendered.contains("cast: \"IntegralCast\""), "{source}: {rendered}");
+        assert!(
+            rendered.contains("cast: \"IntegralCast\""),
+            "{source}: {rendered}"
+        );
     }
 }
 
@@ -91,8 +96,13 @@ fn c05_branch_correlation_is_not_tracked() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(int flag) { void *p = q_alloc(); if (flag) q_free(p); if (!flag) q_free(p); }");
-    assert!(run.unsafe_() && run.has("Leak") && run.has("DoubleRelease"), "{run:?}");
+    let run = gs(
+        "void subject(int flag) { void *p = q_alloc(); if (flag) q_free(p); if (!flag) q_free(p); }",
+    );
+    assert!(
+        run.unsafe_() && run.has("Leak") && run.has("DoubleRelease"),
+        "{run:?}"
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -108,8 +118,12 @@ fn c09_computed_goto_is_refused() {
         t_refusal("int subject(int a) { void *t = &&l; goto *t; l: return a; }"),
         "unmodeled callback expression AddrLabelExpr"
     );
-    let run = gs("void subject(int n) { void *p = q_alloc(); void *t = &&l; goto *t; l: q_free(p); }");
-    assert!(run.unknown() && run.diagnostics.first().map(String::as_str) == Some(NOT_PROJECTED), "{run:?}");
+    let run =
+        gs("void subject(int n) { void *p = q_alloc(); void *t = &&l; goto *t; l: q_free(p); }");
+    assert!(
+        run.unknown() && run.diagnostics.first().map(String::as_str) == Some(NOT_PROJECTED),
+        "{run:?}"
+    );
 }
 
 #[test]
@@ -117,8 +131,10 @@ fn c10_setjmp_has_no_return_twice_edge() {
     if !clang_available() {
         return;
     }
-    let run = gs("#include <setjmp.h>\nvoid subject(jmp_buf b) { void *p = q_alloc(); \
-                  if (setjmp(b)) { return; } q_free(p); }");
+    let run = gs(
+        "#include <setjmp.h>\nvoid subject(jmp_buf b) { void *p = q_alloc(); \
+                  if (setjmp(b)) { return; } q_free(p); }",
+    );
     assert!(run.refused(BRANCH), "{run:?}");
     assert!(!run.safe());
 }
@@ -131,11 +147,19 @@ fn c11_cleanup_attributes_are_refused() {
         return;
     }
     assert_eq!(
-        t_refusal("void g(int *); int subject(void) { __attribute__((cleanup(g))) int x = 0; return x; }"),
+        t_refusal(
+            "void g(int *); int subject(void) { __attribute__((cleanup(g))) int x = 0; return x; }"
+        ),
         "unmodeled local initialization/attributes"
     );
-    assert!(gs("void subject(void) { __attribute__((cleanup(q_free))) void *p = q_alloc(); }").refused(IND));
-    assert!(gs("void g(int *); void subject(void) { __attribute__((cleanup(g))) int x = 0; }").refused(IND));
+    assert!(
+        gs("void subject(void) { __attribute__((cleanup(q_free))) void *p = q_alloc(); }")
+            .refused(IND)
+    );
+    assert!(
+        gs("void g(int *); void subject(void) { __attribute__((cleanup(g))) int x = 0; }")
+            .refused(IND)
+    );
 }
 
 /// Correction to the input: G's refusal of inline asm is not an explicit
@@ -155,7 +179,9 @@ fn c12_inline_asm_is_refused_as_a_call() {
         ("__asm__(\"nop\");", "__asm__"),
         ("__asm__ goto(\"\" :::: out);", "goto"),
     ] {
-        let run = gs(&format!("void subject(void) {{ void *p = q_alloc(); {statement} out: q_free(p); }}"));
+        let run = gs(&format!(
+            "void subject(void) {{ void *p = q_alloc(); {statement} out: q_free(p); }}"
+        ));
         assert!(run.refused(&uncontracted(word)), "{statement}: {run:?}");
     }
 }
@@ -166,12 +192,16 @@ fn c13_noreturn_is_read_only_as_a_terminal_statement() {
         return;
     }
     assert_eq!(
-        t_refusal("__attribute__((noreturn)) int die(void); int subject(int a) { int x = die(); return x; }"),
+        t_refusal(
+            "__attribute__((noreturn)) int die(void); int subject(int a) { int x = die(); return x; }"
+        ),
         "nonreturning call requires a terminal statement"
     );
     assert!(t("__attribute__((noreturn)) void die(void); int subject(int a) { if (a) die(); return 0; }").is_ok());
     // G has no noreturn outcome for a call without a contract, in any position.
-    let run = gs("__attribute__((noreturn)) int die(void); void subject(int a) { void *p = q_alloc(); int x = a ? die() : 0; q_free(p); }");
+    let run = gs(
+        "__attribute__((noreturn)) int die(void); void subject(int a) { void *p = q_alloc(); int x = a ? die() : 0; q_free(p); }",
+    );
     assert!(run.refused(&uncontracted("die")), "{run:?}");
 }
 
@@ -185,9 +215,18 @@ fn e20_builtins_are_ordinary_uncontracted_calls() {
         "unmodeled callback expression ChooseExpr"
     );
     for (source, callee) in [
-        ("void subject(void) { void *p = q_alloc(); int x = __builtin_choose_expr(1, 1, 0); q_free(p); }", "__builtin_choose_expr"),
-        ("int subject(float f) { return __builtin_bit_cast(int, f); }", "__builtin_bit_cast"),
-        ("int subject(int a) { return __builtin_expect(a, 0); }", "__builtin_expect"),
+        (
+            "void subject(void) { void *p = q_alloc(); int x = __builtin_choose_expr(1, 1, 0); q_free(p); }",
+            "__builtin_choose_expr",
+        ),
+        (
+            "int subject(float f) { return __builtin_bit_cast(int, f); }",
+            "__builtin_bit_cast",
+        ),
+        (
+            "int subject(int a) { return __builtin_expect(a, 0); }",
+            "__builtin_expect",
+        ),
     ] {
         assert!(gs(source).refused(&uncontracted(callee)), "{source}");
     }
@@ -218,9 +257,13 @@ fn k01_indirect_callees_are_not_resolved() {
         t_refusal("int f(int); int subject(int a) { return (*f)(a); }"),
         "indirect or unmodeled call"
     );
-    assert!(gs("void subject(void (*fp)(void *)) { void *p = q_alloc(); fp(p); q_free(p); }")
-        .refused(&uncontracted("fp")));
-    assert!(gs("void subject(struct S *s) { void *p = q_alloc(); s->cb(); q_free(p); }").refused(IND));
+    assert!(
+        gs("void subject(void (*fp)(void *)) { void *p = q_alloc(); fp(p); q_free(p); }")
+            .refused(&uncontracted("fp"))
+    );
+    assert!(
+        gs("void subject(struct S *s) { void *p = q_alloc(); s->cb(); q_free(p); }").refused(IND)
+    );
 }
 
 #[test]
@@ -228,8 +271,10 @@ fn k02_callback_registration_has_no_capture_relation() {
     if !clang_available() {
         return;
     }
-    let run = gs("void reg(void (*cb)(void *), void *arg); void cb(void *a); \
-                  void subject(void) { void *p = q_alloc(); reg(cb, p); }");
+    let run = gs(
+        "void reg(void (*cb)(void *), void *arg); void cb(void *a); \
+                  void subject(void) { void *p = q_alloc(); reg(cb, p); }",
+    );
     assert!(run.refused(&uncontracted("reg")), "{run:?}");
 }
 
@@ -300,7 +345,12 @@ fn k06_derived_results_have_no_offset_or_length() {
 fn k07_resource_kinds_are_exactly_four() {
     assert_eq!(
         ResourceKind::ALL,
-        [ResourceKind::Heap, ResourceKind::Descriptor, ResourceKind::Stream, ResourceKind::Directory]
+        [
+            ResourceKind::Heap,
+            ResourceKind::Descriptor,
+            ResourceKind::Stream,
+            ResourceKind::Directory
+        ]
     );
     let error = load("    ensures normal resource_borrowed(p);\n    ensures normal resource_borrowed(n);\n    ensures normal resource_return_owned(nonnull);\n    ensures normal resource_return_kind(handle);\n")
         .expect_err("a fifth kind is outside resource v1");
@@ -315,7 +365,9 @@ fn k11_an_exit_specific_disposition_has_no_summary() {
     // Control: a helper that releases on every exit summarises.
     assert!(gs("static void rel(void *p) { q_free(p); } void subject(void) { void *p = q_alloc(); rel(p); }").safe());
     // Released on one exit only: no summary, so the call is uncontracted.
-    let run = gs("static void rel(void *p, int c) { if (c) q_free(p); } void subject(void) { void *p = q_alloc(); rel(p, 1); }");
+    let run = gs(
+        "static void rel(void *p, int c) { if (c) q_free(p); } void subject(void) { void *p = q_alloc(); rel(p, 1); }",
+    );
     assert!(run.refused(&uncontracted("rel")), "{run:?}");
 }
 
@@ -343,11 +395,15 @@ fn k09_va_list_operations_are_not_modelled() {
         return;
     }
     assert_eq!(
-        t_refusal("#include <stdarg.h>\nint subject(int a, va_list ap) { return va_arg(ap, int); }"),
+        t_refusal(
+            "#include <stdarg.h>\nint subject(int a, va_list ap) { return va_arg(ap, int); }"
+        ),
         "unmodeled callback expression VAArgExpr"
     );
-    let run = gs("#include <stdarg.h>\nvoid subject(int n, ...) { va_list ap; va_start(ap, n); \
-                  void *p = va_arg(ap, void *); va_end(ap); q_free(p); }");
+    let run = gs(
+        "#include <stdarg.h>\nvoid subject(int n, ...) { va_list ap; va_start(ap, n); \
+                  void *p = va_arg(ap, void *); va_end(ap); q_free(p); }",
+    );
     for builtin in ["__builtin_va_start", "__builtin_va_arg", "__builtin_va_end"] {
         assert!(run.refused(&uncontracted(builtin)), "{builtin}: {run:?}");
     }
@@ -370,9 +426,14 @@ fn c06_collection_loops_have_no_invariant() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(int n) { void *a[4]; int i; for (i = 0; i < 4; i++) a[i] = q_alloc(); \
-                  for (i = 0; i < 4; i++) q_free(a[i]); }");
-    assert!(run.refused("discarded owned result of resource API `q_alloc`"), "{run:?}");
+    let run = gs(
+        "void subject(int n) { void *a[4]; int i; for (i = 0; i < 4; i++) a[i] = q_alloc(); \
+                  for (i = 0; i < 4; i++) q_free(a[i]); }",
+    );
+    assert!(
+        run.refused("discarded owned result of resource API `q_alloc`"),
+        "{run:?}"
+    );
     assert!(run.refused(IND));
     // Control: loops over one scalar-indexed body are read.
     assert!(gs("void subject(int n) { int i; for (i = 0; i < n; i++) { void *p = q_alloc(); q_free(p); } }").safe());
@@ -386,7 +447,9 @@ fn c07_recursion_passing_a_resource_has_no_summary() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(void *p, int n) { if (n == 0) { q_free(p); return; } subject(p, n - 1); }");
+    let run = gs(
+        "void subject(void *p, int n) { if (n == 0) { q_free(p); return; } subject(p, n - 1); }",
+    );
     assert!(run.refused(&uncontracted("subject")), "{run:?}");
     assert!(gs("void subject(int n) { if (n <= 0) return; void *p = q_alloc(); subject(n - 1); subject(n - 2); q_free(p); }").safe());
     assert!(gs("void other(int n); void subject(int n) { void *p = q_alloc(); if (n > 0) other(n - 1); q_free(p); } \
@@ -399,17 +462,24 @@ fn c08_budgets_are_reported_never_safe() {
         return;
     }
     assert_eq!(
-        t_refusal("int f(int); int subject(int a) { if (a) f(1); if (a) f(2); if (a) f(3); if (a) f(4); \
-                   if (a) f(5); if (a) f(6); if (a) f(7); return 0; }"),
+        t_refusal(
+            "int f(int); int subject(int a) { if (a) f(1); if (a) f(2); if (a) f(3); if (a) f(4); \
+                   if (a) f(5); if (a) f(6); if (a) f(7); return 0; }"
+        ),
         "callback path limit exceeded"
     );
-    let run = gs("void subject(int c0, int c1, int c2, int c3, int c4, int c5, int c6, int c7, int c8) { \
+    let run = gs(
+        "void subject(int c0, int c1, int c2, int c3, int c4, int c5, int c6, int c7, int c8) { \
                   void *x = 0; void *p0 = q_alloc(); void *p1 = q_alloc(); void *p2 = q_alloc(); void *p3 = q_alloc(); \
                   void *p4 = q_alloc(); void *p5 = q_alloc(); void *p6 = q_alloc(); void *p7 = q_alloc(); void *p8 = q_alloc(); \
                   if (c0) x = p0; if (c1) x = p1; if (c2) x = p2; if (c3) x = p3; if (c4) x = p4; if (c5) x = p5; \
                   if (c6) x = p6; if (c7) x = p7; if (c8) x = p8; q_observe(x); \
-                  q_free(p0); q_free(p1); q_free(p2); q_free(p3); q_free(p4); q_free(p5); q_free(p6); q_free(p7); q_free(p8); }");
-    assert!(run.refused("alias set exceeded 8 targets and was widened"), "{run:?}");
+                  q_free(p0); q_free(p1); q_free(p2); q_free(p3); q_free(p4); q_free(p5); q_free(p6); q_free(p7); q_free(p8); }",
+    );
+    assert!(
+        run.refused("alias set exceeded 8 targets and was widened"),
+        "{run:?}"
+    );
     assert!(!run.safe());
 }
 
@@ -487,6 +557,33 @@ fn n13_vector_values_are_refused() {
     }
     assert!(gs("typedef int v4 __attribute__((vector_size(16))); void subject(v4 a, v4 b) { v4 c = a + b; }")
         .refused(ASSIGNMENT));
+}
+
+// ---------------------------------------------------------------------------
+// CG28 — weak-memory events (W02 W03 W04; the core halves are in qcore-core)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn w02_w03_w04_atomic_rmw_cas_and_fences_are_uncontracted_calls() {
+    if !clang_available() {
+        return;
+    }
+    for (source, builtin) in [
+        (
+            "int subject(_Atomic int *a) { return __c11_atomic_fetch_add(a, 1, 5); }",
+            "__c11_atomic_fetch_add",
+        ),
+        (
+            "int subject(_Atomic int *a, int *e) { return __c11_atomic_compare_exchange_strong(a, e, 1, 5, 5); }",
+            "__c11_atomic_compare_exchange_strong",
+        ),
+        (
+            "void subject(void) { __c11_atomic_thread_fence(5); }",
+            "__c11_atomic_thread_fence",
+        ),
+    ] {
+        assert!(gs(source).refused(&uncontracted(builtin)), "{source}");
+    }
 }
 
 /// Correction to the input: G's refusal of `_BitInt` is the indirect-access
