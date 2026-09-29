@@ -237,6 +237,7 @@ import QCore.JoinedProvenanceCallFrames
 import QCore.JoinedProvenanceRoundBound
 
 import QCore.ScalarCalls
+import QCore.ScalarTypes
 import QCore.ResourceCalls
 
 import QCore.MonkeyWaitSourcePolicy

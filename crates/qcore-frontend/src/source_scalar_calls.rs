@@ -128,7 +128,6 @@ impl Reader<'_> {
             .parse::<i128>()
             .ok()
             .and_then(|n| if negative { n.checked_neg() } else { Some(n) })
-            .filter(|n| i128::from(i64::MIN) <= *n && *n <= i128::from(u64::MAX))
             .ok_or_else(|| self.bad("integer literal outside every scalar type"))?;
         Ok(Expr::Literal(n))
     }

@@ -1,0 +1,25 @@
+#import std.fmt;
+#import std.io;
+#import std.logger;
+
+// Fixed-width scalar types: every operand of one operation has one type,
+// every conversion is written with `as`, and every operation is checked.
+fn average(a: u8, b: u8) -> u8 {
+    let sum = a as u16 + b as u16;
+    return (sum / 2) as u8;
+}
+
+fn main() -> unit {
+    let x: u8 = 250;
+    let y: u8 = 240;
+    let m = average(x, y);
+    print dec m;
+    print hex m;
+    let wide: i64 = -1;
+    print hex wide;
+    let below = m < x;
+    print dec below;
+    log info dec below;
+    flush;
+    return;
+}
