@@ -1,0 +1,32 @@
+module contract;
+
+// Card CG00-CLANG-GAP-BASELINE: two scalar sinks for the BEFORE controls of
+// the Clang gap analysis's nested- and sibling-call entries (E10–E12, its
+// example B `sink(release_and_status(p))`). The value-returning custody
+// callees come from `r_return_call.qcore`. Synthetic trusted test
+// assumptions, not facts about any library.
+
+extern fn cg_sink(value: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+// A declared data-only variadic tail (K08, K10): the tail's actuals are
+// validated as data; nothing about a format string is modelled.
+extern fn cg_log(format: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(format);
+    ensures normal resource_return_none();
+    ensures normal resource_variadic_data_tail();
+};
+
+extern fn cg_sink2(left: i32, right: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(left);
+    ensures normal resource_borrowed(right);
+    ensures normal resource_return_none();
+};
