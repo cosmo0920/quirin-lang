@@ -1,0 +1,6 @@
+merged functions: {'Unknown': 4298, 'Safe': 526, 'Unsafe': 10}
+merged units: {'Unknown': 167, 'Safe': 6, 'Unsafe': 8, 'data_only': 4}
+merged diagnostic_counts: {'leak': 36, 'summary_conflict': 1, 'unknown_alias': 7936, 'unsupported': 35737}
+functions/leaves touched by both cards: 0 []
+mismatches: 0
+COMPOSES

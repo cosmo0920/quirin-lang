@@ -1,0 +1,23 @@
+[
+ {
+  "id": "W47-PREDEFINED-FACTS-UNGENERATED-SOURCES",
+  "title": "Derive the predefined-macro facts of every command, generated sources included",
+  "why": "W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS derives, per recorded compile command of the 90978ac6 export's production build, the reserved macros defined at a unit's start and every #define/#undef its -E -dD preprocessing processes. 34 of the 1,421 commands fail at -E -dD because the prepared build (private/w47-tail/attempt-1/prep, native build of cmetrics-static only) never generated their sources or headers: luajit's lj_libdef.h and lj_vm.S, the bison/flex outputs of src/record_accessor, src/stream_processor/parser and plugins/processor_sql/parser, src/flb_dump.c and src/fluent-bit.c. Fail-closed: those files stay undecided and, because a failed unit may read any header, so does every file without a command, so at the export no header and not the test is decided (the census's 4 unstructured files, among them lib/monkey's acutest.h and libevent's bufferevent_sock.c, stay unstructured; the pre-implementation locator of PREDICTION.md structured those two). Size: 34 failed derivations; every census header undecided; 0 sites move today. DISCHARGE: the prepared build generates every source and header the database's commands read (or the derivation is run on a build that did), every derivation succeeds, and the census is remeasured with headers decided.",
+  "source": "docs/reports/w47-loop-owner-predefined-macro-arms/README.md",
+  "recorded_by": "W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS"
+ },
+ {
+  "id": "W47-CONFIGURED-READING-MULTI-COMMAND-OWNED",
+  "title": "Decide an owned FLB_ macro undefined only where no command of the file defines it",
+  "why": "W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS found that the configured census reading (thread_entry_census.rs, rule 10p's W47-LOOP-OWNER-COROUTINE-HOP amendment; loop_owner_census example's compile_defines) keys each .c file by the intersection of its commands' -D sets and uses that same intersection as 'defined by some unit' for the owned FLB_ prefix. A file compiled by several commands that disagree on an FLB_ -D therefore has the name decided undefined although one of its commands defines it: at the 90978ac6 export, plugins/processor_sampling/sampling_tail.c tests FLB_SAMPLING_BENCH, which only the benchmark target's command defines (its #if arm is dropped); 4 census files have differing FLB_ -D sets (the three processor_sampling files, whose benchmark command lacks 10 FLB_HAVE_* names, and src/flb_pack.c with FLB_CORE/FLB_DUMP_STACKTRACE). A candidate soundness gap of the earlier reading, not a defect claim: an arm some command compiles is not read. The predefined-macro layer this card adds keeps both sets (all/any) and is not affected. Size: 1 tested name in 1 file; 0 sites move on it today. DISCHARGE: the owned-prefix rule decides a name undefined only when no command of the file defines it (union), measured on the census with every movement attributed.",
+  "source": "docs/reports/w47-loop-owner-predefined-macro-arms/README.md",
+  "recorded_by": "W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS"
+ },
+ {
+  "id": "W47-PREDEFINED-VALUE-COMPARISONS",
+  "title": "Evaluate comparisons of recorded predefined values in the configured reading",
+  "why": "W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS decides reserved macros' definedness from the recorded compiler but, fail-closed, never evaluates a comparison of a predefined macro's value (#if __GNUC__ >= 4, __STDC_VERSION__ >= 201112L): the directive reader reads only defined, !, &&, || and parentheses, so both arms stay read. At the 90978ac6 export 30 conditional directives of census files compare a reserved macro's value. Size: 30 directives; 0 sites move on them today. DISCHARGE: such a comparison is decided only from the values the recorded compiler's -dM listing gives for every command of the file (integer literals evaluated exactly as the preprocessor does), undecided otherwise, with Lean parity and the census remeasured.",
+  "source": "docs/reports/w47-loop-owner-predefined-macro-arms/README.md",
+  "recorded_by": "W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS"
+ }
+]

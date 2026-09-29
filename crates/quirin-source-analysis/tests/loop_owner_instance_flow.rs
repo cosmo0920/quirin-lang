@@ -8,11 +8,16 @@
 //! Each fixture is compiled by Clang (the typed reading) and read by the
 //! lexical census. Negative controls first.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use qcore_c_gateway::thread_entry_census::{CensusFile, FLUENT_BIT_INSTANCE_FLOW};
+use qcore_c_gateway::thread_entry_census::predefined_macros::{
+    PredefinedMacros, fixture_command, fixture_database, fixture_facts,
+};
+use qcore_c_gateway::thread_entry_census::{
+    BuildConfiguration, CensusFile, FLUENT_BIT_INSTANCE_FLOW,
+};
 use qcore_c_gateway::typed_dispatch_census::{TypedFacts, TypedUnit, member_key, read_units};
 use qcore_contract::contract_loader::loop_owner_obligations;
 use qcore_core::loop_owner::{Mode, OwnerVerdict};
@@ -826,4 +831,217 @@ fn the_fixed_shape_discharges_only_when_every_derivation_holds() {
     assert!(reason.contains("holder escape"), "{reason}");
     assert!(reason.contains("P-CALLBACK-INSTANCE derived"), "{reason}");
     discharged_on_the_owners(&verdicts(&census, "cb_tail_pause_test"));
+}
+
+// Card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS: the fixed-test shape whose path
+// reaches definitions only Windows arms hold — `localtime_r` under
+// `#if defined (__linux__) … #elif defined (_WIN32)`
+// (`lib/monkey/mk_core/mk_utils.c:41`) and `dirname` under
+// `#ifndef _WIN32 … #else` (`src/config_format/flb_cf_yaml.c:550`) — beside an
+// escaped creator. Clang compiles neither arm's definition, so without a
+// decision both have no typed reading and hold the list-head derivation.
+
+/// The service hook reaches both Windows-only definitions.
+const WINDOWS_ARMS: &str = r#"
+#include "fluent-bit/flb_input.h"
+int platform_localtime(int t);
+char *platform_dirname(char *path);
+#if defined (__linux__)
+static int linux_only;
+#elif defined (_WIN32)
+int platform_localtime(int t)
+{
+    return t;
+}
+#endif
+#ifndef _WIN32
+static int posix_only;
+#else
+char *platform_dirname(char *path)
+{
+    return path;
+}
+#endif
+void service_hook(struct flb_lib_ctx *ctx)
+{
+    platform_localtime(0);
+    platform_dirname(0);
+}
+"#;
+
+/// The derived facts of a fixture: each `.c` file one command whose start
+/// of unit defines `defined`; `failed` names a file whose derivation failed.
+fn predefined(
+    fixture: &Fixture,
+    defined: &[&str],
+    file_defined: &[&str],
+    failed: Option<&str>,
+) -> PredefinedMacros {
+    let root = fixture.root.display().to_string();
+    let units = fixture
+        .files
+        .iter()
+        .map(|file| file.path.as_str())
+        .filter(|path| path.ends_with(".c"))
+        .collect::<Vec<_>>();
+    let database = fixture_database(&root, &units);
+    let commands = units
+        .iter()
+        .map(|path| {
+            let mut command = fixture_command(path, defined, file_defined, &[]);
+            if failed == Some(*path) {
+                command.failure = Some("`-E -dD`: exit 1".to_owned());
+            }
+            command
+        })
+        .collect();
+    let covered = fixture
+        .files
+        .iter()
+        .map(|file| file.path.as_str())
+        .collect::<Vec<_>>();
+    let facts = fixture_facts(&database, commands, &["_WIN32", "__linux__"], &covered);
+    PredefinedMacros::derive(&facts, &database, &fixture.root).expect("the facts match")
+}
+
+fn run_configured(fixture: &Fixture, predefined: Option<PredefinedMacros>) -> Census {
+    let typed = facts(fixture);
+    let obligations = loop_owner_obligations(&BTreeMap::from([(
+        "fluent_bit/loop_owner.qv".to_owned(),
+        CONTRACTS.to_owned(),
+    )]))
+    .expect("the production module loads");
+    let configuration = BuildConfiguration {
+        units: fixture
+            .files
+            .iter()
+            .filter(|file| file.path.ends_with(".c"))
+            .map(|file| (file.path.clone(), BTreeSet::new()))
+            .collect(),
+        owned_prefixes: vec!["FLB_".to_owned()],
+        defined_elsewhere: BTreeSet::new(),
+        predefined,
+    };
+    census_typed(
+        &fixture.files,
+        &obligations,
+        &FLUENT_BIT_HOPS,
+        Some(&configuration),
+        Some(&typed),
+    )
+}
+
+fn windows_arms_fixture(name: &str) -> Fixture {
+    make_fixture(
+        name,
+        &test_file(ONE_TAIL, "", "", ""),
+        &[("src/wild.c", WILD), ("src/service.c", WINDOWS_ARMS)],
+    )
+}
+
+#[test]
+fn nc_the_fixed_shape_with_windows_arms_undecided_is_unresolved() {
+    let fixture = windows_arms_fixture("win-undecided");
+    let census = run_configured(&fixture, None);
+    route_kept(&census, "have no typed reading");
+    let (_, reason) = flag(&census);
+    assert!(reason.contains("platform_localtime"), "{reason}");
+    assert!(reason.contains("platform_dirname"), "{reason}");
+}
+
+#[test]
+fn nc_the_fixed_shape_is_unresolved_where_the_compiler_defines_win32() {
+    // A derived set that defines `_WIN32` keeps both Windows arms.
+    let fixture = windows_arms_fixture("win-defined");
+    let view = predefined(&fixture, &["_WIN32"], &[], None);
+    route_kept(
+        &run_configured(&fixture, Some(view)),
+        "have no typed reading",
+    );
+}
+
+#[test]
+fn nc_the_fixed_shape_is_unresolved_where_a_file_defines_win32() {
+    // Some preprocessed file `#define`s `_WIN32`: nothing is decided.
+    let fixture = windows_arms_fixture("win-file-defined");
+    let view = predefined(&fixture, &["__linux__"], &["_WIN32"], None);
+    route_kept(
+        &run_configured(&fixture, Some(view)),
+        "have no typed reading",
+    );
+}
+
+#[test]
+fn nc_the_fixed_shape_is_unresolved_where_the_derivation_failed() {
+    let fixture = windows_arms_fixture("win-failed");
+    let view = predefined(&fixture, &["__linux__"], &[], Some("src/service.c"));
+    route_kept(
+        &run_configured(&fixture, Some(view)),
+        "have no typed reading",
+    );
+}
+
+#[test]
+fn the_fixed_shape_discharges_when_the_derived_set_decides_the_windows_arms_out() {
+    let fixture = windows_arms_fixture("win-decided");
+    let view = predefined(&fixture, &["__linux__"], &[], None);
+    let census = run_configured(&fixture, Some(view));
+    let (derived, reason) = flag(&census);
+    assert_eq!(derived, Some(false), "{reason}");
+    assert!(reason.contains("list-head instance"), "{reason}");
+    discharged_on_the_owners(&verdicts(&census, "cb_tail_pause_test"));
+    let decided = &census.reading.predefined_decisions["src/service.c"];
+    assert!(decided.contains("__linux__=defined"), "{decided:?}");
+    assert!(decided.contains("_WIN32=undefined"), "{decided:?}");
+}
+
+#[test]
+fn nc_the_old_test_shape_stays_refused_under_the_derived_set() {
+    let old = r#"
+#include "fluent-bit/flb_input.h"
+struct test_ctx { struct flb_lib_ctx *flb; int i_ffd; };
+static struct test_ctx *test_ctx_create(void)
+{
+    struct test_ctx *ctx = flb_calloc(1, sizeof(struct test_ctx));
+    if (!ctx) {
+        return NULL;
+    }
+    ctx->flb = flb_create();
+    ctx->i_ffd = flb_input(ctx->flb, (char *) "tail", NULL);
+    return ctx;
+}
+void flb_test_inotify_pause_collectors(void)
+{
+    struct mk_list *head;
+    struct flb_input_instance *ins;
+    struct test_ctx *ctx;
+    ctx = test_ctx_create();
+    if (!ctx) {
+        return;
+    }
+    flb_start(ctx->flb);
+    head = ctx->flb->config->inputs.next;
+    ins = mk_list_entry(head, struct flb_input_instance, _head);
+    flb_input_collector_running(1, ins);
+    flb_input_pause(ins);
+    flb_input_collector_running(1, ins);
+}
+TEST_LIST = {
+    { "inotify_pause_collectors", flb_test_inotify_pause_collectors },
+    { 0, 0 }
+};
+"#;
+    let fixture = make_fixture(
+        "old-win",
+        old,
+        &[("src/wild.c", WILD), ("src/service.c", WINDOWS_ARMS)],
+    );
+    let view = predefined(&fixture, &["__linux__"], &[], None);
+    let census = run_configured(&fixture, Some(view));
+    for verdict in verdicts(&census, "flb_test_inotify_pause_collectors") {
+        assert!(
+            matches!(verdict, OwnerVerdict::NotDischarged { context, .. } if context.thread == "T"),
+            "{verdict:?}"
+        );
+    }
 }

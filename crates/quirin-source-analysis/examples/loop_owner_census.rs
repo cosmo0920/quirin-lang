@@ -16,6 +16,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use qcore_c_gateway::thread_entry_census::predefined_macros::{PredefinedFacts, PredefinedMacros};
 use qcore_c_gateway::thread_entry_census::{BuildConfiguration, CensusFile};
 use qcore_c_gateway::typed_dispatch_census::TypedFacts;
 use qcore_contract::contract_loader::loop_owner_obligations;
@@ -154,9 +155,24 @@ fn main() {
     // Card W47-LOOP-OWNER-TYPED-DISPATCH: `--typed-facts=PATH` (written by the
     // `typed_dispatch_facts` example) keys field dispatch by record type.
     let mut typed_paths = Vec::new();
+    // Card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS: `--predefined-macros=PATH`
+    // (written by the `predefined_macro_facts` example) decides reserved
+    // macros from the recorded compiler, per command.
+    let mut predefined_path = None;
+    // `--list-functions=PATH`: every census function and edge, one per line
+    // (attribution of a reading's movement).
+    let mut list_path = None;
     arguments.retain(|argument| {
+        if let Some(path) = argument.strip_prefix("--list-functions=") {
+            list_path = Some(path.to_owned());
+            return false;
+        }
         if let Some(path) = argument.strip_prefix("--typed-facts=") {
             typed_paths.push(path.to_owned());
+            return false;
+        }
+        if let Some(path) = argument.strip_prefix("--predefined-macros=") {
+            predefined_path = Some(path.to_owned());
             return false;
         }
         if let Some(path) = argument.strip_prefix("--compile-commands=") {
@@ -240,8 +256,48 @@ fn main() {
             units,
             owned_prefixes: prefixes.clone(),
             defined_elsewhere,
+            predefined: None,
         }
     });
+    // The predefined-macro facts decide only when they match the database
+    // and the recorded compiler; otherwise nothing is decided and the reason
+    // is reported.
+    let mut predefined_report = serde_json::Value::Null;
+    let mut configuration = configuration;
+    if let Some(path) = &predefined_path {
+        let derived = match (&database, configuration.as_ref()) {
+            (Some(database), Some(_)) => {
+                let facts = fs::read_to_string(path)
+                    .map_err(|e| format!("{path}: {e}"))
+                    .and_then(|text| {
+                        serde_json::from_str::<PredefinedFacts>(&text)
+                            .map_err(|e| format!("{path}: {e}"))
+                    });
+                let database_text = fs::read_to_string(database).expect("compile database");
+                facts.and_then(|facts| PredefinedMacros::derive(&facts, &database_text, &root))
+            }
+            _ => Err("no compile database: the reading is not configured".to_owned()),
+        };
+        predefined_report = match derived {
+            Ok(view) => {
+                let (units, failed) = view.unit_counts();
+                let report = serde_json::json!({
+                    "decided": true,
+                    "units": units,
+                    "failed_units": failed,
+                    "files_without_a_command_decided": view.decides_uncommanded_files(),
+                    "candidates": view.candidates().len(),
+                    "compilers": view.compilers,
+                    "failures": view.failures,
+                });
+                if let Some(configuration) = configuration.as_mut() {
+                    configuration.predefined = Some(view);
+                }
+                report
+            }
+            Err(reason) => serde_json::json!({"decided": false, "reason": reason}),
+        };
+    }
     // Repeatable: the library's facts and the test's are read separately.
     let typed = (!typed_paths.is_empty()).then(|| {
         let mut merged = TypedFacts::default();
@@ -362,6 +418,32 @@ fn main() {
         "dispatchers": focus,
         "sites": sites,
     });
+    // Printed only when asked for (the older readings are unchanged).
+    if predefined_path.is_some() {
+        if predefined_report["decided"] == serde_json::json!(true) {
+            predefined_report["decisions"] = serde_json::json!(result.reading.predefined_decisions);
+        }
+        report["predefined_macros"] = predefined_report;
+    }
+    if let Some(path) = &list_path {
+        let program = &result.program;
+        let mut lines = program
+            .functions
+            .iter()
+            .map(|name| format!("function {name}"))
+            .collect::<Vec<_>>();
+        lines.extend(result.reading.edges.iter().map(|edge| {
+            format!(
+                "edge {} -> {} {:?} {:?}",
+                result.reading.functions[edge.caller],
+                result.reading.functions[edge.callee],
+                edge.hop,
+                edge.effect
+            )
+        }));
+        lines.sort();
+        fs::write(path, lines.join("\n") + "\n").expect("write the function list");
+    }
     if let Some(typed) = &typed {
         report["typed"] = serde_json::json!({
             "units": typed.units.len(),

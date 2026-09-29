@@ -1,0 +1,13 @@
+{
+  "note": "W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS card gate at base f269c231. The rust phase ran on the tree of a116de0d (its code identical to 8c6d1e3f and the final tip), logs private/pm/gate of this worktree: run_test_binaries.py 355 units, 368 summaries, 6,355 passed, 0 failed, 11 ignored (private/test-binaries/20260929T031617Z-2211734/summary.json); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 224 audits passed (AuditLoopOwner.lean 66 -> 81 theorems, no new audit module). providers/ is unchanged, so the provider gate is not due; provider cargo test was run for this record: 129 passed / 0 failed / 1 ignored across 43 result lines, then provider clean-dev 0. The records phase (private/pm/gate-records) ran after the ledger (566 -> 568), matrix and index regeneration: 365 Python tests OK, docs index 0. Clang 21.1.8 recorded in this worktree. No gate step failed. Exits in gate/.",
+  "workspace_tests": 6355,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 224,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -152,6 +152,11 @@ pub struct CensusReading {
     /// list-head region read (`PATH:LINE SETTER`), with its derived table and
     /// per-key reach, or why its keys are not read.
     pub property_keys: BTreeMap<String, Vec<String>>,
+    /// Card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS: per read file, each
+    /// reserved macro the recorded compiler decided in one of its conditions
+    /// (`NAME=defined` / `NAME=undefined`), where the configured reading
+    /// alone left it undecided.
+    pub predefined_decisions: BTreeMap<String, BTreeSet<String>>,
 }
 
 impl CensusReading {
@@ -177,6 +182,11 @@ pub use loop_owner_instance::{FLUENT_BIT_INSTANCE_FLOW, InstanceFlowTables};
 #[path = "loop_owner_property_keys.rs"]
 mod loop_owner_property_keys;
 pub use loop_owner_property_keys::{FLUENT_BIT_PROPERTY_KEYS, PropertyKeyTables};
+
+// Card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS: reserved macros decided from the
+// recorded compiler, for the configured reading.
+#[path = "loop_owner_predefined_macros.rs"]
+pub mod predefined_macros;
 
 /// The closed hop vocabulary of one program family.
 #[derive(Clone, Copy, Debug)]
@@ -374,6 +384,9 @@ pub struct BuildConfiguration {
     /// Macros `#define`d in files the census does not read (the build's
     /// generated headers): never decided undefined.
     pub defined_elsewhere: BTreeSet<String>,
+    /// Card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS: reserved macros the
+    /// recorded compiler decides per command; `None` decides none.
+    pub predefined: Option<predefined_macros::PredefinedMacros>,
 }
 
 /// A condition's value under a configuration.
@@ -413,6 +426,12 @@ struct MacroView<'a> {
     written: &'a BTreeSet<String>,
     undefined_somewhere: &'a BTreeSet<String>,
     owned_prefixes: &'a [String],
+    /// The read file's path and the recorded compiler's decisions (card
+    /// W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS).
+    path: &'a str,
+    predefined: Option<&'a predefined_macros::PredefinedMacros>,
+    /// The decisions the recorded compiler made here, for the report.
+    decisions: std::cell::RefCell<BTreeSet<String>>,
 }
 
 impl MacroView<'_> {
@@ -428,7 +447,24 @@ impl MacroView<'_> {
         {
             Truth::False
         } else {
-            Truth::Unknown
+            // A reserved macro the recorded compiler decides: a read file's
+            // own `#define`/`#undef` (or a generated header's) still wins.
+            let truth = match self.predefined.and_then(|p| p.decide(self.path, name)) {
+                Some(true) if !self.undefined_somewhere.contains(name) => Truth::True,
+                Some(false) if !self.written.contains(name) => Truth::False,
+                _ => Truth::Unknown,
+            };
+            if truth != Truth::Unknown {
+                self.decisions.borrow_mut().insert(format!(
+                    "{name}={}",
+                    if truth == Truth::True {
+                        "defined"
+                    } else {
+                        "undefined"
+                    }
+                ));
+            }
+            truth
         }
     }
 }
@@ -1288,18 +1324,37 @@ pub fn read_program_typed(
                     written: &written,
                     undefined_somewhere: &undefined_somewhere,
                     owned_prefixes: &configuration.owned_prefixes,
+                    path: &source.path,
+                    predefined: configuration.predefined.as_ref(),
+                    decisions: std::cell::RefCell::default(),
                 }
             });
-            scan_file(
+            let scan = scan_file(
                 file,
                 &source.path,
                 &source.text,
                 &mut definitions,
                 view.as_ref(),
-            )
+            );
+            let decisions = view
+                .map(|view| view.decisions.into_inner())
+                .unwrap_or_default();
+            (scan, decisions)
         })
         .collect::<Vec<_>>();
     let mut program = CensusReading::default();
+    let scans = scans
+        .into_iter()
+        .zip(files)
+        .map(|((scan, decisions), source)| {
+            if !decisions.is_empty() {
+                program
+                    .predefined_decisions
+                    .insert(source.path.clone(), decisions);
+            }
+            scan
+        })
+        .collect::<Vec<_>>();
     let mut index = BTreeMap::new();
     for definition in &definitions {
         if !index.contains_key(&definition.census_name) {

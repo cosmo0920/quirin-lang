@@ -1228,4 +1228,292 @@ theorem a_key_reach_without_a_hazard_leaves_the_one_creation {α : Type}
     headDerivation [setterEvent hazard reach, .create flag] = some flag := by
   simp [setterEvent, h, headDerivation, mutates, created]
 
+/-! ### Predefined-macro arms (card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS)
+
+A reserved macro is decided from the recorded compiler, per command. A
+preprocessed unit starts from the macros its compiler defines under the
+command's flags (the probe: built-ins, then the command line's `-D`/`-U` in
+order) and then processes its files' `#define`/`#undef` directives in order;
+a condition is evaluated at some point of that sequence. The reading decides
+a name *defined* when every unit of the file starts with it and no directive
+of any of them `#undef`s it, *undefined* when none starts with it and no
+directive `#define`s it, and nothing otherwise, or when the derivation is
+absent (a compiler that is unavailable or not the recorded one, a failed
+run). Such a decision agrees with the name's definedness at every point of
+every unit (`a_predefined_macro_behaves_as_an_owned_macro`), so the arm the
+preprocessor takes is kept (`the_taken_arm_is_read`). A condition's reading
+is three-valued and agrees with the preprocessor's value whenever its names'
+decisions do (`the_condition_reading_agrees_with_the_preprocessor`); an
+arithmetic comparison is never evaluated and keeps its arm
+(`an_undecidable_comparison_keeps_the_arm`); a missing derivation decides
+nothing and keeps every arm (`a_compiler_mismatch_decides_nothing`,
+`a_compiler_mismatch_keeps_every_arm`); a `-U` after a `-D` undefines
+(`a_minus_u_undefines`); a file's own directive keeps the opposite decision
+from being made (`a_file_directive_wins`). None of it bears on the old
+test's path, which is refused on its test-thread context whatever the arms
+(`the_old_test_path_is_never_discharged_whatever_the_arms`). -/
+
+inductive Directive where
+  | define (name : String)
+  | undef (name : String)
+  deriving DecidableEq, Repr
+
+/-- One directive's effect on the defined set. -/
+def applyDirective (defined : String → Bool) : Directive → String → Bool
+  | .define m, n => if n = m then true else defined n
+  | .undef m, n => if n = m then false else defined n
+
+/-- The defined set after a sequence of directives, in order. -/
+def definedAfter (defined : String → Bool) : List Directive → String → Bool
+  | [] => defined
+  | d :: rest => definedAfter (applyDirective defined d) rest
+
+/-- One preprocessed unit: the macros defined at its start (the probe), and
+its files' directives in the order the preprocessor processes them. -/
+structure PUnit where
+  start : String → Bool
+  events : List Directive
+
+/-- The decision for a name over a file's units; `none` is a derivation that
+is absent or failed. -/
+def decidePredefined : Option (List PUnit) → String → Truth
+  | none, _ => .unknown
+  | some [], _ => .unknown
+  | some units, n =>
+    if units.all (fun u => u.start n && !u.events.contains (.undef n)) then .yes
+    else if units.all (fun u => !u.start n && !u.events.contains (.define n)) then .no
+    else .unknown
+
+theorem definedAfter_without_undef (n : String) :
+    ∀ (events : List Directive) (d : String → Bool),
+      (.undef n) ∉ events → d n = true → definedAfter d events n = true := by
+  intro events
+  induction events with
+  | nil => intro d _ h; simpa [definedAfter] using h
+  | cons e rest ih =>
+    intro d hnot hd
+    simp only [List.mem_cons, not_or] at hnot
+    apply ih _ hnot.2
+    cases e with
+    | define m => by_cases hm : n = m <;> simp [applyDirective, hm, hd]
+    | undef m =>
+      have : n ≠ m := fun h => hnot.1 (by rw [h])
+      simp [applyDirective, this, hd]
+
+theorem definedAfter_without_define (n : String) :
+    ∀ (events : List Directive) (d : String → Bool),
+      (.define n) ∉ events → d n = false → definedAfter d events n = false := by
+  intro events
+  induction events with
+  | nil => intro d _ h; simpa [definedAfter] using h
+  | cons e rest ih =>
+    intro d hnot hd
+    simp only [List.mem_cons, not_or] at hnot
+    apply ih _ hnot.2
+    cases e with
+    | undef m => by_cases hm : n = m <;> simp [applyDirective, hm, hd]
+    | define m =>
+      have : n ≠ m := fun h => hnot.1 (by rw [h])
+      simp [applyDirective, this, hd]
+
+/-- A decided reserved macro agrees with its definedness at every point
+(`k` directives processed) of every unit of the file. -/
+theorem a_predefined_macro_behaves_as_an_owned_macro {units : List PUnit} {n : String}
+    {u : PUnit} (hu : u ∈ units) (k : Nat) :
+    agrees (decidePredefined (some units) n) (definedAfter u.start (u.events.take k) n) = true := by
+  cases units with
+  | nil => simp at hu
+  | cons first rest =>
+    simp only [decidePredefined]
+    split
+    · rename_i hall
+      rw [List.all_eq_true] at hall
+      have h := hall u hu
+      simp only [Bool.and_eq_true, Bool.not_eq_true', List.contains_eq_mem,
+        decide_eq_false_iff_not] at h
+      have hk : (.undef n) ∉ u.events.take k := fun hm => h.2 (List.mem_of_mem_take hm)
+      simp [agrees, definedAfter_without_undef n _ _ hk h.1]
+    · split
+      · rename_i _ hall
+        rw [List.all_eq_true] at hall
+        have h := hall u hu
+        simp only [Bool.and_eq_true, Bool.not_eq_true', List.contains_eq_mem,
+          decide_eq_false_iff_not] at h
+        have hk : (.define n) ∉ u.events.take k := fun hm => h.2 (List.mem_of_mem_take hm)
+        simp [agrees, definedAfter_without_define n _ _ hk h.1]
+      · simp [agrees]
+
+/-- An absent or failed derivation decides nothing. -/
+theorem a_compiler_mismatch_decides_nothing (n : String) :
+    decidePredefined none n = .unknown := rfl
+
+/-- A `-U` after a `-D` of the same name on the command line: the unit starts
+without it, and with no `#define` of it in its files the name is decided
+undefined. -/
+theorem a_minus_u_undefines (builtin : String → Bool) (commandLine : List Directive)
+    (n : String) (events : List Directive) (h : (.define n) ∉ events) :
+    decidePredefined
+        (some [{ start := definedAfter builtin (commandLine ++ [.define n, .undef n]),
+                 events := events }]) n = .no := by
+  have hstart : definedAfter builtin (commandLine ++ [.define n, .undef n]) n = false := by
+    have : ∀ (d : String → Bool) (pre : List Directive),
+        definedAfter d (pre ++ [.define n, .undef n]) n = false := by
+      intro d pre
+      induction pre generalizing d with
+      | nil => simp [definedAfter, applyDirective]
+      | cons e rest ih => simpa [definedAfter] using ih (applyDirective d e)
+    exact this builtin commandLine
+  simp [decidePredefined, hstart, h]
+
+/-- A file's own directive wins: a `#define` anywhere in a unit keeps the
+name from being decided undefined, an `#undef` from being decided defined. -/
+theorem a_file_directive_wins {units : List PUnit} {n : String} {u : PUnit}
+    (hu : u ∈ units) :
+    ((.define n) ∈ u.events → decidePredefined (some units) n ≠ .no) ∧
+    ((.undef n) ∈ u.events → decidePredefined (some units) n ≠ .yes) := by
+  constructor
+  · intro hdef hno
+    have hagree := a_predefined_macro_behaves_as_an_owned_macro (n := n) hu u.events.length
+    rw [hno] at hagree
+    cases units with
+    | nil => simp at hu
+    | cons first rest =>
+      simp only [decidePredefined] at hno
+      split at hno
+      · simp at hno
+      · split at hno
+        · rename_i _ hall
+          rw [List.all_eq_true] at hall
+          have h := hall u hu
+          simp only [Bool.and_eq_true, Bool.not_eq_true', List.contains_eq_mem,
+            decide_eq_false_iff_not] at h
+          exact h.2 hdef
+        · simp at hno
+  · intro hundef hyes
+    cases units with
+    | nil => simp at hu
+    | cons first rest =>
+      simp only [decidePredefined] at hyes
+      split at hyes
+      · rename_i hall
+        rw [List.all_eq_true] at hall
+        have h := hall u hu
+        simp only [Bool.and_eq_true, Bool.not_eq_true', List.contains_eq_mem,
+          decide_eq_false_iff_not] at h
+        exact h.2 hundef
+      · split at hyes <;> simp at hyes
+
+/-! A condition as the directive reader reads it: `defined`, `!`, `&&`,
+`||`, and anything else (an arithmetic comparison, a macro's value) as an
+unread operand whose actual value is arbitrary. -/
+
+inductive Cond where
+  | defined (name : String)
+  | not (c : Cond)
+  | and (a b : Cond)
+  | or (a b : Cond)
+  | unread
+  deriving Repr
+
+def Truth.neg : Truth → Truth
+  | .yes => .no
+  | .no => .yes
+  | .unknown => .unknown
+
+def Truth.conj : Truth → Truth → Truth
+  | .no, _ => .no
+  | _, .no => .no
+  | .yes, .yes => .yes
+  | _, _ => .unknown
+
+def Truth.disj (a b : Truth) : Truth := (a.neg.conj b.neg).neg
+
+/-- The reading: three-valued, from the names' decisions. -/
+def readCond (decide : String → Truth) : Cond → Truth
+  | .defined n => decide n
+  | .not c => (readCond decide c).neg
+  | .and a b => (readCond decide a).conj (readCond decide b)
+  | .or a b => (readCond decide a).disj (readCond decide b)
+  | .unread => .unknown
+
+/-- The preprocessor's value, `unread` operands taking any values. -/
+def evalCond (defined : String → Bool) (unread : Bool) : Cond → Bool
+  | .defined n => defined n
+  | .not c => !evalCond defined unread c
+  | .and a b => evalCond defined unread a && evalCond defined unread b
+  | .or a b => evalCond defined unread a || evalCond defined unread b
+  | .unread => unread
+
+theorem agrees_neg {t : Truth} {b : Bool} (h : agrees t b = true) :
+    agrees t.neg (!b) = true := by
+  cases t <;> cases b <;> simp_all [agrees, Truth.neg]
+
+theorem agrees_conj {s t : Truth} {a b : Bool} (ha : agrees s a = true)
+    (hb : agrees t b = true) : agrees (s.conj t) (a && b) = true := by
+  cases s <;> cases t <;> cases a <;> cases b <;> simp_all [agrees, Truth.conj]
+
+theorem the_condition_reading_agrees_with_the_preprocessor
+    {decide : String → Truth} {defined : String → Bool} (unread : Bool)
+    (h : ∀ n, agrees (decide n) (defined n) = true) :
+    ∀ c, agrees (readCond decide c) (evalCond defined unread c) = true := by
+  intro c
+  induction c with
+  | defined n => exact h n
+  | not c ih => exact agrees_neg ih
+  | and a b iha ihb => exact agrees_conj iha ihb
+  | or a b iha ihb =>
+    have hn := agrees_neg (agrees_conj (agrees_neg iha) (agrees_neg ihb))
+    simp only [readCond, evalCond, Truth.disj]
+    simpa [Bool.not_and, Bool.not_not] using hn
+  | unread => simp [readCond, agrees]
+
+/-- An arithmetic comparison is never evaluated: its arm is kept whatever
+the arms after it. -/
+theorem keptArms_unknown_head (rest : List Truth) :
+    keptArms false (.unknown :: rest) = true :: keptArms false rest := rfl
+
+theorem an_undecidable_comparison_keeps_the_arm (decide : String → Truth)
+    (rest : List Truth) :
+    keptArms false (readCond decide .unread :: rest) =
+      true :: keptArms false rest :=
+  keptArms_unknown_head rest
+
+theorem readCond_without_decisions : ∀ c, readCond (fun _ => .unknown) c = .unknown := by
+  intro c
+  induction c with
+  | defined n => rfl
+  | not c ih => simp [readCond, ih, Truth.neg]
+  | and a b iha ihb => simp [readCond, iha, ihb, Truth.conj]
+  | or a b iha ihb => simp [readCond, iha, ihb, Truth.disj, Truth.neg, Truth.conj]
+  | unread => rfl
+
+theorem keptArms_all_unknown : ∀ (conds : List Cond),
+    keptArms false (conds.map (readCond (fun _ => .unknown))) = conds.map (fun _ => true) := by
+  intro conds
+  induction conds with
+  | nil => rfl
+  | cons c rest ih =>
+    rw [List.map_cons, readCond_without_decisions, keptArms_unknown_head, ih]
+    rfl
+
+/-- Without a derivation every arm of every group is kept, as before this
+card. -/
+theorem a_compiler_mismatch_keeps_every_arm (conds : List Cond) :
+    keptArms false (conds.map (readCond (decidePredefined none))) =
+      conds.map (fun _ => true) := by
+  have : decidePredefined none = fun _ => .unknown := rfl
+  rw [this]
+  exact keptArms_all_unknown conds
+
+/-- The old test's collector operations run on the test thread whatever arms
+a reading keeps: every reading's contexts contain that context, so none
+discharges the site. -/
+theorem the_old_test_path_is_never_discharged_whatever_the_arms {owners : Owners}
+    {readings : List (List Context)} {unresolved : Bool} {t : Thread} {list : List Thread}
+    (hc : ∀ cs ∈ readings, { thread := t, mode := .either } ∈ cs)
+    (hl : candidates owners .either = some list) (hn : t ∉ list) :
+    ∀ cs ∈ readings, siteVerdict owners cs unresolved ≠ .discharged := by
+  intro cs hcs
+  exact the_old_test_path_is_never_discharged (hc cs hcs) hl hn
+
 end QCore.LoopOwner
