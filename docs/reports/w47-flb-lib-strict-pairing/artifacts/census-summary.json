@@ -1,0 +1,2147 @@
+{
+ "corpus": {
+  "against_before": {
+   "other_top_level_keys_changed": [],
+   "release_other_key_changes": [],
+   "release_reason_changes": 95,
+   "release_verdict_moves": [],
+   "site_changes_any": 0,
+   "site_verdict_moves": [],
+   "tally_equal": true
+  },
+  "calls": 280,
+  "clauses": [
+   [
+    "L1 start-requires-created",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L2 stop-ends-started",
+    "flb_stop",
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L3 no-stop-after-stop",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L4 no-stop-after-failed-start",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L5 no-stop-of-unstarted",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L6 destroy-requires-not-running",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L7 failed-start-leaves-no-thread",
+    "flb_start",
+    {
+     "reason": "a followed path returns nonzero with flb_lib_worker unjoined",
+     "status": "held"
+    }
+   ]
+  ],
+  "not_established_readings": 0,
+  "outside_contract": [
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L5 no-stop-of-unstarted",
+    "paths": [
+     [
+      "join of an identifier no start began at src/flb_lib.c:1058"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1077"
+     ]
+    ]
+   },
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L3 no-stop-after-stop",
+    "paths": [
+     [
+      "second join of a joined thread at src/flb_lib.c:1058"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1077"
+     ]
+    ]
+   },
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L4 no-stop-after-failed-start",
+    "paths": [
+     [
+      "first join of the started thread at src/flb_lib.c:1058"
+     ],
+     [
+      "first join of the started thread at src/flb_lib.c:1077"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1058"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1077"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1058"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1077"
+     ]
+    ]
+   }
+  ],
+  "pause_collectors_releases": {
+   "flb_test_inotify_pause_collectors `flb_destroy` src/flb_lib.c:216": {
+    "lifecycle_paths": {
+     "conforming": 0,
+     "conforming_descendants": null,
+     "conforming_live": null,
+     "conforming_premises": [],
+     "conforming_result": null,
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:244": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:261": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:292": {
+    "lifecycle_paths": {
+     "conforming": 3,
+     "conforming_descendants": [
+      "downstream_worker_thread -> do_reload: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> etw_worker: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> do_reload: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> etw_worker: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> log_worker_collector: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> do_reload: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> etw_worker: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "output_thread -> etw_worker: unresolved: 1 reason(s) on `output_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "Failed @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"9 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:624, lib/monkey/mk_core/external/winpthreads.c:636, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099, lib/monkey/mk_server/mk_clock.c:115\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+      "verdict": "not discharged"
+     },
+     "refused": 12,
+     "undetermined": 48
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:291",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:291 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:291 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_pause_collectors `unlink` tests/runtime/in_tail.c:252": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `unlink` tests/runtime/in_tail.c:285": {
+    "lifecycle_paths": {
+     "conforming": 5,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "Absent(Nothing) @ no join on this path",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"9 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:624, lib/monkey/mk_core/external/winpthreads.c:636, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099, lib/monkey/mk_server/mk_clock.c:115\")) @ src/flb_lib.c:984",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"9 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:624, lib/monkey/mk_core/external/winpthreads.c:636, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099, lib/monkey/mk_server/mk_clock.c:115\")) @ src/flb_lib.c:999"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+      "verdict": "not discharged"
+     },
+     "refused": 0,
+     "undetermined": 30
+    },
+    "result": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` src/flb_lib.c:216": {
+    "lifecycle_paths": {
+     "conforming": 0,
+     "conforming_descendants": null,
+     "conforming_live": null,
+     "conforming_premises": [],
+     "conforming_result": null,
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:244": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:261": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:292": {
+    "lifecycle_paths": {
+     "conforming": 3,
+     "conforming_descendants": [
+      "downstream_worker_thread -> do_reload: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> etw_worker: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> do_reload: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> etw_worker: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> log_worker_collector: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> do_reload: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> etw_worker: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "output_thread -> etw_worker: unresolved: 1 reason(s) on `output_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "Failed @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"9 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:624, lib/monkey/mk_core/external/winpthreads.c:636, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099, lib/monkey/mk_server/mk_clock.c:115\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+      "verdict": "not discharged"
+     },
+     "refused": 12,
+     "undetermined": 48
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:291",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:291 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:291 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_threaded_pause_collectors `unlink` tests/runtime/in_tail.c:252": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `unlink` tests/runtime/in_tail.c:285": {
+    "lifecycle_paths": {
+     "conforming": 5,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "Absent(Nothing) @ no join on this path",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"9 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:624, lib/monkey/mk_core/external/winpthreads.c:636, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099, lib/monkey/mk_server/mk_clock.c:115\")) @ src/flb_lib.c:984",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"9 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:624, lib/monkey/mk_core/external/winpthreads.c:636, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099, lib/monkey/mk_server/mk_clock.c:115\")) @ src/flb_lib.c:999"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+      "verdict": "not discharged"
+     },
+     "refused": 0,
+     "undetermined": 30
+    },
+    "result": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "stops": []
+   }
+  },
+  "refused_by_site": {
+   "flb_stop tests/runtime/in_tail.c:1072": 1,
+   "flb_stop tests/runtime/in_tail.c:1222": 1,
+   "flb_stop tests/runtime/in_tail.c:1299": 1,
+   "flb_stop tests/runtime/in_tail.c:1382": 1,
+   "flb_stop tests/runtime/in_tail.c:1465": 1,
+   "flb_stop tests/runtime/in_tail.c:2674": 1,
+   "flb_stop tests/runtime/in_tail.c:2803": 1,
+   "flb_stop tests/runtime/in_tail.c:2857": 1,
+   "flb_stop tests/runtime/in_tail.c:291": 19,
+   "flb_stop tests/runtime/in_tail.c:2989": 1,
+   "flb_stop tests/runtime/in_tail.c:639": 5,
+   "flb_stop tests/runtime/in_tail.c:759": 11,
+   "flb_stop tests/runtime/in_tail.c:912": 6
+  },
+  "refused_readings": 50,
+  "roots": {
+   "violates": 46
+  },
+  "states": {
+   "flb_destroy ['created']": 38,
+   "flb_destroy ['stopped']": 50,
+   "flb_destroy []": 46,
+   "flb_start ['created']": 50,
+   "flb_stop ['created', 'start-failed', 'started-ok']": 5,
+   "flb_stop ['start-failed', 'started-ok']": 45,
+   "flb_stop []": 46
+  },
+  "tally": {
+   "broadcast": {
+    "refused (broadcast)": 4,
+    "unresolved": 1
+   },
+   "destroy": {
+    "discharged": 1,
+    "unresolved": 11
+   },
+   "init": {
+    "discharged": 2,
+    "unresolved": 9
+   },
+   "read": {
+    "discharged": 3,
+    "unresolved": 15
+   },
+   "refused": {
+    "refused (recursive-or-dynamic-mutex)": 2,
+    "refused (rwlock)": 5,
+    "refused (try-or-timed-lock)": 8
+   },
+   "release": {
+    "discharged": 97,
+    "not discharged": 131
+   },
+   "signal": {
+    "discharged": 4,
+    "not discharged": 4,
+    "unresolved": 3
+   },
+   "wait": {
+    "discharged": 5,
+    "not discharged": 1,
+    "refused (wait-outside-predicate-loop)": 1,
+    "unresolved": 6
+   }
+  },
+  "undetermined_readings": 188,
+  "violating_readings": 50,
+  "violations_by_clause": {
+   "L4 no-stop-after-failed-start": 50,
+   "L5 no-stop-of-unstarted": 5
+  }
+ },
+ "fixed": {
+  "against_before": {
+   "other_top_level_keys_changed": [],
+   "release_other_key_changes": [],
+   "release_reason_changes": 99,
+   "release_verdict_moves": [],
+   "site_changes_any": 1,
+   "site_verdict_moves": [],
+   "tally_equal": true
+  },
+  "calls": 280,
+  "clauses": [
+   [
+    "L1 start-requires-created",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L2 stop-ends-started",
+    "flb_stop",
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L3 no-stop-after-stop",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L4 no-stop-after-failed-start",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L5 no-stop-of-unstarted",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L6 destroy-requires-not-running",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L7 failed-start-leaves-no-thread",
+    "flb_start",
+    {
+     "reason": "a followed path returns nonzero with flb_lib_worker unjoined",
+     "status": "held"
+    }
+   ]
+  ],
+  "not_established_readings": 0,
+  "outside_contract": [
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L5 no-stop-of-unstarted",
+    "paths": [
+     [
+      "join of an identifier no start began at src/flb_lib.c:1058"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1077"
+     ]
+    ]
+   },
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L3 no-stop-after-stop",
+    "paths": [
+     [
+      "second join of a joined thread at src/flb_lib.c:1058"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1077"
+     ]
+    ]
+   },
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L4 no-stop-after-failed-start",
+    "paths": [
+     [
+      "first join of the started thread at src/flb_lib.c:1058"
+     ],
+     [
+      "first join of the started thread at src/flb_lib.c:1077"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1058"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1077"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1058"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1077"
+     ]
+    ]
+   }
+  ],
+  "pause_collectors_releases": {
+   "flb_test_inotify_pause_collectors `flb_destroy` src/flb_lib.c:216": {
+    "lifecycle_paths": {
+     "conforming": 0,
+     "conforming_descendants": null,
+     "conforming_live": null,
+     "conforming_premises": [],
+     "conforming_result": null,
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:245": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:2588": {
+    "lifecycle_paths": {
+     "conforming": 2,
+     "conforming_descendants": [
+      "downstream_worker_thread -> do_reload: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> etw_worker: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> do_reload: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> etw_worker: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> log_worker_collector: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> do_reload: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> etw_worker: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "output_thread -> etw_worker: unresolved: 1 reason(s) on `output_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` is not checked on a path (src/flb_lib.c:1058), and the POSIX case `already joined or awaited by another joiner` is not excluded: 7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)",
+      "verdict": "not discharged"
+     },
+     "refused": 10,
+     "undetermined": 37
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:2583",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:2583 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:2583 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:262": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `pthread_cond_destroy` tests/runtime/in_tail.c:2595": {
+    "lifecycle_paths": {
+     "conforming": 2,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` is not checked on a path (src/flb_lib.c:1058), and the POSIX case `already joined or awaited by another joiner` is not excluded: 7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)",
+      "verdict": "not discharged"
+     },
+     "refused": 10,
+     "undetermined": 37
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:2583",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:2583 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:2583 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_pause_collectors `pthread_mutex_destroy` tests/runtime/in_tail.c:2596": {
+    "lifecycle_paths": {
+     "conforming": 2,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` is not checked on a path (src/flb_lib.c:1058), and the POSIX case `already joined or awaited by another joiner` is not excluded: 7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)",
+      "verdict": "not discharged"
+     },
+     "refused": 10,
+     "undetermined": 37
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:2583",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:2583 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:2583 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_pause_collectors `unlink` tests/runtime/in_tail.c:253": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `unlink` tests/runtime/in_tail.c:2591": {
+    "lifecycle_paths": {
+     "conforming": 2,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` is not checked on a path (src/flb_lib.c:1058), and the POSIX case `already joined or awaited by another joiner` is not excluded: 7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)",
+      "verdict": "not discharged"
+     },
+     "refused": 10,
+     "undetermined": 37
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:2583",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:2583 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:2583 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_pause_collectors scope end of `test` tests/runtime/in_tail.c:2597": {
+    "lifecycle_paths": {
+     "conforming": 2,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` is not checked on a path (src/flb_lib.c:1058), and the POSIX case `already joined or awaited by another joiner` is not excluded: 7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)",
+      "verdict": "not discharged"
+     },
+     "refused": 10,
+     "undetermined": 37
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:2583",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:2583 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:2583 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` src/flb_lib.c:216": {
+    "lifecycle_paths": {
+     "conforming": 0,
+     "conforming_descendants": null,
+     "conforming_live": null,
+     "conforming_premises": [],
+     "conforming_result": null,
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:245": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:262": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:293": {
+    "lifecycle_paths": {
+     "conforming": 3,
+     "conforming_descendants": [
+      "downstream_worker_thread -> do_reload: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> etw_worker: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> do_reload: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> etw_worker: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> log_worker_collector: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> do_reload: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> etw_worker: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "output_thread -> etw_worker: unresolved: 1 reason(s) on `output_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "Failed @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+      "verdict": "not discharged"
+     },
+     "refused": 12,
+     "undetermined": 48
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:292",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:292 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:292 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_threaded_pause_collectors `unlink` tests/runtime/in_tail.c:253": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `unlink` tests/runtime/in_tail.c:286": {
+    "lifecycle_paths": {
+     "conforming": 5,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "Absent(Nothing) @ no join on this path",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:984",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:999"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+      "verdict": "not discharged"
+     },
+     "refused": 0,
+     "undetermined": 30
+    },
+    "result": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "stops": []
+   }
+  },
+  "refused_by_site": {
+   "flb_stop tests/runtime/in_tail.c:1073": 1,
+   "flb_stop tests/runtime/in_tail.c:1223": 1,
+   "flb_stop tests/runtime/in_tail.c:1300": 1,
+   "flb_stop tests/runtime/in_tail.c:1383": 1,
+   "flb_stop tests/runtime/in_tail.c:1466": 1,
+   "flb_stop tests/runtime/in_tail.c:2583": 1,
+   "flb_stop tests/runtime/in_tail.c:2835": 1,
+   "flb_stop tests/runtime/in_tail.c:292": 18,
+   "flb_stop tests/runtime/in_tail.c:2964": 1,
+   "flb_stop tests/runtime/in_tail.c:3018": 1,
+   "flb_stop tests/runtime/in_tail.c:3150": 1,
+   "flb_stop tests/runtime/in_tail.c:640": 5,
+   "flb_stop tests/runtime/in_tail.c:760": 11,
+   "flb_stop tests/runtime/in_tail.c:913": 6
+  },
+  "refused_readings": 50,
+  "roots": {
+   "violates": 46
+  },
+  "states": {
+   "flb_destroy ['created']": 38,
+   "flb_destroy ['stopped']": 50,
+   "flb_destroy []": 46,
+   "flb_start ['created']": 50,
+   "flb_stop ['created', 'start-failed', 'started-ok']": 5,
+   "flb_stop ['start-failed', 'started-ok']": 45,
+   "flb_stop []": 46
+  },
+  "tally": {
+   "broadcast": {
+    "refused (broadcast)": 4,
+    "unresolved": 1
+   },
+   "destroy": {
+    "discharged": 1,
+    "not discharged": 1,
+    "unresolved": 11
+   },
+   "init": {
+    "discharged": 3,
+    "unresolved": 9
+   },
+   "read": {
+    "discharged": 8,
+    "unresolved": 15
+   },
+   "refused": {
+    "refused (recursive-or-dynamic-mutex)": 2,
+    "refused (rwlock)": 5,
+    "refused (try-or-timed-lock)": 8
+   },
+   "release": {
+    "discharged": 97,
+    "not discharged": 134
+   },
+   "signal": {
+    "discharged": 5,
+    "not discharged": 4,
+    "unresolved": 3
+   },
+   "wait": {
+    "discharged": 6,
+    "not discharged": 1,
+    "refused (wait-outside-predicate-loop)": 1,
+    "unresolved": 6
+   }
+  },
+  "undetermined_readings": 188,
+  "violating_readings": 50,
+  "violations_by_clause": {
+   "L4 no-stop-after-failed-start": 50,
+   "L5 no-stop-of-unstarted": 5
+  }
+ },
+ "previous": {
+  "against_before": {
+   "other_top_level_keys_changed": [],
+   "release_other_key_changes": [],
+   "release_reason_changes": 95,
+   "release_verdict_moves": [],
+   "site_changes_any": 0,
+   "site_verdict_moves": [],
+   "tally_equal": true
+  },
+  "calls": 280,
+  "clauses": [
+   [
+    "L1 start-requires-created",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L2 stop-ends-started",
+    "flb_stop",
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L3 no-stop-after-stop",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L4 no-stop-after-failed-start",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L5 no-stop-of-unstarted",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L6 destroy-requires-not-running",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L7 failed-start-leaves-no-thread",
+    "flb_start",
+    {
+     "reason": "a followed path returns nonzero with flb_lib_worker unjoined",
+     "status": "held"
+    }
+   ]
+  ],
+  "not_established_readings": 0,
+  "outside_contract": [
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L5 no-stop-of-unstarted",
+    "paths": [
+     [
+      "join of an identifier no start began at src/flb_lib.c:1058"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1077"
+     ]
+    ]
+   },
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L3 no-stop-after-stop",
+    "paths": [
+     [
+      "second join of a joined thread at src/flb_lib.c:1058"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1077"
+     ]
+    ]
+   },
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L4 no-stop-after-failed-start",
+    "paths": [
+     [
+      "first join of the started thread at src/flb_lib.c:1058"
+     ],
+     [
+      "first join of the started thread at src/flb_lib.c:1077"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1058"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1077"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1058"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1077"
+     ]
+    ]
+   }
+  ],
+  "pause_collectors_releases": {
+   "flb_test_inotify_pause_collectors `flb_destroy` src/flb_lib.c:216": {
+    "lifecycle_paths": {
+     "conforming": 0,
+     "conforming_descendants": null,
+     "conforming_live": null,
+     "conforming_premises": [],
+     "conforming_result": null,
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:245": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:262": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:293": {
+    "lifecycle_paths": {
+     "conforming": 3,
+     "conforming_descendants": [
+      "downstream_worker_thread -> do_reload: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> etw_worker: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> do_reload: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> etw_worker: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> log_worker_collector: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> do_reload: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> etw_worker: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "output_thread -> etw_worker: unresolved: 1 reason(s) on `output_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "Failed @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+      "verdict": "not discharged"
+     },
+     "refused": 12,
+     "undetermined": 48
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:292",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:292 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:292 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_pause_collectors `unlink` tests/runtime/in_tail.c:253": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `unlink` tests/runtime/in_tail.c:286": {
+    "lifecycle_paths": {
+     "conforming": 5,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "Absent(Nothing) @ no join on this path",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:984",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:999"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+      "verdict": "not discharged"
+     },
+     "refused": 0,
+     "undetermined": 30
+    },
+    "result": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` src/flb_lib.c:216": {
+    "lifecycle_paths": {
+     "conforming": 0,
+     "conforming_descendants": null,
+     "conforming_live": null,
+     "conforming_premises": [],
+     "conforming_result": null,
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:245": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:262": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:293": {
+    "lifecycle_paths": {
+     "conforming": 3,
+     "conforming_descendants": [
+      "downstream_worker_thread -> do_reload: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> etw_worker: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> do_reload: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> etw_worker: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> log_worker_collector: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> do_reload: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> etw_worker: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "output_thread -> etw_worker: unresolved: 1 reason(s) on `output_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "Failed @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+      "verdict": "not discharged"
+     },
+     "refused": 12,
+     "undetermined": 48
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:292",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:292 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:292 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_threaded_pause_collectors `unlink` tests/runtime/in_tail.c:253": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `unlink` tests/runtime/in_tail.c:286": {
+    "lifecycle_paths": {
+     "conforming": 5,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "Absent(Nothing) @ no join on this path",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:984",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:999"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+      "verdict": "not discharged"
+     },
+     "refused": 0,
+     "undetermined": 30
+    },
+    "result": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "stops": []
+   }
+  },
+  "refused_by_site": {
+   "flb_stop tests/runtime/in_tail.c:1073": 1,
+   "flb_stop tests/runtime/in_tail.c:1223": 1,
+   "flb_stop tests/runtime/in_tail.c:1300": 1,
+   "flb_stop tests/runtime/in_tail.c:1383": 1,
+   "flb_stop tests/runtime/in_tail.c:1466": 1,
+   "flb_stop tests/runtime/in_tail.c:2748": 1,
+   "flb_stop tests/runtime/in_tail.c:2877": 1,
+   "flb_stop tests/runtime/in_tail.c:292": 19,
+   "flb_stop tests/runtime/in_tail.c:2931": 1,
+   "flb_stop tests/runtime/in_tail.c:3063": 1,
+   "flb_stop tests/runtime/in_tail.c:640": 5,
+   "flb_stop tests/runtime/in_tail.c:760": 11,
+   "flb_stop tests/runtime/in_tail.c:913": 6
+  },
+  "refused_readings": 50,
+  "roots": {
+   "violates": 46
+  },
+  "states": {
+   "flb_destroy ['created']": 38,
+   "flb_destroy ['stopped']": 50,
+   "flb_destroy []": 46,
+   "flb_start ['created']": 50,
+   "flb_stop ['created', 'start-failed', 'started-ok']": 5,
+   "flb_stop ['start-failed', 'started-ok']": 45,
+   "flb_stop []": 46
+  },
+  "tally": {
+   "broadcast": {
+    "refused (broadcast)": 4,
+    "unresolved": 1
+   },
+   "destroy": {
+    "discharged": 1,
+    "unresolved": 11
+   },
+   "init": {
+    "discharged": 2,
+    "unresolved": 9
+   },
+   "read": {
+    "discharged": 3,
+    "unresolved": 15
+   },
+   "refused": {
+    "refused (recursive-or-dynamic-mutex)": 2,
+    "refused (rwlock)": 5,
+    "refused (try-or-timed-lock)": 8
+   },
+   "release": {
+    "discharged": 97,
+    "not discharged": 131
+   },
+   "signal": {
+    "discharged": 4,
+    "not discharged": 4,
+    "unresolved": 3
+   },
+   "wait": {
+    "discharged": 5,
+    "not discharged": 1,
+    "refused (wait-outside-predicate-loop)": 1,
+    "unresolved": 6
+   }
+  },
+  "undetermined_readings": 188,
+  "violating_readings": 50,
+  "violations_by_clause": {
+   "L4 no-stop-after-failed-start": 50,
+   "L5 no-stop-of-unstarted": 5
+  }
+ },
+ "system": {
+  "against_before": {
+   "other_top_level_keys_changed": [],
+   "release_other_key_changes": [],
+   "release_reason_changes": 95,
+   "release_verdict_moves": [],
+   "site_changes_any": 0,
+   "site_verdict_moves": [],
+   "tally_equal": true
+  },
+  "calls": 280,
+  "clauses": [
+   [
+    "L1 start-requires-created",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L2 stop-ends-started",
+    "flb_stop",
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L3 no-stop-after-stop",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L4 no-stop-after-failed-start",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L5 no-stop-of-unstarted",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L6 destroy-requires-not-running",
+    null,
+    {
+     "status": "in force"
+    }
+   ],
+   [
+    "L7 failed-start-leaves-no-thread",
+    "flb_start",
+    {
+     "reason": "a followed path returns nonzero with flb_lib_worker unjoined",
+     "status": "held"
+    }
+   ]
+  ],
+  "not_established_readings": 0,
+  "outside_contract": [
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L5 no-stop-of-unstarted",
+    "paths": [
+     [
+      "join of an identifier no start began at src/flb_lib.c:1058"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1077"
+     ]
+    ]
+   },
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L3 no-stop-after-stop",
+    "paths": [
+     [
+      "second join of a joined thread at src/flb_lib.c:1058"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1077"
+     ]
+    ]
+   },
+   {
+    "every_path_joins": true,
+    "forbidden_by": "L4 no-stop-after-failed-start",
+    "paths": [
+     [
+      "first join of the started thread at src/flb_lib.c:1058"
+     ],
+     [
+      "first join of the started thread at src/flb_lib.c:1077"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1058"
+     ],
+     [
+      "second join of a joined thread at src/flb_lib.c:1077"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1058"
+     ],
+     [
+      "join of an identifier no start began at src/flb_lib.c:1077"
+     ]
+    ]
+   }
+  ],
+  "pause_collectors_releases": {
+   "flb_test_inotify_pause_collectors `flb_destroy` src/flb_lib.c:216": {
+    "lifecycle_paths": {
+     "conforming": 0,
+     "conforming_descendants": null,
+     "conforming_live": null,
+     "conforming_premises": [],
+     "conforming_result": null,
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:245": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:262": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `flb_destroy` tests/runtime/in_tail.c:293": {
+    "lifecycle_paths": {
+     "conforming": 3,
+     "conforming_descendants": [
+      "downstream_worker_thread -> do_reload: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> etw_worker: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> do_reload: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> etw_worker: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> log_worker_collector: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> do_reload: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> etw_worker: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "output_thread -> etw_worker: unresolved: 1 reason(s) on `output_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "Failed @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+      "verdict": "not discharged"
+     },
+     "refused": 12,
+     "undetermined": 48
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:292",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:292 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:292 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_pause_collectors `unlink` tests/runtime/in_tail.c:253": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_pause_collectors `unlink` tests/runtime/in_tail.c:286": {
+    "lifecycle_paths": {
+     "conforming": 5,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "Absent(Nothing) @ no join on this path",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:984",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:999"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+      "verdict": "not discharged"
+     },
+     "refused": 0,
+     "undetermined": 30
+    },
+    "result": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` src/flb_lib.c:216": {
+    "lifecycle_paths": {
+     "conforming": 0,
+     "conforming_descendants": null,
+     "conforming_live": null,
+     "conforming_premises": [],
+     "conforming_result": null,
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:245": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:262": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `flb_destroy` tests/runtime/in_tail.c:293": {
+    "lifecycle_paths": {
+     "conforming": 3,
+     "conforming_descendants": [
+      "downstream_worker_thread -> do_reload: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> etw_worker: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> do_reload: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> etw_worker: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> log_worker_collector: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> do_reload: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> etw_worker: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> mk_utils_worker_entry: unresolved: `mk_utils_worker_entry` is the entry through which `mk_utils_worker_spawn` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> step_callback: unresolved: `step_callback` is the entry through which `flb_worker_create` runs every thread it starts; each such thread is decided under its own entry",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "output_thread -> etw_worker: unresolved: 1 reason(s) on `output_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "CheckedSuccess @ src/flb_lib.c:1077",
+       "Failed @ src/flb_lib.c:1077",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:1058"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "the join of `flb_lib_worker` failed on a path (src/flb_lib.c:1077)",
+      "verdict": "not discharged"
+     },
+     "refused": 12,
+     "undetermined": 48
+    },
+    "result": {
+     "reason": "the strictly paired lifecycle is not kept on a path: `test_tail_ctx.flb`: stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start) at tests/runtime/in_tail.c:292",
+     "verdict": "not discharged"
+    },
+    "stops": [
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:292 from `start-failed`: refused (stop after a failed start: stop of a context in state `start-failed` (L4 no-stop-after-failed-start))",
+     "`test_tail_ctx.flb` stop at tests/runtime/in_tail.c:292 from `started-ok`: L2 stop-ends-started (in force)"
+    ]
+   },
+   "flb_test_inotify_threaded_pause_collectors `unlink` tests/runtime/in_tail.c:253": {
+    "lifecycle_paths": {
+     "conforming": 1,
+     "conforming_descendants": [],
+     "conforming_live": {},
+     "conforming_premises": [],
+     "conforming_result": {
+      "verdict": "discharged"
+     },
+     "refused": 0,
+     "undetermined": 1
+    },
+    "result": {
+     "verdict": "discharged"
+    },
+    "stops": []
+   },
+   "flb_test_inotify_threaded_pause_collectors `unlink` tests/runtime/in_tail.c:286": {
+    "lifecycle_paths": {
+     "conforming": 5,
+     "conforming_descendants": [
+      "downstream_worker_thread -> downstream_worker_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> input_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> output_thread: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "downstream_worker_thread -> update_pod_service_map: unresolved: 1 reason(s) on `downstream_worker_thread`'s path to its exit, e.g. `src/flb_downstream_worker.c::downstream_worker_thread` is not read: `goto` is outside the statement reader at line 244",
+      "flb_lib_worker -> downstream_worker_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> input_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> output_thread: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "flb_lib_worker -> update_pod_service_map: unresolved: 8 reason(s) on `flb_lib_worker`'s path to its exit, e.g. `flb_chunk_trace_destroy` recurses or nests too deeply for the path reader",
+      "input_thread -> downstream_worker_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> input_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> output_thread: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow",
+      "input_thread -> update_pod_service_map: unresolved: 4 reason(s) on `input_thread`'s path to its exit, e.g. `flb_notification_deliver` may start a thread through a hop the path reader does not follow"
+     ],
+     "conforming_live": {
+      "flb_lib_worker": [
+       "Absent(Nothing) @ no join on this path",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:984",
+       "unchecked first join (not counted: joinable Ok(()), not busy Err(\"7 join site(s) may join it off the joining thread, the joined instance not derived: the join at lib/monkey/mk_server/mk_clock.c:133 may name `flb_lib_worker` (no spawn stores an identifier in field `mk_clock_tid`) and runs on 1 other thread(s) (e.g. `mk_lib_worker`); the join at plugins/filter_geoip2/libmaxminddb-1.12.2/t/threads_t.c:150 may name `flb_lib_worker` (the identifier expression is not read) and some path to it is unresolved; the join at plugins/filter_throttle_size/throttle_size.c:756 may name `flb_lib_worker` (the identifier expression is not read) and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:984 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:999 names `flb_lib_worker` and runs on 1 other thread(s) (e.g. `trace_chunk_pipeline_thread`); the join at src/flb_lib.c:1058 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`); the join at src/flb_lib.c:1077 names `flb_lib_worker` and runs on 6 other thread(s) (e.g. `downstream_worker_thread`)\"), not self Ok(()), no cycle Err(\"6 `pthread_self()` site(s) may keep the joining thread's identifier: lib/monkey/mk_core/deps/libevent/evthread_pthread.c:103, lib/monkey/mk_core/external/winpthreads.c:445, lib/monkey/mk_core/external/winpthreads.c:462, lib/monkey/mk_core/external/winpthreads.c:474, lib/monkey/mk_core/external/winpthreads.c:1089, lib/monkey/mk_core/external/winpthreads.c:1099\")) @ src/flb_lib.c:999"
+      ]
+     },
+     "conforming_premises": [],
+     "conforming_result": {
+      "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+      "verdict": "not discharged"
+     },
+     "refused": 0,
+     "undetermined": 30
+    },
+    "result": {
+     "reason": "released before any join of `flb_lib_worker` (no join on this path)",
+     "verdict": "not discharged"
+    },
+    "stops": []
+   }
+  },
+  "refused_by_site": {
+   "flb_stop tests/runtime/in_tail.c:1073": 1,
+   "flb_stop tests/runtime/in_tail.c:1223": 1,
+   "flb_stop tests/runtime/in_tail.c:1300": 1,
+   "flb_stop tests/runtime/in_tail.c:1383": 1,
+   "flb_stop tests/runtime/in_tail.c:1466": 1,
+   "flb_stop tests/runtime/in_tail.c:2748": 1,
+   "flb_stop tests/runtime/in_tail.c:2877": 1,
+   "flb_stop tests/runtime/in_tail.c:292": 19,
+   "flb_stop tests/runtime/in_tail.c:2931": 1,
+   "flb_stop tests/runtime/in_tail.c:3063": 1,
+   "flb_stop tests/runtime/in_tail.c:640": 5,
+   "flb_stop tests/runtime/in_tail.c:760": 11,
+   "flb_stop tests/runtime/in_tail.c:913": 6
+  },
+  "refused_readings": 50,
+  "roots": {
+   "violates": 46
+  },
+  "states": {
+   "flb_destroy ['created']": 38,
+   "flb_destroy ['stopped']": 50,
+   "flb_destroy []": 46,
+   "flb_start ['created']": 50,
+   "flb_stop ['created', 'start-failed', 'started-ok']": 5,
+   "flb_stop ['start-failed', 'started-ok']": 45,
+   "flb_stop []": 46
+  },
+  "tally": {
+   "broadcast": {
+    "refused (broadcast)": 4,
+    "unresolved": 1
+   },
+   "destroy": {
+    "discharged": 1,
+    "unresolved": 11
+   },
+   "init": {
+    "discharged": 2,
+    "unresolved": 9
+   },
+   "read": {
+    "discharged": 3,
+    "unresolved": 15
+   },
+   "refused": {
+    "refused (recursive-or-dynamic-mutex)": 2,
+    "refused (rwlock)": 5,
+    "refused (try-or-timed-lock)": 8
+   },
+   "release": {
+    "discharged": 97,
+    "not discharged": 131
+   },
+   "signal": {
+    "discharged": 4,
+    "not discharged": 4,
+    "unresolved": 3
+   },
+   "wait": {
+    "discharged": 5,
+    "not discharged": 1,
+    "refused (wait-outside-predicate-loop)": 1,
+    "unresolved": 6
+   }
+  },
+  "undetermined_readings": 188,
+  "violating_readings": 50,
+  "violations_by_clause": {
+   "L4 no-stop-after-failed-start": 50,
+   "L5 no-stop-of-unstarted": 5
+  }
+ }
+}

@@ -1,0 +1,1675 @@
+{
+ "failed": [
+  {
+   "exit": "101",
+   "file": "in_dummy.c"
+  },
+  {
+   "exit": "143",
+   "file": "in_ebpf_exec_handler.c"
+  },
+  {
+   "exit": "101",
+   "file": "in_random.c"
+  }
+ ],
+ "files": 116,
+ "library_callers": {},
+ "per_file": {
+  "config_map_opts.c": {
+   "calls": 3,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 1,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "core-timeout.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :80": 1
+   },
+   "violating_roots": 1
+  },
+  "core_chunk_trace.c": {
+   "calls": 7,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :111": 1
+   },
+   "violating_roots": 1
+  },
+  "core_engine.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :134": 1
+   },
+   "violating_roots": 1
+  },
+  "core_internal_logger.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :177": 1
+   },
+   "violating_roots": 1
+  },
+  "core_log.c": {
+   "calls": 20,
+   "clauses": {
+    "L4": 4
+   },
+   "not_established": 0,
+   "roots": 4,
+   "sites": {
+    "flb_stop :146": 1,
+    "flb_stop :196": 1,
+    "flb_stop :246": 1,
+    "flb_stop :296": 1
+   },
+   "violating_roots": 4
+  },
+  "core_routes.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :118": 1
+   },
+   "violating_roots": 1
+  },
+  "core_shutdown_spin.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :91": 1
+   },
+   "violating_roots": 1
+  },
+  "counter_parity_e2e.c": {
+   "calls": 36,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 4,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "custom_calyptia_input_test.c": {
+   "calls": 4,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 2,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "custom_calyptia_registration_retry_test.c": {
+   "calls": 15,
+   "clauses": {
+    "L4": 3
+   },
+   "not_established": 0,
+   "roots": 3,
+   "sites": {
+    "flb_stop :130": 1,
+    "flb_stop :217": 1,
+    "flb_stop :304": 1
+   },
+   "violating_roots": 3
+  },
+  "custom_calyptia_test.c": {
+   "calls": 3,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 1,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "filter_aws.c": {
+   "calls": 75,
+   "clauses": {
+    "L4": 15
+   },
+   "not_established": 0,
+   "roots": 15,
+   "sites": {
+    "flb_stop :1061": 1,
+    "flb_stop :1172": 1,
+    "flb_stop :1284": 1,
+    "flb_stop :134": 1,
+    "flb_stop :1396": 1,
+    "flb_stop :1516": 1,
+    "flb_stop :1636": 1,
+    "flb_stop :233": 1,
+    "flb_stop :332": 1,
+    "flb_stop :438": 1,
+    "flb_stop :537": 1,
+    "flb_stop :636": 1,
+    "flb_stop :735": 1,
+    "flb_stop :832": 1,
+    "flb_stop :960": 1
+   },
+   "violating_roots": 15
+  },
+  "filter_checklist.c": {
+   "calls": 25,
+   "clauses": {
+    "L4": 5
+   },
+   "not_established": 0,
+   "roots": 5,
+   "sites": {
+    "flb_stop :86": 5
+   },
+   "violating_roots": 5
+  },
+  "filter_counter_semantics.c": {
+   "calls": 8,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 1,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "filter_ecs.c": {
+   "calls": 30,
+   "clauses": {
+    "L4": 6
+   },
+   "not_established": 0,
+   "roots": 6,
+   "sites": {
+    "flb_stop :109": 6
+   },
+   "violating_roots": 6
+  },
+  "filter_expect.c": {
+   "calls": 50,
+   "clauses": {
+    "L4": 10
+   },
+   "not_established": 0,
+   "roots": 10,
+   "sites": {
+    "flb_stop :117": 10
+   },
+   "violating_roots": 10
+  },
+  "filter_grep.c": {
+   "calls": 64,
+   "clauses": {
+    "L4": 2
+   },
+   "not_established": 0,
+   "roots": 13,
+   "sites": {
+    "flb_stop :140": 1,
+    "flb_stop :96": 1
+   },
+   "violating_roots": 2
+  },
+  "filter_kubernetes.c": {
+   "calls": 5,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 1,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "filter_log_to_metrics.c": {
+   "calls": 40,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 8,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "filter_lua.c": {
+   "calls": 85,
+   "clauses": {
+    "L4": 17
+   },
+   "not_established": 0,
+   "roots": 17,
+   "sites": {
+    "flb_stop :1068": 1,
+    "flb_stop :1139": 1,
+    "flb_stop :1214": 1,
+    "flb_stop :1272": 1,
+    "flb_stop :1327": 1,
+    "flb_stop :1531": 1,
+    "flb_stop :1610": 1,
+    "flb_stop :1675": 1,
+    "flb_stop :429": 1,
+    "flb_stop :518": 1,
+    "flb_stop :586": 1,
+    "flb_stop :636": 1,
+    "flb_stop :700": 1,
+    "flb_stop :778": 1,
+    "flb_stop :854": 1,
+    "flb_stop :923": 1,
+    "flb_stop :993": 1
+   },
+   "violating_roots": 17
+  },
+  "filter_modify.c": {
+   "calls": 181,
+   "clauses": {
+    "L4": 35
+   },
+   "not_established": 0,
+   "roots": 36,
+   "sites": {
+    "flb_stop :87": 35
+   },
+   "violating_roots": 35
+  },
+  "filter_multiline.c": {
+   "calls": 60,
+   "clauses": {
+    "L4": 12
+   },
+   "not_established": 0,
+   "roots": 12,
+   "sites": {
+    "flb_stop :358": 9,
+    "flb_stop :596": 2,
+    "flb_stop :807": 1
+   },
+   "violating_roots": 12
+  },
+  "filter_nest.c": {
+   "calls": 20,
+   "clauses": {
+    "L4": 4
+   },
+   "not_established": 0,
+   "roots": 4,
+   "sites": {
+    "flb_stop :159": 1,
+    "flb_stop :232": 1,
+    "flb_stop :302": 1,
+    "flb_stop :372": 1
+   },
+   "violating_roots": 4
+  },
+  "filter_parser.c": {
+   "calls": 85,
+   "clauses": {
+    "L4": 13
+   },
+   "not_established": 0,
+   "roots": 13,
+   "sites": {
+    "flb_stop :1009": 1,
+    "flb_stop :1087": 1,
+    "flb_stop :1209": 4,
+    "flb_stop :162": 1,
+    "flb_stop :249": 1,
+    "flb_stop :326": 1,
+    "flb_stop :408": 1,
+    "flb_stop :578": 1,
+    "flb_stop :839": 1,
+    "flb_stop :923": 1
+   },
+   "violating_roots": 13
+  },
+  "filter_record_modifier.c": {
+   "calls": 40,
+   "clauses": {
+    "L4": 7
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :133": 6,
+    "flb_stop :431": 1
+   },
+   "violating_roots": 7
+  },
+  "filter_rewrite_tag.c": {
+   "calls": 45,
+   "clauses": {
+    "L4": 9
+   },
+   "not_established": 0,
+   "roots": 9,
+   "sites": {
+    "flb_stop :148": 9
+   },
+   "violating_roots": 9
+  },
+  "filter_stdout.c": {
+   "calls": 8,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 2,
+   "sites": {
+    "flb_stop :85": 1
+   },
+   "violating_roots": 1
+  },
+  "filter_sysinfo.c": {
+   "calls": 15,
+   "clauses": {
+    "L4": 3
+   },
+   "not_established": 0,
+   "roots": 3,
+   "sites": {
+    "flb_stop :133": 3
+   },
+   "violating_roots": 3
+  },
+  "filter_throttle.c": {
+   "calls": 10,
+   "clauses": {
+    "L4": 2
+   },
+   "not_established": 0,
+   "roots": 2,
+   "sites": {
+    "flb_stop :103": 1,
+    "flb_stop :70": 1
+   },
+   "violating_roots": 2
+  },
+  "filter_throttle_size.c": {
+   "calls": 20,
+   "clauses": {
+    "L4": 4
+   },
+   "not_established": 0,
+   "roots": 4,
+   "sites": {
+    "flb_stop :217": 1,
+    "flb_stop :376": 1,
+    "flb_stop :478": 1,
+    "flb_stop :575": 1
+   },
+   "violating_roots": 4
+  },
+  "filter_type_converter.c": {
+   "calls": 35,
+   "clauses": {
+    "L4": 7
+   },
+   "not_established": 0,
+   "roots": 7,
+   "sites": {
+    "flb_stop :107": 7
+   },
+   "violating_roots": 7
+  },
+  "filter_wasm.c": {
+   "calls": 35,
+   "clauses": {
+    "L4": 7
+   },
+   "not_established": 0,
+   "roots": 7,
+   "sites": {
+    "flb_stop :405": 1,
+    "flb_stop :444": 1,
+    "flb_stop :538": 1,
+    "flb_stop :605": 1,
+    "flb_stop :661": 1,
+    "flb_stop :723": 1,
+    "flb_stop :946": 1
+   },
+   "violating_roots": 7
+  },
+  "group_counter_semantics.c": {
+   "calls": 52,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 7,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "http_callbacks.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :49": 1
+   },
+   "violating_roots": 1
+  },
+  "in_cpu.c": {
+   "calls": 49,
+   "clauses": {
+    "L4": 11
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :173": 7,
+    "flb_stop :228": 1,
+    "flb_stop :296": 1,
+    "flb_stop :358": 1,
+    "flb_stop :670": 1
+   },
+   "violating_roots": 8
+  },
+  "in_disk.c": {
+   "calls": 49,
+   "clauses": {
+    "L4": 11
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :173": 7,
+    "flb_stop :228": 1,
+    "flb_stop :296": 1,
+    "flb_stop :358": 1,
+    "flb_stop :670": 1
+   },
+   "violating_roots": 8
+  },
+  "in_docker.c": {
+   "calls": 10,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 2,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "in_elasticsearch.c": {
+   "calls": 65,
+   "clauses": {
+    "L4": 13
+   },
+   "not_established": 0,
+   "roots": 13,
+   "sites": {
+    "flb_stop :213": 13
+   },
+   "violating_roots": 13
+  },
+  "in_event_test.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :28": 1
+   },
+   "violating_roots": 1
+  },
+  "in_fluentbit_metrics.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :165": 1
+   },
+   "violating_roots": 1
+  },
+  "in_forward.c": {
+   "calls": 78,
+   "clauses": {
+    "L4": 10
+   },
+   "not_established": 0,
+   "roots": 14,
+   "sites": {
+    "flb_stop :1154": 1,
+    "flb_stop :162": 9
+   },
+   "violating_roots": 10
+  },
+  "in_head.c": {
+   "calls": 49,
+   "clauses": {
+    "L4": 11
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :173": 7,
+    "flb_stop :228": 1,
+    "flb_stop :296": 1,
+    "flb_stop :358": 1,
+    "flb_stop :670": 1
+   },
+   "violating_roots": 8
+  },
+  "in_http.c": {
+   "calls": 72,
+   "clauses": {
+    "L4": 14
+   },
+   "not_established": 0,
+   "roots": 14,
+   "sites": {
+    "flb_stop :411": 14
+   },
+   "violating_roots": 14
+  },
+  "in_kubernetes_events.c": {
+   "calls": 37,
+   "clauses": {
+    "L4": 5
+   },
+   "not_established": 0,
+   "roots": 7,
+   "sites": {
+    "flb_stop :394": 2,
+    "flb_stop :723": 1,
+    "flb_stop :758": 1,
+    "flb_stop :793": 1
+   },
+   "violating_roots": 5
+  },
+  "in_mem.c": {
+   "calls": 49,
+   "clauses": {
+    "L4": 11
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :173": 7,
+    "flb_stop :228": 1,
+    "flb_stop :296": 1,
+    "flb_stop :358": 1,
+    "flb_stop :670": 1
+   },
+   "violating_roots": 8
+  },
+  "in_mqtt.c": {
+   "calls": 10,
+   "clauses": {
+    "L4": 2
+   },
+   "not_established": 0,
+   "roots": 2,
+   "sites": {
+    "flb_stop :135": 2
+   },
+   "violating_roots": 2
+  },
+  "in_netif.c": {
+   "calls": 20,
+   "clauses": {
+    "L4": 4
+   },
+   "not_established": 0,
+   "roots": 4,
+   "sites": {
+    "flb_stop :77": 4
+   },
+   "violating_roots": 4
+  },
+  "in_node_exporter_metrics.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :122": 1
+   },
+   "violating_roots": 1
+  },
+  "in_opentelemetry.c": {
+   "calls": 40,
+   "clauses": {
+    "L4": 8
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :283": 8
+   },
+   "violating_roots": 8
+  },
+  "in_opentelemetry_routing.c": {
+   "calls": 8,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :277": 1
+   },
+   "violating_roots": 1
+  },
+  "in_podman_metrics.c": {
+   "calls": 40,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 8,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "in_proc.c": {
+   "calls": 49,
+   "clauses": {
+    "L4": 11
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :173": 7,
+    "flb_stop :228": 1,
+    "flb_stop :296": 1,
+    "flb_stop :358": 1,
+    "flb_stop :670": 1
+   },
+   "violating_roots": 8
+  },
+  "in_prometheus_textfile.c": {
+   "calls": 6,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :68": 1
+   },
+   "violating_roots": 1
+  },
+  "in_simple_systems.c": {
+   "calls": 49,
+   "clauses": {
+    "L4": 11
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :173": 7,
+    "flb_stop :228": 1,
+    "flb_stop :296": 1,
+    "flb_stop :358": 1,
+    "flb_stop :670": 1
+   },
+   "violating_roots": 8
+  },
+  "in_splunk.c": {
+   "calls": 70,
+   "clauses": {
+    "L4": 14
+   },
+   "not_established": 0,
+   "roots": 14,
+   "sites": {
+    "flb_stop :210": 14
+   },
+   "violating_roots": 14
+  },
+  "in_statsd.c": {
+   "calls": 35,
+   "clauses": {
+    "L4": 7
+   },
+   "not_established": 0,
+   "roots": 7,
+   "sites": {
+    "flb_stop :142": 7
+   },
+   "violating_roots": 7
+  },
+  "in_storage_backlog.c": {
+   "calls": 13,
+   "clauses": {
+    "L6": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_destroy :98": 1
+   },
+   "violating_roots": 1
+  },
+  "in_syslog.c": {
+   "calls": 76,
+   "clauses": {
+    "L4": 14
+   },
+   "not_established": 0,
+   "roots": 15,
+   "sites": {
+    "flb_stop :176": 14
+   },
+   "violating_roots": 14
+  },
+  "in_systemd.c": {
+   "calls": 14,
+   "clauses": {
+    "L4": 1,
+    "L6": 2
+   },
+   "not_established": 0,
+   "roots": 3,
+   "sites": {
+    "flb_destroy :150": 1,
+    "flb_destroy :183": 1,
+    "flb_stop :106": 1
+   },
+   "violating_roots": 3
+  },
+  "in_tail.c": {
+   "calls": 280,
+   "clauses": {
+    "L4": 50,
+    "L5": 5
+   },
+   "not_established": 0,
+   "roots": 46,
+   "sites": {
+    "flb_stop :1073": 1,
+    "flb_stop :1223": 1,
+    "flb_stop :1300": 1,
+    "flb_stop :1383": 1,
+    "flb_stop :1466": 1,
+    "flb_stop :2583": 1,
+    "flb_stop :2835": 1,
+    "flb_stop :292": 18,
+    "flb_stop :2964": 1,
+    "flb_stop :3018": 1,
+    "flb_stop :3150": 1,
+    "flb_stop :640": 5,
+    "flb_stop :760": 11,
+    "flb_stop :913": 6
+   },
+   "violating_roots": 46
+  },
+  "in_tail_file_budget.c": {
+   "calls": 9,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 2,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "in_tcp.c": {
+   "calls": 54,
+   "clauses": {
+    "L4": 10,
+    "L6": 1
+   },
+   "not_established": 0,
+   "roots": 11,
+   "sites": {
+    "flb_destroy :916": 1,
+    "flb_stop :294": 7,
+    "flb_stop :550": 1,
+    "flb_stop :675": 2
+   },
+   "violating_roots": 11
+  },
+  "in_udp.c": {
+   "calls": 34,
+   "clauses": {
+    "L4": 6,
+    "L6": 1
+   },
+   "not_established": 0,
+   "roots": 7,
+   "sites": {
+    "flb_destroy :534": 1,
+    "flb_stop :148": 6
+   },
+   "violating_roots": 7
+  },
+  "in_winevtlog.c": {
+   "calls": 19,
+   "clauses": {
+    "L4": 3,
+    "L6": 1
+   },
+   "not_established": 0,
+   "roots": 4,
+   "sites": {
+    "flb_destroy :170": 1,
+    "flb_stop :100": 1,
+    "flb_stop :138": 1,
+    "flb_stop :67": 1
+   },
+   "violating_roots": 4
+  },
+  "out_arvancloud_cloudlogs.c": {
+   "calls": 45,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 9,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "out_azure_kusto.c": {
+   "calls": 25,
+   "clauses": {
+    "L4": 5
+   },
+   "not_established": 0,
+   "roots": 5,
+   "sites": {
+    "flb_stop :114": 1,
+    "flb_stop :145": 1,
+    "flb_stop :178": 1,
+    "flb_stop :211": 1,
+    "flb_stop :83": 1
+   },
+   "violating_roots": 5
+  },
+  "out_chronicle.c": {
+   "calls": 45,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 9,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "out_cloudwatch.c": {
+   "calls": 70,
+   "clauses": {
+    "L4": 14
+   },
+   "not_established": 0,
+   "roots": 14,
+   "sites": {
+    "flb_stop :104": 1,
+    "flb_stop :141": 1,
+    "flb_stop :178": 1,
+    "flb_stop :215": 1,
+    "flb_stop :252": 1,
+    "flb_stop :289": 1,
+    "flb_stop :333": 1,
+    "flb_stop :373": 1,
+    "flb_stop :414": 1,
+    "flb_stop :452": 1,
+    "flb_stop :58": 1,
+    "flb_stop :611": 3
+   },
+   "violating_roots": 14
+  },
+  "out_counter.c": {
+   "calls": 10,
+   "clauses": {
+    "L4": 2
+   },
+   "not_established": 0,
+   "roots": 2,
+   "sites": {
+    "flb_stop :162": 1,
+    "flb_stop :198": 1
+   },
+   "violating_roots": 2
+  },
+  "out_datadog.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :165": 1
+   },
+   "violating_roots": 1
+  },
+  "out_elasticsearch.c": {
+   "calls": 125,
+   "clauses": {
+    "L4": 18
+   },
+   "not_established": 0,
+   "roots": 25,
+   "sites": {
+    "flb_stop :1002": 1,
+    "flb_stop :1048": 1,
+    "flb_stop :1107": 1,
+    "flb_stop :1559": 1,
+    "flb_stop :275": 1,
+    "flb_stop :319": 1,
+    "flb_stop :365": 1,
+    "flb_stop :411": 1,
+    "flb_stop :497": 1,
+    "flb_stop :543": 1,
+    "flb_stop :590": 1,
+    "flb_stop :635": 1,
+    "flb_stop :679": 1,
+    "flb_stop :723": 1,
+    "flb_stop :786": 1,
+    "flb_stop :831": 1,
+    "flb_stop :902": 1,
+    "flb_stop :949": 1
+   },
+   "violating_roots": 18
+  },
+  "out_exit.c": {
+   "calls": 23,
+   "clauses": {
+    "L4": 3,
+    "L6": 2
+   },
+   "not_established": 0,
+   "roots": 5,
+   "sites": {
+    "flb_destroy :101": 1,
+    "flb_destroy :136": 1,
+    "flb_stop :171": 1,
+    "flb_stop :207": 1,
+    "flb_stop :64": 1
+   },
+   "violating_roots": 5
+  },
+  "out_file.c": {
+   "calls": 121,
+   "clauses": {
+    "L4": 22
+   },
+   "not_established": 0,
+   "roots": 24,
+   "sites": {
+    "flb_stop :1010": 1,
+    "flb_stop :1060": 1,
+    "flb_stop :108": 1,
+    "flb_stop :1105": 1,
+    "flb_stop :1163": 1,
+    "flb_stop :1222": 1,
+    "flb_stop :1280": 1,
+    "flb_stop :1355": 1,
+    "flb_stop :156": 1,
+    "flb_stop :203": 1,
+    "flb_stop :252": 1,
+    "flb_stop :302": 1,
+    "flb_stop :351": 1,
+    "flb_stop :465": 1,
+    "flb_stop :531": 1,
+    "flb_stop :599": 1,
+    "flb_stop :669": 1,
+    "flb_stop :721": 1,
+    "flb_stop :778": 1,
+    "flb_stop :856": 1,
+    "flb_stop :903": 1,
+    "flb_stop :953": 1
+   },
+   "violating_roots": 22
+  },
+  "out_file_rotation.c": {
+   "calls": 116,
+   "clauses": {
+    "L4": 22,
+    "L6": 2
+   },
+   "not_established": 0,
+   "roots": 23,
+   "sites": {
+    "flb_destroy :1970": 1,
+    "flb_destroy :1985": 1,
+    "flb_stop :1024": 1,
+    "flb_stop :1089": 1,
+    "flb_stop :1282": 1,
+    "flb_stop :1346": 1,
+    "flb_stop :1403": 1,
+    "flb_stop :1519": 1,
+    "flb_stop :1615": 1,
+    "flb_stop :1681": 1,
+    "flb_stop :1766": 1,
+    "flb_stop :1833": 1,
+    "flb_stop :1936": 1,
+    "flb_stop :2057": 1,
+    "flb_stop :2121": 1,
+    "flb_stop :2196": 1,
+    "flb_stop :2268": 1,
+    "flb_stop :2319": 1,
+    "flb_stop :2401": 1,
+    "flb_stop :2481": 1,
+    "flb_stop :791": 1,
+    "flb_stop :849": 1,
+    "flb_stop :910": 1,
+    "flb_stop :967": 1
+   },
+   "violating_roots": 23
+  },
+  "out_firehose.c": {
+   "calls": 85,
+   "clauses": {
+    "L4": 17
+   },
+   "not_established": 0,
+   "roots": 17,
+   "sites": {
+    "flb_stop :114": 1,
+    "flb_stop :150": 1,
+    "flb_stop :186": 1,
+    "flb_stop :224": 1,
+    "flb_stop :260": 1,
+    "flb_stop :296": 1,
+    "flb_stop :336": 1,
+    "flb_stop :374": 1,
+    "flb_stop :411": 1,
+    "flb_stop :43": 1,
+    "flb_stop :448": 1,
+    "flb_stop :489": 1,
+    "flb_stop :527": 1,
+    "flb_stop :562": 1,
+    "flb_stop :600": 1,
+    "flb_stop :642": 1,
+    "flb_stop :78": 1
+   },
+   "violating_roots": 17
+  },
+  "out_flowcounter.c": {
+   "calls": 40,
+   "clauses": {
+    "L4": 8
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :100": 1,
+    "flb_stop :135": 1,
+    "flb_stop :171": 1,
+    "flb_stop :207": 1,
+    "flb_stop :243": 1,
+    "flb_stop :279": 1,
+    "flb_stop :315": 1,
+    "flb_stop :64": 1
+   },
+   "violating_roots": 8
+  },
+  "out_forward.c": {
+   "calls": 77,
+   "clauses": {
+    "L4": 14
+   },
+   "not_established": 0,
+   "roots": 15,
+   "sites": {
+    "flb_stop :1056": 1,
+    "flb_stop :1098": 1,
+    "flb_stop :1140": 1,
+    "flb_stop :1176": 1,
+    "flb_stop :1218": 1,
+    "flb_stop :1254": 1,
+    "flb_stop :1318": 1,
+    "flb_stop :1382": 1,
+    "flb_stop :1415": 1,
+    "flb_stop :1476": 1,
+    "flb_stop :1546": 4
+   },
+   "violating_roots": 14
+  },
+  "out_gcs.c": {
+   "calls": 175,
+   "clauses": {
+    "L4": 7,
+    "L6": 5
+   },
+   "not_established": 0,
+   "roots": 33,
+   "sites": {
+    "flb_destroy :277": 1,
+    "flb_destroy :373": 1,
+    "flb_destroy :410": 1,
+    "flb_destroy :443": 1,
+    "flb_destroy :476": 1,
+    "flb_stop :139": 1,
+    "flb_stop :223": 2,
+    "flb_stop :333": 1,
+    "flb_stop :735": 1,
+    "flb_stop :936": 1,
+    "flb_stop :989": 1
+   },
+   "violating_roots": 12
+  },
+  "out_http.c": {
+   "calls": 75,
+   "clauses": {
+    "L4": 15
+   },
+   "not_established": 0,
+   "roots": 15,
+   "sites": {
+    "flb_stop :322": 15
+   },
+   "violating_roots": 15
+  },
+  "out_influxdb.c": {
+   "calls": 35,
+   "clauses": {
+    "L4": 7
+   },
+   "not_established": 0,
+   "roots": 7,
+   "sites": {
+    "flb_stop :274": 1,
+    "flb_stop :318": 1,
+    "flb_stop :370": 1,
+    "flb_stop :421": 1,
+    "flb_stop :473": 1,
+    "flb_stop :524": 1,
+    "flb_stop :569": 1
+   },
+   "violating_roots": 7
+  },
+  "out_kafka.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :42": 1
+   },
+   "violating_roots": 1
+  },
+  "out_kinesis.c": {
+   "calls": 95,
+   "clauses": {
+    "L4": 18
+   },
+   "not_established": 0,
+   "roots": 19,
+   "sites": {
+    "flb_stop :117": 1,
+    "flb_stop :153": 1,
+    "flb_stop :189": 1,
+    "flb_stop :232": 1,
+    "flb_stop :265": 1,
+    "flb_stop :333": 1,
+    "flb_stop :369": 1,
+    "flb_stop :405": 1,
+    "flb_stop :445": 1,
+    "flb_stop :46": 1,
+    "flb_stop :482": 1,
+    "flb_stop :519": 1,
+    "flb_stop :556": 1,
+    "flb_stop :597": 1,
+    "flb_stop :673": 3,
+    "flb_stop :81": 1
+   },
+   "violating_roots": 18
+  },
+  "out_lib.c": {
+   "calls": 25,
+   "clauses": {
+    "L4": 5
+   },
+   "not_established": 0,
+   "roots": 5,
+   "sites": {
+    "flb_stop :329": 5
+   },
+   "violating_roots": 5
+  },
+  "out_logdna.c": {
+   "calls": 60,
+   "clauses": {
+    "L4": 12
+   },
+   "not_established": 0,
+   "roots": 12,
+   "sites": {
+    "flb_stop :139": 1,
+    "flb_stop :240": 1,
+    "flb_stop :311": 1,
+    "flb_stop :397": 1,
+    "flb_stop :461": 1,
+    "flb_stop :543": 1,
+    "flb_stop :610": 1,
+    "flb_stop :690": 1,
+    "flb_stop :740": 1,
+    "flb_stop :806": 1,
+    "flb_stop :869": 1,
+    "flb_stop :940": 1
+   },
+   "violating_roots": 12
+  },
+  "out_loki.c": {
+   "calls": 141,
+   "clauses": {
+    "L4": 27
+   },
+   "not_established": 0,
+   "roots": 28,
+   "sites": {
+    "flb_stop :1105": 1,
+    "flb_stop :1203": 1,
+    "flb_stop :1313": 2,
+    "flb_stop :1558": 1,
+    "flb_stop :1618": 1,
+    "flb_stop :1696": 10,
+    "flb_stop :409": 1,
+    "flb_stop :468": 1,
+    "flb_stop :528": 1,
+    "flb_stop :587": 1,
+    "flb_stop :646": 1,
+    "flb_stop :705": 1,
+    "flb_stop :764": 1,
+    "flb_stop :825": 1,
+    "flb_stop :884": 1,
+    "flb_stop :946": 1,
+    "flb_stop :992": 1
+   },
+   "violating_roots": 27
+  },
+  "out_null.c": {
+   "calls": 15,
+   "clauses": {
+    "L4": 3
+   },
+   "not_established": 0,
+   "roots": 3,
+   "sites": {
+    "flb_stop :125": 1,
+    "flb_stop :54": 1,
+    "flb_stop :90": 1
+   },
+   "violating_roots": 3
+  },
+  "out_opensearch.c": {
+   "calls": 90,
+   "clauses": {
+    "L4": 18
+   },
+   "not_established": 0,
+   "roots": 18,
+   "sites": {
+    "flb_stop :1063": 1,
+    "flb_stop :1110": 1,
+    "flb_stop :1144": 1,
+    "flb_stop :298": 1,
+    "flb_stop :342": 1,
+    "flb_stop :388": 1,
+    "flb_stop :434": 1,
+    "flb_stop :521": 1,
+    "flb_stop :566": 1,
+    "flb_stop :611": 1,
+    "flb_stop :657": 1,
+    "flb_stop :703": 1,
+    "flb_stop :749": 1,
+    "flb_stop :796": 1,
+    "flb_stop :841": 1,
+    "flb_stop :885": 1,
+    "flb_stop :929": 1,
+    "flb_stop :992": 1
+   },
+   "violating_roots": 18
+  },
+  "out_plot.c": {
+   "calls": 15,
+   "clauses": {
+    "L4": 3
+   },
+   "not_established": 0,
+   "roots": 3,
+   "sites": {
+    "flb_stop :146": 1,
+    "flb_stop :53": 1,
+    "flb_stop :95": 1
+   },
+   "violating_roots": 3
+  },
+  "out_retry.c": {
+   "calls": 10,
+   "clauses": {
+    "L4": 2
+   },
+   "not_established": 0,
+   "roots": 2,
+   "sites": {
+    "flb_stop :49": 1,
+    "flb_stop :86": 1
+   },
+   "violating_roots": 2
+  },
+  "out_s3.c": {
+   "calls": 116,
+   "clauses": {
+    "L4": 25
+   },
+   "not_established": 0,
+   "roots": 21,
+   "sites": {
+    "flb_stop :1263": 1,
+    "flb_stop :1313": 1,
+    "flb_stop :1358": 1,
+    "flb_stop :1408": 1,
+    "flb_stop :1453": 1,
+    "flb_stop :1503": 1,
+    "flb_stop :1557": 1,
+    "flb_stop :1615": 1,
+    "flb_stop :1680": 1,
+    "flb_stop :1745": 1,
+    "flb_stop :1924": 1,
+    "flb_stop :1994": 1,
+    "flb_stop :2060": 1,
+    "flb_stop :2127": 1,
+    "flb_stop :2207": 1,
+    "flb_stop :2257": 1,
+    "flb_stop :2298": 1,
+    "flb_stop :445": 1,
+    "flb_stop :496": 1,
+    "flb_stop :552": 1,
+    "flb_stop :623": 1,
+    "flb_stop :686": 1,
+    "flb_stop :753": 1,
+    "flb_stop :813": 1,
+    "flb_stop :843": 1
+   },
+   "violating_roots": 21
+  },
+  "out_s3_otlp_json.c": {
+   "calls": 10,
+   "clauses": {
+    "L4": 2
+   },
+   "not_established": 0,
+   "roots": 2,
+   "sites": {
+    "flb_stop :118": 1,
+    "flb_stop :177": 1
+   },
+   "violating_roots": 2
+  },
+  "out_skywalking.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :48": 1
+   },
+   "violating_roots": 1
+  },
+  "out_splunk.c": {
+   "calls": 40,
+   "clauses": {
+    "L4": 8
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :101": 1,
+    "flb_stop :141": 1,
+    "flb_stop :233": 5,
+    "flb_stop :310": 1
+   },
+   "violating_roots": 8
+  },
+  "out_stackdriver.c": {
+   "calls": 515,
+   "clauses": {
+    "L4": 102
+   },
+   "not_established": 0,
+   "roots": 103,
+   "sites": {
+    "flb_stop :2515": 1,
+    "flb_stop :2558": 1,
+    "flb_stop :2599": 1,
+    "flb_stop :2640": 1,
+    "flb_stop :2681": 1,
+    "flb_stop :2723": 1,
+    "flb_stop :2763": 1,
+    "flb_stop :2803": 1,
+    "flb_stop :2843": 1,
+    "flb_stop :2884": 1,
+    "flb_stop :2925": 1,
+    "flb_stop :2965": 1,
+    "flb_stop :3006": 1,
+    "flb_stop :3047": 1,
+    "flb_stop :3090": 1,
+    "flb_stop :3134": 1,
+    "flb_stop :3177": 1,
+    "flb_stop :3222": 1,
+    "flb_stop :3266": 1,
+    "flb_stop :3306": 1,
+    "flb_stop :3346": 1,
+    "flb_stop :3386": 1,
+    "flb_stop :3426": 1,
+    "flb_stop :3466": 1,
+    "flb_stop :3506": 1,
+    "flb_stop :3546": 1,
+    "flb_stop :3586": 1,
+    "flb_stop :3626": 1,
+    "flb_stop :3666": 1,
+    "flb_stop :3709": 1,
+    "flb_stop :3767": 1,
+    "flb_stop :3816": 1,
+    "flb_stop :3861": 1,
+    "flb_stop :3905": 1,
+    "flb_stop :3950": 1,
+    "flb_stop :3995": 1,
+    "flb_stop :4041": 1,
+    "flb_stop :4084": 1,
+    "flb_stop :4128": 1,
+    "flb_stop :4171": 1,
+    "flb_stop :4212": 1,
+    "flb_stop :4254": 1,
+    "flb_stop :4296": 1,
+    "flb_stop :4338": 1,
+    "flb_stop :4381": 1,
+    "flb_stop :4422": 1,
+    "flb_stop :4463": 1,
+    "flb_stop :4504": 1,
+    "flb_stop :4545": 1,
+    "flb_stop :4587": 1,
+    "flb_stop :4628": 1,
+    "flb_stop :4669": 1,
+    "flb_stop :4710": 1,
+    "flb_stop :4751": 1,
+    "flb_stop :4792": 1,
+    "flb_stop :4833": 1,
+    "flb_stop :4874": 1,
+    "flb_stop :4915": 1,
+    "flb_stop :4960": 1,
+    "flb_stop :5004": 1,
+    "flb_stop :5048": 1,
+    "flb_stop :5091": 1,
+    "flb_stop :5134": 1,
+    "flb_stop :5177": 1,
+    "flb_stop :5220": 1,
+    "flb_stop :5263": 1,
+    "flb_stop :5307": 1,
+    "flb_stop :5351": 1,
+    "flb_stop :5394": 1,
+    "flb_stop :5438": 1,
+    "flb_stop :5482": 1,
+    "flb_stop :5525": 1,
+    "flb_stop :5570": 1,
+    "flb_stop :5610": 1,
+    "flb_stop :5650": 1,
+    "flb_stop :5690": 1,
+    "flb_stop :5730": 1,
+    "flb_stop :5770": 1,
+    "flb_stop :5810": 1,
+    "flb_stop :5850": 1,
+    "flb_stop :5890": 1,
+    "flb_stop :5930": 1,
+    "flb_stop :5970": 1,
+    "flb_stop :6010": 1,
+    "flb_stop :6050": 1,
+    "flb_stop :6090": 1,
+    "flb_stop :6130": 1,
+    "flb_stop :6170": 1,
+    "flb_stop :6210": 1,
+    "flb_stop :6250": 1,
+    "flb_stop :6290": 1,
+    "flb_stop :6330": 1,
+    "flb_stop :6370": 1,
+    "flb_stop :6410": 1,
+    "flb_stop :6450": 1,
+    "flb_stop :6490": 1,
+    "flb_stop :6530": 1,
+    "flb_stop :6570": 1,
+    "flb_stop :6611": 1,
+    "flb_stop :6652": 1,
+    "flb_stop :6693": 1,
+    "flb_stop :6734": 1
+   },
+   "violating_roots": 102
+  },
+  "out_stdout.c": {
+   "calls": 15,
+   "clauses": {
+    "L4": 3
+   },
+   "not_established": 0,
+   "roots": 3,
+   "sites": {
+    "flb_stop :136": 1,
+    "flb_stop :59": 1,
+    "flb_stop :98": 1
+   },
+   "violating_roots": 3
+  },
+  "out_syslog.c": {
+   "calls": 203,
+   "clauses": {
+    "L4": 35,
+    "L6": 4
+   },
+   "not_established": 0,
+   "roots": 41,
+   "sites": {
+    "flb_destroy :1938": 1,
+    "flb_destroy :1990": 1,
+    "flb_destroy :307": 2,
+    "flb_stop :190": 35
+   },
+   "violating_roots": 39
+  },
+  "out_tcp.c": {
+   "calls": 60,
+   "clauses": {
+    "L4": 12
+   },
+   "not_established": 0,
+   "roots": 12,
+   "sites": {
+    "flb_stop :1078": 1,
+    "flb_stop :1123": 1,
+    "flb_stop :399": 9,
+    "flb_stop :502": 1
+   },
+   "violating_roots": 12
+  },
+  "out_td.c": {
+   "calls": 5,
+   "clauses": {
+    "L4": 1
+   },
+   "not_established": 0,
+   "roots": 1,
+   "sites": {
+    "flb_stop :43": 1
+   },
+   "violating_roots": 1
+  },
+  "processor_content_modifier.c": {
+   "calls": 72,
+   "clauses": {},
+   "not_established": 0,
+   "roots": 24,
+   "sites": {},
+   "violating_roots": 0
+  },
+  "processor_cumulative_to_delta.c": {
+   "calls": 85,
+   "clauses": {
+    "L5": 5
+   },
+   "not_established": 0,
+   "roots": 5,
+   "sites": {
+    "flb_stop :605": 5
+   },
+   "violating_roots": 5
+  },
+  "processor_labels.c": {
+   "calls": 25,
+   "clauses": {
+    "L4": 5
+   },
+   "not_established": 0,
+   "roots": 5,
+   "sites": {
+    "flb_stop :146": 1,
+    "flb_stop :252": 1,
+    "flb_stop :357": 1,
+    "flb_stop :453": 1,
+    "flb_stop :550": 1
+   },
+   "violating_roots": 5
+  },
+  "processor_metrics_selector.c": {
+   "calls": 40,
+   "clauses": {
+    "L4": 8
+   },
+   "not_established": 0,
+   "roots": 8,
+   "sites": {
+    "flb_stop :144": 1,
+    "flb_stop :220": 1,
+    "flb_stop :302": 1,
+    "flb_stop :384": 1,
+    "flb_stop :466": 1,
+    "flb_stop :548": 1,
+    "flb_stop :613": 1,
+    "flb_stop :689": 1
+   },
+   "violating_roots": 8
+  }
+ },
+ "totals": {
+  "clause_L4": 851,
+  "clause_L5": 10,
+  "clause_L6": 19,
+  "distinct_sites": 542,
+  "files_with_calls": 103,
+  "files_with_violations": 89,
+  "not_established": 0,
+  "readings": 5124,
+  "roots": 984,
+  "violating_readings": 875,
+  "violating_roots": 848
+ }
+}

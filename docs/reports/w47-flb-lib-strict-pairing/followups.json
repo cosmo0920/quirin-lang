@@ -1,0 +1,48 @@
+{
+ "amend": [
+  {
+   "id": "W47-ENGINE-THREAD-JOIN-CANDIDATES",
+   "append": "AMENDED (W47-FLB-LIB-STRICT-PAIRING, the user's decision of 2026-09-29 that flb_stop is permitted only after a successful flb_start, exactly once, and after a failed start only flb_destroy): (i) a stop after a start whose engine failed after the spawn, (iii) a stop after a start that failed before the spawn, and (v) a second stop are reclassified as reproductions of caller-contract violations (L4, L4, L3 of contract specification C04.11 as amended): the library behaviour on those paths is outside the contract, not a library defect; the native evidence of W47-FB-DOUBLE-STOP-OBSERVATION stands as the observation of that behaviour. The candidates they became are registered against the callers (W47-STRICT-PAIR-CALLER-CANDIDATES, W47-FLB-CREATE-STOP-UNSTARTED). (ii) the unsynchronised ctx->status read and (iv) the output pool's skipped join are unchanged and keep the entry open.",
+   "amended_by": "W47-FLB-LIB-STRICT-PAIRING",
+   "source": "docs/reports/w47-flb-lib-strict-pairing/README.md"
+  },
+  {
+   "id": "W47-LIB-ENGINE-THREAD-REVIEW",
+   "append": "AMENDED (W47-FLB-LIB-STRICT-PAIRING): the lifecycle part is now the strict pair (C04.11 as amended): L1 (start only from created; a restart is not derived) and L3-L6 (no stop after a stop, after a failed start or of a never-started context; destroy from created, start-failed or stopped) are caller preconditions; L2 stays in force against flb_stop's body; L7 (a start that returns nonzero leaves no thread it began unjoined) is held at the three trees. The three declarations' reasons were rewritten for the strict pair and re-pinned at 66910c10, 046accf6 and the 90978ac6 export; every resource_review_pending marker stays, flb_start and flb_downstream_worker_runtime_stop keep rewrite_before_acceptance (their reasons, on retention and on the -1 return, are unchanged by the strict pair). The custody part still awaits a reviewer.",
+   "amended_by": "W47-FLB-LIB-STRICT-PAIRING",
+   "source": "docs/reports/w47-flb-lib-strict-pairing/README.md"
+  },
+  {
+   "id": "W47-LIFECYCLE-PATH-FEASIBILITY",
+   "append": "AMENDED (W47-FLB-LIB-STRICT-PAIRING): under the strict pair a destroy reached after a refused stop is also undetermined on that path (an earlier call on the key was refused): 188 of 280 readings carry an undetermined path at each of the four trees (161 before). Releases now report their paths split into conforming, undetermined and refused; the fixed test's 5 releases after its stop have 2 conforming, 37 undetermined and 10 refused paths, the undetermined ones being exactly these infeasible continuations (a destroy at in_tail.c:245/:262 or flb_create's own error path, then the root's calls).",
+   "amended_by": "W47-FLB-LIB-STRICT-PAIRING",
+   "source": "docs/reports/w47-flb-lib-strict-pairing/README.md"
+  }
+ ],
+ "register": [
+  {
+   "id": "W47-STRICT-PAIR-CALLER-CANDIDATES",
+   "title": "Runtime tests that stop after a failed start (strict-pair caller candidates)",
+   "why": "W47-FLB-LIB-STRICT-PAIRING holds every declared call to the strict pair (C04.11 as amended). Candidates against the tests, not library defects, each a path the rule 10q census follows, never a verified crash. in_tail.c (the census's test binary, identical counts at 90978ac6, 90978ac6~1, 046accf6 and 66910c10): 50 of 280 declared-call readings violate over 46 of 46 roots and 14 flb_stop sites at 90978ac6 (13 at the other three trees): every one a flb_stop reachable after flb_start returned nonzero (L4) because the test continues past TEST_CHECK(ret == 0); 5 of them (test_tail_ctx_destroy at in_tail.c:292 from setup-failure paths) also stop a never-started context (L5). The fixed test flb_test_inotify_pause_collectors calls flb_stop at in_tail.c:2583 whatever flb_start (:2559) returned; the fix shape is a guard of the stop (and of the wait) by the start's success, with flb_destroy alone on the failure path. Sized over every runtime test at the 90978ac6 export (one census per tests/runtime/*.c, docs/reports/w47-flb-lib-strict-pairing/artifacts/runtime/): 113 of 116 files read (in_dummy.c and in_random.c are unreadable symlinks at the export; in_ebpf_exec_handler.c was stopped after 20 minutes of path reading), 103 with a declared call, 89 with a refusal: 848 of 984 roots, 875 readings over 542 sites; by clause L4 851, L5 10 (in_tail.c 5, processor_cumulative_to_delta.c:605 5), L6 19 (a flb_destroy of a context whose unexpected start succeeded, in tests expecting the start to fail: in_tcp.c:916, out_syslog.c:307 and others). One L4 reading is a reader artifact (core_internal_logger.c:177: its start is followed by TEST_ASSERT, which acutest aborts on and the reader's binding table does not name). DISCHARGE: per site, the test guarded (outside Quirin's authority), or the reader shown to have followed an infeasible path; measured by the census.",
+   "source": "docs/reports/w47-flb-lib-strict-pairing/README.md",
+   "recorded_by": "W47-FLB-LIB-STRICT-PAIRING",
+   "amended_by": null
+  },
+  {
+   "id": "W47-FLB-CREATE-STOP-UNSTARTED",
+   "title": "flb_create's error path stops a never-started context (reading-only candidate)",
+   "why": "Read at Fluent Bit 90978ac6 (identical at 046accf6 and 66910c10), not derived by the census: when mk_event_channel_create fails, flb_create calls flb_stop(ctx) (src/flb_lib.c:215) on the context it is building, never started: a strict-pair violation (L5) inside the library. ctx->status is FLB_LIB_NONE and ctx->config->worker is 0 (flb_config_init callocs the config), so flb_stop takes its status branch and joins identifier 0 (:1058), the behaviour W47-FB-DOUBLE-STOP-OBSERVATION observed as SIGSEGV for (iii). Candidate only: the arm needs a failed channel creation, not reproduced. The census leaves these 46 readings undetermined because the reader starts a history only at a creator's result, which flb_create's local is not. DISCHARGE: a native reproduction under fault injection, or the census deriving the creator's own local (W47-LIFECYCLE-CREATOR-CONTRACT).",
+   "source": "docs/reports/w47-flb-lib-strict-pairing/README.md",
+   "recorded_by": "W47-FLB-LIB-STRICT-PAIRING",
+   "amended_by": null
+  },
+  {
+   "id": "W47-STRICT-PAIR-BODY-RESIDUALS",
+   "title": "Strict-pair body clauses not derived: L7 and restart",
+   "why": "W47-FLB-LIB-STRICT-PAIRING: (1) L7 (a start that returns nonzero leaves no thread it began unjoined, the body fact behind L6's admission of a destroy after a failed start) is held at the three trees: do_start joins the engine thread on both failure returns after the spawn (src/flb_lib.c:984, :999), but the path reader cannot tell mk_utils_worker_spawn's own failure return (lib/monkey/mk_core/mk_utils.c) from a spawn, so one followed nonzero return of flb_start leaves flb_lib_worker unjoined. It gates nothing (the release's join reading decides every thread live at a destroy). DISCHARGE: the wrapper's return read against its pthread_create result, putting L7 in force. (2) A restart (flb_start after flb_stop) is refused because no body reading derives it (the engine thread's run is not read; flb_stop destroys ctx->config->cf_main at :1066-1069). DISCHARGE: a body derivation of restart support, or the user's statement that restart is outside the API.",
+   "source": "docs/reports/w47-flb-lib-strict-pairing/README.md",
+   "recorded_by": "W47-FLB-LIB-STRICT-PAIRING",
+   "amended_by": null
+  }
+ ]
+}
