@@ -344,11 +344,13 @@ fn k12_one_contract_is_accepted_in_one_position_and_refused_in_another() {
     // Returned: applied (the leak of `p` is real).
     let run = gs("void *subject(void) { void *p = q_alloc(); return r_wrap(p); }");
     assert!(run.unsafe_() && run.has("Leak"), "{run:?}");
-    // In a condition and as an actual: refused.
+    // In a condition: refused (CG04).
     let run = gs("void subject(void) { void *p = q_alloc(); if (r_wrap(p)) { } q_free(p); }");
     assert!(run.refused(BRANCH), "{run:?}");
+    // As an actual: applied since CG05-NESTED-CALL-EFFECTS (rule 10y); the
+    // wrapper's custody, only borrowed, is a reported leak.
     let run = gs("void subject(void) { void *p = q_alloc(); q_observe(r_wrap(p)); q_free(p); }");
-    assert!(run.refused(&nested("r_wrap")), "{run:?}");
+    assert!(run.unsafe_() && run.has("Leak"), "{run:?}");
 }
 
 #[test]
@@ -443,19 +445,24 @@ fn e13_condition_leaf_composition_is_partial() {
 // CG05 — nested-call effects (E10 E11 E12)
 // ---------------------------------------------------------------------------
 
+// Flipped deliberately by CG05-NESTED-CALL-EFFECTS (gateway rule 10y): the
+// E10/E11 controls now pin the composition, and E12's operator-initializer
+// control the scalar store; the non-commuting siblings stay refused.
+
 #[test]
-fn e10_non_identity_effects_of_a_nested_call_are_refused() {
+fn e10_non_identity_effects_of_a_nested_call_are_composed() {
     if !clang_available() {
         return;
     }
-    // Example B: `sink(release_and_status(p))`.
+    // Example B: `sink(release_and_status(p))`: the inner release, then the
+    // outer entry.
     let run = gs("void subject(void) { void *p = q_alloc(); cg_sink(r_release_code(p)); }");
-    assert!(run.refused(&nested("r_release_code")), "{run:?}");
+    assert!(run.safe(), "{run:?}");
     let run = gs("void subject(void) { void *p = q_alloc(); cg_sink(r_consume_code(p)); }");
-    assert!(run.refused(&nested("r_consume_code")), "{run:?}");
-    // An owned inner result.
+    assert!(run.safe(), "{run:?}");
+    // An owned inner result, bound and released by the outer call.
     let run = gs("void subject(void) { void *p = q_alloc(); q_free(r_wrap(p)); q_free(p); }");
-    assert!(run.refused(&nested("r_wrap")), "{run:?}");
+    assert!(run.safe(), "{run:?}");
     // Control: a borrowed inner call with a `None` result is composed.
     assert!(
         gs("void subject(void) { void *p = q_alloc(); cg_sink(r_borrow_code(p)); q_free(p); }")
@@ -464,21 +471,24 @@ fn e10_non_identity_effects_of_a_nested_call_are_refused() {
 }
 
 #[test]
-fn e11_deeper_and_partial_nested_calls_are_refused() {
+fn e11_deeper_and_partial_nested_calls_are_composed() {
     if !clang_available() {
         return;
     }
+    // Depth two: applied inside-out, and the wrapper's fresh custody, only
+    // borrowed, is a reported leak.
     let run = gs(
         "void subject(void) { void *p = q_alloc(); cg_sink(r_borrow_code(r_wrap(p))); q_free(p); }",
     );
-    assert!(run.refused(&nested("r_borrow_code")), "{run:?}");
+    assert!(run.unsafe_() && run.has("Leak"), "{run:?}");
+    assert!(!run.refused(&nested("r_borrow_code")), "{run:?}");
     let run =
         gs("void subject(void) { void *p = q_alloc(); cg_sink(r_borrow_code(p) + 1); q_free(p); }");
-    assert!(run.refused(&nested("r_borrow_code")), "{run:?}");
+    assert!(run.safe(), "{run:?}");
 }
 
 #[test]
-fn e12_g_sibling_calls_compose_only_as_identity_effects() {
+fn e12_g_sibling_calls_compose_only_when_their_footprints_commute() {
     if !clang_available() {
         return;
     }
@@ -493,11 +503,11 @@ fn e12_g_sibling_calls_compose_only_as_identity_effects() {
     assert!(run.refused(&nested("r_release_code")), "{run:?}");
     // Two identity siblings as actuals are admitted.
     assert!(gs("void subject(void) { void *p = q_alloc(); cg_sink2(r_borrow_code(p), r_borrow_code(p)); q_free(p); }").safe());
-    // Under an operator in an initializer they are refused.
+    // Under an operator in an initializer they are now composed too.
     let run = gs(
         "int subject(void) { void *p = q_alloc(); int x = r_borrow_code(p) + r_borrow_code(p); q_free(p); return x; }",
     );
-    assert!(run.refused(&nested("r_borrow_code")), "{run:?}");
+    assert!(run.safe(), "{run:?}");
 }
 
 // ---------------------------------------------------------------------------

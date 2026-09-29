@@ -34,8 +34,10 @@
 //!   (`None` or a derived result); a discarded value likewise (the
 //!   classifier's own rule); a whole returned value may carry only fresh
 //!   custody (card C-GATEWAY-RETURN-CALL-W4); a value passed to another call
-//!   must be the identity on the abstract state (card B04; widening it is
-//!   card CG05's).
+//!   is the identity on the abstract state (card B04), or, card
+//!   CG05-NESTED-CALL-EFFECTS (rule 10y), any result but a reallocation: the
+//!   nested-call consumer binds it to a fresh reserved place (or reads it as
+//!   data) and applies it inside-out under its footprint order check.
 //! * **Total or reject.** A clause the application does not support refuses
 //!   the whole call by name: the classifier's refusal, or the flow's
 //!   `arguments do not match resource contract` for a custody formal whose
@@ -170,8 +172,14 @@ pub(crate) enum Decline {
     CustodyResult,
     /// A returned value whose custody is not fresh.
     ReturnedAlias,
-    /// A passed value that is not the identity on the abstract state.
+    /// A passed value that is not the identity on the abstract state. Card
+    /// CG05 widened the passed row: no decision reaches it any more; it is
+    /// kept for the parity vocabulary.
+    #[allow(dead_code, reason = "the parity vocabulary keeps B04's decline")]
     NotIdentity,
+    /// Card CG05-NESTED-CALL-EFFECTS: a passed reallocated result (its
+    /// replacement of an argument is not composed).
+    PassedReallocation,
 }
 
 impl Decline {
@@ -181,6 +189,7 @@ impl Decline {
             Self::CustodyResult => "custody-result",
             Self::ReturnedAlias => "returned-alias",
             Self::NotIdentity => "not-identity",
+            Self::PassedReallocation => "passed-reallocation",
         }
     }
 }
@@ -216,9 +225,15 @@ pub(crate) fn accept(
         }
         ResultUse::Passed => {
             if identity && result == ResultClass::None {
+                // Card B04: the identity with no result.
+                Ok(())
+            } else if result != ResultClass::Reallocated {
+                // Card CG05-NESTED-CALL-EFFECTS (rule 10y): a non-identity
+                // call whose value is bound to a fresh reserved place (or is
+                // data), applied inside-out under the footprint order check.
                 Ok(())
             } else {
-                Err(Decline::NotIdentity)
+                Err(Decline::PassedReallocation)
             }
         }
     }
@@ -253,8 +268,17 @@ pub(crate) const ACCEPTANCE_VECTORS: &[(&str, &str, bool, &str, &str)] = &[
         "returned-alias",
     ),
     ("declared", "none", true, "passed", "accept"),
-    ("declared", "none", false, "passed", "not-identity"),
-    ("declared", "derived", true, "passed", "not-identity"),
+    ("declared", "none", false, "passed", "accept"),
+    ("declared", "derived", true, "passed", "accept"),
+    ("validated", "owned", false, "passed", "accept"),
+    (
+        "declared",
+        "reallocated",
+        false,
+        "passed",
+        "passed-reallocation",
+    ),
+    ("recursive", "owned", false, "passed", "recursive-local"),
 ];
 
 /// The typed form of one actual, read from Clang's AST.

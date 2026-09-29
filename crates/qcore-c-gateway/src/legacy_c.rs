@@ -144,6 +144,10 @@ mod elaboration_route;
 // thin.
 #[path = "legacy_call_instantiation.rs"]
 mod call_instantiation_route;
+// Card CG05-NESTED-CALL-EFFECTS (rule 10y): nested and sibling calls with
+// non-identity effects, through the one application point.
+#[path = "legacy_nested_call.rs"]
+mod nested_call_route;
 
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the P3 residual shapes
 // C's evaluation order admits. Hooks are thin.
@@ -6197,6 +6201,11 @@ impl Parser<'_> {
                 {
                     return Ok(instantiated);
                 }
+                // Card CG05-NESTED-CALL-EFFECTS (rule 10y): asked last, only
+                // for a refused return or the nested-call refusal.
+                if let Some(nested) = self.nested_call_return(&expression, line, &statement) {
+                    return Ok(nested);
+                }
                 Ok(statement)
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
@@ -6362,6 +6371,17 @@ impl Parser<'_> {
             self.element_origins.clear();
             return Statement::Block(
                 substituted
+                    .into_iter()
+                    .map(|instruction| Statement::Instruction(instruction, line))
+                    .collect(),
+            );
+        }
+        // Card CG05-NESTED-CALL-EFFECTS (rule 10y): asked last, only for the
+        // nested-call refusal.
+        if let Some(nested) = self.nested_call_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return Statement::Block(
+                nested
                     .into_iter()
                     .map(|instruction| Statement::Instruction(instruction, line))
                     .collect(),

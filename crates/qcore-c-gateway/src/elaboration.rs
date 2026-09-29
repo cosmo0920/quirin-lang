@@ -170,6 +170,68 @@ pub(crate) fn commutes(a: &Event, b: &Event, unaliased: &dyn Fn(&str) -> bool) -
     }
 }
 
+/// Card **CG05-NESTED-CALL-EFFECTS** (gateway rule 10y): one cell of an
+/// event's contract footprint (`QCore.NestedCallEffects.Cell`).
+///
+/// A footprint names what an event may read or write *in the abstract
+/// custody state*, never a C memory model: a named object's own storage, the
+/// identity a pointer-valued name denotes, or the fresh identity a nested
+/// call's owned result is.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub(crate) enum Cell {
+    /// A named object's storage, by its Clang declaration id.
+    Object(String),
+    /// The identity a pointer-valued name (or a derived result) denotes. Two
+    /// such identities are never proved distinct here: names may alias.
+    Identity(String),
+    /// The fresh identity an owned result of the call event with this id
+    /// produces: a site no earlier state holds, so it overlaps only itself.
+    Fresh(EventId),
+}
+
+/// Whether two footprint cells may denote one abstract cell
+/// (`QCore.NestedCallEffects.overlap`). Sound, not precise: two identities
+/// always may; an identity may reach a named object only when its address is
+/// taken; a fresh identity is distinct from every other cell.
+pub(crate) fn cells_overlap(a: &Cell, b: &Cell, unaliased: &dyn Fn(&str) -> bool) -> bool {
+    match (a, b) {
+        (Cell::Object(x), Cell::Object(y)) => x == y,
+        (Cell::Fresh(x), Cell::Fresh(y)) => x == y,
+        (Cell::Fresh(_), _) | (_, Cell::Fresh(_)) => false,
+        (Cell::Identity(_), Cell::Identity(_)) => true,
+        (Cell::Object(decl), Cell::Identity(_)) | (Cell::Identity(_), Cell::Object(decl)) => {
+            !unaliased(decl)
+        }
+    }
+}
+
+/// An event's contract footprint: the cells it reads and the cells it writes.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(crate) struct Footprint {
+    pub(crate) reads: Vec<Cell>,
+    pub(crate) writes: Vec<Cell>,
+}
+
+/// Whether two events commute by their footprints
+/// (`QCore.NestedCallEffects.fpCommute`): no cell one writes may overlap a
+/// cell the other reads or writes.
+pub(crate) fn footprints_commute(
+    a: &Footprint,
+    b: &Footprint,
+    unaliased: &dyn Fn(&str) -> bool,
+) -> bool {
+    let clash = |one: &Footprint, other: &Footprint| {
+        one.writes.iter().any(|written| {
+            other
+                .reads
+                .iter()
+                .chain(&other.writes)
+                .any(|cell| cells_overlap(written, cell, unaliased))
+        })
+    };
+    !clash(a, b) && !clash(b, a)
+}
+
 /// The evaluation graph of one full expression.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub(crate) struct EvalGraph {
@@ -227,6 +289,64 @@ impl EvalGraph {
                     }
                     Commutation::Call(callee) => return Err(Refusal::UnorderedCall(callee)),
                     Commutation::Unlisted => return Err(Refusal::Unlisted("unordered event")),
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// Card CG05-NESTED-CALL-EFFECTS (rule 10y): [`Self::check`], where an
+    /// unordered pair involving a call commutes exactly when both events carry
+    /// a footprint and the footprints commute ([`footprints_commute`]). A call
+    /// with no footprint keeps [`Refusal::UnorderedCall`]; a pair with no call
+    /// is decided by [`commutes`], unchanged. With an empty map this is
+    /// [`Self::check`].
+    pub(crate) fn check_footprints(
+        &self,
+        footprints: &BTreeMap<EventId, Footprint>,
+        unaliased: &dyn Fn(&str) -> bool,
+    ) -> Result<(), Refusal> {
+        debug_assert!(self.before.iter().all(|(a, b)| a < b));
+        let callee = |event: &Event| match event {
+            Event::Call { callee } => Some(callee.clone()),
+            _ => None,
+        };
+        for a in 0..self.events.len() {
+            for b in a + 1..self.events.len() {
+                if self.sequenced(a, b) {
+                    continue;
+                }
+                let calls = (callee(&self.events[a]), callee(&self.events[b]));
+                if calls.0.is_none() && calls.1.is_none() {
+                    match commutes(&self.events[a], &self.events[b], unaliased) {
+                        Commutation::Commutes => continue,
+                        Commutation::Conflict(place) => {
+                            return Err(Refusal::UnsequencedConflict(place));
+                        }
+                        Commutation::Overlap(one, other) => {
+                            return Err(Refusal::NotDisjoint(one, other));
+                        }
+                        Commutation::Call(callee) => return Err(Refusal::UnorderedCall(callee)),
+                        Commutation::Unlisted => {
+                            return Err(Refusal::Unlisted("unordered event"));
+                        }
+                    }
+                }
+                let named = calls.0.clone().or(calls.1.clone()).unwrap_or_default();
+                match (footprints.get(&a), footprints.get(&b)) {
+                    (Some(one), Some(other)) if footprints_commute(one, other, unaliased) => {}
+                    (Some(_), Some(_)) => {
+                        let spell = |id: EventId| match &self.events[id] {
+                            Event::Call { callee } => format!("call `{callee}`"),
+                            Event::Read(place) => format!("read of `{}`", place.spelling()),
+                            Event::Write { place, .. } => {
+                                format!("write of `{}`", place.spelling())
+                            }
+                            _ => "event".to_owned(),
+                        };
+                        return Err(Refusal::CallFootprintConflict(spell(a), spell(b)));
+                    }
+                    _ => return Err(Refusal::UnorderedCall(named)),
                 }
             }
         }
@@ -314,6 +434,9 @@ pub(crate) enum Refusal {
     /// footprint model places in one storage unit (Q661): one C11 memory
     /// location, whatever their bit ranges.
     SharedBitfieldUnit(String, String, u32),
+    /// Card CG05-NESTED-CALL-EFFECTS (rule 10y): two unordered events, at
+    /// least one a call, whose contract footprints do not commute.
+    CallFootprintConflict(String, String),
     /// A cast kind outside the scalar set (card CG08).
     Cast(String),
     /// The route's place reader refused the place (card CG10).
@@ -350,6 +473,9 @@ impl Refusal {
             }
             Refusal::SharedBitfieldUnit(one, other, unit) => format!(
                 "unsequenced access of `{one}` and `{other}`, one bit-field storage unit {unit} (Q661, CG13)"
+            ),
+            Refusal::CallFootprintConflict(one, other) => format!(
+                "unsequenced {one} and {other} whose contract footprints do not commute (CG05)"
             ),
             Refusal::Cast(cast) => format!("cast `{cast}` (CG08)"),
             Refusal::Place(reason) => format!("place: {reason} (CG10)"),

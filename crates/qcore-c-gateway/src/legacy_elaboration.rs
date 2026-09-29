@@ -98,7 +98,8 @@ impl Context for GContext<'_> {
 }
 
 /// Walk a function's AST once for its automatic objects and taken addresses.
-fn aliasing(function: &Value) -> (BTreeSet<String>, BTreeSet<String>) {
+/// Card CG05-NESTED-CALL-EFFECTS (rule 10y) reads the same facts.
+pub(super) fn aliasing(function: &Value) -> (BTreeSet<String>, BTreeSet<String>) {
     fn walk(node: &Value, automatic: &mut BTreeSet<String>, taken: &mut BTreeSet<String>) {
         match kind(node) {
             "ParmVarDecl" | "VarDecl" if node["storageClass"].as_str().is_none() => {

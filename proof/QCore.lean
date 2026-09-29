@@ -281,5 +281,6 @@ import QCore.TypedPlace
 import QCore.CallInstantiation
 import QCore.PointerStore
 import QCore.UnionBitfieldPlace
+import QCore.NestedCallEffects
 
 /-! The executable formal core of QCore-C revision 0.1. -/
