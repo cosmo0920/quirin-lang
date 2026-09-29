@@ -50,6 +50,7 @@ fn functions(files: &[(&str, &str)], predefined: Option<PredefinedMacros>) -> BT
         owned_prefixes: vec!["FLB_".to_owned()],
         defined_elsewhere: BTreeSet::new(),
         predefined,
+        region_macros: None,
     };
     read_program_configured(&files, &FLUENT_BIT_HOPS, Some(&configuration))
         .functions

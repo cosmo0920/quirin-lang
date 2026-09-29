@@ -140,6 +140,9 @@ pub(super) struct KeyedCall {
     pub keys: Vec<String>,
     /// The derived table, one line per entry.
     pub table: Vec<String>,
+    /// Card W47-PREMISES-HOLDER-REGION: the two bodies as scanned (file,
+    /// body, the ranges skipped), for the region's macro invocations.
+    pub parts: Vec<super::region_macros::RegionPart>,
 }
 
 /// One table entry.
@@ -408,6 +411,10 @@ impl StepB<'_> {
         )?;
         skipped.sort_unstable();
         self.scan_named(p.file, p.body, &skipped, &mut roots)?;
+        let parts = vec![
+            (s.file, s.body, vec![(property_call.0, property_call.0)]),
+            (p.file, p.body, skipped.clone()),
+        ];
         roots.remove(&setter);
         roots.remove(&property);
         let table = shape
@@ -432,6 +439,7 @@ impl StepB<'_> {
             in_place: BTreeSet::from([setter, property]),
             keys: described,
             table,
+            parts,
         })
     }
 

@@ -321,6 +321,7 @@ fn configuration(defined: &[&str]) -> BuildConfiguration {
         owned_prefixes: vec!["FLB_".to_owned()],
         defined_elsewhere: BTreeSet::new(),
         predefined: None,
+        region_macros: None,
     }
 }
 

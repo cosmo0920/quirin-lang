@@ -188,6 +188,13 @@ pub use loop_owner_property_keys::{FLUENT_BIT_PROPERTY_KEYS, PropertyKeyTables};
 #[path = "loop_owner_predefined_macros.rs"]
 pub mod predefined_macros;
 
+// Card W47-PREMISES-HOLDER-REGION: the list-head region's macro invocations
+// read from the units' own expansions, and the holder's opacity derived.
+#[path = "loop_owner_holder_opaque.rs"]
+mod holder_opaque;
+#[path = "loop_owner_region_macros.rs"]
+pub mod region_macros;
+
 /// The closed hop vocabulary of one program family.
 #[derive(Clone, Copy, Debug)]
 pub struct HopTables {
@@ -387,6 +394,9 @@ pub struct BuildConfiguration {
     /// Card W47-LOOP-OWNER-PREDEFINED-MACRO-ARMS: reserved macros the
     /// recorded compiler decides per command; `None` decides none.
     pub predefined: Option<predefined_macros::PredefinedMacros>,
+    /// Card W47-PREMISES-HOLDER-REGION: the units' own expansions of the
+    /// list-head region's macro invocations; `None` reads none.
+    pub region_macros: Option<region_macros::RegionMacros>,
 }
 
 /// A condition's value under a configuration.
@@ -1936,6 +1946,7 @@ pub fn read_program_typed(
         keys: &FLUENT_BIT_PROPERTY_KEYS,
         macro_bodies: &macro_bodies,
         property_readings: std::cell::RefCell::new(BTreeMap::new()),
+        region_macros: configuration.and_then(|c| c.region_macros.as_ref()),
     };
     let instance_flags = derive_instance_flags(&step_b);
     let property_keys = step_b.property_readings.take();
@@ -2328,6 +2339,8 @@ struct StepB<'a> {
     keys: &'a PropertyKeyTables,
     macro_bodies: &'a BTreeMap<String, BTreeSet<String>>,
     property_readings: std::cell::RefCell<BTreeMap<String, Vec<String>>>,
+    /// Card W47-PREMISES-HOLDER-REGION.
+    region_macros: Option<&'a region_macros::RegionMacros>,
 }
 
 /// A flag derivation's value: `Some(false)` no coroutine, `Some(true)` the
