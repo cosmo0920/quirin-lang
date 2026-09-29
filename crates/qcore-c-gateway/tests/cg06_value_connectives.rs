@@ -96,16 +96,19 @@ fn the_omitted_middle_operand_is_evaluated_once_and_f_only_on_zero() {
     assert!(run.unsafe_() && run.has("Leak"), "{run:?}");
     // On the zero edge the release happens, so a later release is a double
     // release there (a violation of the synthetic fixture itself).
-    let run =
-        gs("void subject(int x) { void *p = q_alloc(); int r = x ?: r_release_code(p); q_free(p); }");
+    let run = gs(
+        "void subject(int x) { void *p = q_alloc(); int r = x ?: r_release_code(p); q_free(p); }",
+    );
     assert!(run.unsafe_() && run.has("DoubleRelease"), "{run:?}");
-    let run =
-        gs("void subject(int x) { void *p = q_alloc(); int r = x ?: r_borrow_code(p); q_free(p); }");
+    let run = gs(
+        "void subject(int x) { void *p = q_alloc(); int r = x ?: r_borrow_code(p); q_free(p); }",
+    );
     assert!(run.safe(), "{run:?}");
     // An `X` with an effect is evaluated once by C; the re-read lowering
     // would evaluate it twice, so it is refused.
-    let run =
-        gs("void subject(int n) { void *p = q_alloc(); int r = n++ ?: r_borrow_code(p); q_free(p); }");
+    let run = gs(
+        "void subject(int n) { void *p = q_alloc(); int r = n++ ?: r_borrow_code(p); q_free(p); }",
+    );
     assert!(!run.safe(), "{run:?}");
 }
 
@@ -122,8 +125,15 @@ fn order_positions_and_cardinality_refuse() {
     // A region inside a statement expression (CG07).
     let run = gs("void subject(int c) { cg_sink(({ int t = c ? 1 : 2; t; })); }");
     assert!(!run.safe(), "{run:?}");
+    // An unparenthesised comma middle operand would re-parse differently
+    // once substituted; the parenthesised one is CG02's comma on its edge.
+    let run = gs("void subject(int c, int a, int b) { int x = c ? a, b : 0; }");
+    assert!(!run.safe(), "{run:?}");
+    let run = gs("void subject(int c, int a, int b) { int x = c ? (a, b) : 0; }");
+    assert!(run.safe(), "{run:?}");
     // An uncontracted call on one edge.
-    let run = gs("void subject(int c) { void *p = q_alloc(); cg_sink(c ? opaque() : 0); q_free(p); }");
+    let run =
+        gs("void subject(int c) { void *p = q_alloc(); cg_sink(c ? opaque() : 0); q_free(p); }");
     assert!(!run.safe(), "{run:?}");
     // A connective in a controlling expression stays the condition CFG's.
     let run = gs(
@@ -154,22 +164,4 @@ fn lean_merge_vectors_run_through_route_g() {
         count += 1;
     }
     assert_eq!(count, 5);
-}
-
-/// Scratch runner for card work: `CG06_SCRATCH=FILE` runs each line.
-#[test]
-fn scratch() {
-    if !clang_available() {
-        return;
-    }
-    let Ok(path) = std::env::var("CG06_SCRATCH") else {
-        return;
-    };
-    for source in std::fs::read_to_string(path).unwrap().lines() {
-        if source.trim().is_empty() {
-            continue;
-        }
-        let run = gs(source);
-        eprintln!("{source}\n  => {:?} {:?}\n", run.status, run.diagnostics);
-    }
 }

@@ -366,6 +366,12 @@ fn a_refused_return_of_the_identity_withdraws_it() {
         "struct k_box *w(void) { struct k_box *p = k_alloc(1); if (!p) return 0; \
          return p->n > 0 ? p : 0; }",
     );
-    assert_eq!(status, "Unknown", "{keys:?}");
-    assert!(!keys.iter().any(|key| key == "leak"), "{keys:?}");
+    // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): the
+    // return is no longer refused. It is lowered by branching on `p->n > 0`:
+    // one edge returns `p`, the other returns `0` while `p` is still owned,
+    // the fixture's own leak, now reported (BEFORE: the refused return
+    // withdrew it). A still-refused return keeps withdrawing it:
+    // `a_member_value_store_keeps_the_accusation`'s neighbours pin that.
+    assert_eq!(status, "Unsafe", "{keys:?}");
+    assert!(keys.iter().any(|key| key == "leak"), "{keys:?}");
 }

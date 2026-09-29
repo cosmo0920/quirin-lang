@@ -604,7 +604,12 @@ fn cg06_region_vectors_match_the_elaborator() {
         // The branch follows the deciding operand, each arm follows the
         // branch, and the merge follows both arms.
         let graph = &elaborated.graph;
-        assert!(region.condition.iter().all(|&e| graph.sequenced(e, region.branch)));
+        assert!(
+            region
+                .condition
+                .iter()
+                .all(|&e| graph.sequenced(e, region.branch))
+        );
         for arm in &region.arms {
             assert!(arm.iter().all(|&e| graph.sequenced(region.branch, e)));
             assert!(arm.iter().all(|&e| graph.sequenced(e, region.merge)));
@@ -626,7 +631,12 @@ fn cg06_region_vectors_match_the_elaborator() {
     {
         let (source, rest) = row.split_once('"').unwrap();
         let expected = rest.contains("true");
-        assert_eq!(run(source).is_ok(), expected, "{source}: {:?}", run(source).err());
+        assert_eq!(
+            run(source).is_ok(),
+            expected,
+            "{source}: {:?}",
+            run(source).err()
+        );
         count += 1;
     }
     assert_eq!(count, 4);
@@ -653,7 +663,9 @@ fn cg06_omitted_middle_evaluates_once() {
         .count();
     assert_eq!(reads_of_a, 1, "{:?}", elaborated.graph.events);
     assert!(region.arms[0].is_empty());
-    assert!(region.arms[1]
-        .iter()
-        .any(|&e| matches!(elaborated.graph.events[e], Event::Call { .. })));
+    assert!(
+        region.arms[1]
+            .iter()
+            .any(|&e| matches!(elaborated.graph.events[e], Event::Call { .. }))
+    );
 }

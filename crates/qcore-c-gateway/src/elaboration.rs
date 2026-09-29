@@ -1164,8 +1164,7 @@ impl<C: Context> Elaborator<'_, C> {
             return Err(Refusal::Unlisted("omitted-middle without opaque operands"));
         }
         let decided = self.expression(common)?;
-        let (mut part, _) =
-            self.region("omitted-middle conditional", decided, [None, Some(no)])?;
+        let (mut part, _) = self.region("omitted-middle conditional", decided, [None, Some(no)])?;
         part.result = Operand::Value {
             pointer: self.value(node)?,
             source: ValueSource::Computed,

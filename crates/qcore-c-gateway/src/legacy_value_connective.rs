@@ -73,11 +73,7 @@ enum Piece<'r, 'a> {
 
 /// The pieces of `tokens[span]` with `regions` (inside `span`, in order) as
 /// holes.
-fn pieces<'r, 'a>(
-    tokens: &[Token],
-    span: Span,
-    regions: &'r [Region<'a>],
-) -> Vec<Piece<'r, 'a>> {
+fn pieces<'r, 'a>(tokens: &[Token], span: Span, regions: &'r [Region<'a>]) -> Vec<Piece<'r, 'a>> {
     let mut out = Vec::new();
     let mut at = span.0;
     for region in regions {
@@ -164,14 +160,13 @@ impl Parser<'_> {
         old: &str,
     ) -> Option<Statement> {
         if LOWERING.get()
-            || std::env::var_os("QCORE_CG06_OFF").is_some()
             || tokens.is_empty()
             || !spells_connective(tokens)
             || contains_braces(tokens)
             || self.opaque_callee(tokens)
-            || tokens
-                .iter()
-                .any(|token| is_identifier(&token.text) && self.descriptor_names.contains(&token.text))
+            || tokens.iter().any(|token| {
+                is_identifier(&token.text) && self.descriptor_names.contains(&token.text)
+            })
         {
             return None;
         }
@@ -221,11 +216,10 @@ impl Parser<'_> {
             Site::Return => {
                 let mut wanted = vec!["return"];
                 wanted.extend(texts.iter().copied());
-                let statement =
-                    Self::elaboration_node(index, tokens[0].line, &wanted, &|node| {
-                        kind(node) == "ReturnStmt"
-                    })
-                    .ok_or(Decline::Node)?;
+                let statement = Self::elaboration_node(index, tokens[0].line, &wanted, &|node| {
+                    kind(node) == "ReturnStmt"
+                })
+                .ok_or(Decline::Node)?;
                 let [value] = children(statement) else {
                     return Err(Decline::Node);
                 };
@@ -445,13 +439,16 @@ impl Parser<'_> {
             }
             Site::Return => {
                 let statement = self.return_statement(run.clone(), line);
-                if !super::return_refused(&statement) {
+                let lowered = if !super::return_refused(&statement) {
                     Some(statement)
                 } else if let Some(elaborated) = self.elaborated_return(&run, line) {
                     Some(elaborated)
                 } else {
                     self.instantiated_return(&run, line)
-                }
+                };
+                // An edge lowered to an explicit refusal (a refused call
+                // kept as its own `Unknown` step) declines too.
+                lowered.filter(|statement| !refuses(statement))
             }
         });
         LOWERING.set(false);
@@ -491,8 +488,12 @@ fn locate(index: &StatementIndex, texts: &[&str], begin: usize, node: &Value) ->
     let first = super::tokenize(prefix).len();
     let own = index.node_tokens(node)?;
     let last = first.checked_add(own.len())?;
-    (last <= texts.len() && texts[first..last].iter().copied().eq(own.iter().map(String::as_str)))
-        .then_some((first, last))
+    (last <= texts.len()
+        && texts[first..last]
+            .iter()
+            .copied()
+            .eq(own.iter().map(String::as_str)))
+    .then_some((first, last))
 }
 
 /// The function's automatic objects and the objects whose address a `&`
@@ -540,6 +541,10 @@ fn aliasing(
 fn refuses(statement: &Statement) -> bool {
     match statement {
         Statement::Instruction(LegacyInstruction::Unknown { .. }, _) => true,
+        Statement::Return {
+            returned_evaluation: Some(evaluation),
+            ..
+        } => matches!(**evaluation, LegacyInstruction::Unknown { .. }),
         Statement::Block(statements) => statements.iter().any(refuses),
         _ => false,
     }

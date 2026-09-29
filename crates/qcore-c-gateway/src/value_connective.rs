@@ -22,7 +22,7 @@
 //!   non-zero edge. The lowering reads `X` a second time on that edge, so it
 //!   is admitted only when `X`'s evaluation is **reads only**: a second read
 //!   of an unchanged place observes the same value, and a read changes no
-//!   state (`QCore.ValueConnectives.omitted_middle_reread`). An `X` with a
+//!   state (`QCore.ValueConnectives.elvis_reread`). An `X` with a
 //!   call, a store, an increment or a volatile access refuses; C evaluates
 //!   it once.
 //!
@@ -300,7 +300,10 @@ pub(crate) fn deciding<T>(node: &Value, body: impl FnOnce() -> T) -> T {
 /// Among several Clang nodes carrying an operand's line and tokens, the one
 /// inside the deciding operand being lowered, when exactly one is. Asked only
 /// after rule 10n's controlling-scope match declined.
-pub(crate) fn deciding_candidate<'a>(root: &'a Value, candidates: &[&'a Value]) -> Option<&'a Value> {
+pub(crate) fn deciding_candidate<'a>(
+    root: &'a Value,
+    candidates: &[&'a Value],
+) -> Option<&'a Value> {
     let wanted = DECIDING.with(std::cell::Cell::get);
     if wanted == 0 {
         return None;
@@ -409,10 +412,11 @@ pub(crate) fn effect_free(node: &Value) -> bool {
         "CallExpr" | "StmtExpr" | "CompoundAssignOperator" => return false,
         "BinaryOperator" if node["opcode"].as_str() == Some("=") => return false,
         "UnaryOperator" if matches!(node["opcode"].as_str(), Some("++" | "--")) => return false,
-        "ImplicitCastExpr" if node["castKind"].as_str() == Some("LValueToRValue") => {
-            if volatile(node) || children(node).first().is_some_and(volatile) {
-                return false;
-            }
+        "ImplicitCastExpr"
+            if node["castKind"].as_str() == Some("LValueToRValue")
+                && (volatile(node) || children(node).first().is_some_and(volatile)) =>
+        {
+            return false;
         }
         _ => {}
     }
@@ -425,7 +429,10 @@ pub(crate) fn effect_free(node: &Value) -> bool {
 /// taken.
 pub(crate) fn inert(node: &Value, unaliased: &dyn Fn(&str) -> bool) -> bool {
     match kind(node) {
-        "IntegerLiteral" | "CharacterLiteral" | "FloatingLiteral" | "StringLiteral"
+        "IntegerLiteral"
+        | "CharacterLiteral"
+        | "FloatingLiteral"
+        | "StringLiteral"
         | "UnaryExprOrTypeTraitExpr" => true,
         "DeclRefExpr" => true,
         "ImplicitCastExpr" if node["castKind"].as_str() == Some("LValueToRValue") => {
@@ -452,10 +459,8 @@ pub(crate) fn inert(node: &Value, unaliased: &dyn Fn(&str) -> bool) -> bool {
             ) && children(node).iter().all(|child| inert(child, unaliased))
         }
         "BinaryOperator" => {
-            !matches!(
-                node["opcode"].as_str(),
-                Some("=" | "," | "&&" | "||")
-            ) && children(node).iter().all(|child| inert(child, unaliased))
+            !matches!(node["opcode"].as_str(), Some("=" | "," | "&&" | "||"))
+                && children(node).iter().all(|child| inert(child, unaliased))
         }
         _ => false,
     }
@@ -582,6 +587,15 @@ fn region<'a>(
     // Nested regions of an arm keep the region's siblings; the arm's own
     // siblings are added as the walk descends into it.
     let arm = |arm: &'a Value| -> Result<Arm<'a>, Refusal> {
+        // An unparenthesised comma middle operand (`C ? A, B : D`) would
+        // re-parse differently once substituted into its position.
+        let mut bare = arm;
+        while kind(bare) == "ImplicitCastExpr" {
+            bare = children(bare).first().ok_or(Refusal::Span)?;
+        }
+        if kind(bare) == "BinaryOperator" && bare["opcode"].as_str() == Some(",") {
+            return Err(Refusal::Position("BinaryOperator ,".into()));
+        }
         let span = (reading.locate)(arm).ok_or(Refusal::Span)?;
         let mut regions = Vec::new();
         walk(arm, siblings, reading, &mut regions)?;

@@ -78,7 +78,8 @@ fn cg06_effect_and_inert_readings() {
                "inner": [{"kind": "DeclRefExpr", "referencedDecl": {"kind": "VarDecl", "id": id, "name": "v"}}]})
     };
     let call = json!({"kind": "CallExpr", "inner": []});
-    let store = json!({"kind": "BinaryOperator", "opcode": "=", "inner": [read("0x1"), read("0x2")]});
+    let store =
+        json!({"kind": "BinaryOperator", "opcode": "=", "inner": [read("0x1"), read("0x2")]});
     let unevaluated = json!({"kind": "UnaryExprOrTypeTraitExpr", "inner": [call.clone()]});
     assert!(effect_free(&read("0x1")));
     assert!(!effect_free(&call));

@@ -404,13 +404,13 @@ fn a_call_that_is_not_the_whole_return_expression_is_refused() {
     let comma = run("int subject(void) { void *p = q_alloc(); return r_release_code(p), 0; }");
     assert!(!comma.refuses_return(), "{:?}", comma.unsupported());
     assert!(comma.unsupported().is_empty(), "{:?}", comma.unsupported());
+    // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): the
+    // call is the `?:`'s deciding operand, applied once by the condition
+    // route before either edge's `return 1;` / `return 0;`.
     let body = "int subject(void) { void *p = q_alloc(); return r_release_code(p) ? 1 : 0; }";
-    let refused = run(body);
-    assert!(
-        refused.refuses_return(),
-        "`{body}` must keep the return refusal, got {:?}",
-        refused.unsupported()
-    );
+    let branched = run(body);
+    assert!(!branched.refuses_return(), "{:?}", branched.unsupported());
+    assert_eq!(branched.status, AnalysisStatus::Safe, "{body}");
     // Deliberate pin update, card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u):
     // `r_release_code(p) & 1` is one condition leaf, and the return operand
     // accepts exactly what the same leaf in an `if` accepts. B01 refused it
@@ -488,8 +488,10 @@ fn a_local_summary_does_not_admit_an_embedded_recursive_call() {
 
 /// A conditionally evaluated call cannot be extracted and applied on every
 /// path. Doing so would release `p` even when C skips the call, turning this
-/// body falsely Safe. Both conditional operators therefore keep the blanket
-/// refusal.
+/// body falsely Safe. FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule
+/// 10z): both are lowered by branching, the call applied only on the edge C
+/// evaluates it, so the skipping edge's leak is reported (BEFORE: the blanket
+/// return refusal). Neither is Safe.
 #[test]
 fn a_skippable_call_keeps_the_return_refusal() {
     if !clang_available() {
@@ -500,12 +502,9 @@ fn a_skippable_call_keeps_the_return_refusal() {
         "int subject(int flag) { void *p = q_alloc(); return flag && r_release_code(p); }",
     ] {
         let measured = run(body);
-        assert!(
-            measured.refuses_return(),
-            "{body}: {:?}",
-            measured.unsupported()
-        );
-        assert_ne!(measured.status, AnalysisStatus::Safe, "{body}");
+        assert!(!measured.refuses_return(), "{body}");
+        assert_eq!(measured.status, AnalysisStatus::Unsafe, "{body}");
+        assert_eq!(measured.leaks(), 1, "{body}");
     }
 }
 
