@@ -46,6 +46,18 @@ pub enum ObservedOutcome {
     I32(i32),
     Buffer(ResourceId),
     Error(String),
+    /// A worker result of a §G02t type other than `i32` (card
+    /// `W48-QR-SCALAR-TYPES-R6`, `W48-QR-F02-FIXED-OUTCOMES`), rendered
+    /// `QCORE_TASK_RESULT TASK TYPE NUMBER` (`true`/`false` for `bool`). The
+    /// relation observes an outcome only through its equality and whether it
+    /// names a Buffer, and this one never does, so the alphabet grows
+    /// conservatively: a trace without one relates exactly as before
+    /// (`QCore.TaskTraceFixedOutcomes.fixed_free_traces_relate_exactly_as_before`)
+    /// and no pinned digest moves. `ty` is never `i32`.
+    Fixed {
+        ty: crate::scalar_types::ScalarType,
+        value: i128,
+    },
 }
 
 /// The observable alphabet shared by the reference run and the native run.
@@ -274,6 +286,36 @@ fn signed(word: Option<&str>) -> Option<i32> {
     word?.parse::<i32>().ok()
 }
 
+/// A fixed-width worker outcome's `TYPE NUMBER` (card
+/// `W48-QR-SCALAR-TYPES-R6`): the type's upper-case name — never `I32`, which
+/// is its own arm — and a number of the type, `true`/`false` for `BOOL`. The
+/// parser knows no recorded target, so an `ISIZE`/`USIZE` number is read
+/// against the widest width; the relation then demands it equal the
+/// reference's, which is a value of the recorded one.
+fn fixed_outcome(kind: &str, word: Option<&str>) -> Option<ObservedOutcome> {
+    use crate::scalar_types::{PointerWidth, RecordedTarget, ScalarType};
+    let ty = crate::scalar_types::ALL
+        .into_iter()
+        .find(|ty| *ty != ScalarType::I32 && ty.name().to_ascii_uppercase() == kind)?;
+    let word = word?;
+    let value = if ty == ScalarType::Bool {
+        match word {
+            "true" => 1,
+            "false" => 0,
+            _ => return None,
+        }
+    } else {
+        word.parse::<i128>().ok()?
+    };
+    let widest = RecordedTarget {
+        pointer_width: PointerWidth::W64,
+        triple: String::new(),
+        compiler: String::new(),
+    };
+    ty.contains(value, Some(&widest))
+        .then_some(ObservedOutcome::Fixed { ty, value })
+}
+
 /// Read a rendered observation — the reference renderer's output, or the
 /// generated program's stdout — into the observable alphabet. Any line the
 /// alphabet does not cover is an error, never a skipped line.
@@ -377,6 +419,8 @@ pub fn parse_observed_trace(text: &str) -> Result<Vec<ObservedEvent>, TraceParse
                             outcome: ObservedOutcome::Error(tag.to_owned()),
                         })
                     }
+                    (Some(task), Some(kind)) => fixed_outcome(kind, rest.next())
+                        .map(|outcome| ObservedEvent::Completed { task, outcome }),
                     _ => None,
                 }
             }
@@ -427,11 +471,14 @@ fn outcome(value: &TaskOutcome, index: usize) -> Result<ObservedOutcome, Referen
         TaskOutcome::I32(value) => Ok(ObservedOutcome::I32(*value)),
         TaskOutcome::OwnedBuffer(buffer) => Ok(ObservedOutcome::Buffer(*buffer)),
         TaskOutcome::Error(tag) => Ok(ObservedOutcome::Error(tag.clone())),
-        // Card `W48-QR-SCALAR-TYPES-R4`: the observable alphabet has no
-        // fixed-width outcome, so a run carrying one is refused rather than
-        // encoded — such a program sits outside the F02 relation, and its
-        // native evidence is the byte comparison of the maintained trace.
-        TaskOutcome::ErrorWithBuffer { .. } | TaskOutcome::Fixed { .. } => {
+        // Card `W48-QR-SCALAR-TYPES-R6` (`W48-QR-F02-FIXED-OUTCOMES`): the
+        // alphabet grew by the fixed-width worker outcome, so a run carrying
+        // one is encoded rather than refused. Card R4 had refused it.
+        TaskOutcome::Fixed { ty, value } => Ok(ObservedOutcome::Fixed {
+            ty: *ty,
+            value: *value,
+        }),
+        TaskOutcome::ErrorWithBuffer { .. } => {
             Err(ReferenceTraceError::UnsupportedOutcome { index })
         }
     }

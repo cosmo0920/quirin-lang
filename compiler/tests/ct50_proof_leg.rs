@@ -111,6 +111,11 @@ fn encode_event(event: &ObservedEvent) -> u64 {
                 ObservedOutcome::Error(_) => {
                     panic!("typed error outcomes are outside CT50's trace")
                 }
+                // Card `W48-QR-SCALAR-TYPES-R6`: the grown alphabet's fixed-width
+                // outcome, which no declared domain of this leg carries.
+                ObservedOutcome::Fixed { .. } => {
+                    panic!("fixed-width outcomes are outside the declared F02 domains")
+                }
             };
             9 + 16 * (task + 8 * encoded)
         }
