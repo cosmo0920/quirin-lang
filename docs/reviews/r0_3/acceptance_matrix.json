@@ -194,8 +194,8 @@
   "ct_rows": 50,
   "ct_stage_names": 20,
   "ct_cells": 1000,
-  "unverified_spec_items": 7,
-  "named_followups": 589
+  "unverified_spec_items": 10,
+  "named_followups": 620
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -251,6 +251,21 @@
     "item": "the reviewer's archive, acceptance.json, source_inventory.json and validation.json",
     "disposition": "superseded",
     "rationale": "never supplied. The local acceptance record and source inventory are new local records (docs/reviews/r0_3/REVIEW.md lines 8-10); the 43-test Python evidence-validator suite and the standing gate replace validation.json."
+   },
+   {
+    "item": "Quirin_Clang_Gap_Analysis_EN.md (supplied 2026-09-29)",
+    "disposition": "carded-as-candidates",
+    "rationale": "Quirin-Clang gap analysis; archived byte-identically under docs/reviews/clang-gap-2026-09-29/supplied/. A declared static input, not implementation authority: its 112 entries are placed in docs/plans/clang-gap-cards/README.md as 98 carded entries (candidate cards CG00-CG30 in named_followups) and 14 non-card entries."
+   },
+   {
+    "item": "Quirin_Clang_Response_EN.md (supplied 2026-09-29)",
+    "disposition": "carded-as-candidates",
+    "rationale": "Quirin-Clang gap analysis; archived byte-identically under docs/reviews/clang-gap-2026-09-29/supplied/. A declared static input, not implementation authority: its 112 entries are placed in docs/plans/clang-gap-cards/README.md as 98 carded entries (candidate cards CG00-CG30 in named_followups) and 14 non-card entries."
+   },
+   {
+    "item": "Quirin_Source_Evidence_EN.md (supplied 2026-09-29)",
+    "disposition": "carded-as-candidates",
+    "rationale": "Quirin-Clang gap analysis; archived byte-identically under docs/reviews/clang-gap-2026-09-29/supplied/. A declared static input, not implementation authority: its 112 entries are placed in docs/plans/clang-gap-cards/README.md as 98 carded entries (candidate cards CG00-CG30 in named_followups) and 14 non-card entries."
    }
   ]
  },
@@ -11052,6 +11067,223 @@
    "why": "W48-QR-SCALAR-TYPES-R2's `Result::Err { error: e }` arm can only re-raise `e` (`raise e;`) or discard it: there is no match on the variant and no rendering of an error, so a program cannot tell Overflow from DivisionByZero from OutOfRange except by propagating it out of the entry (exit 80 + tag). Size: a variant pattern or an error-to-scalar conversion on the scalar route, its evaluation and emission (the C tag is already an int), a std.fmt rendering if one is wanted; 0 fixtures move. DISCHARGE: a handler that branches on or renders the variant, checked, evaluated and emitted, with Lean parity and native runs.",
    "source": "docs/reports/w48-qr-scalar-types-r2/README.md",
    "recorded_by": "W48-QR-SCALAR-TYPES-R2"
+  },
+  {
+   "id": "CG00-CLANG-GAP-BASELINE",
+   "title": "Candidate implementation card: Reproduce the Clang gap analysis's cited refusals as executed tests and rank the cards by functions freed",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: all 98 carded entries. Effort: Medium. Prerequisite: none. Scope: Turn each cited refusal into an executed BEFORE test (analysis §8 axes), attribute the corpus arbiter's Unknown functions to entry IDs through the existing census routes, and freeze a per-card PREDICTION.md. Records only: no analyzer change, corpus byte-identical. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG01-T-OPERATOR-CLOSURE",
+   "title": "Candidate implementation card: Add the missing operators and literals to typed_source",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: E01 E02 E03(T) E14; route T. Effort: High. Prerequisite: none. Scope: Binary - <= >= ^ << >>, unary + ~, the nine missing compound assignments and float/char literals in Importer::expression (Q11 Q12 Q16), each classified by every consumer as custody-neutral, numerically evaluated or obligation-bearing; unclassified nodes stay refused. No numeric guarantee (CG20). DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG02-ELABORATION-CORE",
+   "title": "Candidate implementation card: Common expression elaborator with explicit sequencing",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: E03(values) E04 E05 E08 E12(order model); routes G, T. Effort: High. Prerequisite: CG00. Absorbs: W43-RETURN-COMMA-MACRO. Scope: elaborate(expr, ctx) -> value/place + evaluation graph + effect/custody events + obligations. Assignment values, pre/post increment old/new values, comma sequencing, compound-assignment single-evaluation RMW. Sequenced-before explicit; unspecified order never serialised. Runs beside the shape routes; parity before any retirement (hard invariant 3). DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG03-CALL-SUMMARY-INSTANTIATION",
+   "title": "Candidate implementation card: Apply a call contract exactly once, identically in every consumer",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: K12 K03; routes G, T. Effort: High. Prerequisite: CG02. Absorbs: W46-ACCESS-PATH-PARITY (plan-vocabulary part). Scope: One application point once callee, types and actual identities are established; the same acceptance range in statement, condition, nested, field and profile consumers; formal substitution value -> identity -> formal and address-of-slot -> Out over CG10 places; total-or-reject kept. W44-CALL-ARGUMENT-CUSTODY-POSITION refusals stay by design. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG04-CONDITION-ACQUISITION",
+   "title": "Candidate implementation card: Lower ownership-producing calls inside conditions",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: E09 E13; route G. Effort: High. Prerequisite: CG02, CG03. Absorbs: W44-CONDITION-CALL-ASSIGNMENT, W44-CONDITION-CALL-FREE-OPERAND, W44-CONDITION-CALL-TYPE-OPERATOR, W44-CONDITION-CALL-REFUSED-SHAPES, W44-CONDITION-DISCARDED-DERIVED-RESULT, W43-INDEX-TRAVERSAL-CONDITION-WRITE, CONDITION-DESUGAR-REFUSAL-ARMS-UNPINNED. Scope: if ((p = malloc(n)) != NULL) free(p): acquisition identity, binding, NULL/sentinel split, success/failure states and merge lowered together; no hoisting (Q47 stays a regression); complex condition leaves compose through CG02. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG05-NESTED-CALL-EFFECTS",
+   "title": "Candidate implementation card: Compose non-identity effects of nested and sibling calls",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: E10 E11 E12; route G. Effort: High. Prerequisite: CG02, CG03. Absorbs: NESTED-CALL-IN-ARGUMENT-POSITION, W44-PRINTF-NESTED-INNER-CALLEES, W43-RETURN-COMPOUND-CALL, CJSON-DELETE-NESTED-DETACH. Scope: sink(release_and_status(p)): inner Owned/Released/Consumed/Out effects applied inside-out; depth beyond one and calls inside larger arguments; sibling calls checked in both orders or proved commutative from contract footprints. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG06-VALUE-CONNECTIVES-AND-CONDITIONAL",
+   "title": "Candidate implementation card: Value-producing &&, || and ?: in every position",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: E06 E07; routes G, T. Effort: High. Prerequisite: CG02. Absorbs: RETURN-POSITION-CONDITIONAL, W43-RETURN-CONDITIONAL-OPERANDS, W47-ACCESS-PATH-POSITION-RESIDUALS (?: actual and pointer ?: return rows). Scope: Short-circuit and conditional values in assignments, actuals, returns and operands with no effect from the unevaluated side; ?: merges the selected branch's alias/custody state; GNU omitted middle operand separately. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG07-GENERIC-AND-STATEMENT-EXPRESSIONS",
+   "title": "Candidate implementation card: Clang-selected _Generic associations and GNU statement expressions",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: E17 E19; routes G, T. Effort: High. Prerequisite: CG02. Scope: Use the selected GenericSelectionExpr association where associations differ, never evaluating controlling or unselected operands (Q21); compose statement-expression inner scope, final value, internal calls and escape into the outer scope. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG08-CASTS-AND-TYPE-QUERIES",
+   "title": "Candidate implementation card: Cast-kind representations and Clang-evaluated sizeof/_Alignof values",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: E15 E16 N11 M18 N08(representation); routes G, T. Effort: High. Prerequisite: CG01. Absorbs: W44-SIZEOF-OPERAND-RESIDUALS, W44-SIZEOF-CAST-SCALAR-QUERY, SIZEOF-TYPE-FOLD-NO-LEAN, CAST-RETURN-UNCOMMITTED-OPERAND, W45-CALLEE-CAST-LEXICAL-PREMISE. Scope: Pointer<->integer, ToVoid, ToBoolean, integer<->FP, FP-width, atomic and address-space casts as representations with loss/provenance flags; evaluated VLA operands separated; Clang constants replace the neutrality marker 1 wherever a value is consumed, never in bounds or branches. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG09-TYPED-SOURCE-CONTROL",
+   "title": "Candidate implementation card: General loops, switch and jumps in typed_source",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: C01 C02 C03; route T. Effort: High. Prerequisite: CG01. Scope: while/for/do, switch/case/default, goto/labels/break/continue in T via the gateway CFG or T edges, with local lifetime ends on every jump. G already has these (Q06 Q07). DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG10-COMMON-TYPED-PLACE",
+   "title": "Candidate implementation card: Common typed place with tracked mixed roots and AST-node identity",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M01 I04 (K03 place side); route G. Effort: High. Prerequisite: CG00. Absorbs: W46-ACCESS-PATH-TRACKED-MIXED-PLACES, W44-CHAIN-NESTED-AGGREGATE, W43-INDIRECT-UNTYPED-SINGLE-ACCESS, REFUSED-HANDON-LINE-GRANULARITY, W44-AGGREGATE-PREMISE3-MEMBER-NAME. Scope: DeclID/FieldID/Index/offset/view places; AST-node and SourceRange identity instead of unique-line token matching; mixed -> . [] * paths with a tracked root. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG11-POINTER-VALUED-STORES",
+   "title": "Candidate implementation card: Pointer-valued stores through fields, slots and elements (FIELD-CUSTODY)",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M02 M03 M04; route G. Effort: High. Prerequisite: CG10; the owned-field Lean model; W45-SR5 findings closed. Absorbs: W43-INDIRECT-POINTER-VALUE-STORE, the seven W45-SUB-OBJECT-STORE-* rows, W44-CALL-RESULT-INDIRECT-DESTINATION, W43-COLLECTION-NAME-STORE. Scope: s->p = q, *slot = p, slots[i] = p through caller-owned objects, formals and aliases, nested fields, arrays, multilevel and function pointers; value store, alias add/overwrite, old obligation and escape as separate events; the Q36 fixture moves by source semantics, not a trusted contract. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG12-VOID-VIEW-READBACK",
+   "title": "Candidate implementation card: Typed readback of identities stored in void * fields",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M05; route G. Effort: High. Prerequisite: CG11. Absorbs: W47-FIELDS-BY-MEMBER-VOID-ESCAPES. Scope: Connect a post-cast view and pointee type to the stored identity, by contract or derivation. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG13-UNION-AND-BITFIELD-PLACES",
+   "title": "Candidate implementation card: Connect bit-fields to footprint storage units and model union overlap",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M06 M07; routes G, T, core. Effort: High. Prerequisite: CG10. Absorbs: W46-UNION-MEMBER-PATH, W44-CHAIN-INCOMPLETE-RECORD (union part), W43-LIBC-GETPEERNAME-SOCKADDR-UNION. Scope: Bit-fields: source fields to disjoint_footprint storage units, read-modify-write events, different bit ranges not automatically disjoint. Unions: overlapping storage and effective-type view boundary, or a contract boundary. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG14-AGGREGATE-VALUES-AND-INITIALIZERS",
+   "title": "Candidate implementation card: Aggregate copies, designated initializers and compound literals",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M08 M09 M10 M11; routes G, T. Effort: High. Prerequisite: CG10, CG11. Scope: Field-wise alias/custody transfer for whole-struct copies; designated/general initializers with zero-fill and initial aliases; compound-literal identity and lifetime; string/array initializer extents feed CG16 only when bounds are claimed. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG15-STORAGE-DURATION-AND-VOLATILE",
+   "title": "Candidate implementation card: Global/static/thread-local identity and volatile access effects",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M24 M23; routes G, T. Effort: High. Prerequisite: CG10. Absorbs: GATEWAY-VOLATILE-PREMISE, CT41-VOLATILE-COMPLEMENT-UNMEASURED. Scope: Storage-duration identity and lifetime (T rejects them today); volatile accesses as separate observable effects with count and order, apart from custody. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG16-INDEX-AND-OFFSET-EXTENTS",
+   "title": "Candidate implementation card: Connect computed indices and pointer arithmetic to extent obligations",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M14 M15 M16 M17; core connection. Effort: High. Prerequisite: CG10; CG20 for ranges. Absorbs: W43-INDEX-TRAVERSAL-STEP-COMPUTED, W43-INDEX-TRAVERSAL-COMPUTED-POINTER-ACCESS, W46-ROUTING-QUERY-EXTENTS. Scope: 0 <= i < count against extent contracts (indexed_collection intervals are release obligations, not bounds, Q25); byte offset = element size x index; same-object obligations for pointer difference/ordering; one-past formation separated from dereference. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG17-LAYOUT-DERIVED-EXTENTS",
+   "title": "Candidate implementation card: VLA, flexible-array, alignment and offsetof/container_of facts",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M12 M13 M19 E18; core connection. Effort: High. Prerequisite: CG08, CG10. Absorbs: W45-FB-OR6-ELEMENT-IDENTITY. Scope: VLA bound evaluation and scope-exit lifetime; flexible-array remaining extent from allocation size, offsetof and element width; access alignment against derived addresses; container_of base/subobject provenance. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG18-FOOTPRINT-CONNECTION",
+   "title": "Candidate implementation card: Connect source places to footprint generations and mutex invariants",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M20 M21 M22 M26 W08; core connection. Effort: High. Prerequisite: CG10, CG13. Absorbs: W43-INDIRECT-BYTE-STORE-REPRESENTATION-PREMISE. Scope: Subobject/view places to core generations without weakening liveness; cross-allocation disjointness by allocator model or stated assumption; effective type and restrict as stated premises; byte semantics of memcpy/memmove/memset only when claimed; footprints composed with mutex invariants beyond source.socket.v1. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG19-ATOMIC-SOURCE-ROUTE",
+   "title": "Candidate implementation card: Route C atomics to the core atomic model and generalise publication",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: W01 W09; core connection. Effort: High. Prerequisite: CG10. Absorbs: CT41-ROUTE-HAS-NO-PRODUCTION-CALLER, CT41-TYPED-SOURCE-QUALIFIER-ARM-STILL-UNDISCRIMINATING. Scope: AtomicExpr, atomic casts and _Atomic accesses to the core model; publication as initialise -> publish -> observe -> use -> reclaim derived from source. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG20-NUMERIC-DOMAIN",
+   "title": "Candidate implementation card: C integer domain: widths, conversions, overflow, division and shift obligations",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: N01-N07 N08(transfer) C04 C05; guarantee-gated. Effort: High. Prerequisite: CG01, CG08. Absorbs: W45-FB-SCHED-RANDOM-RANGE. Scope: Clang canonical widths/signedness per target identity with promotions and usual conversions imported; extension/truncation; signed overflow vs unsigned wrap; / % exception, shift and mixed-signedness obligations; the W48 fixed-width core table reused only through an explicit C interpretation; switch pruning and branch correlation as precision. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG21-CALL-EXITS-AND-BOUNDARIES",
+   "title": "Candidate implementation card: noreturn, setjmp/longjmp, cleanup, computed goto, asm/SEH and extension boundaries",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: C09 C10 C11 C12 C13 E20 I06; guarantee-gated. Effort: High. Prerequisite: CG02. Absorbs: W43-LIBC-NORETURN. Scope: noreturn in every position; non-local edges with invalidation; cleanup on every scope exit; computed-goto target sets; explicit boundaries or refusal for asm, asm goto and SEH; a common opaque boundary for builtin/extension AST kinds, never auto-applying ordinary function contracts. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG22-INDIRECT-CALLS-AND-CALLBACKS",
+   "title": "Candidate implementation card: Candidate callee sets and callback lifetime relations",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: K01 K02; guarantee-gated. Effort: High. Prerequisite: CG03. Absorbs: LOADER-ABI-INLINE-FNPTR-DECLARATOR (generalises the EXTERN-CALL-F function-pointer part and W47-LOOP-OWNER-FIELD-KEYED-V-AND-F). Scope: Resolve candidate callees, common signatures and contracts at indirect call sites; capture, escape, repeated invocation and teardown relations for callbacks. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG23-RELATIONAL-POSTCONDITIONS",
+   "title": "Candidate implementation card: Return-code x multi-resource postconditions and exit-specific dispositions",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: K05 K11; guarantee-gated. Effort: High. Prerequisite: CG03. Absorbs: CONDITIONAL-RELEASE-BY-LITERAL, W45-FB-BACKLOG-MAP-ARMS, W47-SUMMARY-ARGUMENT-CONDITIONAL-NULL, W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED, W43-DESCRIPTOR-REFUSED-SHAPES, CJSON-DELETE-SIBLING-CHAIN. Scope: Relational postconditions for normal/failure branches and exit-polymorphic summaries, with source revalidation; existing realloc and nullable rules kept. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG24-ALIAS-EXTENT-FRAME-VOCABULARY",
+   "title": "Candidate implementation card: Read/write frame effects and richer Derived alias/extent relations",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: K04 K06; guarantee-gated. Effort: High. Prerequisite: CG03, CG16. Absorbs: W46-SDS-CAT-SAFE-IN-PLACE-REALLOC, W45-FB-BACKLOG-REFERENCE-VOCABULARY. Scope: Frame effects distinct from custody modes (Borrowed is not purity); multi-base, offset/length and callback-spanning derived relations. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG25-RESOURCE-KINDS",
+   "title": "Candidate implementation card: Resource kinds beyond Heap/Descriptor/Stream/Directory",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: K07; guarantee-gated. Effort: High. Prerequisite: none. Absorbs: W44-DLOPEN-DECLARATION-REMEASURE, W43-LIBC-IN-PLACE-LIFECYCLE. Scope: New kinds with invalid sentinels and release protocols; no unjustified equivalence to an existing kind. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG26-VARIADICS",
+   "title": "Candidate implementation card: General vararg custody and a va_list state machine",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: K08 K09 K10; guarantee-gated. Effort: High. Prerequisite: CG03. Absorbs: W44-VA-START-END-BUILTINS, W46-FCNTL-SETFD-ADDRESS-TAIL. Scope: Vararg custody and promotions; va_start/va_arg/va_copy/va_end state or whole-helper contract boundaries; format safety only through a separate checker when claimed. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG27-LOOPS-RECURSION-BUDGETS",
+   "title": "Candidate implementation card: Loop invariants, general recursion summaries and budget reporting",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: C06 C07 C08; guarantee-gated. Effort: High. Prerequisite: CG09. Absorbs: W45-COUNTED-USERS-LOOPS, W43-COLLECTION-LOOP-SHAPES, JOINED-PROVENANCE-CYCLE-SITES (re-reads C03-NFR-REACH). Scope: Invariant contracts, widening and loop summaries; inductive summaries and ranking for multi-rank recursion; budget exhaustion reported as coverage, never Safe. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG28-WEAK-MEMORY-EVENTS",
+   "title": "Candidate implementation card: RMW, compare-exchange, fences and release sequences in weak_memory",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: W02 W03 W04 W05 W06; guarantee-gated. Effort: High. Prerequisite: CG19. Scope: RMW/exchange/fetch_*, CAS success/failure orders and weak spurious failure, thread/signal fences; release sequences under one named standard; consume modelled or explicitly out of scope; Lean parity in the WeakMemory module. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG29-EXECUTION-COVERAGE-AND-RECLAMATION",
+   "title": "Candidate implementation card: Candidate-execution coverage and lock-free reclamation protocols",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: W07 W10; guarantee-gated. Effort: High. Prerequisite: CG28. Scope: Execution generation or abstraction with justified bounds (one accepted graph is not race freedom, Q34); hazard-pointer/epoch reclamation as contracts plus a checker. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
+  },
+  {
+   "id": "CG30-DIALECTS-FLAGS-TYPES",
+   "title": "Candidate implementation card: Explicit dialects, structured target flags, canonical types and adopted extensions",
+   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: I01 I02 I03 I05 N12 N13 N14; guarantee-gated. Effort: High. Prerequisite: none. Scope: C17/C23/C2y dialects with frontend identity and AST differences; structured --target/-mabi in evidence identity, no passthrough; canonical type IDs across readers; _Complex, vectors, _BitInt and fixed point only for adopted extensions. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
+   "source": "docs/plans/clang-gap-cards/README.md",
+   "recorded_by": "CLANG-GAP-CARD-QUEUE"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

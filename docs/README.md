@@ -40,6 +40,7 @@ They are not interchangeable.
 | Architecture and W0–W7 direction | [Generalization plan](GENERALIZATION_PLAN.md) |
 | Prospective backlog, retry and engine cards | [Fluent Bit system coverage queue](plans/fluent-bit-system-coverage/README.md) |
 | Prospective coverage cards (typed access paths, callee closure) | [Unsupported coverage queue](plans/unsupported-coverage/README.md) |
+| Prospective expression, place and core-connection cards from the Clang gap analysis | [Clang gap card queue](plans/clang-gap-cards/README.md) |
 | Executed system audit investigations and resume queue | [Three Fluent Bit investigation cards](reports/fb-system-audit-cards/README.md) |
 | Broader workstreams | [Post-Cycle-9 roadmap](ROADMAP_AFTER_CYCLE_9.md) |
 | Restart/context tooling plan | [Resume plan](plans/resume-2026-09-13/README.md) (dated checkpoint; revalidate old blockers) |
