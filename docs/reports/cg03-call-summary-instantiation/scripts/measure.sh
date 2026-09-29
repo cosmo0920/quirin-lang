@@ -12,9 +12,13 @@ repo="$(cd "$here/../../../.." && pwd)"
 out="$repo/private/cg03"
 mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
-CARGO_INCREMENTAL=0 cargo build --release -p qcore-audit --bin quirin-audit \
-  > "$out/build-$name.log" 2>&1
-echo $? > "$out/build-$name.exit"
+# SKIP_BUILD=1 measures the release binary already in target/release (the
+# BEFORE on a merged base, built at that base's commit).
+if [ "${SKIP_BUILD:-0}" != 1 ]; then
+  CARGO_INCREMENTAL=0 cargo build --release -p qcore-audit --bin quirin-audit \
+    > "$out/build-$name.log" 2>&1
+  echo $? > "$out/build-$name.exit"
+fi
 binary="$repo/target/release/quirin-audit"
 sha256sum "$binary" > "$out/$name.binary.sha256"
 QCORE_TYPED_PATH_PARITY="$out/$name-parity.jsonl" python3 scripts/run_pinned_audit.py \
