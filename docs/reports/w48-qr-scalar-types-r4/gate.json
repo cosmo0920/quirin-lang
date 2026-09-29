@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-SCALAR-TYPES-R4 card gate at base 0691a1cc, logs private/w48-r4/gate of this worktree: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 370 units, 383 summaries, 6,593 passed, 1 failed, 11 ignored, exit 101 (gate/03-tests.first.exit; private/test-binaries/20260929T140022Z-2844237/summary.json): the one failure is constraint 16's load-sensitive cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets (elapsed < 500ms) under load average ~40 from other sessions; rerun alone while the gate's clippy step still ran, again 19/20 (gate/03-tests.rerun-cycle20.exit 101), and once more after it, 20/20 (gate/03-tests.rerun2-cycle20.exit 0), so 6,594 pass. clippy first run 101 (gate/05-clippy.first.exit: dead code on the shared test sink's historical instrument() in the one binary that uses only the fixed-width variant, and type_complexity on a test-local tuple), fixed with #[allow(dead_code)] and a type alias; fmt and clippy rerun 0, scalar_tasks rerun 13 passed (gate/03-tests.rerun-scalar-tasks.exit 0). Both reevaluation probes 0; check_lean_audits.py 229 audits passed (new AuditScalarTasks.lean, 15 theorems; AuditTransferability's kindInventoryHasSixteenEntries renamed kindInventoryHasSeventeenEntries). Python and docs index after the ledger (622 -> 623) and matrix regeneration. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8), resource-diagnostics.json byte-identical (ae17152b). Exits in gate/.",
+  "workspace_tests": 6594,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 229,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

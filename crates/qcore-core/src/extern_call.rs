@@ -131,7 +131,8 @@ use std::fmt;
 
 use crate::ResourceId;
 use crate::native_library;
-use crate::scalar_types::{self as st, ArithmeticError, Cmp, Op, RecordedTarget, ScalarType};
+use crate::scalar_types::{Cmp, Op, RecordedTarget, ScalarType};
+use crate::scalar_values;
 use crate::typed_errors::{Effect, EffectRow};
 
 /// Identity of a bound scalar value (card `PIPE-SCALAR-RESULT`).
@@ -1384,101 +1385,10 @@ pub struct ExternProgram {
 
 /// Why a value of the namespace is refused at a position (card
 /// `W48-QR-SCALAR-TYPES-R3`). Each is a condition of `Q024`, the value
-/// namespace's existing code, widened; none allocates a code.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum ValueRefusal {
-    /// Two operands of different types: there is no implicit conversion.
-    MixedTypes { left: ScalarType, right: ScalarType },
-    /// Arithmetic, negation or an ordering on `bool`.
-    NotAnInteger { operation: &'static str },
-    /// A literal that is not a value of the type its context gives it.
-    LiteralOutOfRange { literal: i128, ty: ScalarType },
-    /// A declared `succeeds INTEGER` that is not a value of the declared result.
-    OutcomeOutOfRange {
-        callee: String,
-        outcome: i128,
-        ty: ScalarType,
-    },
-    /// A conversion to or from `bool`.
-    NoConversion { from: ScalarType, to: ScalarType },
-    /// `isize`/`usize` in a value statement with no recorded target.
-    NoRecordedTarget { ty: ScalarType },
-    /// An operation on known operands that faults: decided — and refused — at
-    /// check time, whatever the row permits.
-    StaticFault {
-        error: ArithmeticError,
-        ty: ScalarType,
-    },
-    /// An operation on an operand not known until run time that can fault, in
-    /// an entry whose row does not permit `throws<ArithmeticError>`.
-    NeedsPermission { ty: ScalarType },
-    /// A value of one type at a declared parameter of another.
-    ArgumentType {
-        parameter: usize,
-        declared: ScalarType,
-        supplied: ScalarType,
-    },
-}
-
-impl fmt::Display for ValueRefusal {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::MixedTypes { left, right } => write!(
-                f,
-                "the operands are a `{left}` and a `{right}`; there is no implicit conversion, so \
-                 convert one with `as` first"
-            ),
-            Self::NotAnInteger { operation } => {
-                write!(f, "`bool` is not an integer and has no {operation}")
-            }
-            Self::LiteralOutOfRange { literal, ty } => write!(
-                f,
-                "`{literal}` is not a value of `{ty}`; a literal is range-checked against the type \
-                 its context gives it, the minimum included"
-            ),
-            Self::OutcomeOutOfRange {
-                callee,
-                outcome,
-                ty,
-            } => write!(
-                f,
-                "`{callee}` declares a `{ty}` result and `succeeds {outcome}` is not a value of \
-                 `{ty}`, so no run could return it"
-            ),
-            Self::NoConversion { from, to } => write!(
-                f,
-                "`{from} as {to}` is not a conversion: `bool` is not an integer, so nothing \
-                 converts to or from it"
-            ),
-            Self::NoRecordedTarget { ty } => write!(
-                f,
-                "`{ty}` takes its width from a recorded target, none of which was supplied; the \
-                 width is never guessed (supply one with `--recorded-target FILE`)"
-            ),
-            Self::StaticFault { error, ty } => write!(
-                f,
-                "this `{ty}` operation on values known at check time raises `{error}`, so it is \
-                 refused now rather than run"
-            ),
-            Self::NeedsPermission { ty } => write!(
-                f,
-                "this `{ty}` operation reads a value known only at run time and can fault; the \
-                 entry's row must declare `throws<ArithmeticError>` for the fault to take the \
-                 typed error path (the program then exits `80 + tag`), and without it the \
-                 operation is refused"
-            ),
-            Self::ArgumentType {
-                parameter,
-                declared,
-                supplied,
-            } => write!(
-                f,
-                "argument {parameter} is a `{supplied}` and the parameter is declared `{declared}`; \
-                 there is no implicit conversion, so bind `let v = NAME as {declared};` first"
-            ),
-        }
-    }
-}
+/// namespace's existing code, widened; none allocates a code. Defined in
+/// [`crate::scalar_values`] since card `W48-QR-SCALAR-TYPES-R4`, which shares
+/// the value statement's decision with the task route.
+pub use crate::scalar_values::ValueRefusal;
 
 /// Refusals this checker owns. Custody liveness, leaks, resource flow and the
 /// caller's declared effect row are checked by the established sequential
@@ -2004,96 +1914,38 @@ pub struct ValueComputation {
     pub raises: bool,
 }
 
-/// The §G02t checking of the value namespace (card `W48-QR-SCALAR-TYPES-R3`).
+/// The §G02t checking of the value namespace (card `W48-QR-SCALAR-TYPES-R3`):
+/// each value's type and, where the source determined it, its number. The
+/// decision itself is [`crate::scalar_values::Decider`], shared with the task
+/// route since card `W48-QR-SCALAR-TYPES-R4`.
 #[derive(Default)]
 struct ValueTyping {
     types: BTreeMap<ValueId, ScalarType>,
     known: BTreeMap<ValueId, i128>,
-    /// Whether any check read the width of `isize`/`usize`.
-    used_target: bool,
+    decider: scalar_values::Decider,
 }
 
 impl ValueTyping {
-    /// The width-bearing range check of `ty`, recording that the target was
-    /// read, or the refusal when it is needed and absent.
+    /// The width-bearing range check of `ty` (see [`scalar_values::Decider::range`]).
     fn range(
         &mut self,
         ty: ScalarType,
         target: Option<&RecordedTarget>,
     ) -> Result<(i128, i128), ValueRefusal> {
-        if ty.is_target_width() {
-            if target.is_none() {
-                return Err(ValueRefusal::NoRecordedTarget { ty });
-            }
-            self.used_target = true;
-        }
-        Ok(ty.range(target).expect("a width is known here"))
+        self.decider.range(ty, target)
     }
 
-    fn literal_at(
-        &mut self,
-        literal: i128,
-        ty: ScalarType,
-        target: Option<&RecordedTarget>,
-    ) -> Result<i128, ValueRefusal> {
-        if ty == ScalarType::Bool {
-            return Err(ValueRefusal::LiteralOutOfRange { literal, ty });
-        }
-        let (low, high) = self.range(ty, target)?;
-        if low <= literal && literal <= high {
-            Ok(literal)
-        } else {
-            Err(ValueRefusal::LiteralOutOfRange { literal, ty })
-        }
-    }
-
-    /// The type and known number of one operand, a literal typed by `context`
-    /// (`i32` when there is none).
-    fn operand(
-        &mut self,
-        operand: ValueOperand,
-        context: Option<ScalarType>,
-        target: Option<&RecordedTarget>,
-    ) -> Result<(ScalarType, Option<i128>), Option<ValueRefusal>> {
-        match operand {
-            ValueOperand::Value(value) => {
-                let ty = *self.types.get(&value).ok_or(None)?;
-                Ok((ty, self.known.get(&value).copied()))
-            }
-            ValueOperand::Bool(value) => Ok((ScalarType::Bool, Some(i128::from(value)))),
-            ValueOperand::Integer(literal) => {
-                let ty = context.unwrap_or(ScalarType::I32);
-                Ok((
-                    ty,
-                    Some(self.literal_at(literal, ty, target).map_err(Some)?),
-                ))
-            }
-        }
-    }
-
-    /// The type of a binary operation's operands: a value's type decides a
-    /// literal's; two values must agree; two literals are `i32`.
-    fn pair(
-        &mut self,
-        left: ValueOperand,
-        right: ValueOperand,
-        target: Option<&RecordedTarget>,
-    ) -> Result<(ScalarType, Option<i128>, Option<i128>), Option<ValueRefusal>> {
-        let declared = |operand: ValueOperand, typing: &Self| match operand {
-            ValueOperand::Value(value) => typing.types.get(&value).copied(),
-            ValueOperand::Bool(_) => Some(ScalarType::Bool),
-            ValueOperand::Integer(_) => None,
-        };
-        let context = declared(left, self).or(declared(right, self));
-        let (lt, lk) = self.operand(left, context, target)?;
-        let (rt, rk) = self.operand(right, context, target)?;
-        if lt != rt {
-            return Err(Some(ValueRefusal::MixedTypes {
-                left: lt,
-                right: rt,
-            }));
-        }
-        Ok((lt, lk, rk))
+    /// One operand as the shared decision sees it, or `None` for a value that
+    /// was never bound.
+    fn resolve(&self, operand: ValueOperand) -> Option<scalar_values::Operand> {
+        Some(match operand {
+            ValueOperand::Value(value) => scalar_values::Operand::Typed {
+                ty: *self.types.get(&value)?,
+                known: self.known.get(&value).copied(),
+            },
+            ValueOperand::Integer(literal) => scalar_values::Operand::Integer(literal),
+            ValueOperand::Bool(value) => scalar_values::Operand::Bool(value),
+        })
     }
 
     /// Check one value statement against the row's permission.
@@ -2103,89 +1955,38 @@ impl ValueTyping {
         raises_permitted: bool,
         target: Option<&RecordedTarget>,
     ) -> Result<ValueComputation, Option<ValueRefusal>> {
-        let (ty, operand_ty, known, can_fault) = match statement.operation {
-            ValueOperation::Binary(op, left, right) => {
-                let (ty, a, b) = self.pair(left, right, target)?;
-                if ty == ScalarType::Bool {
-                    return Err(Some(ValueRefusal::NotAnInteger {
-                        operation: "arithmetic",
-                    }));
-                }
-                self.range(ty, target)?;
-                let known = match (a, b) {
-                    (Some(a), Some(b)) => Some(
-                        st::checked_error(op, ty, a, b, target)
-                            .map_err(|error| Some(ValueRefusal::StaticFault { error, ty }))?,
-                    ),
-                    _ => None,
-                };
-                (ty, ty, known, true)
+        let operation = match statement.operation {
+            ValueOperation::Binary(op, a, b) => scalar_values::Operation::Binary(
+                op,
+                self.resolve(a).ok_or(None)?,
+                self.resolve(b).ok_or(None)?,
+            ),
+            ValueOperation::Compare(cmp, a, b) => scalar_values::Operation::Compare(
+                cmp,
+                self.resolve(a).ok_or(None)?,
+                self.resolve(b).ok_or(None)?,
+            ),
+            ValueOperation::Negate(a) => {
+                scalar_values::Operation::Negate(self.resolve(a).ok_or(None)?)
             }
-            ValueOperation::Compare(cmp, left, right) => {
-                let (ty, a, b) = self.pair(left, right, target)?;
-                if ty == ScalarType::Bool && cmp.is_ordering() {
-                    return Err(Some(ValueRefusal::NotAnInteger {
-                        operation: "ordering",
-                    }));
-                }
-                if ty.is_integer() {
-                    self.range(ty, target)?;
-                }
-                let known = match (a, b) {
-                    (Some(a), Some(b)) => st::compare(cmp, ty, a, b).map(i128::from),
-                    _ => None,
-                };
-                (ScalarType::Bool, ty, known, false)
-            }
-            ValueOperation::Negate(operand) => {
-                let (ty, a) = self.operand(operand, None, target)?;
-                if ty == ScalarType::Bool {
-                    return Err(Some(ValueRefusal::NotAnInteger {
-                        operation: "negation",
-                    }));
-                }
-                self.range(ty, target)?;
-                let known = match a {
-                    Some(a) => Some(
-                        st::negate_error(ty, a, target)
-                            .map_err(|error| Some(ValueRefusal::StaticFault { error, ty }))?,
-                    ),
-                    None => None,
-                };
-                (ty, ty, known, true)
-            }
-            ValueOperation::Convert(operand, to) => {
-                let (from, a) = self.operand(operand, None, target)?;
-                if from == ScalarType::Bool || to == ScalarType::Bool {
-                    return Err(Some(ValueRefusal::NoConversion { from, to }));
-                }
-                self.range(from, target)?;
-                self.range(to, target)?;
-                let known = match a {
-                    Some(a) => Some(
-                        st::convert_error(from, to, a, target)
-                            .map_err(|error| Some(ValueRefusal::StaticFault { error, ty: to }))?,
-                    ),
-                    None => None,
-                };
-                let total = st::conversion_is_total(from, to, target).unwrap_or(false);
-                (to, from, known, !total)
+            ValueOperation::Convert(a, to) => {
+                scalar_values::Operation::Convert(self.resolve(a).ok_or(None)?, to)
             }
         };
-        let raises = known.is_none() && can_fault;
-        if raises && !raises_permitted {
-            return Err(Some(ValueRefusal::NeedsPermission { ty: operand_ty }));
-        }
-        self.types.insert(statement.value, ty);
-        if let Some(known) = known {
+        let decision = self
+            .decider
+            .decide(operation, raises_permitted, target)
+            .map_err(Some)?;
+        self.types.insert(statement.value, decision.ty);
+        if let Some(known) = decision.known {
             self.known.insert(statement.value, known);
         }
         Ok(ValueComputation {
             value: statement.value,
-            ty,
-            operand_ty,
-            known,
-            raises,
+            ty: decision.ty,
+            operand_ty: decision.operand_ty,
+            known: decision.known,
+            raises: decision.raises,
         })
     }
 }
@@ -2852,7 +2653,7 @@ pub fn check_extern_program(
         declared_outcomes,
         value_types: typing.types,
         computations,
-        target_assumption: if typing.used_target {
+        target_assumption: if typing.decider.used_target {
             program.target.clone()
         } else {
             None

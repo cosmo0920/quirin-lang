@@ -55,6 +55,7 @@ fn tasks() -> TaskModule {
             },
         )]),
         source_len: 64,
+        target: None,
     }
 }
 
@@ -467,6 +468,7 @@ fn spawning() -> TaskModule {
         entry: 0,
         functions: BTreeMap::from([(0, main), (1, worker)]),
         source_len: 1,
+        target: None,
     }
 }
 

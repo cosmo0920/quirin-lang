@@ -134,6 +134,7 @@ fn module(worker_error: Option<&str>) -> TaskModule {
         entry: 0,
         functions: [(0, main), (1, worker)].into(),
         source_len: 1,
+        target: None,
     }
 }
 #[test]
@@ -755,6 +756,7 @@ fn module_with_worker(worker: TaskFunction) -> TaskModule {
         .into_iter()
         .collect(),
         source_len: 2,
+        target: None,
     }
 }
 

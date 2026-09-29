@@ -362,8 +362,19 @@ fn operand_slots(operand: &ScalarOperand) -> Vec<SlotId> {
         | ScalarOperand::Lease { slot, .. } => {
             vec![*slot]
         }
-        ScalarOperand::Unit | ScalarOperand::I32(_) => Vec::new(),
+        ScalarOperand::Unit | ScalarOperand::I32(_) | ScalarOperand::Fixed { .. } => Vec::new(),
     }
+}
+
+fn value_operation_slots(operation: &crate::task_execution::TaskValueOperation) -> Vec<SlotId> {
+    operation
+        .operands()
+        .into_iter()
+        .filter_map(|operand| match operand {
+            crate::task_execution::TaskValueOperand::Slot(slot) => Some(slot),
+            crate::task_execution::TaskValueOperand::Literal { .. } => None,
+        })
+        .collect()
 }
 
 fn instruction_slots(kind: &TaskInstructionKind) -> Vec<SlotId> {
@@ -418,6 +429,11 @@ fn instruction_slots(kind: &TaskInstructionKind) -> Vec<SlotId> {
             error_slot,
             buffer_slot,
         } => vec![*error_slot, *buffer_slot],
+        TaskInstructionKind::Compute { slot, operation } => {
+            let mut slots = vec![*slot];
+            slots.extend(value_operation_slots(operation));
+            slots
+        }
     }
 }
 
@@ -451,6 +467,16 @@ fn terminator_slots(kind: &TaskTerminatorKind) -> Vec<SlotId> {
             ..
         } => vec![*result_slot, *value_slot, *error_slot],
         TaskTerminatorKind::Return { value } => operand_slots(value),
+        TaskTerminatorKind::TryCompute {
+            slot,
+            operation,
+            error_slot,
+            ..
+        } => {
+            let mut slots = vec![*slot, *error_slot];
+            slots.extend(value_operation_slots(operation));
+            slots
+        }
         TaskTerminatorKind::Raise { payload, .. } => {
             payload.iter().flat_map(operand_slots).collect()
         }

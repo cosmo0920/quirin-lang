@@ -8,10 +8,129 @@ use std::fmt::Write;
 use crate::c_program::{self, Fragment, Section};
 use crate::diagnostic_log_c_emit;
 use crate::io_emit;
+use crate::scalar_calls_c_emit::{Helper, scalar_helper_definition};
+use crate::scalar_types::{self as st, ArithmeticError};
 use crate::task_execution::{
     CheckedTaskModule, ErrorOperand, ScalarOperand, ScalarType,
     TaskInstructionKind as InstructionKind, TaskSpan, TaskTerminatorKind as TerminatorKind,
+    TaskValueOperand, TaskValueOperation,
 };
+
+/// The copy-scalar slot types of the function being emitted (card
+/// `W48-QR-SCALAR-TYPES-R4`), read from the checker's own record.
+type SlotTypes = BTreeMap<usize, ScalarType>;
+
+/// The member of the fixed-width task value's union that holds a value of
+/// `ty` (card `W48-QR-SCALAR-TYPES-R4`). `bool` is a macro in `<stdbool.h>`,
+/// so every member carries the `v_` prefix.
+fn member(ty: st::ScalarType) -> String {
+    format!("v_{ty}")
+}
+
+/// The C lvalue of a copy-scalar slot: an `i32` lives in the task value's
+/// `scalar` field exactly as before, every other type in its union member.
+fn slot_expression(slot: usize, types: &SlotTypes) -> String {
+    match types.get(&slot) {
+        Some(ScalarType::Fixed(ty)) => format!("s_{slot}.value.typed.{}", member(*ty)),
+        _ => format!("s_{slot}.value.scalar"),
+    }
+}
+
+/// The C expression of a value-statement operand.
+fn value_operand(operand: &TaskValueOperand, types: &SlotTypes) -> String {
+    match operand {
+        TaskValueOperand::Slot(slot) => slot_expression(*slot, types),
+        TaskValueOperand::Literal { ty, value } => st::c_literal(*ty, *value),
+    }
+}
+
+/// The type of a value-statement operand.
+fn value_operand_type(operand: &TaskValueOperand, types: &SlotTypes) -> st::ScalarType {
+    match operand {
+        TaskValueOperand::Literal { ty, .. } => *ty,
+        TaskValueOperand::Slot(slot) => match types.get(slot) {
+            Some(ScalarType::Fixed(ty)) => *ty,
+            _ => st::ScalarType::I32,
+        },
+    }
+}
+
+/// The operation's own (operand) type.
+fn operation_type(operation: &TaskValueOperation, types: &SlotTypes) -> st::ScalarType {
+    match operation {
+        TaskValueOperation::Binary(_, a, _)
+        | TaskValueOperation::Compare(_, a, _)
+        | TaskValueOperation::Negate(a)
+        | TaskValueOperation::Convert(a, _) => value_operand_type(a, types),
+    }
+}
+
+/// The shared checked helper a value statement calls, if any: the exiting
+/// form (`q_scalar_OP_T`, a witness the checker proved never fires) when the
+/// statement cannot raise, the tag-returning form (`q_scalar_try_OP_T`) when
+/// it can. A comparison and a total conversion call none.
+fn operation_helper(
+    operation: &TaskValueOperation,
+    types: &SlotTypes,
+    raises: bool,
+    target: Option<&st::RecordedTarget>,
+) -> Option<Helper> {
+    let ty = operation_type(operation, types);
+    match operation {
+        TaskValueOperation::Binary(op, ..) => Some(if raises {
+            Helper::TryOp(*op, ty)
+        } else {
+            Helper::Op(*op, ty)
+        }),
+        TaskValueOperation::Negate(_) => Some(if raises {
+            Helper::TryNeg(ty)
+        } else {
+            Helper::Neg(ty)
+        }),
+        TaskValueOperation::Convert(_, to) => {
+            if st::conversion_is_total(ty, *to, target).unwrap_or(false) {
+                None
+            } else if raises {
+                Some(Helper::TryConvert(ty, *to))
+            } else {
+                Some(Helper::Convert(ty, *to))
+            }
+        }
+        TaskValueOperation::Compare(..) => None,
+    }
+}
+
+/// The C expression of a value statement that cannot raise.
+fn value_expression(
+    operation: &TaskValueOperation,
+    types: &SlotTypes,
+    target: Option<&st::RecordedTarget>,
+) -> String {
+    let operands = operation
+        .operands()
+        .iter()
+        .map(|operand| value_operand(operand, types))
+        .collect::<Vec<_>>();
+    match (operation_helper(operation, types, false, target), operation) {
+        (Some(helper), _) => format!("{}({})", helper.name(), operands.join(", ")),
+        (None, TaskValueOperation::Compare(cmp, ..)) => {
+            format!("({} {} {})", operands[0], cmp.c_operator(), operands[1])
+        }
+        (None, TaskValueOperation::Convert(_, to)) => {
+            format!("({})({})", st::c_type(*to), operands[0])
+        }
+        (None, _) => unreachable!("an arithmetic statement always calls a helper"),
+    }
+}
+
+/// The `result.kind` of a worker result of fixed-width type `ty`: `10` plus
+/// its position in the §G02t table, clear of the historical `0`/`1`/`2`.
+fn fixed_kind(ty: st::ScalarType) -> usize {
+    10 + st::ALL
+        .iter()
+        .position(|candidate| *candidate == ty)
+        .unwrap_or(0)
+}
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskCMapping {
@@ -29,6 +148,8 @@ pub struct TaskCEmission {
 fn scalar(value: &ScalarOperand) -> String {
     match value {
         ScalarOperand::Unit => "0".into(),
+        // Reached only at a position the checker gave a fixed-width type.
+        ScalarOperand::Fixed { ty, value } => st::c_literal(*ty, *value),
         ScalarOperand::I32(i32::MIN) => "(-INT32_C(2147483647) - INT32_C(1))".into(),
         ScalarOperand::I32(value) if *value < 0 => format!("(-INT32_C({}))", -value),
         ScalarOperand::I32(value) => format!("INT32_C({value})"),
@@ -44,8 +165,18 @@ fn scalar(value: &ScalarOperand) -> String {
 /// object rather than two copies, and two lease holders two writers-in-waiting
 /// of one object. They differ only in what the *caller* keeps, which
 /// `consume` decides.
-fn self_value(operand: &ScalarOperand) -> String {
+fn self_value(operand: &ScalarOperand, types: &SlotTypes, tail: &str) -> String {
     match operand {
+        // Card `W48-QR-SCALAR-TYPES-R4`: a fixed-width value travels in its
+        // union member; an `i32` keeps the historical spelling below.
+        ScalarOperand::Fixed { ty, value } => format!(
+            "(struct qcore_task_value){{.typed.{} = {}}}",
+            member(*ty),
+            st::c_literal(*ty, *value)
+        ),
+        ScalarOperand::Slot(slot) if matches!(types.get(slot), Some(ScalarType::Fixed(_))) => {
+            format!("s_{slot}.value")
+        }
         // A lease additionally hands the worker its **base**, in the task
         // value's scalar field — which a lease slot has no other use for,
         // since no scalar operation admits one. Without it a lease-relative
@@ -53,12 +184,15 @@ fn self_value(operand: &ScalarOperand) -> String {
         // the base is exactly the fact the holder must not be able to choose
         // (card `WRITE-LEND-TASKS-EXERCISE`).
         ScalarOperand::Lease { slot, low, .. } => {
-            format!("(struct qcore_task_value){{INT32_C({low}), s_{slot}.value.buffer}}")
+            format!("(struct qcore_task_value){{INT32_C({low}), s_{slot}.value.buffer{tail}}}")
         }
         ScalarOperand::Move(slot) | ScalarOperand::Loan { slot, .. } => {
             format!("s_{slot}.value")
         }
-        _ => format!("(struct qcore_task_value){{{}, NULL}}", scalar(operand)),
+        _ => format!(
+            "(struct qcore_task_value){{{}, NULL{tail}}}",
+            scalar(operand)
+        ),
     }
 }
 
@@ -115,12 +249,50 @@ fn source_lines(
     function: usize,
     block: usize,
     index: usize,
+    types: &SlotTypes,
+    target: Option<&st::RecordedTarget>,
 ) -> Vec<String> {
     let mut statements = Vec::new();
     for site in sites
         .iter()
         .filter(|site| site.function == function && site.block == block && site.index == index)
     {
+        // Card `W48-QR-SCALAR-TYPES-R4`: a fixed-width operand renders at its
+        // type — §G02t's conversion over the slot's union member, framed like
+        // every line (the composed extern route's precedent).
+        if let crate::std_io::StdIoEvent::Print {
+            rendering,
+            operand: crate::std_io::StdIoOperand::Scalar(_),
+        }
+        | crate::std_io::StdIoEvent::Log {
+            rendering,
+            operand: crate::std_io::StdIoOperand::Scalar(_),
+            ..
+        } = &site.event
+            && let Some(slot) = site.operand
+            && let Some(ScalarType::Fixed(ty)) = types.get(&slot)
+        {
+            let level = match &site.event {
+                crate::std_io::StdIoEvent::Log { level, .. } => Some(*level),
+                _ => None,
+            };
+            let (stream, prefix) = crate::std_io::line_framing(level);
+            // A checked program has a rendering here; the silent case is the
+            // same fail-closed backstop as below.
+            if let Some((conversion, operand)) = st::c_rendering(
+                *rendering == crate::std_io::Rendering::Hex,
+                *ty,
+                &slot_expression(slot, types),
+                target,
+            ) {
+                statements.push(io_emit::write_line(
+                    stream,
+                    &format!("{prefix}{conversion}"),
+                    &[&operand],
+                ));
+            }
+            continue;
+        }
         let expressions = site
             .operand
             .map(|slot| {
@@ -192,7 +364,39 @@ pub fn emit_task_c11_with_source_lines(
         crate::std_io::StdIoEvent::LogLevel { level } => Some(level),
         _ => None,
     });
-    let fragments = preamble(capacity, event_capacity, log_level, !sites.is_empty());
+    let mut fragments = preamble(capacity, event_capacity, log_level, !sites.is_empty());
+    // Card `W48-QR-SCALAR-TYPES-R4`: a module using the fixed-width surface
+    // gets the typed runtime; every other module the historical bytes.
+    let fixed = crate::task_execution::fixed_types(module);
+    let fixed_width = crate::task_execution::uses_fixed_width(module);
+    // A module whose task value carries the fixed-width union initializes it
+    // explicitly in every positional initializer (`-Wmissing-field-initializers`);
+    // every other module keeps its historical bytes.
+    let tail = if fixed.is_empty() { "" } else { ", {0}" };
+    let target = checked.target_assumption().or(module.target.as_ref());
+    let fixed_results = module
+        .functions
+        .values()
+        .filter_map(|function| match function.result {
+            ScalarType::Fixed(ty) => Some(ty),
+            _ => None,
+        })
+        .collect::<BTreeSet<_>>();
+    let mut helpers = BTreeSet::new();
+    if fixed_width {
+        for fragment in &mut fragments {
+            if fragment.key == "task.runtime" {
+                fragment.text = fixed_width_runtime(&fixed, &fixed_results);
+            }
+            if fragment.key == diagnostic_log_c_emit::ADAPTER_DEFINITION_KEY
+                && !fixed_results.is_empty()
+            {
+                fragment.text =
+                    diagnostic_log_c_emit::diagnostic_stdout_adapter_definition_with_fixed_results(
+                    );
+            }
+        }
+    }
 
     // The runtime's own helpers and this module's function bodies, built into
     // one file-scope fragment below.
@@ -210,6 +414,7 @@ pub fn emit_task_c11_with_source_lines(
         let start_line = source.lines().count() + 1;
         writeln!(source, "static struct qcore_task_result qcore_task_fn_{id}(const struct qcore_task_value *args, struct qcore_task_context *context) {{").unwrap();
         source.push_str("    (void)args; (void)context;\n");
+        let types: SlotTypes = checked.function_slot_types(*id);
         let mut slots = function
             .parameters
             .iter()
@@ -221,7 +426,8 @@ pub fn emit_task_c11_with_source_lines(
                     InstructionKind::ReadBuffer {
                         value_slot: slot, ..
                     }
-                    | InstructionKind::BindScalar { slot, .. } => {
+                    | InstructionKind::BindScalar { slot, .. }
+                    | InstructionKind::Compute { slot, .. } => {
                         slots.insert(*slot);
                     }
                     InstructionKind::UnwrapInfallible { value_slot, .. }
@@ -250,6 +456,11 @@ pub fn emit_task_c11_with_source_lines(
                 }
                 TerminatorKind::TryOutcome {
                     value_slot,
+                    error_slot,
+                    ..
+                }
+                | TerminatorKind::TryCompute {
+                    slot: value_slot,
                     error_slot,
                     ..
                 } => {
@@ -337,14 +548,31 @@ pub fn emit_task_c11_with_source_lines(
         for (block_id, block) in &function.blocks {
             writeln!(source, "qcore_block_{block_id}: ;").unwrap();
             for (index, instruction) in block.instructions.iter().enumerate() {
-                for statement in source_lines(sites, *id, *block_id, index) {
+                for statement in source_lines(sites, *id, *block_id, index, &types, target) {
                     writeln!(source, "    {statement}").unwrap();
                 }
                 let start = source.lines().count() + 1;
                 match &instruction.kind {
                     InstructionKind::BindScalar { slot, value } => {
-                        writeln!(source, "    s_{slot}.value = {};", self_value(value)).unwrap();
+                        writeln!(
+                            source,
+                            "    s_{slot}.value = {};",
+                            self_value(value, &types, tail)
+                        )
+                        .unwrap();
                         consume(&mut source, value);
+                    }
+                    InstructionKind::Compute { slot, operation } => {
+                        if let Some(helper) = operation_helper(operation, &types, false, target) {
+                            helpers.insert(helper);
+                        }
+                        writeln!(
+                            source,
+                            "    {} = {};",
+                            slot_expression(*slot, &types),
+                            value_expression(operation, &types, target)
+                        )
+                        .unwrap();
                     }
                     InstructionKind::UnwrapInfallible {
                         result_slot,
@@ -479,7 +707,14 @@ pub fn emit_task_c11_with_source_lines(
                     span: instruction.span,
                 });
             }
-            for statement in source_lines(sites, *id, *block_id, block.instructions.len()) {
+            for statement in source_lines(
+                sites,
+                *id,
+                *block_id,
+                block.instructions.len(),
+                &types,
+                target,
+            ) {
                 writeln!(source, "    {statement}").unwrap();
             }
             let start = source.lines().count() + 1;
@@ -499,8 +734,12 @@ pub fn emit_task_c11_with_source_lines(
                         "    {\n        struct qcore_task_value captures[QCORE_TASK_ARGUMENT_CAPACITY] = {{0}};\n",
                     );
                     for (index, value) in arguments.iter().enumerate() {
-                        writeln!(source, "        captures[{index}] = {};", self_value(value))
-                            .unwrap();
+                        writeln!(
+                            source,
+                            "        captures[{index}] = {};",
+                            self_value(value, &types, tail)
+                        )
+                        .unwrap();
                     }
                     writeln!(source, "        s_{handle_slot}.handle = qcore_task_start(qcore_task_fn_{worker}, captures, {}, context, {worker});", arguments.len()).unwrap();
                     writeln!(source, "        if (s_{handle_slot}.handle == NULL) goto qcore_block_{spawn_error};").unwrap();
@@ -558,10 +797,53 @@ pub fn emit_task_c11_with_source_lines(
                     // both edges move the pointer exactly once.
                     writeln!(source, "    if (s_{result_slot}.result.error != 0) {{\n        s_{error_slot}.error = s_{result_slot}.result.error;\n        s_{error_slot}.value = s_{result_slot}.result.value; s_{result_slot}.result.value.buffer = NULL;\n        goto qcore_block_{error};\n    }}\n    s_{value_slot}.value = s_{result_slot}.result.value; s_{result_slot}.result.value.buffer = NULL;\n    goto qcore_block_{success};").unwrap();
                 }
+                TerminatorKind::TryCompute {
+                    slot,
+                    operation,
+                    error_slot,
+                    success,
+                    error,
+                } => {
+                    let helper = operation_helper(operation, &types, true, target)
+                        .expect("a raising value statement calls a checked helper");
+                    helpers.insert(helper);
+                    let operands = operation
+                        .operands()
+                        .iter()
+                        .map(|operand| value_operand(operand, &types))
+                        .collect::<Vec<_>>();
+                    writeln!(
+                        source,
+                        "    {{\n        int q_tag = {}({}, &{});\n        if (q_tag != 0) {{\n            switch (q_tag) {{",
+                        helper.name(),
+                        operands.join(", "),
+                        slot_expression(*slot, &types)
+                    )
+                    .unwrap();
+                    // The helper's tag is §G02t's; the task value carries the
+                    // task route's own tag for the same `ArithmeticError`
+                    // variant, which is the one every task error travels as.
+                    for variant in ArithmeticError::ALL {
+                        if let Some(tag) = errors.get(&variant.to_string()) {
+                            writeln!(
+                                source,
+                                "            case {}: s_{error_slot}.error = {tag}; break;",
+                                variant.tag()
+                            )
+                            .unwrap();
+                        }
+                    }
+                    writeln!(
+                        source,
+                        "            default: abort();\n            }}\n            goto qcore_block_{error};\n        }}\n        goto qcore_block_{success};\n    }}"
+                    )
+                    .unwrap();
+                }
                 TerminatorKind::Return { value } => {
                     let kind = match function.result {
                         ScalarType::Unit => 0,
                         ScalarType::I32 => 1,
+                        ScalarType::Fixed(ty) => fixed_kind(ty),
                         ScalarType::OwnedBuffer => 2,
                         ScalarType::ReadLoan => {
                             unreachable!("a checked result is never a read loan")
@@ -573,7 +855,7 @@ pub fn emit_task_c11_with_source_lines(
                     writeln!(
                         source,
                         "    {{ struct qcore_task_result returned = {{{kind}, {}, 0}};",
-                        self_value(value)
+                        self_value(value, &types, tail)
                     )
                     .unwrap();
                     consume(&mut source, value);
@@ -587,14 +869,14 @@ pub fn emit_task_c11_with_source_lines(
                     match payload {
                         None => writeln!(
                             source,
-                            "    return (struct qcore_task_result){{0, {{0, NULL}}, {tag}}};"
+                            "    return (struct qcore_task_result){{0, {{0, NULL{tail}}}, {tag}}};"
                         )
                         .unwrap(),
                         Some(operand) => {
                             writeln!(
                                 source,
                                 "    {{ struct qcore_task_result raised = {{0, {}, {tag}}};",
-                                self_value(operand)
+                                self_value(operand, &types, tail)
                             )
                             .unwrap();
                             consume(&mut source, operand);
@@ -621,6 +903,39 @@ pub fn emit_task_c11_with_source_lines(
     // `String` they were measured against. Shifting them by the preamble's line
     // count once, here, reproduces exactly the numbers the old splice produced —
     // every fragment ends in a newline, so no line is spliced at the boundary.
+    // Card `W48-QR-SCALAR-TYPES-R4`: the fixed-width headers — beside the
+    // runtime's own, since the widened task value names `bool` and `size_t` —
+    // the recorded target's width assertions and each shared checked helper
+    // once, after the runtime. Added before the line offset is measured, so
+    // the source map counts them.
+    if fixed_width {
+        let position = fragments
+            .iter()
+            .position(|fragment| fragment.key == "task.includes")
+            .map_or(fragments.len(), |index| index + 1);
+        fragments.insert(
+            position,
+            Fragment::new(
+                Section::Includes,
+                "task.scalar-types.includes",
+                "#include <stdbool.h>\n#include <stddef.h>\n",
+            ),
+        );
+        let mut text = String::new();
+        if let Some(target) = checked.target_assumption() {
+            text.push('\n');
+            text.push_str(&st::c_target_assertions(target));
+        }
+        if !helpers.is_empty() {
+            text.push('\n');
+        }
+        for helper in &helpers {
+            text.push_str(&scalar_helper_definition(*helper, target));
+        }
+        if !text.is_empty() {
+            fragments.push(Fragment::new(Section::Prelude, "task.scalar-helpers", text));
+        }
+    }
     let offset = c_program::preamble_text(&fragments).lines().count();
     for mapping in &mut source_map {
         mapping.generated_start_line += offset;
@@ -705,6 +1020,65 @@ pub fn preamble(
     }
     fragments.push(Fragment::new(Section::Prelude, "task.runtime", RUNTIME));
     fragments
+}
+
+/// The task runtime of a module using the fixed-width surface (card
+/// `W48-QR-SCALAR-TYPES-R4`): [`RUNTIME`] with the task value widened by a
+/// union holding one member per fixed-width type the module names, and the
+/// result logger given one arm per fixed-width worker result. An `i32` still
+/// travels in `scalar`, so every historical operation is unchanged; and a
+/// module that names no such type never reaches this function, so its bytes
+/// are [`RUNTIME`]'s.
+fn fixed_width_runtime(
+    fixed: &BTreeSet<st::ScalarType>,
+    results: &BTreeSet<st::ScalarType>,
+) -> String {
+    let value = "struct qcore_task_value { int32_t scalar; struct qcore_buffer *buffer; };\n";
+    let tail = "    } else abort();\n}\nstatic int qcore_task_trampoline";
+    assert_eq!(
+        RUNTIME.matches(value).count(),
+        1,
+        "the task value is declared once"
+    );
+    assert_eq!(
+        RUNTIME.matches(tail).count(),
+        1,
+        "the result logger ends once"
+    );
+    let mut widened = String::new();
+    if !fixed.is_empty() {
+        widened.push_str("union qcore_task_typed {");
+        for ty in fixed {
+            write!(widened, " {} {};", st::c_type(*ty), member(*ty)).unwrap();
+        }
+        widened.push_str(" };\n");
+        widened.push_str(
+            "struct qcore_task_value { int32_t scalar; struct qcore_buffer *buffer; union qcore_task_typed typed; };\n",
+        );
+    } else {
+        widened.push_str(value);
+    }
+    let mut arms = String::from("    }");
+    for ty in results {
+        let label = ty.name().to_ascii_uppercase();
+        let field = format!("result.value.typed.{}", member(*ty));
+        // A signed value (and `bool`) travels in the event's signed `value`,
+        // an unsigned one in its unsigned `related`: both are lossless for
+        // every width of the table, so no conversion is implementation-defined.
+        let (related, signed) = if ty.is_integer() && !ty.is_signed() {
+            (format!("(uint64_t){field}"), "INT64_C(0)".to_owned())
+        } else {
+            ("UINT64_C(0)".to_owned(), format!("(int64_t){field}"))
+        };
+        write!(
+            arms,
+            " else if (result.kind == {})\n        qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_TASK_RESULT, identity,\n            {related}, {signed}, \"={label}\");\n   ",
+            fixed_kind(*ty)
+        )
+        .unwrap();
+    }
+    arms.push_str(" else abort();\n}\nstatic int qcore_task_trampoline");
+    RUNTIME.replace(value, &widened).replace(tail, &arms)
 }
 
 /// The runtime's headers, kept separate from [`RUNTIME`] so the single printing
