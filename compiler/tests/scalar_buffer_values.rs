@@ -29,7 +29,8 @@ use qcore_compiler::{
     compile_files_for_target,
 };
 
-const HEADER: &str = "#import std.buffer;\n#import std.fmt;\n#import std.io;\n#import std.logger;\n";
+const HEADER: &str =
+    "#import std.buffer;\n#import std.fmt;\n#import std.io;\n#import std.logger;\n";
 
 const INTEGERS: [ScalarType; 10] = [
     ScalarType::I8,
@@ -114,7 +115,13 @@ fn symbol(op: Op) -> &'static str {
 /// The reference, written independently of `scalar_types`: the exact result
 /// in `i128` (truncating division), a zero divisor `DivisionByZero`, `MIN / -1`
 /// and `MIN % -1` `Overflow`, and a result outside the type `Overflow`.
-fn reference(op: Op, ty: ScalarType, a: i128, b: i128, t: &RecordedTarget) -> Result<i128, &'static str> {
+fn reference(
+    op: Op,
+    ty: ScalarType,
+    a: i128,
+    b: i128,
+    t: &RecordedTarget,
+) -> Result<i128, &'static str> {
     let (lo, hi) = ty.range(Some(t)).unwrap();
     let exact = match op {
         Op::Add => a.checked_add(b),
@@ -239,7 +246,9 @@ fn comparison_program(ty: ScalarType, points: &[i128]) -> (String, Vec<String>) 
     for (i, a) in points.iter().enumerate() {
         for (j, b) in points.iter().enumerate() {
             for cmp in COMPARISONS {
-                source.push_str(&format!("    let c{n} = x{i} {cmp} x{j};\n    print dec c{n};\n"));
+                source.push_str(&format!(
+                    "    let c{n} = x{i} {cmp} x{j};\n    print dec c{n};\n"
+                ));
                 expected.push(format!("out: {}", compare(cmp, *a, *b)));
                 n += 1;
             }
@@ -261,15 +270,60 @@ fn value_statements_keep_every_refusal() {
             "{HEADER}type R {{ a: {ty}, b: u16, t: bool }}\nfn main() -> unit effects {{ io, alloc, mut }} {{\n    let buf = bytes(4);\n    let r = R {{ a: {init}, b: 7, t: true }};\n    let x = r.a;\n    let y = r.b;\n    let t = r.t;\n{statement}    drop buf;\n    return;\n}}\n"
         )
     };
-    refused_at(&body("u8", "1", "    let z = x + y;\n"), Some(&target), "Q052", "the operands are a `u8` and a `u16`");
-    refused_at(&body("u8", "1", "    let z = t + t;\n"), Some(&target), "Q052", "no arithmetic");
-    refused_at(&body("u8", "1", "    let z = t < t;\n"), Some(&target), "Q052", "no ordering");
-    refused_at(&body("u8", "1", "    let z = -t;\n"), Some(&target), "Q052", "no negation");
-    refused_at(&body("u8", "1", "    let z = x + 256;\n"), Some(&target), "Q053", "`256` is not a value of `u8`");
-    refused_at(&body("u8", "1", "    let z = x + 1 + 2;\n"), Some(&target), "Q051", "one operation per statement");
-    refused_at(&body("u8", "1", "    let z = x + 1;\n    buf[z] = 1;\n"), Some(&target), "Q052", "`z` is a `u8` and this position takes an `i32`");
-    refused_at(&body("usize", "1", "    let z = x + 1;\n"), None, "Q051", "recorded target");
-    refused_at(&body("u8", "1", "    print(x);\n"), Some(&target), "Q051", "");
+    refused_at(
+        &body("u8", "1", "    let z = x + y;\n"),
+        Some(&target),
+        "Q052",
+        "the operands are a `u8` and a `u16`",
+    );
+    refused_at(
+        &body("u8", "1", "    let z = t + t;\n"),
+        Some(&target),
+        "Q052",
+        "no arithmetic",
+    );
+    refused_at(
+        &body("u8", "1", "    let z = t < t;\n"),
+        Some(&target),
+        "Q052",
+        "no ordering",
+    );
+    refused_at(
+        &body("u8", "1", "    let z = -t;\n"),
+        Some(&target),
+        "Q052",
+        "no negation",
+    );
+    refused_at(
+        &body("u8", "1", "    let z = x + 256;\n"),
+        Some(&target),
+        "Q053",
+        "`256` is not a value of `u8`",
+    );
+    refused_at(
+        &body("u8", "1", "    let z = x + 1 + 2;\n"),
+        Some(&target),
+        "Q051",
+        "one operation per statement",
+    );
+    refused_at(
+        &body("u8", "1", "    let z = x + 1;\n    buf[z] = 1;\n"),
+        Some(&target),
+        "Q052",
+        "`z` is a `u8` and this position takes an `i32`",
+    );
+    refused_at(
+        &body("usize", "1", "    let z = x + 1;\n"),
+        None,
+        "Q051",
+        "recorded target",
+    );
+    refused_at(
+        &body("u8", "1", "    print(x);\n"),
+        Some(&target),
+        "Q051",
+        "",
+    );
     // Admitted: a literal typed by the other operand, `bool` equality, a
     // comparison of a literal with a literal (both `i32`), and a result
     // converted to `i32` at an index.
@@ -298,7 +352,12 @@ fn a_loop_body_statement_is_decided_at_every_index() {
     let m = buffer_admitted(&program(156));
     let expected: Vec<String> = (100..256).map(|v| format!("out: {v}")).collect();
     assert_eq!(lines(&m), expected);
-    refused_at(&program(157), Some(&target), "Q053", "raises `ArithmeticError::Overflow`");
+    refused_at(
+        &program(157),
+        Some(&target),
+        "Q053",
+        "raises `ArithmeticError::Overflow`",
+    );
     // A bound computed by a value statement over the tier.
     let computed = format!(
         "{HEADER}fn main() -> unit effects {{ io, alloc }} {{\n    let b = bytes(1);\n    let k = 250;\n    let m = k as u16;\n    let n = m - 247;\n    for i in 0..n {{ print dec i; }}\n    drop b;\n    return;\n}}\n"
@@ -353,7 +412,11 @@ fn lean_buffer_value_vectors_match_the_checker() {
             .map(number);
         let source = binary_program(ty, a, symbol(op), b);
         match expected {
-            Some(v) => assert_eq!(lines(&buffer_admitted(&source)), [format!("out: {v}")], "{row}"),
+            Some(v) => assert_eq!(
+                lines(&buffer_admitted(&source)),
+                [format!("out: {v}")],
+                "{row}"
+            ),
             None => refused_at(&source, Some(&target), "Q053", "ArithmeticError::"),
         }
         rows += 1;
@@ -451,7 +514,13 @@ fn the_typed_loops_example_publishes_its_transcript() {
 }
 
 #[cfg(unix)]
-fn run_native(m: &CompiledModule, expected: &[String], label: &str, rows: &mut Vec<String>, n: usize) {
+fn run_native(
+    m: &CompiledModule,
+    expected: &[String],
+    label: &str,
+    rows: &mut Vec<String>,
+    n: usize,
+) {
     let stdout: String = expected
         .iter()
         .filter_map(|l| l.strip_prefix("out: "))
@@ -467,8 +536,16 @@ fn run_native(m: &CompiledModule, expected: &[String], label: &str, rows: &mut V
         let built = native::build(&c, flags).unwrap_or_else(|e| panic!("{label} {build}: {e}"));
         let out = std::process::Command::new(&built.binary).output().unwrap();
         assert_eq!(out.status.code(), Some(0), "{label} {build}");
-        assert_eq!(String::from_utf8_lossy(&out.stdout), stdout, "{label} {build}");
-        assert_eq!(String::from_utf8_lossy(&out.stderr), stderr, "{label} {build}");
+        assert_eq!(
+            String::from_utf8_lossy(&out.stdout),
+            stdout,
+            "{label} {build}"
+        );
+        assert_eq!(
+            String::from_utf8_lossy(&out.stderr),
+            stderr,
+            "{label} {build}"
+        );
         rows.push(format!(
             "{{\"position\": \"value-statement\", \"program\": \"{label}\", \"build\": \"{build}\", \"statements\": {n}, \"lines\": {}, \"exit\": 0, \"sanitizer_reports\": 0}}",
             expected.len()

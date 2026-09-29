@@ -32,7 +32,8 @@ use qcore_core::std_buffer::{self, BufferEvent, BufferOperand, BufferProgram, Lo
 use qcore_core::std_io::{Rendering, StdIoEvent, StdIoOperand};
 use qcore_core::typed_errors::EffectRow;
 
-const HEADER: &str = "#import std.buffer;\n#import std.fmt;\n#import std.io;\n#import std.logger;\n";
+const HEADER: &str =
+    "#import std.buffer;\n#import std.fmt;\n#import std.io;\n#import std.logger;\n";
 
 const INTEGERS: [ScalarType; 10] = [
     ScalarType::I8,
@@ -242,10 +243,8 @@ fn typed_bounds_are_refused_by_the_loop_rules() {
         "4097 is above the 4096 iterations",
     );
     // The default budget and the licence, at `u16`.
-    let unlicensed = loop_program(ScalarType::U16, 300).replace(
-        "    [| #unroll, where #bound < 301 |]\n",
-        "",
-    );
+    let unlicensed =
+        loop_program(ScalarType::U16, 300).replace("    [| #unroll, where #bound < 301 |]\n", "");
     refused_at(&unlicensed, Some(&target), "Q098", "#bound < 301");
     let violated = loop_program(ScalarType::U16, 300).replace("< 301", "< 300");
     refused_at(&violated, Some(&target), "Q098", "this loop counts 300");
@@ -264,16 +263,31 @@ fn bounds_outside_the_tier_stay_refused() {
     let field = format!(
         "{HEADER}type A {{ f: u8 }}\nfn main() -> unit effects {{ io }} {{\n    let a = A {{ f: 3 }};\n    let x = a.f;\n    for i in 0..x {{ print dec i; }}\n    return;\n}}\n"
     );
-    refused_at(&field, Some(&target), "Q098", "`x` is not a check-time-constant");
+    refused_at(
+        &field,
+        Some(&target),
+        "Q098",
+        "`x` is not a check-time-constant",
+    );
     let nested = format!(
         "{HEADER}fn main() -> unit effects {{ io, alloc }} {{\n    let b = bytes(1);\n    let k = 3;\n    let n = k as u8;\n    for i in 0..n {{\n        for j in 0..i {{ print dec j; }}\n    }}\n    drop b;\n    return;\n}}\n"
     );
-    refused_at(&nested, Some(&target), "Q098", "`i` is not a check-time-constant");
+    refused_at(
+        &nested,
+        Some(&target),
+        "Q098",
+        "`i` is not a check-time-constant",
+    );
     // A conversion of a byte read is outside the tier: its operand is.
     let byte = format!(
         "{HEADER}fn main() -> unit effects {{ io, alloc }} {{\n    let b = bytes(1);\n    let v = b[0];\n    let n = v as u8;\n    for i in 0..n {{ print dec i; }}\n    drop b;\n    return;\n}}\n"
     );
-    refused_at(&byte, Some(&target), "Q098", "`n` is not a check-time-constant");
+    refused_at(
+        &byte,
+        Some(&target),
+        "Q098",
+        "`n` is not a check-time-constant",
+    );
 }
 
 /// A typed index is a value of its type: at an `i32` position it refuses by
@@ -316,7 +330,12 @@ fn a_typed_index_is_a_value_of_its_type() {
 fn the_composed_string_route_refuses_typed_loops() {
     let target = host_target();
     let conversion = "#import std.string;\n#import std.buffer;\n#import std.io;\nfn main() -> unit effects { io, alloc, mut } {\n    let b = bytes(4);\n    for i in 0..4 {\n        let j = i as u8;\n        b[i] = 97;\n    }\n    let all = borrow_utf8(b);\n    print all;\n    drop b;\n    return;\n}\n";
-    refused_at(conversion, Some(&target), "Q077", "W48-QR-TYPES-COMPOSED-STRING");
+    refused_at(
+        conversion,
+        Some(&target),
+        "Q077",
+        "W48-QR-TYPES-COMPOSED-STRING",
+    );
     let typed = "#import std.string;\n#import std.buffer;\n#import std.io;\nfn main() -> unit effects { io, alloc, mut } {\n    let b = bytes(4);\n    for i in 0..1 {\n        let k = 2;\n        let n = k as u8;\n        for j in 0..n {\n            b[0] = 97;\n        }\n    }\n    let all = borrow_utf8(b);\n    print all;\n    drop b;\n    return;\n}\n";
     refused_at(typed, Some(&target), "Q077", "W48-QR-TYPES-COMPOSED-STRING");
 }
@@ -372,7 +391,9 @@ fn the_checker_rederives_a_typed_count() {
     };
     let disagrees = refusals(&repeat_program(u8_bound(199), 199));
     assert!(
-        disagrees.iter().any(|e| e.starts_with("Q098") && e.contains("re-derived")),
+        disagrees
+            .iter()
+            .any(|e| e.starts_with("Q098") && e.contains("re-derived")),
         "{disagrees:?}"
     );
     let too_many = refusals(&repeat_program(u8_bound(300), 300));
@@ -441,8 +462,16 @@ fn every_typed_loop_runs_natively_as_the_reference() {
                     native::build(&c, flags).unwrap_or_else(|e| panic!("{ty} {n} {label}: {e}"));
                 let out = std::process::Command::new(&built.binary).output().unwrap();
                 assert_eq!(out.status.code(), Some(0), "{ty} {n} {label}");
-                assert_eq!(String::from_utf8_lossy(&out.stdout), stdout, "{ty} {n} {label}");
-                assert_eq!(String::from_utf8_lossy(&out.stderr), stderr, "{ty} {n} {label}");
+                assert_eq!(
+                    String::from_utf8_lossy(&out.stdout),
+                    stdout,
+                    "{ty} {n} {label}"
+                );
+                assert_eq!(
+                    String::from_utf8_lossy(&out.stderr),
+                    stderr,
+                    "{ty} {n} {label}"
+                );
                 rows.push(format!(
                     "{{\"position\": \"loop\", \"type\": \"{ty}\", \"bound\": {n}, \"build\": \"{label}\", \"lines\": {}, \"exit\": 0, \"sanitizer_reports\": 0}}",
                     expected.len()

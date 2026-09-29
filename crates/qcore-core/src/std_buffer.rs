@@ -2454,12 +2454,10 @@ impl BufferEvaluation {
             // the shared decision over this route's typed environment. Every
             // operand here is known, so the decision folds: its value is
             // bound, and a fault is a refusal now.
-            BufferEvent::Compute { binding, operation } => {
-                match self.compute(index, operation) {
-                    Ok((ty, value)) => self.bind(binding, ty, value),
-                    Err(error) => step.errors.push(error),
-                }
-            }
+            BufferEvent::Compute { binding, operation } => match self.compute(index, operation) {
+                Ok((ty, value)) => self.bind(binding, ty, value),
+                Err(error) => step.errors.push(error),
+            },
             BufferEvent::Acquire { name, extent } => {
                 if *extent == 0 || *extent > MAX_EXTENT {
                     step.errors.push(BufferError::ExtentOutOfRange {

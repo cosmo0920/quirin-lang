@@ -1062,14 +1062,19 @@ fn emit_events(
             // and negation call §G02t's shared checked helper, a comparison is
             // plain C; the result is declared at its own type.
             BufferEvent::Compute { binding, operation } => {
-                let (ty, expression) = value_statement_expression(records, scalars, index, operation)?;
+                let (ty, expression) =
+                    value_statement_expression(records, scalars, index, operation)?;
                 let emitted = scalar_name(binding);
                 if ty == ScalarType::I32 {
                     scalars.insert(binding.clone(), emitted.clone());
                 } else {
                     records.typed.insert(binding.clone(), (emitted.clone(), ty));
                 }
-                let _ = writeln!(source, "{indent}{} {emitted} = {expression};", st::c_type(ty));
+                let _ = writeln!(
+                    source,
+                    "{indent}{} {emitted} = {expression};",
+                    st::c_type(ty)
+                );
             }
             // Card `W48-QR-SCALAR-TYPES-R3`: the conversion. Total, it is a
             // plain cast; checked, it calls the helper whose test the checker

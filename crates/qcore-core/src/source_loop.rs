@@ -391,7 +391,11 @@ pub enum BoundRefusal {
     /// Card `W48-QR-SCALAR-TYPES-R5`: the checker's value of a typed bound is
     /// not the `ty` number `count` the lowering decided. Unreachable while the
     /// two fold with the one shared decision; refused rather than trusted.
-    BoundDisagrees { bound: String, count: u32, ty: ScalarType },
+    BoundDisagrees {
+        bound: String,
+        count: u32,
+        ty: ScalarType,
+    },
 }
 
 impl std::fmt::Display for BoundRefusal {

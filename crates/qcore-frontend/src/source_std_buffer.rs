@@ -1315,7 +1315,10 @@ impl LoweringConstants {
     }
 
     /// A known operand for the shared decision.
-    fn shared_operand(&self, operand: &BufferOperand) -> Option<qcore_core::scalar_values::Operand> {
+    fn shared_operand(
+        &self,
+        operand: &BufferOperand,
+    ) -> Option<qcore_core::scalar_values::Operand> {
         Some(match operand {
             BufferOperand::Literal(value) => qcore_core::scalar_values::Operand::Typed {
                 ty: ScalarType::I32,

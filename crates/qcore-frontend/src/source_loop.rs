@@ -387,9 +387,8 @@ pub fn read_loop_header(
             // type, `i32` included — is decided by the typed decision, and the
             // loop names it.
             Some(BoundValue::Derived { ty, value }) => {
-                let count = typed_bound(name, ty, value, target).map_err(|refusal| {
-                    refusal_diagnostic(&LoopRefusal::Bound(refusal), span)
-                })?;
+                let count = typed_bound(name, ty, value, target)
+                    .map_err(|refusal| refusal_diagnostic(&LoopRefusal::Bound(refusal), span))?;
                 if let Some(refusal) = budget_refusal(count, budget) {
                     return Err(refusal_diagnostic(&LoopRefusal::Bound(refusal), span));
                 }
