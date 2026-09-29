@@ -1,0 +1,59 @@
+#import std.fmt;
+#import std.io;
+#import std.logger;
+
+// The typed arithmetic error. A function whose row declares
+// `throws<ArithmeticError>` raises `ArithmeticError::Overflow`,
+// `::DivisionByZero` or `::OutOfRange` where one of its operations would
+// fault, instead of stopping the program. A caller propagates it with `?`
+// (its own row must permit it) or handles it with `match`.
+fn scale(reading: u8, factor: u8) -> u8 effects { throws<ArithmeticError> } {
+    return reading * factor;
+}
+
+fn per_second(total: u16, seconds: u16) -> u16 effects { throws<ArithmeticError> } {
+    let rate = total / seconds;
+    return rate;
+}
+
+// `?` hands a raise straight to this function's own caller.
+fn scaled_rate(reading: u8, seconds: u16) -> u16 effects { throws<ArithmeticError> } {
+    let scaled = scale(reading, 3)?;
+    let rate = per_second(scaled as u16, seconds)?;
+    return rate;
+}
+
+fn main() -> unit effects { io } {
+    let fine: u8 = 80;
+    let hot: u8 = 90;
+    let window: u16 = 4;
+    let none: u16 = 0;
+    match scaled_rate(fine, window) {
+        Result::Ok { value: rate } => {
+            print dec rate;
+            match scaled_rate(hot, window) {
+                Result::Ok { value: never } => {
+                    print dec never;
+                    return;
+                }
+                Result::Err { error: overflow } => {
+                    log warn dec 255;
+                    match scaled_rate(fine, none) {
+                        Result::Ok { value: never } => {
+                            print dec never;
+                            return;
+                        }
+                        Result::Err { error: zero } => {
+                            log warn dec 0;
+                            flush;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        Result::Err { error: failure } => {
+            return;
+        }
+    }
+}

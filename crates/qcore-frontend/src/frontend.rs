@@ -3031,7 +3031,18 @@ fn lexical_references(
             previous.map(|token| &token.kind),
             Some(TokenKind::Word(previous)) if previous == "as"
         ) && qcore_core::scalar_types::ScalarType::parse(word).is_some();
+        // Card `W48-QR-SCALAR-TYPES-R2`: `raise ArithmeticError::VARIANT;` names
+        // the builtin typed arithmetic error, which no declaration introduces.
+        // Contextual — the name immediately followed by `::` — so no word is
+        // reserved; the constraint-14 census found `ArithmeticError` in no
+        // tracked `.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` file.
+        let builtin_error = word == qcore_core::scalar_types::ArithmeticError::NAME
+            && matches!(
+                next.map(|token| &token.kind),
+                Some(TokenKind::Symbol(Symbol::ColonColon))
+            );
         if body_binder
+            || builtin_error
             || length_query
             || lend_clause
             || lend_capture

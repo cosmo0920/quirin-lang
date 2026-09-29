@@ -1,0 +1,21 @@
+import QCore.ScalarTypedErrors
+#print axioms QCore.ScalarTypedErrors.checkedE_ok_iff
+#print axioms QCore.ScalarTypedErrors.checkedE_raises_iff
+#print axioms QCore.ScalarTypedErrors.checkedE_raises_classified
+#print axioms QCore.ScalarTypedErrors.checkedE_in_range
+#print axioms QCore.ScalarTypedErrors.checkedE_exact
+#print axioms QCore.ScalarTypedErrors.division_by_zero_raises
+#print axioms QCore.ScalarTypedErrors.min_div_minus_one_raises_overflow
+#print axioms QCore.ScalarTypedErrors.convertE_raises_out_of_range
+#print axioms QCore.ScalarTypedErrors.convertE_ok_iff_fits
+#print axioms QCore.ScalarTypedErrors.total_conversion_never_raises
+#print axioms QCore.ScalarTypedErrors.evalE_agrees
+#print axioms QCore.ScalarTypedErrors.static_fault_is_dynamic_raise
+#print axioms QCore.ScalarTypedErrors.static_value_is_dynamic_value
+#print axioms QCore.ScalarTypedErrors.static_fault_variant
+#print axioms QCore.ScalarTypedErrors.propagate_raise
+#print axioms QCore.ScalarTypedErrors.propagate_value
+#print axioms QCore.ScalarTypedErrors.handle_raise
+#print axioms QCore.ScalarTypedErrors.handle_value
+#print axioms QCore.ScalarTypedErrors.handled_never_raises
+#print axioms QCore.ScalarTypedErrors.typed_agreement_holds

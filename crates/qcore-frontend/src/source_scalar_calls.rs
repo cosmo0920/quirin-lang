@@ -67,6 +67,17 @@ pub fn has_scalar_calls(p: &SourceProgram) -> bool {
                                         && symbol(ts[3], Symbol::Minus)
                                         && matches!(ts[4].kind, TokenKind::Integer(_)))
                         }
+                        // Card `W48-QR-SCALAR-TYPES-R2`: `match CALL { … }` of a
+                        // declared source function is this route's; no route
+                        // selected after the task route spells a match.
+                        Some("match") => {
+                            ts.get(1).and_then(|t| word(t)).is_some_and(|callee| {
+                                p.declarations.iter().any(|d| {
+                                    d.value.kind == DeclarationKind::Function
+                                        && d.value.name == callee
+                                })
+                            }) && ts.get(2).is_some_and(|t| symbol(t, Symbol::LeftParen))
+                        }
                         Some(name) => {
                             p.declarations.iter().any(|d| {
                                 d.value.kind == DeclarationKind::Function && d.value.name == name

@@ -68,7 +68,35 @@ renders `true`/`false` and has no `hex`. An overflow, a zero divisor, a
 conversion whose value does not fit, or a literal outside its type refuses the
 module at check time.
 
+## The typed arithmetic error
+
+[typed_errors.qr](typed_errors.qr) uses the typed arithmetic error (card
+`W48-QR-SCALAR-TYPES-R2`). A function whose `effects` row declares
+`throws<ArithmeticError>` raises `ArithmeticError::Overflow`,
+`::DivisionByZero` or `::OutOfRange` where an operation on a value the checker
+did not fold would fault; its caller propagates the error with `CALL?` (under
+the same permission) or handles it with `match CALL { Result::Ok { value: v }
+=> { … } Result::Err { error: e } => { … } }`, and `raise e;` re-raises it. A
+fault the checker can decide from constants alone is still refused, and so is
+a fault in a function without the permission. Here `80 * 3` fits `u8`,
+`90 * 3` overflows it, and a zero-second window divides by zero:
+
+<!-- transcript: typed_errors stdout -->
+```text
+60
+```
+
+<!-- transcript: typed_errors stderr -->
+```text
+[WARN] 255
+[WARN] 0
+```
+
+An entry that propagates the error exits with status `80 + tag` (81, 82, 83)
+after the lines it wrote; this one handles every raise and exits 0.
+
 See [the exact grammar](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1)
 and [implementation evidence](../../docs/reports/source-scalar-calls-v1/README.md);
 the fixed-width types are [§G02t](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02t-fixed-width-scalar-types)
-and [their evidence](../../docs/reports/w48-qr-scalar-types/README.md).
+and [their evidence](../../docs/reports/w48-qr-scalar-types/README.md); the typed
+error is [its evidence](../../docs/reports/w48-qr-scalar-types-r2/README.md).
