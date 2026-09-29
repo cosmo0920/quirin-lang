@@ -1,0 +1,12 @@
+{
+  "note": "W47-FB-DOUBLE-STOP-OBSERVATION card gate at base f269c231, run on the tree of 787538ff (records, regenerated matrix and index already in place; the commit after it adds only this file, the gate exits and README wording). submodule update --init --recursive 0; run_test_binaries.py 354 units, 367 summaries, 6,333 passed, 0 failed, 11 ignored (private/test-binaries/20260929T024826Z-2040164/summary.json of this worktree); fmt and clippy clean; both reevaluation probes exit 0; check_lean_audits.py 224 audits passed; Python suite 365 tests OK; docs-index check 0. No provider gate (no provider touched). No native Fluent Bit build or run during the gate. Clang 21.1.8 recorded in this worktree. Exits in gate/; logs under private/dstop-gate/ of this worktree.",
+  "workspace_tests": 6333,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 224,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

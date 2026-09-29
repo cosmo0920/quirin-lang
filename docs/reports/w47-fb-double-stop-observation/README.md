@@ -164,4 +164,9 @@ the user's decision to report upstream and, for (ii), a racing reproduction.
 [`scripts/gate.sh`](scripts/gate.sh) runs the standing gate after the records
 are regenerated. Exits are in [gate/](gate/), figures in [gate.json](gate.json)
 and logs under `private/dstop-gate/` of this worktree. No native build or run
-took place while the gate ran.
+took place while the gate ran. The gate ran on the tree of `787538ff`, after
+the records, matrix and index had been regenerated. Every step exited 0:
+submodule; Rust suite **354 units / 367 summaries, 6,333 passed, 0 failed,
+11 ignored**; clean; fmt; clippy; both probes; **224 Lean audits**; clean;
+Python suite **365 tests OK**; docs-index check. Clang 21.1.8 was recorded.
+No provider gate was run, because no provider changed.
