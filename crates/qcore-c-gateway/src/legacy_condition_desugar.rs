@@ -71,11 +71,13 @@ use std::collections::{BTreeMap, BTreeSet};
 use qcore_schemas::contract::{ResourceParameterMode, ResourceReturnMode};
 
 use super::call_instantiation_route::CallRefusal;
+use super::condition_acquisition_route as acquisition;
 use super::{
     CfgBuilder, LegacyInstruction, LegacyNodeId, Parser, Statement, SwitchTargets, TYPE_OPERATORS,
-    Token, contains_braces, contains_call, descriptor_custody, is_identifier, matching,
+    Token, contains_braces, descriptor_custody, is_identifier, matching,
 };
 use crate::call_instantiation::Decline;
+use crate::condition_acquisition::{self as acquisition_rule, LeafRoute, Split};
 use crate::neutral_position::ExpressionRole;
 
 /// Whether the desugaring is consulted by the lowering. The census commits
@@ -156,6 +158,10 @@ pub(super) enum Refusal {
     ResidualRefused,
     DescriptorRead(String),
     CallFreeLeafRefused,
+    /// Card CG04-CONDITION-ACQUISITION (rule 10x): the per-leaf decision
+    /// that replaced the whole-condition type-operator and increment
+    /// refusals, and the carrier check of a split acquisition.
+    LeafShape(acquisition_rule::Refusal),
 }
 
 impl Refusal {
@@ -184,6 +190,7 @@ impl Refusal {
             Self::ResidualRefused => ("residual-refused", None, None),
             Self::DescriptorRead(name) => ("descriptor-read", Some(name.clone()), None),
             Self::CallFreeLeafRefused => ("call-free-leaf-refused", None, None),
+            Self::LeafShape(refusal) => ("leaf-shape", Some(refusal.code().to_owned()), None),
         }
     }
 }
@@ -500,7 +507,9 @@ impl Parser<'_> {
         if !refused || self.opaque_callee(condition) {
             return None;
         }
-        if !contains_call(condition) {
+        // Card CG04-CONDITION-ACQUISITION (rule 10x): a type operator's
+        // operand is not a call of the condition.
+        if !acquisition::holds_real_call(condition) {
             // Census only: a refused call-free expression shares its leaf
             // with any call-bearing one on the same line and position.
             #[cfg(feature = "indirect-census")]
@@ -513,6 +522,7 @@ impl Parser<'_> {
             return self.typed_call_free_plan(condition, position);
         }
         let saved = (self.next_site, self.element_lowerings);
+        self.condition_widening.set(0);
         let outcome = self.condition_plan(condition, position);
         // A derived-result validation parse re-reads a body the ordinary
         // parse already recorded.
@@ -520,6 +530,12 @@ impl Parser<'_> {
         if !self.admit_derived_returns {
             census(self, _line, position, condition, &outcome);
         }
+        self.record_condition_desugar(
+            condition,
+            position,
+            outcome.as_ref().map_err(|refusal| format!("{refusal:?}")),
+            ADMIT,
+        );
         match outcome {
             Ok(plan) if ADMIT => Some(Box::new(plan)),
             _ => {
@@ -558,14 +574,11 @@ impl Parser<'_> {
         if contains_braces(condition) {
             return Err(Refusal::Braces);
         }
-        if texts.iter().any(|text| TYPE_OPERATORS.contains(text)) {
+        // Card CG04-CONDITION-ACQUISITION (rule 10x): a type operator and an
+        // increment are decided per leaf (`leaf_plan`); only a type operand
+        // whose extent is not read lexically keeps the whole refusal.
+        if acquisition::type_operand_spans(&texts).is_none() {
             return Err(Refusal::TypeOperator);
-        }
-        if texts
-            .windows(2)
-            .any(|pair| matches!(pair, ["+", "+"] | ["-", "-"]))
-        {
-            return Err(Refusal::IncrementOrDecrement);
         }
         if texts.windows(2).any(|pair| pair == ["?", ":"]) {
             return Err(Refusal::Elvis);
@@ -649,17 +662,42 @@ impl Parser<'_> {
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
-        if !contains_call(tokens) {
-            if let Some(plan) = self.call_free_decision(tokens, position) {
-                return Ok(plan);
+        // Card CG04-CONDITION-ACQUISITION (rule 10x): the leaf's route, from
+        // its features with every type operand set apart.
+        let features = acquisition::leaf_features(&texts).ok_or(Refusal::TypeOperator)?;
+        let route = acquisition_rule::leaf_route(features).map_err(Refusal::LeafShape)?;
+        if texts.iter().any(|text| TYPE_OPERATORS.contains(text)) {
+            self.condition_widening
+                .set(self.condition_widening.get() | acquisition::WIDENED_TYPE_OPERATOR);
+        }
+        if route == LeafRoute::CallFree {
+            // An increment never reaches the older call-free routes, which
+            // the whole-condition refusal kept it from before this card.
+            if !features.increment {
+                if let Some(plan) = self.call_free_decision(tokens, position) {
+                    return Ok(plan);
+                }
+                // Card W47-ACCESS-PATH-POSITIONS: one `NAME = PATH` operand.
+                if let Some((assignment, decision)) =
+                    self.typed_assignment_operand(tokens, position)
+                {
+                    return Ok(LeafPlan {
+                        calls: vec![assignment],
+                        decision,
+                    });
+                }
             }
-            // Card W47-ACCESS-PATH-POSITIONS: one `NAME = PATH` operand.
-            let (assignment, decision) = self
-                .typed_assignment_operand(tokens, position)
+            // Card CG04-CONDITION-ACQUISITION (rule 10x): the elaborator
+            // (rule 10s), asked last: the leaf's events, then a branch that
+            // refines nothing.
+            let events = self
+                .elaborated_leaf(tokens)
                 .ok_or(Refusal::CallFreeLeafRefused)?;
+            self.condition_widening
+                .set(self.condition_widening.get() | acquisition::WIDENED_ELABORATED_LEAF);
             return Ok(LeafPlan {
-                calls: vec![assignment],
-                decision,
+                calls: events,
+                decision: LegacyInstruction::NoOp,
             });
         }
         let calls = top_level_calls(&texts)?;
@@ -693,6 +731,42 @@ impl Parser<'_> {
             [at] => Some(self.assignment_group(&texts, &calls, *at)?),
             _ => return Err(Refusal::AssignmentShape),
         };
+        // The residual: every call replaced by a neutral literal, the one
+        // assignment group by its destination.
+        let mut residual = Vec::with_capacity(tokens.len());
+        let mut index = 0usize;
+        while index < tokens.len() {
+            if let Some(group) = &assigned
+                && index == group.start
+            {
+                residual.push(synthetic("(", &tokens[index]));
+                residual.push(synthetic(&group.name, &tokens[index]));
+                residual.push(synthetic(")", &tokens[index]));
+                index = group.end;
+                continue;
+            }
+            if let Some(call) = calls.iter().find(|call| call.callee == index) {
+                residual.push(synthetic("0", &tokens[index]));
+                index = call.close + 1;
+                continue;
+            }
+            residual.push(tokens[index].clone());
+            index += 1;
+        }
+        // Card CG04-CONDITION-ACQUISITION (rule 10x): the split the leaf
+        // makes on the assigned destination, if any. A descriptor
+        // destination is admitted only as a split acquisition (below).
+        let split = assigned
+            .as_ref()
+            .and_then(|group| self.acquisition_split(&residual, &group.name));
+        let descriptor_destination = assigned
+            .as_ref()
+            .filter(|group| self.descriptor_names.contains(&group.name));
+        if let Some(group) = descriptor_destination
+            && split != Some(Split::Sentinel)
+        {
+            return Err(Refusal::AssignmentDestination(group.name.clone()));
+        }
         let mut lowered = Vec::with_capacity(calls.len());
         for call in &calls {
             let callee = texts[call.callee];
@@ -714,12 +788,10 @@ impl Parser<'_> {
             // A call whose actuals the lexical gate refused arrives with its
             // actuals' typed reads before it (card W44-INDIRECT-CALL-
             // ARGUMENT-ACCESS, the statement position's own lowering).
-            let sequence = match self.instantiate_call(
-                callee,
-                statement,
-                destination,
-                crate::call_instantiation::ResultUse::Tested,
-            ) {
+            // Card CG04-CONDITION-ACQUISITION (rule 10x): the value of the
+            // assigned call split on its destination is the NULL split use.
+            let use_ = acquisition_rule::leaf_use(destination.is_some(), split);
+            let sequence = match self.instantiate_call(callee, statement, destination, use_) {
                 Ok(sequence) => sequence,
                 Err(CallRefusal::Declined(Decline::RecursiveLocal)) => {
                     return Err(Refusal::RecursiveLocalCallee(callee.to_owned()));
@@ -746,6 +818,30 @@ impl Parser<'_> {
                     ));
                 }
             };
+            if let (Some(split), Some(_)) = (split, destination)
+                && let Some(LegacyInstruction::ContractCall { contract, .. }) = sequence.last()
+            {
+                let result = crate::call_instantiation::ResultClass::of(contract.result);
+                acquisition_rule::carrier(result, contract.result_kind.is_integer(), split)
+                    .map_err(Refusal::LeafShape)?;
+                acquisition_rule::placement(
+                    !result.resource_free(),
+                    self.condition_on_cycle(position),
+                )
+                .map_err(Refusal::LeafShape)?;
+                // A descriptor destination holds only its own acquisition.
+                if descriptor_destination.is_some()
+                    && (result.resource_free() || !contract.result_kind.is_integer())
+                {
+                    return Err(Refusal::AssignmentDestination(
+                        destination.unwrap_or(callee).to_owned(),
+                    ));
+                }
+                if !result.resource_free() {
+                    self.condition_widening
+                        .set(self.condition_widening.get() | acquisition::WIDENED_SPLIT);
+                }
+            }
             lowered.push(sequence);
         }
         if lowered.len() > 1 {
@@ -762,28 +858,6 @@ impl Parser<'_> {
             }
         }
         let lowered = lowered.into_iter().flatten().collect::<Vec<_>>();
-        // The residual: every call replaced by a neutral literal, the one
-        // assignment group by its destination.
-        let mut residual = Vec::with_capacity(tokens.len());
-        let mut index = 0usize;
-        while index < tokens.len() {
-            if let Some(group) = &assigned
-                && index == group.start
-            {
-                residual.push(synthetic("(", &tokens[index]));
-                residual.push(synthetic(&group.name, &tokens[index]));
-                residual.push(synthetic(")", &tokens[index]));
-                index = group.end;
-                continue;
-            }
-            if let Some(call) = calls.iter().find(|call| call.callee == index) {
-                residual.push(synthetic("0", &tokens[index]));
-                index = call.close + 1;
-                continue;
-            }
-            residual.push(tokens[index].clone());
-            index += 1;
-        }
         let residual_texts = residual
             .iter()
             .map(|token| token.text.as_str())
@@ -791,11 +865,26 @@ impl Parser<'_> {
         if let Some(name) =
             descriptor_custody::value_carries_descriptor(&residual_texts, &self.descriptor_names)
         {
-            return Err(Refusal::DescriptorRead(name.to_owned()));
+            // Card CG04-CONDITION-ACQUISITION (rule 10x): a descriptor
+            // acquisition's destination is read only by its own validity
+            // test, which the split below compiles; any other descriptor
+            // name, or this one elsewhere, keeps the refusal.
+            let own = split == Some(Split::Sentinel)
+                && descriptor_destination.is_some_and(|group| {
+                    residual_texts
+                        .iter()
+                        .all(|text| !self.descriptor_names.contains(text) || *text == group.name)
+                });
+            if !own {
+                return Err(Refusal::DescriptorRead(name.to_owned()));
+            }
         }
         let decision = if assigned.is_some() {
             match self.null_condition(&residual) {
                 Some(test) if test.validity.is_none() => test.branch(),
+                // Card CG04-CONDITION-ACQUISITION (rule 10x): the sentinel
+                // split of a descriptor acquisition.
+                Some(test) if split == Some(Split::Sentinel) => test.branch(),
                 Some(_) => return Err(Refusal::ResidualRefused),
                 None if self.supported_expression(&residual, ExpressionRole::Decides) => {
                     LegacyInstruction::NoOp
@@ -871,11 +960,23 @@ impl Parser<'_> {
     ) -> Option<Box<ConditionPlan>> {
         let saved = (self.next_site, self.element_lowerings);
         let uses = self.typed_position_uses.get();
+        self.condition_widening.set(0);
         let outcome = self.condition_plan(condition, position);
         let typed = self.typed_position_uses.get() > uses;
         self.typed_position_uses.set(uses);
+        // Card CG04-CONDITION-ACQUISITION (rule 10x): a leaf the elaborator
+        // decided keeps the plan as a typed operand does.
+        let elaborated = self.condition_widening.get() & acquisition::WIDENED_ELABORATED_LEAF != 0;
+        if elaborated {
+            self.record_condition_desugar(
+                condition,
+                position,
+                outcome.as_ref().map_err(|refusal| format!("{refusal:?}")),
+                ADMIT,
+            );
+        }
         match outcome {
-            Ok(plan) if ADMIT && typed => Some(Box::new(plan)),
+            Ok(plan) if ADMIT && (typed || elaborated) => Some(Box::new(plan)),
             _ => {
                 (self.next_site, self.element_lowerings) = saved;
                 None
@@ -912,12 +1013,15 @@ impl Parser<'_> {
         };
         // A declared scalar, or a single-level pointer the reader committed
         // to; the classifier decides what the call's result binds to it.
-        let declared = self.typed_types.declared_is_scalar(name)
-            || self.typed_types.pointer_kind(name).is_some();
-        if !declared
-            || self.descriptor_names.contains(name)
-            || self.formal_parameters.contains(name)
-        {
+        // Card CG04-CONDITION-ACQUISITION (rule 10x): or, where the lexical
+        // reader does not type the name, one automatic local the Clang AST
+        // types (rule 10l's declared-local premise of an assignment operand's
+        // destination: a `void *`, a typedef'd pointer).
+        let declared = self.position_declared_local(name);
+        // Card CG04-CONDITION-ACQUISITION (rule 10x): a descriptor name is
+        // decided by `leaf_plan`, which admits it only as the destination of
+        // its own split acquisition.
+        if !declared || self.formal_parameters.contains(name) {
             return Err(Refusal::AssignmentDestination(name.to_owned()));
         }
         // `NAME` read elsewhere in the leaf is unsequenced with the write.
@@ -1014,6 +1118,12 @@ fn top_level_calls(texts: &[&str]) -> Result<Vec<CallSpan>, Refusal> {
     while index + 1 < texts.len() {
         if texts[index] == ")" && texts[index + 1] == "(" {
             return Err(Refusal::IndirectCallee);
+        }
+        // Card CG04-CONDITION-ACQUISITION (rule 10x): a type operator's
+        // operand is not evaluated; `leaf_route` refused a call inside one.
+        if TYPE_OPERATORS.contains(&texts[index]) && texts[index + 1] == "(" {
+            index = close_of(texts, index + 1).ok_or(Refusal::Unparsed)? + 1;
+            continue;
         }
         if is_identifier(texts[index]) && texts[index + 1] == "(" {
             let member = index >= 1

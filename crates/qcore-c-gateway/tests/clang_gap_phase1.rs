@@ -374,33 +374,39 @@ fn k03_complex_actual_places_are_not_substituted() {
 // CG04 — condition acquisition (E09 E13)
 // ---------------------------------------------------------------------------
 
+/// **Flipped by CG04-CONDITION-ACQUISITION (rule 10x)** for the three
+/// branch forms: the acquisition, its binding, the NULL (or sentinel) split
+/// and the merge are lowered together where the condition stands, and each is
+/// `Safe` exactly as its statement pair is. The loop form keeps its refusal:
+/// a split acquisition on a CFG cycle is refused (`CG04-LOOP-SITE-GENERATIONS`).
 #[test]
 fn e09_an_owned_acquisition_in_a_condition_is_refused_and_not_hoisted() {
     if !clang_available() {
         return;
     }
-    for (body, refusal) in [
-        ("void *p; if ((p = q_alloc()) != 0) { q_free(p); }", BRANCH),
-        (
-            "void *p; if ((p = q_maybe_alloc()) != 0) { q_free(p); }",
-            BRANCH,
-        ),
-        ("void *p; while ((p = q_alloc()) != 0) { q_free(p); }", LOOP),
-        (
-            "int fd; if ((fd = k_open(\"x\")) >= 0) { k_close(fd); }",
-            BRANCH,
-        ),
+    for body in [
+        "void *p; if ((p = q_alloc()) != 0) { q_free(p); }",
+        "void *p; if ((p = q_maybe_alloc()) != 0) { q_free(p); }",
+        "int fd; if ((fd = k_open(\"x\")) >= 0) { k_close(fd); }",
     ] {
         let run = gs(&format!("void subject(void) {{ {body} }}"));
-        assert!(run.refused(refusal), "{body}: {run:?}");
-        assert!(!run.safe());
-        // The acquisition was not lifted out of the condition.
-        assert!(
-            !run.calls
+        assert!(run.safe(), "{body}: {run:?}");
+        // Applied once, where the condition stands.
+        assert_eq!(
+            run.calls
                 .iter()
-                .any(|c| c == "q_alloc" || c == "q_maybe_alloc" || c == "k_open")
+                .filter(|c| *c == "q_alloc" || *c == "q_maybe_alloc" || *c == "k_open")
+                .count(),
+            1,
+            "{body}"
         );
     }
+    let body = "void *p; while ((p = q_alloc()) != 0) { q_free(p); }";
+    let run = gs(&format!("void subject(void) {{ {body} }}"));
+    assert!(run.refused(LOOP), "{body}: {run:?}");
+    assert!(!run.safe());
+    // The acquisition was not lifted out of the condition.
+    assert!(!run.calls.iter().any(|c| c == "q_alloc"));
     // The normalised form is admitted.
     assert!(gs("void subject(void) { void *p = q_alloc(); if (p != 0) { q_free(p); } }").safe());
 }
@@ -409,14 +415,29 @@ fn e09_an_owned_acquisition_in_a_condition_is_refused_and_not_hoisted() {
 /// increments, `sizeof`, expression callees and field reads in a leaf are
 /// refused, but nested connectives, a scalar cast of a call, an assigned
 /// scalar call and a selection-invariant `_Generic` are admitted.
+///
+/// **Flipped by CG04-CONDITION-ACQUISITION (rule 10x):** a type operator whose
+/// operand holds no call is residual text of its leaf
+/// (`r_borrow_code(p) == sizeof(int)`), and an increment in a call-free leaf
+/// of its own is the elaborator's. An increment beside a call in one leaf
+/// (CG05), a field read in a call's residual (CG10's root premise), an
+/// uncontracted call and an expression callee (CG22) stay refused.
 #[test]
 fn e13_condition_leaf_composition_is_partial() {
     if !clang_available() {
         return;
     }
     for condition in [
-        "r_borrow_code(p) == i++",
         "r_borrow_code(p) == sizeof(int)",
+        "i++ < 4 && r_borrow_code(p)",
+    ] {
+        let run = gs(&format!(
+            "void subject(struct S *s) {{ void *p = q_alloc(); int i = 0; if ({condition}) {{ }} q_free(p); }}"
+        ));
+        assert!(run.safe(), "{condition}: {run:?}");
+    }
+    for condition in [
+        "r_borrow_code(p) == i++",
         "r_borrow_code(p) == s->a",
         "!(r_borrow_code(p) == 0 || (r_borrow_code(p) == 1 && opaque()))",
     ] {

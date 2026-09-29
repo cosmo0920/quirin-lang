@@ -62,6 +62,9 @@ inductive Use where
   | tested
   | returned
   | passed
+  /-- Card CG04-CONDITION-ACQUISITION (rule 10x): stored in its destination
+  and tested there against the contract's failure value (the NULL split). -/
+  | testedSplit
   deriving DecidableEq, Repr
 
 inductive Decision where
@@ -97,6 +100,7 @@ def accept (s : Standing) (r : ResultClass) (identity : Bool) (u : Use) : Decisi
       if identity && r == .none then .accept
       else if r != .reallocated then .accept
       else .passedReallocation
+    | .testedSplit => .accept
 
 /-- `ACCEPTANCE_VECTORS` of `call_instantiation.rs`, row by row. -/
 def acceptanceVectors : List (Standing × ResultClass × Bool × Use × Decision) := [
@@ -115,6 +119,11 @@ def acceptanceVectors : List (Standing × ResultClass × Bool × Use × Decision
   (.declared, .none, true, .passed, .accept),
   (.declared, .none, false, .passed, .accept),
   (.declared, .derived, true, .passed, .accept),
+  (.declared, .owned, false, .testedSplit, .accept),
+  (.validated, .reallocated, false, .testedSplit, .accept),
+  (.declared, .derived, true, .testedSplit, .accept),
+  (.declared, .none, true, .testedSplit, .accept),
+  (.recursive, .owned, false, .testedSplit, .recursiveLocal),
   (.validated, .owned, false, .passed, .accept),
   (.declared, .reallocated, false, .passed, .passedReallocation),
   (.recursive, .owned, false, .passed, .recursiveLocal)

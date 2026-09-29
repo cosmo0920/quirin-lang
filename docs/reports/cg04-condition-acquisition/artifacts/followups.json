@@ -1,0 +1,120 @@
+{
+ "classes": {
+  "CallRefused: indirect memory access is outside the resource projection": {
+   "leaves": 1768,
+   "functions": 708,
+   "sole": 21
+  },
+  "CallRefused: call to uncontracted function `_`": {
+   "leaves": 876,
+   "functions": 520,
+   "sole": 12
+  },
+  "elaboration-refused": {
+   "leaves": 776,
+   "functions": 394,
+   "sole": 6
+  },
+  "AssignmentShape": {
+   "leaves": 219,
+   "functions": 89,
+   "sole": 1
+  },
+  "no-consultation": {
+   "leaves": 129,
+   "functions": 86,
+   "sole": 1
+  },
+  "CallFreeLeafRefused": {
+   "leaves": 63,
+   "functions": 44,
+   "sole": 0
+  },
+  "RecursiveLocalCallee": {
+   "leaves": 31,
+   "functions": 18,
+   "sole": 0
+  },
+  "ResidualRefused": {
+   "leaves": 31,
+   "functions": 28,
+   "sole": 2
+  },
+  "IndirectCallee": {
+   "leaves": 29,
+   "functions": 23,
+   "sole": 2
+  },
+  "Braces": {
+   "leaves": 22,
+   "functions": 21,
+   "sole": 0
+  },
+  "CallRefused: other": {
+   "leaves": 15,
+   "functions": 13,
+   "sole": 1
+  },
+  "AssignmentDestination": {
+   "leaves": 12,
+   "functions": 10,
+   "sole": 0
+  },
+  "LeafShape(IncrementBesideCall)": {
+   "leaves": 4,
+   "functions": 4,
+   "sole": 0
+  },
+  "LeafShape(AcquisitionOnCycle)": {
+   "leaves": 2,
+   "functions": 2,
+   "sole": 0
+  },
+  "admitted": {
+   "leaves": 2,
+   "functions": 2,
+   "sole": 0
+  }
+ },
+ "followups": {
+  "W44-CONDITION-CALL-ASSIGNMENT": {
+   "leaves": 231,
+   "functions": 95,
+   "sole": 1,
+   "classes": {
+    "AssignmentDestination": 12,
+    "AssignmentShape": 219
+   }
+  },
+  "W44-CONDITION-CALL-FREE-OPERAND": {
+   "leaves": 63,
+   "functions": 44,
+   "sole": 0,
+   "classes": {
+    "CallFreeLeafRefused": 63
+   }
+  },
+  "W44-CONDITION-CALL-TYPE-OPERATOR": {
+   "leaves": 0,
+   "functions": 0,
+   "sole": 0,
+   "classes": {}
+  },
+  "W44-CONDITION-CALL-REFUSED-SHAPES": {
+   "leaves": 72,
+   "functions": 62,
+   "sole": 3,
+   "classes": {
+    "IndirectCallee": 29,
+    "Braces": 22,
+    "LeafShape(IncrementBesideCall)": 4,
+    "LeafShape(AcquisitionOnCycle)": 2,
+    "CallRefused: other": 15
+   }
+  }
+ },
+ "condition_writes": {
+  "leaves": 71,
+  "functions": 62
+ }
+}

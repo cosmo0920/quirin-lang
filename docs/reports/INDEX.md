@@ -81,6 +81,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg03-call-summary-instantiation](cg03-call-summary-instantiation/README.md) | CG03-CALL-SUMMARY-INSTANTIATION: one call-contract application point |
 
+| [cg04-condition-acquisition](cg04-condition-acquisition/README.md) | CG04-CONDITION-ACQUISITION: acquisitions in conditions and complex condition leaves |
+
 | [cg05-nested-call-effects](cg05-nested-call-effects/README.md) | CG05-NESTED-CALL-EFFECTS: nested and sibling call effects |
 
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |

@@ -1,0 +1,14 @@
+  123  no parity row at the line
+         cmt_encode_opentelemetry.c::append_data_point_to_metric@8920: 
+         cmt_encode_opentelemetry_batch.c::batch_add_metric@6823: 
+         cmt_encode_opentelemetry_batch.c::batch_add_resource@6578: 
+         cmt_encode_opentelemetry_batch.c::batch_add_scope@6623: 
+    4  other: elaboration-statement
+         rdbuf.c::do_unittest_write_read_payload_correctness@4141: fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , r , max_cnt * sizeof ( crc ) )
+         rdkafka.c::rd_kafka_version_str@24735: r = snprintf ( ret + of , sizeof ( ret ) - of , __qcore_literal__ , ( ver > > 24 ) & 0xff , ( ver > > 16 ) & 0xff , ( ver > > 8 ) & 0xff )
+         rdkafka.c::rd_kafka_version_str@24738: r = sizeof ( ret ) - of
+         rdkafka.c::rd_kafka_version_str@24740: r = sizeof ( ret ) - of
+    1  other: condition,typed-place
+         rdkafka_broker.c::rd_kafka_broker_set_error@21186: rkb - > rkb_last_err . cnt > = 1
+    1  other: condition,residual-shape
+         flb_input_chunk.c::flb_input_chunk_get_direct_routes@19335: view . routing_data = = ( ( void * ) 0 )

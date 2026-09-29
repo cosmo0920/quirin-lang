@@ -129,6 +129,14 @@ pub(crate) enum ResultUse {
     Returned,
     /// An actual of another call.
     Passed,
+    /// Card **CG04-CONDITION-ACQUISITION** (rule 10x): the value of a
+    /// `(NAME = CALL(…))` group stored in `NAME` and tested, where it stands,
+    /// against the contract's failure value on `NAME` (the NULL split of a
+    /// pointer, the validity sentinel of a descriptor). The branch that
+    /// follows is the statement position's own split, so every result class
+    /// the stored use takes is taken; the carrier is checked by
+    /// [`crate::condition_acquisition::carrier`].
+    TestedSplit,
 }
 
 impl ResultUse {
@@ -139,6 +147,7 @@ impl ResultUse {
             Self::Tested => "tested",
             Self::Returned => "returned",
             Self::Passed => "passed",
+            Self::TestedSplit => "tested-split",
         }
     }
 }
@@ -236,6 +245,11 @@ pub(crate) fn accept(
                 Err(Decline::PassedReallocation)
             }
         }
+        // Card CG04-CONDITION-ACQUISITION (rule 10x): the tested row widened
+        // by the NULL split. The value is bound to its destination and the
+        // leaf splits on its failure value, exactly the statement pair
+        // `NAME = CALL(…); if (NAME …)`.
+        ResultUse::TestedSplit => Ok(()),
     }
 }
 
@@ -270,6 +284,18 @@ pub(crate) const ACCEPTANCE_VECTORS: &[(&str, &str, bool, &str, &str)] = &[
     ("declared", "none", true, "passed", "accept"),
     ("declared", "none", false, "passed", "accept"),
     ("declared", "derived", true, "passed", "accept"),
+    // CG04-CONDITION-ACQUISITION (rule 10x): the NULL split.
+    ("declared", "owned", false, "tested-split", "accept"),
+    ("validated", "reallocated", false, "tested-split", "accept"),
+    ("declared", "derived", true, "tested-split", "accept"),
+    ("declared", "none", true, "tested-split", "accept"),
+    (
+        "recursive",
+        "owned",
+        false,
+        "tested-split",
+        "recursive-local",
+    ),
     ("validated", "owned", false, "passed", "accept"),
     (
         "declared",

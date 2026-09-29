@@ -235,10 +235,16 @@ fn a_const_pointer_value_from_a_bound_root_is_not_safe() {
         );
     }
     // Since rule 10o the closure reads the assignment in the condition, so `b`
-    // is bound and the return keeps its refusal as well.
+    // is bound and the return keeps its refusal as well. Flipped by
+    // CG04-CONDITION-ACQUISITION (rule 10x): the owned result split on NULL in
+    // the condition is lowered, so the branch refusal is gone; the outcome is
+    // exactly the assignment-statement pair's (`b = c_make(n); if (!b) …`).
     let nested = "struct c_item *w(int n) { const struct c_box *b; if (!(b = c_make(n))) return 0; \
         return b->item; }";
-    assert_eq!(outcome(nested), unknown(&[BRANCH, RETURN]));
+    assert_eq!(outcome(nested), unknown(&[RETURN]));
+    let pair = "struct c_item *w(int n) { const struct c_box *b; b = c_make(n); if (!b) return 0; \
+        return b->item; }";
+    assert_eq!(outcome(nested), outcome(pair));
 }
 
 /// Step 2: `NAME = PATH` where `PATH` is a `void *` member and `NAME` an
