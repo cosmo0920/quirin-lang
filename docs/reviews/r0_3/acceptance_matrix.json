@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "TARGETED CHECK (user policy 2026-09-30: main moved with non-overlapping, already-gated commits) on integrate/w48-cg04 cc8d8530: main 6883623c (W48-QR-SCALAR-TYPES-R4, .qr routes only; shared records resolved by hand) merged with CG04-CONDITION-ACQUISITION's tip 21a5d85b. Logs private/int-cg04/targeted of the quirin-spec-cards-compass worktree: submodule 0; fmt 0; workspace clippy --locked 0; qcore-c-gateway tests 2,003 passed, 0 failed, 7 ignored; qcore-core tests 1,122 passed, 0 failed, 1 ignored; 235 Lean audits; providers cargo check --locked 0; release quirin-audit build 0; corpus arbiter 0, resource-diagnostics.json 24571074..., byte-identical to the card's AFTER (565 / 10 / 4,259). The full run_test_binaries.py was NOT re-run on this merge: CG04's card gate at fa23b3c5 ran it (6,673 passed, 2 failed; both constraint-16 load-sensitive rows under load ~45, checkpoint_cli 7/7 alone, cycle20_verifier_plugins 20/20 once alone), and R4's integration gate ran it on its side.",
-  "workspace_tests": 6675,
+  "note": "R5 integration onto main c0ccc66a (CG04-CONDITION-ACQUISITION, C gateway only; the only shared code file proof/QCore.lean auto-merged) as integrate/w48-r5 4a785289. TARGETED CHECK under the user's landing-race policy (logs private/w48-int-r5/targeted-4a785289): fmt 0; workspace clippy --locked 0; qcore-c-gateway tests 2,003 passed, 0 failed, 7 ignored; the scalar, loop and buffer test binaries 167 passed; 237 Lean audits; provider tests --locked --no-fail-fast 129/0/1, provider clippy, package build and 5 verifies 0. The full run_test_binaries.py was not re-run on the merge. Card gate at base 6883623c: W48-QR-SCALAR-TYPES-R5 card gate at e96cc3de (base 6883623c), script private/w48-r5/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-r5/gate: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 376 units, 389 summaries, 6,681 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260929T190052Z-1819959/summary.json; the two new test files add 16), no load-sensitive rerun needed; clippy 0; both reevaluation probes 0; check_lean_audits.py 236 audits passed (234 + AuditScalarLoopBounds.lean, 17 theorems, and AuditScalarBufferValues.lean, 11); the provider suite, run as the brief asks although providers/ is unchanged: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries), provider fmt 0, provider clippy 0. Matrix, docs index and Python after the ledger (630 -> 631). Commits after e96cc3de and before the records commit change one doc comment in std_buffer_c_emit.rs, the ledger text and records only. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8): resource-diagnostics.json byte-identical to the base's archive 7393fd21 (CG03's AFTER; the brief's ae17152b is superseded on main), sidecars byte-identical. Exits in gate/.",
+  "workspace_tests": 6681,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 235,
+  "lean_audits": 237,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6933,7 +6933,9 @@
    "AuditReturnRefusedCallLowering.lean",
    "AuditReviewHoldStanding.lean",
    "AuditRuntimeImports.lean",
+   "AuditScalarBufferValues.lean",
    "AuditScalarCalls.lean",
+   "AuditScalarLoopBounds.lean",
    "AuditScalarMemberStore.lean",
    "AuditScalarObservationContracts.lean",
    "AuditScalarPositions.lean",
@@ -7001,7 +7003,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg04-condition-acquisition/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r5/integration/gate.json)"
  },
  "named_followups": [
   {
