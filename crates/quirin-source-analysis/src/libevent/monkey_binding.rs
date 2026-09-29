@@ -277,6 +277,11 @@ impl Replay<'_> {
             E::Function { .. } => {
                 return Err("function pointer outside callback replay profile".into());
             }
+            // CG01 literals (rule 10r): the callbacks import through the
+            // legacy admission, so they cannot reach this replay; refused.
+            E::Floating { .. } | E::Character { .. } => {
+                return Err("CG01 floating/character literal outside callback replay profile".into());
+            }
             E::Parameter { index } => Value::Scalar(match index {
                 0 => self.binding.fd.into(),
                 1 => self.binding.flags.into(),

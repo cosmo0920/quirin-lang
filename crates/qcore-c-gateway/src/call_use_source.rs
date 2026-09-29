@@ -148,6 +148,13 @@ fn value(value: &SourceValue) -> Result<CallUseValueRecord, String> {
         SourceExpression::Function { .. } => {
             return Err("call-use projection does not represent callee designators".into());
         }
+        // CG01 literals (rule 10r): this consumer imports through the legacy
+        // admission, so they cannot reach it; were they to, they are refused.
+        SourceExpression::Floating { .. } | SourceExpression::Character { .. } => {
+            return Err(
+                "call-use projection does not classify CG01 floating/character literals".into(),
+            );
+        }
     };
     Ok(CallUseValueRecord {
         c_type: value.c_type.clone(),

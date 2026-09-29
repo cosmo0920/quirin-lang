@@ -14,6 +14,7 @@ use serde_json::Value;
 
 use crate::legacy_c::{C11TranslationUnit, validate_unrestricted_c11};
 use crate::typed_c_ast::{ast_declarations, children, function_ast, kind};
+use crate::typed_source_nodes::{self, NodeAdmission};
 
 /// Default declarative acceptance rules used by the legacy typed-path importer.
 /// This is shared policy data, not source evidence or a safety certificate.
@@ -57,6 +58,15 @@ pub enum SourceExpression {
         value: String,
     },
     String {
+        value: String,
+    },
+    /// A floating literal: Clang's spelling with its Clang type. No floating
+    /// arithmetic is interpreted (CG01-T-OPERATOR-CLOSURE; IEEE is N09).
+    Floating {
+        value: String,
+    },
+    /// A character literal: Clang's integer code with its Clang type.
+    Character {
         value: String,
     },
     SizeOf {
@@ -239,6 +249,27 @@ pub fn import_source_functions_from_profile(
     library: &str,
     role: qcore_schemas::profile::ImportRole,
 ) -> Result<Vec<SourceResult>, String> {
+    import_source_functions_from_profile_admitting(
+        unit,
+        source_revision,
+        profile,
+        library,
+        role,
+        &NodeAdmission::LEGACY,
+    )
+}
+
+/// As [`import_source_functions_from_profile`], admitting exactly the CG01
+/// nodes the calling consumer classifies (rule 10r); every other CG01 node
+/// is refused by name.
+pub fn import_source_functions_from_profile_admitting(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    profile: &qcore_contract::profile_loader::LoadedProfile,
+    library: &str,
+    role: qcore_schemas::profile::ImportRole,
+    admission: &NodeAdmission,
+) -> Result<Vec<SourceResult>, String> {
     let selected = profile
         .library(library)
         .ok_or_else(|| format!("no library `{library}` in source profile"))?;
@@ -283,7 +314,7 @@ pub fn import_source_functions_from_profile(
         .zip(&parameters)
         .map(|((name, s), p)| (name.as_str(), s.result.as_str(), p.as_slice()))
         .collect::<Vec<_>>();
-    let mut results = import_source_functions(
+    let mut results = import_source_functions_admitting(
         unit,
         source_revision,
         &functions,
@@ -293,6 +324,7 @@ pub fn import_source_functions_from_profile(
             signature_constraints: &signatures,
             restricted_calls: &restricted_calls,
         },
+        admission,
     )?;
     let mut assumptions = profile.assumptions();
     assumptions.insert("library".into(), library.into());
@@ -305,12 +337,33 @@ pub fn import_source_functions_from_profile(
     Ok(results)
 }
 
+/// Import with the pre-CG01 grammar: every CG01 node is refused by name
+/// ([`NodeAdmission::LEGACY`]).
 pub fn import_source_functions(
     unit: &C11TranslationUnit<'_>,
     source_revision: &str,
     functions: &[&str],
     profile: &SourceImportProfile<'_>,
 ) -> Result<Vec<SourceResult>, String> {
+    import_source_functions_admitting(
+        unit,
+        source_revision,
+        functions,
+        profile,
+        &NodeAdmission::LEGACY,
+    )
+}
+
+/// Import admitting exactly the CG01 nodes `admission` classifies (rule 10r).
+/// Reading a node is not admission: an unlisted node is refused by name.
+pub fn import_source_functions_admitting(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    functions: &[&str],
+    profile: &SourceImportProfile<'_>,
+    admission: &NodeAdmission,
+) -> Result<Vec<SourceResult>, String> {
+    admission.validate()?;
     let source = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
     // Field IDs from independent Clang invocations are not stable. Validate the
     // selected complete records by name/type, then bind each MemberExpr to its
@@ -356,6 +409,7 @@ pub fn import_source_functions(
                     &constants,
                     &arrays,
                     profile,
+                    admission,
                 )
             });
             match result {
@@ -516,9 +570,13 @@ fn enum_constants(
 }
 
 fn c_type(node: &Value) -> Result<String, String> {
-    let ty = node["type"]["desugaredQualType"]
+    qual_type(&node["type"])
+}
+
+fn qual_type(ty: &Value) -> Result<String, String> {
+    let ty = ty["desugaredQualType"]
         .as_str()
-        .or_else(|| node["type"]["qualType"].as_str())
+        .or_else(|| ty["qualType"].as_str())
         .ok_or("missing C type")?;
     if ty.contains("volatile") || ty.contains("_Atomic") || ty.contains("restrict") {
         return Err("qualified access requires additional synchronization/alias evidence".into());
@@ -553,6 +611,9 @@ enum Stmt {
     Declare(String, String, Option<Expr>),
     Assign(Expr, Expr),
     OrAssign(Expr, Expr),
+    /// CG01 compound assignment: place, operator (without `=`), place type,
+    /// Clang's computation LHS and result types, right operand.
+    Compound(Expr, String, String, String, String, Expr),
     Increment(Expr, String, String),
     Call(Expr),
     NoReturnCall(Expr),
@@ -563,6 +624,7 @@ enum Stmt {
 }
 
 struct Importer<'a> {
+    admission: &'a NodeAdmission,
     fields: &'a BTreeMap<(String, String), String>,
     constants: &'a BTreeMap<String, SourceValue>,
     allowed_calls: Option<&'a [&'a str]>,
@@ -783,8 +845,116 @@ impl Importer<'_> {
                         .collect::<Result<_, _>>()?,
                 ))
             }
+            _ => self.extended_expression(node, ty, depth),
+        }
+    }
+
+    // CG01: a node outside the pre-CG01 grammar is read only if it is a CG01
+    // node the consumer admits (rule 10r), with promoted integer operands.
+    fn extended_expression(
+        &mut self,
+        node: &Value,
+        ty: String,
+        depth: usize,
+    ) -> Result<Expr, String> {
+        let Some(spelling) = typed_source_nodes::expression_spelling(node) else {
+            return Err(format!("unmodeled callback expression {}", kind(node)));
+        };
+        self.admission.admit(&spelling)?;
+        let operands = children(node)
+            .iter()
+            .map(c_type)
+            .collect::<Result<Vec<_>, _>>()?;
+        typed_source_nodes::check_integer_types(&spelling, &ty, &operands)?;
+        let opcode = || node["opcode"].as_str().unwrap_or_default().to_owned();
+        match (kind(node), children(node)) {
+            ("BinaryOperator", [left, right]) => Ok(Expr::Binary(
+                ty,
+                opcode(),
+                Box::new(self.expression(left, depth + 1)?),
+                Box::new(self.expression(right, depth + 1)?),
+            )),
+            ("UnaryOperator", [child]) => Ok(Expr::Unary(
+                ty,
+                opcode(),
+                Box::new(self.expression(child, depth + 1)?),
+            )),
+            ("FloatingLiteral", []) => {
+                let literal = node["value"]
+                    .as_str()
+                    .ok_or("missing floating literal")?;
+                Ok(Expr::Literal(value(
+                    ty,
+                    SourceExpression::Floating {
+                        value: literal.into(),
+                    },
+                )))
+            }
+            ("CharacterLiteral", []) => {
+                let code = node["value"]
+                    .as_i64()
+                    .ok_or("missing character literal code")?;
+                Ok(Expr::Literal(value(
+                    ty,
+                    SourceExpression::Character {
+                        value: code.to_string(),
+                    },
+                )))
+            }
             _ => Err(format!("unmodeled callback expression {}", kind(node))),
         }
+    }
+
+    // CG01: a compound assignment statement the consumer admits. The left
+    // operand is read once; the computation types are Clang's.
+    fn compound(
+        &mut self,
+        node: &Value,
+        left: &Value,
+        right: &Value,
+        depth: usize,
+    ) -> Result<Stmt, String> {
+        let spelling = typed_source_nodes::compound_spelling(node)
+            .ok_or("unmodeled compound assignment")?;
+        self.admission.admit(&spelling)?;
+        let place = c_type(left)?;
+        let compute_lhs = qual_type(&node["computeLHSType"])?;
+        let compute_result = qual_type(&node["computeResultType"])?;
+        typed_source_nodes::check_compound_types(
+            &spelling,
+            &place,
+            &c_type(right)?,
+            &compute_lhs,
+            &compute_result,
+        )?;
+        if c_type(node)? != place {
+            return Err("compound assignment type differs from its place".into());
+        }
+        let operator = node["opcode"]
+            .as_str()
+            .and_then(|op| op.strip_suffix('='))
+            .ok_or("unmodeled compound assignment")?;
+        Ok(Stmt::Compound(
+            self.expression(left, depth + 1)?,
+            operator.into(),
+            place,
+            compute_lhs,
+            compute_result,
+            self.expression(right, depth + 1)?,
+        ))
+    }
+
+    fn admits_compound(&self, node: &Value) -> bool {
+        typed_source_nodes::compound_spelling(node)
+            .is_some_and(|spelling| self.admission.admit(&spelling).is_ok())
+    }
+
+    // A compound assignment this consumer does not admit: named when it is a
+    // CG01 node, the generic statement refusal otherwise.
+    fn compound_refusal(&self, node: &Value) -> String {
+        typed_source_nodes::compound_spelling(node)
+            .and_then(|spelling| self.admission.admit(&spelling).err())
+            .unwrap_or_else(|| format!("unmodeled callback statement {}", kind(node)))
     }
 
     fn statement(&mut self, node: &Value, depth: usize) -> Result<Stmt, String> {
@@ -907,6 +1077,9 @@ impl Importer<'_> {
                 self.expression(left, depth + 1)?,
                 self.expression(right, depth + 1)?,
             )),
+            ("CompoundAssignOperator", [left, right]) if self.admits_compound(node) => {
+                self.compound(node, left, right, depth)
+            }
             ("CompoundAssignOperator", [left, right]) if node["opcode"] == "|=" => {
                 if c_type(left)? != "int" || c_type(right)? != "int" {
                     return Err("compound assignment requires int operands".into());
@@ -951,6 +1124,7 @@ impl Importer<'_> {
             }
             ("ReturnStmt", []) => Ok(Stmt::Return(None)),
             ("ReturnStmt", [result]) => Ok(Stmt::Return(Some(self.expression(result, depth + 1)?))),
+            ("CompoundAssignOperator", _) => Err(self.compound_refusal(node)),
             _ => Err(format!("unmodeled callback statement {}", kind(node))),
         }
     }
@@ -1101,6 +1275,65 @@ impl Path {
 
     fn update(&mut self, place: &Expr, operator: &str, right: SourceValue) -> Result<(), String> {
         let ty = right.c_type.clone();
+        self.update_with(place, &ty, |left| {
+            Ok(value(
+                ty.clone(),
+                SourceExpression::Binary {
+                    operator: operator.into(),
+                    left: Box::new(left),
+                    right: Box::new(right),
+                },
+            ))
+        })
+    }
+
+    // CG01 compound assignment: one place evaluation, the old value read at
+    // the place type, converted to Clang's computation LHS type, the operation
+    // at the computation result type, the conversion back, and the writeback.
+    // Each conversion is an explicit IntegralCast, never host-evaluated.
+    fn compound(
+        &mut self,
+        place: &Expr,
+        operator: &str,
+        types: [&str; 3],
+        right: SourceValue,
+    ) -> Result<(), String> {
+        let [place_type, compute_lhs, compute_result] = types;
+        let convert = |converted: SourceValue, ty: &str| {
+            if converted.c_type == ty {
+                converted
+            } else {
+                value(
+                    ty.into(),
+                    SourceExpression::Cast {
+                        cast: "IntegralCast".into(),
+                        value: Box::new(converted),
+                    },
+                )
+            }
+        };
+        self.update_with(place, place_type, |left| {
+            if left.c_type != place_type {
+                return Err("compound assignment old value differs from its place type".into());
+            }
+            let result = value(
+                compute_result.into(),
+                SourceExpression::Binary {
+                    operator: operator.into(),
+                    left: Box::new(convert(left, compute_lhs)),
+                    right: Box::new(right),
+                },
+            );
+            Ok(convert(result, place_type))
+        })
+    }
+
+    fn update_with(
+        &mut self,
+        place: &Expr,
+        ty: &str,
+        operation: impl FnOnce(SourceValue) -> Result<SourceValue, String>,
+    ) -> Result<(), String> {
         // C evaluates a compound-assignment lvalue only once. Preserve the
         // resolved address rather than introducing a second nested field read.
         let resolved = if matches!(place, Expr::Local(..)) {
@@ -1112,18 +1345,11 @@ impl Path {
             let operation = self.push(SourceOperation::Read {
                 place: place.clone(),
             })?;
-            value(ty.clone(), SourceExpression::Symbol { operation })
+            value(ty.into(), SourceExpression::Symbol { operation })
         } else {
-            self.read(place, &ty)?
+            self.read(place, ty)?
         };
-        let result = value(
-            ty,
-            SourceExpression::Binary {
-                operator: operator.into(),
-                left: Box::new(left),
-                right: Box::new(right),
-            },
-        );
+        let result = operation(left)?;
         check_value_size(&result)?;
         if let Some(place) = resolved {
             self.push(SourceOperation::Write {
@@ -1526,6 +1752,24 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
                 let right = path.evaluate(expr)?;
                 path.update(place, "|", right)?;
             }
+            Stmt::Compound(place, operator, place_type, compute_lhs, compute_result, expr) => {
+                // As `|=`: the left operand is read and written, so an RHS
+                // call or an effectful address has no invented order.
+                reject_unsequenced(&[place, expr])?;
+                if effects(expr).1 {
+                    return Err("compound assignment with an opaque call".into());
+                }
+                if effects(place).1 {
+                    return Err("compound assignment with an effectful address".into());
+                }
+                let right = path.evaluate(expr)?;
+                path.compound(
+                    place,
+                    operator,
+                    [place_type, compute_lhs, compute_result],
+                    right,
+                )?;
+            }
             Stmt::Increment(place, operator, ty) => {
                 if effects(place).1 {
                     return Err("increment with an effectful address".into());
@@ -1600,6 +1844,7 @@ fn derive(
     constants: &BTreeMap<String, SourceValue>,
     arrays: &BTreeSet<String>,
     profile: &SourceImportProfile<'_>,
+    admission: &NodeAdmission,
 ) -> Result<SourceSummary, String> {
     let expected_signature = profile
         .signature_constraints
@@ -1637,6 +1882,7 @@ fn derive(
         return Err("unmodeled function parameters/attributes".into());
     }
     let mut importer = Importer {
+        admission,
         fields,
         constants,
         allowed_calls: expected_signature.map(|_| profile.restricted_calls),
@@ -1723,5 +1969,5 @@ mod short_circuit_tests;
 mod symbol_tests;
 
 #[cfg(test)]
-#[path = "../tests/unit/source_operators_before.rs"]
-mod operators_before_tests;
+#[path = "../tests/unit/source_operators.rs"]
+mod operators_tests;

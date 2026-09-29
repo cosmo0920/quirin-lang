@@ -1,7 +1,10 @@
 //! Declared Monkey syntax bounds for the shared typed C path importer.
 //! Calls remain opaque; source projection does not establish custody or safety.
 use crate::legacy_c::C11TranslationUnit;
-use crate::typed_source::import_source_functions_from_profile;
+use crate::typed_source::{
+    import_source_functions_from_profile, import_source_functions_from_profile_admitting,
+};
+use qcore_c_gateway::typed_source_nodes::{Classification, NodeAdmission};
 pub use crate::typed_source::{SourceExpression, SourceOperation, SourceRegion, SourceValue};
 pub use crate::typed_source::{
     SourcePath as MonkeySourcePath, SourceResult as MonkeySourceResult,
@@ -33,6 +36,41 @@ pub fn import_monkey_callbacks(
     )
 }
 
+/// The Monkey wrapper projection's classification of route T's CG01 nodes
+/// (card CG01-T-OPERATOR-CLOSURE, rule 10r). This projection certifies
+/// nothing: `pinned_route` reports every wrapper as opaque calls and custody
+/// Unknown (and, with a scan loop, bounds, arithmetic and termination
+/// Unknown), and `monkey-source.json` marks it `source_projection_only`. So a
+/// node with no fault case and no store is custody-neutral, and every other
+/// node is an obligation the projection records and never discharges. The
+/// wrapper summaries have no other reader; the Monkey callbacks and the
+/// observed-wait wrapper import keep the legacy admission.
+pub const MONKEY_WRAPPER_ADMISSION: NodeAdmission = NodeAdmission::new(
+    "Monkey wrapper projection",
+    &[
+        ("binary -", Classification::ObligationBearing),
+        ("binary <=", Classification::CustodyNeutral),
+        ("binary >=", Classification::CustodyNeutral),
+        ("binary ^", Classification::CustodyNeutral),
+        ("binary <<", Classification::ObligationBearing),
+        ("binary >>", Classification::ObligationBearing),
+        ("unary +", Classification::CustodyNeutral),
+        ("unary ~", Classification::CustodyNeutral),
+        ("compound +=", Classification::ObligationBearing),
+        ("compound -=", Classification::ObligationBearing),
+        ("compound *=", Classification::ObligationBearing),
+        ("compound /=", Classification::ObligationBearing),
+        ("compound %=", Classification::ObligationBearing),
+        ("compound <<=", Classification::ObligationBearing),
+        ("compound >>=", Classification::ObligationBearing),
+        ("compound &=", Classification::ObligationBearing),
+        ("compound ^=", Classification::ObligationBearing),
+        ("compound |=", Classification::ObligationBearing),
+        ("literal floating", Classification::CustodyNeutral),
+        ("literal character", Classification::CustodyNeutral),
+    ],
+);
+
 /// Preserve the bounded wrapper grammar and opaque-call behavior. No missing
 /// profile or malformed selection can fall back to a Rust table.
 pub fn import_monkey_wrappers(
@@ -42,12 +80,13 @@ pub fn import_monkey_wrappers(
     let profile =
         crate::source_profiles::load_profile(crate::source_profiles::FLUENT_BIT_SOURCE_SET)
             .map_err(|error| error.to_string())?;
-    let mut results = import_source_functions_from_profile(
+    let mut results = import_source_functions_from_profile_admitting(
         unit,
         source_revision,
         &profile,
         "monkey",
         ImportRole::Wrapper,
+        &MONKEY_WRAPPER_ADMISSION,
     )?;
     let names = wrapper_source_order()?;
     let result_name = |result: &MonkeySourceResult| match result {
