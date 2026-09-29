@@ -1,0 +1,13 @@
+{
+  "note": "CG06-VALUE-CONNECTIVES-AND-CONDITIONAL card gate at tip code 7693c599 (records cce44881; base 27dc7c9a), script docs/reports/cg06-value-connectives-and-conditional/scripts/gate.sh, logs private/cg06/gate of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 374 units, 387 summaries, 6,663 passed, 1 failed, 11 ignored (private/test-binaries/20260929T183702Z-1424317/summary.json): the one failure is the known wall-clock assertion qcore-audit checkpoint_cli::interrupted_run_preserves_completed_units_for_resume ('no unit checkpoint before timeout', recorded as such by W47-PREMISES-INSTANCE), which passes rerun alone (7 passed, 03b-checkpoint-rerun.exit 0); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 234 audits passed (233 + AuditValueConnectives.lean); python tests 365 OK; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE on base 27dc7c9a (binary fb62d605) resource-diagnostics.json 7393fd21 byte-identical to CG03's AFTER; AFTER (binary 34949f1b at 7693c599) 16b723de, 564/10/4,260 -> 582/10/4,242; system 33/2/199 -> 34/2/198; tail-pause slice 26/1/242/1 Pending unmoved. Exits in gate/.",
+  "workspace_tests": 6664,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 234,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
