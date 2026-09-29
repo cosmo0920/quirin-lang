@@ -179,7 +179,8 @@ High for anything that could publish a wrong Safe, Medium for measurement.
   - *Status (wave 48, round 4).* Landed on route G (gateway rule 10z): branch
     regions in the elaborator, and a refused statement, declaration or
     `return` lowered by branching on each region's deciding operand, only
-    the evaluated arm on each edge; **+18** corpus Safe, no correction.
+    the evaluated arm on each edge; **+18** corpus Safe at its base, **+19**
+    on main `41719835` (with CG05), no correction.
     Route T unchanged. Residuals by owner in
     `CG06-VALUE-CONNECTIVE-RESIDUALS`.
     [Report](../../reports/cg06-value-connectives-and-conditional/README.md).

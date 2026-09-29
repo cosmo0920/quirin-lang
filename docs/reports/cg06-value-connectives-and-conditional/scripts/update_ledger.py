@@ -13,7 +13,7 @@ CG06-VALUE-CONNECTIVE-RESIDUALS with its sizes; keeps
 in its own form (indent=1, ensure_ascii=False, trailing newline).
 
 Sizes are the AFTER corpus arbiter's parity rows on the merge of main
-c0ccc66a (private/cg06/after2, tip 789b262a), de-duplicated by scripts/parity_census.py and
+41719835 (private/cg06/after3, tip 6be67b0f), de-duplicated by scripts/parity_census.py and
 scripts/absorbed.py (artifacts/parity-census.json, artifacts/absorbed.json).
 """
 
@@ -36,11 +36,13 @@ REGISTER = [
         "why": (
             "Found by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (gateway rule 10z): a statement, declaration or return "
             "every older route refused is lowered by branching on each value region's deciding operand. On the corpus "
-            "arbiter at its merge of main c0ccc66a (CG04 landed; tip 789b262a) it is consulted 2,452 times "
+            "arbiter at its merge of main 41719835 (CG04 and CG05 landed; tip 6be67b0f; the same figures at "
+            "main c0ccc66a) it is consulted 2,452 times "
             "(de-duplicated parity rows `position: value-connective-statement`/`-return`), admits 233 in 164 functions "
             "and refuses 2,219 in 528 (at its base 27dc7c9a: 232 / 2,220): "
             "1,133 a sibling of the region with an effect (mostly `rd_kafka_log0(..., f(x), ...)` logging macros: "
-            "nested calls, CG05); 420 an edge's expression an older route refuses (CG11 owned `?:` stores "
+            "nested calls: to be decided by composing with CG05's contract footprints, "
+            "`EvalGraph::check_footprints`, never by a parallel check); 420 an edge's expression an older route refuses (CG11 owned `?:` stores "
             "`p->f = s ? strdup(s) : NULL`, CG16 pointer arithmetic, uncontracted calls, `sizeof` of an array); 291 a "
             "deciding operand no `if` route decides (CG04 / the condition routes); 284 no unique Clang node (two "
             "identical runs on one line, I04: CG10's occurrence identity serves statement runs only); 67 a region "

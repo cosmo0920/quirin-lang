@@ -2,8 +2,9 @@
 
 Card CG06 of the [Clang gap card queue](../../plans/clang-gap-cards/README.md)
 (wave 48, round 4; base `27dc7c9a` = local `main` at dispatch, CG03's final
-records commit; main `6883623c` merged at `dd5664b8` and main `c0ccc66a`,
-with CG04, at `789b262a`, re-measured in §3.2a).
+records commit; main `6883623c` merged at `dd5664b8`, main `c0ccc66a`
+(CG04) at `789b262a` and main `41719835` (CG05) at `6be67b0f`, each
+re-measured in §3.2a–b; the final figures are §3.2b's).
 
 - **Gap entries:** E06 and E07, on route **G** (the custody gateway). Route T
   is unchanged: no typed-source consumer decides a value connective (CG01's
@@ -191,6 +192,34 @@ composition (`access_path_position_residuals`:
 leaf decided by the condition desugaring on the edge C evaluates it). The
 census on this main: 2,452 consultations, **233 admitted** (164 functions),
 2,219 refused (291 undecided deciding operands; every other row as §3.5).
+
+### 3.2b Re-measured on main `41719835` (CG05 landed): the final figures
+
+Main then fast-forwarded to `41719835` (CG05-NESTED-CALL-EFFECTS, rule
+10y), merged at `6be67b0f`. Rule 10z's two hooks are asked **after** CG05's
+(its hooks are the older route now), and an edge's `return` takes the
+`return`'s whole chain, CG05's `nested_call_return` included.
+
+| Route | BEFORE (main `41719835`, binary `901c264f…`) | AFTER (tip `6be67b0f`, binary `669201fb…`) | Moves |
+|---|---|---|---|
+| corpus | 567 / 10 / 4,257 (`8642ec02…`, **byte-identical** to CG05's AFTER) | **586 / 10 / 4,238** (`c012e785…`) | **+19 Unknown → Safe**; 160 more Unknown functions change diagnostics |
+| system | 33 / 2 / 199 | **34 / 2 / 198** | +1, the same |
+| tail-pause slice | 26 / 1 / 242 / 1 Pending | unmoved | none |
+
+[main-41719835/](artifacts/main-41719835/). The eighteen moves of §3.3 plus
+**`compare_double`** (cJSON): `double maxVal = fabs(a) > fabs(b) ? fabs(a) :
+fabs(b);` is branched (the deciding comparison's two identity `fabs` calls
+are the condition CFG's leaf; each edge's `double maxVal = fabs(…)` is the
+classifier's), and its remaining refusal, the return's `fabs(a - b)` nested
+in a comparison, is CG05's, admitted on that main. Leaf deltas as §3.3 plus
+−2 more branch-condition leaves and +2 `unknown_alias`; still no leak or
+violation added, no Safe → non-Safe. The consultation census is unchanged
+from §3.2a (2,452; 233 admitted): CG05 does not change rule 10z's sibling
+premise. Composing that premise with CG05's contract footprints
+(`EvalGraph::check_footprints`) rather than refusing every sibling with a
+call is recorded in `CG06-VALUE-CONNECTIVE-RESIDUALS`; the one control CG05
+reserved for this card (`cg05_nested_call_effects`: `cg_sink(c ?
+r_borrow_code(p) : 0)`) is flipped to Safe by name.
 
 ### 3.3 The eighteen moves, each attributed by reading
 
@@ -396,7 +425,16 @@ does to any acquisition, and is not widened.
 
 ## 7. Gate
 
-At tip code `7693c599` (script [gate.sh](scripts/gate.sh), logs
+**Final gate at `6be67b0f`** (main `41719835` merged; logs
+`private/cg06/gate-6be67b0f`, exits in [gate/final-6be67b0f/](gate/final-6be67b0f/),
+[gate.json](gate.json)): submodule 0; `run_test_binaries.py` 0 (377 units,
+6,714 passed, 0 failed, 11 ignored); fmt 0; clippy 0; both reevaluation
+probes 0; 237 Lean audits 0; python 365 OK; docs index 0. A gate at
+`ff00ab6b` (main `c0ccc66a` merged) failed fmt and clippy on a one-element
+loop in a re-pinned control, fixed in the next commit; its tests passed
+(6,699, 0 failed).
+
+The card's first gate, at tip code `7693c599` (script [gate.sh](scripts/gate.sh), logs
 `private/cg06/gate`; exits in [gate/](gate/), [gate.json](gate.json)):
 
 | Step | Exit | Counts |
