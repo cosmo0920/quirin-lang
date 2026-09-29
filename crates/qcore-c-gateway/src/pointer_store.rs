@@ -177,7 +177,7 @@ impl Decision {
 }
 
 /// The decision: a pure function of the value's class, whether the flow
-/// found an identity in a named value, and the owner. `QCore.PointerStore.decide`
+/// found an identity in a named value, and the owner. `QCore.PointerStore.decideStore`
 /// is the same function.
 pub(crate) fn decide(value: ValueClass, carries: bool, owner: OwnerClass) -> Decision {
     match value {
@@ -334,7 +334,8 @@ fn peel<'a>(mut node: &'a Value, casts: &[&str]) -> Option<(&'a Value, Vec<&'a s
 /// taken, or for a named value its name.
 pub(crate) struct ValueReading<'a> {
     pub(crate) class: ValueClass,
-    pub(crate) name: Option<String>,
+    /// A named value's spelling and declaration id.
+    pub(crate) name: Option<(String, String)>,
     pub(crate) address: Option<&'a Value>,
 }
 
@@ -385,7 +386,10 @@ pub(crate) fn classify_value<'a>(
                     let Some(ty) = qual(bare) else {
                         return ValueReading::of(ValueClass::Other);
                     };
-                    let name = decl["name"].as_str().map(str::to_owned);
+                    let name = decl["name"]
+                        .as_str()
+                        .zip(decl["id"].as_str())
+                        .map(|(name, id)| (name.to_owned(), id.to_owned()));
                     if function_pointer_type(ty) {
                         ValueReading {
                             class: ValueClass::FunctionPointerName,
@@ -469,26 +473,21 @@ fn same_object(destination: &TypedPlace, value: &TypedPlace) -> bool {
         && root_only(value)
 }
 
-/// Every declaration of `name` in `function` is the one with `id`, and no
-/// reference names another object of that spelling.
-fn unique_name(function: &Value, name: &str) -> bool {
-    let mut ids = Vec::new();
-    let mut foreign = false;
+/// The name the flow keys a value by denotes one object in `function`: every
+/// declaration of `name` there is the one with `id`, and every reference to
+/// the spelling refers to it.
+fn unique_name(function: &Value, name: &str, id: &str) -> bool {
+    let mut unique = true;
     visit(function, &mut |node| match kind(node) {
         "ParmVarDecl" | "VarDecl" if node["name"].as_str() == Some(name) => {
-            ids.push(node["id"].as_str().map(str::to_owned));
+            unique &= node["id"].as_str() == Some(id);
         }
         "DeclRefExpr" if node["referencedDecl"]["name"].as_str() == Some(name) => {
-            if !matches!(
-                node["referencedDecl"]["kind"].as_str(),
-                Some("ParmVarDecl" | "VarDecl")
-            ) {
-                foreign = true;
-            }
+            unique &= node["referencedDecl"]["id"].as_str() == Some(id);
         }
         _ => {}
     });
-    !foreign && ids.len() <= 1
+    unique
 }
 
 fn visit(node: &Value, f: &mut impl FnMut(&Value)) {
@@ -534,8 +533,8 @@ pub(crate) fn read_store(reader: &mut Reader<'_>, place: &Value, value: &Value) 
     let admitted = reading.class.neutral()
         && reading
             .name
-            .as_deref()
-            .is_none_or(|name| reader.function().is_some_and(|f| unique_name(f, name)));
+            .as_ref()
+            .is_none_or(|(name, id)| reader.function().is_some_and(|f| unique_name(f, name, id)));
     record(Some(&destination), Some(reading.class), admitted);
     if !admitted {
         return None;
@@ -562,7 +561,7 @@ pub(crate) fn read_store(reader: &mut Reader<'_>, place: &Value, value: &Value) 
         place: spell(&destination),
         owner,
         value: reading.class.code(),
-        name: reading.name,
+        name: reading.name.map(|(name, _)| name),
     });
     Some(())
 }

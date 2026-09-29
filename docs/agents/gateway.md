@@ -380,6 +380,12 @@ which is not a second authority.
     summary would call it borrowed while the callee linked it into a record:
     `cfl_list_add`, `mk_list_init`); a statement reading a tracked descriptor
     never reaches the rule. [Report](../reports/w45-sub-object-stores/README.md).
+    Rule 10v (CG11) later reads two stores this rule refuses, on the typed
+    statement route and under its own premises: a store of the destination's
+    own object (`r->next = r`), whose body then publishes no summary, so the
+    `mk_list_init` hazard above cannot recur; and a null or other
+    identity-free store into a chain or a record this reader does not resolve.
+    Every premise above still holds for this rule.
 
 <a id="constraint-5j"></a>
 
@@ -1989,3 +1995,50 @@ which is not a second authority.
     line are the analysed source's (trust boundary 28).
     `QCore.TypedPlace`, bound to the Rust decision table by a shared-vector
     test; [report](../reports/cg10-common-typed-place/README.md).
+
+<a id="constraint-10v"></a>
+
+10v. **A pointer-valued store is read only where no custody moves: a value
+    with no identity into an untracked owner, and a body with one publishes no
+    summary.** Card CG11-POINTER-VALUED-STORES (`pointer_store.rs`, the flow
+    in `legacy_pointer_store.rs`, thin hooks in `typed_access_path.rs`,
+    `legacy_c.rs`, `legacy_summary.rs`, `indirect_chain_access.rs`
+    (`chain_owner`), `legacy_joined_provenance.rs` and
+    `legacy_descriptor_custody.rs`). On the typed statement route only, after
+    every older route declined, a refused `P = V` whose place has pointer
+    type is read from the Clang AST, with four events kept apart:
+    (1) **the value store** writes `P` with the place's own per-hop
+    obligations, read exactly as W46/CG10 read a scalar store's; (2) **alias
+    and overwrite**: every binding of a place rooted at `P`'s root is
+    forgotten, and the value adds none; (3) **the old value's obligation**:
+    the store is admitted only when the root *and* the object the member lives
+    in are untracked at the node (`chain_owner`; a never-bound record object
+    of this frame selected with `.` only), and no binding of a place rooted
+    at `P`'s root carries a target or is unknown; a tracked owner may own
+    its member, and only O04-B08's field-link store rewrites one;
+    (4) **escape**: `V` carries no identity, being the null constant, a string
+    literal, a function designator (or its address), a name of
+    function-pointer type bound to no identity on any reaching path, or the
+    address of the destination's own object (the root itself, or `&` of a
+    place read through no pointer but the root's). Every other value refuses
+    by name: a formal's object pointer (Q36's example C; its missing premise
+    is an owner identity for `*s` that bounds `*q`'s lifetime, or a derived
+    Stored summary mode), a local's pointer, a pointer read, a call,
+    arithmetic, another object's address, and a cast other than a
+    qualification conversion. Every failing premise makes the node exactly
+    the gate's refusal, byte for byte. A body with such a store publishes no
+    derived summary and establishes no specification (`has_pointer_store` in
+    the W4 gate): a caller would read `Borrowed` for the formal whose object
+    the body overwrote, the `cfl_list_add`/`mk_list_init` hazard of rule 5i.
+    **Do not** admit a value that carries or may carry an identity (the
+    STABILITY-REEVAL-5 `MEMBER-RELEASE-BEFORE-SUMMARY-RELEASE` shape needs
+    one in a member), a store into a tracked owner or through a tracked
+    root's untracked child, a store the elaborator reads as a piece, an
+    `*slot` store (the out-slot refusal is not consulted) or an element store
+    an older route decides; **do not** drop the summary gate without a
+    summary mode that states the overwrite. Premise P-CG11-CALLER-SLOT,
+    stated, not proved: the old value of a slot in an untracked object is not
+    this body's obligation. Premises stated, not proved: faithful Clang
+    extraction of types, cast kinds and declaration ids (trust boundary 28).
+    `QCore.PointerStore`, bound to the Rust decision table by shared-vector
+    tests; [report](../reports/cg11-pointer-valued-stores/README.md).
