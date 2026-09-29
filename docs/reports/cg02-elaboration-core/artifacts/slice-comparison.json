@@ -1,0 +1,37 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 244,
+   "Safe": 24,
+   "Pending": 1,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 243,
+   "Safe": 25,
+   "Pending": 1,
+   "Unsafe": 1
+  }
+ },
+ "moves": [
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_rate_gate_collect_backpressure",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -3
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 1
+ },
+ "same_status_functions_with_changed_diagnostics": 5,
+ "leaf_delta": {
+  "unsupported: unmodeled expression may mutate a formal resource identity": -2,
+  "unsupported: call to uncontracted function `flb_input_rate_gate_collect_backpressure`": -2,
+  "unsupported: unrecognized assignment destination": -1,
+  "unknown_alias: unresolved resource identity": 1
+ }
+}

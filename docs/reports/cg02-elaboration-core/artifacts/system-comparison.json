@@ -1,0 +1,37 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 201,
+   "Safe": 31,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 200,
+   "Safe": 32,
+   "Unsafe": 2
+  }
+ },
+ "moves": [
+  {
+   "unit": "src/flb_scheduler.c",
+   "function": "ipow",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unrecognized assignment destination": -1,
+    "unsupported: local declaration may shadow a formal resource identity": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 1
+ },
+ "same_status_functions_with_changed_diagnostics": 4,
+ "leaf_delta": {
+  "unsupported: C operator `sizeof` requires type/operand analysis": -6,
+  "unsupported: unrecognized assignment destination": -5,
+  "unsupported: unmodeled expression may mutate a formal resource identity": -2,
+  "unsupported: local declaration may shadow a formal resource identity": -1,
+  "unknown_alias: unresolved resource identity": 1
+ }
+}
