@@ -138,7 +138,9 @@ fn an_undecided_start_establishes_neither_a_stop_nor_a_destroy() {
         .unwrap_err();
         assert!(!refusal.is_violation(), "{refusal}");
         assert!(
-            refusal.to_string().starts_with("precondition not established"),
+            refusal
+                .to_string()
+                .starts_with("precondition not established"),
             "{refusal}"
         );
     }

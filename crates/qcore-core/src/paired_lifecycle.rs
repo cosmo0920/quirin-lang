@@ -249,10 +249,9 @@ pub fn step(
             clause: None,
             reason: format!("{} of a destroyed context", operation.spelling()),
         }),
-        (Operation::Start, State::Created) => pass(
-            State::Started(outcome),
-            vec![Clause::StartRequiresCreated],
-        ),
+        (Operation::Start, State::Created) => {
+            pass(State::Started(outcome), vec![Clause::StartRequiresCreated])
+        }
         (Operation::Start, State::Stopped) => violation(
             Clause::StartRequiresCreated,
             "start of a stopped context: a restart is not derived from the bodies, \
@@ -453,7 +452,10 @@ pub fn failed_start_status(paths: &[StartPath]) -> ClauseStatus {
     let unjoined = |path: &StartPath| path.left_unjoined.iter().cloned().collect::<Vec<_>>();
     if paths.iter().all(|path| !path.left_unjoined.is_empty()) {
         return ClauseStatus::Refuted {
-            witness: format!("returns nonzero with {} unjoined", unjoined(&paths[0]).join(", ")),
+            witness: format!(
+                "returns nonzero with {} unjoined",
+                unjoined(&paths[0]).join(", ")
+            ),
         };
     }
     if let Some(path) = paths.iter().find(|path| !path.left_unjoined.is_empty()) {

@@ -305,7 +305,10 @@ fn evidence_label(evidence: &JoinEvidence) -> String {
             } else {
                 format!(
                     "not counted: joinable {:?}, not busy {:?}, not self {:?}, no cycle {:?}",
-                    exclusions.joinable, exclusions.not_busy, exclusions.not_self, exclusions.no_cycle
+                    exclusions.joinable,
+                    exclusions.not_busy,
+                    exclusions.not_self,
+                    exclusions.no_cycle
                 )
             }
         ),
@@ -398,26 +401,28 @@ fn lifecycle_json(module: &str, lifecycle: &LifecycleCensus) -> serde_json::Valu
     }
     let conformance = roots
         .iter()
-        .map(|(root, (calls, violations, undetermined, not_established))| {
-            (
-                (*root).to_owned(),
-                serde_json::json!({
-                    "calls": calls,
-                    "violations": violations,
-                    "not_established": not_established,
-                    "undetermined_calls": undetermined,
-                    "result": if *violations > 0 {
-                        "violates"
-                    } else if *not_established > 0 {
-                        "not established"
-                    } else if *undetermined > 0 {
-                        "conforms where derived"
-                    } else {
-                        "conforms"
-                    },
-                }),
-            )
-        })
+        .map(
+            |(root, (calls, violations, undetermined, not_established))| {
+                (
+                    (*root).to_owned(),
+                    serde_json::json!({
+                        "calls": calls,
+                        "violations": violations,
+                        "not_established": not_established,
+                        "undetermined_calls": undetermined,
+                        "result": if *violations > 0 {
+                            "violates"
+                        } else if *not_established > 0 {
+                            "not established"
+                        } else if *undetermined > 0 {
+                            "conforms where derived"
+                        } else {
+                            "conforms"
+                        },
+                    }),
+                )
+            },
+        )
         .collect::<BTreeMap<_, _>>();
     let destroys = lifecycle
         .destroy_bodies

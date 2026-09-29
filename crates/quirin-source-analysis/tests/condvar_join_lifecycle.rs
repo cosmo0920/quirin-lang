@@ -377,7 +377,9 @@ fn nc_start_stop_destroy_conforms() {
 fn nc_a_failed_start_then_destroy_conforms() {
     // Only the destroy after a start that returned nonzero.
     let census = run(
-        &shape("    ret = start_failing(e, &b, 1);\n    if (ret != 0) {\n        flb_destroy(e);\n    }"),
+        &shape(
+            "    ret = start_failing(e, &b, 1);\n    if (ret != 0) {\n        flb_destroy(e);\n    }",
+        ),
         "stop",
     );
     let destroys = call(&census, "flb_destroy");
@@ -429,8 +431,7 @@ fn nc_a_double_start_is_refused() {
 #[test]
 fn a_stop_regardless_of_the_start_is_refused_there_and_decided_apart_elsewhere() {
     // The fixed test's shape: the stop runs whatever the start returned.
-    let unguarded =
-        "    ret = start(e, &b, 0);\n    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }";
+    let unguarded = "    ret = start(e, &b, 0);\n    ret = stop(e);\n    if (ret != 0) {\n        exit(1);\n    }";
     let census = run(&shape(unguarded), "stop");
     let unlink = release(&census, "`unlink`");
     refused_with(&unlink.verdict, "stop after a failed start");
@@ -518,7 +519,11 @@ fn the_failed_start_clause_is_checked_against_the_start() {
     // spawn, so one nonzero return leaves the entry unjoined: held, not in
     // force, never assumed.
     let census = run(&shape(GUARDED), "stop");
-    let held = status(&census, Clause::FailedStartLeavesNoThread, Some("start_failing"));
+    let held = status(
+        &census,
+        Clause::FailedStartLeavesNoThread,
+        Some("start_failing"),
+    );
     assert!(matches!(held, ClauseStatus::Held { .. }), "{held:?}");
     let check = lifecycle(&census)
         .clauses
