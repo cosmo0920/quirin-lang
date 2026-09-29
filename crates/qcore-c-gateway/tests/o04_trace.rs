@@ -781,19 +781,21 @@ fn a_partial_nested_call_expression_is_never_admitted() {
            v_log(\"%d\", v_size(b) + 1); v_drop(b); return 0; }",
         "v_use",
     );
-    assert_eq!(summary.status, AnalysisStatus::Safe, "{:?}", summary.diagnostics);
-    for body in [
-        // A nested call at a *custody* position of the outer contract.
-        "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
-           v_eat(v_grab(b)); v_drop(b); return 0; }",
-    ] {
-        let summary = generic_summary(body, "v_use");
-        assert!(
-            !summary.diagnostics.is_empty(),
-            "the shape keeps its refusal: {body}"
-        );
-        assert_ne!(summary.status, AnalysisStatus::Safe, "{body}");
-    }
+    assert_eq!(
+        summary.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        summary.diagnostics
+    );
+    // A nested call at a *custody* position of the outer contract.
+    let body = "int v_use(int n) { struct v_box *b = v_make(n); if (b == 0) { return -1; } \
+           v_eat(v_grab(b)); v_drop(b); return 0; }";
+    let summary = generic_summary(body, "v_use");
+    assert!(
+        !summary.diagnostics.is_empty(),
+        "the shape keeps its refusal: {body}"
+    );
+    assert_ne!(summary.status, AnalysisStatus::Safe, "{body}");
 }
 
 /// **Adversarial row 5 — an address inside the nested call's own arguments.**

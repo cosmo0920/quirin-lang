@@ -154,7 +154,9 @@ impl Refusal {
     pub(crate) fn reason(&self) -> String {
         match self {
             Self::Form(form, owner) => format!("{form} ({owner})"),
-            Self::Uncontracted(callee) => format!("nested call `{callee}` has no contract in force"),
+            Self::Uncontracted(callee) => {
+                format!("nested call `{callee}` has no contract in force")
+            }
             Self::Clause(callee, clause) => format!("call `{callee}`: {clause} (not composed)"),
             Self::Arity(callee) => format!("call `{callee}`: actuals do not match the formals"),
             Self::DataAtCustody(callee) => {
@@ -351,7 +353,10 @@ impl DataReading<'_> {
 }
 
 /// Read a scalar value holding calls; `Refusal::NotNested` when it holds none.
-pub(crate) fn read_data<'a>(node: &'a Value, facts: &dyn Facts) -> Result<DataReading<'a>, Refusal> {
+pub(crate) fn read_data<'a>(
+    node: &'a Value,
+    facts: &dyn Facts,
+) -> Result<DataReading<'a>, Refusal> {
     if !holds_call(node) {
         return Err(Refusal::NotNested);
     }
@@ -365,7 +370,9 @@ pub(crate) fn read_data<'a>(node: &'a Value, facts: &dyn Facts) -> Result<DataRe
     let mut addressed = Vec::new();
     let (calls, _) = reader.data(node, &mut addressed)?;
     if !addressed.is_empty() {
-        return Err(Refusal::Data("an address outside the calls' actuals".into()));
+        return Err(Refusal::Data(
+            "an address outside the calls' actuals".into(),
+        ));
     }
     reader
         .graph
@@ -442,7 +449,8 @@ impl<'f> Reader<'f> {
                 }
                 "DeclRefExpr" => {
                     if let Some((decl, name)) = object(node) {
-                        let pointer = qual(node).is_none_or(|ty| ty.contains('*') || ty.contains('['));
+                        let pointer =
+                            qual(node).is_none_or(|ty| ty.contains('*') || ty.contains('['));
                         out.push((decl, name, pointer));
                     }
                 }
@@ -498,11 +506,13 @@ impl<'f> Reader<'f> {
         let mut events = Vec::new();
         for call_node in inner {
             let (mut call, events_inner) = self.call(call_node)?;
-            call.use_ = Some(if whole.is_some_and(|whole| std::ptr::eq(whole, call_node)) {
-                ResultUse::Passed
-            } else {
-                ResultUse::Tested
-            });
+            call.use_ = Some(
+                if whole.is_some_and(|whole| std::ptr::eq(whole, call_node)) {
+                    ResultUse::Passed
+                } else {
+                    ResultUse::Tested
+                },
+            );
             if !is_pointer(call_node)
                 && matches!(call.facts.result, ResourceReturnMode::Owned { .. })
             {
@@ -713,15 +723,27 @@ pub(crate) const ORDER_VECTORS: &[(&str, bool)] = &[
     // E10: an owned inner result bound and released by the outer call.
     ("void *p = q_alloc(); q_free(r_wrap(p));", true),
     // E11: depth two.
-    ("void *p = q_alloc(); cg_sink(r_borrow_code(r_wrap(p)));", true),
+    (
+        "void *p = q_alloc(); cg_sink(r_borrow_code(r_wrap(p)));",
+        true,
+    ),
     // E11: a call inside a larger actual.
     ("void *p = q_alloc(); cg_sink(r_borrow_code(p) + 1);", true),
     // E12: two siblings producing fresh identities from borrowed reads.
-    ("void *p = q_alloc(); cg_sink2(r_borrow_code(r_wrap(p)), r_borrow_code(r_wrap(p)));", true),
+    (
+        "void *p = q_alloc(); cg_sink2(r_borrow_code(r_wrap(p)), r_borrow_code(r_wrap(p)));",
+        true,
+    ),
     // E12: a release unordered with a borrow of one identity: refused.
-    ("void *p = q_alloc(); cg_sink2(r_release_code(p), r_borrow_code(p));", false),
+    (
+        "void *p = q_alloc(); cg_sink2(r_release_code(p), r_borrow_code(p));",
+        false,
+    ),
     // E12: two releases of names that may alias: refused.
-    ("void *p = q_alloc(); void *q = q_alloc(); cg_sink2(r_release_code(p), r_release_code(q));", false),
+    (
+        "void *p = q_alloc(); void *q = q_alloc(); cg_sink2(r_release_code(p), r_release_code(q));",
+        false,
+    ),
     // The actual `p` read unordered with a release of `p`: refused.
     ("void *p = q_alloc(); cg_pair(p, r_release_code(p));", false),
 ];

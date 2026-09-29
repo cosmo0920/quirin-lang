@@ -33,9 +33,6 @@ mod call_instantiation;
 // Card CG02-ELABORATION-CORE (rule 10s): the common expression elaborator and
 // its order model; the G hooks are in `legacy_elaboration.rs`.
 mod elaboration;
-// Card CG05-NESTED-CALL-EFFECTS (rule 10y): nested and sibling call trees and
-// their contract footprints; the G hook is in `legacy_nested_call.rs`.
-mod nested_call_effects;
 mod index_traversal;
 pub mod indexed_collection;
 #[cfg(feature = "indirect-census")]
@@ -46,6 +43,7 @@ pub mod indirect_chain_census;
 pub mod legacy_c;
 pub mod legacy_census;
 mod legacy_condition_call;
+mod nested_call_effects; // CG05-NESTED-CALL-EFFECTS (rule 10y); G hook in legacy_nested_call.rs
 // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o).
 mod legacy_summary;
 mod lexical_nested_assignment;

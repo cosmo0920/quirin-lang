@@ -56,9 +56,8 @@ fn deeper_and_partial_nested_calls_compose_inside_out() {
     if !clang_available() {
         return;
     }
-    let run = g(
-        "void subject(void) { void *p = q_alloc(); q_free(r_wrap(r_wrap(p))); q_free(p); }",
-    );
+    let run =
+        g("void subject(void) { void *p = q_alloc(); q_free(r_wrap(r_wrap(p))); q_free(p); }");
     // The middle wrapper's fresh custody is only borrowed by the outer
     // wrapper: a leak, reported.
     assert!(!run.safe(), "{run:?}");
@@ -81,17 +80,13 @@ fn siblings_are_admitted_only_when_their_footprints_commute() {
     }
     // Two fresh identities from borrowed reads commute: admitted, and the two
     // wrappers' custody, only borrowed, is reported.
-    let run = g(
-        "void subject(void) { void *p = q_alloc(); \
-         cg_sink2(r_borrow_code(r_wrap(p)), r_borrow_code(r_wrap(p))); q_free(p); }",
-    );
+    let run = g("void subject(void) { void *p = q_alloc(); \
+         cg_sink2(r_borrow_code(r_wrap(p)), r_borrow_code(r_wrap(p))); q_free(p); }");
     assert!(!run.refused(&nested("r_borrow_code")), "{run:?}");
     assert!(!run.safe(), "{run:?}");
     // Two identity siblings over one name commute (card B04's older route).
-    let run = g(
-        "void subject(void) { void *p = q_alloc(); \
-         cg_sink2(r_borrow_code(p), r_borrow_code(p) + 1); q_free(p); }",
-    );
+    let run = g("void subject(void) { void *p = q_alloc(); \
+         cg_sink2(r_borrow_code(p), r_borrow_code(p) + 1); q_free(p); }");
     assert!(run.safe(), "{run:?}");
     // `f(free_and_status(p), use(p))`: refused in both orders.
     let run = g(
@@ -136,9 +131,7 @@ fn unlisted_forms_keep_the_nested_refusal() {
     );
     assert!(!run.safe(), "{run:?}");
     // A reallocated inner result.
-    let run = g(
-        "void subject(void) { void *p = q_alloc(); q_free(q_realloc(p, 8)); }",
-    );
+    let run = g("void subject(void) { void *p = q_alloc(); q_free(q_realloc(p, 8)); }");
     assert!(run.refused(&nested("q_realloc")), "{run:?}");
     // A conditional inside the actual (CG06).
     let run = g(
@@ -172,9 +165,8 @@ fn a_scalar_value_holding_calls_is_stored_after_its_calls() {
          q_free(p); return n; }",
     );
     assert!(run.safe(), "{run:?}");
-    let run = g(
-        "int subject(void) { void *p = q_alloc(); int n; n = r_release_code(p) + 1; return n; }",
-    );
+    let run =
+        g("int subject(void) { void *p = q_alloc(); int n; n = r_release_code(p) + 1; return n; }");
     assert!(run.safe(), "{run:?}");
     // A release unordered with a borrow of the same name stays refused.
     let run = g(

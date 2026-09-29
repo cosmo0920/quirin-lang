@@ -297,7 +297,10 @@ fn locate(
     out: &mut std::collections::BTreeMap<usize, usize>,
 ) -> Result<(), String> {
     if words.get(at) != Some(&call.callee.as_str()) || words.get(at + 1) != Some(&"(") {
-        return Err(format!("call `{}` is not spelled where Clang has it", call.callee));
+        return Err(format!(
+            "call `{}` is not spelled where Clang has it",
+            call.callee
+        ));
     }
     let spans = super::call_argument_spans(words, at)
         .ok_or_else(|| "an unreadable argument list".to_owned())?;
@@ -310,7 +313,11 @@ fn locate(
                 let clang = index
                     .node_tokens(node)
                     .ok_or_else(|| "an actual without tokens".to_owned())?;
-                if !clang.iter().map(String::as_str).eq(words[start..end].iter().copied()) {
+                if !clang
+                    .iter()
+                    .map(String::as_str)
+                    .eq(words[start..end].iter().copied())
+                {
                     return Err("an actual's tokens differ from Clang's".to_owned());
                 }
             }
@@ -446,7 +453,8 @@ impl Parser<'_> {
             } => {
                 let reading =
                     nested_call_effects::read(call, &facts, use_).map_err(|r| r.reason())?;
-                let (start, end) = Self::call_run(&reading.root.callee, tokens, destination.is_some())?;
+                let (start, end) =
+                    Self::call_run(&reading.root.callee, tokens, destination.is_some())?;
                 if end != tokens.len() {
                     return Err("tokens follow the call".to_owned());
                 }
@@ -519,7 +527,11 @@ impl Parser<'_> {
     /// The run of `tokens` the outer call spells: the only call the statement
     /// holds at its top level after its destination's `=` (from the start when
     /// there is none), closing the statement.
-    fn call_run(callee: &str, tokens: &[Token], destination: bool) -> Result<(usize, usize), String> {
+    fn call_run(
+        callee: &str,
+        tokens: &[Token],
+        destination: bool,
+    ) -> Result<(usize, usize), String> {
         let words = texts(tokens);
         let from = if destination {
             words
@@ -532,8 +544,7 @@ impl Parser<'_> {
         };
         match top_level_calls(&words, from, words.len()).as_slice() {
             [at] if words[*at] == callee => {
-                let close = closing(&words, at + 1)
-                    .ok_or_else(|| "an unclosed call".to_owned())?;
+                let close = closing(&words, at + 1).ok_or_else(|| "an unclosed call".to_owned())?;
                 Ok((*at, close + 1))
             }
             _ => Err("the call is not the statement's one outer call".to_owned()),
@@ -565,7 +576,10 @@ impl Parser<'_> {
                     .filter(|call| {
                         !order.iter().any(|other| {
                             other.event != call.event
-                                && other.post_order().iter().any(|inner| inner.event == call.event)
+                                && other
+                                    .post_order()
+                                    .iter()
+                                    .any(|inner| inner.event == call.event)
                         })
                     })
                     .copied()
@@ -785,7 +799,12 @@ impl Parser<'_> {
                 index,
                 &reading.root.post_order(),
                 &reading.places,
-                Some((&reading.root, prefix, Some(RETURN_RESULT_PLACE.to_owned()), start)),
+                Some((
+                    &reading.root,
+                    prefix,
+                    Some(RETURN_RESULT_PLACE.to_owned()),
+                    start,
+                )),
                 expression,
                 line,
             )?;
