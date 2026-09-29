@@ -1516,4 +1516,287 @@ theorem the_old_test_path_is_never_discharged_whatever_the_arms {owners : Owners
   intro cs hcs
   exact the_old_test_path_is_never_discharged (hc cs hcs) hl hn
 
+/-! ### The list-head instance's premises (card W47-PREMISES-INSTANCE)
+
+The premises Step B's list-head derivation and the owner obligation stated
+are derived from the program, or narrowed.
+
+**P-FRESH-CONTEXT.** The config initializer's own steps from its fresh
+allocation: the allocation's contents are no list (`none`), the list
+initialiser makes the empty list, a step the census reads as neither keeps
+it, and a mutation leaves it unknown. A derived initializer (its list
+initialisation at its top level, nothing after it but other steps) ends with
+the empty list, which is where the list-head derivation starts; one without
+its list initialisation derives none. -/
+
+inductive InitStep where
+  | alloc
+  | initList
+  | other
+  | mutate
+  deriving DecidableEq, Repr
+
+def initStep : Option (List Bool) → InitStep → Option (List Bool)
+  | _, .alloc => none
+  | _, .initList => some []
+  | l, .other => l
+  | _, .mutate => none
+
+/-- The list the initializer leaves, from its allocation's unknown contents. -/
+def freshAfter (steps : List InitStep) : Option (List Bool) :=
+  steps.foldl initStep none
+
+theorem initStep_initList (l : Option (List Bool)) : initStep l .initList = some [] := by
+  cases l <;> rfl
+
+theorem initStep_other (l : Option (List Bool)) : initStep l .other = l := by
+  cases l <;> rfl
+
+theorem initStep_others (l : Option (List Bool)) (post : List InitStep)
+    (h : ∀ e ∈ post, e = .other) : post.foldl initStep l = l := by
+  induction post generalizing l with
+  | nil => rfl
+  | cons e rest ih =>
+    have he : e = .other := h e (List.mem_cons_self ..)
+    subst he
+    rw [List.foldl_cons, initStep_other]
+    exact ih l (fun x hx => h x (List.mem_cons_of_mem _ hx))
+
+/-- A derived initializer leaves the empty list. -/
+theorem a_derived_fresh_context_is_empty (pre post : List InitStep)
+    (h : ∀ e ∈ post, e = .other) :
+    freshAfter (pre ++ .initList :: post) = some [] := by
+  unfold freshAfter
+  rw [List.foldl_append, List.foldl_cons, initStep_initList]
+  exact initStep_others _ post h
+
+theorem initStep_none_without_init (e : InitStep) (h : e ≠ .initList) :
+    initStep none e = none := by
+  cases e <;> simp_all [initStep]
+
+/-- Without its list initialisation the initializer derives no list. -/
+theorem an_initializer_without_its_list_init_is_not_fresh (steps : List InitStep)
+    (h : ∀ e ∈ steps, e ≠ .initList) : freshAfter steps = none := by
+  unfold freshAfter
+  induction steps with
+  | nil => rfl
+  | cons e rest ih =>
+    rw [List.foldl_cons, initStep_none_without_init e (h e (List.mem_cons_self ..))]
+    exact ih (fun x hx => h x (List.mem_cons_of_mem _ hx))
+
+/-- A derived fresh context is exactly the list-head derivation's start. -/
+theorem a_fresh_context_starts_the_head_derivation {init : List InitStep}
+    (h : freshAfter init = some []) (events : List PathEvent) :
+    events.foldl listStep (freshAfter init) = listAfter events := by
+  rw [h]
+  rfl
+
+/-! **P-REGISTERED-DESCRIPTORS.** The registered list is the generated
+registration's descriptors (`none` when it is not read). One creation from a
+literal makes one instance per matching registered descriptor, flagged as
+that descriptor. The census derives a flag only from a read registration
+with at least one match; a derived "no coroutine" holds for every instance
+the creation makes, and an unread registration keeps the route. -/
+
+structure Descriptor where
+  name : String
+  coroutine : Bool
+  deriving DecidableEq, Repr
+
+def createdFlags (nameMatches : String → String → Bool) (registered : List Descriptor)
+    (literal : String) : List Bool :=
+  (registered.filter (fun d => nameMatches d.name literal)).map (·.coroutine)
+
+def registeredFlag (nameMatches : String → String → Bool) :
+    Option (List Descriptor) → String → Option Bool
+  | none, _ => none
+  | some registered, literal =>
+    match createdFlags nameMatches registered literal with
+    | [] => none
+    | flags => some (flags.any id)
+
+theorem an_unread_registration_derives_nothing (nameMatches : String → String → Bool)
+    (literal : String) : registeredFlag nameMatches none literal = none := rfl
+
+theorem a_derived_registration_has_a_match {nameMatches : String → String → Bool}
+    {registered : List Descriptor} {literal : String} {b : Bool}
+    (h : registeredFlag nameMatches (some registered) literal = some b) :
+    createdFlags nameMatches registered literal ≠ [] := by
+  intro hnil
+  simp [registeredFlag, hnil] at h
+
+theorem every_created_instance_runs_no_coroutine {nameMatches : String → String → Bool}
+    {registered : List Descriptor} {literal : String}
+    (h : registeredFlag nameMatches (some registered) literal = some false) :
+    ∀ f ∈ createdFlags nameMatches registered literal, f = false := by
+  intro f hf
+  cases hc : createdFlags nameMatches registered literal with
+  | nil => rw [hc] at hf; cases hf
+  | cons x rest =>
+    have hany : (x :: rest).any id = false := by
+      simp only [registeredFlag, hc] at h
+      exact Option.some.inj h
+    rw [hc] at hf
+    cases f with
+    | false => rfl
+    | true =>
+      have : (x :: rest).any id = true := List.any_eq_true.mpr ⟨true, hf, rfl⟩
+      rw [this] at hany
+      exact absurd hany (by decide)
+
+theorem an_unread_registration_keeps_the_route {α : Type} {registrants : List α} {r : α}
+    (nameMatches : String → String → Bool) (literal : String) (copy : Option Bool)
+    (hr : r ∈ registrants) :
+    r ∈ coroutineDispatched
+      (fun _ => instanceFlag (registeredFlag nameMatches none literal) copy) registrants :=
+  an_underived_part_keeps_the_route (Or.inl rfl) hr
+
+/-! **P-HEAD-INSTANCE, narrowed.** The constructor's block from its allocation
+to its append is straight-line: every step is a plain one or a null return.
+Executing it stops at the first null return, so every execution either
+returns a null pointer or reaches the append: a non-null creation is on the
+list. What stays stated is that the creation succeeds (P-CREATIONS-SUCCEED),
+since a failed one leaves the fresh list empty and its head no instance. -/
+
+inductive CtorStep where
+  | plain
+  | returnNull
+  | append
+  deriving DecidableEq, Repr
+
+/-- One execution of a straight-line block: up to its first null return. -/
+def execute : List CtorStep → List CtorStep
+  | [] => []
+  | .returnNull :: _ => [.returnNull]
+  | .plain :: rest => .plain :: execute rest
+  | .append :: rest => .append :: execute rest
+
+theorem a_straight_block_appends_or_returns_null (body : List CtorStep)
+    (hb : ∀ s ∈ body, s = .plain ∨ s = .returnNull) :
+    .returnNull ∈ execute (body ++ [.append]) ∨ .append ∈ execute (body ++ [.append]) := by
+  induction body with
+  | nil => right; simp [execute]
+  | cons s rest ih =>
+    rcases hb s (List.mem_cons_self ..) with h | h
+    · subst h
+      have ih' := ih (fun x hx => hb x (List.mem_cons_of_mem _ hx))
+      rw [List.cons_append, execute]
+      rcases ih' with h' | h'
+      · left; exact List.mem_cons_of_mem _ h'
+      · right; exact List.mem_cons_of_mem _ h'
+    · subst h
+      left
+      rw [List.cons_append, execute]
+      exact List.mem_cons_self ..
+
+/-- A creation that returns non-null has appended its instance. -/
+theorem a_non_null_creation_is_on_the_list (body : List CtorStep)
+    (hb : ∀ s ∈ body, s = .plain ∨ s = .returnNull)
+    (hnonnull : .returnNull ∉ execute (body ++ [.append])) :
+    .append ∈ execute (body ++ [.append]) := by
+  rcases a_straight_block_appends_or_returns_null body hb with h | h
+  · exact absurd h hnonnull
+  · exact h
+
+theorem listStep_others (l : List Bool) (events : List PathEvent)
+    (h : ∀ e ∈ events, e = .other) : events.foldl listStep (some l) = some l := by
+  induction events with
+  | nil => rfl
+  | cons e rest ih =>
+    have he : e = .other := h e (List.mem_cons_self ..)
+    subst he
+    rw [List.foldl_cons]
+    exact ih (fun x hx => h x (List.mem_cons_of_mem _ hx))
+
+/-- Without the success premise the fresh list stays empty: its head is not
+an instance, and the census says nothing of that read. -/
+theorem a_failed_creation_leaves_the_fresh_list_empty (events : List PathEvent)
+    (h : ∀ e ∈ events, e = .other) : listAfter events = some [] :=
+  listStep_others [] events h
+
+/-! **P-INSTANCE.** A collector's instance is the last value written to it; a
+collector written only by its constructor names its registration's instance,
+and a loop dispatch passes that instance as the callback's first argument, so
+an operation on the callback's unassigned first parameter names the instance
+whose loop dispatched it. A refuted derivation withholds the discharge; the
+premised verdict never adds one. -/
+
+def collectorInstance (writes : List Nat) : Option Nat := writes.getLast?
+
+theorem a_constructor_only_collector_names_its_registration (r : Nat) :
+    collectorInstance [r] = some r := rfl
+
+theorem a_repointed_collector_may_name_another (r o : Nat) :
+    collectorInstance [r, o] = some o := rfl
+
+inductive InstancePremise where
+  | derived
+  | stated
+  | refuted
+  deriving DecidableEq, Repr
+
+def premisedVerdict : InstancePremise → Verdict → Verdict
+  | .refuted, .discharged => .unresolved
+  | _, v => v
+
+theorem a_refuted_instance_is_never_discharged (v : Verdict) :
+    premisedVerdict .refuted v ≠ .discharged := by
+  cases v <;> simp [premisedVerdict]
+
+theorem the_premises_never_add_a_discharge (p : InstancePremise) (v : Verdict)
+    (h : premisedVerdict p v = .discharged) : v = .discharged := by
+  cases p <;> cases v <;> simp_all [premisedVerdict]
+
+theorem a_derived_premise_keeps_the_verdict (v : Verdict) :
+    premisedVerdict .derived v = v := by
+  cases v <;> rfl
+
+theorem the_old_test_path_is_never_discharged_under_the_premises {owners : Owners}
+    {contexts : List Context} {unresolved : Bool} {t : Thread} {list : List Thread}
+    (p : InstancePremise)
+    (hc : { thread := t, mode := .either } ∈ contexts)
+    (hl : candidates owners .either = some list) (hn : t ∉ list) :
+    premisedVerdict p (siteVerdict owners contexts unresolved) ≠ .discharged := by
+  intro h
+  exact the_old_test_path_is_never_discharged hc hl hn
+    (the_premises_never_add_a_discharge p _ h)
+
+/-! **P-INSTANCE-FIELDS-BY-MEMBER.** Every recorded write of an instance's
+plugin or flag, or a collector's instance, is a member write (by an allowed
+writer or not), a byte write, or a whole-object write. The flag is derived
+only when every one is an allowed member write; a byte or whole-object write
+keeps the route. -/
+
+inductive FieldWrite where
+  | member (allowed : Bool)
+  | bytes
+  | whole
+  deriving DecidableEq, Repr
+
+def fieldsByMember (writes : List FieldWrite) : Bool :=
+  writes.all (fun w => w == .member true)
+
+def flagByMember (writes : List FieldWrite) (flag : Option Bool) : Option Bool :=
+  if fieldsByMember writes then flag else none
+
+theorem allowed_member_writes_keep_the_derivation (flag : Option Bool) (n : Nat) :
+    flagByMember (List.replicate n (.member true)) flag = flag := by
+  have : fieldsByMember (List.replicate n (.member true)) = true := by
+    simp [fieldsByMember]
+  simp [flagByMember, this]
+
+theorem a_non_member_write_keeps_the_route {α : Type} {registrants : List α} {r : α}
+    {writes : List FieldWrite} {flag copy : Option Bool}
+    (hw : FieldWrite.bytes ∈ writes ∨ FieldWrite.whole ∈ writes) (hr : r ∈ registrants) :
+    r ∈ coroutineDispatched (fun _ => instanceFlag (flagByMember writes flag) copy)
+      registrants := by
+  have hf : fieldsByMember writes = false := by
+    unfold fieldsByMember
+    rcases hw with h | h
+    · exact List.all_eq_false.mpr ⟨_, h, by decide⟩
+    · exact List.all_eq_false.mpr ⟨_, h, by decide⟩
+  have : flagByMember writes flag = none := by simp [flagByMember, hf]
+  rw [this]
+  exact an_underived_part_keeps_the_route (Or.inl rfl) hr
+
 end QCore.LoopOwner

@@ -17,11 +17,13 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use qcore_c_gateway::thread_entry_census::predefined_macros::{PredefinedFacts, PredefinedMacros};
-use qcore_c_gateway::thread_entry_census::{BuildConfiguration, CensusFile};
+use qcore_c_gateway::thread_entry_census::{
+    BuildConfiguration, CensusFile, GeneratedFile, PremiseInputs, SitePremise,
+};
 use qcore_c_gateway::typed_dispatch_census::TypedFacts;
 use qcore_contract::contract_loader::loop_owner_obligations;
 use qcore_core::loop_owner::OwnerVerdict;
-use quirin_source_analysis::loop_owner_census::{FLUENT_BIT_HOPS, census_typed};
+use quirin_source_analysis::loop_owner_census::{FLUENT_BIT_HOPS, census_premised};
 
 fn collect(root: &Path, path: &Path, out: &mut Vec<PathBuf>) {
     if path.is_dir() {
@@ -99,6 +101,128 @@ fn compile_defines(database: &str, root: &Path) -> BTreeMap<String, BTreeSet<Str
     units
 }
 
+/// Card W47-PREMISES-INSTANCE: each compile command's `#include <…>` search
+/// directories, in order (`-I`, then `-isystem`), keyed by the file's path
+/// under `root`.
+fn include_dirs(database: &str, root: &Path) -> BTreeMap<String, Vec<Vec<PathBuf>>> {
+    let text = fs::read_to_string(database).expect("compile database");
+    let entries: Vec<serde_json::Value> = serde_json::from_str(&text).expect("compile database");
+    let mut units: BTreeMap<String, Vec<Vec<PathBuf>>> = BTreeMap::new();
+    for entry in entries {
+        let directory = PathBuf::from(entry["directory"].as_str().unwrap_or(""));
+        let file = PathBuf::from(entry["file"].as_str().expect("file"));
+        let file = if file.is_absolute() {
+            file
+        } else {
+            directory.join(file)
+        };
+        let Ok(relative) = file.strip_prefix(root) else {
+            continue;
+        };
+        let words = match entry.get("arguments").and_then(|a| a.as_array()) {
+            Some(arguments) => arguments
+                .iter()
+                .filter_map(|a| a.as_str().map(str::to_owned))
+                .collect::<Vec<_>>(),
+            None => entry["command"]
+                .as_str()
+                .unwrap_or("")
+                .split_whitespace()
+                .map(str::to_owned)
+                .collect(),
+        };
+        let (mut quoted, mut system) = (Vec::new(), Vec::new());
+        let mut words = words.iter();
+        while let Some(word) = words.next() {
+            let (list, value) = match word.as_str() {
+                "-I" => (&mut quoted, words.next().cloned().unwrap_or_default()),
+                "-isystem" => (&mut system, words.next().cloned().unwrap_or_default()),
+                _ if word.starts_with("-isystem") => {
+                    (&mut system, word["-isystem".len()..].to_owned())
+                }
+                _ if word.starts_with("-I") => (&mut quoted, word[2..].to_owned()),
+                _ => continue,
+            };
+            list.push(directory.join(value));
+        }
+        quoted.extend(system);
+        units
+            .entry(relative.to_string_lossy().replace('\\', "/"))
+            .or_default()
+            .push(quoted);
+    }
+    units
+}
+
+/// Card W47-PREMISES-INSTANCE: the generated root's files, each with the read
+/// files every compile command of which resolves one of their `#include <…>`
+/// lines to it (the first search directory holding the name).
+fn generated_inputs(
+    database: &str,
+    root: &Path,
+    generated: &Path,
+    files: &[CensusFile],
+) -> PremiseInputs {
+    let mut headers = Vec::new();
+    collect(generated, generated, &mut headers);
+    let canonical = |path: &Path| fs::canonicalize(path).ok();
+    let mut out = headers
+        .iter()
+        .map(|header| GeneratedFile {
+            path: header.to_string_lossy().replace('\\', "/"),
+            text: String::from_utf8_lossy(&fs::read(generated.join(header)).expect("generated"))
+                .into_owned(),
+            included_by: BTreeSet::new(),
+        })
+        .collect::<Vec<_>>();
+    let targets = headers
+        .iter()
+        .map(|header| canonical(&generated.join(header)))
+        .collect::<Vec<_>>();
+    let commands = include_dirs(database, root);
+    for file in files {
+        let Some(searches) = commands.get(&file.path) else {
+            continue;
+        };
+        for line in file.text.lines() {
+            let Some(rest) = line.trim_start().strip_prefix('#') else {
+                continue;
+            };
+            let Some(rest) = rest.trim_start().strip_prefix("include") else {
+                continue;
+            };
+            let Some(name) = rest
+                .trim()
+                .strip_prefix('<')
+                .and_then(|rest| rest.split_once('>'))
+                .map(|(name, _)| name)
+            else {
+                continue;
+            };
+            let resolved = searches
+                .iter()
+                .map(|dirs| {
+                    dirs.iter()
+                        .map(|dir| dir.join(name))
+                        .find(|candidate| candidate.is_file())
+                        .and_then(|found| canonical(&found))
+                })
+                .collect::<BTreeSet<_>>();
+            let resolved = resolved.into_iter().collect::<Vec<_>>();
+            let [Some(only)] = &resolved[..] else {
+                continue;
+            };
+            for (index, target) in targets.iter().enumerate() {
+                if target.as_ref() == Some(only) {
+                    out[index].included_by.insert(file.path.clone());
+                }
+            }
+        }
+    }
+    out.retain(|file| !file.text.is_empty());
+    PremiseInputs { generated: out }
+}
+
 /// For each coroutine body that may yield, one shortest call path (hops other
 /// than the coroutine hop) to a function that yields (card
 /// W47-LOOP-OWNER-TYPED-DISPATCH): what holds the body unresolved.
@@ -162,7 +286,14 @@ fn main() {
     // `--list-functions=PATH`: every census function and edge, one per line
     // (attribution of a reading's movement).
     let mut list_path = None;
+    // Card W47-PREMISES-INSTANCE: `--derive-premises` runs the premised
+    // census (the generated root's files read, P-INSTANCE per site).
+    let mut derive_premises = false;
     arguments.retain(|argument| {
+        if argument == "--derive-premises" {
+            derive_premises = true;
+            return false;
+        }
         if let Some(path) = argument.strip_prefix("--list-functions=") {
             list_path = Some(path.to_owned());
             return false;
@@ -307,12 +438,19 @@ fn main() {
         }
         merged
     });
-    let result = census_typed(
+    let premise_inputs = derive_premises.then(|| match (&database, &generated) {
+        (Some(database), Some(generated)) => {
+            generated_inputs(database, &root, Path::new(generated), &files)
+        }
+        _ => PremiseInputs::default(),
+    });
+    let result = census_premised(
         &files,
         &obligations,
         &FLUENT_BIT_HOPS,
         configuration.as_ref(),
         typed.as_ref(),
+        premise_inputs.as_ref(),
     );
     let sites = result
         .sites
@@ -424,6 +562,36 @@ fn main() {
             predefined_report["decisions"] = serde_json::json!(result.reading.predefined_decisions);
         }
         report["predefined_macros"] = predefined_report;
+    }
+    // Card W47-PREMISES-INSTANCE: printed only in the premised census.
+    if let Some(inputs) = &premise_inputs {
+        let premise_report = result.reading.premises.clone().unwrap_or_default();
+        report["premises"] = serde_json::json!({
+            "generated": inputs
+                .generated
+                .iter()
+                .map(|file| (file.path.clone(), file.included_by.iter().cloned().collect::<Vec<_>>()))
+                .collect::<BTreeMap<_, _>>(),
+            "instance_sites": premise_report
+                .instance_sites
+                .iter()
+                .map(|(site, premise)| {
+                    let (status, why) = match premise {
+                        SitePremise::Derived(why) => ("derived", why),
+                        SitePremise::Stated(why) => ("stated", why),
+                        SitePremise::Refuted(why) => ("refuted", why),
+                    };
+                    (site.clone(), serde_json::json!({"status": status, "reason": why}))
+                })
+                .collect::<BTreeMap<_, _>>(),
+            "fields_by_member": {
+                "read": premise_report.fields_by_member.read,
+                "violations": premise_report.fields_by_member.violations,
+                "escapes": premise_report.fields_by_member.escapes,
+                "other_types": premise_report.fields_by_member.other_types,
+                "harmless": premise_report.fields_by_member.harmless,
+            },
+        });
     }
     if let Some(path) = &list_path {
         let program = &result.program;

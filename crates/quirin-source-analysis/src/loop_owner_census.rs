@@ -12,8 +12,8 @@
 use std::collections::BTreeMap;
 
 use qcore_c_gateway::thread_entry_census::{
-    BuildConfiguration, CensusFile, CensusReading, HopTables, ReadEffect, ReadHop, ReadMode,
-    read_program_typed,
+    BuildConfiguration, CensusFile, CensusReading, HopTables, PremiseInputs, ReadEffect, ReadHop,
+    ReadMode, SitePremise, read_program_premised,
 };
 use qcore_c_gateway::typed_dispatch_census::TypedFacts;
 use qcore_contract::contract_loader::{DeclaredLoopOwner, LoopOwnerOperation};
@@ -154,7 +154,24 @@ pub fn census_typed(
     configuration: Option<&BuildConfiguration>,
     typed: Option<&TypedFacts>,
 ) -> Census {
-    let reading = read_program_typed(files, hops, configuration, typed);
+    census_premised(files, obligations, hops, configuration, typed, None)
+}
+
+/// [`census_typed`] as the premised census (card W47-PREMISES-INSTANCE):
+/// Step B's list-head premises are derived from the program or its flag is
+/// underived, and a site whose P-INSTANCE derivation is refuted is not
+/// discharged (unresolved, with the refutation as its reason). A site whose
+/// premise stays stated keeps its verdict; the reading reports which.
+#[must_use]
+pub fn census_premised(
+    files: &[CensusFile],
+    obligations: &BTreeMap<String, DeclaredLoopOwner>,
+    hops: &HopTables,
+    configuration: Option<&BuildConfiguration>,
+    typed: Option<&TypedFacts>,
+    premises: Option<&PremiseInputs>,
+) -> Census {
+    let reading = read_program_premised(files, hops, configuration, typed, premises);
     let program = thread_program(&reading);
     let derived = derive(&program);
     let owners = Owners::from_dispatchers(
@@ -166,13 +183,26 @@ pub fn census_typed(
         .iter()
         .filter_map(|call| {
             let obligation = obligations.get(&call.callee)?;
+            let mut verdict = owner_verdict(&derived[call.caller], &owners);
+            // Card W47-PREMISES-INSTANCE: a refuted P-INSTANCE withholds the
+            // discharge.
+            if let Some(report) = &reading.premises
+                && let Some(SitePremise::Refuted(why)) = report
+                    .instance_sites
+                    .get(&format!("{}:{} {}", call.file, call.line, call.callee))
+                && matches!(verdict, OwnerVerdict::Discharged { .. })
+            {
+                verdict = OwnerVerdict::Unresolved {
+                    reasons: std::iter::once(why.clone()).collect(),
+                };
+            }
             Some(OwnerSite {
                 file: call.file.clone(),
                 line: call.line,
                 function: program.functions[call.caller].clone(),
                 callee: call.callee.clone(),
                 operation: obligation.operation,
-                verdict: owner_verdict(&derived[call.caller], &owners),
+                verdict,
             })
         })
         .collect();

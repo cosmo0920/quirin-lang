@@ -157,6 +157,9 @@ pub struct CensusReading {
     /// (`NAME=defined` / `NAME=undefined`), where the configured reading
     /// alone left it undecided.
     pub predefined_decisions: BTreeMap<String, BTreeSet<String>>,
+    /// Card W47-PREMISES-INSTANCE: the premised census's report (`None`
+    /// outside it).
+    pub premises: Option<PremiseReport>,
 }
 
 impl CensusReading {
@@ -187,6 +190,15 @@ pub use loop_owner_property_keys::{FLUENT_BIT_PROPERTY_KEYS, PropertyKeyTables};
 // recorded compiler, for the configured reading.
 #[path = "loop_owner_predefined_macros.rs"]
 pub mod predefined_macros;
+
+// Card W47-PREMISES-INSTANCE: the list-head instance's premises and
+// P-INSTANCE, derived from the pinned source.
+#[path = "loop_owner_premises_instance.rs"]
+mod loop_owner_premises_instance;
+pub use loop_owner_premises_instance::{
+    FLUENT_BIT_INSTANCE_PREMISES, FieldsByMember, GeneratedFile, InstancePremiseTables,
+    PremiseInputs, PremiseReport, SitePremise,
+};
 
 /// The closed hop vocabulary of one program family.
 #[derive(Clone, Copy, Debug)]
@@ -322,6 +334,7 @@ impl HopTables {
             member_fields: Vec::new(),
             argument_calls: Vec::new(),
             key_tables: Vec::new(),
+            record_views: Vec::new(),
         }
     }
 
@@ -355,6 +368,25 @@ impl HopTables {
         let mut options = self.instance_flow_options(flow);
         options.argument_calls = keys.argument_calls();
         options.key_tables = keys.key_tables.iter().map(|t| (*t).to_owned()).collect();
+        options
+    }
+
+    /// [`HopTables::property_key_options`] with the premise facts (card
+    /// W47-PREMISES-INSTANCE): an input instance's list link, and the listed
+    /// records' non-member uses.
+    #[must_use]
+    pub fn premise_options(
+        &self,
+        flow: &InstanceFlowTables,
+        keys: &PropertyKeyTables,
+        premises: &InstancePremiseTables,
+    ) -> crate::typed_dispatch_census::TypedOptions {
+        let mut options = self.property_key_options(flow, keys);
+        options.member_fields.push((
+            flow.instance_record.to_owned(),
+            premises.instance_link.to_owned(),
+        ));
+        options.record_views = premises.records.iter().map(|r| (*r).to_owned()).collect();
         options
     }
 }
@@ -1277,6 +1309,21 @@ pub fn read_program_typed(
     configuration: Option<&BuildConfiguration>,
     typed: Option<&crate::typed_dispatch_census::TypedFacts>,
 ) -> CensusReading {
+    read_program_premised(files, hops, configuration, typed, None)
+}
+
+/// [`read_program_typed`] as the premised census (card
+/// W47-PREMISES-INSTANCE) when `premises` is given: Step B's list-head
+/// premises are derived or its flag is underived, and P-INSTANCE is reported
+/// per listed collector operation ([`CensusReading::premises`]).
+#[must_use]
+pub fn read_program_premised(
+    files: &[CensusFile],
+    hops: &HopTables,
+    configuration: Option<&BuildConfiguration>,
+    typed: Option<&crate::typed_dispatch_census::TypedFacts>,
+    premises: Option<&PremiseInputs>,
+) -> CensusReading {
     let macros = files
         .iter()
         .map(|source| macro_definitions(&source.text))
@@ -1936,6 +1983,7 @@ pub fn read_program_typed(
         keys: &FLUENT_BIT_PROPERTY_KEYS,
         macro_bodies: &macro_bodies,
         property_readings: std::cell::RefCell::new(BTreeMap::new()),
+        premises,
     };
     let instance_flags = derive_instance_flags(&step_b);
     let property_keys = step_b.property_readings.take();
@@ -2156,6 +2204,39 @@ pub fn read_program_typed(
     program.dispatch_typing = dispatch_typing_tally;
     program.instance_flags = instance_flags;
     program.property_keys = property_keys;
+    // Card W47-PREMISES-INSTANCE: P-INSTANCE over the final edges, read by a
+    // Step B view that needs neither the direct edges nor the spawns.
+    if premises.is_some() {
+        let (no_edges, no_spawns) = (BTreeSet::new(), BTreeSet::new());
+        let view = StepB {
+            files,
+            hops,
+            typed,
+            definitions: &definitions,
+            scans: &scans,
+            index: &index,
+            registrants: &registrants,
+            collector_registrations: &collector_registrations,
+            field_stores: &field_stores,
+            direct_edges: &no_edges,
+            spawns: &no_spawns,
+            taken: &taken,
+            flag_writers: &flag_writers,
+            descriptor_objects: &descriptor_objects,
+            numeric_macros: &numeric_macros,
+            functions: &program.functions,
+            flow: &FLUENT_BIT_INSTANCE_FLOW,
+            reach: &reach,
+            dispatch_sites: &dispatch_sites,
+            notes: std::cell::RefCell::new(BTreeSet::new()),
+            keys: &FLUENT_BIT_PROPERTY_KEYS,
+            macro_bodies: &macro_bodies,
+            property_readings: std::cell::RefCell::new(BTreeMap::new()),
+            premises,
+        };
+        let report = view.instance_premises(&program);
+        program.premises = Some(report);
+    }
     let dispatcher = |mode: ReadMode| {
         let (name, _) = hops.loop_dispatchers.iter().find(|(_, m)| *m == mode)?;
         let ids = by_name
@@ -2328,6 +2409,8 @@ struct StepB<'a> {
     keys: &'a PropertyKeyTables,
     macro_bodies: &'a BTreeMap<String, BTreeSet<String>>,
     property_readings: std::cell::RefCell<BTreeMap<String, Vec<String>>>,
+    /// Card W47-PREMISES-INSTANCE: the premised census's inputs.
+    premises: Option<&'a PremiseInputs>,
 }
 
 /// A flag derivation's value: `Some(false)` no coroutine, `Some(true)` the

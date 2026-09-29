@@ -722,7 +722,7 @@ impl StepB<'_> {
         hidden
     }
 
-    fn hazards(&self, typed: &TypedFacts) -> BTreeMap<usize, String> {
+    pub(super) fn hazards(&self, typed: &TypedFacts) -> BTreeMap<usize, String> {
         let tables = self.flow;
         let mut hazards: BTreeMap<usize, String> = BTreeMap::new();
         // A call to a name only an unstructured file may define.
@@ -846,6 +846,8 @@ impl StepB<'_> {
                     .or_insert_with(|| "names a listed member and has no typed reading".to_owned());
             }
         }
+        // Card W47-PREMISES-INSTANCE: the premised census's hazards.
+        self.premise_hazards(typed, &mut hazards);
         // A file whose conditional groups the reader cannot structure may hide
         // calls: its functions are hazards when its raw text names a listed
         // member, the constructor, or a function that reaches a hazard (to a
@@ -972,6 +974,11 @@ impl StepB<'_> {
             return Err(format!(
                 "no descriptor declares the plugin name \"{literal}\""
             ));
+        }
+        // Card W47-PREMISES-INSTANCE: the name matches a registered descriptor.
+        if self.premises.is_some() {
+            let note = self.registered_match(literal)?;
+            self.notes.borrow_mut().insert(note);
         }
         let mut value = false;
         for object in objects {
@@ -1555,6 +1562,20 @@ impl StepB<'_> {
             ));
         };
         let flag = self.descriptors_flag(&literal)?;
+        // Card W47-PREMISES-INSTANCE: in the premised census the premises the
+        // note names are derived, or the head is not tied.
+        if self.premises.is_some() {
+            let notes = match self.head_premises() {
+                Ok(notes) => notes,
+                Err(why) => return not_tied(why),
+            };
+            self.notes.borrow_mut().insert(format!(
+                "list-head instance: the one creation `{creator_name}(…, \"{literal}\", …)` at \
+                 {path}:{line} on the context `{maker}` returns"
+            ));
+            self.notes.borrow_mut().extend(notes);
+            return Ok(flag);
+        }
         self.notes.borrow_mut().insert(format!(
             "list-head instance: the one creation `{creator_name}(…, \"{literal}\", …)` at \
              {path}:{line} on the context `{maker}` returns (P-HEAD-INSTANCE, \
