@@ -73,6 +73,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [certificate-context-binding](certificate-context-binding/README.md) | Certificate context binding |
 
+| [cg01-t-operator-closure](cg01-t-operator-closure/README.md) | CG01-T-OPERATOR-CLOSURE: route T's operators and literals, admitted per consumer |
+
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |

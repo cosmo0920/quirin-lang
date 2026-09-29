@@ -103,6 +103,9 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     numerically evaluated or obligation-bearing. A new node no consumer
     classifies stays refused.
   - *Scope.* No numeric guarantee comes with it (N04–N06 are CG20).
+  - *Status (wave 48, round 1).* Landed: the importer reads the closure, and only
+    the Monkey wrapper projection admits it; the other consumers refuse by name
+    (`CG01-T-CONSUMER-ADMISSIONS`). [Report](../../reports/cg01-t-operator-closure/README.md).
 - **CG02: elaboration core.**
   - *The layer.* `elaborate(expr, ctx)` yields a value or place, an evaluation
     graph, effect and custody events, and obligations/assumptions (analysis §7).
