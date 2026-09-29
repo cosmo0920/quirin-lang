@@ -44,9 +44,12 @@
 //! may pass through: the flow keeps one abstract site per acquisition node,
 //! so a later generation would merge with a live earlier one and the refuted
 //! failure edge would erase both (the statement form has the same defect,
-//! registered as `CG04-LOOP-SITE-GENERATIONS`). An out-parameter acquisition (`if (f(&p) == 0)`) needs a
-//! contract that states the result/out relation; no contract does, so its
-//! refusal is unchanged (CG23).
+//! registered as `CG04-LOOP-SITE-GENERATIONS`).
+//!
+//! An out-parameter acquisition (`if (f(&p) == 0)`) would need a contract
+//! that states the result/out relation; none can, and this card adds none
+//! (CG23). Rule 5h already admits such a call, whose result owns nothing,
+//! with the contract's unconditional `Out` on both edges.
 //!
 //! # Complex leaves (E13)
 //!
@@ -66,7 +69,8 @@
 //!   whose events precede the leaf's branch that refines nothing.
 //!
 //! The Lean model is `QCore.ConditionAcquisition`; [`USE_VECTORS`],
-//! [`CARRIER_VECTORS`] and [`LEAF_VECTORS`] are shared with it.
+//! [`CARRIER_VECTORS`], [`PLACEMENT_VECTORS`] and [`LEAF_VECTORS`] are shared
+//! with it.
 
 use crate::call_instantiation::{ResultClass, ResultUse};
 

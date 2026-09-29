@@ -346,7 +346,10 @@ which is not a second authority.
     identity on the abstract state; and in a loop every edge to the exit is a
     `loop_exit_edge` (constraint 5c's retained exit). An unresolved name the
     desugaring now null-tests reports `unknown_alias` where the refusal stood;
-    that exchange is expected. [Report](../reports/w44-branch-condition-calls/README.md).
+    that exchange is expected. Rule 10x amends the first premise (a custody
+    result split on its own failure value off every cycle) and replaces the
+    whole-condition type-operator and increment refusals by its per-leaf
+    decision. [Report](../reports/w44-branch-condition-calls/README.md).
 
 <a id="constraint-5i"></a>
 
@@ -2019,7 +2022,8 @@ which is not a second authority.
     - a callee in the caller's recursive component is refused in every use
       (constraint 4's provisional summary);
     - a discarded or tested value (a condition leaf, a scalar `return`
-      operand) must own nothing;
+      operand) must own nothing, unless it is rule 10x's NULL split
+      (`TestedSplit`);
     - a stored value is the classifier's own;
     - a whole returned value carries only fresh custody;
     - a passed value is the identity with no result.
@@ -2174,3 +2178,71 @@ which is not a second authority.
     target-free borrow. `QCore.UnionBitfieldPlace`, bound to the Rust
     decision table by a shared-vector test and reusing
     `QCore.DisjointFootprint`; [report](../reports/cg13-union-and-bitfield-places/README.md).
+
+<a id="constraint-10x"></a>
+
+10x. **An acquisition in a condition is lowered only as its statement pair,
+    split on its own failure value off every cycle, and a complex leaf is
+    decided leaf by leaf.** Card CG04-CONDITION-ACQUISITION
+    (`condition_acquisition.rs`, the route-G adapter
+    `legacy_condition_acquisition.rs`, thin hooks in
+    `legacy_condition_desugar.rs`, `legacy_elaboration.rs`
+    (`elaborated_leaf`), `legacy_c.rs` and `call_instantiation.rs`). It
+    amends rule 5h's custody-result premise and whole-condition type-operator
+    and increment refusals; every other premise of 5h stands.
+
+    (1) **The NULL split** (gap entry E09, example A). A `(NAME = CALL(…))`
+    group whose leaf's residual is the existing null test of `NAME` (a
+    pointer) or its existing validity test (a descriptor) is the use
+    `ResultUse::TestedSplit`, which `call_instantiation::accept` takes for
+    every result class (the tested row widened, rule 10u; a recursive-component
+    callee still refuses). The leaf lowers to exactly the instructions of the
+    statement pair `NAME = CALL(…); if (NAME …)` — the classifier's
+    `ContractCall` with destination `NAME` (fresh identity, binding), then
+    `BranchOnNull`/`BranchOnValidity` (success and failure edges), wired by
+    the plan's edges (the merge) — so the flow decides the condition as it
+    decides the pair: the obligation on the success edge only, a
+    reallocation's failure edge keeping the old identity live. The call stays
+    a node of the condition's plan (never hoisted), and an acquisition in the
+    right operand of `&&`/`||` is applied only on the edges C evaluates it on
+    (rule 5h's edges). Premises: `NAME` is one automatic, non-formal local the
+    lexical or Clang reader types (rule 10l's declared local); a descriptor
+    name only as the destination of its own integer-carried acquisition; a
+    custody result is split only on its own carrier's failure value
+    (`carrier`: a pointer's NULL, a descriptor's sentinel); and **no custody
+    split on a node a CFG cycle may pass through** (`placement`: a loop
+    position, a loop body, or a range a backward `goto` closes; an unread
+    extent, an unknown label or `setjmp` makes the whole body a cycle),
+    because the flow keeps one abstract site per acquisition node and a live
+    earlier generation would merge with the fresh one while the refuted
+    failure edge erases both (`CG04-LOOP-SITE-GENERATIONS`, the same defect
+    in the statement form). An owned result discarded, bound but not split, or
+    split on another carrier keeps the refusal. An out-parameter acquisition
+    (`if (f(&p) == 0)`) gets no split: no contract states the result/out
+    relation (CG23); rule 5h admits the call as before, with the contract's
+    unconditional `Out` on both edges.
+
+    (2) **Complex leaves** (E13). Leaf by leaf (`leaf_route`): a type
+    operator whose parenthesised operand holds no call is residual text
+    (decided by the existing residual routes); a call inside a type operand,
+    a type operator without a parenthesised operand, an increment beside a
+    call in one leaf (CG05) and a connective below a leaf holding a call
+    (CG06) refuse; a call-free leaf with an increment skips the older
+    call-free routes and is the elaborator's (rule 10s: its events, then a
+    branch that refines nothing); a call-free leaf the older routes refuse is
+    asked of the elaborator last. A call-free condition keeps a plan only if
+    a typed or elaborated operand was needed (rule 10k's premise, unchanged).
+
+    **Do not** split a custody result on a cycle before
+    `CG04-LOOP-SITE-GENERATIONS` gives the flow generations, apply a call a
+    type operand holds, hoist a condition's call, lower an increment beside a
+    call, or widen `TestedSplit` for one consumer (a scalar `return` operand
+    reads the same leaf; its split is no custody-neutral exit, so it keeps
+    rule 10u's refusal). Every consultation is a parity row
+    (`position: "condition-desugar"`, its answer and widenings). Premises
+    stated, not proved: the flow's `BranchOnNull`/`BranchOnValidity` and
+    reallocation arms are the custody meaning of the split (the statement
+    pair's), and faithful Clang extraction (trust boundary 28).
+    `QCore.ConditionAcquisition`, bound to `USE_VECTORS`, `CARRIER_VECTORS`,
+    `PLACEMENT_VECTORS` and `LEAF_VECTORS` by shared-vector tests;
+    [report](../reports/cg04-condition-acquisition/README.md).

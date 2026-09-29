@@ -129,7 +129,12 @@ fn summary_of(outcome: &UnrestrictedLegacyResult) -> &LegacyProgramSummary {
 /// `body` is the function `subject(int flag, int n)`'s body, one statement per
 /// line after the declarations; lines are numbered from the body's first.
 fn analyze(body: &str) -> Run {
-    let source = format!("{DECLARATIONS}void subject(int flag, int n) {{\n{body}\n}}\n");
+    analyze_returning("void", body)
+}
+
+/// As [`analyze`], for a `subject` returning `result`.
+fn analyze_returning(result: &str, body: &str) -> Run {
+    let source = format!("{DECLARATIONS}{result} subject(int flag, int n) {{\n{body}\n}}\n");
     let outcome = analyze_unrestricted_c11(
         &C11TranslationUnit {
             source: &source,
@@ -369,15 +374,27 @@ fn unlisted_acquisition_shapes_keep_the_refusal() {
         "int fd;\nif ((fd = k_open(\"x\"))) { k_close(fd); }",
         // A formal destination.
         "if ((n = r_borrow_code(0)) != 0) { }",
-        // An out-parameter acquisition: no contract relates the status to
-        // the slot (CG23).
-        "void *p;\nif (cg4_make(&p) == 0) { q_free(p); }",
     ] {
         let run = analyze(body);
         assert!(!run.safe(), "{body}: {run:?}");
     }
+    // An out-parameter acquisition with a status result: no contract can
+    // relate the status to the slot (CG23), and this card adds no relation.
+    // Correction to the brief's premise: rule 5h already admits the call (its
+    // result owns nothing), with the contract's unconditional `Out` on both
+    // edges, so the failure edge reports the leak the contract implies.
     let run = analyze("void *p;\nif (cg4_make(&p) == 0) { q_free(p); }");
-    assert!(run.refused(BRANCH) || run.leaks() > 0, "{run:?}");
+    assert!(!run.refused(BRANCH), "{run:?}");
+    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
+    assert_eq!(run.leaks(), 1);
+    // The scalar `return` operand reads the same leaf (rule 10u); its split is
+    // no custody-neutral exit, so it keeps the return's refusal.
+    let run = analyze_returning("int", "void *p;\nreturn (p = q_maybe_alloc()) != 0;");
+    assert!(!run.safe(), "{run:?}");
+    assert!(
+        run.refused("unmodeled call, aggregate or indirect access in return expression"),
+        "{run:?}"
+    );
 }
 
 /// E13: a type operator and an increment are decided per leaf.
