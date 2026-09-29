@@ -26,6 +26,9 @@ pub mod condition_call_census;
 pub mod counter_source;
 #[cfg(feature = "indirect-census")]
 pub mod destination_suffix_census;
+// Card CG02-ELABORATION-CORE (rule 10s): the common expression elaborator and
+// its order model; the G hooks are in `legacy_elaboration.rs`.
+mod elaboration;
 mod index_traversal;
 pub mod indexed_collection;
 #[cfg(feature = "indirect-census")]
