@@ -224,6 +224,21 @@ pub fn read_loop_attribute(
     })
 }
 
+/// What the lowering's constant tier knows of a bound name (card
+/// `W48-QR-SCALAR-TYPES-R5`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BoundValue {
+    /// An `i32` of the tier as it was before the card — a literal `let` or an
+    /// `extent` binding. Its loop is the loop it always was.
+    I32(i32),
+    /// A value the tier derived — a conversion or a value statement over the
+    /// tier's own values, folded by the shared decision — of any §G02t type.
+    Derived { ty: ScalarType, value: i128 },
+    /// A derived value of `isize`/`usize` the tier could not fold because no
+    /// recorded target gives the type a width.
+    Widthless { ty: ScalarType },
+}
+
 /// A read `for NAME in 0..BOUND` header.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LoopHeader {
@@ -307,7 +322,7 @@ fn integer(window: &[&Token], cursor: usize) -> Option<i64> {
 pub fn read_loop_header(
     window: &[&Token],
     span: Span,
-    known: impl Fn(&str) -> Option<(ScalarType, i128)>,
+    known: impl Fn(&str) -> Option<BoundValue>,
     target: Option<&RecordedTarget>,
     budget: LoopBudget,
 ) -> Result<LoopHeader, SourceDiagnostic> {
@@ -358,11 +373,20 @@ pub fn read_loop_header(
             )
         })?,
         Some(TokenKind::Word(name)) => match known(name) {
-            Some((ScalarType::I32, value)) => {
-                i64::try_from(value).expect("an i32 constant fits i64")
+            Some(BoundValue::I32(value)) => i64::from(value),
+            // Card `W48-QR-SCALAR-TYPES-R5`: a derived value of `isize` or
+            // `usize` with no recorded target has no number; the bound is
+            // refused for the width, never guessed.
+            Some(BoundValue::Widthless { ty }) => {
+                return Err(refusal_diagnostic(
+                    &LoopRefusal::Bound(BoundRefusal::NeedsRecordedTarget { ty }),
+                    span,
+                ));
             }
-            // Card `W48-QR-SCALAR-TYPES-R5`: a bound of another type.
-            Some((ty, value)) => {
+            // Card `W48-QR-SCALAR-TYPES-R5`: a bound the tier derived — of any
+            // type, `i32` included — is decided by the typed decision, and the
+            // loop names it.
+            Some(BoundValue::Derived { ty, value }) => {
                 let count = typed_bound(name, ty, value, target).map_err(|refusal| {
                     refusal_diagnostic(&LoopRefusal::Bound(refusal), span)
                 })?;

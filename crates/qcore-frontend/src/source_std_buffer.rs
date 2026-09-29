@@ -1197,6 +1197,10 @@ pub struct LoweringConstants {
     /// exactly as the checker folds it. A name is in at most one of `scalars`
     /// and this map.
     typed: BTreeMap<String, (ScalarType, i128)>,
+    /// Derived names of `isize`/`usize` the tier could not fold for want of a
+    /// recorded target (card `W48-QR-SCALAR-TYPES-R5`), so a bound spelled
+    /// through one is refused for the width rather than as unknown.
+    widthless: BTreeMap<String, ScalarType>,
     /// The builder's recorded target, which alone gives `isize`/`usize` a
     /// width in the tier (card `W48-QR-SCALAR-TYPES-R5`).
     pub target: Option<qcore_core::scalar_types::RecordedTarget>,
@@ -1213,14 +1217,36 @@ impl LoweringConstants {
             .or_else(|| self.typed.get(name).copied())
     }
 
-    /// Bind `binding` to a known value of `ty` (card `W48-QR-SCALAR-TYPES-R5`).
+    /// What the tier knows of a bound name (card `W48-QR-SCALAR-TYPES-R5`).
+    #[must_use]
+    pub fn bound_value(&self, name: &str) -> Option<crate::source_loop::BoundValue> {
+        use crate::source_loop::BoundValue;
+        if let Some(value) = self.scalars.get(name) {
+            return Some(BoundValue::I32(*value));
+        }
+        if let Some((ty, value)) = self.typed.get(name) {
+            return Some(BoundValue::Derived {
+                ty: *ty,
+                value: *value,
+            });
+        }
+        self.widthless
+            .get(name)
+            .map(|ty| BoundValue::Widthless { ty: *ty })
+    }
+
+    /// Bind `binding` to a derived value of `ty` (card
+    /// `W48-QR-SCALAR-TYPES-R5`). An `i32` too goes to the derived map, so a
+    /// loop over it names its bound; `scalars` keeps exactly the tier the
+    /// card found.
     fn bind_known(&mut self, binding: &str, ty: ScalarType, value: i128) {
-        if ty == ScalarType::I32 {
-            if let Ok(value) = i32::try_from(value) {
-                self.scalars.insert(binding.to_owned(), value);
-            }
-        } else {
-            self.typed.insert(binding.to_owned(), (ty, value));
+        self.typed.insert(binding.to_owned(), (ty, value));
+    }
+
+    /// Record a derived name the tier could not fold for want of a width.
+    fn bind_widthless(&mut self, binding: &str, ty: ScalarType) {
+        if ty.is_target_width() && self.target.is_none() {
+            self.widthless.insert(binding.to_owned(), ty);
         }
     }
 
@@ -1347,11 +1373,11 @@ impl LoweringConstants {
                 operand,
                 to,
             } => {
-                if let Some(operand) = self.shared_operand(operand)
-                    && let Some((ty, value)) =
-                        self.fold(qcore_core::scalar_values::Operation::Convert(operand, *to))
-                {
-                    self.bind_known(binding, ty, value);
+                match self.shared_operand(operand).and_then(|operand| {
+                    self.fold(qcore_core::scalar_values::Operation::Convert(operand, *to))
+                }) {
+                    Some((ty, value)) => self.bind_known(binding, ty, value),
+                    None => self.bind_widthless(binding, *to),
                 }
             }
         }
@@ -1647,7 +1673,7 @@ fn lower_loop(
     let header = match crate::source_loop::read_loop_header(
         &header_window,
         span,
-        |name| constants.known(name),
+        |name| constants.bound_value(name),
         constants.target.as_ref(),
         budget,
     ) {
