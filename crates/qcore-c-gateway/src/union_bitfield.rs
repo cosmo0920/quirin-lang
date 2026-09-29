@@ -28,8 +28,11 @@
 //!   pointer-valued member of the same object. A store through a
 //!   **custody-free** union (every member scalar) is frame-neutral;
 //! * a **pointer-valued store** through a union member is refused: a custody
-//!   pointer stored in overlapping storage has no fixed view (card CG11 owns
-//!   pointer-valued stores; no contract fixes the view here).
+//!   pointer stored in overlapping storage has no fixed view, and no contract
+//!   fixes the view here. Card CG11 (rule 10v) owns pointer-valued stores and
+//!   classifies their values; one through a union member reaches
+//!   [`crate::typed_access_path::Reader::path`] as `Access::PointerStore` and
+//!   is refused here whatever its value.
 //!
 //! No route binds a pointer place through a union member (the refusals above
 //! and CG11's), so a union pointer member never carries a tracked identity or
@@ -99,9 +102,8 @@ pub(crate) enum Access {
     /// pointer the path then reads through.
     PointerRead,
     ScalarStore,
-    /// A table row: the reader refuses a pointer-valued store before asking
-    /// (card CG11), and the table refuses it again.
-    #[allow(dead_code, reason = "a decision-table row the reader never reaches")]
+    /// A pointer-valued store (card CG11's, rule 10v), which reaches the
+    /// reader only for a value CG11 classified neutral.
     PointerStore,
 }
 

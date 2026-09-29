@@ -331,6 +331,10 @@ pub(crate) fn admits_descriptor_read(
         // the gate's refusal stands); refused here anyway, since a scalar or
         // untracked store states nothing about a descriptor on its line.
         | LegacyInstruction::SubObjectStore { .. }
+        // Card CG11-POINTER-VALUED-STORES: a pointer store is read only for a
+        // value that carries no identity, so it states nothing about a
+        // descriptor on its line.
+        | LegacyInstruction::PointerStore { .. }
         | LegacyInstruction::NoOp => false,
     }
 }

@@ -1,0 +1,6 @@
+chunkio.c::cio_options_init
+rdkafka_buf.c::rd_kafka_bufq_init
+rdkafka_coord.c::rd_kafka_coord_cache_init
+rdkafka_coord.c::rd_kafka_coord_reqs_init
+rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegrps_init
+5 upper-bound candidate functions

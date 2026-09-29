@@ -251,6 +251,9 @@ pub(crate) struct StatementPlan {
     pub(crate) accesses: usize,
     /// A whole pointer-valued path read becomes a target-free borrowed alias.
     pub(crate) borrowed_destination: bool,
+    /// Card CG11-POINTER-VALUED-STORES (rule 10v): the statement is a
+    /// pointer-valued store this rule read; the flow decides it.
+    pub(crate) pointer_store: Option<crate::pointer_store::PointerStore>,
 }
 
 /// An AST and the exact token rendering handed to Clang. This is created
@@ -692,6 +695,8 @@ impl StatementIndex {
         };
         crate::typed_place::clear_decisions();
         let mut reader = self.reader(&never_bound);
+        // Card CG11 (rule 10v): only the statement route reads a pointer store.
+        reader.pointer_stores = true;
         reader.statement(node)?;
         Some(reader.plan)
     }
@@ -700,11 +705,14 @@ impl StatementIndex {
     pub(crate) fn reader<'a>(&'a self, never_bound: &'a dyn Fn(&str) -> bool) -> Reader<'a> {
         Reader {
             address_target: false,
+            pointer_store_target: false,
+            pointer_stores: false,
             plan: StatementPlan {
                 scalar: TypedScalarPlan::default(),
                 chains: Vec::new(),
                 accesses: 0,
                 borrowed_destination: false,
+                pointer_store: None,
             },
             fields: &self.fields,
             enums: &self.enums,
@@ -951,6 +959,12 @@ pub(crate) struct Reader<'a> {
     /// Rule 10n: the next [`Reader::path`] computes the address of its place
     /// (`&PATH`) instead of reading it, so the place's own type is not read.
     pub(crate) address_target: bool,
+    /// Card CG11 (rule 10v): the next [`Reader::path`] stores a pointer into
+    /// its place, so the place's type is not required to be a scalar.
+    pub(crate) pointer_store_target: bool,
+    /// Card CG11 (rule 10v): this reader reads a pointer-valued store (the
+    /// statement route only).
+    pub(crate) pointer_stores: bool,
     fields: &'a BTreeMap<String, Option<FieldFacts>>,
     enums: &'a EnumFacts,
     /// Card CG13 (rule 10w): union and bit-field record facts.
@@ -961,7 +975,17 @@ pub(crate) struct Reader<'a> {
     function: Option<&'a Value>,
 }
 
-impl Reader<'_> {
+impl<'a> Reader<'a> {
+    /// Card CG11 (rule 10v): the unit's field facts.
+    pub(crate) fn fields(&self) -> &'a BTreeMap<String, Option<FieldFacts>> {
+        self.fields
+    }
+
+    /// Card CG11 (rule 10v): the function whose body the reader reads.
+    pub(crate) fn function(&self) -> Option<&'a Value> {
+        self.function
+    }
+
     /// A proven builtin scalar, or (step B) a positively proven enumeration.
     pub(crate) fn scalar(&self, node: &Value) -> bool {
         is_scalar(node)
@@ -980,6 +1004,11 @@ impl Reader<'_> {
                     self.plan.scalar.destination = Some(destination.to_owned());
                     self.plan.borrowed_destination = true;
                     return self.path(pointer_source(&pair[1], &pair[0])?, false, true);
+                }
+                // Card CG11-POINTER-VALUED-STORES (rule 10v): a store into a
+                // place of pointer type, which `store` never admits.
+                if self.pointer_stores && crate::pointer_store::is_pointer_place(&pair[0]) {
+                    return crate::pointer_store::read_store(self, &pair[0], &pair[1]);
                 }
                 self.store(&pair[0])?;
                 self.expression(&pair[1])
@@ -1123,7 +1152,12 @@ impl Reader<'_> {
 
     pub(crate) fn path(&mut self, node: &Value, store: bool, pointer_read: bool) -> Option<()> {
         let address = std::mem::take(&mut self.address_target) && !store;
-        if !(address || self.scalar(node) || (pointer_read && !store && pointer_value(node))) {
+        let pointer_store = std::mem::take(&mut self.pointer_store_target) && store;
+        if !(address
+            || pointer_store
+            || self.scalar(node)
+            || (pointer_read && !store && pointer_value(node)))
+        {
             return None;
         }
         let mut steps = Vec::new();
@@ -1213,7 +1247,12 @@ impl Reader<'_> {
         let union_frame = if member_steps.is_empty() {
             false
         } else {
-            let access = if store {
+            // Card CG11's pointer-valued store (rule 10v) reaches this reader
+            // with `pointer_store`: through a union member it is refused by
+            // rule 10w's table, whatever value CG11 classified.
+            let access = if pointer_store {
+                crate::union_bitfield::Access::PointerStore
+            } else if store {
                 crate::union_bitfield::Access::ScalarStore
             } else if !address && pointer_read && pointer_value(node) {
                 crate::union_bitfield::Access::PointerRead

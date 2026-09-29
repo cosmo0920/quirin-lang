@@ -68,6 +68,8 @@ mod typed_access_positions;
 mod typed_position_shapes;
 // Card CG10-COMMON-TYPED-PLACE (rule 10t): the common typed place.
 mod typed_place;
+// Card CG11-POINTER-VALUED-STORES (rule 10v): pointer-valued stores.
+mod pointer_store;
 // Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): union-member and bit-field
 // place steps.
 mod union_bitfield;

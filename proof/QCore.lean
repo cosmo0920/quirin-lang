@@ -278,6 +278,7 @@ import QCore.SourceExtensions
 import QCore.TypedSourceOperators
 import QCore.ElaborationCore
 import QCore.TypedPlace
+import QCore.PointerStore
 import QCore.UnionBitfieldPlace
 
 /-! The executable formal core of QCore-C revision 0.1. -/

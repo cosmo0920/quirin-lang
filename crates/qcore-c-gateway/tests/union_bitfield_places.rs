@@ -73,6 +73,18 @@ fn a_custody_pointer_through_a_union_member_is_refused() {
         assert!(!result.safe(), "{body}");
         assert!(result.refused(IND), "{body}: {result:?}");
     }
+    // Composition with CG11 (rule 10v): a value CG11 classifies neutral (the
+    // null constant) is admitted into an ordinary member but still refused
+    // through a union member, where no contract fixes the view.
+    assert!(run("struct O { void *p; }; void subject(struct O *o) { o->p = 0; }").safe());
+    for body in [
+        "void subject(union U *u) { u->p = 0; }",
+        "void subject(struct R *r) { r->u.s.q = 0; }",
+    ] {
+        let result = run(body);
+        assert!(!result.safe(), "{body}: {result:?}");
+        assert!(result.refused(IND), "{body}: {result:?}");
+    }
     let released = run("void subject(union U *u) { void *x = u->p; q_free(x); }");
     assert!(!released.safe());
     assert!(released.has("UnknownAlias { variable: \"x\" }"));

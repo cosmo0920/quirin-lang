@@ -468,7 +468,7 @@ pub(crate) trait ChainView {
 
 /// The reading of the object a pointer on the chain designates.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum Owner {
+pub(crate) enum Owner {
     /// An object no reaching path bound: its members are untracked.
     Untracked,
     /// Exactly one known live identity.
@@ -486,6 +486,13 @@ fn single_identity(binding: &LinkBinding<'_>) -> Option<usize> {
 /// through resolves in `view`; see the module header. `Err` names the spelled
 /// prefix whose dereference refuses.
 pub(crate) fn chain_resolves(view: &impl ChainView, chain: &AccessChain) -> Result<(), String> {
+    chain_owner(view, chain).map(|_| ())
+}
+
+/// Card **CG11-POINTER-VALUED-STORES** (rule 10v): [`chain_resolves`]'s walk,
+/// returning the owner of the chain's final member (the object it lives in).
+/// `QCore.PointerStore.finalOwner`.
+pub(crate) fn chain_owner(view: &impl ChainView, chain: &AccessChain) -> Result<Owner, String> {
     let root = || chain.root.clone();
     let mut owner = if chain.dereferenced_root {
         match view.binding(&chain.root) {
@@ -545,7 +552,7 @@ pub(crate) fn chain_resolves(view: &impl ChainView, chain: &AccessChain) -> Resu
             }
         };
     }
-    Ok(())
+    Ok(owner)
 }
 
 #[cfg(test)]

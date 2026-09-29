@@ -214,6 +214,18 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     not by a trusted contract on `set`.
   - *Absorbs:* W43-INDIRECT-POINTER-VALUE-STORE, the seven W45-SUB-OBJECT-STORE-*
     rows, W44-CALL-RESULT-INDIRECT-DESTINATION and W43-COLLECTION-NAME-STORE.
+  - *Status (wave 48, round 3).* Landed on route G as gateway rule 10v: a
+    pointer-typed store is read from the Clang AST and admitted only for a value
+    with no identity (null, string literal, function, a function-pointer name
+    bound to nothing, the destination's own object) into an untracked owner,
+    and the body publishes no summary. 5 Unknown → Safe in the corpus arbiter
+    and 1 in the system route, no correction. Example C stays Unknown: its
+    missing premise is an owner identity for `*s` that bounds `*q`'s lifetime,
+    or a derived Stored summary mode. The entry is amended, not retired.
+    Residuals: `CG11-UNRESOLVED-OWNER-POINTER-STORES`,
+    `CG11-POINTER-STORE-SUMMARY-MODE`, `CG11-FUNCTION-POINTER-PARAMETER-CLOSURE`
+    and `CG11-UNREAD-POINTER-PLACES`.
+    [Report](../../reports/cg11-pointer-valued-stores/README.md).
 - **CG12: typed readback from `void *` fields.**
   - *Change.* A post-cast view and pointee type are connected to the stored
     identity, by contract or derivation.
