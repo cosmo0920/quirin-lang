@@ -65,12 +65,12 @@
 //! body's statements are the route's own statements, read by the route's own
 //! reader, so a shape one admits and the other refuses is not expressible.
 
-use std::collections::BTreeMap;
-
+use qcore_core::scalar_types::{RecordedTarget, ScalarType};
 use qcore_core::source_loop::{
     BoundRefusal, LoopBudget, LoopRefusal, MAX_DECLARED_LIMIT, MAX_ITERATIONS, UnrollLicense,
-    budget_refusal,
+    budget_refusal, typed_bound,
 };
+use qcore_core::std_buffer::LoopIndex;
 
 use crate::frontend::{
     DeclarationKind, SemanticPass, SourceBlock, SourceDiagnostic, SourceProgram, StatementKind,
@@ -229,6 +229,9 @@ pub fn read_loop_attribute(
 pub struct LoopHeader {
     pub variable: String,
     pub count: u32,
+    /// The bound's §G02t type, and so the index's, with the bound's name when
+    /// it is not an `i32` (card `W48-QR-SCALAR-TYPES-R5`).
+    pub index: LoopIndex,
 }
 
 fn diagnostic(code: &'static str, span: Span, message: impl Into<String>) -> SourceDiagnostic {
@@ -295,10 +298,17 @@ fn integer(window: &[&Token], cursor: usize) -> Option<i64> {
 /// preceding this statement, if one was written and read. Card `LOOP-UNROLL-BUDGET`'s
 /// three-layer budget is applied after the bound is known and **before** the
 /// body is looked at, so an over-budget loop costs the checking route nothing.
+///
+/// Card `W48-QR-SCALAR-TYPES-R5`: `known` resolves a name to its §G02t type
+/// and number in that environment, and the header's `index` is the bound's
+/// type — a literal bound, as before, an `i32`. A bound of another type is
+/// decided by [`qcore_core::source_loop::typed_bound`] under `target`; an
+/// `i32` bound takes exactly the path it always took.
 pub fn read_loop_header(
     window: &[&Token],
     span: Span,
-    constants: &BTreeMap<String, i32>,
+    known: impl Fn(&str) -> Option<(ScalarType, i128)>,
+    target: Option<&RecordedTarget>,
     budget: LoopBudget,
 ) -> Result<LoopHeader, SourceDiagnostic> {
     if word(window, 0) != Some(FOR_KEYWORD) {
@@ -347,8 +357,27 @@ pub fn read_loop_header(
                 span,
             )
         })?,
-        Some(TokenKind::Word(name)) => match constants.get(name) {
-            Some(value) => i64::from(*value),
+        Some(TokenKind::Word(name)) => match known(name) {
+            Some((ScalarType::I32, value)) => {
+                i64::try_from(value).expect("an i32 constant fits i64")
+            }
+            // Card `W48-QR-SCALAR-TYPES-R5`: a bound of another type.
+            Some((ty, value)) => {
+                let count = typed_bound(name, ty, value, target).map_err(|refusal| {
+                    refusal_diagnostic(&LoopRefusal::Bound(refusal), span)
+                })?;
+                if let Some(refusal) = budget_refusal(count, budget) {
+                    return Err(refusal_diagnostic(&LoopRefusal::Bound(refusal), span));
+                }
+                return Ok(LoopHeader {
+                    variable: variable.to_owned(),
+                    count,
+                    index: LoopIndex::Typed {
+                        ty,
+                        bound: name.clone(),
+                    },
+                });
+            }
             None => {
                 return Err(refusal_diagnostic(
                     &LoopRefusal::Bound(BoundRefusal::NotConstant {
@@ -381,12 +410,14 @@ pub fn read_loop_header(
 
     let refusal = if bound < 0 {
         Some(BoundRefusal::Negative {
-            value: i32::try_from(bound).unwrap_or(i32::MIN),
+            value: i128::from(i32::try_from(bound).unwrap_or(i32::MIN)),
         })
     } else if bound == 0 {
         Some(BoundRefusal::Zero)
     } else if bound > i64::from(MAX_ITERATIONS) {
-        Some(BoundRefusal::TooLarge { value: bound })
+        Some(BoundRefusal::TooLarge {
+            value: i128::from(bound),
+        })
     } else {
         None
     };
@@ -404,6 +435,7 @@ pub fn read_loop_header(
     Ok(LoopHeader {
         variable: variable.to_owned(),
         count,
+        index: LoopIndex::I32,
     })
 }
 

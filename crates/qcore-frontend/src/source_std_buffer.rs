@@ -1005,8 +1005,21 @@ pub fn buffer_statement(parsed: &SourceProgram, span: Span) -> Option<Result<Buf
 /// partially lowered middle state.
 pub fn lower_source_buffer(
     parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    entry: &str,
+) -> Result<LoweredBufferModule, Vec<SourceDiagnostic>> {
+    lower_source_buffer_for_target(parsed, typed, entry, None)
+}
+
+/// [`lower_source_buffer`] for the builder's recorded target (card
+/// `W48-QR-SCALAR-TYPES-R5`): the lowering's constant tier folds conversions
+/// and value statements to `isize`/`usize` only with a width, so a loop bound
+/// of either type needs the target here as well as in the checker.
+pub fn lower_source_buffer_for_target(
+    parsed: &SourceProgram,
     _typed: &TypedSourceProgram,
     entry: &str,
+    target: Option<&qcore_core::scalar_types::RecordedTarget>,
 ) -> Result<LoweredBufferModule, Vec<SourceDiagnostic>> {
     let tokens = parsed.lexical_tokens();
     let mut diagnostics = Vec::new();
@@ -1126,6 +1139,9 @@ pub fn lower_source_buffer(
     // Card `W48-QR-SCALAR-TYPES-R3`: the declared field types, so a
     // construction reads each field's value at its declared type.
     constants.declare_records(&records);
+    // Card `W48-QR-SCALAR-TYPES-R5`: the width `isize`/`usize` take in the
+    // constant tier.
+    constants.target = target.cloned();
 
     lower_statements(
         parsed,
@@ -1175,9 +1191,69 @@ pub struct LoweringConstants {
     /// read-only, so a construction reads each field value at its declared
     /// type. Contributes no constant.
     records: BTreeMap<String, RecordType>,
+    /// Card `W48-QR-SCALAR-TYPES-R5`: the tier's values of every §G02t type
+    /// other than `i32`, each with its number — a conversion over a value of
+    /// the tier, folded by the shared decision (`scalar_values::Decider`),
+    /// exactly as the checker folds it. A name is in at most one of `scalars`
+    /// and this map.
+    typed: BTreeMap<String, (ScalarType, i128)>,
+    /// The builder's recorded target, which alone gives `isize`/`usize` a
+    /// width in the tier (card `W48-QR-SCALAR-TYPES-R5`).
+    pub target: Option<qcore_core::scalar_types::RecordedTarget>,
 }
 
 impl LoweringConstants {
+    /// The type and number of a name of the tier, if it has one (card
+    /// `W48-QR-SCALAR-TYPES-R5`).
+    #[must_use]
+    pub fn known(&self, name: &str) -> Option<(ScalarType, i128)> {
+        self.scalars
+            .get(name)
+            .map(|value| (ScalarType::I32, i128::from(*value)))
+            .or_else(|| self.typed.get(name).copied())
+    }
+
+    /// Bind `binding` to a known value of `ty` (card `W48-QR-SCALAR-TYPES-R5`).
+    fn bind_known(&mut self, binding: &str, ty: ScalarType, value: i128) {
+        if ty == ScalarType::I32 {
+            if let Ok(value) = i32::try_from(value) {
+                self.scalars.insert(binding.to_owned(), value);
+            }
+        } else {
+            self.typed.insert(binding.to_owned(), (ty, value));
+        }
+    }
+
+    /// Fold one §G02t operation over the tier with the shared decision (card
+    /// `W48-QR-SCALAR-TYPES-R5`): the result's type and number when every
+    /// operand is known and the operation neither faults nor is refused.
+    /// Anything else contributes no bound — the checker decides (and, for a
+    /// fault, refuses) the statement itself, so the tier never holds a value
+    /// the checker would not.
+    fn fold(&self, operation: qcore_core::scalar_values::Operation) -> Option<(ScalarType, i128)> {
+        let decision = qcore_core::scalar_values::Decider::default()
+            .decide(operation, false, self.target.as_ref())
+            .ok()?;
+        Some((decision.ty, decision.known?))
+    }
+
+    /// A known operand for the shared decision.
+    fn shared_operand(&self, operand: &BufferOperand) -> Option<qcore_core::scalar_values::Operand> {
+        Some(match operand {
+            BufferOperand::Literal(value) => qcore_core::scalar_values::Operand::Typed {
+                ty: ScalarType::I32,
+                known: Some(i128::from(*value)),
+            },
+            BufferOperand::Scalar(name) => {
+                let (ty, value) = self.known(name)?;
+                qcore_core::scalar_values::Operand::Typed {
+                    ty,
+                    known: Some(value),
+                }
+            }
+        })
+    }
+
     #[must_use]
     pub fn new() -> Self {
         Self::default()
@@ -1256,13 +1332,28 @@ impl LoweringConstants {
             // is refused by name, in the same direction as a bound read out of
             // a byte (`AGGREGATE-BOUND-FROM-FIELD`'s shape at a copy).
             | BufferEvent::CopyBind { .. } => {}
-            // Card `W48-QR-SCALAR-TYPES-R3`: **a conversion contributes no
-            // bound either**, for the copy bind's reason: this tier is a
-            // literal, a literal `let` and an `extent` binding, decided in one
-            // place, and following a conversion would widen it by a second
-            // rule. A bound spelled through one is refused by name, in the
-            // `LOOP-BOUND-FROM-BYTE` direction (`W48-QR-TYPES-LOOP-BOUNDS`).
-            BufferEvent::Convert { .. } => {}
+            // Card `W48-QR-SCALAR-TYPES-R3` left a conversion out of this tier
+            // (`W48-QR-TYPES-LOOP-BOUNDS`). Card `W48-QR-SCALAR-TYPES-R5`
+            // admits it, and **not** by a second rule: the conversion of a
+            // value of the tier is folded by the shared decision the checker
+            // decides the same statement with (`scalar_values::Decider`), so
+            // the tier gains exactly the values of every other §G02t type
+            // that a literal, a literal `let` or an `extent` determine. A
+            // conversion of a byte, a field or a copy is still outside it —
+            // its operand is — and a bound spelled through one is refused by
+            // name, as before.
+            BufferEvent::Convert {
+                binding,
+                operand,
+                to,
+            } => {
+                if let Some(operand) = self.shared_operand(operand)
+                    && let Some((ty, value)) =
+                        self.fold(qcore_core::scalar_values::Operation::Convert(operand, *to))
+                {
+                    self.bind_known(binding, ty, value);
+                }
+            }
         }
     }
 }
@@ -1556,7 +1647,8 @@ fn lower_loop(
     let header = match crate::source_loop::read_loop_header(
         &header_window,
         span,
-        &constants.scalars,
+        |name| constants.known(name),
+        constants.target.as_ref(),
         budget,
     ) {
         Ok(header) => header,
@@ -1594,6 +1686,7 @@ fn lower_loop(
     Some(BufferEvent::Repeat {
         variable: header.variable,
         count: header.count,
+        index: header.index,
         body: body_events,
     })
 }

@@ -1698,6 +1698,7 @@ pub fn check_string_program(
                         variable,
                         count,
                         body,
+                        ..
                     } => {
                         if let Some(conflict) =
                             loop_body_conflict(live, &env, extents, variable, *count, body)
@@ -2076,8 +2077,32 @@ pub fn check_string_program(
                     variable,
                     count,
                     body,
+                    ..
                 } = buffer_event
                 {
+                    // Card `W48-QR-SCALAR-TYPES-R5`: this route binds only
+                    // `i32`s, and its emitter carries no typed environment
+                    // (`buffer_loop_block` keeps no conversion helper), so a
+                    // statement of the §G02t value tier is refused by name at
+                    // any depth — a conversion, and a loop whose index is of
+                    // another type. Before the card a conversion in a body
+                    // reached `check` and `emit` and the emitted C did not
+                    // compile (it called a helper nothing defined).
+                    if buffer_event.any(&|inner| {
+                        matches!(inner, BufferEvent::Convert { .. })
+                            || matches!(inner, BufferEvent::Repeat { index, .. } if *index != crate::std_buffer::LoopIndex::I32)
+                    }) {
+                        errors.push(StringError::Composition {
+                            event: index,
+                            reason: "this `for` computes a value of the fixed-width scalar \
+                                     table (a conversion, or an index of a type other than \
+                                     `i32`); the composed string/buffer entry binds only `i32` \
+                                     values and refuses such a statement by name at any depth \
+                                     (`W48-QR-TYPES-COMPOSED-STRING`)"
+                                .to_owned(),
+                        });
+                        continue;
+                    }
                     if buffer_event.any(&|inner| matches!(inner, BufferEvent::Lend { .. })) {
                         errors.push(StringError::Composition {
                             event: index,

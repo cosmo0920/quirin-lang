@@ -6269,7 +6269,9 @@ fn compile_buffer_source(
         )]);
     }
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
-    let lowered = qcore_frontend::source_std_buffer::lower_source_buffer(parsed, typed, &entry)
+    let lowered = qcore_frontend::source_std_buffer::lower_source_buffer_for_target(
+        parsed, typed, &entry, target,
+    )
         .map_err(|errors| {
             errors
                 .into_iter()

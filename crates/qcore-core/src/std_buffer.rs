@@ -175,6 +175,32 @@ impl From<BufferOperand> for FieldOperand {
     }
 }
 
+/// The index type of one `for` (card `W48-QR-SCALAR-TYPES-R5`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum LoopIndex {
+    /// An `i32` index: a literal bound, or a name of the lowering's `i32`
+    /// tier — every loop written before the card.
+    I32,
+    /// An index of another integer type, whose bound is the name `bound` of
+    /// that type. A literal bound is an `i32`, so a bound of another type is
+    /// always a name, and the checker compares the name's value against the
+    /// count the lowering decided (a disagreement refuses), while the emitted
+    /// C compares the index against the name's own C object, so a native run
+    /// checks the lowering's fold as well.
+    Typed { ty: ScalarType, bound: String },
+}
+
+impl LoopIndex {
+    /// The index's §G02t type.
+    #[must_use]
+    pub fn ty(&self) -> ScalarType {
+        match self {
+            Self::I32 => ScalarType::I32,
+            Self::Typed { ty, .. } => *ty,
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum BufferEvent {
     /// `let NAME = INTEGER;` — an ordinary integer binding.
@@ -270,9 +296,17 @@ pub enum BufferEvent {
     /// number — rather than by a fixed point over a back edge. See
     /// [`crate::source_loop`]'s header for why an over-approximation is not an
     /// option on a route whose evidence is a byte comparison.
+    ///
+    /// Card `W48-QR-SCALAR-TYPES-R5`: `index` is the bound's §G02t type, and
+    /// so the index's — the low end `0` is a literal and takes it. An `i32`
+    /// loop ([`LoopIndex::I32`]) is exactly the loop before the card; a loop
+    /// of any other integer type names its bound ([`LoopIndex::Typed`]) and
+    /// binds the index at that type, each value `0 … COUNT-1` a value of it
+    /// ([`crate::source_loop::typed_bound`]).
     Repeat {
         variable: String,
         count: u32,
+        index: LoopIndex,
         body: Vec<BufferEvent>,
     },
     /// `let NAME = TYPE { FIELD: OPERAND, … };` — construct a record value
@@ -1279,6 +1313,7 @@ pub fn custody_operations_with_gates(
                         variable,
                         count,
                         body,
+                        ..
                     } => {
                         // Every buffer this body binds is body-local, so each
                         // iteration's is a distinct binding and carries its own
@@ -1853,6 +1888,7 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                         variable,
                         count,
                         body,
+                        ..
                     } => self.repeat(variable, *count, body, &mut operations),
                     // Unreachable from the route: `check_buffer_program` —
                     // card `AGGREGATE-OWNED-FIELD` — refuses an owned-field
@@ -2056,6 +2092,7 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                             variable,
                             count,
                             body,
+                            ..
                         } => self.repeat(variable, *count, body, operations),
                         // An owned-field statement inside a body is refused
                         // by name before this projection runs
@@ -3310,10 +3347,13 @@ pub fn names_target_width(program: &BufferProgram) -> bool {
                 .scalar()
                 .is_some_and(ScalarType::is_target_width)
         })
-    }) || any_event(
-        &program.events,
-        |event| matches!(event, BufferEvent::Convert { to, .. } if to.is_target_width()),
-    )
+    }) || any_event(&program.events, |event| match event {
+        BufferEvent::Convert { to, .. } => to.is_target_width(),
+        // Card `W48-QR-SCALAR-TYPES-R5`: a loop whose index is `isize` or
+        // `usize` depends on the target too.
+        BufferEvent::Repeat { index, .. } => index.ty().is_target_width(),
+        _ => false,
+    })
 }
 
 /// [`check_buffer_program`] for the builder's recorded target (card
@@ -3792,10 +3832,11 @@ impl BufferRun {
         if let BufferEvent::Repeat {
             variable,
             count,
+            index: loop_index,
             body,
         } = event
         {
-            self.repeat(variable, *count, body, index);
+            self.repeat_typed(variable, *count, loop_index, body, index);
             return;
         }
         let Self {
@@ -3959,6 +4000,23 @@ impl BufferRun {
     ///    emitted C to agree by coincidence about which of two values survives
     ///    the loop, and a refusal is the fail-closed answer.
     pub fn repeat(&mut self, variable: &str, count: u32, body: &[BufferEvent], index: usize) {
+        self.repeat_typed(variable, count, &LoopIndex::I32, body, index);
+    }
+
+    /// [`Self::repeat`] with the index at its own §G02t type (card
+    /// `W48-QR-SCALAR-TYPES-R5`). The count is checked against the index type
+    /// again here — [`source_loop::index_admits`] — so a loop whose index
+    /// cannot hold every value it takes, or its final step, is refused rather
+    /// than iterated; each iteration binds the index at that type.
+    pub fn repeat_typed(
+        &mut self,
+        variable: &str,
+        count: u32,
+        loop_index: &LoopIndex,
+        body: &[BufferEvent],
+        index: usize,
+    ) {
+        let index_type = loop_index.ty();
         // Card `W48-QR-SCALAR-TYPES-R3`: the environment is typed, and both of
         // its parts are scoped and shadow-checked by the one rule — a scalar
         // name is a scalar name whatever its type.
@@ -4000,11 +4058,41 @@ impl BufferRun {
                     BoundRefusal::Zero
                 } else {
                     BoundRefusal::TooLarge {
-                        value: i64::from(count),
+                        value: i128::from(count),
                     }
                 }),
             });
             return;
+        }
+        if let Err(refusal) =
+            source_loop::index_admits(count, index_type, self.evaluation.target.as_ref())
+        {
+            self.errors.push(BufferError::Loop {
+                event: index,
+                refusal: LoopRefusal::Bound(refusal),
+            });
+            return;
+        }
+        // Card `W48-QR-SCALAR-TYPES-R5`: a typed bound is a name, and the
+        // lowering decided the count from its value in the lowering's tier.
+        // The checker's own environment must agree — same type, same number
+        // — or the loop is refused: the count is decided in the lowering, and
+        // this is the second place that re-derives it rather than trusts it.
+        if let LoopIndex::Typed { ty, bound } = loop_index {
+            match self.evaluation.scalar_value(index, bound) {
+                Ok((found, value)) if found == *ty && value == i128::from(count) => {}
+                Ok(_) | Err(_) => {
+                    self.errors.push(BufferError::Loop {
+                        event: index,
+                        refusal: LoopRefusal::Bound(BoundRefusal::BoundDisagrees {
+                            bound: bound.clone(),
+                            count,
+                            ty: *ty,
+                        }),
+                    });
+                    return;
+                }
+            }
         }
 
         // Shadowing is decided **before** the body runs, because afterwards the
@@ -4029,10 +4117,16 @@ impl BufferRun {
         }
 
         for iteration in 0..count {
-            self.evaluation.scalars.insert(
-                variable.to_owned(),
-                i32::try_from(iteration).expect("MAX_ITERATIONS is far inside i32"),
-            );
+            if index_type == ScalarType::I32 {
+                self.evaluation.scalars.insert(
+                    variable.to_owned(),
+                    i32::try_from(iteration).expect("MAX_ITERATIONS is far inside i32"),
+                );
+            } else {
+                self.evaluation
+                    .typed
+                    .insert(variable.to_owned(), (index_type, i128::from(iteration)));
+            }
             let before = self.errors.len();
             self.walk(body, index, false);
             // **One refusal per loop, not one per failing iteration.** The

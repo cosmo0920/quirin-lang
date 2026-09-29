@@ -359,10 +359,13 @@ fn declares_typed_field(record: &RecordType) -> bool {
 #[must_use]
 pub fn uses_typed_scalars(program: &BufferProgram) -> bool {
     program.records.iter().any(declares_typed_field)
-        || std_buffer::any_event(
-            &program.events,
-            |event| matches!(event, BufferEvent::Convert { to, .. } if *to != ScalarType::I32),
-        )
+        || std_buffer::any_event(&program.events, |event| match event {
+            BufferEvent::Convert { to, .. } => *to != ScalarType::I32,
+            // Card `W48-QR-SCALAR-TYPES-R5`: a loop with an index of another
+            // type declares it at that type's C spelling.
+            BufferEvent::Repeat { index, .. } => index.ty() != ScalarType::I32,
+            _ => false,
+        })
 }
 
 /// The paragraph a module declaring a field of another fixed-width type adds
@@ -1255,23 +1258,56 @@ fn emit_events(
             BufferEvent::Repeat {
                 variable,
                 count,
+                index: loop_index,
                 body,
             } => {
+                let index_type = loop_index.ty();
                 // A real C `for`. The index is a C variable the emitted program
                 // computes itself, so every index expression inside the body is
                 // written in terms of it rather than of a number the checker
                 // substituted.
                 let name = scalar_name(variable);
-                let _ = writeln!(
-                    source,
-                    "{indent}for (int32_t {name} = INT32_C(0); {name} < INT32_C({count}); \
-                     {name} += INT32_C(1)) {{"
-                );
+                if let std_buffer::LoopIndex::Typed { ty, bound } = loop_index {
+                    // Card `W48-QR-SCALAR-TYPES-R5`: the index at the bound's
+                    // own type. The checker proved the count a value of that
+                    // type, so the index's values `0 … count-1` and the final
+                    // step's `count` are all values of it: `+= 1` never
+                    // overflows and its conversion back to a narrow type never
+                    // truncates (`QCore.ScalarLoopBounds`). The bound is the
+                    // name's own C object, of the index's type, so the native
+                    // run compares against the number the emitted program
+                    // computed — a check of the lowering's fold, not a
+                    // restatement of it.
+                    let (bound_c, bound_ty) = records.scalar(scalars, index, bound)?;
+                    if bound_ty != *ty {
+                        return Err(BufferEmissionRefusal::Unbound {
+                            event: index,
+                            name: bound.clone(),
+                        });
+                    }
+                    let _ = writeln!(
+                        source,
+                        "{indent}for ({} {name} = {}; {name} < {bound_c}; {name} += {}) {{",
+                        st::c_type(*ty),
+                        st::c_literal(*ty, 0),
+                        st::c_literal(*ty, 1)
+                    );
+                } else {
+                    let _ = writeln!(
+                        source,
+                        "{indent}for (int32_t {name} = INT32_C(0); {name} < INT32_C({count}); \
+                         {name} += INT32_C(1)) {{"
+                    );
+                }
                 let outer_scalars: Vec<String> = scalars.keys().cloned().collect();
                 let outer_extents: Vec<String> = extents.keys().cloned().collect();
                 let outer_records: Vec<String> = records.bound.keys().cloned().collect();
                 let outer_typed: Vec<String> = records.typed.keys().cloned().collect();
-                scalars.insert(variable.clone(), name);
+                if index_type == ScalarType::I32 {
+                    scalars.insert(variable.clone(), name);
+                } else {
+                    records.typed.insert(variable.clone(), (name, index_type));
+                }
                 let inner = format!("{indent}    ");
                 emit_events(
                     body, &inner, index, false, scalars, extents, loans, lends, records, source,
