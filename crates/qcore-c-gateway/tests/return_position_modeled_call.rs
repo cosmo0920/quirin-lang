@@ -404,14 +404,13 @@ fn a_call_that_is_not_the_whole_return_expression_is_refused() {
     let comma = run("int subject(void) { void *p = q_alloc(); return r_release_code(p), 0; }");
     assert!(!comma.refuses_return(), "{:?}", comma.unsupported());
     assert!(comma.unsupported().is_empty(), "{:?}", comma.unsupported());
-    for body in ["int subject(void) { void *p = q_alloc(); return r_release_code(p) ? 1 : 0; }"] {
-        let refused = run(body);
-        assert!(
-            refused.refuses_return(),
-            "`{body}` must keep the return refusal, got {:?}",
-            refused.unsupported()
-        );
-    }
+    let body = "int subject(void) { void *p = q_alloc(); return r_release_code(p) ? 1 : 0; }";
+    let refused = run(body);
+    assert!(
+        refused.refuses_return(),
+        "`{body}` must keep the return refusal, got {:?}",
+        refused.unsupported()
+    );
     // Deliberate pin update, card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u):
     // `r_release_code(p) & 1` is one condition leaf, and the return operand
     // accepts exactly what the same leaf in an `if` accepts. B01 refused it

@@ -69,7 +69,7 @@ pub(super) enum CallRefusal {
     /// The classifier refused the call (its description).
     Unapplied(String),
     /// The classifier lowered the statement to something else.
-    Lowered(LegacyInstruction),
+    Lowered(Box<LegacyInstruction>),
     /// The classifier's destination is not the one the consumer asked for.
     UnexpectedDestination,
 }
@@ -174,7 +174,7 @@ impl Parser<'_> {
             LegacyInstruction::Unknown { description, .. } => {
                 Err(CallRefusal::Unapplied(description.clone()))
             }
-            _ => Err(CallRefusal::Lowered(call.clone())),
+            _ => Err(CallRefusal::Lowered(Box::new(call.clone()))),
         }
     }
 
