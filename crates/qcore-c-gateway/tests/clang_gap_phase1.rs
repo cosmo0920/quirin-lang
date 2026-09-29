@@ -519,17 +519,19 @@ fn e06_short_circuit_values_are_refused_outside_conditions() {
         VALUES
     );
     assert!(t("int subject(int a, int b) { if (a && b) return 1; return 0; }").is_ok());
+    // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): the
+    // initializer and the actual are lowered by branching on the connective
+    // (G only; T above is unchanged). BEFORE: "resource call with a formal
+    // embedded in an unmodeled expression" and the nested-call refusal.
     let run = gs(
         "void subject(int flag) { void *p = q_alloc(); int ok = flag && r_borrow_code(p); q_free(p); }",
     );
-    assert!(
-        run.refused("resource call with a formal embedded in an unmodeled expression"),
-        "{run:?}"
-    );
+    assert!(run.safe(), "{run:?}");
     let run = gs(
         "void subject(int flag) { void *p = q_alloc(); cg_sink(flag || r_borrow_code(p)); q_free(p); }",
     );
-    assert!(run.refused(&nested("r_borrow_code")), "{run:?}");
+    assert!(run.safe(), "{run:?}");
+    // Unchanged: an uncontracted call on one edge keeps the refusal.
     let run =
         gs("int subject(int flag) { void *p = q_alloc(); q_free(p); return flag && opaque(); }");
     assert!(run.refused(RETURN), "{run:?}");
@@ -555,17 +557,33 @@ fn e07_conditional_values_are_refused_outside_conditions() {
         t_refusal("int subject(int a, int b) { return a ?: b; }"),
         "unmodeled callback expression BinaryConditionalOperator"
     );
+    // FLIPPED by CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z), G only:
+    // * the pointer `?:` initializer is lowered by branching; the flow's
+    //   existing join then makes `q` possibly null with `p`'s target, which
+    //   marks `p` nullable, exactly as `if (flag) q = p; else q = 0;` does
+    //   (BEFORE: the assignment refusal). Still Unknown, never Safe;
+    // * the return selects exactly one release per edge: Safe (BEFORE: the
+    //   return refusal);
+    // * the actual's call is applied on one edge only: Safe (BEFORE: the
+    //   nested-call refusal).
     let run =
         gs("void subject(int flag) { void *p = q_alloc(); void *q = flag ? p : 0; q_free(p); }");
-    assert!(run.refused(ASSIGNMENT), "{run:?}");
+    assert!(
+        run.refused("nullable resource `p` used by a non-null contract"),
+        "{run:?}"
+    );
+    let branched = gs(
+        "void subject(int flag) { void *p = q_alloc(); void *q; if (flag) q = p; else q = 0; q_free(p); }",
+    );
+    assert_eq!(branched.diagnostics, run.diagnostics);
     let run = gs(
         "int subject(int flag) { void *p = q_alloc(); return flag ? r_release_code(p) : r_consume_code(p); }",
     );
-    assert!(run.refused(RETURN), "{run:?}");
+    assert!(run.safe(), "{run:?}");
     let run = gs(
         "void subject(int flag) { void *p = q_alloc(); cg_sink(flag ? r_borrow_code(p) : 0); q_free(p); }",
     );
-    assert!(run.refused(&nested("r_borrow_code")), "{run:?}");
+    assert!(run.safe(), "{run:?}");
     // Controls: a top-level condition and a scalar GNU `?:` initializer.
     assert!(gs("void subject(int flag) { void *p = q_alloc(); if (flag ? r_release_code(p) : r_consume_code(p)) { } }").safe());
     assert!(

@@ -164,6 +164,7 @@ impl Parser<'_> {
         old: &str,
     ) -> Option<Statement> {
         if LOWERING.get()
+            || std::env::var_os("QCORE_CG06_OFF").is_some()
             || tokens.is_empty()
             || !spells_connective(tokens)
             || contains_braces(tokens)
@@ -320,7 +321,13 @@ impl Parser<'_> {
         };
         let (yes, no) = (edge(yes), edge(no));
         // C's order: the deciding operand, then the arm of the edge taken.
-        let decision = self.decision(line, &tokens[condition.0..condition.1])?;
+        let deciding = match &region.shape {
+            Shape::Boolean => region.node,
+            _ => children(region.node).first().ok_or(Decline::Node)?,
+        };
+        let decision = value_connective::deciding(deciding, || {
+            self.decision(line, &tokens[condition.0..condition.1])
+        })?;
         choices.push((region.node, choice[0]));
         let then_body = self.branch(lowering, yes, choices);
         choices.pop();

@@ -283,6 +283,46 @@ pub(crate) fn edge_node(actual: &Value) -> Option<&Value> {
     })
 }
 
+thread_local! {
+    /// The deciding operand whose `if` condition routes are running.
+    static DECIDING: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
+/// Run `body` while the condition routes decide `node`, a region's deciding
+/// operand.
+pub(crate) fn deciding<T>(node: &Value, body: impl FnOnce() -> T) -> T {
+    let previous = DECIDING.with(|cell| cell.replace(address(node)));
+    let result = body();
+    DECIDING.with(|cell| cell.set(previous));
+    result
+}
+
+/// Among several Clang nodes carrying an operand's line and tokens, the one
+/// inside the deciding operand being lowered, when exactly one is. Asked only
+/// after rule 10n's controlling-scope match declined.
+pub(crate) fn deciding_candidate<'a>(root: &'a Value, candidates: &[&'a Value]) -> Option<&'a Value> {
+    let wanted = DECIDING.with(std::cell::Cell::get);
+    if wanted == 0 {
+        return None;
+    }
+    fn find(node: &Value, wanted: usize) -> Option<&Value> {
+        if address(node) == wanted {
+            return Some(node);
+        }
+        children(node).iter().find_map(|child| find(child, wanted))
+    }
+    fn inside(node: &Value, target: &Value) -> bool {
+        std::ptr::eq(node, target) || children(node).iter().any(|child| inside(child, target))
+    }
+    let decided = find(root, wanted)?;
+    let mut within = candidates
+        .iter()
+        .copied()
+        .filter(|candidate| inside(decided, candidate));
+    let one = within.next()?;
+    within.next().is_none().then_some(one)
+}
+
 /// The most leaves one full expression is lowered into.
 pub(crate) const MAX_LEAVES: usize = 8;
 
@@ -499,28 +539,25 @@ fn walk<'a>(
         out.push(region(node, siblings, reading)?);
         return Ok(());
     }
-    match kind(node) {
-        "ParenExpr" | "ImplicitCastExpr" | "CStyleCastExpr" | "MemberExpr"
-        | "ArraySubscriptExpr" | "UnaryOperator" => descend(node, reading, siblings, out),
-        "BinaryOperator" if !matches!(node["opcode"].as_str(), Some("=" | ",")) => {
-            descend(node, reading, siblings, out)
-        }
-        "CallExpr" => {
-            let (callee, _) = children(node)
-                .split_first()
+    // The position the node is, in `TRANSPARENT`'s vocabulary: a nested `=`
+    // or `,` is not an operator position (CG02 splits the sequenced forms).
+    let position = match (kind(node), node["opcode"].as_str()) {
+        ("BinaryOperator", Some(opcode @ ("=" | ","))) => format!("BinaryOperator {opcode}"),
+        ("CallExpr", _) => {
+            let callee = children(node)
+                .first()
                 .ok_or_else(|| Refusal::Position("CallExpr".into()))?;
-            if holds_connective(callee)
-                || crate::elaboration::direct_callee(callee).is_none()
-            {
+            if holds_connective(callee) || crate::elaboration::direct_callee(callee).is_none() {
                 return Err(Refusal::Position("indirect callee".into()));
             }
-            descend(node, reading, siblings, out)
+            "CallExpr actual".to_owned()
         }
-        other => Err(Refusal::Position(match (other, node["opcode"].as_str()) {
-            ("BinaryOperator", Some(opcode)) => format!("BinaryOperator {opcode}"),
-            _ => other.to_owned(),
-        })),
+        (other, _) => other.to_owned(),
+    };
+    if !TRANSPARENT.contains(&position.as_str()) {
+        return Err(Refusal::Position(position));
     }
+    descend(node, reading, siblings, out)
 }
 
 fn region<'a>(

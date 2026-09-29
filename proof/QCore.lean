@@ -279,6 +279,7 @@ import QCore.TypedSourceOperators
 import QCore.ElaborationCore
 import QCore.TypedPlace
 import QCore.CallInstantiation
+import QCore.ValueConnectives
 import QCore.PointerStore
 import QCore.UnionBitfieldPlace
 

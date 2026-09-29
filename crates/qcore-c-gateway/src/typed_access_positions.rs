@@ -256,7 +256,10 @@ impl StatementIndex {
             [node] => Some(node),
             // Rule 10n: several nodes carry the tokens; only those inside a
             // controlling expression or a returned value can be the operand.
-            [_, _, ..] => crate::typed_position_shapes::controlling_scope(body, &matched),
+            [_, _, ..] => crate::typed_position_shapes::controlling_scope(body, &matched)
+                // Card CG06 (rule 10z): asked after rule 10n, the one inside
+                // the value region's deciding operand being lowered.
+                .or_else(|| crate::value_connective::deciding_candidate(body, &matched)),
             [] => None,
         }
     }

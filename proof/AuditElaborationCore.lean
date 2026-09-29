@@ -2,7 +2,7 @@ import QCore.ElaborationCore
 #print axioms QCore.ElaborationCore.forms_unique
 #print axioms QCore.ElaborationCore.unlisted_refused
 #print axioms QCore.ElaborationCore.listed_refusal_named
-#print axioms QCore.ElaborationCore.value_connectives_refused
+#print axioms QCore.ElaborationCore.value_connectives_branch
 #print axioms QCore.ElaborationCore.out_of_scope_refused
 #print axioms QCore.ElaborationCore.value_forms_elaborated
 #print axioms QCore.ElaborationCore.commutes_symm
