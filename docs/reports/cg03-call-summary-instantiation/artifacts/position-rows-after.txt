@@ -15,7 +15,7 @@
       8 rows      8 functions  elaboration-return|old_refusal|typed=admitted
     399 rows    343 functions  elaboration-return|old_refusal|typed=refused
     662 rows    420 functions  elaboration-statement|old_refusal|typed=admitted
-  32669 rows   4444 functions  elaboration-statement|old_refusal|typed=refused
+  31988 rows   4390 functions  elaboration-statement|old_refusal|typed=refused
    7531 rows   1505 functions  residual-shape|old_refusal|typed=refused
       6 rows      6 functions  return-connective|old_refusal|typed=admitted
       1 rows      1 functions  return-connective|old_refusal|typed=refused
@@ -26,8 +26,9 @@
      48 rows     46 functions  statement|chain|typed=admitted
       2 rows      2 functions  statement|chain|typed=refused
     260 rows     92 functions  statement|index_traversal|typed=refused
-     21 rows     17 functions  statement|indexed_element|typed=refused
-   5509 rows   1447 functions  statement|old_refusal|typed=admitted
+      9 rows      9 functions  statement|indexed_element|typed=admitted
+     12 rows     10 functions  statement|indexed_element|typed=refused
+   6190 rows   1607 functions  statement|old_refusal|typed=admitted
      88 rows     45 functions  statement|scalar_field_noop|typed=admitted
       4 rows      4 functions  statement|scalar_field_noop|typed=refused
     506 rows    195 functions  statement|scalar_member_store|typed=admitted
@@ -35,11 +36,13 @@
    1583 rows    396 functions  statement|scalar|typed=admitted
     416 rows    223 functions  statement|scalar|typed=refused
      17 rows     17 functions  statement|sub_object_store_call|typed=refused
-    248 rows    133 functions  statement|sub_object_store|typed=admitted
-    792 rows    278 functions  statement|sub_object_store|typed=refused
-   2603 rows    858 functions  typed-place|old_refusal|typed=admitted
-    469 rows    215 functions  typed-place|old_refusal|typed=refused
+    447 rows    238 functions  statement|sub_object_store|typed=admitted
+    593 rows    157 functions  statement|sub_object_store|typed=refused
+   2839 rows    895 functions  typed-place|old_refusal|typed=admitted
+    481 rows    215 functions  typed-place|old_refusal|typed=refused
     148 rows without the W47 keys  call-instantiation
+   9820 rows without the W47 keys  pointer-store
+   2009 rows without the W47 keys  pointer-store-flow
   17751 rows without the W47 keys  root-declarations
      82 rows without the W47 keys  summary-premises
     186 rows without the W47 keys  summary-premises-graph

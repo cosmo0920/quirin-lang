@@ -1,0 +1,123 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4276,
+   "Safe": 548,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4266,
+   "Safe": 558,
+   "Unsafe": 10
+  }
+ },
+ "moves": [
+  {
+   "unit": "ctr_id.c",
+   "function": "ctr_id_cmp",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+   }
+  },
+  {
+   "unit": "rdhdrhistogram.c",
+   "function": "rd_hdr_highestEquivalentValue",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdhdrhistogram.c",
+   "function": "rd_hdr_medianEquivalentValue",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdhdrhistogram.c",
+   "function": "rd_hdr_nextNonEquivalentValue",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_consumer_group_state_code",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+   }
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_consumer_group_type_code",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+   }
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "function": "rd_kafka_topic_result_free",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: arguments do not match resource contract for `rd_kafka_topic_result_destroy`": -1
+   }
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_assignment_is_lost",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_destroy",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: arguments do not match resource contract for `rd_free`": -1
+   }
+  },
+  {
+   "unit": "rdstring.c",
+   "function": "rd_strtup_free",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: arguments do not match resource contract for `rd_strtup_destroy`": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 10
+ },
+ "same_status_functions_with_changed_diagnostics": 66,
+ "leaf_delta": {
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -67,
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": -7,
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -6,
+  "unsupported: call has an unmodeled formal address or borrowed expression": -2,
+  "unsupported: unmodeled call, aggregate or indirect access in loop condition": -1,
+  "unsupported: call to uncontracted function `rd_hdr_highestEquivalentValue`": -1,
+  "unsupported: arguments do not match resource contract for `rd_kafka_topic_result_destroy`": -1,
+  "unsupported: arguments do not match resource contract for `rd_free`": -1,
+  "unsupported: arguments do not match resource contract for `rd_strtup_destroy`": -1,
+  "unsupported: nullable resource `out` used by a non-null contract": 1,
+  "unknown_alias: unresolved resource identity": 18
+ }
+}
