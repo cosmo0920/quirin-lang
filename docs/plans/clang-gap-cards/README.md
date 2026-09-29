@@ -226,6 +226,12 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     (V), or a contract boundary.
   - *Absorbs:* W46-UNION-MEMBER-PATH, W44-CHAIN-INCOMPLETE-RECORD (the union
     part) and W43-LIBC-GETPEERNAME-SOCKADDR-UNION.
+  - *Status (wave 48, round 3).* Landed on route G (rule 10w): union steps
+    by storage (punned pointer reads and pointer stores refused, a framed
+    store through a pointer-bearing union), bit-fields as C11 storage units
+    connected to `disjoint_footprint` for naming an unsequenced pair. Corpus
+    +6 Safe; `getpeername`'s transparent union reported and left to the
+    declared-ABI reader ([report](../../reports/cg13-union-and-bitfield-places/README.md)).
 - **CG14: aggregate values and initializers.**
   - *Copies.* Whole-struct copies and assignments become field-wise alias and
     custody transfer (the `h->value = h->value` fixture).

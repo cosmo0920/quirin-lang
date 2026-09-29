@@ -1,0 +1,30 @@
+{
+ "after1": {
+  "monkey-source.json": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+  "resource-diagnostics.chunk-contracts.json": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+  "resource-diagnostics.contracts.json": "c459009571da7b617f36bbdad7bdff30cfa9271173f9e17a5e8d2c89616c3979",
+  "resource-diagnostics.json": "4b5bb59b4747f0776b6123a031edf7c9d620ca705a895b16f93b597e6adb2c4e",
+  "resource-diagnostics.source-effects.json": "b9eca9ad82c6cda505005ad98be76ebf0edd6409c38229837f97d729e56548af"
+ },
+ "after1_binary": "d78abff0a9619a0bdc68c3846bd1a47cf32265e416081cf11fcbd436f88e8af5",
+ "after1_exit": "0",
+ "after2": {
+  "monkey-source.json": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+  "resource-diagnostics.chunk-contracts.json": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+  "resource-diagnostics.contracts.json": "c459009571da7b617f36bbdad7bdff30cfa9271173f9e17a5e8d2c89616c3979",
+  "resource-diagnostics.json": "4b5bb59b4747f0776b6123a031edf7c9d620ca705a895b16f93b597e6adb2c4e",
+  "resource-diagnostics.source-effects.json": "b9eca9ad82c6cda505005ad98be76ebf0edd6409c38229837f97d729e56548af"
+ },
+ "after2_binary": "c7d14eae99ce1b00d2a35939bef55291298a6536bc235a836f75ab45f97f9da6",
+ "after2_exit": "0",
+ "before": {
+  "monkey-source.json": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+  "resource-diagnostics.chunk-contracts.json": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+  "resource-diagnostics.contracts.json": "c459009571da7b617f36bbdad7bdff30cfa9271173f9e17a5e8d2c89616c3979",
+  "resource-diagnostics.json": "963d7c9f0a0365132bd65bf488d70a4e37bfa345096f701cf93c59119aa50a36",
+  "resource-diagnostics.source-effects.json": "b9eca9ad82c6cda505005ad98be76ebf0edd6409c38229837f97d729e56548af"
+ },
+ "before_binary": "9ffa342b8354e862c4d8b537d175bae8e6aed4db071ff9b542417bf422b5c812",
+ "before_exit": "0",
+ "note": "corpus arbiter scripts/run_pinned_audit.py 66910c10 --jobs 8 over /home/cosmo/Documents/GitHub/qcore-c/build/cycle19; BEFORE at base f19204fa; after1 at ee4ed806; after2 at 5785fcb0 (rule 10w plus its parity rows). after1 and after2 are byte-identical in every artifact."
+}
