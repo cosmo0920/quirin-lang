@@ -268,12 +268,17 @@ fn every_other_refused_member_shape_keeps_its_unknown_and_its_diagnostic() {
     if !clang_available() {
         return;
     }
-    let cases: [(&str, &str); 6] = [
+    // Card CG13 (rule 10w) moves `&hold->lock.tag` out of this table: the
+    // continued selection's only refusal was the union step, which rule 10w
+    // reads; rule 10n's typed address fallback hands the address of a scalar
+    // member of the custody-free union to the borrowed position (no member of
+    // a union is ever linked, O04-B09B10's premise). BEFORE: refused.
+    admitted("a continued selection through a union", "&hold->lock.tag");
+    let cases: [(&str, &str); 5] = [
         ("an array member declared through a typedef", "&hold->bank"),
         ("an array member declared directly", "&hold->table"),
         ("a subscripted member", "&hold->table[0]"),
         ("a `volatile` member", "&hold->guarded"),
-        ("a continued selection", "&hold->lock.tag"),
         ("a parenthesized address", "&(hold->lock)"),
     ];
     for (label, argument) in cases {

@@ -70,6 +70,9 @@ mod typed_position_shapes;
 mod typed_place;
 // Card CG11-POINTER-VALUED-STORES (rule 10v): pointer-valued stores.
 mod pointer_store;
+// Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): union-member and bit-field
+// place steps.
+mod union_bitfield;
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l).
 pub mod typed_c_ast;
 // Card W47-LOOP-OWNER-TYPED-DISPATCH (rule 10p amendment): the record type

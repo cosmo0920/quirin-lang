@@ -718,6 +718,31 @@ fn ambiguous_actual_shapes_keep_their_unknown() {
         // `Borrowed` positions under `conf`'s dereference obligation, which
         // refuses the consumed base (`UnknownAlias` of `conf`) in place of the
         // gate's diagnostic. The body stays `Unknown`.
+        // Card CG13 (rule 10w) moves the union-link and union-base rows
+        // deliberately (the base row keeps its label as written): `view`
+        // is a union step and `ctx` read through it a borrow at `g_open`'s
+        // borrowed position, so the gate refusal gives way to the fixture's
+        // own obligation (`h` used by `g_close` without a null test). Still
+        // Unknown, never Safe.
+        if matches!(
+            label,
+            "a chain through a link the reader did not type is not a direct member read"
+                | "a union base is never admitted"
+        ) {
+            assert!(
+                w.diagnostics.iter().all(|diagnostic| !matches!(
+                    &diagnostic.kind,
+                    LegacyDiagnosticKind::Unsupported { description } if description == INDIRECT
+                )) && w.diagnostics.iter().any(|diagnostic| matches!(
+                    &diagnostic.kind,
+                    LegacyDiagnosticKind::Unsupported { description }
+                        if description == "nullable resource `h` used by a non-null contract"
+                )),
+                "{label}: the typed actual exposes the unguarded result, got {:?}",
+                w.diagnostics
+            );
+            continue;
+        }
         if label == "a base the projection may bind is never admitted" {
             assert!(
                 w.diagnostics.iter().any(|diagnostic| matches!(

@@ -1,0 +1,88 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4281,
+   "Safe": 543,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4275,
+   "Safe": 549,
+   "Unsafe": 10
+  }
+ },
+ "moves": [
+  {
+   "unit": "cmt_encode_opentelemetry_batch.c",
+   "function": "metric_data_point_count",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": -10,
+    "unsupported: indirect memory access is outside the resource projection": -5
+   }
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_favorDecompressionSpeed",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_setCompressionLevel",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "rdkafka_event.c",
+   "function": "rd_kafka_event_opaque",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -2
+   }
+  },
+  {
+   "unit": "rdkafka_event.c",
+   "function": "rd_kafka_event_stats",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_event.c",
+   "function": "rd_kafka_event_topic_partition_list",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": -2
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 6
+ },
+ "same_status_functions_with_changed_diagnostics": 200,
+ "leaf_delta": {
+  "unsupported: indirect memory access is outside the resource projection": -310,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -104,
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": -7,
+  "unsupported: call to uncontracted function `LZ4_setCompressionLevel`": -6,
+  "unsupported: unmodeled call, aggregate or indirect access in switch expression": -6,
+  "unsupported: unmodeled increment or decrement expression": -4,
+  "unsupported: unrecognized assignment destination": -2,
+  "unsupported: call to uncontracted function `metric_data_point_count`": -1,
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1,
+  "unsupported: arguments do not match resource contract for `metric_data_point_count`": 1,
+  "unknown_alias: unresolved resource identity": 372
+ }
+}

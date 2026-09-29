@@ -1,0 +1,24 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 242,
+   "Safe": 26,
+   "Pending": 1,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 242,
+   "Safe": 26,
+   "Pending": 1,
+   "Unsafe": 1
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 3,
+ "leaf_delta": {
+  "unsupported: indirect memory access is outside the resource projection": -3,
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1,
+  "unknown_alias: unresolved resource identity": 4
+ }
+}

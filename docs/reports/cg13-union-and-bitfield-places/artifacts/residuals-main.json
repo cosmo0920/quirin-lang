@@ -1,0 +1,82 @@
+{
+ "classes": {
+  "address (COND)": {
+   "functions": 16,
+   "leaves": 26
+  },
+  "address (IND)": {
+   "functions": 104,
+   "leaves": 193
+  },
+  "call (COND)": {
+   "functions": 28,
+   "leaves": 52
+  },
+  "call (IND)": {
+   "functions": 143,
+   "leaves": 290
+  },
+  "call (RET)": {
+   "functions": 1,
+   "leaves": 1
+  },
+  "cast (COND)": {
+   "functions": 1,
+   "leaves": 1
+  },
+  "cast (IND)": {
+   "functions": 8,
+   "leaves": 8
+  },
+  "cast (RET)": {
+   "functions": 1,
+   "leaves": 1
+  },
+  "indirect-call (COND)": {
+   "functions": 2,
+   "leaves": 2
+  },
+  "indirect-call (IND)": {
+   "functions": 24,
+   "leaves": 31
+  },
+  "indirect-call (RET)": {
+   "functions": 1,
+   "leaves": 2
+  },
+  "other (COND)": {
+   "functions": 25,
+   "leaves": 58
+  },
+  "other (IND)": {
+   "functions": 87,
+   "leaves": 154
+  },
+  "other (OTHER)": {
+   "functions": 2,
+   "leaves": 2
+  },
+  "other (RET)": {
+   "functions": 19,
+   "leaves": 20
+  },
+  "pointer-store (IND)": {
+   "functions": 123,
+   "leaves": 227
+  },
+  "pointer-store (OTHER)": {
+   "functions": 2,
+   "leaves": 2
+  },
+  "release (COND)": {
+   "functions": 1,
+   "leaves": 36
+  },
+  "release (IND)": {
+   "functions": 19,
+   "leaves": 95
+  }
+ },
+ "leaves": 1201,
+ "schema": "qcore.cg13-union-residuals.v1"
+}

@@ -145,6 +145,9 @@ pub(crate) struct PlaceStep {
     pub(crate) ty: String,
     /// Clang's type of the value or object the step reads through (its view).
     pub(crate) view: String,
+    /// Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): how a member step's
+    /// member occupies storage; `Ordinary` for every other step.
+    pub(crate) storage: crate::union_bitfield::MemberStorage,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -180,6 +183,10 @@ pub(crate) enum Refusal {
     Identity,
     /// The tracked-root decision refused (see [`Decision`]).
     Decision(Decision),
+    /// Card CG13 (rule 10w): a pointer read through after a union-member
+    /// step. A pointer member of a union carries no tracked identity, so it
+    /// is never a link of the chain model.
+    UnionHop,
 }
 
 impl Refusal {
@@ -193,6 +200,7 @@ impl Refusal {
             Self::Operator => "operator".into(),
             Self::Identity => "identity".into(),
             Self::Decision(decision) => decision.code().into(),
+            Self::UnionHop => "union-hop".into(),
         }
     }
 }
@@ -360,15 +368,24 @@ pub(crate) fn read_place(
                     .ok_or(Refusal::Field)?
                     .as_ref()
                     .ok_or(Refusal::Field)?;
-                if facts.union_owner || facts.bitfield {
-                    return Err(Refusal::Field);
-                }
+                // Card CG13 (rule 10w): a union member or a bit-field is a
+                // step; its access is decided by `union_bitfield::decide` in
+                // the reader that asked, which also requires a bit-field's unit.
+                let storage = match (facts.union_owner, facts.bitfield) {
+                    (false, false) => crate::union_bitfield::MemberStorage::Ordinary,
+                    (true, false) => crate::union_bitfield::MemberStorage::Union,
+                    (false, true) => crate::union_bitfield::MemberStorage::Bitfield,
+                    (true, true) => return Err(Refusal::Field),
+                };
                 let base = children(cursor).first().ok_or(Refusal::Missing)?;
                 let arrow = cursor["isArrow"].as_bool() == Some(true);
                 let (base, arrow) =
                     crate::typed_position_shapes::arrow_through_address(base, arrow);
                 let view = qual(base).ok_or(Refusal::Missing)?;
-                if view.contains("union ") || view.contains("volatile") || view.contains("_Atomic")
+                if (view.contains("union ")
+                    && storage != crate::union_bitfield::MemberStorage::Union)
+                    || view.contains("volatile")
+                    || view.contains("_Atomic")
                 {
                     return Err(Refusal::Qualifier);
                 }
@@ -389,6 +406,7 @@ pub(crate) fn read_place(
                         .to_owned(),
                     ty: qual(cursor).ok_or(Refusal::Missing)?.to_owned(),
                     view: view.to_owned(),
+                    storage,
                 });
                 if arrow {
                     let (inner, through_pointer) = through(base)?;
@@ -423,6 +441,7 @@ pub(crate) fn read_place(
                     field: String::new(),
                     ty: qual(cursor).ok_or(Refusal::Missing)?.to_owned(),
                     view: view.to_owned(),
+                    storage: crate::union_bitfield::MemberStorage::Ordinary,
                 });
                 cursor = inner;
                 if kind(cursor) == "DeclRefExpr" {
@@ -446,6 +465,7 @@ pub(crate) fn read_place(
                     field: String::new(),
                     ty: qual(cursor).ok_or(Refusal::Missing)?.to_owned(),
                     view: view.to_owned(),
+                    storage: crate::union_bitfield::MemberStorage::Ordinary,
                 });
                 cursor = inner;
                 if kind(cursor) == "DeclRefExpr" {
@@ -603,6 +623,16 @@ fn tracked_chain_of(place: &TypedPlace, function: Option<&Value>) -> Result<Trac
     if !function.is_some_and(|function| root_identity(function, place)) {
         return Err(Refusal::Identity);
     }
+    // Card CG13 (rule 10w): no pointer loaded from a union member's storage
+    // is a link.
+    if let Some(first_union) = place
+        .steps
+        .iter()
+        .position(|step| step.storage == crate::union_bitfield::MemberStorage::Union)
+        && kinds[first_union + 1..].iter().any(|step| step.hop())
+    {
+        return Err(Refusal::UnionHop);
+    }
     let hops = kinds
         .iter()
         .enumerate()
@@ -654,6 +684,7 @@ fn record_decision(place: Option<&TypedPlace>, refusal: Option<&Refusal>) {
                 "field": step.field,
                 "type": step.ty,
                 "view": step.view,
+                "storage": step.storage.code(),
             })).collect::<Vec<_>>(),
         })),
         "admitted": refusal.is_none(),
