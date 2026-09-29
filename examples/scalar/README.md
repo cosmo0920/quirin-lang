@@ -95,8 +95,34 @@ a fault in a function without the permission. Here `80 * 3` fits `u8`,
 An entry that propagates the error exits with status `80 + tag` (81, 82, 83)
 after the lines it wrote; this one handles every raise and exits 0.
 
+## Typed record fields
+
+[record_fields.qr](record_fields.qr) declares a record whose fields are
+fixed-width scalars (card `W48-QR-SCALAR-TYPES-R3`) on the byte-buffer route:
+each field value is checked against its field's type — `65535` is a `u16`,
+`true` a `bool` — and a field read binds a value of that type, rendered at it.
+A buffer index takes an `i32`, so the `u8` version is converted with `as`
+before it indexes; a `u8` at the index would be refused, not widened:
+
+<!-- transcript: record_fields stdout -->
+```text
+2
+0xFFFF
+7
+```
+
+<!-- transcript: record_fields stderr -->
+```text
+[INFO] true
+```
+
+Every value on this route is known when the program is checked, so a literal
+outside its field's type or a conversion that does not fit refuses the module
+at check time.
+
 See [the exact grammar](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1)
 and [implementation evidence](../../docs/reports/source-scalar-calls-v1/README.md);
 the fixed-width types are [§G02t](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02t-fixed-width-scalar-types)
 and [their evidence](../../docs/reports/w48-qr-scalar-types/README.md); the typed
-error is [its evidence](../../docs/reports/w48-qr-scalar-types-r2/README.md).
+error is [its evidence](../../docs/reports/w48-qr-scalar-types-r2/README.md), and
+the typed record fields are [card R3's](../../docs/reports/w48-qr-scalar-types-r3/README.md).

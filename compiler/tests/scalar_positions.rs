@@ -559,6 +559,71 @@ fn lean_field_vectors_match_the_checker() {
     assert!(count >= 20, "{count}");
 }
 
+/// The published example's lines are the ones its page shows, per stream, and
+/// its native run under the three builds writes exactly those.
+#[test]
+fn the_record_fields_example_publishes_its_transcript() {
+    let m = buffer_admitted(include_str!("../../examples/scalar/record_fields.qr"));
+    let page = include_str!("../../examples/scalar/README.md");
+    let mut published = PublishedStreams::default();
+    for (stream, marker) in [
+        ("out", "record_fields stdout"),
+        ("err", "record_fields stderr"),
+    ] {
+        let block = page
+            .split(&format!("<!-- transcript: {marker} -->"))
+            .nth(1)
+            .and_then(|rest| rest.split("```text\n").nth(1))
+            .and_then(|rest| rest.split("```").next())
+            .unwrap_or_else(|| panic!("the page has no `{marker}` transcript"));
+        let observed = lines(&m)
+            .into_iter()
+            .filter(|line| line.starts_with(&format!("{stream}: ")))
+            .collect::<Vec<_>>();
+        let shown = block
+            .lines()
+            .map(|line| format!("{stream}: {line}"))
+            .collect::<Vec<_>>();
+        assert_eq!(shown, observed, "{marker}");
+        published.push(stream, block);
+    }
+    #[cfg(unix)]
+    {
+        let c = m.c_source.clone().unwrap();
+        for (label, flags) in native::BUILDS {
+            let built = native::build(&c, flags).unwrap_or_else(|e| panic!("{label}: {e}"));
+            let out = std::process::Command::new(&built.binary).output().unwrap();
+            assert_eq!(out.status.code(), Some(0), "{label}");
+            assert_eq!(
+                String::from_utf8_lossy(&out.stdout),
+                published.out,
+                "{label}"
+            );
+            assert_eq!(
+                String::from_utf8_lossy(&out.stderr),
+                published.err,
+                "{label}"
+            );
+        }
+    }
+}
+
+/// The two stream projections a page publishes.
+#[derive(Default)]
+struct PublishedStreams {
+    out: String,
+    err: String,
+}
+
+impl PublishedStreams {
+    fn push(&mut self, stream: &str, block: &str) {
+        match stream {
+            "out" => self.out.push_str(block),
+            _ => self.err.push_str(block),
+        }
+    }
+}
+
 // --- Native execution ---------------------------------------------------
 
 #[cfg(unix)]
