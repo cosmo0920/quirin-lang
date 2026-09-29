@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG13-UNION-AND-BITFIELD-PLACES card gate at tip 8252e21c (base f19204fa, main cb20c28e merged), script docs/reports/cg13-union-and-bitfield-places/scripts/gate.sh, logs private/cg13/gate2 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 372 units, 385 summaries, 6,640 passed, 0 failed, 11 ignored (private/test-binaries/20260929T162051Z-4130235/summary.json); a first run (private/cg13/gate, tip 9cf7752e) exited 101 with 13 failed: older cards' union/bit-field pins and the workspace layering guard, each flipped by name or updated deliberately in 8252e21c (report section 4); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 232 audits passed (231 + AuditUnionBitfieldPlace.lean); python tests 365 OK; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE on the merged base (binary built at main cb20c28e) resource-diagnostics.json a6dc500b byte-identical to CG11's AFTER; AFTER 97107d95, 548/10/4,276 -> 554/10/4,270; system 33/2/199 and tail-pause slice unchanged. At the card's base f19204fa: BEFORE 963d7c9f, AFTER 4b5bb59b, 543/10/4,281 -> 549/10/4,275. Exits in gate/.",
-  "workspace_tests": 6640,
+  "note": "CG03-CALL-SUMMARY-INSTANTIATION card gate at tip 3b97868c (base f19204fa, main ab317406 merged at 4d11cfd3), script docs/reports/cg03-call-summary-instantiation/scripts/gate.sh, logs private/cg03/gate3 of this worktree: submodule (--init --recursive) 0; run_test_binaries.py 373 units, 386 summaries, 6,653 passed, 0 failed, 11 ignored (private/test-binaries/20260929T165911Z-505435/summary.json); fmt 0; clippy 0 (an earlier gate at 3da5aa66/d2e8dfac failed clippy on a large Err variant and a single-element loop in a re-pinned test, fixed in 8449fcca); both reevaluation probes exit 0; check_lean_audits.py 233 audits passed (232 + AuditCallInstantiation.lean); python tests: the gate run failed only on the matrix's derived lean_audits (232 against 233 on disk), corrected by this validation regeneration and rerun (09b-python.exit); docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8 recorded in this worktree. Corpus arbiter (--jobs 8): BEFORE on main ab317406 (binary built at ab317406) resource-diagnostics.json 97107d95 byte-identical to CG13's AFTER; AFTER (binary fd7fd89f at 4d11cfd3) 7393fd21, 554/10/4,270 -> 564/10/4,260; system 33/2/199 and tail-pause slice 26/1/242/1 Pending unmoved. Exits in gate/.",
+  "workspace_tests": 6653,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 232,
+  "lean_audits": 233,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6775,6 +6775,7 @@
    "AuditCGatewayRefinements.lean",
    "AuditCProgram.lean",
    "AuditCallArgumentAccess.lean",
+   "AuditCallInstantiation.lean",
    "AuditCallUseAdmission.lean",
    "AuditCallbackTaskHandoff.lean",
    "AuditCalleeSummaryScope.lean",
@@ -6998,7 +6999,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg13-union-and-bitfield-places/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a01dc9dee570e7795/docs/reports/cg03-call-summary-instantiation/gate.json)"
  },
  "named_followups": [
   {

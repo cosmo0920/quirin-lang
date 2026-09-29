@@ -404,7 +404,29 @@ whose models are the older ones.
 - **Amended:** CG04 and CG05, with the API they call.
 - Ledger 627 → 629. Script: [scripts/update_ledger.py](scripts/update_ledger.py).
 
-## 8. Scripts
+## 8. Gate
+
+The final gate ran at tip `3b97868c` (main `ab317406` merged), using
+[scripts/gate.sh](scripts/gate.sh). The exits are in [gate/](gate/), the
+record is [gate.json](gate.json), and the logs are under
+`private/cg03/gate3/`.
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 373 units, 386 summaries; **6,653 passed**, 0 failed, 11 ignored (`private/test-binaries/20260929T165911Z-505435/`) |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | Earlier gates (`private/cg03/gate`, `gate2`) failed on a large `Err` variant and a single-element loop in a re-pinned test. Both were fixed in `8449fcca`. |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **233 audits** (232 + `AuditCallInstantiation.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** | The gate run failed only on the matrix's derived `lean_audits` (232 against 233). The matrix validation was then regenerated from `gate.json` (`remaining-d02/build_matrix.py --gate`), and the rerun passed 365 tests OK (`09b-python.exit`). |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+
+`providers/` is unchanged, so the provider gate is not due. Clang 21.1.8 is
+recorded in `gate/clang-version.txt`.
+
+## 9. Scripts
 
 | Script | What it does |
 |---|---|
