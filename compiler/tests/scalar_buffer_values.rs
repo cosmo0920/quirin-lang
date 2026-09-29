@@ -467,7 +467,13 @@ fn admitted_value_statements_run_natively_as_the_reference() {
         source.push_str("    return;\n}\n");
         let m = buffer_admitted(&source);
         assert_eq!(lines(&m), expected, "{ty}");
-        run_native(&m, &expected, &format!("{ty}"), &mut rows, n);
+        run_native(
+            &m,
+            &expected,
+            &format!("{ty}"),
+            &mut rows,
+            n + points.len() * points.len() * COMPARISONS.len(),
+        );
     }
     // A loop computing on its index at every type.
     for ty in INTEGERS {
@@ -483,7 +489,7 @@ fn admitted_value_statements_run_natively_as_the_reference() {
             })
             .collect();
         assert_eq!(lines(&m), expected, "loop {ty}");
-        run_native(&m, &expected, &format!("loop-{ty}"), &mut rows, 500);
+        run_native(&m, &expected, &format!("loop-{ty}"), &mut rows, 5);
     }
     native::publish("values", &rows);
 }

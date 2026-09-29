@@ -1,0 +1,1126 @@
+{
+ "totals": {
+  "loops": {
+   "O0-ubsan": {
+    "programs": 20,
+    "lines": 64824
+   },
+   "O2-ubsan": {
+    "programs": 20,
+    "lines": 64824
+   },
+   "O2": {
+    "programs": 20,
+    "lines": 64824
+   }
+  },
+  "values": {
+   "O0-ubsan": {
+    "programs": 20,
+    "lines": 4395,
+    "statements": 3245
+   },
+   "O2-ubsan": {
+    "programs": 20,
+    "lines": 4395,
+    "statements": 3245
+   },
+   "O2": {
+    "programs": 20,
+    "lines": 4395,
+    "statements": 3245
+   }
+  },
+  "checker-table": {
+   "position": "checker-table",
+   "values": 1245,
+   "faults": 435
+  }
+ },
+ "rows": {
+  "loops": [
+   {
+    "position": "loop",
+    "type": "i8",
+    "bound": 3,
+    "build": "O0-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i8",
+    "bound": 3,
+    "build": "O2-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i8",
+    "bound": 3,
+    "build": "O2",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i8",
+    "bound": 127,
+    "build": "O0-ubsan",
+    "lines": 254,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i8",
+    "bound": 127,
+    "build": "O2-ubsan",
+    "lines": 254,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i8",
+    "bound": 127,
+    "build": "O2",
+    "lines": 254,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i16",
+    "bound": 3,
+    "build": "O0-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i16",
+    "bound": 3,
+    "build": "O2-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i16",
+    "bound": 3,
+    "build": "O2",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i16",
+    "bound": 4000,
+    "build": "O0-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i16",
+    "bound": 4000,
+    "build": "O2-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i16",
+    "bound": 4000,
+    "build": "O2",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i32",
+    "bound": 3,
+    "build": "O0-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i32",
+    "bound": 3,
+    "build": "O2-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i32",
+    "bound": 3,
+    "build": "O2",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i32",
+    "bound": 4000,
+    "build": "O0-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i32",
+    "bound": 4000,
+    "build": "O2-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i32",
+    "bound": 4000,
+    "build": "O2",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i64",
+    "bound": 3,
+    "build": "O0-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i64",
+    "bound": 3,
+    "build": "O2-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i64",
+    "bound": 3,
+    "build": "O2",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i64",
+    "bound": 4000,
+    "build": "O0-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i64",
+    "bound": 4000,
+    "build": "O2-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "i64",
+    "bound": 4000,
+    "build": "O2",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "isize",
+    "bound": 3,
+    "build": "O0-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "isize",
+    "bound": 3,
+    "build": "O2-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "isize",
+    "bound": 3,
+    "build": "O2",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "isize",
+    "bound": 4000,
+    "build": "O0-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "isize",
+    "bound": 4000,
+    "build": "O2-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "isize",
+    "bound": 4000,
+    "build": "O2",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u8",
+    "bound": 3,
+    "build": "O0-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u8",
+    "bound": 3,
+    "build": "O2-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u8",
+    "bound": 3,
+    "build": "O2",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u8",
+    "bound": 255,
+    "build": "O0-ubsan",
+    "lines": 510,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u8",
+    "bound": 255,
+    "build": "O2-ubsan",
+    "lines": 510,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u8",
+    "bound": 255,
+    "build": "O2",
+    "lines": 510,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u16",
+    "bound": 3,
+    "build": "O0-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u16",
+    "bound": 3,
+    "build": "O2-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u16",
+    "bound": 3,
+    "build": "O2",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u16",
+    "bound": 4000,
+    "build": "O0-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u16",
+    "bound": 4000,
+    "build": "O2-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u16",
+    "bound": 4000,
+    "build": "O2",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u32",
+    "bound": 3,
+    "build": "O0-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u32",
+    "bound": 3,
+    "build": "O2-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u32",
+    "bound": 3,
+    "build": "O2",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u32",
+    "bound": 4000,
+    "build": "O0-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u32",
+    "bound": 4000,
+    "build": "O2-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u32",
+    "bound": 4000,
+    "build": "O2",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u64",
+    "bound": 3,
+    "build": "O0-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u64",
+    "bound": 3,
+    "build": "O2-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u64",
+    "bound": 3,
+    "build": "O2",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u64",
+    "bound": 4000,
+    "build": "O0-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u64",
+    "bound": 4000,
+    "build": "O2-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "u64",
+    "bound": 4000,
+    "build": "O2",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "usize",
+    "bound": 3,
+    "build": "O0-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "usize",
+    "bound": 3,
+    "build": "O2-ubsan",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "usize",
+    "bound": 3,
+    "build": "O2",
+    "lines": 6,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "usize",
+    "bound": 4000,
+    "build": "O0-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "usize",
+    "bound": 4000,
+    "build": "O2-ubsan",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "loop",
+    "type": "usize",
+    "bound": 4000,
+    "build": "O2",
+    "lines": 8000,
+    "exit": 0,
+    "sanitizer_reports": 0
+   }
+  ],
+  "values": [
+   {
+    "position": "value-statement",
+    "program": "i8",
+    "build": "O0-ubsan",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i8",
+    "build": "O2-ubsan",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i8",
+    "build": "O2",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i16",
+    "build": "O0-ubsan",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i16",
+    "build": "O2-ubsan",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i16",
+    "build": "O2",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i32",
+    "build": "O0-ubsan",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i32",
+    "build": "O2-ubsan",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i32",
+    "build": "O2",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i64",
+    "build": "O0-ubsan",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i64",
+    "build": "O2-ubsan",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "i64",
+    "build": "O2",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "isize",
+    "build": "O0-ubsan",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "isize",
+    "build": "O2-ubsan",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "isize",
+    "build": "O2",
+    "statements": 486,
+    "lines": 486,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u8",
+    "build": "O0-ubsan",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u8",
+    "build": "O2-ubsan",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u8",
+    "build": "O2",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u16",
+    "build": "O0-ubsan",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u16",
+    "build": "O2-ubsan",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u16",
+    "build": "O2",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u32",
+    "build": "O0-ubsan",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u32",
+    "build": "O2-ubsan",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u32",
+    "build": "O2",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u64",
+    "build": "O0-ubsan",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u64",
+    "build": "O2-ubsan",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "u64",
+    "build": "O2",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "usize",
+    "build": "O0-ubsan",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "usize",
+    "build": "O2-ubsan",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "usize",
+    "build": "O2",
+    "statements": 153,
+    "lines": 153,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i8",
+    "build": "O0-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i8",
+    "build": "O2-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i8",
+    "build": "O2",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i16",
+    "build": "O0-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i16",
+    "build": "O2-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i16",
+    "build": "O2",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i32",
+    "build": "O0-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i32",
+    "build": "O2-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i32",
+    "build": "O2",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i64",
+    "build": "O0-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i64",
+    "build": "O2-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-i64",
+    "build": "O2",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-isize",
+    "build": "O0-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-isize",
+    "build": "O2-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-isize",
+    "build": "O2",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u8",
+    "build": "O0-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u8",
+    "build": "O2-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u8",
+    "build": "O2",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u16",
+    "build": "O0-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u16",
+    "build": "O2-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u16",
+    "build": "O2",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u32",
+    "build": "O0-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u32",
+    "build": "O2-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u32",
+    "build": "O2",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u64",
+    "build": "O0-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u64",
+    "build": "O2-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-u64",
+    "build": "O2",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-usize",
+    "build": "O0-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-usize",
+    "build": "O2-ubsan",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   },
+   {
+    "position": "value-statement",
+    "program": "loop-usize",
+    "build": "O2",
+    "statements": 5,
+    "lines": 120,
+    "exit": 0,
+    "sanitizer_reports": 0
+   }
+  ]
+ }
+}

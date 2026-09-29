@@ -1,0 +1,6 @@
+7393fd21cf2d5f3f4dd2bd57d3e663240bf3f17e9a847265e7696514c405c614  resource-diagnostics.json
+cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484  resource-diagnostics.chunk-contracts.json
+57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11  monkey-source.json
+df228714d8e0c573…  quirin-audit (release, built in this worktree from the sources of cf902a63; later commits touch tests and records only)
+run exit 0, source commit 66910c10, QCORE_AUDIT_JOBS 8
+baseline: the base 6883623c carries CG03-CALL-SUMMARY-INSTANTIATION's AFTER, resource-diagnostics.json 7393fd21cf2d5f3f (564 / 10 / 4,260; docs/reports/cg03-call-summary-instantiation/README.md), which superseded the brief's ae17152b (w47-round9 archive) when the Clang-gap cards moved corpus figures on main; this AFTER is byte-identical to it, and both sidecars are byte-identical to every archive since R3
