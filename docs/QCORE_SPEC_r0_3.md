@@ -741,6 +741,31 @@ at every position a route admits a scalar:
   vocabulary MUST be refused. A contract module's declarations are the
   contract surface itself and are read by the contract loader.
 
+**The table across a task boundary** (card `W48-QR-SCALAR-TYPES-R4`,
+implemented grammars §G02t, §G02a, §G02j). On the scoped-task route:
+
+* A worker parameter and a worker result MAY be any type of the table, and a
+  `copy` capture MAY copy a value of any of them. A capture MUST be of exactly
+  the parameter's type; there is no conversion at the boundary. A task entry's
+  result stays `i32`, `unit` or its error: a fixed-width value is a worker's
+  result, collected by `join`.
+* Every task function MAY perform the value statement of the extern route —
+  one operation per `let` over bound values and literals — by the same rules
+  and the same decision: over values known at check time (a literal, a copy of
+  a known value, a statement over known values) it is decided at check time and
+  a fault refuses; over a value known only at run time — a parameter, which is
+  what a worker's capture is inside it, a joined outcome, a buffer read — an
+  operation that can fault MUST be refused unless the function's row declares
+  `throws<ArithmeticError>`, and then a fault MUST raise its variant through
+  the route's ordinary error exit, which accounts for every identity the
+  function holds exactly as a `raise` does.
+* A worker's `ArithmeticError` is an ordinary typed worker error: `join` MUST
+  deliver it to the creator unchanged, and the creator MUST consume it with `?`
+  (under its own permission) or `match`. `ArithmeticError` is a builtin error
+  type of the route and MUST NOT be redeclared.
+* A composed rendering (§G02j) of a value of any type renders it at its type,
+  in the parent or in a worker.
+
 ### L14.1. Unchecked linkage
 
 An external library that has **no contract at all** MAY be linked, under an
@@ -1318,8 +1343,9 @@ builder's recorded target — pointer width, target triple and compiler — amon
 its assumptions (`recorded target: …` in the declared-assumption list of
 `quirin check`), on every route that admits them (card
 `W48-QR-SCALAR-TYPES-R3`: the scalar, byte-buffer, extern and composed
-extern + io routes). A result that names neither type carries no such
-assumption.
+extern + io routes; card `W48-QR-SCALAR-TYPES-R4`: the scoped-task route, alone
+or composed with rendered lines). A result that names neither type carries no
+such assumption.
 
 **Safe** means that the named property is established for the identified subject, scope, and assumptions with complete coverage under the selected profile. **Unsafe** means a validated defect or counterexample under that profile. **Unknown** means the requested property was not established, including unsupported behavior, incomplete imports, missing premises, invalid evidence, or exhausted analysis bounds. **Pending** (card W45-USER-CONTRACT-PLUGINS, approved 2026-09-26) means the requested property was not decided by the tool and awaits a named human act: a review edit (`awaiting-human-review`), a re-pin after review (`contract-pin-mismatch`) or a checkable certificate for a checker plugin's claim (`plugin-claim-uncertified`). Pending is not Safe, stays in every denominator exactly as Unknown does, and is produced only by one of those named reasons (§L21.2).
 
@@ -1458,6 +1484,17 @@ operand it cannot render. The read of every `extern fn` declaration widens
 the OrdinaryTypes `Q020` condition to a declaration's parameter or result
 outside the §C04.1 vocabulary, on every route of an executable or library
 module.
+
+`W48-QR-SCALAR-TYPES-R4` allocates no code. On the scoped-task route it widens
+the OrdinaryTypes `Q020` condition (a literal outside its type, mixed operand
+types, `bool` arithmetic, ordering or conversion, a fault decided at check
+time, a target width with no record, a task entry returning a fixed-width
+value), the TypedErrors `Q300` condition (a run-time fault without
+`throws<ArithmeticError>`), the name-resolution `Q013` reserved-name condition
+(a declaration of `ArithmeticError`), the task route's shape `Q500` (a value
+statement of more than one operation), the checker's `Q600` (the independent
+re-decision of every value statement, and a raising statement's error edge,
+which is an exit) and the composed route's `Q050` (`hex` of a `bool`).
 
 `SOURCE-ANNOTATION-ENFORCEMENT` extends Q020 to executable local annotation
 compatibility, unsupported explicit local types, malformed local heads before

@@ -120,9 +120,36 @@ Every value on this route is known when the program is checked, so a literal
 outside its field's type or a conversion that does not fit refuses the module
 at check time.
 
+## Fixed-width values across a task boundary
+
+[typed_workers.qr](typed_workers.qr) passes fixed-width values to worker
+threads (card `W48-QR-SCALAR-TYPES-R4`): a `copy` capture of any scalar type,
+a worker parameter and result of that type, and the value statements of this
+page — one arithmetic, comparison, negation or `as` per `let` — inside the
+worker. A captured value is known only when the worker runs, so an operation
+that can fault needs the worker's `throws<ArithmeticError>`, and a fault
+raises the error in the worker. `join` collects it like any typed worker
+error, and the creator consumes it with `?` or `match`; here the third
+worker's `i64` product overflows and the creator's `Result::Err` arm handles
+it:
+
+<!-- transcript: typed_workers stdout -->
+```text
+245
+0xF5
+9000000000
+true
+```
+
+<!-- transcript: typed_workers stderr -->
+```text
+[WARN] 4611686018427387904
+```
+
 See [the exact grammar](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1)
 and [implementation evidence](../../docs/reports/source-scalar-calls-v1/README.md);
 the fixed-width types are [§G02t](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02t-fixed-width-scalar-types)
 and [their evidence](../../docs/reports/w48-qr-scalar-types/README.md); the typed
 error is [its evidence](../../docs/reports/w48-qr-scalar-types-r2/README.md), and
-the typed record fields are [card R3's](../../docs/reports/w48-qr-scalar-types-r3/README.md).
+the typed record fields are [card R3's](../../docs/reports/w48-qr-scalar-types-r3/README.md), and the
+typed task values are [card R4's](../../docs/reports/w48-qr-scalar-types-r4/README.md).

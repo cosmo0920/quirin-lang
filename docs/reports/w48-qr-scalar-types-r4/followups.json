@@ -1,0 +1,50 @@
+{
+ "retired": [
+  {
+   "id": "W48-QR-TYPES-TASK-CAPTURES",
+   "discharged_by": "W48-QR-SCALAR-TYPES-R4 item 1: on the scoped-task route (G02a) a worker parameter and a worker result take every G02t type, a local annotation any type, and a `copy` capture copies a value of any type into a parameter of exactly that type (no conversion at the boundary; the transferability judgment's new duplicated kind TransferKind::FixedScalar, in Rust and QCore.Transferability, 17 x 6 x 17 decided whole); every task function gains the extern route's one-operation value statement, read by the shared source_value_statement reader and decided by the shared scalar_values::Decider (moved out of extern_call.rs unchanged): folded over values known at check time (a fault refuses, Q020), and over a run-time value (a worker's capture, a joined outcome, a buffer read) refused without the row's throws<ArithmeticError> (Q300) and otherwise lowered to TryCompute, whose error edge is the route's ordinary error exit (scope exits, then raise of the classified variant; a live owned Buffer there refuses, Q600). ArithmeticError is a builtin payload-free error type of the route (a redeclaration refuses, Q013); a worker's ArithmeticError is an ordinary typed worker error collected by join and consumed by the creator with ? or match. The G02j composed operands render at their own type in the parent and in workers (bool has no hex, Q050). The checker records one type per slot and the recorded target as the named assumption for isize/usize. Emission widens the task value by a union only in a module naming a non-i32 type; every existing fixture (629) is byte-identical in check and emit. Native (Clang 21.1.8, -O0/-O2 UBSan and -O2, real C11 threads): the whole boundary table through worker threads, 2,175 cases per build in 226 programs (1,561 reference values, 614 typed raises through join: 325 Overflow, 110 DivisionByZero, 179 OutOfRange), every stream byte-identical to the reference execution and every worker outcome equal to an independent reference, 0 sanitizer reports; end-to-end propagation, handling, every-type parent rendering, worker-line rendering compared up to the declared reordering, and a spawn-failure control. Lean: QCore.ScalarTasks (worker_error_reaches_creator_unchanged, worker_value_reaches_creator, capture_admitted_iff, captured_operand_raises_under_permission, raised_variant_is_raisable, join_returns_the_completion, join_consumes_the_completion, taskAgreement_holds replayed through the reference run, ...)."
+  }
+ ],
+ "registered": [
+  {
+   "id": "W48-QR-TYPES-EPOCH-TASKS",
+   "title": "Admit fixed-width task values on the composed epoch route",
+   "why": "W48-QR-SCALAR-TYPES-R4 widened the scoped-task route with every G02t type and the value statement, but the composed epoch route (G02f), which lowers its task half through the same task route with no recorded target, keeps refusing a task module that names a non-i32 type or performs a value statement: source_epoch_tasks::ledger refuses it by name before deriving its captures, because the epoch's accounting was measured over i32 captures only. Size: ComposedCapture::Copy for a fixed-width capture, the recorded target threaded to the epoch route, the epoch ledger over TryCompute's error edge (an exit inside the accounted region), native runs; 0 fixtures move. DISCHARGE: a composed epoch program whose workers take and return fixed-width values, checked, accounted and run natively, with Lean parity.",
+   "source": "docs/reports/w48-qr-scalar-types-r4/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R4"
+  },
+  {
+   "id": "W48-QR-F02-FIXED-OUTCOMES",
+   "title": "Give the F02 observable alphabet a fixed-width worker outcome",
+   "why": "W48-QR-SCALAR-TYPES-R4 admits worker results of every G02t type, but the F02 trace relation's observable alphabet (ObservedOutcome, parse_observed_trace, QCore.TaskTraceRelation) has only an i32 outcome, so reference_trace refuses a run carrying a fixed-width outcome (UnsupportedOutcome, fail-closed, never dropped) and such a program sits outside F02 relational comparison; its native evidence is the byte comparison of the maintained trace, printed by the sink's fixed-width arm (diagnostic_stdout_adapter_definition_with_fixed_results, installed only where needed so the F02-pinned adapter bytes do not move). Size: ObservedOutcome::Fixed and its rendering in the parser, the alphabet's growth by CT03-PROOF-ALPHABET's method (a conservativity theorem and non-vacuity in both directions), the adapter unified with a deliberate re-pin of the two F02 C digests; 0 fixtures move. DISCHARGE: a fixed-width worker outcome inside the F02 alphabet, with the conservativity theorem and a native relational comparison.",
+   "source": "docs/reports/w48-qr-scalar-types-r4/README.md",
+   "recorded_by": "W48-QR-SCALAR-TYPES-R4"
+  }
+ ],
+ "amended": [
+  {
+   "id": "W48-QR-TYPES-LOOP-BOUNDS",
+   "amendment": "W48-QR-SCALAR-TYPES-R4 did not reach this item (it stopped after item 1). Measured for sizing: source_loop::read_loop_header reads a bound from LoweringConstants::scalars, an i32 map, so a typed bound needs the lowering to carry the known number of a conversion result or a typed field read (both decided today only in the core); BufferEvent::Repeat has no index type; the emitter's `for` spells int32_t. The shared value-statement decision (scalar_values) is available for the bound's own conversion."
+  },
+  {
+   "id": "W48-QR-TYPES-PAYLOADS",
+   "amendment": "W48-QR-SCALAR-TYPES-R4 did not reach this item (it stopped after item 1). The task route now has fixed-width value types (ScalarType::Fixed, the typed task-value union in task_c_emit.rs); the Buffer payload (struct qcore_buffer's int32_t payload, BUFFER_PAYLOAD_BYTES = 4, qcore_buffer_new/read/write) and the protected payload are unchanged."
+  },
+  {
+   "id": "W48-QR-BUFFER-ROUTE-ARITHMETIC",
+   "amendment": "W48-QR-SCALAR-TYPES-R4 did not close this: the item did not fall out of the task route's value statement, because the byte-buffer route has its own IR and certificate. It moved the pieces it should reuse into shared modules: the reader (crates/qcore-frontend/src/source_value_statement.rs) and the decision (crates/qcore-core/src/scalar_values.rs, Decider), both now used by the extern and task routes."
+  },
+  {
+   "id": "W48-QR-TYPES-MSVC-NATIVE",
+   "amendment": "W48-QR-SCALAR-TYPES-R4 adds the task route's typed task-value union, its q_scalar_* and q_scalar_try_* helpers, the typed result log and the sink's fixed-width arm to what no MSVC build has run; the discharge now also covers compiler/tests/scalar_tasks.rs under /W4 /WX on the winpthreads-derived thread subset."
+  },
+  {
+   "id": "W48-QR-VALUE-STATEMENT-EXPRESSIONS",
+   "amendment": "W48-QR-SCALAR-TYPES-R4 gave the task route the same one-operation value statement through the shared reader and decision, so nested expressions, when admitted, apply to both routes at once; on the task route each operation that can raise is its own checked step and error edge."
+  },
+  {
+   "id": "W48-QR-ERROR-VARIANT-INSPECTION",
+   "amendment": "W48-QR-SCALAR-TYPES-R4 adds the task route: a creator's `Result::Err { error: e }` arm over a worker's ArithmeticError can re-raise or discard e, not inspect it; the task trace names the variant (QCORE_TASK_RESULT N ERROR ArithmeticError::VARIANT) but no source construct reads it."
+  }
+ ]
+}

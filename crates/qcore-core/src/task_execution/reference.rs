@@ -4,6 +4,11 @@ use super::*;
 pub enum ScalarValue {
     Unit,
     I32(i32),
+    /// A value of another §G02t type (card `W48-QR-SCALAR-TYPES-R4`).
+    Fixed {
+        ty: st::ScalarType,
+        value: i128,
+    },
     OwnedBuffer(ResourceId),
     /// A borrowed identity. The reference run refuses to treat it as an
     /// outcome, independently of the checker's type rule.
@@ -24,6 +29,7 @@ impl ScalarValue {
         match self {
             Self::Unit => Ok(TaskOutcome::Unit),
             Self::I32(value) => Ok(TaskOutcome::I32(value)),
+            Self::Fixed { ty, value } => Ok(TaskOutcome::Fixed { ty, value }),
             Self::OwnedBuffer(id) => Ok(TaskOutcome::OwnedBuffer(id)),
             Self::ReadLoan(_) => Err("a read loan is not a reference outcome".into()),
             Self::WriteLease { .. } => Err("a write lease is not a reference outcome".into()),
@@ -185,14 +191,18 @@ fn scalar(slots: &BTreeMap<SlotId, Value>, operand: &ScalarOperand) -> Result<Sc
     match operand {
         ScalarOperand::Unit => Ok(ScalarValue::Unit),
         ScalarOperand::I32(value) => Ok(ScalarValue::I32(*value)),
+        ScalarOperand::Fixed { ty, value } => Ok(ScalarValue::Fixed {
+            ty: *ty,
+            value: *value,
+        }),
         ScalarOperand::Move(id) => match slots.get(id) {
             Some(Value::Scalar(value @ ScalarValue::OwnedBuffer(_))) => Ok(value.clone()),
             _ => Err("reference owned slot is unavailable".into()),
         },
         ScalarOperand::Slot(id) => match slots.get(id) {
-            Some(Value::Scalar(value @ (ScalarValue::I32(_) | ScalarValue::Unit))) => {
-                Ok(value.clone())
-            }
+            Some(Value::Scalar(
+                value @ (ScalarValue::I32(_) | ScalarValue::Unit | ScalarValue::Fixed { .. }),
+            )) => Ok(value.clone()),
             _ => Err("reference scalar slot is unavailable".into()),
         },
         // Lending neither consumes nor copies the binding; it produces a
@@ -270,6 +280,67 @@ fn readable(slots: &BTreeMap<SlotId, Value>, slot: SlotId) -> Result<ResourceId,
         _ => Err("reference buffer read requires an owner or borrower".into()),
     }
 }
+/// One value-statement operand's type and number in the reference run.
+fn value_operand(
+    slots: &BTreeMap<SlotId, Value>,
+    operand: &TaskValueOperand,
+) -> Result<(st::ScalarType, i128), String> {
+    match operand {
+        TaskValueOperand::Literal { ty, value } => Ok((*ty, *value)),
+        TaskValueOperand::Slot(slot) => match slots.get(slot) {
+            Some(Value::Scalar(ScalarValue::I32(value))) => {
+                Ok((st::ScalarType::I32, i128::from(*value)))
+            }
+            Some(Value::Scalar(ScalarValue::Fixed { ty, value })) => Ok((*ty, *value)),
+            _ => Err("reference value-statement operand is unavailable".into()),
+        },
+    }
+}
+
+/// Run one value statement in the reference execution (card
+/// `W48-QR-SCALAR-TYPES-R4`), by §G02t's own checked operations — the
+/// definitions `QCore.ScalarTypes` and `QCore.ScalarTypedErrors` state.
+/// `Err(Ok(e))` is the classified fault; `Err(Err(m))` a malformed run.
+fn run_value_statement(
+    slots: &BTreeMap<SlotId, Value>,
+    operation: &TaskValueOperation,
+    target: Option<&RecordedTarget>,
+) -> Result<ScalarValue, Result<ArithmeticError, String>> {
+    let (ty, value) = match operation {
+        TaskValueOperation::Binary(op, a, b) => {
+            let (ta, a) = value_operand(slots, a).map_err(Err)?;
+            let (tb, b) = value_operand(slots, b).map_err(Err)?;
+            if ta != tb {
+                return Err(Err("reference operands of two types".into()));
+            }
+            (ta, st::checked_error(*op, ta, a, b, target).map_err(Ok)?)
+        }
+        TaskValueOperation::Compare(cmp, a, b) => {
+            let (ta, a) = value_operand(slots, a).map_err(Err)?;
+            let (tb, b) = value_operand(slots, b).map_err(Err)?;
+            if ta != tb {
+                return Err(Err("reference operands of two types".into()));
+            }
+            let result = st::compare(*cmp, ta, a, b)
+                .ok_or_else(|| Err("reference ordering of bool".to_string()))?;
+            (st::ScalarType::Bool, i128::from(result))
+        }
+        TaskValueOperation::Negate(a) => {
+            let (ta, a) = value_operand(slots, a).map_err(Err)?;
+            (ta, st::negate_error(ta, a, target).map_err(Ok)?)
+        }
+        TaskValueOperation::Convert(a, to) => {
+            let (ta, a) = value_operand(slots, a).map_err(Err)?;
+            (*to, st::convert_error(ta, *to, a, target).map_err(Ok)?)
+        }
+    };
+    Ok(if ty == st::ScalarType::I32 {
+        ScalarValue::I32(i32::try_from(value).map_err(|_| Err("reference i32 range".to_string()))?)
+    } else {
+        ScalarValue::Fixed { ty, value }
+    })
+}
+
 fn take(
     slots: &mut BTreeMap<SlotId, Value>,
     operand: &ScalarOperand,
@@ -311,6 +382,40 @@ impl Runtime<'_> {
             .iter()
             .filter(|site| site.function == function && site.block == block && site.index == index)
         {
+            // Card `W48-QR-SCALAR-TYPES-R4`: an operand of another §G02t type
+            // renders at its type, by §G02t's rendering and the line framing.
+            if let crate::std_io::StdIoEvent::Print {
+                rendering,
+                operand: crate::std_io::StdIoOperand::Scalar(name),
+            }
+            | crate::std_io::StdIoEvent::Log {
+                rendering,
+                operand: crate::std_io::StdIoOperand::Scalar(name),
+                ..
+            } = &site.event
+                && let Some(slot) = site.operand
+                && let Some(Value::Scalar(ScalarValue::Fixed { ty, value })) = slots.get(&slot)
+            {
+                let level = match &site.event {
+                    crate::std_io::StdIoEvent::Log { level, .. } => Some(*level),
+                    _ => None,
+                };
+                let body = st::render(
+                    *rendering == crate::std_io::Rendering::Hex,
+                    *ty,
+                    *value,
+                    self.module.target.as_ref(),
+                )
+                .ok_or_else(|| format!("`{name}` has no such rendering at `{ty}`"))?;
+                let line = crate::std_io::rendered_text_line(level, &body);
+                let position = self.events.len();
+                self.io_lines.push(crate::composed_tasks::ComposedLine {
+                    position,
+                    emitter,
+                    line,
+                });
+                continue;
+            }
             let value = match &site.event {
                 crate::std_io::StdIoEvent::LogLevel { .. }
                 | crate::std_io::StdIoEvent::Flush
@@ -537,6 +642,23 @@ impl Runtime<'_> {
                             let value = take(&mut slots, value)?;
                             slots.insert(*slot, Value::Scalar(value));
                         }
+                        // The checker admitted this form only where no fault
+                        // is possible, so a fault here is a malformed run.
+                        TaskInstructionKind::Compute { slot, operation } => {
+                            let value = run_value_statement(
+                                &slots,
+                                operation,
+                                self.module.target.as_ref(),
+                            )
+                            .map_err(|fault| match fault {
+                                Ok(error) => format!(
+                                    "reference value statement raised {error} where the checker \
+                                     proved it cannot"
+                                ),
+                                Err(message) => message,
+                            })?;
+                            slots.insert(*slot, Value::Scalar(value));
+                        }
                         TaskInstructionKind::UnwrapInfallible {
                             result_slot,
                             value_slot,
@@ -548,6 +670,9 @@ impl Runtime<'_> {
                             let value = match outcome {
                                 TaskOutcome::Unit => ScalarValue::Unit,
                                 TaskOutcome::I32(value) => ScalarValue::I32(value),
+                                TaskOutcome::Fixed { ty, value } => {
+                                    ScalarValue::Fixed { ty, value }
+                                }
                                 TaskOutcome::OwnedBuffer(id) => ScalarValue::OwnedBuffer(id),
                                 TaskOutcome::Error(_) | TaskOutcome::ErrorWithBuffer { .. } => {
                                     return Err(
@@ -722,6 +847,31 @@ impl Runtime<'_> {
                         }
                     }
                     TaskTerminatorKind::Goto { target } => block_id = *target,
+                    TaskTerminatorKind::TryCompute {
+                        slot,
+                        operation,
+                        error_slot,
+                        success,
+                        error,
+                    } => {
+                        match run_value_statement(&slots, operation, self.module.target.as_ref()) {
+                            Ok(value) => {
+                                slots.insert(*slot, Value::Scalar(value));
+                                block_id = *success;
+                            }
+                            Err(Ok(fault)) => {
+                                slots.insert(
+                                    *error_slot,
+                                    Value::Error {
+                                        tag: fault.to_string(),
+                                        payload: None,
+                                    },
+                                );
+                                block_id = *error;
+                            }
+                            Err(Err(message)) => return Err(message),
+                        }
+                    }
                     TaskTerminatorKind::TrySpawn {
                         scope,
                         worker,
@@ -902,6 +1052,13 @@ impl Runtime<'_> {
                             }
                             TaskOutcome::I32(value) => {
                                 slots.insert(*value_slot, Value::Scalar(ScalarValue::I32(value)));
+                                block_id = *success;
+                            }
+                            TaskOutcome::Fixed { ty, value } => {
+                                slots.insert(
+                                    *value_slot,
+                                    Value::Scalar(ScalarValue::Fixed { ty, value }),
+                                );
                                 block_id = *success;
                             }
                             TaskOutcome::OwnedBuffer(id) => {
@@ -1190,6 +1347,24 @@ pub fn render_task_event(event: &TaskEvent) -> String {
                 TaskOutcome::I32(value) => {
                     writeln!(output, "QCORE_TASK_RESULT {task} I32 {value}").unwrap()
                 }
+                // Card `W48-QR-SCALAR-TYPES-R4`: the type's name in upper case
+                // and the number itself (`true`/`false` for `bool`), which is
+                // what the maintained sink's fixed-width arm prints.
+                TaskOutcome::Fixed { ty, value } => writeln!(
+                    output,
+                    "QCORE_TASK_RESULT {task} {} {}",
+                    ty.name().to_ascii_uppercase(),
+                    if *ty == st::ScalarType::Bool {
+                        if *value == 1 {
+                            "true".to_owned()
+                        } else {
+                            "false".to_owned()
+                        }
+                    } else {
+                        value.to_string()
+                    }
+                )
+                .unwrap(),
                 TaskOutcome::Error(tag) => {
                     writeln!(output, "QCORE_TASK_RESULT {task} ERROR {tag}").unwrap()
                 }

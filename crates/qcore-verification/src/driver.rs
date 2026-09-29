@@ -1061,6 +1061,10 @@ impl CompiledModule {
             CheckedSourceModule::Composed(module) => {
                 module.certificate.externs.target_assumption.as_ref()
             }
+            // Card `W48-QR-SCALAR-TYPES-R4`: a task module naming `isize` or
+            // `usize`, alone or composed with rendered lines.
+            CheckedSourceModule::ScopedTasks(checked) => checked.target_assumption(),
+            CheckedSourceModule::ComposedTasks(module) => module.tasks().target_assumption(),
             _ => None,
         }
     }
@@ -1536,10 +1540,10 @@ fn compile_elaborated_source(
     // fails this conjunction and falls through to the task route with its
     // existing `Q600`.
     if qcore_frontend::source_composed_tasks::has_source_composed_tasks(parsed) {
-        return compile_composed_task_source(parsed, typed, mode, options, ranges);
+        return compile_composed_task_source(parsed, typed, mode, options, ranges, target);
     }
     if qcore_frontend::source_tasks::has_source_tasks(parsed) {
-        return compile_task_source(parsed, typed, mode, options, ranges);
+        return task_route(parsed, typed, mode, options, ranges, false, target);
     }
     // Selected after every concurrent route and before both routes it composes
     // (card `STD-IO-COMPOSE`). The order is what makes the composition safe to
@@ -4433,7 +4437,9 @@ fn compile_task_source(
     options: &CompileOptions,
     ranges: &[FileRange],
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
-    task_route(parsed, typed, mode, options, ranges, false)
+    // The composed-epoch route's task half: no recorded target reaches it, so
+    // `isize`/`usize` refuse there as they always did.
+    task_route(parsed, typed, mode, options, ranges, false, None)
 }
 
 fn compile_bitfield_task_source(
@@ -4525,8 +4531,9 @@ fn compile_composed_task_source(
     mode: SourceModuleMode,
     options: &CompileOptions,
     ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
-    task_route(parsed, typed, mode, options, ranges, true)
+    task_route(parsed, typed, mode, options, ranges, true, target)
 }
 
 fn task_route(
@@ -4536,6 +4543,7 @@ fn task_route(
     options: &CompileOptions,
     ranges: &[FileRange],
     composing: bool,
+    target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
     if mode != SourceModuleMode::Executable {
         return Err(vec![plain_diagnostic(
@@ -4545,16 +4553,19 @@ fn task_route(
     }
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
     let lowered = if composing {
-        qcore_frontend::source_tasks::lower_source_composed_tasks(parsed, typed, &entry)
+        qcore_frontend::source_tasks::lower_source_composed_tasks_for_target(
+            parsed, typed, &entry, target,
+        )
     } else {
-        qcore_frontend::source_tasks::lower_source_tasks(parsed, typed, &entry).map(|tasks| {
-            qcore_frontend::source_tasks::LoweredComposedTaskModule {
-                tasks,
-                sites: Vec::new(),
-                declares_io: false,
-                worker_io: Default::default(),
-            }
-        })
+        qcore_frontend::source_tasks::lower_source_tasks_for_target(parsed, typed, &entry, target)
+            .map(
+                |tasks| qcore_frontend::source_tasks::LoweredComposedTaskModule {
+                    tasks,
+                    sites: Vec::new(),
+                    declares_io: false,
+                    worker_io: Default::default(),
+                },
+            )
     }
     .map_err(|errors| {
         errors
@@ -4716,6 +4727,10 @@ fn task_route(
                 let scalar = match function.result {
                     ScalarType::I32 => ExecutableResultType::I32,
                     ScalarType::Unit => ExecutableResultType::Unit,
+                    // Card `W48-QR-SCALAR-TYPES-R4`: a fixed-width worker
+                    // result is checked but is not one a caller runs, as on
+                    // `source.scalar-calls.v1`.
+                    ScalarType::Fixed(_) => return None,
                     // None is an ordinary scalar result. `ReadLoan` and
                     // `WriteLease` are additionally refused as results by the
                     // checker, so this arm is a total match, not a silent

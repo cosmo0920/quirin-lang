@@ -18,7 +18,7 @@ import QCore.Transferability
 -- statements range over really are complete.
 #print axioms QCore.Transferability.kindInventoryIsComplete
 #print axioms QCore.Transferability.kindInventoryHasNoDuplicates
-#print axioms QCore.Transferability.kindInventoryHasSixteenEntries
+#print axioms QCore.Transferability.kindInventoryHasSeventeenEntries
 #print axioms QCore.Transferability.tagInventoryIsComplete
 #print axioms QCore.Transferability.tagInventoryHasNoDuplicates
 #print axioms QCore.Transferability.tagInventoryHasFifteenEntries

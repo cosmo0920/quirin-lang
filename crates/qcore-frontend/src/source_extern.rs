@@ -1699,131 +1699,34 @@ fn wide_signed_integer(tokens: &[Token], cursor: usize) -> Option<(i128, usize)>
     Some((if negative { -value } else { value }, cursor + 1))
 }
 
-/// One value-statement operand at `cursor`: a bound value, `true`/`false`, or
-/// `["-"] INTEGER`.
-fn value_operand(
-    tokens: &[Token],
-    cursor: usize,
-    values: &BTreeMap<String, ValueId>,
-) -> Option<Result<(ValueOperand, usize), String>> {
-    if let Some((literal, next)) = wide_signed_integer(tokens, cursor) {
-        return Some(Ok((ValueOperand::Integer(literal), next)));
-    }
-    match word(tokens.get(cursor)) {
-        Some("true") => Some(Ok((ValueOperand::Bool(true), cursor + 1))),
-        Some("false") => Some(Ok((ValueOperand::Bool(false), cursor + 1))),
-        Some(name) => Some(match values.get(name) {
-            Some(value) => Ok((ValueOperand::Value(*value), cursor + 1)),
-            None => Err(format!(
-                "`{name}` is not a bound scalar in this body; a value statement reads bound \
-                 values, `true`/`false` and integer literals"
-            )),
-        }),
-        None => None,
-    }
-}
-
 /// `let NAME = VALUE_EXPRESSION;` — a value statement (card
 /// `W48-QR-SCALAR-TYPES-R3`): `A OP B`, `A CMP B`, `- NAME` or `A as TYPE`,
-/// one operation per statement. `None` when the statement is not this shape at
-/// all (so a literal binding or another `let` keeps its own reading),
-/// `Some(Err)` when it is and is malformed.
+/// one operation per statement, read by the shared
+/// [`crate::source_value_statement::parse_value_expression`] (card
+/// `W48-QR-SCALAR-TYPES-R4` moved it there unchanged). `None` when the
+/// statement is not this shape at all (so a literal binding or another `let`
+/// keeps its own reading), `Some(Err)` when it is and is malformed.
 fn parse_value_statement(
     tokens: &[Token],
     values: &BTreeMap<String, ValueId>,
 ) -> Option<Result<ValueOperation, String>> {
-    use qcore_core::scalar_types::{Cmp, Op, ScalarType};
+    use crate::source_value_statement::{
+        ValueExpressionSyntax as Syntax, ValueOperandSyntax as Operand, parse_value_expression,
+    };
     if word(tokens.first()) != Some("let") || !symbol(tokens.get(2), Symbol::Equal) {
         return None;
     }
-    let closes = |at: usize| symbol(tokens.get(at), Symbol::Semicolon) && tokens.len() == at + 1;
-    // `- NAME ;` — negation of a bound value. `- INTEGER ;` is the literal
-    // binding and is left to it.
-    if symbol(tokens.get(3), Symbol::Minus)
-        && let Some(name) = word(tokens.get(4))
-        && !matches!(name, "true" | "false")
-        && closes(5)
-    {
-        return Some(match values.get(name) {
-            Some(value) => Ok(ValueOperation::Negate(ValueOperand::Value(*value))),
-            None => Err(format!("`{name}` is not a bound scalar in this body")),
-        });
-    }
-    let (left, next) = match value_operand(tokens, 3, values)? {
-        Ok(read) => read,
-        // A bare name that is no value, followed by an operator, is this
-        // statement's malformation; anything else is left to the other shapes.
-        Err(message) => {
-            let operator = tokens.get(4).map(|token| &token.kind);
-            let operates = matches!(
-                operator,
-                Some(TokenKind::Symbol(
-                    Symbol::Plus
-                        | Symbol::Minus
-                        | Symbol::Star
-                        | Symbol::Slash
-                        | Symbol::Percent
-                        | Symbol::EqualEqual
-                        | Symbol::NotEqual
-                        | Symbol::Less
-                        | Symbol::LessEqual
-                        | Symbol::Greater
-                        | Symbol::GreaterEqual
-                ))
-            ) || word(tokens.get(4)) == Some("as");
-            return operates.then_some(Err(message));
-        }
+    let operand = |operand: Operand<ValueId>| match operand {
+        Operand::Value(value) => ValueOperand::Value(value),
+        Operand::Integer(literal) => ValueOperand::Integer(literal),
+        Operand::Bool(value) => ValueOperand::Bool(value),
     };
-    if word(tokens.get(next)) == Some("as") {
-        let Some(to) = word(tokens.get(next + 1)).and_then(ScalarType::parse) else {
-            return Some(Err(
-                "`as` converts to one fixed-width scalar type (bool, i8, i16, i32, i64, isize, \
-                 u8, u16, u32, u64, usize)"
-                    .to_owned(),
-            ));
-        };
-        if !closes(next + 2) {
-            return Some(Err(
-                "a value statement performs one operation, `let NAME = A as TYPE;`".to_owned(),
-            ));
-        }
-        return Some(Ok(ValueOperation::Convert(left, to)));
-    }
-    let operator = match tokens.get(next).map(|token| &token.kind) {
-        Some(TokenKind::Symbol(Symbol::Plus)) => Ok(Op::Add),
-        Some(TokenKind::Symbol(Symbol::Minus)) => Ok(Op::Sub),
-        Some(TokenKind::Symbol(Symbol::Star)) => Ok(Op::Mul),
-        Some(TokenKind::Symbol(Symbol::Slash)) => Ok(Op::Div),
-        Some(TokenKind::Symbol(Symbol::Percent)) => Ok(Op::Rem),
-        Some(TokenKind::Symbol(Symbol::EqualEqual)) => Err(Cmp::Eq),
-        Some(TokenKind::Symbol(Symbol::NotEqual)) => Err(Cmp::Ne),
-        Some(TokenKind::Symbol(Symbol::Less)) => Err(Cmp::Lt),
-        Some(TokenKind::Symbol(Symbol::LessEqual)) => Err(Cmp::Le),
-        Some(TokenKind::Symbol(Symbol::Greater)) => Err(Cmp::Gt),
-        Some(TokenKind::Symbol(Symbol::GreaterEqual)) => Err(Cmp::Ge),
-        _ => return None,
-    };
-    let (right, after) = match value_operand(tokens, next + 1, values) {
-        Some(Ok(read)) => read,
-        Some(Err(message)) => return Some(Err(message)),
-        None => {
-            return Some(Err(
-                "a value statement's operator takes a bound value, `true`/`false` or an integer \
-                 literal on each side"
-                    .to_owned(),
-            ));
-        }
-    };
-    if !closes(after) {
-        return Some(Err(
-            "a value statement performs one operation per statement; bind the intermediate \
-             value and use it in the next statement"
-                .to_owned(),
-        ));
-    }
-    Some(Ok(match operator {
-        Ok(op) => ValueOperation::Binary(op, left, right),
-        Err(cmp) => ValueOperation::Compare(cmp, left, right),
+    let parsed = parse_value_expression(&tokens[3..], |name| values.get(name).copied())?;
+    Some(parsed.map(|syntax| match syntax {
+        Syntax::Binary(op, a, b) => ValueOperation::Binary(op, operand(a), operand(b)),
+        Syntax::Compare(cmp, a, b) => ValueOperation::Compare(cmp, operand(a), operand(b)),
+        Syntax::Negate(a) => ValueOperation::Negate(operand(a)),
+        Syntax::Convert(a, to) => ValueOperation::Convert(operand(a), to),
     }))
 }
 
