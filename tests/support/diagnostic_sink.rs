@@ -25,3 +25,18 @@ pub fn instrument_fixed(source: &str) -> String {
         diagnostic_stdout_adapter_definition_with_fixed_results()
     )
 }
+
+/// [`instrument`] with the maintained sink's typed-payload arms (card
+/// `W48-QR-SCALAR-TYPES-R6`), and the fixed-width result arm too when
+/// `fixed_results`: for a program whose Buffers carry typed payloads.
+#[allow(dead_code)]
+pub fn instrument_typed(source: &str, fixed_results: bool) -> String {
+    format!(
+        "{}\n{source}\n{}",
+        diagnostic_stdout_adapter_declaration(qcore_compiler::std_io::Level::Trace),
+        qcore_compiler::diagnostic_log_c_emit::diagnostic_stdout_adapter_definition_for(
+            fixed_results,
+            true
+        )
+    )
+}
