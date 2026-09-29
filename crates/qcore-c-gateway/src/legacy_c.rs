@@ -145,6 +145,13 @@ mod elaboration_route;
 #[path = "legacy_call_instantiation.rs"]
 mod call_instantiation_route;
 
+// Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): value `&&`, `||`
+// and `?:` in statements and returns, lowered by branching, a fallback after
+// every existing route of the position. The hooks below naming the card are
+// thin.
+#[path = "legacy_value_connective.rs"]
+mod value_connective_route;
+
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the P3 residual shapes
 // C's evaluation order admits. Hooks are thin.
 #[path = "legacy_typed_residuals.rs"]
@@ -6197,6 +6204,13 @@ impl Parser<'_> {
                 {
                     return Ok(instantiated);
                 }
+                // Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z):
+                // asked last, only for a refused return.
+                if return_refused(&statement)
+                    && let Some(branched) = self.connective_return(&expression, line)
+                {
+                    return Ok(branched);
+                }
                 Ok(statement)
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
@@ -6366,6 +6380,14 @@ impl Parser<'_> {
                     .map(|instruction| Statement::Instruction(instruction, line))
                     .collect(),
             );
+        }
+        // Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): asked last,
+        // only for a refusal.
+        if let LegacyInstruction::Unknown { description, .. } = &instruction
+            && let Some(branched) = self.connective_statement(tokens, line, description)
+        {
+            self.element_origins.clear();
+            return branched;
         }
         if let LegacyInstruction::ContractCall { destination, .. } = &instruction {
             let use_ = if destination.is_some() {
