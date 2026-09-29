@@ -24,6 +24,9 @@ fn positions_statement_return_and_condition() {
     }
     // Statement: a field increment and a compound on a mixed path.
     assert!(gs("void subject(struct S *s, int i) { s->arr[i]++; s->in.x |= 4; }").safe());
+    // A path read inside another path's address (its obligations are the
+    // outer path's plan).
+    assert!(gs("void subject(struct S *s) { s->arr[s->a]++; }").safe());
     // Declaration: the old value of a field.
     assert!(gs("int subject(struct S *s) { int j = s->a--; return j; }").safe());
     // Return: an increment's value, a field's new value, an assignment.

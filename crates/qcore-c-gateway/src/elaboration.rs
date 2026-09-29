@@ -270,6 +270,10 @@ pub(crate) struct Elaboration<F> {
     pub(crate) facts: BTreeMap<EventId, F>,
     /// Every event of each call's designator and actuals, by call event.
     pub(crate) actuals: BTreeMap<EventId, Vec<EventId>>,
+    /// The reads a path's address computation performs (a pointer root, an
+    /// index, a pointer member on the way): the path's own facts carry their
+    /// obligations.
+    pub(crate) address_reads: std::collections::BTreeSet<EventId>,
     /// Route G discharges each `Access` through the instruction it lowers
     /// the event to and each `Contract` through the existing classifier of the
     /// piece; the list is the interface CG03's single application point reads.
@@ -440,6 +444,7 @@ pub(crate) fn elaborate<C: Context>(
         obligations: Vec::new(),
         in_actual: false,
         actuals: BTreeMap::new(),
+        address_reads: std::collections::BTreeSet::new(),
     };
     let part = if kind(node) == "DeclStmt" {
         elaborator.declaration(node)?
@@ -453,6 +458,7 @@ pub(crate) fn elaborate<C: Context>(
         graph: elaborator.graph,
         facts: elaborator.facts,
         actuals: elaborator.actuals,
+        address_reads: elaborator.address_reads,
         obligations: elaborator.obligations,
         assumptions: if has_arithmetic {
             vec![Assumption::NoNumericClaim]
@@ -500,6 +506,7 @@ struct Elaborator<'a, C: Context> {
     /// Inside a call's actual: a further call is nested (CG05).
     in_actual: bool,
     actuals: BTreeMap<EventId, Vec<EventId>>,
+    address_reads: std::collections::BTreeSet<EventId>,
 }
 
 fn qualified(node: &Value) -> Option<&'static str> {
@@ -590,7 +597,9 @@ impl<C: Context> Elaborator<'_, C> {
             } else {
                 path_place(read)?
             };
-            events.push(self.graph.push(Event::Read(place)));
+            let read = self.graph.push(Event::Read(place));
+            self.address_reads.insert(read);
+            events.push(read);
         }
         self.obligations.push(Obligation::Access(place.clone()));
         Ok((place, events, Some(facts)))

@@ -561,6 +561,9 @@ impl Parser<'_> {
         for (id, event) in elaborated.graph.events.iter().enumerate() {
             match event {
                 Event::Read(Place::Object { .. }) => {}
+                // A read inside a path's address: the typed reader's plan of
+                // that path carries its base and per-link obligations.
+                Event::Read(Place::Path { .. }) if elaborated.address_reads.contains(&id) => {}
                 Event::Write {
                     place: Place::Object { name, .. },
                     pointer: false,

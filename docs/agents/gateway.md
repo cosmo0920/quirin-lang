@@ -1883,3 +1883,59 @@ which is not a second authority.
     node custody-neutral, and do not evaluate one outside `checked_binary`.
     `QCore.TypedSourceOperators`, bound to the Rust tables by a shared-vector
     test; [report](../reports/cg01-t-operator-closure/README.md).
+
+<a id="constraint-10s"></a>
+
+10s. **The common expression elaborator is asked after every older route of a
+    statement, a `return` or a controlling expression, orders only what C
+    sequences, and admits an unordered pair only when it commutes.** Card
+    CG02-ELABORATION-CORE (`crates/qcore-c-gateway/src/elaboration.rs`, the
+    route-G adapter `legacy_elaboration.rs`, thin hooks in `legacy_c.rs`,
+    `legacy_condition_desugar.rs` and `typed_source.rs`). `elaborate(expr,
+    ctx)` reads Clang's typed AST into a result (a value whose increment
+    origin, old or new, is kept apart), an evaluation graph (events in one
+    permitted serialisation, explicit sequenced-before edges, explicit
+    unsequenced operand groups), read/write/call events and access, contract
+    and numeric obligations or assumptions. The operands of an operator, an
+    assignment's place and value, and a call's actuals are unsequenced; a side
+    effect follows only its operands' value computations; a comma, and the
+    sequence point before a call, order every earlier event. The graph is
+    refused unless **every pair the closure leaves unordered commutes**: two
+    reads, or a pair on disjoint places (distinct objects; a path inside
+    another object; a path through a pointer against an automatic object whose
+    address is never taken). A same-place write/write or write/read pair is
+    C undefined behaviour and refuses; a call unordered with any event refuses
+    (CG05). Every form outside `FORM_TABLE`'s admitted rows refuses by name
+    with its owning card (value `&&` `||` `?:` CG06, nested call CG05, pointer
+    store CG11, pointer arithmetic CG16, type query operand CG08, `_Generic`
+    and statement expression CG07, compound literal CG14, volatile CG15, atomic
+    CG19, indirect call CG22). **Route G** (1) lowers a refused statement that
+    holds a compound assignment, an increment, a comma or an assignment used
+    as a value, matched to one Clang node by line and exact tokens, in
+    sequenced pieces: each comma operand and a chain's inner assignment is a
+    statement the older lowering decides first (a call keeps its one contract
+    application), then the piece's own events — a scalar local write is
+    `ForgetScalar`, a path access is the typed access-path reader's
+    `IndirectScalarAccess` with its per-hop obligations, and a call outside a
+    piece, a pointer-valued store, a protected formal, a tracked descriptor, a
+    non-local or non-scalar object write refuse the whole statement; (2) lowers
+    a refused `return` as its leading comma operands, then the older return
+    lowering of the last operand (`return NAME = E` as `NAME = E; return
+    NAME;`), or a scalar value's events with a `NoOp` exit in a scalar-result
+    function; (3) lowers a refused call-free controlling expression holding
+    such a form, with no connective and a scalar value, as its events then a
+    branch that refines nothing. **Route T** names each value form in its
+    refusal: no typed-source consumer decides one (CG01's census). **Do not**
+    ask the elaborator before an older route (hard invariant 3; the
+    `QCORE_TYPED_PATH_PARITY` stream records each consultation with
+    `position: "elaboration-…"`), serialise an unordered pair that does not
+    commute, treat two paths as disjoint (CG10/CG13 own footprints), lower a
+    call inside a piece's events, or read a statement's own top-level `=`
+    as this card's form (its refusal is the older routes' or another card's).
+    Premises stated, not proved: faithful Clang extraction and node matching
+    (trust boundary 28), and that `IndirectScalarAccess` and `ForgetScalar`
+    are the custody meaning of a scalar access and write (the W43/W46 rules).
+    `QCore.ElaborationCore` (`interleave_run`, `read_stable`,
+    `commutes_sound`, `unsequenced_refusals`), bound to `FORM_TABLE`,
+    `commutes` and ten C order vectors by a shared-vector test;
+    [report](../reports/cg02-elaboration-core/README.md).
