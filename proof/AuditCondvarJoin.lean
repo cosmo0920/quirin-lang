@@ -44,6 +44,16 @@ repeated join, an unresolved or a never-joined descendant refuse the
 discharge. The old test's release shapes and the fixed test's stay not
 discharged.
 
+**The strictly paired lifecycle (cards W47-FLB-LIB-LIFECYCLE and
+W47-FLB-LIB-STRICT-PAIRING).** A stop is admitted only from started-ok; a stop
+after a failed start, a second stop, a stop of a never-started context, a
+double start, a restart and a destroy of a running context are refused, and a
+refused history never discharges its release. A destroy after a failed start
+is admitted. An accepted history stops at most once, so with L2 in force a
+conforming path joins the engine thread exactly once, its first join. The
+fixed test's failed-start path is refused; its conforming paths and the old
+test's shapes stay not discharged.
+
 The lexical census reading, its binding tables, P-SYNC-INSTANCE,
 P-JOIN-IDENTITY, P-RETAIN, P-CHECK and the Rust correspondence are trust
 boundary 28's premises, pinned by `crates/qcore-core/tests/unit/condvar_join.rs`
@@ -112,22 +122,33 @@ and `crates/quirin-source-analysis/tests/condvar_join_census.rs`. -/
 #print axioms QCore.CondvarJoin.the_old_test_stays_not_discharged
 #print axioms QCore.CondvarJoin.the_repeated_join_alone_keeps_the_fixed_test_not_discharged
 
--- The paired start/stop lifecycle (W47-FLB-LIB-LIFECYCLE).
+-- The strictly paired start/stop lifecycle (W47-FLB-LIB-LIFECYCLE,
+-- W47-FLB-LIB-STRICT-PAIRING).
+#print axioms QCore.CondvarJoin.lrun_append
+#print axioms QCore.CondvarJoin.a_refused_step_rejects_the_history
 #print axioms QCore.CondvarJoin.starting_twice_is_rejected
-#print axioms QCore.CondvarJoin.destroying_before_the_stop_is_rejected
+#print axioms QCore.CondvarJoin.a_restart_after_a_stop_is_rejected
 #print axioms QCore.CondvarJoin.nothing_follows_a_destroy
-#print axioms QCore.CondvarJoin.an_accepted_start_began_unstarted
-#print axioms QCore.CondvarJoin.an_accepted_destroy_was_unstarted
-#print axioms QCore.CondvarJoin.the_paired_sequence_is_accepted
+#print axioms QCore.CondvarJoin.a_stop_is_admitted_only_from_started_ok
+#print axioms QCore.CondvarJoin.a_stop_after_a_failed_start_is_a_violation
+#print axioms QCore.CondvarJoin.a_second_stop_is_a_violation
+#print axioms QCore.CondvarJoin.a_stop_of_a_never_started_context_is_a_violation
+#print axioms QCore.CondvarJoin.an_accepted_start_began_created
+#print axioms QCore.CondvarJoin.an_accepted_destroy_was_not_running
+#print axioms QCore.CondvarJoin.destroying_a_running_context_is_rejected
+#print axioms QCore.CondvarJoin.a_destroy_after_a_failed_start_is_admitted
+#print axioms QCore.CondvarJoin.the_strict_sequences_are_accepted
 #print axioms QCore.CondvarJoin.a_history_with_a_double_start_is_rejected
-#print axioms QCore.CondvarJoin.a_no_effect_clause_is_in_force_only_if_every_path_joins_nothing
-#print axioms QCore.CondvarJoin.a_no_effect_clause_is_refuted_only_if_every_path_joins
+#print axioms QCore.CondvarJoin.an_accepted_step_spends_its_stop
+#print axioms QCore.CondvarJoin.an_accepted_history_stays_within_its_stop_budget
+#print axioms QCore.CondvarJoin.a_conforming_history_stops_at_most_once
 #print axioms QCore.CondvarJoin.the_first_stop_clause_is_in_force_only_if_every_path_joins_the_started_thread_once
+#print axioms QCore.CondvarJoin.the_failed_start_clause_is_in_force_only_if_no_return_leaves_a_thread
 #print axioms QCore.CondvarJoin.no_followed_path_holds_the_clause
-#print axioms QCore.CondvarJoin.an_in_force_idempotent_stop_adds_no_join
-#print axioms QCore.CondvarJoin.an_in_force_no_effect_clause_agrees_with_the_body
-#print axioms QCore.CondvarJoin.a_withdrawn_clause_reads_the_body
-#print axioms QCore.CondvarJoin.a_refuted_clause_never_discharges
+#print axioms QCore.CondvarJoin.a_conforming_path_has_exactly_one_engine_join
 #print axioms QCore.CondvarJoin.a_lifecycle_violation_blocks_the_release
 #print axioms QCore.CondvarJoin.without_a_violation_the_release_is_unchanged
+#print axioms QCore.CondvarJoin.a_refused_history_never_discharges
+#print axioms QCore.CondvarJoin.a_stop_after_a_failed_start_or_a_second_stop_never_discharges
+#print axioms QCore.CondvarJoin.the_fixed_test_under_the_strict_pair
 #print axioms QCore.CondvarJoin.the_old_and_fixed_test_shapes_stay_not_discharged

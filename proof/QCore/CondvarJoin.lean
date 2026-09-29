@@ -966,28 +966,30 @@ theorem the_repeated_join_alone_keeps_the_fixed_test_not_discharged (ds : List D
 
 end StopPaths
 
-/-! ## The paired start/stop lifecycle (W47-FLB-LIB-LIFECYCLE)
+/-! ## The strictly paired start/stop lifecycle (W47-FLB-LIB-LIFECYCLE, W47-FLB-LIB-STRICT-PAIRING)
 
 Companion to `crates/qcore-core/src/paired_lifecycle.rs`,
 `crates/qcore-c-gateway/src/condvar_census/lifecycle.rs` and
 `crates/quirin-source-analysis/src/lifecycle_census.rs` (gateway rule 10q as
 amended, contract specification §C04.11).
 
-* **The state machine.** `lstep` is `paired_lifecycle::step`: a start only
-  from created or stopped, a destroy only from created or stopped, nothing
-  after a destroy; a stop from created stays created, from any started state
-  or stopped goes to stopped. Starting twice and destroying before the stop
-  are rejected; the paired sequence is accepted on every start outcome.
-* **Clauses against bodies.** A no-effect clause is in force only where every
-  followed path of the body joins nothing and nothing is open; it is refuted
-  only where every followed path joins. The first-stop clause is in force
-  only where every followed path joins the started thread exactly once.
-* **Withdrawal.** A caller's stop is read with the clause's joins (none) only
-  where a no-effect clause is in force, where that agrees with every body
-  path; otherwise with the body's, so a refuted clause never removes a join
-  and the fixed test's repeated join stands.
-* **The gate.** A path that violated a precondition never discharges its
-  release; without a violation the release decision is unchanged. -/
+* **The state machine.** `lstep` is `paired_lifecycle::step` under the user's
+  decision of 2026-09-29: a start only from created (a restart is not
+  derived), a stop only from started-ok (a start that returned 0), a destroy
+  from created, start-failed or stopped, nothing after a destroy. A stop after
+  a failed start, a second stop, a stop of a never-started context, a double
+  start and a destroy of a running context are refused (`none`); so is a stop
+  or a destroy after a start whose value is undecided (not established).
+* **At most one stop.** A history the machine accepts stops at most once, so
+  with L2 in force a conforming path joins the engine thread exactly once,
+  and that join is its first.
+* **Body clauses.** L2 is in force only where every followed path of the stop
+  joins the started thread exactly once; L7 only where no followed nonzero
+  return of the start leaves a thread it began unjoined.
+* **The gate.** A path whose history the machine refuses never discharges its
+  release; without a refusal the release decision is unchanged. The fixed
+  test's failed-start path is refused; its conforming paths and the old
+  test's shape stay not discharged. -/
 
 section Lifecycle
 
@@ -1010,71 +1012,152 @@ inductive LState where
   | destroyed
   deriving DecidableEq, Repr
 
-/-- `paired_lifecycle::step`; `none` is a violated precondition. -/
+/-- `paired_lifecycle::step` (the strict pair); `none` is a refused
+precondition (a violation, or one not established). -/
 def lstep : LState → LOp → LOutcome → Option LState
   | .destroyed, _, _ => none
   | .created, .start, o => some (.started o)
-  | .stopped, .start, o => some (.started o)
+  | .stopped, .start, _ => none
   | .started _, .start, _ => none
-  | .created, .stop, _ => some .created
-  | .started _, .stop, _ => some .stopped
-  | .stopped, .stop, _ => some .stopped
+  | .started .succeeded, .stop, _ => some .stopped
+  | .started .failed, .stop, _ => none
+  | .started .undecided, .stop, _ => none
+  | .created, .stop, _ => none
+  | .stopped, .stop, _ => none
   | .created, .destroy, _ => some .destroyed
+  | .started .failed, .destroy, _ => some .destroyed
   | .stopped, .destroy, _ => some .destroyed
-  | .started _, .destroy, _ => none
+  | .started .succeeded, .destroy, _ => none
+  | .started .undecided, .destroy, _ => none
 
-/-- A history run from `created`. -/
+/-- A history run from a state. -/
 def lrun : LState → List (LOp × LOutcome) → Option LState
   | s, [] => some s
   | s, (op, o) :: rest => (lstep s op o).bind (fun s' => lrun s' rest)
 
+theorem lrun_append (xs ys : List (LOp × LOutcome)) (t : LState) :
+    lrun t (xs ++ ys) = (lrun t xs).bind (fun u => lrun u ys) := by
+  induction xs generalizing t with
+  | nil => simp [lrun]
+  | cons x xs ih =>
+    obtain ⟨op, oc⟩ := x
+    simp only [List.cons_append, lrun]
+    cases lstep t op oc with
+    | none => rfl
+    | some u => exact ih u
+
+/-- A refused step anywhere rejects the whole history. -/
+theorem a_refused_step_rejects_the_history (pre rest : List (LOp × LOutcome)) (s : LState)
+    (op : LOp) (o : LOutcome) (hpre : lrun .created pre = some s) (hs : lstep s op o = none) :
+    lrun .created (pre ++ (op, o) :: rest) = none := by
+  rw [lrun_append, hpre]
+  simp [lrun, hs]
+
 theorem starting_twice_is_rejected (o o' : LOutcome) : lstep (.started o) .start o' = none := rfl
 
-theorem destroying_before_the_stop_is_rejected (o o' : LOutcome) :
-    lstep (.started o) .destroy o' = none := rfl
+theorem a_restart_after_a_stop_is_rejected (o : LOutcome) : lstep .stopped .start o = none := rfl
 
 theorem nothing_follows_a_destroy (op : LOp) (o : LOutcome) : lstep .destroyed op o = none := by
   cases op <;> rfl
 
-/-- A start is accepted only from created or stopped. -/
-theorem an_accepted_start_began_unstarted (s s' : LState) (o : LOutcome)
-    (h : lstep s .start o = some s') : s = .created ∨ s = .stopped := by
+/-- A stop is admitted only from started-ok, and leads to stopped. -/
+theorem a_stop_is_admitted_only_from_started_ok (s s' : LState) (o : LOutcome)
+    (h : lstep s .stop o = some s') : s = .started .succeeded ∧ s' = .stopped := by
+  cases s with
+  | started oc => cases oc <;> simp_all [lstep]
+  | _ => simp_all [lstep]
+
+theorem a_stop_after_a_failed_start_is_a_violation (o : LOutcome) :
+    lstep (.started .failed) .stop o = none := rfl
+
+theorem a_second_stop_is_a_violation (o o' : LOutcome) :
+    lrun .created [(.start, .succeeded), (.stop, o), (.stop, o')] = none := rfl
+
+theorem a_stop_of_a_never_started_context_is_a_violation (o : LOutcome) :
+    lstep .created .stop o = none := rfl
+
+/-- A start is accepted only from created. -/
+theorem an_accepted_start_began_created (s s' : LState) (o : LOutcome)
+    (h : lstep s .start o = some s') : s = .created := by
   cases s <;> simp_all [lstep]
 
-/-- A destroy is accepted only from created or stopped. -/
-theorem an_accepted_destroy_was_unstarted (s s' : LState) (o : LOutcome)
-    (h : lstep s .destroy o = some s') : s = .created ∨ s = .stopped := by
-  cases s <;> simp_all [lstep]
+/-- A destroy is accepted only from created, start-failed or stopped. -/
+theorem an_accepted_destroy_was_not_running (s s' : LState) (o : LOutcome)
+    (h : lstep s .destroy o = some s') :
+    s = .created ∨ s = .started .failed ∨ s = .stopped := by
+  cases s with
+  | started oc => cases oc <;> simp_all [lstep]
+  | _ => simp_all [lstep]
 
-/-- The fixed test's sequence (start, stop whatever start returned, destroy)
-is accepted on every start outcome; so is a restart after a stop. -/
-theorem the_paired_sequence_is_accepted (o : LOutcome) :
-    lrun .created [(.start, o), (.stop, .undecided), (.destroy, .undecided)] = some .destroyed ∧
-      lrun .created [(.start, o), (.stop, .undecided), (.stop, .undecided),
-        (.start, .succeeded)] = some (.started .succeeded) := by
-  cases o <;> exact ⟨rfl, rfl⟩
+theorem destroying_a_running_context_is_rejected (o : LOutcome) :
+    lstep (.started .succeeded) .destroy o = none := rfl
+
+theorem a_destroy_after_a_failed_start_is_admitted (o : LOutcome) :
+    lstep (.started .failed) .destroy o = some .destroyed := rfl
+
+/-- The conforming sequences: start, stop, destroy; a failed start, then
+destroy; a destroy of a never-started context. -/
+theorem the_strict_sequences_are_accepted (o o' : LOutcome) :
+    lrun .created [(.start, .succeeded), (.stop, o), (.destroy, o')] = some .destroyed ∧
+      lrun .created [(.start, .failed), (.destroy, o)] = some .destroyed ∧
+      lrun .created [(.destroy, o)] = some .destroyed := ⟨rfl, rfl, rfl⟩
 
 /-- A double start anywhere in a history rejects the whole history. -/
 theorem a_history_with_a_double_start_is_rejected (o o' : LOutcome)
-    (pre rest : List (LOp × LOutcome)) (s : LState)
-    (hpre : lrun .created pre = some s) (hs : s = .created ∨ s = .stopped) :
+    (pre rest : List (LOp × LOutcome)) (hpre : lrun .created pre = some .created) :
     lrun .created (pre ++ (.start, o) :: (.start, o') :: rest) = none := by
-  have split : ∀ (xs : List (LOp × LOutcome)) (t : LState) (ys : List (LOp × LOutcome)),
-      lrun t (xs ++ ys) = (lrun t xs).bind (fun u => lrun u ys) := by
-    intro xs
-    induction xs with
-    | nil => intro t ys; simp [lrun]
-    | cons x xs ih =>
-      intro t ys
-      obtain ⟨op, oc⟩ := x
-      simp only [List.cons_append, lrun]
-      cases lstep t op oc with
-      | none => rfl
-      | some u => exact ih u ys
-  rw [split, hpre]
-  rcases hs with rfl | rfl <;> simp [lrun, lstep]
+  rw [lrun_append, hpre]
+  simp [lrun, lstep]
 
-/-! ### Clauses against the bodies -/
+/-- How many stops a history holds. -/
+def stopsIn : List (LOp × LOutcome) → Nat
+  | [] => 0
+  | (op, _) :: rest => (if op = .stop then 1 else 0) + stopsIn rest
+
+/-- How many more stops a state admits. -/
+def stopBudget : LState → Nat
+  | .created => 1
+  | .started .succeeded => 1
+  | _ => 0
+
+/-- One accepted step spends a stop's budget, and never adds any. -/
+theorem an_accepted_step_spends_its_stop (s u : LState) (op : LOp) (o : LOutcome)
+    (h : lstep s op o = some u) : (if op = .stop then 1 else 0) + stopBudget u ≤ stopBudget s := by
+  cases s with
+  | destroyed => simp [lstep] at h
+  | created =>
+    cases op with
+    | start => simp only [lstep, Option.some.injEq] at h; subst h; cases o <;> simp [stopBudget]
+    | stop => simp [lstep] at h
+    | destroy => simp only [lstep, Option.some.injEq] at h; subst h; simp [stopBudget]
+  | started so =>
+    cases so <;> cases op <;> simp [lstep] at h <;> subst h <;> simp [stopBudget]
+  | stopped =>
+    cases op <;> simp [lstep] at h <;> subst h <;> simp [stopBudget]
+
+theorem an_accepted_history_stays_within_its_stop_budget (h : List (LOp × LOutcome)) :
+    ∀ (s t : LState), lrun s h = some t → stopsIn h ≤ stopBudget s := by
+  induction h with
+  | nil => intro s t _; simp [stopsIn]
+  | cons x rest ih =>
+    obtain ⟨op, oc⟩ := x
+    intro s t hrun
+    simp only [lrun] at hrun
+    cases hstep : lstep s op oc with
+    | none => simp [hstep] at hrun
+    | some u =>
+      simp only [hstep, Option.bind_some] at hrun
+      have hrest := ih u t hrun
+      have hb := an_accepted_step_spends_its_stop s u op oc hstep
+      simp only [stopsIn]
+      by_cases hop : op = .stop <;> simp only [hop, ite_true, ite_false] at hb ⊢ <;> omega
+
+/-- A history the strict pair accepts stops at most once. -/
+theorem a_conforming_history_stops_at_most_once (h : List (LOp × LOutcome)) (t : LState)
+    (hrun : lrun .created h = some t) : stopsIn h ≤ 1 :=
+  an_accepted_history_stays_within_its_stop_budget h .created t hrun
+
+/-! ### Body clauses -/
 
 inductive BJoin where
   | firstOfStarted
@@ -1096,54 +1179,10 @@ inductive CStatus where
   | held
   deriving DecidableEq, Repr
 
-/-- `no_effect_status`. -/
-def noEffectStatus (ps : List BPath) : CStatus :=
-  if ps.isEmpty then .held
-  else if ps.all (fun p => !p.joins.isEmpty) then .refuted
-  else if ps.any (fun p => !p.joins.isEmpty) then .held
-  else if ps.any (fun p => p.isOpen) then .held
-  else .inForce
-
-theorem a_no_effect_clause_is_in_force_only_if_every_path_joins_nothing (ps : List BPath)
-    (h : noEffectStatus ps = .inForce) : ∀ p ∈ ps, p.joins = [] ∧ p.isOpen = false := by
-  unfold noEffectStatus at h
-  split at h
-  · cases h
-  · split at h
-    · cases h
-    · split at h
-      · cases h
-      · split at h
-        · cases h
-        · rename_i _ _ hjoin hopen
-          intro p hp
-          have hj : ¬ (!p.joins.isEmpty) = true := by
-            intro hx; exact hjoin (List.any_eq_true.mpr ⟨p, hp, hx⟩)
-          have ho : ¬ p.isOpen = true := by
-            intro hx; exact hopen (List.any_eq_true.mpr ⟨p, hp, hx⟩)
-          constructor
-          · simpa [List.isEmpty_iff] using hj
-          · simpa using ho
-
-theorem a_no_effect_clause_is_refuted_only_if_every_path_joins (ps : List BPath)
-    (h : noEffectStatus ps = .refuted) : ps ≠ [] ∧ ∀ p ∈ ps, p.joins ≠ [] := by
-  unfold noEffectStatus at h
-  split at h
-  · cases h
-  · rename_i hne
-    split at h
-    · rename_i hall
-      refine ⟨fun he => hne (by simp [he]), fun p hp => ?_⟩
-      have := List.all_eq_true.mp hall p hp
-      simpa [List.isEmpty_iff] using this
-    · split at h
-      · cases h
-      · split at h <;> cases h
-
 /-- The first stop ends the started thread on a path: one join, its first. -/
 def endsStarted (p : BPath) : Bool := p.joins == [.firstOfStarted]
 
-/-- `ends_started_status`. -/
+/-- `ends_started_status` (L2). -/
 def endsStartedStatus (ps : List BPath) : CStatus :=
   if ps.isEmpty then .held
   else if ps.all (fun p => !endsStarted p && !p.joins.contains .unresolved) then .refuted
@@ -1172,38 +1211,55 @@ theorem the_first_stop_clause_is_in_force_only_if_every_path_joins_the_started_t
           refine ⟨?_, by simpa using ho⟩
           simpa [endsStarted] using he
 
+/-- One followed nonzero return of a declared start: whether it leaves a
+thread it began unjoined, and whether the reader left anything open. -/
+structure SPath where
+  leavesThread : Bool
+  isOpen : Bool
+  deriving DecidableEq, Repr
+
+/-- `failed_start_status` (L7). -/
+def failedStartStatus (ps : List SPath) : CStatus :=
+  if ps.isEmpty then .held
+  else if ps.all (fun p => p.leavesThread) then .refuted
+  else if ps.any (fun p => p.leavesThread) then .held
+  else if ps.any (fun p => p.isOpen) then .held
+  else .inForce
+
+theorem the_failed_start_clause_is_in_force_only_if_no_return_leaves_a_thread
+    (ps : List SPath) (h : failedStartStatus ps = .inForce) :
+    ∀ p ∈ ps, p.leavesThread = false ∧ p.isOpen = false := by
+  unfold failedStartStatus at h
+  split at h
+  · cases h
+  · split at h
+    · cases h
+    · split at h
+      · cases h
+      · split at h
+        · cases h
+        · rename_i _ _ hleave hopen
+          intro p hp
+          have hl : ¬ p.leavesThread = true := by
+            intro hx; exact hleave (List.any_eq_true.mpr ⟨p, hp, hx⟩)
+          have ho : ¬ p.isOpen = true := by
+            intro hx; exact hopen (List.any_eq_true.mpr ⟨p, hp, hx⟩)
+          exact ⟨by simpa using hl, by simpa using ho⟩
+
 /-- A body with no followed path decides nothing. -/
 theorem no_followed_path_holds_the_clause :
-    noEffectStatus [] = .held ∧ endsStartedStatus [] = .held := ⟨rfl, rfl⟩
+    endsStartedStatus [] = .held ∧ failedStartStatus [] = .held := ⟨rfl, rfl⟩
 
-/-! ### Withdrawal: what a caller's stop is read with -/
-
-/-- `governed_joins`: the clause's joins (none) only where a no-effect clause
-is in force; the body's otherwise. -/
-def governedJoins (noEffect : Bool) (st : CStatus) (body : List BJoin) : List BJoin :=
-  if noEffect && st == .inForce then [] else body
-
-theorem an_in_force_idempotent_stop_adds_no_join (body : List BJoin) :
-    governedJoins true .inForce body = [] := rfl
-
-/-- Applying an in-force no-effect clause agrees with every body path. -/
-theorem an_in_force_no_effect_clause_agrees_with_the_body (ps : List BPath)
-    (h : noEffectStatus ps = .inForce) : ∀ p ∈ ps, governedJoins true .inForce p.joins = p.joins :=
-  fun p hp => by
-    rw [(a_no_effect_clause_is_in_force_only_if_every_path_joins_nothing ps h p hp).1]; rfl
-
-theorem a_withdrawn_clause_reads_the_body (noEffect : Bool) (st : CStatus) (body : List BJoin)
-    (h : st ≠ .inForce) : governedJoins noEffect st body = body := by
-  cases st <;> simp_all [governedJoins]
-
-/-- A refuted clause never removes a join: the fixed test's stop after a
-failed start keeps its repeated join, and the release stays not
-discharged whatever else its paths carry. -/
-theorem a_refuted_clause_never_discharges (paths : List StopEvidence) (ds : List Descendant)
-    (o : Bool) :
-    governedJoins true .refuted [.repeated] = [.repeated] ∧
-      stopReleaseVerdict (paths ++ [.repeated]) ds o = .notDischarged :=
-  ⟨rfl, a_repeated_join_refuses _ ds o (by simp)⟩
+/-- L2 in force: a conforming path that stops joins the engine thread exactly
+once, whichever followed body path its one stop took, and that join is the
+thread's first. -/
+theorem a_conforming_path_has_exactly_one_engine_join (h : List (LOp × LOutcome)) (t : LState)
+    (hrun : lrun .created h = some t) (hstop : 1 ≤ stopsIn h) (ps : List BPath)
+    (hl2 : endsStartedStatus ps = .inForce) (p : BPath) (hp : p ∈ ps) :
+    stopsIn h = 1 ∧ p.joins = [.firstOfStarted] :=
+  ⟨Nat.le_antisymm (a_conforming_history_stops_at_most_once h t hrun) hstop,
+    (the_first_stop_clause_is_in_force_only_if_every_path_joins_the_started_thread_once
+      ps hl2 p hp).1⟩
 
 /-! ### The gate on a release -/
 
@@ -1219,16 +1275,74 @@ theorem without_a_violation_the_release_is_unchanged (v : Verdict) :
     gatedVerdict false v = v := by
   cases v <;> simp [gatedVerdict, Verdict.join, Verdict.rank]
 
-/-- The two tests' shapes under the lifecycle: both conform, so the gate
-adds nothing, and both stay not discharged (the fixed test by its repeated
-join after a failed start, the old one by its release before any join). -/
-theorem the_old_and_fixed_test_shapes_stay_not_discharged :
-    gatedVerdict false (stopReleaseVerdict fixedTestPaths [.unresolved] false) = .notDischarged ∧
-      gatedVerdict false (stopReleaseVerdict oldTestUnlinkPaths [.unresolved] false) =
+/-- The gate of one path: refused where the strict pair refuses its history. -/
+def historyGate (h : List (LOp × LOutcome)) (v : Verdict) : Verdict :=
+  gatedVerdict (lrun .created h).isNone v
+
+theorem a_refused_history_never_discharges (h : List (LOp × LOutcome)) (v : Verdict)
+    (hv : lrun .created h = none) : historyGate h v ≠ .discharged := by
+  simp only [historyGate, hv, Option.isNone_none]
+  exact a_lifecycle_violation_blocks_the_release v
+
+/-- A stop after a failed start, and a second stop, never discharge whatever
+the release's own reading. -/
+theorem a_stop_after_a_failed_start_or_a_second_stop_never_discharges (o o' : LOutcome)
+    (rest : List (LOp × LOutcome)) (v : Verdict) :
+    historyGate ((.start, .failed) :: (.stop, o) :: rest) v ≠ .discharged ∧
+      historyGate ((.start, .succeeded) :: (.stop, o) :: (.stop, o') :: rest) v ≠
+        .discharged :=
+  ⟨a_refused_history_never_discharges _ v rfl, a_refused_history_never_discharges _ v rfl⟩
+
+/-! ### The two tests' shapes under the strict pair -/
+
+/-- The status branch's first join on the fixed test's conforming paths: its
+busy and cycle cases are not excluded (the census's `not busy` and `no cycle`
+exclusions fail at the three trees). -/
+def conformingStatusBranchJoin : JoinExclusions :=
+  { joinable := true, notBusy := false, notSelf := true, noCycle := false }
+
+/-- The fixed test's conforming paths (after a start that returned 0): the
+checked join at :1077, or the status branch's unchecked first join at :1058.
+No repeated join. -/
+def fixedTestConformingPaths : List StopEvidence :=
+  [.checkedSuccess, .uncheckedFirst conformingStatusBranchJoin]
+
+/-- The fixed test under the strict pair: its failed-start path (start
+returned nonzero, stop, destroy) is refused and never discharges; its
+conforming path (start returned 0, stop, destroy) is accepted, joins the
+engine thread once per path, and stays not discharged, since the status
+branch's join is not counted; even with every POSIX case excluded, the
+unresolved descendants keep it from discharging. -/
+theorem the_fixed_test_under_the_strict_pair (v : Verdict) :
+    historyGate [(.start, .failed), (.stop, .undecided), (.destroy, .undecided)] v ≠
+        .discharged ∧
+      lrun .created [(.start, .succeeded), (.stop, .undecided), (.destroy, .undecided)] =
+        some .destroyed ∧
+      StopEvidence.repeated ∉ fixedTestConformingPaths ∧
+      historyGate [(.start, .succeeded), (.stop, .undecided), (.destroy, .undecided)]
+          (stopReleaseVerdict fixedTestConformingPaths [.unresolved] false) = .notDischarged ∧
+      stopReleaseVerdict [.checkedSuccess,
+          .uncheckedFirst { joinable := true, notBusy := true, notSelf := true, noCycle := true }]
+          [.unresolved] false ≠ .discharged := by
+  refine ⟨a_refused_history_never_discharges _ v rfl, rfl, by decide, by decide, ?_⟩
+  exact an_unresolved_descendant_blocks_the_discharge _ _ false (by simp)
+
+/-- The old test (negative control): its `unlink` before the stop conforms
+and stays not discharged (no join on its paths); its `flb_destroy` after the
+unguarded stop is refused on the failed-start path and not discharged on the
+conforming ones (a failed join at :1077 on a path). -/
+theorem the_old_and_fixed_test_shapes_stay_not_discharged (o : LOutcome) :
+    historyGate [(.start, o)] (stopReleaseVerdict oldTestUnlinkPaths [.unresolved] false) =
         .notDischarged ∧
-      gatedVerdict false (stopReleaseVerdict oldTestDestroyPaths [.unresolved] false) =
-        .notDischarged := by
-  decide
+      historyGate [(.start, .failed), (.stop, .undecided), (.destroy, .undecided)]
+          (stopReleaseVerdict oldTestDestroyPaths [.unresolved] false) = .notDischarged ∧
+      historyGate [(.start, .succeeded), (.stop, .undecided), (.destroy, .undecided)]
+          (stopReleaseVerdict [.checkedSuccess, .failed,
+            .uncheckedFirst conformingStatusBranchJoin] [.unresolved] false) =
+        .notDischarged ∧
+      historyGate [(.start, .succeeded), (.stop, .undecided), (.destroy, .undecided)]
+          (stopReleaseVerdict fixedTestConformingPaths [.unresolved] false) = .notDischarged := by
+  cases o <;> decide
 
 end Lifecycle
 

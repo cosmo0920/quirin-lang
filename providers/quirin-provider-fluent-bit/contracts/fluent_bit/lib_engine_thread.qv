@@ -58,47 +58,49 @@ module contract;
 // "candidate" names an upstream path whose confirmation needs a native
 // reproduction.
 
-// ## The paired lifecycle (W47-FLB-LIB-LIFECYCLE, contract specification
-// §C04.11, rule 10q as amended)
+// ## The strictly paired lifecycle (W47-FLB-LIB-LIFECYCLE and
+// W47-FLB-LIB-STRICT-PAIRING, contract specification §C04.11, rule 10q as
+// amended)
 //
 // `requires resource_lifecycle(ctx, start|stop|destroy)` states the library
-// API as the user gave it (2026-09-29): `flb_start` and `flb_stop` come in
-// pairs, a stop after the first has no effect, and a start without a stop in
-// between is not permitted; this module's answer for what the statement
-// leaves open is that a stop after a failed start and a stop of a
-// never-started context have no effect either, and that `flb_destroy` is
-// permitted only on a created or stopped context. The six clauses it implies
-// are **specifications to check, never facts**: the rule 10q census runs the
-// declared bodies from each clause's state and applies only a clause every
-// followed path satisfies; a clause the bodies refute is withdrawn from every
-// caller (rule 10g) and read from the body instead. No per-unit route derives
-// a context's lifecycle state, so there every call of these three functions
-// is refused (`outside its declared lifecycle obligation`), behind the review
-// hold that applies first.
+// API as the user decided it (2026-09-29; this supersedes the earlier "a stop
+// after the first has no effect"): `flb_stop` is permitted only after a
+// successful `flb_start`, exactly once per successful start; after a failed
+// `flb_start` the caller calls only `flb_destroy`; a second `flb_stop` is a
+// caller violation; a start without a stop in between is not permitted, and
+// a start after a stop is not derived from the bodies, so it is refused.
+// `flb_destroy` is permitted from created, after a failed start, and after
+// the stop. The clauses are **specifications to check, never facts**: L1 and
+// L3-L6 are caller preconditions (they only refuse: a release a path
+// violating one reaches never discharges); L2 and L7 describe the bodies and
+// are applied only where every path the rule 10q census follows satisfies
+// them. No per-unit route derives a context's lifecycle state, so there every
+// call of these three functions is refused (`outside its declared lifecycle
+// obligation`), behind the review hold that applies first.
 //
 // Checked at the 90978ac6 export, 046accf6 and 66910c10
-// (docs/reports/w47-flb-lib-lifecycle/): L1 (start only from created or
-// stopped) and L6 (destroy only from created or stopped) are preconditions,
-// in force as restrictions; `flb_destroy`'s own body never joins
-// `ctx->config->worker`, so L6 is load-bearing. L2 (the first stop after a
-// start that returned 0 joins the thread that start began, once) is
-// satisfied by `flb_stop`'s body on every followed path, so it is in force;
-// L3 (a stop
-// after a stop has no effect), L4 (a stop after a failed start has no effect)
-// and L5 (a stop of a never-started context has no effect) are **refuted by
-// the body**: every feasible path of `flb_stop` joins `ctx->config->worker`
-// (:1058 or :1077), which no path clears. Candidates, not verified defects
-// (each needs a native reproduction): a second `flb_stop` joins the joined
-// engine thread again; a stop after `do_start` joined on its failure return
-// (:984, :999) joins it a second time; a stop after a start that failed
-// before its spawn, or of a never-started context, joins an identifier no
-// start produced.
+// (docs/reports/w47-flb-lib-strict-pairing/): L2 (the first stop after a
+// start that returned 0 joins the thread that start began, once) is satisfied
+// by `flb_stop`'s body on every followed path (:1058 or :1077), so it is in
+// force; L7 (a start that returns nonzero leaves no thread it began unjoined,
+// the body fact behind L6's admission of a destroy after a failed start) is
+// held: `do_start` joins the engine thread on both failure returns after the
+// spawn (:984, :999), but the reader cannot tell a failed
+// `mk_utils_worker_spawn` (:969-972) from a spawn, so one followed nonzero
+// return leaves `flb_lib_worker` unjoined. What `flb_stop` does from a state
+// the strict pair forbids is outside the contract: every feasible path joins
+// `ctx->config->worker` (:1058 or :1077), which nothing clears, so a second
+// stop and a stop after a failed start join a joined thread again and a stop
+// of a never-started context, or after a start that failed before its spawn,
+// joins an identifier no start produced; the native observation
+// (docs/reports/w47-fb-double-stop-observation/) reproduced each. Those are
+// reproductions of caller-contract violations, not library defects.
 
 extern fn flb_start(ctx: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_lifecycle(ctx, start);
-    requires resource_review_pending("Observed at 90978ac6 (src/flb_lib.c), checked by the rule 10q census: do_start spawns the engine thread flb_lib_worker through mk_utils_worker_spawn, which creates it joinable (PTHREAD_CREATE_JOINABLE, lib/monkey/mk_core/mk_utils.c:316-318), and stores its identifier in ctx->config->worker (:973). On both failure returns after the spawn (:980-986, :994-1001) it joins the thread with the result ignored and sets ctx->status to FLB_LIB_ERROR. It returns 0 without setting FLB_LIB_OK when the notification loop finds no started or failed value (:1008). ctx is handed to the engine thread until that thread is joined; v1 cannot state a thread start, a join or that retention.", "qcore-c integrator", rewrite_before_acceptance);
+    requires resource_review_pending("Observed at 90978ac6 (src/flb_lib.c), checked by the rule 10q census: do_start spawns the engine thread flb_lib_worker through mk_utils_worker_spawn, which creates it joinable (PTHREAD_CREATE_JOINABLE, lib/monkey/mk_core/mk_utils.c:316-318), and stores its identifier in ctx->config->worker (:973). On both failure returns after the spawn (:980-986, :994-1001) it joins the thread with the result ignored and sets ctx->status to FLB_LIB_ERROR. It returns 0 without setting FLB_LIB_OK when the notification loop finds no started or failed value (:1008). ctx is handed to the engine thread until that thread is joined; v1 cannot state a thread start, a join or that retention. Whether a start after flb_stop can run again (flb_stop destroys ctx->config->cf_main, :1066-1069, and the engine thread's run is not read) is not derived, so the lifecycle permits a start only from created.", "qcore-c integrator", rewrite_before_acceptance);
     ensures normal resource_borrowed(ctx);
     ensures normal resource_return_none();
 };
@@ -107,7 +109,7 @@ extern fn flb_stop(ctx: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     requires resource_lifecycle(ctx, stop);
-    requires resource_review_pending("Observed at 90978ac6 (src/flb_lib.c), checked by the rule 10q census: flb_stop reads ctx->config->worker (:1047) before its !ctx->config test (:1062), and ctx->config is stored only by flb_create before publication (:174), so the return 0 without a join at :1063 is derived infeasible under P-DEREF. On the FLB_LIB_NONE or FLB_LIB_ERROR status branch (:1049) it joins the engine thread and returns 0 with the join result ignored (:1058). Otherwise it signals the engine to exit and returns the join result (:1077-1083). Candidate, not a verified defect: after a flb_start whose engine thread already failed and was joined in do_start (:984, :999, status FLB_LIB_ERROR), the status branch joins that thread a second time (:1058), undefined under POSIX; confirming it needs a native reproduction. The status read (:1049) is not synchronised with the engine thread's own write (:932).", "qcore-c integrator");
+    requires resource_review_pending("Observed at 90978ac6 (src/flb_lib.c), checked by the rule 10q census: flb_stop reads ctx->config->worker (:1047) before its !ctx->config test (:1062), and ctx->config is stored only by flb_create before publication (:174), so the return 0 without a join at :1063 is derived infeasible under P-DEREF. On the FLB_LIB_NONE or FLB_LIB_ERROR status branch (:1049) it joins the engine thread and returns 0 with the join result ignored (:1058). Otherwise it signals the engine to exit and returns the join result (:1077-1083). Every feasible path joins ctx->config->worker and nothing clears it, so the lifecycle permits a stop only after a flb_start that returned 0, once; a stop after a failed start, a second stop or a stop of a never-started context is a caller violation, whose second join or join of an unwritten identifier the native observation reproduced (W47-FB-DOUBLE-STOP-OBSERVATION). The status read (:1049) is not synchronised with the engine thread's own write (:932).", "qcore-c integrator");
     ensures normal resource_borrowed(ctx);
     ensures normal resource_return_none();
 };
@@ -116,7 +118,7 @@ extern fn flb_destroy(ctx: ptr<mut, u8>) -> unit
 contract {
     requires resource_contract_v1;
     requires resource_lifecycle(ctx, destroy);
-    requires resource_review_pending("Observed at 90978ac6 (src/flb_lib.c:230-263), identical at 046accf6 and 66910c10, read by the rule 10q census: flb_destroy returns at once on a null ctx; otherwise it deletes and frees ctx->event_channel, destroys ctx->event_loop, shuts the engine down when ctx->config->is_running is still true (flb_engine_shutdown) and releases ctx->config (flb_config_exit), then frees ctx. Its own body contains no join and never joins ctx->config->worker; the joins its callees reach are the output and input workers' and, through the chunk-trace pipeline (src/flb_chunk_trace.c:106, :270), another context's flb_stop, which the entry-keyed census cannot tell from this context's engine thread (P-JOIN-IDENTITY). So a destroy while this context's engine thread is live frees what that thread retains: the lifecycle clause L6 (destroy only from created or stopped) is a precondition on the caller, not an effect of the body. Whether the nullable release of ctx is the whole custody effect (the members it frees, the engine shutdown's own releases) is not derived here.", "qcore-c integrator");
+    requires resource_review_pending("Observed at 90978ac6 (src/flb_lib.c:230-263), identical at 046accf6 and 66910c10, read by the rule 10q census: flb_destroy returns at once on a null ctx; otherwise it deletes and frees ctx->event_channel, destroys ctx->event_loop, shuts the engine down when ctx->config->is_running is still true (flb_engine_shutdown) and releases ctx->config (flb_config_exit), then frees ctx. Its own body contains no join and never joins ctx->config->worker; the joins its callees reach are the output and input workers' and, through the chunk-trace pipeline (src/flb_chunk_trace.c:106, :270), another context's flb_stop, which the entry-keyed census cannot tell from this context's engine thread (P-JOIN-IDENTITY). So a destroy while this context's engine thread is live frees what that thread retains: the lifecycle clause L6 (destroy only from created, after a failed start, or after the stop) is a precondition on the caller, not an effect of the body; its admission after a failed start rests on do_start having joined the thread it spawned (L7, checked against flb_start's body). Whether the nullable release of ctx is the whole custody effect (the members it frees, the engine shutdown's own releases) is not derived here.", "qcore-c integrator");
     ensures normal resource_released(ctx, nullable);
     ensures normal resource_return_none();
 };

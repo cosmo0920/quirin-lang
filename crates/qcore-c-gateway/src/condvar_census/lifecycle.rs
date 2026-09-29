@@ -1,18 +1,22 @@
-//! Lifecycle readings for the C5 census (card **W47-FLB-LIB-LIFECYCLE**,
-//! gateway rule 10q as amended, contract specification §C04.11).
+//! Lifecycle readings for the C5 census (cards **W47-FLB-LIB-LIFECYCLE** and
+//! **W47-FLB-LIB-STRICT-PAIRING**, gateway rule 10q as amended, contract
+//! specification §C04.11).
 //!
 //! The declared lifecycle functions (`requires resource_lifecycle(ctx,
 //! start|stop|destroy)`) are read two ways, and both are *readings*: the
 //! kernel (`qcore_core::paired_lifecycle`) decides, through the adapter.
 //!
 //! * **The bodies** ([`LifecycleBodyReading`]): each declared stop is run by
-//!   the path reader from the state each clause speaks about — a never-started
-//!   context, after a declared start that returned 0, after a stop that
-//!   followed it, after a start that returned nonzero — recording, per
-//!   followed path, every join it executed and how the reader classifies it
-//!   (the first join of the thread the start began, a repeated join, a join of
-//!   an identifier no start began, an underived identity). Each declared
-//!   destroy is run after a successful start the same way.
+//!   the path reader after a declared start that returned 0 (L2) and, as
+//!   observations of what the body does outside the strict pair (card
+//!   W47-FLB-LIB-STRICT-PAIRING), from a never-started context, after a stop
+//!   that followed it and after a start that returned nonzero — recording,
+//!   per followed path, every join it executed and how the reader classifies
+//!   it (the first join of the thread the start began, a repeated join, a
+//!   join of an identifier no start began, an underived identity). Each
+//!   declared destroy is run after a successful start the same way, and each
+//!   declared start's own paths that return nonzero record the threads they
+//!   leave without a join (L7).
 //! * **The callers** ([`LifecycleCallReading`]): on a test root's paths, each
 //!   call of a declared function with its context's key and the context's
 //!   history before the call (every lifecycle event since a creator's result
@@ -90,16 +94,22 @@ pub enum ReadTraceJoin {
 /// The state a declared stop's body is run from.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LifecycleScenario {
-    /// A never-started context (L5).
+    /// A never-started context (outside the strict pair: L5 forbids it; read
+    /// as an observation).
     Unstarted,
     /// After the declared start returned 0 (L2).
     AfterStart { start: String },
-    /// After a stop that followed a start that returned 0 (L3).
+    /// After a stop that followed a start that returned 0 (outside the strict
+    /// pair: L3 forbids it; read as an observation).
     AfterStop { start: String },
-    /// After the declared start returned nonzero (L4).
+    /// After the declared start returned nonzero (outside the strict pair: L4
+    /// forbids it; read as an observation).
     AfterFailedStart { start: String },
     /// A declared destroy after the declared start returned 0 (L6's reading).
     DestroyAfterStart { start: String },
+    /// Card W47-FLB-LIB-STRICT-PAIRING: the declared start's own run, on its
+    /// paths that return nonzero (L7: nothing it began is left unjoined).
+    FailedStartReturn { start: String },
 }
 
 /// One followed path of a body run from a scenario's state.
@@ -108,6 +118,10 @@ pub struct BodyPathReading {
     pub joins: Vec<(ReadTraceJoin, String)>,
     /// What the reader left open on the path, from the scenario's start.
     pub unresolved: BTreeSet<String>,
+    /// Card W47-FLB-LIB-STRICT-PAIRING: the threads the path began and left
+    /// without a join ([`LifecycleScenario::FailedStartReturn`] only; empty
+    /// for a stop or destroy).
+    pub left_unjoined: BTreeSet<String>,
 }
 
 /// One declared body, run from one scenario's state.
@@ -249,6 +263,7 @@ fn body_paths(states: &[(Global, Option<Val>)], before: &BTreeSet<String>) -> Ve
         paths.insert(BodyPathReading {
             joins: global.trace.clone(),
             unresolved: global.unresolved.difference(before).cloned().collect(),
+            left_unjoined: BTreeSet::new(),
         });
     }
     paths.into_iter().collect()
@@ -346,6 +361,42 @@ pub(super) fn read_bodies(c5: &mut C5<'_>, roles: &LifecycleRoles) -> Vec<Lifecy
                 });
             }
         }
+    }
+    // Card W47-FLB-LIB-STRICT-PAIRING: each declared start's paths that
+    // return nonzero, with the threads each leaves without a join (L7).
+    for start_name in &starts {
+        let Some(start) = definition(c5, start_name) else {
+            continue;
+        };
+        let started = c5.traced(start, Global::default());
+        let start_unresolved: BTreeSet<String> = started
+            .iter()
+            .flat_map(|(g, _)| g.unresolved.iter().cloned())
+            .collect();
+        let mut paths = BTreeSet::new();
+        for (global, value) in &started {
+            if start_result(value.as_ref()) != ReadStartResult::NonZero {
+                continue;
+            }
+            paths.insert(BodyPathReading {
+                joins: global.trace.clone(),
+                unresolved: global.unresolved.clone(),
+                left_unjoined: global
+                    .threads
+                    .iter()
+                    .filter(|(_, joined)| matches!(joined, super::Joined::Live(_)))
+                    .map(|(thread, _)| thread.clone())
+                    .collect(),
+            });
+        }
+        out.push(LifecycleBodyReading {
+            function: (*start_name).to_owned(),
+            scenario: LifecycleScenario::FailedStartReturn {
+                start: (*start_name).to_owned(),
+            },
+            paths: paths.into_iter().collect(),
+            start_unresolved,
+        });
     }
     for destroy_name in &destroys {
         let Some(destroy) = definition(c5, destroy_name) else {

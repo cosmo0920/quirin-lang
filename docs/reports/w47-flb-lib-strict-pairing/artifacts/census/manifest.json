@@ -1,0 +1,82 @@
+{
+ "binary.sha256": {
+  "bytes": 187,
+  "file": "binary.sha256.gz",
+  "sha256": "0ed1391f86f0a9c9aa74bbd95db8223b98d218141720d0fc695263dc9a261ba6"
+ },
+ "build.exit": {
+  "bytes": 2,
+  "file": "build.exit.gz",
+  "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+ },
+ "build.log": {
+  "bytes": 0,
+  "file": "build.log.gz",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "corpus.exit": {
+  "bytes": 2,
+  "file": "corpus.exit.gz",
+  "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+ },
+ "corpus.json": {
+  "bytes": 2430900,
+  "file": "corpus.json.gz",
+  "sha256": "dc4bf5a5a1b175e6a3db4540cfdc6ecfe8105a05dec687bb34ebd2377319c0db"
+ },
+ "corpus.stderr": {
+  "bytes": 0,
+  "file": "corpus.stderr.gz",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "fixed.exit": {
+  "bytes": 2,
+  "file": "fixed.exit.gz",
+  "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+ },
+ "fixed.json": {
+  "bytes": 2533836,
+  "file": "fixed.json.gz",
+  "sha256": "90bcc872fe85567bcf77bf147082be6554e39ac6a65e6d3c0d2af4181c04e2d4"
+ },
+ "fixed.stderr": {
+  "bytes": 0,
+  "file": "fixed.stderr.gz",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "inputs.sha256": {
+  "bytes": 797,
+  "file": "inputs.sha256.gz",
+  "sha256": "bab1a88b00fcf43c12b79eab67acb9a69078b1e834e50874136a416d8843c2a4"
+ },
+ "previous.exit": {
+  "bytes": 2,
+  "file": "previous.exit.gz",
+  "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+ },
+ "previous.json": {
+  "bytes": 2493017,
+  "file": "previous.json.gz",
+  "sha256": "d56f3a8fa5becbc4b8d0a43ae13c2bb1d3725308557c6fc20c66503b336a76cf"
+ },
+ "previous.stderr": {
+  "bytes": 0,
+  "file": "previous.stderr.gz",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ },
+ "system.exit": {
+  "bytes": 2,
+  "file": "system.exit.gz",
+  "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+ },
+ "system.json": {
+  "bytes": 2492531,
+  "file": "system.json.gz",
+  "sha256": "d93ba0757bdb19ca698a34fac1e0ce72400c4a42efdc1c799e16831cbf930fe3"
+ },
+ "system.stderr": {
+  "bytes": 0,
+  "file": "system.stderr.gz",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+ }
+}

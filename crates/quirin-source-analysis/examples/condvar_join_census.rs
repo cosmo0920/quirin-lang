@@ -205,6 +205,30 @@ fn main() {
                         serde_json::json!(governing_at(&release.reading, lifecycle)),
                     );
                 }
+                // Card W47-FLB-LIB-STRICT-PAIRING: the release decided on the
+                // paths that conform to the strict pair.
+                if let Some(split) = &release.lifecycle_split {
+                    object.insert(
+                        "lifecycle_paths".to_owned(),
+                        serde_json::json!({
+                            "conforming": split.conforming_paths,
+                            "undetermined": split.undetermined_paths,
+                            "refused": split.refused_paths,
+                            "conforming_result": split.conforming_verdict.as_ref().map(verdict),
+                            "conforming_live": split.conforming_site.as_ref().map(|site| site.live.iter().map(|live| (
+                                live.thread.clone(),
+                                live.paths.iter().map(|(evidence, witness)| format!("{} @ {witness}", evidence_label(evidence))).collect::<std::collections::BTreeSet<_>>(),
+                            )).collect::<BTreeMap<_, _>>()),
+                            "conforming_descendants": split.conforming_site.as_ref().map(|site| site.descendants.iter().map(|d| format!("{} -> {}: {}", d.parent, d.child, match &d.evidence {
+                                DescendantEvidence::Joined => "joined".to_owned(),
+                                DescendantEvidence::NeverJoined(why) => format!("never joined: {why}"),
+                                DescendantEvidence::Unresolved(why) => format!("unresolved: {why}"),
+                            })).collect::<Vec<_>>()),
+                            "conforming_unresolved_count": split.conforming_site.as_ref().map(|site| site.unresolved.len()),
+                            "conforming_premises": split.conforming_premises,
+                        }),
+                    );
+                }
             }
             entry
         })
@@ -271,6 +295,27 @@ fn main() {
     println!("{}", serde_json::to_string_pretty(&report).expect("json"));
 }
 
+/// A short spelling of one join's evidence (card W47-FLB-LIB-STRICT-PAIRING).
+fn evidence_label(evidence: &JoinEvidence) -> String {
+    match evidence {
+        JoinEvidence::UncheckedFirst(exclusions) => format!(
+            "unchecked first join ({})",
+            if join_succeeds(exclusions).is_ok() {
+                "counts as success".to_owned()
+            } else {
+                format!(
+                    "not counted: joinable {:?}, not busy {:?}, not self {:?}, no cycle {:?}",
+                    exclusions.joinable,
+                    exclusions.not_busy,
+                    exclusions.not_self,
+                    exclusions.no_cycle
+                )
+            }
+        ),
+        other => format!("{other:?}"),
+    }
+}
+
 fn status_json(status: &ClauseStatus) -> serde_json::Value {
     match status {
         ClauseStatus::InForce => serde_json::json!({"status": "in force"}),
@@ -298,7 +343,30 @@ fn lifecycle_json(module: &str, lifecycle: &LifecycleCensus) -> serde_json::Valu
                     "unresolved_count": path.unresolved.len(),
                     "unresolved": path.unresolved.iter().take(4).collect::<Vec<_>>(),
                 })).collect::<Vec<_>>(),
+                "start_paths": check.start_paths.iter().map(|path| serde_json::json!({
+                    "left_unjoined": path.left_unjoined,
+                    "unresolved_count": path.unresolved.len(),
+                    "unresolved": path.unresolved.iter().take(4).collect::<Vec<_>>(),
+                })).collect::<Vec<_>>(),
                 "start_unresolved": check.start_unresolved,
+            })
+        })
+        .collect::<Vec<_>>();
+    // Card W47-FLB-LIB-STRICT-PAIRING: what the stop's body does from the
+    // states the strict pair forbids (outside the contract; never a clause).
+    let observations = lifecycle
+        .observations
+        .iter()
+        .map(|observation| {
+            serde_json::json!({
+                "function": observation.function,
+                "forbidden_by": observation.forbidden_by.name(),
+                "after_start": observation.start,
+                "every_path_joins": observation.every_path_joins(),
+                "paths": observation.paths.iter().map(|path| serde_json::json!({
+                    "joins": path.joins.iter().map(|(join, site)| format!("{} at {site}", join.label())).collect::<Vec<_>>(),
+                    "unresolved_count": path.unresolved.len(),
+                })).collect::<Vec<_>>(),
             })
         })
         .collect::<Vec<_>>();
@@ -318,36 +386,43 @@ fn lifecycle_json(module: &str, lifecycle: &LifecycleCensus) -> serde_json::Valu
                 "undetermined": call.undetermined,
                 "undetermined_reasons": call.undetermined_reasons,
                 "violations": call.violations,
+                "not_established": call.not_established,
                 "governed_by": call.governed.iter().map(|(clause, status)| format!("{} ({})", clause.name(), status.label())).collect::<Vec<_>>(),
             })
         })
         .collect::<Vec<_>>();
-    let mut roots: BTreeMap<&str, (usize, usize, usize)> = BTreeMap::new();
+    let mut roots: BTreeMap<&str, (usize, usize, usize, usize)> = BTreeMap::new();
     for call in &lifecycle.calls {
         let entry = roots.entry(call.reading.root.as_str()).or_default();
         entry.0 += 1;
         entry.1 += call.violations.len();
         entry.2 += usize::from(call.undetermined);
+        entry.3 += call.not_established.len();
     }
     let conformance = roots
         .iter()
-        .map(|(root, (calls, violations, undetermined))| {
-            (
-                (*root).to_owned(),
-                serde_json::json!({
-                    "calls": calls,
-                    "violations": violations,
-                    "undetermined_calls": undetermined,
-                    "result": if *violations > 0 {
-                        "violates"
-                    } else if *undetermined > 0 {
-                        "conforms where derived"
-                    } else {
-                        "conforms"
-                    },
-                }),
-            )
-        })
+        .map(
+            |(root, (calls, violations, undetermined, not_established))| {
+                (
+                    (*root).to_owned(),
+                    serde_json::json!({
+                        "calls": calls,
+                        "violations": violations,
+                        "not_established": not_established,
+                        "undetermined_calls": undetermined,
+                        "result": if *violations > 0 {
+                            "violates"
+                        } else if *not_established > 0 {
+                            "not established"
+                        } else if *undetermined > 0 {
+                            "conforms where derived"
+                        } else {
+                            "conforms"
+                        },
+                    }),
+                )
+            },
+        )
         .collect::<BTreeMap<_, _>>();
     let destroys = lifecycle
         .destroy_bodies
@@ -373,6 +448,7 @@ fn lifecycle_json(module: &str, lifecycle: &LifecycleCensus) -> serde_json::Valu
             "function": function,
             "result": status_json(status),
         })).collect::<Vec<_>>(),
+        "outside_contract": observations,
         "destroy_bodies": destroys,
         "calls": calls,
         "conformance": conformance,

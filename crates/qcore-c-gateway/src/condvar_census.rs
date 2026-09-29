@@ -333,6 +333,22 @@ pub struct ReleaseReading {
     /// lifecycle history (key, events) at the release, the release's own
     /// lifecycle event included. Empty unless lifecycle roles were given.
     pub lifecycle: BTreeSet<Vec<(String, LifeHistory)>>,
+    /// Card W47-FLB-LIB-STRICT-PAIRING: per distinct path state, its
+    /// histories together with that path's own join evidence and unresolved
+    /// reasons, so the release can be decided on the paths that keep the
+    /// lifecycle apart from those that do not. Empty unless lifecycle roles
+    /// were given.
+    pub paths: BTreeSet<ReleasePath>,
+}
+
+/// One path state reaching a release (card W47-FLB-LIB-STRICT-PAIRING).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ReleasePath {
+    /// Every keyed context's lifecycle history on the path.
+    pub histories: Vec<(String, LifeHistory)>,
+    /// Each thread's join state on the path, with its witness.
+    pub live: BTreeMap<String, (ReadJoin, String)>,
+    pub unresolved: BTreeSet<String>,
 }
 
 /// A signaller that signals at most once per thread (derived, see
@@ -1817,7 +1833,9 @@ impl C5<'_> {
             live: BTreeMap::new(),
             unresolved: BTreeSet::new(),
             lifecycle: BTreeSet::new(),
+            paths: BTreeSet::new(),
         });
+        let per_path = self.roles.is_some();
         for (global, _) in states {
             entry.unresolved.extend(global.unresolved.iter().cloned());
             if !global.histories.is_empty() {
@@ -1829,6 +1847,7 @@ impl C5<'_> {
                         .collect(),
                 );
             }
+            let mut path_live = BTreeMap::new();
             for (thread, joined) in &global.threads {
                 let evidence = match joined {
                     Joined::Live(note) => (
@@ -1842,11 +1861,25 @@ impl C5<'_> {
                     Joined::Pending(site) => (ReadJoin::Unchecked, site.clone()),
                     Joined::Done(join, site) => (join.clone(), site.clone()),
                 };
+                if per_path {
+                    path_live.insert(thread.clone(), evidence.clone());
+                }
                 entry
                     .live
                     .entry(thread.clone())
                     .or_default()
                     .insert(evidence);
+            }
+            if per_path {
+                entry.paths.insert(ReleasePath {
+                    histories: global
+                        .histories
+                        .iter()
+                        .map(|(key, history)| (key.clone(), history.clone()))
+                        .collect(),
+                    live: path_live,
+                    unresolved: global.unresolved.clone(),
+                });
             }
         }
     }
