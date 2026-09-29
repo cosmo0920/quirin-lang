@@ -387,3 +387,12 @@ At tip code `7693c599` (script [gate.sh](scripts/gate.sh), logs
 | `python3 scripts/build_docs_index.py` | 0 | |
 
 `providers/` is untouched, so the provider gate is not due. Clang 21.1.8.
+
+**Merge of main `6883623c`** (W48-QR-SCALAR-TYPES-R4: `.qr` routes, the
+frontend and core crates, `providers/Cargo.lock`; no gateway or audit code)
+at `dd5664b8`. Records re-applied on main's ledger: 630 → 628, Lean audits
+235. Targeted check ([targeted.sh](scripts/targeted.sh), exits in
+[gate/targeted-dd5664b8/](gate/targeted-dd5664b8/)): submodule 0, fmt 0,
+`cargo test -p qcore-c-gateway` 0 (1,992 passed, 0 failed), clippy 0, 235
+Lean audits 0, python 365 OK, docs index 0. No analyzer code changed in
+that merge, so no corpus figure can move with it.
