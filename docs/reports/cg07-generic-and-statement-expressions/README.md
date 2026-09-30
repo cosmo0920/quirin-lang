@@ -132,7 +132,9 @@ of the round's brief at `--jobs 4`), [compare.py](scripts/compare.py),
 
 Corpus arbiter (`66910c10`): **608 / 10 / 4,216**, `resource-diagnostics.json`
 `3a25c4e9…`, **byte-identical** to the round's baseline (CG10-BOUND-UNTRACKED-ROOTS'
-AFTER). 2,000 braced-construct leaves on 856 functions (initializer lists
+AFTER). System route 41 / 2 / 191 and tail-pause slice 28 / 1 / 240 / 1 Pending,
+the round's figures (the base binary rebuilt from `c374de96` after the AFTER
+runs, byte-identical `6c120e5b…`). 2,000 braced-construct leaves on 856 functions (initializer lists
 included); 1,338 of them on lines holding `({`.
 
 ### 3.2 AFTER (code `5220b1a9`, binary `e2dbc773…`)
@@ -140,8 +142,8 @@ included); 1,338 of them on lines holding `({`.
 | Route | BEFORE | AFTER | Moves |
 |---|---|---|---|
 | corpus | 608 / 10 / 4,216 | **608 / 10 / 4,216** (`8b9e4047…`) | **none**; 584 Unknown functions change leaves |
-| system | SYSTEM_BEFORE | SYSTEM_AFTER | SYSTEM_MOVES |
-| tail-pause slice | SLICE_BEFORE | SLICE_AFTER | SLICE_MOVES |
+| system (`046accf6`) | 41 / 2 / 191 | **41 / 2 / 191** | none; 3 functions change leaves (a `container_of` block: braced −3, indirect access +3, `__builtin_offsetof` +3), [system-comparison.json](artifacts/system-comparison.json) |
+| tail-pause slice (`90978ac6`) | 28 / 1 / 240 / 1 Pending | **28 / 1 / 240 / 1 Pending** | none; 2 functions change leaves (the same family, −2 / +2 / +2), [slice-comparison.json](artifacts/slice-comparison.json) |
 
 Corpus leaf deltas ([corpus-comparison.json](artifacts/corpus-comparison.json)):
 

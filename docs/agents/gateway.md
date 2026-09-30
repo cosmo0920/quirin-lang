@@ -2752,7 +2752,12 @@ own anchor here.
     family, admission and refusal). Route T is unchanged (it names neither
     node). Premises stated, not proved: faithful Clang extraction of the
     selection, the block and its declarations and the token/AST node match
-    (trust boundary 28). MEASURED_PLACEHOLDER
+    (trust boundary 28). Measured (corpus `66910c10`, system, tail-pause slice,
+    base `c374de96`): **no move on any route**; 1,414 corpus blocks lowered
+    (1,327 glibc `assert`, 41 `RD_KAFKAP_STR_DUPA`, 39 typeof temporaries),
+    braced leaves on their lines 1,338 → 69, the inner leaves exposed
+    (1,232 `__assert_fail`, a no-return callee: `W43-LIBC-NORETURN`); no
+    corpus `_Generic` needs route 2 (every one is glibc's invariant shape).
     `QCore.StatementExpressions` (selection: `select_events`,
     `control_no_event`, `unselected_no_event`; `value_is_final`,
     `lifetimes_end_at_block`, `lowering_exact`, `discarded_exact`,
