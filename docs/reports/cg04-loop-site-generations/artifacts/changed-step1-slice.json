@@ -1,0 +1,23 @@
+[
+ {
+  "unit": "src/flb_input.c",
+  "function": "flb_input_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 18101, \"origin\": \"src/flb_input.c:394\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 18157, \"origin\": \"src/flb_input.c:467\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "src/flb_input.c",
+  "function": "flb_input_plugin_property_check",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 18957, \"origin\": \"src/flb_input.c:1471\"}"
+  ],
+  "removed": []
+ }
+]

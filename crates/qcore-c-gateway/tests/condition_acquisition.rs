@@ -236,67 +236,88 @@ fn the_acquisition_is_never_hoisted() {
     assert_eq!(run.calls("q_maybe_alloc"), vec![body_line(1)], "{run:?}");
 }
 
-/// Refusal control: a split acquisition on a node a CFG cycle may pass
-/// through keeps the position's refusal. The flow keeps one abstract site per
-/// acquisition node, so a live earlier generation would merge with the fresh
-/// one and the refuted failure edge would erase both
-/// (`CG04-LOOP-SITE-GENERATIONS`).
+/// Flipped by `CG04-LOOP-SITE-GENERATIONS` (its second, separately measured
+/// step): a split acquisition on a node a CFG cycle may pass through was
+/// refused (`acquisition-on-cycle`) while the flow kept one abstract site per
+/// acquisition node. The flow now keeps the earlier generation apart and the
+/// refuted failure edge removes only the fresh one, so the guard is lifted:
+/// each form is admitted and decides as its statement pair (the call applied
+/// once, where the condition stands). A form that leaks every earlier
+/// generation reports it.
 #[test]
-fn an_acquisition_on_a_cycle_keeps_the_refusal() {
+fn an_acquisition_on_a_cycle_is_split_with_generations() {
     if !clang_available() {
         return;
     }
-    for (body, refusal) in [
+    for (body, safe, callee) in [
         (
             "void *p;\nwhile ((p = q_maybe_alloc()) != 0) { q_free(p); }",
-            LOOP,
+            true,
+            "q_maybe_alloc",
         ),
         (
             "void *p;\nwhile ((p = q_maybe_alloc()) != 0) { q_observe(p); }",
-            LOOP,
+            false,
+            "q_maybe_alloc",
         ),
         (
             "for (int i = 0; i < n; i++) {\nvoid *p;\nif ((p = q_maybe_alloc()) == 0) { break; }\nq_observe(p);\n}",
-            BRANCH,
+            false,
+            "q_maybe_alloc",
         ),
         (
             "void *p;\nretry:\nif ((p = q_maybe_alloc()) == 0) { goto retry; }\nq_free(p);",
-            BRANCH,
+            true,
+            "q_maybe_alloc",
         ),
         (
             "int fd;\nwhile ((fd = k_open(\"x\")) >= 0) { k_close(fd); }",
-            LOOP,
+            true,
+            "k_open",
         ),
     ] {
         let run = analyze(body);
-        assert!(run.refused(refusal), "{body}: {run:?}");
-        assert!(!run.safe(), "{body}");
+        assert!(
+            !run.refused(LOOP) && !run.refused(BRANCH),
+            "{body}: {run:?}"
+        );
+        assert_eq!(run.safe(), safe, "{body}: {run:?}");
+        if !safe {
+            assert_eq!(run.status, AnalysisStatus::Unsafe, "{body}: {run:?}");
+            assert_eq!(run.leaks(), 1, "{body}: {run:?}");
+        }
+        assert_eq!(run.calls(callee).len(), 1, "{body}: applied once: {run:?}");
     }
     // A resource-free result binds no site: its loop split is admitted as
-    // before this card.
+    // before.
     let run = analyze(
         "void *p = q_alloc(); int c;\nwhile ((c = r_borrow_code(p)) != -1) { }\nq_free(p);",
     );
     assert!(run.safe(), "{run:?}");
 }
 
-/// The defect the placement guard keeps this card clear of, in the statement
+/// The defect the placement guard kept this card clear of, in the statement
 /// form an older route already admits: the second generation's failure edge
-/// erases the live first one, and the leak is not reported. Pinned as
-/// observed on the card's base; `CG04-LOOP-SITE-GENERATIONS` flips it.
+/// erased the live first one, and the leak was not reported (`Safe`, pinned
+/// as observed at `the_statement_form_loop_site_defect_is_pinned`). Flipped
+/// by `CG04-LOOP-SITE-GENERATIONS` into this regression: the earlier
+/// generation is the previous one, the refuted failure edge removes only the
+/// new one, and both forms report the leak every earlier generation is.
 #[test]
-fn the_statement_form_loop_site_defect_is_pinned() {
+fn the_statement_form_loop_site_defect_stays_fixed() {
     if !clang_available() {
         return;
     }
-    let run =
-        analyze("void *p;\nfor (;;) { p = q_maybe_alloc(); if (p == 0) break; q_observe(p); }");
-    assert!(run.safe(), "{run:?}");
-    // With another exit the live generation is reported.
-    let run = analyze(
+    for body in [
+        "void *p;\nfor (;;) { p = q_maybe_alloc(); if (p == 0) break; q_observe(p); }",
+        "void *p;\ndo { p = q_maybe_alloc(); if (p) q_observe(p); } while (p != 0);",
+        // With another exit the live generation was already reported.
         "void *p;\nwhile (flag) { p = q_maybe_alloc(); if (p == 0) return; q_observe(p); }",
-    );
-    assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
+    ] {
+        let run = analyze(body);
+        assert_eq!(run.status, AnalysisStatus::Unsafe, "{body}: {run:?}");
+        assert!(run.leaks() >= 1, "{body}: {run:?}");
+    }
 }
 
 /// Refusal control: an acquisition in the right operand of `&&` happens only

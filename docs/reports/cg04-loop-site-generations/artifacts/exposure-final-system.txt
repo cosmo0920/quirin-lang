@@ -1,0 +1,178 @@
+{
+ "exposed": [],
+ "not_exposed": [
+  {
+   "function": "sb_allocate_backlogs",
+   "source": "00b3c1bc2b89",
+   "reported": [
+    [
+     "plugins/in_storage_backlog/sb.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 17893,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "sb_destroy_backlogs",
+   "source": "00b3c1bc2b89",
+   "reported": [
+    [
+     "plugins/in_storage_backlog/sb.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 17911,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 17911,
+     "site": 0,
+     "status": 2,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift",
+     "unresolved": false
+    }
+   ]
+  },
+  {
+   "function": "flb_task_create",
+   "source": "836398727589",
+   "reported": [
+    [
+     "src/flb_task.c",
+     "Unknown"
+    ],
+    [
+     "src/flb_task.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 17789,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 17864,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 17907,
+     "site": 2,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "flb_task_queue_destroy",
+   "source": "836398727589",
+   "reported": [
+    [
+     "src/flb_task.c",
+     "Unknown"
+    ],
+    [
+     "src/flb_task.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 17990,
+     "site": 1,
+     "status": 2,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift",
+     "unresolved": false
+    },
+    {
+     "line": 17995,
+     "site": 0,
+     "status": 2,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift",
+     "unresolved": false
+    }
+   ]
+  },
+  {
+   "function": "flb_output_plugin_property_check",
+   "source": "8c1ecd767d5c",
+   "reported": [
+    [
+     "src/flb_output.c",
+     "Unknown"
+    ],
+    [
+     "src/flb_output.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 18656,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  }
+ ],
+ "unreported": [],
+ "exposed_by_status": {}
+}
+== exposed 0
+== not_exposed 5
+  sb_allocate_backlogs [('plugins/in_storage_backlog/sb.c', 'Unknown')] [(17893, 1, False, False, True, 'shift-refused')]
+  sb_destroy_backlogs [('plugins/in_storage_backlog/sb.c', 'Unknown')] [(17911, 1, False, False, True, 'shift-refused'), (17911, 2, False, False, False, 'shift')]
+  flb_task_create [('src/flb_task.c', 'Unknown'), ('src/flb_task.c', 'Unknown')] [(17789, 1, False, False, True, 'shift-refused'), (17864, 1, False, False, True, 'shift-refused'), (17907, 1, False, False, True, 'shift-refused')]
+  flb_task_queue_destroy [('src/flb_task.c', 'Unknown'), ('src/flb_task.c', 'Unknown')] [(17990, 2, False, False, False, 'shift'), (17995, 2, False, False, False, 'shift')]
+  flb_output_plugin_property_check [('src/flb_output.c', 'Unknown'), ('src/flb_output.c', 'Unknown')] [(18656, 1, False, False, True, 'shift-refused')]
+== unreported 0
+exposed by status {}

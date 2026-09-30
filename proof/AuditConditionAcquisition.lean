@@ -14,6 +14,7 @@ import QCore.ConditionAcquisition
 #print axioms QCore.ConditionAcquisition.every_outcome_reaches_one_edge
 #print axioms QCore.ConditionAcquisition.the_obligation_follows_the_outcome
 #print axioms QCore.ConditionAcquisition.placement_vectors_hold
+#print axioms QCore.ConditionAcquisition.with_generations_every_split_is_placed
 #print axioms QCore.ConditionAcquisition.off_every_cycle_a_site_has_one_generation
 #print axioms QCore.ConditionAcquisition.a_merged_site_would_hide_a_live_generation
 #print axioms QCore.ConditionAcquisition.on_the_failed_edge_the_old_identity_is_live
