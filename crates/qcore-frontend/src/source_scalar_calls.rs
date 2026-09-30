@@ -608,7 +608,8 @@ fn record_types(
     p: &SourceProgram,
 ) -> Result<(Vec<RecordDecl>, BTreeMap<String, usize>), SourceDiagnostic> {
     use qcore_core::source_record::FieldType;
-    let declared = crate::source_record::record_declarations(p).map_err(|(span, message)| {
+    // Card `W48-QR-FLOATING-POINT`: this route admits `f32`/`f64` fields.
+    let declared = crate::source_record::record_declarations_admitting_floats(p).map_err(|(span, message)| {
         SourceDiagnostic {
             code: "Q020",
             pass: SemanticPass::OrdinaryTypes,

@@ -448,6 +448,23 @@ pub fn read_field_path_statement(window: &[&Token]) -> Option<Result<FieldPathSt
 /// repeated field, inside the field bound — is
 /// [`qcore_core::source_record::admit_type`]'s, so the two cannot disagree.
 pub fn record_declarations(program: &SourceProgram) -> Result<Vec<RecordType>, (Span, String)> {
+    declarations(program, false)
+}
+
+/// [`record_declarations`] on a route that admits float fields (card
+/// `W48-QR-FLOATING-POINT`): `f32` and `f64` are field types there. Only
+/// `source.scalar-calls.v1` reads its records this way; every other route keeps
+/// refusing a float field as it always did.
+pub fn record_declarations_admitting_floats(
+    program: &SourceProgram,
+) -> Result<Vec<RecordType>, (Span, String)> {
+    declarations(program, true)
+}
+
+fn declarations(
+    program: &SourceProgram,
+    floats: bool,
+) -> Result<Vec<RecordType>, (Span, String)> {
     let tokens = program.lexical_tokens();
     // Card `OWNED-FIELD-ROUTE-REACH`: the module's record type **names**,
     // collected before any field is read, so a field naming a record declared
@@ -504,7 +521,16 @@ pub fn record_declarations(program: &SourceProgram) -> Result<Vec<RecordType>, (
             // Card `W48-QR-USABLE-RECORDS`: a record type this module declares
             // is a field type, in either declaration order; whether the graph
             // it builds is acyclic is the model's (`admit_graph`).
-            let Some(field_type) = FieldType::from_spelling_in(spelling, &declared_records) else {
+            let float = floats
+                .then(|| {
+                    qcore_core::scalar_types::ScalarType::parse_admitting_floats(spelling)
+                        .filter(|ty| ty.is_float())
+                })
+                .flatten()
+                .map(FieldType::Scalar);
+            let Some(field_type) =
+                float.or_else(|| FieldType::from_spelling_in(spelling, &declared_records))
+            else {
                 // The refusal itself is the model's, and it is reported with
                 // the model's own message so there is one description of the
                 // rule rather than two.
