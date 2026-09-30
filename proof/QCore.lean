@@ -293,5 +293,6 @@ import QCore.ConditionAcquisition
 import QCore.NestedCallEffects
 import QCore.FfiStructImport
 import QCore.UsableRecords
+import QCore.TaskRecordCaptures
 
 /-! The executable formal core of QCore-C revision 0.1. -/

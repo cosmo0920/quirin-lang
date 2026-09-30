@@ -105,3 +105,13 @@ import QCore.Transferability
 #print axioms QCore.Transferability.mutablyShareableUnder
 #print axioms QCore.Transferability.exactlyOneKindIsMutablyShareable
 #print axioms QCore.Transferability.leaseObligationHolds
+
+-- Card `W48-QR-TASK-RECORD-CAPTURES`: the aggregate kind, decided from its
+-- leaves. Both judgment theorems re-decided over records rather than weakened
+-- (the flat ones above are unchanged); the card's own surface is
+-- `AuditTaskRecordCaptures.lean`.
+#print axioms QCore.Transferability.theAggregateJudgmentIsTheConjunctionOfItsLeaves
+#print axioms QCore.Transferability.theAggregateBoundaryIsDecidedExactlyOnce
+#print axioms QCore.Transferability.theBoundaryIsDecidedExactlyOnceOverRecords
+#print axioms QCore.Transferability.aWriteCaptureOfARecordIsRefusedByName
+#print axioms QCore.Transferability.aWriteCaptureIsRefusedByNameOverRecords

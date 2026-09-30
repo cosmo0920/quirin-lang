@@ -736,4 +736,338 @@ theorem duplicationCarriesNoCustody :
     allKinds.filter (fun k => decide (transferable k = .duplicated))
       = [.i32, .fixedScalar] := by decide
 
+/-! ### The aggregate kind (card `W48-QR-TASK-RECORD-CAPTURES`)
+
+Model of `qcore_core::transfer::{leaf_mode, admits_aggregate,
+admits_aggregate_capture, AggregateRefusal}`. A record crosses a spawn as its
+**leaves**, each a flat kind, so the aggregate adds no rule over a leaf: it
+asks each leaf the flat judgment above, in the mode the record asks of it.
+`copy` of a record is `copy` of every leaf; `move` duplicates a leaf that
+duplicates and moves every other, and needs some leaf that carries custody
+(a record of scalars is a copy record, and `move` of it is refused for its
+mode exactly as `move` of an `i32` is); `write` is refused by name before any
+leaf is asked; a sharing mode has no whole-record protocol, an owned leaf
+being shared by its own field capture. The flat vocabulary, both flat
+matrices and every theorem above are unchanged; the aggregate's boundary is
+decided exactly once over **every** leaf list (`theAggregateBoundaryIsDecidedExactlyOnce`),
+and over the union of the two vocabularies (`theBoundaryIsDecidedExactlyOnceOverRecords`). -/
+
+/-- The mode an aggregate capture asks of one leaf. -/
+def leafMode (k : Kind) (m : Mode) : Mode :=
+  match transferable k, m with
+  | .duplicated, .move => .copy
+  | _, _ => m
+
+/-- Why an aggregate capture is refused, mirroring `AggregateRefusal`. -/
+inductive AggregateRefusal where
+  | writeCaptureUnimplemented
+  | leaf (index : Nat) (reason : Refusal)
+  | modeNotAdmittedForRecord
+  | noWholeRecordProtocol
+  | receivedKindMismatch
+  deriving DecidableEq, Repr
+
+/-- The first leaf that does not cross in the mode the record asks of it,
+counted from `start`, with that leaf's own flat refusal. -/
+def firstFailing (m : Mode) : List Kind → Nat → Option (Nat × Refusal)
+  | [], _ => none
+  | k :: rest, start =>
+    match admits k (leafMode k m) with
+    | none => (refuse k (leafMode k m)).map (fun reason => (start, reason))
+    | some _ => firstFailing m rest (start + 1)
+
+/-- Whether some leaf carries custody across a record `move`. -/
+def someLeafMoves (leaves : List Kind) : Bool :=
+  leaves.any (fun k => admits k (leafMode k .move) == some .moveCustody)
+
+/-- **The aggregate judgment**: the conjunction of each leaf's own admission
+in the mode the record asks of it, with the two whole-record conditions. -/
+def admitsAggregate (leaves : List Kind) (m : Mode) : Option Transfer :=
+  match m with
+  | .copy =>
+    if leaves.all (fun k => (admits k .copy).isSome) then some .duplicate else none
+  | .move =>
+    if leaves.all (fun k => (admits k (leafMode k .move)).isSome) && someLeafMoves leaves
+    then some .moveCustody else none
+  | .write | .lend | .lendWrite | .shareUnderMutex => none
+
+/-- The refusing half, in the same decision order. -/
+def refuseAggregate (leaves : List Kind) (m : Mode) : Option AggregateRefusal :=
+  match m with
+  | .write => some .writeCaptureUnimplemented
+  | .lend | .lendWrite | .shareUnderMutex => some .noWholeRecordProtocol
+  | .copy =>
+    match firstFailing .copy leaves 0 with
+    | some (index, reason) => some (.leaf index reason)
+    | none => none
+  | .move =>
+    match firstFailing .move leaves 0 with
+    | some (index, reason) => some (.leaf index reason)
+    | none => if someLeafMoves leaves then none else some .modeNotAdmittedForRecord
+
+/-- The whole boundary decision for a record: an admitted aggregate transfer
+delivers the record type it left as, and record types are nominal, so the
+worker's parameter must be the same record type (`place`, `parameter` are
+record type identities). -/
+def admitsAggregateCapture (place : Nat) (leaves : List Kind) (m : Mode) (parameter : Nat) :
+    Option Transfer :=
+  match admitsAggregate leaves m with
+  | none => none
+  | some t => if place = parameter then some t else none
+
+def refuseAggregateCapture (place : Nat) (leaves : List Kind) (m : Mode) (parameter : Nat) :
+    Option AggregateRefusal :=
+  match admitsAggregate leaves m with
+  | none => refuseAggregate leaves m
+  | some _ => if place = parameter then none else some .receivedKindMismatch
+
+/-- Every flat kind's admission is decided by a flat refusal or an admission,
+never both: the flat partition, restated per kind for the leaf proofs below. -/
+theorem admitsOrRefusesEachKind (k : Kind) (m : Mode) :
+    (refuse k m).isSome = (admits k m).isNone :=
+  refusalComplementsAdmission k (kindInventoryIsComplete k) m (modeInventoryIsComplete m)
+
+/-- `firstFailing` finds nothing exactly when every leaf crosses. -/
+theorem firstFailing_none_iff (m : Mode) (leaves : List Kind) (start : Nat) :
+    firstFailing m leaves start = none ↔
+      leaves.all (fun k => (admits k (leafMode k m)).isSome) = true := by
+  induction leaves generalizing start with
+  | nil => simp [firstFailing]
+  | cons k rest ih =>
+    have partition := admitsOrRefusesEachKind k (leafMode k m)
+    cases hk : admits k (leafMode k m) with
+    | none =>
+      rw [hk] at partition
+      cases hr : refuse k (leafMode k m) with
+      | none => rw [hr] at partition; simp at partition
+      | some reason => simp [firstFailing, hk, hr]
+    | some t => simp [firstFailing, hk, ih]
+
+/-- A refusal names a leaf that really does not cross, with that leaf's own
+flat reason. -/
+theorem firstFailing_names_a_failing_leaf (m : Mode) (leaves : List Kind) (start : Nat)
+    (index : Nat) (reason : Refusal)
+    (found : firstFailing m leaves start = some (index, reason)) :
+    ∃ k ∈ leaves, admits k (leafMode k m) = none ∧ refuse k (leafMode k m) = some reason := by
+  induction leaves generalizing start with
+  | nil => simp [firstFailing] at found
+  | cons k rest ih =>
+    cases hk : admits k (leafMode k m) with
+    | none =>
+      simp only [firstFailing, hk] at found
+      cases hr : refuse k (leafMode k m) with
+      | none => simp [hr] at found
+      | some r =>
+        simp [hr] at found
+        exact ⟨k, List.mem_cons_self .., hk, by rw [hr, found.2]⟩
+    | some t =>
+      simp only [firstFailing, hk] at found
+      obtain ⟨k', member, h1, h2⟩ := ih (start + 1) found
+      exact ⟨k', List.mem_cons_of_mem _ member, h1, h2⟩
+
+/-- **The aggregate transfer judgment is the conjunction of its leaves.** A
+record crosses by `copy` exactly when every leaf crosses by `copy`, and by
+`move` exactly when every leaf crosses in the mode the record's `move` asks of
+it and some leaf carries custody. -/
+theorem theAggregateJudgmentIsTheConjunctionOfItsLeaves (leaves : List Kind) :
+    ((admitsAggregate leaves .copy).isSome ↔ ∀ k ∈ leaves, (admits k .copy).isSome) ∧
+      ((admitsAggregate leaves .move).isSome ↔
+        (∀ k ∈ leaves, (admits k (leafMode k .move)).isSome) ∧
+          ∃ k ∈ leaves, admits k (leafMode k .move) = some .moveCustody) := by
+  constructor
+  · by_cases h : leaves.all (fun k => (admits k .copy).isSome) = true
+    · simp only [admitsAggregate, h, ite_true, Option.isSome_some, true_iff]
+      simpa using h
+    · have h' : leaves.all (fun k => (admits k .copy).isSome) = false := by simpa using h
+      simp only [admitsAggregate, h', ite_false, Option.isSome_none, Bool.false_eq_true,
+        false_iff]
+      intro all
+      apply h
+      simpa using all
+  · unfold admitsAggregate someLeafMoves
+    by_cases h : (leaves.all (fun k => (admits k (leafMode k .move)).isSome) &&
+        leaves.any (fun k => admits k (leafMode k .move) == some .moveCustody)) = true
+    · simp only [h, ite_true, Option.isSome_some, true_iff]
+      simp only [Bool.and_eq_true, List.all_eq_true, List.any_eq_true, beq_iff_eq] at h
+      exact h
+    · have h' : (leaves.all (fun k => (admits k (leafMode k .move)).isSome) &&
+          leaves.any (fun k => admits k (leafMode k .move) == some .moveCustody)) = false := by
+        simpa using h
+      simp only [h', ite_false, Option.isSome_none, Bool.false_eq_true, false_iff]
+      intro both
+      apply h
+      simp only [Bool.and_eq_true, List.all_eq_true, List.any_eq_true, beq_iff_eq]
+      exact both
+
+/-- An admitted aggregate transfer is a duplicate or a custody move — never a
+share, a lease or a mutex crossing — and is backed by the rule that backs the
+same flat transfer. -/
+theorem everyAdmittedAggregateTransferIsBacked (leaves : List Kind) (m : Mode) (t : Transfer)
+    (admitted : admitsAggregate leaves m = some t) :
+    (t = .duplicate ∨ t = .moveCustody) ∧ Backed t := by
+  cases m <;> simp only [admitsAggregate] at admitted
+  · split at admitted
+    · cases admitted; exact ⟨Or.inl rfl, trivial⟩
+    · contradiction
+  · split at admitted
+    · cases admitted; exact ⟨Or.inr rfl, moveObligationHolds⟩
+    · contradiction
+  all_goals contradiction
+
+/-- **`aWriteCaptureIsRefusedByName`, re-decided over records**: a `write`
+capture of any record is refused by its own name, before any leaf is asked. -/
+theorem aWriteCaptureOfARecordIsRefusedByName (leaves : List Kind) :
+    refuseAggregate leaves .write = some .writeCaptureUnimplemented ∧
+      admitsAggregate leaves .write = none := ⟨rfl, rfl⟩
+
+/-- No record is shared whole: every sharing mode refuses for its missing
+whole-record protocol. -/
+theorem noRecordIsSharedWhole (leaves : List Kind) :
+    ∀ m ∈ [Mode.lend, .lendWrite, .shareUnderMutex],
+      refuseAggregate leaves m = some .noWholeRecordProtocol ∧ admitsAggregate leaves m = none := by
+  intro m member
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at member
+  rcases member with rfl | rfl | rfl <;> exact ⟨rfl, rfl⟩
+
+/-- **`theBoundaryIsDecidedExactlyOnce`, re-decided over records**: for every
+leaf list and every mode, refusal and admission partition the aggregate
+judgment. -/
+theorem theAggregateJudgmentIsDecidedExactlyOnce (leaves : List Kind) (m : Mode) :
+    (refuseAggregate leaves m).isSome = (admitsAggregate leaves m).isNone := by
+  cases m with
+  | copy =>
+    have iff := firstFailing_none_iff .copy leaves 0
+    simp only [leafMode] at iff
+    cases hf : firstFailing .copy leaves 0 with
+    | none =>
+      have all : leaves.all (fun k => (admits k .copy).isSome) = true := by
+        have := iff.mp hf
+        simpa [leafMode] using this
+      simp [refuseAggregate, admitsAggregate, hf, all]
+    | some found =>
+      have notAll : leaves.all (fun k => (admits k .copy).isSome) = false := by
+        cases h : leaves.all (fun k => (admits k .copy).isSome)
+        · rfl
+        · have := iff.mpr (by simpa [leafMode] using h)
+          rw [hf] at this; contradiction
+      obtain ⟨index, reason⟩ := found
+      simp [refuseAggregate, admitsAggregate, hf, notAll]
+  | move =>
+    have iff := firstFailing_none_iff .move leaves 0
+    cases hf : firstFailing .move leaves 0 with
+    | none =>
+      have all := iff.mp hf
+      cases hm : someLeafMoves leaves <;> simp [refuseAggregate, admitsAggregate, hf, all, hm]
+    | some found =>
+      have notAll : leaves.all (fun k => (admits k (leafMode k .move)).isSome) = false := by
+        cases h : leaves.all (fun k => (admits k (leafMode k .move)).isSome)
+        · rfl
+        · have := iff.mpr h
+          rw [hf] at this; contradiction
+      obtain ⟨index, reason⟩ := found
+      simp [refuseAggregate, admitsAggregate, hf, notAll]
+  | write => rfl
+  | lend => rfl
+  | lendWrite => rfl
+  | shareUnderMutex => rfl
+
+/-- The capture form: refusal and admission partition every (record, leaves,
+mode, parameter record) cell. -/
+theorem theAggregateBoundaryIsDecidedExactlyOnce (place : Nat) (leaves : List Kind) (m : Mode)
+    (parameter : Nat) :
+    (refuseAggregateCapture place leaves m parameter).isSome =
+      (admitsAggregateCapture place leaves m parameter).isNone := by
+  unfold refuseAggregateCapture admitsAggregateCapture
+  cases h : admitsAggregate leaves m with
+  | none =>
+    have := theAggregateJudgmentIsDecidedExactlyOnce leaves m
+    rw [h] at this
+    simpa using this
+  | some t => by_cases same : place = parameter <;> simp [same]
+
+/-- Record types are nominal: an admitted record transfer into a parameter of
+another record type is refused as a delivered-kind mismatch, whatever the
+leaves. -/
+theorem aRecordIntoAnotherRecordTypeIsRefused (place parameter : Nat) (leaves : List Kind)
+    (m : Mode) (other : place ≠ parameter) (t : Transfer)
+    (admitted : admitsAggregate leaves m = some t) :
+    admitsAggregateCapture place leaves m parameter = none ∧
+      refuseAggregateCapture place leaves m parameter = some .receivedKindMismatch := by
+  simp [admitsAggregateCapture, refuseAggregateCapture, admitted, other]
+
+/-- The flat and aggregate vocabularies together: a crossing is a flat kind
+or a record (a nominal type identity and its leaves). -/
+inductive Crossing where
+  | kind (k : Kind)
+  | record (id : Nat) (leaves : List Kind)
+  deriving DecidableEq, Repr
+
+/-- A refusal in the union: the flat reason or the aggregate one. -/
+inductive CrossingRefusal where
+  | flat (reason : Refusal)
+  | aggregate (reason : AggregateRefusal)
+  /-- A record into a flat parameter, or a flat kind into a record parameter:
+  the shapes differ before any mode is asked. -/
+  | shapeMismatch
+  deriving DecidableEq, Repr
+
+def admitsCrossing : Crossing → Mode → Crossing → Option Transfer
+  | .kind place, m, .kind parameter => admitsCapture place m parameter
+  | .record p leaves, m, .record q _ => admitsAggregateCapture p leaves m q
+  | _, _, _ => none
+
+def refuseCrossing : Crossing → Mode → Crossing → Option CrossingRefusal
+  | .kind place, m, .kind parameter => (refuseCapture place m parameter).map .flat
+  | .record p leaves, m, .record q _ => (refuseAggregateCapture p leaves m q).map .aggregate
+  | _, _, _ => some .shapeMismatch
+
+/-- **`theBoundaryIsDecidedExactlyOnce` over the grown vocabulary**: every
+cell of the union — flat into flat, record into record, and the two mixed
+shapes — is refused or admitted, and exactly one of the two. The flat cells
+are the flat theorem's own; the record cells the aggregate's. -/
+theorem theBoundaryIsDecidedExactlyOnceOverRecords (place : Crossing) (m : Mode)
+    (parameter : Crossing) :
+    (refuseCrossing place m parameter).isSome = (admitsCrossing place m parameter).isNone := by
+  cases place with
+  | kind k =>
+    cases parameter with
+    | kind q =>
+      simpa [refuseCrossing, admitsCrossing] using
+        theBoundaryIsDecidedExactlyOnce k (kindInventoryIsComplete k) m
+          (modeInventoryIsComplete m) q (kindInventoryIsComplete q)
+    | record _ _ => rfl
+  | record p leaves =>
+    cases parameter with
+    | kind _ => rfl
+    | record q _ =>
+      simpa [refuseCrossing, admitsCrossing] using
+        theAggregateBoundaryIsDecidedExactlyOnce p leaves m q
+
+/-- **`aWriteCaptureIsRefusedByName` over the grown vocabulary**: a `write`
+capture is refused by its own name for every flat kind and every record. -/
+theorem aWriteCaptureIsRefusedByNameOverRecords (place : Crossing) :
+    refuseCrossing place .write place =
+      some (match place with
+        | .kind _ => .flat .writeCaptureUnimplemented
+        | .record _ _ => .aggregate .writeCaptureUnimplemented) := by
+  cases place with
+  | kind k =>
+    have named := aWriteCaptureIsRefusedByName k (kindInventoryIsComplete k)
+    simp [refuseCrossing, refuseCapture, admits, named]
+  | record p leaves => simp [refuseCrossing, refuseAggregateCapture, admitsAggregate,
+      refuseAggregate]
+
+/-- Non-vacuity, decided: the record the task route meets most — a scalar
+and an owned Buffer — crosses by `move` and refuses `copy` naming its second
+leaf for its mode; a record of two scalars crosses by `copy` and refuses
+`move` for its mode. -/
+theorem theTaskRoutesRecordsCrossAsTheirLeavesDecide :
+    admitsAggregate [.i32, .ownedBuffer] .move = some .moveCustody ∧
+      refuseAggregate [.i32, .ownedBuffer] .copy = some (.leaf 1 .modeNotAdmittedForKind) ∧
+      admitsAggregate [.i32, .fixedScalar] .copy = some .duplicate ∧
+      refuseAggregate [.i32, .fixedScalar] .move = some .modeNotAdmittedForRecord ∧
+      refuseAggregate [.ownedBuffer, .taskHandle] .move =
+        some (.leaf 1 (.kindNotTransferable .owedToCreatingFrame)) := by
+  decide
+
 end QCore.Transferability

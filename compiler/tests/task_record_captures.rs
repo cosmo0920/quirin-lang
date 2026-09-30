@@ -347,6 +347,36 @@ fn a_moved_or_unsettled_record_is_used_no_more() {
     refused_with(&unsettled, "Q600", &["W48-QR-TASK-RECORD-ARM-MERGE"]);
 }
 
+/// A sub-record of scalars crosses by `copy` into a parameter of its own type;
+/// a sub-record that owns crosses field by field and is refused whole.
+#[test]
+fn a_sub_record_copies_and_an_owning_one_crosses_field_by_field() {
+    let program = |worker: &str, capture: &str| {
+        format!(
+            "{HEAD}type Tag {{ id: u16 }}\n{PAIR}type Job {{ tag: Tag, part: Pair }}\n{worker}\n\
+             fn main() -> i32 {OWNER_ROW} {{\n    let seed: u8 = 7;\n    let b = \
+             qcore_buffer_new(seed)?;\n    let id: u16 = 3;\n    let t = Tag {{ id: id }};\n    let p = \
+             Pair {{ a: 1, buf: b }};\n    let j = Job {{ tag: t, part: p }};\n    thread scope s {{\n        \
+             match spawn s w({capture}) {{\n            Result::Ok {{ value: h }} => {{\n                let \
+             r = join move h?;\n                drop j;\n                return r;\n            }}\n            \
+             Result::Err {{ error: failure }} => {{\n                drop j;\n                return 0;\n            \
+             }}\n        }}\n    }}\n}}\n"
+        )
+    };
+    admitted(&program(
+        "fn w(t: Tag) -> i32 {\n    let v = t.id;\n    let n = v as i32;\n    return n;\n}",
+        "copy j.tag",
+    ));
+    refused_with(
+        &program(
+            "fn w(p: Pair use one) -> i32 {\n    drop p.buf;\n    return 0;\n}",
+            "move j.part",
+        ),
+        "Q600",
+        &["W48-QR-NESTED-OWNED-SUBRECORD-MOVE"],
+    );
+}
+
 // ---------------------------------------------------------------------------
 // Admissions, and what the core is handed.
 // ---------------------------------------------------------------------------
@@ -742,6 +772,50 @@ fn tsan_rows() -> Vec<String> {
         }
     }
     rows
+}
+
+/// §G02j natively: a worker logs three fields of the record it received (one
+/// emitter on stderr, so its order is determined) and the parent prints fields
+/// before the creation and after the join, beside the trace (all the parent's
+/// own writes on stdout). Both streams equal the reference under all three
+/// builds, and the declared reordering relation admits the stderr run.
+#[cfg(target_os = "linux")]
+#[test]
+fn record_fields_render_natively_in_a_worker_and_the_parent() {
+    let source = "#import std.concurrency;\n#import std.fmt;\n#import std.io;\n#import std.logger;\n\
+                  concurrency checked;\ntype Reading { sensor: u8, level: i16, ok: bool }\n\
+                  fn report(r: Reading) -> i16 effects { io } {\n    log info dec r.sensor;\n    \
+                  log info dec r.level;\n    log info dec r.ok;\n    let l = r.level;\n    return l;\n}\n\
+                  fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {\n    \
+                  log_level trace;\n    let s8: u8 = 3;\n    let lv: i16 = -12;\n    let r = Reading { \
+                  sensor: s8, level: lv, ok: true };\n    print dec r.level;\n    thread scope s {\n        \
+                  let h = spawn s report(copy r)?;\n        let back = join move h?;\n        print dec \
+                  back;\n        print hex r.sensor;\n        return 0;\n    }\n}\n";
+    let module = admitted(source);
+    let composed = module.checked.as_composed_tasks().unwrap();
+    assert!(composed.certificate().admits_reordering);
+    let observation = execute_with_source_lines(
+        composed.tasks(),
+        &TaskExecutionScript::default(),
+        &BTreeMap::new(),
+        composed.sites(),
+    )
+    .unwrap();
+    let (stdout, stderr) = observation.projections();
+    assert_eq!(stderr, "[INFO] 3\n[INFO] -12\n[INFO] true\n");
+    assert!(stdout.starts_with("-12\n"), "{stdout}");
+    assert!(stdout.contains("\n-12\n0x03\n"), "{stdout}");
+    let c = module.c_source.as_deref().unwrap();
+    for (label, flags) in BUILDS {
+        let run = build_and_run(c, flags, None)
+            .unwrap_or_else(|error| panic!("{label}: the emitted C does not build: {error}"));
+        assert_eq!(run.status, Some(0), "{label}: {}", run.stderr);
+        assert_eq!(run.stdout, stdout, "{label}");
+        observation
+            .compare_stream(qcore_core::std_io::Stream::Err, &run.stderr)
+            .unwrap_or_else(|refusal| panic!("{label}: stderr outside the relation: {refusal}"));
+        assert_eq!(run.stderr, stderr, "{label}");
+    }
 }
 
 /// The examples page publishes each example's transcript, read out of the

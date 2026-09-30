@@ -1092,6 +1092,24 @@ impl Builder<'_> {
             ));
         };
         let kinds: Vec<_> = leaves.iter().map(|leaf| transfer_kind(leaf.kind)).collect();
+        // A sub-record that owns crosses field by field: moving it whole would
+        // leave its scalar fields readable in a record that no longer holds
+        // them, and the lowering tracks a whole move per binding only.
+        if !path.is_empty()
+            && kinds.contains(&qcore_core::transfer::TransferKind::OwnedBuffer)
+            && matches!(capture.mode, SourceCaptureMode::Move)
+        {
+            return Err(failure(
+                span,
+                SemanticPass::Concurrency,
+                format!(
+                    "`{root}.{}` is a sub-record that owns a Buffer; it crosses field by field, and \
+                     a whole move of it out of `{root}` is not admitted \
+                     (W48-QR-NESTED-OWNED-SUBRECORD-MOVE)",
+                    path.join(".")
+                ),
+            ));
+        }
         let derived = qcore_core::transfer::admits_aggregate_capture(
             &ty,
             &kinds,
