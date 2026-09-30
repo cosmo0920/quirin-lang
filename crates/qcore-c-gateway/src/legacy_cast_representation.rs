@@ -327,6 +327,63 @@ impl Parser<'_> {
         false
     }
 
+    /// Parity runs only (`W45-CALLEE-CAST-LEXICAL-PREMISE`): cross-check the
+    /// lexical cast/call reading of `( NAME ) (` against Clang's nodes. For
+    /// every `CallExpr` whose callee is a parenthesised name and every
+    /// `CStyleCastExpr` whose written type is one identifier over a
+    /// parenthesised operand, one row: Clang's answer, and whether the
+    /// function's normalised tokens on that line spell the call (`NAME (`,
+    /// W45's rewrite) or keep the group (`( NAME ) (`, read as a cast).
+    pub(super) fn record_callee_cast_census(&self, body_start: usize) {
+        if !crate::typed_access_path::parity_enabled() {
+            return;
+        }
+        let Some(body_end) = super::matching(self.tokens, body_start, "{", "}") else {
+            return;
+        };
+        let Some(index) = self.cast_index() else {
+            return;
+        };
+        let body = &self.tokens[body_start..=body_end];
+        let spelled = |line: usize, name: &str, group: bool| {
+            let on_line = body
+                .iter()
+                .filter(|token| token.line == line)
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            if group {
+                on_line
+                    .windows(4)
+                    .any(|window| window == ["(", name, ")", "("])
+            } else {
+                on_line
+                    .windows(3)
+                    .any(|window| window[1] == name && window[2] == "(" && window[0] != "(")
+            }
+        };
+        let mut sites = Vec::new();
+        collect_callee_cast_sites(&index, &index.function, &mut sites);
+        for (line, name, clang) in sites {
+            let as_call = spelled(line, &name, false);
+            let as_group = spelled(line, &name, true);
+            let lexical = match (as_call, as_group) {
+                (true, false) => "call",
+                (false, true) => "cast",
+                (true, true) => "both",
+                (false, false) => "absent",
+            };
+            record_row(json!({
+                "function": self.typed_path_function,
+                "line": line,
+                "position": "cast-representation-callee-census",
+                "name": name,
+                "clang": clang,
+                "lexical": lexical,
+                "agree": lexical == clang,
+            }));
+        }
+    }
+
     /// The `[start, end)` spans of the parenthesised `sizeof ( … )` operands
     /// of `tokens` whose every Clang node on their line is a query with an
     /// unevaluated operand (E16), outside `known`.
@@ -367,6 +424,61 @@ impl Parser<'_> {
             }
         }
         spans
+    }
+}
+
+/// The `( NAME ) (` sites Clang decides: a call through a parenthesised name
+/// (`"call"`), or a cast to a one-identifier type name over a parenthesised
+/// operand (`"cast"`), each with its line.
+fn collect_callee_cast_sites(
+    index: &StatementIndex,
+    node: &Value,
+    out: &mut Vec<(usize, String, &'static str)>,
+) {
+    match kind(node) {
+        "CallExpr" => {
+            if let Some(callee) = children(node).first() {
+                let mut cursor = callee;
+                let mut parenthesised = false;
+                loop {
+                    match kind(cursor) {
+                        "ImplicitCastExpr" => {}
+                        "ParenExpr" => parenthesised = true,
+                        _ => break,
+                    }
+                    match children(cursor).first() {
+                        Some(inner) => cursor = inner,
+                        None => break,
+                    }
+                }
+                if parenthesised
+                    && kind(cursor) == "DeclRefExpr"
+                    && let (Some(name), Some(line)) =
+                        (cursor["referencedDecl"]["name"].as_str(), index.node_line(node))
+                {
+                    out.push((line, name.to_owned(), "call"));
+                }
+            }
+        }
+        "CStyleCastExpr" => {
+            if let (Some(written), Some(operand), Some(line)) = (
+                node["type"]["qualType"].as_str(),
+                children(node).first(),
+                index.node_line(node),
+            ) && !written.is_empty()
+                && written
+                    .bytes()
+                    .all(|byte| byte == b'_' || byte.is_ascii_alphanumeric())
+                && !written.as_bytes()[0].is_ascii_digit()
+                && kind(operand) == "ParenExpr"
+            {
+                out.push((line, written.to_owned(), "cast"));
+            }
+        }
+        _ => {}
+    }
+    for child in children(node) {
+        collect_callee_cast_sites(index, child, out);
     }
 }
 

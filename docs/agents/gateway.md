@@ -144,6 +144,10 @@ which is not a second authority.
     `wave23-c-operations`, `c-gateway-wave`.
 <!-- preserved:constraint-5a:end -->
 
+Amended by [rule 11b](#constraint-11b): a type query's operand is read
+by its evaluation class from Clang's node; the marker still never
+reaches a bound or a branch.
+
 <a id="constraint-5b"></a>
 
 <!-- preserved:constraint-5b:start -->
@@ -1952,6 +1956,9 @@ which is not a second authority.
     `commutes_sound`, `unsequenced_refusals`), bound to `FORM_TABLE`,
     `commutes` and ten C order vectors by a shared-vector test;
     [report](../reports/cg02-elaboration-core/README.md).
+    Amended by [rule 11b](#constraint-11b): the cast and type-query rows
+    are read by `CAST_TABLE` and `query_operand`, and a statement, `return`
+    or condition holding a cast or a type query is consulted too.
 
 <a id="constraint-10t"></a>
 
@@ -2085,6 +2092,8 @@ which is not a second authority.
     `QCore.CallInstantiation`, bound to `ACCEPTANCE_VECTORS` and
     `SUBSTITUTION_VECTORS` by shared-vector tests;
     [report](../reports/cg03-call-summary-instantiation/README.md).
+    Amended by [rule 11b](#constraint-11b): the data reading takes
+    `FloatingToBoolean` and the null test of a named pointer object.
 
 <a id="constraint-10v"></a>
 
@@ -2374,3 +2383,86 @@ which is not a second authority.
     the re-read, order, merge, forms and positions), bound to
     `ADMISSION_VECTORS`, `TRANSPARENT`, the elaborator and route G by
     shared-vector tests; [report](../reports/cg06-value-connectives-and-conditional/README.md).
+
+<a id="constraint-11-series"></a>
+
+Gateway rules after 10z continue as the 11 series (`11a`, `11b`, …) beside
+[source-identity rule 11](source-identity.md#constraint-11); each keeps its
+own anchor here. `11a` is reserved for CG04-LOOP-SITE-GENERATIONS.
+
+<a id="constraint-11b"></a>
+
+11b. **A cast is a representation with no custody effect, and a type query's
+    operand is read by its evaluation class; a pointer converted to a truth
+    value or an integer never carries an identity.** Card
+    CG08-CASTS-AND-TYPE-QUERIES (`cast_representation.rs`, the route-G
+    adapter `legacy_cast_representation.rs`, additive items in
+    `elaboration.rs` (`representation`, `type_query`, `pointer_operand`,
+    `Context::untracked_pointer`, `Refusal::PointerEscape`, nine
+    `FORM_TABLE` rows) and `call_instantiation.rs` (two data-reading cast
+    rows), thin hooks in `legacy_c.rs` and `legacy_elaboration.rs`). It
+    amends rules 5a, 10s and 10u and the W44 cast return; every other
+    premise of theirs stands. (1) **Casts** (E15, M18, N08). Every Clang
+    cast kind the route reads has a row of `CAST_TABLE` with a preservation
+    flag (preserving / possibly lossy), a provenance flag (kept / lost / not
+    applicable) and an admission; no row has a custody effect. The
+    elaborator asks the table after CG02's own arms: a scalar conversion
+    (`IntegralToBoolean`, `FloatingToBoolean`, `IntegralToFloating`,
+    `FloatingToIntegral`, `FloatingCast`) is its operand's events and a
+    computed scalar under `NoNumericClaim` (numeric transfer is CG20's);
+    `PointerToBoolean` is the null test, the pointer's read and a truth
+    value; `PointerToIntegral` is data only of a pointer read of an
+    automatic local or formal the custody closure proves never bound
+    (`untracked_pointer`), otherwise `PointerEscape` refuses by name;
+    `IntegralToPointer` yields a pointer value with **no** identity; an
+    object-pointer `BitCast`/`NoOp` is the same pointer value;
+    `NullToPointer` the null pointer; `ToVoid` no value; the atomic
+    conversions refuse as CG19's, `AddressSpaceConversion` and
+    `ArrayToPointerDecay` as before, and an unlisted kind by name. Route G
+    consults the elaborator for a refused statement, `return` or call-free
+    condition holding an explicit cast, one of those implicit conversions or
+    a type query, beside CG02's value forms. (2) **The null test is no
+    escape** (a soundness repair asked *before* the older routes, whose
+    premise that the value is the pointer is false): a `return`,
+    declaration or assignment whose value Clang converts with
+    `PointerToBoolean` is the elaborator's (its events, then a `NoOp` exit or
+    a scalar write) and never escapes or binds the pointer; where the
+    elaborator declines, the older answer stands only when the pointer's
+    root is an automatic object the closure proves never bound, and
+    otherwise the position refuses. (3) **Pointer destinations.** A refused
+    `T *NAME = (U *) V;` or `NAME = (U *) V;` whose explicit casts are
+    object-pointer `BitCast`/`NoOp` conversions is lowered as the uncast
+    statement by the older routes, and only if they admit it. (4) **The
+    cast return** (`CAST-RETURN-UNCOMMITTED-OPERAND`). `return (INTEGER)
+    NAME;` the W44 rule leaves to the pre-card parse is refused with its
+    refusal when Clang's kind is `PointerToIntegral` and `NAME` may be
+    bound. (5) **Type queries** (E16). `query_operand` reads the class from
+    Clang's node: an operand whose type is not variably modified is
+    unevaluated and has **no event** (`sizeof(*p)`, `sizeof p->f`,
+    `sizeof f()`); a `sizeof` of a variably modified type evaluates the size
+    expressions Clang lists, each once, and must only read (a call, store or
+    increment refuses); `_Alignof` of one, an evaluated expression operand
+    other than a plain name and the other traits refuse. In an ordinary call
+    statement a parenthesised `sizeof ( … )` whose every Clang node on its
+    line is unevaluated joins W44's operand spans at the lexical gate; a
+    parenthesised type-query operand is no call to the elaborator's
+    call-free premise. (6) **Values.** No route decides a bound or a branch
+    from a query's number: the marker `1` stays a class marker of the
+    custody predicates (rule 5a), and a consumer that needs the number takes
+    Clang's evaluated constant or refuses. **Do not** read a tracked
+    pointer's integer as data, give an integer-to-pointer value an identity,
+    escape or bind a pointer through its truth value, evaluate an operand C
+    does not evaluate or evaluate one twice, use the marker in a bound or a
+    branch, or consult rules (1), (3) and (5) before an older route of the
+    position (hard invariant 3). Parity runs record the null test, the
+    uncast statement and the integer return (`position:
+    "cast-representation-…"`) and the cast/call census of
+    `W45-CALLEE-CAST-LEXICAL-PREMISE`. Premises stated, not proved: faithful
+    Clang extraction of cast kinds, types and constants and the token/AST
+    node match (trust boundary 28), and C11 6.3.2.3p7 for an object-pointer
+    conversion. `QCore.CastRepresentation` (no custody effect, the escape,
+    no identity, the null test, the kept identity, unlisted refusal, the
+    operand classes, single evaluation, consumed constants and the
+    type-size fold), bound to `CAST_TABLE`, `query_operand`, Clang's
+    constants and `fold_type_sizes` by shared-vector tests;
+    [report](../reports/cg08-casts-and-type-queries/README.md).

@@ -3220,6 +3220,9 @@ fn build_function_cfg_with(
     };
     // Card W47-TYPED-ROOT-DECLARATION-READER: parity runs only.
     parser.record_typed_root_parity();
+    // Card CG08-CASTS-AND-TYPE-QUERIES (`W45-CALLEE-CAST-LEXICAL-PREMISE`):
+    // parity runs only.
+    parser.record_callee_cast_census(body_start);
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
     let statements =
