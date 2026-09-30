@@ -71,9 +71,21 @@ fn pointer_store_and_union_still_refuse() {
             "{source}"
         );
     }
+    // Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS flip (rule 11f): the
+    // `h->value = h->value` fixture copies a custody-free record (`A` holds
+    // one `int`), which is the source's typed read and the destination's
+    // typed store and certifies. BEFORE: Unknown with the indirect-access
+    // diagnostic. A record with a pointer member keeps the refusal.
+    let result = run(
+        "typedef struct { int x; } A; struct H { A value; }; int subject(struct H *h) { h->value = h->value; return 0; }",
+    );
+    let UnrestrictedLegacyResult::Safe(certificate) = result else {
+        panic!("a custody-free record copy certifies: {result:?}");
+    };
+    check_legacy_safety_certificate(&certificate).expect("independent rederivation");
     for source in [
         "struct S { int *p; }; int subject(struct S *s, int *q) { s->p = q; return 0; }",
-        "typedef struct { int x; } A; struct H { A value; }; int subject(struct H *h) { h->value = h->value; return 0; }",
+        "typedef struct { int *x; } A; struct H { A value; }; int subject(struct H *h) { h->value = h->value; return 0; }",
     ] {
         let result = run(source);
         let UnrestrictedLegacyResult::Unknown {

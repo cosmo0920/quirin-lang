@@ -1,0 +1,23 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 240,
+   "Safe": 28,
+   "Pending": 1,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 240,
+   "Safe": 28,
+   "Pending": 1,
+   "Unsafe": 1
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 7,
+ "leaf_delta": {
+  "unsupported: braced initializer, expression, or declaration is not modeled": -7,
+  "unknown_alias: unresolved resource identity": -1
+ }
+}

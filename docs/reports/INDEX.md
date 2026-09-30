@@ -103,6 +103,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg13-union-and-bitfield-places](cg13-union-and-bitfield-places/README.md) | CG13-UNION-AND-BITFIELD-PLACES: union-member and bit-field place steps |
 
+| [cg14-aggregate-values-and-initializers](cg14-aggregate-values-and-initializers/README.md) | CG14-AGGREGATE-VALUES-AND-INITIALIZERS |
+
 | [cg19-atomic-source-route](cg19-atomic-source-route/README.md) | CG19-ATOMIC-SOURCE-ROUTE |
 
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
