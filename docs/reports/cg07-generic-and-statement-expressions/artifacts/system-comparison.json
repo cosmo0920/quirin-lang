@@ -1,0 +1,22 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 191,
+   "Safe": 41,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 191,
+   "Safe": 41,
+   "Unsafe": 2
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 3,
+ "leaf_delta": {
+  "unsupported: braced initializer, expression, or declaration is not modeled": -3,
+  "unsupported: indirect memory access is outside the resource projection": 3,
+  "unsupported: call to uncontracted function `__builtin_offsetof`": 3
+ }
+}

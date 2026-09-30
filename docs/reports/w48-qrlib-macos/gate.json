@@ -1,0 +1,13 @@
+{
+  "note": "W48-QRLIB-MACOS gate on the user's Mac (macOS 27.0.1 arm64, Apple clang 21.0.0), tree c374de96 = merge 0ba59362 (main 0631c00b merged; empty tree diff), script private/5m-gate/gate4.sh (each exit to a file, no step piped), logs private/5m-gate4. submodule 0, fmt 0, clippy 0, both probes 0, check_lean_audits.py 0 (255 audits). run_test_binaries.py exit 101: 400 units, 413 summaries; 6,966 passed, 1 failed, 10 ignored (private/test-binaries/20260930T161427Z-63545/summary.json); the failure is the exclusive load-sensitive row qcore-audit subcommand_plugins::a_timeout_is_unknown_and_kills_the_process_group (no child.pid within the 500 ms timeout), green 3/3 in isolation (private/5m-gate4/isolation). Provider suite (cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast) exit 101: 126 passed, 1 failed, 1 ignored, 43 summaries; the failure is conformance packages::real_packages_preserve_unknown_and_reject_mutations (first package.py verify inside the test), while all five packages verify by hand. Python (after the matrix regeneration) exit 1: 365 ran, 15 failed, 6 skipped; 13 are the /var -> /private/var alias (0 of them with a resolved TMPDIR, private/5m-gate4/python-resolved-tmp.log) and 2 the Apple-injected __CF_USER_TEXT_ENCODING; CommittedMatrixIsSelfConsistent passes. All four are pre-existing, macOS-only and outside this card's code: W48-MACOS-GATE-HARNESS. Earlier runs: gate 1 at e9f909c0 (float_ieee_vectors and clippy failures, fixed here), gates 2 and 3 stopped as superseded. No corpus arbiter: no analysis route changed.",
+  "workspace_tests": 6966,
+  "provider_tests": 126,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "not green on macOS: Rust 6,966 passed / 1 load-sensitive failure (green 3/3 in isolation), provider 126 passed / 1 failed, Python macOS harness failures; all pre-existing and macOS-only (W48-MACOS-GATE-HARNESS); fmt, clippy, probes and 255 Lean audits clean",
+  "lean_audits": 255,
+  "clang": "present: Apple clang version 21.0.0 (clang-2100.3.34.2)"
+}

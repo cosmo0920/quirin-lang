@@ -738,6 +738,25 @@ impl StatementIndex {
             .then(|| self.line_starts.partition_point(|&start| start <= offset))
     }
 
+    /// Card CG10 (I04): the analysed source's own tokens per line, read once.
+    fn original_lines(&self) -> &BTreeMap<usize, Vec<String>> {
+        self.line_tokens.get_or_init(|| {
+            let mut lines: BTreeMap<usize, Vec<String>> = BTreeMap::new();
+            for token in tokenize(&self.source) {
+                lines.entry(token.line).or_default().push(token.text);
+            }
+            lines
+        })
+    }
+
+    /// Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): the analysed
+    /// source's own tokens on `line` (empty for a line with none).
+    pub(crate) fn original_line_texts(&self, line: usize) -> &[String] {
+        self.original_lines()
+            .get(&line)
+            .map_or(&[][..], Vec::as_slice)
+    }
+
     /// Card CG10 (I04): the candidate the gateway's occurrence names.
     pub(crate) fn by_occurrence<'a>(
         &self,
@@ -745,13 +764,7 @@ impl StatementIndex {
         line: usize,
         occurrence: &crate::typed_place::Occurrence,
     ) -> Option<&'a Value> {
-        let original = self.line_tokens.get_or_init(|| {
-            let mut lines: BTreeMap<usize, Vec<String>> = BTreeMap::new();
-            for token in tokenize(&self.source) {
-                lines.entry(token.line).or_default().push(token.text);
-            }
-            lines
-        });
+        let original = self.original_lines();
         crate::typed_place::by_occurrence(
             candidates,
             occurrence,

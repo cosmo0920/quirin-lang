@@ -1,0 +1,13 @@
+{
+  "note": "CG07-GENERIC-AND-STATEMENT-EXPRESSIONS card gate at tip code 692e1c07 (base c374de96), script docs/reports/cg07-generic-and-statement-expressions/scripts/gate.sh, logs private/cg07/gate-692e1c07 of this worktree: submodule 0; run_test_binaries.py 401 units, 414 summaries, 7,045 passed, 0 failed, 11 ignored, exit 0; fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 256 audits passed (255 + AuditStatementExpressions.lean); python tests 365, exit 1 before the matrix regeneration (test_build_matrix_sections: the derived Lean audit count 255 -> 256), then rerun after build_matrix.py --gate this file (09b); docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE c374de96 3a25c4e9 608/10/4,216; AFTER 5220b1a9 8b9e4047 608/10/4,216 (no move); system 41/2/191 unchanged; tail-pause slice 28/1/240/1 Pending unchanged. Exits in docs/reports/cg07-generic-and-statement-expressions/gate/.",
+  "workspace_tests": 7045,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 256,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
