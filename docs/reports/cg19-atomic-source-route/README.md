@@ -1,0 +1,206 @@
+# CG19-ATOMIC-SOURCE-ROUTE
+
+Wave 48, round 7, High. Card CG19 of the
+[Clang gap queue](../../plans/clang-gap-cards/README.md), gap entries W01 and
+W09 (evidence Q10, Q34, Q35, Q39, Q46); routes G, T and the atomic-publication
+route. Gateway rule [11i](../../agents/gateway.md#constraint-11i);
+`QCore.AtomicSourceRoute`
+([`proof/QCore/AtomicSourceRoute.lean`](../../../proof/QCore/AtomicSourceRoute.lean),
+audited in `proof/AuditAtomicSourceRoute.lean`). Base `c374de96`; `main`
+`b59aaae2` (CG07-GENERIC-AND-STATEMENT-EXPRESSIONS, W48-QRLIB-MACOS) merged
+at `5b8cd34c` and every figure below re-measured on it (§4).
+
+## 1. What changed
+
+- **The route** ([`atomic_source_route.rs`](../../../crates/qcore-c-gateway/src/atomic_source_route.rs)).
+  `ATOMIC_FORM_TABLE` classifies 51 builtins: `__c11_atomic_load`/`store`
+  and `__atomic_load_n`/`store_n` (plain), `__c11_atomic_init`
+  (initialisation), the generic by-pointer `__atomic_load`/`store`, every
+  exchange, fetch-and-op, op-and-fetch, test-and-set and listed `__sync`
+  read-modify-write, the compare-exchanges and the fences. `<stdatomic.h>`
+  arrives through Clang's lowering to `__c11_atomic_*`. `classify_qualified`
+  reads the `_Atomic` operator forms: the lvalue conversion (`AtomicToNonAtomic`,
+  a seq_cst load), the simple assignment (a `NonAtomicToAtomic` value, a
+  seq_cst store) and the compound assignment and increment (read-modify-writes).
+  These are the atomic casts the gap entry names; the elaborator's cast rows
+  for them stay refused (§8). A plain operation becomes the core model's own
+  event (`AtomicLoad`/`AtomicStore`/`AtomicInit`) with Clang's order decoded
+  (0–5) and admitted per C11 7.17.7; the model's own validity test is exposed
+  additively as `qcore_core::event_order_represented`, and every routed order
+  satisfies it. Everything else refuses **by name**: read-modify-write,
+  compare-exchange and fence (CG28), a consume load (by value 1 or by the
+  enumerator `memory_order_consume`), an order invalid for the operation, an
+  unevaluated order, a by-pointer form, a pointer or aggregate value, and an
+  unlisted builtin of the three families.
+- **Route G** ([`legacy_atomic_route.rs`](../../../crates/qcore-c-gateway/src/legacy_atomic_route.rs);
+  hooks at the end of `expression_statement` and of the `return` chain in
+  `legacy_c.rs`, after CG07's). Asked only where the classifier refused: a
+  statement or `return` refused as a call to an uncontracted atomic builtin
+  (for a `return`, W43's whole-call re-attribution), and a statement whose top
+  node is an `_Atomic` store or read-modify-write. A routed plain access is
+  lowered to **the plain access's custody effect**: the typed reader's
+  dereference of the pointer object, read with the value type (the reader and
+  `is_pointer` refuse every `_Atomic` spelling, including an `_Atomic(T)`
+  pointee, which is this route's case), as `IndirectScalarAccess` with its
+  base obligation (checked by `transfer`) and, for a store, the refused-write
+  frame; `&x` reads nothing; a loaded value's scalar destination forgets its
+  fact; a returned scalar escapes nothing. The order goes to the parity row
+  only (`position: "atomic-route-…"`): G's verdict is custody, and it claims
+  no ordering. Every other answer keeps the refusal's writes and replaces its
+  text with the route's named refusal.
+- **Route T** (`typed_source.rs`). An `_Atomic` type has its own arm, asked
+  first, with its own message; the `volatile`/`restrict` arm is unchanged
+  (CG15, CG18). An atomic builtin is named by the route's answer instead of
+  `unmodeled callback expression AtomicExpr`. No T consumer reads a routed
+  access, so T admits none.
+- **Publication (W09)** ([`atomic_publication_source.rs`](../../../crates/qcore-c-gateway/src/atomic_publication_source.rs)).
+  The extractor reads the flag's store and load through the route: any
+  routed plain store/load of the flag (`__c11_atomic_*`, the generics, the
+  `_Atomic` forms, and GNU `__atomic_*` builtins on a non-`_Atomic` `int` flag
+  both of whose accesses are one, with that assumption stated in the
+  certificate), a literal order or a canonical enumerator (the canonical
+  enumeration is now required only where an enumerator is used), and a
+  `seen == READY` guarded use beside `seen != READY` early return. It records
+  the stages it derived (`AtomicPublicationStages`: initialise, publish,
+  observe, use) and says where it stops: `reclaim: not derived:
+  reclamation is outside this route (CG29)`. A consume load or a
+  read-modify-write of the flag is `NamedAtomicRefusal` with the route's text.
+- **Production caller** (absorbs CT41-ROUTE-HAS-NO-PRODUCTION-CALLER).
+  `qcore_verification::atomic_publication_source::atomic_publication_verdict`
+  is `Safe` exactly when extraction and the core model both accept and
+  `Unknown` on any refusal; both carry the same assumptions, now including
+  `SINGLE_GRAPH_ASSUMPTION` (one candidate execution; not race freedom over
+  every execution, W07/CG29; no liveness, W11).
+  `quirin-audit atomic-publication CONFIG.json`
+  ([`atomic_publication.rs`](../../../crates/qcore-audit/src/atomic_publication.rs))
+  selects a unit and a publication profile, writes a report with the verdict
+  contract's fields (artifact, property, profile, scope, bounds, assumptions,
+  evidence version, source digest, result, refusal, stages) and exits
+  non-zero on `Unknown`.
+
+Shared foundations: `elaboration.rs`, `typed_place.rs` and
+`call_instantiation.rs` are **not** touched. Additive items: the pub module
+`atomic_source_route`, `qcore_core::event_order_represented` (and its
+re-export), `AtomicPublicationSourceRefusal::NamedAtomicRefusal`,
+`AtomicPublicationStages` and the certificate's `stages` field,
+`AtomicPublicationVerdict`/`atomic_publication_verdict`, two hooks in
+`legacy_c.rs` and two arms in `typed_source.rs`.
+
+## 2. Cited claims
+
+- **Q10** (T refuses `_Atomic`): reproduced; the one arm also refused
+  `volatile` and `restrict` with the same message (the CT41 entry).
+- **Q34** (weak_memory: plain loads/stores, no RMW/fence/consume, one supplied
+  graph): reproduced by reading and by CG00's core controls.
+- **Q35** (the publication route is a dedicated shape): reproduced: before
+  this card the extractor accepted exactly `__c11_atomic_store`/`load` with
+  canonical enumerators and a `!=` gate.
+- **Q39** (`typed_root_declarations.rs` reads `AtomicExpr` operands as
+  operands of a builtin that is not a call): reproduced by reading; unchanged.
+- **Q46** (concurrency.rs's scope): reproduced by reading; unchanged.
+- **W01 correction (partial).** The entry says G has "specialized routes such
+  as atomic publication". G never called the publication route; it read an
+  atomic builtin as an uncontracted call and an `_Atomic` load as a neutral
+  scalar, and it refused `_Atomic` stores and read-modify-writes under
+  generic texts (`unsupported assignment expression`, `unrecognized
+  assignment destination`, a formal-mutation refusal). The publication route
+  was reachable only from tests (the CT41 entry).
+
+## 3. Prediction and outcome
+
+[PREDICTION.md](PREDICTION.md), frozen before any AFTER run (with the
+disclosure that the route's code preceded it, and an amendment for the
+`_Atomic` statement hook, also before any AFTER run).
+
+AFTER_TABLE
+
+## 4. Measurement
+
+AFTER_MEASUREMENT
+
+## 5. Tests and pins
+
+- **Flipped BEFORE controls** (CG00): `clang_gap_phase3.rs`
+  `w01_atomic_accesses_do_not_reach_the_atomic_model` (T's two refusal texts;
+  G's `__c11_atomic_load` now `Safe`) and
+  `w09_general_publication_is_not_derived_from_source` (G's function-local
+  release store now custody-`Safe`, the publication judgment being the
+  publication route's); `clang_gap_phase4.rs`
+  `w02_w03_w04_atomic_rmw_cas_and_fences_are_uncontracted_calls` (still
+  `Unknown`, now by the route's names). `tests/atomic_publication_source.rs`
+  `atomic_spelling_extracts_orders_without_claiming_synchronization`: the
+  `_Atomic` simple assignment `done = 1` is now a seq_cst publisher store
+  (BEFORE `UnsupportedPublisher`).
+- **New** (`crates/qcore-c-gateway/tests/atomic_source_route.rs`): the
+  cmetrics shapes (load and store `Safe`, compare-exchange refused by name);
+  `<stdatomic.h>` plain forms and destinations; the dereference obligation
+  kept (a store through a released pointer is not `Safe`); refusal controls
+  for `atomic_fetch_add` (statement, initializer, return),
+  `atomic_compare_exchange_strong`, `atomic_thread_fence`, a consume load (by
+  enumerator and by `__ATOMIC_CONSUME`), a release load and a pointer-valued
+  load; a `volatile` that is not atomic (G unchanged, T's volatile and
+  restrict arm unchanged); T's discrimination; `_Atomic` stores and
+  read-modify-writes in G. `tests/atomic_publication_source.rs`
+  `cg19_publication_forms_through_the_atomic_route`; the verification test
+  `cg19_publication_verdict_gates_on_the_composed_check`; the audit unit test
+  `cg19_atomic_publication_route_reports_safe_and_unknown`; the unit tests of
+  the route (`tests/unit/atomic_source_route.rs`, 7).
+- **CT stage summary**: `scripts/ct_stage_summary.py . --check` exit 0,
+  mapped 50 / unmapped 0; no CT stage moved (CT41's controls, run by
+  `compiler/tests/support/ct_atomic_publication.rs`, answer as before).
+
+## 6. Lean
+
+`QCore.AtomicSourceRoute`, 23 audited theorems, no axioms beyond `propext`:
+`names_unique`; `routed_order_is_represented` and
+`routed_plain_agrees_with_model` (every admission is a plain operation whose
+order the model represents); `route_class_is_plain`;
+`read_modify_write_refused`, `compare_exchange_refused`, `fence_refused`,
+`by_pointer_refused`, `consume_load_refused`, `order_one_never_routed`,
+`consume_never_routed`, `unlisted_refused`, `unevaluated_order_refused`;
+`routed_store_matches_publication`, `routed_load_matches_publication`,
+`releases_iff`, `acquires_iff` (agreement with `QCore.AtomicPublication` on
+Clang's numbering); `publication_verdict_carries_single_graph`,
+`failed_publication_is_unknown`, `undecided_publication_is_unknown`,
+`safe_publication_only_when_checked`; `route_vectors_hold` and
+`order_vectors_hold`. Bound to Rust by `tests/unit/atomic_source_route.rs`:
+`formTable` = `ATOMIC_FORM_TABLE` row for row, `routeVectors` run through
+`classify_builtin` on synthetic nodes, `orderVectors` through `decode_order`
+and `route_order`, `modelRepresents` = `event_order_represented` for every
+load/store order, and routed events run through `check_c11_execution`.
+Premises by review: faithful Clang extraction (trust boundary 28) and the
+Rust-to-Lean correspondence of the verdict gate.
+
+## 7. Scope stated
+
+A routed access is one event; the publication route checks one candidate
+execution of one closed shape. No verdict here is race freedom over every
+execution (W07, CG29), liveness or eventual observation (W11), or a
+reclamation proof (CG29). Route G's `Safe` is custody under its declared
+contracts, with no ordering claim.
+
+## 8. Follow-ups
+
+- **Closed:** `CG19-ATOMIC-SOURCE-ROUTE` (every DISCHARGE clause holds;
+  reclamation is CG29's by the brief), `CT41-ROUTE-HAS-NO-PRODUCTION-CALLER`
+  (the `quirin-audit atomic-publication` route), and
+  `CT41-TYPED-SOURCE-QUALIFIER-ARM-STILL-UNDISCRIMINATING` (T's `_Atomic` arm
+  with its own message and controls; `volatile` and `restrict` still share
+  the old arm, owned by CG15 and CG18).
+- **Registered:** `CG19-ENUMERATOR-ORDER-UNEVALUATED-IN-G-AND-T` (0 corpus
+  leaves), `CG19-ATOMIC-FORMAL-VALUE-STORE-OUT-PARAMETER` (0),
+  `CG19-PUBLICATION-ONE-FLAG-ONE-PAYLOAD` (the route is not in the arbiter).
+- **Amended:** `CG28-WEAK-MEMORY-EVENTS` (the source side is routed and
+  refused by name; 1 corpus leaf), `CG29-EXECUTION-COVERAGE-AND-RECLAMATION`
+  (the single-graph assumption and the stated reclamation stop).
+- **Not absorbed, unchanged:** `CT41-PROOF-NOT-BOUND-TO-THE-CASE-ARTIFACT`,
+  `CT41-BOUNDS-ARE-CALLER-DECLARED-PREMISES`,
+  `CT41-VOLATILE-COMPLEMENT-UNMEASURED` (CG15's). The elaborator's
+  `atomic access` row and the `AtomicToNonAtomic`/`NonAtomicToAtomic` cast
+  rows stay `Refused("CG19")`: the corpus parity stream carries no refusal of
+  them (0 rows), so no follow-up is registered for them; the route reads
+  those casts itself.
+
+## 9. Gate
+
+GATE_SECTION

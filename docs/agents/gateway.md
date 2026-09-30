@@ -2767,3 +2767,72 @@ own anchor here.
     `commutes` by shared-vector tests and to route G by
     `tests/cg07_statement_expressions.rs`;
     [report](../reports/cg07-generic-and-statement-expressions/README.md).
+
+<a id="constraint-11i"></a>
+
+11i. **A C atomic reaches the weak-memory model only as a plain load or
+    store with an order the model represents; every other atomic is refused
+    by name, and nothing a route admits claims ordering beyond one checked
+    execution.** Card CG19-ATOMIC-SOURCE-ROUTE (`atomic_source_route.rs`, the
+    route-G adapter `legacy_atomic_route.rs`, additive
+    `qcore_core::event_order_represented`, thin hooks in `legacy_c.rs` (the
+    end of `expression_statement` and of the `return` chain) and
+    `typed_source.rs` (`qual_type`, `extended_expression`), the
+    atomic-publication extractor, `qcore_verification::atomic_publication_verdict`
+    and `quirin-audit atomic-publication`). (1) **The route.**
+    `ATOMIC_FORM_TABLE` (51 builtins) classifies `AtomicExpr` and the builtin
+    fence/`__sync` calls; `<stdatomic.h>` reaches it through Clang's
+    `__c11_atomic_*` lowering. The `_Atomic` operator forms are an lvalue
+    conversion (`AtomicToNonAtomic`: a seq_cst load), a simple assignment
+    (`NonAtomicToAtomic` value: a seq_cst store), and a compound assignment or
+    increment (a read-modify-write). A plain load, store or `__c11_atomic_init`
+    maps to `AtomicLoad`/`AtomicStore`/`AtomicInit` with Clang's numeric order
+    decoded (0–5) and admitted per C11 7.17.7 (a load relaxed, acquire or
+    seq_cst; a store relaxed, release or seq_cst); read-modify-writes,
+    compare-exchange, fences, a consume load (by value or by the enumerator
+    `memory_order_consume`), an invalid or unevaluated order, a generic
+    by-pointer form, a pointer or aggregate value and every unlisted builtin
+    of the families refuse by name, CG28 owning the unrepresented events.
+    (2) **Route G.** Asked last, only where the classifier refused: an
+    uncontracted atomic builtin's statement or `return`, and an `_Atomic`
+    store or read-modify-write statement. A routed plain access is its
+    custody effect, that of the plain access: the typed reader's dereference
+    of a pointer object (`*p`, the pointee possibly `_Atomic(T)`), read with
+    the value type, as `IndirectScalarAccess` (a store with the refused-write
+    frame); `&x` reads nothing and stores forget a scalar local; a loaded
+    value's scalar destination forgets its fact; a returned scalar escapes
+    nothing. A stored value must be a literal, an enumerator or a non-pointer
+    named object. Every other answer replaces the refusal's text with the
+    route's named refusal and keeps its writes. G's verdict is custody
+    only: the order goes to the parity row, never into a claim. (3) **Route
+    T** names an `_Atomic` type in its own arm, asked before the unchanged
+    `volatile`/`restrict` arm, and an atomic builtin by the route's answer; no
+    T consumer reads a routed access. (4) **Publication.** The extractor reads
+    the flag's store and load through the route (`__c11_atomic_*`, the
+    generics, the `_Atomic` forms, and GNU `__atomic_*` builtins on a
+    non-`_Atomic` `int` flag both of whose accesses are one, with the stated
+    assumption that those builtins are atomic operations), accepts a literal
+    or canonical-enumerator order, a `seen != READY` early return or a
+    `seen == READY` guarded use, and records the initialise → publish →
+    observe → use stages; reclamation is not derived (CG29).
+    `atomic_publication_verdict` is `Safe` exactly when extraction and the
+    core model accept; any refusal is `Unknown`; both carry
+    `SINGLE_GRAPH_ASSUMPTION` (one candidate execution, not race freedom over
+    every execution, W07/CG29; no liveness, W11). `quirin-audit
+    atomic-publication CONFIG.json` is its production caller, writing the
+    verdict contract's fields and exiting non-zero on `Unknown`. **Do not**
+    read a routed access's order as an ordering or race-freedom claim of
+    route G, admit a read-modify-write, compare-exchange, fence or consume
+    load as a neutral call, strengthen consume to acquire, evaluate an
+    enumerator order from the function's AST alone, or publish a publication
+    verdict without the single-graph assumption. Premises stated, not
+    proved: faithful Clang extraction of the builtin name, operands and order
+    (trust boundary 28); the Rust-to-Lean correspondence by review. Measured
+    (corpus `66910c10`): see the report. `QCore.AtomicSourceRoute` (the form
+    table, `routed_plain_agrees_with_model`, the per-class refusals,
+    `consume_load_refused`, `order_one_never_routed`, `unlisted_refused`,
+    agreement with `QCore.AtomicPublication` on Clang's numbering, the
+    publication verdict's single-graph assumption and gate), bound to
+    `ATOMIC_FORM_TABLE`, `decode_order`, `route_order` and
+    `event_order_represented` by `tests/unit/atomic_source_route.rs`;
+    [report](../reports/cg19-atomic-source-route/README.md).
