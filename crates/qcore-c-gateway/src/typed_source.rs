@@ -593,6 +593,12 @@ fn qual_type(ty: &Value) -> Result<String, String> {
         .as_str()
         .or_else(|| ty["qualType"].as_str())
         .ok_or("missing C type")?;
+    // Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): `_Atomic` has its
+    // own arm, asked first (a `volatile _Atomic` object is atomic). The
+    // `volatile` and `restrict` arm below is unchanged (CG15, CG18).
+    if ty.contains("_Atomic") {
+        return Err(crate::atomic_source_route::typed_source_qualifier_refusal(ty));
+    }
     if ty.contains("volatile") || ty.contains("_Atomic") || ty.contains("restrict") {
         return Err("qualified access requires additional synchronization/alias evidence".into());
     }
@@ -876,6 +882,11 @@ impl Importer<'_> {
         // consumer decides one (CG01's census), so none is read.
         if let Some(form) = crate::elaboration::value_form(node) {
             return Err(crate::elaboration::t_refusal(form));
+        }
+        // CG19-ATOMIC-SOURCE-ROUTE (rule 11i): an atomic builtin is named by
+        // the atomic route's answer. No route-T consumer reads a routed one.
+        if let Some(reason) = crate::atomic_source_route::typed_source_refusal(node) {
+            return Err(reason);
         }
         let Some(spelling) = typed_source_nodes::expression_spelling(node) else {
             return Err(format!("unmodeled callback expression {}", kind(node)));

@@ -134,6 +134,12 @@ mod typed_roots;
 // Card CG02-ELABORATION-CORE (rule 10s): the elaborator's route-G adapter, a
 // fallback after every existing route of a statement, a `return` and a
 // call-free controlling expression. The hooks below naming the card are thin.
+// Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): an atomic builtin the
+// classifier refused as an uncontracted call, routed to the weak-memory
+// model's vocabulary. Hooks name the card.
+#[path = "legacy_atomic_route.rs"]
+mod atomic_route;
+
 #[path = "legacy_elaboration.rs"]
 mod elaboration_route;
 
@@ -6275,6 +6281,13 @@ impl Parser<'_> {
                 {
                     return Ok(branched);
                 }
+                // Card CG19-ATOMIC-SOURCE-ROUTE (rule 11i): asked last, only
+                // for a refused return or an uncontracted atomic builtin's.
+                if (return_refused(&statement) || atomic_route::refused_atomic_return(&statement))
+                    && let Some(routed) = self.atomic_routed_return(&expression, line)
+                {
+                    return Ok(routed);
+                }
                 Ok(statement)
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
@@ -6483,6 +6496,12 @@ impl Parser<'_> {
         {
             self.element_origins.clear();
             return branched;
+        }
+        // Card CG19-ATOMIC-SOURCE-ROUTE (rule 11i): asked last, only for the
+        // uncontracted-call refusal of an atomic builtin.
+        if let Some(routed) = self.atomic_routed_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return routed;
         }
         if let LegacyInstruction::ContractCall { destination, .. } = &instruction {
             let use_ = if destination.is_some() {

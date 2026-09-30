@@ -14,6 +14,9 @@
 pub mod access_path_census;
 mod aggregate_store;
 pub mod atomic_publication_source;
+// Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): C atomics routed to the
+// core weak-memory model.
+pub mod atomic_source_route;
 pub mod boolean_source;
 mod borrow_liveness;
 mod borrowed_actual;

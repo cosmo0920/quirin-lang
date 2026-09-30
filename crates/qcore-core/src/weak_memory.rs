@@ -217,6 +217,17 @@ pub fn check_c11_execution(
     }
 }
 
+/// Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): whether this model
+/// represents the event's memory order for its operation (a load is relaxed,
+/// acquire or seq_cst; a store relaxed, release or seq_cst). The C source
+/// route maps a routed atomic to an event only when this holds, so a routed
+/// access never carries an order `check_c11_execution` would refuse. Additive:
+/// it is exactly the negation of the checker's own `InvalidMemoryOrder` test.
+#[must_use]
+pub fn event_order_represented(kind: &MemoryEventKind) -> bool {
+    !invalid_order(kind)
+}
+
 fn invalid_order(kind: &MemoryEventKind) -> bool {
     match kind {
         MemoryEventKind::AtomicStore { order, .. } => !matches!(
