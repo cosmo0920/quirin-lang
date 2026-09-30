@@ -1076,8 +1076,11 @@ impl<C: Context> Elaborator<'_, C> {
                 Ok(part)
             }
             Admission::NullPointer if to_pointer => {
+                // A null pointer constant: an integer constant expression 0,
+                // or one already converted to `void *` (`(void *)0`), with
+                // no event either way.
                 let part = self.expression(inner)?;
-                if part.pointer() || !part.all.is_empty() {
+                if !part.all.is_empty() {
                     return Err(refuse(&cast));
                 }
                 Ok(Part {
