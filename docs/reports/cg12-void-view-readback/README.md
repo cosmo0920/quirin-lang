@@ -230,3 +230,20 @@ as its own record type `struct flb_input_instance *` at
 (over a never-bound formal, no identity) and `sb_get_context` is Safe on the
 system route, but that reads no instance identity. The 18 non-discard
 escapes and the other-type view (`in_blob.c:761`) stay registered, amended.
+
+## 8. Ledger
+
+Applied by [`scripts/update_ledger.py`](scripts/update_ledger.py) (text in
+`scripts/ledger_text.py`, idempotent): 661 → 663.
+
+- **`CG12-VOID-VIEW-READBACK` amended, not retired.** Every other DISCHARGE
+  clause holds (BEFORE reproduced with its corrections, PREDICTION.md frozen,
+  AFTER attributed, the absorbed entry re-measured, Rust refusal controls,
+  audited Lean). The entry's scope, a stored identity connected to its
+  post-cast view on the corpus, is met by the rule but by **no** corpus site.
+- **`W47-FIELDS-BY-MEMBER-VOID-ESCAPES` amended** with the re-measured
+  classes (§7): 0 followed, 62 discards, 18 carrying a value.
+- **Registered:** `CG12-READBACK-NO-STORE-BASE` (115 sites) and
+  `CG12-VIEW-RESIDUAL-FORMS` (58 of CG00's 76 M05 leaves on 26 functions,
+  and the 90 unresolved-identity leaves on 40 functions that replace
+  indirect-access refusals).

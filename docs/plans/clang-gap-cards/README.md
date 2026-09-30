@@ -272,6 +272,15 @@ High for anything that could publish a wrong Safe, Medium for measurement.
   - *Change.* A post-cast view and pointee type are connected to the stored
     identity, by contract or derivation.
   - *Absorbs:* W47-FIELDS-BY-MEMBER-VOID-ESCAPES.
+  - *Status (wave 48, round 7).* Landed on route G (gateway rule 11j) as two
+    rules: an object-pointer bit-cast view of a `void *` over an untracked
+    object, and the readback of a `void *` member of an admitted store base
+    as its linked identity (type punning refused). Corpus **+2** Safe, system
+    +2, no correction. Corrections to the input: CG00's M05 leaves are views of
+    untracked `void *`, not readbacks, and its control refuses at the store.
+    No corpus readback is bound to an identity, so the entry is amended, not
+    retired (`CG12-READBACK-NO-STORE-BASE`, `CG12-VIEW-RESIDUAL-FORMS`).
+    [Report](../../reports/cg12-void-view-readback/README.md).
 - **CG13: unions and bit-fields.**
   - *Bit-fields* are an R card. Source fields map to `disjoint_footprint`
     storage units, and accesses become read-modify-write events. Different
