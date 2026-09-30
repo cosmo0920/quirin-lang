@@ -239,5 +239,25 @@ unresolved obligation.
 
 ## 9. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (commands, exits, counts; logs
-in `private/cg10bur/gate`).
+[`scripts/gate.sh`](scripts/gate.sh) at `fcff2aaf`, exits in [gate/](gate/),
+figures in [gate.json](gate.json); logs in `private/cg10bur/gate`.
+
+| Step | Exit | Count |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | |
+| `python3 scripts/run_test_binaries.py` | **101**, then 0 on re-run (`03c`) | 7,028 passed, 1 failed, 11 ignored; re-run 400 units, 413 summaries, **7,029 passed, 0 failed, 11 ignored** (`private/test-binaries/20260930T151755Z-809972`) |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 255 audits (254 + `AuditBoundUntracked.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then **0** after `build_matrix.py . --gate gate.json` (`09a` 0, `09b`) | 365 |
+| `python3 scripts/build_docs_index.py` | 0, 0 | |
+
+The first runner's one failure was
+`qcorec::test::contract_load_path::unpublished_parent_and_bad_pin_refuse`,
+which panicked in its fixture's `Drop` (`remove_dir_all` of its own temporary
+directory returned `NotFound`) in a crate this card does not touch; the binary
+alone passed 4/4 (`03b`, 0) and the whole runner re-run passed. The first
+Python run failed only on the matrix's derived Lean audit count (254 → 255),
+which the regeneration moves. `providers/` is unchanged, so the provider gate
+was not due. Clang 21.1.8 ([gate/clang-version.txt](gate/clang-version.txt)).
