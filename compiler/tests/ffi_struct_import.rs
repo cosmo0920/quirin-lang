@@ -553,6 +553,32 @@ fn a_c_result_with_no_declared_outcome_is_not_rendered() {
 }
 
 #[test]
+fn a_call_still_needs_std_extern_and_a_line_its_effect() {
+    let path = examples().join("header_sum.qr");
+    let source = std::fs::read_to_string(&path).unwrap();
+    refused_with(
+        compile_at(
+            &path,
+            &source.replace("#import std.extern;\n", ""),
+            Some(example_contracts()),
+            Some(&host_target()),
+        ),
+        "Q022",
+        "#import std.extern;",
+    );
+    refused_with(
+        compile_at(
+            &path,
+            &source.replace("effects { io }", "effects { }"),
+            Some(example_contracts()),
+            Some(&host_target()),
+        ),
+        "Q029",
+        "does not admit it",
+    );
+}
+
+#[test]
 fn the_marker_belongs_to_the_contract_side() {
     let scratch = Scratch::new("marker", &example_header());
     let source = format!(
