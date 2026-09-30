@@ -502,9 +502,11 @@ fn array_types(
     Ok(types)
 }
 
-// Resolve explicit enum values from this same preprocessed input, never from
-// host constants. Ambiguous names (including shadowing) and implicit enum values
-// remain outside this profile. Clang's constant evaluator is a trusted boundary.
+// Resolve enum values from this same preprocessed input, never from host
+// constants: an explicit initializer's evaluated `ConstantExpr`, or (card
+// CG08, N11) Clang's evaluation of an implicit enumerator. Ambiguous names
+// (including shadowing) remain outside this profile. Clang's constant
+// evaluator is a trusted boundary.
 fn enum_constants(
     ast: &Value,
     source: &str,
@@ -534,7 +536,21 @@ fn enum_constants(
             return Err("enum constant requires one unambiguous declaration".into());
         };
         let [initial] = children(decl) else {
-            return Err("enum constant requires an explicit evaluated initializer".into());
+            // Card CG08-CASTS-AND-TYPE-QUERIES (N11): an implicit value is
+            // Clang's own evaluation of the enumerator, never the host's
+            // count from its predecessor; an unevaluable one refuses.
+            let integer = crate::cast_representation::clang_constant(source, unit, &name)
+                .map_err(|_| "enum constant requires a Clang-evaluated value")?;
+            constants.insert(
+                name,
+                value(
+                    c_type(decl)?,
+                    SourceExpression::Integer {
+                        value: integer.to_string(),
+                    },
+                ),
+            );
+            continue;
         };
         check_source_rule(
             "source_enum_value",

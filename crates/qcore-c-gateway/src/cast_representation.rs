@@ -270,6 +270,51 @@ pub(crate) fn query_operand(node: &Value) -> QueryOperand<'_> {
     }
 }
 
+/// The probe enumerator [`clang_constant`] reads.
+const PROBE: &str = "__qcore_cg08_value";
+
+/// Clang's own evaluation of the integer constant expression `expression`
+/// over `source` (N11, example D): the value Clang's constant evaluator gives
+/// an enumerator initialised with it (C11 6.6, 6.7.2.2), never a host
+/// computation. A consumer that needs a query's or an enumerator's number
+/// takes this or refuses (`QCore.CastRepresentation.consume`): an expression
+/// that is not an integer constant expression over the unit's file scope (a
+/// variably modified `sizeof`, a block-scope name) is a Clang error, and so
+/// an `Err`.
+pub(crate) fn clang_constant(
+    source: &str,
+    unit: &crate::legacy_c::C11TranslationUnit<'_>,
+    expression: &str,
+) -> Result<i128, String> {
+    let probe = format!("{source}\nenum __qcore_cg08_probe {{ {PROBE} = ({expression}) }};\n");
+    let declarations = crate::typed_c_ast::ast_declarations(&probe, unit, PROBE)?;
+    fn find(node: &Value) -> Option<&Value> {
+        if kind(node) == "EnumConstantDecl" && node["name"] == PROBE {
+            return children(node).first();
+        }
+        children(node).iter().find_map(find)
+    }
+    let mut value = declarations
+        .iter()
+        .find_map(find)
+        .ok_or("Clang evaluated no probe enumerator")?;
+    // Clang converts the initializer to the enumerator's type around its
+    // evaluated `ConstantExpr`.
+    while kind(value) == "ImplicitCastExpr" {
+        value = children(value)
+            .first()
+            .ok_or("a conversion without an operand")?;
+    }
+    if kind(value) != "ConstantExpr" {
+        return Err("Clang gave no evaluated constant".into());
+    }
+    value["value"]
+        .as_str()
+        .ok_or("Clang gave no evaluated value")?
+        .parse()
+        .map_err(|_| "Clang's value is not an integer".into())
+}
+
 #[cfg(test)]
 #[path = "../tests/unit/cast_representation.rs"]
 mod tests;

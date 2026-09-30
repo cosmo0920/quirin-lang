@@ -138,39 +138,26 @@ fn cg08_lean_query_vectors_match_query_operand() {
     assert_eq!(count, 8);
 }
 
-/// Clang's own constant evaluation of `expression` over `prelude`: the value
-/// Clang gives an enumerator initialised with it (an integer constant
-/// expression, C11 6.6), never a host computation.
-fn clang_constant(prelude: &str, expression: &str) -> i128 {
-    let source =
-        format!("{prelude}\nenum __qcore_cg08_probe {{ __qcore_cg08_value = ({expression}) }};\n");
+/// [`clang_constant`] over `prelude`, or a panic naming the expression.
+fn evaluated(prelude: &str, expression: &str) -> i128 {
     let unit = C11TranslationUnit {
-        source: &source,
+        source: prelude,
         ..Default::default()
     };
-    let declarations = crate::typed_c_ast::ast_declarations(&source, &unit, "__qcore_cg08_value")
-        .unwrap_or_else(|error| panic!("Clang rejected {expression}: {error}"));
-    fn find(node: &Value) -> Option<&Value> {
-        if kind(node) == "EnumConstantDecl" && node["name"] == "__qcore_cg08_value" {
-            return children(node).first();
-        }
-        children(node).iter().find_map(find)
+    clang_constant(prelude, &unit, expression)
+        .unwrap_or_else(|error| panic!("Clang rejected {expression}: {error}"))
+}
+
+/// A non-constant expression (a variably modified `sizeof`) is no constant:
+/// the evaluator refuses rather than guess.
+#[test]
+fn a_non_constant_query_has_no_clang_constant() {
+    if !clang_available() {
+        return;
     }
-    let mut value = declarations
-        .iter()
-        .find_map(find)
-        .expect("the probe enumerator");
-    // Clang converts the initializer to the enumerator's type around its
-    // evaluated `ConstantExpr`.
-    while kind(value) == "ImplicitCastExpr" {
-        value = children(value).first().expect("a converted initializer");
-    }
-    assert_eq!(kind(value), "ConstantExpr", "{expression}");
-    value["value"]
-        .as_str()
-        .expect("Clang's evaluated value")
-        .parse()
-        .expect("an integer")
+    let unit = C11TranslationUnit::default();
+    assert!(clang_constant("int n;", &unit, "sizeof(int[n])").is_err());
+    assert!(clang_constant("", &unit, "undeclared_name").is_err());
 }
 
 /// `constantVectors`: each value is Clang's evaluation (x86-64 Linux, where
@@ -200,11 +187,7 @@ fn cg08_lean_constant_vectors_are_clangs_constants() {
             .trim_end_matches(')')
             .parse()
             .unwrap();
-        assert_eq!(
-            clang_constant(prelude, expression),
-            expected,
-            "{expression}"
-        );
+        assert_eq!(evaluated(prelude, expression), expected, "{expression}");
         count += 1;
     }
     assert_eq!(count, 8);

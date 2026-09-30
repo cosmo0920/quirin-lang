@@ -272,3 +272,21 @@ fn the_nanopb_comma_return_still_refuses_past_the_boolean_conversion() {
          return (stream->errmsg = (stream)->errmsg ? (stream)->errmsg : (\"x\")), 0; }");
     assert!(run.unknown(), "{run:?}");
 }
+
+/// N11 on route T: an implicit enumerator's value is Clang's evaluation
+/// (BEFORE: refused as "enum constant requires an explicit evaluated
+/// initializer"); an explicit one keeps its `ConstantExpr`.
+#[test]
+fn an_implicit_enumerator_is_clangs_constant_on_route_t() {
+    if !clang_available() {
+        return;
+    }
+    let summary =
+        t("enum E { E0, E1 = 5, E2 }; int subject(void) { return E2; }").expect("admitted");
+    let rendered = format!("{:?}", summary.paths());
+    assert!(rendered.contains("Integer { value: \"6\" }"), "{rendered}");
+    let summary =
+        t("enum E { E0, E1 = 5, E2 }; int subject(void) { return E1; }").expect("admitted");
+    let rendered = format!("{:?}", summary.paths());
+    assert!(rendered.contains("Integer { value: \"5\" }"), "{rendered}");
+}
