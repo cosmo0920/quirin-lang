@@ -328,18 +328,27 @@ pub fn record_types_text(records: &[RecordType]) -> String {
     if records.iter().any(declares_typed_field) {
         text.push_str(RECORD_PRELUDE_TYPED);
     }
-    for record in records {
+    // Card `W48-QR-USABLE-RECORDS`: likewise the paragraph about record
+    // members, written only for a module declaring one.
+    if records.iter().any(declares_record_field) {
+        text.push_str(RECORD_PRELUDE_NESTED);
+    }
+    for record in emission_order(records) {
         let _ = writeln!(text, "struct {} {{", record_type_tag(&record.name));
         for field in &record.fields {
             let member = record_field_name(&field.name);
-            match field.field_type {
+            match &field.field_type {
                 // `int32_t` for an `i32`, exactly as before the card, and each
                 // other type's `<stdint.h>`/`<stdbool.h>`/`<stddef.h>` spelling.
                 FieldType::Scalar(ty) => {
-                    let _ = writeln!(text, "    {} {member};", st::c_type(ty));
+                    let _ = writeln!(text, "    {} {member};", st::c_type(*ty));
                 }
                 FieldType::Bytes => {
                     let _ = writeln!(text, "    unsigned char *{member};");
+                }
+                // Card `W48-QR-USABLE-RECORDS`: a record member by value.
+                FieldType::Record(inner) => {
+                    let _ = writeln!(text, "    struct {} {member};", record_type_tag(inner));
                 }
             }
         }
@@ -347,6 +356,62 @@ pub fn record_types_text(records: &[RecordType]) -> String {
     }
     text
 }
+
+/// The records in the order C must define them (card
+/// `W48-QR-USABLE-RECORDS`): declaration order, except that a record held by
+/// value by another is defined first, since a member of struct type needs a
+/// complete type. For a module declaring no record field this **is**
+/// declaration order, so its emitted bytes are unchanged. The graph is acyclic
+/// (`source_record::admit_graph`), so the walk ends.
+fn emission_order(records: &[RecordType]) -> Vec<&RecordType> {
+    fn visit<'a>(
+        records: &'a [RecordType],
+        record: &'a RecordType,
+        done: &mut Vec<&'a str>,
+        order: &mut Vec<&'a RecordType>,
+    ) {
+        if done.contains(&record.name.as_str()) {
+            return;
+        }
+        done.push(&record.name);
+        for field in &record.fields {
+            if let FieldType::Record(inner) = &field.field_type
+                && let Some(held) = records.iter().find(|candidate| candidate.name == *inner)
+            {
+                visit(records, held, done, order);
+            }
+        }
+        order.push(record);
+    }
+    let mut done = Vec::new();
+    let mut order = Vec::new();
+    for record in records {
+        visit(records, record, &mut done, &mut order);
+    }
+    order
+}
+
+/// Whether a record declares a field whose type is a record (card
+/// `W48-QR-USABLE-RECORDS`).
+fn declares_record_field(record: &RecordType) -> bool {
+    record
+        .fields
+        .iter()
+        .any(|field| matches!(field.field_type, FieldType::Record(_)))
+}
+
+/// The paragraph a module declaring a record member adds to
+/// [`RECORD_PRELUDE_HEADER`] (card `W48-QR-USABLE-RECORDS`), appended rather
+/// than edited in so the header's bytes are unchanged for every other module.
+pub const RECORD_PRELUDE_NESTED: &str = r#"
+/* W48-QR-USABLE-RECORDS: a member declared with a record type holds that
+   record by value, as a member of its struct type, defined above it. A
+   construction copies the named record into it (for a record holding an
+   owned buffer, the pointers move with it and the source binding is dead),
+   a source path `a.b.c` is the member access `r_a.f_b.f_c`, and a field
+   write is one member assignment of a value the checker already proved to
+   be a value of the member's type. */
+"#;
 
 /// Whether a record declares a scalar field of a type other than `i32` (card
 /// `W48-QR-SCALAR-TYPES-R3`).
@@ -649,7 +714,9 @@ pub fn buffer_event_statement(
         | BufferEvent::FieldStore { .. }
         | BufferEvent::FieldLoad { .. }
         | BufferEvent::FieldExtent { .. }
-        | BufferEvent::FieldRelease { .. } => {
+        | BufferEvent::FieldRelease { .. }
+        // Card `W48-QR-USABLE-RECORDS`: a field write likewise.
+        | BufferEvent::FieldWrite { .. } => {
             return Err(BufferEmissionRefusal::UnemittableRecord { event: index });
         }
         // **Refused, not skipped** — see [`BufferEmissionRefusal::UnemittableLend`].
@@ -932,15 +999,16 @@ impl EmbeddedTyped {
 struct RecordEnvironment {
     types: BTreeMap<String, RecordType>,
     bound: BTreeMap<String, String>,
-    /// `(record binding, field)` → the extent of the buffer moved into that
-    /// owned field (card `AGGREGATE-OWNED-FIELD`), so an access through the
-    /// field emits the same bounds witness a plain access does.
-    field_extents: BTreeMap<(String, String), u32>,
-    /// Record binding → the owned fields that still hold their buffer, so a
-    /// whole-record release frees exactly those, in declaration order — the
-    /// emitter's mirror of what the checker decided and the certificate
+    /// `(record binding, field path)` → the extent of the buffer moved into
+    /// that owned field (card `AGGREGATE-OWNED-FIELD`; a path since card
+    /// `W48-QR-USABLE-RECORDS`), so an access through the field emits the same
+    /// bounds witness a plain access does.
+    field_extents: BTreeMap<(String, Vec<String>), u32>,
+    /// Record binding → the owned fields (paths) that still hold their buffer,
+    /// so a whole-record release frees exactly those, in the IR's leaf order
+    /// — the emitter's mirror of what the checker decided and the certificate
     /// published.
-    live_fields: BTreeMap<String, BTreeSet<String>>,
+    live_fields: BTreeMap<String, BTreeSet<Vec<String>>>,
     /// Card `W48-QR-SCALAR-TYPES-R3`: every scalar binding of a type other
     /// than `i32`, with its C object — the emitter's half of the typed
     /// environment (`i32` names stay in `scalars`, as before the card).
@@ -984,25 +1052,39 @@ impl RecordEnvironment {
 }
 
 impl RecordEnvironment {
-    /// The C expression for the member `record.field`.
-    fn member(record: &str, field: &str) -> String {
-        format!(
-            "{}.{}",
-            record_binding_name(record),
-            record_field_name(field)
-        )
+    /// The C expression for the member `record.path` — `r_a.f_b.f_c` for the
+    /// source path `a.b.c` (card `W48-QR-USABLE-RECORDS`; one level before).
+    fn member(record: &str, path: &[String]) -> String {
+        let mut text = record_binding_name(record);
+        for field in path {
+            text.push('.');
+            text.push_str(&record_field_name(field));
+        }
+        text
     }
 
     fn field_extent(
         &self,
         event: usize,
         record: &str,
-        field: &str,
+        path: &[String],
     ) -> Result<u32, BufferEmissionRefusal> {
         self.field_extents
-            .get(&(record.to_owned(), field.to_owned()))
+            .get(&(record.to_owned(), path.to_vec()))
             .copied()
             .ok_or(BufferEmissionRefusal::UnplaceableAccess { event })
+    }
+
+    /// The declared type at `record.path` of a bound record.
+    fn field_type(&self, record: &str, path: &[String]) -> Option<FieldType> {
+        let type_name = self.bound.get(record)?;
+        crate::source_record::field_type_at(
+            &|name: &str| self.types.get(name),
+            record,
+            type_name,
+            path,
+        )
+        .ok()
     }
 }
 
@@ -1184,23 +1266,19 @@ fn emit_event_sequence(
                         name: name.clone(),
                     });
                 };
-                let declared: Vec<String> = records
-                    .types
-                    .get(type_name)
-                    .map(|declared| {
-                        declared
-                            .owned_field_names()
-                            .map(ToOwned::to_owned)
-                            .collect()
-                    })
-                    .unwrap_or_default();
+                // Card `W48-QR-USABLE-RECORDS`: the owned **leaves**, at every
+                // depth, in the IR's order.
+                let declared = crate::source_record::owned_leaves(
+                    &|name: &str| records.types.get(name),
+                    type_name,
+                );
                 let live = records.live_fields.remove(name).unwrap_or_default();
-                for field in declared {
-                    if live.contains(&field) {
+                for leaf in declared {
+                    if live.contains(&leaf) {
                         let _ = writeln!(
                             source,
                             "{indent}qcore_bytes_drop({});",
-                            RecordEnvironment::member(name, &field)
+                            RecordEnvironment::member(name, &leaf)
                         );
                     }
                 }
@@ -1316,55 +1394,98 @@ fn emit_event_sequence(
             // binding and the field's extent as the bounds witness.
             BufferEvent::FieldStore {
                 record,
-                field,
+                path,
                 index: at,
                 value,
             } => {
-                let extent = records.field_extent(index, record, field)?;
+                let extent = records.field_extent(index, record, path)?;
                 let at = operand_expression(scalars, index, at)?;
                 let value = operand_expression(scalars, index, value)?;
                 let _ = writeln!(
                     source,
                     "{indent}qcore_bytes_store({}, (size_t) {extent}u, (size_t) ({at}), {value});",
-                    RecordEnvironment::member(record, field)
+                    RecordEnvironment::member(record, path)
                 );
             }
             BufferEvent::FieldLoad {
                 binding,
                 record,
-                field,
+                path,
                 index: at,
             } => {
-                let extent = records.field_extent(index, record, field)?;
+                let extent = records.field_extent(index, record, path)?;
                 let at = operand_expression(scalars, index, at)?;
                 let emitted = scalar_name(binding);
                 scalars.insert(binding.clone(), emitted.clone());
                 let _ = writeln!(
                     source,
                     "{indent}int32_t {emitted} = qcore_bytes_load({}, (size_t) {extent}u, (size_t) ({at}));",
-                    RecordEnvironment::member(record, field)
+                    RecordEnvironment::member(record, path)
                 );
             }
             BufferEvent::FieldExtent {
                 binding,
                 record,
-                field,
+                path,
             } => {
-                let extent = records.field_extent(index, record, field)?;
+                let extent = records.field_extent(index, record, path)?;
                 let emitted = scalar_name(binding);
                 scalars.insert(binding.clone(), emitted.clone());
                 let _ = writeln!(source, "{indent}int32_t {emitted} = INT32_C({extent});");
             }
-            BufferEvent::FieldRelease { record, field } => {
-                records.field_extent(index, record, field)?;
+            BufferEvent::FieldRelease { record, path } => {
+                records.field_extent(index, record, path)?;
                 if let Some(live) = records.live_fields.get_mut(record) {
-                    live.remove(field);
+                    live.remove(path);
                 }
                 let _ = writeln!(
                     source,
                     "{indent}qcore_bytes_drop({});",
-                    RecordEnvironment::member(record, field)
+                    RecordEnvironment::member(record, path)
                 );
+            }
+            // Card `W48-QR-USABLE-RECORDS`: the field write. A scalar field is
+            // one member assignment of a value the checker proved a value of
+            // the member's type; an owned field — the refill — takes the
+            // buffer's pointer, and the struct owes it again.
+            BufferEvent::FieldWrite {
+                record,
+                path,
+                value,
+            } => {
+                let Some(field_type) = records.field_type(record, path) else {
+                    return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
+                };
+                let member = RecordEnvironment::member(record, path);
+                match field_type {
+                    FieldType::Scalar(ty) => {
+                        let value = field_expression(scalars, &records.typed, index, ty, value)?;
+                        let _ = writeln!(source, "{indent}{member} = {value};");
+                    }
+                    FieldType::Bytes => {
+                        let FieldOperand::Name(from) = value else {
+                            return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
+                        };
+                        let Some(extent) = extents.get(from).copied() else {
+                            return Err(BufferEmissionRefusal::Unbound {
+                                event: index,
+                                name: from.clone(),
+                            });
+                        };
+                        records
+                            .field_extents
+                            .insert((record.clone(), path.clone()), extent);
+                        records
+                            .live_fields
+                            .entry(record.clone())
+                            .or_default()
+                            .insert(path.clone());
+                        let _ = writeln!(source, "{indent}{member} = {};", buffer_name(from));
+                    }
+                    FieldType::Record(_) => {
+                        return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
+                    }
+                }
             }
             // Card `AGGREGATES-V1`. Emitted here rather than in
             // `buffer_event_statement` because both need the record
@@ -1398,9 +1519,39 @@ fn emit_event_sequence(
                             name: format!("{type_name}.{}", field.name),
                         });
                     };
-                    let value = match field.field_type {
+                    let value = match &field.field_type {
                         FieldType::Scalar(ty) => {
-                            field_expression(scalars, &records.typed, index, ty, operand)?
+                            field_expression(scalars, &records.typed, index, *ty, operand)?
+                        }
+                        // Card `W48-QR-USABLE-RECORDS`: a record member takes
+                        // the named record by value. For one holding an owned
+                        // buffer the pointers move with it: its live members
+                        // and their extents are re-keyed under this field.
+                        FieldType::Record(_) => {
+                            let FieldOperand::Name(from) = operand else {
+                                return Err(BufferEmissionRefusal::UnplaceableAccess {
+                                    event: index,
+                                });
+                            };
+                            if !records.bound.contains_key(from) {
+                                return Err(BufferEmissionRefusal::Unbound {
+                                    event: index,
+                                    name: from.clone(),
+                                });
+                            }
+                            if let Some(inner) = records.live_fields.remove(from) {
+                                for leaf in inner {
+                                    let mut path = vec![field.name.clone()];
+                                    path.extend(leaf.iter().cloned());
+                                    if let Some(extent) =
+                                        records.field_extents.get(&(from.clone(), leaf)).copied()
+                                    {
+                                        moved_in.push(((binding.clone(), path.clone()), extent));
+                                    }
+                                    live.insert(path);
+                                }
+                            }
+                            record_binding_name(from)
                         }
                         // Card `AGGREGATE-OWNED-FIELD`: the owned member takes
                         // the buffer's pointer — the move, in C, is the
@@ -1418,8 +1569,8 @@ fn emit_event_sequence(
                                     name: from.clone(),
                                 });
                             };
-                            moved_in.push(((binding.clone(), field.name.clone()), extent));
-                            live.insert(field.name.clone());
+                            moved_in.push(((binding.clone(), vec![field.name.clone()]), extent));
+                            live.insert(vec![field.name.clone()]);
                             buffer_name(from)
                         }
                     };
@@ -1441,34 +1592,21 @@ fn emit_event_sequence(
             BufferEvent::Field {
                 binding,
                 record,
-                field,
+                path,
             } => {
-                let Some(type_name) = records.bound.get(record) else {
-                    return Err(BufferEmissionRefusal::Unbound {
-                        event: index,
-                        name: record.clone(),
-                    });
-                };
-                // The declared type is consulted rather than trusted: a field
+                // The declared type is consulted rather than trusted: a path
                 // the type does not declare has no member to read, and the
-                // checker already refused it.
-                let Some(field_type) = records
-                    .types
-                    .get(type_name)
-                    .and_then(|declared| declared.field(field))
-                else {
+                // checker already refused it. Card `W48-QR-USABLE-RECORDS`: the
+                // member is the whole path, `r_a.f_b.f_c`.
+                let Some(field_type) = records.field_type(record, path) else {
                     return Err(BufferEmissionRefusal::UnplaceableAccess { event: index });
                 };
+                let member = RecordEnvironment::member(record, path);
                 match field_type {
                     FieldType::Scalar(ScalarType::I32) => {
                         let emitted = scalar_name(binding);
                         scalars.insert(binding.clone(), emitted.clone());
-                        let _ = writeln!(
-                            source,
-                            "{indent}int32_t {emitted} = {}.{};",
-                            record_binding_name(record),
-                            record_field_name(field)
-                        );
+                        let _ = writeln!(source, "{indent}int32_t {emitted} = {member};");
                     }
                     // Card `W48-QR-SCALAR-TYPES-R3`: a field of another type
                     // binds a scalar of exactly that type.
@@ -1477,10 +1615,8 @@ fn emit_event_sequence(
                         records.typed.insert(binding.clone(), (emitted.clone(), ty));
                         let _ = writeln!(
                             source,
-                            "{indent}{} {emitted} = {}.{};",
-                            st::c_type(ty),
-                            record_binding_name(record),
-                            record_field_name(field)
+                            "{indent}{} {emitted} = {member};",
+                            st::c_type(ty)
                         );
                     }
                     // Card `AGGREGATE-OWNED-FIELD`: the partial move. The plain
@@ -1488,16 +1624,27 @@ fn emit_event_sequence(
                     // struct no longer does, so the whole-record release below
                     // skips this member.
                     FieldType::Bytes => {
-                        let extent = records.field_extent(index, record, field)?;
+                        let extent = records.field_extent(index, record, path)?;
                         if let Some(live) = records.live_fields.get_mut(record) {
-                            live.remove(field);
+                            live.remove(path);
                         }
                         extents.insert(binding.clone(), extent);
                         let _ = writeln!(
                             source,
-                            "{indent}unsigned char *{} = {};",
-                            buffer_name(binding),
-                            RecordEnvironment::member(record, field)
+                            "{indent}unsigned char *{} = {member};",
+                            buffer_name(binding)
+                        );
+                    }
+                    // Card `W48-QR-USABLE-RECORDS`: a sub-record of scalars is
+                    // copied out whole — one struct assignment. One holding an
+                    // owned buffer was refused by the checker.
+                    FieldType::Record(inner) => {
+                        let emitted = record_binding_name(binding);
+                        records.bound.insert(binding.clone(), inner.clone());
+                        let _ = writeln!(
+                            source,
+                            "{indent}struct {} {emitted} = {member};",
+                            record_type_tag(&inner)
                         );
                     }
                 }

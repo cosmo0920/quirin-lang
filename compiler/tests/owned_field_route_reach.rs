@@ -370,22 +370,36 @@ fn a_view_field_refuses_by_its_own_name() {
     );
 }
 
-/// `AGGREGATE-NESTED` refuses by name, and it does so for a field naming a
-/// record type declared **after** it as well as before: the classification
-/// reads the module's declaration kinds, not the table being built.
+/// `AGGREGATE-NESTED` refused by name here, for a field naming a record type
+/// declared after it as well as before. Card `W48-QR-USABLE-RECORDS` lifted
+/// it: both declaration orders are now **admitted** — the classification still
+/// reads the module's declaration kinds, not the table being built — and what
+/// refuses by name is a record that contains itself (the termination argument
+/// of the declaration graph).
 #[test]
-fn a_nested_record_field_refuses_by_its_own_name_in_both_declaration_orders() {
+fn a_nested_record_field_is_admitted_in_both_declaration_orders() {
     for declaration in [
-        "type Inner { x: i32 }\ntype Outer { inner: Inner }",
-        "type Outer { inner: Inner }\ntype Inner { x: i32 }",
+        "type Inner { x: i32 }
+type Outer { inner: Inner }",
+        "type Outer { inner: Inner }
+type Inner { x: i32 }",
     ] {
-        let source = module(declaration, "    let n = 1;\n    n |> print dec;\n");
+        let source = module(declaration, "    let n = 1;
+    n |> print dec;
+");
+        assert!(compile(&source).is_ok(), "{declaration}");
+    }
+    for declaration in [
+        "type Node { next: Node, x: i32 }",
+        "type A { b: B }
+type B { a: A }",
+    ] {
+        let source = module(declaration, "    let n = 1;
+    n |> print dec;
+");
         let (codes, message) = refusal(&source);
-        assert_eq!(codes, vec!["Q051"]);
-        assert!(
-            message.contains("AGGREGATE-NESTED"),
-            "the boundary names itself: {message}"
-        );
+        assert_eq!(codes, vec!["Q051"], "{declaration}");
+        assert!(message.contains("contain itself"), "{declaration}: {message}");
     }
 }
 

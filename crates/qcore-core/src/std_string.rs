@@ -915,7 +915,13 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
             ) => {
                 effects.insert(Effect::Alloc);
             }
-            StringEvent::Buffer(BufferEvent::Store { .. } | BufferEvent::FieldStore { .. }) => {
+            // Card `W48-QR-USABLE-RECORDS`: a field write derives what it
+            // derives on `source.buffer.v1`, for the same refusing reason.
+            StringEvent::Buffer(
+                BufferEvent::Store { .. }
+                | BufferEvent::FieldStore { .. }
+                | BufferEvent::FieldWrite { .. },
+            ) => {
                 effects.insert(Effect::Mut);
             }
             // A composed `for` (the `LOOP-V1` × `STRING-CONCAT` composition,
@@ -1201,6 +1207,9 @@ fn view_uses_at_any_depth(event: &StringEvent) -> Vec<&str> {
             | BufferEvent::FieldLoad { .. }
             | BufferEvent::FieldExtent { .. }
             | BufferEvent::FieldRelease { .. }
+            // Card `W48-QR-USABLE-RECORDS`: a field write names no view; this
+            // route refuses every record statement before emission.
+            | BufferEvent::FieldWrite { .. }
             // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind names no view, and
             // on this route it cannot exist at all — `buffer_use` does not
             // claim the shape, so a composed module never lowers one and
@@ -1799,6 +1808,7 @@ pub fn check_string_program_for_target(
                     | BufferEvent::Construct { .. }
                     | BufferEvent::FieldStore { .. }
                     | BufferEvent::FieldRelease { .. }
+                    | BufferEvent::FieldWrite { .. }
                     | BufferEvent::Line(_)
                     | BufferEvent::Return => {}
                 }

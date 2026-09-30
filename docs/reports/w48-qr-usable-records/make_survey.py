@@ -42,7 +42,7 @@ BUFFER = {
         "io", "    let p = P { x: 1, y: 2 };\n    let a = p.x;\n    print dec a;\n"
     ),
     "write": IO_HEAD + RECORD + entry(
-        "io",
+        "io, mut",
         "    let p = P { x: 1, y: 2 };\n    p.x = 5;\n    let a = p.x;\n    print dec a;\n",
     ),
     "write_owned": BUF_HEAD + OWNED + entry(
@@ -217,7 +217,9 @@ def ffi(decls: str, body: str) -> str:
 FFI = {
     "construct": ffi("", CONS),
     "read": ffi("", CONS + "    let l = r.len;\n    print dec l;\n"),
-    "write": ffi("", CONS + "    r.len = 9;\n    let l = r.len;\n    print dec l;\n"),
+    "write": FFI_HEAD + IMPORT + entry(
+        "io, mut", CONS + "    r.len = 9;\n    let l = r.len;\n    print dec l;\n"
+    ),
     "nested": ffi(IMPORT_OUTER, CONS),
     "param": ffi(
         "fn total(h: R) -> u32 {\n    let l = h.len;\n    return l;\n}\n",

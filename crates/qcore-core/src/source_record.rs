@@ -88,12 +88,17 @@ pub const MAX_FIELDS: usize = 32;
 /// resource (`qcore_buffer_new`'s four-byte payload) with a different model,
 /// and a field type that spelled one while meaning the other would be a
 /// collision by design. Widening this enum further is `AGGREGATE-FIELD-TYPES`.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum FieldType {
     /// A §G02t scalar, held by value.
     Scalar(ScalarType),
     /// An owned `source.buffer.v1` buffer, moved in at construction.
     Bytes,
+    /// Another record type this module declares, held by value (card
+    /// `W48-QR-USABLE-RECORDS`, which lifted `AGGREGATE-NESTED`). A record of
+    /// scalars held here is copied in; one with an owned field anywhere below
+    /// it is **moved** in, its owned leaves becoming the outer record's.
+    Record(String),
 }
 
 impl FieldType {
@@ -103,14 +108,17 @@ impl FieldType {
 
     /// The source spelling this type is declared with.
     #[must_use]
-    pub fn spelling(self) -> &'static str {
+    pub fn spelling(&self) -> &str {
         match self {
             Self::Scalar(ty) => ty.name(),
             Self::Bytes => "bytes",
+            Self::Record(name) => name,
         }
     }
 
     /// The declared spelling, or `None` for a word this model gives no type.
+    /// A record type is not recognised here — which words name one is the
+    /// module's question ([`Self::from_spelling_in`]).
     #[must_use]
     pub fn from_spelling(word: &str) -> Option<Self> {
         match word {
@@ -119,18 +127,42 @@ impl FieldType {
         }
     }
 
-    /// The scalar type of a scalar field, `None` for an owned one.
+    /// [`Self::from_spelling`], plus a record type the module declares (card
+    /// `W48-QR-USABLE-RECORDS`). A scalar or `bytes` spelling keeps its
+    /// meaning even if a record were so named, because those words were
+    /// field types first.
     #[must_use]
-    pub fn scalar(self) -> Option<ScalarType> {
+    pub fn from_spelling_in(word: &str, declared_records: &BTreeSet<String>) -> Option<Self> {
+        Self::from_spelling(word).or_else(|| {
+            declared_records
+                .contains(word)
+                .then(|| Self::Record(word.to_owned()))
+        })
+    }
+
+    /// The scalar type of a scalar field, `None` for an owned or record one.
+    #[must_use]
+    pub fn scalar(&self) -> Option<ScalarType> {
         match self {
-            Self::Scalar(ty) => Some(ty),
-            Self::Bytes => None,
+            Self::Scalar(ty) => Some(*ty),
+            Self::Bytes | Self::Record(_) => None,
         }
     }
 
-    /// Whether a field of this type owns a resource.
+    /// The record type of a record field.
     #[must_use]
-    pub fn is_owned(self) -> bool {
+    pub fn record(&self) -> Option<&str> {
+        match self {
+            Self::Record(name) => Some(name),
+            Self::Scalar(_) | Self::Bytes => None,
+        }
+    }
+
+    /// Whether a field of this type **directly** owns a resource. A record
+    /// field owns through its own fields; [`owned_leaves`] is the question
+    /// that sees through it.
+    #[must_use]
+    pub fn is_owned(&self) -> bool {
         matches!(self, Self::Bytes)
     }
 }
@@ -148,13 +180,15 @@ pub const VIEW_FIELD_SPELLING: &str = "string";
 /// Why a field-type spelling is not a field type — the **by-name**
 /// classification (card `OWNED-FIELD-ROUTE-REACH`, wave 41).
 ///
-/// Three answers, in one place so the reader and any later route cannot
+/// Two answers, in one place so the reader and any later route cannot
 /// disagree about which residual a spelling meets: a view spelling is
-/// `AGGREGATE-VIEW-FIELD`, a record type this module declares is
-/// `AGGREGATE-NESTED`, and everything else is the generic
-/// `AGGREGATE-FIELD-TYPES` this model always reported. All three are `Q051`
-/// and all three refuse; what the split buys is that two named boundaries now
-/// have a message to pin and something for a later card to supersede.
+/// `AGGREGATE-VIEW-FIELD`, and everything else is the generic
+/// `AGGREGATE-FIELD-TYPES` this model always reported. Both are `Q051`.
+/// Card `W48-QR-USABLE-RECORDS` removed the third answer: a record type this
+/// module declares is a field type ([`FieldType::Record`]), so
+/// `AGGREGATE-NESTED`'s refusal is lifted rather than renamed, and
+/// `declared_records` is read only so that a spelling is never classified
+/// as unknown when it names one.
 #[must_use]
 pub fn field_type_refusal(
     type_name: &str,
@@ -162,15 +196,12 @@ pub fn field_type_refusal(
     spelling: &str,
     declared_records: &BTreeSet<String>,
 ) -> RecordRefusal {
+    debug_assert!(
+        !declared_records.contains(spelling),
+        "a declared record type is a field type"
+    );
     if spelling == VIEW_FIELD_SPELLING {
         return RecordRefusal::ViewFieldType {
-            type_name: type_name.to_owned(),
-            field: field.to_owned(),
-            spelling: spelling.to_owned(),
-        };
-    }
-    if declared_records.contains(spelling) {
-        return RecordRefusal::NestedFieldType {
             type_name: type_name.to_owned(),
             field: field.to_owned(),
             spelling: spelling.to_owned(),
@@ -180,6 +211,129 @@ pub fn field_type_refusal(
         type_name: type_name.to_owned(),
         field: field.to_owned(),
         spelling: spelling.to_owned(),
+    }
+}
+
+/// The deepest nesting of record fields this model admits (card
+/// `W48-QR-USABLE-RECORDS`): a record holding a record holding … at most this
+/// many records deep, the outermost counted. Bounded for [`MAX_FIELDS`]'s
+/// reason — every leaf of every value is published and emitted — and refused
+/// by name beyond it rather than truncated.
+pub const MAX_NESTING: usize = 8;
+
+/// The most scalar and owned **leaves** one record type may hold once its
+/// record fields are expanded (card `W48-QR-USABLE-RECORDS`). [`MAX_FIELDS`]
+/// bounds one level; this bounds the tree.
+pub const MAX_LEAVES: usize = 256;
+
+/// The owned **leaves** of `type_name` — every `bytes` field at any depth, as
+/// a path from the record down — in declaration order at every level,
+/// depth-first (card `W48-QR-USABLE-RECORDS`). This is the order a
+/// whole-record `drop` releases in, and the order the ownership IR's
+/// aggregate lists; a one-level record's list is
+/// [`RecordType::owned_field_names`], one-element paths.
+///
+/// `types` resolves a record name; an unresolvable one and a cycle contribute
+/// nothing (both are refused at type formation, [`admit_types`], so a module
+/// that reaches this function has neither).
+#[must_use]
+pub fn owned_leaves<'a>(
+    types: &impl Fn(&str) -> Option<&'a RecordType>,
+    type_name: &str,
+) -> Vec<Vec<String>> {
+    fn walk<'a>(
+        types: &impl Fn(&str) -> Option<&'a RecordType>,
+        type_name: &str,
+        prefix: &mut Vec<String>,
+        depth: usize,
+        into: &mut Vec<Vec<String>>,
+    ) {
+        if depth > MAX_NESTING {
+            return;
+        }
+        let Some(declared) = types(type_name) else {
+            return;
+        };
+        for field in &declared.fields {
+            prefix.push(field.name.clone());
+            match &field.field_type {
+                FieldType::Bytes => into.push(prefix.clone()),
+                FieldType::Record(inner) => walk(types, inner, prefix, depth + 1, into),
+                FieldType::Scalar(_) => {}
+            }
+            prefix.pop();
+        }
+    }
+    let mut leaves = Vec::new();
+    walk(types, type_name, &mut Vec::new(), 1, &mut leaves);
+    leaves
+}
+
+/// Whether a value of `type_name` owns anything — an owned field at any depth
+/// (card `W48-QR-USABLE-RECORDS`). The one question that decides whether a
+/// record is a custody shape or a plain value; for a record declaring no
+/// record field it is [`RecordType::has_owned_field`].
+#[must_use]
+pub fn owns<'a>(types: &impl Fn(&str) -> Option<&'a RecordType>, type_name: &str) -> bool {
+    !owned_leaves(types, type_name).is_empty()
+}
+
+/// The declared type at `path` below a value of `type_name` (card
+/// `W48-QR-USABLE-RECORDS`): every component but the last must name a field
+/// whose type is a record.
+///
+/// # Errors
+///
+/// [`RecordRefusal::NoSuchField`] for a component the type at that point does
+/// not declare, and [`RecordRefusal::PathThroughNonRecord`] for a component
+/// reached through a field that is a scalar or a buffer.
+pub fn field_type_at<'a>(
+    types: &impl Fn(&str) -> Option<&'a RecordType>,
+    name: &str,
+    type_name: &str,
+    path: &[String],
+) -> Result<FieldType, RecordRefusal> {
+    let mut current = type_name.to_owned();
+    for (depth, component) in path.iter().enumerate() {
+        let Some(declared) = types(&current) else {
+            return Err(RecordRefusal::UnknownType {
+                type_name: current,
+            });
+        };
+        let Some(field_type) = declared.field(component) else {
+            return Err(RecordRefusal::NoSuchField {
+                name: spell_path(name, &path[..depth]),
+                type_name: current,
+                field: component.clone(),
+            });
+        };
+        if depth + 1 == path.len() {
+            return Ok(field_type);
+        }
+        match field_type {
+            FieldType::Record(inner) => current = inner,
+            other => {
+                return Err(RecordRefusal::PathThroughNonRecord {
+                    path: spell_path(name, &path[..=depth]),
+                    declared: other.spelling().to_owned(),
+                    next: path[depth + 1].clone(),
+                });
+            }
+        }
+    }
+    Err(RecordRefusal::NotARecord {
+        name: name.to_owned(),
+    })
+}
+
+/// `NAME.F1.….Fn`, the spelling a diagnostic and a certificate name a field
+/// path by; `NAME` itself for the empty path.
+#[must_use]
+pub fn spell_path(name: &str, path: &[String]) -> String {
+    if path.is_empty() {
+        name.to_owned()
+    } else {
+        format!("{name}.{}", path.join("."))
     }
 }
 
@@ -204,16 +358,19 @@ pub enum FieldValue {
     Bytes {
         moved_from: String,
     },
+    /// A record held by a record field (card `W48-QR-USABLE-RECORDS`): the
+    /// whole value, copied or moved in at construction.
+    Record(RecordValue),
 }
 
 impl FieldValue {
-    /// The scalar type of this value, `None` for an owned buffer.
+    /// The scalar type of this value, `None` for an owned buffer or a record.
     #[must_use]
     pub fn scalar_type(&self) -> Option<ScalarType> {
         match self {
             Self::Scalar(_) => Some(ScalarType::I32),
             Self::Typed { ty, .. } => Some(*ty),
-            Self::Bytes { .. } => None,
+            Self::Bytes { .. } | Self::Record(_) => None,
         }
     }
 }
@@ -245,7 +402,7 @@ impl RecordType {
         self.fields
             .iter()
             .find(|declared| declared.name == field)
-            .map(|declared| declared.field_type)
+            .map(|declared| declared.field_type.clone())
     }
 
     /// The declared field names, in declaration order.
@@ -312,6 +469,40 @@ impl RecordValue {
             _ => None,
         }
     }
+
+    /// **Projection along a path** (card `W48-QR-USABLE-RECORDS`): the value
+    /// at `a.b.c`, each component but the last a record field. Total on the
+    /// declared paths of the type this value was constructed for, because
+    /// construction is total at every level; `None` for any other path.
+    #[must_use]
+    pub fn project_path(&self, path: &[String]) -> Option<&FieldValue> {
+        let (first, rest) = path.split_first()?;
+        let value = self.fields.get(first)?;
+        if rest.is_empty() {
+            return Some(value);
+        }
+        match value {
+            FieldValue::Record(inner) => inner.project_path(rest),
+            _ => None,
+        }
+    }
+
+    /// **The field-write rule** (card `W48-QR-USABLE-RECORDS`): replace the
+    /// value at `path` and nothing else. Returns the value the path held, or
+    /// `None` — changing nothing — when the path is not a declared path of
+    /// this value. `QCore.UsableRecords.write_changes_exactly_that_field` and
+    /// `…_leaves_every_other_path` are the Lean statements.
+    pub fn write_path(&mut self, path: &[String], value: FieldValue) -> Option<FieldValue> {
+        let (first, rest) = path.split_first()?;
+        let slot = self.fields.get_mut(first)?;
+        if rest.is_empty() {
+            return Some(std::mem::replace(slot, value));
+        }
+        match slot {
+            FieldValue::Record(inner) => inner.write_path(rest, value),
+            _ => None,
+        }
+    }
 }
 
 /// Every way this model refuses.
@@ -350,18 +541,45 @@ pub enum RecordRefusal {
         field: String,
         spelling: String,
     },
-    /// A field declared with the name of a record type this module declares
-    /// (card `OWNED-FIELD-ROUTE-REACH`, wave 41) — the nested aggregate.
-    ///
-    /// Split out of [`Self::UnknownFieldType`] for [`Self::ViewFieldType`]'s
-    /// reason, and detected from the module's **declared record names**, so a
-    /// forward reference (`type Outer { inner: Inner }` written above
-    /// `type Inner { … }`) is the same refusal as a backward one.
-    NestedFieldType {
+    /// A record type that contains itself, directly or through other record
+    /// fields (card `W48-QR-USABLE-RECORDS`): **the termination argument of
+    /// the declaration graph**. Card `OWNED-FIELD-ROUTE-REACH` refused every
+    /// record field by name (`AGGREGATE-NESTED`); the lift admits a record
+    /// field exactly when the graph of record fields is acyclic, so every
+    /// value is a finite tree and every walk over one ends. `cycle` names the
+    /// types around the loop, starting and ending at `type_name`.
+    RecursiveFieldType {
         type_name: String,
         field: String,
-        spelling: String,
+        cycle: Vec<String>,
     },
+    /// A record nested more than [`MAX_NESTING`] deep (card
+    /// `W48-QR-USABLE-RECORDS`).
+    NestingTooDeep { type_name: String, depth: usize },
+    /// A record whose expanded tree has more than [`MAX_LEAVES`] leaves (card
+    /// `W48-QR-USABLE-RECORDS`).
+    TooManyLeaves { type_name: String, count: usize },
+    /// A field path continuing through a field that is not a record (card
+    /// `W48-QR-USABLE-RECORDS`): `p.x.y` where `p.x` is a scalar or a buffer.
+    PathThroughNonRecord {
+        path: String,
+        declared: String,
+        next: String,
+    },
+    /// A record field supplied something other than a record of its declared
+    /// type (card `W48-QR-USABLE-RECORDS`): a scalar, a buffer, or a record of
+    /// another type. `supplied` names the other record type when it is one.
+    FieldTakesARecord {
+        type_name: String,
+        field: String,
+        declared: String,
+        supplied: Option<String>,
+    },
+    /// A write naming a field whose type is a record (card
+    /// `W48-QR-USABLE-RECORDS`): this revision writes a scalar field, or
+    /// refills an owned one, and a whole sub-record is written field by field
+    /// (`W48-QR-RECORD-FIELD-WHOLE-WRITE`).
+    WriteOfRecordField { path: String, declared: String },
     /// A construction naming a type this module does not declare.
     UnknownType { type_name: String },
     /// A construction supplying a field the type does not declare.
@@ -423,10 +641,16 @@ pub enum RecordRefusal {
         name: String,
         type_name: String,
         field: String,
-        /// The field's declared scalar type (card `W48-QR-SCALAR-TYPES-R3`;
-        /// before it, always `i32`).
-        declared: ScalarType,
+        /// The field's declared type's spelling (card
+        /// `W48-QR-SCALAR-TYPES-R3`; before it, always `i32`; since card
+        /// `W48-QR-USABLE-RECORDS` a scalar's or a record's name).
+        declared: String,
     },
+    /// A read of a whole sub-record with an owned field below it (card
+    /// `W48-QR-USABLE-RECORDS`): that would move a whole aggregate out of
+    /// another, which this revision does not spell; its fields are read one by
+    /// one (`W48-QR-NESTED-OWNED-SUBRECORD-MOVE`).
+    SubRecordOwns { path: String, declared: String },
 }
 
 impl RecordRefusal {
@@ -450,7 +674,12 @@ impl RecordRefusal {
             // themselves are the same shape condition, refused at the same
             // code — what changed is the message, not the allocation.
             | Self::ViewFieldType { .. }
-            | Self::NestedFieldType { .. }
+            // Card `W48-QR-USABLE-RECORDS`: a record that contains itself is
+            // not a type, and a whole sub-record write is not a statement this
+            // revision spells — both the band's shape condition.
+            | Self::RecursiveFieldType { .. }
+            | Self::WriteOfRecordField { .. }
+            | Self::SubRecordOwns { .. }
             | Self::UndeclaredField { .. }
             | Self::RepeatedField { .. }
             | Self::MissingField { .. } => "Q051",
@@ -468,7 +697,12 @@ impl RecordRefusal {
             // Card `W48-QR-SCALAR-TYPES-R3`: a value of another type at a
             // field is "a name that is not what this position takes", the
             // same condition, widened.
-            | Self::FieldTakesAType { .. } => "Q052",
+            | Self::FieldTakesAType { .. }
+            // Card `W48-QR-USABLE-RECORDS`: a path through a field that has
+            // no fields, and a record field given something else, are the
+            // same condition.
+            | Self::PathThroughNonRecord { .. }
+            | Self::FieldTakesARecord { .. } => "Q052",
             // Card `W48-QR-SCALAR-TYPES-R3`: a literal outside its field's
             // type is the band's **range** condition, widened.
             Self::FieldLiteralOutOfRange { .. } => "Q053",
@@ -481,7 +715,9 @@ impl RecordRefusal {
             // of it lands on the same code so one fault has one code.
             Self::FieldTakesAScalar { .. } => "Q055",
             // A range this model does not enumerate.
-            Self::TooManyFields { .. } => "Q053",
+            Self::TooManyFields { .. }
+            | Self::NestingTooDeep { .. }
+            | Self::TooManyLeaves { .. } => "Q053",
         }
     }
 }
@@ -529,18 +765,65 @@ impl fmt::Display for RecordRefusal {
                  window was computed for. This is `AGGREGATE-VIEW-FIELD`, and it is refused by \
                  name rather than left to the generic field-type message"
             ),
-            Self::NestedFieldType {
+            Self::RecursiveFieldType {
                 type_name,
                 field,
-                spelling,
+                cycle,
             } => write!(
                 f,
-                "`{type_name}.{field}` is declared `{spelling}`, a record type this module \
-                 declares, and `source.record.v1` models no record field: the ownership IR's \
-                 owner path is one level (`BASE.FIELD`), so a nested aggregate needs a \
-                 recursive path, a drop-through over a tree and a termination argument for the \
-                 declaration graph. This is `AGGREGATE-NESTED`, and it is refused by name \
-                 rather than left to the generic field-type message"
+                "`{type_name}.{field}` makes `{type_name}` contain itself ({}); a record field \
+                 holds a whole value, so a record that contains itself would be an infinite \
+                 value — the record fields of a module form an acyclic graph",
+                cycle.join(" -> ")
+            ),
+            Self::NestingTooDeep { type_name, depth } => write!(
+                f,
+                "`{type_name}` nests records {depth} deep; `source.record.v1` models at most \
+                 {MAX_NESTING} levels, and a deeper declaration is refused rather than truncated"
+            ),
+            Self::TooManyLeaves { type_name, count } => write!(
+                f,
+                "`{type_name}` holds {count} fields once its record fields are expanded; \
+                 `source.record.v1` models at most {MAX_LEAVES}, and a larger tree is refused \
+                 rather than truncated"
+            ),
+            Self::PathThroughNonRecord {
+                path,
+                declared,
+                next,
+            } => write!(
+                f,
+                "`{path}` is declared `{declared}`, which has no fields, so `{path}.{next}` names \
+                 nothing; a field path continues only through a field whose type is a record"
+            ),
+            Self::FieldTakesARecord {
+                type_name,
+                field,
+                declared,
+                supplied,
+            } => match supplied {
+                Some(supplied) => write!(
+                    f,
+                    "`{type_name}.{field}` is declared `{declared}` and is supplied a \
+                     `{supplied}`; a record field takes a record of exactly its declared type"
+                ),
+                None => write!(
+                    f,
+                    "`{type_name}.{field}` is declared `{declared}` and takes a `{declared}` \
+                     record this entry bound; a literal, a scalar or a buffer is not one"
+                ),
+            },
+            Self::SubRecordOwns { path, declared } => write!(
+                f,
+                "`{path}` is a `{declared}`, which holds an owned field; reading it whole would \
+                 move an aggregate out of another, which this revision does not spell, so read \
+                 its fields one by one (`W48-QR-NESTED-OWNED-SUBRECORD-MOVE`)"
+            ),
+            Self::WriteOfRecordField { path, declared } => write!(
+                f,
+                "`{path}` is declared `{declared}`, a record; a write names a scalar field (or \
+                 refills an owned one), so write the fields of `{path}` one by one \
+                 (`W48-QR-RECORD-FIELD-WHOLE-WRITE`)"
             ),
             Self::UnknownType { type_name } => write!(
                 f,
@@ -693,7 +976,10 @@ pub fn construct(
         };
         match (field_type, value) {
             (FieldType::Bytes, FieldValue::Bytes { .. }) => {}
-            (FieldType::Bytes, FieldValue::Scalar(_) | FieldValue::Typed { .. }) => {
+            (
+                FieldType::Bytes,
+                FieldValue::Scalar(_) | FieldValue::Typed { .. } | FieldValue::Record(_),
+            ) => {
                 return Err(RecordRefusal::FieldTakesABuffer {
                     type_name: declared.name.clone(),
                     field: name.clone(),
@@ -703,6 +989,26 @@ pub fn construct(
                 return Err(RecordRefusal::FieldTakesAScalar {
                     type_name: declared.name.clone(),
                     field: name.clone(),
+                });
+            }
+            // Card `W48-QR-USABLE-RECORDS`: a record field takes a record of
+            // exactly its declared type, and nothing else takes a record.
+            (FieldType::Record(expected), FieldValue::Record(supplied))
+                if supplied.type_name == expected => {}
+            (FieldType::Record(expected), other) => {
+                return Err(RecordRefusal::FieldTakesARecord {
+                    type_name: declared.name.clone(),
+                    field: name.clone(),
+                    declared: expected,
+                    supplied: match other {
+                        FieldValue::Record(supplied) => Some(supplied.type_name.clone()),
+                        _ => None,
+                    },
+                });
+            }
+            (FieldType::Scalar(_), FieldValue::Record(supplied)) => {
+                return Err(RecordRefusal::RecordAtScalarPosition {
+                    name: supplied.type_name.clone(),
                 });
             }
             // Card `W48-QR-SCALAR-TYPES-R3`: the value's type is the field's,
@@ -758,5 +1064,92 @@ pub fn admit_types(declared: &[RecordType]) -> Result<BTreeMap<String, RecordTyp
         admit_type(record)?;
         types.insert(record.name.clone(), record.clone());
     }
+    admit_graph(declared, &types)?;
     Ok(types)
+}
+
+/// **The termination argument** (card `W48-QR-USABLE-RECORDS`): the graph
+/// whose edges are record fields is acyclic, no chain of record fields is
+/// longer than [`MAX_NESTING`], and no type's expanded tree has more than
+/// [`MAX_LEAVES`] leaves. With the graph acyclic every value is a finite tree
+/// and every walk over one — construction, projection, the drop-through, the
+/// emitted C's member order — ends; `QCore.UsableRecords.acyclic_depth_bounds_every_path`
+/// is the Lean statement. Checked in declaration order, so the first
+/// offending declaration is the one reported. A record field naming a type
+/// the module does not declare cannot reach here: the reader classifies the
+/// spelling against the module's declared names.
+///
+/// # Errors
+///
+/// The first cycle, the first over-deep type, or the first over-large one.
+pub fn admit_graph(
+    declared: &[RecordType],
+    types: &BTreeMap<String, RecordType>,
+) -> Result<(), RecordRefusal> {
+    /// The depth of `name`'s tree, or the cycle through `name` if `stack`
+    /// already holds it.
+    fn depth(
+        types: &BTreeMap<String, RecordType>,
+        name: &str,
+        stack: &mut Vec<String>,
+    ) -> Result<usize, RecordRefusal> {
+        let Some(declared) = types.get(name) else {
+            return Ok(0);
+        };
+        stack.push(name.to_owned());
+        let mut deepest = 0;
+        for field in &declared.fields {
+            let FieldType::Record(inner) = &field.field_type else {
+                continue;
+            };
+            if let Some(at) = stack.iter().position(|entry| entry == inner) {
+                // The field that closes the loop, on the type that holds it.
+                let mut cycle = stack[at..].to_vec();
+                cycle.push(inner.clone());
+                return Err(RecordRefusal::RecursiveFieldType {
+                    type_name: name.to_owned(),
+                    field: field.name.clone(),
+                    cycle,
+                });
+            }
+            if stack.len() > MAX_NESTING {
+                return Err(RecordRefusal::NestingTooDeep {
+                    type_name: stack[0].clone(),
+                    depth: stack.len() + 1,
+                });
+            }
+            deepest = deepest.max(depth(types, inner, stack)?);
+        }
+        stack.pop();
+        Ok(deepest + 1)
+    }
+    fn leaves(types: &BTreeMap<String, RecordType>, name: &str) -> usize {
+        types.get(name).map_or(0, |declared| {
+            declared
+                .fields
+                .iter()
+                .map(|field| match &field.field_type {
+                    FieldType::Record(inner) => leaves(types, inner).max(1),
+                    _ => 1,
+                })
+                .fold(0usize, usize::saturating_add)
+        })
+    }
+    for name in declared.iter().map(|record| &record.name) {
+        let deep = depth(types, name, &mut Vec::new())?;
+        if deep > MAX_NESTING {
+            return Err(RecordRefusal::NestingTooDeep {
+                type_name: name.clone(),
+                depth: deep,
+            });
+        }
+        let count = leaves(types, name);
+        if count > MAX_LEAVES {
+            return Err(RecordRefusal::TooManyLeaves {
+                type_name: name.clone(),
+                count,
+            });
+        }
+    }
+    Ok(())
 }

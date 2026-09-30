@@ -3,7 +3,7 @@
 #import std.fmt;
 #import std.io;
 type P { x: i32, y: i32 }
-fn main() -> unit effects { io } {
+fn main() -> unit effects { io, mut } {
     let p = P { x: 1, y: 2 };
     p.x = 5;
     let a = p.x;

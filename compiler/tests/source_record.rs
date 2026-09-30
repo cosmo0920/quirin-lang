@@ -569,7 +569,7 @@ fn a_record_contributes_no_custody_operation() {
             BufferEvent::Field {
                 binding: "a".to_owned(),
                 record: "p".to_owned(),
-                field: "x".to_owned(),
+                path: vec!["x".to_owned()],
             },
             BufferEvent::Return,
         ],

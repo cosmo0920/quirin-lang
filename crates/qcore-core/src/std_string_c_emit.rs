@@ -250,6 +250,14 @@ fn buffer_consumers(event: &BufferEvent, consumed: &mut BTreeMap<String, bool>) 
         BufferEvent::FieldExtent { record, .. } | BufferEvent::FieldRelease { record, .. } => {
             consumed.insert(record.clone(), true);
         }
+        // Card `W48-QR-USABLE-RECORDS`: a field write reads its record and its
+        // value, marked for the record arms' reason.
+        BufferEvent::FieldWrite { record, value, .. } => {
+            consumed.insert(record.clone(), true);
+            if let crate::std_buffer::FieldOperand::Name(name) = value {
+                consumed.insert(name.clone(), true);
+            }
+        }
         // Card `OWNED-FIELD-ROUTE-REACH`: a copy bind **reads its source**, so
         // the source is consumed — marked here for the reason the record arms
         // above are, though this route lowers no copy bind at all
