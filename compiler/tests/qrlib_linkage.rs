@@ -189,7 +189,9 @@ mod unix {
         pub stdout: String,
         pub stderr: String,
         pub status: Option<i32>,
-        /// What the linker printed for `--trace` (GNU `ld` only), else empty.
+        /// What the linker printed for `--trace` (GNU `ld` only), else empty;
+        /// only the Linux row reads it.
+        #[cfg_attr(not(target_os = "linux"), allow(dead_code))]
         pub trace: String,
     }
 

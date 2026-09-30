@@ -70,6 +70,30 @@ the six libm functions to `libsystem_m.dylib`.
 CI: `.github/workflows/ci.yml` gains a `macos` job on `macos-15` running the two
 commands below after recording the SDK and toolchain.
 
+## Two gate failures only this Mac sees
+
+The first standing-gate run here (at `e9f909c0`, logs `private/5m-gate/`)
+failed two steps on code this card did not change; both were fixed here at the
+user's direction.
+
+* **`float_ieee_vectors` (1 of 6,926).** `proof/QCore/Ieee754Vectors32.lean`
+  and `Ieee754Vectors64.lean` were generated on x86-64 Linux and wrote the
+  kernel's raw NaN results: 16 rows per table held x86-64's default NaN
+  `0xFFC00000` / `0xFFF8000000000000` (sign bit set), and AArch64 computes
+  `0x7FC00000` / `0x7FF8000000000000`, so the regenerated table differed. The
+  language leaves a NaN's payload and sign unspecified and the Lean theorems
+  compare arithmetic and conversion rows with `sameValue`, so the generator now
+  writes `scalar_floats::canonical` of each arithmetic and conversion result
+  (the kernel-vs-host assertion still runs on the raw bits first). Regenerated:
+  exactly those 16 lines per table changed, each only by that rewrite;
+  negation rows (proved bit for bit) are untouched; counts unchanged.
+* **clippy (`-D warnings`).** `compiler/tests/task_record_captures.rs` and
+  `closures.rs` keep native-run helpers (`NEXT`, `BUILDS`, `Run`,
+  `build_and_run`, `REFUSE_CREATION`, their `Command`/atomic imports) that only
+  `cfg(target_os = "linux")` tests use; they are now gated the same way.
+  `qrlib_linkage.rs`'s `Built::trace`, filled on every Unix host and read only
+  by the Linux `--trace` row, is allowed dead off Linux.
+
 ## Second run: green
 
 ```sh

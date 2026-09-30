@@ -313,7 +313,11 @@ fn table(ty: ScalarType) -> Table {
                     let r = st::checked(op, ty, a, b, None).unwrap();
                     let host = host_arith(op, ty, a, b);
                     assert!(sf::same_value(ty, r, host), "{op:?} {a:#x} {b:#x}");
-                    r
+                    // A NaN result's payload and sign are the host's (x86-64's
+                    // default NaN is negative, AArch64's positive; card
+                    // W48-QRLIB-MACOS), so the table names every NaN by the
+                    // canonical one, as `sameValue` compares it.
+                    sf::canonical(ty, r)
                 })
                 .collect();
             rows.push(format!(
@@ -461,7 +465,7 @@ fn table(ty: ScalarType) -> Table {
                 _ => f32b(f64::from_bits(a as u64) as f32),
             };
             assert!(sf::same_value(other, r, host), "{a:#x}");
-            format!("  ({}, {})", hex(ty, a), hex(other, r))
+            format!("  ({}, {})", hex(ty, a), hex(other, sf::canonical(other, r)))
         })
         .collect();
     let convert = rows.len();

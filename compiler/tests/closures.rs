@@ -16,12 +16,15 @@
 //! identity, then the published examples' native runs on real threads.
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
+#[cfg(target_os = "linux")]
 use std::process::Command;
+#[cfg(target_os = "linux")]
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use qcore_compiler::{CompileOptions, CompiledModule, FileDiagnostic, SourceFile, compile_files};
 use qcore_core::task_execution::{TaskExecutionScript, TaskModule, execute_with_source_lines};
 
+#[cfg(target_os = "linux")]
 static NEXT: AtomicU64 = AtomicU64::new(0);
 
 fn root() -> PathBuf {
