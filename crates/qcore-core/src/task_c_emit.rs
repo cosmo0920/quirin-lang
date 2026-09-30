@@ -1329,7 +1329,11 @@ fn record_runtime(
         1,
         "the task result is declared once"
     );
-    assert_eq!(runtime.matches(tail).count(), 1, "the result logger ends once");
+    assert_eq!(
+        runtime.matches(tail).count(),
+        1,
+        "the result logger ends once"
+    );
     let capacity = records
         .values()
         .map(|record| record.leaves.len())

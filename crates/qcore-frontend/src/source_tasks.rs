@@ -498,7 +498,11 @@ fn signature(
                  or an ungraded lend<Buffer>",
             ));
         };
-        parameters.push((parameter.symbol, parameter.name.clone(), Shape::Scalar(kind)));
+        parameters.push((
+            parameter.symbol,
+            parameter.name.clone(),
+            Shape::Scalar(kind),
+        ));
     }
     if !symbol(tokens.get(close + 1), Symbol::Arrow) {
         return Err(bad("task functions require an explicit result type"));
@@ -1501,18 +1505,14 @@ impl<'a> Builder<'a> {
         for (symbol, name, shape) in &signature.parameters {
             let kind = match shape {
                 Shape::Scalar(scalar) => {
-                    builder
-                        .parameters
-                        .push((symbol.0 as usize, scalar.core()));
+                    builder.parameters.push((symbol.0 as usize, scalar.core()));
                     ValueType::Scalar(*scalar)
                 }
                 Shape::Record(ty) => {
                     let leaves = builder.fresh_leaves(ty, span)?;
-                    builder.parameters.extend(
-                        leaves
-                            .iter()
-                            .map(|leaf| (leaf.slot, leaf.kind.core())),
-                    );
+                    builder
+                        .parameters
+                        .extend(leaves.iter().map(|leaf| (leaf.slot, leaf.kind.core())));
                     ValueType::Record(RecordValue {
                         ty: ty.clone(),
                         leaves,
@@ -1881,10 +1881,9 @@ impl<'a> Builder<'a> {
                 ));
             }
             return Ok(match target {
-                PathTarget::Leaf(leaf) => (
-                    SymbolId(leaf.slot as u32),
-                    ValueType::Scalar(leaf.kind),
-                ),
+                PathTarget::Leaf(leaf) => {
+                    (SymbolId(leaf.slot as u32), ValueType::Scalar(leaf.kind))
+                }
                 PathTarget::Record { ty, leaves } => (
                     found,
                     ValueType::Record(RecordValue {
@@ -2174,13 +2173,14 @@ impl<'a> Builder<'a> {
             && self.records.contains_key(ty)
         {
             let ty = ty.to_owned();
-            return Ok(Some(ValueType::Record(self.construct_record(rhs, span, &ty)?)));
+            return Ok(Some(ValueType::Record(
+                self.construct_record(rhs, span, &ty)?,
+            )));
         }
         let Some((root, path, after)) = records::token_path(rhs, 0) else {
             return Ok(None);
         };
-        if after != rhs.len()
-            || !matches!(self.lookup(&root, span), Ok((_, ValueType::Record(_))))
+        if after != rhs.len() || !matches!(self.lookup(&root, span), Ok((_, ValueType::Record(_))))
         {
             return Ok(None);
         }
@@ -2215,7 +2215,10 @@ impl<'a> Builder<'a> {
         let spelled = format!("{root}.{}", path.join("."));
         let (_, _, target) = self.resolve_path(&root, &path, span)?;
         let PathTarget::Leaf(leaf) = target else {
-            return Err(self.bad(span, format!("`{spelled}` is a sub-record, not an owned field")));
+            return Err(self.bad(
+                span,
+                format!("`{spelled}` is a sub-record, not an owned field"),
+            ));
         };
         let Scalar::OwnedBuffer(payload) = leaf.kind else {
             return Err(self.bad(
@@ -2539,7 +2542,9 @@ impl<'a> Builder<'a> {
     ) -> Result<ValueType, SourceDiagnostic> {
         match value {
             Shape::Scalar(scalar) => Ok(ValueType::Scalar(scalar)),
-            Shape::Record(ty) => Ok(ValueType::Record(self.unpack_record(&ty, value_slot, span)?)),
+            Shape::Record(ty) => Ok(ValueType::Record(
+                self.unpack_record(&ty, value_slot, span)?,
+            )),
         }
     }
 
@@ -2814,7 +2819,9 @@ impl<'a> Builder<'a> {
     /// `W48-QR-TASK-RECORD-CAPTURES`).
     fn mark_moved(&mut self, moved: &[String]) {
         for name in moved {
-            if let Ok((_, ValueType::Record(mut record))) = self.lookup(name, Span { start: 0, end: 0 }) {
+            if let Ok((_, ValueType::Record(mut record))) =
+                self.lookup(name, Span { start: 0, end: 0 })
+            {
                 record.state = RecordState::Moved;
                 self.rebind(name, ValueType::Record(record));
             }
@@ -3259,7 +3266,9 @@ impl<'a> Builder<'a> {
                     }
                     Ok(slot.map(|_| kind))
                 } else {
-                    if slot.is_none() && (value != Shape::Scalar(Scalar::Unit) || !errors.is_empty()) {
+                    if slot.is_none()
+                        && (value != Shape::Scalar(Scalar::Unit) || !errors.is_empty())
+                    {
                         return Err(self.bad(span, "discarded join result must be infallible unit"));
                     }
                     self.instruction(
@@ -3544,10 +3553,9 @@ impl<'a> Builder<'a> {
                     let (root, path, after) =
                         records::token_path(&tokens, 0).expect("the guard read it");
                     if tokens.len() < after + 3 || !symbol(tokens.last(), Symbol::Semicolon) {
-                        return Err(self.bad(
-                            statement.span,
-                            "a field write is `RECORD.FIELD = VALUE;`",
-                        ));
+                        return Err(
+                            self.bad(statement.span, "a field write is `RECORD.FIELD = VALUE;`")
+                        );
                     }
                     let value = tokens[after + 1..tokens.len() - 1].to_vec();
                     self.field_write(&root, &path, &value, statement.span)?;

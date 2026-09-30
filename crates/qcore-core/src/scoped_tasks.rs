@@ -1144,18 +1144,17 @@ impl ScopedTaskLedger {
             // Card `W48-QR-TASK-RECORD-CAPTURES`: a record names each owned
             // leaf's identity, in order, and a record leaf is a value — never a
             // nested record, an error or unit.
-            if let TaskOutcome::Record(leaves) = &outcome {
-                if leaves.iter().any(|leaf| {
+            if let TaskOutcome::Record(leaves) = &outcome
+                && (leaves.iter().any(|leaf| {
                     !matches!(
                         leaf,
                         TaskOutcome::I32(_)
                             | TaskOutcome::Fixed { .. }
                             | TaskOutcome::OwnedBuffer(_)
                     )
-                }) || resources != outcome.owned_identities().as_slice()
-                {
-                    return Err(TaskLedgerError::CompletionResourceMismatch);
-                }
+                }) || resources != outcome.owned_identities().as_slice())
+            {
+                return Err(TaskLedgerError::CompletionResourceMismatch);
             }
             let returned = unique(resources)?;
             let owned = ledger

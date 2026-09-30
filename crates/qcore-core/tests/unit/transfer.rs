@@ -729,8 +729,7 @@ fn the_aggregate_judgment_is_the_conjunction_of_its_leaves() {
             .iter()
             .all(|leaf| admits(*leaf, leaf_mode(*leaf, TransferMode::Move)).is_ok());
         let some_leaf_moves = leaves.iter().any(|leaf| {
-            admits(*leaf, leaf_mode(*leaf, TransferMode::Move))
-                == Ok(AdmittedTransfer::MoveCustody)
+            admits(*leaf, leaf_mode(*leaf, TransferMode::Move)) == Ok(AdmittedTransfer::MoveCustody)
         });
         assert_eq!(
             moved.is_ok(),

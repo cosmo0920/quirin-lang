@@ -941,6 +941,80 @@ contracts and task-bearing workers reject in every definition; the one
 expression form admitted, by the same card, is §G02t's value statement — one
 operation per `let`, with `ArithmeticError` raised through the ordinary error
 exit. Entry-free task modules are not admitted yet.
+
+**Records across tasks** (card `W48-QR-TASK-RECORD-CAPTURES`; §G07.13, §G02b,
+§G02j). A task module may declare record types and use them in every task
+function — construct, read, write, pass to a worker, return from one:
+
+```ebnf
+field     = NAME, ":", ( SCALAR | owned | RECORD ) ;   (* §G07.13's declaration *)
+owned     = "own", "<", "Buffer", [ "<", SCALAR, ">" ], ">" ;
+param     = NAME, ":", RECORD                  (* a record of scalars *)
+          | NAME, ":", RECORD, "use", "one" ;  (* a record that owns a Buffer *)
+result    = RECORD ;
+capture   = ( "copy" | "move" ), NAME, [ path ]           (* a record or a sub-record *)
+          | ( "copy" | "move" ), NAME, path               (* one scalar or owned field *)
+          | "read", NAME, path, "share", SHARE
+          | "lend", NAME, path, LOW, "..", HIGH ;
+stmt      = "let", NAME, "=", RECORD, "{", assign, { ",", assign }, [ "," ], "}", ";"
+          | "let", NAME, "=", NAME, [ path ], ";"      (* a field read, or a copy *)
+          | NAME, path, "=", VALUE, ";"                 (* a field write, or a refill *)
+          | "drop", NAME, [ path ], ";"
+          | "return", [ "move" ], NAME, ";" ;           (* a record result *)
+task_effect = … | "mut" ;                             (* in a module declaring a record *)
+```
+
+* **A record is its leaves.** A record binding is one task slot per scalar or
+  owned-`Buffer<T>` leaf, depth-first in declaration order (card
+  `W48-QR-USABLE-RECORDS`' leaf order); a record parameter is one worker
+  parameter per leaf; a record capture is its leaves' captures. So every
+  custody question about a record is the unedited checker's question about an
+  owned leaf. A `bytes` field is `source.buffer.v1`'s byte buffer, which crosses
+  no spawn here (`Q500`, `WRITE-LEND-TASKS-EXTENT`); a record type in a composed
+  epoch module refuses (`Q500`, `W48-QR-TASK-RECORD-EPOCH`).
+* **Crossing a spawn.** The transferability judgment's aggregate kind decides a
+  whole-record capture from its leaves: a record of scalars crosses by `copy`
+  (duplicated), a record that owns by `move` (custody of every owned leaf
+  transferred, its scalars duplicated); `move` of a record of scalars, `copy`
+  of one that owns (naming the owned leaf and the contract it lacks), `write`
+  (by name, before any leaf is asked) and every sharing mode (a record shares
+  no protocol whole) refuse at `Q600`, as does a record into a parameter of
+  another record type (types are nominal). A successful creation moves a
+  record whole: on that path it is used no more (`Q600`); a failed creation
+  restores it exactly. A record moved into another record at construction is
+  used no more either.
+* **Field captures** are the existing captures of one leaf: `copy r.f` of a
+  scalar field, `move r.buf` of an owned one (leaving a **hole**, used before a
+  refill at `Q600` by the checker on that path), `read r.buf share N` and
+  `lend r.buf LOW..HIGH` with the loan and lease rules over that leaf. The
+  one-leased-resource-at-a-time bound is **per resource** since this card: two
+  fields — two resources — may be leased to two workers at once; two leases of
+  one field still may not share a byte, and a read share and a write lease
+  still do not mix. A sub-record of scalars crosses by `copy`; a sub-record that
+  owns crosses field by field (`W48-QR-NESTED-OWNED-SUBRECORD-MOVE`).
+* **Results.** `return r;` returns a record of scalars and `return move r;` one
+  that owns; `join` collects it whole and it is unpacked into fresh leaf slots
+  where it is taken (`?` or the `Ok` arm). The entry's result stays `i32`/`unit`.
+* **Operations in any task function**: construction (every field once; a scalar
+  field a literal of its type or a name of exactly its type, an owned field a
+  Buffer of its payload type moved in, a record field a record of its type
+  copied or moved in), a field read (a scalar copied, an owned field moved out),
+  `let q = r;` (a record of scalars; one that owns has no whole-move spelling,
+  `W48-QR-RECORD-WHOLE-MOVE`), a field write (a fresh value of exactly the
+  field's type; at an owned field the **refill**, admitted exactly into a hole,
+  `OverwriteOfLiveField` otherwise) which derives `mut` — admitted in the row of
+  a module that declares a record, and required (`Q300`) —, `drop r.buf;`, and
+  `drop r;` of every owned leaf (a hole refuses), `qcore_buffer_read(r.buf)` and
+  `qcore_buffer_write(r.buf, v)`. A record left in different states by two arms
+  of a `match` that both continue is unsettled and used no more
+  (`W48-QR-TASK-RECORD-ARM-MERGE`).
+* **Emission.** A record result travels in the task result's `leaves` array
+  (installed only in a module that returns a record); its trace is
+  `QCORE_TASK_RESULT TASK RECORD N` followed by one result line per leaf. The
+  F02 observable alphabet has no record outcome, so such a run is refused by
+  the reference encoding rather than flattened (`W48-QR-TASK-RECORD-F02`).
+  See [the card's report](reports/w48-qr-task-record-captures/README.md).
+
 The native driver supports Linux C11 threads, macOS through an emitted pthread
 adapter, and Windows through an emitted winpthreads-derived C11 thread subset;
 it explicitly rejects other targets. Its start record survives until successful native join; failed
@@ -989,6 +1063,15 @@ failed creation restores them, without altering prior siblings. A later join
 returns custody through a fresh Result/value binding; it never revives the
 original moved binding. Reading does not consume ownership; `drop name;` and
 `return move name;` consume it. Repeated reads require the same live owner.
+
+Card `W48-QR-TASK-RECORD-CAPTURES`: an owned Buffer may also be a **field** of a
+record (§G02a, "Records across tasks"). A record that owns is a parameter
+spelled `NAME: RECORD use one` and crosses by `move` — each owned leaf an owned
+capture of this section, reserved, committed or rolled back with the others in
+one creation — and a worker hands it back with `return move NAME;`, `join`
+returning custody of every owned leaf at once. Duplicate owned captures, a
+moved field used before a refill, and a record moved while one of its leaves
+is lent or leased refuse by this section's rules, per leaf.
 
 `qcore_buffer_new(I32_OPERAND)` requires `alloc` in the root or a leaf worker. It must either
 be propagated with `?` under `throws<AllocError>`, or directly matched using the
@@ -2518,8 +2601,16 @@ model bound to an `i32` — since card `W48-QR-SCALAR-TYPES-R4`, to a value of
 any §G02t type, rendered at its type (§G02t; `bool` has no `hex`, `Q050`):
 
 ```ebnf
-OPERAND     = [ "-" ], INTEGER | NAME ;   (* no `borrow NAME` on this route *)
+OPERAND     = [ "-" ], INTEGER | NAME     (* no `borrow NAME` on this route *)
+            | NAME, path ;                (* a scalar field of a record, W48-QR-TASK-RECORD-CAPTURES *)
 ```
+
+Card `W48-QR-TASK-RECORD-CAPTURES` adds the field operand: `print dec r.f;` or
+`log LEVEL dec r.f;` renders a **scalar** field of a record the function holds
+at the field's type, in the parent or in a worker, read out of the field's
+leaf slot; a sub-record, an owned field and a whole record refuse (`Q050`).
+The operand is read by this route alone, so every other route's §G02g grammar
+is unchanged.
 
 Unlike §G02g's own `let`-bound literals and §G02i's declared outcomes, the number
 is **computed by the task model** at the rendering's own step — the value a
@@ -3769,6 +3860,11 @@ OPERAND = [ "-" ], INTEGER | NAME                  (* `source.buffer.v1`'s own *
   whole sub-record write and a whole read of a sub-record that owns refuse by
   name (`Q051`). A record of scalars crosses `.qr` calls on
   `source.scalar-calls.v1` (§G02s); this route stays entry-only.
+* **Card `W48-QR-TASK-RECORD-CAPTURES`: the scoped-task route.** A task module
+  declares records whose owned fields are `own<Buffer<T>>` — the task route's
+  own resource — and a record crosses a spawn and a `join` as its leaves
+  (§G02a, "Records across tasks"). `AGGREGATE-TASK-CAPTURE`'s by-name refusal is
+  lifted.
 * **Name resolution needed no new rule.** A field name sits before a `:` at a
   construction and after a `.` at a read, and both positions were already drained
   by `lexical_references`; the type name is an ordinary reference and resolves

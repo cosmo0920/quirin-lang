@@ -64,7 +64,8 @@ fn refused_with(source: &str, code: &str, needles: &[&str]) {
 }
 
 const HEAD: &str = "#import std.concurrency;\nconcurrency checked;\n";
-const IO_HEAD: &str = "#import std.concurrency;\n#import std.fmt;\n#import std.io;\nconcurrency checked;\n";
+const IO_HEAD: &str =
+    "#import std.concurrency;\n#import std.fmt;\n#import std.io;\nconcurrency checked;\n";
 const PAIR: &str = "type Pair { a: i32, buf: own<Buffer<u8>> }\n";
 const OWNER_ROW: &str = "effects { alloc, throws<AllocError>, spawn, join, may_block }";
 
@@ -138,7 +139,8 @@ fn a_moved_field_used_before_refill_is_refused() {
 
 const WIDE: &str = "type Wide { tag: i32, buf: own<Buffer> }\n";
 const FILL: &str = "fn fill(l: lend<Buffer>) -> unit {\n    let u = qcore_buffer_write(l, 0, 9);\n    return;\n}\n";
-const READER: &str = "fn reader(r: borrow<Buffer>) -> i32 {\n    let v = qcore_buffer_read(r);\n    return v;\n}\n";
+const READER: &str =
+    "fn reader(r: borrow<Buffer>) -> i32 {\n    let v = qcore_buffer_read(r);\n    return v;\n}\n";
 
 /// A parent holding `let w = Wide { tag: 1, buf: b };` that opens two
 /// creations, the second inside the first's `Ok` arm.
@@ -175,8 +177,14 @@ fn two_overlapping_lends_of_one_field_are_refused() {
 #[test]
 fn a_read_share_and_a_write_lease_of_one_leaf_are_refused() {
     let workers = format!("{READER}{FILL}");
-    let source = wide_program(&workers, "reader(read w.buf share 512)", "fill(lend w.buf 0..2)");
-    let found = codes(compile(&source.replace("join move h1;", "let r1 = join move h1?;")));
+    let source = wide_program(
+        &workers,
+        "reader(read w.buf share 512)",
+        "fill(lend w.buf 0..2)",
+    );
+    let found = codes(compile(
+        &source.replace("join move h1;", "let r1 = join move h1?;"),
+    ));
     assert!(
         found.iter().any(|(code, message)| code == "Q600"
             && (message.contains("does not mix outstanding read loans and write leases")
@@ -198,7 +206,11 @@ fn a_record_into_another_record_types_parameter_is_refused() {
     refused_with(
         &source,
         "Q600",
-        &["delivers a `P`", "receives a `Q`", "record types are nominal"],
+        &[
+            "delivers a `P`",
+            "receives a `Q`",
+            "record types are nominal",
+        ],
     );
 }
 
@@ -433,13 +445,14 @@ fn a_record_capture_is_its_leaves_captures() {
         [ScalarOperand::Slot(_), ScalarOperand::Move(_)]
     ));
     // The collected record is unpacked into two leaf slots.
-    assert!(main.blocks.values().any(|block| block
-        .instructions
-        .iter()
-        .any(|instruction| matches!(
-            &instruction.kind,
-            TaskInstructionKind::UnpackRecord { leaves, .. } if leaves.len() == 2
-        ))));
+    assert!(
+        main.blocks.values().any(
+            |block| block.instructions.iter().any(|instruction| matches!(
+                &instruction.kind,
+                TaskInstructionKind::UnpackRecord { leaves, .. } if leaves.len() == 2
+            ))
+        )
+    );
 }
 
 /// Field captures are the existing captures of one leaf: a copy of a scalar
@@ -501,7 +514,9 @@ fn a_worker_constructs_reads_and_writes_its_own_records() {
     .unwrap();
     let rendered = qcore_core::task_execution::render_task_observation(&composed);
     assert!(
-        rendered.contains("QCORE_TASK_RESULT 1 RECORD 2\nQCORE_TASK_RESULT 1 I64 40\nQCORE_TASK_RESULT 1 U8 1\n"),
+        rendered.contains(
+            "QCORE_TASK_RESULT 1 RECORD 2\nQCORE_TASK_RESULT 1 I64 40\nQCORE_TASK_RESULT 1 U8 1\n"
+        ),
         "{rendered}"
     );
 }
@@ -559,7 +574,10 @@ const EXAMPLES: [(&str, &str); 3] = [
 
 fn example(name: &str, source: &str) -> CompiledModule {
     compile_files(
-        &[SourceFile::new(format!("examples/threads/{name}.qr"), source)],
+        &[SourceFile::new(
+            format!("examples/threads/{name}.qr"),
+            source,
+        )],
         &CompileOptions::default(),
     )
     .unwrap_or_else(|errors| panic!("{name} does not check: {errors:#?}"))

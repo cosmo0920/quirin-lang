@@ -131,9 +131,7 @@ pub(super) fn task_records(source: &SourceProgram) -> Result<Records, SourceDiag
                 ))
             })?;
             if !symbol(tokens.get(cursor + 1), Symbol::Colon) {
-                return Err(bad(format!(
-                    "`{name}.{field}` is declared without its `:`"
-                )));
+                return Err(bad(format!("`{name}.{field}` is declared without its `:`")));
             }
             let start = cursor + 2;
             let mut end = start;
@@ -193,9 +191,7 @@ pub(super) fn task_records(source: &SourceProgram) -> Result<Records, SourceDiag
                 },
             };
             if fields.iter().any(|(existing, _)| existing == field) {
-                return Err(bad(format!(
-                    "`{name}` declares the field `{field}` twice"
-                )));
+                return Err(bad(format!("`{name}` declares the field `{field}` twice")));
             }
             fields.push((field.to_owned(), kind));
             cursor = if end < close { end + 1 } else { end };
@@ -216,9 +212,8 @@ pub(super) fn task_records(source: &SourceProgram) -> Result<Records, SourceDiag
     for (key, (span, name, fields)) in shapes.into_iter().enumerate() {
         let mut leaves = Vec::new();
         let mut stack = vec![name.clone()];
-        flatten(&by_name, &fields, &mut Vec::new(), &mut stack, &mut leaves).map_err(
-            |message| declaration_refusal(span, SemanticPass::OrdinaryTypes, message),
-        )?;
+        flatten(&by_name, &fields, &mut Vec::new(), &mut stack, &mut leaves)
+            .map_err(|message| declaration_refusal(span, SemanticPass::OrdinaryTypes, message))?;
         records.insert(
             name.clone(),
             RecordType {
@@ -459,7 +454,10 @@ impl Builder<'_> {
                     return Err(failure(
                         span,
                         SemanticPass::OrdinaryTypes,
-                        format!("`{root}.{}` passes through a field that is not a record", path.join(".")),
+                        format!(
+                            "`{root}.{}` passes through a field that is not a record",
+                            path.join(".")
+                        ),
                     ));
                 }
             }
@@ -716,7 +714,10 @@ impl Builder<'_> {
             failure(
                 span,
                 SemanticPass::OrdinaryTypes,
-                format!("the field `{field}` takes a value of its type: {}", error.message),
+                format!(
+                    "the field `{field}` takes a value of its type: {}",
+                    error.message
+                ),
             )
         })?;
         if kind != scalar {
@@ -1116,9 +1117,7 @@ impl Builder<'_> {
             transfer_mode(&capture.mode),
             &parameter.to_owned(),
         );
-        let owns = kinds
-            .iter()
-            .any(|kind| *kind == qcore_core::transfer::TransferKind::OwnedBuffer);
+        let owns = kinds.contains(&qcore_core::transfer::TransferKind::OwnedBuffer);
         // The enumeration: a record of scalars under `copy`, a record that owns
         // under `move`, into a parameter of its own type.
         let enumerated = match (&capture.mode, owns, ty == parameter) {
