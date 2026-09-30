@@ -231,3 +231,56 @@ fn static_addresses_and_reads_carry_no_identity() {
         g("volatile char *subject(int i) { static volatile char ret[4][16]; return ret[i & 3]; }");
     assert!(!run.safe(), "{run:?}");
 }
+
+/// `CT41-VOLATILE-COMPLEMENT-UNMEASURED`: the three uses of `volatile` for its
+/// C11 purposes, each measured through route G and pinned as it answers.
+#[test]
+fn the_volatile_complement_shapes_answer_as_measured() {
+    if !clang_available() {
+        return;
+    }
+    // A memory-mapped device register: a store to and a poll of a fixed
+    // address. Refused (the fixed-address place is no place route G reads).
+    let run = g(
+        "void subject(void) { *(volatile unsigned *)0x40000000UL = 1u; \
+         while (*(volatile unsigned *)0x40000004UL & 1u) { } }",
+    );
+    assert!(run.unknown() && run.refused(DESTINATION), "{run:?}");
+    let run = g(
+        "void subject(void) { volatile unsigned *reg = (volatile unsigned *)0x40000000UL; \
+         *reg = 1u; while (*reg & 1u) { } }",
+    );
+    assert!(run.unknown(), "{run:?}");
+    // An object a signal handler writes: a spin-wait on it is custody-neutral
+    // and admitted; a release it decides is refused by rule 11h.
+    let flag = "typedef int sig_atomic_t; static volatile sig_atomic_t stop_flag; \
+        void on_signal(int s) { (void)s; stop_flag = 1; }";
+    let run = g(&format!(
+        "{flag} void subject(void) {{ void *p = q_alloc(); while (!stop_flag) {{ }} q_free(p); }}"
+    ));
+    assert!(run.safe(), "{run:?}");
+    let run = g(&format!(
+        "{flag} void subject(void) {{ void *p = q_alloc(); if (stop_flag) {{ q_free(p); return; }} \
+         q_free(p); }}"
+    ));
+    assert!(
+        run.refused_prefix("custody decision on a volatile read"),
+        "{run:?}"
+    );
+    // An object live across `setjmp`: refused (the volatile binding by rule
+    // 11h; `setjmp` itself is an uncontracted call in the condition).
+    let jump = "typedef long jmp_buf[8]; int setjmp(jmp_buf env); jmp_buf env;";
+    let run = g(&format!(
+        "{jump} void subject(void) {{ void * volatile p = q_alloc(); \
+         if (setjmp(env)) {{ q_free(p); return; }} q_free(p); }}"
+    ));
+    assert!(
+        run.refused_prefix("custody through the volatile object `p`"),
+        "{run:?}"
+    );
+    let run = g(&format!(
+        "{jump} void subject(void) {{ volatile int n = 0; if (setjmp(env)) {{ cg_sink(n); return; }} \
+         n = 1; }}"
+    ));
+    assert!(run.unknown(), "{run:?}");
+}
