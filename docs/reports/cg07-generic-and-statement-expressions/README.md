@@ -139,6 +139,13 @@ included); 1,338 of them on lines holding `({`.
 
 ### 3.2 AFTER (code `5220b1a9`, binary `e2dbc773…`)
 
+The tip's code differs from the measured code only by formatting, two elided
+lifetimes and one reordering: a discarded chain now locates every operand's
+span before lowering any (a decline never follows a partly parsed block). The
+reordering changes an outcome only where a span fails to locate, and the
+AFTER parity stream records no such decline, so the measured figures stand for
+the tip.
+
 | Route | BEFORE | AFTER | Moves |
 |---|---|---|---|
 | corpus | 608 / 10 / 4,216 | **608 / 10 / 4,216** (`8b9e4047…`) | **none**; 584 Unknown functions change leaves |

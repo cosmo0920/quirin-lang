@@ -351,24 +351,26 @@ impl Parser<'_> {
         let mut statements = Vec::new();
         match plan {
             Plan::Discarded(operands) => {
-                for operand in operands {
-                    match operand {
-                        Operand::Block(block) => {
-                            let (first, last) = self.block_span(&texts, &locate, block)?;
-                            statements.push(Statement::Block(
-                                self.inner_block(origin + first + 1, origin + last - 2)?,
-                            ));
-                        }
-                        Operand::Plain(node) => {
-                            let (first, last) = locate(node).ok_or(Decline::Span)?;
-                            if first < last {
-                                statements.push(self.expression_statement(
-                                    &tokens[first..last],
-                                    line,
-                                    None,
-                                ));
-                            }
-                        }
+                // Every span is located before anything is lowered, so a
+                // decline never follows a partly parsed block.
+                let mut spans = Vec::with_capacity(operands.len());
+                for operand in &operands {
+                    spans.push(match operand {
+                        Operand::Block(block) => (true, self.block_span(&texts, &locate, block)?),
+                        Operand::Plain(node) => (false, locate(node).ok_or(Decline::Span)?),
+                    });
+                }
+                for (block, (first, last)) in spans {
+                    if block {
+                        statements.push(Statement::Block(
+                            self.inner_block(origin + first + 1, origin + last - 2)?,
+                        ));
+                    } else if first < last {
+                        statements.push(self.expression_statement(
+                            &tokens[first..last],
+                            line,
+                            None,
+                        ));
                     }
                 }
             }
