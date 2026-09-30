@@ -306,4 +306,25 @@ base (a hand edit). It is now 662, the list length.
 ## 8. Gate
 
 See [gate.json](gate.json) and [gate/](gate/). The commands are those of
-[scripts/gate.sh](scripts/gate.sh), with logs in `private/cg14/gate`.
+[scripts/gate.sh](scripts/gate.sh), run at tip `8fddb6ed`, with logs in
+`private/cg14/gate`.
+
+| Step | Exit | Count |
+|---|---:|---|
+| submodule update (`--init --recursive`) | 0 | |
+| `run_test_binaries.py` | 0 | 401 units, 414 summaries, 7,046 passed, 0 failed, 11 ignored (`private/test-binaries/20260930T180015Z-1529007`) |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 256 audits (255 + `AuditAggregateValue.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then **0** after `build_matrix.py . --gate gate.json` (`09a` 0, `09b`) | 365 |
+| `build_docs_index.py` | 0 (`10`, `10b`) | |
+| `cargo clean --profile dev` | 0 | |
+
+- **The first Python run** failed on one test: the derived Lean audit count
+  moved from 255 to 256. That is expected, and the matrix regeneration
+  repairs it.
+- **Provider gate.** Not due, because `providers/` is unchanged; the 129
+  provider tests are carried.
+- **Host.** `target/release` was deleted after the measurements were
+  archived.
