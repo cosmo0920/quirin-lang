@@ -1,0 +1,20 @@
+native_library manifest v2;
+# Generated on every build from the artifact's bytes and the build's inputs; never edited by hand.
+library libm;
+version 2.43;
+linkage dynamic;
+format elf;
+target x86_64-pc-linux-gnu;
+artifact /usr/lib/x86_64-linux-gnu/libm.so;
+hash sha256:0789aa234121bb6b77f060e40577027323ae1e7531a430fe208d29e57a697e4a;
+input /usr/lib/x86_64-linux-gnu/libm.so.6 sha256:1c488db6f4fe8cecb72456bc018de000b7a9b539c2994864b0416b5e8371b3d8;
+input /usr/lib/x86_64-linux-gnu/libmvec.so.1 sha256:2f2e7f4ad88e1b13f2f8345c826b25f85ba61c93527d91e59dd0d2943eac6e80 as_needed;
+runtime soname libm.so.6 in /usr/lib/x86_64-linux-gnu/libm.so.6;
+runtime soname libmvec.so.1 in /usr/lib/x86_64-linux-gnu/libmvec.so.1;
+data_model lp64;
+unwinding abort;
+allocator_custody closed;
+thread_posture single_caller;
+contract fn floor(double) -> double from libm.qv export floor version GLIBC_2.2.5 weak ifunc in /usr/lib/x86_64-linux-gnu/libm.so.6;
+contract fn ilogb(double) -> int32_t from libm.qv export ilogb version GLIBC_2.2.5 weak in /usr/lib/x86_64-linux-gnu/libm.so.6;
+contract fn sqrt(double) -> double from libm.qv export sqrt version GLIBC_2.2.5 weak in /usr/lib/x86_64-linux-gnu/libm.so.6;

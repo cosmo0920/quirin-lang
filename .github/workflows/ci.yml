@@ -147,6 +147,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cargo test -p qcorec --test cli
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          # Card W48-QRLIB-LINKAGE: every platform's symbol reader from bytes,
+          # an MSVC static .lib and one ntdll.dll function through the SDK's
+          # ntdll.lib, each linked through its generated .qrlib with cl.exe.
+          cargo test -p qcore-c-gateway --lib linkage::
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cargo test -p qcore-compiler --test qrlib_linkage -- --nocapture
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           foreach ($filter in @('clang::tests::', 'frontend::tests::', 'driver::tests::', 'c_emit::tests::', 'native_concurrency::tests::')) {
             cargo test --workspace --lib $filter
             if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

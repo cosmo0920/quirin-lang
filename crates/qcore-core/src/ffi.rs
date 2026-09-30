@@ -31,6 +31,16 @@
 //! function the entry calls, and [`certificate_carries_ffi_assumption`] is the
 //! publication tripwire the driver runs before publishing.
 //!
+//! # Linkage
+//!
+//! Card `W48-QRLIB-LINKAGE`: every called C function carries an [`FfiLink`] —
+//! the exported symbol, the artifact (or link-time stub) and its sha256, the
+//! runtime premise of a dynamic link — resolved by the driver from the
+//! generated `.qrlib` the file binds. A called function without one refuses
+//! (`Q066`), [`certificate_carries_linkage`] is the publication tripwire
+//! (`Q067`), and the premise stacks beside the unsafe-FFI assumption, never in
+//! place of it: it says which code is linked, not that the code is safe.
+//!
 //! # Unlisted fields are opaque
 //!
 //! A member the `fields { … }` list does not name is **opaque bytes**: no

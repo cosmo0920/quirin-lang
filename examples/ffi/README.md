@@ -54,8 +54,25 @@ produce exits 70 before the line that would have published it.
 
 The contract selection is a builder-side input, so this program is checked and
 emitted through the library API with `examples/ffi/contracts/qr_header.qv`
-selected and the recorded target of the Clang that builds it; the emitted C is
-compiled with `-I examples/ffi` and linked with `qr_header.c`.
+selected and the recorded target of the Clang that builds it. The C it calls
+is linked from a pinned artifact (card `W48-QRLIB-LINKAGE`): the build compiles
+`qr_header.c` into a static library, **generates** `qr_header.qrlib` from that
+archive's own symbol table and the contract module, and the program binds it
+with `extern library qr_header;`. The emitted C is compiled with
+`-I examples/ffi` and linked with exactly the archive the manifest pins, after
+its sha256 is checked again. From the command line:
+
+```sh
+quirin qrlib generate --library qr_header --version 0.1.0 --linkage static \
+    --artifact libqr_header.a --header qr_header.h --contracts contracts/qr_header.qv \
+    --recorded-target host.target --unwinding abort --allocator-custody closed \
+    --thread-posture single_caller -o qr_header.qrlib
+quirin build --recorded-target host.target --contracts contracts/qr_header.qv \
+    --native-library qr_header.qrlib -o header_sum header_sum.qr
+```
+
+run from `examples/ffi` after building `libqr_header.a`; `quirin build`
+regenerates the manifest and refuses a stale one.
 `compiler/tests/ffi_struct_import.rs` does exactly that, at `-O0` and `-O2`
 under `-fsanitize=undefined,integer` and at plain `-O2`, all
 `-Wall -Wextra -Werror -pedantic`, and compares both streams with the reference
