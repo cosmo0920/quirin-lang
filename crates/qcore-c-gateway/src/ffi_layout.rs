@@ -89,11 +89,16 @@ fn clang(directory: &Path, flags: &[&str], source: &str) -> Result<String, Layou
     let mut child = command
         .spawn()
         .map_err(|error| refuse(format!("the recorded compiler could not be run: {error}")))?;
-    let mut stdin = child.stdin.take().ok_or_else(|| refuse("Clang stdin unavailable"))?;
+    let mut stdin = child
+        .stdin
+        .take()
+        .ok_or_else(|| refuse("Clang stdin unavailable"))?;
     let output = std::thread::scope(|scope| {
         let writer = scope.spawn(move || stdin.write_all(source.as_bytes()));
         let output = child.wait_with_output();
-        let written = writer.join().map_err(|_| refuse("Clang input writer panicked"))?;
+        let written = writer
+            .join()
+            .map_err(|_| refuse("Clang input writer panicked"))?;
         written.map_err(|error| refuse(format!("Clang input failed: {error}")))?;
         output.map_err(|error| refuse(format!("Clang failed: {error}")))
     })?;
@@ -103,7 +108,8 @@ fn clang(directory: &Path, flags: &[&str], source: &str) -> Result<String, Layou
             String::from_utf8_lossy(&output.stderr).trim()
         )));
     }
-    String::from_utf8(output.stdout).map_err(|error| refuse(format!("Clang output is not text: {error}")))
+    String::from_utf8(output.stdout)
+        .map_err(|error| refuse(format!("Clang output is not text: {error}")))
 }
 
 /// The canonical spelling of a typed-AST node's type.
@@ -122,12 +128,17 @@ fn kind(node: &Value) -> &str {
 }
 
 fn inner(node: &Value) -> &[Value] {
-    node.get("inner").and_then(Value::as_array).map_or(&[], Vec::as_slice)
+    node.get("inner")
+        .and_then(Value::as_array)
+        .map_or(&[], Vec::as_slice)
 }
 
 /// Direct members of `struct TAG` from Clang's record-layout dump:
 /// `(name, offset)` in order, and `(size, align)`.
-fn parse_layout(dump: &str, tag: &str) -> Result<(Vec<(String, u64)>, u64, u64), LayoutReadRefusal> {
+fn parse_layout(
+    dump: &str,
+    tag: &str,
+) -> Result<(Vec<(String, u64)>, u64, u64), LayoutReadRefusal> {
     let header = format!("struct {tag}");
     let mut found = None;
     for section in dump.split("*** Dumping AST Record Layout").skip(1) {
@@ -139,7 +150,9 @@ fn parse_layout(dump: &str, tag: &str) -> Result<(Vec<(String, u64)>, u64, u64),
             continue;
         }
         if found.is_some() {
-            return Err(refuse(format!("the recorded compiler dumps two layouts of `{header}`")));
+            return Err(refuse(format!(
+                "the recorded compiler dumps two layouts of `{header}`"
+            )));
         }
         let mut members = Vec::new();
         let mut size_align = None;
@@ -179,7 +192,11 @@ fn parse_layout(dump: &str, tag: &str) -> Result<(Vec<(String, u64)>, u64, u64),
             size_align.ok_or_else(|| refuse(format!("the layout of `{header}` states no size")))?;
         found = Some((members, size, align));
     }
-    found.ok_or_else(|| refuse(format!("the recorded compiler lays out no complete `{header}`")))
+    found.ok_or_else(|| {
+        refuse(format!(
+            "the recorded compiler lays out no complete `{header}`"
+        ))
+    })
 }
 
 /// The running Clang's `(first --version line, -dumpmachine)`: what a builder
@@ -192,7 +209,13 @@ fn parse_layout(dump: &str, tag: &str) -> Result<(Vec<(String, u64)>, u64, u64),
 pub fn running_compiler() -> Result<(String, String), String> {
     let identity = crate::clang::ClangIdentity::capture()?;
     Ok((
-        identity.version().lines().next().unwrap_or("").trim().to_owned(),
+        identity
+            .version()
+            .lines()
+            .next()
+            .unwrap_or("")
+            .trim()
+            .to_owned(),
         identity.target().to_owned(),
     ))
 }
@@ -203,7 +226,9 @@ pub fn running_compiler() -> Result<(String, String), String> {
 ///
 /// A [`LayoutReadRefusal`] for every header, compile context or struct shape
 /// this reader cannot state.
-pub fn read_struct_layout(request: &StructLayoutRequest<'_>) -> Result<CStructFacts, LayoutReadRefusal> {
+pub fn read_struct_layout(
+    request: &StructLayoutRequest<'_>,
+) -> Result<CStructFacts, LayoutReadRefusal> {
     let tag = request.tag;
     let header = request.source_directory.join(request.header);
     let bytes = std::fs::read(&header).map_err(|error| {
@@ -213,9 +238,12 @@ pub fn read_struct_layout(request: &StructLayoutRequest<'_>) -> Result<CStructFa
             header.display()
         ))
     })?;
-    let header_path = header
-        .canonicalize()
-        .map_err(|error| refuse(format!("the header `{}` does not resolve: {error}", request.header)))?;
+    let header_path = header.canonicalize().map_err(|error| {
+        refuse(format!(
+            "the header `{}` does not resolve: {error}",
+            request.header
+        ))
+    })?;
     let directory = header_path
         .parent()
         .ok_or_else(|| refuse("the header has no directory"))?
@@ -230,7 +258,9 @@ pub fn read_struct_layout(request: &StructLayoutRequest<'_>) -> Result<CStructFa
     let identity = crate::clang::ClangIdentity::capture()
         .map_err(|error| refuse(format!("the recorded compiler is unavailable: {error}")))?;
     let running = identity.version().lines().next().unwrap_or("").trim();
-    if running != request.recorded_compiler.trim() || identity.target() != request.recorded_triple.trim() {
+    if running != request.recorded_compiler.trim()
+        || identity.target() != request.recorded_triple.trim()
+    {
         return Err(refuse(format!(
             "the running compiler is `{running}` for `{}`, not the recorded `{}` for `{}`; a layout is read only by the recorded compiler",
             identity.target(),
@@ -238,18 +268,38 @@ pub fn read_struct_layout(request: &StructLayoutRequest<'_>) -> Result<CStructFa
             request.recorded_triple
         )));
     }
-    let mut probe = String::from("#include <stdbool.h>\n#include <stddef.h>\n#include <stdint.h>\n");
+    let mut probe =
+        String::from("#include <stdbool.h>\n#include <stddef.h>\n#include <stdint.h>\n");
     probe.push_str(&format!("#include \"{path_text}\"\n"));
     for ty in st::ALL {
-        probe.push_str(&format!("extern {} {};\n", st::c_type(ty), probe_name(tag, ty)));
+        probe.push_str(&format!(
+            "extern {} {};\n",
+            st::c_type(ty),
+            probe_name(tag, ty)
+        ));
     }
-    let include = directory.to_str().ok_or_else(|| refuse("the header directory is not UTF-8"))?;
+    let include = directory
+        .to_str()
+        .ok_or_else(|| refuse("the header directory is not UTF-8"))?;
     let ast = clang(
         &directory,
-        &["-I", include, "-Xclang", "-ast-dump=json", "-Xclang", "-ast-dump-filter", "-Xclang", tag],
+        &[
+            "-I",
+            include,
+            "-Xclang",
+            "-ast-dump=json",
+            "-Xclang",
+            "-ast-dump-filter",
+            "-Xclang",
+            tag,
+        ],
         &probe,
     )?;
-    let dump = clang(&directory, &["-I", include, "-Xclang", "-fdump-record-layouts-complete"], &probe)?;
+    let dump = clang(
+        &directory,
+        &["-I", include, "-Xclang", "-fdump-record-layouts-complete"],
+        &probe,
+    )?;
     let mut nodes = Vec::new();
     let mut stream = serde_json::Deserializer::from_str(&ast).into_iter::<Value>();
     for node in &mut stream {
@@ -261,15 +311,23 @@ pub fn read_struct_layout(request: &StructLayoutRequest<'_>) -> Result<CStructFa
         let name = probe_name(tag, ty);
         let node = nodes
             .iter()
-            .find(|node| kind(node) == "VarDecl" && node.get("name").and_then(Value::as_str) == Some(&name))
-            .ok_or_else(|| refuse(format!("the probe for `{ty}` is missing from the typed AST")))?;
+            .find(|node| {
+                kind(node) == "VarDecl" && node.get("name").and_then(Value::as_str) == Some(&name)
+            })
+            .ok_or_else(|| {
+                refuse(format!(
+                    "the probe for `{ty}` is missing from the typed AST"
+                ))
+            })?;
         let (_, canonical_type) =
             canonical(node).ok_or_else(|| refuse(format!("the probe for `{ty}` has no type")))?;
         spellings.push((ty, canonical_type));
     }
     let records: Vec<&Value> = nodes
         .iter()
-        .filter(|node| kind(node) == "RecordDecl" && node.get("name").and_then(Value::as_str) == Some(tag))
+        .filter(|node| {
+            kind(node) == "RecordDecl" && node.get("name").and_then(Value::as_str) == Some(tag)
+        })
         .collect();
     let Some(record) = records
         .iter()
@@ -281,28 +339,39 @@ pub fn read_struct_layout(request: &StructLayoutRequest<'_>) -> Result<CStructFa
         )));
     };
     if record.get("tagUsed").and_then(Value::as_str) != Some("struct") {
-        return Err(refuse(format!("`{tag}` is a union, not a struct: a union has no field-by-field layout to import")));
+        return Err(refuse(format!(
+            "`{tag}` is a union, not a struct: a union has no field-by-field layout to import"
+        )));
     }
     let mut members = Vec::new();
     for node in inner(record) {
         match kind(node) {
             "FieldDecl" => {
                 let Some(name) = node.get("name").and_then(Value::as_str) else {
-                    return Err(refuse(format!("`struct {tag}` has an anonymous member, which this reader does not state")));
+                    return Err(refuse(format!(
+                        "`struct {tag}` has an anonymous member, which this reader does not state"
+                    )));
                 };
                 if node.get("isBitfield").and_then(Value::as_bool) == Some(true) {
-                    return Err(refuse(format!("`struct {tag}` has a bit-field `{name}`, whose storage this reader does not state")));
+                    return Err(refuse(format!(
+                        "`struct {tag}` has a bit-field `{name}`, whose storage this reader does not state"
+                    )));
                 }
-                if let Some(attribute) = inner(node).iter().find(|node| kind(node).ends_with("Attr")) {
+                if let Some(attribute) =
+                    inner(node).iter().find(|node| kind(node).ends_with("Attr"))
+                {
                     return Err(refuse(format!(
                         "member `{name}` of `struct {tag}` carries `{}`, an attribute this reader does not state",
                         kind(attribute)
                     )));
                 }
-                let (written, canonical_type) = canonical(node)
-                    .ok_or_else(|| refuse(format!("member `{name}` of `struct {tag}` has no type")))?;
+                let (written, canonical_type) = canonical(node).ok_or_else(|| {
+                    refuse(format!("member `{name}` of `struct {tag}` has no type"))
+                })?;
                 if canonical_type.ends_with("[]") {
-                    return Err(refuse(format!("`struct {tag}` has a flexible array member `{name}`, whose extent is not part of the layout")));
+                    return Err(refuse(format!(
+                        "`struct {tag}` has a flexible array member `{name}`, whose extent is not part of the layout"
+                    )));
                 }
                 let scalars = spellings
                     .iter()
@@ -314,19 +383,28 @@ pub fn read_struct_layout(request: &StructLayoutRequest<'_>) -> Result<CStructFa
             // A nested type definition is a type, not a member.
             "RecordDecl" | "EnumDecl" => {}
             "IndirectFieldDecl" => {
-                return Err(refuse(format!("`struct {tag}` has an anonymous member, which this reader does not state")));
+                return Err(refuse(format!(
+                    "`struct {tag}` has an anonymous member, which this reader does not state"
+                )));
             }
             other if other.ends_with("Attr") => {
-                return Err(refuse(format!("`struct {tag}` carries `{other}`, an attribute this reader does not state")));
+                return Err(refuse(format!(
+                    "`struct {tag}` carries `{other}`, an attribute this reader does not state"
+                )));
             }
             other => {
-                return Err(refuse(format!("`struct {tag}` contains `{other}`, which this reader does not state")));
+                return Err(refuse(format!(
+                    "`struct {tag}` contains `{other}`, which this reader does not state"
+                )));
             }
         }
     }
     let (layout, size, align) = parse_layout(&dump, tag)?;
     if layout.len() != members.len()
-        || layout.iter().zip(&members).any(|((laid, _), (member, ..))| laid != member)
+        || layout
+            .iter()
+            .zip(&members)
+            .any(|((laid, _), (member, ..))| laid != member)
     {
         return Err(refuse(format!(
             "the typed AST and the record layout of `struct {tag}` name different members"
@@ -335,13 +413,15 @@ pub fn read_struct_layout(request: &StructLayoutRequest<'_>) -> Result<CStructFa
     let fields = members
         .into_iter()
         .zip(layout)
-        .map(|((name, written_type, canonical_type, scalars), (_, offset))| CFieldFact {
-            name,
-            offset,
-            written_type,
-            canonical_type,
-            scalars,
-        })
+        .map(
+            |((name, written_type, canonical_type, scalars), (_, offset))| CFieldFact {
+                name,
+                offset,
+                written_type,
+                canonical_type,
+                scalars,
+            },
+        )
         .collect();
     Ok(CStructFacts {
         tag: tag.to_owned(),

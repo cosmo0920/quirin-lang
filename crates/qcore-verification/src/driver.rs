@@ -1522,7 +1522,9 @@ fn compile_files_with_registry_inner(
     // declaration of its module itself, against the imported struct names and
     // its selected contracts (a `ptr<const, Header>` is its vocabulary), so the
     // §C04.1 read below is not a second, narrower reader of the same text.
-    if mode != SourceModuleMode::Contract && module.execution_profile != SourceExecutionProfile::FfiV1 {
+    if mode != SourceModuleMode::Contract
+        && module.execution_profile != SourceExecutionProfile::FfiV1
+    {
         check_extern_declaration_signatures(&parsed, &ranges)?;
     }
     Ok(module)
@@ -7659,12 +7661,17 @@ pub fn ffi_verdict(
             "the published FFI certificate does not carry the unsafe-FFI assumption naming every imported struct and every `#c_ffi` function it calls; a result from a file that imports C is never plain `Safe`".into(),
         );
     }
-    let names = certificate.assumptions.iter().map(|assumption| match assumption {
-        FfiAssumption::UnsafeFfi { .. } => UNSAFE_FFI_ASSUMPTION.to_owned(),
-        FfiAssumption::RecordedCompiler { .. } => "recorded-compiler".to_owned(),
-        FfiAssumption::DeclaredContract(callee) => format!("declared-contract:{callee}"),
-        FfiAssumption::BuilderIncludesAndLinks { .. } => "builder-includes-and-links".to_owned(),
-    });
+    let names = certificate
+        .assumptions
+        .iter()
+        .map(|assumption| match assumption {
+            FfiAssumption::UnsafeFfi { .. } => UNSAFE_FFI_ASSUMPTION.to_owned(),
+            FfiAssumption::RecordedCompiler { .. } => "recorded-compiler".to_owned(),
+            FfiAssumption::DeclaredContract(callee) => format!("declared-contract:{callee}"),
+            FfiAssumption::BuilderIncludesAndLinks { .. } => {
+                "builder-includes-and-links".to_owned()
+            }
+        });
     let verdict = AssumedVerdict::new(Verdict::Safe, names);
     if verdict.is_plain_safe() || !verdict.holds_under(UNSAFE_FFI_ASSUMPTION) {
         return Err("an FFI result would be published as plain `Safe`".into());
@@ -7706,7 +7713,9 @@ fn compile_ffi_source(
             .map(|error| map_diagnostic(error, ranges))
             .collect::<Vec<_>>()
     })?;
-    let first_span = imports.first().map_or(Span { start: 0, end: 0 }, |(_, span)| *span);
+    let first_span = imports
+        .first()
+        .map_or(Span { start: 0, end: 0 }, |(_, span)| *span);
     let Some(target) = target else {
         return Err(vec![map_raw_diagnostic(
             "Q063",
@@ -7738,7 +7747,10 @@ fn compile_ffi_source(
                     "Q063",
                     SemanticPass::NativeLibrary,
                     *span,
-                    format!("the layout of `{}` (`struct {}`) is not read: {refusal}", import.name, import.tag),
+                    format!(
+                        "the layout of `{}` (`struct {}`) is not read: {refusal}",
+                        import.name, import.tag
+                    ),
                     ranges,
                 ));
                 continue;
@@ -7750,7 +7762,10 @@ fn compile_ffi_source(
                 refusal.code(),
                 SemanticPass::NativeLibrary,
                 *span,
-                format!("the listing of `{}` disagrees with the recorded compiler: {refusal}", import.name),
+                format!(
+                    "the listing of `{}` disagrees with the recorded compiler: {refusal}",
+                    import.name
+                ),
                 ranges,
             )),
         }
@@ -7793,18 +7808,21 @@ fn compile_ffi_source(
                 ranges,
             )]
         };
-        let contracts =
-            qcore_contract::contract_loader::load_resource_contract_sources(sources).map_err(load_refusal)?;
+        let contracts = qcore_contract::contract_loader::load_resource_contract_sources(sources)
+            .map_err(load_refusal)?;
         qcore_contract::contract_loader::check_source_assumptions(&contracts).map_err(|error| {
             vec![map_raw_diagnostic(
                 "Q027",
                 SemanticPass::ExternCall,
                 first,
-                format!("the selected extern contracts differ from their declared sources: {error}"),
+                format!(
+                    "the selected extern contracts differ from their declared sources: {error}"
+                ),
                 ranges,
             )]
         })?;
-        let marked = qcore_contract::contract_loader::ffi_declarations(sources).map_err(load_refusal)?;
+        let marked =
+            qcore_contract::contract_loader::ffi_declarations(sources).map_err(load_refusal)?;
         let signatures =
             qcore_contract::extern_bridge::declared_signatures(&contracts).map_err(load_refusal)?;
         for declaration in declarations {
@@ -7870,13 +7888,17 @@ fn compile_ffi_source(
                         FfiType::Unit => CAbiType::Unit,
                         FfiType::Scalar(scalar) => CAbiType::Scalar(*scalar),
                         FfiType::Record(record) => CAbiType::Struct(tag_of(record)?),
-                        FfiType::ConstRecordPointer(record) => CAbiType::ConstStructPointer(tag_of(record)?),
+                        FfiType::ConstRecordPointer(record) => {
+                            CAbiType::ConstStructPointer(tag_of(record)?)
+                        }
                     })
                 };
                 let agrees = parameters.len() == contract.parameters.len()
-                    && parameters.iter().zip(&contract.parameters).all(|((pname, ty), (cname, cty))| {
-                        pname == cname && expected(ty).as_ref() == Some(cty)
-                    })
+                    && parameters.iter().zip(&contract.parameters).all(
+                        |((pname, ty), (cname, cty))| {
+                            pname == cname && expected(ty).as_ref() == Some(cty)
+                        },
+                    )
                     && expected(&result).as_ref() == Some(&contract.result);
                 if !agrees {
                     errors.push(map_raw_diagnostic(
@@ -7885,8 +7907,17 @@ fn compile_ffi_source(
                         span,
                         format!(
                             "`{name}` is declared `({}) -> {result}` here but `({}) -> {}` in {}",
-                            parameters.iter().map(|(p, ty)| format!("{p}: {ty}")).collect::<Vec<_>>().join(", "),
-                            contract.parameters.iter().map(|(p, ty)| format!("{p}: {ty}")).collect::<Vec<_>>().join(", "),
+                            parameters
+                                .iter()
+                                .map(|(p, ty)| format!("{p}: {ty}"))
+                                .collect::<Vec<_>>()
+                                .join(", "),
+                            contract
+                                .parameters
+                                .iter()
+                                .map(|(p, ty)| format!("{p}: {ty}"))
+                                .collect::<Vec<_>>()
+                                .join(", "),
                             contract.result,
                             contract.module
                         ),
@@ -7911,10 +7942,18 @@ fn compile_ffi_source(
                     .unwrap_or_else(|| {
                         format!("`{name}` has no admitted declared contract in the selected extern contract environment")
                     });
-                errors.push(map_raw_diagnostic("Q023", SemanticPass::ExternCall, span, message, ranges));
+                errors.push(map_raw_diagnostic(
+                    "Q023",
+                    SemanticPass::ExternCall,
+                    span,
+                    message,
+                    ranges,
+                ));
                 continue;
             };
-            let module = signatures.get(name).map_or_else(String::new, |signature| signature.module.clone());
+            let module = signatures
+                .get(name)
+                .map_or_else(String::new, |signature| signature.module.clone());
             if carries_struct {
                 errors.push(map_raw_diagnostic(
                     "Q033",
@@ -7937,9 +7976,15 @@ fn compile_ffi_source(
             let declared = signatures.get(name);
             let agrees = declared.is_some_and(|signature| {
                 signature.parameter_names
-                    == parameters.iter().map(|(p, _)| p.clone()).collect::<Vec<_>>()
+                    == parameters
+                        .iter()
+                        .map(|(p, _)| p.clone())
+                        .collect::<Vec<_>>()
                     && signature.parameter_types
-                        == parameters.iter().map(|(_, ty)| ty.to_string()).collect::<Vec<_>>()
+                        == parameters
+                            .iter()
+                            .map(|(_, ty)| ty.to_string())
+                            .collect::<Vec<_>>()
                     && signature.result_type == result.to_string()
             });
             if !custody_free || !agrees {
@@ -7971,12 +8016,13 @@ fn compile_ffi_source(
             return Err(errors);
         }
     }
-    let lowered = source_ffi::lower_source_ffi(parsed, typed, &entry, structs, callees, target).map_err(|errors| {
-        errors
-            .into_iter()
-            .map(|error| map_diagnostic(error, ranges))
-            .collect::<Vec<_>>()
-    })?;
+    let lowered = source_ffi::lower_source_ffi(parsed, typed, &entry, structs, callees, target)
+        .map_err(|errors| {
+            errors
+                .into_iter()
+                .map(|error| map_diagnostic(error, ranges))
+                .collect::<Vec<_>>()
+        })?;
     let certificate = ffi::check_ffi_program(&lowered.program).map_err(|errors| {
         errors
             .into_iter()
@@ -7986,7 +8032,13 @@ fn compile_ffi_source(
                     .get(error.statement)
                     .copied()
                     .unwrap_or(lowered.scope_span);
-                map_raw_diagnostic(error.code, source_ffi::pass_of(error.code), span, error.message, ranges)
+                map_raw_diagnostic(
+                    error.code,
+                    source_ffi::pass_of(error.code),
+                    span,
+                    error.message,
+                    ranges,
+                )
             })
             .collect::<Vec<_>>()
     })?;
@@ -8000,14 +8052,22 @@ fn compile_ffi_source(
         )]
     })?;
     let verdict = ffi_verdict(&certificate).map_err(|message| {
-        vec![map_raw_diagnostic("Q035", SemanticPass::UncheckedLinkage, lowered.scope_span, message, ranges)]
-    })?;
-    let source = qcore_core::ffi_c_emit::emit_ffi_c11(&lowered.program, &certificate).map_err(|refusal| {
-        vec![plain_diagnostic(
-            "Q500",
-            format!("the `source.ffi.v1` backend refused this program: {refusal:?}"),
+        vec![map_raw_diagnostic(
+            "Q035",
+            SemanticPass::UncheckedLinkage,
+            lowered.scope_span,
+            message,
+            ranges,
         )]
     })?;
+    let source = qcore_core::ffi_c_emit::emit_ffi_c11(&lowered.program, &certificate).map_err(
+        |refusal| {
+            vec![plain_diagnostic(
+                "Q500",
+                format!("the `source.ffi.v1` backend refused this program: {refusal:?}"),
+            )]
+        },
+    )?;
     let result_profile = SourceResultProfile {
         scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
         owned_buffer_results: BTreeSet::new(),

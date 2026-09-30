@@ -1127,6 +1127,46 @@ either the prefix or the suffix position of a declaration, so the two spellings
 read alike; a decoration outside the vocabulary refuses the declaration by name
 rather than being stepped over.
 
+### L14.6. Imported C structs and the file-wide trust mark
+
+Card `W48-QR-C-STRUCT-IMPORT` (implemented grammars §G02u; contract
+specification §C04.12). A source file enables the FFI with exactly
+`#import std.ffi.unsafe;` and imports a C struct with
+`struct! { type T = c"struct TAG" from "HEADER"; fields { … } }`. Any FFI
+construct in a file without the import is refused (`Q032`).
+
+**The whole file is unsafe.** Importing C marks every result from the file,
+not only the statements that touch C. This is a **named assumption**, not the
+`Unsafe` verdict (which remains reserved for a validated reachable violation):
+the imported C layouts are faithful, and each `[| quant #c_ffi |]` contract
+function behaves as its contract states. Every result from the file carries it
+in its assumptions (§L20); every certificate lists each imported struct and
+each `#c_ffi` function the entry calls; the best a result can be is "Safe
+under the unsafe-FFI assumption", and a certificate that would publish plain
+`Safe` is refused (`Q035`). Composition joins the verdicts and unions the
+assumptions (§L21.2), so the assumption is carried by every composed verdict.
+
+**The layout is read, never declared or guessed.** The listed fields name
+members and their §G02t types only. Their offsets and the object's size come
+from the **recorded compiler**: the builder's recorded target names it, and a
+layout is read only when the running Clang is that compiler for that target
+(P-RECORDED-COMPILER). A listed field MUST be a direct member of a type the
+compiler reports as the canonical type of the field's §G02t spelling, listed in
+layout order; unlisted members are opaque bytes that no statement reads or
+writes. A header or compile context that does not resolve, and every shape the
+reader does not state (unions, bit-fields, flexible array members, anonymous
+members, layout attributes), refuse (`Q063`); a listing the compiler
+contradicts refuses (`Q064`). The emitted C includes the real header and
+asserts the size, each listed offset and each listed type, so a layout that
+changes after checking fails the C build rather than running under the old
+reading.
+
+**Values crossing the boundary.** An imported struct is a record in the sense
+of §G07.13, construct-then-read. It crosses a call as data — by value, or by a
+`const` pointer the callee reads and does not retain — only through a marked
+contract function; a C result carries a number only where the source declares
+the outcome (`succeeds`), which the emitted C compares before it is read.
+
 ## L15. Lowering, observations, and translation certificates
 
 Sequential lowering MUST preserve the checked resource identities, ordered acquisition/release/transfer behavior, and modeled normal/error payloads. The tagged C error representation must not bypass cleanup through unmodeled control transfers.
@@ -1403,6 +1443,14 @@ loop whose index is `isize` or `usize`; card `W48-QR-SCALAR-TYPES-R6`: an
 composed epoch route's task half and the composed string/buffer route). A
 result that names neither type carries no such assumption.
 
+A result from a file that imports C (`#import std.ffi.unsafe;`, §L14.6) names
+the **unsafe-FFI assumption** among its assumptions, listing every imported
+struct (with its header digest) and every `#c_ffi` contract function the entry
+calls, beside the recorded compiler the layouts were read by (card
+`W48-QR-C-STRUCT-IMPORT`). `quirin check` prints the verdict as "Safe under
+the … unsafe-ffi assumption(s)" and the assumption list below it; no such file
+publishes plain `Safe`, and the verdict's join keeps the assumption.
+
 **Safe** means that the named property is established for the identified subject, scope, and assumptions with complete coverage under the selected profile. **Unsafe** means a validated defect or counterexample under that profile. **Unknown** means the requested property was not established, including unsupported behavior, incomplete imports, missing premises, invalid evidence, or exhausted analysis bounds. **Pending** (card W45-USER-CONTRACT-PLUGINS, approved 2026-09-26) means the requested property was not decided by the tool and awaits a named human act: a review edit (`awaiting-human-review`), a re-pin after review (`contract-pin-mismatch`) or a checkable certificate for a checker plugin's claim (`plugin-claim-uncertified`). Pending is not Safe, stays in every denominator exactly as Unknown does, and is produced only by one of those named reasons (§L21.2).
 
 These words MUST NOT be repurposed to mean successful parsing, a green build, contract loading, or observed cleanup in a few fixtures. Rejection of malformed source is a compilation result, not necessarily a semantic counterexample to a well-formed program.
@@ -1462,6 +1510,34 @@ after all of them” apply to reactor statements, not to this entry-level logger
 configuration. The same declaration is admitted by the maintained sequential,
 standard-I/O, extern-composed, and task-composed hosted profiles under their
 existing shape/import/effect codes.
+
+**`source.ffi.v1` (card `W48-QR-C-STRUCT-IMPORT`) allocates no code** (the
+`Q-NAMESPACE-DECISION` icebox): each of its refusals is an existing condition
+reached by a new route, or a condition of an existing band widened here.
+`Q032` is widened from "an `unsafe extern fn` without `std.extern.unsafe`" to
+"an FFI construct (`struct!`) without `std.ffi.unsafe`" — the same trust act,
+gated by its own module. `Q033` is widened to a `[| quant #c_ffi |]` marker in
+a runtime or library module and to a call carrying an imported struct through
+an unmarked contract; `Q034` to an `unsafe extern fn` in an FFI file; `Q035`
+to an FFI certificate that would publish without the unsafe-FFI assumption
+naming every imported struct and marked function (plain `Safe`). `Q063` is
+widened from "the header binding does not load" to "an imported struct's
+header or compile context does not resolve, or its layout is a shape the
+reader does not state": an unreadable header, no recorded target, a running
+compiler other than the recorded one, no complete `struct TAG`, a union, a
+bit-field, a flexible array member, an anonymous member, a layout attribute, a
+`c"…"` spelling other than `struct TAG`, and a listed member with no §G02t
+equivalent. `Q064` is widened from "a transcription the header contradicts" to
+"a listing the recorded compiler contradicts": a listed field that is not a
+member, of another type, or out of layout order. On this route `Q051`–`Q053`
+carry §G07.13's record conditions (construction shape, an undeclared or opaque
+field, a missing or repeated one; a value of another type; a field count
+outside `1..=32` or a literal out of range); `Q022`–`Q027` the extern-call
+conditions (a missing `std.extern`, no admitted contract, a type or argument
+outside the FFI table, a missing or mistyped binding or declared outcome, a
+declaration or statement the route does not model, a signature disagreeing
+with its contract or a failed recheck); `Q028`–`Q030` the line conditions; and
+`Q043` a rendering of a C result no declared outcome determined.
 
 Reserving all four of `Q700`–`Q703` corrects a documentation drift, not a code change: `Q702` and `Q703` have existed in `crates/qcore-verification/src/verify_dispatch.rs` since the W3 dispatch increment, and the code is the authority. An earlier revision of this row named only `Q700` and `Q701`, which was narrower than the implementation; `AGENTS.md` was already accurate.
 

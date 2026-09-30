@@ -160,7 +160,10 @@ pub fn imported_structs(
     }
 }
 
-fn imported_struct(program: &SourceProgram, span: Span) -> Result<ImportedStruct, SourceDiagnostic> {
+fn imported_struct(
+    program: &SourceProgram,
+    span: Span,
+) -> Result<ImportedStruct, SourceDiagnostic> {
     let tokens = window(program, span);
     let shape = |message: &str| {
         diagnostic(
@@ -188,19 +191,32 @@ fn imported_struct(program: &SourceProgram, span: Span) -> Result<ImportedStruct
         Ok(Some(tag)) => tag,
         Ok(None) => return Err(shape("the C type is spelled `c\"struct TAG\"`")),
         Err(message) => {
-            return Err(diagnostic("Q063", SemanticPass::NativeLibrary, span, message));
+            return Err(diagnostic(
+                "Q063",
+                SemanticPass::NativeLibrary,
+                span,
+                message,
+            ));
         }
     };
     if word(&tokens, 8) != Some("from") {
-        return Err(shape("`from \"HEADER\"` names the header the struct is declared in"));
+        return Err(shape(
+            "`from \"HEADER\"` names the header the struct is declared in",
+        ));
     }
     let header = string(&tokens, 9).ok_or_else(|| shape("the header is a quoted reference"))?;
-    if header.is_empty() || header.chars().any(|ch| ch == '\\' || ch == '"' || ch.is_control()) {
+    if header.is_empty()
+        || header
+            .chars()
+            .any(|ch| ch == '\\' || ch == '"' || ch.is_control())
+    {
         return Err(diagnostic(
             "Q063",
             SemanticPass::NativeLibrary,
             span,
-            format!("the header reference `{header}` is not a path this route can resolve: it is nonempty, with no escape, quote or control character"),
+            format!(
+                "the header reference `{header}` is not a path this route can resolve: it is nonempty, with no escape, quote or control character"
+            ),
         ));
     }
     if !symbol(&tokens, 10, Symbol::Semicolon)
@@ -256,7 +272,10 @@ fn imported_struct(program: &SourceProgram, span: Span) -> Result<ImportedStruct
             "Q053",
             SemanticPass::StandardBuffer,
             span,
-            format!("`{name}` lists {} field(s); an imported struct lists 1 to {MAX_FIELDS}", fields.len()),
+            format!(
+                "`{name}` lists {} field(s); an imported struct lists 1 to {MAX_FIELDS}",
+                fields.len()
+            ),
         ));
     }
     Ok(ImportedStruct {
@@ -289,7 +308,10 @@ pub fn ffi_type(source: &str, records: &[String]) -> Option<FfiType> {
             } else if let Some(scalar) = ScalarType::parse(name) {
                 Some(FfiType::Scalar(scalar))
             } else {
-                records.iter().any(|record| record == name).then(|| FfiType::Record(name.to_owned()))
+                records
+                    .iter()
+                    .any(|record| record == name)
+                    .then(|| FfiType::Record(name.to_owned()))
             }
         }
         6 if word(0) == Some("ptr")
@@ -316,7 +338,10 @@ pub struct LoweredFfiModule {
     pub scope_span: Span,
 }
 
-fn declared_effects(declaration: &SourceDeclaration, span: Span) -> Result<EffectRow, SourceDiagnostic> {
+fn declared_effects(
+    declaration: &SourceDeclaration,
+    span: Span,
+) -> Result<EffectRow, SourceDiagnostic> {
     let tokens = &declaration.tokens;
     let Some(index) = tokens
         .iter()
@@ -324,8 +349,16 @@ fn declared_effects(declaration: &SourceDeclaration, span: Span) -> Result<Effec
     else {
         return Ok(EffectRow::default());
     };
-    if !matches!(tokens.get(index + 1), Some(TokenKind::Symbol(Symbol::LeftBrace))) {
-        return Err(diagnostic("Q026", SemanticPass::ExternCall, span, "an `effects` row requires a block"));
+    if !matches!(
+        tokens.get(index + 1),
+        Some(TokenKind::Symbol(Symbol::LeftBrace))
+    ) {
+        return Err(diagnostic(
+            "Q026",
+            SemanticPass::ExternCall,
+            span,
+            "an `effects` row requires a block",
+        ));
     }
     let mut effects = Vec::new();
     let mut cursor = index + 2;
@@ -352,7 +385,12 @@ fn declared_effects(declaration: &SourceDeclaration, span: Span) -> Result<Effec
                 }
             }
             _ => {
-                return Err(diagnostic("Q026", SemanticPass::ExternCall, span, "malformed `effects` row"));
+                return Err(diagnostic(
+                    "Q026",
+                    SemanticPass::ExternCall,
+                    span,
+                    "malformed `effects` row",
+                ));
             }
         }
     }
@@ -361,13 +399,17 @@ fn declared_effects(declaration: &SourceDeclaration, span: Span) -> Result<Effec
 
 fn value(tokens: &[&Token], cursor: usize) -> Option<(FfiValue, usize)> {
     match tokens.get(cursor).map(|token| &token.kind) {
-        Some(TokenKind::Symbol(Symbol::Minus)) => match tokens.get(cursor + 1).map(|token| &token.kind) {
-            Some(TokenKind::Integer(digits)) => {
-                Some((FfiValue::Literal(-digits.parse::<i128>().ok()?), cursor + 2))
+        Some(TokenKind::Symbol(Symbol::Minus)) => {
+            match tokens.get(cursor + 1).map(|token| &token.kind) {
+                Some(TokenKind::Integer(digits)) => {
+                    Some((FfiValue::Literal(-digits.parse::<i128>().ok()?), cursor + 2))
+                }
+                _ => None,
             }
-            _ => None,
-        },
-        Some(TokenKind::Integer(digits)) => Some((FfiValue::Literal(digits.parse().ok()?), cursor + 1)),
+        }
+        Some(TokenKind::Integer(digits)) => {
+            Some((FfiValue::Literal(digits.parse().ok()?), cursor + 1))
+        }
         Some(TokenKind::Word(word)) if word == "true" => Some((FfiValue::Bool(true), cursor + 1)),
         Some(TokenKind::Word(word)) if word == "false" => Some((FfiValue::Bool(false), cursor + 1)),
         Some(TokenKind::Word(word)) => Some((FfiValue::Name(word.clone()), cursor + 1)),
@@ -432,7 +474,9 @@ fn call(
     let mut outcome = None;
     if word(tokens, at) == Some("succeeds") {
         at += 1;
-        if let Some(record) = word(tokens, at).filter(|name| records.iter().any(|record| record == name)) {
+        if let Some(record) =
+            word(tokens, at).filter(|name| records.iter().any(|record| record == name))
+        {
             let (fields, next) = assignments(tokens, at + 1)?;
             outcome = Some(FfiOutcome::Record {
                 record: record.to_owned(),
@@ -468,7 +512,8 @@ pub fn lower_source_ffi(
     target: &RecordedTarget,
 ) -> Result<LoweredFfiModule, Vec<SourceDiagnostic>> {
     let _ = typed;
-    let context = |span: Span, message: String| diagnostic("Q026", SemanticPass::ExternCall, span, message);
+    let context =
+        |span: Span, message: String| diagnostic("Q026", SemanticPass::ExternCall, span, message);
     let mut errors = Vec::new();
     for declaration in &parsed.declarations {
         let admitted = match declaration.value.kind {
@@ -489,7 +534,10 @@ pub fn lower_source_ffi(
     let Some(declaration) = parsed.declarations.iter().find(|declaration| {
         declaration.value.kind == DeclarationKind::Function && declaration.value.name == entry
     }) else {
-        return Err(vec![context(Span { start: 0, end: 0 }, format!("`{entry}` is not a function declaration in this module"))]);
+        return Err(vec![context(
+            Span { start: 0, end: 0 },
+            format!("`{entry}` is not a function declaration in this module"),
+        )]);
     };
     let scope_span = declaration.span;
     if !declaration.value.parameters.is_empty()
@@ -514,7 +562,12 @@ pub fn lower_source_ffi(
     let records: Vec<String> = structs.iter().map(|record| record.name.clone()).collect();
     let mut statements = Vec::new();
     let mut statement_spans = Vec::new();
-    let body = declaration.value.body.as_ref().map(|body| body.statements.as_slice()).unwrap_or(&[]);
+    let body = declaration
+        .value
+        .body
+        .as_ref()
+        .map(|body| body.statements.as_slice())
+        .unwrap_or(&[]);
     for statement in body {
         let tokens = window(parsed, statement.span);
         let lowered = (|| -> Result<FfiStatement, String> {
@@ -534,7 +587,8 @@ pub fn lower_source_ffi(
                     return Err("`let NAME = …;`".into());
                 }
                 // A construction.
-                if let Some(record) = word(&tokens, 3).filter(|name| records.iter().any(|record| record == name))
+                if let Some(record) =
+                    word(&tokens, 3).filter(|name| records.iter().any(|record| record == name))
                     && symbol(&tokens, 4, Symbol::LeftBrace)
                 {
                     let (fields, next) = assignments(&tokens, 4)
@@ -561,8 +615,9 @@ pub fn lower_source_ffi(
                         field: field.to_owned(),
                     });
                 }
-                let (callee, arguments, outcome) = call(&tokens, 3, &records)
-                    .ok_or("a binding on `source.ffi.v1` is a construction, a field read or a call")?;
+                let (callee, arguments, outcome) = call(&tokens, 3, &records).ok_or(
+                    "a binding on `source.ffi.v1` is a construction, a field read or a call",
+                )?;
                 return Ok(FfiStatement::Call {
                     binding: Some(binding),
                     callee,

@@ -1209,7 +1209,10 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             // Card W48-QR-C-STRUCT-IMPORT: an unmarked declaration naming a C
             // struct is refused by name — the struct table is the marked
             // vocabulary's alone (user decision 4).
-            if tokens.iter().any(|kind| matches!(kind, TokenKind::StringLiteral(_))) {
+            if tokens
+                .iter()
+                .any(|kind| matches!(kind, TokenKind::StringLiteral(_)))
+            {
                 return Err(
                     "a C struct type is admitted only on a declaration marked `[| quant #c_ffi |]`"
                         .into(),
@@ -1701,7 +1704,11 @@ fn ffi_abi_type(source: &str, result: bool) -> Result<qcore_core::ffi::CAbiType,
     let refuse = || {
         format!(
             "`{source}` is not in the `#c_ffi` type table: a §G02t scalar, `c\"struct TAG\"` or `ptr<const, c\"struct TAG\">`{}",
-            if result { ", or `unit` as a result" } else { "" }
+            if result {
+                ", or `unit` as a result"
+            } else {
+                ""
+            }
         )
     };
     let c_struct = |at: usize| -> Result<String, String> {
@@ -1711,7 +1718,9 @@ fn ffi_abi_type(source: &str, result: bool) -> Result<qcore_core::ffi::CAbiType,
                     return Err(refuse());
                 };
                 if c.span.end != text.span.start {
-                    return Err("`c\"…\"` is one spelling: no space between `c` and the quote".into());
+                    return Err(
+                        "`c\"…\"` is one spelling: no space between `c` and the quote".into(),
+                    );
                 }
                 parse_c_struct_spelling(text_value)
                     .map(str::to_owned)
@@ -1789,11 +1798,16 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
     let clause_text = clauses
         .iter()
         .map(|c| match &c.value.kind {
-            SourceContractClauseKind::Requires => Ok(format!("requires {};", c.value.expression_source)),
+            SourceContractClauseKind::Requires => {
+                Ok(format!("requires {};", c.value.expression_source))
+            }
             SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => {
                 Ok(format!("ensures normal {};", c.value.expression_source))
             }
-            _ => Err("a `#c_ffi` declaration admits `requires` and `ensures normal` clauses only".to_owned()),
+            _ => Err(
+                "a `#c_ffi` declaration admits `requires` and `ensures normal` clauses only"
+                    .to_owned(),
+            ),
         })
         .collect::<Result<Vec<_>, _>>()?
         .join(" ");
@@ -1802,7 +1816,10 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
         decl.name
     );
     if token_kinds(&expected)? != decl.tokens {
-        return Err("unsupported signature, effects, or declaration suffix on a `#c_ffi` declaration".into());
+        return Err(
+            "unsupported signature, effects, or declaration suffix on a `#c_ffi` declaration"
+                .into(),
+        );
     }
     let mut marker = false;
     let mut borrowed = BTreeSet::new();
@@ -1822,7 +1839,9 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
         match call.as_slice() {
             [predicate, parameter] if predicate == "resource_borrowed" => {
                 if !names.contains(parameter) || !borrowed.insert(parameter.clone()) {
-                    return Err(format!("`resource_borrowed({parameter})` names no parameter, or names one twice"));
+                    return Err(format!(
+                        "`resource_borrowed({parameter})` names no parameter, or names one twice"
+                    ));
                 }
             }
             [predicate] if predicate == "resource_return_none" && !none => none = true,
@@ -1889,7 +1908,9 @@ pub fn ffi_declarations(
             let decl = &declaration.value;
             let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
             let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            let mut ffi = loaded.ffi.ok_or_else(|| format!("{context}: not a `#c_ffi` declaration"))?;
+            let mut ffi = loaded
+                .ffi
+                .ok_or_else(|| format!("{context}: not a `#c_ffi` declaration"))?;
             ffi.module = path.clone();
             if declared.insert(decl.name.clone(), ffi).is_some() {
                 return Err(format!("{context}: duplicate function contract"));

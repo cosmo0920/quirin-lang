@@ -276,7 +276,11 @@ pub fn check_layout(
             });
         }
         let size = ty.size_bytes(target).unwrap_or(u64::MAX);
-        if fact.offset.checked_add(size).is_none_or(|end| end > facts.size) {
+        if fact
+            .offset
+            .checked_add(size)
+            .is_none_or(|end| end > facts.size)
+        {
             return Err(LayoutRefusal::OutOfBounds {
                 field: name.clone(),
             });
@@ -506,7 +510,10 @@ impl fmt::Display for FfiAssumption {
                 "recorded compiler: the imported layouts are the ones `{compiler}` reports for `{triple}`, and the emitted C asserts each of them when it is compiled"
             ),
             Self::DeclaredContract(callee) => {
-                write!(f, "declared contract: `{callee}` behaves as its selected contract states")
+                write!(
+                    f,
+                    "declared contract: `{callee}` behaves as its selected contract states"
+                )
             }
             Self::BuilderIncludesAndLinks { directories } => write!(
                 f,
@@ -906,14 +913,23 @@ pub fn check_ffi_program(program: &FfiProgram) -> Result<FfiCertificate, Vec<Ffi
                                     ),
                                 )
                             })?;
-                            outcomes.push((callee.clone(), outcome_text(outcome.as_ref().expect("matched"))));
+                            outcomes.push((
+                                callee.clone(),
+                                outcome_text(outcome.as_ref().expect("matched")),
+                            ));
                             Some(Value::Scalar(*ty, Some(number)))
                         }
                         (FfiType::Record(record), Some(_), None) => {
-                            let checked = program.record(record).expect("an admitted type is imported");
+                            let checked = program
+                                .record(record)
+                                .expect("an admitted type is imported");
                             Some(Value::Record(
                                 record.clone(),
-                                checked.listed.iter().map(|field| (field.name.clone(), None)).collect(),
+                                checked
+                                    .listed
+                                    .iter()
+                                    .map(|field| (field.name.clone(), None))
+                                    .collect(),
                             ))
                         }
                         (
@@ -924,9 +940,14 @@ pub fn check_ffi_program(program: &FfiProgram) -> Result<FfiCertificate, Vec<Ffi
                                 fields,
                             }),
                         ) if declared == record => {
-                            let checked = program.record(record).expect("an admitted type is imported");
+                            let checked = program
+                                .record(record)
+                                .expect("an admitted type is imported");
                             let values = record_fields(index, checked, fields, &env, target, true)?;
-                            outcomes.push((callee.clone(), outcome_text(outcome.as_ref().expect("matched"))));
+                            outcomes.push((
+                                callee.clone(),
+                                outcome_text(outcome.as_ref().expect("matched")),
+                            ));
                             Some(Value::Record(record.clone(), values))
                         }
                         (result, Some(_), Some(declared)) => {
@@ -997,16 +1018,15 @@ pub fn check_ffi_program(program: &FfiProgram) -> Result<FfiCertificate, Vec<Ffi
                                     }
                                 },
                             };
-                            let Some(body) = st::render(
-                                *rendering == Rendering::Hex,
-                                ty,
-                                number,
-                                Some(target),
-                            ) else {
+                            let Some(body) =
+                                st::render(*rendering == Rendering::Hex, ty, number, Some(target))
+                            else {
                                 return Err(error(
                                     index,
                                     "Q043",
-                                    format!("`hex` renders an integer, and this operand is a `{ty}`"),
+                                    format!(
+                                        "`hex` renders an integer, and this operand is a `{ty}`"
+                                    ),
                                 ));
                             };
                             lines.push(crate::std_io::rendered_text_line(level, &body));
@@ -1026,7 +1046,11 @@ pub fn check_ffi_program(program: &FfiProgram) -> Result<FfiCertificate, Vec<Ffi
                 }
                 FfiStatement::Return => {
                     if index != last {
-                        return Err(error(index, "Q026", "`return;` is the entry's last statement"));
+                        return Err(error(
+                            index,
+                            "Q026",
+                            "`return;` is the entry's last statement",
+                        ));
                     }
                     Ok(())
                 }
@@ -1124,9 +1148,9 @@ pub fn certificate_carries_ffi_assumption(certificate: &FfiCertificate) -> bool 
         };
         structs.len() == certificate.structs.len()
             && certificate.structs.iter().all(|record| {
-                structs
-                    .iter()
-                    .any(|entry| entry.starts_with(&format!("`{} = struct {}`", record.name, record.tag)))
+                structs.iter().any(|entry| {
+                    entry.starts_with(&format!("`{} = struct {}`", record.name, record.tag))
+                })
             })
             && certificate
                 .functions
@@ -1154,7 +1178,11 @@ pub enum FfiRecheckFailure {
 impl fmt::Display for FfiRecheckFailure {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Refused(errors) => write!(f, "the program no longer checks ({} refusal(s))", errors.len()),
+            Self::Refused(errors) => write!(
+                f,
+                "the program no longer checks ({} refusal(s))",
+                errors.len()
+            ),
             Self::LayoutDiffers { record } => write!(
                 f,
                 "the certificate publishes a layout of `{record}` the recorded compiler's facts do not give"

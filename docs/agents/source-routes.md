@@ -230,6 +230,25 @@ P10, refused by the extern-declaration read — a declaration check, not a word.
 
 Add `w48-qr-scalar-types-r3` to the rule's closing evidence list.
 
+### 14 — census entry, card `W48-QR-C-STRUCT-IMPORT` (wave 48)
+
+Reserves **+0 words and +0 tokens**, and claims three **positions**. `struct !`
+at declaration position (`struct` stays census-clean and **still not taken**:
+only the two-token head is claimed, which was a parse error before); `c` touching
+a string literal inside a `struct!` or a `#c_ffi` signature (`c` stays an
+ordinary identifier everywhere else, and name resolution never walks declaration
+tokens); and `[| quant #c_ffi |]` before `extern fn` at declaration position,
+five tokens the lexer already produced. The census
+(`docs/reports/w48-qr-c-struct-import/census_ffi_spelling.py`, a token-level
+reading of all 632 tracked `.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` files) found
+**zero** `struct !`, `c"…"`, `[|`, `|]`, `c_ffi` and `std.ffi` before the card,
+and the whole-tree fixture freeze found every existing file byte-identical in
+`check` and `emit`. Card 4's closure capture list `|copy x, …|` keeps its
+space: `[|`/`|]` form only with an adjacent `[`/`]`, and a capture list lexes as
+single bars (`ffi_struct_import.rs::the_marker_tokens_leave_the_capture_list_spelling_free`).
+
+Add `w48-qr-c-struct-import` to the rule's closing evidence list.
+
 ### 14 — CT implementation source forms
 
 CT24 reuses the parsed error-region and spawn-success-arm forms. CT10 uses

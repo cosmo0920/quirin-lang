@@ -1,0 +1,53 @@
+{
+ "retired": [],
+ "amended": [
+  {
+   "id": "W48-QR-TYPES-MSVC-NATIVE",
+   "amendment": "W48-QR-C-STRUCT-IMPORT adds `source.ffi.v1`'s emitted C to the MSVC build owed here: the `_Generic` member-type assertions, `offsetof` assertions, `memset` constructions and struct-by-value calls are built natively with Clang only; and the layout reader itself is Clang (`ffi_layout`), so a recorded MSVC or GCC compiler refuses every import (`Q063`) until a reader for that compiler exists."
+  }
+ ],
+ "registered": [
+  {
+   "id": "W48-QR-FFI-MUT-POINTER",
+   "title": "A C function writing into an imported struct (`ptr<mut, STRUCT>`) is refused",
+   "why": "Found by W48-QR-C-STRUCT-IMPORT: `source.ffi.v1` passes an imported struct by value or by `ptr<const, …>` only; a `#c_ffi` declaration naming `ptr<mut, c\"struct TAG\">` rejects its module and a `.qr` declaration naming `ptr<mut, T>` refuses at `Q024`, because the record's listed fields after such a call have no model value and card 0's rendering rule needs one. Size M. DISCHARGE: with card 2's field writes, a declared post-state (`succeeds T { … }` after the call, compared by the emitted C) or an explicit havoc of the listed fields, with the opaque-bytes rule unchanged.",
+   "source": "docs/reports/w48-qr-c-struct-import/README.md",
+   "recorded_by": "W48-QR-C-STRUCT-IMPORT"
+  },
+  {
+   "id": "W48-QR-FFI-NESTED-AND-ARRAY-FIELDS",
+   "title": "An imported struct lists §G02t scalar members only",
+   "why": "Found by W48-QR-C-STRUCT-IMPORT: a member whose C type has no §G02t equivalent — a nested struct, an array, a pointer, an enum, a `char`, a `long long` on LP64 — may stay unlisted as opaque bytes but refuses at `Q063` when listed. Size M. DISCHARGE: card 2's nesting (a listed member of an imported struct type, checked recursively against the recorded layout) and fixed-length arrays of §G02t scalars, each with its `offsetof`/`_Generic` assertions.",
+   "source": "docs/reports/w48-qr-c-struct-import/README.md",
+   "recorded_by": "W48-QR-C-STRUCT-IMPORT"
+  },
+  {
+   "id": "W48-QR-FFI-LAYOUT-ATTRIBUTES",
+   "title": "Packed, aligned and bit-field structs are refused rather than read",
+   "why": "Found by W48-QR-C-STRUCT-IMPORT: the layout reader refuses any attribute on the record or a member (`PackedAttr`, `AlignedAttr`, `#pragma pack`'s `MaxFieldAlignmentAttr`), any bit-field, flexible array member or anonymous member (`Q063`), although Clang's record layout states their offsets. Size S–M. DISCHARGE: read the stated layouts (bit positions for bit-fields, the reported offsets for packed members) with a proof that a listed read of a misaligned member is well-defined in the emitted C, or keep the refusals with the reason recorded.",
+   "source": "docs/reports/w48-qr-c-struct-import/README.md",
+   "recorded_by": "W48-QR-C-STRUCT-IMPORT"
+  },
+  {
+   "id": "W48-QR-FFI-CLI-CONTRACT-SELECTION",
+   "title": "`quirin` selects no extern contracts, so an FFI file that calls C is checked only through the library API",
+   "why": "Found by W48-QR-C-STRUCT-IMPORT: an FFI file whose entry only constructs, reads and renders imported records checks and emits through `quirin --recorded-target`, but one that calls a `#c_ffi` function needs `CompileOptions::extern_contracts`, which the CLI never sets (the same gap every contracted extern example has). The published example `examples/ffi/header_sum.qr` is therefore checked by `compiler/tests/ffi_struct_import.rs`, not by a command line. Size S. DISCHARGE: a contract-selection flag (a manifest or `.qv` list) on `quirin check`/`emit`, loaded total-or-reject.",
+   "source": "docs/reports/w48-qr-c-struct-import/README.md",
+   "recorded_by": "W48-QR-C-STRUCT-IMPORT"
+  },
+  {
+   "id": "W48-QR-FFI-ROUTE-SCOPE",
+   "title": "`source.ffi.v1` admits one flat entry and no other route's statements",
+   "why": "Found by W48-QR-C-STRUCT-IMPORT: an FFI file is selected before every route and admits imported structs, extern declarations and one executable entry of constructions, field reads, calls and lines; a second function, a record passed between `.qr` functions, a library-mode FFI module, a value statement, a branch, a loop, a buffer or a task in an FFI file each refuse (`Q026`), and a C result renders only under a declared outcome (`Q043`). Size L, shared with cards 2–4. DISCHARGE: compose the FFI trust mark with the routes cards 2–4 widen (records across calls, task record captures, closures), each composition carrying the unsafe-FFI assumption on every result it publishes.",
+   "source": "docs/reports/w48-qr-c-struct-import/README.md",
+   "recorded_by": "W48-QR-C-STRUCT-IMPORT"
+  },
+  {
+   "id": "W48-QR-FFI-HEADER-IDENTITY-AT-BUILD",
+   "title": "The header read at check time and the one built against are bound by static assertions, not by the digest",
+   "why": "Found by W48-QR-C-STRUCT-IMPORT: the certificate names the header's SHA-256 and its resolved absolute path and directory (so it is host-specific), and the emitted C re-asserts the size, each listed offset and each listed type; a header edited after checking in a way that keeps every listed member's type and offset and the size still builds, though its digest differs. Size S. DISCHARGE: carry the digest into the build (a builder-side check, or a generated `#include` guard over the checked bytes), or state the weaker binding as the premise it is, with a relative header identity in the certificate.",
+   "source": "docs/reports/w48-qr-c-struct-import/README.md",
+   "recorded_by": "W48-QR-C-STRUCT-IMPORT"
+  }
+ ]
+}

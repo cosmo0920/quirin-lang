@@ -660,16 +660,25 @@ fn cli_prints_the_unsafe_ffi_verdict_and_its_premises() {
         .unwrap();
     let stdout = String::from_utf8_lossy(&checked.stdout);
     assert!(checked.status.success(), "{checked:?}");
-    assert!(stdout.contains("Safe under the unsafe-ffi assumption, never plain Safe"), "{stdout}");
+    assert!(
+        stdout.contains("Safe under the unsafe-ffi assumption, never plain Safe"),
+        "{stdout}"
+    );
     assert!(stdout.contains("verdict: Safe under the "), "{stdout}");
     assert!(stdout.contains("unsafe FFI (unsafe-ffi)"), "{stdout}");
-    assert!(stdout.contains("`Header = struct qr_header` from \"qr_header.h\""), "{stdout}");
+    assert!(
+        stdout.contains("`Header = struct qr_header` from \"qr_header.h\""),
+        "{stdout}"
+    );
     let refused = Command::new(env!("CARGO_BIN_EXE_quirin"))
         .arg("check")
         .arg(&program)
         .output()
         .unwrap();
     assert!(!refused.status.success());
-    assert!(String::from_utf8_lossy(&refused.stderr).contains("Q063"), "{refused:?}");
+    assert!(
+        String::from_utf8_lossy(&refused.stderr).contains("Q063"),
+        "{refused:?}"
+    );
     std::fs::remove_dir_all(&directory).unwrap();
 }

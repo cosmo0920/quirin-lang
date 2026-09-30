@@ -69,7 +69,11 @@ fn literal(value: &FfiValue, ty: ScalarType) -> Option<String> {
     }
 }
 
-fn operand(value: &FfiValue, ty: ScalarType, scalars: &BTreeSet<String>) -> Result<String, FfiEmissionRefusal> {
+fn operand(
+    value: &FfiValue,
+    ty: ScalarType,
+    scalars: &BTreeSet<String>,
+) -> Result<String, FfiEmissionRefusal> {
     match value {
         FfiValue::Name(name) if scalars.contains(name) => Ok(value_variable(name)),
         FfiValue::Name(name) => Err(FfiEmissionRefusal::Unbound(name.clone())),
@@ -134,27 +138,34 @@ pub fn emit_ffi_c11(
     }
     fragments.push(Fragment::new(Section::Includes, "ffi.includes", includes));
     let mut assertions = String::from("\n");
-    let uses_target_width = program.structs.iter().any(|record| {
-        record.listed.iter().any(|field| field.ty.is_target_width())
-    }) || program.callees.values().any(|callee| {
-        callee
-            .parameters
-            .iter()
-            .map(|(_, ty)| ty)
-            .chain([&callee.result])
-            .any(|ty| matches!(ty, FfiType::Scalar(scalar) if scalar.is_target_width()))
-    });
+    let uses_target_width = program
+        .structs
+        .iter()
+        .any(|record| record.listed.iter().any(|field| field.ty.is_target_width()))
+        || program.callees.values().any(|callee| {
+            callee
+                .parameters
+                .iter()
+                .map(|(_, ty)| ty)
+                .chain([&callee.result])
+                .any(|ty| matches!(ty, FfiType::Scalar(scalar) if scalar.is_target_width()))
+        });
     if uses_target_width {
         assertions.push_str(&st::c_target_assertions(&program.target));
     }
     for record in &program.structs {
         assertions.push_str(&layout_assertions(record));
     }
-    fragments.push(Fragment::new(Section::Declarations, "ffi.layout", assertions));
+    fragments.push(Fragment::new(
+        Section::Declarations,
+        "ffi.layout",
+        assertions,
+    ));
     fragments.push(crate::io_emit::io_prelude_fragment());
     let mut prototypes = String::from("\n");
     for callee in program.callees.values() {
-        let result = c_type(program, &callee.result).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+        let result =
+            c_type(program, &callee.result).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
         let parameters = if callee.parameters.is_empty() {
             "void".to_owned()
         } else {
@@ -177,7 +188,11 @@ pub fn emit_ffi_c11(
         };
         let _ = writeln!(prototypes, "{result} {}({parameters});", callee.name);
     }
-    fragments.push(Fragment::new(Section::FileScope, "ffi.prototypes", prototypes));
+    fragments.push(Fragment::new(
+        Section::FileScope,
+        "ffi.prototypes",
+        prototypes,
+    ));
 
     let mut body = String::new();
     let mut scalars: BTreeSet<String> = BTreeSet::new();
@@ -190,7 +205,9 @@ pub fn emit_ffi_c11(
                 record,
                 fields,
             } => {
-                let checked = program.record(record).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                let checked = program
+                    .record(record)
+                    .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
                 let variable = record_variable(binding);
                 let _ = writeln!(body, "    {} {variable};", c_struct(checked));
                 let _ = writeln!(body, "    memset(&{variable}, 0, sizeof {variable});");
@@ -214,9 +231,15 @@ pub fn emit_ffi_c11(
                 source,
                 field,
             } => {
-                let record = records.get(source).ok_or_else(|| FfiEmissionRefusal::Unbound(source.clone()))?;
-                let checked = program.record(record).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
-                let listed = checked.field(field).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                let record = records
+                    .get(source)
+                    .ok_or_else(|| FfiEmissionRefusal::Unbound(source.clone()))?;
+                let checked = program
+                    .record(record)
+                    .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                let listed = checked
+                    .field(field)
+                    .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
                 let variable = value_variable(binding);
                 let _ = writeln!(
                     body,
@@ -233,12 +256,17 @@ pub fn emit_ffi_c11(
                 arguments,
                 outcome,
             } => {
-                let admitted = program.callees.get(callee).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                let admitted = program
+                    .callees
+                    .get(callee)
+                    .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
                 let mut actuals = Vec::new();
                 for ((_, ty), argument) in admitted.parameters.iter().zip(arguments) {
                     actuals.push(match (ty, argument) {
                         (FfiType::Scalar(scalar), value) => operand(value, *scalar, &scalars)?,
-                        (FfiType::Record(_), FfiValue::Name(name)) if records.contains_key(name) => {
+                        (FfiType::Record(_), FfiValue::Name(name))
+                            if records.contains_key(name) =>
+                        {
                             record_variable(name)
                         }
                         (FfiType::ConstRecordPointer(_), FfiValue::Name(name))
@@ -256,9 +284,14 @@ pub fn emit_ffi_c11(
                     }
                     (FfiType::Scalar(ty), Some(name)) => {
                         let variable = value_variable(name);
-                        let _ = writeln!(body, "    {} {variable} = {call};\n    (void) {variable};", st::c_type(*ty));
+                        let _ = writeln!(
+                            body,
+                            "    {} {variable} = {call};\n    (void) {variable};",
+                            st::c_type(*ty)
+                        );
                         if let Some(FfiOutcome::Scalar(declared)) = outcome {
-                            let expected = literal(declared, *ty).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                            let expected = literal(declared, *ty)
+                                .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
                             let _ = writeln!(
                                 body,
                                 "    if ({variable} != {expected}) {{\n        return 70;\n    }}"
@@ -268,9 +301,15 @@ pub fn emit_ffi_c11(
                         scalar_types.insert(name.clone(), *ty);
                     }
                     (FfiType::Record(record), Some(name)) => {
-                        let checked = program.record(record).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                        let checked = program
+                            .record(record)
+                            .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
                         let variable = record_variable(name);
-                        let _ = writeln!(body, "    {} {variable} = {call};\n    (void) {variable};", c_struct(checked));
+                        let _ = writeln!(
+                            body,
+                            "    {} {variable} = {call};\n    (void) {variable};",
+                            c_struct(checked)
+                        );
                         if let Some(FfiOutcome::Record { fields, .. }) = outcome {
                             let mut tests = Vec::new();
                             for field in &checked.listed {
@@ -278,7 +317,8 @@ pub fn emit_ffi_c11(
                                     .iter()
                                     .find(|(name, _)| *name == field.name)
                                     .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
-                                let expected = literal(value, field.ty).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                                let expected = literal(value, field.ty)
+                                    .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
                                 tests.push(format!("{variable}.{} != {expected}", field.name));
                             }
                             let _ = writeln!(
@@ -293,23 +333,33 @@ pub fn emit_ffi_c11(
                 }
             }
             FfiStatement::Line(event) => match event {
-                StdIoEvent::Print { rendering, operand: value }
+                StdIoEvent::Print {
+                    rendering,
+                    operand: value,
+                }
                 | StdIoEvent::Log {
-                    rendering, operand: value, ..
+                    rendering,
+                    operand: value,
+                    ..
                 } => {
                     let level = match event {
                         StdIoEvent::Log { level, .. } => Some(*level),
                         _ => None,
                     };
                     let (ty, expression) = match value {
-                        StdIoOperand::Literal(number) => {
-                            (ScalarType::I32, st::c_literal(ScalarType::I32, i128::from(*number)))
-                        }
+                        StdIoOperand::Literal(number) => (
+                            ScalarType::I32,
+                            st::c_literal(ScalarType::I32, i128::from(*number)),
+                        ),
                         StdIoOperand::Scalar(name) => (
-                            *scalar_types.get(name).ok_or_else(|| FfiEmissionRefusal::Unbound(name.clone()))?,
+                            *scalar_types
+                                .get(name)
+                                .ok_or_else(|| FfiEmissionRefusal::Unbound(name.clone()))?,
                             value_variable(name),
                         ),
-                        StdIoOperand::Borrowed(name) => return Err(FfiEmissionRefusal::Unbound(name.clone())),
+                        StdIoOperand::Borrowed(name) => {
+                            return Err(FfiEmissionRefusal::Unbound(name.clone()));
+                        }
                     };
                     let (stream, prefix) = crate::std_io::line_framing(level);
                     let (conversion, argument) = st::c_rendering(
@@ -322,7 +372,11 @@ pub fn emit_ffi_c11(
                     let _ = writeln!(
                         body,
                         "    {}",
-                        crate::io_emit::write_line(stream, &format!("{prefix}{conversion}"), &[&argument])
+                        crate::io_emit::write_line(
+                            stream,
+                            &format!("{prefix}{conversion}"),
+                            &[&argument]
+                        )
                     );
                 }
                 StdIoEvent::Flush => {
@@ -335,5 +389,8 @@ pub fn emit_ffi_c11(
             FfiStatement::Return => {}
         }
     }
-    Ok(c_program::assemble(&fragments, &c_program::Entry::source_route(body)))
+    Ok(c_program::assemble(
+        &fragments,
+        &c_program::Entry::source_route(body),
+    ))
 }

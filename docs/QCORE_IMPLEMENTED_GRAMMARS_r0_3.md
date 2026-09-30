@@ -647,6 +647,107 @@ conversion, recorded-target and fault refusals, and card
 import the gate's `Q015`. The annotation rule above widens the sequential
 route's `Q020` and each entry-only route's own code.
 
+<a id="g02u-imported-c-structs-sourceffiv1"></a>
+
+## G02u. Imported C structs (`source.ffi.v1`)
+
+Card `W48-QR-C-STRUCT-IMPORT`, card 1 of the `.qr` language track, on five
+user decisions (2026-09-29/30): the import line, the file-wide trust mark, the
+import form, the `#c_ffi` marker on the contract side (contract spec §C04.12),
+and output only through `std.fmt`/`std.io`/`std.logger`.
+
+```ebnf
+ffi_module    = "#import", "std.ffi.unsafe", ";", { import },
+                { struct_import | extern_decl | entry } ;
+struct_import = "struct", "!", "{", "type", NAME, "=", C_STRUCT, "from", STRING, ";",
+                "fields", "{", field, { ",", field }, [ "," ], "}", "}" ;
+C_STRUCT      = "c", STRING ;          (* no byte between; the text is exactly `struct TAG` *)
+field         = NAME, ":", SCALAR ;    (* §G02t; 1 to 32 fields, names distinct *)
+extern_decl   = "extern", "fn", NAME, "(", [ param, { ",", param } ], ")", "->", FFI_RESULT, ";" ;
+param         = NAME, ":", ( SCALAR | NAME | "ptr", "<", "const", ",", NAME, ">" ) ;
+FFI_RESULT    = "unit" | SCALAR | NAME ;   (* NAME: an imported struct *)
+entry         = "fn", NAME, "(", ")", "->", "unit", "effects", "{", EFFECT, { ",", EFFECT }, "}",
+                "{", { stmt }, "return", ";", "}" ;
+stmt          = "let", NAME, "=", NAME, "{", assign, { ",", assign }, [ "," ], "}", ";"
+              | "let", NAME, "=", NAME, ".", NAME, ";"
+              | [ "let", NAME, "=" ], NAME, "(", [ value, { ",", value } ], ")",
+                [ "succeeds", outcome ], ";"
+              | print_stmt | log_stmt | "flush", ";" ;          (* §G02g *)
+assign        = NAME, ":", value ;
+value         = [ "-" ], INTEGER | "true" | "false" | NAME ;
+outcome       = [ "-" ], INTEGER | "true" | "false"
+              | NAME, "{", assign, { ",", assign }, [ "," ], "}" ;   (* literal values only *)
+```
+
+* **The import enables it, and marks the whole file.** `#import std.ffi.unsafe;`
+  is spelled like every bundled import and granted by no other module (the
+  `std.extern.unsafe` precedent, §G02d.1): a `struct!` in a file without it
+  refuses at `Q032`. A call still needs `#import std.extern;` (`Q022`), and a
+  line its output module. Every result from the file holds under the
+  **unsafe-FFI assumption** — that the imported layouts are faithful and each
+  `#c_ffi` function behaves as its contract states — which the certificate
+  names with every imported struct and every marked function called; the
+  verdict is at best "Safe under the unsafe-ffi assumption" and never plain
+  `Safe` (language specification §L14.6, §L20). This is not the `Unsafe`
+  verdict.
+* **Route selection.** `source.ffi.v1` is selected **before every other
+  route**, by the import or by a `struct!`: an FFI file reaches no route that
+  would publish without the assumption, and a declaration or statement this
+  route does not model refuses (`Q026`) instead of reaching one.
+* **The layout is the compiler's, never the source's.** The listing names
+  fields and `.qr` types; no offset, size or alignment is written. The header
+  resolves against the declaring file's own directory (one candidate path, no
+  search). The builder's recorded target (`--recorded-target`) must name the
+  running Clang — its first `--version` line as `compiler`, its `-dumpmachine`
+  as `triple` — and that compiler's typed AST and record layout
+  (`qcore_c_gateway::ffi_layout`) give each member's written and canonical
+  type and its offset. A listed field must be a direct member whose canonical
+  type is the canonical type of the field's §G02t C11 spelling under the same
+  compiler (`int64_t` and `ptrdiff_t` are both `long` on LP64, so `i64` and
+  `isize` both read a `long`; a `long long` reads as neither), and the listing
+  must follow the layout order — that is how a listed field's offset is
+  compared, since the listing states none. An unreadable header or context, no
+  recorded target, another compiler, no complete `struct TAG` (an unknown tag),
+  a union, a bit-field, a flexible array member, an anonymous member, any
+  attribute on the record or a member (`packed`, `aligned`, `#pragma pack`),
+  and a listed member with no §G02t equivalent refuse at `Q063`; a listed field
+  that is not a member, of another type or out of layout order refuses at
+  `Q064`.
+* **Unlisted members are opaque bytes.** A read or a construction naming one
+  refuses at `Q051`; a member of any type may stay unlisted. A construction
+  zeroes the object before storing the listed fields.
+* **Records are §G07.13's, construct-then-read.** A construction supplies every
+  listed field exactly once (`Q051`), each value of exactly the field's type
+  (`Q052`; a literal range-checked, `Q053`); a read binds a value of the field's
+  type. No field write, nesting or record across a `.qr` call: card 2.
+* **Calls.** A declared callee is admitted against the explicit contract
+  selection, by name, parameter names and types. A position carrying an
+  imported struct — by value or `ptr<const, NAME>`, a result by value — is
+  admitted **only through a `[| quant #c_ffi |]` declaration** whose types name
+  the same C tag; through an unmarked one it refuses at `Q033`. An unmarked
+  custody-free scalar contract (every parameter borrowed, no result custody)
+  may be called as well. A pointer result, `ptr<mut, …>` over a struct and any
+  other type refuse at `Q024`; a signature disagreeing with its contract at
+  `Q027`; an `unsafe extern fn` at `Q034`.
+* **Declared outcomes.** A C result is a value with no number until the source
+  declares one: `succeeds INTEGER` on a scalar result, `succeeds NAME { … }`
+  with every listed field's literal on a struct result. The emitted C compares
+  the real result and exits 70 before anything reads it. Rendering a value no
+  outcome determined refuses at `Q043`.
+* **Emission.** The C `#include`s the header as written (the builder puts its
+  directory on the include path), uses the real `struct TAG`, never re-declares
+  it, and asserts `sizeof`, each listed `offsetof` and each listed member's type
+  (`_Generic`), so a header whose layout drifted after checking does not build.
+  Each callee is declared from its contract signature, so a header declaring it
+  otherwise makes the unit ill-formed. A `const` pointer argument is `&r_NAME`,
+  a by-value one `r_NAME`.
+
+Census (constraint 14, `docs/reports/w48-qr-c-struct-import/census_ffi_spelling.py`):
+no tracked `.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` file contained `struct !`,
+`c"…"`, `[|`, `|]`, `c_ffi` or a `std.ffi` import before the card; no word is
+reserved. Card 4's capture list `|copy x, …|` lexes as single bars and is
+untouched: `[|` and `|]` form only with an adjacent `[` or `]`.
+
 <a id="g02r-resource-aware-functions-sourceresource-callsv1"></a>
 
 ## G02r. Resource-aware byte helpers (`source.resource-calls.v1`)

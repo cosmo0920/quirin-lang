@@ -19,7 +19,6 @@ mod borrow_liveness;
 mod borrowed_actual;
 pub mod call_use_source;
 mod clang;
-pub mod ffi_layout;
 pub mod cleanup_replay_source;
 pub mod composition_source;
 #[cfg(feature = "indirect-census")]
@@ -27,6 +26,7 @@ pub mod condition_call_census;
 pub mod counter_source;
 #[cfg(feature = "indirect-census")]
 pub mod destination_suffix_census;
+pub mod ffi_layout;
 // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): the call-contract
 // acceptance and the typed per-formal substitution; the G hooks are in
 // `legacy_call_instantiation.rs`.
