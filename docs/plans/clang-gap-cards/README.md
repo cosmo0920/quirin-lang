@@ -201,6 +201,12 @@ High for anything that could publish a wrong Safe, Medium for measurement.
   - *Absorbs:* W44-SIZEOF-OPERAND-RESIDUALS, W44-SIZEOF-CAST-SCALAR-QUERY,
     SIZEOF-TYPE-FOLD-NO-LEAN, CAST-RETURN-UNCOMMITTED-OPERAND and
     W45-CALLEE-CAST-LEXICAL-PREMISE.
+  - *Status (wave 48, round 5).* Landed on route G (gateway rule 11b) with
+    T's implicit enumerators (N11): **+16** corpus Safe, system +3, no
+    correction; a wrong Safe repaired (a pointer returned or stored as a
+    truth value escaped or bound it; no corpus instance). Residuals by owner
+    in `CG08-CAST-AND-QUERY-RESIDUALS`.
+    [Report](../../reports/cg08-casts-and-type-queries/README.md).
 - **CG09: typed-source control.**
   - *Statements.* General `while`/`for`/`do`, `switch`/`case`/`default`, and
     `goto`/labels/`break`/`continue` in T. Either lower through the

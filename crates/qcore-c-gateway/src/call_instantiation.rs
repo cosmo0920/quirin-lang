@@ -586,6 +586,20 @@ fn data_actual(node: &Value) -> Result<Actual, SubstitutionRefusal> {
                         "LValueToRValue" | "NoOp" | "IntegralCast" | "IntegralToFloating"
                         | "FloatingToIntegral" | "FloatingCast" | "IntegralToBoolean",
                     ) => {}
+                    // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the
+                    // remaining scalar representation, and the null test of
+                    // a named pointer object, whose truth value carries no
+                    // identity (`QCore.CastRepresentation`).
+                    Some("FloatingToBoolean") => {}
+                    Some("PointerToBoolean") => {
+                        let operand = crate::elaboration::pointer_operand(
+                            children(node).first().unwrap_or(node),
+                        );
+                        return match (kind(operand), operand["referencedDecl"]["kind"].as_str()) {
+                            ("DeclRefExpr", Some("VarDecl" | "ParmVarDecl")) => Ok(()),
+                            _ => Err(SubstitutionRefusal::Form("cast", "CG08")),
+                        };
+                    }
                     Some("ArrayToPointerDecay" | "NullToPointer" | "BitCast") => {
                         // A constant address: a string literal's decay or a
                         // null pointer constant.

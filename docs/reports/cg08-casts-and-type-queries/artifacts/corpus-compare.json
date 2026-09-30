@@ -1,0 +1,211 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4238,
+   "Safe": 586,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4222,
+   "Safe": 602,
+   "Unsafe": 10
+  }
+ },
+ "moves": [
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_meta_aggregation_type",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -1,
+    "unknown_alias: unresolved resource identity": -1
+   }
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_metric_start_ts",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -1
+   }
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_metric_ts",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -1
+   }
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "function": "flb_input_chunk_get_name",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_putIndexOnHash",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -2
+   }
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "function": "safe_read_bool",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -1
+   }
+  },
+  {
+   "unit": "rdfnv1a.c",
+   "function": "rd_fnv1a",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_AuthorizedOperations_copy",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1,
+    "unknown_alias: unresolved resource identity": -1,
+    "unsupported: nullable resource `dst` used by a non-null contract": -1
+   }
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignor_cmp_idx",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -2
+   }
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_anyconf_is_any_modified",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -2,
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+   }
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_conf_s2i_find",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+   }
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_partition",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -1
+   }
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafkap_leader_discovery_metadata_init",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1,
+    "unknown_alias: unresolved resource identity": -3
+   }
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_ack_entries_offset_find_cmp_ptr",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -2
+   }
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "function": "rd_kafka_share_ack_entries_sort_cmp_ptr",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unsupported assignment expression": -2
+   }
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "ut_get_consumer_rack",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 16
+ },
+ "same_status_functions_with_changed_diagnostics": 386,
+ "leaf_delta": {
+  "unsupported: C operator `sizeof` requires type/operand analysis": -367,
+  "unsupported: unsupported assignment expression": -181,
+  "unsupported: indirect memory access is outside the resource projection": -152,
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -49,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -42,
+  "unsupported: call to uncontracted function `rd_kafkap_leader_discovery_metadata_init`": -2,
+  "unsupported: nullable resource `dst` used by a non-null contract": -1,
+  "unsupported: call to uncontracted function `rd_kafka_conf_s2i_find`": -1,
+  "unsupported: unrecognized assignment destination": 0,
+  "summary_conflict: inferred custody summary ResourceFunctionContract { parameters: [Owned { nullable: false }, Borrowed], result: None } contradicts the declared contract ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None, counted_users: CountedUserClauses { effects: {}, neutral: true, exits: [] } }; the declared contract governs every call site": 1,
+  "unsupported: call to uncontracted function `LZ4_initStream`": 1,
+  "unsupported: call to uncontracted function `LZ4F_malloc`": 1,
+  "unsupported: call to uncontracted function `rd_kafka_mem_malloc`": 1,
+  "unsupported: cast of a possibly tracked value to another carrier in return expression": 1,
+  "unsupported: call to uncontracted function `pthread_setspecific`": 1,
+  "leak: live obligation acquired at mk_server/mk_scheduler.c:201": 1,
+  "unsupported: nullable resource `rsal` used by a non-null contract": 1,
+  "unsupported: nullable resource `hdr` used by a non-null contract": 1,
+  "unsupported: nullable resource `ret` used by a non-null contract": 1,
+  "unsupported: nullable resource `rkbuf` used by a non-null contract": 1,
+  "unsupported: nullable resource `rkcg` used by a non-null contract": 1,
+  "unsupported: call to uncontracted function `rd_tmpabuf_write0`": 1,
+  "unsupported: call to uncontracted function `__builtin_alloca`": 1,
+  "unsupported: nullable resource `target_assignment` used by a non-null contract": 1,
+  "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 1,
+  "unsupported: nullable resource `messages` used by a non-null contract": 1,
+  "unsupported: nullable resource `rko` used by a non-null contract": 1,
+  "unsupported: nullable resource `rkt` used by a non-null contract": 1,
+  "unsupported: discarded owned result of resource API `rd_calloc`": 1,
+  "unsupported: publication of a tracked resource into the static-storage object `ut_mock_rk` is outside the resource projection": 1,
+  "unsupported: store through `*out` without an out-parameter contract": 2,
+  "unsupported: call has an unmodeled formal address or borrowed expression": 2,
+  "unsupported: nullable resource `node` used by a non-null contract": 2,
+  "unsupported: call to uncontracted function `LZ4_initStreamHC`": 3,
+  "unsupported: call to uncontracted function `rd_tmpabuf_alloc0`": 5,
+  "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 5,
+  "unsupported: call to uncontracted function `rd_kafka_features_check`": 6,
+  "unsupported: call to uncontracted function `setupRackAwareAssignment`": 9,
+  "unsupported: call to uncontracted function `setupRackAwareAssignment0`": 31,
+  "unknown_alias: unresolved resource identity": 352
+ }
+}

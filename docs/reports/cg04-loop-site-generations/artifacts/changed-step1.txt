@@ -1,0 +1,71 @@
+cmt_encode_prometheus.c::initialize_temporary_metric Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @cmt_encode_prometheus.c:271
+cmt_encode_splunk_hec.c::initialize_temporary_metric Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @cmt_encode_splunk_hec.c:86
+cmt_map.c::cmt_map_create Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @cmt_map.c:146
+cmt_map.c::map_metric_create Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @cmt_map.c:297
+ctr_encode_opentelemetry.c::otel_span_set_links Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @ctr_encode_opentelemetry.c:785
+mk_core/mk_rconf.c::mk_rconf_free Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_core/mk_rconf.c:675
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_core/mk_rconf.c:683
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_core/mk_rconf.c:692
+mk_core/mk_rconf.c::mk_rconf_free_entries Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_core/mk_rconf.c:716
+mk_core/mk_string.c::mk_string_split_free Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_core/mk_string.c:399
+mk_core/mk_string.c::mk_string_split_line Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_core/mk_string.c:370
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_core/mk_string.c:374
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_core/mk_string.c:381
+mk_server/mk_config.c::mk_config_listeners_free Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_config.c:62
+mk_server/mk_fifo.c::mk_fifo_worker_destroy_all Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_fifo.c:267
+mk_server/mk_http.c::mk_http_request_free_list Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_http.c:1535
+mk_server/mk_server.c::mk_server_listen_init Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_server.c:205
+mk_server/mk_vhost.c::mk_vhost_destroy Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_vhost.c:785
+   - unknown_alias unresolved resource identity `ep` @mk_server/mk_vhost.c:786
+mk_server/mk_vhost.c::mk_vhost_fdt_worker_init Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_vhost.c:95
+mk_server/mk_vhost.c::mk_vhost_handler_free Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_vhost.c:742
+mk_server/mk_vhost.c::mk_vhost_read Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_vhost.c:407
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_vhost.c:481
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_vhost.c:511
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @mk_server/mk_vhost.c:539
+rdkafka_assignor.c::rd_kafka_member_subscriptions_map Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdkafka_assignor.c:298
+rdkafka_conf.c::rd_kafka_anyconf_dump Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdkafka_conf.c:3469
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdkafka_conf.c:3478
+rdkafka_fetcher.c::rd_kafka_share_acknowledge_reply_handle Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdkafka_fetcher.c:2164
+rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdkafka_mock_cgrp.c:910
+rdkafka_mock_handlers.c::rd_kafka_mock_handle_EndTxn Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdkafka_mock_handlers.c:2525
+rdkafka_mock_sharegrp.c::rd_kafka_mock_sharegroup_get_members_for_topic Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdkafka_mock_sharegrp.c:443
+rdkafka_request.c::rd_kafka_handle_OffsetFetch Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdkafka_request.c:1335
+rdkafka_sasl_scram.c::rd_kafka_sasl_safe_string Unsafe -> Unsafe
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdkafka_sasl_scram.c:243
+rdstring.c::rd_string_render Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdstring.c:93
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdstring.c:125
+rdunittest.c::ut_tq_test Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdunittest.c:179
+snappy.c::rd_kafka_snappy_java_uncompress Unsafe -> Unsafe
+   + leak live obligation acquired at snappy.c:1705 @snappy.c:1680
+   + leak live obligation acquired at snappy.c:1705 @snappy.c:1694
+   + leak live obligation acquired at snappy.c:1705 @snappy.c:1712
+   + leak live obligation acquired at snappy.c:1705 @snappy.c:1721
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @snappy.c:1705
+28 functions changed

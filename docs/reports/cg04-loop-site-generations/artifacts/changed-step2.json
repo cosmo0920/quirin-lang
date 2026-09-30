@@ -1,0 +1,30 @@
+[
+ {
+  "unit": "rdgz.c",
+  "function": "rd_gz_decompress",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 3118, \"origin\": \"rdgz.c:100\"}",
+   "{\"category\": \"unsupported\", \"description\": \"nullable resource `decompressed` used by a non-null contract\", \"line\": 3127, \"origin\": \"rdgz.c:114\"}"
+  ],
+  "removed": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `decompressed`\", \"line\": 3123, \"origin\": \"rdgz.c:108\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `decompressed`\", \"line\": 3129, \"origin\": \"rdgz.c:117\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `decompressed`\", \"line\": 3130, \"origin\": \"rdgz.c:118\"}",
+   "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 3118, \"origin\": \"rdgz.c:100\"}"
+  ]
+ },
+ {
+  "unit": "rdkafka_lz4.c",
+  "function": "rd_kafka_lz4_decompress",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `out`\", \"line\": 19815, \"origin\": \"rdkafka_lz4.c:280\"}"
+  ],
+  "removed": [
+   "{\"category\": \"unsupported\", \"description\": \"unmodeled call, aggregate or indirect access in branch condition\", \"line\": 19815, \"origin\": \"rdkafka_lz4.c:280\"}"
+  ]
+ }
+]

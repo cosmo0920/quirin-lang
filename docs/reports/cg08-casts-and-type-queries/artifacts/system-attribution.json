@@ -1,0 +1,53 @@
+[
+ {
+  "unit": "src/flb_engine.c",
+  "function": "calculate_chunk_capacity_percent",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  },
+  "new_rows": [
+   {
+    "answer": "elaboration-return:admitted",
+    "line": 19110
+   }
+  ],
+  "hooks": {
+   "elaboration-return:admitted": 1
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_get_name",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 20521
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 1
+  }
+ },
+ {
+  "unit": "src/flb_task.c",
+  "function": "flb_task_from_fs_storage",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 17538
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 1
+  }
+ }
+]

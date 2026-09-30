@@ -669,3 +669,47 @@ fn cg06_omitted_middle_evaluates_once() {
             .any(|&e| matches!(elaborated.graph.events[e], Event::Call { .. }))
     );
 }
+
+/// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the representation rows and
+/// the type-query operand classes, through the route-free context (which
+/// proves no pointer untracked).
+#[test]
+fn cg08_casts_and_type_queries_are_elaborated_by_their_rows() {
+    if !clang_available() {
+        return;
+    }
+    // Admitted: the call is the only event besides its operands' reads.
+    for source in [
+        "void f(const char *p, int n); void subject(void) { f(((void *)0), 1); }",
+        "void f(_Bool b); void subject(void *p) { f(p); }",
+        "void f(void *p); void subject(unsigned long v) { f((void *)v); }",
+        "void f(int b); void subject(double d) { f((_Bool)d); }",
+        "void f(unsigned long n); void subject(int *p) { f(sizeof(*p)); }",
+        "int g(void); void f(unsigned long n); void subject(void) { f(sizeof(g())); }",
+        "void f(unsigned long n); void subject(int n) { f(sizeof(int[n])); }",
+    ] {
+        let elaborated = run(source).unwrap_or_else(|refusal| panic!("{source}: {refusal:?}"));
+        let events = &elaborated.graph.events;
+        let calls = events
+            .iter()
+            .filter(|event| matches!(event, Event::Call { .. }))
+            .count();
+        assert_eq!(calls, 1, "{source}: {events:?}");
+        assert!(
+            events
+                .iter()
+                .all(|event| matches!(event, Event::Call { .. } | Event::Read(_))),
+            "{source}: {events:?}"
+        );
+    }
+    // A pointer the context does not prove untracked escapes as an integer.
+    match run("void f(unsigned long n); void subject(void *p) { f((unsigned long)p); }") {
+        Err(Refusal::PointerEscape(name)) => assert_eq!(name, "p"),
+        other => panic!("{other:?}"),
+    }
+    // An evaluated operand with a store refuses.
+    assert_eq!(
+        run("void f(unsigned long n); void subject(int n) { f(sizeof(char[n++])); }").err(),
+        Some(refused("type query operand"))
+    );
+}

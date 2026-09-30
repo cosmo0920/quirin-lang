@@ -149,8 +149,11 @@ fn every_refusal_arm_is_pinned() {
             "void *p = q_alloc(); int a[2] = {0}; if (r_borrow_code(p) == a[n]) { } q_free(p);",
             "ResidualRefused",
         ),
+        // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b) admits the unevaluated
+        // `sizeof(buf)` this arm's fixture used; an evaluated operand with a
+        // store (`char[n++]`) is still refused by the elaborator.
         (
-            "void *p = q_alloc(); char buf[8]; if (r_borrow_code(p) && n >= sizeof(buf)) { } q_free(p);",
+            "void *p = q_alloc(); if (r_borrow_code(p) && n >= sizeof(char[n++])) { } q_free(p);",
             "CallFreeLeafRefused",
         ),
         (

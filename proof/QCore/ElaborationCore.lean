@@ -62,7 +62,17 @@ def formTable : List (String × Disposition) := [
   ("statement expression", .refused "CG07"),
   ("compound literal", .refused "CG14"),
   ("volatile access", .refused "CG15"),
-  ("atomic access", .refused "CG19")
+  ("atomic access", .refused "CG19"),
+  -- Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): `QCore.CastRepresentation`.
+  ("representation cast", .admitted),
+  ("pointer null test", .admitted),
+  ("pointer to integer", .admitted),
+  ("integer to pointer", .admitted),
+  ("pointer representation", .admitted),
+  ("null pointer constant", .admitted),
+  ("discarded value", .admitted),
+  ("unevaluated type query", .admitted),
+  ("evaluated type query", .admitted)
 ]
 
 def disposition (form : String) : Option Disposition :=

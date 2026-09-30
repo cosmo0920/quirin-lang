@@ -162,6 +162,18 @@ mod condition_acquisition_route;
 #[path = "legacy_value_connective.rs"]
 mod value_connective_route;
 
+// Card CG04-LOOP-SITE-GENERATIONS: a re-acquired site on a CFG cycle keeps
+// its earlier generation apart. The hooks below naming the card are thin.
+#[path = "legacy_loop_generations.rs"]
+mod loop_generations_route;
+
+// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the null test is no escape or
+// binding, pointer-to-pointer casts at a pointer destination, the cast return
+// the reader does not commit to, and Clang-confirmed unevaluated `sizeof`
+// operands at the gate. The hooks below naming the card are thin.
+#[path = "legacy_cast_representation.rs"]
+mod cast_representation_route;
+
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the P3 residual shapes
 // C's evaluation order admits. Hooks are thin.
 #[path = "legacy_typed_residuals.rs"]
@@ -3213,6 +3225,9 @@ fn build_function_cfg_with(
     };
     // Card W47-TYPED-ROOT-DECLARATION-READER: parity runs only.
     parser.record_typed_root_parity();
+    // Card CG08-CASTS-AND-TYPE-QUERIES (`W45-CALLEE-CAST-LEXICAL-PREMISE`):
+    // parity runs only.
+    parser.record_callee_cast_census(body_start);
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
     let statements =
@@ -6207,6 +6222,12 @@ impl Parser<'_> {
             Some("return") => {
                 self.cursor += 1;
                 let expression = self.consume_to_semicolon()?;
+                // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b), a soundness
+                // repair asked first: a pointer C converts to a truth value
+                // is no escape.
+                if let Some(tested) = self.pointer_test_return(&expression, line) {
+                    return Ok(tested);
+                }
                 let statement = self.return_statement(expression.clone(), line);
                 // Card CG02-ELABORATION-CORE (rule 10s): asked last, only for
                 // a refused return.
@@ -6279,6 +6300,14 @@ impl Parser<'_> {
                 ) {
                     cast_return::CastReturn::Operand(start) => expression[start..].to_vec(),
                     cast_return::CastReturn::Refuse => {
+                        return cast_return::refusal(line, self.expression_writes(&expression));
+                    }
+                    // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b,
+                    // `CAST-RETURN-UNCOMMITTED-OPERAND`): Clang's
+                    // `PointerToIntegral` of a possibly tracked pointer.
+                    cast_return::CastReturn::PreCard
+                        if self.pointer_integer_return(&expression) =>
+                    {
                         return cast_return::refusal(line, self.expression_writes(&expression));
                     }
                     cast_return::CastReturn::PreCard => expression,
@@ -6354,6 +6383,12 @@ impl Parser<'_> {
         // Card W45-CONTAINER-ROOT-REACH: keep an element binding only
         // when it is the statement's final instruction.
         self.element_origins.clear();
+        // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b), a soundness repair
+        // asked first: a pointer C converts to a truth value binds nothing.
+        if let Some(tested) = self.pointer_test_store(tokens, line) {
+            self.element_origins.clear();
+            return tested;
+        }
         // Card CG10 (I04): this run's own place in the stream.
         self.typed_place_origin
             .set(origin.map(|origin| (origin, tokens.len())));
@@ -6392,6 +6427,12 @@ impl Parser<'_> {
         {
             self.element_origins.clear();
             return elaborated;
+        }
+        // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): asked after the
+        // elaborator, only for a refusal.
+        if let Some(uncast) = self.uncast_pointer_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return uncast;
         }
         // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): asked last, only
         // for a call whose lexical substitution was refused or incomplete.
@@ -7752,12 +7793,19 @@ impl Parser<'_> {
         // so the gate below sees it as the scalar marker. Only for a statement
         // whose first call is an ordinary callee; everything after the gate
         // reads the original tokens. Empty (the gate unchanged) otherwise.
-        let unevaluated =
-            if find_call(&texts).is_some_and(|(_, callee)| !TYPE_OPERATORS.contains(&callee)) {
-                crate::sizeof_operand::unevaluated_spans(&texts, &self.sizeof_operands)
-            } else {
-                Vec::new()
-            };
+        let unevaluated = if find_call(&texts)
+            .is_some_and(|(_, callee)| !TYPE_OPERATORS.contains(&callee))
+        {
+            let mut spans = crate::sizeof_operand::unevaluated_spans(&texts, &self.sizeof_operands);
+            // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): operands Clang
+            // shows unevaluated join the lexically admitted ones.
+            let confirmed = self.clang_unevaluated_spans(tokens, &spans);
+            spans.extend(confirmed);
+            spans.sort_unstable();
+            spans
+        } else {
+            Vec::new()
+        };
         let gate_view = |from: usize| {
             if unevaluated.is_empty() {
                 outside_spans(&texts, &borrowed_actuals, from)
@@ -11364,7 +11412,11 @@ struct TransferContext<'a> {
 
 /// The kind of `site` under `kinds`: heap unless recorded otherwise.
 fn kind_of(kinds: &BTreeMap<usize, ResourceKind>, site: usize) -> ResourceKind {
-    kinds.get(&site).copied().unwrap_or_default()
+    // Card CG04-LOOP-SITE-GENERATIONS: every generation of a site has its kind.
+    kinds
+        .get(&crate::loop_generations::base(site))
+        .copied()
+        .unwrap_or_default()
 }
 
 /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: whether `place` is bound here to at
@@ -11461,6 +11513,11 @@ pub(crate) fn analyze_cfg_with_entry(
         };
         let node = &cfg.nodes[node_id];
         let mut local = BTreeSet::new();
+        // Card CG04-LOOP-SITE-GENERATIONS: a re-acquisition shifts its site's
+        // generations first, so every read below and the transfer see the
+        // earlier generation under its own identity.
+        let (state, shifted) =
+            loop_generations_route::shift(&cfg.function, node, state, &mut local);
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
         // Card W44-LEAK-PIN-AUDIT: the live identities this statement hands
         // on, read from the state it runs in (`refused_operands`).
@@ -11479,6 +11536,7 @@ pub(crate) fn analyze_cfg_with_entry(
         // *this* node rather than anything reported elsewhere in the function.
         joined_provenance::finish_release(conditional_release, &mut output, &local);
         refused_operands::apply(&mut output, &handed, &local);
+        loop_generations_route::settle_refused(&shifted, &mut output, &local);
         output.unmodeled |= local.iter().any(is_path_poisoning);
         diagnostics.append(&mut local);
         if node.is_exit {
@@ -11613,6 +11671,9 @@ pub(crate) fn analyze_cfg_with_entry(
         &mut diagnostics,
     );
     report_retained_loop_exit_edges(&cfg, &incoming, &context.site_kinds, &mut diagnostics);
+    // Card CG04-LOOP-SITE-GENERATIONS: the re-acquisitions an earlier
+    // generation reaches, from the settled states (parity only).
+    loop_generations_route::record_exposure(&cfg, &incoming);
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kind-mismatched release and the
     // use-after-close candidates, from the same settled states.
     report_kind_violations(
@@ -11664,6 +11725,7 @@ pub(crate) fn analyze_cfg_with_entry(
     // this pass only observes.
     let mut observations = Vec::new();
     let mut exits = Vec::new();
+    let mut withheld = Vec::new();
     for (node_id, node) in cfg.nodes.iter().enumerate() {
         if !node.is_exit {
             continue;
@@ -11672,6 +11734,9 @@ pub(crate) fn analyze_cfg_with_entry(
             continue;
         };
         let mut ignored = BTreeSet::new();
+        // Card CG04-LOOP-SITE-GENERATIONS: as in the work list.
+        let (state, shifted) =
+            loop_generations_route::shift(&cfg.function, node, state, &mut ignored);
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
         // Card W44-LEAK-PIN-AUDIT: the refused hand-on rule, as in the work list.
         let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
@@ -11686,6 +11751,7 @@ pub(crate) fn analyze_cfg_with_entry(
         );
         joined_provenance::finish_release(conditional_release, &mut output, &ignored);
         refused_operands::apply(&mut output, &handed, &ignored);
+        loop_generations_route::settle_refused(&shifted, &mut output, &ignored);
         output.unmodeled |= ignored.iter().any(is_path_poisoning);
         // Card W43-INDEXED-RESOURCE-COLLECTIONS: an element obligation left at
         // this settled exit.
@@ -11711,10 +11777,17 @@ pub(crate) fn analyze_cfg_with_entry(
             &acquisition_lines,
             entry_custody,
         ));
+        withheld.push((
+            node.line,
+            loop_generations_route::withheld(&output, &entry_custody.exempt_sites(&output)),
+        ));
     }
 
     let diagnostics = diagnostics.into_iter().collect::<Vec<_>>();
     let status = classify_diagnostics(&diagnostics);
+    // Card CG04-LOOP-SITE-GENERATIONS: the census of Safe results resting on
+    // a possibly-live identity whose effect is unresolved (parity only).
+    loop_generations_route::record_withheld(&cfg.function, status, &withheld, &acquisition_lines);
     (
         LegacyFunctionSummary {
             function: cfg.function.clone(),
@@ -15119,7 +15192,12 @@ fn refine_pointer_null(
 }
 
 fn acquisition_line(acquisition_lines: &BTreeMap<usize, usize>, site: usize) -> usize {
-    acquisition_lines.get(&site).copied().unwrap_or(0)
+    // Card CG04-LOOP-SITE-GENERATIONS: every generation of a site was acquired
+    // at its line.
+    acquisition_lines
+        .get(&crate::loop_generations::base(site))
+        .copied()
+        .unwrap_or(0)
 }
 
 fn report_leaks(

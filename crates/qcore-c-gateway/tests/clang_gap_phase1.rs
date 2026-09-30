@@ -377,8 +377,13 @@ fn k03_complex_actual_places_are_not_substituted() {
 /// **Flipped by CG04-CONDITION-ACQUISITION (rule 10x)** for the three
 /// branch forms: the acquisition, its binding, the NULL (or sentinel) split
 /// and the merge are lowered together where the condition stands, and each is
-/// `Safe` exactly as its statement pair is. The loop form keeps its refusal:
-/// a split acquisition on a CFG cycle is refused (`CG04-LOOP-SITE-GENERATIONS`).
+/// `Safe` exactly as its statement pair is. The loop form kept its refusal
+/// until **CG04-LOOP-SITE-GENERATIONS** gave the flow generation-indexed sites
+/// and lifted the placement guard: it is now admitted, applied once in the
+/// condition, and decided as its statement pair `p = q_alloc(); while (p != 0)
+/// { q_free(p); p = q_alloc(); }` is: the value route calls the exit edge of a
+/// non-null result infeasible, the edge is retained (rule
+/// SCALAR-ROUTE-EXIT-EDGE), and neither is `Safe`.
 #[test]
 fn e09_an_owned_acquisition_in_a_condition_is_refused_and_not_hoisted() {
     if !clang_available() {
@@ -403,10 +408,15 @@ fn e09_an_owned_acquisition_in_a_condition_is_refused_and_not_hoisted() {
     }
     let body = "void *p; while ((p = q_alloc()) != 0) { q_free(p); }";
     let run = gs(&format!("void subject(void) {{ {body} }}"));
-    assert!(run.refused(LOOP), "{body}: {run:?}");
+    assert!(!run.refused(LOOP), "{body}: {run:?}");
     assert!(!run.safe());
-    // The acquisition was not lifted out of the condition.
-    assert!(!run.calls.iter().any(|c| c == "q_alloc"));
+    let pair = gs(
+        "void subject(void) { void *p = q_alloc(); while (p != 0) { q_free(p); p = q_alloc(); } }",
+    );
+    assert!(!pair.safe(), "{pair:?}");
+    // The acquisition was not lifted out of the condition: applied once, in
+    // the condition's plan.
+    assert_eq!(run.calls.iter().filter(|c| *c == "q_alloc").count(), 1);
     // The normalised form is admitted.
     assert!(gs("void subject(void) { void *p = q_alloc(); if (p != 0) { q_free(p); } }").safe());
 }
@@ -729,16 +739,22 @@ fn e16_type_queries_are_read_only_in_fixed_shapes() {
         gs("void subject(struct S *s) { void *p = q_alloc(); cg_sink(sizeof(*s)); q_free(p); }")
             .safe()
     );
+    // Flipped by CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the initializer and
+    // the return read the unevaluated operand from Clang's node (no event),
+    // and the evaluated VLA operand's size expression `n` is read once.
     assert!(
-        gs("unsigned long subject(struct S *s) { unsigned long z = sizeof(*s); return z; }")
-            .refused(IND)
+        gs("unsigned long subject(struct S *s) { unsigned long z = sizeof(*s); return z; }").safe()
     );
-    assert!(gs("unsigned long subject(struct S *s) { return sizeof(*s); }").refused(RETURN));
-    // An evaluated VLA operand is refused.
+    assert!(gs("unsigned long subject(struct S *s) { return sizeof(*s); }").safe());
     let run = gs(
         "unsigned long subject(int n) { void *p = q_alloc(); unsigned long z = sizeof(int[n]); q_free(p); return z; }",
     );
-    assert!(run.refused(IND), "{run:?}");
+    assert!(run.safe(), "{run:?}");
+    // An evaluated operand with an effect stays refused.
+    let run = gs(
+        "unsigned long subject(int n) { void *p = q_alloc(); unsigned long z = sizeof(int[n++]); q_free(p); return z; }",
+    );
+    assert!(run.unknown(), "{run:?}");
 }
 
 #[test]

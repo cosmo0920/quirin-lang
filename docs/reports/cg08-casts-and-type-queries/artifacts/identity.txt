@@ -1,0 +1,8 @@
+454ecd004d2bf94a26f210c29bdf5a93ecd60bd0bc09be9894c169111cb0055c  private/cg08/repaired-before/resource-diagnostics.json
+2fc3af8c39f0cf043fedb405badf6dc0c000bc461a38b06f7de8310308c8bf94  private/cg08/repaired-after/resource-diagnostics.json
+2cf0aa7b597360346755f25fbb9181723b89386274edb81fe2633f606d600133  private/cg08/repaired-before-system/resource-diagnostics.json
+037d4d5efb2d4afff64591f1e37fbcc1a7ca1b3f54e6363c5c337e9fd3fa7517  private/cg08/repaired-after-system/resource-diagnostics.json
+37cf8df28db48ecf39c58e25a2c840d86e46305daeec9f7005a648016e52e889  <main>/private/w47-tail/attempt-1/cg08-repaired-before/resource-diagnostics.json
+1062b647857cf8e50fe470befbcf989f6099107b013ae0296682fe26f146834f  <main>/private/w47-tail/attempt-1/cg08-repaired-after/resource-diagnostics.json
+7e611b2cba2dabb2b186967e7229c13d1fd03cc41bda4908e14185e51dff7db7  target/release/quirin-audit
+3c8c2d169f75319a8d233d1d43dfe781cad01898ecf02050f525380b63ef0d6f  target/release/quirin-audit

@@ -94,9 +94,11 @@ fn m12_variable_length_arrays_are_refused() {
             "{body}: {run:?}"
         );
     }
+    // Flipped by CG08-CASTS-AND-TYPE-QUERIES (rule 11b, E16): an evaluated
+    // VLA type-query operand is read once (its size expression `n`); the
+    // declaration refusal above is CG17's and stands.
     assert!(
-        gs("unsigned long subject(int n) { unsigned long z = sizeof(int[n]); return z; }")
-            .refused(IND)
+        gs("unsigned long subject(int n) { unsigned long z = sizeof(int[n]); return z; }").safe()
     );
 }
 

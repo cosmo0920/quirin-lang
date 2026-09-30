@@ -489,6 +489,10 @@ pub(crate) enum Refusal {
     CallFootprintConflict(String, String),
     /// A cast kind outside the scalar set (card CG08).
     Cast(String),
+    /// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): a pointer converted to an
+    /// integer that the route does not prove carries no identity: an escape
+    /// from the custody frame, never data.
+    PointerEscape(String),
     /// The route's place reader refused the place (card CG10).
     Place(String),
     Declaration(&'static str),
@@ -528,6 +532,9 @@ impl Refusal {
                 "unsequenced {one} and {other} whose contract footprints do not commute (CG05)"
             ),
             Refusal::Cast(cast) => format!("cast `{cast}` (CG08)"),
+            Refusal::PointerEscape(pointer) => format!(
+                "pointer `{pointer}` converted to an integer may carry a tracked identity (CG08)"
+            ),
             Refusal::Place(reason) => format!("place: {reason} (CG10)"),
             Refusal::Declaration(reason) => format!("declaration: {reason}"),
             Refusal::Unlisted(form) => format!("unlisted form: {form}"),
@@ -553,7 +560,7 @@ pub(crate) enum Disposition {
 
 /// Every form the elaborator names, with its disposition. A form not listed is
 /// refused as unlisted.
-pub(crate) const FORM_TABLE: [(&str, Disposition); 29] = [
+pub(crate) const FORM_TABLE: [(&str, Disposition); 38] = [
     ("literal", Disposition::Admitted),
     ("object read", Disposition::Admitted),
     ("path read", Disposition::Admitted),
@@ -583,6 +590,17 @@ pub(crate) const FORM_TABLE: [(&str, Disposition); 29] = [
     ("compound literal", Disposition::Refused("CG14")),
     ("volatile access", Disposition::Refused("CG15")),
     ("atomic access", Disposition::Refused("CG19")),
+    // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the representation rows of
+    // `cast_representation::CAST_TABLE` and the type-query operand classes.
+    ("representation cast", Disposition::Admitted),
+    ("pointer null test", Disposition::Admitted),
+    ("pointer to integer", Disposition::Admitted),
+    ("integer to pointer", Disposition::Admitted),
+    ("pointer representation", Disposition::Admitted),
+    ("null pointer constant", Disposition::Admitted),
+    ("discarded value", Disposition::Admitted),
+    ("unevaluated type query", Disposition::Admitted),
+    ("evaluated type query", Disposition::Admitted),
 ];
 
 /// The disposition of a form, `None` for an unlisted one.
@@ -641,6 +659,12 @@ pub(crate) trait Context {
     /// refusal the graph check already made.
     fn shared_bitfield_unit(&self, _node: &Value, _one: &str, _other: &str) -> Option<u32> {
         None
+    }
+    /// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): whether the pointer value
+    /// `node` provably carries no resource identity, so its conversion to an
+    /// integer is data rather than an escape. The default refuses.
+    fn untracked_pointer(&self, _node: &Value) -> bool {
+        false
     }
 }
 
@@ -911,9 +935,8 @@ impl<C: Context> Elaborator<'_, C> {
                 if self.context.scalar(node) && self.context.scalar(inner) {
                     self.expression(inner)
                 } else {
-                    Err(Refusal::Cast(
-                        node["castKind"].as_str().unwrap_or("?").to_owned(),
-                    ))
+                    // Card CG08 (rule 11b).
+                    self.representation(node, inner)
                 }
             }
             "UnaryExprOrTypeTraitExpr" => {
@@ -931,7 +954,8 @@ impl<C: Context> Elaborator<'_, C> {
                         source: ValueSource::Computed,
                     }))
                 } else {
-                    Err(refused("type query operand"))
+                    // Card CG08 (rule 11b).
+                    self.type_query(node)
                 }
             }
             "UnaryOperator" => self.unary(node),
@@ -973,14 +997,158 @@ impl<C: Context> Elaborator<'_, C> {
             }
             "NoOp" | "IntegralCast" => {
                 if !self.context.scalar(node) {
-                    return Err(Refusal::Cast(
-                        node["castKind"].as_str().unwrap_or("?").to_owned(),
-                    ));
+                    // Card CG08 (rule 11b): an object-pointer `NoOp`.
+                    return self.representation(node, inner);
                 }
                 self.expression(inner)
             }
             "FunctionToPointerDecay" => Err(refused("indirect call")),
-            other => Err(Refusal::Cast(other.to_owned())),
+            // Card CG08 (rule 11b): the representation table.
+            _ => self.representation(node, inner),
+        }
+    }
+
+    /// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): a cast CG02's arms do not
+    /// read, by its row of `cast_representation::CAST_TABLE`. No cast has a
+    /// custody effect; a refused or unlisted kind keeps CG02's refusal text.
+    fn representation(&mut self, node: &Value, inner: &Value) -> Result<Part, Refusal> {
+        use crate::cast_representation::{Admission, Preservation, representation};
+        let cast = node["castKind"].as_str().unwrap_or("?").to_owned();
+        let refuse = |cast: &str| Refusal::Cast(cast.to_owned());
+        let row = representation(&cast).ok_or_else(|| refuse(&cast))?;
+        let lossy = row.preservation == Preservation::PossiblyLossy;
+        let scalar = |part: Part, lossy: bool| Part {
+            result: Operand::Value {
+                pointer: false,
+                source: ValueSource::Computed,
+            },
+            arithmetic: part.arithmetic || lossy,
+            ..part
+        };
+        let (to_scalar, to_pointer) = (self.context.scalar(node), self.context.pointer(node));
+        let (from_scalar, from_pointer) = (self.context.scalar(inner), self.context.pointer(inner));
+        match row.admission {
+            Admission::Scalar if to_scalar && from_scalar => {
+                let part = self.expression(inner)?;
+                Ok(scalar(part, lossy))
+            }
+            Admission::NullTest if to_scalar && from_pointer => {
+                let part = self.expression(inner)?;
+                if !part.pointer() {
+                    return Err(refuse(&cast));
+                }
+                Ok(scalar(part, false))
+            }
+            Admission::PointerToInteger if to_scalar && from_pointer => {
+                if !self.context.untracked_pointer(inner) {
+                    let operand = pointer_operand(inner);
+                    let spelling = operand["referencedDecl"]["name"]
+                        .as_str()
+                        .unwrap_or("expression")
+                        .to_owned();
+                    return Err(Refusal::PointerEscape(spelling));
+                }
+                let part = self.expression(inner)?;
+                if !part.pointer() {
+                    return Err(refuse(&cast));
+                }
+                Ok(scalar(part, lossy))
+            }
+            Admission::IntegerToPointer if to_pointer && from_scalar => {
+                // A pointer with no identity: the elaborator's value never
+                // carries one, and no consumer binds it (a pointer store is
+                // CG11's refusal).
+                let part = self.expression(inner)?;
+                Ok(Part {
+                    result: Operand::Value {
+                        pointer: true,
+                        source: ValueSource::Computed,
+                    },
+                    arithmetic: true,
+                    ..part
+                })
+            }
+            Admission::PointerValue if to_pointer && from_pointer => {
+                let part = self.expression(inner)?;
+                if !part.pointer() {
+                    return Err(refuse(&cast));
+                }
+                Ok(part)
+            }
+            Admission::NullPointer if to_pointer => {
+                // A null pointer constant: an integer constant expression 0,
+                // or one already converted to `void *` (`(void *)0`), with
+                // no event either way.
+                let part = self.expression(inner)?;
+                if !part.all.is_empty() {
+                    return Err(refuse(&cast));
+                }
+                Ok(Part {
+                    result: Operand::Value {
+                        pointer: true,
+                        source: ValueSource::Computed,
+                    },
+                    ..part
+                })
+            }
+            Admission::Discard => {
+                let part = self.expression(inner)?;
+                Ok(Part {
+                    result: Operand::Void,
+                    ..part
+                })
+            }
+            Admission::Refused("CG19") => Err(refused("atomic access")),
+            _ => Err(refuse(&cast)),
+        }
+    }
+
+    /// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): a type query CG02's arm
+    /// does not read, by its operand's evaluation class. An unevaluated
+    /// operand has no event; a variably modified type's size expressions are
+    /// evaluated once and must only read.
+    fn type_query(&mut self, node: &Value) -> Result<Part, Refusal> {
+        use crate::cast_representation::{QueryOperand, query_operand};
+        if !self.context.scalar(node) {
+            return Err(refused("type query operand"));
+        }
+        let value = Operand::Value {
+            pointer: false,
+            source: ValueSource::Computed,
+        };
+        match query_operand(node) {
+            QueryOperand::Unevaluated => Ok(Part::empty(value)),
+            QueryOperand::Evaluated(sizes) => {
+                let mut all = Vec::new();
+                let mut values = Vec::new();
+                let mut groups = Vec::new();
+                for size in sizes {
+                    let part = self.expression(size)?;
+                    if part.pointer()
+                        || part
+                            .all
+                            .iter()
+                            .any(|&event| !matches!(self.graph.events[event], Event::Read(_)))
+                    {
+                        return Err(refused("type query operand"));
+                    }
+                    groups.push(part.all.clone());
+                    all.extend(part.all);
+                    values.extend(part.values);
+                }
+                // The extents of one type are unsequenced with one another;
+                // reads commute.
+                if groups.len() > 1 {
+                    self.graph.unsequenced.push(groups);
+                }
+                Ok(Part {
+                    all,
+                    values,
+                    result: value,
+                    arithmetic: false,
+                })
+            }
+            QueryOperand::Refused(_) => Err(refused("type query operand")),
         }
     }
 
@@ -1363,6 +1531,25 @@ pub(crate) fn strip_parens(mut node: &Value) -> &Value {
         }
     }
     node
+}
+
+/// Card CG08 (rule 11b): the pointer operand of a conversion, through
+/// parentheses and the implicit read and pointer conversions around a name.
+pub(crate) fn pointer_operand(mut node: &Value) -> &Value {
+    loop {
+        node = strip_parens(node);
+        if kind(node) == "ImplicitCastExpr"
+            && matches!(
+                node["castKind"].as_str(),
+                Some("LValueToRValue" | "NoOp" | "BitCast")
+            )
+            && let Some(inner) = children(node).first()
+        {
+            node = inner;
+            continue;
+        }
+        return node;
+    }
 }
 
 /// The named function a callee designates through its function-to-pointer

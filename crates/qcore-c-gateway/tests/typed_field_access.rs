@@ -323,12 +323,11 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
         // a scalar, so the typed route now admits it with each link's
         // obligation; it certifies in
         // `a_typed_member_chain_store_is_admitted_by_the_chain_route` below.
-        // A cast names a type, which is never a declared scalar variable.
-        (
-            "cast operand",
-            "void subject(struct doc *d, void *h) { void *p = q_alloc(); \
-             d->revision = (long) h; q_free(p); }",
-        ),
+        // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b) moves the "cast
+        // operand" row (`d->revision = (long) h;`) out of this table
+        // deliberately: Clang's `PointerToIntegral` of a formal the closure
+        // proves never bound is data, so the elaborator stores it as a typed
+        // scalar store; the same cast of a tracked pointer is refused below.
         // A call in the statement keeps the call's own rules.
         (
             "call-bearing statement",
@@ -344,9 +343,20 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
     for body in [
         "void subject(union overlay *o) { void *p = q_alloc(); o->cursor = 1; q_free(p); }",
         "void subject(struct bitfield_doc *d) { void *p = q_alloc(); d->cursor = 1; q_free(p); }",
+        "void subject(struct doc *d, void *h) { void *p = q_alloc(); \
+         d->revision = (long) h; q_free(p); }",
     ] {
         certified(body);
     }
+    // Card CG08: the tracked pointer's conversion is an escape, refused.
+    let reasons = unknown_reasons(
+        "void subject(struct doc *d) { void *p = q_alloc(); \
+         d->revision = (long) p; q_free(p); }",
+    );
+    assert!(
+        !reasons.is_empty(),
+        "a tracked pointer's integer must refuse"
+    );
     for (case, body) in cases {
         let reasons = unknown_reasons(body);
         assert!(

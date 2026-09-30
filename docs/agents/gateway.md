@@ -144,6 +144,10 @@ which is not a second authority.
     `wave23-c-operations`, `c-gateway-wave`.
 <!-- preserved:constraint-5a:end -->
 
+Amended by [rule 11b](#constraint-11b): a type query's operand is read
+by its evaluation class from Clang's node; the marker still never
+reaches a bound or a branch.
+
 <a id="constraint-5b"></a>
 
 <!-- preserved:constraint-5b:start -->
@@ -1952,6 +1956,9 @@ which is not a second authority.
     `commutes_sound`, `unsequenced_refusals`), bound to `FORM_TABLE`,
     `commutes` and ten C order vectors by a shared-vector test;
     [report](../reports/cg02-elaboration-core/README.md).
+    Amended by [rule 11b](#constraint-11b): the cast and type-query rows
+    are read by `CAST_TABLE` and `query_operand`, and a statement, `return`
+    or condition holding a cast or a type query is consulted too.
 
 <a id="constraint-10t"></a>
 
@@ -2085,6 +2092,8 @@ which is not a second authority.
     `QCore.CallInstantiation`, bound to `ACCEPTANCE_VECTORS` and
     `SUBSTITUTION_VECTORS` by shared-vector tests;
     [report](../reports/cg03-call-summary-instantiation/README.md).
+    Amended by [rule 11b](#constraint-11b): the data reading takes
+    `FloatingToBoolean` and the null test of a named pointer object.
 
 <a id="constraint-10v"></a>
 
@@ -2215,13 +2224,16 @@ which is not a second authority.
     name only as the destination of its own integer-carried acquisition; a
     custody result is split only on its own carrier's failure value
     (`carrier`: a pointer's NULL, a descriptor's sentinel); and **no custody
-    split on a node a CFG cycle may pass through** (`placement`: a loop
-    position, a loop body, or a range a backward `goto` closes; an unread
-    extent, an unknown label or `setjmp` makes the whole body a cycle),
-    because the flow keeps one abstract site per acquisition node and a live
-    earlier generation would merge with the fresh one while the refuted
-    failure edge erases both (`CG04-LOOP-SITE-GENERATIONS`, the same defect
-    in the statement form). An owned result discarded, bound but not split, or
+    split on a node a CFG cycle may pass through unless the flow keeps the
+    site's generations apart** (`placement`: a loop position, a loop body, or
+    a range a backward `goto` closes; an unread extent, an unknown label or
+    `setjmp` makes the whole body a cycle). **Amended by
+    `CG04-LOOP-SITE-GENERATIONS` (rule 11a): the flow now indexes sites by
+    generation, so the guard is lifted** (`placement` takes
+    `SITES_ARE_GENERATION_INDEXED`, and refuses only for a flow that does
+    not); a split on a cycle decides as its statement pair, each earlier
+    generation apart, the refuted failure edge removing only the fresh one.
+    An owned result discarded, bound but not split, or
     split on another carrier keeps the refusal. An out-parameter acquisition
     (`if (f(&p) == 0)`) gets no split: no contract states the result/out
     relation (CG23); rule 5h admits the call as before, with the contract's
@@ -2238,8 +2250,8 @@ which is not a second authority.
     asked of the elaborator last. A call-free condition keeps a plan only if
     a typed or elaborated operand was needed (rule 10k's premise, unchanged).
 
-    **Do not** split a custody result on a cycle before
-    `CG04-LOOP-SITE-GENERATIONS` gives the flow generations, apply a call a
+    **Do not** split a custody result on a cycle in a flow without
+    generation-indexed sites (rule 11a), apply a call a
     type operand holds, hoist a condition's call, lower an increment beside a
     call, or widen `TestedSplit` for one consumer (a scalar `return` operand
     reads the same leaf; its split is no custody-neutral exit, so it keeps
@@ -2374,3 +2386,158 @@ which is not a second authority.
     the re-read, order, merge, forms and positions), bound to
     `ADMISSION_VECTORS`, `TRANSPARENT`, the elaborator and route G by
     shared-vector tests; [report](../reports/cg06-value-connectives-and-conditional/README.md).
+
+<a id="constraint-11-series"></a>
+
+Gateway rules after 10z continue as the 11 series (`11a`, `11b`, …) beside
+[source-identity rule 11](source-identity.md#constraint-11); each keeps its
+own anchor here.
+
+<a id="constraint-11a"></a>
+
+11a. **A re-acquired site keeps its earlier generations apart: the previous
+    one precisely, every older one in a summary that never discharges.** Card
+    CG04-LOOP-SITE-GENERATIONS (`loop_generations.rs`, the route-G adapter
+    `legacy_loop_generations.rs`, thin hooks in `legacy_c.rs` (the work
+    list, the settled exit pass, `kind_of`, `acquisition_line`) and
+    `legacy_leak_witness.rs`). It amends the flow's acquisition
+    (`create_resource`, `Acquire`, a foreign unlink's element) and lifts rule
+    10x's placement guard.
+
+    (1) **The defect.** The flow names a resource by its acquisition node.
+    A node on a CFG cycle re-inserted the site `LIVE` over a possibly live
+    earlier generation, and a refuted nullable acquisition's failure edge
+    then removed the site, earlier generation included:
+    `for (;;) { p = malloc(n); if (!p) break; use(p); }` and
+    `do { p = malloc(n); if (p) use(p); } while (p);` were `Safe` while every
+    earlier generation leaks. (2) **Generations.** Each site has three
+    identities: *current* (the site), *previous* (`site | 2^29`) and *older*
+    (`site | 2^30`). Current and previous are each one object per execution,
+    so every precise update the flow makes applies to them; older is a
+    summary. (3) **The shift.** Before a node runs (and before the driver's
+    per-node reads), every site it produces that the state already mentions
+    shifts: previous merges into older (statuses, nullability, unresolved
+    effects and aggregate edges joined; every binding that named it becomes
+    unknown, so any custody effect through it refuses; two generations'
+    collection ranges are `Unknown`), current is renamed previous, and the
+    node's own transfer creates a fresh current. A refuted failure edge
+    removes only the fresh current. (4) **Refusal.** The merge is refused
+    (`Unsupported`, the summary unresolved, the path unmodeled) when the
+    merged summary may be live and an edge that can update it without a
+    binding holds it (a field link, a containment, a pending reallocation, a
+    publication, an out slot the node does not overwrite), or when one side
+    may be live and the other carries an unresolved effect that would hide
+    it (`decide`, positive in every input, so monotone: the settled state
+    decides as every iterate did); a site the tags cannot index refuses. (5) **A refused re-acquiring node** (its transfer reported a
+    path-poisoning diagnostic) leaves a shifted site it did not create
+    present, live and unresolved: the call C ran may have produced it.
+
+    **Do not** let any precise update reach the summary, remove it by a null
+    refinement, exempt it through a binding, or widen it towards
+    "discharged"; do not merge a live generation into a held or unresolved
+    summary without the refusal; do not read a site's kind or line other
+    than through its base. Measured (corpus `66910c10`, system, tail-pause
+    slice): no function re-acquired a site over a live earlier generation
+    without an unresolved effect on the base (the census, parity
+    `position: "loop-site-generation"`), so no Safe moved, and none moved at
+    all (586 / 10 / 4,238; 34 / 2 / 198; 26 / 1 / 242 / 1 Pending). Step 1
+    changes leaves in 28 corpus functions (26 Unknown: rule-11a refusals
+    where an unresolved generation meets a live one; 2 Unsafe:
+    `rd_kafka_snappy_java_uncompress` gains 4 leak leaves that are the
+    flow's imprecision on a `pass == 1` guard,
+    `LOOP-GENERATION-COUNTER-CORRELATION`), 4 system and 2 slice Unknown
+    functions; lifting rule 10x's guard changes 2 more Unknown functions
+    (`rd_gz_decompress`, `rd_kafka_lz4_decompress`). Premises stated,
+    not proved: that the shift renames every mention of an identity in the
+    state (trust boundary 28) and that every other rule reports a refusal
+    wherever it leaves an identity unresolved (the census
+    `position: "withheld-obligation"` measures where one does not,
+    `B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED`). `QCore.LoopSiteGenerations`
+    (`reacquisition_keeps_the_earlier_obligation`,
+    `the_failure_edge_removes_only_the_new_generation`,
+    `the_summary_never_discharges`, `a_live_summary_is_never_safe`,
+    `for_break_reports_exactly_the_concrete_leak`,
+    `the_one_site_flow_hides_the_leak`), bound to `STEP_VECTORS`,
+    `IDENTITY_VECTORS` and the gateway's verdicts on the pinned shapes
+    (`SHAPE_VECTORS`) by shared-vector tests;
+    [report](../reports/cg04-loop-site-generations/README.md).
+
+<a id="constraint-11b"></a>
+
+11b. **A cast is a representation with no custody effect, and a type query's
+    operand is read by its evaluation class; a pointer converted to a truth
+    value or an integer never carries an identity.** Card
+    CG08-CASTS-AND-TYPE-QUERIES (`cast_representation.rs`, the route-G
+    adapter `legacy_cast_representation.rs`, additive items in
+    `elaboration.rs` (`representation`, `type_query`, `pointer_operand`,
+    `Context::untracked_pointer`, `Refusal::PointerEscape`, nine
+    `FORM_TABLE` rows) and `call_instantiation.rs` (two data-reading cast
+    rows), thin hooks in `legacy_c.rs` and `legacy_elaboration.rs`). It
+    amends rules 5a, 10s and 10u and the W44 cast return; every other
+    premise of theirs stands. (1) **Casts** (E15, M18, N08). Every Clang
+    cast kind the route reads has a row of `CAST_TABLE` with a preservation
+    flag (preserving / possibly lossy), a provenance flag (kept / lost / not
+    applicable) and an admission; no row has a custody effect. The
+    elaborator asks the table after CG02's own arms: a scalar conversion
+    (`IntegralToBoolean`, `FloatingToBoolean`, `IntegralToFloating`,
+    `FloatingToIntegral`, `FloatingCast`) is its operand's events and a
+    computed scalar under `NoNumericClaim` (numeric transfer is CG20's);
+    `PointerToBoolean` is the null test, the pointer's read and a truth
+    value; `PointerToIntegral` is data only of a pointer read of an
+    automatic local or formal the custody closure proves never bound
+    (`untracked_pointer`), otherwise `PointerEscape` refuses by name;
+    `IntegralToPointer` yields a pointer value with **no** identity; an
+    object-pointer `BitCast`/`NoOp` is the same pointer value;
+    `NullToPointer` the null pointer; `ToVoid` no value; the atomic
+    conversions refuse as CG19's, `AddressSpaceConversion` and
+    `ArrayToPointerDecay` as before, and an unlisted kind by name. Route G
+    consults the elaborator for a refused statement, `return` or call-free
+    condition holding an explicit cast, one of those implicit conversions or
+    a type query, beside CG02's value forms. (2) **The null test is no
+    escape** (a soundness repair asked *before* the older routes, whose
+    premise that the value is the pointer is false): a `return`,
+    declaration or assignment whose value Clang converts with
+    `PointerToBoolean` is the elaborator's (its events, then a `NoOp` exit or
+    a scalar write) and never escapes or binds the pointer; where the
+    elaborator declines, the older answer stands only when the pointer's
+    root is an automatic object the closure proves never bound, and
+    otherwise the position refuses. (3) **Pointer destinations.** A refused
+    `T *NAME = (U *) V;` or `NAME = (U *) V;` whose explicit casts are
+    object-pointer `BitCast`/`NoOp` conversions is lowered as the uncast
+    statement by the older routes, and only if they admit it. (4) **The
+    cast return** (`CAST-RETURN-UNCOMMITTED-OPERAND`). `return (INTEGER)
+    NAME;` the W44 rule leaves to the pre-card parse is refused with its
+    refusal when Clang's kind is `PointerToIntegral` and `NAME` may be
+    bound. (5) **Type queries** (E16). `query_operand` reads the class from
+    Clang's node: an operand whose type is not variably modified is
+    unevaluated and has **no event** (`sizeof(*p)`, `sizeof p->f`,
+    `sizeof f()`); a `sizeof` of a variably modified type evaluates the size
+    expressions Clang lists, each once, and must only read (a call, store or
+    increment refuses); `_Alignof` of one, an evaluated expression operand
+    other than a plain name and the other traits refuse. In an ordinary call
+    statement a parenthesised `sizeof ( … )` whose every Clang node on its
+    line is unevaluated joins W44's operand spans at the lexical gate; a
+    parenthesised type-query operand is no call to the elaborator's
+    call-free premise. (6) **Values.** No route decides a bound or a branch
+    from a query's number: the marker `1` stays a class marker of the
+    custody predicates (rule 5a), and a consumer that needs the number takes
+    Clang's evaluated constant (`clang_constant`: the value Clang's
+    evaluator gives a probe enumerator) or refuses; route T's enumerator
+    values are Clang's (an explicit initializer's `ConstantExpr`, and since
+    this rule an implicit enumerator's `clang_constant`, N11). **Do not** read a tracked
+    pointer's integer as data, give an integer-to-pointer value an identity,
+    escape or bind a pointer through its truth value, evaluate an operand C
+    does not evaluate or evaluate one twice, use the marker in a bound or a
+    branch, or consult rules (1), (3) and (5) before an older route of the
+    position (hard invariant 3). Parity runs record the null test, the
+    uncast statement and the integer return (`position:
+    "cast-representation-…"`) and the cast/call census of
+    `W45-CALLEE-CAST-LEXICAL-PREMISE`. Premises stated, not proved: faithful
+    Clang extraction of cast kinds, types and constants and the token/AST
+    node match (trust boundary 28), and C11 6.3.2.3p7 for an object-pointer
+    conversion. `QCore.CastRepresentation` (no custody effect, the escape,
+    no identity, the null test, the kept identity, unlisted refusal, the
+    operand classes, single evaluation, consumed constants and the
+    type-size fold), bound to `CAST_TABLE`, `query_operand`, Clang's
+    constants and `fold_type_sizes` by shared-vector tests;
+    [report](../reports/cg08-casts-and-type-queries/README.md).

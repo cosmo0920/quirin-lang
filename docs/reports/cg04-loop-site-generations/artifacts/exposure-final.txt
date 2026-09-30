@@ -1,0 +1,845 @@
+{
+ "exposed": [],
+ "not_exposed": [
+  {
+   "function": "mk_server_listen_exit",
+   "source": "00f62bbd90b3",
+   "reported": [
+    [
+     "mk_server/mk_server.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 6257,
+     "site": 0,
+     "status": 2,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift",
+     "unresolved": false
+    }
+   ]
+  },
+  {
+   "function": "mk_server_listen_init",
+   "source": "00f62bbd90b3",
+   "reported": [
+    [
+     "mk_server/mk_server.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 6290,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_http_request_free_list",
+   "source": "0bb09a3cd761",
+   "reported": [
+    [
+     "mk_server/mk_http.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 7121,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "otel_span_set_links",
+   "source": "16a892881a9c",
+   "reported": [
+    [
+     "ctr_encode_opentelemetry.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 9083,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_rconf_free",
+   "source": "1e396edd1ccd",
+   "reported": [
+    [
+     "mk_core/mk_rconf.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 2197,
+     "site": 2,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 2203,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 2210,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_rconf_free_entries",
+   "source": "1e396edd1ccd",
+   "reported": [
+    [
+     "mk_core/mk_rconf.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 2227,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_kafka_zstd_decompress",
+   "source": "27cff26137e4",
+   "reported": [
+    [
+     "rdkafka_zstd.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 19822,
+     "site": 0,
+     "status": 2,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_vhost_destroy",
+   "source": "3667f1f0f350",
+   "reported": [
+    [
+     "mk_server/mk_vhost.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 6521,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_vhost_fdt_worker_init",
+   "source": "3667f1f0f350",
+   "reported": [
+    [
+     "mk_server/mk_vhost.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 5984,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_vhost_handler_free",
+   "source": "3667f1f0f350",
+   "reported": [
+    [
+     "mk_server/mk_vhost.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 6486,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_vhost_read",
+   "source": "3667f1f0f350",
+   "reported": [
+    [
+     "mk_server/mk_vhost.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 6218,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 6273,
+     "site": 3,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 6297,
+     "site": 4,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 6323,
+     "site": 5,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "ut_tq_test",
+   "source": "40d24491751f",
+   "reported": [
+    [
+     "rdunittest.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 20342,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_kafka_snappy_java_uncompress",
+   "source": "4bf588502dd7",
+   "reported": [
+    [
+     "snappy.c",
+     "Unsafe"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 20506,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+   "source": "4c81b0943149",
+   "reported": [
+    [
+     "rdkafka_mock_cgrp.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 21279,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_kafka_mock_handle_EndTxn",
+   "source": "58a7957f9910",
+   "reported": [
+    [
+     "rdkafka_mock_handlers.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 23673,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_kafka_member_subscriptions_map",
+   "source": "8e3777de6d9f",
+   "reported": [
+    [
+     "rdkafka_assignor.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 20361,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_kafka_anyconf_dump",
+   "source": "8e8f6943eb02",
+   "reported": [
+    [
+     "rdkafka_conf.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 25292,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 25298,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_gz_decompress",
+   "source": "9ac44908103f",
+   "reported": [
+    [
+     "rdgz.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 3118,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": true,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_config_listeners_free",
+   "source": "a45ea0c64b7b",
+   "reported": [
+    [
+     "mk_server/mk_config.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 5972,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_string_split_free",
+   "source": "a53fe26d13d7",
+   "reported": [
+    [
+     "mk_core/mk_string.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 2236,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_string_split_line",
+   "source": "a53fe26d13d7",
+   "reported": [
+    [
+     "mk_core/mk_string.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 2214,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 2218,
+     "site": 2,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 2222,
+     "site": 3,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "do_unittest_erase",
+   "source": "ad4ebecb3ee5",
+   "reported": [
+    [
+     "rdbuf.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 4302,
+     "site": 0,
+     "status": 2,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_kafka_handle_OffsetFetch",
+   "source": "bdb64fc1c27c",
+   "reported": [
+    [
+     "rdkafka_request.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 21196,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "initialize_temporary_metric",
+   "source": "c70dccd86516",
+   "reported": [
+    [
+     "cmt_encode_prometheus.c",
+     "Unknown"
+    ],
+    [
+     "cmt_encode_splunk_hec.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 6049,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "mk_fifo_worker_destroy_all",
+   "source": "ceb45191b8e8",
+   "reported": [
+    [
+     "mk_server/mk_fifo.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 5275,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_kafka_mock_sharegroup_get_members_for_topic",
+   "source": "d6785fbb2b7e",
+   "reported": [
+    [
+     "rdkafka_mock_sharegrp.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 22098,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_string_render",
+   "source": "d70a15f12a80",
+   "reported": [
+    [
+     "rdstring.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 2988,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 3007,
+     "site": 2,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "initialize_temporary_metric",
+   "source": "dd69112effd7",
+   "reported": [
+    [
+     "cmt_encode_prometheus.c",
+     "Unknown"
+    ],
+    [
+     "cmt_encode_splunk_hec.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 5631,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_kafka_share_acknowledge_reply_handle",
+   "source": "eebc9bd447f2",
+   "reported": [
+    [
+     "rdkafka_fetcher.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 21479,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "rd_kafka_sasl_safe_string",
+   "source": "f6e05493a973",
+   "reported": [
+    [
+     "rdkafka_sasl_scram.c",
+     "Unsafe"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 20282,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "cmt_map_create",
+   "source": "f71cf772033c",
+   "reported": [
+    [
+     "cmt_map.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 5585,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "map_metric_create",
+   "source": "f71cf772033c",
+   "reported": [
+    [
+     "cmt_map.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 5713,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  }
+ ],
+ "unreported": [],
+ "exposed_by_status": {}
+}
+== exposed 0
+== not_exposed 32
+  mk_server_listen_exit [('mk_server/mk_server.c', 'Unknown')] [(6257, 2, False, False, False, 'shift')]
+  mk_server_listen_init [('mk_server/mk_server.c', 'Unknown')] [(6290, 1, False, False, True, 'shift-refused')]
+  mk_http_request_free_list [('mk_server/mk_http.c', 'Unknown')] [(7121, 1, False, False, True, 'shift-refused')]
+  otel_span_set_links [('ctr_encode_opentelemetry.c', 'Unknown')] [(9083, 1, False, False, True, 'shift-refused')]
+  mk_rconf_free [('mk_core/mk_rconf.c', 'Unknown')] [(2197, 1, False, False, True, 'shift-refused'), (2203, 1, False, False, True, 'shift-refused'), (2210, 1, False, False, True, 'shift-refused')]
+  mk_rconf_free_entries [('mk_core/mk_rconf.c', 'Unknown')] [(2227, 1, False, False, True, 'shift-refused')]
+  rd_kafka_zstd_decompress [('rdkafka_zstd.c', 'Unknown')] [(19822, 2, False, False, True, 'shift')]
+  mk_vhost_destroy [('mk_server/mk_vhost.c', 'Unknown')] [(6521, 1, False, False, True, 'shift-refused')]
+  mk_vhost_fdt_worker_init [('mk_server/mk_vhost.c', 'Unknown')] [(5984, 1, False, False, True, 'shift-refused')]
+  mk_vhost_handler_free [('mk_server/mk_vhost.c', 'Unknown')] [(6486, 1, False, False, True, 'shift-refused')]
+  mk_vhost_read [('mk_server/mk_vhost.c', 'Unknown')] [(6218, 1, False, False, True, 'shift-refused'), (6273, 1, False, False, True, 'shift-refused'), (6297, 1, False, False, True, 'shift-refused'), (6323, 1, False, False, True, 'shift-refused')]
+  ut_tq_test [('rdunittest.c', 'Unknown')] [(20342, 1, False, False, True, 'shift-refused')]
+  rd_kafka_snappy_java_uncompress [('snappy.c', 'Unsafe')] [(20506, 1, False, False, True, 'shift-refused')]
+  rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range [('rdkafka_mock_cgrp.c', 'Unknown')] [(21279, 1, False, False, True, 'shift-refused')]
+  rd_kafka_mock_handle_EndTxn [('rdkafka_mock_handlers.c', 'Unknown')] [(23673, 1, False, False, True, 'shift-refused')]
+  rd_kafka_member_subscriptions_map [('rdkafka_assignor.c', 'Unknown')] [(20361, 1, False, False, True, 'shift-refused')]
+  rd_kafka_anyconf_dump [('rdkafka_conf.c', 'Unknown')] [(25292, 1, False, False, True, 'shift-refused'), (25298, 1, False, False, True, 'shift-refused')]
+  rd_gz_decompress [('rdgz.c', 'Unknown')] [(3118, 1, False, True, True, 'shift-refused')]
+  mk_config_listeners_free [('mk_server/mk_config.c', 'Unknown')] [(5972, 1, False, False, True, 'shift-refused')]
+  mk_string_split_free [('mk_core/mk_string.c', 'Unknown')] [(2236, 1, False, False, True, 'shift-refused')]
+  mk_string_split_line [('mk_core/mk_string.c', 'Unknown')] [(2214, 1, False, False, True, 'shift-refused'), (2218, 1, False, False, True, 'shift-refused'), (2222, 1, False, False, True, 'shift-refused')]
+  do_unittest_erase [('rdbuf.c', 'Unknown')] [(4302, 2, False, False, True, 'shift')]
+  rd_kafka_handle_OffsetFetch [('rdkafka_request.c', 'Unknown')] [(21196, 1, False, False, True, 'shift-refused')]
+  initialize_temporary_metric [('cmt_encode_prometheus.c', 'Unknown'), ('cmt_encode_splunk_hec.c', 'Unknown')] [(6049, 1, False, False, True, 'shift-refused')]
+  mk_fifo_worker_destroy_all [('mk_server/mk_fifo.c', 'Unknown')] [(5275, 1, False, False, True, 'shift-refused')]
+  rd_kafka_mock_sharegroup_get_members_for_topic [('rdkafka_mock_sharegrp.c', 'Unknown')] [(22098, 1, False, False, True, 'shift-refused')]
+  rd_string_render [('rdstring.c', 'Unknown')] [(2988, 1, False, False, True, 'shift-refused'), (3007, 1, False, False, True, 'shift-refused')]
+  initialize_temporary_metric [('cmt_encode_prometheus.c', 'Unknown'), ('cmt_encode_splunk_hec.c', 'Unknown')] [(5631, 1, False, False, True, 'shift-refused')]
+  rd_kafka_share_acknowledge_reply_handle [('rdkafka_fetcher.c', 'Unknown')] [(21479, 1, False, False, True, 'shift-refused')]
+  rd_kafka_sasl_safe_string [('rdkafka_sasl_scram.c', 'Unsafe')] [(20282, 1, False, False, True, 'shift-refused')]
+  cmt_map_create [('cmt_map.c', 'Unknown')] [(5585, 1, False, False, True, 'shift-refused')]
+  map_metric_create [('cmt_map.c', 'Unknown')] [(5713, 1, False, False, True, 'shift-refused')]
+== unreported 0
+exposed by status {}
