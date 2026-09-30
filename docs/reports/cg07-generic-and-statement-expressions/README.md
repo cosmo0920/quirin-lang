@@ -296,4 +296,22 @@ no `sorry`, no project axiom): `select_events`, `control_no_event`,
 
 ## 8. Gate
 
-GATE_PLACEHOLDER
+At tip code `692e1c07` (scripts [gate.sh](scripts/gate.sh) and
+[gate_after.sh](scripts/gate_after.sh), logs `private/cg07/gate-692e1c07`,
+exits in [gate/](gate/), figures in [gate.json](gate.json)):
+
+| Step | Exit | Counts |
+|---|---:|---|
+| `git submodule update --init --recursive` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 401 units, 414 summaries, **7,045 passed, 0 failed**, 11 ignored |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 256 audits (255 + `AuditStatementExpressions.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then **0** after `build_matrix.py . --gate gate.json` (`09a` 0, `09b`) | 365 (the one failure: the derived Lean audit count 255 → 256) |
+| `python3 scripts/build_docs_index.py` | 0, 0 (`10b`) | |
+
+`providers/` is untouched, so the provider gate is not due. Clang 21.1.8. An
+earlier gate start at `3446abd4` was stopped by the card before its first step
+completed, to reorder the discarded-chain lowering (§3.2); it produced no
+result.
