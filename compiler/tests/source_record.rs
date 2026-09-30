@@ -728,21 +728,23 @@ fn a_construction_without_a_declaration_keeps_the_route_it_had() {
     assert_eq!(codes(source), ["Q013"]);
 }
 
+/// Card `W48-QR-TASK-RECORD-CAPTURES` moved this row by name: the concurrent
+/// route is still selected above this card's guard, and since that card it
+/// reads the record itself, so the module is **admitted** on the task route
+/// rather than refused there. What the row still pins is the route: the
+/// aggregate route's own codes (`Q051`, `Q052`) are never reached.
 #[test]
 fn a_task_module_declaring_a_record_keeps_its_own_refusal() {
-    // A genuine task statement, so the concurrent route actually selects: it is
-    // above this card's guard, so the module keeps that route's own refusal and
-    // the aggregate is not reached at all.
+    // A genuine task statement, so the concurrent route actually selects.
     let source = "#import std.concurrency;\nconcurrency checked;\n\ntype Point { x: i32 }\n\nfn \
                   main() -> unit {\n    thread scope s { let p = Point { x: 1 }; }\n                      return;\n}\n";
-    let codes = codes(source);
-    assert!(
-        !codes.contains(&"Q051".to_owned()) && !codes.contains(&"Q052".to_owned()),
-        "the concurrent route is selected above this card's and keeps its refusal: {codes:?}"
-    );
-    assert!(
-        codes.contains(&"Q500".to_owned()) || codes.contains(&"Q600".to_owned()),
-        "{codes:?}"
+    let module = compile(source).unwrap_or_else(|errors| {
+        panic!("the task route now reads a record of scalars: {errors:#?}")
+    });
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::ScopedCopyTasksV1,
+        "the concurrent route is selected above this card's"
     );
 }
 

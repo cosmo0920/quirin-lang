@@ -788,7 +788,13 @@ fn tsan_rows() -> Vec<String> {
                     .iter()
                     .filter(|event| matches!(event, ScheduleEvent::Start(_)))
                     .count();
-                assert_eq!(started, *cohort, "{name} {}: {:?}", schedule.tag(), run.schedule);
+                assert_eq!(
+                    started,
+                    *cohort,
+                    "{name} {}: {:?}",
+                    schedule.tag(),
+                    run.schedule
+                );
             }
             assert_eq!(run.stdout, stdout, "{name} {}", schedule.tag());
             rows.push(format!(
