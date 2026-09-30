@@ -1,0 +1,191 @@
+{
+ "population": {
+  "root_refusal_leaves": 7455,
+  "functions": 1635,
+  "top_roots": [
+   [
+    "rkbuf",
+    851
+   ],
+   [
+    "rk",
+    776
+   ],
+   [
+    "rkb",
+    604
+   ],
+   [
+    "rkcg",
+    382
+   ],
+   [
+    "rktp",
+    331
+   ],
+   [
+    "rko",
+    299
+   ],
+   [
+    "reply",
+    248
+   ],
+   [
+    "rkm",
+    134
+   ],
+   [
+    "dctx",
+    116
+   ],
+   [
+    "__tmpstr",
+    115
+   ],
+   [
+    "rkt",
+    104
+   ],
+   [
+    "rktpar",
+    85
+   ]
+  ],
+  "by_premise": {
+   "path-refused": 5197,
+   "ineligible": 505,
+   "bound": 5346,
+   "holds": 459,
+   "rooted-place": 13
+  },
+  "by_binding": {
+   "target-free": 118,
+   "absent": 5955,
+   "nullable": 959,
+   "tracked": 423
+  },
+  "by_class_leaves": {
+   "e": 2244,
+   "b": 5973,
+   "c": 1514,
+   "a": 458,
+   "d": 153,
+   "ast": 89
+  },
+  "by_class_functions": {
+   "e": 740,
+   "b": 1223,
+   "c": 518,
+   "a": 164,
+   "d": 40,
+   "ast": 49
+  },
+  "by_premise_and_binding_first_row": {
+   "path-refused/absent": 5072,
+   "bound/nullable": 917,
+   "ineligible/absent": 444,
+   "holds/absent": 426,
+   "bound/tracked": 410,
+   "path-refused/target-free": 112,
+   "ineligible/nullable": 42,
+   "rooted-place/absent": 13,
+   "ineligible/tracked": 13,
+   "ineligible/target-free": 6
+  }
+ },
+ "functions_whose_only_leaves_are_root_refusals": [
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "function": "mk_fifo_queue_get",
+   "roots": [
+    "q"
+   ],
+   "premises": [
+    "path-refused"
+   ],
+   "reasons": {
+    "q": []
+   }
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_cap",
+   "roots": [
+    "plugin"
+   ],
+   "premises": [
+    "path-refused"
+   ],
+   "reasons": {
+    "plugin": []
+   }
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "function": "_share_invalid_topic_cb",
+   "roots": [
+    "rktpar"
+   ],
+   "premises": [
+    "bound",
+    "holds"
+   ],
+   "reasons": {
+    "rktpar": [
+     "e:protected-formal"
+    ]
+   }
+  }
+ ],
+ "admitted_with_premise_in_before_state": {
+  "leaves": 336,
+  "functions": 329
+ },
+ "freed_alone": {
+  "upper": {
+   "ast": 2
+  },
+  "strict": {}
+ },
+ "freed_alone_totals": {
+  "upper": 2,
+  "strict": 0
+ },
+ "pointer_store_owner_roots": {
+  "refused_without": 404,
+  "admitted_with": 6
+ },
+ "freed_functions": [
+  {
+   "unit": "mk_server/mk_fifo.c",
+   "function": "mk_fifo_queue_get",
+   "roots": [
+    "q"
+   ],
+   "class": "ast",
+   "premises": [
+    "path-refused"
+   ],
+   "strict": false,
+   "reasons": {
+    "q": []
+   }
+  },
+  {
+   "unit": "mk_server/mk_plugin.c",
+   "function": "mk_plugin_cap",
+   "roots": [
+    "plugin"
+   ],
+   "class": "ast",
+   "premises": [
+    "path-refused"
+   ],
+   "strict": false,
+   "reasons": {
+    "plugin": []
+   }
+  }
+ ]
+}
