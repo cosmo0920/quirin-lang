@@ -52,11 +52,19 @@ fn failure(span: Span, pass: SemanticPass, message: impl Into<String>) -> Source
     }
 }
 
+/// The tokens of a byte window. Card `W48-QR-CLOSURES`: a closure's header
+/// and body are skipped by a window that contains the closure without lying
+/// inside it — they are the hidden worker's — so the statement that spawns a
+/// closure reads `spawn SCOPE |CAPTURES|`, its hand-written twin's shape.
 fn tokens_for(source: &SourceProgram, span: Span) -> Vec<Token> {
     source
         .lexical_tokens()
         .iter()
-        .filter(|token| token.span.start >= span.start && token.span.end <= span.end)
+        .filter(|token| {
+            token.span.start >= span.start
+                && token.span.end <= span.end
+                && !source.outside_closure_window(token.span, span)
+        })
         .cloned()
         .collect()
 }
@@ -269,6 +277,17 @@ struct Signature {
     parameters: Vec<(SymbolId, String, Shape)>,
     result: Shape,
     effects: ParsedEffects,
+    /// Card `W48-QR-CLOSURES`: a closure's hidden worker. Its parameters are
+    /// the capture binders, whose types the spawn site decides; until then
+    /// `parameters` is empty and the worker is not lowered.
+    closure: Option<ClosureParameters>,
+}
+
+/// A closure's parameters before and after its spawn site decides their types.
+#[derive(Clone, Debug)]
+struct ClosureParameters {
+    binders: Vec<(SymbolId, String)>,
+    decided: bool,
 }
 
 fn error_declarations(
@@ -507,6 +526,80 @@ fn signature(
     if !symbol(tokens.get(close + 1), Symbol::Arrow) {
         return Err(bad("task functions require an explicit result type"));
     }
+    let (result, effects) =
+        result_and_effects(declaration, &tokens, close + 1, errors, composing, records)?;
+    Ok(Signature {
+        id: typed.symbol,
+        name: typed.name.clone(),
+        parameters,
+        result,
+        effects,
+        closure: None,
+    })
+}
+
+/// A closure's hidden worker's signature (card `W48-QR-CLOSURES`): its result
+/// and effect row read exactly as a named worker's are, after its capture list;
+/// its parameters are the capture binders, typed at the spawn site.
+fn closure_signature(
+    source: &SourceProgram,
+    declaration: &Located<SourceDeclaration>,
+    typed: &TypedSourceDeclaration,
+    errors: &BTreeMap<String, ErrorType>,
+    composing: bool,
+    records: &Records,
+) -> Result<Signature, SourceDiagnostic> {
+    let bad = |message| failure(declaration.span, SemanticPass::OrdinaryTypes, message);
+    let body = declaration
+        .value
+        .body
+        .as_ref()
+        .ok_or_else(|| bad("task functions require source bodies"))?;
+    let tokens = tokens_for(
+        source,
+        Span {
+            start: declaration.span.start,
+            end: body.span.start,
+        },
+    );
+    // The capture list holds no `->`, so the first is the result's.
+    let arrow = tokens
+        .iter()
+        .position(|token| symbol(Some(token), Symbol::Arrow))
+        .ok_or_else(|| bad("task functions require an explicit result type"))?;
+    let (result, effects) =
+        result_and_effects(declaration, &tokens, arrow, errors, composing, records)?;
+    Ok(Signature {
+        id: typed.symbol,
+        name: typed.name.clone(),
+        parameters: Vec::new(),
+        result,
+        effects,
+        closure: Some(ClosureParameters {
+            binders: typed
+                .parameters
+                .iter()
+                .map(|parameter| (parameter.symbol, parameter.name.clone()))
+                .collect(),
+            decided: false,
+        }),
+    })
+}
+
+/// A task function's result type and effect row, read from its header's
+/// tokens after the `->` at `arrow` (split out of [`signature`] by card
+/// `W48-QR-CLOSURES`, byte for byte, so a closure's header is read by the same
+/// code).
+fn result_and_effects(
+    declaration: &Located<SourceDeclaration>,
+    tokens: &[Token],
+    arrow: usize,
+    errors: &BTreeMap<String, ErrorType>,
+    composing: bool,
+    records: &Records,
+) -> Result<(Shape, ParsedEffects), SourceDiagnostic> {
+    let bad = |message| failure(declaration.span, SemanticPass::OrdinaryTypes, message);
+    let close = arrow - 1;
     let result_end = tokens
         .iter()
         .enumerate()
@@ -628,13 +721,7 @@ fn signature(
             "a declared error row must carry an owned payload on every variant or on none",
         ));
     }
-    Ok(Signature {
-        id: typed.symbol,
-        name: typed.name.clone(),
-        parameters,
-        result,
-        effects,
-    })
+    Ok((result, effects))
 }
 
 use qcore_core::prelude::concurrency::task_execution::{
@@ -1174,7 +1261,7 @@ fn lower(
     }
     let errors = error_declarations(source)?;
     let records = records::task_records(source)?;
-    let mut signatures = BTreeMap::new();
+    let mut signatures: BTreeMap<SymbolId, Signature> = BTreeMap::new();
     for declaration in source
         .declarations
         .iter()
@@ -1185,7 +1272,13 @@ fn lower(
             .iter()
             .find(|d| d.name == declaration.value.name)
             .expect("independent elaboration preserved functions");
-        let signature = signature(source, declaration, resolved, &errors, composing, &records)?;
+        // Card `W48-QR-CLOSURES`: a closure's hidden worker reads its header
+        // after its capture list and waits for its spawn site's types.
+        let signature = if source.closure(&declaration.value.name).is_some() {
+            closure_signature(source, declaration, resolved, &errors, composing, &records)?
+        } else {
+            signature(source, declaration, resolved, &errors, composing, &records)?
+        };
         signatures.insert(signature.id, signature);
     }
     let entry = typed
@@ -1219,13 +1312,14 @@ fn lower(
             ),
         ));
     }
-    let mut functions = BTreeMap::new();
-    let mut sites = Vec::new();
-    for declaration in source
-        .declarations
-        .iter()
-        .filter(|d| d.value.kind == DeclarationKind::Function)
-    {
+    // One function's lowering. With `discovering`, a spawn of a closure whose
+    // parameter types are not yet decided decides them from the spawn site
+    // and records them there (card `W48-QR-CLOSURES`); without it, every
+    // worker's signature is complete.
+    let lower_function = |declaration: &Located<SourceDeclaration>,
+                          signatures: &BTreeMap<SymbolId, Signature>,
+                          discovering: Option<&Discovered>|
+     -> Result<(usize, TaskFunction, Vec<TaskIoSite>), SourceDiagnostic> {
         let resolved = typed
             .declarations
             .iter()
@@ -1235,7 +1329,7 @@ fn lower(
         let body = declaration.value.body.as_ref().unwrap();
         let mut builder = Builder::new(
             source,
-            &signatures,
+            signatures,
             signature,
             &errors,
             &records,
@@ -1244,6 +1338,7 @@ fn lower(
         builder.composing = composing;
         builder.function = resolved.symbol.0 as usize;
         builder.target = target;
+        builder.discovering = discovering;
         if !builder.block(body, &resolved.statements)? {
             return Err(failure(
                 body.span,
@@ -1251,7 +1346,7 @@ fn lower(
                 "task functions require an explicit return or raise on every path",
             ));
         }
-        functions.insert(
+        Ok((
             resolved.symbol.0 as usize,
             TaskFunction {
                 name: signature.name.clone(),
@@ -1271,8 +1366,98 @@ fn lower(
                 blocks: builder.blocks,
                 span: core_span(declaration.span),
             },
-        );
-        sites.extend(builder.sites);
+            builder.sites,
+        ))
+    };
+    let function_declarations = || {
+        source
+            .declarations
+            .iter()
+            .filter(|d| d.value.kind == DeclarationKind::Function)
+    };
+    // Card `W48-QR-CLOSURES`: decide every closure's parameter types before
+    // any function is lowered for the module. A capture list names modes, not
+    // types; each parameter is the captured place's type at the spawn site
+    // (the loan or lease type for `read`/`lend` of an owned Buffer), which
+    // only the enclosing function's lowering knows. So each function that
+    // spawns an undecided closure is lowered once to find out, and its outcome
+    // discarded — unless it refused before every closure it spawns was
+    // decided, which is then the module's refusal. With every signature
+    // complete, the loop below lowers every function in declaration order,
+    // exactly as it lowers the hand-written twin.
+    let undecided = |signatures: &BTreeMap<SymbolId, Signature>, id: &SymbolId| {
+        signatures[id]
+            .closure
+            .as_ref()
+            .is_some_and(|closure| !closure.decided)
+    };
+    if signatures.keys().any(|id| undecided(&signatures, id)) {
+        let discovered = Discovered::default();
+        let mut probed = BTreeSet::new();
+        loop {
+            let mut progress = false;
+            for declaration in function_declarations() {
+                let id = typed.globals[&declaration.value.name];
+                if probed.contains(&id) || undecided(&signatures, &id) {
+                    continue;
+                }
+                probed.insert(id);
+                let spawned: Vec<SymbolId> = source
+                    .closures()
+                    .iter()
+                    .filter(|closure| closure.enclosing == declaration.value.name)
+                    .map(|closure| typed.globals[&closure.hidden])
+                    .filter(|closure| undecided(&signatures, closure))
+                    .collect();
+                if spawned.is_empty() {
+                    continue;
+                }
+                progress = true;
+                let outcome = lower_function(declaration, &signatures, Some(&discovered));
+                let decided = std::mem::take(&mut *discovered.borrow_mut());
+                for (worker, shapes) in decided {
+                    let signature = signatures
+                        .get_mut(&worker)
+                        .expect("a discovered closure has a signature");
+                    if let Some(closure) = &mut signature.closure {
+                        signature.parameters = closure
+                            .binders
+                            .iter()
+                            .zip(shapes)
+                            .map(|((symbol, name), shape)| (*symbol, name.clone(), shape))
+                            .collect();
+                        closure.decided = true;
+                    }
+                }
+                if let Err(error) = outcome
+                    && spawned.iter().any(|id| undecided(&signatures, id))
+                {
+                    return Err(error);
+                }
+            }
+            if !progress {
+                break;
+            }
+        }
+        if let Some(closure) = source
+            .closures()
+            .iter()
+            .find(|closure| undecided(&signatures, &typed.globals[&closure.hidden]))
+        {
+            return Err(failure(
+                closure.span,
+                SemanticPass::Concurrency,
+                "this closure's spawn site was never lowered, so no parameter type was decided \
+                 for its captures; a closure is lowered from the spawn that names it",
+            ));
+        }
+    }
+    let mut functions = BTreeMap::new();
+    let mut sites = Vec::new();
+    for declaration in function_declarations() {
+        let (id, function, function_sites) = lower_function(declaration, &signatures, None)?;
+        functions.insert(id, function);
+        sites.extend(function_sites);
     }
     // A worker cannot recursively or transitively create tasks in this first
     // executable profile. All source functions were still lowered above.
@@ -1435,7 +1620,14 @@ fn next_temporary(function: &TypedSourceDeclaration) -> Result<usize, SourceDiag
         })
 }
 
+/// The parameter types a closure's spawn site decides, by hidden worker (card
+/// `W48-QR-CLOSURES`).
+type Discovered = std::cell::RefCell<BTreeMap<SymbolId, Vec<Shape>>>;
+
 struct Builder<'a> {
+    /// Card `W48-QR-CLOSURES`: set while an enclosing function is lowered to
+    /// decide its closures' parameter types; `None` for every real lowering.
+    discovering: Option<&'a Discovered>,
     source: &'a SourceProgram,
     signatures: &'a BTreeMap<SymbolId, Signature>,
     signature: &'a Signature,
@@ -1480,6 +1672,7 @@ impl<'a> Builder<'a> {
         next_temporary: usize,
     ) -> Result<Self, SourceDiagnostic> {
         let mut builder = Self {
+            discovering: None,
             source,
             signatures,
             signature,
@@ -2570,6 +2763,46 @@ impl<'a> Builder<'a> {
             .signatures
             .get(&worker)
             .ok_or_else(|| self.bad(span, "unknown source worker"))?;
+        // Card `W48-QR-CLOSURES`: a closure's parameter types are decided
+        // here, at its spawn site, from the places it captures, while its
+        // enclosing function is lowered to find them. Every other check below
+        // is the named worker's, unchanged.
+        let decided;
+        let signature = match &signature.closure {
+            Some(closure) if !closure.decided => {
+                let Some(discovering) = self.discovering else {
+                    return Err(self.bad(
+                        span,
+                        "a closure's parameter types are decided at its spawn site before it is \
+                         lowered",
+                    ));
+                };
+                if captures.len() != closure.binders.len() {
+                    return Err(self.bad(span, "worker capture arity mismatch"));
+                }
+                let shapes = captures
+                    .iter()
+                    .zip(&closure.binders)
+                    .map(|(capture, (_, binder))| self.closure_parameter(capture, binder))
+                    .collect::<Result<Vec<_>, _>>()?;
+                discovering.borrow_mut().insert(worker, shapes.clone());
+                decided = Signature {
+                    parameters: closure
+                        .binders
+                        .iter()
+                        .zip(shapes)
+                        .map(|((symbol, name), shape)| (*symbol, name.clone(), shape))
+                        .collect(),
+                    closure: Some(ClosureParameters {
+                        binders: closure.binders.clone(),
+                        decided: true,
+                    }),
+                    ..signature.clone()
+                };
+                &decided
+            }
+            _ => signature,
+        };
         if captures.len() != signature.parameters.len() {
             return Err(self.bad(span, "worker capture arity mismatch"));
         }
@@ -2815,6 +3048,53 @@ impl<'a> Builder<'a> {
         Ok((scope_id, arguments, moved_records))
     }
 
+    /// The parameter type a closure's capture binds (card `W48-QR-CLOSURES`):
+    /// the captured place's own type — a record's record type, a scalar's
+    /// scalar type, an owned Buffer's owned Buffer — except that `read … share`
+    /// and `lend … LOW..HIGH` of an owned Buffer deliver its loan and its
+    /// lease, exactly the types a hand-written worker declares for them. So
+    /// the closure's worker receives what a twin receives, and the
+    /// transferability judgment decides the capture against it unchanged: a
+    /// mode it refuses (`copy` of an owned Buffer, `move` of a scalar, `write`)
+    /// is refused with the judgment's own reason. A place that is not a value
+    /// — a handle, a Result, a scope, an error, `unit` — is a type no worker
+    /// parameter can declare, and refuses here, naming the capture.
+    fn closure_parameter(
+        &self,
+        capture: &ResolvedTaskCapture,
+        binder: &str,
+    ) -> Result<Shape, SourceDiagnostic> {
+        let (_, kind) = self.lookup_place(&capture.place)?;
+        let what = match kind {
+            ValueType::Record(record) => return Ok(Shape::Record(record.ty)),
+            ValueType::Scalar(Scalar::Unit) => "a `unit` value",
+            ValueType::Scalar(scalar) => {
+                return Ok(Shape::Scalar(match (&capture.mode, scalar) {
+                    (SourceCaptureMode::Read { .. }, Scalar::OwnedBuffer(payload)) => {
+                        Scalar::ReadLoan(payload)
+                    }
+                    (SourceCaptureMode::LendWrite { .. }, Scalar::OwnedBuffer(payload)) => {
+                        Scalar::WriteLease(payload)
+                    }
+                    _ => scalar,
+                }));
+            }
+            ValueType::Handle(_) => "a task handle",
+            ValueType::Result { .. } => "an undiscriminated Result",
+            ValueType::Scope => "a thread scope",
+            ValueType::KnownError(_) | ValueType::Error { .. } => "an error value",
+        };
+        Err(failure(
+            capture.span,
+            SemanticPass::Concurrency,
+            format!(
+                "the closure's capture `{binder}` names {what}, which no worker parameter can \
+                 receive: a closure captures values — a scalar, an owned Buffer (moved, lent or \
+                 leased) or a record"
+            ),
+        ))
+    }
+
     /// Mark each record a successful creation moved whole (card
     /// `W48-QR-TASK-RECORD-CAPTURES`).
     fn mark_moved(&mut self, moved: &[String]) {
@@ -2894,7 +3174,7 @@ impl<'a> Builder<'a> {
             .position(|t| t.span.start >= syntax.scrutinee_span.end)
             .ok_or_else(|| self.bad(span, "missing Result match body"))?;
         if open < 2
-            || tokens[open - 1].span.end != syntax.scrutinee_span.end
+            || tokens[open - 1].span.end != self.source.visible_end(span, syntax.scrutinee_span.end)
             || matching(tokens, open, Symbol::LeftBrace, Symbol::RightBrace)
                 != Some(tokens.len() - 1)
         {
@@ -3169,7 +3449,8 @@ impl<'a> Builder<'a> {
         }
         let task = &statement.task_expressions[0];
         if rhs.first().map(|t| t.span.start) != Some(task.syntax.span.start)
-            || rhs.last().map(|t| t.span.end) != Some(task.syntax.span.end)
+            || rhs.last().map(|t| t.span.end)
+                != Some(self.source.visible_end(span, task.syntax.span.end))
         {
             return Err(self.bad(span, "task expression must consume its complete statement or initializer; suffixes and surrounding operations are unsupported"));
         }

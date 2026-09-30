@@ -94,6 +94,186 @@ pub enum SourceTaskExpressionKind {
     },
 }
 
+/// A closure spawn target (card `W48-QR-CLOSURES`):
+/// `spawn SCOPE |CAPTURES| -> TYPE [effects { … }] { BODY }`.
+///
+/// The parser lifts it into a **hidden named worker**: a function declaration
+/// named [`Self::hidden`], placed immediately before the declaration that
+/// spells the spawn, with one parameter per capture ([`Self::binders`]), the
+/// written result and effect row, and the closure's body as its body. The spawn
+/// itself is an ordinary spawn of that worker with the written captures, so
+/// every later phase meets a named worker. The closure's tokens stay where the
+/// reader wrote them; a window that contains a closure without lying inside it
+/// skips [`Self::lifted`], so the enclosing statement reads as its hand-written
+/// twin `spawn SCOPE worker(CAPTURES)` does. Nothing here decides a type, a
+/// capture's admission or a name's resolution.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceClosure {
+    /// `ENCLOSING#closureN`: the enclosing function's name and the closure's
+    /// ordinal in it, in source order. `#` is not an identifier character, so
+    /// no source declaration can have this name.
+    pub hidden: String,
+    /// The function whose body spells the spawn (a hidden name for a closure
+    /// written inside another closure).
+    pub enclosing: String,
+    /// The `spawn` keyword.
+    pub spawn_keyword: Span,
+    /// The opening bar through the body's closing brace: the hidden worker's
+    /// own extent, and the span its refusals name.
+    pub span: Span,
+    /// The capture list, both bars included (`||` for the empty list).
+    pub captures_span: Span,
+    /// `->` through the body's closing brace: the hidden worker's header and
+    /// body, read by the hidden worker alone.
+    pub lifted: Span,
+    pub captures: Vec<Located<SourceTaskCapture>>,
+    /// One per capture, in order: the name the capture is bound to inside the
+    /// body — the place's root name, a field capture's last segment, or an
+    /// explicit `as NAME`.
+    pub binders: Vec<Located<String>>,
+}
+
+impl SourceClosure {
+    /// Whether `token` is one of this closure's two capture-list bars (the one
+    /// `||` token of an empty list).
+    pub fn is_bar(&self, token: Span) -> bool {
+        token.start == self.captures_span.start || token.end == self.captures_span.end
+    }
+}
+
+/// Token positions of one closure, for the parser's own passes.
+#[derive(Clone, Debug)]
+pub(super) struct ClosureSyntax {
+    pub(super) open: usize,
+    pub(super) close: usize,
+    pub(super) arrow: usize,
+    pub(super) result_end: usize,
+    pub(super) body_open: usize,
+    pub(super) body_close: usize,
+    pub(super) captures: Vec<Located<SourceTaskCapture>>,
+    pub(super) binders: Vec<Located<String>>,
+}
+
+/// A lifted closure: its public record and the positions that produced it.
+#[derive(Clone, Debug)]
+pub(super) struct LiftedClosure {
+    pub(super) closure: SourceClosure,
+    pub(super) syntax: ClosureSyntax,
+}
+
+/// Whether the tokens at `start` open a closure spawn: `spawn NAME` followed by
+/// `|`, `||`, or the bracket-adjacent `[|` the closure parser refuses by name.
+pub(super) fn is_closure_head(parser: &SourceParser<'_>, start: usize) -> bool {
+    parser.word(start, "spawn")
+        && !(start > 0
+            && matches!(
+                parser.tokens[start - 1].kind,
+                TokenKind::Symbol(Symbol::Dot | Symbol::ColonColon)
+            ))
+        && parser.word_value(start + 1).is_some()
+        && (parser.symbol(start + 2, Symbol::Pipe)
+            || parser.symbol(start + 2, Symbol::PipePipe)
+            || parser.symbol(start + 2, Symbol::QuantOpen))
+}
+
+/// Parse the closure whose `spawn` keyword is at `start` (card
+/// `W48-QR-CLOSURES`). The capture list uses exactly the capture spellings of a
+/// named worker's parenthesized list, each optionally followed by `as NAME`.
+pub(super) fn parse_closure(
+    parser: &SourceParser<'_>,
+    start: usize,
+) -> Result<ClosureSyntax, SourceParseError> {
+    const BRACKETS: &str = "a closure's capture list is written between single bars, \
+         `spawn SCOPE |copy x, …| -> TYPE { … }`, and never touches `[` or `]`: `[|` and `|]` \
+         are the quant delimiters";
+    identifier(parser, start + 1)?;
+    let open = start + 2;
+    if parser.symbol(open, Symbol::QuantOpen) {
+        return Err(parser.error(open, BRACKETS));
+    }
+    let (close, captures) = if parser.symbol(open, Symbol::PipePipe) {
+        (open, Vec::new())
+    } else {
+        let mut cursor = open + 1;
+        loop {
+            match parser.tokens.get(cursor).map(|token| &token.kind) {
+                None => return Err(parser.error(open, "a closure's capture list ends at `|`")),
+                Some(TokenKind::Symbol(Symbol::Pipe)) => break,
+                Some(TokenKind::Symbol(Symbol::QuantOpen | Symbol::QuantClose)) => {
+                    return Err(parser.error(cursor, BRACKETS));
+                }
+                Some(TokenKind::Symbol(
+                    Symbol::LeftBrace
+                    | Symbol::RightBrace
+                    | Symbol::Semicolon
+                    | Symbol::PipePipe
+                    | Symbol::PipeInto
+                    | Symbol::Arrow,
+                )) => {
+                    return Err(parser.error(cursor, "a closure's capture list ends at `|`"));
+                }
+                _ => cursor = parser.skip_group(cursor),
+            }
+        }
+        if cursor == open + 1 {
+            return Err(parser.error(
+                cursor,
+                "an empty capture list is spelled `||`, one token, as a named worker's is `()`",
+            ));
+        }
+        (cursor, parse_captures(parser, open + 1, cursor, true)?)
+    };
+    let arrow = close + 1;
+    if !parser.symbol(arrow, Symbol::Arrow) {
+        return Err(parser.error(
+            arrow,
+            "a closure declares its result type after its capture list: `|…| -> TYPE { … }`",
+        ));
+    }
+    let mut cursor = arrow + 1;
+    let mut angle_depth = 0_u32;
+    while cursor < parser.tokens.len() {
+        if angle_depth == 0
+            && (parser.word(cursor, "effects") || parser.symbol(cursor, Symbol::LeftBrace))
+        {
+            break;
+        }
+        if parser.symbol(cursor, Symbol::Less) {
+            angle_depth += 1;
+        } else if parser.symbol(cursor, Symbol::Greater) {
+            angle_depth = angle_depth.saturating_sub(1);
+        }
+        cursor = parser.skip_group(cursor);
+    }
+    if cursor == arrow + 1 {
+        return Err(parser.error(cursor, "a closure requires a nonempty result type"));
+    }
+    let result_end = cursor;
+    let body_open = if parser.word(cursor, "effects") {
+        if !parser.symbol(cursor + 1, Symbol::LeftBrace) {
+            return Err(parser.error(cursor + 1, "a closure's effect row is `effects { … }`"));
+        }
+        parser.close(cursor + 1)? + 1
+    } else {
+        cursor
+    };
+    if !parser.symbol(body_open, Symbol::LeftBrace) {
+        return Err(parser.error(body_open, "a closure's body is a block `{ … }`"));
+    }
+    let body_close = parser.close(body_open)?;
+    let (captures, binders) = captures.into_iter().unzip();
+    Ok(ClosureSyntax {
+        open,
+        close,
+        arrow,
+        result_end,
+        body_open,
+        body_close,
+        captures,
+        binders,
+    })
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SourceTaskExpression {
     /// Expression including an immediately following `?`, when present.
@@ -154,6 +334,9 @@ pub(super) fn parse_inventory(
                     || children.iter().any(|child| {
                         token.span.start >= child.span.start && token.span.end <= child.span.end
                     })
+                    // Card `W48-QR-CLOSURES`: a closure's body belongs to its
+                    // hidden worker, whose own statements are scanned there.
+                    || parser.outside_closure_window(token.span, statement.span)
                 {
                     continue;
                 }
@@ -187,6 +370,126 @@ pub(super) fn parse_inventory(
     Ok(result)
 }
 
+/// Find and lift every closure in `body`, which `enclosing` declares (card
+/// `W48-QR-CLOSURES`). Each closure yields its hidden worker declaration into
+/// `lifted` — a closure written inside another closure first, so each hidden
+/// worker precedes the function that spawns it, as a hand-written twin's
+/// declarations would — and its record into `closures`, keyed by the index of
+/// its `spawn` keyword.
+pub(super) fn find_closures(
+    parser: &SourceParser<'_>,
+    enclosing: &str,
+    body: &SourceBlock,
+    lifted: &mut Vec<Located<SourceDeclaration>>,
+    closures: &mut BTreeMap<usize, LiftedClosure>,
+) -> Result<(), SourceParseError> {
+    fn walk(
+        parser: &SourceParser<'_>,
+        enclosing: &str,
+        block: &SourceBlock,
+        ordinal: &mut usize,
+        lifted: &mut Vec<Located<SourceDeclaration>>,
+        closures: &mut BTreeMap<usize, LiftedClosure>,
+    ) -> Result<(), SourceParseError> {
+        for statement in &block.statements {
+            let children = statement.value.nested_blocks();
+            let mut taken: Vec<Span> = Vec::new();
+            for index in 0..parser.tokens.len() {
+                let span = parser.tokens[index].span;
+                if span.start < statement.span.start
+                    || span.end > statement.span.end
+                    || children
+                        .iter()
+                        .any(|child| span.start >= child.span.start && span.end <= child.span.end)
+                    || taken
+                        .iter()
+                        .any(|closure| span.start >= closure.start && span.end <= closure.end)
+                    || !is_closure_head(parser, index)
+                {
+                    continue;
+                }
+                let syntax = parse_closure(parser, index)?;
+                *ordinal += 1;
+                let hidden = format!("{enclosing}#closure{ordinal}");
+                let body = parser.block(syntax.body_open)?;
+                find_closures(parser, &hidden, &body, lifted, closures)?;
+                let extent = parser.range_span(syntax.open, syntax.body_close + 1);
+                let result_span = parser.range_span(syntax.arrow + 1, syntax.result_end);
+                let parameters = syntax
+                    .captures
+                    .iter()
+                    .zip(&syntax.binders)
+                    .map(|(capture, binder)| SourceParameter {
+                        name: binder.clone(),
+                        // The type is not written: the task route decides it
+                        // from the captured place at the spawn site.
+                        type_kind: SourceTypeKind::Named,
+                        type_span: capture.span,
+                        type_source: String::new(),
+                        // A `move` hands the worker custody of what it moves,
+                        // which a hand-written twin spells `use one`.
+                        usage: matches!(capture.value.mode, SourceCaptureMode::Move).then(|| {
+                            Located {
+                                span: capture.span,
+                                value: Usage::ONE,
+                            }
+                        }),
+                    })
+                    .collect();
+                lifted.push(Located {
+                    span: extent,
+                    value: SourceDeclaration {
+                        kind: DeclarationKind::Function,
+                        name: hidden.clone(),
+                        parameters,
+                        result_type: Some(SourceResultType {
+                            kind: parser.type_kind(syntax.arrow + 1),
+                            span: result_span,
+                            source: parser.source[result_span.start..result_span.end].to_owned(),
+                            tokens: parser.tokens[syntax.arrow + 1..syntax.result_end]
+                                .iter()
+                                .map(|token| token.kind.clone())
+                                .collect(),
+                        }),
+                        quant_index_types: Vec::new(),
+                        body: Some(body),
+                        function_contract: None,
+                        verifier_scope: None,
+                        tokens: parser.tokens[syntax.open..=syntax.body_close]
+                            .iter()
+                            .map(|token| token.kind.clone())
+                            .collect(),
+                        c_ffi: None,
+                    },
+                });
+                taken.push(extent);
+                closures.insert(
+                    index,
+                    LiftedClosure {
+                        closure: SourceClosure {
+                            hidden,
+                            enclosing: enclosing.to_owned(),
+                            spawn_keyword: span,
+                            span: extent,
+                            captures_span: parser.range_span(syntax.open, syntax.close + 1),
+                            lifted: parser.range_span(syntax.arrow, syntax.body_close + 1),
+                            captures: syntax.captures.clone(),
+                            binders: syntax.binders.clone(),
+                        },
+                        syntax,
+                    },
+                );
+            }
+            for child in children {
+                walk(parser, enclosing, child, ordinal, lifted, closures)?;
+            }
+        }
+        Ok(())
+    }
+    let mut ordinal = 0;
+    walk(parser, enclosing, body, &mut ordinal, lifted, closures)
+}
+
 fn identifier(
     parser: &SourceParser<'_>,
     cursor: usize,
@@ -206,7 +509,24 @@ fn parse_task(
     start: usize,
     statement_span: Span,
 ) -> Result<SourceTaskExpression, SourceParseError> {
-    let (kind, mut next) = if parser.word(start, "spawn") {
+    let (kind, mut next) = if parser.word(start, "spawn")
+        && let Some(lifted) = parser.closures.get(&start)
+    {
+        // Card `W48-QR-CLOSURES`: the closure's hidden worker, spawned with the
+        // written captures. The expression runs through the body's closing
+        // brace, so a following `?` is the spawn's, exactly as after `)`.
+        (
+            SourceTaskExpressionKind::Spawn {
+                scope: identifier(parser, start + 1)?,
+                worker: Located {
+                    span: lifted.closure.captures_span,
+                    value: lifted.closure.hidden.clone(),
+                },
+                captures: lifted.closure.captures.clone(),
+            },
+            lifted.syntax.body_close + 1,
+        )
+    } else if parser.word(start, "spawn") {
         let scope = identifier(parser, start + 1)?;
         let worker = identifier(parser, start + 2)?;
         if !parser.symbol(start + 3, Symbol::LeftParen) {
@@ -216,64 +536,10 @@ fn parse_task(
             ));
         }
         let close = parser.close(start + 3)?;
-        let mut cursor = start + 4;
-        let mut captures = Vec::new();
-        while cursor < close {
-            let begin = cursor;
-            let mode = parser.word_value(cursor).unwrap_or("");
-            if !matches!(mode, "copy" | "move" | "read" | "write" | "lend") {
-                return Err(parser.error(
-                    cursor,
-                    "capture requires copy, move, read ... share, lend ... LOW..HIGH, or write",
-                ));
-            }
-            let (place, end) = parse_place(parser, cursor + 1, close)?;
-            cursor = end;
-            let mode = match mode {
-                "copy" => SourceCaptureMode::Copy,
-                "move" => SourceCaptureMode::Move,
-                "write" => SourceCaptureMode::Write,
-                "read" => {
-                    if !parser.word(cursor, "share") {
-                        return Err(parser
-                            .error(cursor, "read capture requires an explicit share expression"));
-                    }
-                    let (share, end) = parse_share(parser, cursor + 1, close)?;
-                    cursor = end;
-                    SourceCaptureMode::Read { share }
-                }
-                "lend" => {
-                    // The range spelling is the loop's: `LOW..HIGH`, the `..`
-                    // being the two existing `Dot` tokens (card `LOOP-V1`'s
-                    // precedent; no new token).
-                    let (low, next) = lease_bound(parser, cursor, close)?;
-                    if !parser.symbol(next, Symbol::Dot) || !parser.symbol(next + 1, Symbol::Dot) {
-                        return Err(parser.error(next, "a write lend spells its range `LOW..HIGH`"));
-                    }
-                    let (high, next) = lease_bound(parser, next + 2, close)?;
-                    cursor = next;
-                    SourceCaptureMode::LendWrite { low, high }
-                }
-                _ => unreachable!(),
-            };
-            captures.push(Located {
-                span: parser.range_span(begin, cursor),
-                value: SourceTaskCapture { mode, place },
-            });
-            if cursor == close {
-                break;
-            }
-            if !parser.symbol(cursor, Symbol::Comma) {
-                return Err(parser.error(
-                    cursor,
-                    "capture must be a place, followed by comma or closing parenthesis",
-                ));
-            }
-            cursor += 1;
-            if cursor == close {
-                return Err(parser.error(cursor, "missing capture after comma"));
-            }
-        }
+        let captures = parse_captures(parser, start + 4, close, false)?
+            .into_iter()
+            .map(|(capture, _)| capture)
+            .collect();
         (
             SourceTaskExpressionKind::Spawn {
                 scope,
@@ -308,6 +574,98 @@ fn parse_task(
         kind,
         propagates_error,
     })
+}
+
+/// The captures between `start` and `close` (exclusive): a named worker's
+/// parenthesized list, or — card `W48-QR-CLOSURES`, `closure` — a closure's
+/// capture list, where each capture may end in `as NAME`, the name it is bound
+/// to inside the body. Each capture carries that binder, the place's root name
+/// or a field capture's last segment when none is written.
+fn parse_captures(
+    parser: &SourceParser<'_>,
+    start: usize,
+    close: usize,
+    closure: bool,
+) -> Result<Vec<(Located<SourceTaskCapture>, Located<String>)>, SourceParseError> {
+    let mut cursor = start;
+    let mut captures = Vec::new();
+    while cursor < close {
+        let begin = cursor;
+        let mode = parser.word_value(cursor).unwrap_or("");
+        if !matches!(mode, "copy" | "move" | "read" | "write" | "lend") {
+            return Err(parser.error(
+                cursor,
+                "capture requires copy, move, read ... share, lend ... LOW..HIGH, or write",
+            ));
+        }
+        let (place, end) = parse_place(parser, cursor + 1, close)?;
+        cursor = end;
+        let mode = match mode {
+            "copy" => SourceCaptureMode::Copy,
+            "move" => SourceCaptureMode::Move,
+            "write" => SourceCaptureMode::Write,
+            "read" => {
+                if !parser.word(cursor, "share") {
+                    return Err(
+                        parser.error(cursor, "read capture requires an explicit share expression")
+                    );
+                }
+                let (share, end) = parse_share(parser, cursor + 1, close)?;
+                cursor = end;
+                SourceCaptureMode::Read { share }
+            }
+            "lend" => {
+                // The range spelling is the loop's: `LOW..HIGH`, the `..`
+                // being the two existing `Dot` tokens (card `LOOP-V1`'s
+                // precedent; no new token).
+                let (low, next) = lease_bound(parser, cursor, close)?;
+                if !parser.symbol(next, Symbol::Dot) || !parser.symbol(next + 1, Symbol::Dot) {
+                    return Err(parser.error(next, "a write lend spells its range `LOW..HIGH`"));
+                }
+                let (high, next) = lease_bound(parser, next + 2, close)?;
+                cursor = next;
+                SourceCaptureMode::LendWrite { low, high }
+            }
+            _ => unreachable!(),
+        };
+        let span = parser.range_span(begin, cursor);
+        let binder = if closure && parser.word(cursor, "as") {
+            let binder = identifier(parser, cursor + 1)?;
+            cursor += 2;
+            binder
+        } else {
+            match &place.value {
+                SourcePlace::Field { field, .. } => field.clone(),
+                other => other.root().clone(),
+            }
+        };
+        captures.push((
+            Located {
+                span,
+                value: SourceTaskCapture { mode, place },
+            },
+            binder,
+        ));
+        if cursor == close {
+            break;
+        }
+        if !parser.symbol(cursor, Symbol::Comma) {
+            return Err(parser.error(
+                cursor,
+                if closure {
+                    "capture must be a place, optionally `as NAME`, followed by comma or the \
+                     closing `|`"
+                } else {
+                    "capture must be a place, followed by comma or closing parenthesis"
+                },
+            ));
+        }
+        cursor += 1;
+        if cursor == close {
+            return Err(parser.error(cursor, "missing capture after comma"));
+        }
+    }
+    Ok(captures)
 }
 
 fn parse_place(
@@ -465,6 +823,23 @@ fn share_atom(
 pub(super) struct ResolutionContext<'a> {
     pub(super) program: &'a SourceProgram,
     pub(super) live_scopes: BTreeSet<SymbolId>,
+    /// Card `W48-QR-CLOSURES`: while a closure's hidden worker is resolved,
+    /// the names its enclosing scopes hold at the spawn site. None of them is
+    /// in the worker's scope; they only let a refusal say why a name that the
+    /// reader can see around the closure does not resolve inside it.
+    pub(super) closure_outer: Option<BTreeSet<String>>,
+}
+
+/// A capture's place as the reader wrote it, for naming a duplicate.
+pub(super) fn place_key(place: &SourcePlace) -> String {
+    match place {
+        SourcePlace::Name(name) => name.value.clone(),
+        SourcePlace::Dereference(base) => format!("*{}", place_key(&base.value)),
+        SourcePlace::Field { base, field } => format!("{}.{}", place_key(&base.value), field.value),
+        SourcePlace::Index { base, index } => {
+            format!("{}[{}]", place_key(&base.value), index.source)
+        }
+    }
 }
 
 pub(super) fn resolve_tasks(

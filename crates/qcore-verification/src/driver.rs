@@ -1603,6 +1603,56 @@ fn compile_elaborated_source(
     ranges: &[FileRange],
     target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    // Card `W48-QR-CLOSURES`: a closure is lifted into a hidden worker that the
+    // two scoped-task routes lower — the task route and the composed task
+    // route. Every other route would meet a worker it does not model, so a
+    // module spelling a closure and selecting any other route is refused
+    // here, naming the route's residual, before that route reads it.
+    if let Some(closure) = parsed.closures().first() {
+        let refusal = if qcore_frontend::source_ffi::has_source_ffi(parsed) {
+            Some(
+                "a closure on the FFI route: `source.ffi.v1` hosts no task, so a closure — and \
+                 an imported struct it would capture — stays refused (W48-QR-TASK-FFI-STRUCT-WORKER)",
+            )
+        } else if qcore_frontend::source_bitfield_concurrency::has_source_bitfield_tasks(parsed) {
+            Some(
+                "a closure on the field-footprint route: `source.bitfield-concurrency.v1` decides \
+                 named workers' field captures only (W48-QR-CLOSURE-ROUTES)",
+            )
+        } else if qcore_frontend::source_epoch_tasks::has_composed_epoch(parsed)
+            || qcore_frontend::source_epoch::has_source_epoch(parsed)
+        {
+            Some(
+                "a closure on an epoch route: an epoch task's worker is a named function the \
+                 epoch ledger reads by name, and a closure's hidden worker is not lowered there \
+                 yet (W48-QR-CLOSURE-EPOCH)",
+            )
+        } else if qcore_frontend::source_mutex::has_source_mutex(parsed) {
+            Some(
+                "a closure on the mutex route: `source.mutex.guard.v1` lowers named workers only, \
+                 and `share … under M` is a scope clause rather than a capture \
+                 (W48-QR-CLOSURE-MUTEX)",
+            )
+        } else if qcore_frontend::source_composed_tasks::has_source_composed_tasks(parsed)
+            || qcore_frontend::source_tasks::has_source_tasks(parsed)
+        {
+            None
+        } else {
+            Some(
+                "a closure is a spawn target of the scoped-task routes, inside a `thread scope` \
+                 of a module marked `concurrency checked;`",
+            )
+        };
+        if let Some(message) = refusal {
+            return Err(vec![map_raw_diagnostic(
+                "Q600",
+                SemanticPass::Concurrency,
+                closure.span,
+                message.to_owned(),
+                ranges,
+            )]);
+        }
+    }
     // Card `W48-QR-C-STRUCT-IMPORT`: `source.ffi.v1` is selected before every
     // other route, by `#import std.ffi.unsafe;` or a `struct!` declaration. A
     // file that imports C is unsafe as a whole (user decision 2), so it must

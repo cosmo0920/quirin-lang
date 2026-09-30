@@ -966,8 +966,39 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             .any(|extent| extent.start <= span.start && span.end <= extent.end)
     };
 
-    for token in tokens {
+    // Card `W48-QR-CLOSURES`: the two bars of a closure's capture list (the
+    // one `||` of an empty list) are the closure's, directly after
+    // `spawn SCOPE`. Every other bar keeps its reading; one that opens or
+    // closes a capture-list shape anywhere else is named as that.
+    let closure_bar = |span: Span| {
+        program
+            .closures()
+            .iter()
+            .any(|closure| closure.is_bar(span))
+    };
+    let capture_list_shape = |index: usize| {
+        let next = tokens.get(index + 1).map(|token| &token.kind);
+        matches!(next, Some(TokenKind::Symbol(Symbol::Arrow)))
+            || (matches!(tokens[index].kind, TokenKind::Symbol(Symbol::Pipe))
+                && matches!(
+                    next,
+                    Some(TokenKind::Word(word))
+                        if matches!(word.as_str(), "copy" | "move" | "read" | "write" | "lend")
+                ))
+    };
+    for (index, token) in tokens.iter().enumerate() {
         let message = match &token.kind {
+            TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe) if closure_bar(token.span) => {
+                continue;
+            }
+            TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe)
+                if !in_condition(token.span) && capture_list_shape(index) =>
+            {
+                "a capture list `|…|` belongs to a closure, and a closure is a spawn target \
+                 only: `spawn SCOPE |CAPTURES| -> TYPE { … }`. A closure stored, passed or \
+                 called as a value is not admitted (W48-QR-CLOSURE-VALUES)"
+                    .to_owned()
+            }
             // Card `BITWISE-CONDITIONS` spends the three reservations card
             // `OR-AND-LOWERING` held: `|`, `^` and `&` are the bitwise
             // operators of `source.branch.v1`'s integer tier, and that tier

@@ -12,8 +12,8 @@
 mod tasks;
 pub use tasks::{
     ResolvedTaskCapture, ResolvedTaskExpression, ResolvedTaskExpressionKind, ResolvedTaskPlace,
-    SourceCaptureMode, SourceIndexExpression, SourceLeaseBound, SourcePlace, SourceShareExpression,
-    SourceTaskCapture, SourceTaskExpression, SourceTaskExpressionKind,
+    SourceCaptureMode, SourceClosure, SourceIndexExpression, SourceLeaseBound, SourcePlace,
+    SourceShareExpression, SourceTaskCapture, SourceTaskExpression, SourceTaskExpressionKind,
 };
 
 #[path = "frontend_result_match.rs"]
@@ -373,6 +373,8 @@ pub struct SourceProgram {
     result_matches: Vec<SourceResultMatch>,
     tokens: Vec<TokenKind>,
     pipe_refusals: Vec<crate::pipe::PipeRefusal>,
+    /// Card `W48-QR-CLOSURES`: every closure spawn target, in source order.
+    closures: Vec<SourceClosure>,
     pub declarations: Vec<Located<SourceDeclaration>>,
 }
 
@@ -426,6 +428,42 @@ impl SourceProgram {
     /// Parsed task syntax only; executable checking remains a separate gate.
     pub fn task_expressions(&self) -> &[SourceTaskExpression] {
         &self.task_expressions
+    }
+
+    /// Every closure spawn target, in source order (card `W48-QR-CLOSURES`).
+    /// Each is also a hidden function declaration named
+    /// [`SourceClosure::hidden`].
+    pub fn closures(&self) -> &[SourceClosure] {
+        &self.closures
+    }
+
+    /// The closure whose hidden worker is named `name`, if any.
+    pub fn closure(&self, name: &str) -> Option<&SourceClosure> {
+        self.closures.iter().find(|closure| closure.hidden == name)
+    }
+
+    /// Whether a token at `token` belongs to the header or body of a closure
+    /// that the byte window `window` contains without lying inside it (card
+    /// `W48-QR-CLOSURES`). Such tokens are the hidden worker's, so a reader of
+    /// the enclosing statement's window skips them and reads what the
+    /// hand-written twin's statement holds: `spawn SCOPE |CAPTURES|`.
+    pub fn outside_closure_window(&self, token: Span, window: Span) -> bool {
+        outside_closure_window(self.closures.iter(), token, window)
+    }
+
+    /// Where an expression ending at `end` ends as the window `window` reads
+    /// it (card `W48-QR-CLOSURES`): a closure spawn's expression ends at the
+    /// body's closing brace, but a window that skips the closure's header and
+    /// body sees it end at the capture list's closing bar — where its twin's
+    /// ends, at the `)`. Every other end is itself.
+    pub fn visible_end(&self, window: Span, end: usize) -> usize {
+        self.closures
+            .iter()
+            .find(|closure| {
+                closure.lifted.end == end
+                    && outside_closure_window(std::iter::once(*closure), closure.lifted, window)
+            })
+            .map_or(end, |closure| closure.captures_span.end)
     }
 
     pub fn source(&self) -> &str {
@@ -553,6 +591,19 @@ struct SourceParser<'a> {
     tokens: Vec<Token>,
     matching: BTreeMap<usize, usize>,
     pipe_refusals: Vec<crate::pipe::PipeRefusal>,
+    /// Card `W48-QR-CLOSURES`: the lifted closures, keyed by the index of
+    /// their `spawn` keyword; filled before the task inventory is read.
+    closures: BTreeMap<usize, tasks::LiftedClosure>,
+}
+
+/// [`SourceProgram::outside_closure_window`] over any closure list.
+fn outside_closure_window<'c>(
+    mut closures: impl Iterator<Item = &'c SourceClosure>,
+    token: Span,
+    window: Span,
+) -> bool {
+    let within = |outer: Span, inner: Span| outer.start <= inner.start && inner.end <= outer.end;
+    closures.any(|closure| within(closure.lifted, token) && !within(closure.span, window))
 }
 
 impl<'a> SourceParser<'a> {
@@ -605,6 +656,7 @@ impl<'a> SourceParser<'a> {
             tokens,
             matching,
             pipe_refusals,
+            closures: BTreeMap::new(),
         })
     }
 
@@ -633,7 +685,16 @@ impl<'a> SourceParser<'a> {
         Ok((mode, mode_span, cursor))
     }
 
-    fn parse(self) -> Result<(SourceProgram, Vec<Located<String>>), SourceParseError> {
+    /// See [`SourceProgram::outside_closure_window`].
+    fn outside_closure_window(&self, token: Span, window: Span) -> bool {
+        outside_closure_window(
+            self.closures.values().map(|lifted| &lifted.closure),
+            token,
+            window,
+        )
+    }
+
+    fn parse(mut self) -> Result<(SourceProgram, Vec<Located<String>>), SourceParseError> {
         let mut declarations = Vec::new();
         let mut imports = Vec::new();
         let mut runtime_imports = Vec::new();
@@ -779,6 +840,27 @@ impl<'a> SourceParser<'a> {
                 }
             }
         }
+        // Card `W48-QR-CLOSURES`: lift every closure into a hidden worker
+        // declared immediately before the function that spawns it, before the
+        // task and match inventories read any statement.
+        let mut closures = BTreeMap::new();
+        let mut with_closures = Vec::with_capacity(declarations.len());
+        for declaration in declarations {
+            if declaration.value.kind == DeclarationKind::Function
+                && let Some(body) = &declaration.value.body
+            {
+                tasks::find_closures(
+                    &self,
+                    &declaration.value.name,
+                    body,
+                    &mut with_closures,
+                    &mut closures,
+                )?;
+            }
+            with_closures.push(declaration);
+        }
+        let declarations = with_closures;
+        self.closures = closures;
         let task_expressions = tasks::parse_inventory(&self, &declarations)?;
         let result_matches = result_match::parse_inventory(&self, &declarations)?;
         Ok((
@@ -793,6 +875,11 @@ impl<'a> SourceParser<'a> {
                 lexical_tokens: self.tokens.clone(),
                 tokens: self.tokens.iter().map(|token| token.kind.clone()).collect(),
                 pipe_refusals: self.pipe_refusals.clone(),
+                closures: self
+                    .closures
+                    .values()
+                    .map(|lifted| lifted.closure.clone())
+                    .collect(),
                 declarations,
             },
             runtime_imports,
@@ -2460,6 +2547,46 @@ pub struct TypedSourceProgram {
     pub origin: String,
 }
 
+/// The names the scopes enclosing `closure` hold at its spawn site (card
+/// `W48-QR-CLOSURES`): the enclosing function's parameters, the locals and
+/// scope names visible there, the `match` arm binders around it, and — for a
+/// closure written inside another closure — the outer closure's own.
+fn closure_outer_names(program: &SourceProgram, closure: &SourceClosure) -> BTreeSet<String> {
+    let mut names = BTreeSet::new();
+    let mut current = Some(closure);
+    while let Some(closure) = current {
+        let position = closure.spawn_keyword.start;
+        if let Some(enclosing) = program
+            .declarations
+            .iter()
+            .find(|declaration| declaration.value.name == closure.enclosing)
+        {
+            names.extend(
+                enclosing
+                    .value
+                    .parameters
+                    .iter()
+                    .map(|parameter| parameter.name.value.clone()),
+            );
+            if let Some(body) = &enclosing.value.body {
+                visible_local_names(body, position, &mut names);
+            }
+        }
+        for syntax in program.result_matches() {
+            for arm in &syntax.arms {
+                if arm.body.span.start <= position
+                    && position < arm.body.span.end
+                    && let Some(pattern) = &arm.pattern
+                {
+                    names.insert(pattern.binding.value.clone());
+                }
+            }
+        }
+        current = program.closure(&closure.enclosing);
+    }
+    names
+}
+
 fn visible_local_names(block: &SourceBlock, position: usize, names: &mut BTreeSet<String>) {
     if position < block.span.start || position >= block.span.end {
         return;
@@ -2627,13 +2754,40 @@ pub fn elaborate_source(
         let symbol = globals[&declaration.value.name];
         let mut scopes = vec![BTreeMap::<String, SymbolId>::new()];
         let mut parameters = Vec::new();
+        // Card `W48-QR-CLOSURES`: a capture list names each place once.
+        let closure = program.closure(&declaration.value.name);
+        if let Some(closure) = closure {
+            let mut seen = BTreeSet::new();
+            for capture in &closure.captures {
+                let key = tasks::place_key(&capture.value.place.value);
+                if !seen.insert(key.clone()) {
+                    diagnostics.push(SourceDiagnostic {
+                        code: "Q011",
+                        pass: SemanticPass::NameResolution,
+                        span: capture.span,
+                        message: format!(
+                            "the closure captures `{key}` twice; a capture list names each place \
+                             once"
+                        ),
+                    });
+                }
+            }
+        }
         for parameter in &declaration.value.parameters {
             if scopes[0].contains_key(&parameter.name.value) {
                 diagnostics.push(SourceDiagnostic {
                     code: "Q011",
                     pass: SemanticPass::NameResolution,
                     span: parameter.name.span,
-                    message: format!("duplicate parameter `{}`", parameter.name.value),
+                    message: if closure.is_some() {
+                        format!(
+                            "two captures of the closure are bound to `{}` inside its body; \
+                             name one of them with `as NAME`",
+                            parameter.name.value
+                        )
+                    } else {
+                        format!("duplicate parameter `{}`", parameter.name.value)
+                    },
                 });
                 continue;
             }
@@ -2701,6 +2855,9 @@ pub fn elaborate_source(
                     &mut tasks::ResolutionContext {
                         program,
                         live_scopes: BTreeSet::new(),
+                        closure_outer: program
+                            .closure(&declaration.value.name)
+                            .map(|closure| closure_outer_names(program, closure)),
                     },
                     &mut next_symbol,
                     &mut diagnostics,
@@ -2753,7 +2910,7 @@ fn elaborate_block(
     let mut typed = Vec::new();
     for statement in &block.statements {
         let (binding, reference, pass) = statement_metadata(&statement.value);
-        let mut references = lexical_references(statement, &context.program.lexical_tokens);
+        let mut references = lexical_references(statement, context.program);
         if let Some(reference) = reference {
             references.insert(reference.to_owned());
         }
@@ -2767,6 +2924,26 @@ fn elaborate_block(
                 .copied();
             if let Some(symbol) = resolved {
                 referenced_symbols.push(symbol);
+            } else if context
+                .closure_outer
+                .as_ref()
+                .is_some_and(|outer| outer.contains(&name))
+            {
+                // Card `W48-QR-CLOSURES`: no implicit capture. The name is
+                // one the reader sees around the closure, and it is not in
+                // the closure's scope because the capture list does not
+                // name it.
+                diagnostics.push(SourceDiagnostic {
+                    code: "Q013",
+                    pass: SemanticPass::NameResolution,
+                    span: statement.span,
+                    message: format!(
+                        "`{name}` belongs to the scope enclosing this closure, and the closure \
+                         does not capture it: a closure sees only the places its capture list \
+                         names (`copy {name}`, `move {name}`, `read {name} share …`, \
+                         `lend {name} LOW..HIGH`); nothing is captured implicitly"
+                    ),
+                });
             } else {
                 diagnostics.push(SourceDiagnostic {
                     code: "Q013",
@@ -2932,8 +3109,9 @@ fn elaborate_block(
 
 fn lexical_references(
     statement: &Located<StatementKind>,
-    lexical_tokens: &[Token],
+    program: &SourceProgram,
 ) -> BTreeSet<String> {
+    let lexical_tokens = program.lexical_tokens();
     // Card `LOOP-UNROLL-BUDGET`: every word inside `[| #unroll, where #bound <
     // N |]` is a clause word of the attribute grammar and none of them is a
     // reference to a binding, so the list contributes no referenced name at
@@ -2958,10 +3136,16 @@ fn lexical_references(
     if matches!(statement.value, StatementKind::ErrorRegion { .. }) {
         return BTreeSet::new();
     }
+    // Card `W48-QR-CLOSURES`: a closure's header and body are its hidden
+    // worker's, resolved in that worker's own scope; the enclosing statement
+    // references what its hand-written twin's does — the capture list's
+    // places and, below, the worker.
     let mut tokens = lexical_tokens
         .iter()
         .filter(|token| {
-            statement.span.start <= token.span.start && token.span.end <= statement.span.end
+            statement.span.start <= token.span.start
+                && token.span.end <= statement.span.end
+                && !program.outside_closure_window(token.span, statement.span)
         })
         .collect::<Vec<_>>();
     if matches!(
@@ -3080,10 +3264,14 @@ fn lexical_references(
         // no file of this repository — before this card it was a parse
         // failure — and the place name after it *is* a reference and still
         // resolves normally.
+        // Card `W48-QR-CLOSURES` adds the closure's opening bar to the two
+        // symbols a capture follows.
         let lend_capture = word == "lend"
             && matches!(
                 previous.map(|token| &token.kind),
-                Some(TokenKind::Symbol(Symbol::LeftParen | Symbol::Comma))
+                Some(TokenKind::Symbol(
+                    Symbol::LeftParen | Symbol::Comma | Symbol::Pipe
+                ))
             )
             && matches!(next.map(|token| &token.kind), Some(TokenKind::Word(_)))
             && tokens[..index]
@@ -3119,7 +3307,20 @@ fn lexical_references(
                 next.map(|token| &token.kind),
                 Some(TokenKind::Symbol(Symbol::ColonColon))
             );
+        // Card `W48-QR-CLOSURES`: `as NAME` after a closure's capture names
+        // the parameter the capture is bound to inside the body, a definition
+        // there and not a reference here. Contextual — `as` inside a closure's
+        // capture list — so no word is reserved; the census found `as` inside
+        // no spawn's capture list.
+        let closure_binder = matches!(
+            previous.map(|token| &token.kind),
+            Some(TokenKind::Word(previous)) if previous == "as"
+        ) && program.closures().iter().any(|closure| {
+            closure.captures_span.start <= token.span.start
+                && token.span.end <= closure.captures_span.end
+        });
         if body_binder
+            || closure_binder
             || builtin_error
             || length_query
             || lend_clause
@@ -3141,6 +3342,16 @@ fn lexical_references(
             continue;
         }
         result.insert(word.clone());
+    }
+    // Card `W48-QR-CLOSURES`: a statement that spawns a closure references
+    // its hidden worker, as its twin's statement references the named one.
+    for closure in program.closures() {
+        if statement.span.start <= closure.spawn_keyword.start
+            && closure.spawn_keyword.end <= statement.span.end
+            && !program.outside_closure_window(closure.spawn_keyword, statement.span)
+        {
+            result.insert(closure.hidden.clone());
+        }
     }
     result
 }
