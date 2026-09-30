@@ -1,0 +1,13 @@
+{
+  "note": "CG14-AGGREGATE-VALUES-AND-INITIALIZERS card gate at tip 8fddb6ed (base c374de96), script docs/reports/cg14-aggregate-values-and-initializers/scripts/gate.sh, logs private/cg14/gate of this worktree: submodule 0; run_test_binaries.py 401 units, 414 summaries, 7,046 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T180015Z-1529007); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 256 audits passed (255 + AuditAggregateValue.lean); python tests 365, exit 1 before the matrix regeneration (test_build_matrix_sections: the derived Lean audit count 255 -> 256), then exit 0 after build_matrix.py --gate this file (09b); docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE c374de96 3a25c4e9, 608/10/4,216; AFTER 7ebbdc45 5ebd8394, 616/10/4,208 (+8 Unknown -> Safe, no Safe -> non-Safe); system 41/2/191 unmoved; tail-pause slice 28/1/240/1 Pending unmoved. The records commit 8fddb6ed changes no analyzer code after 7ebbdc45. Exits in docs/reports/cg14-aggregate-values-and-initializers/gate/.",
+  "workspace_tests": 7046,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 256,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

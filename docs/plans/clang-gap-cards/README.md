@@ -233,7 +233,7 @@ High for anything that could publish a wrong Safe, Medium for measurement.
 | CG11-POINTER-VALUED-STORES | M02 M03 M04 | G | High | CG10; the owned-field Lean model; W45-SR5 findings closed |
 | CG12-VOID-VIEW-READBACK | M05 | G | High | CG11 |
 | CG13-UNION-AND-BITFIELD-PLACES | M06 M07 | G, T, core | High | CG10 |
-| CG14-AGGREGATE-VALUES-AND-INITIALIZERS | M08 M09 M10 M11 | G, T | High | CG10, CG11 |
+| CG14-AGGREGATE-VALUES-AND-INITIALIZERS | M08 M09 M10 M11 | G, T | High | CG10, CG11 (landed on G, wave 48 round 7) |
 | CG15-STORAGE-DURATION-AND-VOLATILE | M24 M23 | G, T | High | CG10 |
 
 - **CG10: common typed place.**
@@ -294,6 +294,16 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     lifetime.
   - *Strings and arrays.* String and array initializer extents feed CG16 only
     when bounds are claimed.
+  - *Status (wave 48, round 7).* Landed on route G (gateway rule 11f):
+    custody-free record copies, identity-free braced initializers (a local
+    that can hold a pointer through rule 10v's flow guard), compound literals
+    as borrowed actuals only, string initializers with extents recorded and no
+    bound. **+8** corpus Safe (2 direct, 6 through derived summaries), system
+    and slice unmoved, no correction. Pointer-bearing copies, aggregate values
+    in actuals, returns and conditions, and several declaration forms remain
+    (`CG14-POINTER-BEARING-COPIES-AND-INITIAL-ALIASES`,
+    `CG14-AGGREGATE-VALUE-POSITIONS`, `CG14-DECLARATION-FORMS`); route T is
+    unchanged. [Report](../../reports/cg14-aggregate-values-and-initializers/README.md).
 - **CG15: storage duration and volatile.**
   - *Storage.* Global, static and thread-local identity and lifetime; T
     currently rejects them.

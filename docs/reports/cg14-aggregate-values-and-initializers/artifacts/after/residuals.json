@@ -1,0 +1,66 @@
+{
+ "initializer declaration:not an automatic object": {
+  "statements": 102,
+  "functions": 85
+ },
+ "initializer declaration:several declarators": {
+  "statements": 96,
+  "functions": 84
+ },
+ "initializer declaration:no single initializer": {
+  "statements": 93,
+  "functions": 70
+ },
+ "copy pointer-members": {
+  "statements": 75,
+  "functions": 61
+ },
+ "compound-literal literal-callee-uncontracted": {
+  "statements": 40,
+  "functions": 31
+ },
+ "copy copy-operand:source": {
+  "statements": 34,
+  "functions": 25
+ },
+ "initializer leaf:address": {
+  "statements": 30,
+  "functions": 24
+ },
+ "initializer leaf:pointer-bearing-record": {
+  "statements": 27,
+  "functions": 14
+ },
+ "initializer reader": {
+  "statements": 22,
+  "functions": 19
+ },
+ "initializer leaf:formal-pointer": {
+  "statements": 22,
+  "functions": 19
+ },
+ "initializer leaf:call": {
+  "statements": 13,
+  "functions": 7
+ },
+ "compound-literal literal-position": {
+  "statements": 8,
+  "functions": 6
+ },
+ "copy unread-record": {
+  "statements": 4,
+  "functions": 3
+ },
+ "initializer leaf:local-pointer": {
+  "statements": 4,
+  "functions": 4
+ },
+ "initializer leaf:pointer-read": {
+  "statements": 3,
+  "functions": 3
+ },
+ "copy reader": {
+  "statements": 2,
+  "functions": 2
+ }
+}

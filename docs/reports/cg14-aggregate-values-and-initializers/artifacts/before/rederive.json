@@ -1,0 +1,532 @@
+{
+ "alone": [
+  {
+   "function": "cmt_histogram.c::cmt_histogram_buckets_default_create",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1
+    }
+   ]
+  },
+  {
+   "function": "lz4frame.c::LZ4F_freeCDict",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 4
+    }
+   ]
+  },
+  {
+   "function": "lz4frame.c::LZ4F_freeCompressionContext",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 3
+    }
+   ]
+  },
+  {
+   "function": "lz4frame.c::LZ4F_freeDecompressionContext",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 3
+    }
+   ]
+  },
+  {
+   "function": "rdbuf.c::rd_buf_get_segment_at_offset",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unknown_alias: unresolved resource identity": 5
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_metadata_cache.c::rd_kafka_metadata_cache_entry_by_id_cmp",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::rd_kafka_mock_broker_find",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::rd_kafka_mock_error_stack_find",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::rd_kafka_mock_msgset_find",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::rd_kafka_mock_topic_find_by_id",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock_handlers.c::rd_kafka_mock_offset_is_aborted",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_topic_partition_get_topic_id",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unknown_alias: unresolved resource identity": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in return expression": 2
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_pause",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_resume",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_request.c::rd_kafka_MetadataRequest",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_telemetry_encode.c::get_member_id",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+    }
+   ]
+  },
+  {
+   "function": "rdvarint.c::unittest_rdvarint",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 8
+    }
+   ]
+  }
+ ],
+ "with_one_other": [
+  {
+   "function": "ctr_encode_opentelemetry.c::destroy_link",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 4,
+     "unknown_alias: unresolved resource identity": 3
+    }
+   ]
+  },
+  {
+   "function": "ctr_encode_opentelemetry.c::destroy_span",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 11,
+     "unknown_alias: unresolved resource identity": 11
+    }
+   ]
+  },
+  {
+   "function": "ctr_encode_opentelemetry.c::set_span",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 9
+    }
+   ]
+  },
+  {
+   "function": "flb_input_chunk.c::update_logs_tag_records_untracked",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1
+    }
+   ]
+  },
+  {
+   "function": "lz4.c::LZ4_isLittleEndian",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1
+    }
+   ]
+  },
+  {
+   "function": "mk_server/mk_lib.c::chunk_header",
+   "status": [],
+   "leaves": []
+  },
+  {
+   "function": "rdavl.c::rd_avl_find_node",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+     "unsupported: indirect memory access is outside the resource projection": 2
+    }
+   ]
+  },
+  {
+   "function": "rdbuf.c::rd_slice_narrow",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity": 1,
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1
+    }
+   ]
+  },
+  {
+   "function": "rdbuf.c::rd_slice_narrow_copy",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity": 2,
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_admin.c::rd_kafka_ConfigEntry_copy",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 5
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_broker.c::rd_kafka_broker_request_supported",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_fetcher.c::can_use_topic_ids",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: unmodeled call, aggregate or indirect access in do-while condition": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_fetcher.c::rd_kafka_toppar_fetch_decide_next_fetch_start_pos",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: unmodeled call, aggregate or indirect access in return expression": 2
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_metadata_cache.c::rd_kafka_metadata_cache_find_by_id",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 2,
+     "unknown_alias: unresolved resource identity": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::rd_kafka_mock_topic_find",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::rd_kafka_mock_topic_find_by_kstr",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::ut_cgrp_consumer_member_next_assignment1",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unknown_alias: unresolved resource identity": 1,
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+     "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::ut_cgrp_consumer_member_next_assignment2",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unknown_alias: unresolved resource identity": 1,
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+     "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::ut_cgrp_consumer_member_next_assignment3",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unknown_alias: unresolved resource identity": 1,
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+     "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::ut_cgrp_consumer_member_next_assignment4",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unknown_alias: unresolved resource identity": 1,
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+     "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock.c::ut_cgrp_consumer_member_next_assignment5",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unknown_alias: unresolved resource identity": 1,
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+     "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_mock_handlers.c::rd_kafka_mock_sgrp_partmeta_find",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity": 1,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_telemetry_encode.c::calculate_broker_avg_rtt",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+     "unsupported: indirect memory access is outside the resource projection": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_telemetry_encode.c::calculate_broker_max_rtt",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+     "unsupported: indirect memory access is outside the resource projection": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_telemetry_encode.c::calculate_produce_latency_max",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1,
+     "unsupported: indirect memory access is outside the resource projection": 1
+    }
+   ]
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_local_topic_ids_to_list",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: indirect memory access is outside the resource projection": 5,
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+    }
+   ]
+  },
+  {
+   "function": "rdunittest.c::ut_tq_find_prev_pos",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: for-loop clause with a call or grouping is not classified from its stripped spelling": 1,
+     "unsupported: indirect memory access is outside the resource projection": 1,
+     "unknown_alias: unresolved resource identity": 2
+    }
+   ]
+  },
+  {
+   "function": "rdxxhash.c::XXH_isLittleEndian",
+   "status": [
+    "Unknown"
+   ],
+   "leaves": [
+    {
+     "unsupported: braced initializer, expression, or declaration is not modeled": 1
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,64 @@
+{
+ "compound-literal": {
+  "statements": 71,
+  "admitted_in_some_analysis": 0,
+  "admitted_in_every_analysis": 0,
+  "functions": 12,
+  "functions_with_an_admission": 0,
+  "refusals": {
+   "literal-callee-uncontracted": 40,
+   "literal-position": 31
+  },
+  "classes": {},
+  "statements_with_leaf": {}
+ },
+ "copy": {
+  "statements": 350,
+  "admitted_in_some_analysis": 0,
+  "admitted_in_every_analysis": 0,
+  "functions": 109,
+  "functions_with_an_admission": 0,
+  "refusals": {
+   "declaration:not a record": 339,
+   "pointer-members": 10,
+   "reader": 1
+  },
+  "classes": {
+   "scalar": 185,
+   "pointer": 154,
+   "pointer-bearing": 10,
+   "custody-free": 1
+  },
+  "statements_with_leaf": {}
+ },
+ "initializer": {
+  "statements": 10,
+  "admitted_in_some_analysis": 7,
+  "admitted_in_every_analysis": 7,
+  "functions": 10,
+  "functions_with_an_admission": 7,
+  "refusals": {
+   "declaration:several declarators": 1,
+   "declaration:not a record or array": 1,
+   "declaration:no single initializer": 1
+  },
+  "classes": {
+   "custody-free": 5,
+   "pointer-bearing": 2,
+   "pointer": 1
+  },
+  "statements_with_leaf": {
+   "zero": 7,
+   "scalar": 6,
+   "null": 1
+  }
+ },
+ "initializer-guard-flow": {
+  "decisions": {
+   "admit": 9
+  },
+  "functions": {
+   "admit": 2
+  }
+ }
+}
