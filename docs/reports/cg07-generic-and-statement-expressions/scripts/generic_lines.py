@@ -62,6 +62,7 @@ def main() -> int:
     parser.add_argument("diagnostics", type=pathlib.Path)
     parser.add_argument("out", type=pathlib.Path)
     parser.add_argument("--json", type=pathlib.Path)
+    parser.add_argument("--pattern", default="_Generic", help="the text a leaf's line must hold")
     args = parser.parse_args()
     args.out = args.out.resolve()
     args.out.mkdir(parents=True, exist_ok=True)
@@ -87,7 +88,7 @@ def main() -> int:
                     dest = preprocess(candidates[0], args.out)
                     text = dest.read_text(errors="replace").splitlines() if dest else []
                 line = diagnostic.get("line")
-                if not line or line > len(text) or "_Generic" not in text[line - 1]:
+                if not line or line > len(text) or args.pattern not in text[line - 1]:
                     continue
                 label = diagnostic.get("description") or diagnostic.get("category")
                 leaves[label] += 1
@@ -95,7 +96,8 @@ def main() -> int:
                     functions.add((unit["file"], function["function"]))
                     statuses[function["status"]] += 1
     record = {
-        "leaves_on_generic_lines": sum(leaves.values()),
+        "pattern": args.pattern,
+        "leaves_on_matching_lines": sum(leaves.values()),
         "by_description": dict(leaves.most_common()),
         "functions": len(functions),
         "function_statuses": dict(statuses),

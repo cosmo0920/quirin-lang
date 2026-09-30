@@ -2688,3 +2688,77 @@ own anchor here.
     `DECISION_VECTORS` and `EVENT_VECTORS`, whose paths the gateway runs
     (`tests/bound_untracked_roots.rs`);
     [report](../reports/cg10-bound-untracked-roots/README.md).
+
+<a id="constraint-11g"></a>
+
+11g. **A generic selection is its selected association, and a statement
+    expression is lowered only where nothing is unsequenced beside it, as its
+    block's statements then its value.** Card
+    CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (`generic_association.rs`,
+    `statement_expression.rs`, the route-G adapter
+    `legacy_statement_expression.rs`, additive items in
+    `legacy_generic_selection.rs` (route 2), `elaboration.rs` (two arms, a
+    lifetime commutation arm, `Refusal::InnerEscape`, the `FORM_TABLE` rows
+    `generic selection` and `statement expression` admitted and a new
+    `statement expression control` row) and `typed_access_path.rs`
+    (`original_line_texts`), thin hooks in `legacy_c.rs`). It amends rules
+    10s (the two CG07 rows) and the W44 generic-selection route; every other
+    premise of theirs stands. (1) **`_Generic`** (E17). Route 1 (selection
+    invariance) is asked first and keeps every lowering it made. A selection
+    it refuses as not invariant, or whose removed cast it cannot justify, is
+    matched to one Clang `GenericSelectionExpr` by its line and its ordinal
+    among that line's `_Generic` keywords (only where the line's tokens are
+    the analysed source's and the counts agree), and its associations must
+    be Clang's, kind for kind; it is then lowered to the association Clang
+    marks `selected` (nested selections first), parenthesised unless a
+    direct call or a name. The controlling expression and every other
+    association are dropped: C evaluates neither, so neither yields an event
+    or an obligation. The elaborator reads a `GenericSelectionExpr` as its
+    selected association. (2) **Statement expressions** (E19), route G, a
+    fallback after every older route of a statement or `return`. The full
+    expression is matched to one Clang node by line and exact tokens and its
+    statement expressions are read by `statement_expression::decide`
+    (`admit`): the **position** is discarded (an expression statement's
+    operand through parentheses, `__extension__`, `(void)` and commas), the
+    whole initializer of a one-declarator declaration, the whole right
+    operand of an assignment to a named object (`NAME`, or `*&NAME`), or the
+    whole `return` operand; the **names** are hygienic (no inner name is a
+    formal's, a declaration's outside every other statement expression, an
+    enclosing or a second declaration's, or a referenced object's, function's
+    or constant's declared outside them: the route has no block scopes);
+    no inner declaration is `static`, `extern` or thread-local; and, where
+    the value is used, the block takes no inner object's address (`&t`, an
+    inner array's decay, a member or element of either) and ends in an
+    expression. The block is then lowered **from the parser's own stream**:
+    a discarded one as a block (each comma operand in order, a plain one a
+    statement of its own), a used one as its statements before the last,
+    then `T NAME = e`, `NAME = e` or `return e` through the position's own
+    routes. An inner statement is read exactly as in an ordinary block and
+    keeps its own refusal. The elaborator reads a straight-line block
+    (declarations, expression and null statements) as its full expressions
+    in order, each inner object's `LifetimeStart` at its declaration and
+    `LifetimeEnd` after the value, the whole complete before the value is
+    used; a lifetime event touches its own object only; any other statement
+    refuses as `statement expression control`, a pointer value where the
+    block takes an inner address as `InnerEscape`. Every other position
+    (an operand, a call actual, a controlling expression, a cast's operand,
+    a path destination) keeps its refusal. **Do not** evaluate a controlling
+    expression or an unselected association, ask route 2 before route 1,
+    lower a statement expression beside an unsequenced sibling, admit an
+    inner name the flat lowering could confuse, let a used value carry an
+    inner address, or consult the hook before an older route of the position
+    (hard invariant 3). Parity runs record each consultation (`position:
+    "statement-expression-statement"`/`"-return"`, each block's position,
+    family, admission and refusal). Route T is unchanged (it names neither
+    node). Premises stated, not proved: faithful Clang extraction of the
+    selection, the block and its declarations and the token/AST node match
+    (trust boundary 28). MEASURED_PLACEHOLDER
+    `QCore.StatementExpressions` (selection: `select_events`,
+    `control_no_event`, `unselected_no_event`; `value_is_final`,
+    `lifetimes_end_at_block`, `lowering_exact`, `discarded_exact`,
+    `returned_exact`, `flat_names_exact` with its counterexample
+    `shadow_breaks_flat`, `admitted_no_escape`, the refusals and the
+    position table), bound to `ADMISSION_VECTORS`, `POSITIONS` and
+    `commutes` by shared-vector tests and to route G by
+    `tests/cg07_statement_expressions.rs`;
+    [report](../reports/cg07-generic-and-statement-expressions/README.md).
