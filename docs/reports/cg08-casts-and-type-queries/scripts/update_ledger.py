@@ -37,7 +37,7 @@ RESIDUAL_WHY = (
     "requires type/operand analysis` (W44-SIZEOF-CAST-SCALAR-QUERY's family, 458/121 at BEFORE; mostly librdkafka "
     "`rd_kafka_buf_read_*` macro statements holding calls, and `id_bytes = (int) sizeof(uint16_t);` whose "
     "destination the lexical scalar-local premise of rule 10s's event lowering does not read), and SIZEOF-LINE "
-    "other unsupported leaves on a line spelling `sizeof` (W44-SIZEOF-OPERAND-RESIDUALS' neighbourhood, 373/241 "
+    "other unsupported leaves on a line spelling `sizeof` (W44-SIZEOF-OPERAND-RESIDUALS' neighbourhood, 390/254 "
     "at BEFORE; most carry another access, a pointer-arithmetic actual or a call). (b) Explicit casts in refused "
     "assignments: ASSIGNMENT-CAST `unsupported assignment expression` leaves on a line spelling a pointer cast "
     "(193/153 at BEFORE): a cast over pointer arithmetic (CG16), an `IntegralToPointer` destination, a cast of "

@@ -191,6 +191,7 @@
   "unsupported: call to uncontracted function `rd_tmpabuf_write0`": 1,
   "unsupported: call to uncontracted function `__builtin_alloca`": 1,
   "unsupported: nullable resource `target_assignment` used by a non-null contract": 1,
+  "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 1,
   "unsupported: nullable resource `messages` used by a non-null contract": 1,
   "unsupported: nullable resource `rko` used by a non-null contract": 1,
   "unsupported: nullable resource `rkt` used by a non-null contract": 1,

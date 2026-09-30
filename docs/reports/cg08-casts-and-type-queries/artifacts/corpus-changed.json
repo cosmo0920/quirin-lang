@@ -2780,7 +2780,8 @@
   "before": "Unknown",
   "after": "Unknown",
   "leaf_delta": {
-   "unsupported: indirect memory access is outside the resource projection": -1
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 1
   }
  },
  {

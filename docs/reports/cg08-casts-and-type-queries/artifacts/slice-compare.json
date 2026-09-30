@@ -21,6 +21,7 @@
   "unsupported: indirect memory access is outside the resource projection": -6,
   "unsupported: unsupported assignment expression": -5,
   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2,
+  "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 1,
   "unsupported: publication by `mk_list_add` of `dormant`, which this function does not hold as one live object": 1,
   "unknown_alias: unresolved resource identity": 13
  }

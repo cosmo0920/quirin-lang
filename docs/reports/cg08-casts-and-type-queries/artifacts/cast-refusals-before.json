@@ -25,13 +25,13 @@
  },
  {
   "position": "elaboration-statement",
-  "refusal": "cast `ArrayToPointerDecay` (CG08)",
+  "refusal": "cast `NullToPointer` (CG08)",
   "consultations": 2,
   "functions": 2
  },
  {
   "position": "elaboration-statement",
-  "refusal": "cast `NullToPointer` (CG08)",
+  "refusal": "cast `ArrayToPointerDecay` (CG08)",
   "consultations": 2,
   "functions": 2
  },

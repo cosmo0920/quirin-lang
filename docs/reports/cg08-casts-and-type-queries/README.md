@@ -3,16 +3,19 @@
 Card CG08 of the [Clang gap card queue](../../plans/clang-gap-cards/README.md)
 (wave 48, round 5; base `ca634dc1` = local `main` at dispatch, which contains
 the round-5 base `3e69322c` and W48-QR-C-STRUCT-IMPORT); main `bcdc13b9`
-(W48-QR-USABLE-RECORDS, corpus identity unchanged) merged at `998b0353`. The
-loop-site soundness repair (CG04-LOOP-SITE-GENERATIONS) had not landed on
-`main` when these figures were taken; §4 is measured on `ca634dc1` (BEFORE)
-and `998b0353` (AFTER), and is to be re-taken on the repaired base.
+(W48-QR-USABLE-RECORDS, corpus identity unchanged) merged at `998b0353`, and
+main `9290ff1a` (the loop-site soundness repair CG04-LOOP-SITE-GENERATIONS,
+rule 11a) merged at `9d1a9588`. §4 is measured on the repaired base: BEFORE
+on `9290ff1a`, AFTER on `9d1a9588`. The first measurement (BEFORE `ca634dc1`,
+AFTER `998b0353`) moved exactly the same 16 corpus and 3 system functions
+with the same leaf classes (§4.1).
 
 - **Gap entries:** E15, E16, N11, M18 and N08 (representation only), on
   route **G** (the custody gateway) and, for N11, route **T**.
 - **Evidence:** Q11, Q16, Q22, Q23, Q29, Q37, Q40 and example D.
-- **Rule:** [gateway 11b](../../agents/gateway.md#constraint-11b) (opens the
-  11 series; amends 5a, 10s and 10u, cross-referenced there).
+- **Rule:** [gateway 11b](../../agents/gateway.md#constraint-11b) (after
+  CG04-LOOP-SITE-GENERATIONS' 11a, under the one 11-series note; amends 5a,
+  10s and 10u, cross-referenced there).
 - **Lean:** `QCore.CastRepresentation`, `proof/AuditCastRepresentation.lean`
   (19 theorems); `QCore.ElaborationCore`'s form table gains nine rows.
 - **Prediction:** frozen in [PREDICTION.md](PREDICTION.md) (commit
@@ -133,24 +136,29 @@ Commands: `scripts/measure.sh` (corpus arbiter `run_pinned_audit.py … 66910c10
 --jobs 8` with `QCORE_TYPED_PATH_PARITY`, the system route and the
 tail-pause slice); artifacts from `scripts/artifacts.sh`
 ([identity](artifacts/identity.txt)). Runs are in this worktree's
-`private/cg08/` (`before/`, `base-before*`, `after-998b*`).
+`private/cg08/` (`repaired-before*`, `repaired-after*`; the first
+measurement's `before/`, `base-before*`, `after-998b*`).
 
-### 4.1 Identity and totals
+### 4.1 Identity and totals (on the repaired base)
 
-| Run | BEFORE (`ca634dc1`, binary `393ce0f1`) | AFTER (`998b0353`, binary `d699f988`) |
+| Run | BEFORE (main `9290ff1a`, binary `7e611b2c`) | AFTER (`9d1a9588`, binary `3c8c2d16`) |
 |---|---|---|
-| Corpus arbiter | `c012e785…`, **586 / 10 / 4,238** (the baseline, byte for byte) | `be132742…`, **602 / 10 / 4,222** |
-| System route | `b0e18a3b…`, 34 / 2 / 198 | `f49826a6…`, **37 / 2 / 195** |
-| Tail-pause slice | `22825272…`, 26 / 1 / 242 / 1 Pending | `644d1392…`, unmoved |
-
-The AFTER on `998b0353` is byte-identical to the AFTER on the card's own tip
-before the merge (`be132742…`, `private/cg08/base-after`), and the system and
-slice reports too: W48-QR-USABLE-RECORDS moves nothing here.
+| Corpus arbiter | `454ecd00…`, **586 / 10 / 4,238** (main's own, byte for byte) | `2fc3af8c…`, **602 / 10 / 4,222** |
+| System route | `2cf0aa7b…`, 34 / 2 / 198 | `037d4d5e…`, **37 / 2 / 195** |
+| Tail-pause slice | `37cf8df2…`, 26 / 1 / 242 / 1 Pending | `1062b647…`, unmoved (12 functions change leaves) |
 
 **Corpus: +16 Unknown → Safe, no Safe → non-Safe, no correction.** Corpus
-diagnostics ([totals](artifacts/diagnostic-totals.txt)): leak 36 → 37,
-summary conflict 1 → 2, unknown_alias 11,343 → 11,695 (+352), unsupported
-31,865 → 31,153 (−712); 386 same-status functions change leaves.
+diagnostics ([totals](artifacts/diagnostic-totals.txt)): leak 40 → 41,
+summary conflict 1 → 2, unknown_alias 11,340 → 11,692 (+352), unsupported
+31,902 → 31,191 (−711); 386 same-status functions change leaves.
+
+The first measurement, before the repair landed (BEFORE `ca634dc1`
+`c012e785…`, the round's baseline byte for byte; AFTER `998b0353`
+`be132742…`, 602 / 10 / 4,222; system `b0e18a3b…` 34 / 2 / 198 → `f49826a6…`
+37 / 2 / 195; slice unmoved), moved the same 16 and 3 functions with the same
+added leaves; only the totals differ by the repair's own leaves (leak 36 → 37,
+unsupported −712). The AFTER on `998b0353` was byte-identical to the AFTER on
+the card's tip before merging W48-QR-USABLE-RECORDS.
 
 ### 4.2 Every mover, attributed ([attribution](artifacts/corpus-attribution.json))
 
@@ -215,19 +223,21 @@ pointer as a truth value on a Safe path.
   `return (char*)(uptrval)bufferStart;` — a pointer laundered through an
   integer into the returned value, of a local the closure does not prove
   never bound. The correct refusal (it was the pre-card parse).
-- **unknown_alias +352, unsupported −712**: statements this card now lowers
+- **unknown_alias +352, unsupported −711**: statements this card now lowers
   expose later readings of the same names (the refusals they replaced had
   invalidated the bindings, rule 10a); no added leaf moves a status.
-- Tail-pause slice: 12 functions change leaves only; one refusal
-  (`publication by mk_list_add of dormant, which this function does not hold
-  as one live object`) is newly reached past an admitted statement.
+- Tail-pause slice: 12 functions change leaves only; two refusals are newly
+  reached past an admitted statement (`publication by mk_list_add of dormant,
+  which this function does not hold as one live object`, and on the repaired
+  base rule 11a's `loop re-acquisition: an earlier generation that may be
+  live is still held`), both fail-closed.
 
 ### 4.5 The absorbed families ([before](artifacts/families-before.json), [after](artifacts/families-after.json))
 
 | Family | BEFORE leaves / Unknown functions | AFTER |
 |---|---|---|
 | `C operator sizeof requires type/operand analysis` (W44-SIZEOF-CAST-SCALAR-QUERY) | 458 / 121 | 91 / 31 |
-| other unsupported leaves on a line spelling `sizeof` (W44-SIZEOF-OPERAND-RESIDUALS' neighbourhood, CG00's E16 feature) | 373 / 240 | 297 / 199 |
+| other unsupported leaves on a line spelling `sizeof` (W44-SIZEOF-OPERAND-RESIDUALS' neighbourhood, CG00's E16 feature) | 390 / 253 | 315 / 213 |
 | `unsupported assignment expression` on a line spelling a pointer cast (CG00's E15) | 193 / 152 | 32 / 24 |
 | the cast-return refusal | 0 | 1 / 1 |
 
@@ -323,7 +333,7 @@ pointer↔integer assignments of a tracked pointer still refuse; N11's T control
   and (d) admitted; what remains is re-registered with its size).
 - **Amended**: `CG02-COMMA-OPERAND-RESIDUALS` (§4.5).
 - **Registered**: `CG08-CAST-AND-QUERY-RESIDUALS`, by owner: the `sizeof`
-  families' remainders (91 / 31 and 297 / 199), the cast-assignment remainder
+  families' remainders (91 / 31 and 315 / 213), the cast-assignment remainder
   (32 / 24), the elaborator's remaining CG08 refusals (1,320 / 509, almost all
   array decay), a tracked pointer's integer used only in a comparison
   (refused), the explicit `(bool)p` condition (admitted by an older route

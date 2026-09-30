@@ -1,2 +1,2 @@
-private/cg08/before/out {'leak': 36, 'summary_conflict': 1, 'unknown_alias': 11343, 'unsupported': 31865}
-private/cg08/after-998b {'leak': 37, 'summary_conflict': 2, 'unknown_alias': 11695, 'unsupported': 31153}
+private/cg08/repaired-before {'leak': 40, 'summary_conflict': 1, 'unknown_alias': 11340, 'unsupported': 31902}
+private/cg08/repaired-after {'leak': 41, 'summary_conflict': 2, 'unknown_alias': 11692, 'unsupported': 31191}
