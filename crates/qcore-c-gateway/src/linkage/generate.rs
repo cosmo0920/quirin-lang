@@ -540,6 +540,10 @@ pub fn generate(
     Ok(GeneratedManifest { manifest, text })
 }
 
+#[cfg(test)]
+#[path = "../../tests/unit/linkage_generate.rs"]
+mod tests;
+
 /// Regenerate and compare with a stored manifest, byte for byte.
 ///
 /// # Errors

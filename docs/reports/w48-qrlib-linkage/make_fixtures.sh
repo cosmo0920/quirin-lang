@@ -101,13 +101,17 @@ rm -f "$out/coff/qr_demo.lib"
 cp "$work/qr_demo.lib" "$out/coff/"
 
 # COFF import library written by llvm-dlltool: a by-name code import, an
-# ordinal-only import, and a data import.
+# ordinal-only import, a data import, and two by-name imports the unit tests'
+# synthesized `qr_runtime.dll` exports only as a forwarder (`qr_forwarded`) or
+# not at all (`qr_gone`).
 cat > "$work/qr_runtime.def" <<'EOF'
 LIBRARY qr_runtime.dll
 EXPORTS
   qr_by_name
   qr_by_ordinal @7 NONAME
   qr_data DATA
+  qr_forwarded
+  qr_gone
 EOF
 rm -f "$out/coff/qr_import.lib"
 llvm-dlltool -m i386:x86-64 -d "$work/qr_runtime.def" -l "$out/coff/qr_import.lib"
