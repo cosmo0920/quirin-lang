@@ -1,0 +1,56 @@
+[
+ {
+  "position": "elaboration-statement",
+  "refusal": "cast `ArrayToPointerDecay` (CG08)",
+  "consultations": 1250,
+  "functions": 460
+ },
+ {
+  "position": "elaboration-statement",
+  "refusal": "cast `BitCast` (CG08)",
+  "consultations": 25,
+  "functions": 24
+ },
+ {
+  "position": "elaboration-statement",
+  "refusal": "cast `NullToPointer` (CG08)",
+  "consultations": 19,
+  "functions": 17
+ },
+ {
+  "position": "elaboration-statement",
+  "refusal": "pointer `expression` converted to an integer may carry a tracked identity (CG08)",
+  "consultations": 13,
+  "functions": 2
+ },
+ {
+  "position": "elaboration-return",
+  "refusal": "cast `ArrayToPointerDecay` (CG08)",
+  "consultations": 6,
+  "functions": 6
+ },
+ {
+  "position": "elaboration-statement",
+  "refusal": "pointer `src` converted to an integer may carry a tracked identity (CG08)",
+  "consultations": 3,
+  "functions": 2
+ },
+ {
+  "position": "elaboration-statement",
+  "refusal": "pointer `source` converted to an integer may carry a tracked identity (CG08)",
+  "consultations": 2,
+  "functions": 1
+ },
+ {
+  "position": "elaboration-return",
+  "refusal": "pointer `expression` converted to an integer may carry a tracked identity (CG08)",
+  "consultations": 1,
+  "functions": 1
+ },
+ {
+  "position": "elaboration-condition",
+  "refusal": "cast `ArrayToPointerDecay` (CG08)",
+  "consultations": 1,
+  "functions": 1
+ }
+]

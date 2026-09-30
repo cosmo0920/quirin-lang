@@ -1,0 +1,3888 @@
+[
+ {
+  "unit": "cJSON.c",
+  "function": "print_number",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cio_file.c",
+  "function": "cio_file_sync",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cio_file.c",
+  "function": "cio_file_write",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 6,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cmt_cat.c",
+  "function": "cmt_cat_copy_label_keys",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: store through `*out` without an out-parameter contract": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_cat.c",
+  "function": "cmt_cat_copy_map",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -4
+  }
+ },
+ {
+  "unit": "cmt_cat.c",
+  "function": "copy_label_values",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: store through `*out` without an out-parameter contract": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_basic_type_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_basic_type_meta",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 6,
+   "unsupported: indirect memory access is outside the resource projection": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_context_external_metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_context_internal_metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_count",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_negative_bucket",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_negative_buckets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_negative_offset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_positive_bucket",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_positive_buckets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_positive_offset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_scale",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_sum",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_sum_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_zero_count",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_exp_histogram_zero_threshold",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_histogram_bucket",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 4,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_histogram_buckets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_histogram_count",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_histogram_sum",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_meta_aggregation_type",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_meta_bucket",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_meta_buckets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_meta_label",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_meta_opts",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_meta_quantile",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_meta_quantiles",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_meta_type",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_array_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_exp_histogram",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_hash",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_histogram",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_label",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_start_ts",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_summary",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_ts",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_value",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_value_int64",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_value_type",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_value_uint64",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_opts_desc",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_opts_name",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_opts_ns",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_opts_ss",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_opts_unit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_static_label",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_static_label_component",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_summary_count",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_summary_quantile",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_summary_quantiles",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_summary_quantiles_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_summary_sum",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_opentelemetry.c",
+  "function": "decode_counter_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_opentelemetry.c",
+  "function": "decode_exponential_histogram_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_opentelemetry.c",
+  "function": "decode_gauge_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_opentelemetry.c",
+  "function": "decode_histogram_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_opentelemetry.c",
+  "function": "decode_summary_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_prometheus_remote_write.c",
+  "function": "decode_counter_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_prometheus_remote_write.c",
+  "function": "decode_gauge_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_prometheus_remote_write.c",
+  "function": "decode_histogram_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_prometheus_remote_write.c",
+  "function": "decode_untyped_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_statsd.c",
+  "function": "decode_counter_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_statsd.c",
+  "function": "decode_gauge_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_decode_statsd.c",
+  "function": "decode_untyped_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_cloudwatch_emf.c",
+  "function": "pack_histogram_metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_cloudwatch_emf.c",
+  "function": "pack_summary_metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_influx.c",
+  "function": "append_histogram_metric_value",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_influx.c",
+  "function": "append_summary_metric_value",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_msgpack.c",
+  "function": "pack_header",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -4
+  }
+ },
+ {
+  "unit": "cmt_encode_msgpack.c",
+  "function": "pack_metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry.c",
+  "function": "apply_data_point_metadata_from_otlp_context",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 15,
+   "unsupported: unsupported assignment expression": -4
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry.c",
+  "function": "destroy_opentelemetry_context",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry.c",
+  "function": "get_context_arena",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry_batch.c",
+  "function": "batch_add_metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry_batch.c",
+  "function": "batch_add_resource",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry_batch.c",
+  "function": "batch_add_scope",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry_batch.c",
+  "function": "batches_append",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_text.c",
+  "function": "append_histogram_metric_value",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_text.c",
+  "function": "append_summary_metric_value",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "cmt_summary.c",
+  "function": "cmt_summary_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call has an unmodeled formal address or borrowed expression": 1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_get_direct_routes",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -3
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_get_name",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_get_projected_write_size",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_is_storage_overlimit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_total_size",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_write",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_write_at",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_write_header_v2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "get_input_chunk_source_name",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "input_chunk_append_raw",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "input_chunk_has_magic_bytes",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "summary_conflict: inferred custody summary ResourceFunctionContract { parameters: [Owned { nullable: false }, Borrowed], result: None } contradicts the declared contract ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None, counted_users: CountedUserClauses { effects: {}, neutral: true, exits: [] } }; the declared contract governs every call site": 1,
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "input_chunk_metadata_view",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "update_logs_tag_records_metrics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_clearHash",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 5,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unrecognized assignment destination": 1,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_compress_destSize_extState",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_compress_fast_extState",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 4,
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_compress_fast_extState_fastReset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 4,
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_compress_generic_validated",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 15,
+   "unsupported: unsupported assignment expression": -7
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_createStream",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `LZ4_initStream`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_decompress_generic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_decompress_unsafe_generic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_getPositionOnHash",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_initStream",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_loadDict",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_putIndexOnHash",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_putPositionOnHash",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_readLE16",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_wildCopy32",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_wildCopy8",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_writeLE16",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4frame.c",
+  "function": "LZ4F_compressUpdateImpl",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4frame.c",
+  "function": "LZ4F_createCDict_advanced",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: call to uncontracted function `LZ4F_malloc`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4frame.c",
+  "function": "LZ4F_decodeHeader",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4HC_compress_hashChain",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 7,
+   "unsupported: unsupported assignment expression": -3
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4HC_compress_optimal",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 7,
+   "unsupported: call to uncontracted function `rd_kafka_mem_malloc`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unsupported assignment expression": -3
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4HC_countPattern",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4_compress_HC_destSize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `LZ4_initStreamHC`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4_compress_HC_extStateHC",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `LZ4_initStreamHC`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4_initStreamHC",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4_resetStreamStateHC",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `LZ4_initStreamHC`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "lz4hc.c",
+  "function": "LZ4_slideInputBufferHC",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: cast of a possibly tracked value to another carrier in return expression": 1
+  }
+ },
+ {
+  "unit": "mk_core/mk_event.c",
+  "function": "mk_event_loop_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call has an unmodeled formal address or borrowed expression": 1
+  }
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "function": "mk_rconf_read",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "mk_core/mk_string.c",
+  "function": "_mk_string_search",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_cache.c",
+  "function": "mk_cache_worker_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `pthread_setspecific`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "function": "fifo_drop_msg",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "function": "fifo_is_msg_ready",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "function": "mk_fifo_queue_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "function": "mk_fifo_worker_read",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 6,
+   "unsupported: indirect memory access is outside the resource projection": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_http_parser.c",
+  "function": "header_lookup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_http_parser.c",
+  "function": "http_parser_transfer_encoding_chunked",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_http_thread.c",
+  "function": "mk_http_thread_event",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_load",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_add_connection",
+  "before": "Unsafe",
+  "after": "Unsafe",
+  "leaf_delta": {
+   "leak: live obligation acquired at mk_server/mk_scheduler.c:201": 1,
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_server.c",
+  "function": "mk_server_worker_loop",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_socket.c",
+  "function": "mk_socket_accept",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_socket.c",
+  "function": "mk_socket_ip_str",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_utils.c",
+  "function": "mk_utils_gen_hash",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 4,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "nanopb/pb_common.c",
+  "function": "pb_default_field_callback",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "nanopb/pb_decode.c",
+  "function": "decode_callback_field",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "nanopb/pb_decode.c",
+  "function": "pb_dec_bytes",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "nanopb/pb_decode.c",
+  "function": "pb_dec_string",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "nanopb/pb_encode.c",
+  "function": "pb_check_proto3_default_value",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: indirect memory access is outside the resource projection": -3
+  }
+ },
+ {
+  "unit": "nanopb/pb_encode.c",
+  "function": "pb_enc_bytes",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "nanopb/pb_encode.c",
+  "function": "pb_enc_fixed",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "nanopb/pb_encode.c",
+  "function": "pb_enc_string",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "nanopb/pb_encode.c",
+  "function": "safe_read_bool",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdaddr.c",
+  "function": "rd_addrinfo_prepare",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdaddr.c",
+  "function": "rd_getaddrinfo",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `rsal` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "rdaddr.c",
+  "function": "rd_sockaddr2str",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "do_unittest_write_read_payload_correctness",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_write",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_write_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_slice_read",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdfnv1a.c",
+  "function": "rd_fnv1a",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdfnv1a.c",
+  "function": "unittest_fnv1a",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdgz.c",
+  "function": "rd_gz_decompress",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "rd_hdr_histogram_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": 11,
+   "unsupported: nullable resource `hdr` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_high_sigfig",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_quantile",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_subbucketmask_overflow",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_DescribeGroups_resp_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_ListGroups_resp_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_Uuid_base64str",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_Uuid_random",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_get_err_descs",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_group_list_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_log0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_version_str",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AlterConfigsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AlterUserScramCredentialsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AuthorizedOperations_copy",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `dst` used by a non-null contract": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -9
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_CreateAclsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_CreatePartitionsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_CreateTopicsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteAclsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -5
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteGroupsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteRecordsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteRecords_result_offsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteTopicsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeAclsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -4
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeCluster_result_description",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeConfigsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -5
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -6
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeConsumerGroups_result_groups",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeTopics_result_topics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeUserScramCredentialsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -6
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ElectLeadersResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -6
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_IncrementalAlterConfigsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroups_result_errors",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 4,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroups_result_valid",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_OffsetDeleteResponse_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_assignment.c",
+  "function": "rd_kafka_assignment_handle_OffsetFetch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "rd_kafka_assignor_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "rd_kafka_assignor_cmp_idx",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "rd_kafka_group_member_cmp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 4,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "rdkafka_aux.c",
+  "function": "rd_kafka_Node_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `ret` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "rdkafka_aux.c",
+  "function": "rd_kafka_Node_new_from_brokers",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `node` used by a non-null contract": 2
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_handle_SaslHandshake",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_set_error",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -6
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_start_reauth_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_connect_any_timer_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_recv",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_buf.c",
+  "function": "rd_kafka_buf_new_shadow",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `rkbuf` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -4
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_FindCoordinator",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -4
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_Heartbeat",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_JoinGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -4
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_LeaveGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -4
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_SyncGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_SyncGroup_memberstate",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `rkcg` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_consumer_group_metadata_read",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_consumer_group_metadata_write",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_group_MemberMetadata_consumer_read",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_op_offset_commit_timeout_check",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_anyconf_get0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_anyconf_is_any_modified",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -2,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_anyconf_set_prop",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_kafka_conf_s2i_find`": -1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_dump_free",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_finalize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_flags2str",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_properties_show",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_s2i_find",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_confval_set_type",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_desensitize_str",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "unittest_conf",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_coord.c",
+  "function": "rd_kafka_coord_req_handle_FindCoordinator",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -4
+  }
+ },
+ {
+  "unit": "rdkafka_feature.c",
+  "function": "rd_kafka_features2str",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_feature.c",
+  "function": "rd_ut_features_check",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_kafka_features_check`": 6,
+   "unsupported: indirect memory access is outside the resource projection": -6
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_handle_Fetch_metadata_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_tmpabuf_alloc0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_op_offset_cmp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_share_acknowledge_reply_handle",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -6
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_share_fetch_reply_handle",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -5
+  }
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_share_fetch_reply_handle_partition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -12
+  }
+ },
+ {
+  "unit": "rdkafka_header.c",
+  "function": "rd_kafka_header_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_header.c",
+  "function": "rd_kafka_header_copy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_copy_internal",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_tmpabuf_write0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_new_topic_mock",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_tmpabuf_alloc0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -3
+  }
+ },
+ {
+  "unit": "rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_topic_update_merge_partitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_tmpabuf_alloc0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_broker_listen_io",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_broker_new_listener",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_connection_read_request",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -5
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_msgset_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_partition_log_append",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_push_request_errors",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__builtin_alloca`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_validate_records",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_cgrp_consumer_member_next_assignment1",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_cgrp_consumer_member_next_assignment2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_cgrp_consumer_member_next_assignment3",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_cgrp_consumer_member_next_assignment4",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_cgrp_consumer_member_next_assignment5",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `ut_cgrp_consumer_member_next_assignment0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_consumer_target_assignment_new0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `target_assignment` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_AddOffsetsToTxn",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_AddPartitionsToTxn",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -5
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_EndTxn",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_Fetch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -17
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_Heartbeat",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_InitProducerId",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_JoinGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ListOffsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -7
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_Metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_OffsetCommit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -8
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_OffsetFetch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_OffsetForLeaderEpoch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -5
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_Produce",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -5
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_PushTelemetry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ShareAcknowledge",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -8
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ShareFetch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -16
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ShareGroupHeartbeat",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_SyncGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_TxnOffsetCommit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -8
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_sgrp_write_acquired_records_meta",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_message_produce_errstr",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_messages_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `messages` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_msg_new00",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "unittest_msg",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unrecognized assignment destination": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_reader.c",
+  "function": "rd_kafka_msgset_reader_peek_msg_version",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -7
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_reader.c",
+  "function": "rd_kafka_msgset_reader_v2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -14
+  }
+ },
+ {
+  "unit": "rdkafka_offset.c",
+  "function": "rd_kafka_offset_store_message",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_op.c",
+  "function": "rd_kafka_op_new0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `rko` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_get",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_partition",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_topic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_queue.c",
+  "function": "rd_kafka_q_cb_event_enable",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_member_assigned_partitions_pair_cmp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_member_assigned_partitions_pair_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_range_assignor_unittest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_topic_assignment_state_cmp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 8,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_topic_assignment_state_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testCoPartitionedAssignmentWithSameSubscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `setupRackAwareAssignment0`": 1,
+   "unsupported: call to uncontracted function `setupRackAwareAssignment`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -2,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testRackAwareAssignmentWithCoPartitioning0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `setupRackAwareAssignment0`": 2,
+   "unsupported: call to uncontracted function `setupRackAwareAssignment`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -3,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -3
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testRackAwareAssignmentWithCoPartitioning1",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `setupRackAwareAssignment0`": 3,
+   "unsupported: call to uncontracted function `setupRackAwareAssignment`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -4,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -4
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testRackAwareAssignmentWithNonEqualSubscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `setupRackAwareAssignment0`": 4,
+   "unsupported: call to uncontracted function `setupRackAwareAssignment`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -3,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -3
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testRackAwareAssignmentWithUniformPartitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `setupRackAwareAssignment0`": 2,
+   "unsupported: call to uncontracted function `setupRackAwareAssignment`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testRackAwareAssignmentWithUniformPartitionsNonEqualSubscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `setupRackAwareAssignment0`": 4,
+   "unsupported: call to uncontracted function `setupRackAwareAssignment`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -3,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -3
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testRackAwareAssignmentWithUniformSubscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `setupRackAwareAssignment0`": 4,
+   "unsupported: call to uncontracted function `setupRackAwareAssignment`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -3,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -3
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_PushTelemetryRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_buf_read_CurrentLeader",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_buf_read_NodeEndpoints",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -3
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_buf_read_topic_partitions_nullable",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -7
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_ApiVersion",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -6
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_GetTelemetrySubscriptions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -7
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_InitProducerId",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -4
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_LeaveGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_OffsetCommit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_OffsetFetch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -9
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_OffsetForLeaderEpoch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_Produce_metadata_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: call to uncontracted function `rd_kafkap_leader_discovery_metadata_init`": -1,
+   "unsupported: call to uncontracted function `rd_tmpabuf_alloc0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_PushTelemetry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_SaslAuthenticate",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_parse_ListOffsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -10
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafkap_leader_discovery_metadata_init",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -3,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafkap_leader_discovery_set_brokers",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafkap_share_leader_changes_apply",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: call to uncontracted function `rd_kafkap_leader_discovery_metadata_init`": -1,
+   "unsupported: call to uncontracted function `rd_tmpabuf_alloc0`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "create_jws_compact_serialization",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_empty_value_should_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_value_with_quote_should_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_illegal_extension_keys_should_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "rd_kafka_oauthbearer_set_token0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "rd_kafka_oauthbearer_unsecured_token0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "rd_kafka_sasl_oauthbearer_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_jwt_bearer_base64url_encode",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_sub_claim_name",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_ack_entries_offset_find_cmp_ptr",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_ack_entries_sort_cmp_ptr",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "rd_kafka_sticky_assignor_get_metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "rd_kafka_sticky_assignor_state_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "rd_kafka_sticky_assignor_unittest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_get_consumer_rack",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testAllConsumersReachExpectedQuotaAndAreConsideredFilled",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testConflictingPreviousAssignments",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testEnsurePartitionsAssignedToHighestGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testLargeAssignmentWithMultipleConsumersLeaving",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testMoveExistingAssignments",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testMoveExistingAssignments_j",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testNewSubscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testNoReassignmentOnCurrentMembers",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithMultipleGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithNoGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithStaleGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testRackAwareAssignmentWithNonEqualSubscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `setupRackAwareAssignment0`": 5,
+   "unsupported: call to uncontracted function `setupRackAwareAssignment`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -5,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -4
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testRackAwareAssignmentWithUniformSubscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `setupRackAwareAssignment0`": 6,
+   "unsupported: call to uncontracted function `setupRackAwareAssignment`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -6,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -5
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testReassignmentAfterOneConsumerAdded",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testReassignmentAfterOneConsumerLeaves",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testSameSubscriptions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testStickiness",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testStickiness2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testStickiness_j",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry.c",
+  "function": "rd_kafka_handle_get_telemetry_subscriptions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_decode.c",
+  "function": "decode_string",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_decode.c",
+  "function": "unit_test_telemetry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_encode.c",
+  "function": "resource_attributes",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_topic_new0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `rkt` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "rdkafka_transport.c",
+  "function": "rd_kafka_transport_framed_recv",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdkafka_transport.c",
+  "function": "rd_kafka_transport_get_socket_error",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_transport.c",
+  "function": "rd_kafka_transport_post_connect_setup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_handle_AddPartitionsToTxn",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -5
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_handle_EndTxn",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_handle_FindCoordinator",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -4
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_prealloc_elems",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdlog.c",
+  "function": "rd_hexdump",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdmap.c",
+  "function": "rd_map_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdmurmur2.c",
+  "function": "rd_murmur2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 9,
+   "unsupported: unsupported assignment expression": -3
+  }
+ },
+ {
+  "unit": "rdmurmur2.c",
+  "function": "unittest_murmur2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdunittest.c",
+  "function": "ut_tq_test",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: discarded owned result of resource API `rd_calloc`": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_fetcher_share_filter_forward",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: publication of a tracked resource into the static-storage object `ut_mock_rk` is outside the resource projection": 1
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_all_error_types_with_valid",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_mixed_crc_success_decomp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH32_canonicalFromHash",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH32_endian_align",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH32_finalize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH32_reset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH32_update_endian",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH64_canonicalFromHash",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH64_endian_align",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH64_finalize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH64_reset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH64_update_endian",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "unaligned_copy64",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "varint_encode32",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 17,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "varint_parse32_with_limit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 8,
+   "unsupported: unsupported assignment expression": -2
+  }
+ }
+]

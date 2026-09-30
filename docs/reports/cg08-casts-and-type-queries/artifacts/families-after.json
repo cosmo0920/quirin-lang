@@ -1,0 +1,22 @@
+{
+ "assignment-cast": {
+  "leaves": 32,
+  "functions": 24,
+  "unknown_functions": 24
+ },
+ "cast-return": {
+  "leaves": 1,
+  "functions": 1,
+  "unknown_functions": 1
+ },
+ "sizeof-analysis": {
+  "leaves": 91,
+  "functions": 31,
+  "unknown_functions": 31
+ },
+ "sizeof-line": {
+  "leaves": 297,
+  "functions": 199,
+  "unknown_functions": 199
+ }
+}

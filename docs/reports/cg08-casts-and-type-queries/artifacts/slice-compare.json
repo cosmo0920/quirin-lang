@@ -1,0 +1,27 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 242,
+   "Safe": 26,
+   "Pending": 1,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 242,
+   "Safe": 26,
+   "Pending": 1,
+   "Unsafe": 1
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 12,
+ "leaf_delta": {
+  "unsupported: C operator `sizeof` requires type/operand analysis": -7,
+  "unsupported: indirect memory access is outside the resource projection": -6,
+  "unsupported: unsupported assignment expression": -5,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2,
+  "unsupported: publication by `mk_list_add` of `dormant`, which this function does not hold as one live object": 1,
+  "unknown_alias: unresolved resource identity": 13
+ }
+}

@@ -1,0 +1,295 @@
+[
+ {
+  "unit": "lz4.c",
+  "function": "LZ4_putIndexOnHash",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 542
+   },
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 543
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 2
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_get_name",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 20454
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 1
+  }
+ },
+ {
+  "unit": "rdfnv1a.c",
+  "function": "rd_fnv1a",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 2881
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AuthorizedOperations_copy",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `dst` used by a non-null contract": -1
+  },
+  "new_rows": [
+   {
+    "answer": "elaboration-statement:admitted",
+    "line": 25176
+   }
+  ],
+  "hooks": {
+   "elaboration-statement:admitted": 1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_anyconf_is_any_modified",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -2,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  },
+  "new_rows": [
+   {
+    "answer": "condition-desugar:admitted",
+    "line": 22748
+   },
+   {
+    "answer": "typed-place:admitted",
+    "line": 22749
+   }
+  ],
+  "hooks": {
+   "condition-desugar:admitted": 1,
+   "typed-place:admitted": 1
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "rd_kafka_assignor_cmp_idx",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 20527
+   },
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 20528
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 2
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_s2i_find",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  },
+  "new_rows": [
+   {
+    "answer": "condition-desugar:admitted",
+    "line": 24433
+   }
+  ],
+  "hooks": {
+   "condition-desugar:admitted": 1
+  }
+ },
+ {
+  "unit": "rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_ack_entries_offset_find_cmp_ptr",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 20049
+   },
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 20050
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 2
+  }
+ },
+ {
+  "unit": "rdkafka_share_acknowledgement.c",
+  "function": "rd_kafka_share_ack_entries_sort_cmp_ptr",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -2
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 20037
+   },
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 20039
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 2
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_partition",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 21583
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafkap_leader_discovery_metadata_init",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -3,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  },
+  "new_rows": [],
+  "hooks": {
+   "H6 (gate span; no row)": 1
+  }
+ },
+ {
+  "unit": "nanopb/pb_encode.c",
+  "function": "safe_read_bool",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 392
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_meta_aggregation_type",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: unsupported assignment expression": -1
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 8159
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_start_ts",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 7400
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 1
+  }
+ },
+ {
+  "unit": "cmt_decode_msgpack.c",
+  "function": "unpack_metric_ts",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: unsupported assignment expression": -1
+  },
+  "new_rows": [
+   {
+    "answer": "cast-representation-pointer-statement:uncast-admitted",
+    "line": 7384
+   }
+  ],
+  "hooks": {
+   "cast-representation-pointer-statement:uncast-admitted": 1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_get_consumer_rack",
+  "move": "Unknown -> Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  },
+  "new_rows": [
+   {
+    "answer": "value-connective-statement:admitted",
+    "line": 22410
+   }
+  ],
+  "hooks": {
+   "value-connective-statement:admitted": 1
+  }
+ }
+]

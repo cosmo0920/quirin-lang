@@ -1,0 +1,50 @@
+[
+ {
+  "position": "elaboration-statement",
+  "refusal": "cast `NoOp` (CG08)",
+  "consultations": 68,
+  "functions": 25
+ },
+ {
+  "position": "elaboration-return",
+  "refusal": "cast `IntegralToBoolean` (CG08)",
+  "consultations": 67,
+  "functions": 32
+ },
+ {
+  "position": "elaboration-condition",
+  "refusal": "cast `BitCast` (CG08)",
+  "consultations": 39,
+  "functions": 35
+ },
+ {
+  "position": "elaboration-statement",
+  "refusal": "cast `BitCast` (CG08)",
+  "consultations": 23,
+  "functions": 8
+ },
+ {
+  "position": "elaboration-statement",
+  "refusal": "cast `ArrayToPointerDecay` (CG08)",
+  "consultations": 2,
+  "functions": 2
+ },
+ {
+  "position": "elaboration-statement",
+  "refusal": "cast `NullToPointer` (CG08)",
+  "consultations": 2,
+  "functions": 2
+ },
+ {
+  "position": "elaboration-statement",
+  "refusal": "type query operand (CG08)",
+  "consultations": 2,
+  "functions": 2
+ },
+ {
+  "position": "elaboration-statement",
+  "refusal": "cast `IntegralToFloating` (CG08)",
+  "consultations": 1,
+  "functions": 1
+ }
+]

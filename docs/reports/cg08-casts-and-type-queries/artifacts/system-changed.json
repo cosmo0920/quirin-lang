@@ -1,0 +1,262 @@
+[
+ {
+  "unit": "plugins/in_storage_backlog/sb.c",
+  "function": "cb_queue_chunks",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 3,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "src/flb_engine.c",
+  "function": "calculate_chunk_capacity_percent",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in return expression": -1
+  }
+ },
+ {
+  "unit": "src/flb_engine.c",
+  "function": "flb_engine_flush_timer_reset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `flb_time_from_double`": -2
+  }
+ },
+ {
+  "unit": "src/flb_engine.c",
+  "function": "flb_engine_shutdown",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "src/flb_engine.c",
+  "function": "flb_engine_start",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "src/flb_engine.c",
+  "function": "handle_dlq_if_available",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "src/flb_engine.c",
+  "function": "handle_output_events",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_get_direct_routes",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -1,
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -3
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_get_name",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_get_projected_write_size",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_is_storage_overlimit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_total_size",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_write",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_write_at",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_write_header_v2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: C operator `sizeof` requires type/operand analysis": -2
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "get_input_chunk_source_name",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "input_chunk_append_raw",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -2
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "input_chunk_has_magic_bytes",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "summary_conflict: inferred custody summary ResourceFunctionContract { parameters: [Owned { nullable: false }, Borrowed], result: None } contradicts the declared contract ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None, counted_users: CountedUserClauses { effects: {}, neutral: true, exits: [] } }; the declared contract governs every call site": 1,
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "input_chunk_metadata_view",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "update_logs_tag_records_metrics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2
+  }
+ },
+ {
+  "unit": "src/flb_scheduler.c",
+  "function": "flb_sched_event_handler",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "src/flb_storage.c",
+  "function": "flb_storage_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "src/flb_storage.c",
+  "function": "print_storage_info",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "src/flb_task.c",
+  "function": "flb_task_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "src/flb_task.c",
+  "function": "flb_task_from_fs_storage",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "src/flb_task.c",
+  "function": "flb_task_retry_count",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: unsupported assignment expression": -1
+  }
+ },
+ {
+  "unit": "src/flb_task.c",
+  "function": "task_alloc",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: nullable resource `task` used by a non-null contract": 1,
+   "unsupported: resource call with a formal embedded in an unmodeled expression": -1
+  }
+ }
+]

@@ -1,0 +1,16 @@
+{
+ "sites": 1437,
+ "by_clang_and_lexical": {
+  "cast/absent": 1,
+  "cast/cast": 1436
+ },
+ "disagreements": [
+  {
+   "function": "mk_http_init",
+   "line": 6714,
+   "name": "int",
+   "clang": "cast",
+   "lexical": "absent"
+  }
+ ]
+}

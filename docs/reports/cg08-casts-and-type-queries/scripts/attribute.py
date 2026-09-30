@@ -31,6 +31,8 @@ def admitted(path: pathlib.Path, functions: set) -> dict:
             if function not in functions:
                 continue
             position = row.get("position", "")
+            if position == "cast-representation-callee-census":
+                continue
             if position.startswith("cast-representation-"):
                 rows[function].add((f"{position}:{row.get('answer')}", row.get("line")))
             elif row.get("new_admitted"):
