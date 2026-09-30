@@ -723,7 +723,12 @@ fn collect_ownership_identities(operations: &[OwnershipOp], result: &mut BTreeSe
             | OwnershipOp::ReadField(_)
             | OwnershipOp::WriteField(_)
             | OwnershipOp::MoveOut { .. }
-            | OwnershipOp::DropField(_) => {}
+            | OwnershipOp::DropField(_)
+            // Card `W48-QR-USABLE-RECORDS`: the nested composition, the refill
+            // and the live-record check likewise introduce no identity.
+            | OwnershipOp::ComposeNested { .. }
+            | OwnershipOp::RefillField { .. }
+            | OwnershipOp::AccessRecord(_) => {}
         }
     }
 }

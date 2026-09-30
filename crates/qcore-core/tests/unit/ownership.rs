@@ -475,7 +475,7 @@ fn composing_moves_the_named_bindings_into_their_fields() {
     assert_eq!(state.field_resource(&path("p", "tail")), Some(2));
     assert_eq!(
         state.aggregate_fields("p"),
-        Some(&["buf".to_owned(), "tail".to_owned()][..])
+        Some(vec!["buf".to_owned(), "tail".to_owned()])
     );
     assert_eq!(state.live().get("memory"), 6);
     state.validate_invariant().unwrap();
@@ -638,7 +638,7 @@ fn a_drop_through_releases_in_declaration_order_not_acquisition_order() {
     .unwrap();
     assert_eq!(
         declared_first_acquired_second.aggregate_fields("p"),
-        Some(&["first".to_owned(), "second".to_owned()][..])
+        Some(vec!["first".to_owned(), "second".to_owned()])
     );
     assert_eq!(
         declared_first_acquired_second.field_resource(&path("p", "first")),
@@ -816,4 +816,237 @@ fn an_aggregate_of_no_owned_field_drops_nothing_and_is_still_not_copied() {
     check_ownership(&[compose("p", &[]), OwnershipOp::Drop("p".into())]).unwrap();
     let error = execute_ownership(&[compose("p", &[]), OwnershipOp::Copy("p".into())]).unwrap_err();
     assert_eq!(error, OwnershipError::CopyOfOwned("p".into()));
+}
+
+// --- Nested owner paths, the refill and the live-record rules (card
+// `W48-QR-USABLE-RECORDS`). ---
+
+fn nested(base: &str, fields: &[&str]) -> FieldPath {
+    FieldPath::nested(base, fields.iter().map(|field| (*field).to_owned()).collect())
+}
+
+fn compose_nested(owner: &str, parts: &[(&str, &str, bool)]) -> OwnershipOp {
+    OwnershipOp::ComposeNested {
+        owner: owner.into(),
+        parts: parts
+            .iter()
+            .map(|(field, from, record)| {
+                if *record {
+                    ComposePart::Record {
+                        field: (*field).to_owned(),
+                        from: (*from).to_owned(),
+                    }
+                } else {
+                    ComposePart::Buffer {
+                        field: (*field).to_owned(),
+                        from: (*from).to_owned(),
+                    }
+                }
+            })
+            .collect(),
+    }
+}
+
+/// A one-level path is the path it always was: `FieldPath::new` and a
+/// one-element `nested` are one value, spelled `BASE.FIELD`.
+#[test]
+fn a_one_level_path_is_the_one_level_path_it_always_was() {
+    assert_eq!(path("p", "buf"), nested("p", &["buf"]));
+    assert_eq!(path("p", "buf").spelling(), "p.buf");
+    assert_eq!(nested("o", &["inner", "buf"]).spelling(), "o.inner.buf");
+}
+
+/// **The nested construction rule.** Composing an aggregate under a field
+/// moves every leaf of it under the new path, keeping its state: the live
+/// buffer is owned at `o.inner.buf`, the hole stays a hole, and the source
+/// aggregate and its old leaves are moved.
+#[test]
+fn composing_an_aggregate_moves_its_leaves_under_the_field() {
+    let state = execute_ownership(&[
+        acquire(1, "b", 4),
+        acquire(2, "c", 2),
+        compose("i", &[("buf", "b"), ("aux", "c")]),
+        OwnershipOp::MoveOut {
+            from: path("i", "aux"),
+            to: "t".into(),
+        },
+        acquire(3, "d", 1),
+        compose_nested("o", &[("inner", "i", true), ("tail", "d", false)]),
+    ])
+    .unwrap();
+    assert_eq!(
+        state.field_resource(&nested("o", &["inner", "buf"])),
+        Some(1)
+    );
+    assert_eq!(state.field_resource(&nested("o", &["inner", "aux"])), None);
+    assert_eq!(state.field_resource(&nested("o", &["tail"])), Some(3));
+    assert_eq!(
+        state.aggregate_fields("o"),
+        Some(vec![
+            "inner.buf".to_owned(),
+            "inner.aux".to_owned(),
+            "tail".to_owned()
+        ])
+    );
+    assert_eq!(state.aggregate_fields("i"), None);
+    let error = execute_ownership(&[
+        acquire(1, "b", 4),
+        compose("i", &[("buf", "b")]),
+        compose_nested("o", &[("inner", "i", true)]),
+        OwnershipOp::ReadField(path("i", "buf")),
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::UseAfterMove("i.buf".into()));
+}
+
+/// **The drop-through rule over a tree.** Dropping the outer record releases
+/// every live leaf once, at every depth, tolerating a hole; nothing leaks.
+#[test]
+fn dropping_a_nested_aggregate_releases_every_live_leaf_once() {
+    let state = check_ownership(&[
+        acquire(1, "b", 4),
+        acquire(2, "c", 2),
+        compose("i", &[("buf", "b"), ("aux", "c")]),
+        acquire(3, "d", 1),
+        compose_nested("o", &[("inner", "i", true), ("tail", "d", false)]),
+        OwnershipOp::MoveOut {
+            from: nested("o", &["inner", "aux"]),
+            to: "t".into(),
+        },
+        OwnershipOp::Drop("o".into()),
+        OwnershipOp::Drop("t".into()),
+    ])
+    .unwrap();
+    assert_eq!(state.live(), &Footprint::zero());
+    let error = execute_ownership(&[
+        acquire(1, "b", 4),
+        compose("i", &[("buf", "b")]),
+        compose_nested("o", &[("inner", "i", true)]),
+        OwnershipOp::DropField(nested("o", &["inner", "buf"])),
+        OwnershipOp::Drop("o".into()),
+        OwnershipOp::DropField(nested("o", &["inner", "buf"])),
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::DoubleDrop("o.inner.buf".into()));
+    let error = check_ownership(&[
+        acquire(1, "b", 4),
+        compose("i", &[("buf", "b")]),
+        compose_nested("o", &[("inner", "i", true)]),
+    ])
+    .unwrap_err();
+    assert_eq!(
+        error,
+        OwnershipError::NormalPathLeak(vec!["o.inner.buf".into()])
+    );
+}
+
+/// A composition refuses a moved, dropped or plain source by name and changes
+/// nothing.
+#[test]
+fn a_nested_composition_refuses_a_source_that_is_not_a_live_aggregate() {
+    let error = execute_ownership(&[
+        acquire(1, "b", 4),
+        compose("i", &[("buf", "b")]),
+        OwnershipOp::Drop("i".into()),
+        compose_nested("o", &[("inner", "i", true)]),
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::UseAfterDrop("i".into()));
+    let error = execute_ownership(&[acquire(1, "b", 4), compose_nested("o", &[("inner", "b", true)])])
+        .unwrap_err();
+    assert_eq!(error, OwnershipError::NotAnAggregate("b".into()));
+    let error = execute_ownership(&[
+        acquire(1, "b", 4),
+        compose("i", &[("buf", "b")]),
+        compose_nested("o", &[("inner", "i", true), ("again", "i", true)]),
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::UseAfterMove("i".into()));
+}
+
+/// **The refill rule.** A hole takes a buffer; a live field refuses, and so
+/// does a released record.
+#[test]
+fn a_whole_field_write_refills_a_hole_and_never_a_live_field() {
+    let state = check_ownership(&[
+        acquire(1, "b", 4),
+        compose("f", &[("buf", "b")]),
+        OwnershipOp::MoveOut {
+            from: path("f", "buf"),
+            to: "t".into(),
+        },
+        OwnershipOp::Drop("t".into()),
+        acquire(2, "c", 2),
+        OwnershipOp::RefillField {
+            from: "c".into(),
+            into: path("f", "buf"),
+        },
+        OwnershipOp::WriteField(path("f", "buf")),
+        OwnershipOp::Drop("f".into()),
+    ])
+    .unwrap();
+    assert_eq!(state.live(), &Footprint::zero());
+    let error = execute_ownership(&[
+        acquire(1, "b", 4),
+        compose("f", &[("buf", "b")]),
+        acquire(2, "c", 2),
+        OwnershipOp::RefillField {
+            from: "c".into(),
+            into: path("f", "buf"),
+        },
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::OverwriteOfLiveField("f.buf".into()));
+    let error = execute_ownership(&[
+        acquire(1, "b", 4),
+        compose("f", &[("buf", "b")]),
+        OwnershipOp::Drop("f".into()),
+        acquire(2, "c", 2),
+        OwnershipOp::RefillField {
+            from: "c".into(),
+            into: path("f", "buf"),
+        },
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::UseAfterDrop("f".into()));
+    let error = execute_ownership(&[
+        acquire(1, "b", 4),
+        compose("f", &[("buf", "b")]),
+        OwnershipOp::DropField(path("f", "buf")),
+        OwnershipOp::RefillField {
+            from: "b".into(),
+            into: path("f", "buf"),
+        },
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::UseAfterMove("b".into()));
+}
+
+/// **The live-record rule.** A scalar field of an aggregate is accessed only
+/// while the aggregate is live.
+#[test]
+fn a_scalar_field_is_accessed_only_while_its_record_is_live() {
+    check_ownership(&[
+        acquire(1, "b", 4),
+        compose("f", &[("buf", "b")]),
+        OwnershipOp::AccessRecord("f".into()),
+        OwnershipOp::Drop("f".into()),
+    ])
+    .unwrap();
+    let error = execute_ownership(&[
+        acquire(1, "b", 4),
+        compose("f", &[("buf", "b")]),
+        OwnershipOp::Drop("f".into()),
+        OwnershipOp::AccessRecord("f".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::UseAfterDrop("f".into()));
+    let error = execute_ownership(&[
+        acquire(1, "b", 4),
+        compose("i", &[("buf", "b")]),
+        compose_nested("o", &[("inner", "i", true)]),
+        OwnershipOp::AccessRecord("i".into()),
+    ])
+    .unwrap_err();
+    assert_eq!(error, OwnershipError::UseAfterMove("i".into()));
 }

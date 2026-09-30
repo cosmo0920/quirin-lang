@@ -78,37 +78,63 @@ impl Footprint {
     }
 }
 
-/// One field of a named aggregate — the owner path `BASE.FIELD` (card
-/// `AGGREGATE-OWNED-FIELD`).
+/// A field of a named aggregate, at any depth — the owner path
+/// `BASE.FIELD.….FIELD` (card `AGGREGATE-OWNED-FIELD`, generalised by card
+/// `W48-QR-USABLE-RECORDS`).
 ///
 /// **This is the field-path owner vocabulary constraint 15k recorded as
-/// missing.** Before the card every owner-addressing field of this IR was a
-/// plain `String`, so `p.buf` had nothing to be spelled into and
-/// [`check_ownership`] could not be *asked* about a field. A path is one level
-/// deep — a name and one field — which is measured to be what the record route
-/// needs (`AGGREGATE-NESTED` is the recorded step beyond it), and it is a
-/// **type** rather than a spelling convention: a plain `String` owner in an
-/// existing operation is always [`Place::Name`], so no name containing a `.`
-/// can be mistaken for a path and no path can be forged by spelling one.
+/// missing.** Before card `AGGREGATE-OWNED-FIELD` every owner-addressing field
+/// of this IR was a plain `String`, so `p.buf` had nothing to be spelled into
+/// and [`check_ownership`] could not be *asked* about a field. That card made
+/// the path one level deep — a name and one field — measured sufficient then
+/// and recorded as the boundary `AGGREGATE-NESTED`. Card
+/// `W48-QR-USABLE-RECORDS` generalises **this** type rather than adding a
+/// second path type beside it: `fields` is the non-empty sequence of field
+/// names from the base down, so `o.inner.buf` is one path and a one-level path
+/// is exactly the path it always was. It is a **type** rather than a spelling
+/// convention: a plain `String` owner in an existing operation is always
+/// [`Place::Name`], so no name containing a `.` can be mistaken for a path and
+/// no path can be forged by spelling one.
+///
+/// The derived order is the order the one-level type had for one-level paths
+/// (base, then field), which is what keeps [`OwnershipError::NormalPathLeak`]'s
+/// published list identical for every program written before the card.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct FieldPath {
     pub base: String,
-    pub field: String,
+    /// The field names from the base down; never empty.
+    pub fields: Vec<String>,
 }
 
 impl FieldPath {
+    /// The one-level path `BASE.FIELD`.
     #[must_use]
     pub fn new(base: impl Into<String>, field: impl Into<String>) -> Self {
         Self {
             base: base.into(),
-            field: field.into(),
+            fields: vec![field.into()],
+        }
+    }
+
+    /// The path `BASE.F1.….Fn` (card `W48-QR-USABLE-RECORDS`).
+    ///
+    /// # Panics
+    ///
+    /// When `fields` is empty: a path names at least one field, and an empty
+    /// one would be the base itself spelled as a field.
+    #[must_use]
+    pub fn nested(base: impl Into<String>, fields: Vec<String>) -> Self {
+        assert!(!fields.is_empty(), "a field path names at least one field");
+        Self {
+            base: base.into(),
+            fields,
         }
     }
 
     /// The `BASE.FIELD` spelling a diagnostic names the path by.
     #[must_use]
     pub fn spelling(&self) -> String {
-        format!("{}.{}", self.base, self.field)
+        format!("{}.{}", self.base, self.fields.join("."))
     }
 }
 
@@ -233,9 +259,28 @@ enum Binding {
     /// [`Place::Field`] bindings `BASE.FIELD` beside it (card
     /// `AGGREGATE-OWNED-FIELD`). The aggregate itself owns no resource: each
     /// field does, and the aggregate is what a whole-record `Drop` walks.
+    ///
+    /// Card `W48-QR-USABLE-RECORDS`: `fields` are the owned **leaves**, each a
+    /// path relative to the base, in declaration order at every level
+    /// (depth-first), so a record holding a record holding a buffer lists
+    /// `["inner", "buf"]`. A one-level aggregate lists one-element paths,
+    /// exactly the fields it always listed.
     Aggregate {
-        fields: Vec<String>,
+        fields: Vec<Vec<String>>,
     },
+}
+
+/// One direct field of a nested composition (card `W48-QR-USABLE-RECORDS`):
+/// an owned buffer moved into an owned field, or a whole aggregate moved into
+/// a field whose type is a record with an owned field.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ComposePart {
+    /// The buffer `from` owns moves into `OWNER.field`.
+    Buffer { field: String, from: String },
+    /// The aggregate `from` moves under `OWNER.field`: each of its owned leaves
+    /// `from.L` — live, moved out or released — becomes `OWNER.field.L` in the
+    /// same state, and `from` is moved.
+    Record { field: String, from: String },
 }
 
 /// Reduced cycle-3 ownership IR. Borrow nodes delimit lexical loan lifetimes.
@@ -349,6 +394,31 @@ pub enum OwnershipOp {
     /// A release of one owned field, leaving a hole the whole-record `Drop`
     /// tolerates; a second release of it is a `DoubleDrop`.
     DropField(FieldPath),
+    /// **The nested construction rule** (card `W48-QR-USABLE-RECORDS`):
+    /// [`Self::Compose`] generalised to a field whose type is a record with an
+    /// owned field. Bind `owner` as an aggregate built from `parts`, in the
+    /// order given (the declaration order the admitting route publishes); a
+    /// [`ComposePart::Buffer`] is exactly `Compose`'s move, and a
+    /// [`ComposePart::Record`] moves a whole aggregate under the field, its
+    /// leaves keeping their states. `Compose { owner, fields }` is this
+    /// operation with every part a buffer, and is decided by the same code.
+    ComposeNested {
+        owner: String,
+        parts: Vec<ComposePart>,
+    },
+    /// **The refill rule** (card `W48-QR-USABLE-RECORDS`): a write of a whole
+    /// owned field. The buffer `from` owns moves into the leaf `into`, which
+    /// must be a **hole** — moved out or released — of a live aggregate: a
+    /// write over a field still holding its buffer would lose that buffer's
+    /// release duty, and is refused (`OverwriteOfLiveField`). The only move
+    /// *into* a field besides the construction's.
+    RefillField { from: String, into: FieldPath },
+    /// **The live-record rule** (card `W48-QR-USABLE-RECORDS`): a read or
+    /// write of a **scalar** field of an aggregate. Owns nothing and moves
+    /// nothing; it asks only that the aggregate is still live — a scalar field
+    /// of a record that was dropped or moved is a use after drop or move, like
+    /// every other access to it.
+    AccessRecord(String),
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -386,11 +456,14 @@ impl OwnershipState {
     }
 
     /// The owned fields of aggregate `owner` in declaration order, if `owner`
-    /// is an aggregate binding.
+    /// is an aggregate binding — since card `W48-QR-USABLE-RECORDS` its owned
+    /// **leaves**, each spelled relative to `owner` (`inner.buf`).
     #[must_use]
-    pub fn aggregate_fields(&self, owner: &str) -> Option<&[String]> {
+    pub fn aggregate_fields(&self, owner: &str) -> Option<Vec<String>> {
         match self.bindings.get(&Place::name(owner)) {
-            Some(Binding::Aggregate { fields }) => Some(fields),
+            Some(Binding::Aggregate { fields }) => {
+                Some(fields.iter().map(|leaf| leaf.join(".")).collect())
+            }
             _ => None,
         }
     }
@@ -429,7 +502,7 @@ impl OwnershipState {
                         return Err(OwnershipError::LedgerInvariantViolation);
                     };
                     for field in fields {
-                        let key = Place::Field(FieldPath::new(base.clone(), field.clone()));
+                        let key = Place::Field(FieldPath::nested(base.clone(), field.clone()));
                         if !matches!(
                             self.bindings.get(&key),
                             Some(Binding::Owned(_) | Binding::Moved | Binding::Dropped)
@@ -504,6 +577,9 @@ impl OwnershipState {
                 self.move_owned(&Place::Field(from.clone()), &Place::name(to))
             }
             OwnershipOp::DropField(path) => self.release(&Place::Field(path.clone()), false),
+            OwnershipOp::ComposeNested { owner, parts } => self.compose_parts(owner, parts),
+            OwnershipOp::RefillField { from, into } => self.refill(from, into),
+            OwnershipOp::AccessRecord(base) => self.access_record(base),
         }
     }
 
@@ -546,47 +622,170 @@ impl OwnershipState {
     /// [`OwnershipOp::Compose`]. Every precondition is checked before any
     /// binding moves, so a refused composition names its one fault.
     fn compose(&mut self, owner: &str, fields: &[(String, String)]) -> Result<(), OwnershipError> {
+        let parts: Vec<ComposePart> = fields
+            .iter()
+            .map(|(field, from)| ComposePart::Buffer {
+                field: field.clone(),
+                from: from.clone(),
+            })
+            .collect();
+        self.compose_parts(owner, &parts)
+    }
+
+    /// **The construction rule, over a tree of fields** (card
+    /// `W48-QR-USABLE-RECORDS`): see [`OwnershipOp::ComposeNested`]. A buffer
+    /// part is the one-level move [`OwnershipOp::Compose`] always made; a
+    /// record part moves every leaf of an aggregate under the field, keeping
+    /// each leaf's state, so a hole stays a hole and a live buffer stays live
+    /// with its ledger owner re-keyed to the new path. Every precondition of
+    /// every part is checked before any binding moves, so a refused
+    /// composition names its one fault and changes nothing.
+    fn compose_parts(&mut self, owner: &str, parts: &[ComposePart]) -> Result<(), OwnershipError> {
         let base = Place::name(owner);
         if self.bindings.contains_key(&base) {
             return Err(OwnershipError::BindingAlreadyExists(owner.into()));
         }
-        let mut moves = Vec::with_capacity(fields.len());
-        let mut named: Vec<&str> = Vec::with_capacity(fields.len());
-        for (field, from) in fields {
-            let path = FieldPath::new(owner, field.clone());
+        // (the owner's leaf, the source place it comes from, the source's
+        // binding) for every leaf this composition moves, plus the sources.
+        let mut moves: Vec<(Vec<String>, Place, Binding)> = Vec::new();
+        let mut sources: Vec<&str> = Vec::with_capacity(parts.len());
+        let mut named: Vec<&str> = Vec::with_capacity(parts.len());
+        for part in parts {
+            let (field, from) = match part {
+                ComposePart::Buffer { field, from } | ComposePart::Record { field, from } => {
+                    (field, from)
+                }
+            };
             if named.contains(&field.as_str()) {
-                return Err(OwnershipError::BindingAlreadyExists(path.spelling()));
+                return Err(OwnershipError::BindingAlreadyExists(
+                    FieldPath::new(owner, field.clone()).spelling(),
+                ));
             }
             named.push(field);
             // A source moved twice refuses at its second occurrence exactly as
             // a second `Move` of it would: the first move is recorded below,
             // so here the check is against the sources already taken.
-            if moves.iter().any(|(_, taken, _)| taken == from) {
+            if sources.contains(&from.as_str()) {
                 return Err(OwnershipError::UseAfterMove(from.clone()));
             }
-            let resource = self.require_owned(&Place::name(from))?;
-            if self.has_any_borrow(resource) {
-                return Err(OwnershipError::MoveWhileBorrowed(from.clone()));
+            sources.push(from);
+            match part {
+                ComposePart::Buffer { .. } => {
+                    let resource = self.require_owned(&Place::name(from))?;
+                    if self.has_any_borrow(resource) {
+                        return Err(OwnershipError::MoveWhileBorrowed(from.clone()));
+                    }
+                    moves.push((
+                        vec![field.clone()],
+                        Place::name(from),
+                        Binding::Owned(resource),
+                    ));
+                }
+                ComposePart::Record { .. } => {
+                    let leaves = match self.binding(&Place::name(from))? {
+                        Binding::Aggregate { fields } => fields.clone(),
+                        Binding::Moved => return Err(OwnershipError::UseAfterMove(from.clone())),
+                        Binding::Dropped => return Err(OwnershipError::UseAfterDrop(from.clone())),
+                        Binding::Borrowed { .. } => {
+                            return Err(OwnershipError::MoveOfBorrow(from.clone()));
+                        }
+                        Binding::Owned(_) => {
+                            return Err(OwnershipError::NotAnAggregate(from.clone()));
+                        }
+                    };
+                    for leaf in leaves {
+                        let place = Place::Field(FieldPath::nested(from.clone(), leaf.clone()));
+                        let binding = self
+                            .bindings
+                            .get(&place)
+                            .cloned()
+                            .ok_or(OwnershipError::LedgerInvariantViolation)?;
+                        if let Binding::Owned(resource) = binding
+                            && self.has_any_borrow(resource)
+                        {
+                            return Err(OwnershipError::MoveWhileBorrowed(place.spelling()));
+                        }
+                        let mut path = vec![field.clone()];
+                        path.extend(leaf);
+                        moves.push((path, place, binding));
+                    }
+                }
             }
-            moves.push((path, from.clone(), resource));
         }
-        for (path, from, resource) in moves {
-            let entry = self
-                .ledger
-                .get_mut(&resource)
-                .ok_or(OwnershipError::LedgerInvariantViolation)?;
-            entry.owner = Place::Field(path.clone());
-            self.bindings.insert(Place::name(&from), Binding::Moved);
-            self.bindings
-                .insert(Place::Field(path), Binding::Owned(resource));
+        for (path, source, binding) in &moves {
+            let place = Place::Field(FieldPath::nested(owner, path.clone()));
+            if let Binding::Owned(resource) = binding {
+                let entry = self
+                    .ledger
+                    .get_mut(resource)
+                    .ok_or(OwnershipError::LedgerInvariantViolation)?;
+                entry.owner = place.clone();
+            }
+            // The source keeps no custody: a plain buffer and every leaf of a
+            // moved aggregate are `Moved`, so a later use of either is a use
+            // after move.
+            self.bindings.insert(source.clone(), Binding::Moved);
+            self.bindings.insert(place, binding.clone());
+        }
+        for part in parts {
+            if let ComposePart::Record { from, .. } = part {
+                self.bindings.insert(Place::name(from), Binding::Moved);
+            }
         }
         self.bindings.insert(
             base,
             Binding::Aggregate {
-                fields: fields.iter().map(|(field, _)| field.clone()).collect(),
+                fields: moves.into_iter().map(|(path, _, _)| path).collect(),
             },
         );
         Ok(())
+    }
+
+    /// **The refill rule** (card `W48-QR-USABLE-RECORDS`): see
+    /// [`OwnershipOp::RefillField`].
+    fn refill(&mut self, from: &str, into: &FieldPath) -> Result<(), OwnershipError> {
+        let leaves = match self.binding(&Place::name(&into.base))? {
+            Binding::Aggregate { fields } => fields.clone(),
+            Binding::Moved => return Err(OwnershipError::UseAfterMove(into.base.clone())),
+            Binding::Dropped => return Err(OwnershipError::UseAfterDrop(into.base.clone())),
+            _ => return Err(OwnershipError::NotAnAggregate(into.base.clone())),
+        };
+        if !leaves.contains(&into.fields) {
+            return Err(OwnershipError::UnknownBinding(into.spelling()));
+        }
+        let place = Place::Field(into.clone());
+        match self.bindings.get(&place) {
+            Some(Binding::Moved | Binding::Dropped) => {}
+            Some(Binding::Owned(_)) => {
+                return Err(OwnershipError::OverwriteOfLiveField(into.spelling()));
+            }
+            _ => return Err(OwnershipError::LedgerInvariantViolation),
+        }
+        let resource = self.require_owned(&Place::name(from))?;
+        if self.has_any_borrow(resource) {
+            return Err(OwnershipError::MoveWhileBorrowed(from.to_owned()));
+        }
+        let entry = self
+            .ledger
+            .get_mut(&resource)
+            .ok_or(OwnershipError::LedgerInvariantViolation)?;
+        entry.owner = place.clone();
+        self.bindings.insert(Place::name(from), Binding::Moved);
+        self.bindings.insert(place, Binding::Owned(resource));
+        Ok(())
+    }
+
+    /// **The live-record rule** (card `W48-QR-USABLE-RECORDS`): see
+    /// [`OwnershipOp::AccessRecord`].
+    fn access_record(&self, base: &str) -> Result<(), OwnershipError> {
+        match self.binding(&Place::name(base))? {
+            Binding::Aggregate { .. } => Ok(()),
+            Binding::Moved => Err(OwnershipError::UseAfterMove(base.to_owned())),
+            Binding::Dropped => Err(OwnershipError::UseAfterDrop(base.to_owned())),
+            Binding::Owned(_) | Binding::Borrowed { .. } => {
+                Err(OwnershipError::NotAnAggregate(base.to_owned()))
+            }
+        }
     }
 
     fn read(&self, place: &Place) -> Result<(), OwnershipError> {
@@ -734,10 +933,15 @@ impl OwnershipState {
     /// `DoubleDrop` of `p` and a later field access is a use after drop.
     /// `QCore.AggregateOwnedField.drop_through_releases_exactly_the_live_fields`
     /// is the Lean statement.
-    fn drop_through(&mut self, base: &str, fields: &[String]) -> Result<(), OwnershipError> {
+    ///
+    /// Card `W48-QR-USABLE-RECORDS`: `fields` are the aggregate's owned
+    /// leaves, so the walk is over the **tree** of fields — declaration order
+    /// at every level, depth-first — and releases each live leaf once, however
+    /// deep (`QCore.UsableRecords.drop_through_tree_releases_exactly_the_live_leaves`).
+    fn drop_through(&mut self, base: &str, fields: &[Vec<String>]) -> Result<(), OwnershipError> {
         let mut releasing = Vec::new();
         for field in fields {
-            let path = Place::Field(FieldPath::new(base, field.clone()));
+            let path = Place::Field(FieldPath::nested(base, field.clone()));
             match self.bindings.get(&path) {
                 Some(Binding::Owned(resource)) => {
                     if self.has_any_borrow(*resource) {
@@ -1161,6 +1365,10 @@ pub enum OwnershipError {
     AggregateAtOwnerPosition(String),
     /// A field path whose base is a binding that has no fields.
     NotAnAggregate(String),
+    /// A whole write of an owned field that still holds its buffer (card
+    /// `W48-QR-USABLE-RECORDS`): the buffer it holds would lose its release
+    /// duty. A field is refilled only when it is a hole.
+    OverwriteOfLiveField(String),
     BranchOwnershipMismatch {
         then_owned: Vec<String>,
         else_owned: Vec<String>,
@@ -1235,6 +1443,14 @@ impl fmt::Display for OwnershipError {
             }
             Self::NotAnAggregate(name) => {
                 write!(f, "`{name}` has no fields to address")
+            }
+            Self::OverwriteOfLiveField(name) => {
+                write!(
+                    f,
+                    "`{name}` still holds its buffer, and a write of the whole field would lose \
+                     that buffer's release; an owned field is written only when it is a hole — \
+                     moved out or released first"
+                )
             }
             Self::BranchOwnershipMismatch { .. } => {
                 f.write_str("branch ownership states do not join")
