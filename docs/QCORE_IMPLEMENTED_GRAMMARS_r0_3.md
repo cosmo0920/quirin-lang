@@ -738,7 +738,7 @@ effect   = ... | "partial_eq" | "partial_ord" ;                 (* each once *)
 | §G07.13 records of `source.buffer.v1`, its conversions and value statements, loop bodies (§G07.12); the composed string route | refused (`W48-QR-FLOAT-BUFFER-ROUTE`) |
 | §G02b `Buffer<T>` and §G02c `protected T` payloads | refused (`W48-QR-FLOAT-PAYLOADS`) |
 | a loop bound | refused on every route |
-| the `.qrlib` manifest's C declaration spellings (`double`, `float`) | unspellable, as before (card 5) |
+| the `.qrlib` manifest's C declaration spellings (`double`, `float`) and the header reader's projection | admitted (card `W48-QRLIB-LINKAGE`, both manifest versions) |
 
 **Diagnostics.** No code is allocated. Every new refusal on this route is a
 widened condition of `Q020` (type, literal-range, mixed-type, `bool`,
@@ -851,6 +851,21 @@ outcome       = [ "-" ], INTEGER | "true" | "false"
   may be called as well. A pointer result, `ptr<mut, …>` over a struct and any
   other type refuse at `Q024`; a signature disagreeing with its contract at
   `Q027`; an `unsafe extern fn` at `Q034`.
+* **Linkage (card `W48-QRLIB-LINKAGE`).** Every admitted callee resolves
+  through a **generated** `.qrlib` (§G02d.2.1) that its declaring file binds
+  with `extern library NAME;` (§G02d.3): no binding, a binding to a v1
+  manifest (`Q065`), a callee the bound manifests do not bind (`Q066`), an
+  entry naming another contract module or another C signature — struct
+  positions compared by tag (`Q041`), a manifest header whose digest is not
+  the header the `struct!` read, for a struct the callee carries (`Q064`), and
+  a slice that is not total (`Q047`) refuse. The trusted premise "the builder
+  links the library that supplies each callee" is gone: the builder keeps only
+  the include path (`BuilderIncludes`), and each called function carries a
+  linkage premise — symbol X from artifact Y@sha256 (static), or stub
+  Y@sha256 plus runtime premise R (dynamic), under ABI premises Z — which the
+  certificate must name for every call (`Q067`, the tripwire) and the verdict
+  lists as `linked:NAME`. It says which code is linked, never that it is safe:
+  the unsafe-FFI assumption is unchanged.
 * **Declared outcomes.** A C result is a value with no number until the source
   declares one: `succeeds INTEGER` on a scalar result, `succeeds NAME { … }`
   with every listed field's literal on a struct result. The emitted C compares
@@ -2099,6 +2114,85 @@ See `docs/design/NATIVE_LIBRARY_LINKAGE_V1.md`,
 [the header record](reports/wave22-native-library-header/README.md)
 and [the decoration record](reports/native-library-header-decoration/README.md).
 
+#### G02d.2.1. The generated manifest (v2)
+
+Card `W48-QRLIB-LINKAGE` (user decisions, 2026-09-30). `.qrlib` is **the** C
+linkage manifest of the FFI route (§G02u), and a v2 manifest is **generated on
+every build, before linking**, never written by hand: `quirin qrlib generate`
+(or the library API `qcore_c_gateway::linkage::generate`) derives it from the
+artifact's bytes and the build's declared inputs, `quirin qrlib check` and
+`quirin build` regenerate it and refuse a stored manifest that is not byte for
+byte the regenerated one as **stale**, and `quirin build` (the `LinkPlan` API)
+hashes every pinned file again immediately before handing the linker exactly
+the pinned artifact. The v1 grammar above loads unchanged, and `float`/`double`
+join `C_ABI_TYPE` in both versions (`W48-QR-FLOAT-QRLIB-SPELLING`).
+
+```ebnf
+manifest_v2   = "native_library", "manifest", "v2", ";",
+                { field_v2 | entry_v2 } ;
+field_v2      = ( "library" | "version" | "artifact" | "target" ), TOKEN, ";"
+              | "hash", DIGEST, ";"
+              | "linkage", ( "static" | "dynamic" ), ";"
+              | "format", ( "elf" | "macho" | "coff" ), ";"
+              | "input", TOKEN, DIGEST, [ "as_needed" ], ";"        (* repeatable *)
+              | "runtime", RUNTIME, ";"                              (* repeatable *)
+              | "data_model", ( "lp64" | "llp64" ), ";"
+              | "unwinding", "abort", ";" | "allocator_custody", "closed", ";"
+              | "thread_posture", "single_caller", ";"
+              | "header", TOKEN, ";" | "header_hash", DIGEST, ";" ;
+RUNTIME       = "soname", TOKEN, "in", TOKEN
+              | "install_name", TOKEN, [ "current_version", TOKEN ]
+              | "dll", TOKEN, "os_build", TOKEN ;
+entry_v2      = "contract", "fn", NAME, "(", [ C_TYPE, { ",", C_TYPE } ], ")",
+                "->", C_TYPE, "from", MODULE_REF, "export", EXPORT, ";" ;
+EXPORT        = TOKEN, [ "version", TOKEN ], ( "global" | "weak" ), [ "ifunc" ],
+                [ "dll", TOKEN ], "in", TOKEN ;
+C_TYPE        = C_ABI_TYPE | "float" | "double"
+              | "struct", TAG | "struct", TAG, "*" | "const", "struct", TAG, "*" ;
+DIGEST        = "sha256:", 64 * LOWER_HEX ;
+```
+
+* **What is derived.** `hash` is the sha256 of the file the link names
+  (`artifact`); an `ld` script is followed and every file it names is an
+  `input` with its own digest, in script order, `AS_NEEDED` kept; `format`,
+  `target` and `data_model` come from the recorded target (`llp64` for 64-bit
+  COFF); each entry's `export` clause is what the artifact's own symbol table
+  says of the symbol — its object-level name (`_sqrt` on Mach-O), its default
+  ELF version, `global` or `weak`, `ifunc` for an `STT_GNU_IFUNC`, the DLL a
+  COFF import names, and the file (and archive member) that defines it; a
+  dynamic link's `runtime` premises are the shared objects' `DT_SONAME`s, a
+  stub's install name and current version, or each imported DLL with the
+  declared OS build. `header_hash` is measured over the declared header.
+* **What is declared.** `library`, `version`, `linkage`, the three ABI
+  premises (never defaulted), the header, the contract modules — **every**
+  declaration of each becomes one entry, so the slice is total by
+  construction — and the Windows OS build.
+* **Linkage means the exported symbol table** (the view `nm` gives, read by
+  the card's own ELF, Mach-O and COFF/PE readers, never by `nm`). A bound
+  symbol must be exported and defined in the pinned artifact: missing
+  (stripped), undefined, local-only, doubly defined, defined only under a
+  hidden version, not listed by an archive's index, imported by ordinal only,
+  or — on Windows — not exported by name by the runtime DLL or exported as a
+  forwarder each refuses generation by name. A defined weak symbol is admitted
+  and recorded `weak`.
+* **Static and dynamic.** `static` pins the code (an ELF, Mach-O or COFF
+  archive, or a script naming archives) and states no `runtime`; `dynamic`
+  pins the link-time stub (an ELF shared object or a script naming them, a
+  `.tbd` text stub or a dylib export trie, a COFF import library) and states
+  at least one `runtime` premise, because the OS owns the library the program
+  loads. A script naming both kinds, the linkage kind the artifact is not, a
+  static link resolving to an import and a dynamic COFF link resolving to code
+  are refused.
+* **Refusals.** Each is a `Q039` load refusal by its own name: a v2 statement
+  in a v1 manifest or `include` in a v2 one, an `unchecked fn` in a v2
+  manifest, a v2 entry without its `export` clause, a malformed `export`,
+  `input` or `runtime`, a static manifest with a `runtime`, a dynamic one
+  without, and a missing `linkage`/`format`/`target`. Struct spellings are
+  refused in a v1 manifest.
+
+§L14.8 states the linkage limitations. See
+[the card record](reports/w48-qrlib-linkage/README.md).
+
 ### G02d.3. The source library binding
 
 Card `NATIVE-LIBRARY-SOURCE-BINDING`. §G02d.2's manifest is selected by the
@@ -2164,6 +2258,12 @@ binds a library and calls nothing it exports still carries it, because the bindi
 is a trust act whether or not a call site consumed it.
 
 See [the source binding record](reports/native-library-source-binding/README.md).
+
+Card `W48-QRLIB-LINKAGE`: on the FFI route (§G02u) the binding is **required**
+for a file that calls C, and it must resolve to a generated (v2) manifest
+(§G02d.2.1); a file with no binding (`Q065`, widened), a binding resolving to a
+v1 manifest (`Q065`) and a callee no manifest the file bound binds (`Q066`,
+widened) refuse. The other routes keep the opt-in rule above byte for byte.
 
 ## G02e. Flat-epoch quantitative bound
 

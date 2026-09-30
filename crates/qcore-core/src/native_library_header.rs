@@ -362,8 +362,17 @@ pub enum HeaderRefusal {
         parameter: usize,
         spelling: String,
     },
+    /// A generated entry declares a C struct position (card
+    /// `W48-QRLIB-LINKAGE`), which this bounded reader does not compare: the
+    /// FFI route reads a struct's layout with the recorded compiler instead.
+    StructEntry {
+        manifest: String,
+        reference: String,
+        symbol: String,
+    },
     /// The declaration's type at this position was **read**, and the manifest's
-    /// ABI vocabulary cannot spell it (`fnptr`, `f32`, `f64`).
+    /// ABI vocabulary cannot spell it (`fnptr`; `f32` and `f64` until card
+    /// `W48-QRLIB-LINKAGE` gave them `float` and `double`).
     UnspellableResult {
         manifest: String,
         reference: String,
@@ -514,6 +523,14 @@ impl fmt::Display for HeaderRefusal {
             } => write!(
                 f,
                 "the exported header `{reference}` of `{manifest}` declares parameter {parameter} of `{symbol}` as `{spelling}`, which this reader does not commit to"
+            ),
+            Self::StructEntry {
+                manifest,
+                reference,
+                symbol,
+            } => write!(
+                f,
+                "`{manifest}` binds `{symbol}` with a C struct position, which this bounded reader of `{reference}` does not compare; a struct's layout is read by the recorded compiler on the FFI route"
             ),
             Self::UnspellableResult {
                 manifest,
@@ -980,23 +997,27 @@ pub fn check_manifest_header(
     // does not, because the weaker reading below a withdrawn header binding is
     // the same for both.
     for symbol in &symbols {
-        let (parameters, result) = manifest
-            .unchecked
-            .get(*symbol)
-            .map(|entry| (entry.parameters.as_slice(), entry.result))
-            .or_else(|| {
-                manifest
-                    .contracted
-                    .get(*symbol)
-                    .map(|entry| (entry.parameters.as_slice(), entry.result))
-            })
-            .expect("every named symbol is bound by an entry");
+        let (parameters, result) = match manifest.unchecked.get(*symbol) {
+            Some(entry) => (entry.parameters.clone(), entry.result),
+            None => manifest
+                .contracted
+                .get(*symbol)
+                .expect("every named symbol is bound by an entry")
+                .abi_signature()
+                .ok_or_else(|| {
+                    unreadable(HeaderRefusal::StructEntry {
+                        manifest: module.to_owned(),
+                        reference: header.reference.clone(),
+                        symbol: (*symbol).to_owned(),
+                    })
+                })?,
+        };
         compare_reading(
             module,
             &header.reference,
             symbol,
             readings.get(*symbol).expect("every named symbol was read"),
-            parameters,
+            &parameters,
             result,
         )?;
     }
@@ -2584,14 +2605,11 @@ fn project_arithmetic(core: &[&str], result: bool) -> Option<HeaderProjection> {
     ) {
         (1, 0, 0, 0, 0, 0, 0, 0) if result && signed == 0 && unsigned == 0 => set(&[AbiType::Unit]),
         (0, 1, 0, 0, 0, 0, 0, 0) if signed == 0 && unsigned == 0 => set(&[AbiType::Bool]),
-        // `float` and `double` are §C04.1 spellings the *contract* loader has
-        // and the manifest's ABI vocabulary does not. Read, and unspellable.
-        (0, 0, 1, 0, 0, 0, 0, 0) if signed == 0 && unsigned == 0 => {
-            Some(HeaderProjection::Unspellable("f32"))
-        }
-        (0, 0, 0, 1, 0, 0, 0, 0) if signed == 0 && unsigned == 0 => {
-            Some(HeaderProjection::Unspellable("f64"))
-        }
+        // `float` and `double`: card `W48-QRLIB-LINKAGE` gave the manifest's
+        // ABI vocabulary their spellings (`W48-QR-FLOAT-QRLIB-SPELLING`), so a
+        // read float is now compared rather than reported unspellable.
+        (0, 0, 1, 0, 0, 0, 0, 0) if signed == 0 && unsigned == 0 => set(&[AbiType::F32]),
+        (0, 0, 0, 1, 0, 0, 0, 0) if signed == 0 && unsigned == 0 => set(&[AbiType::F64]),
         (0, 0, 0, 0, 1, 0, 0, 0) => {
             if signed == 1 && unsigned == 0 {
                 set(&[AbiType::I8])

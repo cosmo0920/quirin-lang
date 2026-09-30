@@ -56,6 +56,9 @@ pub mod external_integration;
 pub mod external_source;
 pub mod field_destructor;
 pub use qcore_c_gateway::legacy_c;
+// Card W48-QRLIB-LINKAGE: the symbol readers, the `.qrlib` generator and the
+// link plan, for the `quirin qrlib` and `quirin build` commands.
+pub use qcore_c_gateway::linkage;
 pub use qcore_core::index;
 pub use qcore_core::inference;
 pub use qcore_frontend::frontend;
@@ -213,7 +216,7 @@ pub use parser::{ParseError, parse_program};
 /// Card `source.extern-call.v1`: the bounded extern-call model, its C11
 /// backend and its reference execution.
 pub use qcore_core::{
-    composed_std_io, composed_std_io_c_emit, extern_c_emit, extern_call, native_library,
+    composed_std_io, composed_std_io_c_emit, extern_c_emit, extern_call, ffi, native_library,
     native_library_header,
 };
 /// Card `NATIVE-LIBRARY-HEADER`: the canonical digest a manifest's exported

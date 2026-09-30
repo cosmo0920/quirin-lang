@@ -298,5 +298,6 @@ import QCore.TaskRecordCaptures
 import QCore.CastRepresentation
 import QCore.Closures
 import QCore.FloatTypes
+import QCore.QrlibLinkage
 
 /-! The executable formal core of QCore-C revision 0.1. -/

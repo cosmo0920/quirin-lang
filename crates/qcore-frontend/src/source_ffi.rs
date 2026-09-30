@@ -668,6 +668,9 @@ pub fn lower_source_ffi(
             declared_effects: entry_effects,
             target: target.clone(),
             functions,
+            // Card `W48-QRLIB-LINKAGE`: the driver resolves each callee's
+            // generated manifest and fills this in before the check.
+            links: std::collections::BTreeMap::new(),
         },
         statement_spans,
         scope_span,

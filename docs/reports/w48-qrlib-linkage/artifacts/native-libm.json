@@ -1,0 +1,13 @@
+{
+ "compiler": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+ "triple": "x86_64-pc-linux-gnu",
+ "flags": "-std=c11 -Wall -Wextra -Werror -pedantic -ffp-contract=off",
+ "runs": [
+  {"linkage": "static", "build": "O0-ubsan", "exit": 0, "stdout": "10\n0x1.6a09e667f3bcdp+0\n3.5\n2\n0x1.0000000000001p+0\n", "sanitizer_reports": 0, "pinned": 3},
+  {"linkage": "static", "build": "O2-ubsan", "exit": 0, "stdout": "10\n0x1.6a09e667f3bcdp+0\n3.5\n2\n0x1.0000000000001p+0\n", "sanitizer_reports": 0, "pinned": 3},
+  {"linkage": "static", "build": "O2", "exit": 0, "stdout": "10\n0x1.6a09e667f3bcdp+0\n3.5\n2\n0x1.0000000000001p+0\n", "sanitizer_reports": 0, "pinned": 3},
+  {"linkage": "dynamic", "build": "O0-ubsan", "exit": 0, "stdout": "10\n0x1.6a09e667f3bcdp+0\n3.5\n2\n0x1.0000000000001p+0\n2\n", "sanitizer_reports": 0, "pinned": 3},
+  {"linkage": "dynamic", "build": "O2-ubsan", "exit": 0, "stdout": "10\n0x1.6a09e667f3bcdp+0\n3.5\n2\n0x1.0000000000001p+0\n2\n", "sanitizer_reports": 0, "pinned": 3},
+  {"linkage": "dynamic", "build": "O2", "exit": 0, "stdout": "10\n0x1.6a09e667f3bcdp+0\n3.5\n2\n0x1.0000000000001p+0\n2\n", "sanitizer_reports": 0, "pinned": 3}
+ ]
+}

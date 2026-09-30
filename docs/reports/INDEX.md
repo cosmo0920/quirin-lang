@@ -1068,6 +1068,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-qr-usable-records](w48-qr-usable-records/README.md) | W48-QR-USABLE-RECORDS: records usable as values |
 
+| [w48-qrlib-linkage](w48-qrlib-linkage/README.md) | W48-QRLIB-LINKAGE: `.qrlib` as the C linkage manifest of the FFI route |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |

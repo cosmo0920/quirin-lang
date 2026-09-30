@@ -734,9 +734,12 @@ fn the_reader_divergences_are_named_and_pinned() {
         ("agreed".to_owned(), "UnspecifiedParameters".to_owned())
     );
     // 4. The vocabulary. §C04.1 has `fnptr`, `f32` and `f64`; the manifest's
-    //    ABI table does not, so a type this reader *reads* can still have no
-    //    manifest spelling. The gateway projects it and compares; this reader
-    //    reports the gap as its own refusal rather than as a reader boundary.
+    //    ABI table had none of them, so this reader reported a read `double`
+    //    as `UnspellableResult`. Card `W48-QRLIB-LINKAGE` gave the manifest
+    //    `float` and `double` (`W48-QR-FLOAT-QRLIB-SPELLING`), so the row is
+    //    corrected: a read `double` is now compared, and an `int64_t`
+    //    transcription of it is a disagreement like any other. `fnptr` stays
+    //    the vocabulary gap.
     let floating = "double demo_now(void);";
     let floating_contract = "extern fn demo_now() -> f64\ncontract {\n  requires resource_contract_v1;\n  ensures normal resource_return_none();\n};";
     assert_eq!(
@@ -745,7 +748,7 @@ fn the_reader_divergences_are_named_and_pinned() {
             floating_contract,
             "unchecked fn demo_now() -> int64_t;"
         ),
-        ("agreed".to_owned(), "UnspellableResult".to_owned())
+        ("agreed".to_owned(), "Disagreement".to_owned())
     );
 }
 
