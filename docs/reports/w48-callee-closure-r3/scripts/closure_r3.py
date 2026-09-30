@@ -19,9 +19,10 @@ round 2's closure_r2.py from the external callees to every callee:
          (`cross-unit-ambiguous` when several: a `static` name defined in
          several units, which no cross-unit route could serve);
   - (iii) `external`: no unit of the route defines N;
-  - (iv) `decision`: N is named in DECISIONS_JSON, the eight classes of
-         W47-CALLEE-CLOSURE-R2 §6 (a class-(iv) callee keeps its location
-         class as `location`);
+  - (iv) `decision`: N has no body in the route and is named in
+         DECISIONS_JSON, the eight classes of W47-CALLEE-CLOSURE-R2 §6 (a
+         name with a body in the route keeps its location class: its body,
+         not a declaration, is what would decide it);
   - (v)  `builtin`: N is a compiler builtin (`__builtin_*`, `__atomic_*`,
          `__sync_*`, `__c11_atomic_*`).
 * `alone`: Unknown functions whose every blocker is a call blocker naming N;
@@ -32,9 +33,11 @@ round 2's closure_r2.py from the external callees to every callee:
 
 Closure over the call-only Unknown functions (every blocker a call blocker),
 iterated to a fixpoint (round r frees the functions every callee of which is
-served by a function Safe at the base or freed in a round < r; a `nested
-call` leaf is refused for its position, so only a declared contract serves
-it, and it always blocks):
+served by a function Safe at the base or freed in a round < r). Since
+CG05-NESTED-CALL-EFFECTS (gateway 10y) a nested call is applied through any
+contract in force, a validated summary included, so a `nested call` leaf is
+served exactly as an uncontracted-call leaf is (round 2 read it as always
+blocking, which was right before 10y):
 
 * `same-unit`: the existing summary rule, a Safe same-unit callee;
 * `cross-unit`: also a Safe callee defined in one other unit;
@@ -118,11 +121,17 @@ def main() -> int:
     args = parser.parse_args()
     data = load(args.diagnostics)
     defined_in, functions = analyse(data)
-    decisions = {}
+    decisions, prefixes = {}, []
     if args.decisions:
         for klass, spec in json.loads(pathlib.Path(args.decisions).read_text())["classes"].items():
             for name in spec["callees"]:
                 decisions[name] = klass
+            prefixes += [(prefix, klass) for prefix in spec.get("prefixes", [])]
+    for name in list(defined_in) + [n for f in functions.values() for n in f["calls"]]:
+        if name not in decisions and not defined_in.get(name):
+            for prefix, klass in prefixes:
+                if name.startswith(prefix):
+                    decisions[name] = klass
     status = {key: value["status"] for key, value in functions.items()}
 
     def location(file, name):
@@ -139,7 +148,7 @@ def main() -> int:
         where, _ = location(file, name)
         if BUILTIN.match(name):
             return "v-builtin"
-        if name in decisions:
+        if name in decisions and where == "external":
             return "iv-decision"
         return {"same-unit": "i-same-unit", "cross-unit": "ii-cross-unit",
                 "cross-unit-ambiguous": "ii-cross-unit-ambiguous",
@@ -252,9 +261,6 @@ def main() -> int:
                     continue
                 served = True
                 for name, kinds in functions[key]["calls"].items():
-                    if "nested" in kinds and variant != "class-i-safe":
-                        served = False
-                        break
                     where, target = location(key[0], name)
                     if variant == "class-i-safe" and where in ("same-unit", "cross-unit") \
                             and klass(key[0], name) in ("i-same-unit", "ii-cross-unit"):
@@ -278,6 +284,40 @@ def main() -> int:
 
     variants = {v: closure(v) for v in ("same-unit", "cross-unit", "ceiling", "class-i-safe")}
 
+    # ---- the eight decision classes (class (v) is class 6) ---------------------
+    decision_table = collections.defaultdict(lambda: {"callees": [], "alone": set(), "plus_one": set(),
+                                                     "functions": set(), "sites": 0})
+    for key, entry in unknown.items():
+        label = "::".join(key)
+        for name, kinds in entry["calls"].items():
+            k = klass(key[0], name)
+            if k == "v-builtin":
+                group = "6-compiler-builtins-without-an-owning-crate"
+            elif k == "iv-decision":
+                group = decisions[name]
+            else:
+                continue
+            cell = decision_table[group]
+            if name not in cell["callees"]:
+                cell["callees"].append(name)
+            cell["functions"].add(label)
+            cell["sites"] += sum(kinds.values())
+            if not entry["others"] and len(entry["calls"]) == 1:
+                cell["alone"].add(label)
+            elif (not entry["others"] and len(entry["calls"]) == 2) or \
+                    (len(entry["others"]) == 1 and len(entry["calls"]) == 1):
+                cell["plus_one"].add(label)
+    # Functions every one of whose blockers is a call to some callee of the class.
+    for group, cell in decision_table.items():
+        members = set(cell["callees"])
+        cell["class_alone"] = sorted("::".join(key) for key, entry in unknown.items()
+                                     if entry["calls"] and not entry["others"]
+                                     and set(entry["calls"]) <= members)
+    decision_table = {group: {"callees": sorted(cell["callees"]), "alone": sorted(cell["alone"]),
+                              "plus_one": sorted(cell["plus_one"]), "class_alone": cell["class_alone"],
+                              "functions": len(cell["functions"]), "sites": cell["sites"]}
+                      for group, cell in sorted(decision_table.items())}
+
     tally = collections.Counter(entry["status"] for entry in functions.values())
     document = {
         "schema": "qcore.w48-callee-closure-r3.v1",
@@ -288,6 +328,7 @@ def main() -> int:
         "call_only_population": dict(population.most_common()),
         "by_class": {k: dict(v) for k, v in sorted(by_class.items())},
         "closure": variants,
+        "decision_table": decision_table,
         "ranking": ranking,
     }
     pathlib.Path(args.out).write_text(json.dumps(document, indent=1, sort_keys=True) + "\n")
@@ -301,6 +342,10 @@ def main() -> int:
     print("by class: callees / alone / plus-one / sites / callees alone>=2")
     for k, v in sorted(by_class.items()):
         print(f"  {k:26} {v['callees']:5} {v['alone']:5} {v['plus_one']:5} {v['sites']:6} {v['callees_alone_ge_2']:4}")
+    print("decision classes: callees / alone (one callee) / freed by the whole class / plus-one / functions / sites")
+    for group, cell in decision_table.items():
+        print(f"  {group:48} {len(cell['callees']):4} {len(cell['alone']):4} {len(cell['class_alone']):4} "
+              f"{len(cell['plus_one']):4} {cell['functions']:5} {cell['sites']:5}")
     print(f"{'alone':>5} {'+call':>5} {'+leaf':>5} {'fns':>4} {'sites':>5}  class  callee  [home status]")
     for r in ranking[:60]:
         homes = ",".join(f"{h['status']}" for h in r["homes"])

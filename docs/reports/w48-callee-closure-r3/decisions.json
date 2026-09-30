@@ -1,0 +1,49 @@
+{
+ "schema": "qcore.w48-callee-closure-r3.decisions.v1",
+ "source": "docs/reports/w47-callee-closure-r2/README.md section 6, the eight classes; every name below was placed by reading its body or prototype (this card's report, section 5). Class 6 is the ranking's class (v), matched by builtin prefix in closure_r3.py.",
+ "classes": {
+  "1-callbacks-and-retained-pointers": {
+   "vocabulary": "a callback or retention vocabulary",
+   "callees": ["pthread_setspecific", "pthread_getspecific", "pthread_once", "bsearch", "qsort", "qsort_r", "rd_qsort_r_cmp", "pthread_create", "atexit", "signal", "sigaction", "mk_sched_get_thread_conf"]
+  },
+  "2-in-place-lifecycles-and-reallocation": {
+   "vocabulary": "an out-slot or in-place lifecycle mode, and an in-place reallocation through T ** or of a field",
+   "callees": ["pthread_key_create", "pthread_key_delete", "pthread_rwlock_init", "pthread_rwlock_destroy", "pthread_attr_init", "pthread_attr_destroy", "regcomp", "regfree", "cfl_sds_cat_safe", "flb_config_task_map_grow"]
+  },
+  "3-reference-counts": {
+   "vocabulary": "a counted-reference kind",
+   "callees": ["rd_kafka_q_destroy_owner", "rd_kafka_toppar_keep0", "rd_kafka_enq_once_trigger", "rd_kafka_enq_once_add_source", "rd_kafka_topic_keep", "rd_kafka_toppar_destroy0"]
+  },
+  "4-handle-kinds-and-no-return": {
+   "vocabulary": "a handle kind (dlopen, the arena constructor, a constructor or destructor whose release is its own destructor) and a no-return effect",
+   "callees": ["dlopen", "dlclose", "dlsym", "cfl_arena_create_with_options", "cfl_arena_options_init", "abort", "exit", "_exit", "__assert_fail", "flb_config_map_create", "flb_sqldb_close", "flb_input_coro_finished"]
+  },
+  "5-system-libraries-outside-the-audited-source": {
+   "vocabulary": "user decision 2026-09-28: quirin-audit plugin crates (W48-OPENSSL-CONTRACT-PLUGIN, W48-LIBCURL-CONTRACT-PLUGIN), out of scope here",
+   "callees": ["ERR_clear_error", "curl_global_init"],
+   "prefixes": ["ERR_", "X509_", "SSL_", "EVP_", "BIO_", "PEM_", "PKCS12_", "OSSL_", "OPENSSL_", "curl_"]
+  },
+  "6-compiler-builtins-without-an-owning-crate": {
+   "vocabulary": "an owner for compiler builtins (no provider crate owns them); the ranking's class (v)",
+   "callees": []
+  },
+  "7-monkey-backend-selected-static-inline-bodies": {
+   "vocabulary": "a reading of the backend-selected static inline bodies included into mk_event.c",
+   "callees": ["_mk_event_wait_2", "_mk_event_add", "_mk_event_inject", "_mk_event_timeout_create", "_mk_event_timeout_destroy", "_mk_event_del", "_mk_event_channel_create", "_mk_event_channel_destroy", "_mk_event_loop_create", "_mk_event_loop_destroy", "mk_http_thread_resume"]
+  },
+  "8-arena-interior-reading": {
+   "vocabulary": "W47-ARENA-INTERIOR-READING, accepted by the user as interim for the arena; the pool mode is W47-ARENA-POOL-RESULT-MODE. Extending the interior reading to a child the base allocates lazily and keeps in a field (rd_kafka_topic_partition_get_private) is the same decision",
+   "callees": ["cfl_arena_destroy", "cfl_arena_reset", "rd_kafka_topic_partition_get_private"]
+  }
+ },
+ "not_decisions": {
+  "reader-gap-transparent-union": {
+   "callees": ["accept4", "bind"],
+   "why": "glibc's __SOCKADDR_ARG / __CONST_SOCKADDR_ARG transparent union, which the declared-ABI reader does not read (libc/socket.qv); a reader gap, not a vocabulary decision"
+  },
+  "no-owning-crate": {
+   "callees": ["XXH_INLINE_XXH3_64bits", "XXH_INLINE_XXH3_64bits_digest", "XXH_INLINE_XXH3_64bits_reset"],
+   "why": "xxHash's XXH_INLINE_ALL header bodies have no provider crate; creating one is an ownership decision, the builtin rule applied to a vendored library"
+  }
+ }
+}

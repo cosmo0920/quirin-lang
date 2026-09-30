@@ -1,0 +1,5851 @@
+{
+ "by_class": {
+  "i-same-unit": {
+   "alone": 10,
+   "callees": 80,
+   "callees_alone_ge_1": 9,
+   "callees_alone_ge_2": 1,
+   "plus_one": 5,
+   "sites": 297
+  },
+  "ii-cross-unit": {
+   "alone": 0,
+   "callees": 27,
+   "callees_alone_ge_1": 0,
+   "callees_alone_ge_2": 0,
+   "plus_one": 0,
+   "sites": 89
+  },
+  "iii-external": {
+   "alone": 0,
+   "callees": 90,
+   "callees_alone_ge_1": 0,
+   "callees_alone_ge_2": 0,
+   "plus_one": 0,
+   "sites": 329
+  },
+  "iv-decision": {
+   "alone": 4,
+   "callees": 5,
+   "callees_alone_ge_1": 4,
+   "callees_alone_ge_2": 0,
+   "plus_one": 0,
+   "sites": 10
+  }
+ },
+ "call_only_population": {
+  "i-same-unit": 11,
+  "ii-cross-unit": 1,
+  "iv-decision": 4
+ },
+ "call_only_total": 16,
+ "closure": {
+  "ceiling": {
+   "freed": 0,
+   "functions": [],
+   "rounds": [
+    0
+   ]
+  },
+  "class-i-safe": {
+   "freed": 12,
+   "functions": [
+    "src/flb_engine.c::flb_engine_destroy_tasks@0",
+    "src/flb_engine.c::flb_engine_manager@0",
+    "src/flb_input_chunk.c::flb_input_chunk_append_raw@0",
+    "src/flb_input_chunk.c::flb_input_chunk_append_raw_local@0",
+    "src/flb_input_chunk.c::flb_input_chunk_ring_buffer_enqueue@0",
+    "src/flb_input_chunk.c::flb_input_chunk_ring_buffer_enqueue_log_routing@0",
+    "src/flb_output.c::flb_output_task_singleplex_flush_next@0",
+    "src/flb_scheduler.c::backoff_full_jitter@0",
+    "src/flb_scheduler.c::flb_sched_timer_cb_destroy@0",
+    "src/flb_scheduler.c::flb_sched_timer_cleanup@0",
+    "src/flb_scheduler.c::flb_sched_timer_coro_cleanup@0",
+    "src/flb_task.c::flb_task_map_get_task_id@0"
+   ],
+   "rounds": [
+    12,
+    0
+   ]
+  },
+  "cross-unit": {
+   "freed": 0,
+   "functions": [],
+   "rounds": [
+    0
+   ]
+  },
+  "same-unit": {
+   "freed": 0,
+   "functions": [],
+   "rounds": [
+    0
+   ]
+  }
+ },
+ "decision_table": {
+  "1-callbacks-and-retained-pointers": {
+   "alone": [
+    "src/flb_engine.c::flb_engine_evl_init"
+   ],
+   "callees": [
+    "pthread_once"
+   ],
+   "class_alone": [
+    "src/flb_engine.c::flb_engine_evl_init"
+   ],
+   "functions": 1,
+   "plus_one": [],
+   "sites": 2
+  },
+  "2-in-place-lifecycles-and-reallocation": {
+   "alone": [
+    "src/flb_task.c::map_get_task_id"
+   ],
+   "callees": [
+    "flb_config_task_map_grow"
+   ],
+   "class_alone": [
+    "src/flb_task.c::map_get_task_id"
+   ],
+   "functions": 1,
+   "plus_one": [],
+   "sites": 2
+  },
+  "4-handle-kinds-and-no-return": {
+   "alone": [
+    "src/flb_engine.c::handle_input_event",
+    "src/flb_output.c::flb_output_get_global_config_map"
+   ],
+   "callees": [
+    "exit",
+    "flb_config_map_create",
+    "flb_input_coro_finished"
+   ],
+   "class_alone": [
+    "src/flb_engine.c::handle_input_event",
+    "src/flb_output.c::flb_output_get_global_config_map"
+   ],
+   "functions": 3,
+   "plus_one": [],
+   "sites": 6
+  }
+ },
+ "functions": {
+  "Safe": 41,
+  "Unknown": 191,
+  "Unsafe": 2
+ },
+ "ranking": [
+  {
+   "alone": 2,
+   "alone_functions": [
+    "src/flb_input_chunk.c::flb_input_chunk_ring_buffer_enqueue",
+    "src/flb_input_chunk.c::flb_input_chunk_ring_buffer_enqueue_log_routing"
+   ],
+   "callee": "append_to_ring_buffer",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 3,
+   "functions": 3,
+   "homes": [
+    {
+     "blocker_leaves": 48,
+     "blockers": {
+      "call destroy_chunk_raw": 4,
+      "unknown_alias: unresolved resource identity `X`": 16,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 6,
+      "unsupported: indirect memory access is outside the resource projection": 16,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 3
+   },
+   "nested_sites": 0,
+   "plus_callee": 1,
+   "plus_callee_functions": [
+    {
+     "function": "src/flb_input_chunk.c::flb_input_chunk_append_raw",
+     "other": "input_chunk_append_raw",
+     "other_class": "i-same-unit"
+    }
+   ],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 6
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_scheduler.c::flb_sched_timer_cb_destroy"
+   ],
+   "callee": "flb_sched_timer_destroy",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 7
+   },
+   "decision": null,
+   "freed_with_one_other": 2,
+   "functions": 7,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "call flb_sched_timer_cb_disable": 2,
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 7
+   },
+   "nested_sites": 0,
+   "plus_callee": 1,
+   "plus_callee_functions": [
+    {
+     "function": "src/flb_scheduler.c::flb_sched_timer_cleanup",
+     "other": "flb_sched_timer_coro_cleanup",
+     "other_class": "i-same-unit"
+    }
+   ],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 18
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_input_chunk.c::flb_input_chunk_append_raw_local"
+   ],
+   "callee": "input_chunk_append_raw",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 2,
+   "functions": 2,
+   "homes": [
+    {
+     "blocker_leaves": 86,
+     "blockers": {
+      "call flb_input_chunk_set_limits": 4,
+      "call flb_input_name": 8,
+      "unknown_alias: unresolved resource identity `X`": 20,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 8,
+      "unsupported: indirect memory access is outside the resource projection": 28,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 1,
+   "plus_callee_functions": [
+    {
+     "function": "src/flb_input_chunk.c::flb_input_chunk_append_raw",
+     "other": "append_to_ring_buffer",
+     "other_class": "i-same-unit"
+    }
+   ],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_engine.c::flb_engine_destroy_tasks"
+   ],
+   "callee": "flb_task_destroy",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 2,
+    "ii-cross-unit": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 1,
+   "functions": 4,
+   "homes": [
+    {
+     "blocker_leaves": 26,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 6,
+      "unsupported: indirect memory access is outside the resource projection": 14,
+      "unsupported: unlink by `X` of `X`, which this function has not published": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_task.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 2,
+    "same-unit": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 14
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_engine.c::flb_engine_manager"
+   ],
+   "callee": "flb_engine_flush",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 1,
+   "functions": 3,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "call flb_engine_dispatch": 2,
+      "unknown_alias: unresolved resource identity `X`": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 3
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 6
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_task.c::flb_task_map_get_task_id"
+   ],
+   "callee": "map_get_task_id",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 1,
+   "functions": 2,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "call flb_config_task_map_grow": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_task.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_output.c::flb_output_get_global_config_map"
+   ],
+   "callee": "flb_config_map_create",
+   "class": "iv-decision",
+   "classes": {
+    "iv-decision": 1
+   },
+   "decision": "4-handle-kinds-and-no-return",
+   "freed_with_one_other": 1,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_task.c::map_get_task_id"
+   ],
+   "callee": "flb_config_task_map_grow",
+   "class": "iv-decision",
+   "classes": {
+    "iv-decision": 1
+   },
+   "decision": "2-in-place-lifecycles-and-reallocation",
+   "freed_with_one_other": 1,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_engine.c::handle_input_event"
+   ],
+   "callee": "flb_input_coro_finished",
+   "class": "iv-decision",
+   "classes": {
+    "iv-decision": 1
+   },
+   "decision": "4-handle-kinds-and-no-return",
+   "freed_with_one_other": 1,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_output.c::flb_output_task_singleplex_flush_next"
+   ],
+   "callee": "flb_output_task_queue_flush_one",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 1,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 10,
+     "blockers": {
+      "call flb_output_task_singleplex_flush_next": 2,
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: call to `X` whose declared contract its own analysed body refutes (contract-refuted-by-body)": 2,
+      "unsupported: counted-user operation by `X` on `X`, which is not a formal this function never rebinds": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_scheduler.c::flb_sched_timer_coro_cleanup"
+   ],
+   "callee": "flb_sched_timer_coro_destroy",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 1,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_engine.c::flb_engine_evl_init"
+   ],
+   "callee": "pthread_once",
+   "class": "iv-decision",
+   "classes": {
+    "iv-decision": 1
+   },
+   "decision": "1-callbacks-and-retained-pointers",
+   "freed_with_one_other": 1,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 1,
+   "alone_functions": [
+    "src/flb_scheduler.c::backoff_full_jitter"
+   ],
+   "callee": "random_uniform",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 1,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "call rand": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_timer_coro_cleanup",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 1,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "call flb_sched_timer_coro_destroy": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 1,
+   "plus_callee_functions": [
+    {
+     "function": "src/flb_scheduler.c::flb_sched_timer_cleanup",
+     "other": "flb_sched_timer_destroy",
+     "other_class": "i-same-unit"
+    }
+   ],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sb_remove_chunk_from_segregated_backlog",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 1,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 1,
+      "unsupported: declared specification of `X` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it": 1,
+      "unsupported: indirect memory access is outside the resource projection": 1,
+      "unsupported: nullable resource `X` used by a non-null contract": 1
+     },
+     "status": "Unknown",
+     "unit": "plugins/in_storage_backlog/sb.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 1,
+   "plus_leaf_functions": [
+    {
+     "function": "plugins/in_storage_backlog/sb.c::sb_remove_chunk_from_segregated_backlogs",
+     "leaf": "unsupported: declared specification of `X` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it",
+     "line": 17955,
+     "origin": "plugins/in_storage_backlog/sb.c:249"
+    }
+   ],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_output_size_subtract",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 5
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 5,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 5
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 10
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_name",
+   "class": "ii-cross-unit",
+   "classes": {
+    "i-same-unit": 2,
+    "ii-cross-unit": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 5,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unsupported: unmodeled call, aggregate or indirect access in return expression": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 3,
+    "same-unit": 2
+   },
+   "nested_sites": 6,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 8
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_get_tag",
+   "class": "ii-cross-unit",
+   "classes": {
+    "i-same-unit": 2,
+    "ii-cross-unit": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 4,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "call input_chunk_metadata_view": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2,
+      "unsupported: store through `X` without an out-parameter contract": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 2,
+    "same-unit": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 7
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_name",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 4
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 4,
+   "homes": [],
+   "locations": {
+    "external": 4
+   },
+   "nested_sites": 10,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 8
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_instance_destroy",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 4
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 4,
+   "homes": [
+    {
+     "blocker_leaves": 54,
+     "blockers": {
+      "call flb_output_free_properties": 2,
+      "unknown_alias: unresolved resource identity `X`": 8,
+      "unsupported: indirect memory access is outside the resource projection": 42,
+      "unsupported: unlink by `X` of `X`, which this function has not published": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 4
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 32
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "destroy_chunk_raw",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 3,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 3
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 8
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_update_output_instances",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 3,
+   "homes": [
+    {
+     "blocker_leaves": 12,
+     "blockers": {
+      "call flb_input_chunk_output_size_subtract": 2,
+      "call input_chunk_output_size_add": 2,
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 3
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 6
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_mp_count_log_records",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 3,
+   "homes": [],
+   "locations": {
+    "external": 3
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 6
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_thread_instance_get",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 3,
+   "homes": [],
+   "locations": {
+    "external": 3
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 6
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_request_destroy",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 3,
+   "homes": [
+    {
+     "blocker_leaves": 8,
+     "blockers": {
+      "call flb_sched_timer_invalidate": 2,
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: unlink by `X` of `X`, which this function has not published": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 3
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 10
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_timer_cb_disable",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 3,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 3
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 6
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "input_chunk_metadata_view",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 3,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 6
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 3
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 6
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "msgpack_pack_map",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 3
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 3,
+   "homes": [],
+   "locations": {
+    "external": 3
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 12
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cio_destroy",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [],
+   "locations": {
+    "external": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cio_meta_write",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [],
+   "locations": {
+    "external": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_get_direct_routes",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1,
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [
+    {
+     "blocker_leaves": 48,
+     "blockers": {
+      "call input_chunk_metadata_view": 2,
+      "unsupported: C operator `X` requires type/operand analysis": 6,
+      "unsupported: indirect memory access is outside the resource projection": 28,
+      "unsupported: store through `X` without an out-parameter contract": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2,
+      "unsupported: unrecognized assignment destination": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1,
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_pause_all",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [],
+   "locations": {
+    "external": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_get_instance",
+   "class": "ii-cross-unit",
+   "classes": {
+    "i-same-unit": 1,
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1,
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_ctx_get",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_timer_create",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [
+    {
+     "blocker_leaves": 18,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 8,
+      "unsupported: indirect memory access is outside the resource projection": 10
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_task_users_release",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [],
+   "locations": {
+    "external": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "msgpack_pack_str",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [],
+   "locations": {
+    "external": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 44
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "msgpack_pack_str_body",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [],
+   "locations": {
+    "external": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 44
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sb_destroy_backlogs",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "call sb_destroy_backlog": 1,
+      "unknown_alias: unresolved resource identity `X`": 1,
+      "unsupported: declared specification of `X` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it": 1,
+      "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 1
+     },
+     "status": "Unknown",
+     "unit": "plugins/in_storage_backlog/sb.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sb_remove_chunk_from_segregated_backlogs",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "call sb_remove_chunk_from_segregated_backlog": 1,
+      "unsupported: declared specification of `X` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it": 1
+     },
+     "status": "Unknown",
+     "unit": "plugins/in_storage_backlog/sb.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 5
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "schedule_request_now",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 2
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 2,
+   "homes": [
+    {
+     "blocker_leaves": 16,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 12,
+      "unsupported: indirect memory access is outside the resource projection": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 2
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cio_chunk_get_real_size",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cio_chunk_lock",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cio_chunk_write_at",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 6
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cio_create",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cio_error_get",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cio_options_init",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cio_stream_destroy",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cio_version",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 2,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 0
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cmt_create",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cmt_histogram_buckets_create_size",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cmt_initialize",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "cmt_version",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 2,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 0
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "ctr_version",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 2,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 0
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "exit",
+   "class": "iv-decision",
+   "classes": {
+    "iv-decision": 1
+   },
+   "decision": "4-handle-kinds-and-no-return",
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_bucket_queue_create",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_chunk_trace_do_input",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_coro_create",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_custom_exit",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_custom_init_all",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_downstream_conn_event_resume",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_adaptive_flush_init",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 14,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 12,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_adaptive_flush_update",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 28,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 22,
+      "unsupported: indirect memory access is outside the resource projection": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_dispatch",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 32,
+     "blockers": {
+      "call flb_input_chunk_down": 2,
+      "call flb_input_chunk_flush": 2,
+      "call flb_input_chunk_get_tag": 2,
+      "call flb_input_chunk_release_lock": 10,
+      "unknown_alias: unresolved resource identity `X`": 6,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine_dispatch.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_evl_init",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "call pthread_once": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_evl_set",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_failed",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_log_start",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_manager",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "call flb_engine_flush": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_reschedule_retries",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 8,
+     "blockers": {
+      "call flb_sched_request_invalidate": 2,
+      "call flb_sched_retry_now": 2,
+      "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_shutdown",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 36,
+     "blockers": {
+      "call flb_filter_exit": 2,
+      "call flb_input_pause_all": 2,
+      "call flb_output_exit": 2,
+      "call flb_router_exit": 2,
+      "unknown_alias: unresolved resource identity `X`": 12,
+      "unsupported: indirect memory access is outside the resource projection": 10
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_started",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_engine_stop_ingestion",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "call flb_input_pause_all": 2,
+      "unknown_alias: unresolved resource identity `X`": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_event_chunk_destroy",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_filter_exit",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_filter_init_all",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_fips_init",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_http_client_debug_property_is_valid",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_create",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unsupported: publication by `X` of `X`, which owns linked objects": 2,
+      "unsupported: transfer of `X`, which a container holds after its publication": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_down",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 0,
+     "blockers": {},
+     "status": "Safe",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_find_space_new_data",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 8,
+     "blockers": {
+      "call flb_input_chunk_release_space_compound": 2,
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_flush",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 14,
+     "blockers": {
+      "call flb_input_chunk_update_output_instances": 2,
+      "unknown_alias: unresolved resource identity `X`": 6,
+      "unsupported: indirect memory access is outside the resource projection": 6
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_get_event_type",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 12,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 10,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_get_projected_write_size",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 12,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: indirect memory access is outside the resource projection": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_has_overlimit_routes",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_map",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 182,
+     "blockers": {
+      "call cio_chunk_write_at": 6,
+      "call flb_mp_validate_log_chunk": 2,
+      "unknown_alias: unresolved resource identity `X`": 82,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 4,
+      "unsupported: indirect memory access is outside the resource projection": 54,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 22
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_protect",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 16,
+     "blockers": {
+      "call flb_input_pause": 4,
+      "unknown_alias: unresolved resource identity `X`": 6,
+      "unsupported: indirect memory access is outside the resource projection": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_release_lock",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 0,
+     "blockers": {},
+     "status": "Safe",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 10
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_release_space",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 40,
+     "blockers": {
+      "call flb_input_chunk_output_size_subtract": 2,
+      "call get_input_chunk_record_count": 2,
+      "unknown_alias: unresolved resource identity `X`": 6,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 6,
+      "unsupported: indirect memory access is outside the resource projection": 18,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_release_space_compound",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 12,
+     "blockers": {
+      "call flb_input_chunk_release_space": 4,
+      "call sb_release_output_queue_space": 2,
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_ring_buffer_collector",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 18,
+     "blockers": {
+      "call destroy_chunk_raw": 2,
+      "unknown_alias: unresolved resource identity `X`": 6,
+      "unsupported: indirect memory access is outside the resource projection": 10
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_set_limits",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 20,
+     "blockers": {
+      "call flb_input_rate_gate_maybe_resume": 2,
+      "call flb_input_resume": 2,
+      "unknown_alias: unresolved resource identity `X`": 12,
+      "unsupported: indirect memory access is outside the resource projection": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_set_up",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_chunk_write",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_collector_fd",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_collectors_start",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_exit_all",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_init_all",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_pause",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_pre_run_all",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_rate_gate_maybe_resume",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_resume",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_set_collector_time",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_input_set_context",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_kv_item_destroy",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_log_get_level_str",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_log_pipeline_enable",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_mp_count",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_mp_validate_log_chunk",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_mp_validate_metric_chunk",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_net_ctx_init",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_net_dns_ctx_init",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_net_dns_ctx_set",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_net_dns_lookup_context_cleanup",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_net_lib_init",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_notification_cleanup",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_notification_deliver",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_enable_multi_threading",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "call flb_output_instance_destroy": 2,
+      "call flb_output_thread_pool_start": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_exit",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 20,
+     "blockers": {
+      "call flb_output_instance_destroy": 2,
+      "unknown_alias: unresolved resource identity `X`": 8,
+      "unsupported: call to `X` whose declared contract awaits human review (awaiting-human-review)": 2,
+      "unsupported: indirect memory access is outside the resource projection": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_flush_destroy",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_flush_finished",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 10,
+     "blockers": {
+      "call flb_output_flush_destroy": 2,
+      "call flb_output_get_instance": 2,
+      "call flb_output_thread_instance_get": 2,
+      "unsupported: indirect memory access is outside the resource projection": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_free_properties",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 32,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 32
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_init_all",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 180,
+     "blockers": {
+      "call flb_output_instance_destroy": 26,
+      "call flb_output_name": 6,
+      "unknown_alias: unresolved resource identity `X`": 20,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 46,
+      "unsupported: indirect memory access is outside the resource projection": 54,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 18
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_pre_run",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_task_singleplex_flush_next",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "call flb_output_task_queue_flush_one": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_output.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_output_thread_pool_start",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_pack_init",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_plugin_alias_get",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_router_chunk_context_destroy",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 14
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_router_exit",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_router_io_set",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_ctx_init",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 0,
+     "blockers": {},
+     "status": "Safe",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_ctx_set",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_destroy",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 20,
+     "blockers": {
+      "call flb_sched_request_destroy": 4,
+      "call flb_sched_timer_destroy": 4,
+      "unknown_alias: unresolved resource identity `X`": 8,
+      "unsupported: indirect memory access is outside the resource projection": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_event_handler",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 48,
+     "blockers": {
+      "call flb_sched_ctx_get": 2,
+      "call flb_sched_request_destroy": 2,
+      "call flb_sched_timer_cb_disable": 2,
+      "call schedule_request_promote": 2,
+      "unknown_alias: unresolved resource identity `X`": 26,
+      "unsupported: indirect memory access is outside the resource projection": 12
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_request_invalidate",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 12,
+     "blockers": {
+      "call flb_sched_request_destroy": 4,
+      "unknown_alias: unresolved resource identity `X`": 8
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_retry_now",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 24,
+     "blockers": {
+      "call flb_sched_timer_destroy": 4,
+      "call schedule_request_now": 2,
+      "unknown_alias: unresolved resource identity `X`": 8,
+      "unsupported: indirect memory access is outside the resource projection": 10
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_timer_cb_create",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 28,
+     "blockers": {
+      "call flb_sched_timer_create": 2,
+      "call flb_sched_timer_destroy": 2,
+      "unknown_alias: unresolved resource identity `X`": 12,
+      "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 2,
+      "unsupported: indirect memory access is outside the resource projection": 8,
+      "unsupported: store through `X` without an out-parameter contract": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_timer_cb_destroy",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "call flb_sched_timer_destroy": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_timer_coro_create",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 30,
+     "blockers": {
+      "call flb_coro_create": 2,
+      "call flb_sched_ctx_get": 2,
+      "call sched_timer_cb_params_set": 2,
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+      "unsupported: indirect memory access is outside the resource projection": 18
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sched_timer_invalidate",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 8,
+     "blockers": {
+      "call flb_sched_timer_cb_disable": 2,
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sds_create",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sds_create_size",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sds_len_set",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_sosreport",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_storage_chunk_count",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_storage_create",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 38,
+     "blockers": {
+      "call cio_create": 2,
+      "call cio_destroy": 2,
+      "call cio_options_init": 2,
+      "call storage_contexts_create": 2,
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: indirect memory access is outside the resource projection": 20
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_storage_destroy",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 8,
+     "blockers": {
+      "call cio_destroy": 2,
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_storage_quarantine_chunk",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 28,
+     "blockers": {
+      "call get_or_create_rejected_stream": 2,
+      "call sanitize_name_component": 4,
+      "unknown_alias: unresolved resource identity `X`": 12,
+      "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_task_clear_route_retry_context",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_task_retry_clean",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "call flb_task_clear_route_retry_context": 2,
+      "unknown_alias: unresolved resource identity `X`": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_task.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 8
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_task_retry_create",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 36,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 18,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+      "unsupported: indirect memory access is outside the resource projection": 10,
+      "unsupported: nullable resource `X` used by a non-null contract": 2,
+      "unsupported: publication by `X` of `X`, which this function does not hold as one live object": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_task.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_task_retry_reschedule",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 12,
+     "blockers": {
+      "call flb_task_destroy": 2,
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: indirect memory access is outside the resource projection": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_task.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 6
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_task_running_print",
+   "class": "ii-cross-unit",
+   "classes": {
+    "ii-cross-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 18,
+     "blockers": {
+      "call flb_sds_create_size": 2,
+      "call flb_sds_len_set": 2,
+      "unknown_alias: unresolved resource identity `X`": 6,
+      "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 2,
+      "unsupported: indirect memory access is outside the resource projection": 6
+     },
+     "status": "Unknown",
+     "unit": "src/flb_task.c"
+    }
+   ],
+   "locations": {
+    "cross-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_time_get",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_tls_destroy",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_upstream_set_busy_connections_label",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_upstream_set_total_connections_label",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_utils_bytes_to_human_readable_size",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_utils_error",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_utils_size_to_bytes",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_utils_time_to_seconds",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "flb_utils_timer_consume",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "get_input_chunk_record_count",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "call flb_mp_count": 2,
+      "call flb_mp_count_log_records": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "get_or_create_rejected_stream",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 12,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 2,
+      "unsupported: indirect memory access is outside the resource projection": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "getenv",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "getpid",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 2,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 0
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "handle_dlq_if_available",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 14,
+     "blockers": {
+      "call flb_output_name": 2,
+      "call flb_storage_quarantine_chunk": 2,
+      "unsupported: indirect memory access is outside the resource projection": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 8
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "input_chunk_get",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 48,
+     "blockers": {
+      "call flb_input_chunk_create": 2,
+      "call flb_input_chunk_get_projected_write_size": 2,
+      "unknown_alias: unresolved resource identity `X`": 24,
+      "unsupported: indirect memory access is outside the resource projection": 12,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 8
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "input_chunk_output_size_add",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "map_set_task_id",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_task.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "memrb_input_chunk_release_space",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "metrics_append_general",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 44,
+     "blockers": {
+      "call msgpack_pack_map": 4,
+      "call msgpack_pack_str": 14,
+      "call msgpack_pack_str_body": 14,
+      "unsupported: indirect memory access is outside the resource projection": 12
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "metrics_append_input",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 108,
+     "blockers": {
+      "call msgpack_pack_map": 6,
+      "call msgpack_pack_str": 30,
+      "call msgpack_pack_str_body": 30,
+      "call msgpack_pack_uint64": 8,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 16,
+      "unsupported: indirect memory access is outside the resource projection": 8
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "metrics_context_create",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 12,
+     "blockers": {
+      "call cmt_create": 2,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 10
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "mk_event_loop_create",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "mk_event_timeout_create",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "mk_event_wait",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "mk_list_init",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "msgpack_pack_false",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "msgpack_pack_true",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "msgpack_pack_uint64",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 8
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "msgpack_sbuffer_destroy",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "print_storage_info",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 16,
+     "blockers": {
+      "call cio_version": 2,
+      "unknown_alias: unresolved resource identity `X`": 12,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "rand",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "record_retry_failure_metrics",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 18,
+     "blockers": {
+      "call flb_output_name": 2,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 8,
+      "unsupported: indirect memory access is outside the resource projection": 6,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine_dispatch.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "record_unmatched_route_drop_metrics",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 14,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: indirect memory access is outside the resource projection": 8,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_task.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sanitize_name_component",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 6
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sb_allocate_backlogs",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 6,
+     "blockers": {
+      "call sb_destroy_backlogs": 1,
+      "unknown_alias: unresolved resource identity `X`": 2,
+      "unsupported: declared specification of `X` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it": 1,
+      "unsupported: indirect memory access is outside the resource projection": 1,
+      "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 1
+     },
+     "status": "Unknown",
+     "unit": "plugins/in_storage_backlog/sb.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sb_append_chunk_to_segregated_backlog",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unsupported: declared specification of `X` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it": 1,
+      "unsupported: indirect memory access is outside the resource projection": 1
+     },
+     "status": "Unknown",
+     "unit": "plugins/in_storage_backlog/sb.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sb_append_chunk_to_segregated_backlogs",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 8,
+     "blockers": {
+      "call cio_chunk_get_real_size": 1,
+      "call flb_input_chunk_get_tag": 1,
+      "call sb_append_chunk_to_segregated_backlog": 1,
+      "unsupported: declared specification of `X` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it": 1,
+      "unsupported: indirect memory access is outside the resource projection": 3,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+     },
+     "status": "Unknown",
+     "unit": "plugins/in_storage_backlog/sb.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sb_destroy_backlog",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 2,
+     "blockers": {
+      "unsupported: declared specification of `X` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it": 1,
+      "unsupported: indirect memory access is outside the resource projection": 1
+     },
+     "status": "Unknown",
+     "unit": "plugins/in_storage_backlog/sb.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sb_get_context",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 1,
+     "blockers": {
+      "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+     },
+     "status": "Unknown",
+     "unit": "plugins/in_storage_backlog/sb.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 1
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sb_release_output_queue_space",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 5,
+     "blockers": {
+      "call sb_remove_chunk_from_segregated_backlogs": 1,
+      "unknown_alias: unresolved resource identity `X`": 1,
+      "unsupported: declared specification of `X` is not established: its body, analysed under it, is not fully modelled, reports a diagnostic or leaves an exit that does not match it": 1,
+      "unsupported: indirect memory access is outside the resource projection": 2
+     },
+     "status": "Unknown",
+     "unit": "plugins/in_storage_backlog/sb.c"
+    },
+    {
+     "blocker_leaves": 0,
+     "blockers": {},
+     "status": "not analysed",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sb_segregate_chunks",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 22,
+     "blockers": {
+      "call cio_error_get": 1,
+      "call sb_allocate_backlogs": 1,
+      "call sb_get_context": 1,
+      "unknown_alias: unresolved resource identity `X`": 9,
+      "unsupported: indirect memory access is outside the resource projection": 3,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+     },
+     "status": "Unknown",
+     "unit": "plugins/in_storage_backlog/sb.c"
+    },
+    {
+     "blocker_leaves": 0,
+     "blockers": {},
+     "status": "not analysed",
+     "unit": "src/flb_engine.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 4
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "sched_timer_cb_params_set",
+   "class": "iii-external",
+   "classes": {
+    "iii-external": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [],
+   "locations": {
+    "external": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "schedule_request_promote",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 22,
+     "blockers": {
+      "call mk_list_init": 2,
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+      "unsupported: indirect memory access is outside the resource projection": 8,
+      "unsupported: unlink by `X` of `X`, which this function has not published": 6
+     },
+     "status": "Unknown",
+     "unit": "src/flb_scheduler.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "storage_contexts_create",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unsupported: indirect memory access is outside the resource projection": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_storage.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "task_alloc",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 28,
+     "blockers": {
+      "call map_get_task_id": 2,
+      "call map_set_task_id": 2,
+      "unknown_alias: unresolved resource identity `X`": 12,
+      "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 2,
+      "unsupported: counted-user operation `X` on `X`, which is not a formal this function never rebinds": 2,
+      "unsupported: indirect memory access is outside the resource projection": 6
+     },
+     "status": "Unknown",
+     "unit": "src/flb_task.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "tasks_start",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 26,
+     "blockers": {
+      "call test_run_formatter": 2,
+      "unknown_alias: unresolved resource identity `X`": 12,
+      "unsupported: call to `X` whose declared contract its own analysed body refutes (contract-refuted-by-body)": 4,
+      "unsupported: indirect memory access is outside the resource projection": 4,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine_dispatch.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "test_run_formatter",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 16,
+     "blockers": {
+      "unknown_alias: unresolved resource identity `X`": 4,
+      "unsupported: indirect memory access is outside the resource projection": 8,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 4
+     },
+     "status": "Unknown",
+     "unit": "src/flb_engine_dispatch.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 2
+  },
+  {
+   "alone": 0,
+   "alone_functions": [],
+   "callee": "update_logs_tag_records_untracked",
+   "class": "i-same-unit",
+   "classes": {
+    "i-same-unit": 1
+   },
+   "decision": null,
+   "freed_with_one_other": 0,
+   "functions": 1,
+   "homes": [
+    {
+     "blocker_leaves": 4,
+     "blockers": {
+      "unsupported: braced initializer, expression, or declaration is not modeled": 2,
+      "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+     },
+     "status": "Unknown",
+     "unit": "src/flb_input_chunk.c"
+    }
+   ],
+   "locations": {
+    "same-unit": 1
+   },
+   "nested_sites": 0,
+   "plus_callee": 0,
+   "plus_callee_functions": [],
+   "plus_leaf": 0,
+   "plus_leaf_functions": [],
+   "sites": 14
+  }
+ ],
+ "route": "system",
+ "schema": "qcore.w48-callee-closure-r3.v1",
+ "unknown_with_call_blocker": 107
+}
