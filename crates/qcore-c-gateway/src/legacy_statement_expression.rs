@@ -95,7 +95,12 @@ fn family(texts: &[&str], span: (usize, usize)) -> String {
 
 /// A node's token span within the run starting at byte `begin`, when its
 /// tokens are exactly that run's (card CG06's reading, rule 10z).
-fn locate(index: &StatementIndex, texts: &[&str], begin: usize, node: &Value) -> Option<(usize, usize)> {
+fn locate(
+    index: &StatementIndex,
+    texts: &[&str],
+    begin: usize,
+    node: &Value,
+) -> Option<(usize, usize)> {
     let start = offset(&node["range"]["begin"])?;
     let prefix = index.source.get(begin..start)?;
     let first = super::tokenize(prefix).len();
@@ -133,7 +138,9 @@ impl Parser<'_> {
         old: &str,
     ) -> Option<Statement> {
         let origin = origin?;
-        if tokens.is_empty() || !spells_statement_expression(tokens) || !self.in_stream(tokens, origin)
+        if tokens.is_empty()
+            || !spells_statement_expression(tokens)
+            || !self.in_stream(tokens, origin)
         {
             return None;
         }
@@ -186,8 +193,14 @@ impl Parser<'_> {
         let index = self.typed_positions_index()?.clone();
         let saved = (self.next_site, self.element_lowerings, self.cursor);
         let mut placements = Vec::new();
-        let outcome =
-            self.statement_expression_lowering(&index, returned, tokens, line, origin, &mut placements);
+        let outcome = self.statement_expression_lowering(
+            &index,
+            returned,
+            tokens,
+            line,
+            origin,
+            &mut placements,
+        );
         record_row(json!({
             "function": self.typed_path_function,
             "line": line,
@@ -236,7 +249,10 @@ impl Parser<'_> {
             let [value] = children(statement) else {
                 return Err(Decline::Node);
             };
-            (value, offset(&value["range"]["begin"]).ok_or(Decline::Node)?)
+            (
+                value,
+                offset(&value["range"]["begin"]).ok_or(Decline::Node)?,
+            )
         } else {
             let node = Self::elaboration_node(index, tokens[0].line, &texts, &|node| {
                 !kind(node).ends_with("Stmt") || kind(node) == "DeclStmt"
@@ -314,7 +330,11 @@ impl Parser<'_> {
                 for operand in operands {
                     if let Operand::Block(block) = operand {
                         let outcome = se::decide(&body, block, Position::Discarded);
-                        place(block, Position::Discarded.label(), outcome.as_ref().map(|_| ()));
+                        place(
+                            block,
+                            Position::Discarded.label(),
+                            outcome.as_ref().map(|_| ()),
+                        );
                         outcome?;
                     }
                 }

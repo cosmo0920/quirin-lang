@@ -34,12 +34,13 @@ fn cg07_admission_table() {
 /// `positionTable` = `POSITIONS`.
 #[test]
 fn cg07_lean_vectors_match() {
-    let rows = block("def admissionVectors : List (Bool × Bool × Bool × Bool × Bool × Bool × Bool) := [")
-        .lines()
-        .map(str::trim)
-        .filter(|line| line.starts_with('('))
-        .map(booleans)
-        .collect::<Vec<_>>();
+    let rows =
+        block("def admissionVectors : List (Bool × Bool × Bool × Bool × Bool × Bool × Bool) := [")
+            .lines()
+            .map(str::trim)
+            .filter(|line| line.starts_with('('))
+            .map(booleans)
+            .collect::<Vec<_>>();
     let rust = ADMISSION_VECTORS
         .iter()
         .map(|(a, b, c, d, e, f, g)| vec![*a, *b, *c, *d, *e, *f, *g])
@@ -92,7 +93,7 @@ mod ast {
         }
     }
 
-    fn first<'v>(node: &'v Value) -> Option<&'v Value> {
+    fn first(node: &Value) -> Option<&Value> {
         if kind(node) == "StmtExpr" {
             return Some(node);
         }
@@ -112,33 +113,54 @@ mod ast {
             return;
         }
         assert_eq!(
-            decide_first("int *subject(void) { int *p = ({ int t = 1; &t; }); return p; }", Position::Initializer),
+            decide_first(
+                "int *subject(void) { int *p = ({ int t = 1; &t; }); return p; }",
+                Position::Initializer
+            ),
             Err(Refusal::Escape("t".into()))
         );
         assert_eq!(
-            decide_first("int *subject(void) { int *p = ({ int a[2]; a; }); return p; }", Position::Initializer),
+            decide_first(
+                "int *subject(void) { int *p = ({ int a[2]; a; }); return p; }",
+                Position::Initializer
+            ),
             Err(Refusal::Escape("a".into()))
         );
         // The same block with its value dropped escapes nothing.
         assert_eq!(
-            decide_first("void subject(void) { ({ int t = 1; &t; }); }", Position::Discarded),
+            decide_first(
+                "void subject(void) { ({ int t = 1; &t; }); }",
+                Position::Discarded
+            ),
             Ok(())
         );
         assert_eq!(
-            decide_first("int subject(int a) { int x = ({ int t = a; t; }); return x; }", Position::Initializer),
+            decide_first(
+                "int subject(int a) { int x = ({ int t = a; t; }); return x; }",
+                Position::Initializer
+            ),
             Ok(())
         );
         // A block whose last item is no expression has no value to use.
         assert_eq!(
-            decide_first("void subject(int a) { ({ if (a) a = 1; }); }", Position::Initializer),
+            decide_first(
+                "void subject(int a) { ({ if (a) a = 1; }); }",
+                Position::Initializer
+            ),
             Err(Refusal::NoValue)
         );
         assert_eq!(
-            decide_first("void subject(int a) { ({ if (a) a = 1; }); }", Position::Discarded),
+            decide_first(
+                "void subject(int a) { ({ if (a) a = 1; }); }",
+                Position::Discarded
+            ),
             Ok(())
         );
         assert_eq!(
-            decide_first("int subject(void) { int x = ({ static int s; s; }); return x; }", Position::Initializer),
+            decide_first(
+                "int subject(void) { int x = ({ static int s; s; }); return x; }",
+                Position::Initializer
+            ),
             Err(Refusal::Storage("s".into()))
         );
     }

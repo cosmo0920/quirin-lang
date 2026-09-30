@@ -731,19 +731,26 @@ fn cg07_selection_and_block_elaboration() {
     )
     .unwrap();
     assert!(selected.graph.events.iter().any(object("a")));
-    assert!(!selected.graph.events.iter().any(object("b")), "{selected:?}");
+    assert!(
+        !selected.graph.events.iter().any(object("b")),
+        "{selected:?}"
+    );
     let selected = run(
         "int subject(int a, long b) { int x = 0; x = _Generic(b, int: a++, default: 7); return x; }",
     )
     .unwrap();
-    assert!(!selected.graph.events.iter().any(object("a")), "{selected:?}");
+    assert!(
+        !selected.graph.events.iter().any(object("a")),
+        "{selected:?}"
+    );
     // A block: `t`'s lifetime starts, `t` is written, read into the value,
     // then its lifetime ends, all before the write of `x`.
     let block =
         run("int subject(int a) { int x = 0; x = ({ int t = a; t + 1; }); return x; }").unwrap();
     let events = &block.graph.events;
     let position = |wanted: &dyn Fn(&Event) -> bool| events.iter().position(wanted).unwrap();
-    let named = |place: &Place, wanted: &str| matches!(place, Place::Object { name, .. } if name == wanted);
+    let named =
+        |place: &Place, wanted: &str| matches!(place, Place::Object { name, .. } if name == wanted);
     let start = position(&|e| matches!(e, Event::LifetimeStart(p) if named(p, "t")));
     let end = position(&|e| matches!(e, Event::LifetimeEnd(p) if named(p, "t")));
     let store = position(&|e| matches!(e, Event::Write { place, .. } if named(place, "x")));

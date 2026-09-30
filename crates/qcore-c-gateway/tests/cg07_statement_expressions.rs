@@ -26,22 +26,34 @@ fn only_the_selected_association_is_evaluated() {
         return;
     }
     // Selected: the release is evaluated, so no leak.
-    let run = gs("void subject(int a) { void *p = q_alloc(); int x = _Generic(a, int: r_release_code(p), default: 0); }");
+    let run = gs(
+        "void subject(int a) { void *p = q_alloc(); int x = _Generic(a, int: r_release_code(p), default: 0); }",
+    );
     assert!(run.safe(), "{run:?}");
     // Unselected: the release is not evaluated, so the later free is the
     // only one (no double release).
-    let run = gs("void subject(void) { void *p = q_alloc(); int x = _Generic(0, long: r_release_code(p), default: 0); q_free(p); }");
+    let run = gs(
+        "void subject(void) { void *p = q_alloc(); int x = _Generic(0, long: r_release_code(p), default: 0); q_free(p); }",
+    );
     assert!(run.safe(), "{run:?}");
     // Unselected: without the later free the allocation leaks.
-    let run = gs("void subject(void) { void *p = q_alloc(); int x = _Generic(0, long: r_release_code(p), default: 0); }");
+    let run = gs(
+        "void subject(void) { void *p = q_alloc(); int x = _Generic(0, long: r_release_code(p), default: 0); }",
+    );
     assert!(run.unsafe_() && run.has("Leak"), "{run:?}");
     // The controlling expression is never evaluated: its release is no event.
-    let run = gs("void subject(void) { void *p = q_alloc(); int x = _Generic(r_release_code(p), int: 1, default: 2); q_free(p); }");
+    let run = gs(
+        "void subject(void) { void *p = q_alloc(); int x = _Generic(r_release_code(p), int: 1, default: 2); q_free(p); }",
+    );
     assert!(run.safe(), "{run:?}");
     // The selected association in a return and as a statement.
-    let run = gs("int subject(void *p, int a) { return _Generic(a, int: r_borrow_code(p), default: 0); }");
+    let run = gs(
+        "int subject(void *p, int a) { return _Generic(a, int: r_borrow_code(p), default: 0); }",
+    );
     assert!(run.safe(), "{run:?}");
-    let run = gs("void subject(int a) { void *p = q_alloc(); _Generic(a, long: q_observe(p), default: q_free(p)); }");
+    let run = gs(
+        "void subject(int a) { void *p = q_alloc(); _Generic(a, long: q_observe(p), default: q_free(p)); }",
+    );
     assert!(run.safe(), "{run:?}");
 }
 
@@ -51,7 +63,9 @@ fn selection_invariant_selections_keep_route_one() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(void) { void *p = q_alloc(); int x = _Generic(0, int: r_borrow_code(p), default: r_borrow_code(p)); q_free(p); }");
+    let run = gs(
+        "void subject(void) { void *p = q_alloc(); int x = _Generic(0, int: r_borrow_code(p), default: r_borrow_code(p)); q_free(p); }",
+    );
     assert!(run.safe(), "{run:?}");
 }
 
@@ -95,10 +109,13 @@ fn inner_custody_composes_into_the_outer_scope() {
     assert!(run.unsafe_() && run.has("Leak"), "{run:?}");
     let run = gs("void subject(void) { ({ void *q = q_alloc(); q; }); }");
     assert!(run.unsafe_() && run.has("Leak"), "{run:?}");
-    let run = gs("void subject(void) { void *p = q_alloc(); int x = ({ q_free(p); 0; }); q_free(p); }");
+    let run =
+        gs("void subject(void) { void *p = q_alloc(); int x = ({ q_free(p); 0; }); q_free(p); }");
     assert!(run.unsafe_() && run.has("DoubleRelease"), "{run:?}");
     // A return from inside the block leaves the function.
-    let run = gs("int subject(int a) { void *p = q_alloc(); int x = ({ if (a) { q_free(p); return 1; } 0; }); q_free(p); return x; }");
+    let run = gs(
+        "int subject(int a) { void *p = q_alloc(); int x = ({ if (a) { q_free(p); return 1; } 0; }); q_free(p); return x; }",
+    );
     assert!(run.safe(), "{run:?}");
 }
 
@@ -117,7 +134,9 @@ fn statement_expression_refusals() {
     let run = gs("void subject(void) { int *p; p = ({ int a[2]; a; }); }");
     assert!(!run.safe(), "{run:?}");
     // An inner name that shadows an outer object.
-    let run = gs("int subject(void) { void *t = q_alloc(); int x = ({ int t = 1; t; }); q_free(t); return x; }");
+    let run = gs(
+        "int subject(void) { void *t = q_alloc(); int x = ({ int t = 1; t; }); q_free(t); return x; }",
+    );
     assert!(!run.safe(), "{run:?}");
     // Operand positions stay refused.
     for source in [
@@ -163,7 +182,8 @@ fn inner_refusals_keep_their_own_reason() {
     if !clang_available() {
         return;
     }
-    let run = gs("void opaque_fail(int a); void subject(int a) { ({ if (a) ; else opaque_fail(a); }); }");
+    let run =
+        gs("void opaque_fail(int a); void subject(int a) { ({ if (a) ; else opaque_fail(a); }); }");
     assert!(run.unknown(), "{run:?}");
     assert!(
         run.refused("call to uncontracted function `opaque_fail`")

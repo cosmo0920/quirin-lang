@@ -558,9 +558,9 @@ impl Refusal {
                 "pointer `{pointer}` converted to an integer may carry a tracked identity (CG08)"
             ),
             Refusal::Place(reason) => format!("place: {reason} (CG10)"),
-            Refusal::InnerEscape(name) => format!(
-                "statement expression value may point into its own object `{name}` (CG07)"
-            ),
+            Refusal::InnerEscape(name) => {
+                format!("statement expression value may point into its own object `{name}` (CG07)")
+            }
             Refusal::Declaration(reason) => format!("declaration: {reason}"),
             Refusal::Unlisted(form) => format!("unlisted form: {form}"),
             Refusal::UnlistedKind(kind) => format!("unlisted form `{kind}`"),
@@ -1001,7 +1001,9 @@ impl<C: Context> Elaborator<'_, C> {
             // association yield no event.
             "GenericSelectionExpr" => match crate::generic_association::selected(node) {
                 Some(selected) => self.expression(selected),
-                None => Err(Refusal::Unlisted("generic selection with no selected association")),
+                None => Err(Refusal::Unlisted(
+                    "generic selection with no selected association",
+                )),
             },
             // Card CG07 (rule 11g).
             "StmtExpr" => self.statement_expression(node),

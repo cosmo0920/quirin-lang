@@ -161,10 +161,12 @@ impl Refusal {
             Refusal::Storage(name) => {
                 format!("statement expression declares `{name}` with static storage (CG07)")
             }
-            Refusal::Escape(name) => format!(
-                "statement expression takes the address of its own object `{name}` (CG07)"
-            ),
-            Refusal::NoValue => "statement expression whose value is not an expression (CG07)".into(),
+            Refusal::Escape(name) => {
+                format!("statement expression takes the address of its own object `{name}` (CG07)")
+            }
+            Refusal::NoValue => {
+                "statement expression whose value is not an expression (CG07)".into()
+            }
             Refusal::Shape(what) => format!("statement expression: {what}"),
         }
     }
@@ -452,7 +454,7 @@ pub(crate) fn address_taken(node: &Value) -> Option<String> {
         .into_iter()
         .map(|(id, name, _)| (id, name))
         .collect::<BTreeMap<_, _>>();
-    fn root<'v>(node: &'v Value) -> Option<&'v Value> {
+    fn root(node: &Value) -> Option<&Value> {
         let bare = strip_transparent(node);
         match kind(bare) {
             "DeclRefExpr" => Some(bare),

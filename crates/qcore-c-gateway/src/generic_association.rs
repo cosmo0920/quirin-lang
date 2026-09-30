@@ -93,7 +93,10 @@ mod tests {
             json!({"associationKind": "default", "inner": [{"kind": "IntegerLiteral"}]}),
         ];
         entries[chosen]["selected"] = json!(true);
-        let mut inner = vec![json!({"kind": "DeclRefExpr"}), json!({"kind": "BuiltinType"})];
+        let mut inner = vec![
+            json!({"kind": "DeclRefExpr"}),
+            json!({"kind": "BuiltinType"}),
+        ];
         inner.extend(entries);
         json!({"kind": "GenericSelectionExpr", "inner": inner})
     }

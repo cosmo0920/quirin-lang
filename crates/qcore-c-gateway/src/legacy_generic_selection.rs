@@ -378,7 +378,10 @@ impl ClangSelections<'_> {
                     .collect::<Vec<_>>();
                 let original = index.original_line_texts(line);
                 let keywords = stream.iter().filter(|t| **t == GENERIC_KEYWORD).count();
-                if !stream.iter().copied().eq(original.iter().map(String::as_str))
+                if !stream
+                    .iter()
+                    .copied()
+                    .eq(original.iter().map(String::as_str))
                     || keywords != nodes.len()
                 {
                     continue;
@@ -397,7 +400,11 @@ impl ClangSelections<'_> {
     /// The `(line, ordinal)` of `keyword`, a token of the stream.
     fn site(&self, keyword: &Token) -> Option<(usize, usize)> {
         let mut ordinal = 0usize;
-        for token in self.stream.iter().filter(|token| token.line == keyword.line) {
+        for token in self
+            .stream
+            .iter()
+            .filter(|token| token.line == keyword.line)
+        {
             if std::ptr::eq(token, keyword) {
                 return Some((keyword.line, ordinal));
             }
