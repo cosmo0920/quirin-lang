@@ -1,0 +1,71 @@
+{
+  "card_words_reserved": [],
+  "counts": {
+    "annotation_f32": 0,
+    "annotation_f64": 8,
+    "annotation_partial_eq": 0,
+    "annotation_partial_ord": 0,
+    "as_f32": 0,
+    "as_f64": 0,
+    "as_partial_eq": 0,
+    "as_partial_ord": 0,
+    "effect_row_f32": 0,
+    "effect_row_f64": 0,
+    "effect_row_partial_eq": 0,
+    "effect_row_partial_ord": 0,
+    "exponent_spelling": 0,
+    "float_token": 10,
+    "word_f32": 0,
+    "word_f64": 20,
+    "word_partial_eq": 0,
+    "word_partial_ord": 0
+  },
+  "files": 701,
+  "occurrences": {
+    "annotation_f64": [
+      "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv:135",
+      "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv:218",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:32",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:40",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:48",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:56",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:56",
+      "providers/quirin-provider-mpack/contracts/mpack/writer.qv:190"
+    ],
+    "float_token": [
+      "compiler/tests/fixtures/native_library/buffer_lib.qrlib:10",
+      "compiler/tests/fixtures/native_library/buffer_lib.qrlib:16",
+      "compiler/tests/fixtures/native_library/buffer_lib_decorated.qrlib:27",
+      "compiler/tests/fixtures/native_library/buffer_lib_header.qrlib:22",
+      "compiler/tests/fixtures/native_library/unchecked_demo.qrlib:14",
+      "examples/sockets/inet_v4_echo.qr:29",
+      "examples/sockets/inet_v4_echo.qr:29",
+      "examples/sockets/inet_v4_echo.qr:37",
+      "examples/sockets/inet_v4_echo.qr:37",
+      "examples/unsafe-linkage/unchecked_demo.qrlib:17"
+    ],
+    "word_f64": [
+      "crates/qcore-c-gateway/tests/fixtures/contracts/neighbours_generic.qv:77",
+      "crates/qcore-c-gateway/tests/fixtures/contracts/o04_b08_callees.qr:25",
+      "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv:135",
+      "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv:146",
+      "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv:218",
+      "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv:224",
+      "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv:250",
+      "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv:256",
+      "providers/qcore-provider-cmetrics/contracts/cmetrics/metric_values.qv:263",
+      "providers/quirin-provider-fluent-bit/contracts/fluent_bit/time.qv:65",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:32",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:32",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:40",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:40",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:48",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:48",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:56",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:56",
+      "providers/quirin-provider-libc/contracts/libc/math.qv:56",
+      "providers/quirin-provider-mpack/contracts/mpack/writer.qv:190"
+    ]
+  },
+  "reserved_word_count": 118
+}
