@@ -270,6 +270,38 @@ composition remain outside this subset. Unsupported ordinary forms use Q020;
 nonempty contracts retain Q021.
 [Implementation and evidence](reports/source-scalar-calls-v1/README.md).
 
+**Records across calls (card `W48-QR-USABLE-RECORDS`).** A module that declares
+a record type (§G07.13), holds no buffer and declares a function besides its
+entry reaches this route; every such module was refused before (the buffer
+route models its entry only, `Q051`), and a record module with one function
+keeps the buffer route byte for byte. A record of scalars — and of records of
+scalars — is a plain value here:
+
+```ebnf
+parameter = NAME, ":", ( SCALAR | RECORD ) ;
+result    = SCALAR | "unit" | RECORD ;
+statement = "let", NAME, [":", ( SCALAR | RECORD )], "=", expression, ";" | … ;
+unary     = … | RECORD, "{", [NAME, ":", expression, {",", NAME, ":", expression}], "}"
+          | unary, ".", NAME, {".", NAME} ;              (* a field path *)
+```
+
+* A call **copies** a record argument in and a `return` copies a record result
+  out: no custody is involved, and a callee building a new record leaves the
+  caller's as it was. A parameter is a record by value only — `own<R>`,
+  `borrow<R>`, `ptr<const, R>` and `move p` refuse at `Q020`.
+* A construction names every declared field exactly once, in any order; the
+  checker types each value at its field's type and orders them as declared.
+  A field path names declared fields, each but the last a record. A record
+  has no arithmetic, comparison, conversion or rendering; read the field.
+* The record declarations are read by §G07.13's own reader; a type holding an
+  owned `bytes` field anywhere refuses by name (`W48-QR-OWNED-RECORD-ACROSS-CALL`),
+  a field write refuses (its rows admit `io` and the typed error, and a write
+  derives `mut`: `W48-QR-SCALAR-CALLS-FIELD-WRITE`), and a function whose row
+  permits `throws<ArithmeticError>` returns a scalar or `unit`
+  (`W48-QR-RECORD-THROWS-RESULT`), each at `Q020`.
+* The emitted C declares one `struct qcore_record_NAME` per record, a held
+  record before its holder, and passes and returns it by value.
+
 <a id="g02t-fixed-width-scalar-types"></a>
 
 ## G02t. Fixed-width scalar types
@@ -658,7 +690,10 @@ and output only through `std.fmt`/`std.io`/`std.logger`.
 
 ```ebnf
 ffi_module    = "#import", "std.ffi.unsafe", ";", { import },
-                { struct_import | extern_decl | entry } ;
+                { struct_import | extern_decl | entry | helper } ;
+helper        = "fn", NAME, "(", [ NAME, ":", ( SCALAR | NAME ), { ",", … } ], ")",
+                [ "->", ( "unit" | SCALAR | NAME ) ], [ "effects", "{", EFFECT, { ",", EFFECT }, "}" ],
+                "{", { stmt }, "return", [ value ], ";", "}" ;   (* W48-QR-USABLE-RECORDS *)
 struct_import = "struct", "!", "{", "type", NAME, "=", C_STRUCT, "from", STRING, ";",
                 "fields", "{", field, { ",", field }, [ "," ], "}", "}" ;
 C_STRUCT      = "c", STRING ;          (* no byte between; the text is exactly `struct TAG` *)
@@ -672,6 +707,8 @@ stmt          = "let", NAME, "=", NAME, "{", assign, { ",", assign }, [ "," ], "
               | "let", NAME, "=", NAME, ".", NAME, ";"
               | [ "let", NAME, "=" ], NAME, "(", [ value, { ",", value } ], ")",
                 [ "succeeds", outcome ], ";"
+              | NAME, ".", NAME, "=", value, ";"                (* a listed field *)
+              | "let", NAME, "=", NAME, ";"                     (* a copy *)
               | print_stmt | log_stmt | "flush", ";" ;          (* §G02g *)
 assign        = NAME, ":", value ;
 value         = [ "-" ], INTEGER | "true" | "false" | NAME ;
@@ -716,10 +753,26 @@ outcome       = [ "-" ], INTEGER | "true" | "false"
 * **Unlisted members are opaque bytes.** A read or a construction naming one
   refuses at `Q051`; a member of any type may stay unlisted. A construction
   zeroes the object before storing the listed fields.
-* **Records are §G07.13's, construct-then-read.** A construction supplies every
-  listed field exactly once (`Q051`), each value of exactly the field's type
-  (`Q052`; a literal range-checked, `Q053`); a read binds a value of the field's
-  type. No field write, nesting or record across a `.qr` call: card 2.
+* **Records are §G07.13's.** A construction supplies every listed field exactly
+  once (`Q051`), each value of exactly the field's type (`Q052`; a literal
+  range-checked, `Q053`); a read binds a value of the field's type. Card
+  `W48-QR-USABLE-RECORDS`: `RECORD.FIELD = VALUE;` writes a **listed** field
+  with a value of exactly its type and derives `mut` (an opaque or unknown
+  member, `Q051`); `let q = r;` copies a record or a scalar. Nesting an
+  imported struct stays `W48-QR-FFI-NESTED-AND-ARRAY-FIELDS`.
+* **`.qr` helper functions (card `W48-QR-USABLE-RECORDS`).** A function other
+  than the entry takes §G02t scalars and imported records **by value**
+  (a pointer parameter refuses, `Q026`) and returns `unit`, a scalar or a
+  record; an absent effect row is inferred, an explicit one must admit what
+  the body does (`Q029`). A helper is checked at **every** call, with the
+  values it is given — records copied — by the entry's own statement rules;
+  the call graph is acyclic and at most 16 deep, and a helper the entry never
+  reaches refuses (`Q026`). A helper call declares no outcome (`Q025`). The
+  emitted C defines each as `static RESULT qr_fn_NAME(…)`, by value, and a
+  declared outcome that disagrees inside one exits 70 through `exit`.
+* **The mark is a file's.** In a bundle of several files, a function in a file
+  that does not itself import `std.ffi.unsafe` refuses (`Q032`): no code is
+  checked under the unsafe-FFI assumption in a file that never took it.
 * **Calls.** A declared callee is admitted against the explicit contract
   selection, by name, parameter names and types. A position carrying an
   imported struct — by value or `ptr<const, NAME>`, a result by value — is
@@ -3648,9 +3701,11 @@ other route keeps the refusal it already had (`AGGREGATE-ROUTE-WIDENING`).
 
 ```ebnf
 decl    = "type", NAME, "{", field, { ",", field }, [ "," ], "}" ;
-field   = NAME, ":", ( SCALAR | "bytes" ) ;        (* SCALAR: §G02t, card W48-QR-SCALAR-TYPES-R3 *)
+field   = NAME, ":", ( SCALAR | "bytes" | RECORD ) ; (* SCALAR: §G02t; RECORD: W48-QR-USABLE-RECORDS *)
+path    = ".", NAME, { ".", NAME } ;                (* W48-QR-USABLE-RECORDS *)
 stmt    = "let", NAME, "=", NAME, "{", assign, { ",", assign }, [ "," ], "}", ";"
-        | "let", NAME, "=", NAME, ".", NAME, ";" ;
+        | "let", NAME, "=", NAME, path, ";"
+        | NAME, path, "=", VALUE, ";" ;             (* the field write, W48-QR-USABLE-RECORDS *)
 assign  = NAME, ":", OPERAND ;
 OPERAND = [ "-" ], INTEGER | NAME                  (* `source.buffer.v1`'s own *)
         | "true" | "false" ;                       (* at a `bool` field *)
@@ -3696,9 +3751,24 @@ OPERAND = [ "-" ], INTEGER | NAME                  (* `source.buffer.v1`'s own *
   indexing and storing a field needs **no new operand form**. A record at a
   position that takes an integer refuses at `Q052`, naming the field read that
   would fix it.
-* **v1 is construct-then-read.** There is no field write
-  (`AGGREGATE-FIELD-WRITE`), no nested record (`AGGREGATE-NESTED`) and no
-  record-valued parameter or result (`AGGREGATE-ACROSS-CALL`).
+* **Card `W48-QR-USABLE-RECORDS`: writes, nesting, and calls.** A field whose
+  type is another record the module declares (either declaration order) holds
+  that record by value: a record of scalars is copied in, one that owns a
+  buffer anywhere below is moved in (the ownership IR's owner path, one level
+  before the card, is now a path of any depth, and the owned leaves are
+  released depth-first in declaration order). The declaration graph is
+  acyclic (a record that contains itself refuses, `Q051`), at most 8 deep and
+  256 leaves (`Q053`). Every field-path form takes a path (`o.inner.buf[0]`,
+  `drop o.inner.buf;`, `extent(o.inner.buf)`); a path through a field that is
+  not a record refuses (`Q052`). `RECORD.PATH = VALUE;` writes a scalar field
+  with a value of exactly its type (a literal range-checked, `Q053`; a name
+  of another type, `Q052`) and derives `mut`; at an owned field it is the
+  **refill**, moving a buffer into a hole only (over a live field, `Q054`). On
+  a record that owns, a read or write of a scalar field asks the IR that the
+  record is live, so after `drop f;` both are a use after drop (`Q054`). A
+  whole sub-record write and a whole read of a sub-record that owns refuse by
+  name (`Q051`). A record of scalars crosses `.qr` calls on
+  `source.scalar-calls.v1` (§G02s); this route stays entry-only.
 * **Name resolution needed no new rule.** A field name sits before a `:` at a
   construction and after a `.` at a read, and both positions were already drained
   by `lexical_references`; the type name is an ordinary reference and resolves

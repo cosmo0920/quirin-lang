@@ -18,6 +18,17 @@ import QCore.UsableRecords
 #print axioms QCore.UsableRecords.start_mono
 #print axioms QCore.UsableRecords.sibling_slices_are_disjoint
 
+-- The nested aggregate: composition conserves custody, the drop-through over a
+-- tree releases exactly the held leaves, and no two owned leaves share a path.
+#print axioms QCore.UsableRecords.under_held
+#print axioms QCore.UsableRecords.nested_composition_conserves_custody
+#print axioms QCore.UsableRecords.drop_through_tree_releases_exactly_the_live_leaves
+#print axioms QCore.UsableRecords.under_paths
+#print axioms QCore.UsableRecords.under_keeps_paths_distinct
+#print axioms QCore.UsableRecords.under_path_head
+#print axioms QCore.UsableRecords.compose_path_head
+#print axioms QCore.UsableRecords.compose_keeps_paths_distinct
+
 -- The refill is admitted exactly into a hole and moves custody.
 #print axioms QCore.UsableRecords.a_refill_is_admitted_exactly_into_a_hole
 #print axioms QCore.UsableRecords.a_refill_moves_custody

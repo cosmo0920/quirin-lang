@@ -91,6 +91,31 @@ fn the_b1_probes_are_corrected() {
     }
 }
 
+/// Card `W48-QR-USABLE-RECORDS`: a record module holding no buffer reaches
+/// `source.scalar-calls.v1` with a second function, which reads and checks
+/// the helper — a valid one is admitted and each ill-typed one is refused at
+/// `Q020` — so no helper is admitted unread there either.
+#[test]
+fn a_record_module_with_a_helper_checks_the_helper() {
+    let example = include_str!("../../examples/records/point.qr");
+    let source = format!(
+        "{}\nfn qprobe_helper(x: i32) -> i32 {{ return 0; }}\n",
+        example.trim_end()
+    );
+    compile(&source, None).unwrap_or_else(|e| panic!("{e:?}"));
+    for helper in [
+        "fn qprobe_helper(x: Widget) -> Widget { return 0; }",
+        "fn qprobe_helper() -> i32 { let q: usize = 7; return 0; }",
+        "fn qprobe_helper() -> usize { return 0; }",
+    ] {
+        let source = format!("{}\n{helper}\n", example.trim_end());
+        let e = compile(&source, None).expect_err(&source);
+        assert_eq!(e.len(), 1, "{e:?}");
+        assert_eq!(e[0].code, "Q020", "{helper}\n{e:?}");
+        assert!(e[0].message.contains("source.scalar-calls.v1"), "{e:?}");
+    }
+}
+
 /// Each entry-only route refuses a helper it would have admitted unread, at
 /// that route's own code, whatever the helper's annotations; the example alone
 /// is still admitted.
@@ -98,7 +123,10 @@ fn the_b1_probes_are_corrected() {
 fn the_entry_only_routes_refuse_a_function_they_do_not_model() {
     for (example, code) in [
         (include_str!("../../examples/stdio/renderings.qr"), "Q030"),
-        (include_str!("../../examples/records/point.qr"), "Q051"),
+        // Card `W48-QR-USABLE-RECORDS`: `records/point.qr` holds no buffer, so
+        // with a second function it reaches `source.scalar-calls.v1`, which
+        // checks the helper — see the test below — and is no longer an
+        // entry-only row.
         (include_str!("../../examples/loops/buffer_copy.qr"), "Q051"),
         (
             include_str!("../../examples/strings/status_line.qr"),

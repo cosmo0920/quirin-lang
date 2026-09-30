@@ -409,6 +409,42 @@ and a copy bind copies it. Two things must survive refactors.
 
 `w48-qr-scalar-types-r3`.
 
+### 15k — appended, card `W48-QR-USABLE-RECORDS` (wave 48)
+
+It **supersedes deliberately** three of constraint 15k's sentences — the owner
+path "one level: `NAME.FIELD`, … recorded as the boundary `AGGREGATE-NESTED`
+beyond", `AGGREGATE-NESTED`'s by-name refusal (the 15k amendment above), and
+"v1 is construct-then-read" (§G07.13) — by landing what they named as missing,
+and supersedes nothing else.
+
+* **The owner path is generalised, not doubled.** `ownership::FieldPath` holds
+  a non-empty path (`o.inner.buf`); a one-level path is the path it always
+  was, with the same order, so every `NormalPathLeak` list written before the
+  card is unchanged. An aggregate lists its owned **leaves**, depth-first in
+  declaration order; `ComposeNested` moves a whole aggregate under a field
+  (its leaves keep their states), and `Compose` is that operation with buffer
+  parts only, decided by the same code. The drop-through walks the leaves.
+  These rules stay the IR's (15h's precedent).
+* **Two new IR rules.** `RefillField` moves a buffer into an owned leaf that is
+  a **hole** — over a live field it refuses (`OverwriteOfLiveField`), since
+  the held buffer would lose its release. `AccessRecord` asks that an
+  aggregate is live: a scalar field read or write of a record with an owned
+  field after its `drop` (or move) is a use after drop — for the read a
+  narrowing of what was admitted, in the refusing direction.
+* **The value half mirrors, and decides no custody.** A field write replaces
+  one field (`RecordValue::write_path`) with a value typed by the
+  construction's own rule and derives `Mut`; nested values are trees; the
+  declaration graph is acyclic, at most 8 deep and 256 leaves. A record that
+  owns through a nested record keeps `OWNED-FIELD-LEND-WINDOW` and
+  `OWNED-FIELD-LOOP-BODY` (the gates ask the transitive question), and a
+  write of an outer composed record in a body joins the latter.
+* **Across calls.** A record of scalars crosses `.qr` calls by value on
+  `source.scalar-calls.v1`, selected for a record module with a second
+  function and no buffer; a record holding `bytes` does not cross a call
+  (`W48-QR-OWNED-RECORD-ACROSS-CALL`). The buffer route stays entry-only.
+
+Lean `QCore.UsableRecords`. `w48-qr-usable-records`.
+
 ### 15h — card `COMPOSED-WINDOW-REACH` (wave 41)
 
 It **narrows a clause** the `LOOPS-ON-COMPOSED-ROUTES` amendment carries and

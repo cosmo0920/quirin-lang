@@ -940,9 +940,9 @@ impl OwnershipState {
     /// Card `W48-QR-USABLE-RECORDS`: `fields` are the aggregate's owned
     /// leaves, so the walk is over the **tree** of fields — declaration order
     /// at every level, depth-first — and releases each live leaf once, however
-    /// deep — pinned by this module's unit test
-    /// `dropping_a_nested_aggregate_releases_every_live_leaf_once`; the Lean
-    /// statement stays the one-level `QCore.AggregateOwnedField` one.
+    /// deep (`QCore.UsableRecords.drop_through_tree_releases_exactly_the_live_leaves`,
+    /// over the leaf list this binding holds; the unit test
+    /// `dropping_a_nested_aggregate_releases_every_live_leaf_once` runs it).
     fn drop_through(&mut self, base: &str, fields: &[Vec<String>]) -> Result<(), OwnershipError> {
         let mut releasing = Vec::new();
         for field in fields {
