@@ -1,6 +1,6 @@
 # W48-QRLIB-MACOS — card 5m: the macOS linkage path, run
 
-Base `a235ead6`. Discharges `W48-QRLIB-MACOS`, registered by
+Base `a235ead6`, main `0631c00b` merged. Discharges `W48-QRLIB-MACOS`, registered by
 [W48-QRLIB-LINKAGE](../w48-qrlib-linkage/README.md), whose macOS section this
 card ran.
 
@@ -148,6 +148,6 @@ diagnosis (`W48-QR-FLOAT-APPLE-TSAN`).
 ## Ledger
 
 [followups.json](followups.json), applied by [apply_ledger.py](apply_ledger.py)
-(`named_followups` 657 → 658): retired `W48-QRLIB-MACOS`; registered
+(`named_followups` 657 → 658 on the base; 658 → 659 after merging main `0631c00b`): retired `W48-QRLIB-MACOS`; registered
 `W48-QRLIB-MACOS-CI-RUN` (S) and `W48-QR-FLOAT-APPLE-TSAN` (M). An Intel-run follow-up was drafted and dropped
 on the user's decision above.

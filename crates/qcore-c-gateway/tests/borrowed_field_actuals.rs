@@ -350,10 +350,14 @@ fn a_store_through_the_field_between_the_read_and_the_call_is_never_admitted() {
     );
 }
 
-/// The refusal of a base is flow-insensitive: a later opaque reassignment
-/// refuses the name at every earlier read too.
+/// Card CG10-BOUND-UNTRACKED-ROOTS flip (rule 11d): the refusal of a base is
+/// now flow-sensitive for an eligible typed-place root. `in` is handed to the
+/// uncontracted `b_pick` only after its read, so the read of `in->storage`
+/// before it is admitted (BEFORE: `unknown_alias in` at that read, the
+/// closure being flow-insensitive); `storage`, a possibly-null borrowed alias
+/// at `b_open`'s actuals, keeps its refusal, and the call keeps its own.
 #[test]
-fn a_later_opaque_reassignment_of_the_base_refuses_every_earlier_read() {
+fn a_later_opaque_reassignment_of_the_base_refuses_only_later_reads() {
     if !clang_available() {
         return;
     }
@@ -367,15 +371,23 @@ fn a_later_opaque_reassignment_of_the_base_refuses_every_earlier_read() {
     assert!(!matches!(result, UnrestrictedLegacyResult::Safe(_)));
     let w = function(program(&result), "w");
     assert_eq!(w.status, AnalysisStatus::Unknown);
-    for base in ["in", "storage"] {
-        assert!(
-            w.diagnostics.iter().any(|d| matches!(
+    let alias = |base: &str| {
+        w.diagnostics.iter().any(|d| {
+            matches!(
                 &d.kind, LegacyDiagnosticKind::UnknownAlias { variable } if variable == base
-            )),
-            "missing {base} alias obligation: {:?}",
-            w.diagnostics
-        );
-    }
+            )
+        })
+    };
+    assert!(
+        alias("storage"),
+        "missing storage alias obligation: {:?}",
+        w.diagnostics
+    );
+    assert!(
+        !alias("in"),
+        "the read before `b_pick` is admitted: {:?}",
+        w.diagnostics
+    );
     assert!(w.diagnostics.iter().any(|d| matches!(
         &d.kind, LegacyDiagnosticKind::Unsupported { description }
             if description == "call to uncontracted function `b_pick`"

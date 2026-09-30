@@ -1,0 +1,143 @@
+{
+ "population": {
+  "root_refusal_leaves": 341,
+  "functions": 92,
+  "top_roots": [
+   [
+    "ctx",
+    141
+   ],
+   [
+    "ins",
+    37
+   ],
+   [
+    "file",
+    29
+   ],
+   [
+    "coll",
+    26
+   ],
+   [
+    "event",
+    18
+   ],
+   [
+    "thi",
+    15
+   ],
+   [
+    "plugin",
+    9
+   ],
+   [
+    "collector",
+    8
+   ],
+   [
+    "p",
+    8
+   ],
+   [
+    "config",
+    7
+   ],
+   [
+    "instance",
+    6
+   ],
+   [
+    "o_ins",
+    5
+   ]
+  ],
+  "by_premise": {
+   "bound": 234,
+   "ineligible": 15,
+   "path-refused": 195,
+   "holds": 33,
+   "rooted-place": 2
+  },
+  "by_binding": {
+   "nullable": 59,
+   "absent": 228,
+   "tracked": 45,
+   "target-free": 9
+  },
+  "by_class_leaves": {
+   "b": 255,
+   "a": 53,
+   "c": 84,
+   "e": 139,
+   "ast": 14
+  },
+  "by_class_functions": {
+   "b": 69,
+   "a": 10,
+   "c": 22,
+   "e": 37,
+   "ast": 5
+  },
+  "by_premise_and_binding_first_row": {
+   "path-refused/absent": 184,
+   "bound/nullable": 55,
+   "bound/tracked": 45,
+   "holds/absent": 31,
+   "ineligible/absent": 11,
+   "path-refused/target-free": 9,
+   "ineligible/nullable": 4,
+   "rooted-place/absent": 2
+  }
+ },
+ "functions_whose_only_leaves_are_root_refusals": [
+  {
+   "unit": "src/flb_input.c",
+   "function": "get_collector",
+   "roots": [
+    "coll"
+   ],
+   "premises": [
+    "path-refused"
+   ],
+   "reasons": {
+    "coll": []
+   }
+  }
+ ],
+ "admitted_with_premise_in_before_state": {
+  "leaves": 21,
+  "functions": 21
+ },
+ "freed_alone": {
+  "upper": {
+   "ast": 1
+  },
+  "strict": {}
+ },
+ "freed_alone_totals": {
+  "upper": 1,
+  "strict": 0
+ },
+ "pointer_store_owner_roots": {
+  "refused_without": 27,
+  "admitted_with": 0
+ },
+ "freed_functions": [
+  {
+   "unit": "src/flb_input.c",
+   "function": "get_collector",
+   "roots": [
+    "coll"
+   ],
+   "class": "ast",
+   "premises": [
+    "path-refused"
+   ],
+   "strict": false,
+   "reasons": {
+    "coll": []
+   }
+  }
+ ]
+}

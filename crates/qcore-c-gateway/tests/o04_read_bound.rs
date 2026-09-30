@@ -646,7 +646,16 @@ fn every_refused_member_shape_keeps_its_unknown_and_its_diagnostic() {
         // (`UnknownAlias` of `b` in place of the gate's diagnostic). A scalar
         // member of the live `b` is data, never an identity, and is admitted
         // under `b`'s dereference obligation.
-        const OBLIGATED: &[&str] = &["a void pointer member", "a double pointer member"];
+        // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d) adds "a chained access"
+        // deliberately: the pointer read `b->item->next` on a root the
+        // closure binds is left to the flow, which reads a deferred actual's
+        // root only as untracked, so the tracked `b` refuses there
+        // (`UnknownAlias` of `b` in place of the gate's diagnostic).
+        const OBLIGATED: &[&str] = &[
+            "a void pointer member",
+            "a double pointer member",
+            "a chained access",
+        ];
         // Card W47-ACCESS-PATH-POSITIONS (rule 10k) re-pins "a partial
         // argument" deliberately: the Clang-typed call-actual fallback reads
         // the scalar value `b->item->weight + n` whole, with the chain's

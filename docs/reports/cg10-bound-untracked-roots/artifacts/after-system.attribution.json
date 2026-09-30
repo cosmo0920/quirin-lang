@@ -1,0 +1,646 @@
+{
+ "summary": {
+  "functions": 34,
+  "by_cause": {
+   "premise": 18,
+   "callee-summary": 3,
+   "deferred-actual": 8,
+   "read": 5
+  },
+  "status_moves": [
+   {
+    "unit": "plugins/in_storage_backlog/sb.c",
+    "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "cause": "premise",
+    "roots": [
+     "backlog"
+    ],
+    "reading": null,
+    "removed": {
+     "unknown_alias: unresolved resource identity": 1
+    },
+    "added": {}
+   },
+   {
+    "unit": "src/flb_engine.c",
+    "function": "engine_has_fluentbit_logs_input",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "cause": "premise",
+    "roots": [
+     "ins"
+    ],
+    "reading": null,
+    "removed": {
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+    },
+    "added": {}
+   },
+   {
+    "unit": "src/flb_engine.c",
+    "function": "flb_engine_get_chunk_backpressure_percent",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "cause": "premise",
+    "roots": [
+     "ins"
+    ],
+    "reading": null,
+    "removed": {
+     "unknown_alias: unresolved resource identity": 1
+    },
+    "added": {}
+   },
+   {
+    "unit": "src/flb_input_chunk.c",
+    "function": "flb_input_chunk_drop_task_route",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "cause": "read",
+    "roots": [],
+    "reading": "callee-summary: the branch condition `flb_task_get_route_data(task, output_plugin, &route_records, &route_bytes) == 0` (flb_input_chunk.c:883) calls the static inline flb_task_get_route_data, whose `*records`/`*bytes` stores rule 11d admits",
+    "removed": {
+     "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+    },
+    "added": {}
+   }
+  ],
+  "unattributed": []
+ },
+ "rows": [
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "cause": "premise",
+   "roots": [
+    "backlog"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_get_releasable_output_queue_space",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "callee-summary",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: call to uncontracted function `sb_find_segregated_backlog_by_output_plugin_instance`": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_release_output_queue_space",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "callee-summary",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: call to uncontracted function `sb_find_segregated_backlog_by_output_plugin_instance`": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_remove_chunk_from_segregated_backlog",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "chunk"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "engine_has_fluentbit_logs_input",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_adaptive_flush_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "config"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 2
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_adaptive_flush_update",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "callee-summary",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: call to uncontracted function `flb_engine_get_chunk_backpressure_percent`": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_get_chunk_backpressure_percent",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_handle_event",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "config"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "handle_output_event",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "read",
+   "roots": [],
+   "reading": "callee-summary: the branch condition `flb_task_get_route_data(task, ins, &effective_records, ...)` (flb_engine.c:625) calls the static inline body rule 11d admits",
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "in"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "flb_engine_dispatch_retry",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "retry"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_engine_dispatch.c",
+   "function": "record_retry_failure_metrics",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "read",
+   "roots": [],
+   "reading": "callee-summary: the branch condition `flb_task_get_route_data(task, output, ...) != 0 && ...` (flb_engine_dispatch.c:54) is admitted, so the refused statement no longer poisons `task`'s binding; its reads at :58-59 resolve",
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unknown_alias: unresolved resource identity": 2
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "destroy_chunk_raw",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "cr"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_drop_task_route",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "cause": "read",
+   "roots": [],
+   "reading": "callee-summary: the branch condition `flb_task_get_route_data(task, output_plugin, &route_records, &route_bytes) == 0` (flb_input_chunk.c:883) calls the static inline flb_task_get_route_data, whose `*records`/`*bytes` stores rule 11d admits",
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_map",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_place_new_chunk",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ic"
+   ],
+   "reading": null,
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in return expression": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_protect",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "i"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_release_space",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "read",
+   "roots": [],
+   "reading": "callee-summary: the branch condition `if (flb_input_chunk_drop_task_route(old_input_chunk->task, ...))` (flb_input_chunk.c:607) calls flb_input_chunk_drop_task_route, now Safe",
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_release_space_compound",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "output_plugin"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_http_server_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_init_all",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_net_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 2
+   }
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_oauth2_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_plugin_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_set_property",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_task_flush_error",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "read",
+   "roots": [],
+   "reading": "callee-summary: `flb_task_set_route_data(task, out_ins, task->event_chunk->total_events, ...)` (flb_output.c:439), whose static inline body rule 11d admits, is contracted, so its actuals are read",
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_output.c",
+   "function": "flb_output_upstream_set",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 3
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "function": "flb_storage_input_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 3
+   }
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_clean",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "retry"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_count",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "retry"
+   ],
+   "reading": null,
+   "removed": {},
+   "added": {
+    "summary_conflict: inferred custody summary ResourceFunctionContract { parameters: [Borrowed, Owned { nullable: false }], result: None } contradicts the declared contract ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None, counted_users: CountedUserClauses { effects: {}, neutral: true, exits: [] } }; the declared contract governs every call site": 1
+   }
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "flb_task_retry_reschedule",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "retry"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_task.c",
+   "function": "map_get_task_id",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "config"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  }
+ ]
+}

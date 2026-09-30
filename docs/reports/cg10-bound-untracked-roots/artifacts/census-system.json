@@ -1,0 +1,173 @@
+{
+ "population": {
+  "root_refusal_leaves": 193,
+  "functions": 70,
+  "top_roots": [
+   [
+    "event",
+    31
+   ],
+   [
+    "timer",
+    22
+   ],
+   [
+    "config",
+    19
+   ],
+   [
+    "ins",
+    15
+   ],
+   [
+    "in",
+    12
+   ],
+   [
+    "retry",
+    9
+   ],
+   [
+    "plugin",
+    8
+   ],
+   [
+    "ctx",
+    7
+   ],
+   [
+    "direct_routes",
+    6
+   ],
+   [
+    "meta",
+    6
+   ],
+   [
+    "sched",
+    6
+   ],
+   [
+    "evc",
+    6
+   ]
+  ],
+  "by_premise": {
+   "bound": 93,
+   "ineligible": 33,
+   "path-refused": 111,
+   "holds": 12
+  },
+  "by_binding": {
+   "nullable": 33,
+   "tracked": 18,
+   "absent": 140,
+   "target-free": 2
+  },
+  "by_class_leaves": {
+   "b": 162,
+   "a": 46,
+   "c": 53,
+   "e": 86,
+   "ast": 13,
+   "d": 9
+  },
+  "by_class_functions": {
+   "b": 56,
+   "a": 22,
+   "c": 13,
+   "e": 32,
+   "ast": 5,
+   "d": 5
+  },
+  "by_premise_and_binding_first_row": {
+   "path-refused/absent": 109,
+   "bound/nullable": 23,
+   "ineligible/absent": 19,
+   "bound/tracked": 17,
+   "holds/absent": 12,
+   "ineligible/nullable": 10,
+   "ineligible/tracked": 1,
+   "ineligible/target-free": 1,
+   "path-refused/target-free": 1
+  }
+ },
+ "functions_whose_only_leaves_are_root_refusals": [
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+   "roots": [
+    "backlog"
+   ],
+   "premises": [
+    "path-refused"
+   ],
+   "reasons": {
+    "backlog": []
+   }
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_get_chunk_backpressure_percent",
+   "roots": [
+    "ins"
+   ],
+   "premises": [
+    "path-refused"
+   ],
+   "reasons": {
+    "ins": []
+   }
+  }
+ ],
+ "admitted_with_premise_in_before_state": {
+  "leaves": 10,
+  "functions": 10
+ },
+ "freed_alone": {
+  "upper": {
+   "ast": 2
+  },
+  "strict": {}
+ },
+ "freed_alone_totals": {
+  "upper": 2,
+  "strict": 0
+ },
+ "pointer_store_owner_roots": {
+  "refused_without": 30,
+  "admitted_with": 0
+ },
+ "freed_functions": [
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+   "roots": [
+    "backlog"
+   ],
+   "class": "ast",
+   "premises": [
+    "path-refused"
+   ],
+   "strict": false,
+   "reasons": {
+    "backlog": []
+   }
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_get_chunk_backpressure_percent",
+   "roots": [
+    "ins"
+   ],
+   "class": "ast",
+   "premises": [
+    "path-refused"
+   ],
+   "strict": false,
+   "reasons": {
+    "ins": []
+   }
+  }
+ ]
+}

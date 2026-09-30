@@ -302,12 +302,9 @@ fn every_non_conforming_tail_shape_keeps_its_refusal() {
     // untracked formals (an indexed byte, a sibling of a bitfield, a
     // typedef-spelled link, an embedded record, a chain past this rule's
     // bound). They move to `TYPED` below; the rest keep their refusal.
-    let rows: [(&str, &str); 5] = [
+    let rows: [(&str, &str); 4] = [
         // The chain is not the whole actual.
         ("&storage->leaf->label", INDIRECT),
-        // Card CG10 (rule 10t): the tracked-root place reads it; the flow
-        // refuses the root, which the body may bind and does not track.
-        ("*storage->leaf->label", "UnknownAlias:storage"),
         ("storage->flag = 1", INDIRECT),
         // A chain whose base this body may bind: the base is laundered by a
         // whole-object address-of elsewhere in the same body. Since W47 the
@@ -325,7 +322,13 @@ fn every_non_conforming_tail_shape_keeps_its_refusal() {
     // Card CG13 (rule 10w) moves `uh->view->leaf` here deliberately: the
     // union link is a union step, and the pointer read through it (unpunned)
     // is a target-free borrow in the declared tail. BEFORE: refused.
-    const TYPED: [&str; 6] = [
+    // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d) moves `*storage->leaf->label`
+    // here: rule 10t reads the place and the flow now reads its root, which
+    // the AST closure binds (a variadic-tail actual) but no path reaching the
+    // read bound or handed to a custody position, as an untracked borrowed
+    // object. BEFORE: `UnknownAlias:storage` at the flow.
+    const TYPED: [&str; 7] = [
+        "*storage->leaf->label",
         "uh->view->leaf",
         "storage->leaf->label[0]",
         "bh->bits->label",
@@ -392,8 +395,14 @@ fn a_released_base_is_never_read_through_in_a_tail() {
          y_log(\"gone %s\", storage->leaf->label); \
      }";
     let summary = summary(body, "y_probe");
+    // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): the pointer read is now
+    // left to the flow, which refuses it after the release on the path
+    // (`unknown_alias storage`). BEFORE: the gate's refusal (`unsupported`).
     assert!(
-        !unsupported(&summary).is_empty(),
+        summary.diagnostics.iter().any(|diagnostic| matches!(
+            &diagnostic.kind,
+            LegacyDiagnosticKind::UnknownAlias { variable } if variable == "storage"
+        )),
         "a released base must refuse: {:?}",
         summary.diagnostics
     );

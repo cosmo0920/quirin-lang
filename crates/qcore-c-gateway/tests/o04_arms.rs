@@ -281,6 +281,22 @@ fn every_untyped_link_keeps_its_unknown_and_its_diagnostic() {
             );
             continue;
         }
+        // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d) re-pins this row
+        // deliberately: the pointer actual on `link` is left to the flow,
+        // which refuses it because `h_adopt(link)` refused `link` earlier on
+        // the path (the per-path premise ends there). BEFORE: the gate's
+        // refusal. Still Unknown, never Safe.
+        if label == "a chain whose root the projection may bind is never admitted" {
+            assert!(
+                w.diagnostics.iter().any(|d| matches!(
+                    &d.kind,
+                    LegacyDiagnosticKind::UnknownAlias { variable } if variable == "link"
+                )),
+                "{label}: refused at the flow, got {:?}",
+                w.diagnostics
+            );
+            continue;
+        }
         assert!(
             unsupported(w).contains(&INDIRECT),
             "{label}: the existing diagnostic must be retained, got {:?}",

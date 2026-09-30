@@ -175,14 +175,25 @@ fn an_untouched_root_certifies_when_only_the_ast_answers() {
     }
     // Rule 10l serves the typed positions only: a statement the older
     // routes read keeps the lexical answer, whose unread declarations leave
-    // `b` unresolved there.
+    // `b` not never bound there. Card CG10-BOUND-UNTRACKED-ROOTS flip (rule
+    // 11d): the flow's per-path premise, which reads no declaration answer,
+    // reads `b` at `b->flag` as an untracked borrowed object (no binding, no
+    // refusal on the path, never address-taken). BEFORE:
+    // `("Unknown", ["unknown_alias:b"])`.
     assert_eq!(
         outcome(
             "char *w(struct c_box *b, int (*cb)(int)) { int n = b->flag; c_use(n); \
              return b->item->leaf->name; }"
         ),
-        ("Unknown", vec!["unknown_alias:b".to_owned()])
+        safe()
     );
+    // The never-bound answer is unchanged: a custody position on `b` before
+    // the read still refuses it (the path is refused there).
+    let (status, keys) = outcome(
+        "char *w(struct c_box *b, int (*cb)(int)) { c_drop(b); int n = b->flag; c_use(n); \
+         return 0; }",
+    );
+    assert_ne!(status, "Safe", "{keys:?}");
 }
 
 /// The same body with a formal the lexical reader reads is the lexical

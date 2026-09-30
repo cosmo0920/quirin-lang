@@ -57,6 +57,9 @@ pub mod legacy_c;
 pub mod legacy_census;
 mod legacy_condition_call;
 mod loop_generations;
+// Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): partial field links
+// and the settled-exit floor; the G hooks are in `legacy_field_link_join.rs`.
+mod field_link_join;
 mod nested_call_effects; // CG05-NESTED-CALL-EFFECTS (rule 10y); G hook in legacy_nested_call.rs
 // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o).
 mod legacy_summary;
@@ -89,6 +92,9 @@ mod typed_position_shapes;
 mod typed_place;
 // Card CG11-POINTER-VALUED-STORES (rule 10v): pointer-valued stores.
 mod pointer_store;
+// Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): the per-path bound-untracked
+// root premise; the flow hook is `legacy_bound_untracked.rs`.
+mod bound_untracked;
 // Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): union-member and bit-field
 // place steps.
 mod union_bitfield;

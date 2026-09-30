@@ -220,6 +220,8 @@ fn rename(state: &mut AbstractState, from: usize, into: usize) {
             replace_in(children, from, into);
         }
     }
+    // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: the partial triples follow.
+    super::field_link_join_route::rename(state, from, into);
     for pointer in state.pointers.values_mut() {
         if replace_in(&mut pointer.targets, from, into) && summary {
             pointer.unknown = true;

@@ -234,6 +234,25 @@ impl Reader<'_> {
     fn roots_admit(&self, pointer_root: &dyn Fn(&str) -> bool) -> bool {
         roots(&self.plan).iter().all(|root| pointer_root(root))
     }
+
+    /// Card **CG10-BOUND-UNTRACKED-ROOTS** (rule 11d): every root the
+    /// never-bound premise does not cover is the dereferenced root of the
+    /// plan's chains, each eligible for the per-path bound-untracked premise,
+    /// so the flow decides it at the node (`chain_owner`).
+    fn roots_deferred(&self, never_bound: &dyn Fn(&str) -> bool) -> bool {
+        roots(&self.plan).iter().all(|root| {
+            never_bound(root) || {
+                let mut chains = self
+                    .plan
+                    .chains
+                    .iter()
+                    .filter(|chain| &chain.root == root)
+                    .peekable();
+                chains.peek().is_some()
+                    && chains.all(|chain| chain.dereferenced_root && chain.root_bound_untracked)
+            }
+        })
+    }
 }
 
 impl StatementIndex {
@@ -359,19 +378,34 @@ impl StatementIndex {
         crate::typed_place::clear_decisions();
         let mut reader = self.reader(&never_bound);
         // Rule 10n: an address `&PATH` is a pointer value, never a read.
+        let mut address = false;
         let pointer_valued = match strip_pointer_value(actual) {
             Some(value)
                 if kind(value) == "UnaryOperator" && value["opcode"].as_str() == Some("&") =>
             {
                 reader.address(value, true)?;
+                address = true;
                 true
             }
             _ => reader.value(actual)?,
         };
         // A borrowed actual hands nothing out of the body: the never-bound
         // premise suffices, and W44's `ArgumentReads` decides what it names.
+        // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): a pointer read (never an
+        // address, rule 10n's premise) whose other roots are eligible chain
+        // roots is left to the flow's per-path premise.
         if pointer_valued && !reader.roots_admit(&never_bound) {
-            return None;
+            if address || !reader.roots_deferred(&never_bound) {
+                return None;
+            }
+            // The deferred roots must read as untracked at the flow: rule
+            // 10k(3)'s pointer-actual premise is not relaxed to a tracked
+            // root.
+            for chain in &mut reader.plan.chains {
+                if !never_bound(&chain.root) {
+                    chain.root_untracked_only = true;
+                }
+            }
         }
         Some(ArgumentPlan {
             plan: reader.plan,
@@ -505,11 +539,19 @@ mod tests {
                     .unwrap()
                     .pointer_valued
             );
-            assert!(
-                index
-                    .argument("g", 1, 2, &pointer, 1, |name| name != "p")
-                    .is_none()
-            );
+            // Card CG10-BOUND-UNTRACKED-ROOTS flip (rule 11d): a root the
+            // closure does not prove never bound is left to the flow's
+            // per-path premise when it is an eligible chain root. BEFORE:
+            // refused here.
+            let deferred = index
+                .argument("g", 1, 2, &pointer, 1, |name| name != "p")
+                .expect("deferred to the flow");
+            assert!(deferred.pointer_valued);
+            assert!(deferred.plan.chains.iter().all(|chain| chain.root == "p"
+                && !chain.root_never_bound
+                && chain.root_bound_untracked
+                && chain.root_untracked_only));
+            assert!(!deferred.plan.chains.is_empty());
             assert!(index.argument("g", 0, 2, &pointer, 1, open).is_none());
             assert!(index.argument("h", 0, 2, &scalar, 1, open).is_none());
         });

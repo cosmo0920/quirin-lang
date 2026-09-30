@@ -467,6 +467,10 @@ reaches a bound or a branch.
     its declaration: a declared release does not cascade to members
     (P-B08-SHALLOW, stated). `QCore.MemberReleaseCallee`;
     [report](../reports/w45-sr5-soundness/README.md).
+    Amended by [rule 11c](#constraint-11c): the B08 join records a
+    one-sided link as partial, never as a silent unresolved effect, and the
+    escape cascade refuses a possibly-live child it does not carry on every
+    path.
 
 <a id="constraint-5l"></a>
 
@@ -1098,6 +1102,10 @@ reaches a bound or a branch.
     (trust boundary 28), and that a never-bound root reaches no tracked
     place (P2's premise). `QCore.TypedAccessPathPositions`;
     [report](../reports/w47-access-path-positions/README.md).
+    Amended by [rule 11d](#constraint-11d): (3)'s pointer read on roots that
+    are eligible chain roots is left to the flow, which reads each only as
+    untracked (a tracked root refuses); an address actual and (2)'s return
+    premise are unchanged.
 
 <a id="constraint-10l"></a>
 
@@ -2009,6 +2017,10 @@ reaches a bound or a branch.
     line are the analysed source's (trust boundary 28).
     `QCore.TypedPlace`, bound to the Rust decision table by a shared-vector
     test; [report](../reports/cg10-common-typed-place/README.md).
+    Amended by [rule 11d](#constraint-11d): an eligible root with no tracked
+    identity is read as untracked on a path where nothing bound it and
+    nothing was refused before the access; the never-bound premise stays
+    off this route.
 
 <a id="constraint-10u"></a>
 
@@ -2451,8 +2463,9 @@ own anchor here.
     not proved: that the shift renames every mention of an identity in the
     state (trust boundary 28) and that every other rule reports a refusal
     wherever it leaves an identity unresolved (the census
-    `position: "withheld-obligation"` measures where one does not,
-    `B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED`). `QCore.LoopSiteGenerations`
+    `position: "withheld-obligation"` measures where one does not; since
+    [rule 11c](#constraint-11c) a settled exit that withholds one on a path
+    no refusal reached is itself refused). `QCore.LoopSiteGenerations`
     (`reacquisition_keeps_the_earlier_obligation`,
     `the_failure_edge_removes_only_the_new_generation`,
     `the_summary_never_discharges`, `a_live_summary_is_never_safe`,
@@ -2541,3 +2554,137 @@ own anchor here.
     type-size fold), bound to `CAST_TABLE`, `query_operand`, Clang's
     constants and `fold_type_sizes` by shared-vector tests;
     [report](../reports/cg08-casts-and-type-queries/README.md).
+
+<a id="constraint-11c"></a>
+
+11c. **A field link that holds on some paths only never leaves its child's
+    obligation unresolved without a diagnostic, and no settled exit that
+    withholds an obligation is `Safe`.** Card
+    B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED, a soundness repair
+    (`field_link_join.rs`, the route-G adapter `legacy_field_link_join.rs`,
+    thin hooks in `legacy_c.rs` (the field-link join, the store, the bound
+    read, the chain view, the escape cascade, the work list and the settled
+    exit pass) and `legacy_loop_generations.rs` (`rename`)). It amends rule
+    5k's B08 join and escape cascade.
+
+    (1) **The defect.** The B08 join recorded every child linked on one side
+    only as an unresolved effect and nothing else: no diagnostic reported it,
+    `report_leaks` skipped it, and the escape cascade escaped a live joined
+    child anyway. `if (n) b->item = it; else k_release(it); k_drop(b);` was
+    `Safe` although the linking arm leaks `it` (P-B08-SHALLOW), and
+    `if (n) b->item = it; return b;` was `Safe` although the other arm leaks
+    it; a must-linked child of mixed status was left unresolved silently at
+    an escape. (2) **The join** keeps the union of the links and records each
+    `(owner, field, child)` that does not hold on both sides as *partial*
+    (`join_link`, `partial_links`, always a subset of `field_links`); it adds
+    **no** unresolved effect, so an owner's release leaves a possibly-live
+    child to be reported exactly as in the straight-line form. A store makes
+    its link hold again; a generation shift renames partial triples with the
+    links. (3) **The escape** decides each child it reaches (`escape_step`):
+    an exactly-live child linked on every path escapes; one already escaped
+    or untracked is kept; one live on no path (released, or contained and
+    so its container's) is withdrawn as before (an unresolved effect, no
+    report: this escape owes nothing for it); every other
+    possibly-live child (not carried on every path, or of mixed status)
+    refuses (`Unsupported`, "field-link escape: …"), keeping its status with
+    an unresolved effect. (4) **Reads.** A bound read and a chain step
+    through a partial link decline (the link no longer denotes one identity
+    on every path). (5) **The floor.** A settled exit whose path no refusal
+    reached (`unmodeled` false) and that withholds a possibly-live identity
+    with an unresolved effect, not the caller's, reports a refusal
+    (`exit_refuses`, "exit withholds a possibly-live obligation …"): any
+    other rule that leaves an identity unresolved without reporting is a
+    refusal here, never a `Safe` (and a W4 summary over it is not
+    validated, which requires a body with no diagnostic).
+
+    **Do not** record a one-sided link as an unresolved effect, escape a
+    possibly-live child a partial link reaches, read through a partial link,
+    or leave an identity unresolved on a path without a path-poisoning
+    diagnostic (the floor then refuses the function). Premises stated, not
+    proved: P-B08-SHALLOW (unchanged), that every rule that marks an
+    identity unresolved reports a path-poisoning diagnostic on that path (the
+    audit in the report lists each insertion and its report; the floor turns
+    a violation on a modeled path into a refusal), and faithful extraction
+    (trust boundary 28). Measured (corpus `66910c10`, system,
+    tail-pause slice): no Safe result withheld an obligation at its exit
+    (CG04's census) and no escape reached a possibly-live child that was
+    one-sided or mixed (the census, parity `position: "field-link-escape"`),
+    so nothing moved: every report is byte-identical (602 / 10 / 4,222,
+    `2fc3af8c…`; 37 / 2 / 195; 26 / 1 / 242 / 1 Pending). The repair closes
+    the class for the code widening cards admit; the fixtures were `Safe`
+    on the base. The residual imprecision (a correct one-sided escape is
+    refused) is `FIELD-LINK-ESCAPE-PATH-CORRELATION`. `QCore.FieldLinkJoin`
+    (`a_decided_escape_leaves_no_live_child`,
+    `an_escape_over_a_one_sided_live_child_refuses`,
+    `the_join_adds_no_unresolved`, `a_live_child_at_exit_is_reported`,
+    `an_unresolved_possibly_live_obligation_at_exit_is_never_safe`,
+    `the_model_is_sound`, `the_base_flow_hides_the_leak`), bound to
+    `LINK_VECTORS`, `ESCAPE_VECTORS`, `EXIT_VECTORS` and the gateway's
+    verdicts on the pinned shapes (`SHAPE_VECTORS`) by shared-vector tests;
+    [report](../reports/b08-field-link-join-silent-unresolved/README.md).
+
+<a id="constraint-11d"></a>
+
+11d. **A typed place's root the body may bind is read as an untracked,
+    borrowed object only on a path where nothing bound it and nothing was
+    refused before the access.** Card CG10-BOUND-UNTRACKED-ROOTS
+    (`bound_untracked.rs`, the flow adapter `legacy_bound_untracked.rs`,
+    additive items in `indirect_chain_access.rs` (`AccessChain::root_bound_untracked`,
+    `AccessChain::root_untracked_only`, `ChainView::bound_untracked`), thin
+    hooks in `typed_place.rs`, `typed_access_path.rs`,
+    `typed_access_positions.rs` and `legacy_c.rs`). It amends rules 10t
+    and 10k(3); the never-bound premise (rules 10k, 10l, 10o) is unchanged
+    for every root. (1) **Eligibility** (static, from the Clang AST): the
+    root of a typed-reader chain is a pointer declared exactly once in the
+    function as a parameter or automatic local, every reference names that
+    declaration, and no `&` of it appears anywhere (class (d), an address,
+    stays refused). (2) **The premise** (`decide`, at the state entering the
+    access): the root's binding is absent, or known, non-null and
+    target-free in a state that widened nothing (a borrowed alias, a
+    null-tested derived result of an untracked base); no place rooted at it
+    is bound; and the state's `unmodeled` flag is clear: no path reaching
+    the access passed a refused statement or an unresolved effect. Every
+    custody-taking position that receives an object with no tracked
+    identity reports there (`Consumed`/`Released`: the unknown identity;
+    `Owned`/`Stored`/`Removed`: `require_live_resource`), and so does every
+    call to an uncontracted function, so on every path reaching the access
+    no custody position has received the root or any alias of it; a
+    `Borrowed` actual reports nothing and preserves the premise. Where it
+    holds, `chain_owner` reads the root exactly as a never-bound root
+    (untracked; every link untracked); a root with a tracked identity keeps
+    the tracked reading, and every other answer is unchanged. The premise is
+    path-wide, not per root: an unrelated refusal ends it too (it frees no
+    function the per-root form would, a refused path being `Unknown`, but
+    lifts fewer leaves). (3) **Rule 10k(3)'s pointer actual.** A pointer read
+    handed to a `Borrowed` or declared data-tail position whose roots are
+    not never bound is left to the flow when each is the dereferenced root of
+    the plan's eligible chains; the flow reads such a root only as untracked
+    (`root_untracked_only`): a tracked root refuses there, so the
+    pointer-actual premise is not relaxed to a tracked root. An address
+    actual keeps rule 10n's never-bound premise. **Do not** serve the
+    never-bound answer from this premise, read a root whose address is
+    taken, read a possibly-null, widened, mixed or tracked binding as
+    untracked, keep the premise past a refusal or unresolved effect on any
+    reaching path, or admit a tracked root at a deferred actual. Premise
+    P-CG10B-ABSENT-UNTRACKED, stated, not proved: an object reached through
+    a name with no binding on any reaching path is disjoint from every
+    identity the frame tracks (a contract's `None` result carries no
+    custody; rule 10k's premise that a never-bound root reaches no tracked
+    place, here per path). Premises stated, not proved: faithful Clang
+    extraction of declarations and `&` operands (trust boundary 28).
+    Measured (corpus `66910c10`, system, tail-pause slice, base `a235ead6`):
+    **+6 / +4 / +2 Unknown → Safe**, no Safe → non-Safe, no leak or
+    violation added; of 7,455 corpus root-refusal leaves on 1,635 functions,
+    7,053 remain (path refused 5,126, a nullable or tracked binding 1,409,
+    ineligible 505, rooted 13). Parity runs record every settled chain root
+    the never-bound premise does not cover (`position:
+    "bound-untracked-root"`) and the lexical closure's reasons
+    (`"bound-untracked-closure"`). `QCore.BoundUntracked` (the decision, the
+    interlock `the_never_bound_answer_is_unchanged` and
+    `every_old_admission_stands`, per-hop sufficiency, the per-path event
+    model: a `Borrowed` actual preserves, a custody actual and an
+    uncontracted call end it on every later path, a `None` or null-tested
+    derived result satisfies it, the join keeps a refusal), bound to
+    `DECISION_VECTORS` and `EVENT_VECTORS`, whose paths the gateway runs
+    (`tests/bound_untracked_roots.rs`);
+    [report](../reports/cg10-bound-untracked-roots/README.md).

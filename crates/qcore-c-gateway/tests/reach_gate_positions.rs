@@ -393,16 +393,19 @@ fn the_adversarial_family_keeps_its_unknown_and_its_diagnostic() {
     // pointer read, with a per-hop obligation over the untracked formal and
     // no refinement. The address, the dereference, the assignment and the cast
     // keep their refusal.
-    const TYPED: [&str; 3] = [
+    // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d) adds "an explicit
+    // dereference has no model here" deliberately: rule 10t reads
+    // `*view->count` as a tracked-root place (CG10-COMMON-TYPED-PLACE, where
+    // the flow refused the root, `UnknownAlias` of `view`), and the flow now
+    // reads `view`, which no path reaching the condition bound or handed to a
+    // custody position, as an untracked borrowed object. BEFORE: Unknown.
+    const TYPED: [&str; 4] = [
         "a subscript has no model here",
         "a chain one selection past the bound refuses",
         "a link this reader will not type refuses",
+        "an explicit dereference has no model here",
     ];
-    // Card CG10-COMMON-TYPED-PLACE (rule 10t) re-pins one row deliberately:
-    // the typed condition fallback now reads `*view->count` on the root this
-    // body may bind as a tracked-root place, and the flow refuses the root
-    // (`UnknownAlias` of `view`), in place of the refusal. Still Unknown.
-    const TRACKED: [&str; 1] = ["an explicit dereference has no model here"];
+    const TRACKED: [&str; 0] = [];
     for (reason, body) in cases {
         let measured = run(body);
         if TRACKED.contains(&reason) {

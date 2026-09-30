@@ -1,0 +1,183 @@
+{
+ "classifications": [
+  {
+   "value": "null",
+   "admitted": true,
+   "statements": 594,
+   "functions": 344
+  },
+  {
+   "value": "pointer-read",
+   "admitted": false,
+   "statements": 436,
+   "functions": 196
+  },
+  {
+   "value": "formal-pointer",
+   "admitted": false,
+   "statements": 397,
+   "functions": 193
+  },
+  {
+   "value": "unread-place",
+   "admitted": false,
+   "statements": 366,
+   "functions": 72
+  },
+  {
+   "value": "local-pointer",
+   "admitted": false,
+   "statements": 301,
+   "functions": 200
+  },
+  {
+   "value": "other-address",
+   "admitted": false,
+   "statements": 220,
+   "functions": 76
+  },
+  {
+   "value": "other",
+   "admitted": false,
+   "statements": 193,
+   "functions": 136
+  },
+  {
+   "value": "function",
+   "admitted": true,
+   "statements": 129,
+   "functions": 28
+  },
+  {
+   "value": "interior-address",
+   "admitted": true,
+   "statements": 70,
+   "functions": 38
+  },
+  {
+   "value": "arithmetic",
+   "admitted": false,
+   "statements": 53,
+   "functions": 30
+  },
+  {
+   "value": "self-address",
+   "admitted": true,
+   "statements": 30,
+   "functions": 4
+  },
+  {
+   "value": "function-pointer-name",
+   "admitted": true,
+   "statements": 24,
+   "functions": 17
+  },
+  {
+   "value": "string",
+   "admitted": true,
+   "statements": 16,
+   "functions": 10
+  },
+  {
+   "value": "call",
+   "admitted": false,
+   "statements": 7,
+   "functions": 4
+  }
+ ],
+ "flow": [
+  {
+   "value": "null",
+   "owner": "unresolved",
+   "decision": "unresolved-owner",
+   "statements": 290,
+   "functions": 180
+  },
+  {
+   "value": "null",
+   "owner": "untracked",
+   "decision": "admit",
+   "statements": 100,
+   "functions": 59
+  },
+  {
+   "value": "function",
+   "owner": "unresolved",
+   "decision": "unresolved-owner",
+   "statements": 88,
+   "functions": 14
+  },
+  {
+   "value": "interior-address",
+   "owner": "unresolved",
+   "decision": "unresolved-owner",
+   "statements": 53,
+   "functions": 29
+  },
+  {
+   "value": "null",
+   "owner": "tracked",
+   "decision": "owned-field",
+   "statements": 37,
+   "functions": 21
+  },
+  {
+   "value": "self-address",
+   "owner": "untracked",
+   "decision": "admit",
+   "statements": 29,
+   "functions": 3
+  },
+  {
+   "value": "function-pointer-name",
+   "owner": "unresolved",
+   "decision": "unresolved-owner",
+   "statements": 20,
+   "functions": 13
+  },
+  {
+   "value": "interior-address",
+   "owner": "untracked",
+   "decision": "admit",
+   "statements": 18,
+   "functions": 12
+  },
+  {
+   "value": "string",
+   "owner": "unresolved",
+   "decision": "unresolved-owner",
+   "statements": 6,
+   "functions": 5
+  },
+  {
+   "value": "function",
+   "owner": "untracked",
+   "decision": "admit",
+   "statements": 4,
+   "functions": 2
+  },
+  {
+   "value": "function-pointer-name",
+   "owner": "tracked",
+   "decision": "owned-field",
+   "statements": 3,
+   "functions": 3
+  },
+  {
+   "value": "string",
+   "owner": "untracked",
+   "decision": "admit",
+   "statements": 2,
+   "functions": 2
+  },
+  {
+   "value": "self-address",
+   "owner": "unresolved",
+   "decision": "unresolved-owner",
+   "statements": 1,
+   "functions": 1
+  }
+ ],
+ "statements_admitted_in_every_analysis": 128,
+ "statements_admitted_in_some_analysis": 153
+}

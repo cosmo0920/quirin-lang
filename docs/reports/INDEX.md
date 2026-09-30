@@ -48,6 +48,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [b04-nested-call-argument](b04-nested-call-argument/README.md) | B04 — sibling nested-call arguments |
 
+| [b08-field-link-join-silent-unresolved](b08-field-link-join-silent-unresolved/README.md) | B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: partial field links |
+
 | [base-type-reader-census](base-type-reader-census/README.md) | BASE-TYPE-READER-CENSUS — the reader beneath the member reader, measured |
 
 ## C
@@ -90,6 +92,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [cg06-value-connectives-and-conditional](cg06-value-connectives-and-conditional/README.md) | CG06-VALUE-CONNECTIVES-AND-CONDITIONAL: value `&&`, `&#124;&#124;` and `?:` by branching |
 
 | [cg08-casts-and-type-queries](cg08-casts-and-type-queries/README.md) | CG08-CASTS-AND-TYPE-QUERIES: casts as representations and type-query operands |
+
+| [cg10-bound-untracked-roots](cg10-bound-untracked-roots/README.md) | CG10-BOUND-UNTRACKED-ROOTS |
 
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 
