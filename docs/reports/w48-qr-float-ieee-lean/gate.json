@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-FLOAT-IEEE-LEAN-MODEL card gate (base d11179c9), script private/w48-qr-float-ieee-lean/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-qr-float-ieee-lean/gate, run 2 at a2c4031a: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 396 units, 409 summaries, 6,927 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T123639Z-3985394/summary.json); clippy 0; both reevaluation probes 0; check_lean_audits.py 251 audits passed (250 + AuditIeee754.lean). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). Run 1 (at 61a06930, logs private/w48-qr-float-ieee-lean/gate-run1) is retained and discarded: clippy 101 (clippy::redundant_locals in the new test, fixed in a2c4031a) and provider suite 101 (two QP006 provider timeouts in configured_source_contract while this card ran cargo clippy and cargo test beside it: load, not a regression); every other step 0 (6,927 passed there too). Matrix, docs index and Python were then run in that order after the records commit. Clang 21.1.8 recorded in this worktree. No corpus arbiter: no analyzer, contract, checker or corpus-path change.",
+  "workspace_tests": 6927,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 251,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

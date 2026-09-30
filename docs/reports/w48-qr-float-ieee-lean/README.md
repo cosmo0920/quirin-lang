@@ -123,8 +123,8 @@ for bit. Every row holds: **no disagreement between the model and
 binary64 magnitudes (up to about `2^4200`) made the binary64 table take
 171 s. The model's definitions use `ilog2` instead — a 16-step binary search
 over accelerated powers and comparisons, proved equal to `Nat.log2`
-(`ilog2_eq`, `log2Search_spec`) — after which both tables build in about
-14 s together.
+(`ilog2_eq`, `log2Search_spec`) — after which each table builds in about
+16 s cold, the two in parallel.
 
 ## What is modelled and what is observed
 
@@ -160,15 +160,60 @@ the round trip is proved; §L14.7 limitation 13 is narrowed to say so
 `python3 scripts/check_lean_audits.py`, this host (16 CPUs), wall seconds
 from `private/w48-qr-float-ieee-lean/lean-timed.sh` ([timings](artifacts/lean-timings.json)):
 
-LEAN_TIMINGS_TABLE
+| Run | Base `d11179c9` | Tip `a2c4031a` |
+|---|---|---|
+| cold (fresh build), wall | 71.57 s (build 59.7 s) | **83.45 s** (build 73.1 s) |
+| warm (nothing to rebuild), wall | 9.21 s | **9.84 s** |
+| audits | 250 | 251 (`AuditIeee754.lean` 0.3 s) |
+
+The new modules' cold builds: `Ieee754` 5.0 s, `Ieee754Round` 7.2 s,
+`Ieee754Ops` 1.0 s, `Ieee754Vectors32` 16 s, `Ieee754Vectors64` 16 s (the
+vector files build in parallel); the whole cold run is 11.9 s longer.
 
 ## Prediction and outcome
 
-PREDICTION_TABLE
+| Measure | Predicted | Outcome |
+|---|---|---|
+| items 1–4 complete, entry retired | yes, 70% | **yes** |
+| item 5 | not proved, 85% | **not proved**; limitation 13 narrowed, follow-up |
+| model vs `scalar_floats.rs` | no disagreement, 85% | **none** on 19,171 results |
+| Lean modules | 4–6, 75% | **5** |
+| theorems | 60–110, 60% | **124** (outside the range) |
+| vectors | 10,000–20,000 rows, 60% | **4,006 rows / 19,171 results** (rows outside the range, results inside: a row packs four arithmetic or six comparison results) |
+| `decide +kernel` total | under 60 s, 65% | **about 32 s** cold, after `ilog2` (192 s before it) |
+| cold audits after | under 130 s, 70% | **83.45 s** |
+| warm after | within 3 s, 70% | **+0.63 s** |
+| corpus figures | unmoved, 99% | unmoved (no analyzer change; no arbiter run) |
+| gate first run green | 55% | **no**: clippy (`redundant_locals`) and two provider timeouts under this card's concurrent load; run 2 green |
+| existing tests changed | 0, 90% | **0** |
 
 ## Gate
 
-GATE_TABLE
+Run 2 at `a2c4031a` (script `private/w48-qr-float-ieee-lean/gate.sh`, each
+exit to a file, logs `private/w48-qr-float-ieee-lean/gate/`):
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 396 units, 409 summaries; **6,927 passed, 0 failed, 11 ignored** (`private/test-binaries/20260930T123639Z-3985394/summary.json`) |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **251 audits** (250 + `AuditIeee754.lean`) |
+| provider suite | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | 129 passed, 0 failed, 1 ignored, 43 summaries (`providers/` unchanged) |
+| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qr-float-ieee-lean/gate.json` | MATRIX_EXIT | |
+| docs index | `python3 scripts/build_docs_index.py` | INDEX_EXIT | |
+| Python | `python3 -m unittest discover -s scripts/tests` | PYTHON_EXIT | PYTHON_COUNT (after the matrix) |
+| ledger | `python3 docs/reports/w48-qr-float-ieee-lean/apply_ledger.py` (twice) | 0, 0 | 649 → 650, then 650 → 650 |
+
+Run 1 (at `61a06930`, logs `private/w48-qr-float-ieee-lean/gate-run1/`) is
+retained and discarded: clippy 101 (`clippy::redundant_locals` in the new
+test, fixed) and the provider suite 101 (two `QP006` provider timeouts in
+`configured_source_contract` while this card ran `cargo clippy` and
+`cargo test` beside it); every other step 0. Exits in [gate/](gate/), record
+in [gate.json](gate.json). No corpus arbiter: nothing on a corpus path
+changed.
 
 ## Follow-ups
 

@@ -1,0 +1,28 @@
+{
+ "command": "python3 scripts/check_lean_audits.py",
+ "host_cpus": 16,
+ "script": "docs/reports/w48-qr-float-ieee-lean/time_lean_audits.sh (cold removes proof/.lake/build first; the base's cold run started without a .lake directory)",
+ "before": {
+  "commit": "d11179c9",
+  "cold_wall_s": 71.57,
+  "cold_lean_build_s": 59.7,
+  "warm_wall_s": 9.21,
+  "audits": 250
+ },
+ "after": {
+  "commit": "a2c4031a",
+  "cold_wall_s": 83.45,
+  "cold_lean_build_s": 73.1,
+  "warm_wall_s": 9.84,
+  "audits": 251,
+  "module_build_s_cold": {
+   "QCore.Ieee754": 5.0,
+   "QCore.Ieee754Round": 7.2,
+   "QCore.Ieee754Ops": 1.0,
+   "QCore.Ieee754Vectors32": 16,
+   "QCore.Ieee754Vectors64": 16
+  },
+  "AuditIeee754_s": 0.3
+ },
+ "development_measurement": "With Nat.log2 in the model (before ilog2), `lake build QCore.Ieee754Vectors64` alone took 170.95 s and QCore.Ieee754Vectors32 21.22 s; measured once, not a gate figure."
+}

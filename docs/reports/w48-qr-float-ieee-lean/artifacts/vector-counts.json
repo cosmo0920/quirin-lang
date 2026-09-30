@@ -1,0 +1,34 @@
+{
+ "generator": "compiler/tests/float_ieee_vectors.rs (pins these counts)",
+ "operands_per_type": 30,
+ "binary32": {
+  "arith_rows": 900,
+  "arith_results": 3600,
+  "neg": 30,
+  "cmp_rows": 900,
+  "cmp_results": 5400,
+  "ofInt": 77,
+  "toInt_rows": 42,
+  "toInt_results": 420,
+  "convert_to_binary64": 42,
+  "rows": 1991,
+  "results": 9569
+ },
+ "binary64": {
+  "arith_rows": 900,
+  "arith_results": 3600,
+  "neg": 30,
+  "cmp_rows": 900,
+  "cmp_results": 5400,
+  "ofInt": 77,
+  "toInt_rows": 43,
+  "toInt_results": 430,
+  "convert_to_binary32": 59,
+  "effects": 6,
+  "rows": 2009,
+  "results": 9596
+ },
+ "total_rows": 4006,
+ "total_results": 19171,
+ "disagreements": 0
+}
