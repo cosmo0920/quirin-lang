@@ -95,6 +95,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg08-casts-and-type-queries](cg08-casts-and-type-queries/README.md) | CG08-CASTS-AND-TYPE-QUERIES: casts as representations and type-query operands |
 
+| [cg09-typed-source-control](cg09-typed-source-control/README.md) | CG09-TYPED-SOURCE-CONTROL: route T's control statements, admitted per consumer |
+
 | [cg10-bound-untracked-roots](cg10-bound-untracked-roots/README.md) | CG10-BOUND-UNTRACKED-ROOTS |
 
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
