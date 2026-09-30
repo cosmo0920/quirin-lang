@@ -1052,6 +1052,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-typed-root-declaration-reader](w47-typed-root-declaration-reader/README.md) | W47-TYPED-ROOT-DECLARATION-READER |
 
+| [w48-callee-closure-r3](w48-callee-closure-r3/README.md) | W48-CALLEE-CLOSURE-R3: every blocking callee ranked, two libc facts declared |
+
 | [w48-qr-c-struct-import](w48-qr-c-struct-import/README.md) | W48-QR-C-STRUCT-IMPORT: importing a C struct into `.qr` |
 
 | [w48-qr-closures](w48-qr-closures/README.md) | W48-QR-CLOSURES: closures that capture into concurrent workers |
