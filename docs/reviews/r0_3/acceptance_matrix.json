@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 625
+  "named_followups": 631
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "R6 integration onto main 3e69322c (CG06-VALUE-CONNECTIVES-AND-CONDITIONAL, C gateway only; the only shared code file proof/QCore.lean auto-merged) as integrate/w48-r6 171d363e, ledger 625. TARGETED CHECK (logs private/w48-int-r6/targeted-171d363e): fmt, workspace clippy --locked 0; gateway tests 2,029 passed, 0 failed, 7 ignored; the scalar/loop/buffer/payload/epoch/F02/composed/Werror test binaries 194 passed; 243 Lean audits; provider tests --locked --no-fail-fast 129/0/1; provider clippy, package build, 5 verifies 0. Card gate at base 8a378bf3: W48-QR-SCALAR-TYPES-R6 card gate (base 8a378bf3), script private/w48-r6/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-r6/gate: submodule (--init --recursive) 0; the first run at 7b0fff4a had tests 0 and clippy 101 (two lints in the new code, fixed at b1410565), so fmt, clippy and the whole test suite were rerun at b1410565: fmt 0; run_test_binaries.py 383 units, 396 summaries, 6,745 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260929T215155Z-3081128/summary.json; the first run at 7b0fff4a gave the same totals), no load-sensitive rerun needed; clippy 0; both reevaluation probes 0; check_lean_audits.py 242 audits passed (238 + AuditScalarPayloads.lean 15, AuditScalarEpochTasks.lean 7, AuditTaskTraceFixedOutcomes.lean 12, AuditScalarComposedString.lean 8); the provider suite, run as the brief asks although providers/ is unchanged: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries), provider fmt 0, provider clippy 0. Matrix, docs index and Python after the ledger (631 -> 627). Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit from b1410565): resource-diagnostics.json 8642ec02..., matching the base's archived AFTER (CG05-NESTED-CALL-EFFECTS on the merged base, 567 / 10 / 4,257; only the prefix is archived), sidecars byte-identical. Exits in gate/.",
-  "workspace_tests": 6745,
+  "note": "W48-QR-C-STRUCT-IMPORT card gate (base 96764798), script private/w48-c1/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-c1/gate, run at 68f5ebf0 (later commits move records only): submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 385 units, 398 summaries, 6,781 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T022905Z-3407117/summary.json), no load-sensitive rerun needed; clippy 0 (a pre-gate clippy at b5f140e7 exited 101 on two lints in the new code, too_many_arguments and type_complexity, fixed at 68f5ebf0 before the gate ran); both reevaluation probes 0; check_lean_audits.py 244 audits passed (243 + AuditFfiStructImport.lean, 16 theorems). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway so this record carries a measured count: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries), provider fmt 0, provider clippy 0. Matrix, docs index and Python (365 tests OK) after the ledger (625 -> 631); matrix and docs index rerun after the counts were recorded, then Python again. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit): resource-diagnostics.json c012e785..., 586 Safe / 10 Unsafe / 4,238 Unknown, matching the base archive (CG06-VALUE-CONNECTIVES-AND-CONDITIONAL AFTER; only the prefix is archived), sidecars byte-identical. Exits in gate/.",
+  "workspace_tests": 6781,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 243,
+  "lean_audits": 244,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6848,6 +6848,7 @@
    "AuditEventCompositionContext.lean",
    "AuditEventPayloadBoundary.lean",
    "AuditExternCall.lean",
+   "AuditFfiStructImport.lean",
    "AuditFixedScalarQuery.lean",
    "AuditFrameHelperTask.lean",
    "AuditGenericNames.lean",
@@ -7009,7 +7010,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-scalar-types-r6/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-c-struct-import/gate.json)"
  },
  "named_followups": [
   {

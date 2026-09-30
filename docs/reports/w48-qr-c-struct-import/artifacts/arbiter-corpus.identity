@@ -1,0 +1,9 @@
+W48-QR-C-STRUCT-IMPORT corpus arbiter, AFTER only (base 96764798, code at 68f5ebf0)
+command: QCORE_TYPED_PATH_PARITY=private/w48-c1/arbiter/parity.jsonl python3 scripts/run_pinned_audit.py private/w48-c1/arbiter 66910c10 --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 --jobs 8
+exit: 0
+quirin-audit (release) sha256: 34d43a106af4446a665f5348a457d7ec1eabab8356fa2b5eda73f908fd4dec3c
+resource-diagnostics.json sha256: c012e78506cdb4ca0727ce377e49a516f7b07dcc642181e04863b7eb397b1440
+  functions: 586 Safe / 10 Unsafe / 4,238 Unknown
+  base archive: CG06-VALUE-CONNECTIVES-AND-CONDITIONAL's AFTER, `c012e785…`, 586 / 10 / 4,238 (only the 8-hex prefix is archived, in its README): matches
+resource-diagnostics.chunk-contracts.json sha256: cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484 (identical to every archive since W48-QR-SCALAR-TYPES-R3)
+monkey-source.json sha256: 57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11 (identical to every archive since W48-QR-SCALAR-TYPES)

@@ -122,15 +122,63 @@ test replays the join-keeps-the-assumption property over every value.
 
 ## Prediction and outcome
 
-GATE_TABLE_PLACEHOLDER
+| Measure | Predicted | Outcome |
+|---|---|---|
+| census of the card's spellings in 632 tracked files | 0 each, no word reserved, 99% | **0 each**, none reserved |
+| fixture freeze AFTER vs BEFORE | byte-identical, new files only, 80% | **632 / 632 byte-identical**; the two new files are the only entries (a first AFTER freeze caught the marker gate refusing the new `.qv`, fixed before the gate — see Corrections) |
+| existing tests changed | none but constructions, 70% | **none** changed; 25 tests added (23 in `ffi_struct_import.rs`, 1 CLI, 1 verdict unit) |
+| real-library example × 3 builds under `-Werror -pedantic` | clean, 0 reports, 75% | **clean**, exit 0, both streams equal, **0** reports |
+| drifted header after checking | the build refuses, 90% | **refuses**, all three drifts |
+| negative controls | each refused, 85% | **each refused**, each a test row |
+| Lean | one module, ~10–15 theorems, 80% | one module, **16** theorems, 244 audits pass |
+| corpus arbiter | CG06's AFTER `c012e785…`, 586 / 10 / 4,238, 95% | **matches**: `c012e785…`, 586 / 10 / 4,238 |
+| standing gate first run | green, new tests only, 60% | **green** at the first gate run; a pre-gate clippy had flagged two lints, fixed first |
+| items | 1 (90%), 2 (75%), 3 (65%), 4 (55%), 5 (60%) | **all five** |
+
+Not predicted: the offset comparison had to be defined as layout order, since
+decision 3 forbids a hand-written offset (Decisions, row 3); and the marker gate
+had to move to the driver (Corrections).
 
 ## Gate
 
-GATE_PLACEHOLDER
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 385 units, 398 summaries; **6,781 passed, 0 failed, 11 ignored** (`private/test-binaries/20260930T022905Z-3407117/summary.json`); no load-sensitive rerun needed |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | a pre-gate run at `b5f140e7` exited 101 on `too_many_arguments` (`ffi::scalar_operand`) and `type_complexity` (`ffi_layout::parse_layout`), fixed at `68f5ebf0` |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **244 audits** (243 + `AuditFfiStructImport.lean`) |
+| arbiter | `run_pinned_audit.py` (below) | 0 | |
+| provider tests | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | **129 passed, 0 failed, 1 ignored** (43 summaries) — `providers/` is unchanged; run so the record carries a measured count |
+| provider fmt / clippy | `cargo fmt --manifest-path providers/Cargo.toml --all -- --check`; `cargo clippy --manifest-path providers/Cargo.toml --workspace --all-targets --locked --offline -- -D warnings` | 0 / 0 | |
+| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qr-c-struct-import/gate.json` | 0 | after the ledger, 625 → 631 |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | **365 tests OK** (after the matrix regeneration) |
+| clean | `cargo clean --profile dev` | 0 | |
+
+Exits in [gate/](gate/), record in [gate.json](gate.json); logs under
+`private/w48-c1/gate/` of this worktree. The gate ran at `68f5ebf0`; later
+commits move records only. The AFTER fixture freeze was taken with the debug
+`quirin` built from that code (`9e79e171…`). Clang 21.1.8 recorded in this
+worktree ([gate/clang-version.txt](gate/clang-version.txt)). The base's full
+test count was not remeasured; this card adds 25 tests.
 
 ## Corpus arbiter
 
-ARBITER_PLACEHOLDER
+`QCORE_TYPED_PATH_PARITY=OUT/parity.jsonl python3 scripts/run_pinned_audit.py
+OUT 66910c10 --inputs-root …/build/cycle19 --jobs 8`, AFTER only, with this
+card's release `quirin-audit` (`34d43a10…`, built from `68f5ebf0`): exit 0.
+`resource-diagnostics.json` sha256 `c012e78506cdb4ca…`, **586 Safe / 10
+Unsafe / 4,238 Unknown**, matches the base's current archive — CG06's AFTER
+(`c012e785…`, 586 / 10 / 4,238; only the 8-hex prefix is archived) — and the
+sidecars `resource-diagnostics.chunk-contracts.json` (`cbbcfd9c…`) and
+`monkey-source.json` (`57acfc58…`) are byte-identical to every archive since
+card 0 ([identity](artifacts/arbiter-corpus.identity)). No C-audit path moved:
+the contract loader's only change for an unmarked declaration is a message for a
+spelling no tracked contract has, and a marked declaration occurs in no
+provider.
 
 ## Follow-ups
 
@@ -166,6 +214,6 @@ adjacent `[`/`]`.
 * [`census_ffi_spelling.py`](census_ffi_spelling.py) — the constraint-14 census.
 * Card 0's `freeze_fixtures.py` and `compare_fixtures.py`, unchanged.
 * [`apply_ledger.py`](apply_ledger.py) — applies `followups.json`, idempotently.
-* The native summary: `QCORE_W48_FFI_NATIVE_SUMMARY=native-ffi.json cargo test
-  -p qcore-compiler --test ffi_struct_import the_example_runs` (written under
-  `compiler/`, then moved to `artifacts/`).
+* The native summary: `QCORE_W48_FFI_NATIVE_SUMMARY=<absolute path of artifacts/native-ffi.json> cargo test
+  -p qcore-compiler --test ffi_struct_import the_example_runs`.
+

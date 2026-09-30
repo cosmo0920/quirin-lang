@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-C-STRUCT-IMPORT card gate (base 96764798), script private/w48-c1/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-c1/gate, run at 68f5ebf0 (later commits move records only): submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 385 units, 398 summaries, 6,781 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T022905Z-3407117/summary.json), no load-sensitive rerun needed; clippy 0 (a pre-gate clippy at b5f140e7 exited 101 on two lints in the new code, too_many_arguments and type_complexity, fixed at 68f5ebf0 before the gate ran); both reevaluation probes 0; check_lean_audits.py 244 audits passed (243 + AuditFfiStructImport.lean, 16 theorems). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway so this record carries a measured count: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries), provider fmt 0, provider clippy 0. Matrix, docs index and Python (365 tests OK) after the ledger (625 -> 631); matrix and docs index rerun after the counts were recorded, then Python again. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit): resource-diagnostics.json c012e785..., 586 Safe / 10 Unsafe / 4,238 Unknown, matching the base archive (CG06-VALUE-CONNECTIVES-AND-CONDITIONAL AFTER; only the prefix is archived), sidecars byte-identical. Exits in gate/.",
+  "workspace_tests": 6781,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 244,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
