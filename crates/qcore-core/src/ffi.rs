@@ -596,8 +596,7 @@ fn literal_at(value: &FfiValue, ty: ScalarType, target: &RecordedTarget) -> Opti
 /// An operand at a scalar position of type `ty`: its number, if determined.
 fn scalar_operand(
     index: usize,
-    code_type: &'static str,
-    code_range: &'static str,
+    (code_type, code_range): (&'static str, &'static str),
     value: &FfiValue,
     ty: ScalarType,
     what: &str,
@@ -677,8 +676,7 @@ fn record_fields(
         }
         let number = scalar_operand(
             index,
-            "Q052",
-            "Q053",
+            ("Q052", "Q053"),
             value,
             field.ty,
             &format!("field `{name}`"),
@@ -834,8 +832,7 @@ pub fn check_ffi_program(program: &FfiProgram) -> Result<FfiCertificate, Vec<Ffi
                             FfiType::Scalar(scalar) => {
                                 scalar_operand(
                                     index,
-                                    "Q024",
-                                    "Q024",
+                                    ("Q024", "Q024"),
                                     argument,
                                     *scalar,
                                     &format!("parameter `{parameter}` of `{callee}`"),

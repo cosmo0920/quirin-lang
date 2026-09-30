@@ -133,12 +133,13 @@ fn inner(node: &Value) -> &[Value] {
         .map_or(&[], Vec::as_slice)
 }
 
+/// One record's layout as the dump states it: `(name, offset)` of each direct
+/// member in order, the size and the alignment.
+type DumpedLayout = (Vec<(String, u64)>, u64, u64);
+
 /// Direct members of `struct TAG` from Clang's record-layout dump:
 /// `(name, offset)` in order, and `(size, align)`.
-fn parse_layout(
-    dump: &str,
-    tag: &str,
-) -> Result<(Vec<(String, u64)>, u64, u64), LayoutReadRefusal> {
+fn parse_layout(dump: &str, tag: &str) -> Result<DumpedLayout, LayoutReadRefusal> {
     let header = format!("struct {tag}");
     let mut found = None;
     for section in dump.split("*** Dumping AST Record Layout").skip(1) {
