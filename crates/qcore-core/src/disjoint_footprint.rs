@@ -1502,7 +1502,13 @@ pub fn check_disjoint_footprint_program(
                 bytes,
                 may_overlap,
             } => {
-                let target = resolve_live(index, *destination, &handles, &allocations, &mut diagnostics);
+                let target = resolve_live(
+                    index,
+                    *destination,
+                    &handles,
+                    &allocations,
+                    &mut diagnostics,
+                );
                 let origin = resolve_live(index, *source, &handles, &allocations, &mut diagnostics);
                 let (Some(target), Some(origin)) = (target, origin) else {
                     continue;
@@ -1560,9 +1566,13 @@ pub fn check_disjoint_footprint_program(
             }
 
             FootprintEvent::ByteFill { destination, bytes } => {
-                let Some(target) =
-                    resolve_live(index, *destination, &handles, &allocations, &mut diagnostics)
-                else {
+                let Some(target) = resolve_live(
+                    index,
+                    *destination,
+                    &handles,
+                    &allocations,
+                    &mut diagnostics,
+                ) else {
                     continue;
                 };
                 if byte_range(index, *destination, target, *bytes, &mut diagnostics).is_none() {

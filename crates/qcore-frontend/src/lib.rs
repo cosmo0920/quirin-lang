@@ -26,6 +26,7 @@ pub mod source_ffi;
 pub mod source_http;
 pub mod source_loop;
 pub mod source_mutex;
+pub mod source_mutex_footprint;
 pub mod source_record;
 pub mod source_region;
 pub mod source_resource_calls;

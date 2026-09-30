@@ -216,6 +216,18 @@ Q058 remains Event-owned. This adds one condition-extension instance on the
 existing ordinary/buffer bands, no band or code; the preceding historical
 tallies retain their checkpoint scope. Canonical meanings are in §L21.
 
+### CG18-FOOTPRINT-CONNECTION amendment
+
+The footprint band `Q650`–`Q667` gains new routes to eight conditions it
+already owns, and no code: `Q650` (a zero-byte transfer), `Q652`/`Q655` (a
+view or byte transfer naming a retired or unknown handle), `Q653` (a byte
+count past its handle), `Q659` (a view or byte transfer over a bit-field unit
+or a descriptor), `Q662` (a `memcpy` or a mutex-invariant composition across
+two allocations not both declared fresh), `Q665` (a composed mutex interval no
+live handle derives) and `Q667` (a punned view, an overlapping `memcpy`). One
+condition-extension instance on one band not counted in the carried ten; the
+historical tallies above keep their checkpoint scope. Canonical text: §L21.
+
 ### Contract inclusion namespace (`QI`)
 
 Card `CONTRACT-INHERIT` opens `QI001`–`QI020`, owned by the contract loader

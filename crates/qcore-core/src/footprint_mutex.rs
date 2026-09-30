@@ -40,9 +40,8 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::concurrency::{AccessFootprint, ConcurrencyAssumption};
 use crate::disjoint_footprint::{
-    AllocationId, DerivedFootprint, FootprintAssumption, FootprintCertificate,
-    FootprintDiagnostic, FootprintExport, FootprintProgram, HandleId,
-    check_disjoint_footprint_program,
+    AllocationId, DerivedFootprint, FootprintAssumption, FootprintCertificate, FootprintDiagnostic,
+    FootprintExport, FootprintProgram, HandleId, check_disjoint_footprint_program,
 };
 use crate::mutex_invariant::{
     MutexInvariantCertificate, MutexInvariantDiagnostic, MutexInvariantEvent,

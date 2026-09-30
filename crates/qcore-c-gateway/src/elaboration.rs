@@ -321,8 +321,36 @@ impl EvalGraph {
     /// Refuse the graph unless every pair the closure leaves unordered
     /// commutes. A pair is checked once, in event order; two events in the two
     /// arms of one branch region never both occur and are not a pair.
+    #[allow(
+        dead_code,
+        reason = "the pre-CG18 check, read by the tests; elaborate asks check_with"
+    )]
     pub(crate) fn check(&self, unaliased: &dyn Fn(&str) -> bool) -> Result<(), Refusal> {
+        self.check_with(unaliased, &|_, _| false)
+    }
+
+    /// Card CG18-FOOTPRINT-CONNECTION (rule 11k): [`Self::check`], where an
+    /// unordered pair of two **path** places that [`commutes`] leaves as an
+    /// overlap commutes when `paths_disjoint` decides the two places disjoint
+    /// (the route asks the core footprint model). Every other pair, and every
+    /// pair it declines, is decided exactly as by [`Self::check`], which is
+    /// this method with a decider that declines everything.
+    pub(crate) fn check_with(
+        &self,
+        unaliased: &dyn Fn(&str) -> bool,
+        paths_disjoint: &dyn Fn(&str, &str) -> bool,
+    ) -> Result<(), Refusal> {
         debug_assert!(self.before.iter().all(|(a, b)| a < b));
+        let path = |event: &Event| {
+            matches!(
+                event,
+                Event::Read(Place::Path { .. })
+                    | Event::Write {
+                        place: Place::Path { .. },
+                        ..
+                    }
+            )
+        };
         for a in 0..self.events.len() {
             for b in a + 1..self.events.len() {
                 if self.sequenced(a, b) || self.excluded(a, b) {
@@ -333,6 +361,10 @@ impl EvalGraph {
                     Commutation::Conflict(place) => {
                         return Err(Refusal::UnsequencedConflict(place));
                     }
+                    Commutation::Overlap(one, other)
+                        if path(&self.events[a])
+                            && path(&self.events[b])
+                            && paths_disjoint(&one, &other) => {}
                     Commutation::Overlap(one, other) => {
                         return Err(Refusal::NotDisjoint(one, other));
                     }
@@ -691,6 +723,13 @@ pub(crate) trait Context {
     fn shared_bitfield_unit(&self, _node: &Value, _one: &str, _other: &str) -> Option<u32> {
         None
     }
+    /// Card CG18-FOOTPRINT-CONNECTION (rule 11k): whether the unordered path
+    /// places `one` and `other` of `node` provably share no storage, decided
+    /// by the core footprint model. The default declines, which keeps the
+    /// [`Refusal::NotDisjoint`] refusal.
+    fn disjoint_places(&self, _node: &Value, _one: &str, _other: &str) -> bool {
+        false
+    }
     /// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): whether the pointer value
     /// `node` provably carries no resource identity, so its conversion to an
     /// integer is data rather than an escape. The default refuses.
@@ -721,7 +760,9 @@ pub(crate) fn elaborate<C: Context>(
     };
     elaborator
         .graph
-        .check(&|decl| context.unaliased(decl))
+        .check_with(&|decl| context.unaliased(decl), &|one, other| {
+            context.disjoint_places(node, one, other)
+        })
         .map_err(|refusal| match refusal {
             // Card CG13 (rule 10w): name a bit-field pair of one unit.
             Refusal::NotDisjoint(one, other) => {

@@ -2767,3 +2767,89 @@ own anchor here.
     `commutes` by shared-vector tests and to route G by
     `tests/cg07_statement_expressions.rs`;
     [report](../reports/cg07-generic-and-statement-expressions/README.md).
+
+<a id="constraint-11k"></a>
+
+11k. **Two places are disjoint only by the core footprint model's decision:
+    two members of one struct object, from Clang's layout; nothing across two
+    objects; every footprint premise named where it is taken.** Card
+    CG18-FOOTPRINT-CONNECTION (`footprint_connection.rs`, additive items in
+    `elaboration.rs` (`Context::disjoint_places`, default declining, and
+    `EvalGraph::check_with`, of which `check` is the declining case), a thin
+    hook in `legacy_elaboration.rs`; the core's `disjoint_footprint.rs` and
+    new `footprint_mutex.rs`, and `qcore_frontend::source_mutex_footprint`).
+    It amends rule 10s's path-pair refusal and rule 10w's (3) (CG13 left
+    every field pair refused for this card); every other refusal of theirs
+    stands. (1) **Member pairs** (M20/M21). An unordered write/write or
+    write/read pair of two *path* places is admitted when both lie, by their
+    own structure (only `.` member steps and parentheses above the step), in
+    two different members of one `struct` object whose base expression is the
+    same on both sides **structurally** (Clang kinds, declarations, member
+    steps, literal values; never the place spelling, which erases indices),
+    and the core model admits `AssertDisjoint` on the two members' field
+    handles of one allocation generation under a two-member layout contract
+    read from Clang's `-fdump-record-layouts-complete` (an ordinary member
+    spans to the next member's first byte, a superset; a bit-field spans the
+    bytes of its bits). A union member, an anonymous member, an unnamed or
+    unread record, a subscript, `*` or `->` above the step, one member on
+    both sides, two bit-fields of one C11 unit (CG13's `Q661`) and two
+    different base objects refuse. (2) **Across objects** (M21). No route
+    assumes two allocation identities disjoint: the core refuses them
+    (`Q662`) unless both live generations were declared fresh
+    (`DeclareFreshAllocation`), and then its certificate names
+    `P-DISTINCT-ALLOCATIONS-DISJOINT`; route G takes no allocator premise,
+    so `s->a = t->b++` stays refused. (3) **Types** (M22). A core view is a
+    character view (no premise), an effective-type view
+    (`P-EFFECTIVE-TYPE`) or a punned view, refused as `TypePunnedAlias`
+    (`Q667`), as CG13 refuses a punned pointer read. Route G reads a punned
+    scalar load as custody-neutral under constraint 10a's no-undefined-
+    behaviour reading and claims no effective-type result; route T keeps
+    refusing `restrict`, and no route derives disjointness from it
+    (`P-RESTRICT` is relied on nowhere). (4) **Bytes** (M26). The core's
+    `ByteCopy`/`ByteFill` check `memcpy`/`memmove`/`memset` ranges (inside
+    both handles, `Q653`; a `memcpy` whose ranges share a byte stays the
+    excluded `OverlappingCopy`, `Q667`), for a property that claims byte
+    safety only; every custody contract of these calls is unchanged, and
+    each admitted transfer names `P-BYTE-REPRESENTATION`: its bytes are read
+    back only through an lvalue they validly represent. That is the premise
+    `W43-INDIRECT-BYTE-STORE-REPRESENTATION-PREMISE` names for a
+    character-typed store, the same one the Borrowed `memset`/`memcpy`
+    declarations rest on (W43-LIBC-RESULT-ALIAS), under "the ordinary C
+    object model under the no-undefined-behaviour reading" of rule 10a
+    (`AOM-POISON-NO-UB`). (5) **Generations** (M20). Rule 11a's current and
+    previous identities of a site are two core allocations, its older
+    summary has none, and a reallocation is the core's `Reallocate` (every
+    earlier handle stale, `Q652`, as the flow's `UnknownAlias`); the
+    correspondence is checked by a replay against the core checker, and no
+    liveness check of the flow changes. (6) **Mutex invariants** (W08).
+    `compose_footprints_with_mutex_invariant` admits a checked mutex trace
+    only when every interval it names is exactly a live derived handle's
+    export (else `Q665`) and every pair of two resources has both declared
+    fresh (else `Q662`); it then drops `DeclaredFootprintShape` for the
+    footprint premises. `source.mutex.guard.v1` reaches it without changing
+    its own certificate; no C route has mutex-invariant evidence, so a C
+    field update claims no lock invariant. **Do not** admit a pair by its
+    spelling, through a subscript, a dereference or `->` above the diverging
+    member, across two base objects, or through a union member; do not treat
+    two allocation identities as disjoint without both freshness
+    declarations, admit a punned view, drop `OverlappingCopy`, or drop
+    `DeclaredFootprintShape` while any interval stays declared; do not
+    consult the hook before an older route of the position (hard invariant
+    3). Parity runs record each consultation (`position:
+    "footprint-member-pair"`, the pair and its decision). Premises stated,
+    not proved: faithful Clang extraction of member steps, record types and
+    layouts (trust boundary 28), and the three named core premises where a
+    certificate carries them. MEASURED. `QCore.DisjointFootprint`'s CG18
+    section (`without_the_premise_nothing_changes`,
+    `cross_allocation_disjointness_needs_the_premise`,
+    `an_admitted_judgement_is_grounded_or_premised`,
+    `a_punned_view_is_refused`, `an_admitted_view_names_its_premise`,
+    `an_admitted_memcpy_shares_no_byte`,
+    `a_cross_allocation_memcpy_needs_the_premise`,
+    `composition_backs_every_mutex_disjointness`,
+    `two_generations_of_a_site_are_not_assumed_disjoint`,
+    `the_previous_generation_is_the_former_current`,
+    `the_summary_has_no_footprint`), bound to `PAIR_VECTORS`,
+    `COPY_VECTORS` and the replay's generation vectors by shared-vector
+    tests and to route G by `tests/footprint_connection.rs`;
+    [report](../reports/cg18-footprint-connection/README.md).

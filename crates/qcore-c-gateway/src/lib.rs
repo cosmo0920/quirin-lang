@@ -60,6 +60,9 @@ mod loop_generations;
 // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): partial field links
 // and the settled-exit floor; the G hooks are in `legacy_field_link_join.rs`.
 mod field_link_join;
+// Card CG18-FOOTPRINT-CONNECTION (rule 11k): source places connected to the
+// core footprint model; the elaborator hook is in `legacy_elaboration.rs`.
+mod footprint_connection;
 mod nested_call_effects; // CG05-NESTED-CALL-EFFECTS (rule 10y); G hook in legacy_nested_call.rs
 // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o).
 mod legacy_summary;
