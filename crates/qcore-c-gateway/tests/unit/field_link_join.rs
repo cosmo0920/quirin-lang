@@ -38,10 +38,15 @@ fn link(code: &str) -> Link {
 
 fn status(tracked: bool, live: bool, released: bool, escaped: bool, contained: bool) -> Option<u8> {
     tracked.then(|| {
-        u8::from(live) * LIVE
-            | u8::from(released) * RELEASED_BIT
-            | u8::from(escaped) * ESCAPED
-            | u8::from(contained) * CONTAINED_BIT
+        [
+            (live, LIVE),
+            (released, RELEASED_BIT),
+            (escaped, ESCAPED),
+            (contained, CONTAINED_BIT),
+        ]
+        .into_iter()
+        .filter(|(set, _)| *set)
+        .fold(0, |bits, (_, bit)| bits | bit)
     })
 }
 
