@@ -43,10 +43,10 @@ fn the_step_vectors_hold() {
     for &(
         (
             present,
-            previous_owes,
+            previous_live,
             previous_held,
             previous_unresolved,
-            older_owes,
+            older_live,
             older_held,
             older_unresolved,
         ),
@@ -55,10 +55,10 @@ fn the_step_vectors_hold() {
     {
         let step = decide(Earlier {
             present,
-            previous_owes,
+            previous_live,
             previous_held,
             previous_unresolved,
-            older_owes,
+            older_live,
             older_held,
             older_unresolved,
         });
@@ -66,34 +66,43 @@ fn the_step_vectors_hold() {
     }
 }
 
-/// Every one of the 128 inputs: refused exactly when an owed obligation meets
-/// a holder or an unresolved effect; fresh exactly when absent.
+/// Every one of the 128 inputs: refused exactly when a possibly-live summary
+/// meets a holder, or one possibly-live side meets the other's unresolved
+/// effect; fresh exactly when absent; and monotone in every input.
 #[test]
-fn the_decision_is_total_and_refuses_only_an_exposed_owed_summary() {
-    for bits in 0u8..128 {
+fn the_decision_is_total_monotone_and_refuses_only_an_exposed_live_summary() {
+    let earlier = |bits: u8| {
         let bit = |index: u8| bits & (1 << index) != 0;
-        let earlier = Earlier {
+        Earlier {
             present: bit(0),
-            previous_owes: bit(1),
+            previous_live: bit(1),
             previous_held: bit(2),
             previous_unresolved: bit(3),
-            older_owes: bit(4),
+            older_live: bit(4),
             older_held: bit(5),
             older_unresolved: bit(6),
-        };
-        let owed = earlier.previous_owes || earlier.older_owes;
-        let exposed = earlier.previous_held
-            || earlier.older_held
-            || earlier.previous_unresolved
-            || earlier.older_unresolved;
-        let expected = if !earlier.present {
+        }
+    };
+    for bits in 0u8..128 {
+        let e = earlier(bits);
+        let exposed = ((e.previous_live || e.older_live) && (e.previous_held || e.older_held))
+            || (e.previous_live && e.older_unresolved)
+            || (e.older_live && e.previous_unresolved);
+        let expected = if !e.present {
             Step::Fresh
-        } else if owed && exposed {
+        } else if exposed {
             Step::ShiftRefused
         } else {
             Step::Shift
         };
-        assert_eq!(decide(earlier), expected, "{earlier:?}");
+        assert_eq!(decide(e), expected, "{e:?}");
+        // Monotone: adding any input bit never withdraws a refusal.
+        for more in 0u8..7 {
+            let grown = earlier(bits | (1 << more));
+            if decide(e) == Step::ShiftRefused {
+                assert_eq!(decide(grown), Step::ShiftRefused, "{e:?} -> {grown:?}");
+            }
+        }
     }
 }
 

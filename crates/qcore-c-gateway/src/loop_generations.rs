@@ -29,11 +29,12 @@
 //! generation.
 //!
 //! The merge into the summary is refused ([`Step::ShiftRefused`], `Unknown`)
-//! when the merged summary may owe an obligation and either a place that can
-//! later update it without an unknown binding still holds it (an aggregate
-//! edge: a field link or a containment; a pending reallocation; a
-//! publication into a container; an out slot), or the other side of the
-//! merge carries an unresolved effect, which would hide the obligation. An
+//! when the merged summary may be live and a place that can later update it
+//! without an unknown binding still holds it (an aggregate edge: a field
+//! link or a containment; a pending reallocation; a publication into a
+//! container; an out slot), or when one side may be live and the other
+//! carries an unresolved effect, which would hide it once merged. Every input
+//! of the decision only grows with the state, so it is monotone. An
 //! unknown binding refuses every custody effect through it on its own, so a
 //! binding that still names the summary needs no refusal here: either the
 //! program discharges through it later (refused there) or it never does, and
@@ -99,21 +100,22 @@ pub(crate) const fn is_summary(identity: usize) -> bool {
 }
 
 /// What the flow knows, at a node that acquires a site, about that site's
-/// earlier generations in the state the node runs in.
+/// earlier generations in the state the node runs in. Every field only grows
+/// as the state grows (a status bit, a holder, an unresolved effect), so the
+/// decision is monotone and the settled state decides as every iterate did.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct Earlier {
     /// The site is present: an earlier generation reaches this node, so the
     /// node lies on a CFG cycle.
     pub(crate) present: bool,
-    /// The previous generation owes an obligation: it may be live and carries
-    /// no unresolved effect.
-    pub(crate) previous_owes: bool,
+    /// The previous generation may be live.
+    pub(crate) previous_live: bool,
     /// A place other than a local binding holds the previous generation.
     pub(crate) previous_held: bool,
     /// The previous generation carries an unresolved effect.
     pub(crate) previous_unresolved: bool,
-    /// The older summary owes an obligation.
-    pub(crate) older_owes: bool,
+    /// The older summary may be live.
+    pub(crate) older_live: bool,
     /// A place other than a local binding holds the older summary.
     pub(crate) older_held: bool,
     /// The older summary carries an unresolved effect.
@@ -143,15 +145,25 @@ impl Step {
     }
 }
 
-/// The decision for one re-acquisition (`QCore.LoopSiteGenerations.decide`).
+/// The decision for one re-acquisition (`QCore.LoopSiteGenerations.decide`):
+/// refused when the merged summary may be live and a holder could update it
+/// precisely, or when one side may be live and the other's unresolved effect
+/// would hide it once merged.
 pub(crate) const fn decide(earlier: Earlier) -> Step {
-    if !earlier.present {
+    let Earlier {
+        present,
+        previous_live,
+        previous_held,
+        previous_unresolved,
+        older_live,
+        older_held,
+        older_unresolved,
+    } = earlier;
+    if !present {
         Step::Fresh
-    } else if (earlier.previous_owes || earlier.older_owes)
-        && (earlier.previous_held
-            || earlier.older_held
-            || earlier.previous_unresolved
-            || earlier.older_unresolved)
+    } else if ((previous_live || older_live) && (previous_held || older_held))
+        || (previous_live && older_unresolved)
+        || (older_live && previous_unresolved)
     {
         Step::ShiftRefused
     } else {
@@ -159,7 +171,7 @@ pub(crate) const fn decide(earlier: Earlier) -> Step {
     }
 }
 
-/// `(present, previous_owes, previous_held, previous_unresolved, older_owes,
+/// `(present, previous_live, previous_held, previous_unresolved, older_live,
 /// older_held, older_unresolved)` and the step.
 #[cfg(test)]
 pub(crate) type StepVector = ((bool, bool, bool, bool, bool, bool, bool), &'static str);
@@ -175,6 +187,11 @@ pub(crate) const STEP_VECTORS: &[StepVector] = &[
     ((true, true, false, false, true, false, false), "shift"),
     ((true, false, true, false, false, true, false), "shift"),
     ((true, false, false, true, false, false, true), "shift"),
+    ((true, true, false, true, false, false, false), "shift"),
+    (
+        (true, true, false, true, true, false, true),
+        "shift-refused",
+    ),
     (
         (true, true, true, false, false, false, false),
         "shift-refused",

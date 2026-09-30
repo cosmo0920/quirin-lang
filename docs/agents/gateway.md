@@ -2215,13 +2215,16 @@ which is not a second authority.
     name only as the destination of its own integer-carried acquisition; a
     custody result is split only on its own carrier's failure value
     (`carrier`: a pointer's NULL, a descriptor's sentinel); and **no custody
-    split on a node a CFG cycle may pass through** (`placement`: a loop
-    position, a loop body, or a range a backward `goto` closes; an unread
-    extent, an unknown label or `setjmp` makes the whole body a cycle),
-    because the flow keeps one abstract site per acquisition node and a live
-    earlier generation would merge with the fresh one while the refuted
-    failure edge erases both (`CG04-LOOP-SITE-GENERATIONS`, the same defect
-    in the statement form). An owned result discarded, bound but not split, or
+    split on a node a CFG cycle may pass through unless the flow keeps the
+    site's generations apart** (`placement`: a loop position, a loop body, or
+    a range a backward `goto` closes; an unread extent, an unknown label or
+    `setjmp` makes the whole body a cycle). **Amended by
+    `CG04-LOOP-SITE-GENERATIONS` (rule 11a): the flow now indexes sites by
+    generation, so the guard is lifted** (`placement` takes
+    `SITES_ARE_GENERATION_INDEXED`, and refuses only for a flow that does
+    not); a split on a cycle decides as its statement pair, each earlier
+    generation apart, the refuted failure edge removing only the fresh one.
+    An owned result discarded, bound but not split, or
     split on another carrier keeps the refusal. An out-parameter acquisition
     (`if (f(&p) == 0)`) gets no split: no contract states the result/out
     relation (CG23); rule 5h admits the call as before, with the contract's
@@ -2238,8 +2241,8 @@ which is not a second authority.
     asked of the elaborator last. A call-free condition keeps a plan only if
     a typed or elaborated operand was needed (rule 10k's premise, unchanged).
 
-    **Do not** split a custody result on a cycle before
-    `CG04-LOOP-SITE-GENERATIONS` gives the flow generations, apply a call a
+    **Do not** split a custody result on a cycle in a flow without
+    generation-indexed sites (rule 11a), apply a call a
     type operand holds, hoist a condition's call, lower an increment beside a
     call, or widen `TestedSplit` for one consumer (a scalar `return` operand
     reads the same leaf; its split is no custody-neutral exit, so it keeps
@@ -2374,3 +2377,64 @@ which is not a second authority.
     the re-read, order, merge, forms and positions), bound to
     `ADMISSION_VECTORS`, `TRANSPARENT`, the elaborator and route G by
     shared-vector tests; [report](../reports/cg06-value-connectives-and-conditional/README.md).
+
+<a id="constraint-11a"></a>
+
+11a. **A re-acquired site keeps its earlier generations apart: the previous
+    one precisely, every older one in a summary that never discharges.** Card
+    CG04-LOOP-SITE-GENERATIONS (`loop_generations.rs`, the route-G adapter
+    `legacy_loop_generations.rs`, thin hooks in `legacy_c.rs` (the work
+    list, the settled exit pass, `kind_of`, `acquisition_line`) and
+    `legacy_leak_witness.rs`). It amends the flow's acquisition
+    (`create_resource`, `Acquire`, a foreign unlink's element) and lifts rule
+    10x's placement guard.
+
+    (1) **The defect.** The flow names a resource by its acquisition node.
+    A node on a CFG cycle re-inserted the site `LIVE` over a possibly live
+    earlier generation, and a refuted nullable acquisition's failure edge
+    then removed the site, earlier generation included:
+    `for (;;) { p = malloc(n); if (!p) break; use(p); }` and
+    `do { p = malloc(n); if (p) use(p); } while (p);` were `Safe` while every
+    earlier generation leaks. (2) **Generations.** Each site has three
+    identities: *current* (the site), *previous* (`site | 2^29`) and *older*
+    (`site | 2^30`). Current and previous are each one object per execution,
+    so every precise update the flow makes applies to them; older is a
+    summary. (3) **The shift.** Before a node runs (and before the driver's
+    per-node reads), every site it produces that the state already mentions
+    shifts: previous merges into older (statuses, nullability, unresolved
+    effects and aggregate edges joined; every binding that named it becomes
+    unknown, so any custody effect through it refuses; two generations'
+    collection ranges are `Unknown`), current is renamed previous, and the
+    node's own transfer creates a fresh current. A refuted failure edge
+    removes only the fresh current. (4) **Refusal.** The merge is refused
+    (`Unsupported`, the summary unresolved, the path unmodeled) when the
+    merged summary may owe an obligation (live, no unresolved effect) and
+    either an edge that can update it without a binding holds it (a field
+    link, a containment, a pending reallocation, a publication, an out slot
+    the node does not overwrite) or the other side carries an unresolved
+    effect that would hide it (`decide`); a site the tags cannot index
+    refuses. (5) **A refused re-acquiring node** (its transfer reported a
+    path-poisoning diagnostic) leaves a shifted site it did not create
+    present, live and unresolved: the call C ran may have produced it.
+
+    **Do not** let any precise update reach the summary, remove it by a null
+    refinement, exempt it through a binding, or widen it towards
+    "discharged"; do not merge a live generation into a held or unresolved
+    summary without the refusal; do not read a site's kind or line other
+    than through its base. Measured: no corpus, system or slice function
+    re-acquired a site over an owed earlier generation on the base (the
+    census, parity `position: "loop-site-generation"`), so no Safe moved;
+    3 corpus and 2 system functions change leaves only. Premises stated,
+    not proved: that the shift renames every mention of an identity in the
+    state (trust boundary 28) and that every other rule reports a refusal
+    wherever it leaves an identity unresolved (the census
+    `position: "withheld-obligation"` measures where one does not,
+    `B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED`). `QCore.LoopSiteGenerations`
+    (`reacquisition_keeps_the_earlier_obligation`,
+    `the_failure_edge_removes_only_the_new_generation`,
+    `the_summary_never_discharges`, `a_live_summary_is_never_safe`,
+    `for_break_reports_exactly_the_concrete_leak`,
+    `the_one_site_flow_hides_the_leak`), bound to `STEP_VECTORS`,
+    `IDENTITY_VECTORS` and the gateway's verdicts on the pinned shapes
+    (`SHAPE_VECTORS`) by shared-vector tests;
+    [report](../reports/cg04-loop-site-generations/README.md).

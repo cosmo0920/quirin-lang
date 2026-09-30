@@ -422,10 +422,15 @@ fn analyze_k(body: &str) -> Run {
 /// The sibling this card found and registered, pinned as observed
 /// (`B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED`): the B08 join marks a child
 /// linked on one side only as unresolved, which suppresses its leak, but no
-/// diagnostic reports it, so the result is `Safe`. Under P-B08-SHALLOW the
-/// member's child leaks when the owner is released; the straight-line control
-/// reports it. Not a generation defect (the branch form has it too), so it is
-/// not this card's to fix; the follow-up flips these two rows.
+/// diagnostic reports it, so the branch form is `Safe`. Under P-B08-SHALLOW
+/// the member's child leaks when the owner is released; the straight-line
+/// control reports it. Not a generation defect, so it is not this card's to
+/// fix; the follow-up flips the branch row.
+///
+/// The loop form was `Safe` on the base too (every stored generation but the
+/// last is overwritten in the member and leaks). With generations, the live
+/// previous generation meets the summary the join left unresolved, and the
+/// merge refuses (rule 11a): `Unknown`, a correction of this fixture.
 #[test]
 fn the_field_link_join_sibling_is_pinned() {
     if !clang_available() {
@@ -438,22 +443,27 @@ fn the_field_link_join_sibling_is_pinned() {
          k_drop(b); }",
     );
     assert_eq!(straight.status, AnalysisStatus::Unsafe, "{straight:?}");
-    for body in [
+    let branch = analyze_k(
         "void k_chain(int n) { struct k_item *it; struct k_box *b; \
          b = k_make(n); if (!b) return; \
          it = k_take(n); if (!it) { k_drop(b); return; } \
          if (n) { b->item = it; } else { k_release(it); } \
          k_drop(b); }",
+    );
+    assert_eq!(
+        branch.status,
+        AnalysisStatus::Safe,
+        "pinned as observed: {branch:?}"
+    );
+    let looped = analyze_k(
         "void k_chain(int n) { struct k_item *it; struct k_box *b; int i; \
          b = k_make(n); if (!b) return; \
          for (i = 0; i < n; i++) { it = k_take(n); if (!it) break; b->item = it; } \
          k_drop(b); }",
-    ] {
-        let run = analyze_k(body);
-        assert_eq!(
-            run.status,
-            AnalysisStatus::Safe,
-            "pinned as observed: {body}: {run:?}"
-        );
-    }
+    );
+    assert_eq!(looped.status, AnalysisStatus::Unknown, "{looped:?}");
+    assert!(
+        looped.refused("loop re-acquisition: an earlier generation that may be live is still held"),
+        "{looped:?}"
+    );
 }

@@ -1,12 +1,13 @@
 import QCore.LoopSiteGenerations
 
-/-! Audited companion to CG04-LOOP-SITE-GENERATIONS (generation-indexed acquisition sites). -/
+/-! Audited companion to CG04-LOOP-SITE-GENERATIONS (generation-indexed acquisition sites, gateway rule 11a). -/
 
 #print axioms QCore.LoopSiteGenerations.tag_is_two_to_the_29
 #print axioms QCore.LoopSiteGenerations.identity_vectors_hold
 #print axioms QCore.LoopSiteGenerations.generations_name_their_site
 #print axioms QCore.LoopSiteGenerations.step_vectors_hold
-#print axioms QCore.LoopSiteGenerations.refused_iff_owed_and_exposed
+#print axioms QCore.LoopSiteGenerations.refused_iff_live_and_exposed
+#print axioms QCore.LoopSiteGenerations.the_decision_is_monotone
 #print axioms QCore.LoopSiteGenerations.merge_live
 #print axioms QCore.LoopSiteGenerations.shift_live_older
 #print axioms QCore.LoopSiteGenerations.reacquisition_keeps_the_earlier_obligation

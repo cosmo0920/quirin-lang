@@ -116,14 +116,12 @@ fn held(state: &AbstractState, identity: usize, overwritten: &BTreeSet<&str>) ->
         })
 }
 
-/// Whether `identity` owes an obligation: it may be live and carries no
-/// unresolved effect, so an exit it reaches reports its leak.
-fn owes(state: &AbstractState, identity: usize) -> bool {
+/// Whether `identity` may be live.
+fn live(state: &AbstractState, identity: usize) -> bool {
     state
         .resources
         .get(&identity)
         .is_some_and(|status| status & LIVE != 0)
-        && !state.unresolved_effect_sites.contains(&identity)
 }
 
 /// What the node at hand knows about `site`'s earlier generations.
@@ -131,10 +129,10 @@ fn earlier(state: &AbstractState, site: usize, overwritten: &BTreeSet<&str>) -> 
     let (previous, older) = (previous(site), older(site));
     Earlier {
         present: mentioned(state, site),
-        previous_owes: owes(state, previous),
+        previous_live: live(state, previous),
         previous_held: held(state, previous, overwritten),
         previous_unresolved: state.unresolved_effect_sites.contains(&previous),
-        older_owes: owes(state, older),
+        older_live: live(state, older),
         older_held: held(state, older, overwritten),
         older_unresolved: state.unresolved_effect_sites.contains(&older),
     }
@@ -337,10 +335,10 @@ pub(super) fn record_exposure(cfg: &LegacyCfg, incoming: &[Option<AbstractState>
                     !overwritten.contains(name.as_str()) && pointer.targets.contains(&site)
                 }),
                 "nullable": state.nullable_sites.contains(&site),
-                "previous_owes": earlier.previous_owes,
+                "previous_live": earlier.previous_live,
                 "previous_held": earlier.previous_held,
                 "previous_unresolved": earlier.previous_unresolved,
-                "older_owes": earlier.older_owes,
+                "older_live": earlier.older_live,
                 "older_held": earlier.older_held,
                 "older_unresolved": earlier.older_unresolved,
                 "step": if indexable(site) { decide(earlier).code() } else { "not-indexable" },

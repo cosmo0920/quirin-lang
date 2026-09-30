@@ -27,10 +27,11 @@ A re-acquisition (the site is already present) **shifts**: previous is merged
 into older, current becomes previous, and the node creates a fresh current.
 The failure edge of a nullable acquisition removes only the fresh current
 (`the_failure_edge_removes_only_the_new_generation`). The merge is refused
-(`Unknown`) when the merged summary may owe an obligation and either a place
-other than a binding (an aggregate edge, a pending reallocation, a publication,
-an out slot) holds it, which could update the summary precisely, or the other
-side carries an unresolved effect, which would hide the obligation (`decide`).
+(`Unknown`) when the merged summary may be live and a place other than a
+binding (an aggregate edge, a pending reallocation, a publication, an out slot)
+holds it, which could update the summary precisely, or when one side may be
+live and the other carries an unresolved effect, which would hide it (`decide`,
+monotone: `the_decision_is_monotone`).
 A binding to the summary is unknown, and every custody effect through an
 unknown binding refuses on its own.
 
@@ -115,12 +116,13 @@ inductive Step where
   deriving DecidableEq, Repr
 
 /-- `decide`: whether the site is present; then, for previous and for older,
-whether it owes an obligation (may be live, no unresolved effect), whether a
-place other than a binding holds it, and whether it carries an unresolved
-effect. -/
-def decide (present pOwes pHeld pUnresolved oOwes oHeld oUnresolved : Bool) : Step :=
+whether it may be live, whether a place other than a binding holds it, and
+whether it carries an unresolved effect. Every input only grows as the state
+grows, and the formula is positive in each, so the decision is monotone. -/
+def decide (present pLive pHeld pUnresolved oLive oHeld oUnresolved : Bool) : Step :=
   if !present then .fresh
-  else if (pOwes || oOwes) && (pHeld || oHeld || pUnresolved || oUnresolved) then .shiftRefused
+  else if ((pLive || oLive) && (pHeld || oHeld)) || (pLive && oUnresolved)
+      || (oLive && pUnresolved) then .shiftRefused
   else .shift
 
 /-- `STEP_VECTORS` of `loop_generations.rs`, row by row. -/
@@ -133,6 +135,8 @@ def stepVectors : List (Bool × Bool × Bool × Bool × Bool × Bool × Bool × 
   (true, true, false, false, true, false, false, .shift),
   (true, false, true, false, false, true, false, .shift),
   (true, false, false, true, false, false, true, .shift),
+  (true, true, false, true, false, false, false, .shift),
+  (true, true, false, true, true, false, true, .shiftRefused),
   (true, true, true, false, false, false, false, .shiftRefused),
   (true, true, false, false, false, true, false, .shiftRefused),
   (true, false, true, false, true, false, false, .shiftRefused),
@@ -146,11 +150,23 @@ theorem step_vectors_hold :
     stepVectors.all (fun (p, a, b, c, d, e, f, s) => decide p a b c d e f == s) = true := by
   decide
 
-/-- The merge is refused exactly when the merged summary may owe an obligation
-and something could update it precisely or hide it. -/
-theorem refused_iff_owed_and_exposed (a b c d e f : Bool) :
-    decide true a b c d e f = .shiftRefused ↔ (a || d) = true ∧ (b || e || c || f) = true := by
+/-- The merge is refused exactly when a possibly-live summary meets a holder,
+or one possibly-live side meets the other's unresolved effect. -/
+theorem refused_iff_live_and_exposed (a b c d e f : Bool) :
+    decide true a b c d e f = .shiftRefused ↔
+      (((a || d) && (b || e)) || (a && f) || (d && c)) = true := by
   cases a <;> cases b <;> cases c <;> cases d <;> cases e <;> cases f <;> simp [decide]
+
+/-- Monotone: a refusal is never withdrawn by more liveness, more holders or
+more unresolved effects, so the settled state decides as every iterate did. -/
+theorem the_decision_is_monotone (a b c d e f a' b' c' d' e' f' : Bool)
+    (ha : a = true → a' = true) (hb : b = true → b' = true) (hc : c = true → c' = true)
+    (hd : d = true → d' = true) (he : e = true → e' = true) (hf : f = true → f' = true)
+    (h : decide true a b c d e f = .shiftRefused) :
+    decide true a' b' c' d' e' f' = .shiftRefused := by
+  rw [refused_iff_live_and_exposed] at h ⊢
+  cases a <;> cases b <;> cases c <;> cases d <;> cases e <;> cases f <;>
+    simp_all
 
 /-! ## One site's abstract state -/
 
@@ -201,8 +217,8 @@ def Gens.join (a b : Gens) : Gens :=
     a.refused || b.refused⟩
 
 def shiftRefused (g : Gens) : Bool :=
-  decide true (owes g.previous) (heldAt g.previous) (unresolvedAt g.previous)
-    (owes g.older) (heldAt g.older) (unresolvedAt g.older) == .shiftRefused
+  decide true (liveAt g.previous) (heldAt g.previous) (unresolvedAt g.previous)
+    (liveAt g.older) (heldAt g.older) (unresolvedAt g.older) == .shiftRefused
 
 /-- `shift`: previous into older, current into previous. A refused merge
 leaves the summary unresolved and reports. -/
@@ -322,22 +338,22 @@ theorem an_owed_generation_stays_owed_or_refused (g : Gens) (h : g.current.isSom
       cases o with
       | none =>
         cases cl <;> cases cu <;>
-          simp_all [acquire, shift, shiftRefused, leak, owes, merge, heldAt, unresolvedAt, decide]
+          simp_all [acquire, shift, shiftRefused, leak, owes, merge, heldAt, unresolvedAt, liveAt, decide]
       | some oe =>
         rcases oe with ⟨ol, oh, ou⟩
         cases cl <;> cases cu <;> cases ol <;> cases oh <;> cases ou <;>
-          simp_all [acquire, shift, shiftRefused, leak, owes, merge, heldAt, unresolvedAt, decide]
+          simp_all [acquire, shift, shiftRefused, leak, owes, merge, heldAt, unresolvedAt, liveAt, decide]
     | some pe =>
       rcases pe with ⟨pl, ph, pu⟩
       cases o with
       | none =>
         cases cl <;> cases cu <;> cases pl <;> cases ph <;> cases pu <;>
-          simp_all [acquire, shift, shiftRefused, leak, owes, merge, heldAt, unresolvedAt, decide]
+          simp_all [acquire, shift, shiftRefused, leak, owes, merge, heldAt, unresolvedAt, liveAt, decide]
       | some oe =>
         rcases oe with ⟨ol, oh, ou⟩
         cases cl <;> cases cu <;> cases pl <;> cases ph <;> cases pu <;> cases ol <;> cases oh <;>
           cases ou <;>
-          simp_all [acquire, shift, shiftRefused, leak, owes, merge, heldAt, unresolvedAt, decide,
+          simp_all [acquire, shift, shiftRefused, leak, owes, merge, heldAt, unresolvedAt, liveAt, decide,
             Entry.join]
 
 /-! ## The failure edge removes only the new generation -/

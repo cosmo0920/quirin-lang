@@ -362,6 +362,11 @@ fn a_body_that_writes_the_bound_is_not_a_counted_loop() {
     );
 }
 
+/// Re-pinned deliberately by card CG04-LOOP-SITE-GENERATIONS: the refused
+/// element store leaves each iteration's element with an unresolved effect,
+/// and rule 11a refuses merging a possibly-live generation with it (it would
+/// hide the obligation), which also poisons the path the later statements
+/// read. More refusal leaves, the same `Unknown`.
 #[test]
 fn a_break_keeps_the_exit_equation_from_holding() {
     expect(
@@ -371,10 +376,20 @@ fn a_break_keeps_the_exit_equation_from_holding() {
          for (i = 0; i < n; i++) { v[i] = x_dup(s); if (k) break; } \
          for (i = 0; i < n; i++) x_free(v[i]); x_free(v); }",
         "Unknown",
-        &["unknown_alias:v[i]"],
+        &[
+            "unknown_alias:v[i]",
+            INDIRECT,
+            "unsupported:loop re-acquisition: an earlier generation that may be live is still held",
+            "unsupported:resource call with a formal embedded in an unmodeled expression",
+        ],
     );
 }
 
+/// Re-pinned deliberately by card CG04-LOOP-SITE-GENERATIONS: the refused
+/// element store leaves each iteration's element with an unresolved effect,
+/// and rule 11a refuses merging a possibly-live generation with it (it would
+/// hide the obligation), which also poisons the path the later statements
+/// read. More refusal leaves, the same `Unknown`.
 #[test]
 fn a_narrower_unsigned_index_is_not_a_counted_loop() {
     expect(
@@ -383,7 +398,11 @@ fn a_narrower_unsigned_index_is_not_a_counted_loop() {
          v = x_alloc(n * 8); if (!v) return; for (i = 0; i < n; i++) v[i] = x_dup(s); \
          x_free(v); }",
         "Unknown",
-        &["unknown_alias:v[i]"],
+        &[
+            "unknown_alias:v[i]",
+            "unsupported:loop re-acquisition: an earlier generation that may be live is still held",
+            "unsupported:resource call with a formal embedded in an unmodeled expression",
+        ],
     );
 }
 
