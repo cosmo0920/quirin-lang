@@ -207,6 +207,9 @@ impl Parser<'_> {
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: plan.chains.clone(),
             borrowed_destination: false,
+            // Composition with CG12-VOID-VIEW-READBACK (rule 11j): a routed
+            // atomic access is never a `void *` member readback.
+            readback: None,
         }
     }
 
