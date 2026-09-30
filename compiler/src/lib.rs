@@ -31,6 +31,7 @@ pub use qcore_core::chunk_lifecycle;
 pub use qcore_core::cleanup_lowering;
 /// Typed diagnostic adapters for native verification harnesses using this facade.
 pub use qcore_core::diagnostic_log_c_emit;
+pub use qcore_core::scalar_floats;
 pub use qcore_core::scalar_types;
 pub use qcore_core::std_io;
 pub mod cleanup_outcome;
