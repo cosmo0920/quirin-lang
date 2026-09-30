@@ -305,7 +305,38 @@ there is no Safe → non-Safe move, and no leak or violation is added.
 
 [`scripts/gate.sh`](scripts/gate.sh) runs the standing gate and the provider
 gate, one exit file per step. The exits are in [gate/](gate/), and the
-figures are in [gate.json](gate.json).
+figures are in [gate.json](gate.json). The logs are private under
+`private/w48cc/gate/`. The gate ran at `7cd4f79c`; the docs-only commit
+`7e4c1abd` landed while the Rust suite ran, so the Python and index steps
+read that tree.
+
+**Standing gate:**
+
+- `run_test_binaries.py` exits 0: 401 units, 414 summaries, **7,034
+  passed, 0 failed**, 11 ignored (`private/test-binaries/20260930T173243Z-1135215`);
+- fmt, clippy and both reevaluation examples exit 0;
+- **255** Lean audits pass (no new module);
+- Python: **365** OK, again after the matrix regeneration (`09b`);
+- the docs index exits 0 (`10`, `10b`).
+
+**Provider gate** (`providers/` changed):
+
+- `cargo test` exited **101 twice** at host load averages 45–62, each time
+  in a different process-provider conformance binary:
+  - `11`: `configured_audit::configured_helper_is_imported_from_its_real_pinned_compile_entry`;
+  - `11c`: two `configured_source_contract` tests, each `QP006 provider
+    timed out`.
+- Constraint 16's instruction was applied, and nothing was weakened:
+  - the first failure alone passed (`11b`, exit 0);
+  - the whole suite re-run with `--no-fail-fast` passed **129**, 0 failed,
+    1 ignored (`11d`, exit 0).
+- fmt, clippy and `contracts.py check` exit 0.
+- The package build and all five verifies exit 0.
+- Provider Python: 24 OK.
+- `pin` and `pin --check` at both revisions exit 0 (`gate/pin/`).
+
+The matrix is regenerated with this gate (`build_matrix.py . --gate`,
+`09a`, exit 0).
 
 ## 8. Follow-ups
 
