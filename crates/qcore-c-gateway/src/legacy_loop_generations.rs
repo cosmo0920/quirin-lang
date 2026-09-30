@@ -13,6 +13,10 @@
 //!   stable and records every re-acquisition, with its step, in the
 //!   `QCORE_TYPED_PATH_PARITY` stream (`position: "loop-site-generation"`).
 //!   It decides nothing.
+//! * [`withheld`] and [`record_withheld`] are a census for the card's sibling
+//!   search: a `Safe` result whose settled exit still holds a possibly-live
+//!   identity with an unresolved effect, which no diagnostic reported
+//!   (`position: "withheld-obligation"`). They decide nothing either.
 
 use std::collections::BTreeSet;
 
@@ -295,8 +299,8 @@ pub(super) fn settle_refused(
         return;
     }
     for &site in shifted {
-        if !state.resources.contains_key(&site) {
-            state.resources.insert(site, LIVE);
+        if let std::collections::btree_map::Entry::Vacant(entry) = state.resources.entry(site) {
+            entry.insert(LIVE);
             state.unresolved_effect_sites.insert(site);
         }
     }
@@ -348,3 +352,55 @@ pub(super) fn record_exposure(cfg: &LegacyCfg, incoming: &[Option<AbstractState>
         }
     }
 }
+
+/// The identities an exit state holds possibly live, with an unresolved
+/// effect, that the caller does not receive (census only).
+pub(super) fn withheld(state: &AbstractState, exempt: &BTreeSet<usize>) -> BTreeSet<usize> {
+    state
+        .resources
+        .iter()
+        .filter(|(site, status)| {
+            **status & LIVE != 0
+                && state.unresolved_effect_sites.contains(site)
+                && !exempt.contains(site)
+        })
+        .map(|(site, _)| *site)
+        .collect()
+}
+
+/// Record every exit of a `Safe` result that withholds an obligation (see
+/// [`withheld`]). Parity only.
+pub(super) fn record_withheld(
+    function: &str,
+    status: super::AnalysisStatus,
+    withheld: &[(usize, BTreeSet<usize>)],
+    acquisition_lines: &std::collections::BTreeMap<usize, usize>,
+) {
+    if !parity_enabled() || status != super::AnalysisStatus::Safe {
+        return;
+    }
+    for (line, sites) in withheld {
+        if sites.is_empty() {
+            continue;
+        }
+        record_row(json!({
+            "function": function,
+            "line": line,
+            "texts": [],
+            "position": "withheld-obligation",
+            "sites": sites.iter().map(|site| format!("{site:#x}")).collect::<Vec<_>>(),
+            "acquisition_lines": sites
+                .iter()
+                .map(|site| super::acquisition_line(acquisition_lines, *site))
+                .collect::<Vec<_>>(),
+            "old_route": "flow",
+            "old_admitted": true,
+            "new_admitted": true,
+            "disagreement": false,
+        }));
+    }
+}
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_loop_generations.rs"]
+mod tests;

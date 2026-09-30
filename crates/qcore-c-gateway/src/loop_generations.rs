@@ -43,6 +43,11 @@
 //! (`proof/QCore/LoopSiteGenerations.lean`); [`STEP_VECTORS`] and
 //! [`IDENTITY_VECTORS`] are shared with it.
 
+/// The flow keeps an acquisition site's generations apart. Rule 10x's
+/// placement guard reads it: a custody split on a CFG cycle was refused only
+/// because it did not.
+pub(crate) const SITES_ARE_GENERATION_INDEXED: bool = true;
+
 /// The tag of a previous-generation identity.
 pub(crate) const PREVIOUS_TAG: usize = 1 << 29;
 /// The tag of an older-generations summary identity.

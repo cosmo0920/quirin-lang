@@ -11682,6 +11682,7 @@ pub(crate) fn analyze_cfg_with_entry(
     // this pass only observes.
     let mut observations = Vec::new();
     let mut exits = Vec::new();
+    let mut withheld = Vec::new();
     for (node_id, node) in cfg.nodes.iter().enumerate() {
         if !node.is_exit {
             continue;
@@ -11733,10 +11734,17 @@ pub(crate) fn analyze_cfg_with_entry(
             &acquisition_lines,
             entry_custody,
         ));
+        withheld.push((
+            node.line,
+            loop_generations_route::withheld(&output, &entry_custody.exempt_sites(&output)),
+        ));
     }
 
     let diagnostics = diagnostics.into_iter().collect::<Vec<_>>();
     let status = classify_diagnostics(&diagnostics);
+    // Card CG04-LOOP-SITE-GENERATIONS: the census of Safe results resting on
+    // a possibly-live identity whose effect is unresolved (parity only).
+    loop_generations_route::record_withheld(&cfg.function, status, &withheld, &acquisition_lines);
     (
         LegacyFunctionSummary {
             function: cfg.function.clone(),

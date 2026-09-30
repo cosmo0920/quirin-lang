@@ -40,11 +40,14 @@
 //!
 //! [`leaf_use`] decides the use, [`carrier`] checks that the split tests the
 //! carrier the result is (a pointer's NULL, an integer descriptor's
-//! sentinel), and [`placement`] refuses a custody split on a node a CFG cycle
-//! may pass through: the flow keeps one abstract site per acquisition node,
-//! so a later generation would merge with a live earlier one and the refuted
-//! failure edge would erase both (the statement form has the same defect,
-//! registered as `CG04-LOOP-SITE-GENERATIONS`).
+//! sentinel), and [`placement`] refused a custody split on a node a CFG cycle
+//! may pass through while the flow kept one abstract site per acquisition
+//! node: a later generation would merge with a live earlier one and the
+//! refuted failure edge would erase both (the statement form had the same
+//! defect). Card `CG04-LOOP-SITE-GENERATIONS` gives the flow
+//! generation-indexed sites ([`crate::loop_generations`]), so the guard is
+//! lifted: `placement` still takes whether the flow indexes generations, and
+//! refuses only when it does not.
 //!
 //! An out-parameter acquisition (`if (f(&p) == 0)`) would need a contract
 //! that states the result/out relation; none can, and this card adds none
@@ -113,11 +116,12 @@ pub(crate) enum Refusal {
     IncrementBesideCall,
     /// A connective below a leaf holding a call (CG06).
     ConnectiveBesideCall,
-    /// A custody split on a node that may lie on a CFG cycle: the flow's
-    /// acquisition site is one abstract site for every generation
-    /// (`create_resource`), so a live earlier generation would be merged into
-    /// the fresh one and the refuted failure edge would erase both
-    /// (`CG04-LOOP-SITE-GENERATIONS`).
+    /// A custody split on a node that may lie on a CFG cycle, in a flow that
+    /// keeps one abstract site for every generation: a live earlier
+    /// generation would be merged into the fresh one and the refuted failure
+    /// edge would erase both. Unreachable since `CG04-LOOP-SITE-GENERATIONS`
+    /// indexed the flow's sites by generation; kept as the answer for a flow
+    /// that does not.
     AcquisitionOnCycle,
 }
 
@@ -147,10 +151,13 @@ pub(crate) fn carrier(result: ResultClass, integer: bool, split: Split) -> Resul
     }
 }
 
-/// Where a split acquisition may stand: a custody result is split only on a
-/// node no CFG cycle passes through. A resource-free result binds no site.
-pub(crate) fn placement(custody: bool, on_cycle: bool) -> Result<(), Refusal> {
-    if custody && on_cycle {
+/// Where a split acquisition may stand. A resource-free result binds no site.
+/// A custody result on a node a CFG cycle may pass through is split only when
+/// the flow keeps the site's generations apart (`generations`, card
+/// `CG04-LOOP-SITE-GENERATIONS`); the flow does, so the production call
+/// passes [`crate::loop_generations::SITES_ARE_GENERATION_INDEXED`].
+pub(crate) fn placement(custody: bool, on_cycle: bool, generations: bool) -> Result<(), Refusal> {
+    if custody && on_cycle && !generations {
         Err(Refusal::AcquisitionOnCycle)
     } else {
         Ok(())
@@ -232,14 +239,18 @@ pub(crate) const CARRIER_VECTORS: &[(&str, bool, &str, &str)] = &[
     ("derived", false, "null", "accept"),
 ];
 
-/// `(custody, on a cycle, decision)`, shared with
+/// `(custody, on a cycle, generation-indexed sites, decision)`, shared with
 /// `proof/QCore/ConditionAcquisition.lean` (`placementVectors`).
 #[cfg(test)]
-pub(crate) const PLACEMENT_VECTORS: &[(bool, bool, &str)] = &[
-    (true, false, "accept"),
-    (true, true, "acquisition-on-cycle"),
-    (false, true, "accept"),
-    (false, false, "accept"),
+pub(crate) const PLACEMENT_VECTORS: &[(bool, bool, bool, &str)] = &[
+    (true, false, false, "accept"),
+    (true, true, false, "acquisition-on-cycle"),
+    (false, true, false, "accept"),
+    (false, false, false, "accept"),
+    (true, false, true, "accept"),
+    (true, true, true, "accept"),
+    (false, true, true, "accept"),
+    (false, false, true, "accept"),
 ];
 
 /// `(call, call in type operand, increment, connective, decision)`, shared

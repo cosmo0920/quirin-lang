@@ -487,15 +487,24 @@ fn storing_a_named_pointer_keeps_the_refusal_it_had() {
     );
 }
 
+/// Re-pinned deliberately by card CG04-LOOP-SITE-GENERATIONS. Each
+/// iteration's array is a new object. Before the card the re-acquisition
+/// wrote the one site over the old array, whose element ranges it still
+/// carried, so the store into the fresh array was refused (`unknown_alias`
+/// on `v[0]`). Now the old array is the previous generation with its own
+/// ranges and the store into the fresh one is admitted; the older
+/// generations' ranges are merged into one summary, which establishes no
+/// ranges, so the exit refuses instead. Still `Unknown` (the source leaks
+/// every element; nothing claims otherwise).
 #[test]
 fn an_array_reallocated_in_a_loop_refuses() {
     expect(
-        "each iteration's array is a new object; the old one's element is not followed",
+        "each iteration's array is a new generation; the older ones' ranges are not joined",
         "void w(const char *s, unsigned long n) { char **v; unsigned long i; \
          for (i = 0; i < n; i++) { v = x_alloc(16); if (!v) return; v[0] = x_dup(s); \
          x_free(v); } }",
         "Unknown",
-        &["unknown_alias:v[0]"],
+        &["unsupported:indexed collection element ranges are not established at this exit"],
     );
 }
 

@@ -220,6 +220,14 @@ def acquire (g : Gens) : Gens :=
   let g := if g.current.isSome then shift g else g
   { g with current := some fresh }
 
+/-- A refused acquisition node (`settle_refused`): the call C ran may have
+produced a generation the refused transfer did not create, so the current
+generation is present, possibly live, with an unresolved effect, and the
+refusal is reported. -/
+def acquireRefused (g : Gens) : Gens :=
+  let g := if g.current.isSome then shift g else g
+  { g with current := some ⟨true, false, true⟩, refused := true }
+
 /-- The failure edge of a nullable acquisition: the fresh generation was never
 produced. -/
 def refuteNull (g : Gens) : Gens := { g with current := none }
@@ -241,6 +249,7 @@ def linkCurrent (g : Gens) : Gens :=
 precisely: a binding to it is unknown, and an effect through it refuses. -/
 inductive Op where
   | acquire
+  | acquireRefused
   | refuteNull
   | releaseCurrent
   | releasePrevious
@@ -250,6 +259,7 @@ inductive Op where
 
 def apply : Op → Gens → Gens
   | .acquire, g => acquire g
+  | .acquireRefused, g => acquireRefused g
   | .refuteNull, g => refuteNull g
   | .releaseCurrent, g => releaseCurrent g
   | .releasePrevious, g => releasePrevious g
@@ -360,6 +370,11 @@ theorem the_summary_never_discharges (op : Op) (g : Gens) (h : liveAt g.older = 
     split
     · simp [shift_live_older, h]
     · simp [h]
+  | acquireRefused =>
+    simp only [apply, acquireRefused]
+    split
+    · simp [shift_live_older, h]
+    · simp [h]
   | refuteNull => simp [apply, refuteNull, h]
   | releaseCurrent => simp [apply, releaseCurrent, h]
   | releasePrevious => simp [apply, releasePrevious, h]
@@ -425,6 +440,7 @@ theorem operations_keep_unresolved_reported (op : Op) (g : Gens) (hw : reported 
       apply hw
       revert hu
       cases unresolvedAt c <;> cases unresolvedAt p <;> cases unresolvedAt o <;> simp
+  | acquireRefused => intro _; rfl
   | refuteNull =>
     dsimp only [apply, refuteNull]
     rw [unresolved_none]
@@ -600,14 +616,44 @@ theorem link_each_iteration_is_refused_from_the_third :
     (linkEachIteration 3).refused = true ∧ verdict (linkEachIteration 2) = .«unsafe» := by
   decide
 
+/-- A reported refusal is never withdrawn by a later operation. -/
+theorem refusals_persist (op : Op) (g : Gens) (h : g.refused = true) :
+    (apply op g).refused = true := by
+  cases op with
+  | acquire =>
+    simp only [apply, acquire]
+    split
+    · simp [shift, h]
+    · simpa using h
+  | acquireRefused => rfl
+  | refuteNull => simpa [apply, refuteNull] using h
+  | releaseCurrent => simpa [apply, releaseCurrent] using h
+  | releasePrevious => simpa [apply, releasePrevious] using h
+  | linkCurrent => simpa [apply, linkCurrent] using h
+  | refuseThroughSummary => rfl
+
+/-- A refused re-acquisition never leaves an exit `Safe`: the generation the
+call may have produced is not claimed discharged, and the refusal stays. -/
+theorem a_refused_acquisition_is_never_safe (ops : List Op) (g : Gens) :
+    verdict (run ops (acquireRefused g)) ≠ .safe := by
+  have hr : (run ops (acquireRefused g)).refused = true := by
+    have h0 : (acquireRefused g).refused = true := rfl
+    generalize acquireRefused g = s at h0 ⊢
+    induction ops generalizing s with
+    | nil => simpa [run] using h0
+    | cons op ops ih =>
+      simp only [run, List.foldl_cons]
+      exact ih _ (refusals_persist op s h0)
+  simp only [verdict, hr, ite_true]
+  split <;> simp
+
 /-- `SHAPE_VECTORS` of `tests/loop_site_generations.rs`: the pinned shape and
 the verdict the model gives its joined exit (and the gateway its fixture). -/
 def shapeVectors : List (String × Verdict) := [
   ("for-break", .«unsafe»),
   ("do-while", .«unsafe»),
   ("release-each-iteration", .safe),
-  ("release-after-the-loop", .«unsafe»),
-  ("link-each-iteration", .unknown)
+  ("release-after-the-loop", .«unsafe»)
 ]
 
 /-- The model's verdict of each pinned shape: the join of its path exits. -/
@@ -619,9 +665,6 @@ def shapeVerdict : String → Verdict
         ((releaseEachIteration 2).join (releaseEachIteration 3))))
   | "release-after-the-loop" =>
       verdict ((releaseAfterTheLoop 0).join ((releaseAfterTheLoop 1).join (releaseAfterTheLoop 2)))
-  | "link-each-iteration" =>
-      let g := (linkEachIteration 3).join (linkEachIteration 4)
-      if g.refused then .unknown else verdict g
   | _ => .unknown
 
 theorem shape_vectors_hold :
