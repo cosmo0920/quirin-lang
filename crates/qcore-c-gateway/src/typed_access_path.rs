@@ -1320,6 +1320,7 @@ impl<'a> Reader<'a> {
                             crate::bound_untracked::eligible_root(function, root, decl)
                         })
                     }),
+                root_untracked_only: false,
                 links,
                 member: members.last()?.clone(),
             });

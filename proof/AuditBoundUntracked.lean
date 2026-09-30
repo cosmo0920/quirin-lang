@@ -23,6 +23,8 @@ import QCore.BoundUntracked
 #print axioms QCore.BoundUntracked.every_never_bound_actual_stands
 #print axioms QCore.BoundUntracked.an_address_actual_keeps_the_never_bound_premise
 #print axioms QCore.BoundUntracked.an_ineligible_actual_is_refused
+#print axioms QCore.BoundUntracked.a_deferred_actual_never_reads_a_tracked_root
+#print axioms QCore.BoundUntracked.a_deferred_actual_is_read_under_the_premise
 #print axioms QCore.BoundUntracked.the_refusal_is_monotone
 #print axioms QCore.BoundUntracked.a_refusal_is_kept_on_every_later_path
 #print axioms QCore.BoundUntracked.a_refused_path_never_holds

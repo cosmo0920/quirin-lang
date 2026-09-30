@@ -246,9 +246,7 @@ fn a_borrowed_result_root_is_admitted() {
     );
     assert_eq!(run.status, AnalysisStatus::Safe, "{run:?}");
     // A derived result is possibly null until a test refines it.
-    let run = self::run(
-        "void subject(struct S *o) { struct S *r = bu_interior(o); r->in.x = 1; }",
-    );
+    let run = self::run("void subject(struct S *o) { struct S *r = bu_interior(o); r->in.x = 1; }");
     assert!(run.alias_lines("r").len() == 1, "{run:?}");
     let run = self::run(
         "void subject(struct S *o) { struct S *r = bu_interior(o); if (r) { r->in.x = 1; } }",
@@ -266,7 +264,11 @@ fn the_premise_is_per_path() {
         "void subject(struct S *r, int c) {\n r->in.x = 1;\n if (c) q_free(r);\n r->in.x = 2;\n}",
     );
     let lines = run.alias_lines("r");
-    assert_eq!(lines.len(), 2, "the release and the access after it: {run:?}");
+    assert_eq!(
+        lines.len(),
+        2,
+        "the release and the access after it: {run:?}"
+    );
     // Rebinding to a borrowed result after the refused call does not restore
     // the premise: the path was refused.
     let (refused, _) = access_refused(&["uncontracted", "rebind-none"]);
@@ -316,8 +318,6 @@ fn a_borrowed_pointer_actual_on_a_bound_root_is_read_by_the_flow() {
     );
     assert!(run.alias_lines("r").len() >= 2, "{run:?}");
     // An address actual keeps rule 10n's never-bound premise.
-    let run = self::run(
-        "void subject(struct S *r) {\n q_observe(&r->in);\n q_free(r);\n}",
-    );
+    let run = self::run("void subject(struct S *r) {\n q_observe(&r->in);\n q_free(r);\n}");
     assert!(run.status != AnalysisStatus::Safe, "{run:?}");
 }

@@ -394,11 +394,18 @@ impl StatementIndex {
         // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): a pointer read (never an
         // address, rule 10n's premise) whose other roots are eligible chain
         // roots is left to the flow's per-path premise.
-        if pointer_valued
-            && !reader.roots_admit(&never_bound)
-            && (address || !reader.roots_deferred(&never_bound))
-        {
-            return None;
+        if pointer_valued && !reader.roots_admit(&never_bound) {
+            if address || !reader.roots_deferred(&never_bound) {
+                return None;
+            }
+            // The deferred roots must read as untracked at the flow: rule
+            // 10k(3)'s pointer-actual premise is not relaxed to a tracked
+            // root.
+            for chain in &mut reader.plan.chains {
+                if !never_bound(&chain.root) {
+                    chain.root_untracked_only = true;
+                }
+            }
         }
         Some(ArgumentPlan {
             plan: reader.plan,
@@ -532,11 +539,19 @@ mod tests {
                     .unwrap()
                     .pointer_valued
             );
-            assert!(
-                index
-                    .argument("g", 1, 2, &pointer, 1, |name| name != "p")
-                    .is_none()
-            );
+            // Card CG10-BOUND-UNTRACKED-ROOTS flip (rule 11d): a root the
+            // closure does not prove never bound is left to the flow's
+            // per-path premise when it is an eligible chain root. BEFORE:
+            // refused here.
+            let deferred = index
+                .argument("g", 1, 2, &pointer, 1, |name| name != "p")
+                .expect("deferred to the flow");
+            assert!(deferred.pointer_valued);
+            assert!(deferred.plan.chains.iter().all(|chain| chain.root == "p"
+                && !chain.root_never_bound
+                && chain.root_bound_untracked
+                && chain.root_untracked_only));
+            assert!(!deferred.plan.chains.is_empty());
             assert!(index.argument("g", 0, 2, &pointer, 1, open).is_none());
             assert!(index.argument("h", 0, 2, &scalar, 1, open).is_none());
         });

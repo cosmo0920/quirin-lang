@@ -31,8 +31,7 @@ fn only_an_untracked_binding_on_an_unrefused_path_holds() {
         for class in ["absent", "target-free", "nullable", "unresolved", "tracked"] {
             for rooted in [false, true] {
                 for refused in [false, true] {
-                    let holds =
-                        decide(eligible, binding(class), rooted, refused) == Premise::Holds;
+                    let holds = decide(eligible, binding(class), rooted, refused) == Premise::Holds;
                     assert_eq!(
                         holds,
                         eligible

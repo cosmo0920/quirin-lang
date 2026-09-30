@@ -666,9 +666,16 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     // with the repair off in the same tree: 20.
     // W46 typed scalar statements additionally retain the unresolved `chunk`
     // base at line 248 when the constructor declarations are withdrawn.
+    // **Deliberate pin update, card CG10-BOUND-UNTRACKED-ROOTS** (rule 11d):
+    // 22 → 21. The read through `in` at line 204 precedes every refusal on
+    // its path (the first uncontracted call is at line 205), so the per-path
+    // premise reads `in` as an untracked borrowed object there and its
+    // `UnknownAlias in` is gone; `in` keeps its obligation at 237 and 242,
+    // after the refused calls. Measured with the premise off in the same
+    // tree: 22.
     assert_eq!(
         before.diagnostics.len(),
-        22,
+        21,
         "the before-state diagnostic count moved: {:?}",
         before.diagnostics
     );

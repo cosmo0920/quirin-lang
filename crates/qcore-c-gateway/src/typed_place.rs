@@ -658,6 +658,7 @@ fn tracked_chain_of(place: &TypedPlace, function: Option<&Value>) -> Result<Trac
             root_bound_untracked: function.is_some_and(|function| {
                 crate::bound_untracked::eligible_root(function, &place.name, &place.decl)
             }),
+            root_untracked_only: false,
             links,
             member,
         },

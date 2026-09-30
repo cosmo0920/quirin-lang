@@ -328,6 +328,26 @@ theorem an_address_actual_keeps_the_never_bound_premise (e : Bool) :
 theorem an_ineligible_actual_is_refused (a : Bool) : actualClassified false false a = false := by
   simp [actualClassified]
 
+/-- The flow's reading of a deferred actual's root (`root_untracked_only`):
+only an untracked owner; rule 10k(3)'s premise is not relaxed to a tracked
+root. -/
+def actualOwner (s : State) (c : Obligation) : Option Owner :=
+  match rootOwner s c with
+  | some .untracked => some .untracked
+  | _ => none
+
+theorem a_deferred_actual_never_reads_a_tracked_root (s : State) (c : Obligation) (site : Nat) :
+    actualOwner s c ≠ some (.tracked site) := by
+  unfold actualOwner
+  split <;> simp
+
+theorem a_deferred_actual_is_read_under_the_premise (s : State) (c : Obligation)
+    (hd : c.base.dereferencedRoot = true) (hn : c.base.rootNeverBound = false)
+    (he : c.eligible = true) (hb : s.chain.base.binding c.base.root = none)
+    (hr : s.facts.rooted c.base.root = false) (hf : s.facts.refused = false) :
+    actualOwner s c = some .untracked := by
+  simp [actualOwner, (under_the_premise_an_unbound_root_resolves s c hd hn he hb hr hf).1]
+
 /-! ## The flow arms the premise relies on (per path) -/
 
 /-- One event on a path, as the flow meets the root. -/

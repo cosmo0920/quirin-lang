@@ -332,9 +332,13 @@ fn a_typed_actual_at_a_custody_position_or_uncontracted_callee_refuses() {
     assert_eq!(outcome(uncontracted).0, "Unknown");
     let tracked = "void w(int n) { struct c_box *b = c_make(n); if (!b) return; \
         c_peek(b->items[0].leaf); c_drop(b); }";
+    // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): the pointer read on a
+    // root the closure binds is now left to the flow, which reads it only
+    // as untracked; a tracked root keeps the refusal there (rule 10k(3)'s
+    // pointer-actual premise is not relaxed). BEFORE: the gate's refusal.
     let (status, keys) = outcome(tracked);
     assert_eq!(status, "Unknown");
-    assert!(keys.contains(&GATE.to_owned()), "{keys:?}");
+    assert!(keys.contains(&"unknown_alias:b".to_owned()), "{keys:?}");
 }
 
 /// A typedef redeclared as C11 permits (librdkafka declares `rd_kafka_Node_t`
