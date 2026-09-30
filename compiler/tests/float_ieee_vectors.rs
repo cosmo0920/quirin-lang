@@ -276,21 +276,9 @@ struct Table {
 
 fn table(ty: ScalarType) -> Table {
     let t = target();
-    let (bits, name, fmt, other, other_name) = match ty {
-        ScalarType::F32 => (
-            32,
-            "Ieee754Vectors32",
-            "binary32",
-            ScalarType::F64,
-            "binary64",
-        ),
-        _ => (
-            64,
-            "Ieee754Vectors64",
-            "binary64",
-            ScalarType::F32,
-            "binary32",
-        ),
+    let (bits, fmt, other, other_name) = match ty {
+        ScalarType::F32 => (32, "binary32", ScalarType::F64, "binary64"),
+        _ => (64, "binary64", ScalarType::F32, "binary32"),
     };
     let mut values = boundary(ty);
     values.extend(probes(ty));
@@ -456,7 +444,6 @@ fn table(ty: ScalarType) -> Table {
     ));
 
     // the format conversion out of this format
-    let mut operands = operands;
     if ty == ScalarType::F64 {
         operands.extend(narrowing_probes());
     }
@@ -517,7 +504,6 @@ fn table(ty: ScalarType) -> Table {
     }
 
     out.push_str(&format!("end QCore.Ieee754.Vectors{bits}\n"));
-    let _ = name;
     Table {
         text: out,
         counts: [arith, neg, cmp, of_int, to_int, convert],
