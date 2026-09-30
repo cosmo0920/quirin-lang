@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W48-QR-TASK-RECORD-CAPTURES card gate (base bcdc13b9), script private/w48-c3/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-c3/gate, first run at caba384f: submodule (--init --recursive) 0; fmt 1 (one assertion in the card's new test not yet formatted); run_test_binaries.py 388 units, 401 summaries, 6,832 passed, 1 failed, 11 ignored, exit 101 (private/test-binaries/20260930T061330Z-1052281/summary.json) - the failure was compiler/tests/source_record.rs's a_task_module_declaring_a_record_keeps_its_own_refusal, a pin of the refusal this card lifts (now admitted on the task route; moved by name at adb0aea4); clippy 0; both reevaluation probes 0; check_lean_audits.py 246 audits passed (245 + AuditTaskRecordCaptures.lean). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). Rerun at adb0aea4 (private/w48-c3/gate-rerun.sh, logs private/w48-c3/gate-rerun): fmt 0; run_test_binaries.py 388 units, 401 summaries, 6,833 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T062745Z-1286290/summary.json), no load-sensitive rerun needed; clippy 0. Matrix, docs index and Python were then run in that order. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit built at b3b7d7ca, the last crate change before the test-only commits): resource-diagnostics.json c012e785..., 586 Safe / 10 Unsafe / 4,238 Unknown, byte-identical to the base archive (W48-QR-USABLE-RECORDS AFTER); sidecars byte-identical. Exits in gate/ (the first run's failing steps as *.first-run.exit).",
+  "note": "Card 3 integration onto main 5d33dbd2 (CG08-CASTS-AND-TYPE-QUERIES and its merges: C gateway and Lean only; one proof/QCore.lean import conflict, both kept) as integrate/w48-c3 6625b88b, ledger 638. TARGETED CHECK under the user's landing-race policy (logs private/w48-int-c3/targeted-6625b88b): fmt, workspace clippy --locked 0; gateway tests 2,080 passed; compiler scalar/record/task test binaries 284 passed; qcore-frontend 288 passed; qcore-core 1,133 passed (1 ignored); 248 Lean audits; provider tests 129/0/1; provider clippy, package build, 5 verifies 0. Card gate at base bcdc13b9: W48-QR-TASK-RECORD-CAPTURES card gate (base bcdc13b9), script private/w48-c3/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-c3/gate, first run at caba384f: submodule (--init --recursive) 0; fmt 1 (one assertion in the card's new test not yet formatted); run_test_binaries.py 388 units, 401 summaries, 6,832 passed, 1 failed, 11 ignored, exit 101 (private/test-binaries/20260930T061330Z-1052281/summary.json) - the failure was compiler/tests/source_record.rs's a_task_module_declaring_a_record_keeps_its_own_refusal, a pin of the refusal this card lifts (now admitted on the task route; moved by name at adb0aea4); clippy 0; both reevaluation probes 0; check_lean_audits.py 246 audits passed (245 + AuditTaskRecordCaptures.lean). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). Rerun at adb0aea4 (private/w48-c3/gate-rerun.sh, logs private/w48-c3/gate-rerun): fmt 0; run_test_binaries.py 388 units, 401 summaries, 6,833 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T062745Z-1286290/summary.json), no load-sensitive rerun needed; clippy 0. Matrix, docs index and Python were then run in that order. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit built at b3b7d7ca, the last crate change before the test-only commits): resource-diagnostics.json c012e785..., 586 Safe / 10 Unsafe / 4,238 Unknown, byte-identical to the base archive (W48-QR-USABLE-RECORDS AFTER); sidecars byte-identical. Exits in gate/ (the first run's failing steps as *.first-run.exit).",
   "workspace_tests": 6833,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 246,
+  "lean_audits": 248,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6780,6 +6780,7 @@
    "AuditCallbackTaskHandoff.lean",
    "AuditCalleeSummaryScope.lean",
    "AuditCapacityBoundary.lean",
+   "AuditCastRepresentation.lean",
    "AuditCastReturnEscape.lean",
    "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
@@ -6870,6 +6871,7 @@
    "AuditLiteralTailActual.lean",
    "AuditLoopBudget.lean",
    "AuditLoopOwner.lean",
+   "AuditLoopSiteGenerations.lean",
    "AuditLoopSwitchCallEvaluation.lean",
    "AuditLoopWindows.lean",
    "AuditMayAlias.lean",
@@ -7012,7 +7014,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-task-record-captures/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-task-record-captures/integration/gate.json)"
  },
  "named_followups": [
   {
