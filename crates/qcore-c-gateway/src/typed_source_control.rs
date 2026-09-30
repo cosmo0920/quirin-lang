@@ -202,7 +202,7 @@ pub enum Jump {
 pub(super) enum SwitchItem {
     Case(Expr),
     Default,
-    Statement(Stmt),
+    Statement(Box<Stmt>),
 }
 
 impl Importer<'_> {
@@ -305,7 +305,7 @@ impl Importer<'_> {
             ("DeclStmt", _) => Err("declaration at a switch body's top level".into()),
             ("LabelStmt", _) => Err("label at a switch body's top level".into()),
             _ => {
-                items.push(SwitchItem::Statement(self.statement(node, depth)?));
+                items.push(SwitchItem::Statement(Box::new(self.statement(node, depth)?)));
                 Ok(())
             }
         }
