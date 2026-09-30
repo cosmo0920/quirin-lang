@@ -775,6 +775,17 @@ mod native {
     }
 }
 
+/// One native case: the program, its module, its reference stdout and
+/// stderr, and the header directory and C library it links, when it has one.
+type NativeCase<'a> = (
+    &'a str,
+    &'a CompiledModule,
+    String,
+    String,
+    Option<PathBuf>,
+    Option<PathBuf>,
+);
+
 /// The three published examples, three builds each: stdout and stderr equal
 /// the reference observation, exit 0, no sanitizer report. The summary goes
 /// to the report's `native-records.json` when `QCORE_W48_RECORDS_NATIVE_SUMMARY`
@@ -809,14 +820,7 @@ fn the_published_examples_run_clean_under_three_builds() {
     let (nested_out, nested_err) = projections(&nested);
     let (calls_out, calls_err) = projections(&calls);
     let library = ffi_dir().join("qr_point.c");
-    let cases: [(
-        &str,
-        &CompiledModule,
-        String,
-        String,
-        Option<PathBuf>,
-        Option<PathBuf>,
-    ); 3] = [
+    let cases: [NativeCase; 3] = [
         (
             "examples/records/nested_writes.qr",
             &nested,

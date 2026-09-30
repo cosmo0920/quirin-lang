@@ -746,8 +746,8 @@ fn a_task_module_declaring_a_record_keeps_its_own_refusal() {
     );
 }
 
-/// A record construct outside the entry is never left unmodelled — invariant
-/// 1. Before card `W48-QR-USABLE-RECORDS` the buffer route, which lowers the
+/// A record construct outside the entry is never left unmodelled (invariant
+/// one). Before card `W48-QR-USABLE-RECORDS` the buffer route, which lowers the
 /// entry only, refused it by name ("models the entry only"); since that card a
 /// module declaring a record and a second function, and holding no buffer,
 /// reaches `source.scalar-calls.v1`, which **checks** every function: this
