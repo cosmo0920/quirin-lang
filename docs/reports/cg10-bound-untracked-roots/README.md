@@ -5,9 +5,9 @@ Wave 48, round 6, route G (the custody gateway). The residual
 [CG10-COMMON-TYPED-PLACE](../cg10-common-typed-place/README.md). Gateway rule
 [11d](../../agents/gateway.md#constraint-11d); `QCore.BoundUntracked`
 ([`proof/QCore/BoundUntracked.lean`](../../../proof/QCore/BoundUntracked.lean),
-audited in `proof/AuditBoundUntracked.lean`). Base `a235ead6` (= local `main`).
-The B08 soundness repair (rule 11c) had not landed when this was measured; see
-§7.
+audited in `proof/AuditBoundUntracked.lean`). Base `a235ead6`; the B08
+soundness repair (rule 11c, `4b984bab`) merged and every route re-measured on
+it (§7), byte-identical to the figures below.
 
 ## 1. What changed
 
@@ -202,12 +202,25 @@ flow's arms; the gateway runs every event vector
 
 ## 7. The B08 repair
 
-`B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED` (rule 11c) runs beside this card and
-lands first. This card does not rely on a join or escape cascade silently
-leaving an obligation unresolved: the premise reads `unmodeled`, bindings and
-rooted places only, never an identity's unresolved effect. The AFTER above is
-on `a235ead6`; the re-measurement on the repaired base is recorded here when
-the repair lands.
+`B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED` (rule 11c) landed first, at
+`4b984bab` (a fast-forward of `a235ead6`), and is merged here (`dd4348b4`;
+conflicts only in the router, `gateway.md` and the matrix, resolved by keeping
+11c before 11d and re-applying `scripts/update_ledger.py` to main's matrix).
+This card does not rely on a join or escape cascade silently leaving an
+obligation unresolved: the premise reads `unmodeled`, bindings and rooted
+places only, never an identity's unresolved effect or a field link.
+
+| Run | Tree | corpus | system | slice |
+|---|---|---|---|---|
+| BEFORE, repaired base | `4b984bab` | `2fc3af8c…` 602 / 10 / 4,222 | `062a990d…` 37 / 2 / 195 | `e4e4197d…` 26 / 1 / 242 / 1 P |
+| AFTER, repaired base | `dd4348b4` | `3a25c4e9…` 608 / 10 / 4,216 | `f41b88cb…` 41 / 2 / 191 | `6949e223…` 28 / 1 / 240 / 1 P |
+
+The repaired-base BEFORE is byte-identical to the `a235ead6` BEFORE on all
+three routes, and the repaired-base AFTER to the `f477d6c0` AFTER
+([before](artifacts/before-repaired-identity.json),
+[after](artifacts/after-repaired-identity.json)): the movement relative to the
+repaired base is exactly §4's, and no Safe result rests on a silently
+unresolved obligation.
 
 ## 8. Follow-ups
 

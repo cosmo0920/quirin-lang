@@ -93,6 +93,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg08-casts-and-type-queries](cg08-casts-and-type-queries/README.md) | CG08-CASTS-AND-TYPE-QUERIES: casts as representations and type-query operands |
 
+| [cg10-bound-untracked-roots](cg10-bound-untracked-roots/README.md) | CG10-BOUND-UNTRACKED-ROOTS |
+
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |

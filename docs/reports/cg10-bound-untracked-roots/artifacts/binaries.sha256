@@ -1,2 +1,4 @@
-b99a23108948a8342362b35731bb3d9ecc8061fa8c5770fe9638c0d1cf9ee02c  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a652aec09d76e1e21/target/release/quirin-audit
-f92db24f5e3d6d30b46b91e0a49a68a098c350b6638c636ec025f7ea14683d84  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a652aec09d76e1e21/target/release/quirin-audit
+b99a23108948a8342362b35731bb3d9ecc8061fa8c5770fe9638c0d1cf9ee02c  before-base (a235ead6)
+f92db24f5e3d6d30b46b91e0a49a68a098c350b6638c636ec025f7ea14683d84  after2 (f477d6c0, on a235ead6)
+ead964956375b60056b1588a14aea9a8a752b58caa10227ff974b73ed3d9b8bc  before-b08 (4b984bab, the repaired base)
+5915b2008baac5a009887fd17df13f4c03b183dcbad99758aada69c5e89dc321  after3 (dd4348b4, the card merged with 4b984bab)
