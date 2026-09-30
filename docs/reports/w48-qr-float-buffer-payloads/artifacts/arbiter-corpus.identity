@@ -1,0 +1,8 @@
+W48-QR-FLOAT-BUFFER-PAYLOADS corpus arbiter, AFTER only (base d11179c9, code at e3fa19d8)
+command: QCORE_TYPED_PATH_PARITY=private/w48-fbp/arbiter-parity.jsonl python3 scripts/run_pinned_audit.py private/w48-fbp/arbiter e3fa19d8 --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 --jobs 8
+exit: 0
+quirin-audit (release) sha256: f0025447277e3ed7249529f72a103a09b21f158b6d20fbc0bcc693764c186b94
+resource-diagnostics.json sha256: 2fc3af8c39f0cf043fedb405badf6dc0c000bc461a38b06f7de8310308c8bf94
+  byte-identical to the base archive (W48-QR-FLOATING-POINT's AFTER, docs/reports/w48-qr-floating-point/artifacts/arbiter-corpus.identity, 602 Safe / 10 Unsafe / 4,222 Unknown): matches, full hash
+resource-diagnostics.chunk-contracts.json sha256: cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484 (identical to the archive)
+monkey-source.json sha256: 57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11 (identical to the archive)

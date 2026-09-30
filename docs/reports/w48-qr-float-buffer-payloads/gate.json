@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-FLOAT-BUFFER-PAYLOADS card gate (base d11179c9), scripts private/w48-fbp/gate.sh (at c3e28405) and private/w48-fbp/gate2.sh (at e3fa19d8) of this worktree, each exit to a file, no step piped, logs private/w48-fbp/gate and private/w48-fbp/gate2. First run at c3e28405: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 101 (6,935 passed, 3 failed, 11 ignored: three rows pinning refusals the card discharges, corrected); clippy 0; both reevaluation probes 0; check_lean_audits.py 251 audits passed (250 + AuditFloatPayloads.lean); provider suite (--no-fail-fast) 101 (128 / 1 / 1, one QP006 provider timeout while a test build ran beside it; providers/ unchanged). Rerun at e3fa19d8 (only tests and report artifacts changed since c3e28405): fmt 0; run_test_binaries.py 396 units, 409 summaries, 6,938 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T122635Z-3790016/summary.json); clippy 0; provider suite 0 (129 passed, 0 failed, 1 ignored, 43 summaries). Matrix, docs index and Python were then run in that order after the records commit. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit f0025447 built at e3fa19d8): resource-diagnostics.json 2fc3af8c..., 602 Safe / 10 Unsafe / 4,222 Unknown, byte-identical to the base archive; sidecars byte-identical. Exits in gate/ (first-run exits kept as *.first-run.exit).",
+  "workspace_tests": 6938,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 251,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
