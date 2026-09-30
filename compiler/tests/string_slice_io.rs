@@ -698,6 +698,7 @@ fn the_models_own_guard_refuses_a_rendered_literal_it_does_not_store() {
     use qcore_core::typed_errors::{Effect, EffectRow};
 
     let program = StringProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::new([Effect::Io]),
         literals: Vec::new(),
@@ -730,6 +731,7 @@ fn a_rendered_view_is_published_in_the_certificates_provenance_list() {
     use qcore_core::typed_errors::{Effect, EffectRow};
 
     let program = StringProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::new([Effect::Io]),
         literals: vec![b"hello, world".to_vec()],

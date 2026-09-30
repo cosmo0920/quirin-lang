@@ -566,6 +566,7 @@ fn the_models_own_guard_refuses_a_bound_it_cannot_evaluate() {
     // guard the route relies on is checked rather than merely present.
     use qcore_core::std_string::{StringEvent, StringOperand, StringProgram, check_string_program};
     let program = StringProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: qcore_core::typed_errors::EffectRow::default(),
         literals: vec![b"hello".to_vec()],

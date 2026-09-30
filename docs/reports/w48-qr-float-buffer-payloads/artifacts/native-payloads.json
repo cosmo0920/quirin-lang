@@ -1,0 +1,4 @@
+[
+  {"type": "f32", "programs_per_build": 21, "runs": 63, "lines": 1512, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0, "runs_differing_only_in_a_nan_sign_bit": 2},
+  {"type": "f64", "programs_per_build": 21, "runs": 63, "lines": 1512, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0, "runs_differing_only_in_a_nan_sign_bit": 2}
+]

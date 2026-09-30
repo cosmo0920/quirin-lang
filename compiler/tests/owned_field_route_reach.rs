@@ -419,7 +419,9 @@ type B { a: A }",
 /// that table.
 #[test]
 fn every_other_unknown_field_type_keeps_the_message_it_had() {
-    for spelling in ["f32", "Buffer", "char"] {
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS` admits `f32` fields on the buffer
+    // route; `f16` is a float spelling no route models.
+    for spelling in ["f16", "Buffer", "char"] {
         let source = module(
             &format!("type Frame {{ x: {spelling} }}"),
             "    let n = 1;\n    n |> print dec;\n",

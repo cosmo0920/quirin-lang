@@ -521,6 +521,7 @@ fn a_body_index_read_from_a_byte_conflicts_with_every_live_loan() {
 #[test]
 fn the_projection_unrolls_the_body_inside_the_borrow_node() {
     let program = std_buffer::BufferProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::default(),
         records: Vec::new(),
@@ -631,6 +632,7 @@ fn a_loop_writing_outside_a_live_loans_range_is_admitted_on_the_composed_route()
 #[test]
 fn a_body_release_under_a_live_loan_is_refused_by_the_model_by_name() {
     let program = StringProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::default(),
         literals: Vec::new(),
@@ -691,6 +693,7 @@ fn a_body_release_under_a_live_loan_is_refused_by_the_model_by_name() {
 #[test]
 fn a_body_store_after_the_release_is_the_inherited_use_after_drop() {
     let program = StringProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::default(),
         literals: Vec::new(),

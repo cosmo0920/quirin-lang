@@ -1607,7 +1607,11 @@ fn lower_declaration(
         // Card `W48-QR-SCALAR-TYPES-R6`: `protected TYPE` declares one value
         // of a §G02t type, whose byte extent is the type's size — decided
         // here, once, and then exactly a `protected N` region's to the model.
-        let payload = name(tokens.get(4)).and_then(qcore_core::scalar_types::ScalarType::parse);
+        // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: `protected f32`/`protected f64`
+        // too, of four and eight bytes; the route has no value position, so
+        // the cell is those bytes, whose float reading is IEEE's.
+        let payload = name(tokens.get(4))
+            .and_then(qcore_core::scalar_types::ScalarType::parse_admitting_floats);
         let bytes = if let Some(payload) = payload {
             let size = payload.size_bytes(state.target.as_ref()).map_err(|_| {
                 failure(

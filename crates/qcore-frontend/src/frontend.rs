@@ -3298,10 +3298,13 @@ fn lexical_references(
         // reserved; before the card the shape was refused here (`Q013`), and
         // the constraint-14 census found `protected` followed by a scalar type
         // name in no tracked source file.
-        let protected_type = matches!(
-            previous.map(|token| &token.kind),
-            Some(TokenKind::Word(previous)) if previous == "protected"
-        ) && qcore_core::scalar_types::ScalarType::parse(word).is_some();
+        // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: `protected f32`/`protected f64`
+        // on the same contextual terms.
+        let protected_type =
+            matches!(
+                previous.map(|token| &token.kind),
+                Some(TokenKind::Word(previous)) if previous == "protected"
+            ) && qcore_core::scalar_types::ScalarType::parse_admitting_floats(word).is_some();
         // Card `W48-QR-SCALAR-TYPES-R2`: `raise ArithmeticError::VARIANT;` names
         // the builtin typed arithmetic error, which no declaration introduces.
         // Contextual — the name immediately followed by `::` — so no word is

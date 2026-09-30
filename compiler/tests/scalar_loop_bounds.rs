@@ -339,6 +339,7 @@ fn the_composed_string_route_admits_typed_loops() {
 
 fn repeat_program(index: LoopIndex, count: u32) -> BufferProgram {
     BufferProgram {
+        float_effects: Default::default(),
         entry: "main".into(),
         declared_effects: EffectRow::new([qcore_core::typed_errors::Effect::Io]),
         records: Vec::new(),

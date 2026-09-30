@@ -710,6 +710,7 @@ fn a_lend_binding_that_shadows_a_live_name_refuses() {
     assert_eq!(codes(&module(&body)), ["Q012"]);
 
     let program = std_buffer::BufferProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::default(),
         records: Vec::new(),
@@ -925,6 +926,7 @@ fn a_module_with_no_lend_builds_the_operation_list_it_always_built() {
     // statement about code: no ranged op and no lend node appears in a
     // lend-free program's custody operations.
     let program = std_buffer::BufferProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::default(),
         records: Vec::new(),
@@ -963,6 +965,7 @@ fn a_lending_module_projects_the_loan_as_a_borrow_node_with_its_fraction() {
     // the ownership IR, its footprint fraction is the lend's own range, and
     // the accesses inside the window state their rebased byte footprints.
     let program = std_buffer::BufferProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::default(),
         records: Vec::new(),

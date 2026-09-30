@@ -106,7 +106,7 @@ use crate::frontend::{
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use crate::source_std_io::{FLUSH_KEYWORD, LOG_KEYWORD, PRINT_KEYWORD};
-use qcore_core::scalar_types::ScalarType;
+use qcore_core::scalar_types::{FloatEffect, FloatEffects, ScalarType};
 use qcore_core::source_record::{FieldType, RecordType};
 use qcore_core::std_buffer::{BufferEvent, BufferOperand, BufferProgram, FieldOperand, MAX_EXTENT};
 use qcore_core::typed_errors::{Effect, EffectRow};
@@ -340,12 +340,20 @@ fn diagnostic(code: &'static str, span: Span, message: impl Into<String>) -> Sou
 
 /// The entry's declared `effects { … }` row. An absent suffix is the empty row,
 /// which admits nothing, so the opt-in stays visible.
-fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, SourceDiagnostic> {
+///
+/// Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: the row may also name `partial_eq` and
+/// `partial_ord`, the float comparison effects, returned beside the row as
+/// the extern route carries them; they are what a float comparison needs and
+/// are never inferred.
+fn declared_effect_row(
+    tokens: &[TokenKind],
+    span: Span,
+) -> Result<(EffectRow, FloatEffects), SourceDiagnostic> {
     let Some(index) = tokens
         .iter()
         .position(|token| matches!(token, TokenKind::Word(word) if word == "effects"))
     else {
-        return Ok(EffectRow::default());
+        return Ok((EffectRow::default(), FloatEffects::default()));
     };
     if !matches!(
         tokens.get(index + 1),
@@ -358,10 +366,18 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
         ));
     }
     let mut effects = Vec::new();
+    let mut comparisons = FloatEffects::default();
     let mut cursor = index + 2;
     loop {
         match tokens.get(cursor) {
             Some(TokenKind::Symbol(Symbol::RightBrace)) => break,
+            Some(TokenKind::Word(name)) if FloatEffect::parse(name).is_some() => {
+                comparisons.insert(FloatEffect::parse(name).expect("parsed above"));
+                cursor += 1;
+                if matches!(tokens.get(cursor), Some(TokenKind::Symbol(Symbol::Comma))) {
+                    cursor += 1;
+                }
+            }
             Some(TokenKind::Word(name)) => {
                 let effect = match name.as_str() {
                     "io" => Effect::Io,
@@ -389,7 +405,7 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
             }
         }
     }
-    Ok(EffectRow::new(effects))
+    Ok((EffectRow::new(effects), comparisons))
 }
 
 /// Lower one `let` statement. Four shapes share the head, so they are
@@ -599,7 +615,9 @@ fn lower_let(
     if let Some((operand, next)) = operand(window, 3)
         && word(window, next) == Some("as")
     {
-        let Some(to) = word(window, next + 1).and_then(ScalarType::parse) else {
+        // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: `f32`/`f64` are conversion
+        // targets here too; the checker applies §G02t's float rules.
+        let Some(to) = word(window, next + 1).and_then(ScalarType::parse_admitting_floats) else {
             diagnostics.push(diagnostic(
                 "Q051",
                 span,
@@ -633,30 +651,24 @@ fn lower_let(
     // conversion it is **not** a `buffer_use`, so it selects no route.
     {
         let rest: Vec<Token> = window[3..].iter().map(|token| (*token).clone()).collect();
-        match crate::source_value_statement::parse_value_expression(&rest, |name: &str| {
-            Some(name.to_owned())
-        }) {
+        // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: the route reads float
+        // spellings — `["-"] FLOAT` operands and `as f32`/`as f64` — with the
+        // reader the extern and task routes admit floats through, so the
+        // three routes read one grammar.
+        match crate::source_value_statement::parse_value_expression_admitting_floats(
+            &rest,
+            |name: &str| Some(name.to_owned()),
+        ) {
             Some(Ok(syntax)) => {
                 use crate::source_value_statement::{
                     ValueExpressionSyntax as Syntax, ValueOperandSyntax as Operand,
                 };
                 use qcore_core::std_buffer::{ValueOperand, ValueOperation};
-                // Card `W48-QR-FLOATING-POINT`: this route reads without
-                // floats, so the reader never yields a float literal here;
-                // were one to arrive it is refused, never read as a number.
-                if syntax.has_float_literal() {
-                    diagnostics.push(diagnostic(
-                        "Q051",
-                        span,
-                        "`source.buffer.v1` has no float values (`W48-QR-FLOAT-BUFFER-ROUTE`)",
-                    ));
-                    return None;
-                }
                 let operand = |operand: Operand<String>| match operand {
                     Operand::Value(name) => ValueOperand::Name(name),
                     Operand::Integer(value) => ValueOperand::Integer(value),
                     Operand::Bool(value) => ValueOperand::Bool(value),
-                    Operand::Float(_) => unreachable!("refused above"),
+                    Operand::Float(literal) => ValueOperand::Float(literal),
                 };
                 let operation = match syntax {
                     Syntax::Binary(op, a, b) => ValueOperation::Binary(op, operand(a), operand(b)),
@@ -664,6 +676,11 @@ fn lower_let(
                         ValueOperation::Compare(cmp, operand(a), operand(b))
                     }
                     Syntax::Negate(a) => ValueOperation::Negate(operand(a)),
+                    // A float literal's conversion — the one `as` whose
+                    // operand the conversion form above does not read.
+                    Syntax::Convert(a @ Operand::Float(_), to) => {
+                        ValueOperation::Convert(operand(a), to)
+                    }
                     Syntax::Convert(..) => {
                         diagnostics.push(diagnostic(
                             "Q051",
@@ -708,6 +725,38 @@ fn lower_let(
             binding: binding.to_owned(),
             source: source.to_owned(),
         });
+    }
+    // `let NAME = ["-"] FLOAT ;` — the float literal binding (card
+    // `W48-QR-FLOAT-BUFFER-PAYLOADS`), an `f64` as on the extern route: the
+    // literal read once at `f64`, which is the value statement `FLOAT as f64`.
+    // A digit or a `-` at index 3, like the integer binding below, so it
+    // claims no other form's shape.
+    {
+        let (negative, at) = if symbol(window, 3, Symbol::Minus) {
+            (true, 4)
+        } else {
+            (false, 3)
+        };
+        if let Some(TokenKind::Float(text)) = window.get(at).map(|token| &token.kind)
+            && ends_with_semicolon(window, at + 1)
+        {
+            let Some(literal) = qcore_core::scalar_floats::FloatLiteral::read(text, negative)
+            else {
+                diagnostics.push(diagnostic(
+                    "Q051",
+                    span,
+                    format!("`{text}` is not a float literal"),
+                ));
+                return None;
+            };
+            return Some(BufferEvent::Compute {
+                binding: binding.to_owned(),
+                operation: qcore_core::std_buffer::ValueOperation::Convert(
+                    qcore_core::std_buffer::ValueOperand::Float(literal),
+                    ScalarType::F64,
+                ),
+            });
+        }
     }
     // `let NAME = ["-"] INTEGER ;`
     match integer(window, 3) {
@@ -888,6 +937,15 @@ fn typed_field_operand(
         _ => (false, start),
     };
     match window.get(at).map(|token| &token.kind) {
+        // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: `["-"] FLOAT`, read once at the
+        // field's type by the checker (which refuses it at a field that is
+        // not a float).
+        Some(TokenKind::Float(text)) => {
+            match qcore_core::scalar_floats::FloatLiteral::read(text, negative) {
+                Some(literal) => exactly(at + 1 - start, FieldOperand::Float(literal)),
+                None => Err(format!("`{text}` is not a float literal")),
+            }
+        }
         Some(TokenKind::Integer(text)) => {
             let Ok(magnitude) = text.parse::<i128>() else {
                 return Err(format!(
@@ -1069,11 +1127,26 @@ pub fn value_statement(parsed: &SourceProgram, span: Span) -> Option<Result<Buff
     }
     let conversion = operand(&window, 3).is_some_and(|(_, next)| word(&window, next) == Some("as"));
     let rest: Vec<Token> = window[3..].iter().map(|token| (*token).clone()).collect();
-    let expression = crate::source_value_statement::parse_value_expression(&rest, |name: &str| {
-        Some(name.to_owned())
-    })
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: float spellings too, read as this
+    // route reads them — and the float literal binding `let NAME = FLOAT;`,
+    // which is `FLOAT as f64` and which no composing route's own reader spells.
+    let expression = crate::source_value_statement::parse_value_expression_admitting_floats(
+        &rest,
+        |name: &str| Some(name.to_owned()),
+    )
     .is_some();
-    if !conversion && !expression {
+    let float_binding = {
+        let at = if symbol(&window, 3, Symbol::Minus) {
+            4
+        } else {
+            3
+        };
+        matches!(
+            window.get(at).map(|token| &token.kind),
+            Some(TokenKind::Float(_))
+        ) && ends_with_semicolon(&window, at + 1)
+    };
+    if !conversion && !expression && !float_binding {
         return None;
     }
     let mut diagnostics = Vec::new();
@@ -1243,7 +1316,8 @@ pub fn lower_source_buffer_for_target(
     // well-formed one is a type the *model* admits is
     // `qcore_core::source_record::admit_type`'s and is decided in the checker,
     // so the shape rule and the formation rule each live in one place.
-    let records = match crate::source_record::record_declarations(parsed) {
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: `f32`/`f64` are field types here.
+    let records = match crate::source_record::record_declarations_admitting_floats(parsed) {
         Ok(records) => records,
         Err((span, message)) => {
             diagnostics.push(diagnostic("Q051", span, message));
@@ -1251,13 +1325,14 @@ pub fn lower_source_buffer_for_target(
         }
     };
 
-    let declared_effects = match declared_effect_row(&declaration.value.tokens, scope_span) {
-        Ok(row) => row,
-        Err(error) => {
-            diagnostics.push(error);
-            EffectRow::default()
-        }
-    };
+    let (declared_effects, float_effects) =
+        match declared_effect_row(&declaration.value.tokens, scope_span) {
+            Ok(row) => row,
+            Err(error) => {
+                diagnostics.push(error);
+                (EffectRow::default(), FloatEffects::default())
+            }
+        };
 
     let Some(body) = &declaration.value.body else {
         diagnostics.push(diagnostic("Q051", scope_span, "this entry has no body"));
@@ -1295,6 +1370,7 @@ pub fn lower_source_buffer_for_target(
             declared_effects,
             records,
             events,
+            float_effects,
         },
         event_spans,
         scope_span,
@@ -1522,6 +1598,7 @@ impl LoweringConstants {
                         }
                         ValueOperand::Integer(value) => Operand::Integer(*value),
                         ValueOperand::Bool(value) => Operand::Bool(*value),
+                        ValueOperand::Float(literal) => Operand::Float(*literal),
                     })
                 };
                 let shared = match operation {
@@ -1532,6 +1609,9 @@ impl LoweringConstants {
                         .zip(operand(b))
                         .map(|(a, b)| Operation::Compare(*cmp, a, b)),
                     ValueOperation::Negate(a) => operand(a).map(Operation::Negate),
+                    ValueOperation::Convert(a, to) => {
+                        operand(a).map(|a| Operation::Convert(a, *to))
+                    }
                 };
                 match shared.and_then(|shared| self.fold(shared)) {
                     Some((ty, value)) => self.bind_known(binding, ty, value),

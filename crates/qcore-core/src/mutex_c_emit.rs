@@ -593,7 +593,7 @@ fn emit_single_task(
     }
     Ok(MutexCEmission {
         source: c_program::assemble(
-            &preamble(),
+            &typed_preamble(payloads),
             &c_program::Entry {
                 lead: String::new(),
                 brace: c_program::BraceStyle::KAndR,
@@ -896,7 +896,7 @@ fn emit_fork_join(
     for resource in extents.keys() {
         writeln!(source, "    free(r{resource});").unwrap();
     }
-    let mut fragments = preamble();
+    let mut fragments = typed_preamble(payloads);
     fragments.push(Fragment::new(
         Section::FileScope,
         "mutex.fork_join",
@@ -920,6 +920,29 @@ fn emit_fork_join(
 /// The file-scope text `CheckedMutexInvariantV1` contributes to a program it is
 /// part of (card `C-EMIT-MAIN-UNIFY`).
 #[must_use]
+/// [`preamble`] for a module with typed protected payloads (card
+/// `W48-QR-FLOAT-BUFFER-PAYLOADS`): a `protected f32`/`f64` payload's size is
+/// binary32's and binary64's, so the program asserts the IEEE environment
+/// (`scalar_floats::c_environment`, with `sizeof(float) == 4` and
+/// `sizeof(double) == 8`) when it is compiled. Exactly [`preamble`] for every
+/// other module, byte for byte.
+fn typed_preamble(payloads: &ProtectedPayloads) -> Vec<Fragment> {
+    let mut fragments = preamble();
+    if payloads.values().any(|ty| ty.is_float()) {
+        fragments.push(Fragment::new(
+            Section::Includes,
+            "scalar-floats.includes",
+            crate::scalar_floats::C_INCLUDES,
+        ));
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "mutex.float-environment",
+            format!("\n{}", crate::scalar_floats::c_environment()),
+        ));
+    }
+    fragments
+}
+
 pub fn preamble() -> Vec<Fragment> {
     vec![
         Fragment::new(

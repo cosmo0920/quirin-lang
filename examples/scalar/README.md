@@ -241,6 +241,36 @@ formats and `FLT_EVAL_METHOD == 0` when it is compiled; build it with
 `-ffp-contract=off`. The limitations are the specification's
 [§L14.7](../../docs/QCORE_SPEC_r0_3.md#l147-floating-point-and-its-limitations).
 
+[float_buffer.qr](float_buffer.qr) holds floats on the byte-buffer route
+(card `W48-QR-FLOAT-BUFFER-PAYLOADS`): `f32`/`f64` record fields, the literal
+binding `let limit = 3.75;` (an `f64`), `as` to and from floats, and value
+statements at the top level and in a loop body. Every value on this route is
+known when the program is checked; the comparison needs `partial_ord` in the
+entry's row, and the loop's bound is the float converted with `as` (a float
+bound is refused). Writing `-0.0` into the field keeps its sign:
+
+<!-- transcript: float_buffer stdout -->
+```text
+7.5
+0x1.ep+2
+7.75
+7
+-0
+0x1.99999ap-4
+```
+
+<!-- transcript: float_buffer stderr -->
+```text
+[INFO] true
+[INFO] true
+[INFO] false
+```
+
+`Buffer<f32>`/`Buffer<f64>` payloads (4 and 8 bytes) and `protected f32`/`f64`
+are admitted on the task and mutex routes; a byte view of a float payload is
+its IEEE representation, and a NaN's sign and payload bits in it are not
+specified.
+
 See [the exact grammar](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1)
 and [implementation evidence](../../docs/reports/source-scalar-calls-v1/README.md);
 the fixed-width types are [§G02t](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02t-fixed-width-scalar-types)
@@ -249,4 +279,5 @@ error is [its evidence](../../docs/reports/w48-qr-scalar-types-r2/README.md), an
 the typed record fields are [card R3's](../../docs/reports/w48-qr-scalar-types-r3/README.md), and the
 typed task values are [card R4's](../../docs/reports/w48-qr-scalar-types-r4/README.md), and the
 typed loops and buffer-route arithmetic are [card R5's](../../docs/reports/w48-qr-scalar-types-r5/README.md);
-floating point is [its evidence](../../docs/reports/w48-qr-floating-point/README.md).
+floating point is [its evidence](../../docs/reports/w48-qr-floating-point/README.md),
+and floats on the buffer route and in payloads [card W48-QR-FLOAT-BUFFER-PAYLOADS's](../../docs/reports/w48-qr-float-buffer-payloads/README.md).

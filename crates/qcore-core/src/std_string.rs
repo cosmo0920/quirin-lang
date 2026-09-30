@@ -272,6 +272,11 @@ pub struct StringProgram {
     /// literal's index is its static-storage identity for the whole program.
     pub literals: Vec<Vec<u8>>,
     pub events: Vec<StringEvent>,
+    /// The entry row's float comparison effects (card
+    /// `W48-QR-FLOAT-BUFFER-PAYLOADS`), which the embedded `source.buffer.v1`
+    /// value statements are decided under. Empty for every program before
+    /// the card.
+    pub float_effects: crate::scalar_types::FloatEffects,
 }
 
 /// Where a view's bytes live (card `STRING-CONCAT`).
@@ -936,6 +941,8 @@ pub fn derived_effects(program: &StringProgram) -> EffectRow {
                 let body = BufferProgram {
                     entry: String::new(),
                     declared_effects: EffectRow::default(),
+                    // A comparison effect is no effect this walk derives.
+                    float_effects: Default::default(),
                     // Card `AGGREGATES-V1`: this route models no record, so the
                     // synthetic program built to derive a refused loop's
                     // effects declares none. Nothing is lost by that — a record
@@ -1583,6 +1590,27 @@ pub fn check_string_program(
     check_string_program_for_target(program, None)
 }
 
+/// Whether the composed entry holds an `f32`/`f64` value (card
+/// `W48-QR-FLOAT-BUFFER-PAYLOADS`): `source.buffer.v1`'s own test over its
+/// embedded statements. Exactly such a result carries the IEEE premise.
+#[must_use]
+pub fn uses_floats(program: &StringProgram) -> bool {
+    crate::std_buffer::uses_floats(&crate::std_buffer::BufferProgram {
+        entry: program.entry.clone(),
+        declared_effects: program.declared_effects.clone(),
+        float_effects: program.float_effects,
+        records: Vec::new(),
+        events: program
+            .events
+            .iter()
+            .filter_map(|event| match event {
+                StringEvent::Buffer(event) => Some(event.clone()),
+                _ => None,
+            })
+            .collect(),
+    })
+}
+
 /// Whether the program names `isize` or `usize` anywhere — a conversion's
 /// target, a value statement's result or a loop's index (card
 /// `W48-QR-SCALAR-TYPES-R6`). A program naming neither never reads a target.
@@ -1590,6 +1618,7 @@ pub fn names_target_width(program: &StringProgram) -> bool {
     let buffer = crate::std_buffer::BufferProgram {
         entry: program.entry.clone(),
         declared_effects: program.declared_effects.clone(),
+        float_effects: program.float_effects,
         records: Vec::new(),
         events: program
             .events
@@ -1660,6 +1689,9 @@ pub fn check_string_program_for_target(
         views: BTreeMap::new(),
         buffer: BufferEvaluation {
             target: target_assumption.clone(),
+            // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: the entry row's comparison
+            // effects, which the embedded value statements are decided under.
+            float_effects: program.float_effects,
             ..BufferEvaluation::new()
         },
     };

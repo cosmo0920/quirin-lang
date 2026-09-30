@@ -239,6 +239,7 @@ fn a_leak_refuses_and_the_refusal_comes_from_the_unedited_ownership_checker() {
     // `OwnershipError` out of the unedited cycle-3 checker, over the operation
     // list this route derives. Nothing in `std_buffer` decides it.
     let program = std_buffer::BufferProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::new([Effect::Alloc]),
         records: Vec::new(),

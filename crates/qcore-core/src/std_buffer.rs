@@ -164,6 +164,11 @@ pub enum FieldOperand {
     Bool(bool),
     /// A name this entry bound.
     Name(String),
+    /// `["-"] FLOAT` (card `W48-QR-FLOAT-BUFFER-PAYLOADS`), written at a
+    /// field declared `f32` or `f64`: read once at the field's type. At a
+    /// field of any other type it is refused — a float is never implicitly
+    /// an integer.
+    Float(crate::scalar_floats::FloatLiteral),
 }
 
 impl From<BufferOperand> for FieldOperand {
@@ -184,6 +189,10 @@ pub enum ValueOperand {
     Name(String),
     Integer(i128),
     Bool(bool),
+    /// `["-"] FLOAT` (card `W48-QR-FLOAT-BUFFER-PAYLOADS`), typed by the other
+    /// operand (`f64` when there is none) and read once at that type — the
+    /// shared decision's `Operand::Float`.
+    Float(crate::scalar_floats::FloatLiteral),
 }
 
 /// The one §G02t operation a value statement performs on this route (card
@@ -197,6 +206,14 @@ pub enum ValueOperation {
     Compare(st::Cmp, ValueOperand, ValueOperand),
     /// `-a`, checked.
     Negate(ValueOperand),
+    /// `LITERAL as TYPE` of a float literal, and the literal binding
+    /// `let NAME = FLOAT;`, which is `FLOAT as f64` (card
+    /// `W48-QR-FLOAT-BUFFER-PAYLOADS`). A literal converted to a float type is
+    /// read once at that type; one converted to an integer type is the `f64`
+    /// literal truncated, `OutOfRange` when it does not fit. Every other
+    /// conversion — of a name or an `i32` literal — stays
+    /// [`BufferEvent::Convert`].
+    Convert(ValueOperand, ScalarType),
 }
 
 impl ValueOperation {
@@ -205,7 +222,7 @@ impl ValueOperation {
     pub fn operands(&self) -> Vec<&ValueOperand> {
         match self {
             Self::Binary(_, a, b) | Self::Compare(_, a, b) => vec![a, b],
-            Self::Negate(a) => vec![a],
+            Self::Negate(a) | Self::Convert(a, _) => vec![a],
         }
     }
 
@@ -532,6 +549,11 @@ pub struct BufferProgram {
     /// checking, their certificates and their emitted C byte-identical.
     pub records: Vec<RecordType>,
     pub events: Vec<BufferEvent>,
+    /// The entry row's float comparison effects, `partial_eq` and
+    /// `partial_ord` (card `W48-QR-FLOAT-BUFFER-PAYLOADS`): what the row
+    /// permits a value statement to compare. Empty for every program before
+    /// the card, so no float comparison is admitted without them.
+    pub float_effects: st::FloatEffects,
 }
 
 /// One checked access, published so a certificate names every index this
@@ -714,6 +736,11 @@ pub struct BufferCertificate {
     pub flushes: usize,
     /// The renderings actually used.
     pub renderings: BTreeSet<Rendering>,
+    /// The float comparison effects the program's value statements used
+    /// (card `W48-QR-FLOAT-BUFFER-PAYLOADS`), each declared by the entry's
+    /// row — the decision refuses an undeclared one. Empty for every program
+    /// without a float comparison.
+    pub float_comparisons: st::FloatEffects,
 }
 
 /// The refusals the write lend owns (card `SLICE-PERMISSIONS-WRITE-LEND`),
@@ -1035,9 +1062,11 @@ impl TypedRefusal {
                 use crate::scalar_values::ValueRefusal;
                 match refusal {
                     ValueRefusal::NoRecordedTarget { .. } => "Q051",
-                    ValueRefusal::StaticFault { .. } | ValueRefusal::LiteralOutOfRange { .. } => {
-                        "Q053"
-                    }
+                    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float literal
+                    // outside its type is the same range condition.
+                    ValueRefusal::StaticFault { .. }
+                    | ValueRefusal::LiteralOutOfRange { .. }
+                    | ValueRefusal::FloatLiteral { .. } => "Q053",
                     _ => "Q052",
                 }
             }
@@ -1058,6 +1087,17 @@ impl fmt::Display for TypedRefusal {
                 f,
                 "`{from} as {to}` is not a conversion: `bool` is not an integer, so nothing \
                  converts to or from it"
+            ),
+            // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float source is named by
+            // its `dec` rendering, never its bit pattern, and its conversion
+            // truncates toward zero before the range is asked.
+            Self::ConversionOutOfRange { from, to, value } if from.is_float() => write!(
+                f,
+                "`{}` (a `{from}`) truncated toward zero is not a value of `{to}`, and NaN and \
+                 the infinities are no integer's; `as` raises `ArithmeticError::OutOfRange` \
+                 here, and on `source.buffer.v1` every value is a check-time constant, so the \
+                 conversion is refused rather than run",
+                st::render(false, *from, *value, None).unwrap_or_else(|| value.to_string())
             ),
             Self::ConversionOutOfRange { from, to, value } => write!(
                 f,
@@ -1389,7 +1429,9 @@ pub fn custody_operations_with_gates(
                                 fields.iter().find(|(name, _)| name == field).and_then(
                                     |(_, operand)| match operand {
                                         FieldOperand::Name(from) => Some(from),
-                                        FieldOperand::Literal(_) | FieldOperand::Bool(_) => None,
+                                        FieldOperand::Literal(_)
+                                        | FieldOperand::Bool(_)
+                                        | FieldOperand::Float(_) => None,
                                     },
                                 )
                             };
@@ -2464,6 +2506,12 @@ pub struct BufferEvaluation {
     /// so by construction there is no later use for an expired entry to
     /// mislead — the same self-consistency the read card's `through` rests on.
     pub loans: BTreeMap<String, LoanShape>,
+    /// The float comparison effects the entry's row permits (card
+    /// `W48-QR-FLOAT-BUFFER-PAYLOADS`). Empty by default, so a route that
+    /// does not set them admits no float comparison.
+    pub float_effects: st::FloatEffects,
+    /// The float comparison effects the decided value statements used.
+    pub float_comparisons: st::FloatEffects,
 }
 
 /// One owned field of a composed record, as the value half carries it (card
@@ -3002,9 +3050,12 @@ impl BufferEvaluation {
                         (None, FieldOperand::Name(name)) => self
                             .operand(index, &BufferOperand::Scalar(name.clone()))
                             .map(FieldValue::Scalar),
-                        (None, FieldOperand::Literal(_) | FieldOperand::Bool(_)) => {
-                            Ok(FieldValue::Scalar(0))
-                        }
+                        (
+                            None,
+                            FieldOperand::Literal(_)
+                            | FieldOperand::Bool(_)
+                            | FieldOperand::Float(_),
+                        ) => Ok(FieldValue::Scalar(0)),
                     };
                     match value {
                         Ok(value) => supplied.push((field.clone(), value)),
@@ -3475,7 +3526,7 @@ impl BufferEvaluation {
     /// One value statement's result, decided now by the shared decision (card
     /// `W48-QR-SCALAR-TYPES-R5`): its type and its number, or the refusal.
     pub fn compute(
-        &self,
+        &mut self,
         event: usize,
         operation: &ValueOperation,
     ) -> Result<(ScalarType, i128), BufferError> {
@@ -3491,6 +3542,7 @@ impl BufferEvaluation {
                 }
                 ValueOperand::Integer(value) => Operand::Integer(*value),
                 ValueOperand::Bool(value) => Operand::Bool(*value),
+                ValueOperand::Float(literal) => Operand::Float(*literal),
             })
         };
         let shared = match operation {
@@ -3499,14 +3551,26 @@ impl BufferEvaluation {
                 Operation::Compare(*cmp, operand(a)?, operand(b)?)
             }
             ValueOperation::Negate(a) => Operation::Negate(operand(a)?),
+            ValueOperation::Convert(a, to) => Operation::Convert(operand(a)?, *to),
         };
         let refused = |refusal| BufferError::Typed {
             event,
             refusal: TypedRefusal::Value(refusal),
         };
-        let decision = Decider::default()
+        // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float comparison needs its
+        // effect in the entry's row, never inferred.
+        let mut decider = Decider {
+            permitted: self.float_effects,
+            ..Decider::default()
+        };
+        let decision = decider
             .decide(shared, false, self.target.as_ref())
             .map_err(refused)?;
+        for effect in st::FloatEffect::ALL {
+            if decider.used.contains(effect) {
+                self.float_comparisons.insert(effect);
+            }
+        }
         // Every operand is known, so the decision folded; a statement it left
         // unfolded would be a value this route cannot hold, refused rather
         // than bound.
@@ -3536,7 +3600,10 @@ impl BufferEvaluation {
                 });
             }
         }
-        if !from.is_integer() || !to.is_integer() {
+        // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float converts to and from
+        // every integer and the other float (§G02t's rules: rounding to a
+        // float, truncation to an integer); `bool` still converts to nothing.
+        if from == ScalarType::Bool || to == ScalarType::Bool {
             return Err(BufferError::Typed {
                 event,
                 refusal: TypedRefusal::NoConversion { from, to },
@@ -3585,7 +3652,26 @@ impl BufferEvaluation {
                 },
             });
         }
+        let kind = |float: bool| BufferError::Typed {
+            event,
+            refusal: TypedRefusal::Value(crate::scalar_values::ValueRefusal::LiteralKind {
+                ty,
+                float,
+            }),
+        };
         match operand {
+            // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: an integer literal is
+            // never a float, and a float literal never an integer.
+            FieldOperand::Literal(_) if ty.is_float() => Err(kind(false)),
+            FieldOperand::Float(_) if !ty.is_float() => Err(kind(true)),
+            FieldOperand::Float(literal) => {
+                literal.at(ty).map(at).map_err(|error| BufferError::Typed {
+                    event,
+                    refusal: TypedRefusal::Value(
+                        crate::scalar_values::ValueRefusal::FloatLiteral { ty, error },
+                    ),
+                })
+            }
             FieldOperand::Literal(value) => {
                 if ty.is_integer() && ty.contains(*value, self.target.as_ref()) {
                     Ok(at(*value))
@@ -3888,6 +3974,32 @@ pub fn names_target_width(program: &BufferProgram) -> bool {
         // Card `W48-QR-SCALAR-TYPES-R5`: a loop whose index is `isize` or
         // `usize` depends on the target too.
         BufferEvent::Repeat { index, .. } => index.ty().is_target_width(),
+        _ => false,
+    })
+}
+
+/// Whether this program holds an `f32` or `f64` value anywhere (card
+/// `W48-QR-FLOAT-BUFFER-PAYLOADS`): a record field declared with a float type,
+/// a conversion to one, or a value statement with a float literal or
+/// converting to a float. Every float value of the route originates at one of
+/// those, so exactly such a program's result carries the IEEE premise
+/// (`scalar_floats::ASSUMPTION`) and its C the float environment.
+#[must_use]
+pub fn uses_floats(program: &BufferProgram) -> bool {
+    program.records.iter().any(|record| {
+        record
+            .fields
+            .iter()
+            .any(|field| field.field_type.scalar().is_some_and(ScalarType::is_float))
+    }) || any_event(&program.events, |event| match event {
+        BufferEvent::Convert { to, .. } => to.is_float(),
+        BufferEvent::Compute { operation, .. } => {
+            matches!(operation, ValueOperation::Convert(_, to) if to.is_float())
+                || operation
+                    .operands()
+                    .iter()
+                    .any(|operand| matches!(operand, ValueOperand::Float(_)))
+        }
         _ => false,
     })
 }
@@ -4210,6 +4322,7 @@ pub fn check_buffer_program_for_target(
     let mut run = BufferRun::new(BufferEvaluation {
         record_types,
         target: target_assumption.clone(),
+        float_effects: program.float_effects,
         ..BufferEvaluation::new()
     });
     run.lend_windows = lend_window_by_event;
@@ -4272,6 +4385,7 @@ pub fn check_buffer_program_for_target(
             lines,
             flushes,
             renderings,
+            float_comparisons: evaluation.float_comparisons,
         })
     } else {
         Err(errors)
@@ -4827,6 +4941,8 @@ pub enum BufferRecheckFailure {
     Lines,
     Flushes,
     Renderings,
+    /// Card `W48-QR-FLOAT-BUFFER-PAYLOADS`.
+    FloatComparisons,
     Refused,
 }
 
@@ -4851,6 +4967,7 @@ impl fmt::Display for BufferRecheckFailure {
             Self::Lines => "the produced lines",
             Self::Flushes => "the barrier count",
             Self::Renderings => "the used renderings",
+            Self::FloatComparisons => "the float comparison effects the statements used",
             Self::Refused => "the program itself, which the recheck refuses",
         };
         write!(f, "{what} does not survive an independent rederivation")
@@ -4929,6 +5046,9 @@ pub fn recheck_buffer_certificate_for_target(
     }
     if rederived.renderings != certificate.renderings {
         return Err(BufferRecheckFailure::Renderings);
+    }
+    if rederived.float_comparisons != certificate.float_comparisons {
+        return Err(BufferRecheckFailure::FloatComparisons);
     }
     Ok(())
 }

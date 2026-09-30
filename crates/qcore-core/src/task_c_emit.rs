@@ -484,8 +484,13 @@ pub fn emit_task_c11_with_source_lines(
             );
             // Card `W48-QR-FLOATING-POINT`: a float result's arm, only in a
             // program that can log one.
-            if floats {
+            if floats && fixed_arm {
                 fragment.text = diagnostic_log_c_emit::with_float_results(&fragment.text);
+            }
+            // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float payload's arm, only
+            // in a program holding one.
+            if payloads.iter().any(|payload| payload.is_float()) {
+                fragment.text = diagnostic_log_c_emit::with_float_payloads(&fragment.text);
             }
         }
     }
@@ -1513,7 +1518,25 @@ fn typed_payload_runtime(runtime: &str, payloads: &BTreeSet<st::ScalarType>) -> 
         let name = payload.name();
         let label = name.to_ascii_uppercase();
         let field = format!("buffer->typed.{}", member(*payload));
-        let bits = if payload.is_integer() && !payload.is_signed() {
+        // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float payload's event carries
+        // its bit pattern, copied with `memcpy` — never a conversion to an
+        // integer, which is undefined for a NaN or an out-of-range value.
+        let bits = if payload.is_float() {
+            let (unsigned, widen) = if *payload == st::ScalarType::F32 {
+                ("uint32_t", "(int64_t)q_bits")
+            } else {
+                ("uint64_t", "qcore_buffer_bits(q_bits)")
+            };
+            write!(
+                text,
+                "static int64_t qcore_buffer_bits_{name}({c} value) {{\n    \
+                 {unsigned} q_bits;\n    \
+                 memcpy(&q_bits, &value, sizeof q_bits);\n    \
+                 return {widen};\n}}\n"
+            )
+            .unwrap();
+            format!("qcore_buffer_bits_{name}(payload)")
+        } else if payload.is_integer() && !payload.is_signed() {
             "qcore_buffer_bits((uint64_t)payload)".to_owned()
         } else {
             "(int64_t)payload".to_owned()

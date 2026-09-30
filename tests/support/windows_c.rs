@@ -15,7 +15,7 @@ pub fn run(source: &str, header: Option<&str>, defines: &[String]) -> Output {
 /// not merely inferred from the Rust target.
 #[allow(dead_code)]
 pub fn run_msvc(source: &str, header: Option<&str>, defines: &[String]) -> Output {
-    run_with_sources_impl(source, header, defines, &[], true)
+    run_with_sources_impl(source, header, defines, &[], true, &[])
 }
 
 #[allow(dead_code)]
@@ -25,7 +25,15 @@ pub fn run_with_sources(
     defines: &[String],
     extra_sources: &[(&str, &str)],
 ) -> Output {
-    run_with_sources_impl(source, header, defines, extra_sources, false)
+    run_with_sources_impl(source, header, defines, extra_sources, false, &[])
+}
+
+/// Card `W48-QRLIB-LINKAGE`: compile with Microsoft's `cl.exe` and link the
+/// given libraries (a static `.lib` or an SDK import library) by path — the
+/// pinned artifacts a verified link plan names, and nothing else.
+#[allow(dead_code)]
+pub fn run_msvc_with_libraries(source: &str, libraries: &[&Path]) -> Output {
+    run_with_sources_impl(source, None, &[], &[], true, libraries)
 }
 
 fn run_with_sources_impl(
@@ -34,6 +42,7 @@ fn run_with_sources_impl(
     defines: &[String],
     extra_sources: &[(&str, &str)],
     require_cl: bool,
+    libraries: &[&Path],
 ) -> Output {
     static NEXT: AtomicU64 = AtomicU64::new(0);
     let directory = std::env::temp_dir().join(format!(
@@ -131,6 +140,7 @@ fn run_with_sources_impl(
     }
     command.arg(&c);
     command.args(&extra_source_paths);
+    command.args(libraries);
     if compiler.is_like_msvc() {
         command.arg(format!("/Fe:{}", exe.display()));
     } else {

@@ -540,6 +540,12 @@ fn field_expression(
         (ScalarType::I32, FieldOperand::Literal(value)) => Ok(format!("INT32_C({value})")),
         (_, FieldOperand::Literal(value)) => Ok(st::c_literal(ty, *value)),
         (_, FieldOperand::Bool(value)) => Ok(st::c_literal(ty, i128::from(*value))),
+        // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float literal is its bits at
+        // the field's type, the value the checker read once.
+        (_, FieldOperand::Float(literal)) => literal
+            .at(ty)
+            .map(|bits| st::c_literal(ty, bits))
+            .map_err(|_| BufferEmissionRefusal::UnemittableRecord { event }),
         (_, FieldOperand::Name(name)) => scalars
             .get(name)
             .cloned()
@@ -760,6 +766,8 @@ pub fn emit_buffer_c11(
         comparisons: BTreeSet::new(),
         target: certificate.target_assumption.clone(),
         discard_unused: true,
+        renderers: BTreeSet::new(),
+        floats: std_buffer::uses_floats(program),
     };
 
     let lends: BTreeMap<usize, &std_buffer::LendRecord> = certificate
@@ -810,6 +818,7 @@ pub fn emit_buffer_c11(
     for (cmp, ty) in &records.comparisons {
         typed_prelude.push_str(&comparison_helper(*cmp, *ty));
     }
+    typed_prelude.push_str(&records.float_prelude());
     if !typed_prelude.is_empty() {
         fragments.push(Fragment::new(
             Section::Prelude,
@@ -874,8 +883,22 @@ impl EmbeddedTyped {
                 comparisons: BTreeSet::new(),
                 target,
                 discard_unused: true,
+                renderers: BTreeSet::new(),
+                floats: false,
             },
         }
+    }
+
+    /// Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: the composing entry holds a float
+    /// value, so [`EmbeddedTyped::prelude`] adds the IEEE environment.
+    pub fn hold_floats(&mut self, floats: bool) {
+        self.records.floats = floats;
+    }
+
+    /// Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a composing route's own line
+    /// renders a float name, so the prelude defines that renderer.
+    pub fn use_renderer(&mut self, hex: bool, ty: ScalarType) {
+        self.records.renderers.insert((hex, ty));
     }
 
     /// One `for` block at the entry's indent, in this environment.
@@ -969,6 +992,7 @@ impl EmbeddedTyped {
         for (cmp, ty) in &self.records.comparisons {
             text.push_str(&comparison_helper(*cmp, *ty));
         }
+        text.push_str(&self.records.float_prelude());
         Ok(text)
     }
 }
@@ -1028,9 +1052,28 @@ struct RecordEnvironment {
     /// (card `W48-QR-SCALAR-TYPES-R6`). Off only for a composing route's single
     /// top-level statement, whose reads that route's own discard decides.
     discard_unused: bool,
+    /// Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: the float renderings the
+    /// program's lines use, `(hex, type)`, each renderer emitted once.
+    renderers: BTreeSet<(bool, ScalarType)>,
+    /// Whether the program holds a float value, so its C carries the IEEE
+    /// environment ([`crate::scalar_floats::c_environment`]).
+    floats: bool,
 }
 
 impl RecordEnvironment {
+    /// The IEEE environment and the float renderers the program's lines use
+    /// (card `W48-QR-FLOAT-BUFFER-PAYLOADS`) — the scalar route's own text,
+    /// asserted when the C is compiled; empty for a program holding no float.
+    fn float_prelude(&self) -> String {
+        if !self.floats {
+            return String::new();
+        }
+        let mut text = String::from("\n");
+        text.push_str(&crate::scalar_floats::c_environment());
+        text.push_str(&crate::scalar_floats::c_renderers(&self.renderers));
+        text
+    }
+
     /// The C object and type of a scalar name of any type.
     fn scalar(
         &self,
@@ -1736,6 +1779,11 @@ fn emit_event_sequence(
                 };
                 let (emitted, ty) = records.typed[name].clone();
                 let (stream, prefix) = crate::std_io::line_framing(level);
+                // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float renders through
+                // the language's own renderer, defined once in the prelude.
+                if ty.is_float() {
+                    records.renderers.insert((*rendering == Rendering::Hex, ty));
+                }
                 let Some((conversion, operand)) = st::c_rendering(
                     *rendering == Rendering::Hex,
                     ty,
@@ -1819,6 +1867,7 @@ fn value_statement_expression(
     use crate::scalar_calls_c_emit::Helper;
     use std_buffer::{ValueOperand, ValueOperation};
     let mut ty = None;
+    let mut float_literal = false;
     for operand in operation.operands() {
         match operand {
             ValueOperand::Name(name) => {
@@ -1829,16 +1878,56 @@ fn value_statement_expression(
                 ty.get_or_insert(ScalarType::Bool);
             }
             ValueOperand::Integer(_) => {}
+            ValueOperand::Float(_) => float_literal = true,
         }
     }
-    let ty = ty.unwrap_or(ScalarType::I32);
-    let c = |operand: &ValueOperand| -> Result<String, BufferEmissionRefusal> {
+    // A literal takes the other operand's type; two literals are `i32`, or
+    // `f64` when they are float literals (card `W48-QR-FLOAT-BUFFER-PAYLOADS`,
+    // the shared decision's rule — a mixed pair was refused by the checker).
+    let ty = ty.unwrap_or(if float_literal {
+        ScalarType::F64
+    } else {
+        ScalarType::I32
+    });
+    let unemittable = BufferEmissionRefusal::UnemittableValueStatement { event };
+    let c = |operand: &ValueOperand, at: ScalarType| -> Result<String, BufferEmissionRefusal> {
         Ok(match operand {
             ValueOperand::Name(name) => records.scalar(scalars, event, name)?.0,
-            ValueOperand::Integer(value) => st::c_literal(ty, *value),
+            ValueOperand::Integer(value) => st::c_literal(at, *value),
             ValueOperand::Bool(value) => st::c_literal(ScalarType::Bool, i128::from(*value)),
+            ValueOperand::Float(literal) => {
+                st::c_literal(at, literal.at(at).map_err(|_| unemittable.clone())?)
+            }
         })
     };
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: the conversion of a float literal
+    // (and the literal binding, `FLOAT as f64`). To a float type the literal is
+    // read once at that type and is its constant; to an integer type it is the
+    // `f64` literal passed through the checked conversion helper, whose test
+    // the checker proved never taken.
+    if let ValueOperation::Convert(operand, to) = operation {
+        let from = match operand {
+            ValueOperand::Float(_) if to.is_float() => *to,
+            ValueOperand::Float(_) => ScalarType::F64,
+            _ => ty,
+        };
+        let value = c(operand, from)?;
+        if from == *to {
+            return Ok((*to, value));
+        }
+        let total = st::conversion_is_total(from, *to, records.target.as_ref())
+            .map_err(|_| unemittable.clone())?;
+        return Ok((
+            *to,
+            if total {
+                format!("({})({value})", st::c_type(*to))
+            } else {
+                records.conversions.insert((from, *to));
+                format!("{}({value})", conversion_helper_name(from, *to))
+            },
+        ));
+    }
+    let c = |operand: &ValueOperand| c(operand, ty);
     Ok(match operation {
         ValueOperation::Binary(op, a, b) => {
             let (a, b) = (c(a)?, c(b)?);
@@ -1860,6 +1949,7 @@ fn value_statement_expression(
                 format!("{}({a}, {b})", comparison_helper_name(*cmp, ty)),
             )
         }
+        ValueOperation::Convert(..) => unreachable!("decided above"),
     })
 }
 
@@ -1883,6 +1973,16 @@ pub fn preamble(program: &BufferProgram) -> Vec<Fragment> {
             Section::Includes,
             "scalar-types.includes",
             "#include <stdbool.h>\n#include <stddef.h>\n",
+        ));
+    }
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: `<float.h>` for the environment's
+    // assertions and `<string.h>` for the renderers, under the scalar route's
+    // own fragment key so a merged program includes them once.
+    if std_buffer::uses_floats(program) {
+        fragments.push(Fragment::new(
+            Section::Includes,
+            "scalar-floats.includes",
+            crate::scalar_floats::C_INCLUDES,
         ));
     }
     fragments.extend([

@@ -290,8 +290,11 @@ fn a_repeated_field_name_is_refused() {
 /// so the unmodelled spelling is now one outside that table.
 #[test]
 fn a_field_type_this_revision_does_not_model_is_refused() {
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS` admits `f64` fields on this route
+    // (its rows are `float_buffer_payloads.rs`), so the row pins a spelling
+    // no route models.
     let source = module(
-        "type Point { x: f64 }",
+        "type Point { x: f16 }",
         "    let a = 1;\n    print dec a;\n",
     );
     assert_eq!(codes(&source), ["Q051"]);
@@ -551,6 +554,7 @@ fn reading_a_field_the_type_does_not_declare_is_refused() {
 #[test]
 fn a_record_contributes_no_custody_operation() {
     let program = BufferProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: qcore_core::typed_errors::EffectRow::default(),
         records: vec![RecordType {

@@ -1050,6 +1050,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-qr-closures](w48-qr-closures/README.md) | W48-QR-CLOSURES: closures that capture into concurrent workers |
 
+| [w48-qr-float-buffer-payloads](w48-qr-float-buffer-payloads/README.md) | W48-QR-FLOAT-BUFFER-PAYLOADS: floats on the buffer route and in payloads |
+
 | [w48-qr-float-ieee-lean](w48-qr-float-ieee-lean/README.md) | W48-QR-FLOAT-IEEE-LEAN-MODEL: IEEE 754 binary32/binary64 in Lean |
 
 | [w48-qr-floating-point](w48-qr-floating-point/README.md) | W48-QR-FLOATING-POINT: `f32` and `f64` in `.qr` sources |
@@ -1069,6 +1071,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w48-qr-task-record-captures](w48-qr-task-record-captures/README.md) | W48-QR-TASK-RECORD-CAPTURES: task workers receive and return records |
 
 | [w48-qr-usable-records](w48-qr-usable-records/README.md) | W48-QR-USABLE-RECORDS: records usable as values |
+
+| [w48-qrlib-linkage](w48-qrlib-linkage/README.md) | W48-QRLIB-LINKAGE: `.qrlib` as the C linkage manifest of the FFI route |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 

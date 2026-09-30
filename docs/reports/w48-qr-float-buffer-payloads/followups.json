@@ -1,0 +1,31 @@
+{
+ "retired": [
+  {
+   "id": "W48-QR-FLOAT-BUFFER-ROUTE",
+   "why": "Discharged by W48-QR-FLOAT-BUFFER-PAYLOADS item 1 and 3: floats on source.buffer.v1 (records, conversions, value statements, loop bodies) and the composed string route, the boundary table natively, the fixture freeze byte-identical for every existing file."
+  },
+  {
+   "id": "W48-QR-FLOAT-PAYLOADS",
+   "why": "Discharged by W48-QR-FLOAT-BUFFER-PAYLOADS item 2: Buffer<f32>/Buffer<f64> (4/8-byte extents, byte views under the byte rules, NaN bits a stated limitation) and protected f32/f64, native and TSan rows, QCore.FloatPayloads."
+  }
+ ],
+ "amended": [
+  {
+   "id": "W48-QR-FLOAT-MSVC-NATIVE",
+   "amendment": "the buffer-route and composed-string-route float emission (the float environment and renderers in their preludes), the float payload runtime (`qcore_buffer_bits_f32`/`_f64` by `memcpy`, the sink's float payload branch) and `protected f32`/`f64` are likewise built and run with Clang on x86-64 Linux only."
+  },
+  {
+   "id": "W48-QR-F02-TYPED-PAYLOADS",
+   "amendment": "`Buffer<f32>`/`Buffer<f64>` events (`F32 BITS`/`F64 BITS`, every NaN `nan`) are typed payload events too and are refused by the same encoding; an extension would also have to carry the NaN rule."
+  }
+ ],
+ "registered": [
+  {
+   "id": "W48-QR-FLOAT-NAN-BYTE-VIEW",
+   "title": "A byte view of a NaN payload is not determined",
+   "why": "Found by W48-QR-FLOAT-BUFFER-PAYLOADS, measured: the same task-route `0.0 / 0.0` stored into a `Buffer<f32>`/`Buffer<f64>` is x86-64's sign-set default NaN when divided at run time (the Rust reference, a `-O0` build) and the sign-clear quiet NaN when Clang folds it (`-O2`), so the owner's byte read of the payload's top byte differs between the reference and a native run in the sign bit (4 of 126 native payload runs). The card states it as specification §L14.7 limitation 16 (a NaN's sign and payload bits in a byte view are not specified, per the brief) and its native rows admit exactly that one-bit difference at that one line. Canonicalising a NaN at every typed payload write (reference and C both storing the one NaN pattern) would make the byte view determined without a user decision, since NaN bits are unspecified. Size S. DISCHARGE: typed float payload writes and allocations canonicalise NaN in the reference and the emitted C, the native rows compared byte for byte with no tolerance, and the limitation narrowed to NaNs built by byte writes.",
+   "source": "docs/reports/w48-qr-float-buffer-payloads/README.md",
+   "recorded_by": "W48-QR-FLOAT-BUFFER-PAYLOADS"
+  }
+ ]
+}

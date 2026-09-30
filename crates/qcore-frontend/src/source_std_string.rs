@@ -113,6 +113,7 @@ use crate::frontend::{
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use crate::source_std_io::{BORROW_KEYWORD, FLUSH_KEYWORD, LOG_KEYWORD, PRINT_KEYWORD};
+use qcore_core::scalar_types::{FloatEffect, FloatEffects};
 use qcore_core::std_io::{Level, Rendering};
 use qcore_core::std_string::{
     LiteralRefusal, StringEvent, StringOperand, StringPiece, StringProgram, TextOperand,
@@ -451,12 +452,19 @@ fn diagnostic(code: &'static str, span: Span, message: impl Into<String>) -> Sou
 
 /// The entry's declared `effects { … }` row. An absent suffix is the empty row,
 /// which admits nothing, so the opt-in stays visible.
-fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, SourceDiagnostic> {
+///
+/// Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: the row may also name `partial_eq` and
+/// `partial_ord`, returned beside it — what a float comparison of the embedded
+/// `source.buffer.v1` value statements needs, never inferred.
+fn declared_effect_row(
+    tokens: &[TokenKind],
+    span: Span,
+) -> Result<(EffectRow, FloatEffects), SourceDiagnostic> {
     let Some(index) = tokens
         .iter()
         .position(|token| matches!(token, TokenKind::Word(word) if word == "effects"))
     else {
-        return Ok(EffectRow::default());
+        return Ok((EffectRow::default(), FloatEffects::default()));
     };
     if !matches!(
         tokens.get(index + 1),
@@ -469,10 +477,18 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
         ));
     }
     let mut effects = Vec::new();
+    let mut comparisons = FloatEffects::default();
     let mut cursor = index + 2;
     loop {
         match tokens.get(cursor) {
             Some(TokenKind::Symbol(Symbol::RightBrace)) => break,
+            Some(TokenKind::Word(name)) if FloatEffect::parse(name).is_some() => {
+                comparisons.insert(FloatEffect::parse(name).expect("parsed above"));
+                cursor += 1;
+                if matches!(tokens.get(cursor), Some(TokenKind::Symbol(Symbol::Comma))) {
+                    cursor += 1;
+                }
+            }
             Some(TokenKind::Word(name)) => {
                 let effect = match name.as_str() {
                     "io" => Effect::Io,
@@ -500,7 +516,7 @@ fn declared_effect_row(tokens: &[TokenKind], span: Span) -> Result<EffectRow, So
             }
         }
     }
-    Ok(EffectRow::new(effects))
+    Ok((EffectRow::new(effects), comparisons))
 }
 
 /// The literal pool of one lowering: decoded payloads, deduplicated by payload.
@@ -1151,13 +1167,14 @@ pub fn lower_source_string_for_target(
         ));
     }
 
-    let declared_effects = match declared_effect_row(&declaration.value.tokens, scope_span) {
-        Ok(row) => row,
-        Err(error) => {
-            diagnostics.push(error);
-            EffectRow::default()
-        }
-    };
+    let (declared_effects, float_effects) =
+        match declared_effect_row(&declaration.value.tokens, scope_span) {
+            Ok(row) => row,
+            Err(error) => {
+                diagnostics.push(error);
+                (EffectRow::default(), FloatEffects::default())
+            }
+        };
 
     let Some(body) = &declaration.value.body else {
         diagnostics.push(diagnostic("Q068", scope_span, "this entry has no body"));
@@ -1428,6 +1445,7 @@ pub fn lower_source_string_for_target(
             declared_effects,
             literals: literals.payloads,
             events,
+            float_effects,
         },
         event_spans,
         scope_span,
