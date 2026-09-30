@@ -569,6 +569,9 @@ struct LoadedDeclaration {
     /// Card W45-CONTRACT-REVISION-MODE: the declaration's revision markers,
     /// validated as a whole; `None` when it carries none (pinned).
     revision: Option<qcore_schemas::contract_revision::DeclaredRevision>,
+    /// Card W48-QR-C-STRUCT-IMPORT: the declaration carries
+    /// `[| quant #c_ffi |]`. It is withheld from the function map.
+    ffi: Option<DeclaredFfiFunction>,
 }
 
 /// The parameter vocabulary: every scalar, every pointer, `fnptr` and
@@ -765,7 +768,13 @@ pub fn load_resource_contract_sources(
             // review marker is validated in full above and then withheld. It
             // is never an entry of the function map, so a consumer that knows
             // nothing of the marker sees an uncontracted callee.
-            if loaded.review.is_empty() {
+            if loaded.ffi.is_some() {
+                // Card W48-QR-C-STRUCT-IMPORT: a `#c_ffi` declaration is
+                // validated in full above and withheld, like a pending review:
+                // it is never an entry of the function map, so every consumer
+                // but `source.ffi.v1` (which rederives it through
+                // `ffi_declarations`) sees an uncontracted callee.
+            } else if loaded.review.is_empty() {
                 contracts.insert_contract(&decl.name, loaded.contract);
             } else {
                 pending.insert(
@@ -1177,6 +1186,11 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     if decl.kind != DeclarationKind::ExternFunction {
         return Err("resource modules accept only extern functions".into());
     }
+    // Card W48-QR-C-STRUCT-IMPORT: a marked declaration is read by its own,
+    // narrower vocabulary, and only a marked one may name a C struct.
+    if decl.c_ffi.is_some() {
+        return load_ffi_function(decl);
+    }
     let clauses = &decl
         .function_contract
         .as_ref()
@@ -1192,6 +1206,15 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         let matched =
             parameter_abi_types().find(|ty| token_kinds(ty).ok().as_ref() == Some(&tokens));
         let Some(matched) = matched.filter(|_| parameter.usage.is_none()) else {
+            // Card W48-QR-C-STRUCT-IMPORT: an unmarked declaration naming a C
+            // struct is refused by name — the struct table is the marked
+            // vocabulary's alone (user decision 4).
+            if tokens.iter().any(|kind| matches!(kind, TokenKind::StringLiteral(_))) {
+                return Err(
+                    "a C struct type is admitted only on a declaration marked `[| quant #c_ffi |]`"
+                        .into(),
+                );
+            }
             return Err("unsupported parameter type or usage annotation".into());
         };
         // Card LOADER-ABI: the canonical table spelling, not the module's own
@@ -1650,7 +1673,230 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         review,
         body_checked,
         revision: crate::contract_revision::declared_revision(revision)?,
+        ffi: None,
     })
+}
+
+/// One `[| quant #c_ffi |]`-marked declaration (card
+/// `W48-QR-C-STRUCT-IMPORT`, user decision 4; contract spec §C04.9).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DeclaredFfiFunction {
+    pub name: String,
+    /// The module the declaration was loaded from.
+    pub module: String,
+    pub parameters: Vec<(String, qcore_core::ffi::CAbiType)>,
+    pub result: qcore_core::ffi::CAbiType,
+}
+
+/// Read a `#c_ffi` signature type: a §G02t scalar, `c"struct TAG"`,
+/// `ptr<const, c"struct TAG">`, or (`result` only) `unit`.
+fn ffi_abi_type(source: &str, result: bool) -> Result<qcore_core::ffi::CAbiType, String> {
+    use qcore_core::ffi::{CAbiType, parse_c_struct_spelling};
+    use qcore_core::scalar_types::ScalarType;
+    let tokens = lex(source).map_err(|error| error.to_string())?;
+    let tokens: Vec<_> = tokens
+        .into_iter()
+        .filter(|token| token.kind != TokenKind::Eof)
+        .collect();
+    let refuse = || {
+        format!(
+            "`{source}` is not in the `#c_ffi` type table: a §G02t scalar, `c\"struct TAG\"` or `ptr<const, c\"struct TAG\">`{}",
+            if result { ", or `unit` as a result" } else { "" }
+        )
+    };
+    let c_struct = |at: usize| -> Result<String, String> {
+        match (tokens.get(at), tokens.get(at + 1)) {
+            (Some(c), Some(text)) if c.kind == TokenKind::Word("c".into()) => {
+                let TokenKind::StringLiteral(text_value) = &text.kind else {
+                    return Err(refuse());
+                };
+                if c.span.end != text.span.start {
+                    return Err("`c\"…\"` is one spelling: no space between `c` and the quote".into());
+                }
+                parse_c_struct_spelling(text_value)
+                    .map(str::to_owned)
+                    .ok_or_else(|| format!("`c\"{text_value}\"` names no struct tag: the spelling is exactly `struct TAG`"))
+            }
+            _ => Err(refuse()),
+        }
+    };
+    let kinds: Vec<&TokenKind> = tokens.iter().map(|token| &token.kind).collect();
+    match kinds.as_slice() {
+        [TokenKind::Word(word)] if result && word == "unit" => Ok(CAbiType::Unit),
+        [TokenKind::Word(word)] => ScalarType::parse(word)
+            .map(CAbiType::Scalar)
+            .ok_or_else(refuse),
+        [TokenKind::Word(_), TokenKind::StringLiteral(_)] => c_struct(0).map(CAbiType::Struct),
+        [
+            TokenKind::Word(ptr),
+            TokenKind::Symbol(Symbol::Less),
+            TokenKind::Word(constness),
+            TokenKind::Symbol(Symbol::Comma),
+            TokenKind::Word(_),
+            TokenKind::StringLiteral(_),
+            TokenKind::Symbol(Symbol::Greater),
+        ] if ptr == "ptr" && constness == "const" => c_struct(4).map(CAbiType::ConstStructPointer),
+        _ => Err(refuse()),
+    }
+}
+
+/// Load one `[| quant #c_ffi |]`-marked declaration, total or reject.
+///
+/// The marked vocabulary is the custody-free subset of v1 over the `#c_ffi`
+/// type table: `requires resource_contract_v1;`, `resource_borrowed(p)` for
+/// every parameter and `resource_return_none()`, each exactly once, and no
+/// other clause, marker or suffix. A struct is data here: a by-value struct
+/// is a copy, a `ptr<const, c"struct TAG">` is a borrowed pointer the callee
+/// reads and does not retain, and a returned struct is a copy the caller owns
+/// outright.
+fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> {
+    use qcore_core::ffi::CAbiType;
+    if decl.tokens.first() != Some(&TokenKind::Word("extern".into())) {
+        return Err("`[| quant #c_ffi |]` marks an `extern fn` declaration".into());
+    }
+    let clauses = &decl
+        .function_contract
+        .as_ref()
+        .ok_or("a `#c_ffi` declaration carries its resource contract")?
+        .clauses;
+    let mut parameters = Vec::with_capacity(decl.parameters.len());
+    let mut names = BTreeSet::new();
+    for parameter in &decl.parameters {
+        if parameter.usage.is_some() {
+            return Err("a `#c_ffi` parameter carries no usage annotation".into());
+        }
+        if !names.insert(parameter.name.value.clone()) {
+            return Err("duplicate parameter name".into());
+        }
+        parameters.push((
+            parameter.name.value.clone(),
+            ffi_abi_type(&parameter.type_source, false)?,
+        ));
+    }
+    let result_source = decl
+        .result_type
+        .as_ref()
+        .map(|result| result.source.clone())
+        .ok_or("a `#c_ffi` declaration states its result")?;
+    let result = ffi_abi_type(&result_source, true)?;
+    // The whole declaration, reconstructed: no effects row, no suffix.
+    let parameter_text = decl
+        .parameters
+        .iter()
+        .map(|p| format!("{}: {}", p.name.value, p.type_source))
+        .collect::<Vec<_>>()
+        .join(", ");
+    let clause_text = clauses
+        .iter()
+        .map(|c| match &c.value.kind {
+            SourceContractClauseKind::Requires => Ok(format!("requires {};", c.value.expression_source)),
+            SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => {
+                Ok(format!("ensures normal {};", c.value.expression_source))
+            }
+            _ => Err("a `#c_ffi` declaration admits `requires` and `ensures normal` clauses only".to_owned()),
+        })
+        .collect::<Result<Vec<_>, _>>()?
+        .join(" ");
+    let expected = format!(
+        "extern fn {}({parameter_text}) -> {result_source} contract {{ {clause_text} }};",
+        decl.name
+    );
+    if token_kinds(&expected)? != decl.tokens {
+        return Err("unsupported signature, effects, or declaration suffix on a `#c_ffi` declaration".into());
+    }
+    let mut marker = false;
+    let mut borrowed = BTreeSet::new();
+    let mut none = false;
+    for clause in clauses {
+        let expression = &clause.value.expression_source;
+        if clause.value.kind == SourceContractClauseKind::Requires {
+            if token_kinds(expression)? == token_kinds("resource_contract_v1")? && !marker {
+                marker = true;
+                continue;
+            }
+            return Err(format!(
+                "`requires {expression};` is not admitted on a `#c_ffi` declaration, whose only requirement is `resource_contract_v1`"
+            ));
+        }
+        let call = predicate_call(expression)?;
+        match call.as_slice() {
+            [predicate, parameter] if predicate == "resource_borrowed" => {
+                if !names.contains(parameter) || !borrowed.insert(parameter.clone()) {
+                    return Err(format!("`resource_borrowed({parameter})` names no parameter, or names one twice"));
+                }
+            }
+            [predicate] if predicate == "resource_return_none" && !none => none = true,
+            _ => {
+                return Err(format!(
+                    "`ensures normal {expression};` is not admitted on a `#c_ffi` declaration: every parameter is `resource_borrowed` and the result `resource_return_none()` — a struct crosses the boundary as data"
+                ));
+            }
+        }
+    }
+    if !marker {
+        return Err("missing requires resource_contract_v1".into());
+    }
+    if borrowed.len() != names.len() || !none {
+        return Err("a `#c_ffi` declaration states `resource_borrowed` for every parameter and `resource_return_none()` once".into());
+    }
+    // A marked declaration that carries no struct still loads: the marker is
+    // the auditor's handle on every FFI function, carried or not.
+    let _: &CAbiType = &result;
+    let contract = ResourceFunctionContract::new(
+        vec![ResourceParameterMode::Borrowed; decl.parameters.len()],
+        ResourceReturnMode::None,
+    );
+    Ok(LoadedDeclaration {
+        contract,
+        variadic_data_tail: false,
+        literal_arguments: Vec::new(),
+        loop_owner: None,
+        thread_sync: None,
+        lifecycle: None,
+        abi: DeclaredAbiSignature {
+            parameters: parameters.iter().map(|(_, ty)| ty.to_string()).collect(),
+            result: result.to_string(),
+            variadic_data_tail: false,
+        },
+        review: Vec::new(),
+        body_checked: false,
+        revision: None,
+        ffi: Some(DeclaredFfiFunction {
+            name: decl.name.clone(),
+            module: String::new(),
+            parameters,
+            result,
+        }),
+    })
+}
+
+/// Every `#c_ffi`-marked declaration of a selection, rederived from its
+/// retained texts (the variadic-tail precedent): total or reject, with the
+/// module each came from. The ordinary loader withholds these declarations
+/// from the function map, so no route but `source.ffi.v1` can reach one.
+pub fn ffi_declarations(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeMap<String, DeclaredFfiFunction>, String> {
+    let mut declared = BTreeMap::new();
+    for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
+        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        for declaration in parsed.declarations {
+            if declaration.value.c_ffi.is_none() {
+                continue;
+            }
+            let decl = &declaration.value;
+            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            let mut ffi = loaded.ffi.ok_or_else(|| format!("{context}: not a `#c_ffi` declaration"))?;
+            ffi.module = path.clone();
+            if declared.insert(decl.name.clone(), ffi).is_some() {
+                return Err(format!("{context}: duplicate function contract"));
+            }
+        }
+    }
+    Ok(declared)
 }
 
 /// The checked-specification marker (card W45-FB-BACKLOG-CUSTODY, §C06.3).

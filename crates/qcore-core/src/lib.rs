@@ -28,6 +28,8 @@ pub mod error_region;
 pub mod executable_model;
 pub mod extern_c_emit;
 pub mod extern_call;
+pub mod ffi;
+pub mod ffi_c_emit;
 pub mod index;
 pub mod inference;
 pub mod io_emit;

@@ -280,6 +280,23 @@ pub enum CheckedSourceModule {
     /// certificate carries the transport's certificate inside it, so the
     /// evidence of the composition is the evidence of both halves.
     StandardHttp(Box<CheckedHttpModule>),
+    /// One entry function checked under `source.ffi.v1` (card
+    /// `W48-QR-C-STRUCT-IMPORT`): a file that imports C structs and calls C
+    /// through `#c_ffi`-marked contracts. The certificate lists every imported
+    /// struct's recorded layout and every function called; the published
+    /// verdict is never plain `Safe`, because the whole file holds under the
+    /// unsafe-FFI assumption.
+    Ffi(Box<CheckedFfiModule>),
+}
+
+/// A checked `source.ffi.v1` module (card `W48-QR-C-STRUCT-IMPORT`).
+#[derive(Clone, Debug)]
+pub struct CheckedFfiModule {
+    pub lowered: qcore_frontend::source_ffi::LoweredFfiModule,
+    pub certificate: qcore_core::ffi::FfiCertificate,
+    /// The published verdict: `Safe` under the certificate's named
+    /// assumptions, the unsafe-FFI one always among them.
+    pub verdict: qcore_schemas::verdict::AssumedVerdict,
 }
 
 /// A checked `source.buffer.v1` module (card `STD-BUFFER`).
@@ -522,7 +539,8 @@ impl CheckedSourceModule {
             | Self::StandardString(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
         }
     }
 
@@ -546,7 +564,8 @@ impl CheckedSourceModule {
             | Self::StandardString(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::ScopedTasks(program) => Some(program),
         }
     }
@@ -567,7 +586,8 @@ impl CheckedSourceModule {
             | Self::StandardString(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::CheckedMutexGuards(module) => Some(module),
         }
     }
@@ -591,7 +611,8 @@ impl CheckedSourceModule {
             | Self::StandardString(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::CheckedEpochBound(module) => Some(module),
         }
     }
@@ -612,7 +633,8 @@ impl CheckedSourceModule {
             | Self::StandardString(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::ComposedEpochTasks(module) => Some(module),
         }
     }
@@ -633,7 +655,8 @@ impl CheckedSourceModule {
             | Self::StandardString(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::ExternCalls(module) => Some(module),
         }
     }
@@ -654,7 +677,8 @@ impl CheckedSourceModule {
             | Self::StandardString(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::StandardIo(module) => Some(module),
         }
     }
@@ -680,7 +704,8 @@ impl CheckedSourceModule {
             | Self::StandardString(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::Composed(module) => Some(module),
         }
     }
@@ -707,7 +732,8 @@ impl CheckedSourceModule {
             | Self::StandardString(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::ComposedTasks(module) => Some(module),
         }
     }
@@ -729,7 +755,8 @@ impl CheckedSourceModule {
             | Self::StandardString(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::StandardBuffer(module) => Some(module),
         }
     }
@@ -756,7 +783,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::Event(_)
             | Self::StandardSocket(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::StandardString(module) => Some(module),
         }
     }
@@ -778,7 +806,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::Event(_)
-            | Self::StandardHttp(_) => None,
+            | Self::StandardHttp(_)
+            | Self::Ffi(_) => None,
             Self::StandardSocket(module) => Some(module),
         }
     }
@@ -800,7 +829,8 @@ impl CheckedSourceModule {
             | Self::StandardBuffer(_)
             | Self::StandardString(_)
             | Self::StandardSocket(_)
-            | Self::Event(_) => None,
+            | Self::Event(_)
+            | Self::Ffi(_) => None,
             Self::StandardHttp(module) => Some(module),
         }
     }
@@ -854,6 +884,9 @@ impl CheckedSourceModule {
             // And likewise for the HTTP route, which composes that one with a
             // message vocabulary in the same single entry.
             Self::StandardHttp(_) => 1,
+            // And likewise for the FFI route: one flat entry is lowered, and
+            // its callees are C with no checked body to count.
+            Self::Ffi(_) => 1,
         }
     }
 }
@@ -1007,6 +1040,11 @@ pub enum SourceExecutionProfile {
     /// no computed text, no parsing of unknown input, no chunked coding, no
     /// persistent connection, no external peer, no TLS.
     StandardHttpV1,
+    /// `source.ffi.v1` (card `W48-QR-C-STRUCT-IMPORT`): imported C structs,
+    /// construct-then-read over their listed fields, calls through
+    /// `#c_ffi`-marked contracts, and rendered lines — every result under the
+    /// file-wide unsafe-FFI assumption.
+    FfiV1,
 }
 
 #[derive(Clone, Debug)]
@@ -1077,6 +1115,28 @@ impl CompiledModule {
             CheckedSourceModule::CheckedMutexGuards(module) => {
                 module.lowered.target_assumption.as_ref()
             }
+            _ => None,
+        }
+    }
+
+    /// Card `W48-QR-C-STRUCT-IMPORT`: the premises a `source.ffi.v1` result
+    /// holds relative to — the unsafe-FFI trust mark first — and the empty
+    /// slice on every other route.
+    #[must_use]
+    pub fn ffi_assumptions(&self) -> &[qcore_core::ffi::FfiAssumption] {
+        match &self.checked {
+            CheckedSourceModule::Ffi(module) => &module.certificate.assumptions,
+            _ => &[],
+        }
+    }
+
+    /// Card `W48-QR-C-STRUCT-IMPORT`: the verdict a route publishes with its
+    /// named assumptions, where it publishes one. Only `source.ffi.v1` does
+    /// today, and its verdict is never plain `Safe`.
+    #[must_use]
+    pub fn published_verdict(&self) -> Option<&qcore_schemas::verdict::AssumedVerdict> {
+        match &self.checked {
+            CheckedSourceModule::Ffi(module) => Some(&module.verdict),
             _ => None,
         }
     }
@@ -1439,7 +1499,11 @@ fn compile_files_with_registry_inner(
     // `Buffer`, quantity types) and read by the contract loader whenever a
     // program selects them; it declares nothing callable here.
     let module = compile_elaborated_source(&parsed, &typed, mode, options, &ranges, target)?;
-    if mode != SourceModuleMode::Contract {
+    // Card `W48-QR-C-STRUCT-IMPORT`: `source.ffi.v1` reads every extern
+    // declaration of its module itself, against the imported struct names and
+    // its selected contracts (a `ptr<const, Header>` is its vocabulary), so the
+    // §C04.1 read below is not a second, narrower reader of the same text.
+    if mode != SourceModuleMode::Contract && module.execution_profile != SourceExecutionProfile::FfiV1 {
         check_extern_declaration_signatures(&parsed, &ranges)?;
     }
     Ok(module)
@@ -1518,6 +1582,17 @@ fn compile_elaborated_source(
     ranges: &[FileRange],
     target: Option<&RecordedTarget>,
 ) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    // Card `W48-QR-C-STRUCT-IMPORT`: `source.ffi.v1` is selected before every
+    // other route, by `#import std.ffi.unsafe;` or a `struct!` declaration. A
+    // file that imports C is unsafe as a whole (user decision 2), so it must
+    // reach no route that would publish its results without the unsafe-FFI
+    // assumption, and a statement this route does not model is refused here
+    // rather than handed to a route that ignores the import. No file written
+    // before the card carries either marker (the census), so no existing
+    // module moves.
+    if qcore_frontend::source_ffi::has_source_ffi(parsed) {
+        return compile_ffi_source(parsed, typed, mode, options, ranges, target);
+    }
     // `source.bitfield-concurrency.v1`: selected before the generic task route
     // because it composes the task parser's real `write OBJECT.FIELD` captures
     // with an explicit source-derived layout. Falling through would discard
@@ -7544,6 +7619,399 @@ fn add_source_mapping(
             source,
         }],
     )
+}
+
+/// Card `W48-QR-C-STRUCT-IMPORT`: the verdict a `source.ffi.v1` certificate
+/// publishes — `Safe` under every assumption the certificate names — or the
+/// `Q035` refusal when it would be a plain `Safe` or has lost the unsafe-FFI
+/// trust mark. The publication tripwire: it cannot fail for a certificate the
+/// checker derived, and a certificate edited to drop the mark is caught here.
+///
+/// # Errors
+///
+/// The refusal message.
+pub fn ffi_verdict(
+    certificate: &qcore_core::ffi::FfiCertificate,
+) -> Result<qcore_schemas::verdict::AssumedVerdict, String> {
+    use qcore_core::ffi::{FfiAssumption, UNSAFE_FFI_ASSUMPTION};
+    use qcore_schemas::verdict::{AssumedVerdict, Verdict};
+    if !qcore_core::ffi::certificate_carries_ffi_assumption(certificate) {
+        return Err(
+            "the published FFI certificate does not carry the unsafe-FFI assumption naming every imported struct and every `#c_ffi` function it calls; a result from a file that imports C is never plain `Safe`".into(),
+        );
+    }
+    let names = certificate.assumptions.iter().map(|assumption| match assumption {
+        FfiAssumption::UnsafeFfi { .. } => UNSAFE_FFI_ASSUMPTION.to_owned(),
+        FfiAssumption::RecordedCompiler { .. } => "recorded-compiler".to_owned(),
+        FfiAssumption::DeclaredContract(callee) => format!("declared-contract:{callee}"),
+        FfiAssumption::BuilderIncludesAndLinks { .. } => "builder-includes-and-links".to_owned(),
+    });
+    let verdict = AssumedVerdict::new(Verdict::Safe, names);
+    if verdict.is_plain_safe() || !verdict.holds_under(UNSAFE_FFI_ASSUMPTION) {
+        return Err("an FFI result would be published as plain `Safe`".into());
+    }
+    Ok(verdict)
+}
+
+/// Compile one `source.ffi.v1` module (card `W48-QR-C-STRUCT-IMPORT`).
+///
+/// In order, each step failing closed: the entry; the recorded target (the
+/// compiler every layout is read by); every `struct!` read, its header
+/// resolved against the declaring file's own directory and its layout read by
+/// the recorded compiler, then its listing checked against that layout; every
+/// extern declaration admitted against the selected contracts — through a
+/// `#c_ffi`-marked contract whenever a position carries an imported struct;
+/// the entry lowered and checked; the certificate rechecked; the trust mark's
+/// tripwire; and the emission.
+fn compile_ffi_source(
+    parsed: &SourceProgram,
+    typed: &TypedSourceProgram,
+    mode: SourceModuleMode,
+    options: &CompileOptions,
+    ranges: &[FileRange],
+    target: Option<&RecordedTarget>,
+) -> Result<CompiledModule, Vec<FileDiagnostic>> {
+    use qcore_core::ffi::{self, CAbiType, FfiCallee, FfiType};
+    use qcore_frontend::source_ffi;
+
+    if mode != SourceModuleMode::Executable {
+        return Err(vec![plain_diagnostic(
+            "Q026",
+            "`source.ffi.v1` checks an executable module with one entry; an entry-free FFI module is not modeled",
+        )]);
+    }
+    let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    let imports = source_ffi::imported_structs(parsed).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
+    let first_span = imports.first().map_or(Span { start: 0, end: 0 }, |(_, span)| *span);
+    let Some(target) = target else {
+        return Err(vec![map_raw_diagnostic(
+            "Q063",
+            SemanticPass::NativeLibrary,
+            first_span,
+            "an FFI file is checked against the recorded compiler, and no recorded target was supplied (`quirin --recorded-target FILE`); a C layout is never guessed".into(),
+            ranges,
+        )]);
+    };
+    let mut structs = Vec::new();
+    let mut errors = Vec::new();
+    for (import, span) in &imports {
+        let path = &ranges[file_index(*span, ranges)].path;
+        let directory = std::path::Path::new(path)
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .unwrap_or_else(|| std::path::Path::new("."));
+        let request = qcore_c_gateway::ffi_layout::StructLayoutRequest {
+            tag: &import.tag,
+            header: &import.header,
+            source_directory: directory,
+            recorded_compiler: &target.compiler,
+            recorded_triple: &target.triple,
+        };
+        let facts = match qcore_c_gateway::ffi_layout::read_struct_layout(&request) {
+            Ok(facts) => facts,
+            Err(refusal) => {
+                errors.push(map_raw_diagnostic(
+                    "Q063",
+                    SemanticPass::NativeLibrary,
+                    *span,
+                    format!("the layout of `{}` (`struct {}`) is not read: {refusal}", import.name, import.tag),
+                    ranges,
+                ));
+                continue;
+            }
+        };
+        match ffi::check_layout(import, &facts, Some(target)) {
+            Ok(checked) => structs.push(checked),
+            Err(refusal) => errors.push(map_raw_diagnostic(
+                refusal.code(),
+                SemanticPass::NativeLibrary,
+                *span,
+                format!("the listing of `{}` disagrees with the recorded compiler: {refusal}", import.name),
+                ranges,
+            )),
+        }
+    }
+    if !errors.is_empty() {
+        return Err(errors);
+    }
+    let names: Vec<String> = structs.iter().map(|record| record.name.clone()).collect();
+    let tag_of = |name: &str| {
+        structs
+            .iter()
+            .find(|record| record.name == name)
+            .map(|record| record.tag.clone())
+    };
+
+    // Every extern declaration is admitted, called or not.
+    let declarations: Vec<_> = parsed
+        .declarations
+        .iter()
+        .filter(|declaration| declaration.value.kind == DeclarationKind::ExternFunction)
+        .collect();
+    let mut callees = BTreeMap::new();
+    if !declarations.is_empty() {
+        let first = declarations[0].span;
+        let Some(sources) = options.extern_contracts.as_ref() else {
+            return Err(vec![map_raw_diagnostic(
+                "Q023",
+                SemanticPass::ExternCall,
+                first,
+                "calling C from an FFI file requires an explicit extern contract selection; there is no default environment".into(),
+                ranges,
+            )]);
+        };
+        let load_refusal = |error: String| {
+            vec![map_raw_diagnostic(
+                "Q023",
+                SemanticPass::ExternCall,
+                first,
+                format!("the selected extern contract environment does not load: {error}"),
+                ranges,
+            )]
+        };
+        let contracts =
+            qcore_contract::contract_loader::load_resource_contract_sources(sources).map_err(load_refusal)?;
+        qcore_contract::contract_loader::check_source_assumptions(&contracts).map_err(|error| {
+            vec![map_raw_diagnostic(
+                "Q027",
+                SemanticPass::ExternCall,
+                first,
+                format!("the selected extern contracts differ from their declared sources: {error}"),
+                ranges,
+            )]
+        })?;
+        let marked = qcore_contract::contract_loader::ffi_declarations(sources).map_err(load_refusal)?;
+        let signatures =
+            qcore_contract::extern_bridge::declared_signatures(&contracts).map_err(load_refusal)?;
+        for declaration in declarations {
+            let name = &declaration.value.name;
+            let span = declaration.span;
+            if declaration.value.tokens.first() == Some(&TokenKind::Word("unsafe".into())) {
+                errors.push(map_raw_diagnostic(
+                    "Q034",
+                    SemanticPass::UncheckedLinkage,
+                    span,
+                    format!("`{name}` is an `unsafe extern fn`: an FFI file calls C only through a selected contract, never through an unchecked-linkage waiver"),
+                    ranges,
+                ));
+                continue;
+            }
+            if declaration.value.function_contract.is_some() {
+                errors.push(map_raw_diagnostic(
+                    "Q027",
+                    SemanticPass::ExternCall,
+                    span,
+                    format!("`{name}` carries an inline `contract {{ … }}` block, which this profile does not enforce; the contract must come from the explicit selection"),
+                    ranges,
+                ));
+                continue;
+            }
+            let mut parameters = Vec::new();
+            let mut unreadable = None;
+            for parameter in &declaration.value.parameters {
+                match source_ffi::ffi_type(&parameter.type_source, &names) {
+                    Some(FfiType::Unit) | None => {
+                        unreadable = Some(parameter.type_source.clone());
+                        break;
+                    }
+                    Some(ty) => parameters.push((parameter.name.value.clone(), ty)),
+                }
+            }
+            let result = declaration
+                .value
+                .result_type
+                .as_ref()
+                .and_then(|result| source_ffi::ffi_type(&result.source, &names));
+            let (Some(result), None) = (result, unreadable.as_ref()) else {
+                errors.push(map_raw_diagnostic(
+                    "Q024",
+                    SemanticPass::ExternCall,
+                    span,
+                    format!(
+                        "`{name}` declares a type `source.ffi.v1` does not call through: a parameter is a §G02t scalar, an imported struct by value or `ptr<const, STRUCT>`; a result is `unit`, a scalar or an imported struct by value{}",
+                        unreadable.map(|ty| format!(" (`{ty}`)")).unwrap_or_default()
+                    ),
+                    ranges,
+                ));
+                continue;
+            };
+            let carries_struct = parameters
+                .iter()
+                .map(|(_, ty)| ty)
+                .chain([&result])
+                .any(|ty| matches!(ty, FfiType::Record(_) | FfiType::ConstRecordPointer(_)));
+            if let Some(contract) = marked.get(name) {
+                let expected = |ty: &FfiType| -> Option<CAbiType> {
+                    Some(match ty {
+                        FfiType::Unit => CAbiType::Unit,
+                        FfiType::Scalar(scalar) => CAbiType::Scalar(*scalar),
+                        FfiType::Record(record) => CAbiType::Struct(tag_of(record)?),
+                        FfiType::ConstRecordPointer(record) => CAbiType::ConstStructPointer(tag_of(record)?),
+                    })
+                };
+                let agrees = parameters.len() == contract.parameters.len()
+                    && parameters.iter().zip(&contract.parameters).all(|((pname, ty), (cname, cty))| {
+                        pname == cname && expected(ty).as_ref() == Some(cty)
+                    })
+                    && expected(&result).as_ref() == Some(&contract.result);
+                if !agrees {
+                    errors.push(map_raw_diagnostic(
+                        "Q027",
+                        SemanticPass::ExternCall,
+                        span,
+                        format!(
+                            "`{name}` is declared `({}) -> {result}` here but `({}) -> {}` in {}",
+                            parameters.iter().map(|(p, ty)| format!("{p}: {ty}")).collect::<Vec<_>>().join(", "),
+                            contract.parameters.iter().map(|(p, ty)| format!("{p}: {ty}")).collect::<Vec<_>>().join(", "),
+                            contract.result,
+                            contract.module
+                        ),
+                        ranges,
+                    ));
+                    continue;
+                }
+                callees.insert(
+                    name.clone(),
+                    FfiCallee {
+                        name: name.clone(),
+                        module: contract.module.clone(),
+                        parameters,
+                        result,
+                        marked: true,
+                    },
+                );
+                continue;
+            }
+            let Some(contract) = contracts.contract(name) else {
+                let message = qcore_contract::extern_bridge::pending_review_refusal(name, &contracts)
+                    .unwrap_or_else(|| {
+                        format!("`{name}` has no admitted declared contract in the selected extern contract environment")
+                    });
+                errors.push(map_raw_diagnostic("Q023", SemanticPass::ExternCall, span, message, ranges));
+                continue;
+            };
+            let module = signatures.get(name).map_or_else(String::new, |signature| signature.module.clone());
+            if carries_struct {
+                errors.push(map_raw_diagnostic(
+                    "Q033",
+                    SemanticPass::UncheckedLinkage,
+                    span,
+                    format!(
+                        "`{name}` takes or returns an imported struct, and its contract in {module} is not marked `[| quant #c_ffi |]`; a call carrying a C struct is admitted only through a marked contract function, so an auditor finds every FFI use in the `.qv` files"
+                    ),
+                    ranges,
+                ));
+                continue;
+            }
+            // An unmarked, custody-free scalar contract: every parameter
+            // borrowed, no result custody, and the declared signature equal.
+            let custody_free = contract
+                .parameters
+                .iter()
+                .all(|mode| *mode == qcore_schemas::contract::ResourceParameterMode::Borrowed)
+                && contract.result == qcore_schemas::contract::ResourceReturnMode::None;
+            let declared = signatures.get(name);
+            let agrees = declared.is_some_and(|signature| {
+                signature.parameter_names
+                    == parameters.iter().map(|(p, _)| p.clone()).collect::<Vec<_>>()
+                    && signature.parameter_types
+                        == parameters.iter().map(|(_, ty)| ty.to_string()).collect::<Vec<_>>()
+                    && signature.result_type == result.to_string()
+            });
+            if !custody_free || !agrees {
+                errors.push(map_raw_diagnostic(
+                    if agrees { "Q024" } else { "Q027" },
+                    SemanticPass::ExternCall,
+                    span,
+                    if agrees {
+                        format!("`{name}`'s contract in {module} carries custody, which `source.ffi.v1` does not model: a callee here borrows scalars and returns data")
+                    } else {
+                        format!("`{name}` is declared here otherwise than in its selected contract {module}")
+                    },
+                    ranges,
+                ));
+                continue;
+            }
+            callees.insert(
+                name.clone(),
+                FfiCallee {
+                    name: name.clone(),
+                    module,
+                    parameters,
+                    result,
+                    marked: false,
+                },
+            );
+        }
+        if !errors.is_empty() {
+            return Err(errors);
+        }
+    }
+    let lowered = source_ffi::lower_source_ffi(parsed, typed, &entry, structs, callees, target).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| map_diagnostic(error, ranges))
+            .collect::<Vec<_>>()
+    })?;
+    let certificate = ffi::check_ffi_program(&lowered.program).map_err(|errors| {
+        errors
+            .into_iter()
+            .map(|error| {
+                let span = lowered
+                    .statement_spans
+                    .get(error.statement)
+                    .copied()
+                    .unwrap_or(lowered.scope_span);
+                map_raw_diagnostic(error.code, source_ffi::pass_of(error.code), span, error.message, ranges)
+            })
+            .collect::<Vec<_>>()
+    })?;
+    ffi::recheck_ffi_certificate(&lowered.program, &certificate).map_err(|failure| {
+        vec![map_raw_diagnostic(
+            "Q027",
+            SemanticPass::ExternCall,
+            lowered.scope_span,
+            format!("the FFI certificate failed its independent recheck: {failure}"),
+            ranges,
+        )]
+    })?;
+    let verdict = ffi_verdict(&certificate).map_err(|message| {
+        vec![map_raw_diagnostic("Q035", SemanticPass::UncheckedLinkage, lowered.scope_span, message, ranges)]
+    })?;
+    let source = qcore_core::ffi_c_emit::emit_ffi_c11(&lowered.program, &certificate).map_err(|refusal| {
+        vec![plain_diagnostic(
+            "Q500",
+            format!("the `source.ffi.v1` backend refused this program: {refusal:?}"),
+        )]
+    })?;
+    let result_profile = SourceResultProfile {
+        scalar_results: BTreeMap::from([(entry.clone(), ExecutableResultType::Unit)]),
+        owned_buffer_results: BTreeSet::new(),
+        custody_payloads: CustodyPayloadProfile::SeparateIdentityLedger,
+    };
+    Ok(CompiledModule {
+        source_bundle: None,
+        extension_warnings: Vec::new(),
+        checked: CheckedSourceModule::Ffi(Box::new(CheckedFfiModule {
+            lowered,
+            certificate,
+            verdict,
+        })),
+        execution_profile: SourceExecutionProfile::FfiV1,
+        declaration_count: typed.declarations.len(),
+        mode,
+        result_profile,
+        entry: Some(entry),
+        c_source: Some(source),
+        source_map: Vec::new(),
+        reference_observation: None,
+        extern_observation: None,
+    })
 }
 
 fn escape_c_path(path: &str) -> String {

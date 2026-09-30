@@ -304,6 +304,11 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
                 qcore_compiler::SourceExecutionProfile::ComposedEpochTasksV1 => {
                     "; scoped tasks with an agreeing flat-epoch bound (Linux/macOS/Windows threads)"
                 }
+                // Card `W48-QR-C-STRUCT-IMPORT`: the file-wide trust mark is
+                // part of the verdict line, never only a premise below it.
+                qcore_compiler::SourceExecutionProfile::FfiV1 => {
+                    "; source.ffi.v1: imported C structs checked against the recorded compiler; calls through #c_ffi contracts; std.fmt/std.io/std.logger lines; Safe under the unsafe-ffi assumption, never plain Safe"
+                }
                 qcore_compiler::SourceExecutionProfile::ComposedStdIoExternV1 => {
                     "; declared extern calls composed with rendered lines (both models checked)"
                 }
@@ -454,13 +459,22 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
     // Card `W48-QR-SCALAR-TYPES`: a program naming `isize`/`usize` holds only
     // for the recorded target's width, and says so here beside the others.
     let target = module.target_assumption();
-    if assumptions.is_empty() && target.is_none() {
+    // Card `W48-QR-C-STRUCT-IMPORT`: an FFI file's premises, the unsafe-FFI
+    // trust mark first. Empty on every other route, so no existing output moves.
+    let ffi = module.ffi_assumptions();
+    if assumptions.is_empty() && target.is_none() && ffi.is_empty() {
         return;
+    }
+    if let Some(verdict) = module.published_verdict() {
+        println!("verdict: {}", verdict.render());
     }
     println!(
         "under {} declared assumption(s):",
-        assumptions.len() + usize::from(target.is_some())
+        assumptions.len() + usize::from(target.is_some()) + ffi.len()
     );
+    for assumption in ffi {
+        println!("  - {assumption}");
+    }
     if let Some(target) = target {
         println!("  - recorded target: {target}");
     }

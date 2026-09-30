@@ -58,6 +58,19 @@ pub enum DeclarationKind {
     /// would have falsified a frozen archive's own table (standing constraint
     /// 21) — the `buffer`, `stream` and `len` collision shape exactly.
     Record,
+    /// `struct! { type NAME = c"struct TAG" from "HEADER"; fields { … } }` —
+    /// an imported C struct (card `W48-QR-C-STRUCT-IMPORT`, `source.ffi.v1`).
+    ///
+    /// The head is the two tokens `struct` `!` at declaration position. Neither
+    /// is a reserved word and none becomes one: `struct` was **census-clean and
+    /// deliberately not taken** by `AGGREGATES-V1` (constraint 14), and it is
+    /// still not taken — only the sequence `struct !`, which was a parse error
+    /// ("expected a QCore declaration") before this card and occurs in no
+    /// tracked file (`docs/reports/w48-qr-c-struct-import/census_ffi_spelling.py`).
+    /// The declaration's body is read by `crate::source_ffi`; name resolution
+    /// never walks declaration tokens, so `c`, `from` and `fields` stay
+    /// ordinary identifiers everywhere.
+    ImportedStruct,
     ResourceType,
     ErrorType,
     Constant,
@@ -76,6 +89,12 @@ pub struct SourceDeclaration {
     pub function_contract: Option<SourceFunctionContract>,
     pub verifier_scope: Option<VerifierScopeDeclaration>,
     pub tokens: Vec<TokenKind>,
+    /// Card `W48-QR-C-STRUCT-IMPORT` (user decision 4): the span of a
+    /// `[| quant #c_ffi |]` attribute written immediately before this
+    /// declaration. The attribute is not one of [`Self::tokens`] — the
+    /// declaration still starts at its own first word — so every reader that
+    /// reconstructs a declaration from its tokens reads it exactly as before.
+    pub c_ffi: Option<Span>,
 }
 
 /// A source-level function contract retained as structured syntax.  Semantic
@@ -715,7 +734,34 @@ impl<'a> SourceParser<'a> {
                      resolves it, against a published contract load path",
                 ));
             }
-            let (declaration, next) = self.declaration(cursor)?;
+            // Card `W48-QR-C-STRUCT-IMPORT` (user decision 4): the FFI marker
+            // `[| quant #c_ffi |]` on the declaration that follows it. Five
+            // tokens the lexer already produced (`[|` and `|]` are the
+            // quant-index aliases, `#` the attribute marker), claimed only at
+            // declaration position, where a `[|` was a parse error before —
+            // the census found no `[|` in any tracked source file. The marker
+            // marks an `extern fn` and nothing else; whether a module may carry
+            // one at all (a contract module, not a `.qr`) is the driver's.
+            let marker = self.symbol(cursor, Symbol::QuantOpen)
+                && self.word(cursor + 1, "quant")
+                && self.symbol(cursor + 2, Symbol::Hash)
+                && self.word(cursor + 3, "c_ffi")
+                && self.symbol(cursor + 4, Symbol::QuantClose);
+            let c_ffi = if marker {
+                let span = self.range_span(cursor, cursor + 5);
+                cursor += 5;
+                if !self.words(cursor, &["extern", "fn"]) {
+                    return Err(self.error(
+                        cursor,
+                        "`[| quant #c_ffi |]` marks an `extern fn` declaration of a contract module",
+                    ));
+                }
+                Some(span)
+            } else {
+                None
+            };
+            let (mut declaration, next) = self.declaration(cursor)?;
+            declaration.value.c_ffi = c_ffi;
             declarations.push(declaration);
             cursor = next;
         }
@@ -781,6 +827,17 @@ impl<'a> SourceParser<'a> {
             } else {
                 (DeclarationKind::TypeAlias, Some(start + 1))
             }
+        } else if self.word(start, "struct") && self.symbol(start + 1, Symbol::Bang) {
+            // Card `W48-QR-C-STRUCT-IMPORT`: `struct! { type NAME = …`. The
+            // name is the fifth token; the rest of the shape is
+            // `crate::source_ffi`'s to read.
+            if !self.symbol(start + 2, Symbol::LeftBrace) || !self.word(start + 3, "type") {
+                return Err(self.error(
+                    start,
+                    "expected `struct! { type NAME = c\"struct TAG\" from \"HEADER\"; fields { … } }`",
+                ));
+            }
+            (DeclarationKind::ImportedStruct, Some(start + 4))
         } else if self.word(start, "error") {
             (DeclarationKind::ErrorType, Some(start + 1))
         } else if self.word(start, "const") {
@@ -810,6 +867,7 @@ impl<'a> SourceParser<'a> {
             DeclarationKind::ResourceType
             | DeclarationKind::ErrorType
             | DeclarationKind::Record
+            | DeclarationKind::ImportedStruct
             | DeclarationKind::VerifierScope => {
                 let open = self.find_symbol(start, Symbol::LeftBrace)?;
                 (self.close(open)? + 1, None)
@@ -871,6 +929,7 @@ impl<'a> SourceParser<'a> {
                         .iter()
                         .map(|token| token.kind.clone())
                         .collect(),
+                    c_ffi: None,
                 },
             },
             end,
@@ -1435,6 +1494,10 @@ impl<'a> SourceParser<'a> {
             // own statements out of a byte-span token window. Refusing a
             // malformed field list here would put the rule in a second place.
             DeclarationKind::Record => {}
+            // Card `W48-QR-C-STRUCT-IMPORT`: likewise, the head was validated
+            // by the branch that selected it and the body is
+            // `crate::source_ffi`'s.
+            DeclarationKind::ImportedStruct => {}
         }
         Ok(())
     }
@@ -1921,6 +1984,11 @@ impl<'a> SourceParser<'a> {
             || self.word(index, "verify")
             || self.word(index, "import")
             || (self.symbol(index, Symbol::Hash) && self.word(index + 1, "import"))
+            // Card `W48-QR-C-STRUCT-IMPORT`: an imported struct and the FFI
+            // marker begin declarations. Both shapes were parse errors after a
+            // top-level brace group before the card.
+            || (self.word(index, "struct") && self.symbol(index + 1, Symbol::Bang))
+            || (self.symbol(index, Symbol::QuantOpen) && self.word(index + 1, "quant"))
     }
 
     fn is_statement_start(&self, index: usize) -> bool {

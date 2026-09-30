@@ -273,6 +273,83 @@ impl ReasonedVerdict {
     }
 }
 
+/// A verdict with the **named assumptions** it holds under (card
+/// `W48-QR-C-STRUCT-IMPORT`; §L20's assumptions field, §L21.2's join).
+///
+/// Composition joins the values and **unions** the assumptions, so an
+/// assumption any part rests on is carried by every composed verdict: the
+/// join never drops one. A *plain* `Safe` is `Safe` with no assumption, and
+/// only a result with no named assumption can be one — so a result from a
+/// file that imports C (`std.ffi.unsafe`) is at best "Safe under the
+/// unsafe-FFI assumption", never plain `Safe`. The Lean model is
+/// `proof/QCore/FfiStructImport.lean`.
+///
+/// Serialize-only, like [`ReasonedVerdict`]: a deserializer would be a
+/// second, unchecked constructor.
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize)]
+pub struct AssumedVerdict {
+    verdict: Verdict,
+    assumptions: std::collections::BTreeSet<String>,
+}
+
+impl AssumedVerdict {
+    /// `verdict`, holding under `assumptions`.
+    #[must_use]
+    pub fn new(verdict: Verdict, assumptions: impl IntoIterator<Item = impl Into<String>>) -> Self {
+        Self {
+            verdict,
+            assumptions: assumptions.into_iter().map(Into::into).collect(),
+        }
+    }
+
+    #[must_use]
+    pub const fn verdict(&self) -> Verdict {
+        self.verdict
+    }
+
+    /// The named assumptions, in canonical order.
+    #[must_use]
+    pub fn assumptions(&self) -> &std::collections::BTreeSet<String> {
+        &self.assumptions
+    }
+
+    /// Whether this is `Safe` with no assumption at all.
+    #[must_use]
+    pub fn is_plain_safe(&self) -> bool {
+        self.verdict.is_safe() && self.assumptions.is_empty()
+    }
+
+    /// Whether the named assumption is carried.
+    #[must_use]
+    pub fn holds_under(&self, assumption: &str) -> bool {
+        self.assumptions.contains(assumption)
+    }
+
+    /// The composition: join of the values, union of the assumptions.
+    #[must_use]
+    pub fn join(mut self, other: Self) -> Self {
+        self.verdict = self.verdict.join(other.verdict);
+        self.assumptions.extend(other.assumptions);
+        self
+    }
+
+    /// How a report says it: `Safe`, or `Safe under the unsafe-ffi
+    /// assumption`, the assumptions named in order.
+    #[must_use]
+    pub fn render(&self) -> String {
+        if self.assumptions.is_empty() {
+            return self.verdict.as_str().to_owned();
+        }
+        let names = self.assumptions.iter().cloned().collect::<Vec<_>>();
+        format!(
+            "{} under the {} assumption{}",
+            self.verdict,
+            names.join(", "),
+            if names.len() == 1 { "" } else { "s" }
+        )
+    }
+}
+
 /// What a chain composes (§L21.2).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -356,6 +433,24 @@ mod tests {
             }
         }
         assert_eq!(Verdict::fold([]), Verdict::Safe);
+    }
+
+    #[test]
+    fn an_assumption_survives_every_join_and_forbids_plain_safe() {
+        let ffi = AssumedVerdict::new(Verdict::Safe, ["unsafe-ffi"]);
+        assert!(!ffi.is_plain_safe());
+        assert_eq!(ffi.render(), "Safe under the unsafe-ffi assumption");
+        for verdict in Verdict::ALL {
+            let other = AssumedVerdict::new(verdict, std::iter::empty::<String>());
+            let joined = ffi.clone().join(other.clone());
+            assert!(joined.holds_under("unsafe-ffi"));
+            assert!(!joined.is_plain_safe());
+            assert_eq!(joined.verdict(), verdict);
+            assert_eq!(joined, other.join(ffi.clone()));
+        }
+        let plain = AssumedVerdict::new(Verdict::Safe, std::iter::empty::<String>());
+        assert!(plain.is_plain_safe());
+        assert_eq!(plain.render(), "Safe");
     }
 
     #[test]

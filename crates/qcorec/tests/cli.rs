@@ -615,3 +615,61 @@ fn the_cli_reads_the_include_texts_a_manifest_declares() {
 
     std::fs::remove_dir_all(&directory).unwrap();
 }
+
+/// Card `W48-QR-C-STRUCT-IMPORT`: an FFI file's `check` line says the result
+/// holds under the unsafe-FFI assumption and never plain `Safe`, and lists the
+/// imported struct among its premises; without a recorded target no layout is
+/// read and the file is refused.
+#[test]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+fn cli_prints_the_unsafe_ffi_verdict_and_its_premises() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let directory = std::env::temp_dir().join(format!("qcore-cli-ffi-{}", std::process::id()));
+    std::fs::create_dir_all(&directory).unwrap();
+    std::fs::copy(
+        root.join("examples/ffi/qr_header.h"),
+        directory.join("qr_header.h"),
+    )
+    .unwrap();
+    let clang = std::env::var("QCORE_CLANG").unwrap_or_else(|_| "clang".into());
+    let version = Command::new(&clang).arg("--version").output().unwrap();
+    let triple = Command::new(&clang).arg("-dumpmachine").output().unwrap();
+    let compiler = String::from_utf8(version.stdout).unwrap();
+    let target = directory.join("host.target");
+    std::fs::write(
+        &target,
+        format!(
+            "quirin-recorded-target v1\npointer_width = 64\ntriple = {}\ncompiler = {}\n",
+            String::from_utf8(triple.stdout).unwrap().trim(),
+            compiler.lines().next().unwrap().trim()
+        ),
+    )
+    .unwrap();
+    let program = directory.join("demo.qr");
+    std::fs::write(
+        &program,
+        "#import std.ffi.unsafe;\n#import std.fmt;\n#import std.io;\nstruct! { type Header = c\"struct qr_header\" from \"qr_header.h\"; fields { len: u32, flags: u8 } }\nfn main() -> unit effects { io } {\n    let h = Header { len: 40, flags: 255 };\n    let flags = h.flags;\n    flags |> print hex;\n    return;\n}\n",
+    )
+    .unwrap();
+    let checked = Command::new(env!("CARGO_BIN_EXE_quirin"))
+        .arg("check")
+        .arg("--recorded-target")
+        .arg(&target)
+        .arg(&program)
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8_lossy(&checked.stdout);
+    assert!(checked.status.success(), "{checked:?}");
+    assert!(stdout.contains("Safe under the unsafe-ffi assumption, never plain Safe"), "{stdout}");
+    assert!(stdout.contains("verdict: Safe under the "), "{stdout}");
+    assert!(stdout.contains("unsafe FFI (unsafe-ffi)"), "{stdout}");
+    assert!(stdout.contains("`Header = struct qr_header` from \"qr_header.h\""), "{stdout}");
+    let refused = Command::new(env!("CARGO_BIN_EXE_quirin"))
+        .arg("check")
+        .arg(&program)
+        .output()
+        .unwrap();
+    assert!(!refused.status.success());
+    assert!(String::from_utf8_lossy(&refused.stderr).contains("Q063"), "{refused:?}");
+    std::fs::remove_dir_all(&directory).unwrap();
+}

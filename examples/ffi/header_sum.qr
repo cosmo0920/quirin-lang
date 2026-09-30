@@ -1,0 +1,50 @@
+#import std.ffi.unsafe;
+#import std.extern;
+#import std.fmt;
+#import std.io;
+#import std.logger;
+
+// Importing a C struct and calling C through marked contracts (card
+// `W48-QR-C-STRUCT-IMPORT`, `source.ffi.v1`).
+//
+// `#import std.ffi.unsafe;` marks this whole file unsafe: every result it
+// supports holds only if the imported layout is faithful and each `#c_ffi`
+// contract function behaves as its contract states, and `quirin check` says so.
+//
+// The listing names four members of `struct qr_header` with their `.qr` types.
+// No offset is written: the recorded compiler reports the layout, the checker
+// compares each listed member's type and offset against it, and the emitted C
+// includes the real header and asserts `sizeof` and every listed `offsetof`.
+// `reserved` and `label` are not listed, so they are opaque bytes.
+struct! {
+    type Header = c"struct qr_header" from "qr_header.h";
+    fields { len: u32, flags: u8, id: i64, valid: bool }
+}
+
+extern fn qr_header_total(header: ptr<const, Header>) -> u32;
+extern fn qr_header_make(len: u32, flags: u8) -> Header;
+
+fn main() -> unit effects { io } {
+    // Construct-then-read: every listed field is supplied, and a read binds a
+    // value of that field's type.
+    let h = Header { len: 40, flags: 2, id: -7, valid: true };
+    let len = h.len;
+    len |> print dec;
+    let flags = h.flags;
+    print hex flags;
+
+    // By `const` pointer. `succeeds 42` is the declared outcome: the emitted C
+    // compares the real result and exits 70 on disagreement.
+    let total = qr_header_total(h) succeeds 42;
+    total |> print dec;
+
+    // By value, both ways: the returned record's listed fields are declared,
+    // compared by the emitted C, and then read like any record's.
+    let made = qr_header_make(10, 5) succeeds Header { len: 10, flags: 5, id: 30, valid: true };
+    let id = made.id;
+    id |> log info dec;
+    let valid = made.valid;
+    valid |> print dec;
+    flush;
+    return;
+}

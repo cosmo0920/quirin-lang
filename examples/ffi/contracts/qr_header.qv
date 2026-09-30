@@ -1,0 +1,28 @@
+module contract;
+
+// The declared model of `qr_header.c` (card W48-QR-C-STRUCT-IMPORT).
+//
+// Each function is marked `[| quant #c_ffi |]`: it is an FFI function, and a
+// `.qr` call that passes or returns an imported struct is admitted only through
+// a marked declaration, so an auditor finds every FFI use in the `.qv` files.
+// Loading this file asserts nothing about the C: it is a declared assumption,
+// and a file that calls through it is unsafe as a whole.
+
+// A borrowed `const` pointer to the struct: the callee reads it, keeps nothing.
+[| quant #c_ffi |]
+extern fn qr_header_total(header: ptr<const, c"struct qr_header">) -> u32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(header);
+    ensures normal resource_return_none();
+};
+
+// Two scalars in, the struct out by value: a copy the caller owns outright.
+[| quant #c_ffi |]
+extern fn qr_header_make(len: u32, flags: u8) -> c"struct qr_header"
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(len);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};

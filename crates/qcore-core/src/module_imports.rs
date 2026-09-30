@@ -129,6 +129,16 @@ pub const SOCKET_MODULE: &str = "std.socket";
 /// subset. It is not `std.net` and not `std.web`.
 pub const HTTP_MODULE: &str = "std.http";
 
+/// Card `W48-QR-C-STRUCT-IMPORT` (user decision 1): the file-level opt-in to
+/// the unsafe FFI — importing a C struct with `struct! { … }` and calling C
+/// through `[| quant #c_ffi |]`-marked contracts. The precedent is
+/// [`UNCHECKED_EXTERN_MODULE`]: a trust act, granted by no other module and
+/// granting nothing else. A call still needs [`EXTERN_MODULE`], exactly as an
+/// unchecked-linkage call does, and rendering still needs the output modules.
+/// Importing it marks the **whole file** unsafe: every result from the file
+/// carries the unsafe-FFI assumption (`qcore_core::ffi`).
+pub const FFI_MODULE: &str = "std.ffi.unsafe";
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ModuleImports {
     concurrency: bool,
@@ -142,6 +152,7 @@ pub struct ModuleImports {
     string: bool,
     socket: bool,
     http: bool,
+    ffi: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -171,6 +182,7 @@ impl ModuleImports {
                 STRING_MODULE => imports.string = true,
                 SOCKET_MODULE => imports.socket = true,
                 HTTP_MODULE => imports.http = true,
+                FFI_MODULE => imports.ffi = true,
                 _ => return Err(UnknownModule(name.to_owned())),
             }
         }
@@ -241,5 +253,12 @@ impl ModuleImports {
     /// no socket and constructs no `string`.
     pub fn http(self) -> bool {
         self.http
+    }
+
+    /// Whether this file may import a C struct or call C through a
+    /// `#c_ffi`-marked contract (card `W48-QR-C-STRUCT-IMPORT`). Granted by no
+    /// other module.
+    pub fn ffi(self) -> bool {
+        self.ffi
     }
 }

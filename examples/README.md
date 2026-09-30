@@ -27,6 +27,7 @@ page says so. It is the only one.
 | [scalar/](scalar/) | i32/unit helpers, typed immutable locals, checked arithmetic, nested direct calls, and explicit `std.io` output | `source.scalar-calls.v1` |
 | [loops/](loops/) | The bounded counted loop `for i in 0..n`, the bulk buffer copy it was landed for, and a loop beside a write lend | `source.loop.v1` on `source.buffer.v1` |
 | [records/](records/) | The first aggregate type: `type NAME { … }`, construction, field reads — a plain copyable value, shown alone and beside an owned buffer | `source.record.v1` on `source.buffer.v1` |
+| [ffi/](ffi/) | A C struct imported with `struct! { … }` from a real header, checked against the recorded compiler, and C called through `[| quant #c_ffi |]` contracts — the whole file under the unsafe-FFI assumption | `source.ffi.v1` |
 
 `compiler/tests/examples_suite.rs` holds **every** directory in the table above
 to one standard: each published program has a row on its family page, each row
@@ -52,6 +53,7 @@ ones no other file does and references the rest rather than building them twice:
 | strings/ | `cargo test -p qcore-compiler --test string_slice_io` (`status_line`), `--test string_concat` (`computed_length`) |
 | sockets/ | `cargo test -p qcore-compiler --test std_socket` |
 | http/ | `cargo test -p qcore-compiler --test std_http` |
+| ffi/ | `cargo test -p qcore-compiler --test ffi_struct_import` |
 
 One file here belongs to no family: [`cycle12.qr`](cycle12.qr) predates
 the directories and is the smallest sequential-cleanup program in the tree —

@@ -22,6 +22,7 @@ pub mod source_epoch_tasks;
 pub mod source_event;
 pub mod source_extension;
 pub mod source_extern;
+pub mod source_ffi;
 pub mod source_http;
 pub mod source_loop;
 pub mod source_mutex;

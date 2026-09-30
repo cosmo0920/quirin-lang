@@ -6,7 +6,8 @@ use crate::lexer::{Span, Symbol, TokenKind};
 use crate::source_std_io::StdIoUse;
 use qcore_core::module_imports::{
     BUFFER_MODULE, CONCURRENCY_MODULE, EVENT_MODULE, EXTERN_MODULE, FMT_MODULE, HTTP_MODULE,
-    IO_MODULE, LOGGER_MODULE, ModuleImports, SOCKET_MODULE, STRING_MODULE, UNCHECKED_EXTERN_MODULE,
+    FFI_MODULE, IO_MODULE, LOGGER_MODULE, ModuleImports, SOCKET_MODULE, STRING_MODULE,
+    UNCHECKED_EXTERN_MODULE,
 };
 
 /// Importing another compilation input never grants this file a capability.
@@ -90,6 +91,41 @@ pub fn check_source_imports_in_scope(
             message: format!(
                 "declaring an extern function with no contract requires an explicit `#import {UNCHECKED_EXTERN_MODULE};` in this source file"
             ),
+        }]);
+    }
+    // Card `W48-QR-C-STRUCT-IMPORT` (user decision 1): an imported C struct is
+    // the FFI trust act, gated by `std.ffi.unsafe` and by no other module —
+    // the `UNSAFE-LINKAGE` precedent exactly, so the refusal is that card's
+    // `Q032`, widened from "an `unsafe extern fn` declaration" to "an FFI
+    // construct" (§L21). A call through a `#c_ffi` contract from a file
+    // without the import never reaches a marked contract at all: the loader
+    // withholds marked declarations from every route but `source.ffi.v1`.
+    if !imports.ffi()
+        && let Some(span) = crate::source_ffi::ffi_declaration_span(program)
+    {
+        return Err(vec![SourceDiagnostic {
+            code: "Q032",
+            pass: SemanticPass::UncheckedLinkage,
+            span,
+            message: format!(
+                "importing a C struct with `struct! {{ … }}` requires an explicit `#import {FFI_MODULE};` in this source file; the import marks the whole file unsafe"
+            ),
+        }]);
+    }
+    // User decision 4: the marker belongs to the FFI side, the `.qv` contract
+    // files, so an auditor finds every FFI function there. A runtime or
+    // library module carrying one is refused rather than ignored.
+    if program.mode != crate::frontend::SourceModuleMode::Contract
+        && let Some(span) = program
+            .declarations
+            .iter()
+            .find_map(|declaration| declaration.value.c_ffi)
+    {
+        return Err(vec![SourceDiagnostic {
+            code: "Q033",
+            pass: SemanticPass::UncheckedLinkage,
+            span,
+            message: "`[| quant #c_ffi |]` marks an FFI function definition in a `.qv` contract module; a runtime or library module declares its callee with a plain `extern fn` and calls it through the marked contract".into(),
         }]);
     }
     // Card `STD-MODULES`. Each capability is gated by its own module, and by no
