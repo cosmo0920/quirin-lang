@@ -1,0 +1,114 @@
+{
+ "population": {
+  "root_refusal_leaves": 7053,
+  "functions": 1529,
+  "top_roots": [
+   [
+    "rkbuf",
+    844
+   ],
+   [
+    "rk",
+    721
+   ],
+   [
+    "rkb",
+    612
+   ],
+   [
+    "rkcg",
+    331
+   ],
+   [
+    "rktp",
+    278
+   ],
+   [
+    "rko",
+    272
+   ],
+   [
+    "reply",
+    237
+   ],
+   [
+    "rkm",
+    129
+   ],
+   [
+    "dctx",
+    115
+   ],
+   [
+    "__tmpstr",
+    115
+   ],
+   [
+    "rkt",
+    98
+   ],
+   [
+    "prop",
+    93
+   ]
+  ],
+  "by_premise": {
+   "path-refused": 5139,
+   "ineligible": 505,
+   "bound": 4898,
+   "rooted-place": 13,
+   "holds": 29
+  },
+  "by_binding": {
+   "target-free": 122,
+   "absent": 5467,
+   "nullable": 1030,
+   "tracked": 434
+  },
+  "by_class_leaves": {
+   "e": 2250,
+   "b": 5563,
+   "c": 1544,
+   "a": 414,
+   "ast": 103,
+   "d": 158
+  },
+  "by_class_functions": {
+   "e": 728,
+   "b": 1126,
+   "c": 518,
+   "a": 148,
+   "ast": 56,
+   "d": 40
+  },
+  "by_premise_and_binding_first_row": {
+   "path-refused/absent": 5010,
+   "bound/nullable": 988,
+   "ineligible/absent": 444,
+   "bound/tracked": 421,
+   "path-refused/target-free": 116,
+   "ineligible/nullable": 42,
+   "rooted-place/absent": 13,
+   "ineligible/tracked": 13,
+   "ineligible/target-free": 6
+  }
+ },
+ "functions_whose_only_leaves_are_root_refusals": [],
+ "admitted_with_premise_in_before_state": {
+  "leaves": 0,
+  "functions": 0
+ },
+ "freed_alone": {
+  "upper": {},
+  "strict": {}
+ },
+ "freed_alone_totals": {
+  "upper": 0,
+  "strict": 0
+ },
+ "pointer_store_owner_roots": {
+  "refused_without": 404,
+  "admitted_with": 20
+ },
+ "freed_functions": []
+}

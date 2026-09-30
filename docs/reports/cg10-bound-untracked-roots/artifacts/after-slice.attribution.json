@@ -1,0 +1,912 @@
+{
+ "summary": {
+  "functions": 51,
+  "by_cause": {
+   "premise": 37,
+   "deferred-actual": 11,
+   "callee-summary": 3
+  },
+  "status_moves": [
+   {
+    "unit": "src/flb_input.c",
+    "function": "flb_input_collector_running",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "cause": "callee-summary",
+    "roots": [],
+    "reading": null,
+    "removed": {
+     "unsupported: call to uncontracted function `get_collector`": 1
+    },
+    "added": {}
+   },
+   {
+    "unit": "src/flb_input.c",
+    "function": "get_collector",
+    "status": [
+     "Unknown",
+     "Safe"
+    ],
+    "cause": "premise",
+    "roots": [
+     "coll"
+    ],
+    "reading": null,
+    "removed": {
+     "unknown_alias: unresolved resource identity": 1
+    },
+    "added": {}
+   }
+  ],
+  "unattributed": []
+ },
+ "rows": [
+  {
+   "unit": "plugins/in_tail/tail_db.c",
+   "function": "flb_tail_db_file_set",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ctx"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_db.c",
+   "function": "flb_tail_db_open",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "plugins/in_tail/tail_dockermode.c",
+   "function": "file_pending_flush",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "file"
+   ],
+   "reading": null,
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_dockermode.c",
+   "function": "flb_tail_dmode_flush",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "plugins/in_tail/tail_dockermode.c",
+   "function": "flb_tail_dmode_process_content",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "plugins/in_tail/tail_dockermode.c",
+   "function": "modify_json_cond",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 2
+   }
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "check_purge_deleted_file",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ctx"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 3
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_append",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 4
+   }
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_chunk",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "file"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_remove",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "file"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_reset_on_truncate",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "file"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_rotated",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "file"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "flb_tail_file_to_event",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "file"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "function": "update_resumable_offset_state",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "file"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_file_budget.c",
+   "function": "configured_limit",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "plugins/in_tail/tail_file_budget.c",
+   "function": "flb_tail_file_budget_destroy",
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "cause": "premise",
+   "roots": [
+    "budget"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "function": "flb_tail_fs_inotify_add",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "file"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "function": "flb_tail_fs_inotify_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ctx"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "function": "reconcile_file_state",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ctx"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_inotify.c",
+   "function": "tail_fs_add",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "file"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_multiline.c",
+   "function": "file_pending_flush",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "file"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "plugins/in_tail/tail_multiline.c",
+   "function": "flb_tail_mult_create",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_delete",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "callee-summary",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: call to uncontracted function `get_collector`": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "coll"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 3
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_get_event",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "callee-summary",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: call to uncontracted function `get_collector`": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_pause",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "coll"
+   ],
+   "reading": null,
+   "removed": {
+    "unsupported: call to uncontracted function `get_collector`": 1,
+    "unknown_alias: unresolved resource identity": 4
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_resume",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "coll"
+   ],
+   "reading": null,
+   "removed": {
+    "unsupported: call to uncontracted function `get_collector`": 1,
+    "unknown_alias: unresolved resource identity": 2
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_running",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "cause": "callee-summary",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: call to uncontracted function `get_collector`": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "coll"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_http_server_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 2
+   }
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_instance_exit",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_instance_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 2
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_net_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_oauth2_jwt_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 2
+   }
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_plugin_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 2
+   }
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_rate_gate_timer_schedule",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_set_property",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "get_collector",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "cause": "premise",
+   "roots": [
+    "coll"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "function": "flb_input_thread_collectors_signal_wait",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "function": "flb_input_thread_instance_exit",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "function": "flb_input_thread_instance_pause",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "function": "flb_input_thread_instance_resume",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "function": "handle_input_event",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "function": "input_collector_fd",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "collector"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 2
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_input_thread.c",
+   "function": "input_thread",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "deferred-actual",
+   "roots": [],
+   "reading": null,
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity": 1
+   }
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "function": "flb_filter_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "f_ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "function": "flb_input_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "i_ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "function": "flb_input_set_test",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "i_ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "function": "flb_output_property_check",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "o_ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "function": "flb_output_set_http_test",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "o_ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  },
+  {
+   "unit": "src/flb_lib.c",
+   "function": "flb_output_set_test_with_ctx_callback",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "cause": "premise",
+   "roots": [
+    "o_ins"
+   ],
+   "reading": null,
+   "removed": {
+    "unknown_alias: unresolved resource identity": 1
+   },
+   "added": {}
+  }
+ ]
+}

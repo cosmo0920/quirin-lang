@@ -1,0 +1,65 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 195,
+   "Safe": 37,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 191,
+   "Safe": 41,
+   "Unsafe": 2
+  }
+ },
+ "moves": [
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_find_segregated_backlog_by_output_plugin_instance",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -1
+   }
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "engine_has_fluentbit_logs_input",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+   }
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_get_chunk_backpressure_percent",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -1
+   }
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_drop_task_route",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 4
+ },
+ "same_status_functions_with_changed_diagnostics": 30,
+ "leaf_delta": {
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -10,
+  "unknown_alias: unresolved resource identity": -8,
+  "unsupported: indirect memory access is outside the resource projection": -8,
+  "unsupported: call to uncontracted function `sb_find_segregated_backlog_by_output_plugin_instance`": -2,
+  "unsupported: call to uncontracted function `flb_engine_get_chunk_backpressure_percent`": -1,
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": -1,
+  "summary_conflict: inferred custody summary ResourceFunctionContract { parameters: [Borrowed, Owned { nullable: false }], result: None } contradicts the declared contract ResourceFunctionContract { parameters: [Borrowed, Borrowed], result: None, counted_users: CountedUserClauses { effects: {}, neutral: true, exits: [] } }; the declared contract governs every call site": 1
+ }
+}

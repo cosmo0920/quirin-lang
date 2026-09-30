@@ -1,0 +1,46 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 242,
+   "Safe": 26,
+   "Pending": 1,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 240,
+   "Safe": 28,
+   "Pending": 1,
+   "Unsafe": 1
+  }
+ },
+ "moves": [
+  {
+   "unit": "src/flb_input.c",
+   "function": "flb_input_collector_running",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `get_collector`": -1
+   }
+  },
+  {
+   "unit": "src/flb_input.c",
+   "function": "get_collector",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 2
+ },
+ "same_status_functions_with_changed_diagnostics": 49,
+ "leaf_delta": {
+  "unknown_alias: unresolved resource identity": -25,
+  "unsupported: indirect memory access is outside the resource projection": -10,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -6,
+  "unsupported: call to uncontracted function `get_collector`": -5
+ }
+}
