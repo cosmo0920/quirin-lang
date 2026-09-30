@@ -342,7 +342,14 @@ impl<'a> Walk<'a, '_> {
                     DeclarationKind::Other
                 };
                 self.facts.declare(node, declaration, self.enums, self.ids);
-                if let Some(name) = node["name"].as_str() {
+                // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): a
+                // static- or thread-duration initializer is a constant
+                // evaluated before the program starts, never a store here.
+                let static_duration = crate::storage_duration::storage_of(node, true)
+                    .is_some_and(crate::storage_duration::Storage::outlives_frame);
+                if let Some(name) = node["name"].as_str()
+                    && !static_duration
+                {
                     let values = children(node).iter().collect::<Vec<_>>();
                     if !values.is_empty() {
                         self.facts.bound.insert(name.to_owned());

@@ -283,6 +283,6 @@ GATE_TABLE
   - `CG27-LOOPS-RECURSION-BUDGETS`: route T reads its loops and refuses each
     back-edge by name. A T invariant or summary lands there as a checked
     admission class.
-- **The ledger stays at 666 entries** (one retired, one registered), with
+- **The ledger stays at 665 entries** on the merged main (one retired, one registered), with
   `dimensions.named_followups` equal to the list length. The edits are made by
   [scripts/update_ledger.py](scripts/update_ledger.py).

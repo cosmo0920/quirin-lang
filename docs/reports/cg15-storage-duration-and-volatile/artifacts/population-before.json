@@ -1,0 +1,139 @@
+{
+ "cg00_alone_list_now": {
+  "already_safe": [],
+  "other": [],
+  "still_alone": [
+   "rdkafka_admin.c::rd_kafka_AclOperation_name",
+   "rdkafka_admin.c::rd_kafka_AclPermissionType_name",
+   "rdkafka_admin.c::rd_kafka_ConfigSource_name",
+   "rdkafka_admin.c::rd_kafka_ResourcePatternType_name",
+   "rdkafka_admin.c::rd_kafka_ResourceType_name",
+   "rdkafka_broker.c::rd_kafka_broker_name",
+   "rdkafka_partition.c::rd_kafka_fetch_pos2str"
+  ]
+ },
+ "current_leaf_total": {
+  "M23": 1,
+  "M24": 132
+ },
+ "current_leaves": {
+  "M23 volatile-atomic": 1,
+  "M24 path:static-local": 67,
+  "M24 static-storage-declaration": 65
+ },
+ "current_unknown_functions": {
+  "M23": 1,
+  "M24": 67
+ },
+ "entry_functions": [
+  "lz4frame.c::LZ4F_getBlockSize",
+  "lz4hc.c::LZ4HC_compress_generic_internal",
+  "rdaddr.c::rd_sockaddr2str",
+  "rdavl.c::rd_avl_rotate",
+  "rdbuf.c::do_unittest_erase",
+  "rdkafka.c::rd_kafka_destroy_app",
+  "rdkafka.c::rd_kafka_purge_flags2str",
+  "rdkafka.c::rd_kafka_stats_emit_broker_reqs",
+  "rdkafka_admin.c::rd_kafka_AclOperation_name",
+  "rdkafka_admin.c::rd_kafka_AclPermissionType_name",
+  "rdkafka_admin.c::rd_kafka_AlterConfigs",
+  "rdkafka_admin.c::rd_kafka_AlterConsumerGroupOffsets",
+  "rdkafka_admin.c::rd_kafka_AlterUserScramCredentials",
+  "rdkafka_admin.c::rd_kafka_ConfigSource_name",
+  "rdkafka_admin.c::rd_kafka_CreateAcls",
+  "rdkafka_admin.c::rd_kafka_CreatePartitions",
+  "rdkafka_admin.c::rd_kafka_CreateTopics",
+  "rdkafka_admin.c::rd_kafka_DeleteAcls",
+  "rdkafka_admin.c::rd_kafka_DeleteConsumerGroupOffsets",
+  "rdkafka_admin.c::rd_kafka_DeleteGroups",
+  "rdkafka_admin.c::rd_kafka_DeleteRecords",
+  "rdkafka_admin.c::rd_kafka_DeleteRecords_leaders_queried_cb",
+  "rdkafka_admin.c::rd_kafka_DeleteTopics",
+  "rdkafka_admin.c::rd_kafka_DescribeAcls",
+  "rdkafka_admin.c::rd_kafka_DescribeCluster",
+  "rdkafka_admin.c::rd_kafka_DescribeConfigs",
+  "rdkafka_admin.c::rd_kafka_DescribeConsumerGroups",
+  "rdkafka_admin.c::rd_kafka_DescribeConsumerGroups_response_merge",
+  "rdkafka_admin.c::rd_kafka_DescribeTopics",
+  "rdkafka_admin.c::rd_kafka_DescribeUserScramCredentials",
+  "rdkafka_admin.c::rd_kafka_ElectLeaders",
+  "rdkafka_admin.c::rd_kafka_IncrementalAlterConfigs",
+  "rdkafka_admin.c::rd_kafka_ListConsumerGroupOffsets",
+  "rdkafka_admin.c::rd_kafka_ListConsumerGroups",
+  "rdkafka_admin.c::rd_kafka_ListOffsets",
+  "rdkafka_admin.c::rd_kafka_ListOffsets_leaders_queried_cb",
+  "rdkafka_admin.c::rd_kafka_ResourcePatternType_name",
+  "rdkafka_admin.c::rd_kafka_ResourceType_name",
+  "rdkafka_broker.c::rd_kafka_broker_name",
+  "rdkafka_cert.c::rd_kafka_cert_new",
+  "rdkafka_conf.c::rd_kafka_desensitize_str",
+  "rdkafka_event.c::rd_kafka_event_debug_contexts",
+  "rdkafka_feature.c::rd_kafka_features2str",
+  "rdkafka_feature.c::rd_kafka_get_legacy_ApiVersions",
+  "rdkafka_lz4.c::rd_kafka_lz4_compress_break_framing",
+  "rdkafka_lz4.c::rd_kafka_lz4_decompress_fixup_bad_framing",
+  "rdkafka_msg.c::unittest_msg_seq_wrap",
+  "rdkafka_msgset_reader.c::rd_kafka_msgset_reader_decompress",
+  "rdkafka_msgset_writer.c::rd_kafka_msgset_writer_select_MsgVersion",
+  "rdkafka_offset.c::rd_kafka_offset2str",
+  "rdkafka_offset.c::rd_kafka_offset_store_init",
+  "rdkafka_op.c::rd_kafka_op2str",
+  "rdkafka_op.c::rd_kafka_op_new0",
+  "rdkafka_partition.c::rd_kafka_fetch_pos2str",
+  "rdkafka_range_assignor.c::rd_kafka_range_assignor_unittest",
+  "rdkafka_sasl_oauthbearer.c::do_unittest_config_empty_value_should_fail",
+  "rdkafka_sasl_oauthbearer.c::do_unittest_config_value_with_quote_should_fail",
+  "rdkafka_sasl_oauthbearer.c::do_unittest_illegal_extension_keys_should_fail",
+  "rdkafka_sasl_oauthbearer.c::rd_kafka_sasl_oauthbearer_fsm",
+  "rdkafka_sasl_oauthbearer_oidc.c::rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+  "rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_jwt_bearer_base64url_encode",
+  "rdkafka_sasl_scram.c::rd_kafka_sasl_scram_fsm",
+  "rdkafka_ssl.c::rd_kafka_ssl_probe_and_set_default_ca_location",
+  "rdkafka_sticky_assignor.c::rd_kafka_sticky_assignor_unittest",
+  "rdkafka_telemetry_decode.c::rd_kafka_snappy_decompress",
+  "rdmap.c::rd_map_alloc_buckets",
+  "rdstring.c::ut_strcasestr",
+  "rdstring.c::ut_string_split"
+ ],
+ "freed_alone": {
+  "strict": [
+   "rdkafka_admin.c::rd_kafka_AclOperation_name",
+   "rdkafka_admin.c::rd_kafka_AclPermissionType_name",
+   "rdkafka_admin.c::rd_kafka_ConfigSource_name",
+   "rdkafka_admin.c::rd_kafka_ResourcePatternType_name",
+   "rdkafka_admin.c::rd_kafka_ResourceType_name",
+   "rdkafka_broker.c::rd_kafka_broker_name",
+   "rdkafka_feature.c::rd_kafka_features2str",
+   "rdkafka_partition.c::rd_kafka_fetch_pos2str"
+  ],
+  "with_alias": [
+   "rdkafka_admin.c::rd_kafka_AclOperation_name",
+   "rdkafka_admin.c::rd_kafka_AclPermissionType_name",
+   "rdkafka_admin.c::rd_kafka_ConfigSource_name",
+   "rdkafka_admin.c::rd_kafka_ResourcePatternType_name",
+   "rdkafka_admin.c::rd_kafka_ResourceType_name",
+   "rdkafka_broker.c::rd_kafka_broker_name",
+   "rdkafka_feature.c::rd_kafka_features2str",
+   "rdkafka_partition.c::rd_kafka_fetch_pos2str"
+  ]
+ },
+ "freed_alone_counts": {
+  "strict": 8,
+  "with_alias": 8
+ },
+ "freed_with_one_other_card": {
+  "CG02": 1,
+  "CG07": 2,
+  "CG10": 2,
+  "CG13": 1,
+  "unattributed:callee-closure": 2
+ },
+ "moved_leaves": {},
+ "new_unattributed_leaves": 190,
+ "schema": "qcore.cg15-population.v1",
+ "status": {
+  "Safe": 608,
+  "Unknown": 4216,
+  "Unsafe": 10
+ }
+}

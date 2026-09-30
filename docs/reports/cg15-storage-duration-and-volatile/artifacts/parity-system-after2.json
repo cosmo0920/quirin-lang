@@ -1,0 +1,87 @@
+{
+ "function_counts": {
+  "storage-duration-address-argument declined": 41,
+  "storage-duration-address-return declined": 6,
+  "storage-duration-declaration no-event": 2
+ },
+ "functions": {
+  "storage-duration-address-argument declined": [
+   "cb_queue_chunks",
+   "cb_sb_init",
+   "flb_bucket_queue_add",
+   "flb_engine_reschedule_retries",
+   "flb_input_chunk_destroy",
+   "flb_input_chunk_destroy_corrupted",
+   "flb_input_chunk_find_space_new_data",
+   "flb_input_chunk_get_direct_routes",
+   "flb_input_chunk_has_overlimit_routes",
+   "flb_input_chunk_release_route",
+   "flb_input_chunk_release_space",
+   "flb_input_chunk_ring_buffer_collector",
+   "flb_input_chunk_set_limits",
+   "flb_input_chunk_update_output_instances",
+   "flb_output_flush_create",
+   "flb_output_init_all",
+   "flb_output_new",
+   "flb_output_proxy_tls_ca_check",
+   "flb_output_set_property",
+   "flb_output_task_flush_error",
+   "flb_output_task_singleplex_enqueue",
+   "flb_output_upstream_set",
+   "flb_sched_timer_coro_create",
+   "flb_sched_timer_create",
+   "flb_sched_timer_destroy",
+   "flb_sched_timer_invalidate",
+   "flb_storage_input_create",
+   "flb_task_create",
+   "flb_task_destroy",
+   "generate_chunk_name",
+   "handle_output_event",
+   "input_chunk_append_raw",
+   "input_chunk_collect_output_references",
+   "input_chunk_get",
+   "print_storage_info",
+   "sb_append_chunk_to_segregated_backlog",
+   "sb_remove_chunk_from_segregated_backlog",
+   "sb_segregate_chunks",
+   "storage_contexts_create",
+   "task_collect_output_references",
+   "tasks_start"
+  ],
+  "storage-duration-address-return declined": [
+   "calculate_chunk_capacity_percent",
+   "flb_bucket_queue_find_min",
+   "flb_input_chunk_place_new_chunk",
+   "flb_output_name",
+   "get_input_chunk_source_name",
+   "sb_get_context"
+  ],
+  "storage-duration-declaration no-event": [
+   "flb_engine_adaptive_flush_interval",
+   "flb_engine_drain_ring_buffer_signal_channel"
+  ]
+ },
+ "rows": {
+  "storage-duration-address-argument": {
+   "declined": 1832
+  },
+  "storage-duration-address-return": {
+   "declined": 78
+  },
+  "storage-duration-declaration": {
+   "no-event": 16
+  }
+ },
+ "schema": "qcore.cg15-parity-summary.v1",
+ "trace": {
+  "accesses": 840,
+  "function_count": 3,
+  "functions": [
+   "flb_coro_destroy",
+   "flb_output_flush_create",
+   "flb_sched_timer_coro_create"
+  ],
+  "statements": 480,
+  "unsequenced_conflicts": 0
+ }
+}

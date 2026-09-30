@@ -1,0 +1,51 @@
+{
+ "after1": {
+  "monkey-source.json": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+  "resource-diagnostics.chunk-contracts.json": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+  "resource-diagnostics.contracts.json": "d38f9698630de26c9be8381e53c9eb4e7275261003fc06a9d42ba891733fbd36",
+  "resource-diagnostics.json": "d3241e0b5886e2d9c2b729ab0881d55649a370634e5892115ed023e87cbc43ea",
+  "resource-diagnostics.source-effects.json": "f58268cc9e7ec71dd47213e83bae8142d6ef38e210fa7a9f9095d13f8c359593"
+ },
+ "after1_binary": "194d67f5a5fd7fd44b77b320c4670590ef6478dd95583611b0fb968c57afd509",
+ "after1_exit": "0",
+ "after1_head": "1937b10f64a678d1a200ea1bdd58c8ba155535ac",
+ "after2": {
+  "monkey-source.json": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+  "resource-diagnostics.chunk-contracts.json": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+  "resource-diagnostics.contracts.json": "d38f9698630de26c9be8381e53c9eb4e7275261003fc06a9d42ba891733fbd36",
+  "resource-diagnostics.json": "3964371f7d1cbcc45bf6c58bcd9230ca9922f6e0ece785c8cd5a6b95abeb8bf2",
+  "resource-diagnostics.source-effects.json": "f58268cc9e7ec71dd47213e83bae8142d6ef38e210fa7a9f9095d13f8c359593"
+ },
+ "after2_binary": "ab71131f3523674dca0db9c9d2e659664d5004e4c00f722e9bcca1dd70e286dd",
+ "after2_exit": "0",
+ "after2_head": "56ffcc9fce3b3647c4ce247b2f6e867d6e7dffc4",
+ "after2_slice": "a71501d2f242f5bea129832f882c8b25d2aa4d3882a310a478037de0541e173d",
+ "after2_slice_exit": "0",
+ "after2_system": "41b7eadd87e35512520b121e57a9334ddcffc0abf0d9525a2f6d2a33a71df697",
+ "after2_system_exit": "0",
+ "after3": {
+  "monkey-source.json": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+  "resource-diagnostics.chunk-contracts.json": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+  "resource-diagnostics.contracts.json": "d38f9698630de26c9be8381e53c9eb4e7275261003fc06a9d42ba891733fbd36",
+  "resource-diagnostics.json": "3964371f7d1cbcc45bf6c58bcd9230ca9922f6e0ece785c8cd5a6b95abeb8bf2",
+  "resource-diagnostics.source-effects.json": "f58268cc9e7ec71dd47213e83bae8142d6ef38e210fa7a9f9095d13f8c359593"
+ },
+ "after3_binary": "4e3ca7d6e0943303ad892e4fa4dd76f08b3b602ffe9203676e7ed95d086b3298",
+ "after3_exit": "0",
+ "after3_head": "8b556dc03806884193983e0956aa0ed8e01ce53b",
+ "before": {
+  "monkey-source.json": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+  "resource-diagnostics.chunk-contracts.json": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+  "resource-diagnostics.contracts.json": "d38f9698630de26c9be8381e53c9eb4e7275261003fc06a9d42ba891733fbd36",
+  "resource-diagnostics.json": "3a25c4e968e8f646f85a61378fb50fd41287534a7d6a2e91725ef47b018a19ca",
+  "resource-diagnostics.source-effects.json": "f58268cc9e7ec71dd47213e83bae8142d6ef38e210fa7a9f9095d13f8c359593"
+ },
+ "before_binary": "02e92546ccd66a2f391c02e1c1bbe219cbdb7a3449cece752937a7388192f407",
+ "before_exit": "0",
+ "before_head": "c374de9671359d33c0b768a4edff3755a0fe7190",
+ "before_slice": "a71501d2f242f5bea129832f882c8b25d2aa4d3882a310a478037de0541e173d",
+ "before_slice_exit": "0",
+ "before_system": "f9deddc358107b7dcec36ce8ab547c622fa30fd9aa28278bb128e410fe646688",
+ "before_system_exit": "0",
+ "note": "corpus arbiter scripts/run_pinned_audit.py 66910c10 --jobs 4 over /home/cosmo/Documents/GitHub/qcore-c/build/cycle19; BEFORE at base c374de96 (binary built there); after1 at 1937b10f; after2 binary built from dd84ce7b's sources (its recorded head 56ffcc9f differs from dd84ce7b only in tests/storage_duration_volatile.rs); after3 at 8b556dc0 (the final sources but a `#[cfg(test)]` on a function the release build never calls), byte-identical to after2 in every artifact. System route and tail-pause slice per scripts/measure.sh."
+}

@@ -1221,6 +1221,17 @@ impl Importer<'_> {
             ("ReturnStmt", []) => Ok(Stmt::Return(None)),
             ("ReturnStmt", [result]) => Ok(Stmt::Return(Some(self.expression(result, depth + 1)?))),
             ("CompoundAssignOperator", _) => Err(self.compound_refusal(node)),
+            // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): no
+            // typed-source consumer decides a static- or thread-duration
+            // object's lifetime, so T names the form and refuses it.
+            ("DeclStmt", declarations)
+                if declarations.iter().any(|declaration| {
+                    crate::storage_duration::storage_of(declaration, true)
+                        .is_some_and(crate::storage_duration::Storage::outlives_frame)
+                }) =>
+            {
+                Err(crate::storage_duration::T_STATIC_REFUSAL.to_owned())
+            }
             // CG09 (rule 11l): control statements, each admitted or refused
             // by name; any other statement keeps the generic refusal.
             _ => self.control_statement(node, depth),
