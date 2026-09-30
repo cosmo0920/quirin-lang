@@ -1,0 +1,26 @@
+module contract;
+
+// Card CG10-BOUND-UNTRACKED-ROOTS: test assumptions, not a model of any real
+// library. `bu_get` returns a pointer that carries no custody (a borrowed
+// result); `bu_interior` returns a pointer derived from its argument, or NULL.
+
+extern fn bu_get(p: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
+
+extern fn bu_interior(p: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_interior(p, nullable);
+};
+
+extern fn bu_name(p: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};

@@ -13942,6 +13942,12 @@ impl crate::indirect_chain_access::ChainView for AbstractState {
             && self.resources.get(&site) == Some(&LIVE)
     }
 
+    // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): the per-path premise, read
+    // off this state (`legacy_bound_untracked.rs`).
+    fn bound_untracked(&self, root: &str) -> bool {
+        bound_untracked_route::premise(self, root, true) == crate::bound_untracked::Premise::Holds
+    }
+
     fn field_link(&self, owner: usize, field: &str) -> Option<&BTreeSet<usize>> {
         self.field_links.get(&owner)?.get(field)
     }

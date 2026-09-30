@@ -285,6 +285,7 @@ import QCore.SourceExtensions
 import QCore.TypedSourceOperators
 import QCore.ElaborationCore
 import QCore.TypedPlace
+import QCore.BoundUntracked
 import QCore.CallInstantiation
 import QCore.ValueConnectives
 import QCore.PointerStore

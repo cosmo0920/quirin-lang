@@ -234,6 +234,25 @@ impl Reader<'_> {
     fn roots_admit(&self, pointer_root: &dyn Fn(&str) -> bool) -> bool {
         roots(&self.plan).iter().all(|root| pointer_root(root))
     }
+
+    /// Card **CG10-BOUND-UNTRACKED-ROOTS** (rule 11d): every root the
+    /// never-bound premise does not cover is the dereferenced root of the
+    /// plan's chains, each eligible for the per-path bound-untracked premise,
+    /// so the flow decides it at the node (`chain_owner`).
+    fn roots_deferred(&self, never_bound: &dyn Fn(&str) -> bool) -> bool {
+        roots(&self.plan).iter().all(|root| {
+            never_bound(root) || {
+                let mut chains = self
+                    .plan
+                    .chains
+                    .iter()
+                    .filter(|chain| &chain.root == root)
+                    .peekable();
+                chains.peek().is_some()
+                    && chains.all(|chain| chain.dereferenced_root && chain.root_bound_untracked)
+            }
+        })
+    }
 }
 
 impl StatementIndex {
@@ -359,18 +378,26 @@ impl StatementIndex {
         crate::typed_place::clear_decisions();
         let mut reader = self.reader(&never_bound);
         // Rule 10n: an address `&PATH` is a pointer value, never a read.
+        let mut address = false;
         let pointer_valued = match strip_pointer_value(actual) {
             Some(value)
                 if kind(value) == "UnaryOperator" && value["opcode"].as_str() == Some("&") =>
             {
                 reader.address(value, true)?;
+                address = true;
                 true
             }
             _ => reader.value(actual)?,
         };
         // A borrowed actual hands nothing out of the body: the never-bound
         // premise suffices, and W44's `ArgumentReads` decides what it names.
-        if pointer_valued && !reader.roots_admit(&never_bound) {
+        // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): a pointer read (never an
+        // address, rule 10n's premise) whose other roots are eligible chain
+        // roots is left to the flow's per-path premise.
+        if pointer_valued
+            && !reader.roots_admit(&never_bound)
+            && (address || !reader.roots_deferred(&never_bound))
+        {
             return None;
         }
         Some(ArgumentPlan {
