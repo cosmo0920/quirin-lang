@@ -408,6 +408,14 @@ def integerTargets : List Ty := [.i8, .i16, .i32, .i64, .isize, .u8, .u16, .u32,
 /-- A float `as bool` converts nothing, as in the kernel. -/
 theorem toInt_bool (f : Format) (t : Option Width) (d : Datum) : toInt f t .bool d = none := rfl
 
+/-- The float card's `QCore.FloatTypes.toInt` does admit `.bool` (`0.5` →
+`0`), unlike the kernel; recorded as `W48-QR-FLOAT-TOINT-BOOL-TARGET`, not
+edited here. -/
+theorem floatTypes_toInt_bool_differs :
+    QCore.FloatTypes.toInt none .bool (.finite 1 (-1)) = some 0 ∧
+      toInt binary64 none .bool (.fin false (2 ^ 1073)) = none := by
+  decide +kernel
+
 theorem roundUnb_scaled (f : Format) (a Q : Nat) :
     roundUnb f (a * 2 ^ Q) 1 = QCore.FloatTypes.roundNat f.p a * 2 ^ Q := by
   have hp := p_pos f

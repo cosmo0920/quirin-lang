@@ -75,6 +75,12 @@ theorem dist_of_le {n d N : Nat} (h : N * d ≤ n) : dist n d N = n - N * d := b
 theorem dist_of_lt {n d N : Nat} (h : n < N * d) : dist n d N = N * d - n := by
   simp [dist, Nat.not_le.mpr h]
 
+/-- `dist` is the integer distance `|n - N·d|`, i.e. `|x - N| · d` for
+`x = n / d`. -/
+theorem dist_eq_natAbs (n d N : Nat) : dist n d N = ((n : Int) - (N * d : Nat)).natAbs := by
+  unfold dist
+  split <;> omega
+
 /-- The quotient `q = ⌊x / 2^s⌋` has at most `p` bits, and exactly `p` when
 the scale is positive. -/
 theorem quotient_bounds (f : Format) (n d : Nat) :

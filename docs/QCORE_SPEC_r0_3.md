@@ -1232,11 +1232,33 @@ binary64 for `f64`); every pattern is a value. The checker, the reference
 interpreters and the constant folds compute with the host's IEEE operations
 (round to nearest, ties to even); the emitted C performs the same operations
 at run time. Their agreement rests on the IEEE premise below and is
-**observed** — the card's boundary tables, bit for bit, NaN for NaN — never
-proved: the Lean model (`QCore.FloatTypes`) states the comparison effects, the
-float → integer truncation and the integer → float rounding over dyadic values
-and replays vectors against the Rust kernel; IEEE arithmetic itself is not
-formalised.
+**observed** — the card's boundary tables, bit for bit, NaN for NaN.
+
+**What Lean proves** (card `W48-QR-FLOAT-IEEE-LEAN-MODEL`). IEEE 754 itself is
+modelled: `QCore.Ieee754` decodes and encodes binary32/binary64 patterns (sign,
+biased exponent, trailing significand, subnormals, both zeros, both
+infinities, NaN with its payload unspecified; both round trips on every
+non-NaN pattern and the five-class partition); `QCore.Ieee754Round` rounds an
+exact rational to nearest, ties to even, subnormals and overflow to ±inf
+included, proved nearest, even at a tie, monotone, exact on representable
+values, and overflowing exactly from half a unit in the last place above the
+largest finite value; `QCore.Ieee754Ops` defines `+ - * /`, negation, the six
+comparisons, integer → float, `f64 → f32`, `f32 → f64` and float → integer as
+IEEE defines them — the exact result rounded once — and proves their
+special-case table (NaN propagation, `inf - inf`, `0 · inf`, `0 / 0`, `x / 0`,
+the signs of zero results), `-0 == +0`, NaN unordered, the operators
+`partial_eq` and `partial_ord` gate meaning exactly the IEEE relations,
+integer → float equal to `QCore.FloatTypes.roundNat`, and `f32 → f64` exact
+(`QCore.FloatTypes` keeps the comparison effects and float → integer
+truncation, which `toInt` reuses). What is proved **about the kernel** is a
+table: every result the Rust kernel computes (the host's IEEE operations) on
+the card's boundary table and rounding probes — 4,006 rows, 19,171 results
+over both formats (`QCore.Ieee754Vectors32`/`64`) — equals the model's, bit
+for bit and a NaN as a NaN, by kernel computation; the table is regenerated
+from the kernel by `compiler/tests/float_ieee_vectors.rs`, which fails when it
+drifts. The kernel on other operands, the emitted C and the C compiler's float
+operations stay **observed**: the model is a specification the vectors bind,
+neither an extraction nor a refinement of the Rust or the C.
 
 **Limitations (normative).**
 
@@ -1301,8 +1323,10 @@ formalised.
     shortest round-trip digits in ECMAScript's layout; the emitted renderer is
     a transcription of the same Dragon4 shortest search, compared with the
     reference natively on the boundary table and a seeded sample — agreement
-    observed, not proved. `hex` normalises subnormals (`0x1p-1074`), unlike
-    some C libraries' `%a`.
+    observed, not proved. The IEEE model above covers the values, not the
+    digits: neither that `dec` is the shortest decimal nor that it reads back
+    to the same value is proved (`W48-QR-FLOAT-RENDER-ROUNDTRIP-PROOF`). `hex`
+    normalises subnormals (`0x1p-1074`), unlike some C libraries' `%a`.
 14. **Positions not widened** keep their refusals: a float field on
     `source.buffer.v1` (§G07.13), the byte-buffer route's conversions, value
     statements and loop bodies, a float `Buffer<T>` or `protected T` payload,

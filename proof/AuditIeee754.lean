@@ -42,6 +42,7 @@ import QCore.Ieee754Vectors64
 #print axioms QCore.Ieee754.pow_p
 #print axioms QCore.Ieee754.dist_of_le
 #print axioms QCore.Ieee754.dist_of_lt
+#print axioms QCore.Ieee754.dist_eq_natAbs
 #print axioms QCore.Ieee754.quotient_bounds
 #print axioms QCore.Ieee754.gap
 #print axioms QCore.Ieee754.sig_grid
@@ -101,6 +102,7 @@ import QCore.Ieee754Vectors64
 #print axioms QCore.Ieee754.gated_relations
 #print axioms QCore.Ieee754.partial_not_total
 #print axioms QCore.Ieee754.toInt_bool
+#print axioms QCore.Ieee754.floatTypes_toInt_bool_differs
 #print axioms QCore.Ieee754.roundUnb_scaled
 #print axioms QCore.Ieee754.ofInt_roundNat
 #print axioms QCore.Ieee754.ofInt_value

@@ -157,7 +157,7 @@ fn conversion_probes(ty: ScalarType) -> Vec<i128> {
             2f64.powi(31),
             2f64.powi(63),
             -(2f64.powi(63)),
-            9_223_372_036_854_774_784.0, // largest below 2^63
+            9_223_372_036_854_774_784.0,  // largest below 2^63
             18_446_744_073_709_549_568.0, // largest below 2^64
             2f64.powi(64),
             1.0e-300,
@@ -257,7 +257,11 @@ fn hex(ty: ScalarType, v: i128) -> String {
 }
 
 fn lean_int(n: i128) -> String {
-    if n < 0 { format!("({n})") } else { n.to_string() }
+    if n < 0 {
+        format!("({n})")
+    } else {
+        n.to_string()
+    }
 }
 
 fn lean_bool(b: bool) -> &'static str {
@@ -273,8 +277,20 @@ struct Table {
 fn table(ty: ScalarType) -> Table {
     let t = target();
     let (bits, name, fmt, other, other_name) = match ty {
-        ScalarType::F32 => (32, "Ieee754Vectors32", "binary32", ScalarType::F64, "binary64"),
-        _ => (64, "Ieee754Vectors64", "binary64", ScalarType::F32, "binary32"),
+        ScalarType::F32 => (
+            32,
+            "Ieee754Vectors32",
+            "binary32",
+            ScalarType::F64,
+            "binary64",
+        ),
+        _ => (
+            64,
+            "Ieee754Vectors64",
+            "binary64",
+            ScalarType::F32,
+            "binary32",
+        ),
     };
     let mut values = boundary(ty);
     values.extend(probes(ty));
@@ -556,4 +572,26 @@ fn a_float_as_bool_is_no_conversion() {
     )
     .unwrap();
     assert!(text.contains("theorem toInt_bool"));
+}
+
+/// The model encodes every NaN as the kernel's canonical NaN
+/// (`quietNaN_binary32`, `quietNaN_binary64`), and negation flips the sign
+/// bit of every pattern, a NaN's included (`decode_negBits`).
+#[test]
+fn the_models_nan_is_the_kernels_canonical_nan() {
+    let text = std::fs::read_to_string(
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../proof/QCore/Ieee754.lean"),
+    )
+    .unwrap();
+    assert_eq!(sf::canonical_nan(ScalarType::F32), 0x7FC0_0000);
+    assert_eq!(sf::canonical_nan(ScalarType::F64), 0x7FF8_0000_0000_0000);
+    assert!(text.contains("theorem quietNaN_binary32 : quietNaN binary32 = 0x7FC00000"));
+    assert!(text.contains("theorem quietNaN_binary64 : quietNaN binary64 = 0x7FF8000000000000"));
+    for (ty, sign) in [
+        (ScalarType::F32, 1i128 << 31),
+        (ScalarType::F64, 1i128 << 63),
+    ] {
+        let nan = sf::canonical_nan(ty);
+        assert_eq!(st::negate(ty, nan, None), Some(nan ^ sign));
+    }
 }
