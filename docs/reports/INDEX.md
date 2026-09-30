@@ -48,6 +48,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [b04-nested-call-argument](b04-nested-call-argument/README.md) | B04 — sibling nested-call arguments |
 
+| [b08-field-link-join-silent-unresolved](b08-field-link-join-silent-unresolved/README.md) | B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: partial field links |
+
 | [base-type-reader-census](base-type-reader-census/README.md) | BASE-TYPE-READER-CENSUS — the reader beneath the member reader, measured |
 
 ## C

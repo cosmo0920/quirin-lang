@@ -1,0 +1,13 @@
+{
+  "note": "B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED card gate at 49cc915d (base a235ead6; the code tree of 277707ec, later commits change documentation and one doc comment), script docs/reports/b08-field-link-join-silent-unresolved/scripts/gate.sh, logs private/b08fl/gate of this worktree: submodule 0; run_test_binaries.py 399 units, 412 summaries, 7,014 passed, 0 failed, 11 ignored (private/test-binaries/20260930T142457Z-345674); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 254 audits passed (AuditFieldLinkJoin.lean new); python tests 365 with 1 failure before the matrix was regenerated from this file (the derived Lean audit count 253 carried), then 0 after (09b); docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 8, release quirin-audit): BEFORE at a235ead6 resource-diagnostics.json 2fc3af8c, 602/10/4,222; census build dc296d00 and AFTER (built at 277707ec) byte-identical 2fc3af8c; system 37/2/195 (60f636af) and tail-pause slice 26/1/242/1 Pending (a4cfa035) byte-identical: no move, no correction. Exits in docs/reports/b08-field-link-join-silent-unresolved/gate/.",
+  "workspace_tests": 7014,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 254,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

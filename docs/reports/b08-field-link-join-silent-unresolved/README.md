@@ -221,7 +221,25 @@ modeled path a refusal); faithful extraction (trust boundary 28).
 ## 9. Gate
 
 [scripts/gate.sh](scripts/gate.sh), logs `private/b08fl/gate`; exits in
-[gate/](gate/), figures in [gate.json](gate.json). GATE-PLACEHOLDER
+[gate/](gate/), figures in [gate.json](gate.json). Run at `49cc915d`, whose
+code tree is `277707ec`'s (later commits change documentation and one doc
+comment).
+
+| Step | Exit | Count |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 399 units, 412 summaries, 7,014 passed, 0 failed, 11 ignored (`private/test-binaries/20260930T142457Z-345674`) |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 254 audits (253 + `AuditFieldLinkJoin.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then **0** after `remaining-d02/build_matrix.py . --gate gate.json` (`09a` 0, `09b`) | 365 |
+| `python3 scripts/build_docs_index.py` | 0, 0 | |
+
+The first Python run failed only on the matrix's derived Lean audit count
+(253 → 254), which the regeneration moves. `providers/` is unchanged, so the
+provider gate was not due. Clang 21.1.8 recorded in
+[gate/clang-version.txt](gate/clang-version.txt).
 
 ## 10. Ledger
 
