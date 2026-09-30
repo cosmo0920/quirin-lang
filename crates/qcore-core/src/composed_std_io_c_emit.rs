@@ -191,6 +191,8 @@ pub fn emit_composed_c11(
     );
 
     let mut source = String::new();
+    // Card `W48-QR-FLOATING-POINT`: the float renderers the lines use.
+    let mut renderers = std::collections::BTreeSet::new();
     for step in &program.order {
         match step {
             ComposedStep::Extern(index) => {
@@ -229,6 +231,9 @@ pub fn emit_composed_c11(
                         _ => None,
                     };
                     let (stream, prefix) = crate::std_io::line_framing(level);
+                    if ty.is_float() {
+                        renderers.insert((*rendering == Rendering::Hex, *ty));
+                    }
                     let cast = format!("({})({variable})", st::c_type(*ty));
                     let Some((conversion, operand)) = st::c_rendering(
                         *rendering == Rendering::Hex,
@@ -269,6 +274,13 @@ pub fn emit_composed_c11(
                 }
             }
         }
+    }
+    if !renderers.is_empty() {
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "scalar-floats.renderers",
+            format!("\n{}", crate::scalar_floats::c_renderers(&renderers)),
+        ));
     }
     Ok(ComposedCEmission {
         source: c_program::assemble(&fragments, &c_program::Entry::source_route(source)),

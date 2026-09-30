@@ -515,25 +515,26 @@ pub fn render_hex(ty: ScalarType, value: i128) -> Option<String> {
     ))
 }
 
-/// A C11 constant expression of type `ty` denoting `value`: a hexadecimal
-/// floating constant (exact by construction; an `f32` is spelled as the `double`
-/// constant it equals and cast, which is exact), or `INFINITY`/`NAN` from
-/// `<math.h>` for the values no constant spells.
+/// A C11 expression of type `ty` denoting `value`: a hexadecimal floating
+/// constant for a finite value (exact by construction; an `f32` is spelled as
+/// the `double` constant it equals and cast, which is exact), and for a NaN or
+/// an infinity — which no constant spells — its bit pattern read through a
+/// union compound literal (C11 6.5.2.3), so neither `<math.h>` nor a division
+/// by zero is needed. No source literal is ever non-finite; this spells a value
+/// a route computed.
 #[must_use]
 pub fn c_literal(ty: ScalarType, value: i128) -> String {
     let c = crate::scalar_types::c_type(ty);
     let Some(v) = wide(ty, value) else {
         return format!("(({c})0)");
     };
-    if v.is_nan() {
-        return format!("(({c})NAN)");
-    }
-    if v.is_infinite() {
-        return if v < 0.0 {
-            format!("(-({c})INFINITY)")
+    if !v.is_finite() {
+        let (word, suffix) = if ty == ScalarType::F32 {
+            ("uint32_t", "UINT32_C")
         } else {
-            format!("(({c})INFINITY)")
+            ("uint64_t", "UINT64_C")
         };
+        return format!("((union {{ {word} b; {c} v; }}){{ .b = {suffix}({value}) }}.v)");
     }
     // `render_hex` of the value widened to f64 is a C hexadecimal constant of
     // type double denoting exactly this value.
@@ -613,7 +614,7 @@ pub fn c_environment() -> String {
 }
 
 /// The headers a program holding float values includes.
-pub const C_INCLUDES: &str = "#include <float.h>\n#include <math.h>\n#include <string.h>\n";
+pub const C_INCLUDES: &str = "#include <float.h>\n#include <string.h>\n";
 
 /// The emitted renderers: `q_float_dec_f32`/`_f64` (shortest round-trip, a
 /// transcription of the Dragon4 shortest mode of Rust's

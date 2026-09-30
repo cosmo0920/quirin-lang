@@ -641,10 +641,22 @@ fn lower_let(
                     ValueExpressionSyntax as Syntax, ValueOperandSyntax as Operand,
                 };
                 use qcore_core::std_buffer::{ValueOperand, ValueOperation};
+                // Card `W48-QR-FLOATING-POINT`: this route reads without
+                // floats, so the reader never yields a float literal here;
+                // were one to arrive it is refused, never read as a number.
+                if syntax.has_float_literal() {
+                    diagnostics.push(diagnostic(
+                        "Q051",
+                        span,
+                        "`source.buffer.v1` has no float values (`W48-QR-FLOAT-BUFFER-ROUTE`)",
+                    ));
+                    return None;
+                }
                 let operand = |operand: Operand<String>| match operand {
                     Operand::Value(name) => ValueOperand::Name(name),
                     Operand::Integer(value) => ValueOperand::Integer(value),
                     Operand::Bool(value) => ValueOperand::Bool(value),
+                    Operand::Float(_) => unreachable!("refused above"),
                 };
                 let operation = match syntax {
                     Syntax::Binary(op, a, b) => ValueOperation::Binary(op, operand(a), operand(b)),

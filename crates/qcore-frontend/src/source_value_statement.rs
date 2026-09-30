@@ -9,6 +9,12 @@
 //! operand    = NAME | ["-"], INTEGER | "true" | "false" ;
 //! ```
 //!
+//! Card `W48-QR-FLOATING-POINT`: a route that admits floats reads with
+//! [`parse_value_expression_admitting_floats`], where an operand may also be
+//! `["-"] FLOAT` and `as` may name `f32`/`f64`; [`parse_value_expression`]
+//! reads exactly what it read before, so a route that has not been widened
+//! refuses a float spelling as it always did.
+//!
 //! One operation per statement. Card `W48-QR-SCALAR-TYPES-R3` wrote this
 //! reader inside `source_extern.rs`; card `W48-QR-SCALAR-TYPES-R4` moved it
 //! here, unchanged in what it accepts and in every message, so the task route
@@ -16,6 +22,7 @@
 //! the caller's `lookup`, so each route keeps its own namespace.
 
 use crate::lexer::{Symbol, Token, TokenKind};
+use qcore_core::scalar_floats::FloatLiteral;
 use qcore_core::scalar_types::{Cmp, Op, ScalarType};
 
 /// One operand as written.
@@ -24,6 +31,21 @@ pub enum ValueOperandSyntax<V> {
     Value(V),
     Integer(i128),
     Bool(bool),
+    /// `["-"] FLOAT` (card `W48-QR-FLOATING-POINT`), read only on a route
+    /// that admits floats.
+    Float(FloatLiteral),
+}
+
+impl<V> ValueExpressionSyntax<V> {
+    /// Whether an operand is a float literal (card `W48-QR-FLOATING-POINT`),
+    /// which only [`parse_value_expression_admitting_floats`] reads.
+    pub fn has_float_literal(&self) -> bool {
+        let float = |operand: &ValueOperandSyntax<V>| matches!(operand, ValueOperandSyntax::Float(_));
+        match self {
+            Self::Binary(_, a, b) | Self::Compare(_, a, b) => float(a) || float(b),
+            Self::Negate(a) | Self::Convert(a, _) => float(a),
+        }
+    }
 }
 
 /// One operation as written.
@@ -58,15 +80,31 @@ fn wide_signed_integer(tokens: &[Token], cursor: usize) -> Option<(i128, usize)>
     Some((if negative { -value } else { value }, cursor + 1))
 }
 
+/// `["-"] FLOAT` at `cursor` (card `W48-QR-FLOATING-POINT`).
+fn signed_float(tokens: &[Token], cursor: usize) -> Option<(FloatLiteral, usize)> {
+    let (negative, cursor) = match tokens.get(cursor).map(|token| &token.kind) {
+        Some(TokenKind::Symbol(Symbol::Minus)) => (true, cursor + 1),
+        _ => (false, cursor),
+    };
+    let TokenKind::Float(text) = &tokens.get(cursor)?.kind else {
+        return None;
+    };
+    Some((FloatLiteral::read(text, negative)?, cursor + 1))
+}
+
 /// One value-statement operand at `cursor`: a bound value, `true`/`false`, or
-/// `["-"] INTEGER`.
+/// `["-"] INTEGER` — and `["-"] FLOAT` when `floats`.
 fn value_operand<V>(
     tokens: &[Token],
     cursor: usize,
     lookup: &impl Fn(&str) -> Option<V>,
+    floats: bool,
 ) -> Option<Result<(ValueOperandSyntax<V>, usize), String>> {
     if let Some((literal, next)) = wide_signed_integer(tokens, cursor) {
         return Some(Ok((ValueOperandSyntax::Integer(literal), next)));
+    }
+    if floats && let Some((literal, next)) = signed_float(tokens, cursor) {
+        return Some(Ok((ValueOperandSyntax::Float(literal), next)));
     }
     match word(tokens.get(cursor)) {
         Some("true") => Some(Ok((ValueOperandSyntax::Bool(true), cursor + 1))),
@@ -91,6 +129,24 @@ pub fn parse_value_expression<V>(
     tokens: &[Token],
     lookup: impl Fn(&str) -> Option<V>,
 ) -> Option<Result<ValueExpressionSyntax<V>, String>> {
+    parse(tokens, lookup, false)
+}
+
+/// [`parse_value_expression`] on a route that admits floats (card
+/// `W48-QR-FLOATING-POINT`): an operand may be `["-"] FLOAT`, and `as` may name
+/// `f32` or `f64`.
+pub fn parse_value_expression_admitting_floats<V>(
+    tokens: &[Token],
+    lookup: impl Fn(&str) -> Option<V>,
+) -> Option<Result<ValueExpressionSyntax<V>, String>> {
+    parse(tokens, lookup, true)
+}
+
+fn parse<V>(
+    tokens: &[Token],
+    lookup: impl Fn(&str) -> Option<V>,
+    floats: bool,
+) -> Option<Result<ValueExpressionSyntax<V>, String>> {
     let closes = |at: usize| symbol(tokens.get(at), Symbol::Semicolon) && tokens.len() == at + 1;
     // `- NAME ;` — negation of a bound value. `- INTEGER ;` is the literal
     // binding and is left to it.
@@ -106,7 +162,7 @@ pub fn parse_value_expression<V>(
             None => Err(format!("`{name}` is not a bound scalar in this body")),
         });
     }
-    let (left, next) = match value_operand(tokens, 0, &lookup)? {
+    let (left, next) = match value_operand(tokens, 0, &lookup, floats)? {
         Ok(read) => read,
         // A bare name that is no value, followed by an operator, is this
         // statement's malformation; anything else is left to the other shapes.
@@ -132,7 +188,19 @@ pub fn parse_value_expression<V>(
         }
     };
     if word(tokens.get(next)) == Some("as") {
-        let Some(to) = word(tokens.get(next + 1)).and_then(ScalarType::parse) else {
+        let to = if floats {
+            word(tokens.get(next + 1)).and_then(ScalarType::parse_admitting_floats)
+        } else {
+            word(tokens.get(next + 1)).and_then(ScalarType::parse)
+        };
+        let Some(to) = to else {
+            if floats {
+                return Some(Err(
+                    "`as` converts to one scalar type (bool, i8, i16, i32, i64, isize, u8, u16, \
+                     u32, u64, usize, f32, f64)"
+                        .to_owned(),
+                ));
+            }
             return Some(Err(
                 "`as` converts to one fixed-width scalar type (bool, i8, i16, i32, i64, isize, \
                  u8, u16, u32, u64, usize)"
@@ -160,7 +228,7 @@ pub fn parse_value_expression<V>(
         Some(TokenKind::Symbol(Symbol::GreaterEqual)) => Err(Cmp::Ge),
         _ => return None,
     };
-    let (right, after) = match value_operand(tokens, next + 1, &lookup) {
+    let (right, after) = match value_operand(tokens, next + 1, &lookup, floats) {
         Some(Ok(read)) => read,
         Some(Err(message)) => return Some(Err(message)),
         None => {

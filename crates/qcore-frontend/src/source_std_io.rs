@@ -488,6 +488,7 @@ fn declared_effect_row_admitting(
     tokens: &[TokenKind],
     span: Span,
     admit_arithmetic_error: bool,
+    admit_float_effects: bool,
 ) -> Result<EffectRow, SourceDiagnostic> {
     let Some(index) = tokens
         .iter()
@@ -523,6 +524,19 @@ fn declared_effect_row_admitting(
                     ) =>
             {
                 cursor += 4;
+                if matches!(tokens.get(cursor), Some(TokenKind::Symbol(Symbol::Comma))) {
+                    cursor += 1;
+                }
+            }
+            // Card `W48-QR-FLOATING-POINT`: the extern model's comparison
+            // effects, which a composed entry's one row carries and which are
+            // no effect of this model; skipped on the composed route only, so
+            // on `source.std-io.v1` itself the words keep their refusal.
+            Some(TokenKind::Word(name))
+                if admit_float_effects
+                    && qcore_core::scalar_types::FloatEffect::parse(name).is_some() =>
+            {
+                cursor += 1;
                 if matches!(tokens.get(cursor), Some(TokenKind::Symbol(Symbol::Comma))) {
                     cursor += 1;
                 }
@@ -585,6 +599,9 @@ pub struct ComposedValues {
     pub typed: BTreeMap<String, (qcore_core::scalar_types::ScalarType, i128)>,
     pub target: Option<qcore_core::scalar_types::RecordedTarget>,
     pub admit_arithmetic_error: bool,
+    /// Card `W48-QR-FLOATING-POINT`: whether the one row may carry the extern
+    /// model's `partial_eq`/`partial_ord`.
+    pub admit_float_effects: bool,
 }
 
 /// [`lower_source_std_io`] with a set of entry-body statement spans left to
@@ -693,6 +710,7 @@ pub fn lower_source_std_io_skipping(
         &declaration.value.tokens,
         scope_span,
         composed.admit_arithmetic_error,
+        composed.admit_float_effects,
     ) {
         Ok(row) => row,
         Err(error) => {

@@ -74,6 +74,7 @@ fn program(events: Vec<ExternEvent>) -> ExternProgram {
         libraries: Vec::new(),
         raises: false,
         target: None,
+        float_effects: Default::default(),
     }
 }
 
@@ -740,6 +741,7 @@ fn f1_program(events: Vec<ExternEvent>) -> ExternProgram {
         libraries: Vec::new(),
         raises: false,
         target: None,
+        float_effects: Default::default(),
     }
 }
 
@@ -1920,6 +1922,7 @@ fn modes_program(events: Vec<ExternEvent>) -> ExternProgram {
         libraries: Vec::new(),
         raises: false,
         target: None,
+        float_effects: Default::default(),
     }
 }
 

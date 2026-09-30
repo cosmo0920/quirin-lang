@@ -117,6 +117,12 @@ pub fn value_variable(value: ValueId) -> String {
 fn argument_line(argument: &ExternArgument, out: ResourceId) -> String {
     match argument {
         ExternArgument::Data(value) => format!("d:{value}"),
+        // Card `W48-QR-FLOATING-POINT`: a float literal, observed as its `dec`
+        // rendering (a constant of the program, like every other observation).
+        ExternArgument::Float { ty, bits } => format!(
+            "d:{}",
+            st::render(false, *ty, *bits, None).unwrap_or_default()
+        ),
         ExternArgument::Borrow(resource) => format!("b:{}", resource_name(*resource)),
         ExternArgument::Consume(resource) => format!("c:{}", resource_name(*resource)),
         ExternArgument::Store(resource) => format!("s:{}", resource_name(*resource)),
@@ -177,8 +183,18 @@ fn value_observation(
         callee.name,
         value_name(value),
         argument_lines(arguments, 0),
-        outcome.map_or_else(String::new, |outcome| format!(" -> {outcome}"))
+        outcome.map_or_else(String::new, |outcome| format!(" -> {}", outcome_text(callee, outcome)))
     )
+}
+
+/// A declared outcome as the observation spells it: the number, and (card
+/// `W48-QR-FLOATING-POINT`) a float outcome as its `dec` rendering rather than
+/// its bit pattern.
+fn outcome_text(callee: &ExternCallee, outcome: i128) -> String {
+    match callee.result_abi.scalar() {
+        Some(ty) if ty.is_float() => st::render(false, ty, outcome, None).unwrap_or_default(),
+        _ => outcome.to_string(),
+    }
 }
 
 /// A call that establishes fresh custody through a declared out slot, without
@@ -323,7 +339,7 @@ pub fn trace_extern_events(
             // raises at run time exits `80 + tag` there and writes no later
             // line, so this trace is the observation of a run that does not
             // raise — the partial-correctness reading every route here has.
-            ExternEvent::Bind(_) | ExternEvent::Compute(_) => {}
+            ExternEvent::Bind(_) | ExternEvent::BindFloat(_) | ExternEvent::Compute(_) => {}
             ExternEvent::Return => trace.push("return".to_owned()),
         }
         parts.push((index, trace));
@@ -372,6 +388,7 @@ fn prototype(callee: &ExternCallee) -> String {
 fn argument_expression(argument: &ExternArgument, out: ResourceId) -> String {
     match argument {
         ExternArgument::Data(value) => format!("{value}"),
+        ExternArgument::Float { ty, bits } => st::c_literal(*ty, *bits),
         ExternArgument::Borrow(resource)
         | ExternArgument::Consume(resource)
         | ExternArgument::Store(resource)
@@ -390,6 +407,7 @@ const fn argument_value(argument: &ExternArgument) -> Option<ValueId> {
     match argument {
         ExternArgument::Value(value) => Some(*value),
         ExternArgument::Data(_)
+        | ExternArgument::Float { .. }
         | ExternArgument::OutSlot
         | ExternArgument::Borrow(_)
         | ExternArgument::Consume(_)
@@ -404,7 +422,10 @@ const fn argument_value(argument: &ExternArgument) -> Option<ValueId> {
 /// writes the identity the adapter binds.
 const fn argument_identity(argument: &ExternArgument) -> Option<ResourceId> {
     match argument {
-        ExternArgument::Data(_) | ExternArgument::OutSlot | ExternArgument::Value(_) => None,
+        ExternArgument::Data(_)
+        | ExternArgument::Float { .. }
+        | ExternArgument::OutSlot
+        | ExternArgument::Value(_) => None,
         ExternArgument::Borrow(resource)
         | ExternArgument::Consume(resource)
         | ExternArgument::Store(resource)
@@ -509,6 +530,21 @@ pub fn scalar_fragments(
         }
     }
     let mut fragments = Vec::new();
+    // Card `W48-QR-FLOATING-POINT`: a program holding a float value asserts
+    // the IEEE environment when compiled, whether or not it computes.
+    let floats = uses_floats(program);
+    if floats {
+        fragments.push(Fragment::new(
+            Section::Includes,
+            "scalar-floats.includes",
+            crate::scalar_floats::C_INCLUDES,
+        ));
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "scalar-floats.environment",
+            format!("\n{}", crate::scalar_floats::c_environment()),
+        ));
+    }
     if !computes {
         return Ok(fragments);
     }
@@ -541,12 +577,47 @@ pub fn scalar_fragments(
     Ok(fragments)
 }
 
+/// Whether a program holds a float value anywhere (card
+/// `W48-QR-FLOATING-POINT`): a callee's float parameter or result, a float
+/// literal argument or binding, or a value statement over or into a float.
+#[must_use]
+pub fn uses_floats(program: &ExternProgram) -> bool {
+    let float = |abi: AbiType| abi.scalar().is_some_and(ScalarType::is_float);
+    program.callees.values().any(|callee| {
+        float(callee.result_abi)
+            || callee
+                .parameters
+                .iter()
+                .any(|parameter| matches!(parameter, CallParameter::Data(abi) if float(*abi)))
+    }) || program.events.iter().any(|event| match event {
+        ExternEvent::BindFloat(_) => true,
+        ExternEvent::Call(call) => call
+            .arguments
+            .iter()
+            .any(|argument| matches!(argument, ExternArgument::Float { .. })),
+        ExternEvent::Compute(statement) => {
+            let operand = |operand: ValueOperand| matches!(operand, ValueOperand::Float(_));
+            match statement.operation {
+                ValueOperation::Binary(_, a, b) | ValueOperation::Compare(_, a, b) => {
+                    operand(a) || operand(b)
+                }
+                ValueOperation::Negate(a) => operand(a),
+                ValueOperation::Convert(a, to) => operand(a) || to.is_float(),
+            }
+        }
+        ExternEvent::Bind(_) | ExternEvent::Return => false,
+    })
+}
+
 /// The C expression of one value-statement operand at the operation's type.
 fn value_operand_expression(operand: ValueOperand, ty: ScalarType) -> String {
     match operand {
         ValueOperand::Value(value) => value_name(value),
         ValueOperand::Integer(literal) => st::c_literal(ty, literal),
         ValueOperand::Bool(value) => st::c_literal(ScalarType::Bool, i128::from(value)),
+        // Card `W48-QR-FLOATING-POINT`: the literal at the operation's type,
+        // which the checker already read it at.
+        ValueOperand::Float(literal) => st::c_literal(ty, literal.at(ty).unwrap_or_default()),
     }
 }
 
@@ -860,7 +931,30 @@ pub fn emit_extern_statements(
                             // emitted **before** the observation, and a
                             // disagreeing run therefore exits without writing
                             // the line at all.
-                            if let Some(outcome) = binding.outcome {
+                            let float = callee
+                                .result_abi
+                                .scalar()
+                                .filter(|ty| ty.is_float());
+                            // Card `W48-QR-FLOATING-POINT`: a float result is
+                            // compared with its declared outcome bit for bit
+                            // (so `-0.0` is not `0.0`, and no literal outcome
+                            // is a NaN), and is logged without a conversion
+                            // to an integer, which could be undefined.
+                            let logged = if float.is_some() {
+                                "INT64_C(0)".to_owned()
+                            } else {
+                                format!("(int64_t){name}")
+                            };
+                            if let (Some(outcome), Some(ty)) = (binding.outcome, float) {
+                                let _ = writeln!(
+                                    source,
+                                    "    {{\n        {} q_expected = {};\n        if (memcmp(&{name}, &q_expected, sizeof q_expected) != 0) {{\n            \
+                                     qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_EXTERN_OUTCOME, {}, UINT64_C(0), INT64_C(0), {});\n            return 70;\n        }}\n    }}",
+                                    st::c_type(ty),
+                                    st::c_literal(ty, outcome),
+                                    value, c_string(&format!("declared outcome violated: {}", callee.name))
+                                );
+                            } else if let Some(outcome) = binding.outcome {
                                 // Card `W48-QR-SCALAR-TYPES-R3`: a number
                                 // outside `int32_t` — a declared outcome of a
                                 // wider type — is spelled as its type's own C
@@ -889,7 +983,7 @@ pub fn emit_extern_statements(
                             );
                             let _ = writeln!(
                                 source,
-                                "    qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_EXTERN_OUTCOME, {}, UINT64_C(0), (int64_t){name}, {});",
+                                "    qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_EXTERN_OUTCOME, {}, UINT64_C(0), {logged}, {});",
                                 value, c_string(&observed)
                             );
                             bound_values.insert(value);
@@ -916,6 +1010,17 @@ pub fn emit_extern_statements(
                 let _ = writeln!(source, "    int32_t {name} = INT32_C({});", literal.literal);
                 let _ = writeln!(source, "    (void) {name};");
                 bound_values.insert(literal.value);
+            }
+            // Card `W48-QR-FLOATING-POINT`: a float literal binding, an `f64`.
+            ExternEvent::BindFloat(binding) => {
+                let name = value_name(binding.value);
+                let _ = writeln!(
+                    source,
+                    "    double {name} = {};",
+                    st::c_literal(ScalarType::F64, binding.bits)
+                );
+                let _ = writeln!(source, "    (void) {name};");
+                bound_values.insert(binding.value);
             }
             // Card `W48-QR-SCALAR-TYPES-R3`: a value statement, emitted from
             // what the checker decided about it.

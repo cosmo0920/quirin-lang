@@ -82,10 +82,12 @@ use crate::whole_program::{CallSite, FunctionSemantics, FunctionSummary, Paramet
 use qcore_core::cleanup_lowering::{SourceOp, SourceProgram as LoweringProgram};
 use qcore_core::extern_call::{
     AbiType, CallParameter, ExternAdapter, ExternArgument, ExternCall, ExternCallee, ExternCustody,
-    ExternEvent, ExternProgram, ScalarBinding, ScalarLiteral, ValueId, ValueOperand,
+    ExternEvent, ExternProgram, FloatBinding, ScalarBinding, ScalarLiteral, ValueId, ValueOperand,
     ValueOperation, ValueStatement, binds_scalar, derived_custody, derived_effects,
 };
 use qcore_core::native_library::SourceLibraryBinding;
+use qcore_core::scalar_floats::FloatLiteral;
+use qcore_core::scalar_types::{FloatEffect, FloatEffects};
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorLedger, ErrorOp};
@@ -406,6 +408,29 @@ fn declares_arithmetic_error(declaration: &SourceDeclaration) -> bool {
     })
 }
 
+/// Card `W48-QR-FLOATING-POINT`: the comparison effects the entry's row
+/// declares, `partial_eq` and `partial_ord`. Like `throws<ArithmeticError>`
+/// they are no effect the calls derive: they permit a value statement's float
+/// comparison, and are never inferred.
+fn declared_float_effects(declaration: &SourceDeclaration) -> FloatEffects {
+    let Some(index) = declaration
+        .tokens
+        .iter()
+        .position(|token| matches!(token, TokenKind::Word(word) if word == "effects"))
+    else {
+        return FloatEffects::default();
+    };
+    FloatEffects::from_effects(
+        declaration.tokens[index..]
+            .iter()
+            .take_while(|token| !matches!(token, TokenKind::Symbol(Symbol::RightBrace)))
+            .filter_map(|token| match token {
+                TokenKind::Word(word) => FloatEffect::parse(word),
+                _ => None,
+            }),
+    )
+}
+
 fn declared_effect_row(
     declaration: &SourceDeclaration,
     span: Span,
@@ -454,6 +479,25 @@ fn declared_effect_row(
                     cursor += 1;
                 }
             }
+            // Card `W48-QR-FLOATING-POINT`: the comparison effects, read by
+            // `declared_float_effects`, each at most once.
+            Some(TokenKind::Word(name)) if FloatEffect::parse(name).is_some() => {
+                if tokens[index + 2..cursor]
+                    .iter()
+                    .any(|token| matches!(token, TokenKind::Word(earlier) if earlier == name))
+                {
+                    return Err(diagnostic(
+                        "Q020",
+                        SemanticPass::OrdinaryTypes,
+                        span,
+                        format!("`{name}` is listed twice in the `effects` row"),
+                    ));
+                }
+                cursor += 1;
+                if matches!(tokens.get(cursor), Some(TokenKind::Symbol(Symbol::Comma))) {
+                    cursor += 1;
+                }
+            }
             Some(TokenKind::Word(name)) => {
                 let effect = match name.as_str() {
                     "io" => Effect::Io,
@@ -465,7 +509,7 @@ fn declared_effect_row(
                             SemanticPass::OrdinaryTypes,
                             span,
                             format!(
-                                "`{other}` is not an effect the extern-call profile models; use io, alloc or mut"
+                                "`{other}` is not an effect the extern-call profile models; use io, alloc or mut (and `partial_eq`/`partial_ord` for float comparisons)"
                             ),
                         ));
                     }
@@ -633,6 +677,50 @@ impl Lowering<'_> {
                             self.diagnostics.push(bridging(
                                 span,
                                 format!("scalar literal `{value}` does not fit the model"),
+                            ));
+                            return None;
+                        }
+                    }
+                }
+                // Card `W48-QR-FLOATING-POINT`: `["-"] FLOAT` at a declared
+                // float parameter, read once at that parameter's type. At any
+                // other parameter it is refused: a float is never implicitly
+                // an integer.
+                (float, CallParameter::Data(abi))
+                    if matches!(
+                        float.last().map(|token| &token.kind),
+                        Some(TokenKind::Float(_))
+                    ) && (float.len() == 1
+                        || (float.len() == 2
+                            && float[0].kind == TokenKind::Symbol(Symbol::Minus))) =>
+                {
+                    let Some(TokenKind::Float(text)) = float.last().map(|token| &token.kind) else {
+                        unreachable!("matched above")
+                    };
+                    let Some(ty) = abi.scalar().filter(|ty| ty.is_float()) else {
+                        self.diagnostics.push(bridging(
+                            span,
+                            format!(
+                                "argument {index} is the float literal `{text}` and the parameter is declared `{}`; a float is never implicitly an integer",
+                                abi.scalar().map_or("a non-scalar", |ty| ty.name())
+                            ),
+                        ));
+                        return None;
+                    };
+                    let literal = FloatLiteral::read(text, float.len() == 2);
+                    match literal.map(|literal| literal.at(ty)) {
+                        Some(Ok(bits)) => ExternArgument::Float { ty, bits },
+                        Some(Err(error)) => {
+                            self.diagnostics.push(bridging(
+                                span,
+                                format!("the `{ty}` literal `{text}` {error}"),
+                            ));
+                            return None;
+                        }
+                        None => {
+                            self.diagnostics.push(bridging(
+                                span,
+                                format!("`{text}` is not a float literal"),
                             ));
                             return None;
                         }
@@ -969,6 +1057,28 @@ pub fn lower_source_extern_skipping(
                         }
                         None => {}
                     }
+                    // Card `W48-QR-FLOATING-POINT`: `let NAME = ["-"] FLOAT;`,
+                    // an `f64` literal binding, tried where the integer one is.
+                    if let Some(literal) = parse_float_binding(&tokens) {
+                        if lowering.refuse_cross_namespace_shadow(name, span, true) {
+                            continue;
+                        }
+                        let bits = match literal {
+                            Ok(bits) => bits,
+                            Err(message) => {
+                                lowering.diagnostics.push(bridging(span, message));
+                                continue;
+                            }
+                        };
+                        let value = lowering.next_value;
+                        lowering.next_value += 1;
+                        lowering.values.insert(name.clone(), value);
+                        lowering.value_outcomes.insert(value, bits);
+                        lowering.value_abi.insert(value, AbiType::F64);
+                        events.push(ExternEvent::BindFloat(FloatBinding { value, bits }));
+                        event_spans.push(span);
+                        continue;
+                    }
                     // Card `EXTERN-SCALAR-LITERAL`. Tried last of the three, so
                     // nothing naming a callee can reach it and no call shape
                     // loses its own diagnostic to it. A literal binds a number
@@ -1271,6 +1381,7 @@ pub fn lower_source_extern_skipping(
         // typed arithmetic error, and the builder's recorded target.
         raises: declares_arithmetic_error(&entry_declaration.value),
         target: target.cloned(),
+        float_effects: declared_float_effects(&entry_declaration.value),
     };
     let certificate = match qcore_core::extern_call::check_extern_program(&program) {
         Ok(certificate) => certificate,
@@ -1442,11 +1553,49 @@ fn lower_scalar_binding(
     else {
         return Vec::new();
     };
+    // Card `W48-QR-FLOATING-POINT`: a declared outcome is a literal of the
+    // result's own kind — a float literal, read once at a float result's type,
+    // or an integer at an integer result — never one read as the other.
+    let result_float = callee.result_abi.scalar().filter(|ty| ty.is_float());
+    let outcome = match (&parsed_call.float_outcome, parsed_call.outcome, result_float) {
+        (Some(literal), _, Some(ty)) => match literal.at(ty) {
+            Ok(bits) => Some(bits),
+            Err(error) => {
+                lowering.diagnostics.push(bridging(
+                    span,
+                    format!("`{}` declares a `{ty}` result and its outcome literal {error}", callee.name),
+                ));
+                return Vec::new();
+            }
+        },
+        (Some(_), _, None) => {
+            lowering.diagnostics.push(bridging(
+                span,
+                format!(
+                    "`{}` declares a `{}` result and `succeeds` names a float literal; a float is never implicitly an integer",
+                    callee.name,
+                    callee.result_abi.c_spelling()
+                ),
+            ));
+            return Vec::new();
+        }
+        (None, Some(_), Some(ty)) => {
+            lowering.diagnostics.push(bridging(
+                span,
+                format!(
+                    "`{}` declares a `{ty}` result and `succeeds` names an integer literal; an integer is never implicitly a float, so write a float literal (`1.0`)",
+                    callee.name
+                ),
+            ));
+            return Vec::new();
+        }
+        (None, outcome, _) => outcome,
+    };
     let value = lowering.next_value;
     lowering.next_value += 1;
     lowering.values.insert(name.to_owned(), value);
     lowering.value_abi.insert(value, callee.result_abi);
-    if let Some(outcome) = parsed_call.outcome {
+    if let Some(outcome) = outcome {
         lowering.value_outcomes.insert(value, outcome);
     }
     record_call(
@@ -1463,10 +1612,7 @@ fn lower_scalar_binding(
         callee: callee.name.clone(),
         arguments,
         adapter: None,
-        binding: Some(ScalarBinding {
-            value,
-            outcome: parsed_call.outcome,
-        }),
+        binding: Some(ScalarBinding { value, outcome }),
     }));
     event_spans.push(span);
     moved
@@ -1570,6 +1716,9 @@ struct ParsedCall {
     /// `W48-QR-SCALAR-TYPES-R3` reads it at any width; the checker range-checks
     /// it against the declared result.
     outcome: Option<i128>,
+    /// Card `W48-QR-FLOATING-POINT`: a `succeeds ["-"] FLOAT` tail, read at the
+    /// result's type once the callee is known.
+    float_outcome: Option<FloatLiteral>,
     /// The error arm's dispositions, in written order: `(callee, arguments)`.
     releases: Vec<(String, Vec<Token>)>,
     error: String,
@@ -1623,6 +1772,7 @@ fn parse_adapter_statement(tokens: &[Token]) -> Option<ParsedCall> {
         arguments,
         succeeds,
         outcome: None,
+        float_outcome: None,
         releases,
         error,
     })
@@ -1647,11 +1797,16 @@ fn parse_bound_call(tokens: &[Token]) -> Option<ParsedCall> {
     // literal outcome control — and an acquisition's control is a boolean, so
     // the two tails are told apart by the literal alone and no malformed
     // adapter tail can be read as this one.
-    let (outcome, next) = if word(tokens.get(next)) == Some("succeeds") {
-        let (value, after) = wide_signed_integer(tokens, next + 1)?;
-        (Some(value), after)
+    let (outcome, float_outcome, next) = if word(tokens.get(next)) == Some("succeeds") {
+        if let Some((value, after)) = wide_signed_integer(tokens, next + 1) {
+            (Some(value), None, after)
+        } else {
+            // Card `W48-QR-FLOATING-POINT`: `succeeds ["-"] FLOAT`.
+            let (literal, after) = signed_float(tokens, next + 1)?;
+            (None, Some(literal), after)
+        }
     } else {
-        (None, next)
+        (None, None, next)
     };
     if !symbol(tokens.get(next), Symbol::Semicolon) || tokens.len() != next + 1 {
         return None;
@@ -1661,6 +1816,7 @@ fn parse_bound_call(tokens: &[Token]) -> Option<ParsedCall> {
         arguments,
         succeeds: true,
         outcome,
+        float_outcome,
         releases: Vec::new(),
         error: String::new(),
     })
@@ -1699,6 +1855,36 @@ fn wide_signed_integer(tokens: &[Token], cursor: usize) -> Option<(i128, usize)>
     Some((if negative { -value } else { value }, cursor + 1))
 }
 
+/// Read `["-"] FLOAT` at `cursor` (card `W48-QR-FLOATING-POINT`).
+fn signed_float(tokens: &[Token], cursor: usize) -> Option<(FloatLiteral, usize)> {
+    let (negative, cursor) = match tokens.get(cursor).map(|token| &token.kind) {
+        Some(TokenKind::Symbol(Symbol::Minus)) => (true, cursor + 1),
+        _ => (false, cursor),
+    };
+    let TokenKind::Float(text) = &tokens.get(cursor)?.kind else {
+        return None;
+    };
+    Some((FloatLiteral::read(text, negative)?, cursor + 1))
+}
+
+/// `let NAME = ["-"] FLOAT;` — a float literal binding (card
+/// `W48-QR-FLOATING-POINT`), an `f64`: its bits, or why the literal is no
+/// `f64`.
+fn parse_float_binding(tokens: &[Token]) -> Option<Result<i128, String>> {
+    if word(tokens.first()) != Some("let") || !symbol(tokens.get(2), Symbol::Equal) {
+        return None;
+    }
+    let (literal, next) = signed_float(tokens, 3)?;
+    if !symbol(tokens.get(next), Symbol::Semicolon) || tokens.len() != next + 1 {
+        return None;
+    }
+    Some(
+        literal
+            .at(qcore_core::scalar_types::ScalarType::F64)
+            .map_err(|error| format!("this `f64` literal {error}")),
+    )
+}
+
 /// `let NAME = VALUE_EXPRESSION;` — a value statement (card
 /// `W48-QR-SCALAR-TYPES-R3`): `A OP B`, `A CMP B`, `- NAME` or `A as TYPE`,
 /// one operation per statement, read by the shared
@@ -1711,7 +1897,8 @@ fn parse_value_statement(
     values: &BTreeMap<String, ValueId>,
 ) -> Option<Result<ValueOperation, String>> {
     use crate::source_value_statement::{
-        ValueExpressionSyntax as Syntax, ValueOperandSyntax as Operand, parse_value_expression,
+        ValueExpressionSyntax as Syntax, ValueOperandSyntax as Operand,
+        parse_value_expression_admitting_floats,
     };
     if word(tokens.first()) != Some("let") || !symbol(tokens.get(2), Symbol::Equal) {
         return None;
@@ -1720,8 +1907,12 @@ fn parse_value_statement(
         Operand::Value(value) => ValueOperand::Value(value),
         Operand::Integer(literal) => ValueOperand::Integer(literal),
         Operand::Bool(value) => ValueOperand::Bool(value),
+        Operand::Float(literal) => ValueOperand::Float(literal),
     };
-    let parsed = parse_value_expression(&tokens[3..], |name| values.get(name).copied())?;
+    // Card `W48-QR-FLOATING-POINT`: this route admits floats.
+    let parsed = parse_value_expression_admitting_floats(&tokens[3..], |name| {
+        values.get(name).copied()
+    })?;
     Some(parsed.map(|syntax| match syntax {
         Syntax::Binary(op, a, b) => ValueOperation::Binary(op, operand(a), operand(b)),
         Syntax::Compare(cmp, a, b) => ValueOperation::Compare(cmp, operand(a), operand(b)),
@@ -1755,6 +1946,7 @@ fn parse_plain_call(tokens: &[Token]) -> Option<ParsedCall> {
         arguments,
         succeeds: true,
         outcome: None,
+        float_outcome: None,
         releases: Vec::new(),
         error: String::new(),
     })

@@ -1807,6 +1807,7 @@ impl<'a> Builder<'a> {
                 },
                 Operand::Integer(literal) => scalar_values::Operand::Integer(literal),
                 Operand::Bool(value) => scalar_values::Operand::Bool(value),
+                Operand::Float(literal) => scalar_values::Operand::Float(literal),
             }
         };
         let operation = match syntax {
@@ -1846,6 +1847,12 @@ impl<'a> Builder<'a> {
             Operand::Bool(value) => TaskValueOperand::Literal {
                 ty: FixedType::Bool,
                 value: i128::from(value),
+            },
+            // Card `W48-QR-FLOATING-POINT`: the literal at the type the
+            // decision gave it, which it has already read there.
+            Operand::Float(literal) => TaskValueOperand::Literal {
+                ty: decision.operand_ty,
+                value: literal.at(decision.operand_ty).unwrap_or_default(),
             },
         };
         let operation = match syntax {

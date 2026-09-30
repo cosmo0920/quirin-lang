@@ -159,6 +159,11 @@ pub type ValueId = u64;
 /// what unchecked linkage admits. (The doc comment claimed the table was
 /// "complete" from NEIGHBOURS onward, when it already was not; corrected here
 /// rather than left to rot. No behaviour moved with this comment.)
+///
+/// Card `W48-QR-FLOATING-POINT` adds `f32`/`f64` here, deliberately: a float
+/// is now a §G02t value with its own checked rules, so a declaration may state
+/// one and a bound float result is a value of the namespace. `fnptr` and the
+/// quantity types stay outside this table.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum AbiType {
     Bool,
@@ -172,6 +177,10 @@ pub enum AbiType {
     U32,
     U64,
     Usize,
+    /// IEEE binary32, C `float` (card `W48-QR-FLOATING-POINT`).
+    F32,
+    /// IEEE binary64, C `double` (card `W48-QR-FLOATING-POINT`).
+    F64,
     PtrMutU8,
     PtrConstU8,
     PtrMutPtrMutU8,
@@ -194,6 +203,8 @@ impl AbiType {
             "u32" => Self::U32,
             "u64" => Self::U64,
             "usize" => Self::Usize,
+            "f32" => Self::F32,
+            "f64" => Self::F64,
             "ptr<mut,u8>" => Self::PtrMutU8,
             "ptr<const,u8>" => Self::PtrConstU8,
             "ptr<mut,ptr<mut,u8>>" => Self::PtrMutPtrMutU8,
@@ -234,6 +245,8 @@ impl AbiType {
             Self::U32 => ScalarType::U32,
             Self::U64 => ScalarType::U64,
             Self::Usize => ScalarType::Usize,
+            Self::F32 => ScalarType::F32,
+            Self::F64 => ScalarType::F64,
             Self::PtrMutU8 | Self::PtrConstU8 | Self::PtrMutPtrMutU8 | Self::Unit => return None,
         })
     }
@@ -254,6 +267,8 @@ impl AbiType {
             Self::U32 => "uint32_t",
             Self::U64 => "uint64_t",
             Self::Usize => "uintptr_t",
+            Self::F32 => "float",
+            Self::F64 => "double",
             Self::PtrMutU8 => "uint8_t *",
             Self::PtrConstU8 => "const uint8_t *",
             Self::PtrMutPtrMutU8 => "uint8_t **",
@@ -1216,6 +1231,10 @@ pub enum ExternArgument {
     /// reallocation. It survives the failure arm and is replaced on the
     /// success arm.
     Realloc(ResourceId),
+    /// A float literal at a declared float parameter (card
+    /// `W48-QR-FLOATING-POINT`), read once at that parameter's type: its bit
+    /// pattern. Data only, like [`Self::Data`].
+    Float { ty: ScalarType, bits: i128 },
     /// A bound scalar local, read at a declared `Data` parameter (card
     /// `PIPE-SCALAR-RESULT`). Data, exactly as [`Self::Data`] is: it names a
     /// [`ValueId`], carries no custody, and is admitted at no other parameter
@@ -1303,14 +1322,26 @@ pub struct ScalarLiteral {
     pub literal: i32,
 }
 
+/// `let NAME = ["-"] FLOAT;` — a float literal binding (card
+/// `W48-QR-FLOATING-POINT`): an `f64`, the literal read once at `f64`. An `f32`
+/// literal is bound with `let NAME = FLOAT as f32;`, a value statement that
+/// reads the literal at `f32` directly.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct FloatBinding {
+    pub value: ValueId,
+    pub bits: i128,
+}
+
 /// One operand of a value statement (card `W48-QR-SCALAR-TYPES-R3`): a bound
 /// value of the namespace, an integer literal — typed by its context, `i32`
-/// when nothing gives it one — or `true`/`false`.
+/// when nothing gives it one — or `true`/`false`; and (card
+/// `W48-QR-FLOATING-POINT`) a float literal, `f64` when nothing types it.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ValueOperand {
     Value(ValueId),
     Integer(i128),
     Bool(bool),
+    Float(crate::scalar_floats::FloatLiteral),
 }
 
 /// The one §G02t operation a value statement performs (card
@@ -1344,6 +1375,9 @@ pub enum ExternEvent {
     Call(ExternCall),
     /// `let NAME = INTEGER;` — see [`ScalarLiteral`].
     Bind(ScalarLiteral),
+    /// `let NAME = FLOAT;` — see [`FloatBinding`] (card
+    /// `W48-QR-FLOATING-POINT`).
+    BindFloat(FloatBinding),
     /// A value statement — see [`ValueStatement`] (card
     /// `W48-QR-SCALAR-TYPES-R3`).
     Compute(ValueStatement),
@@ -1381,6 +1415,11 @@ pub struct ExternProgram {
     /// The builder's recorded target, which alone gives `isize`/`usize` values
     /// a range (card `W48-QR-SCALAR-TYPES-R3`).
     pub target: Option<RecordedTarget>,
+    /// The comparison effects the entry's row declares (card
+    /// `W48-QR-FLOATING-POINT`): `partial_eq` permits a float `==`/`!=`,
+    /// `partial_ord` a float ordering. Never inferred; empty for every program
+    /// before the card.
+    pub float_effects: crate::scalar_types::FloatEffects,
 }
 
 /// Why a value of the namespace is refused at a position (card
@@ -1859,6 +1898,12 @@ pub struct ExternCallCertificate {
     /// names a number written at the site, and a reader of the evidence must be
     /// able to tell those apart.
     pub literal_bindings: Vec<(ValueId, i32)>,
+    /// `(value, bits)` of every float literal binding, in trace order (card
+    /// `W48-QR-FLOATING-POINT`). Empty for every program before the card.
+    pub float_literal_bindings: Vec<(ValueId, i128)>,
+    /// The comparison effects the value statements used (card
+    /// `W48-QR-FLOATING-POINT`), each admitted by the entry's row.
+    pub float_effects: crate::scalar_types::FloatEffects,
     /// `(value, outcome)` of every scalar binding whose site declared what the
     /// call returns (card `STD-IO-COMPOSE`), in trace order. A binding absent
     /// here carries no modeled number, which is what makes it unreadable as
@@ -1945,6 +1990,7 @@ impl ValueTyping {
             },
             ValueOperand::Integer(literal) => scalar_values::Operand::Integer(literal),
             ValueOperand::Bool(value) => scalar_values::Operand::Bool(value),
+            ValueOperand::Float(literal) => scalar_values::Operand::Float(literal),
         })
     }
 
@@ -2115,6 +2161,7 @@ fn check_error_arm(
                     }
                 }
                 ExternArgument::Data(_)
+                | ExternArgument::Float { .. }
                 | ExternArgument::Store(_)
                 | ExternArgument::OutSlot
                 | ExternArgument::Realloc(_) => {}
@@ -2176,6 +2223,7 @@ pub fn check_extern_program(
     let mut error_dispositions = Vec::new();
     let mut scalar_bindings = Vec::new();
     let mut literal_bindings = Vec::new();
+    let mut float_literal_bindings = Vec::new();
     let mut declared_outcomes = Vec::new();
     // Acquisition order, because the established cleanup edge releases in
     // reverse acquisition order and the error arm is required to match it.
@@ -2189,6 +2237,9 @@ pub fn check_extern_program(
     // Card `W48-QR-SCALAR-TYPES-R3`: the namespace's §G02t typing — each
     // value's type and, where the source determined it, its number.
     let mut typing = ValueTyping::default();
+    // Card `W48-QR-FLOATING-POINT`: the row's comparison effects, never
+    // inferred.
+    typing.decider.permitted = program.float_effects;
     let mut computations = Vec::new();
     let target = program.target.as_ref();
     let mut effects = BTreeSet::new();
@@ -2217,6 +2268,21 @@ pub fn check_extern_program(
                     typing
                         .known
                         .insert(literal.value, i128::from(literal.literal));
+                    break 'event;
+                }
+                // Card `W48-QR-FLOATING-POINT`: a float literal binding, an
+                // `f64` known at check time; like an integer one it touches
+                // no ledger.
+                ExternEvent::BindFloat(binding) => {
+                    if !values.insert(binding.value) {
+                        diagnostics.push(ExternDiagnostic::DuplicateValueBinding {
+                            event: index,
+                            value: binding.value,
+                        });
+                    }
+                    float_literal_bindings.push((binding.value, binding.bits));
+                    typing.types.insert(binding.value, ScalarType::F64);
+                    typing.known.insert(binding.value, binding.bits);
                     break 'event;
                 }
                 // Card `W48-QR-SCALAR-TYPES-R3`: a value statement. Like a
@@ -2289,6 +2355,7 @@ pub fn check_extern_program(
                 let admitted = matches!(
                     (argument, declared),
                     (ExternArgument::Data(_), CallParameter::Data(_))
+                    | (ExternArgument::Float { .. }, CallParameter::Data(_))
                     | (ExternArgument::Borrow(_), CallParameter::Borrowed(_))
                     | (ExternArgument::Consume(_), CallParameter::Consumed)
                     | (ExternArgument::Store(_), CallParameter::Stored { .. })
@@ -2338,6 +2405,47 @@ pub fn check_extern_program(
                     // parameter's type — never truncated by the C call. The
                     // width of `isize`/`usize` is the recorded target's; with
                     // none, the literal is passed as it always was.
+                    // Card `W48-QR-FLOATING-POINT`: an integer literal is never
+                    // a float, and a float literal is a value of exactly the
+                    // parameter's float type.
+                    (ExternArgument::Data(_), CallParameter::Data(abi))
+                        if abi.scalar().is_some_and(ScalarType::is_float) =>
+                    {
+                        diagnostics.push(ExternDiagnostic::Value {
+                            event: index,
+                            refusal: ValueRefusal::LiteralKind {
+                                ty: abi.scalar().expect("a float parameter"),
+                                float: false,
+                            },
+                        });
+                    }
+                    (ExternArgument::Float { ty, bits }, CallParameter::Data(abi)) => {
+                        match abi.scalar() {
+                            Some(declared) if declared == *ty && ty.contains(*bits, None) => {}
+                            Some(declared) if declared.is_float() => {
+                                diagnostics.push(ExternDiagnostic::Value {
+                                    event: index,
+                                    refusal: ValueRefusal::ArgumentType {
+                                        parameter,
+                                        declared,
+                                        supplied: *ty,
+                                    },
+                                });
+                            }
+                            Some(declared) => diagnostics.push(ExternDiagnostic::Value {
+                                event: index,
+                                refusal: ValueRefusal::LiteralKind {
+                                    ty: declared,
+                                    float: true,
+                                },
+                            }),
+                            None => diagnostics.push(ExternDiagnostic::ArgumentForm {
+                                event: index,
+                                parameter,
+                                expected: *declared,
+                            }),
+                        }
+                    }
                     (ExternArgument::Data(literal), CallParameter::Data(abi)) => {
                         if let Some(ty) = abi.scalar()
                             && !(ty.is_target_width() && target.is_none())
@@ -2500,6 +2608,18 @@ pub fn check_extern_program(
                         declared_outcomes.push((value, outcome));
                         let checked = if ty.is_target_width() && target.is_none() {
                             Ok(outcome)
+                        } else if ty.is_float() {
+                            // Card `W48-QR-FLOATING-POINT`: a float outcome is
+                            // a bit pattern of the result's type.
+                            if ty.contains(outcome, None) {
+                                Ok(outcome)
+                            } else {
+                                Err(ValueRefusal::OutcomeOutOfRange {
+                                    callee: callee.name.clone(),
+                                    outcome,
+                                    ty,
+                                })
+                            }
                         } else {
                             typing.range(ty, target).and_then(|(low, high)| {
                                 if low <= outcome && outcome <= high {
@@ -2650,6 +2770,8 @@ pub fn check_extern_program(
         error_dispositions,
         scalar_bindings,
         literal_bindings,
+        float_literal_bindings,
+        float_effects: typing.decider.used,
         declared_outcomes,
         value_types: typing.types,
         computations,

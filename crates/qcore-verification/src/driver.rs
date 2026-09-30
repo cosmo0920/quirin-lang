@@ -1127,6 +1127,12 @@ impl CompiledModule {
     pub fn float_assumption(&self) -> Option<&'static str> {
         let uses = match &self.checked {
             CheckedSourceModule::ScalarCalls(checked) => checked.uses_floats(),
+            CheckedSourceModule::ExternCalls(module) => {
+                qcore_core::extern_c_emit::uses_floats(&module.lowered.program)
+            }
+            CheckedSourceModule::Composed(module) => {
+                qcore_core::extern_c_emit::uses_floats(&module.lowered.program.externs)
+            }
             _ => false,
         };
         uses.then_some(qcore_core::scalar_floats::ASSUMPTION)

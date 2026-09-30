@@ -307,6 +307,8 @@ pub fn lower_source_composed_for_target(
             typed: typed_scalars,
             target: target.cloned(),
             admit_arithmetic_error: externs.program.raises,
+            admit_float_effects: externs.program.float_effects
+                != qcore_core::scalar_types::FloatEffects::default(),
         },
     )?;
 
