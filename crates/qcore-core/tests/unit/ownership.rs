@@ -822,7 +822,10 @@ fn an_aggregate_of_no_owned_field_drops_nothing_and_is_still_not_copied() {
 // `W48-QR-USABLE-RECORDS`). ---
 
 fn nested(base: &str, fields: &[&str]) -> FieldPath {
-    FieldPath::nested(base, fields.iter().map(|field| (*field).to_owned()).collect())
+    FieldPath::nested(
+        base,
+        fields.iter().map(|field| (*field).to_owned()).collect(),
+    )
 }
 
 fn compose_nested(owner: &str, parts: &[(&str, &str, bool)]) -> OwnershipOp {
@@ -952,8 +955,11 @@ fn a_nested_composition_refuses_a_source_that_is_not_a_live_aggregate() {
     ])
     .unwrap_err();
     assert_eq!(error, OwnershipError::UseAfterDrop("i".into()));
-    let error = execute_ownership(&[acquire(1, "b", 4), compose_nested("o", &[("inner", "b", true)])])
-        .unwrap_err();
+    let error = execute_ownership(&[
+        acquire(1, "b", 4),
+        compose_nested("o", &[("inner", "b", true)]),
+    ])
+    .unwrap_err();
     assert_eq!(error, OwnershipError::NotAnAggregate("b".into()));
     let error = execute_ownership(&[
         acquire(1, "b", 4),

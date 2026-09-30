@@ -146,6 +146,29 @@ true
 [WARN] 4611686018427387904
 ```
 
+## Records across calls
+
+[record_calls.qr](record_calls.qr) passes records to functions and returns
+them (card `W48-QR-USABLE-RECORDS`). A module that declares a record and a
+function besides its entry takes this route; a record of scalars — here
+`Point`, and `Box`, which holds two of them — is a plain value, so a call
+copies it in and a `return` copies it out, and `grow` building a new `Box`
+leaves the caller's `b` as it was. A field is read through its path
+(`b.hi.x`), a construction names every field in any order, and a record has no
+arithmetic, comparison or rendering of its own: read the field you mean. A
+field write is not a statement of this route (its rows admit `io` and the
+typed error only, and a write derives `mut`), and a record holding an owned
+`bytes` field does not cross a call here:
+
+<!-- transcript: record_calls stdout -->
+```text
+9
+14
+25
+0x07
+10
+```
+
 ## Typed loops and arithmetic on the byte-buffer route
 
 [typed_loops.qr](typed_loops.qr) counts a `for` loop over a `u8` bound (card

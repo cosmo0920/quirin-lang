@@ -166,9 +166,10 @@ impl Reader<'_> {
     fn fields(&mut self, operand: Expr) -> Result<Expr, SourceDiagnostic> {
         let mut path = Vec::new();
         while self.take(Symbol::Dot) {
-            path.push(self.name().map_err(|_| {
-                self.bad("a field path names a declared field after each `.`")
-            })?);
+            path.push(
+                self.name()
+                    .map_err(|_| self.bad("a field path names a declared field after each `.`"))?,
+            );
         }
         Ok(if path.is_empty() {
             operand
@@ -428,7 +429,10 @@ impl Reader<'_> {
                 // error only, and a write derives `mut` on every route that
                 // spells one (`W48-QR-SCALAR-CALLS-FIELD-WRITE`).
                 Some(_)
-                    if self.tokens.get(self.at + 1).is_some_and(|t| symbol(t, Symbol::Dot))
+                    if self
+                        .tokens
+                        .get(self.at + 1)
+                        .is_some_and(|t| symbol(t, Symbol::Dot))
                         && (self.at + 2..self.tokens.len())
                             .take_while(|at| !symbol(self.tokens[*at], Symbol::Semicolon))
                             .any(|at| symbol(self.tokens[at], Symbol::Equal)) =>

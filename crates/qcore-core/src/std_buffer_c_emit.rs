@@ -1613,11 +1613,8 @@ fn emit_event_sequence(
                     FieldType::Scalar(ty) => {
                         let emitted = scalar_name(binding);
                         records.typed.insert(binding.clone(), (emitted.clone(), ty));
-                        let _ = writeln!(
-                            source,
-                            "{indent}{} {emitted} = {member};",
-                            st::c_type(ty)
-                        );
+                        let _ =
+                            writeln!(source, "{indent}{} {emitted} = {member};", st::c_type(ty));
                     }
                     // Card `AGGREGATE-OWNED-FIELD`: the partial move. The plain
                     // binding takes the member's pointer and owes it; the

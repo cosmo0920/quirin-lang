@@ -384,9 +384,12 @@ type Outer { inner: Inner }",
         "type Outer { inner: Inner }
 type Inner { x: i32 }",
     ] {
-        let source = module(declaration, "    let n = 1;
+        let source = module(
+            declaration,
+            "    let n = 1;
     n |> print dec;
-");
+",
+        );
         assert!(compile(&source).is_ok(), "{declaration}");
     }
     for declaration in [
@@ -394,12 +397,18 @@ type Inner { x: i32 }",
         "type A { b: B }
 type B { a: A }",
     ] {
-        let source = module(declaration, "    let n = 1;
+        let source = module(
+            declaration,
+            "    let n = 1;
     n |> print dec;
-");
+",
+        );
         let (codes, message) = refusal(&source);
         assert_eq!(codes, vec!["Q051"], "{declaration}");
-        assert!(message.contains("contain itself"), "{declaration}: {message}");
+        assert!(
+            message.contains("contain itself"),
+            "{declaration}: {message}"
+        );
     }
 }
 

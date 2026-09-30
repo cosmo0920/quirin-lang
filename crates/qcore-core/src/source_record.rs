@@ -296,9 +296,7 @@ pub fn field_type_at<'a>(
     let mut current = type_name.to_owned();
     for (depth, component) in path.iter().enumerate() {
         let Some(declared) = types(&current) else {
-            return Err(RecordRefusal::UnknownType {
-                type_name: current,
-            });
+            return Err(RecordRefusal::UnknownType { type_name: current });
         };
         let Some(field_type) = declared.field(component) else {
             return Err(RecordRefusal::NoSuchField {

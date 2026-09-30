@@ -873,7 +873,8 @@ pub fn check_ffi_program(program: &FfiProgram) -> Result<FfiCertificate, Vec<Ffi
     let mut errors = std::mem::take(&mut checker.errors);
     // A helper checked at two calls reports one fault once.
     let mut seen = BTreeSet::new();
-    errors.retain(|refusal| seen.insert((refusal.statement, refusal.code, refusal.message.clone())));
+    errors
+        .retain(|refusal| seen.insert((refusal.statement, refusal.code, refusal.message.clone())));
     if !errors.is_empty() {
         errors.sort_by_key(|refusal| refusal.statement);
         return Err(errors);
@@ -902,7 +903,11 @@ pub fn check_ffi_program(program: &FfiProgram) -> Result<FfiCertificate, Vec<Ffi
         declared_outcomes: checker.outcomes,
         effects: derived.entry,
         assumptions,
-        helpers: program.functions.iter().map(FfiFunction::signature).collect(),
+        helpers: program
+            .functions
+            .iter()
+            .map(FfiFunction::signature)
+            .collect(),
         writes: checker.writes,
     })
 }
@@ -1188,9 +1193,7 @@ impl Checker<'_> {
                             return Err(error(
                                 index,
                                 "Q025",
-                                format!(
-                                    "`{callee}` returns `unit`: a call of it binds nothing"
-                                ),
+                                format!("`{callee}` returns `unit`: a call of it binds nothing"),
                             ));
                         }
                         (result, None, _) => {
@@ -1375,9 +1378,7 @@ impl Checker<'_> {
                             _ => None,
                         };
                         let (ty, number) = match operand {
-                            StdIoOperand::Literal(number) => {
-                                (ScalarType::I32, i128::from(*number))
-                            }
+                            StdIoOperand::Literal(number) => (ScalarType::I32, i128::from(*number)),
                             StdIoOperand::Borrowed(name) => {
                                 return Err(error(
                                     index,
@@ -1595,7 +1596,13 @@ impl Checker<'_> {
             inner.insert(parameter.clone(), value);
         }
         let before = self.errors.len();
-        let value = self.run(&helper.statements, helper.base, &mut inner, Some(helper), depth + 1);
+        let value = self.run(
+            &helper.statements,
+            helper.base,
+            &mut inner,
+            Some(helper),
+            depth + 1,
+        );
         if self.errors.len() > before {
             return Ok(None);
         }

@@ -1386,13 +1386,12 @@ pub fn custody_operations_with_gates(
                             && self.owns(type_name)
                         {
                             let supplied = |field: &str| {
-                                fields
-                                    .iter()
-                                    .find(|(name, _)| name == field)
-                                    .and_then(|(_, operand)| match operand {
+                                fields.iter().find(|(name, _)| name == field).and_then(
+                                    |(_, operand)| match operand {
                                         FieldOperand::Name(from) => Some(from),
                                         FieldOperand::Literal(_) | FieldOperand::Bool(_) => None,
-                                    })
+                                    },
+                                )
                             };
                             let nests = declared
                                 .fields
@@ -1433,11 +1432,9 @@ pub fn custody_operations_with_gates(
                                 let moved: Vec<(String, String)> = declared
                                     .owned_field_names()
                                     .filter_map(|owned| {
-                                        supplied(owned)
-                                            .filter(|from| self.names(from))
-                                            .map(|from| {
-                                                (owned.to_owned(), Self::owner(renames, from))
-                                            })
+                                        supplied(owned).filter(|from| self.names(from)).map(
+                                            |from| (owned.to_owned(), Self::owner(renames, from)),
+                                        )
                                     })
                                     .collect();
                                 self.operations.push(OwnershipOp::Compose {
@@ -1496,27 +1493,30 @@ pub fn custody_operations_with_gates(
                     BufferEvent::FieldStore { record, path, .. }
                         if self.owned_field(record, path) =>
                     {
-                        self.operations.push(OwnershipOp::WriteField(FieldPath::nested(
-                            record.clone(),
-                            path.clone(),
-                        )));
+                        self.operations
+                            .push(OwnershipOp::WriteField(FieldPath::nested(
+                                record.clone(),
+                                path.clone(),
+                            )));
                     }
                     BufferEvent::FieldLoad { record, path, .. }
                     | BufferEvent::FieldExtent { record, path, .. }
                         if self.owned_field(record, path) =>
                     {
-                        self.operations.push(OwnershipOp::ReadField(FieldPath::nested(
-                            record.clone(),
-                            path.clone(),
-                        )));
+                        self.operations
+                            .push(OwnershipOp::ReadField(FieldPath::nested(
+                                record.clone(),
+                                path.clone(),
+                            )));
                     }
                     BufferEvent::FieldRelease { record, path }
                         if self.owned_field(record, path) =>
                     {
-                        self.operations.push(OwnershipOp::DropField(FieldPath::nested(
-                            record.clone(),
-                            path.clone(),
-                        )));
+                        self.operations
+                            .push(OwnershipOp::DropField(FieldPath::nested(
+                                record.clone(),
+                                path.clone(),
+                            )));
                     }
                     // `drop p;` of a composed record is the plain `Drop` — the
                     // IR sees an aggregate binding and walks its fields.
@@ -3050,8 +3050,7 @@ impl BufferEvaluation {
                         for field in &declared.fields {
                             match value.project(&field.name) {
                                 Some(FieldValue::Bytes { moved_from }) => {
-                                    let extent =
-                                        self.extents.get(moved_from).copied().unwrap_or(0);
+                                    let extent = self.extents.get(moved_from).copied().unwrap_or(0);
                                     let contents =
                                         self.contents.get(moved_from).cloned().unwrap_or_default();
                                     owned_fields.insert(
@@ -3272,10 +3271,8 @@ impl BufferEvaluation {
                     }
                 };
                 let spelling = path.join(".");
-                let holder = source_record::spell_path(
-                    &type_name,
-                    &path[..path.len().saturating_sub(1)],
-                );
+                let holder =
+                    source_record::spell_path(&type_name, &path[..path.len().saturating_sub(1)]);
                 let last = path.last().cloned().unwrap_or_default();
                 match declared {
                     FieldType::Scalar(ty) => {

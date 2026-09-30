@@ -605,8 +605,9 @@ pub fn lower_source_ffi(
             .value
             .result_type
             .as_ref()
-            .map_or(Some(FfiType::Unit), |result| ffi_type(&result.source, &records))
-        {
+            .map_or(Some(FfiType::Unit), |result| {
+                ffi_type(&result.source, &records)
+            }) {
             Some(ty @ (FfiType::Unit | FfiType::Scalar(_) | FfiType::Record(_))) => ty,
             _ => {
                 errors.push(context(
@@ -703,7 +704,9 @@ fn lower_statement(tokens: &[&Token], records: &[String]) -> Result<FfiStatement
         }
         // Card `W48-QR-USABLE-RECORDS`: a helper's `return VALUE;`.
         return match value(tokens, 1) {
-            Some((returned, next)) if symbol(tokens, next, Symbol::Semicolon) && next + 1 == tokens.len() => {
+            Some((returned, next))
+                if symbol(tokens, next, Symbol::Semicolon) && next + 1 == tokens.len() =>
+            {
                 Ok(FfiStatement::Return(Some(returned)))
             }
             _ => Err("`return;` or `return VALUE;` with one literal or name".into()),
@@ -715,7 +718,8 @@ fn lower_statement(tokens: &[&Token], records: &[String]) -> Result<FfiStatement
             return Err("`let NAME = …;`".into());
         }
         // A construction.
-        if let Some(record) = word(tokens, 3).filter(|name| records.iter().any(|record| record == name))
+        if let Some(record) =
+            word(tokens, 3).filter(|name| records.iter().any(|record| record == name))
             && symbol(tokens, 4, Symbol::LeftBrace)
         {
             let (fields, next) =

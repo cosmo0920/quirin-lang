@@ -404,8 +404,7 @@ pub fn read_field_path_statement(window: &[&Token]) -> Option<Result<FieldPathSt
     }
     // `RECORD . PATH [ INDEX ] = VALUE ;`
     let open = after;
-    let Some(close) =
-        (open + 1..window.len()).find(|at| symbol(window, *at, Symbol::RightBracket))
+    let Some(close) = (open + 1..window.len()).find(|at| symbol(window, *at, Symbol::RightBracket))
     else {
         return Some(Err(format!(
             "`{spelled}[` is not closed; a store through a field is \

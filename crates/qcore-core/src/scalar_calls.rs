@@ -476,7 +476,10 @@ impl Checked {
             stdout: Vec::new(),
             lines: Vec::new(),
         };
-        let arguments = arguments.iter().map(|a| Arg::Scalar(*a)).collect::<Vec<_>>();
+        let arguments = arguments
+            .iter()
+            .map(|a| Arg::Scalar(*a))
+            .collect::<Vec<_>>();
         let outcome = self.call(entry, &arguments, &mut budget, &mut out, 0)?;
         let f = &self.typed[entry];
         let (result, error) = match outcome {
@@ -503,7 +506,10 @@ impl Checked {
             stdout: Vec::new(),
             lines: Vec::new(),
         };
-        let arguments = arguments.iter().map(|a| Arg::Scalar(*a)).collect::<Vec<_>>();
+        let arguments = arguments
+            .iter()
+            .map(|a| Arg::Scalar(*a))
+            .collect::<Vec<_>>();
         self.call(id, &arguments, &mut budget, &mut out, 0)
     }
     fn call(
@@ -554,7 +560,10 @@ impl Checked {
                     return Err(bad(id, &format!("argument {value} is not a value of {ty}")));
                 }
                 (Arg::Record(_), _) => {
-                    return Err(bad(id, &format!("a record argument is not a value of {ty}")));
+                    return Err(bad(
+                        id,
+                        &format!("a record argument is not a value of {ty}"),
+                    ));
                 }
             }
         }
@@ -797,7 +806,10 @@ impl Checked {
             // Card `W48-QR-USABLE-RECORDS`: a scalar field of a record is its
             // leaf at the path's offset.
             TKind::Field(base, path) => {
-                let record = base.ty.record().ok_or_else(|| bad(id, "a field of a non-record"))?;
+                let record = base
+                    .ty
+                    .record()
+                    .ok_or_else(|| bad(id, "a field of a non-record"))?;
                 let (start, _, _) = self
                     .program
                     .field_slice(record, path)
@@ -873,7 +885,10 @@ impl Checked {
                 Ok(leaves)
             }
             TKind::Field(base, path) => {
-                let record = base.ty.record().ok_or_else(|| bad(id, "a field of a non-record"))?;
+                let record = base
+                    .ty
+                    .record()
+                    .ok_or_else(|| bad(id, "a field of a non-record"))?;
                 let (start, width, _) = self
                     .program
                     .field_slice(record, path)
@@ -1247,12 +1262,14 @@ impl Elab<'_> {
                 // exactly once, and no other.
                 for (position, (name, _)) in values.iter().enumerate() {
                     if !declared.fields.iter().any(|(field, _)| field == name) {
-                        return Err(self.bad(&format!(
-                            "`{}` declares no field `{name}`",
-                            declared.name
-                        )));
+                        return Err(
+                            self.bad(&format!("`{}` declares no field `{name}`", declared.name))
+                        );
                     }
-                    if values[..position].iter().any(|(earlier, _)| earlier == name) {
+                    if values[..position]
+                        .iter()
+                        .any(|(earlier, _)| earlier == name)
+                    {
                         return Err(self.bad(&format!(
                             "this `{}` construction supplies `{name}` twice",
                             declared.name
@@ -1310,7 +1327,8 @@ impl Elab<'_> {
 const BOOL_ARITHMETIC: &str =
     "arithmetic requires integer operands; `bool` is not an integer and has no arithmetic";
 /// Card `W48-QR-USABLE-RECORDS`.
-const RECORD_ARITHMETIC: &str = "a record has no arithmetic, comparison or conversion; read the field you mean first (`p.x`)";
+const RECORD_ARITHMETIC: &str =
+    "a record has no arithmetic, comparison or conversion; read the field you mean first (`p.x`)";
 const NOT_A_RECORD: &str = "a field path continues only through a record; this operand is not one";
 const NO_TARGET: &str = "`isize` and `usize` take their width from a recorded target, and none was supplied; the width is never guessed (supply one with `--recorded-target FILE`)";
 
@@ -1688,11 +1706,12 @@ pub fn check_for_target(
         }
     }
     let uses_target = typed.iter().any(|f| {
-        f.locals
-            .iter()
-            .chain([&f.result])
-            .any(|ty| program.leaves(*ty).iter().any(|leaf| leaf.is_target_width()))
-            || block_uses_target(&f.body)
+        f.locals.iter().chain([&f.result]).any(|ty| {
+            program
+                .leaves(*ty)
+                .iter()
+                .any(|leaf| leaf.is_target_width())
+        }) || block_uses_target(&f.body)
     });
     Ok(Checked {
         program,
@@ -1711,11 +1730,7 @@ pub fn check_for_target(
 /// recorded target. The frontend reads the declarations through
 /// `source.record.v1`'s own reader, which refuses the rest first.
 fn check_records(program: &Program, target: Option<&RecordedTarget>) -> Result<(), Refusal> {
-    fn depth(
-        program: &Program,
-        record: usize,
-        stack: &mut Vec<usize>,
-    ) -> Result<usize, Refusal> {
+    fn depth(program: &Program, record: usize, stack: &mut Vec<usize>) -> Result<usize, Refusal> {
         if stack.contains(&record) {
             return Err(bad(
                 0,
@@ -1749,11 +1764,18 @@ fn check_records(program: &Program, target: Option<&RecordedTarget>) -> Result<(
         if record.fields.is_empty() || record.fields.len() > crate::source_record::MAX_FIELDS {
             return Err(bad(
                 0,
-                &format!("record `{}` declares 1 to {} fields", record.name, crate::source_record::MAX_FIELDS),
+                &format!(
+                    "record `{}` declares 1 to {} fields",
+                    record.name,
+                    crate::source_record::MAX_FIELDS
+                ),
             ));
         }
         for (position, (name, ty)) in record.fields.iter().enumerate() {
-            if record.fields[..position].iter().any(|(earlier, _)| earlier == name) {
+            if record.fields[..position]
+                .iter()
+                .any(|(earlier, _)| earlier == name)
+            {
                 return Err(bad(
                     0,
                     &format!("record `{}` declares `{name}` twice", record.name),

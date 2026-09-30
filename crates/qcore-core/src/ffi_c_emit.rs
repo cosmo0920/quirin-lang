@@ -237,7 +237,13 @@ pub fn emit_ffi_c11(
                 }
             }
             let mut body = discards;
-            emit_statements(program, &function.statements, &mut env, Some(function), &mut body)?;
+            emit_statements(
+                program,
+                &function.statements,
+                &mut env,
+                Some(function),
+                &mut body,
+            )?;
             let _ = write!(
                 helpers_text,
                 "\n{}\n{{\n{body}}}\n",

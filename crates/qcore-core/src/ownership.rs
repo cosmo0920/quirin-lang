@@ -412,7 +412,10 @@ pub enum OwnershipOp {
     /// write over a field still holding its buffer would lose that buffer's
     /// release duty, and is refused (`OverwriteOfLiveField`). The only move
     /// *into* a field besides the construction's.
-    RefillField { from: String, into: FieldPath },
+    RefillField {
+        from: String,
+        into: FieldPath,
+    },
     /// **The live-record rule** (card `W48-QR-USABLE-RECORDS`): a read or
     /// write of a **scalar** field of an aggregate. Owns nothing and moves
     /// nothing; it asks only that the aggregate is still live — a scalar field

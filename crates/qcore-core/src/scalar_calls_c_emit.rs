@@ -423,7 +423,10 @@ impl Emitter<'_> {
                     unreachable!("found by pattern")
                 };
                 let args = self.arguments(args);
-                self.line(&format!("{} v{value} = 0;", c_type(self.checked, m.call.ty)));
+                self.line(&format!(
+                    "{} v{value} = 0;",
+                    c_type(self.checked, m.call.ty)
+                ));
                 let separator = if args.is_empty() { "" } else { ", " };
                 self.line(&format!(
                     "int e{error} = q_scalar_fn_{id}({args}{separator}&v{value});"
