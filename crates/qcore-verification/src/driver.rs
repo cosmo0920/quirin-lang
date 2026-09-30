@@ -1600,7 +1600,7 @@ fn check_extern_declaration_signatures(
                 SemanticPass::OrdinaryTypes,
                 parameter.type_span,
                 format!(
-                    "parameter `{}` of `extern fn {name}` is `{written}`, which is not a type an extern declaration can state; a parameter is a fixed-width scalar (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize) or one of the custody pointers ptr<mut, u8>, ptr<const, u8>, ptr<mut, ptr<mut, u8>> (§C04.1), and every declaration is read whether or not a body calls it",
+                    "parameter `{}` of `extern fn {name}` is `{written}`, which is not a type an extern declaration can state; a parameter is a scalar (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize, f32, f64) or one of the custody pointers ptr<mut, u8>, ptr<const, u8>, ptr<mut, ptr<mut, u8>> (§C04.1), and every declaration is read whether or not a body calls it",
                     parameter.name.value
                 ),
                 ranges,

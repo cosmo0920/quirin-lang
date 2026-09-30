@@ -84,11 +84,15 @@ impl Drop for Scratch {
     }
 }
 
+/// A `.qr` helper of the FFI file taking an imported record and a float by
+/// value and returning a float (card `W48-QR-USABLE-RECORDS`'s helpers).
+const HELPER: &str = "fn pick(p: Point, k: f64) -> f64 {\n    let x = p.x;\n    return k;\n}\n";
+
 fn program(body: &str) -> String {
-    format!("{HEAD}{IMPORT}{DECLARATIONS}fn main() -> unit effects {{ io }} {{\n{body}    return;\n}}\n")
+    format!("{HEAD}{IMPORT}{DECLARATIONS}{HELPER}fn main() -> unit effects {{ io }} {{\n{body}    return;\n}}\n")
 }
 
-const BODY: &str = "    let p = Point { x: 1.5, y: -0.25, n: 3 };\n    let x = p.x;\n    print dec x;\n    let y = p.y;\n    print hex y;\n    let s = qr_point_sum(p) succeeds 4.25;\n    print dec s;\n    let q = qr_point_scale(p, 2.0) succeeds Point { x: 3.0, y: -0.5, n: 3 };\n    let qx = q.x;\n    log info dec qx;\n    let h = qr_half(1e-45) succeeds 0.0;\n    print dec h;\n    flush;\n";
+const BODY: &str = "    let p = Point { x: 1.5, y: -0.25, n: 3 };\n    let x = p.x;\n    print dec x;\n    let y = p.y;\n    print hex y;\n    let s = qr_point_sum(p) succeeds 4.25;\n    print dec s;\n    let q = qr_point_scale(p, 2.0) succeeds Point { x: 3.0, y: -0.5, n: 3 };\n    let qx = q.x;\n    log info dec qx;\n    let h = qr_half(1e-45) succeeds 0.0;\n    print dec h;\n    let k = pick(p, -2.5);\n    print dec k;\n    flush;\n";
 
 #[test]
 fn float_fields_calls_and_outcomes_check_and_render() {
@@ -103,7 +107,7 @@ fn float_fields_calls_and_outcomes_check_and_render() {
     assert_eq!(
         qcore_core::ffi::reference_stream(&checked.certificate, Stream::Out),
         format!(
-            "1.5\n{}\n4.25\n0\n",
+            "1.5\n{}\n4.25\n0\n-2.5\n",
             sf::render_hex(ScalarType::F32, sf::of_f32(-0.25)).unwrap()
         )
     );
@@ -123,7 +127,9 @@ fn negative_controls_refuse() {
         ("    let h = qr_half(1.0) succeeds 1;\n", "is not a `f32` literal"),
         ("    let h = qr_half(4e38);\n", "is not a `f32` value"),
     ] {
-        let errors = scratch.compile(&program(body)).expect_err(body);
+        // Without the helper, which only the admitted program calls.
+        let source = program(body).replace(HELPER, "");
+        let errors = scratch.compile(&source).expect_err(body);
         assert!(
             errors.iter().any(|error| error.message.contains(needle)),
             "`{needle}` for\n{body}\n{errors:#?}"
