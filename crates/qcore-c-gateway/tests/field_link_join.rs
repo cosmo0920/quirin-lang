@@ -251,3 +251,109 @@ fn a_summary_over_a_one_sided_escape_is_not_validated() {
 /// on a path it does not escape.
 const ESCAPE_REFUSED: &str =
     "field-link escape: a linked child may still be live on a path the escape does not carry it";
+
+/// `(shape, returns the owner, statements after the prologue, verdict)`: the
+/// pinned shapes, shared with `QCore.FieldLinkJoin.shapeVectors` (the model's
+/// verdict of each shape's two paths and the owner's action).
+const SHAPE_VECTORS: &[(&str, bool, &str, &str)] = &[
+    (
+        "straight-line-release",
+        false,
+        "b->item = it;\nk_drop(b);",
+        "unsafe",
+    ),
+    (
+        "branch-release",
+        false,
+        "if (n) { b->item = it; } else { k_release(it); }\nk_drop(b);",
+        "unsafe",
+    ),
+    (
+        "both-arms-member-released",
+        false,
+        "if (n) { b->item = it; } else { b->flag = 1; b->item = it; }\nk_release(b->item);\nk_drop(b);",
+        "safe",
+    ),
+    (
+        "both-arms-escape",
+        true,
+        "if (n) { b->item = it; } else { b->flag = 1; b->item = it; }\nreturn b;",
+        "safe",
+    ),
+    (
+        "one-sided-escape",
+        true,
+        "if (n) { b->item = it; }\nreturn b;",
+        "unknown",
+    ),
+    (
+        "released-arm-escape",
+        true,
+        "if (n) { b->item = it; } else { k_release(it); }\nreturn b;",
+        "unknown",
+    ),
+    (
+        "mixed-linked-escape",
+        true,
+        "b->item = it;\nif (n) { k_release(it); }\nreturn b;",
+        "unknown",
+    ),
+];
+
+fn verdict(status: AnalysisStatus) -> &'static str {
+    match status {
+        AnalysisStatus::Safe => "safe",
+        AnalysisStatus::Pending => "pending",
+        AnalysisStatus::Unknown => "unknown",
+        AnalysisStatus::Unsafe => "unsafe",
+    }
+}
+
+/// Each pinned shape decides as the Lean model's verdict of its paths.
+#[test]
+fn the_pinned_shapes_decide_as_the_model() {
+    if !clang_available() {
+        return;
+    }
+    for (shape, returns, rest, expected) in SHAPE_VECTORS {
+        let body = if *returns {
+            box_body(rest)
+        } else {
+            void_body(rest)
+        };
+        let run = analyze(&body);
+        assert_eq!(verdict(run.status), *expected, "{shape}: {run:?}");
+    }
+}
+
+const LEAN: &str = include_str!("../../../proof/QCore/FieldLinkJoin.lean");
+
+#[test]
+fn b08_lean_shape_vectors_match_the_rust_table() {
+    let table = LEAN
+        .split("def shapeVectors : List (String × Verdict) := [")
+        .nth(1)
+        .expect("table header");
+    let table = &table[..table.find("\n]").expect("end of table")];
+    let rows = table
+        .lines()
+        .map(str::trim)
+        .filter(|line| line.starts_with('('))
+        .map(|row| {
+            let row = row.trim_end_matches(',').trim_start_matches('(');
+            let row = row.trim_end_matches(')');
+            let (shape, verdict) = row.split_once(',').expect("two cells");
+            (
+                shape.trim().trim_matches('"').to_owned(),
+                verdict.trim().trim_start_matches('.').replace(['«', '»'], ""),
+            )
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(rows.len(), SHAPE_VECTORS.len());
+    for ((shape, verdict), (rust_shape, _, _, rust_verdict)) in rows.iter().zip(SHAPE_VECTORS) {
+        assert_eq!(
+            (shape.as_str(), verdict.as_str()),
+            (*rust_shape, *rust_verdict)
+        );
+    }
+}
