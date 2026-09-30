@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 643
+  "named_followups": 649
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W48-QR-CLOSURES card gate (base f3969316), script private/w48-c4/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-c4/gate, first run at c408056a: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 391 units, 404 summaries, 6,898 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T072756Z-1585066/summary.json); clippy 101 (two lints in the card's new code: a capture-and-binder pair type, a needless borrow in the split-out result/effect reader); both reevaluation probes 0; check_lean_audits.py 249 audits passed (248 + AuditClosures.lean). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). Clippy fixed at 4351007f; rerun there (private/w48-c4/gate-rerun.sh, logs private/w48-c4/gate-rerun): fmt 0; run_test_binaries.py 391 units, 404 summaries, 6,898 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T074213Z-1828189/summary.json); clippy 0; both probes 0. Matrix, docs index and Python were then run in that order (a Python run before the matrix was regenerated failed its two matrix self-consistency rows, as expected for a ledger change). Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit a83a746f built at 4351007f): resource-diagnostics.json 2fc3af8c..., 602 Safe / 10 Unsafe / 4,222 Unknown, byte-identical to the base archive (CG08-CASTS-AND-TYPE-QUERIES AFTER, merged into the base); sidecars byte-identical. Exits in gate/ (the first run's failing and superseded steps as *.first-run.exit).",
-  "workspace_tests": 6898,
+  "note": "W48-QR-FLOATING-POINT card gate (base 2ef0f8b5), script private/w48-qr-floating-point/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-qr-floating-point/gate, one run at dabdc595: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 395 units, 408 summaries, 6,924 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T093257Z-2213596/summary.json); clippy 0; both reevaluation probes 0; check_lean_audits.py 250 audits passed (249 + AuditFloatTypes.lean). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). Matrix, docs index and Python were then run in that order after the records commit. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit 1bfd0e8a built at dabdc595): resource-diagnostics.json 2fc3af8c..., 602 Safe / 10 Unsafe / 4,222 Unknown, byte-identical to the base archive; sidecars byte-identical. Exits in gate/.",
+  "workspace_tests": 6924,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 249,
+  "lean_audits": 250,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6852,6 +6852,7 @@
    "AuditExternCall.lean",
    "AuditFfiStructImport.lean",
    "AuditFixedScalarQuery.lean",
+   "AuditFloatTypes.lean",
    "AuditFrameHelperTask.lean",
    "AuditGenericNames.lean",
    "AuditGenericSelection.lean",
@@ -7015,7 +7016,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-closures/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-floating-point/gate.json)"
  },
  "named_followups": [
   {

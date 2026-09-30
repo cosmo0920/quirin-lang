@@ -1050,6 +1050,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-qr-closures](w48-qr-closures/README.md) | W48-QR-CLOSURES: closures that capture into concurrent workers |
 
+| [w48-qr-floating-point](w48-qr-floating-point/README.md) | W48-QR-FLOATING-POINT: `f32` and `f64` in `.qr` sources |
+
 | [w48-qr-scalar-types](w48-qr-scalar-types/README.md) | W48-QR-SCALAR-TYPES: fixed-width scalar types in `.qr` sources |
 
 | [w48-qr-scalar-types-r2](w48-qr-scalar-types-r2/README.md) | W48-QR-SCALAR-TYPES-R2: unread annotations and the typed arithmetic error |

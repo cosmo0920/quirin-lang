@@ -239,9 +239,9 @@ file, logs `private/w48-qr-floating-point/gate/`):
 | follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
 | Lean | `python3 scripts/check_lean_audits.py` | 0 | **250 audits** (249 + `AuditFloatTypes.lean`) |
 | provider suite | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | 129 passed, 0 failed, 1 ignored, 43 summaries (`providers/` unchanged) |
-| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qr-floating-point/gate.json` | see gate.json | |
-| docs index | `python3 scripts/build_docs_index.py` | see gate.json | |
-| Python | `python3 -m unittest discover -s scripts/tests` | see gate.json | after the matrix |
+| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qr-floating-point/gate.json` | 0 | |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | **365 tests OK** (after the matrix) |
 
 Exits in [gate/](gate/), record in [gate.json](gate.json).
 
