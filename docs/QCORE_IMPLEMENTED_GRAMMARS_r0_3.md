@@ -177,7 +177,8 @@ reserved words and does not widen the other profiles.
 function = "fn", NAME, "(", [parameter, {",", parameter}], ")", "->", result,
            ["effects", "{", [effect, {",", effect}], "}"], ["contract", "{", "}"],
            block ;
-effect = "io" | "throws", "<", "ArithmeticError", ">" ;        (* each once *)
+effect = "io" | "throws", "<", "ArithmeticError", ">"
+       | "partial_eq" | "partial_ord" ;                        (* each once; §G02t *)
 block = "{", {statement}, end, "}" ;
 end = "return", [expression], ";"
     | "raise", (NAME | "ArithmeticError", "::", VARIANT), ";"
@@ -188,7 +189,8 @@ VARIANT = "Overflow" | "DivisionByZero" | "OutOfRange" ;
 parameter = NAME, ":", SCALAR ;
 result = SCALAR | "unit" ;
 SCALAR = "bool" | "i8" | "i16" | "i32" | "i64" | "isize"
-       | "u8" | "u16" | "u32" | "u64" | "usize" ;               (* §G02t *)
+       | "u8" | "u16" | "u32" | "u64" | "usize"
+       | "f32" | "f64" ;                                        (* §G02t *)
 statement = "let", NAME, [":", SCALAR], "=", expression, ";"
           | call, ["?"], ";"
           | "print", "(", expression, ")", ";"                  (* i32 only *)
@@ -199,7 +201,7 @@ expression = sum, [CMP, sum] ;                                  (* non-associati
 sum = product, {("+" | "-"), product} ;
 product = cast, {("*" | "/" | "%"), cast} ;
 cast = unary, {"as", SCALAR} ;
-unary = "-", unary | NAT | "true" | "false" | NAME | call, ["?"]
+unary = "-", unary | NAT | FLOAT | "true" | "false" | NAME | call, ["?"]
       | "(", expression, ")" ;
 CMP = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
 call = FUNCTION_NAME, "(", [expression, {",", expression}], ")" ;
@@ -670,6 +672,73 @@ naming the parameter or the result. The check runs after the admitting route's
 own passes, so every refusal given before keeps its bytes. A contract module is
 exempt: its declarations are the contract surface itself, in the resource
 contract language's wider vocabulary, read by the contract loader.
+
+**Floating point: `f32` and `f64`** (card `W48-QR-FLOATING-POINT`;
+semantics and normative limitations in specification §L14.7). The table gains
+two types, outside the integer table: `ScalarType::parse` still reads the
+eleven above, and a position admits a float only by reading its types with
+`parse_admitting_floats`, so every position this card did not widen keeps its
+refusal.
+
+| Type | Values | C11 | `dec` | `hex` |
+|---|---|---|---|---|
+| `f32` | every IEEE 754 binary32 bit pattern | `float` | shortest round-trip, ECMAScript layout | C hex float, normalised |
+| `f64` | every IEEE 754 binary64 bit pattern | `double` | shortest round-trip, ECMAScript layout | C hex float, normalised |
+
+```ebnf
+FLOAT    = DIGITS, ".", DIGITS, [EXPONENT] | DIGITS, EXPONENT ;  (* one token *)
+EXPONENT = ("e" | "E"), ["+" | "-"], DIGITS ;
+effect   = ... | "partial_eq" | "partial_ord" ;                 (* each once *)
+```
+
+* **Lexing.** `DIGITS . DIGITS` was already the lexer's `Float` token; card
+  `W48-QR-FLOATING-POINT` extends it with an exponent written directly after
+  the digits, taken only when a digit follows the `e` and its sign, so `1.5e`
+  and `1e+` lex as before (a literal and the name `e`). The census
+  (`docs/reports/w48-qr-floating-point/census_float_spelling.py`) found no
+  tracked file spelling an exponent form.
+* **Literals.** A float literal takes its context's float type, `f64` when
+  there is none (a literal-only operand of `as` to a float type takes that
+  type), and is read once at it; one that rounds to ±inf or a nonzero one that
+  rounds to zero refuses. An integer literal is never a float, a float literal
+  never an integer. `-` is unary minus, exact on every float. There is no
+  literal for NaN or an infinity (write `0.0 / 0.0`, `1.0 / 0.0`) and no
+  hexadecimal float literal.
+* **Operations.** `+ - * /` and unary `-` are IEEE (round to nearest, ties to
+  even) and never fault; `%` refuses. `f32` and `f64` do not mix. The emitted C
+  performs each operation in its own helper (`q_scalar_add_f64`), so no C
+  expression holds two float operations.
+* **Comparisons** need their effect in the declared row — `partial_eq` for
+  `==`/`!=`, `partial_ord` for the orderings — never inferred; on the scalar
+  route a caller declares every comparison effect its callees derive. Integer
+  and `bool` comparisons are unchanged.
+* **Conversions.** `as` from an integer or `f64` to `f32`, and from an integer
+  to `f64`, rounds to nearest, ties to even, and is total; `f32 as f64` is
+  exact; a float to an integer truncates toward zero and faults (`OutOfRange`)
+  for NaN, ±inf and a value outside the target, tested in C against exact
+  hexadecimal thresholds before the cast.
+* **Renderings.** `dec` prints the shortest decimal that reads back to the same
+  value at its type, laid out as ECMAScript's `Number::toString` (`1.5`,
+  `100000000000000000000`, `1e+21`, `0.000001`, `1e-7`) with `-0` for negative
+  zero; `hex` prints `0x1.8p+1`, `0x1p-1074`, `-0x0p+0`; a NaN renders `nan`
+  and the infinities `inf`/`-inf` under both. The emitted renderers
+  (`q_float_dec_T`, `q_float_hex_T`) use no C library formatting.
+* **Environment.** A program holding a float includes `<float.h>` and
+  `<string.h>`, `_Static_assert`s the binary32/binary64 parameters and
+  `FLT_EVAL_METHOD == 0`, `#error`s under fast-math or finite-math-only, and
+  names the IEEE premise among its assumptions.
+
+| Position | Floats |
+|---|---|
+| §G02s parameters, results, locals, literals, arithmetic, comparisons, conversions, renderings, records (card `W48-QR-USABLE-RECORDS`) | admitted |
+| §G02d extern declarations (`AbiType` `f32`/`f64`, `float`/`double`), literal arguments, declared outcomes (`succeeds 1.5`, compared bit for bit), `let NAME = FLOAT;` (`f64`), value statements; §G02i rendering | admitted |
+| §G02d.1 unchecked declarations | admitted (the `Q033` vocabulary now has them) |
+| §G02u `struct!` fields (`float`/`double` members), `#c_ffi` parameters and results, literals, outcomes, helpers | admitted |
+| §G02a/§G02j worker parameters, results, `copy` captures, value statements, record leaves (card `W48-QR-TASK-RECORD-CAPTURES`); §G02v closures; §G02f the epoch route's task half | admitted |
+| §G07.13 records of `source.buffer.v1`, its conversions and value statements, loop bodies (§G07.12); the composed string route | refused (`W48-QR-FLOAT-BUFFER-ROUTE`) |
+| §G02b `Buffer<T>` and §G02c `protected T` payloads | refused (`W48-QR-FLOAT-PAYLOADS`) |
+| a loop bound | refused on every route |
+| the `.qrlib` manifest's C declaration spellings (`double`, `float`) | unspellable, as before (card 5) |
 
 **Diagnostics.** No code is allocated. Every new refusal on this route is a
 widened condition of `Q020` (type, literal-range, mixed-type, `bool`,

@@ -819,6 +819,48 @@ string route** (card `W48-QR-SCALAR-TYPES-R6`, implemented grammars §G02t,
   environment, and a typed statement MUST NOT change the borrow window's
   decision, which only stores and releases reach.
 
+**Floating point** (card `W48-QR-FLOATING-POINT`, implemented grammars §G02t,
+§G02s, §G02d, §G02u, §G02a; semantics and limitations §L14.7). `f32` and
+`f64` join the table as IEEE 754 binary32 and binary64 values. On the scalar
+route (with its records), the extern route and the composed extern + io route,
+the FFI route (`struct!` fields, `#c_ffi` positions, helpers) and the
+scoped-task route (parameters, results, `copy` captures, record leaves,
+closures, the composed epoch route's task half):
+
+* A float literal (`D.D`, `D.DeX`, `DeX`; §G02t) takes its context's float
+  type, `f64` when there is none, and MUST be read once, at that type; a
+  literal that rounds to ±inf, or a nonzero one that rounds to zero, MUST be
+  refused. An integer literal is never a float and a float literal never an
+  integer, and operands of one operation MUST have one type: `f32` and `f64`
+  do not mix, and nothing converts implicitly.
+* `+ - * /` and unary `-` are IEEE operations rounding to nearest, ties to
+  even, and MUST NOT fault: NaN and ±inf are ordinary values, and `x / 0.0` is
+  ±inf or NaN. There is no float `%`; it MUST be refused.
+* A float comparison MUST be refused unless the function's declared row lists
+  its effect — `partial_eq` for `==`/`!=`, `partial_ord` for `<`, `<=`, `>`,
+  `>=`, neither implying the other. They are never inferred (an absent row
+  permits neither). On the scalar route the derived row — the function's own
+  float comparisons and every callee's derived row — MUST be admitted by the
+  declared row, so a caller declares every comparison effect its callees
+  derive; on the task route a spawn is not a call, and each function's row
+  permits its own body's comparisons, as `alloc` does. Integer and `bool`
+  comparisons stay ungated; arithmetic, conversions and renderings of floats
+  are not gated.
+* `as` converts: an integer to a float and `f64` to `f32` round to nearest,
+  ties to even, and MUST NOT fault (an `f64` beyond `f32`'s range becomes
+  ±inf); `f32` to `f64` is exact; a float to an integer truncates toward zero
+  and MUST fault — refused at check time where the value is known, else the
+  typed `ArithmeticError::OutOfRange` under `throws<ArithmeticError>` — when
+  the truncation is not a value of the target, NaN and ±inf included.
+* `dec` renders the shortest decimal that reads back to the same value at its
+  own type (ECMAScript's `Number::toString` layout, `-0` for negative zero),
+  `hex` C's normalised hexadecimal form (`0x1.8p+1`), and NaN, +inf and −inf
+  as `nan`, `inf`, `-inf`. The emitted C MUST produce exactly these bytes
+  without the C library's float formatting.
+* Every result holding a float value carries the IEEE premise as a named
+  assumption (§L20), and the emitted C MUST refuse to build where the premise's
+  checkable parts fail (§L14.7).
+
 ### L14.1. Unchecked linkage
 
 An external library that has **no contract at all** MAY be linked, under an
@@ -1178,6 +1220,96 @@ from the entry; it is under the same file-wide assumption. The mark is a
 itself import `std.ffi.unsafe` is refused (`Q032`), so no code is checked under
 the assumption in a file that never took it.
 
+### L14.7. Floating point and its limitations
+
+Card `W48-QR-FLOATING-POINT` (user decisions 2026-09-30). The positions and
+rules are §L14.0's; this section states what a checked float program's
+result claims, and, **normatively, what it does not**. Every item below is a
+limitation of every verdict over a program holding an `f32` or `f64` value.
+
+**The model.** A float value is its IEEE 754 bit pattern (binary32 for `f32`,
+binary64 for `f64`); every pattern is a value. The checker, the reference
+interpreters and the constant folds compute with the host's IEEE operations
+(round to nearest, ties to even); the emitted C performs the same operations
+at run time. Their agreement rests on the IEEE premise below and is
+**observed** — the card's boundary tables, bit for bit, NaN for NaN — never
+proved: the Lean model (`QCore.FloatTypes`) states the comparison effects, the
+float → integer truncation and the integer → float rounding over dyadic values
+and replays vectors against the Rust kernel; IEEE arithmetic itself is not
+formalised.
+
+**Limitations (normative).**
+
+1. **NaN and ±inf are values; ordering is partial.** Every comparison with a
+   NaN operand is false except `!=`, which is true, so `x == x` can be false
+   and `x < y`, `x >= y` can both be false. This is why `partial_eq` and
+   `partial_ord` gate comparisons; an admitted function without one contains —
+   and, on the scalar route, reaches through calls — no float comparison of
+   that kind (`no_undeclared_float_comparison`). Nothing here orders NaN or
+   offers a total order.
+2. **NaN payload and sign are neither preserved nor specified.** Two NaNs are
+   the same value for every purpose the language has: `dec` and `hex` both
+   render `nan`, a task trace names every NaN `nan`, a reference and a native
+   run are compared NaN for NaN. A verdict claims nothing about which NaN bits
+   a run produces, and no source literal is a NaN.
+3. **Signed zero.** `-0.0 == 0.0` is true, but the two differ in bits, in
+   `dec` (`-0` and `0`), in `hex` (`-0x0p+0`) and in a declared outcome, which
+   is compared bit for bit (the extern and FFI routes' `succeeds`): `succeeds 0.0`
+   does not accept `-0.0`.
+4. **Silent precision loss.** `int → float` and `f64 → f32` round to nearest,
+   ties to even, and never fault: `9007199254740993 as f64` is
+   `9007199254740992`, and an `f64` beyond `f32`'s range becomes ±inf. A
+   literal is rounded once at its type, so a literal converted to a float type
+   is read at that type, never through `f64`; arithmetic on literal-only
+   operands is folded at the operands' type.
+5. **`float → int` faults** with `ArithmeticError::OutOfRange` for NaN, ±inf
+   and every value whose truncation toward zero is not a value of the target
+   (refused at check time when the value is known). The emitted C tests the
+   operand against exact hexadecimal thresholds before the cast, so no C
+   undefined behaviour is evaluated.
+6. **Subnormals are kept**; flush-to-zero and denormals-are-zero modes are not
+   allowed. The emitted C cannot detect them (they are processor state, not a
+   macro), so a run under FTZ/DAZ is outside every verdict; `-ffast-math`,
+   which enables them on some toolchains, is refused at build time.
+7. **IEEE targets only.** `f32`/`f64` are binary32/binary64; the emitted C
+   `_Static_assert`s `FLT_RADIX == 2`, the binary32 and binary64 mantissa and
+   exponent limits and their sizes, so a compiler with another format refuses
+   to build the program. No other format is modelled.
+8. **Rounding mode fixed to nearest-even.** Changing it (`fesetround`, or a C
+   `#pragma STDC FENV_ACCESS` region) is not modelled; a run in another mode is
+   outside every verdict.
+9. **No excess precision.** `FLT_EVAL_METHOD == 0` is required (SSE2 and every
+   64-bit target measured) and asserted at build time, so x87 extended
+   evaluation (or `-ffp-eval-method=extended`) refuses to build rather than
+   running with other values.
+10. **No fast-math and no contraction.** `__FAST_MATH__` and finite-math-only
+    are refused at build time. Contraction (FMA fusion) cannot be detected by
+    the program: the emitted C performs each float operation in its own helper
+    and emits `#pragma STDC FP_CONTRACT OFF` under Clang, and the build premise
+    is `-ffp-contract=off` (MSVC `/fp:strict`); a build that fuses operations
+    is outside every verdict.
+11. **libm is not claimed across platforms.** Results of C library math
+    functions may differ in the last unit in the last place between glibc,
+    Apple libm and UCRT; no cross-platform byte identity of such results is
+    claimed, and each platform is compared only against its own reference. A
+    declared outcome of a C function is a fixture control compared by the
+    emitted C, never a claim about the library.
+12. **No float remainder, no float literal for NaN or inf, no hexadecimal float
+    literal.** `%` of floats is refused (C's `fmod` is a library function);
+    NaN and ±inf are written as quotients (`0.0 / 0.0`, `1.0 / 0.0`).
+13. **Renderings are the language's, not the C library's.** `dec` is Rust's
+    shortest round-trip digits in ECMAScript's layout; the emitted renderer is
+    a transcription of the same Dragon4 shortest search, compared with the
+    reference natively on the boundary table and a seeded sample — agreement
+    observed, not proved. `hex` normalises subnormals (`0x1p-1074`), unlike
+    some C libraries' `%a`.
+14. **Positions not widened** keep their refusals: a float field on
+    `source.buffer.v1` (§G07.13), the byte-buffer route's conversions, value
+    statements and loop bodies, a float `Buffer<T>` or `protected T` payload,
+    and the composed string route (`W48-QR-FLOAT-BUFFER-ROUTE`,
+    `W48-QR-FLOAT-PAYLOADS`); a float loop bound is refused on every route.
+    The native evidence is Linux/Clang only (`W48-QR-FLOAT-MSVC-NATIVE`).
+
 ## L15. Lowering, observations, and translation certificates
 
 Sequential lowering MUST preserve the checked resource identities, ordered acquisition/release/transfer behavior, and modeled normal/error payloads. The tagged C error representation must not bypass cleanup through unmodeled control transfers.
@@ -1487,6 +1619,16 @@ loop whose index is `isize` or `usize`; card `W48-QR-SCALAR-TYPES-R6`: an
 composed epoch route's task half and the composed string/buffer route). A
 result that names neither type carries no such assumption.
 
+A result of a program holding an `f32` or `f64` value (§L14.0, §L14.7)
+names the **IEEE floating-point premise** among its assumptions (`IEEE
+floating point: …` in the declared-assumption list of `quirin check`): binary32
+and binary64 evaluated at their own type, round-to-nearest-even, subnormals
+kept, no fast-math and no contraction (card `W48-QR-FLOATING-POINT`; the
+scalar, extern, composed extern + io, FFI, scoped-task, composed task + io and
+composed epoch routes). The emitted C discharges its checkable parts when it is
+compiled; contraction and the processor's rounding and denormal modes remain
+premises. A result that holds no float carries no such assumption.
+
 A result from a file that imports C (`#import std.ffi.unsafe;`, §L14.6) names
 the **unsafe-FFI assumption** among its assumptions, listing every imported
 struct (with its header digest) and every `#c_ffi` contract function the entry
@@ -1713,6 +1855,29 @@ and, on the composed epoch route, to any record type (`W48-QR-TASK-RECORD-EPOCH`
 the composed route's `Q050` to a rendering of a sub-record, an owned field or a
 whole record. `AGGREGATE-TASK-CAPTURE`'s by-name `Q500` refusal of every record
 declaration in a task module is lifted.
+
+`W48-QR-FLOATING-POINT` allocates no code. It widens the scalar route's
+OrdinaryTypes `Q020` (a float literal outside its type or rounding to zero, an
+integer literal at a float type and a float literal at an integer one, mixed
+`f32`/`f64` operands, `%` of a float, a float comparison whose effect the row
+does not declare, a caller not declaring a callee's derived comparison effect,
+a comparison effect listed twice); the task route's `Q020` (the same typing
+conditions and the missing comparison effect in a worker's or entry's own row)
+and TypedErrors `Q300` (a run-time float → integer conversion without
+`throws<ArithmeticError>`); the extern route's `Q024` (a float literal at an
+integer parameter or an integer literal at a float one, an outcome literal of
+the other kind or rounding to infinity, the value-statement conditions above);
+the FFI route's `Q051` (a listed field type — now also `f32`/`f64`), `Q052`/`Q053`
+(a field, argument or outcome literal of the other kind) and `Q025` (a declared
+outcome literal of the other kind). It **narrows** two conditions deliberately:
+`Q033` no longer refuses an `f32`/`f64` parameter or result of an unchecked
+declaration, and the declaration read's `Q020` no longer refuses an uncalled
+`extern fn` stating one (the extern ABI table gained both), whose message now
+lists them. On `source.std-io.v1` itself a comparison effect keeps its `Q030`
+refusal; on the composed extern + io route the row's `partial_eq`/`partial_ord`
+are the extern model's permission. Whole-tree fixture freeze: only the two
+`usable_records/survey` FFI fixtures' `Q051` message moves (it now lists
+`f32, f64`).
 
 `W48-QR-CLOSURES` allocates no code and changes no existing program's
 diagnostic (the whole-tree fixture freeze). A closure's lifted worker meets
