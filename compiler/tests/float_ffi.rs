@@ -38,11 +38,20 @@ const LIBRARY: &str = "#include \"qr_point.h\"\ndouble qr_point_sum(const struct
 
 const CONTRACTS: &str = "module contract;\n\n[| quant #c_ffi |]\nextern fn qr_point_sum(p: ptr<const, c\"struct qr_point\">) -> f64\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(p);\n    ensures normal resource_return_none();\n};\n\n[| quant #c_ffi |]\nextern fn qr_point_scale(p: c\"struct qr_point\", k: f64) -> c\"struct qr_point\"\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(p);\n    ensures normal resource_borrowed(k);\n    ensures normal resource_return_none();\n};\n\n[| quant #c_ffi |]\nextern fn qr_half(v: f32) -> f32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_borrowed(v);\n    ensures normal resource_return_none();\n};\n";
 
-const HEAD: &str = "#import std.ffi.unsafe;\n#import std.extern;\n#import std.fmt;\n#import std.io;\n#import std.logger;\n";
+// Card `W48-QRLIB-LINKAGE`: every `#c_ffi` call resolves through the
+// generated `.qrlib` the file binds.
+const HEAD: &str = "#import std.ffi.unsafe;\n#import std.extern;\n#import std.fmt;\n#import std.io;\n#import std.logger;\nextern library qr_point;\n";
 const IMPORT: &str = "struct! { type Point = c\"struct qr_point\" from \"qr_point.h\"; fields { x: f64, y: f32, n: i32 } }\n";
 const DECLARATIONS: &str = "extern fn qr_point_sum(p: ptr<const, Point>) -> f64;\nextern fn qr_point_scale(p: Point, k: f64) -> Point;\nextern fn qr_half(v: f32) -> f32;\n";
 
-struct Scratch(PathBuf);
+#[path = "../../tests/support/qrlib.rs"]
+mod qrlib;
+
+struct Scratch(PathBuf, qrlib::Generated);
+
+fn contracts() -> BTreeMap<String, String> {
+    BTreeMap::from([("qr_point.qv".to_owned(), CONTRACTS.to_owned())])
+}
 
 impl Scratch {
     fn new() -> Self {
@@ -56,7 +65,18 @@ impl Scratch {
         std::fs::create_dir_all(&dir).unwrap();
         std::fs::write(dir.join("qr_point.h"), HEADER).unwrap();
         std::fs::write(dir.join("qr_point.c"), LIBRARY).unwrap();
-        Self(dir)
+        // Card `W48-QRLIB-LINKAGE`: the library is built, and its manifest
+        // generated from the archive, before anything is checked.
+        let archive = qrlib::static_library(&dir, "qr_point", &[dir.join("qr_point.c")], &[&dir]);
+        let generated = qrlib::manifest(
+            "qr_point",
+            qcore_core::native_library::LinkageKind::Static,
+            &archive,
+            Some(&dir.join("qr_point.h")),
+            &host_target(),
+            &contracts(),
+        );
+        Self(dir, generated)
     }
 
     fn compile(&self, source: &str) -> Result<CompiledModule, Vec<FileDiagnostic>> {
@@ -66,14 +86,17 @@ impl Scratch {
                 source,
             )],
             &CompileOptions {
-                extern_contracts: Some(BTreeMap::from([(
-                    "qr_point.qv".to_owned(),
-                    CONTRACTS.to_owned(),
-                )])),
+                extern_contracts: Some(contracts()),
+                native_libraries: Some(self.1.selection()),
                 ..CompileOptions::default()
             },
             Some(&host_target()),
         )
+    }
+
+    /// The pinned archive, verified: the only library the build links.
+    fn archive(&self) -> PathBuf {
+        self.1.link_plan().input
     }
 
     fn path(&self) -> &Path {
@@ -197,7 +220,7 @@ fn the_program_runs_against_the_card_library_under_three_builds() {
             .arg("-I")
             .arg(scratch.path())
             .arg(scratch.path().join("main.c"))
-            .arg(scratch.path().join("qr_point.c"))
+            .arg(scratch.archive())
             .arg("-o")
             .arg(scratch.path().join("main"))
             .output()
@@ -237,7 +260,7 @@ fn the_program_runs_against_the_card_library_under_three_builds() {
         .arg("-I")
         .arg(scratch.path())
         .arg(scratch.path().join("main.c"))
-        .arg(scratch.path().join("qr_point.c"))
+        .arg(scratch.archive())
         .arg("-o")
         .arg(scratch.path().join("main"))
         .output()

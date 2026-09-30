@@ -4,6 +4,11 @@
 #import std.io;
 #import std.logger;
 
+// Card `W48-QRLIB-LINKAGE`: the C this file calls is linked from the artifact a
+// generated `qr_header.qrlib` pins (the build compiles `qr_header.c` into a
+// static library and generates the manifest from it before linking).
+extern library qr_header;
+
 // Importing a C struct and calling C through marked contracts (card
 // `W48-QR-C-STRUCT-IMPORT`, `source.ffi.v1`).
 //

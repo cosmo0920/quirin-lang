@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 648
+  "named_followups": 656
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -11480,13 +11480,6 @@
    "recorded_by": "W48-QR-FLOATING-POINT"
   },
   {
-   "id": "W48-QR-FLOAT-QRLIB-SPELLING",
-   "title": "A `.qrlib` manifest cannot yet spell `float`/`double`",
-   "why": "Found by W48-QR-FLOATING-POINT, for card 5. The extern route's `AbiType` now has `f32`/`f64` (`float`/`double`), but the native-library manifest's C declaration spellings (`native_library::parse_c_declaration_type`) and the header reader's projection (`HeaderProjection::Unspellable(\"f32\"|\"f64\")`, pinned by `native_library_header.rs`'s floating-result tests and its census row) are left as they were: `.qrlib` linkage is card 5's scope. Size S. DISCHARGE: the manifest vocabulary and the header projection spelling `float`/`double` as `AbiType::F32`/`F64`, the pinned unspellable rows moved deliberately, and a libm linkage test (card 5).",
-   "source": "docs/reports/w48-qr-floating-point/README.md",
-   "recorded_by": "W48-QR-FLOATING-POINT"
-  },
-  {
    "id": "W48-QR-FLOAT-IEEE-LEAN-MODEL",
    "title": "IEEE arithmetic and the shortest round-trip renderer are observed, not proved",
    "why": "Found by W48-QR-FLOATING-POINT. `QCore.FloatTypes` proves the comparison effects, the float → integer truncation and the integer → float rounding over dyadic values; IEEE `+ - * /`, `f64 → f32`, comparisons and the Dragon4 shortest-digit search the emitted renderer transcribes are the host's operations in the Rust reference, compared with the native C on the boundary table and a seeded sample (specification §L14.7, limitations 1 and 13). Size L. DISCHARGE: a Lean model of binary32/binary64 rounding (or a checked import of one) with the kernel's operations and the renderer's digit search proved against it, bound to the Rust vectors.",
@@ -11506,6 +11499,69 @@
    "why": "Found by W48-QR-FLOAT-BUFFER-PAYLOADS, measured: the same task-route `0.0 / 0.0` stored into a `Buffer<f32>`/`Buffer<f64>` is x86-64's sign-set default NaN when divided at run time (the Rust reference, a `-O0` build) and the sign-clear quiet NaN when Clang folds it (`-O2`), so the owner's byte read of the payload's top byte differs between the reference and a native run in the sign bit (4 of 126 native payload runs). The card states it as specification §L14.7 limitation 16 (a NaN's sign and payload bits in a byte view are not specified, per the brief) and its native rows admit exactly that one-bit difference at that one line. Canonicalising a NaN at every typed payload write (reference and C both storing the one NaN pattern) would make the byte view determined without a user decision, since NaN bits are unspecified. Size S. DISCHARGE: typed float payload writes and allocations canonicalise NaN in the reference and the emitted C, the native rows compared byte for byte with no tolerance, and the limitation narrowed to NaNs built by byte writes.",
    "source": "docs/reports/w48-qr-float-buffer-payloads/README.md",
    "recorded_by": "W48-QR-FLOAT-BUFFER-PAYLOADS"
+  },
+  {
+   "id": "W48-QRLIB-WINDOWS-RUN",
+   "title": "The Windows linkage rows are wired into `msvc-core` and not yet read",
+   "why": "Found by W48-QRLIB-LINKAGE. `cargo test -p qcore-c-gateway --lib linkage::` and `cargo test -p qcore-compiler --test qrlib_linkage` run in the `windows-2022` `msvc-core` job: the COFF/PE readers from bytes, an MSVC static `.lib` built by `cl.exe`/`lib.exe` and one `ntdll.dll` function (the first of `RtlNtStatusToDosError`, `RtlNtStatusToDosErrorNoTeb` that `ntdll.lib` imports by name and `System32\\ntdll.dll` exports by name, not as a forwarder), each generated into a `.qrlib`, checked, emitted and linked with `cl.exe` through `run_msvc_with_libraries`. The card ran on Linux only; the emitted FFI C has never been compiled by `cl.exe` (`/W4 /WX`). Size S. DISCHARGE: the job green on a push at or after the card, the chosen ntdll function named from its log, or each failure fixed.",
+   "source": "docs/reports/w48-qrlib-linkage/README.md",
+   "recorded_by": "W48-QRLIB-LINKAGE"
+  },
+  {
+   "id": "W48-QRLIB-MACOS",
+   "title": "Card 5m: the macOS linkage path, a macOS CI job and a run",
+   "why": "Found by W48-QRLIB-LINKAGE (the brief's card 5m). The Mach-O readers (`__.SYMDEF` archives, `.tbd` v3/v4/v5, the dylib export trie) are unit-tested from bytes on Linux; the native path is written — `qrlib_linkage.rs`'s `cfg(target_os = \"macos\")` row linking libm through `$(xcrun --show-sdk-path)/usr/lib/libm.tbd` (runtime premise `/usr/lib/libSystem.B.dylib`) and the `cfg(unix)` rows building a Mach-O C archive and a Rust `staticlib` — and never run. Real SDK stubs may use a `.tbd` shape the subset reader refuses (it refuses rather than guesses), and Apple Clang's archive writer is unmeasured. Size M. DISCHARGE: a macOS CI job (card 5m) and the user's Mac running the commands in the report's macOS section green, or each refusal fixed.",
+   "source": "docs/reports/w48-qrlib-linkage/README.md",
+   "recorded_by": "W48-QRLIB-LINKAGE"
+  },
+  {
+   "id": "W48-QRLIB-V1-RETIREMENT",
+   "title": "The extern routes still accept a hand-written v1 `.qrlib`",
+   "why": "Found by W48-QRLIB-LINKAGE. User decision 1 makes the `.qrlib` generated on every build and never hand-written; the card applied it to the FFI route (a v1 manifest refuses there, `Q065`) and kept the v1 grammar loading for the §G02d.1/§G02d.2/§G02d.3 extern routes, whose tests and fixtures (`native_library*.rs`, `unsafe_linkage.rs`, `examples/unsafe-linkage`) state manifests over artifacts the tests never build, so every existing program keeps its bytes. Retiring v1 there means building each artifact, generating its manifest, and refusing v1 on every route. Size M. DISCHARGE: the extern routes admitting only generated manifests, their fixtures rebuilt through `quirin qrlib generate`, and the fixture freeze attributing every move.",
+   "source": "docs/reports/w48-qrlib-linkage/README.md",
+   "recorded_by": "W48-QRLIB-LINKAGE"
+  },
+  {
+   "id": "W48-QRLIB-STATIC-REFERENCES",
+   "title": "A static artifact's own undefined references are not pinned",
+   "why": "Found by W48-QRLIB-LINKAGE (specification §L14.8, limitation 6). A static manifest pins the archive fully, but its members' undefined references — libm's to libc (`errno`, glibc's `_dl_x86_cpu_features` behind a static `ifunc`), a Rust `staticlib`'s to the platform runtime — are satisfied by whatever else the link supplies, and the manifest names none of them. Measured: glibc's static `floor` does not link into a dynamic executable at all. Size M. DISCHARGE: the generator naming every undefined reference of the members a bound symbol pulls (transitively inside the archive), and either pinning the files that define them or stating them as named premises.",
+   "source": "docs/reports/w48-qrlib-linkage/README.md",
+   "recorded_by": "W48-QRLIB-LINKAGE"
+  },
+  {
+   "id": "W48-QRLIB-HEADER-DECLARATIONS",
+   "title": "A manifest header without a `struct!` is digested, not read",
+   "why": "Found by W48-QRLIB-LINKAGE. On the FFI route a manifest header is compared with the `struct!` read (by digest) for every struct a callee carries; a header bound for scalar-only callees (e.g. `math.h`) is only digested, and the emitted C declares each callee from its contract, so a mismatching declaration is caught only where the compiler knows a builtin's signature. The bounded header reader of §G02d.2 cannot read a system header. Size M. DISCHARGE: the generator reading each bound function's declaration from the header with the recorded compiler's typed AST (the `ffi_layout` transport) and refusing one the contract's C signature disagrees with.",
+   "source": "docs/reports/w48-qrlib-linkage/README.md",
+   "recorded_by": "W48-QRLIB-LINKAGE"
+  },
+  {
+   "id": "W48-QRLIB-READER-SHAPES",
+   "title": "Artifact shapes the symbol readers refuse unread",
+   "why": "Found by W48-QRLIB-LINKAGE (specification §L14.8, limitation 9). Refused by name rather than read: ELF shared objects without section headers (read through `PT_DYNAMIC` instead), universal (fat) Mach-O files and archives, COFF `/bigobj` and link-time-code-generation (anonymous) objects, thin archives, LLVM bitcode archive members, and `ld` scripts nested more than one level. Each refuses generation, so no manifest states less than it read. Size M. DISCHARGE: each shape read with a fixture and a unit test, or kept refused with its reason recorded per shape.",
+   "source": "docs/reports/w48-qrlib-linkage/README.md",
+   "recorded_by": "W48-QRLIB-LINKAGE"
+  },
+  {
+   "id": "W48-QRLIB-API-SETS",
+   "title": "Windows API-set DLLs are not resolved",
+   "why": "Found by W48-QRLIB-LINKAGE (specification §L14.8, limitation 8). An import naming an API-set DLL (`api-ms-win-*`) is checked against the file of that name as read, and the loader's redirection to a host DLL is part of the runtime premise. The card's Windows row imports from `ntdll.dll`, which is not an API set. Size S. DISCHARGE: the generator resolving an API-set name through the image's API-set schema (or refusing it by name) with a test on the CI image.",
+   "source": "docs/reports/w48-qrlib-linkage/README.md",
+   "recorded_by": "W48-QRLIB-LINKAGE"
+  },
+  {
+   "id": "W48-QRLIB-LONG-SPELLING",
+   "title": "C `long` has no manifest or §G02t spelling, so `lrint`-like functions are not callable",
+   "why": "Found by W48-QRLIB-LINKAGE. `long` is 64 bits on LP64 and 32 on LLP64, and `int64_t` is `long` on Linux but `long long` on macOS, so declaring libm's `lrint`/`lround` as `int64_t` is an incompatible redeclaration there; the card's libm rows use `ilogb`, `sqrt`, `fabs`, `fmax`, `nextafter` and `floor` instead. Size S. DISCHARGE: a data-model-aware `long`/`unsigned long` spelling in the contract and manifest vocabularies, projected per recorded target, and `lrint` linked on Linux and macOS.",
+   "source": "docs/reports/w48-qrlib-linkage/README.md",
+   "recorded_by": "W48-QRLIB-LINKAGE"
+  },
+  {
+   "id": "W48-QRLIB-CLI-CONTRACTS",
+   "title": "`quirin check`/`emit` still select no extern contract environment",
+   "why": "Found by W48-QRLIB-LINKAGE. `quirin qrlib generate`, `quirin qrlib check` and `quirin build` take `--contracts`, but `quirin check` and `quirin emit` select none, so an FFI program that calls C is checked from the command line only by `quirin build` (or the library API) and refuses at `Q023` under `check`. Size S. DISCHARGE: `--contracts` on `check` and `emit`, keyed exactly as `build` keys it, with a CLI test.",
+   "source": "docs/reports/w48-qrlib-linkage/README.md",
+   "recorded_by": "W48-QRLIB-LINKAGE"
   }
  ],
  "updated": "2026-09-12 (wave 27 complete: SIX pieces merged one at a time under the failure-gated chain, each under its own green gate. CT23-CREDIT-ERROR-PATH landed EpochCreditRecoveryV1 - the creator's own error edges over a flat epoch's credits, restored + spent = credit componentwise with abandonment and minting both REFUSALS, zero words and zero codes, Q637 deliberately NOT extended because the success exit's bound already covers every error edge, and the T07 seam measured and deliberately not crossed. DOCS-COMPACT-3 honoured the compaction cadence three waves on with 39 standing constraints in and 39 out, zero renumbered and 37 bodies byte-identical, refreshed README.md to the full route surface, corrected one drift (the binary is quirin-audit; qcore-audit is the package and library name), and carried the USER-DIRECTED examples style pass - 'pipe the flow, parenthesize the assembly' - five files respelled one commit each with byte identity MEASURED, nine examined and skipped with reasons, and the rule's one open case left for the user as EXAMPLES-STYLE-SLICE-FANOUT rather than repaired against the brief's direction. AGGREGATES-V1 is the wave's LANGUAGE HEAD: source.record.v1 on source.buffer.v1, zero reserved words because the obvious spelling `record` was REJECTED ON EVIDENCE (an archived one-line probe pinned to Q000 by two frozen reports, constraint 21), zero codes because Q051/Q052/Q053's conditions widened under the ice box, no line of name resolution changed, scalar-fields-only DECIDED BY MEASUREMENT against an ownership IR that addresses owners by plain names, and CT09's scenario executed and byte-compared. QUANT-REGION-SOURCE gave the kernel's quantitative region its first source path with the sealed pack as a LINEAR capability consumed exactly once, the region ERASING to byte-identical C, and the RegionOp::QuantOpen operation VARIANT measured unreachable-by-design rather than repaired; CT21 and CT22's archived reasons retire, with CT22 keeping a narrower scenario gap for a lane to publish in its own record. CT07-SLICE-PERMISSIONS lent a RANGE and corrected the recorded blocker: the footprint fraction STD-BUFFER-SLICE named is about the WRITE half, so a read lend needed no ownership-IR change, disjointness is DECIDED by max low < min high and proved to be the set-theoretic question itself, overlapping BORROWS are deliberately admitted and argued, and exactly one pre-card refusal moves code (Q078 -> Q077) - measured and pinned. THE WAVE RAN ONE ARBITER: GATEWAY-C-LOCATION presents the original pre-preprocessing file:line on 54,371 diagnostic rows with the L-numbers kept INTERNAL by the user's ruling, under a checked line pairing where no #line can forge a file spelling; its re-pin is PRESENTATION-ONLY and measured to be, the BEFORE run reproducing the preceding baseline byte for byte and the AFTER run moving no verdict, no leaf and no count - 185 units 2/42/137/4, 4,834 functions 150/84/4,600, leak 266, unknown_alias 4,344, unsupported 49,773 - so the corpus baseline moves to docs/reports/gateway-c-location/artifacts/ with every preceding archive frozen and constraint 7 gaining no sixth move. CT coverage is UNCHANGED at 36/50 mapped: the wave mapped nothing and edited no manifest row, and the CT08/CT09/CT21/CT22/CT23 readiness it produced is capability rather than conformance. Standing constraint 15h is AMENDED on the slice card's own proposal, and three new rules land in merge order - 15j, 15k, 15l - beside 12a for the arbiter's anti-forgery rule. Nothing is promoted; full language conformance stays false.)"

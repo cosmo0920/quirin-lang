@@ -1349,6 +1349,83 @@ formalised.
     derived row is the entry's own statements' — every loop iteration's
     included — and the certificate publishes the effects they used.
 
+### L14.8. C linkage through generated manifests, and its limitations
+
+Card `W48-QRLIB-LINKAGE` (user decisions 2026-09-30; implemented grammars
+§G02d.2.1, §G02d.3, §G02u; contract specification §C04.12). Every C function a
+file that imports C calls resolves through a `.qrlib` manifest that the build
+**generates** from the artifact's bytes before linking and that the file binds
+with `extern library NAME;`. **Linkage means the exported symbol table**: a
+bound symbol MUST be exported and defined in the pinned artifact — the readers
+of ELF, Mach-O and COFF/PE symbol tables decide it from bytes on every
+platform — and the build hashes every pinned file again and links exactly the
+pinned artifact. A result then names, per called function, which code was
+linked: symbol X from artifact Y@sha256 (static), or stub Y@sha256 plus the
+runtime premise R (dynamic), under ABI premises Z (§L20).
+
+**What a linkage premise does not claim (normative).**
+
+1. **The manifest proves which code is linked, not that the code is safe.**
+   Every result keeps the file-wide unsafe-FFI assumption of §L14.6; a
+   linkage premise stacks beside it and never replaces it.
+2. **The runtime library is a premise.** A dynamic manifest pins the link-time
+   stub (an ELF shared object, an Apple `.tbd` or dylib, a COFF import
+   library) and names the runtime library — its soname, install name, or DLL
+   name and OS build — without pinning it: the OS owns the file the program
+   loads, and a run against another one is outside the premise. The generator
+   reads a Windows runtime DLL's export directory to refuse a missing or
+   forwarded export; it does not hash it.
+3. **Weak-symbol interposition.** A defined weak symbol is admitted and
+   recorded `weak`; a strong definition of the same name elsewhere in the link
+   (another object, or the executable itself) takes its place, and at run time
+   an earlier-loaded library may interpose a dynamic one. A verdict does not
+   claim the pinned weak definition is the one that runs.
+4. **Symbol versions.** A versioned ELF symbol binds its default (`@@`)
+   version, which the manifest records and the stale check compares; a symbol
+   with only hidden (`@`) versions refuses. What the dynamic loader binds at
+   run time is the runtime library's (limitation 2).
+5. **`ifunc` symbols.** An `STT_GNU_IFUNC` definition is admitted and recorded
+   `ifunc`: a resolver chooses among implementations at load time, so the
+   manifest pins the artifact, not the variant that runs. glibc's static
+   `ifunc` resolvers read symbols only a fully static libc defines, so a static
+   libm `floor` does not link into a dynamic executable; that is a link failure,
+   never a run.
+6. **A static artifact's own references.** Static linkage pins the artifact
+   fully, but an archive member's undefined references (libm's to libc's
+   `errno` or CPU-feature data, a Rust `staticlib`'s to the platform runtime)
+   are satisfied by whatever else the link supplies; the manifest does not pin
+   them, and a verdict does not claim which code satisfies them.
+7. **`ld` scripts.** A GNU `ld` script used as a library (`libm.a`,
+   `libm.so` on glibc) is followed one level: the script and every file it
+   names are pinned, in order, `AS_NEEDED` kept. A script naming a search
+   (`-lNAME`), a relative path, another script, a command outside `GROUP`,
+   `INPUT`, `AS_NEEDED` and `OUTPUT_FORMAT`, or both static and shared files
+   refuses. An `AS_NEEDED` file is pinned though the linker may not load it.
+8. **Forwarders and API sets on Windows.** An import MUST be by name; an
+   ordinal-only import refuses, and so does a runtime export that is a
+   forwarder (`DLL.NAME`) or absent. API-set DLLs (`api-ms-win-*`), which the
+   loader redirects to a host DLL, are not resolved: an import naming one is
+   checked against the API-set stub's exports as read, and the redirection is
+   part of limitation 2.
+9. **Archive indexes.** A definition in an archive links only if the archive's
+   symbol index lists it for that member (GNU `/` and `/SYM64/`, BSD
+   `__.SYMDEF`, the COFF linker members); an archive without one links nothing.
+   Thin archives, universal (fat) Mach-O files, `/bigobj` and LTCG COFF
+   objects and ELF files without section headers are refused unread.
+10. **libm last-ulp differences** across glibc, Apple libm and UCRT are §L14.7
+    item 11's: each platform's libm is compared only with its own reference,
+    and the card's libm rows use only exact IEEE operations.
+11. **Build premises the check cannot see.** The manifest is a function of the
+    artifact's bytes and the declared inputs, and a stored manifest the
+    regenerated one differs from is stale; linking exactly the pinned files is
+    the `quirin build`/`LinkPlan` path's act, observed on Linux through the
+    linker's own `--trace`. A builder that links otherwise is outside every
+    verdict, as it is for the recorded compiler.
+12. **Evidence.** The native runs are Linux/Clang; the MSVC static library and
+    the `ntdll.dll` import are wired into the `msvc-core` CI job and the macOS
+    `.tbd` path is written for card `W48-QRLIB-MACOS` (5m), neither run by the
+    card.
+
 ## L15. Lowering, observations, and translation certificates
 
 Sequential lowering MUST preserve the checked resource identities, ordered acquisition/release/transfer behavior, and modeled normal/error payloads. The tagged C error representation must not bypass cleanup through unmodeled control transfers.
@@ -1674,7 +1751,14 @@ struct (with its header digest) and every `#c_ffi` contract function the entry
 calls, beside the recorded compiler the layouts were read by (card
 `W48-QR-C-STRUCT-IMPORT`). `quirin check` prints the verdict as "Safe under
 the … unsafe-ffi assumption(s)" and the assumption list below it; no such file
-publishes plain `Safe`, and the verdict's join keeps the assumption.
+publishes plain `Safe`, and the verdict's join keeps the assumption. Card
+`W48-QRLIB-LINKAGE` (§L14.8) adds one **linkage premise** per called C
+function (`linked:NAME`): the exported symbol, the pinned artifact and its
+sha256 (every file an `ld` script names beside it), the library bound by
+`extern library`, the ABI premises, and for a dynamic link the runtime library
+as a named premise; a certificate missing one is refused (`Q067`). It replaces
+the former "the builder links the library that supplies each callee" premise;
+the builder keeps only the include path.
 
 **Safe** means that the named property is established for the identified subject, scope, and assumptions with complete coverage under the selected profile. **Unsafe** means a validated defect or counterexample under that profile. **Unknown** means the requested property was not established, including unsupported behavior, incomplete imports, missing premises, invalid evidence, or exhausted analysis bounds. **Pending** (card W45-USER-CONTRACT-PLUGINS, approved 2026-09-26) means the requested property was not decided by the tool and awaits a named human act: a review edit (`awaiting-human-review`), a re-pin after review (`contract-pin-mismatch`) or a checkable certificate for a checker plugin's claim (`plugin-claim-uncertified`). Pending is not Safe, stays in every denominator exactly as Unknown does, and is produced only by one of those named reasons (§L21.2).
 

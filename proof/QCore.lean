@@ -299,5 +299,6 @@ import QCore.CastRepresentation
 import QCore.Closures
 import QCore.FloatTypes
 import QCore.FloatPayloads
+import QCore.QrlibLinkage
 
 /-! The executable formal core of QCore-C revision 0.1. -/

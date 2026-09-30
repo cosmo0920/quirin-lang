@@ -99,6 +99,25 @@
 //! certificate names what was obligated — rather than an invisible one. Card
 //! follow-on `UNSAFE-LINKAGE-ARTIFACT-PROBE` is where a builder-side hash
 //! *observation* would live; it is an observation and could never be more.
+//!
+//! # The generated manifest (v2)
+//!
+//! Card `W48-QRLIB-LINKAGE` (user decisions, 2026-09-30) makes `.qrlib` **the**
+//! C linkage manifest of the FFI route, and a `native_library manifest v2`
+//! file is **generated on every build, before linking**, never written by
+//! hand. What changes is where the identity comes from, not what this module
+//! does: the generator (`qcore_c_gateway::linkage::generate`) opens the
+//! artifact, hashes it and reads its exported symbol table, and renders the
+//! manifest with [`render_manifest`]; a stored manifest the regenerated one
+//! does not equal byte for byte is refused as stale; the build hashes every
+//! pinned file again immediately before handing exactly those paths to the
+//! linker. This module still reads no file: it loads the text, total or
+//! reject, and states the facts the generator derived — the linkage kind, the
+//! object format and target, every file an `ld` script names, the runtime
+//! library's identity as a **named premise** for a dynamic link, and for each
+//! entry the exported symbol it resolved to (name, version, weak or global,
+//! `ifunc`, the file that defines it). The v1 grammar keeps loading byte for
+//! byte.
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
@@ -113,6 +132,20 @@ use crate::native_library_header::{HeaderIdentity, IncludeIdentity};
 pub enum DataModel {
     /// Spelled `lp64`.
     Lp64,
+    /// Spelled `llp64` (64-bit Windows, where `long` is 32 bits). Admitted by a
+    /// generated (v2) manifest only, whose recorded target derives it (card
+    /// `W48-QRLIB-LINKAGE`); a v1 manifest admits `lp64` alone, as before.
+    Llp64,
+}
+
+impl DataModel {
+    #[must_use]
+    pub fn spelling(self) -> &'static str {
+        match self {
+            Self::Lp64 => "lp64",
+            Self::Llp64 => "llp64",
+        }
+    }
 }
 
 /// The unwinding posture across the boundary (§4.4). v1 admits `abort` only:
@@ -227,6 +260,188 @@ pub struct UncheckedEntry {
     pub result: AbiType,
 }
 
+/// A type in a manifest entry's declaration (card `W48-QRLIB-LINKAGE`): the
+/// §C04.1 ABI projection, or — in a generated (v2) contract slice entry only —
+/// an imported C struct by value or by pointer, bound to the `struct!` layout
+/// of the FFI route.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum EntryType {
+    Abi(AbiType),
+    /// `struct TAG`.
+    Struct(String),
+    /// `struct TAG *` (`constant == false`) or `const struct TAG *`.
+    StructPointer {
+        tag: String,
+        constant: bool,
+    },
+}
+
+impl EntryType {
+    /// The C spelling, as a manifest writes it.
+    #[must_use]
+    pub fn c_spelling(&self) -> String {
+        match self {
+            Self::Abi(abi) => abi.c_spelling().to_owned(),
+            Self::Struct(tag) => format!("struct {tag}"),
+            Self::StructPointer {
+                tag,
+                constant: false,
+            } => format!("struct {tag} *"),
+            Self::StructPointer {
+                tag,
+                constant: true,
+            } => format!("const struct {tag} *"),
+        }
+    }
+
+    /// The ABI projection, or `None` for a struct position.
+    #[must_use]
+    pub fn abi(&self) -> Option<AbiType> {
+        match self {
+            Self::Abi(abi) => Some(*abi),
+            Self::Struct(_) | Self::StructPointer { .. } => None,
+        }
+    }
+}
+
+/// How a defined symbol binds in the pinned artifact (card
+/// `W48-QRLIB-LINKAGE`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ExportBinding {
+    Global,
+    /// A defined weak symbol: admitted, and recorded, because a strong
+    /// definition elsewhere in the link would interpose it (§L14.8).
+    Weak,
+}
+
+impl ExportBinding {
+    #[must_use]
+    pub fn spelling(self) -> &'static str {
+        match self {
+            Self::Global => "global",
+            Self::Weak => "weak",
+        }
+    }
+}
+
+/// What the generator read about the symbol an entry binds: the `export`
+/// clause of a v2 entry (card `W48-QRLIB-LINKAGE`).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ExportFacts {
+    /// The object-level name (`_sqrt` on Mach-O, `sqrt` on ELF).
+    pub symbol: String,
+    /// The ELF default version the link binds (`GLIBC_2.2.5`).
+    pub version: Option<String>,
+    pub binding: ExportBinding,
+    /// An ELF `STT_GNU_IFUNC`: a resolver chooses the code at load time.
+    pub ifunc: bool,
+    /// The DLL a COFF import names.
+    pub dll: Option<String>,
+    /// The file (and archive member) that defines it, as the reader named it.
+    pub file: String,
+}
+
+impl ExportFacts {
+    /// The clause text after `export`.
+    #[must_use]
+    pub fn render(&self) -> String {
+        let mut out = self.symbol.clone();
+        if let Some(version) = &self.version {
+            out.push_str(" version ");
+            out.push_str(version);
+        }
+        out.push(' ');
+        out.push_str(self.binding.spelling());
+        if self.ifunc {
+            out.push_str(" ifunc");
+        }
+        if let Some(dll) = &self.dll {
+            out.push_str(" dll ");
+            out.push_str(dll);
+        }
+        out.push_str(" in ");
+        out.push_str(&self.file);
+        out
+    }
+}
+
+/// Static or dynamic linkage (card `W48-QRLIB-LINKAGE`, user decision 3).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum LinkageKind {
+    /// The artifact is the code, pinned fully.
+    Static,
+    /// The artifact is a link-time stub; the runtime library is the OS's, and
+    /// its identity is a named premise.
+    Dynamic,
+}
+
+impl LinkageKind {
+    #[must_use]
+    pub fn spelling(self) -> &'static str {
+        match self {
+            Self::Static => "static",
+            Self::Dynamic => "dynamic",
+        }
+    }
+}
+
+/// One file an `ld` script names, pinned beside the script.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct LinkedInput {
+    pub reference: String,
+    pub digest: String,
+    /// Inside `AS_NEEDED ( … )`.
+    pub as_needed: bool,
+}
+
+/// The runtime library's identity for a dynamic link: a **premise**, because
+/// the OS owns the file the program loads.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum RuntimePremise {
+    /// ELF: the `DT_SONAME` of a pinned shared object.
+    Soname { soname: String, file: String },
+    /// Mach-O: the stub's install name and current version.
+    InstallName {
+        name: String,
+        current_version: Option<String>,
+    },
+    /// Windows: the DLL an import names and the OS build it was checked on.
+    Dll { name: String, os_build: String },
+}
+
+impl RuntimePremise {
+    /// The statement text after `runtime`.
+    #[must_use]
+    pub fn render(&self) -> String {
+        match self {
+            Self::Soname { soname, file } => format!("soname {soname} in {file}"),
+            Self::InstallName {
+                name,
+                current_version: None,
+            } => format!("install_name {name}"),
+            Self::InstallName {
+                name,
+                current_version: Some(version),
+            } => format!("install_name {name} current_version {version}"),
+            Self::Dll { name, os_build } => format!("dll {name} os_build {os_build}"),
+        }
+    }
+}
+
+/// The linkage section of a generated (v2) manifest.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct LinkageSection {
+    pub kind: LinkageKind,
+    /// `elf`, `macho` or `coff`.
+    pub format: String,
+    /// The recorded target triple the artifact was read for.
+    pub target: String,
+    /// Every file the artifact (an `ld` script) names, in script order.
+    pub inputs: Vec<LinkedInput>,
+    /// Empty for static linkage; at least one for dynamic.
+    pub runtime: Vec<RuntimePremise>,
+}
+
 /// One contract slice entry: a symbol the artifact exports, the exported header
 /// declaration's ABI projection, and the declared `.qcore` contract module that
 /// states what the symbol *does* (card `NATIVE-LIBRARY-CONTRACT-SLICE`, design
@@ -246,13 +461,31 @@ pub struct UncheckedEntry {
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ContractedEntry {
     pub symbol: String,
-    /// The header declaration's parameter types, in order. Pointers admitted.
-    pub parameters: Vec<AbiType>,
+    /// The header declaration's parameter types, in order. Pointers admitted;
+    /// a struct only in a generated (v2) manifest.
+    pub parameters: Vec<EntryType>,
     /// The header declaration's result type.
-    pub result: AbiType,
+    pub result: EntryType,
     /// The declared contract module reference, as the manifest spells it. It is
     /// the contract selection's own key, compared exactly.
     pub contract_module: String,
+    /// The exported symbol the generator resolved (v2), or `None` in a v1
+    /// manifest, which states none.
+    pub export: Option<ExportFacts>,
+}
+
+impl ContractedEntry {
+    /// The ABI signature, or `None` when a position carries a struct — which
+    /// only the FFI route can call.
+    #[must_use]
+    pub fn abi_signature(&self) -> Option<(Vec<AbiType>, AbiType)> {
+        let parameters = self
+            .parameters
+            .iter()
+            .map(EntryType::abi)
+            .collect::<Option<Vec<_>>>()?;
+        Some((parameters, self.result.abi()?))
+    }
 }
 
 /// One loaded manifest.
@@ -277,6 +510,9 @@ pub struct NativeLibraryManifest {
     /// A symbol may be bound at most once **across both maps**: an entry that
     /// is both waived and contracted has no defined premise.
     pub contracted: BTreeMap<String, ContractedEntry>,
+    /// The linkage section of a generated manifest (card
+    /// `W48-QRLIB-LINKAGE`), or `None` for a v1 manifest.
+    pub linkage: Option<LinkageSection>,
 }
 
 impl NativeLibraryManifest {
@@ -379,6 +615,30 @@ pub enum ManifestRefusal {
     /// header names a text nothing reads — a statement with no effect, refused
     /// rather than ignored.
     IncludeWithoutHeader { spelling: String },
+    /// A field of the generated (v2) grammar in a v1 manifest, or a v1-only
+    /// statement (`include`) in a v2 one (card `W48-QRLIB-LINKAGE`).
+    WrongVersionField {
+        field: String,
+        version: &'static str,
+    },
+    /// A contract-less `unchecked fn` entry in a generated manifest, which binds
+    /// declared contracts only: a waiver is a v1 manifest's.
+    UncheckedInGenerated { symbol: String },
+    /// A v2 entry without its `export …` clause, or a v1 entry with one.
+    MissingExport { symbol: String },
+    /// An `export` clause that is not
+    /// `SYMBOL [version V] (global|weak) [ifunc] [dll DLL] in FILE`.
+    MalformedExport { symbol: String, clause: String },
+    /// An `input` statement that is not `input REFERENCE sha256:HEX [as_needed]`.
+    MalformedInput { statement: String },
+    /// A `runtime` statement that is not one of the three premise forms.
+    MalformedRuntime { statement: String },
+    /// A static manifest states a runtime premise: the code is pinned, so there
+    /// is no runtime library to name.
+    RuntimeInStaticLinkage,
+    /// A dynamic manifest states no runtime premise: the OS supplies the code,
+    /// and a dynamic link that does not name it would drop that premise.
+    MissingRuntime,
     /// Two entries bind the same symbol.
     SymbolBoundTwice { symbol: String },
     /// The manifest binds no symbol at all. An artifact identity that names
@@ -465,6 +725,38 @@ impl fmt::Display for ManifestRefusal {
             Self::IncludeWithoutHeader { spelling } => write!(
                 f,
                 "the manifest declares the include text `{spelling}` and names no `header`, so nothing would read it"
+            ),
+            Self::WrongVersionField { field, version } => write!(
+                f,
+                "`{field}` is not a statement of a `native_library manifest {version}`"
+            ),
+            Self::UncheckedInGenerated { symbol } => write!(
+                f,
+                "`unchecked fn {symbol}` in a generated (v2) manifest; a generated manifest binds declared contracts, and a contract-less waiver is a v1 manifest's"
+            ),
+            Self::MissingExport { symbol } => write!(
+                f,
+                "entry `{symbol}`: a generated (v2) entry carries exactly one `export …` clause naming the symbol it resolved, and a v1 entry carries none"
+            ),
+            Self::MalformedExport { symbol, clause } => write!(
+                f,
+                "entry `{symbol}`: `export {clause}` is not `export SYMBOL [version V] (global|weak) [ifunc] [dll DLL] in FILE`"
+            ),
+            Self::MalformedInput { statement } => write!(
+                f,
+                "the statement `{statement}` is not `input REFERENCE sha256:HEX [as_needed]`"
+            ),
+            Self::MalformedRuntime { statement } => write!(
+                f,
+                "the statement `{statement}` is not `runtime soname NAME in FILE`, `runtime install_name NAME [current_version V]` or `runtime dll NAME os_build BUILD`"
+            ),
+            Self::RuntimeInStaticLinkage => write!(
+                f,
+                "a static manifest pins the code itself and names no runtime library"
+            ),
+            Self::MissingRuntime => write!(
+                f,
+                "a dynamic manifest names no runtime library; the OS supplies the code, so its identity must be stated as a premise"
             ),
             Self::SymbolBoundTwice { symbol } => {
                 write!(f, "the symbol `{symbol}` is bound by two entries")
@@ -556,6 +848,12 @@ fn well_formed_include_spelling(spelling: &str) -> bool {
 
 /// The manifest's selector marker, which must be its first statement.
 const MARKER: &str = "native_library manifest v1";
+
+/// The generated manifest's marker (card `W48-QRLIB-LINKAGE`).
+pub const MARKER_V2: &str = "native_library manifest v2";
+
+/// The fields a generated manifest adds, each mandatory and stated once.
+const GENERATED_FIELDS: [&str; 3] = ["linkage", "format", "target"];
 
 /// Split a manifest into `;`-terminated statements, dropping `#` comment lines
 /// and blank lines. Returns the statement texts with surrounding whitespace
@@ -747,9 +1045,24 @@ fn parse_unchecked_entry(body: &str, statement: &str) -> Result<UncheckedEntry, 
 
 /// Parse one contract slice entry body, `NAME(TYPES) -> TYPE from MODULE` (card
 /// `NATIVE-LIBRARY-CONTRACT-SLICE`).
-fn parse_contracted_entry(body: &str, statement: &str) -> Result<ContractedEntry, ManifestRefusal> {
+fn parse_contracted_entry(
+    body: &str,
+    statement: &str,
+    generated: bool,
+) -> Result<ContractedEntry, ManifestRefusal> {
     let malformed = || ManifestRefusal::MalformedContractedEntry {
         statement: statement.to_owned(),
+    };
+    // Card `W48-QRLIB-LINKAGE`: a generated entry ends with its `export`
+    // clause, split off first so the head reads exactly as a v1 entry's.
+    let (body, export) = if generated {
+        let Some((head, clause)) = body.rsplit_once(" export ") else {
+            let symbol = body.split('(').next().unwrap_or(body).trim().to_owned();
+            return Err(ManifestRefusal::MissingExport { symbol });
+        };
+        (head, Some(clause.trim()))
+    } else {
+        (body, None)
     };
     let head = split_entry_head(body, &malformed)?;
     if head.tail.is_empty() {
@@ -761,14 +1074,184 @@ fn parse_contracted_entry(body: &str, statement: &str) -> Result<ContractedEntry
             module: head.tail.to_owned(),
         });
     }
-    let parameters = parse_entry_parameters(head.symbol, head.inside, true)?;
-    let result = parse_entry_result(head.symbol, head.result_text, true)?;
+    let (parameters, result) = if generated {
+        let mut parameters = Vec::new();
+        if !head.inside.is_empty() {
+            for (index, spelling) in head.inside.split(',').enumerate() {
+                let spelling = spelling.trim();
+                let ty = parse_entry_type(spelling).ok_or_else(|| {
+                    ManifestRefusal::UnknownParameterSpelling {
+                        symbol: head.symbol.to_owned(),
+                        parameter: index,
+                        spelling: spelling.to_owned(),
+                    }
+                })?;
+                if ty == EntryType::Abi(AbiType::Unit) {
+                    return Err(ManifestRefusal::UnitParameterInEntry {
+                        symbol: head.symbol.to_owned(),
+                        parameter: index,
+                    });
+                }
+                parameters.push(ty);
+            }
+        }
+        let result = parse_entry_type(head.result_text).ok_or_else(|| {
+            ManifestRefusal::UnknownResultSpelling {
+                symbol: head.symbol.to_owned(),
+                spelling: head.result_text.to_owned(),
+            }
+        })?;
+        (parameters, result)
+    } else {
+        (
+            parse_entry_parameters(head.symbol, head.inside, true)?
+                .into_iter()
+                .map(EntryType::Abi)
+                .collect(),
+            EntryType::Abi(parse_entry_result(head.symbol, head.result_text, true)?),
+        )
+    };
+    let export = match export {
+        None => None,
+        Some(clause) => Some(parse_export(head.symbol, clause)?),
+    };
     Ok(ContractedEntry {
         symbol: head.symbol.to_owned(),
         parameters,
         result,
         contract_module: head.tail.to_owned(),
+        export,
     })
+}
+
+/// Parse a generated entry's type: the ABI projection, or `struct TAG`,
+/// `struct TAG *`, `const struct TAG *` (card `W48-QRLIB-LINKAGE`).
+#[must_use]
+pub fn parse_entry_type(text: &str) -> Option<EntryType> {
+    if let Some(abi) = parse_c_declaration_type(text) {
+        return Some(EntryType::Abi(abi));
+    }
+    let normalized = text
+        .replace('*', " * ")
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ");
+    let words: Vec<&str> = normalized.split(' ').collect();
+    let tag_ok = |tag: &str| well_formed_symbol(tag);
+    match words.as_slice() {
+        ["struct", tag] if tag_ok(tag) => Some(EntryType::Struct((*tag).to_owned())),
+        ["struct", tag, "*"] if tag_ok(tag) => Some(EntryType::StructPointer {
+            tag: (*tag).to_owned(),
+            constant: false,
+        }),
+        ["const", "struct", tag, "*"] if tag_ok(tag) => Some(EntryType::StructPointer {
+            tag: (*tag).to_owned(),
+            constant: true,
+        }),
+        _ => None,
+    }
+}
+
+/// Parse `SYMBOL [version V] (global|weak) [ifunc] [dll DLL] in FILE`.
+fn parse_export(symbol: &str, clause: &str) -> Result<ExportFacts, ManifestRefusal> {
+    let malformed = || ManifestRefusal::MalformedExport {
+        symbol: symbol.to_owned(),
+        clause: clause.to_owned(),
+    };
+    let words: Vec<&str> = clause.split_whitespace().collect();
+    let mut at = 0;
+    let next = |at: &mut usize| -> Option<&str> {
+        let word = words.get(*at).copied();
+        *at += 1;
+        word
+    };
+    let name = next(&mut at).ok_or_else(malformed)?;
+    let mut version = None;
+    let mut word = next(&mut at).ok_or_else(malformed)?;
+    if word == "version" {
+        version = Some(next(&mut at).ok_or_else(malformed)?.to_owned());
+        word = next(&mut at).ok_or_else(malformed)?;
+    }
+    let binding = match word {
+        "global" => ExportBinding::Global,
+        "weak" => ExportBinding::Weak,
+        _ => return Err(malformed()),
+    };
+    let mut word = next(&mut at).ok_or_else(malformed)?;
+    let mut ifunc = false;
+    if word == "ifunc" {
+        ifunc = true;
+        word = next(&mut at).ok_or_else(malformed)?;
+    }
+    let mut dll = None;
+    if word == "dll" {
+        dll = Some(next(&mut at).ok_or_else(malformed)?.to_owned());
+        word = next(&mut at).ok_or_else(malformed)?;
+    }
+    if word != "in" {
+        return Err(malformed());
+    }
+    let file = next(&mut at).ok_or_else(malformed)?.to_owned();
+    if at != words.len() || name.is_empty() {
+        return Err(malformed());
+    }
+    Ok(ExportFacts {
+        symbol: name.to_owned(),
+        version,
+        binding,
+        ifunc,
+        dll,
+        file,
+    })
+}
+
+/// Parse `input REFERENCE sha256:HEX [as_needed]`.
+fn parse_input(rest: &str, statement: &str) -> Result<LinkedInput, ManifestRefusal> {
+    let malformed = || ManifestRefusal::MalformedInput {
+        statement: statement.to_owned(),
+    };
+    let words: Vec<&str> = rest.split_whitespace().collect();
+    let (reference, digest, as_needed) = match words.as_slice() {
+        [reference, digest] => (*reference, *digest, false),
+        [reference, digest, "as_needed"] => (*reference, *digest, true),
+        _ => return Err(malformed()),
+    };
+    if !well_formed_hash(digest) {
+        return Err(ManifestRefusal::MalformedHash {
+            hash: digest.to_owned(),
+        });
+    }
+    Ok(LinkedInput {
+        reference: reference.to_owned(),
+        digest: digest.to_owned(),
+        as_needed,
+    })
+}
+
+/// Parse one `runtime …` premise.
+fn parse_runtime(rest: &str, statement: &str) -> Result<RuntimePremise, ManifestRefusal> {
+    let words: Vec<&str> = rest.split_whitespace().collect();
+    match words.as_slice() {
+        ["soname", soname, "in", file] => Ok(RuntimePremise::Soname {
+            soname: (*soname).to_owned(),
+            file: (*file).to_owned(),
+        }),
+        ["install_name", name] => Ok(RuntimePremise::InstallName {
+            name: (*name).to_owned(),
+            current_version: None,
+        }),
+        ["install_name", name, "current_version", version] => Ok(RuntimePremise::InstallName {
+            name: (*name).to_owned(),
+            current_version: Some((*version).to_owned()),
+        }),
+        ["dll", name, "os_build", build] => Ok(RuntimePremise::Dll {
+            name: (*name).to_owned(),
+            os_build: (*build).to_owned(),
+        }),
+        _ => Err(ManifestRefusal::MalformedRuntime {
+            statement: statement.to_owned(),
+        }),
+    }
 }
 
 /// Parse one C declaration type as the manifest spells it: the canonical stdint
@@ -790,6 +1273,10 @@ pub fn parse_c_declaration_type(text: &str) -> Option<AbiType> {
         AbiType::U32,
         AbiType::U64,
         AbiType::Usize,
+        // Card `W48-QRLIB-LINKAGE` (`W48-QR-FLOAT-QRLIB-SPELLING`): `float`
+        // and `double`, in both manifest versions.
+        AbiType::F32,
+        AbiType::F64,
         AbiType::PtrMutU8,
         AbiType::PtrConstU8,
         AbiType::PtrMutPtrMutU8,
@@ -810,14 +1297,28 @@ pub fn parse_c_declaration_type(text: &str) -> Option<AbiType> {
 pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest, ManifestRefusal> {
     let statements = statements(text)?;
     let mut iterator = statements.iter();
-    match iterator.next() {
-        Some(first) if first.split_whitespace().collect::<Vec<_>>().join(" ") == MARKER => {}
-        _ => return Err(ManifestRefusal::MissingMarker),
-    }
+    // Card `W48-QRLIB-LINKAGE`: the marker selects the grammar. `v2` is the
+    // generated manifest; `v1` loads exactly as before.
+    let generated = match iterator.next() {
+        Some(first) => match first
+            .split_whitespace()
+            .collect::<Vec<_>>()
+            .join(" ")
+            .as_str()
+        {
+            MARKER => false,
+            MARKER_V2 => true,
+            _ => return Err(ManifestRefusal::MissingMarker),
+        },
+        None => return Err(ManifestRefusal::MissingMarker),
+    };
+    let version = if generated { "v2" } else { "v1" };
     let mut fields: BTreeMap<String, String> = BTreeMap::new();
     let mut unchecked: BTreeMap<String, UncheckedEntry> = BTreeMap::new();
     let mut contracted: BTreeMap<String, ContractedEntry> = BTreeMap::new();
     let mut includes: BTreeMap<String, IncludeIdentity> = BTreeMap::new();
+    let mut inputs: Vec<LinkedInput> = Vec::new();
+    let mut runtime: Vec<RuntimePremise> = Vec::new();
     for statement in iterator {
         if statement.is_empty() {
             continue;
@@ -827,12 +1328,49 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
             None => (statement.as_str(), ""),
         };
         match keyword {
+            "input" | "runtime" | "linkage" | "format" | "target" if !generated => {
+                return Err(ManifestRefusal::WrongVersionField {
+                    field: keyword.to_owned(),
+                    version,
+                });
+            }
+            "include" if generated => {
+                return Err(ManifestRefusal::WrongVersionField {
+                    field: keyword.to_owned(),
+                    version,
+                });
+            }
+            "input" => {
+                let input = parse_input(rest, statement)?;
+                if inputs
+                    .iter()
+                    .any(|known| known.reference == input.reference)
+                {
+                    return Err(ManifestRefusal::RepeatedField {
+                        field: format!("input {}", input.reference),
+                    });
+                }
+                inputs.push(input);
+            }
+            "runtime" => {
+                let premise = parse_runtime(rest, statement)?;
+                if runtime.contains(&premise) {
+                    return Err(ManifestRefusal::RepeatedField {
+                        field: format!("runtime {}", premise.render()),
+                    });
+                }
+                runtime.push(premise);
+            }
             "unchecked" => {
                 let Some(body) = rest.strip_prefix("fn ") else {
                     return Err(ManifestRefusal::MalformedEntry {
                         statement: statement.clone(),
                     });
                 };
+                if generated {
+                    let symbol = body.split('(').next().unwrap_or(body).trim().to_owned();
+                    return Err(ManifestRefusal::UncheckedInGenerated { symbol });
+                }
                 let entry = parse_unchecked_entry(body.trim(), statement)?;
                 if unchecked.contains_key(&entry.symbol) || contracted.contains_key(&entry.symbol) {
                     return Err(ManifestRefusal::SymbolBoundTwice {
@@ -851,7 +1389,7 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
                         statement: statement.clone(),
                     });
                 };
-                let entry = parse_contracted_entry(body.trim(), statement)?;
+                let entry = parse_contracted_entry(body.trim(), statement, generated)?;
                 // A symbol may not be bound twice **across both kinds**: an
                 // entry that is at once waived and contracted has no defined
                 // premise, and choosing one by entry order would make the
@@ -878,7 +1416,9 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
                 includes.insert(binding.spelling.clone(), binding);
             }
             field
-                if MANDATORY_FIELDS.contains(&field) || HEADER_BINDING_FIELDS.contains(&field) =>
+                if MANDATORY_FIELDS.contains(&field)
+                    || HEADER_BINDING_FIELDS.contains(&field)
+                    || (generated && GENERATED_FIELDS.contains(&field)) =>
             {
                 if fields.contains_key(field) {
                     return Err(ManifestRefusal::RepeatedField {
@@ -903,6 +1443,13 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
     for field in MANDATORY_FIELDS {
         if !fields.contains_key(field) {
             return Err(ManifestRefusal::MissingField { field });
+        }
+    }
+    if generated {
+        for field in GENERATED_FIELDS {
+            if !fields.contains_key(field) {
+                return Err(ManifestRefusal::MissingField { field });
+            }
         }
     }
     // Card `NATIVE-LIBRARY-HEADER`: the two header-binding fields are optional
@@ -961,8 +1508,13 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
             })
         }
     }
+    let data_model = if generated && fields.get("data_model").map(String::as_str) == Some("llp64") {
+        DataModel::Llp64
+    } else {
+        closed_value(&fields, "data_model", "lp64", DataModel::Lp64)?
+    };
     let premises = AbiPremises {
-        data_model: closed_value(&fields, "data_model", "lp64", DataModel::Lp64)?,
+        data_model,
         unwinding: closed_value(&fields, "unwinding", "abort", UnwindingPosture::Abort)?,
         allocator_custody: closed_value(
             &fields,
@@ -980,6 +1532,39 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
     if unchecked.is_empty() && contracted.is_empty() {
         return Err(ManifestRefusal::NoSymbols);
     }
+    let linkage = if generated {
+        let kind = match value("linkage").as_str() {
+            "static" => LinkageKind::Static,
+            "dynamic" => LinkageKind::Dynamic,
+            other => {
+                return Err(ManifestRefusal::UnknownValue {
+                    field: "linkage".to_owned(),
+                    value: other.to_owned(),
+                });
+            }
+        };
+        let format = value("format");
+        if !matches!(format.as_str(), "elf" | "macho" | "coff") {
+            return Err(ManifestRefusal::UnknownValue {
+                field: "format".to_owned(),
+                value: format,
+            });
+        }
+        match (kind, runtime.is_empty()) {
+            (LinkageKind::Static, false) => return Err(ManifestRefusal::RuntimeInStaticLinkage),
+            (LinkageKind::Dynamic, true) => return Err(ManifestRefusal::MissingRuntime),
+            _ => {}
+        }
+        Some(LinkageSection {
+            kind,
+            format,
+            target: value("target"),
+            inputs,
+            runtime,
+        })
+    } else {
+        None
+    };
     Ok(NativeLibraryManifest {
         identity: ArtifactIdentity {
             library: value("library"),
@@ -991,7 +1576,83 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
         header,
         unchecked,
         contracted,
+        linkage,
     })
+}
+
+/// Render a generated (v2) manifest in its one canonical text (card
+/// `W48-QRLIB-LINKAGE`). The generator writes exactly this, and a stale check
+/// compares a stored manifest with it byte for byte, so the rendering is a
+/// function of the manifest alone: fixed statement order, entries by symbol,
+/// no timestamp and no host detail. [`load_native_library_manifest`] reads it
+/// back to an equal manifest.
+///
+/// # Panics
+///
+/// Never for a manifest with a linkage section; `None` is returned for a v1
+/// manifest, which is hand-written and has no canonical rendering.
+#[must_use]
+pub fn render_manifest(manifest: &NativeLibraryManifest) -> Option<String> {
+    use std::fmt::Write as _;
+    let linkage = manifest.linkage.as_ref()?;
+    let mut out = String::new();
+    let _ = writeln!(out, "{MARKER_V2};");
+    let _ = writeln!(
+        out,
+        "# Generated on every build from the artifact's bytes and the build's inputs; never edited by hand."
+    );
+    let _ = writeln!(out, "library {};", manifest.identity.library);
+    let _ = writeln!(out, "version {};", manifest.identity.version);
+    let _ = writeln!(out, "linkage {};", linkage.kind.spelling());
+    let _ = writeln!(out, "format {};", linkage.format);
+    let _ = writeln!(out, "target {};", linkage.target);
+    let _ = writeln!(out, "artifact {};", manifest.identity.artifact);
+    let _ = writeln!(out, "hash {};", manifest.identity.hash);
+    for input in &linkage.inputs {
+        let _ = writeln!(
+            out,
+            "input {} {}{};",
+            input.reference,
+            input.digest,
+            if input.as_needed { " as_needed" } else { "" }
+        );
+    }
+    for premise in &linkage.runtime {
+        let _ = writeln!(out, "runtime {};", premise.render());
+    }
+    let _ = writeln!(
+        out,
+        "data_model {};",
+        manifest.premises.data_model.spelling()
+    );
+    let _ = writeln!(out, "unwinding abort;");
+    let _ = writeln!(out, "allocator_custody closed;");
+    let _ = writeln!(out, "thread_posture single_caller;");
+    if let Some(header) = &manifest.header {
+        let _ = writeln!(out, "header {};", header.reference);
+        let _ = writeln!(out, "header_hash {};", header.digest);
+    }
+    for entry in manifest.contracted.values() {
+        let _ = writeln!(
+            out,
+            "contract fn {}({}) -> {} from {} export {};",
+            entry.symbol,
+            entry
+                .parameters
+                .iter()
+                .map(EntryType::c_spelling)
+                .collect::<Vec<_>>()
+                .join(", "),
+            entry.result.c_spelling(),
+            entry.contract_module,
+            entry
+                .export
+                .as_ref()
+                .map(ExportFacts::render)
+                .unwrap_or_default()
+        );
+    }
+    Some(out)
 }
 
 /// Why a *selection* of manifests is rejected, as opposed to one manifest.
@@ -1074,6 +1735,9 @@ pub struct ContractedBinding<'a> {
     /// `NATIVE-LIBRARY-HEADER`).
     pub header: Option<&'a HeaderIdentity>,
     pub entry: &'a ContractedEntry,
+    /// The generated manifest's linkage section (card `W48-QRLIB-LINKAGE`),
+    /// or `None` for a v1 manifest.
+    pub linkage: Option<&'a LinkageSection>,
 }
 
 impl ContractedBinding<'_> {
@@ -1167,6 +1831,7 @@ impl NativeLibraries {
             premises: &manifest.premises,
             header: manifest.header.as_ref(),
             entry,
+            linkage: manifest.linkage.as_ref(),
         })
     }
 
@@ -1569,6 +2234,11 @@ pub enum ManifestDisagreement {
         declared: AbiType,
         manifest: AbiType,
     },
+    /// The entry carries a struct (card `W48-QRLIB-LINKAGE`), which only the
+    /// FFI route calls.
+    StructEntry {
+        symbol: String,
+    },
 }
 
 impl fmt::Display for ManifestDisagreement {
@@ -1593,6 +2263,10 @@ impl fmt::Display for ManifestDisagreement {
                 "the result is declared `{}` here and `{}` in the manifest",
                 declared.c_spelling(),
                 manifest.c_spelling()
+            ),
+            Self::StructEntry { symbol } => write!(
+                f,
+                "the manifest declares `{symbol}` with a C struct, which only `source.ffi.v1` calls"
             ),
         }
     }
@@ -1649,13 +2323,76 @@ pub fn check_contracted_agreement(
     declared_parameters: &[AbiType],
     declared_result: AbiType,
 ) -> Result<(), ManifestDisagreement> {
-    check_abi_agreement(
-        &entry.parameters,
-        entry.result,
-        declared_parameters,
-        declared_result,
-    )
+    // Card `W48-QRLIB-LINKAGE`: an entry carrying a struct is the FFI route's;
+    // an ABI-only declaration never agrees with it.
+    let Some((parameters, result)) = entry.abi_signature() else {
+        return Err(ManifestDisagreement::StructEntry {
+            symbol: entry.symbol.clone(),
+        });
+    };
+    check_abi_agreement(&parameters, result, declared_parameters, declared_result)
 }
+
+/// The FFI route's type gate (card `W48-QRLIB-LINKAGE`): the callee's C
+/// signature, struct positions included, must equal the generated entry's.
+///
+/// # Errors
+///
+/// The first disagreement.
+pub fn check_ffi_agreement(
+    entry: &ContractedEntry,
+    declared_parameters: &[EntryType],
+    declared_result: &EntryType,
+) -> Result<(), FfiEntryDisagreement> {
+    if declared_parameters.len() != entry.parameters.len() {
+        return Err(FfiEntryDisagreement {
+            position: "the parameter count".to_owned(),
+            declared: declared_parameters.len().to_string(),
+            manifest: entry.parameters.len().to_string(),
+        });
+    }
+    for (index, (declared, manifest)) in declared_parameters
+        .iter()
+        .zip(&entry.parameters)
+        .enumerate()
+    {
+        if declared != manifest {
+            return Err(FfiEntryDisagreement {
+                position: format!("parameter {index}"),
+                declared: declared.c_spelling(),
+                manifest: manifest.c_spelling(),
+            });
+        }
+    }
+    if *declared_result != entry.result {
+        return Err(FfiEntryDisagreement {
+            position: "the result".to_owned(),
+            declared: declared_result.c_spelling(),
+            manifest: entry.result.c_spelling(),
+        });
+    }
+    Ok(())
+}
+
+/// How an FFI callee and its generated entry disagree.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct FfiEntryDisagreement {
+    pub position: String,
+    pub declared: String,
+    pub manifest: String,
+}
+
+impl fmt::Display for FfiEntryDisagreement {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{} is `{}` in the contract and `{}` in the manifest",
+            self.position, self.declared, self.manifest
+        )
+    }
+}
+
+impl std::error::Error for FfiEntryDisagreement {}
 
 /// The one ABI comparison both entry kinds use, so the two gates cannot drift
 /// in what "agree" means — only in what a disagreement does.
@@ -1902,3 +2639,7 @@ pub fn check_slice_totality(
 #[cfg(test)]
 #[path = "../tests/unit/native_library.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/native_library_v2.rs"]
+mod v2_tests;

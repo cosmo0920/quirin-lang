@@ -63,6 +63,29 @@ requirements that are part of the gate.
     `PLATFORM-RESIDUAL-FAMILY-PARTIALLY-TRACKED` is decided.
   - Four tests keep `runs_sanitized` in their names while their Windows arm
     claims no sanitizer coverage (`WINDOWS-RUN-TEST-NAME-SANITIZED`).
+  - **`W48-QRLIB-WINDOWS-RUN` (wave 48), wired, not run.** Card
+    `W48-QRLIB-LINKAGE` added `cargo test -p qcore-c-gateway --lib linkage::`
+    and `cargo test -p qcore-compiler --test qrlib_linkage` to the
+    `windows-2022` `msvc-core` job: the COFF/PE readers from bytes, an MSVC
+    static `.lib` (`cl.exe` + `lib.exe` through `cc`) and one `ntdll.dll`
+    function (the first of `RtlNtStatusToDosError`,
+    `RtlNtStatusToDosErrorNoTeb` that the SDK's `ntdll.lib` imports by name and
+    the image's `System32\ntdll.dll` exports by name, not as a forwarder),
+    each generated into a `.qrlib`, checked, emitted and linked by `cl.exe`
+    through `run_msvc_with_libraries`. The card ran on Linux only: the
+    integrator reads the job after landing, and no Windows result is claimed
+    until then.
+- **macOS path for card `W48-QRLIB-MACOS` (5m), written, not run.** The Mach-O
+  readers (`__.SYMDEF` archives, `.tbd` v3/v4/v5, the dylib export trie) are
+  unit-tested from bytes on every host. The native path is
+  `compiler/tests/qrlib_linkage.rs`'s `cfg(target_os = "macos")` row
+  `libm_links_through_the_sdk_text_stub_under_three_builds` — libm through
+  `$(xcrun --show-sdk-path)/usr/lib/libm.tbd`, the runtime premise
+  `/usr/lib/libSystem.B.dylib` — plus the `cfg(unix)` rows that build a Mach-O
+  C archive and a Rust `staticlib` there. Commands:
+  `cargo test -p qcore-c-gateway --lib linkage::` and
+  `cargo test -p qcore-compiler --test qrlib_linkage --test ffi_struct_import --test float_ffi --test usable_records`.
+  No macOS CI job is added by that card and no macOS run is claimed.
 - **macOS:** pthread-backed C11 thread subset, Apple ASan/UBSan (LSan is
   Linux-only, so leak detection stays a Linux observation), and Apple Clang
   option transport — `docs/reports/macos-cycle19-compiler-options/README.md`.
