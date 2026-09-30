@@ -71,9 +71,10 @@ pub(crate) enum EscapeStep {
     Keep,
     /// Exactly live and linked on every path: it escapes with its owner.
     Escape,
-    /// Neither live nor contained on any path (released, escaped): nothing is
-    /// owed, and the member's hazard is withdrawn as before (an unresolved
-    /// effect, no report).
+    /// Live on no path (released, or contained and so its container's): the
+    /// escape owes nothing for it, and the member's hazard is withdrawn as
+    /// before (an unresolved effect, no report). A contained child later
+    /// detached live meets the settled-exit floor.
     Withdraw,
     /// Possibly live, and either not carried on every path or of mixed
     /// status: the escape refuses (`Unknown`) and the child keeps an

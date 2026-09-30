@@ -2574,8 +2574,9 @@ own anchor here.
     its link hold again; a generation shift renames partial triples with the
     links. (3) **The escape** decides each child it reaches (`escape_step`):
     an exactly-live child linked on every path escapes; one already escaped
-    or untracked is kept; one neither live nor contained is withdrawn as
-    before (an unresolved effect, no report: nothing is owed); every other
+    or untracked is kept; one live on no path (released, or contained and
+    so its container's) is withdrawn as before (an unresolved effect, no
+    report: this escape owes nothing for it); every other
     possibly-live child (not carried on every path, or of mixed status)
     refuses (`Unsupported`, "field-link escape: …"), keeping its status with
     an unresolved effect. (4) **Reads.** A bound read and a chain step
