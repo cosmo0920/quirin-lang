@@ -8,7 +8,8 @@ route. Gateway rule [11i](../../agents/gateway.md#constraint-11i);
 ([`proof/QCore/AtomicSourceRoute.lean`](../../../proof/QCore/AtomicSourceRoute.lean),
 audited in `proof/AuditAtomicSourceRoute.lean`). Base `c374de96`; `main`
 `b59aaae2` (CG07-GENERIC-AND-STATEMENT-EXPRESSIONS, W48-QRLIB-MACOS) merged
-at `5b8cd34c` and every figure below re-measured on it (§4).
+at `5b8cd34c`, then `main` `60cb0895` (W48-CALLEE-CLOSURE-R3) at `4fd89b6f`,
+and every figure below re-measured on each (§4).
 
 ## 1. What changed
 
@@ -136,10 +137,13 @@ Corpus arbiter (`scripts/run_pinned_audit.py … 66910c10 --jobs 4`, release
 |---|---|---|---|---|
 | BEFORE (base) | `c374de96` | built at `c374de96` | `3a25c4e9…` (the brief's baseline) | 608 / 10 / 4,216 |
 | BEFORE (merged main) | `b59aaae2` | `b8bcc25c…` | `8b9e4047…` (the integrator's figure for `b59aaae2`) | 608 / 10 / 4,216 |
-| AFTER | tip (merge `5b8cd34c`, code as built at `95b7f93e`) | `220c2b92…` | `c7d4dfa4bd55685faddcf0d8abdccf483f4f98e48a94cca1c0e1b1fdb2ae2a49` | **610 / 10 / 4,214** |
+| AFTER (on `b59aaae2`) | merge `5b8cd34c`, code as built at `95b7f93e` | `220c2b92…` | `c7d4dfa4…` | **610 / 10 / 4,214** |
+| BEFORE (merged main) | `60cb0895` | built at `60cb0895` | `c2cc1db902f24bfb131f6f8453f040a1f535a8923ff03f5f8c58ef1ac4fdb49a` | 608 / 10 / 4,216 |
+| AFTER (tip) | merge `4fd89b6f` | `a16e1630…` | `31503cba2745acec7a0ebfece98c461da30ec22d4837b6c29cb4b5f4cd71b100` | **610 / 10 / 4,214** |
 
 Attribution ([`artifacts/corpus-comparison.json`](artifacts/corpus-comparison.json),
-`scripts/compare.py`): the two moves above, each by removing its only leaf;
+`scripts/compare.py`, BEFORE `60cb0895` → AFTER tip; the `b59aaae2` pair gave
+the identical record): the two moves above, each by removing its only leaf;
 `cmt_atomic_compare_exchange`'s one leaf renamed; leaf delta otherwise empty.
 Atomic-builtin census ([before](artifacts/before-census.json),
 [after](artifacts/after-census.json), `scripts/census.py`): 3 leaves on 3
@@ -246,7 +250,7 @@ contracts, with no ordering claim.
 
 Script [`scripts/gate.sh`](scripts/gate.sh), logs `private/cg19/gate2` of
 the card's worktree, record [`gate.json`](gate.json), exits in [`gate/`](gate/).
-Tip code `8c90519c` (main `b59aaae2` merged).
+GATE_TIP_LINE
 
 | Step | Command | Exit | Count |
 |---|---|---:|---|
