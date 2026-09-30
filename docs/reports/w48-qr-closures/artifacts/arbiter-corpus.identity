@@ -1,0 +1,9 @@
+W48-QR-CLOSURES corpus arbiter, AFTER only (base f3969316, code at 4351007f; later commits move records only)
+command: QCORE_TYPED_PATH_PARITY=private/w48-c4/arbiter-parity.jsonl python3 scripts/run_pinned_audit.py private/w48-c4/arbiter 66910c10 --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 --jobs 8
+exit: 0
+quirin-audit (release) sha256: a83a746fea2bc42055622148da7572432e6bc7a9ce246ac0a27c72ebf6fbb2e9
+resource-diagnostics.json sha256: 2fc3af8c39f0cf043fedb405badf6dc0c000bc461a38b06f7de8310308c8bf94
+  functions: 602 Safe / 10 Unsafe / 4,222 Unknown (byte-identical to the base archive, so the counts are its counts)
+  base archive: CG08-CASTS-AND-TYPE-QUERIES's AFTER (docs/reports/cg08-casts-and-type-queries/artifacts/identity.txt), 2fc3af8c39f0cf04..., 602 / 10 / 4,222: matches, full hash
+resource-diagnostics.chunk-contracts.json sha256: cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484 (identical to every archive since W48-QR-SCALAR-TYPES-R3)
+monkey-source.json sha256: 57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11 (identical to every archive since W48-QR-SCALAR-TYPES)

@@ -1,0 +1,53 @@
+{
+ "card_words_reserved": [
+  "as",
+  "copy",
+  "move",
+  "read",
+  "share",
+  "spawn",
+  "write"
+ ],
+ "counts": {
+  "as_binder_in_spawn_list": 0,
+  "pipe_before_arrow": 4,
+  "pipe_before_mode_word": 4,
+  "pipepipe_before_arrow": 0,
+  "spawn_name_pipe": 4,
+  "spawn_name_pipepipe": 0,
+  "spawn_name_quant_open": 0
+ },
+ "files": 701,
+ "hits": {
+  "as_binder_in_spawn_list": [],
+  "pipe_before_arrow": [
+   "examples/threads/closure_errors.qr:16",
+   "examples/threads/closure_errors.qr:28",
+   "examples/threads/closures.qr:23",
+   "examples/threads/closures.qr:34"
+  ],
+  "pipe_before_mode_word": [
+   "examples/threads/closure_errors.qr:16",
+   "examples/threads/closure_errors.qr:28",
+   "examples/threads/closures.qr:23",
+   "examples/threads/closures.qr:34"
+  ],
+  "pipepipe_before_arrow": [],
+  "spawn_name_pipe": [
+   "examples/threads/closure_errors.qr:16",
+   "examples/threads/closure_errors.qr:28",
+   "examples/threads/closures.qr:23",
+   "examples/threads/closures.qr:34"
+  ],
+  "spawn_name_pipepipe": [],
+  "spawn_name_quant_open": []
+ },
+ "reserved_word_count": 118,
+ "token_totals": {
+  "pipe": 10,
+  "pipe_into": 118,
+  "pipepipe": 2,
+  "quant_close": 4,
+  "quant_open": 4
+ }
+}
