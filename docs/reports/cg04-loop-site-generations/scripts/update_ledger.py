@@ -54,7 +54,7 @@ REGISTER = [
             "is reported leaking at four exits (snappy.c:1680, 1694, 1712, 1721) where the source frees or returns the one "
             "buffer. The function was already provisional Unsafe on real leaks (pass-2 `return NULL` at 1648 and 1660 without "
             "freeing `outbuf`); the four new leaves are the flow's imprecision, not source leaks, and are not presented as "
-            "upstream defects. `rd_kafka_sasl_safe_string` (`if (pass == 0) d = safe = rd_malloc(...)`) takes a rule-11a "
+            "upstream defects. `rd_kafka_sasl_safe_string` (`if (pass == 0) d = safe = rd_malloc(...)`) and, once rule 10x admits its condition, `rd_gz_decompress` (`if (pass == 1) ... decompressed = rd_malloc(...)`) take a rule-11a "
             "refusal instead. DISCHARGE: a counted-loop fact that decides a `pass == k` guard per iteration (or a recorded "
             "decision to keep the reading), re-measured."
         ),

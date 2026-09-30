@@ -2408,12 +2408,12 @@ which is not a second authority.
     node's own transfer creates a fresh current. A refuted failure edge
     removes only the fresh current. (4) **Refusal.** The merge is refused
     (`Unsupported`, the summary unresolved, the path unmodeled) when the
-    merged summary may owe an obligation (live, no unresolved effect) and
-    either an edge that can update it without a binding holds it (a field
-    link, a containment, a pending reallocation, a publication, an out slot
-    the node does not overwrite) or the other side carries an unresolved
-    effect that would hide it (`decide`); a site the tags cannot index
-    refuses. (5) **A refused re-acquiring node** (its transfer reported a
+    merged summary may be live and an edge that can update it without a
+    binding holds it (a field link, a containment, a pending reallocation, a
+    publication, an out slot the node does not overwrite), or when one side
+    may be live and the other carries an unresolved effect that would hide
+    it (`decide`, positive in every input, so monotone: the settled state
+    decides as every iterate did); a site the tags cannot index refuses. (5) **A refused re-acquiring node** (its transfer reported a
     path-poisoning diagnostic) leaves a shifted site it did not create
     present, live and unresolved: the call C ran may have produced it.
 
@@ -2421,10 +2421,18 @@ which is not a second authority.
     refinement, exempt it through a binding, or widen it towards
     "discharged"; do not merge a live generation into a held or unresolved
     summary without the refusal; do not read a site's kind or line other
-    than through its base. Measured: no corpus, system or slice function
-    re-acquired a site over an owed earlier generation on the base (the
-    census, parity `position: "loop-site-generation"`), so no Safe moved;
-    3 corpus and 2 system functions change leaves only. Premises stated,
+    than through its base. Measured (corpus `66910c10`, system, tail-pause
+    slice): no function re-acquired a site over a live earlier generation
+    without an unresolved effect on the base (the census, parity
+    `position: "loop-site-generation"`), so no Safe moved, and none moved at
+    all (586 / 10 / 4,238; 34 / 2 / 198; 26 / 1 / 242 / 1 Pending). Step 1
+    changes leaves in 28 corpus functions (26 Unknown: rule-11a refusals
+    where an unresolved generation meets a live one; 2 Unsafe:
+    `rd_kafka_snappy_java_uncompress` gains 4 leak leaves that are the
+    flow's imprecision on a `pass == 1` guard,
+    `LOOP-GENERATION-COUNTER-CORRELATION`), 4 system and 2 slice Unknown
+    functions; lifting rule 10x's guard changes 2 more Unknown functions
+    (`rd_gz_decompress`, `rd_kafka_lz4_decompress`). Premises stated,
     not proved: that the shift renames every mention of an identity in the
     state (trust boundary 28) and that every other rule reports a refusal
     wherever it leaves an identity unresolved (the census
