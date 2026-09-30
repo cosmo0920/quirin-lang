@@ -3256,8 +3256,11 @@ fn build_function_cfg_with(
     let mut cfg = CfgBuilder::build(function, &statements, publications);
     // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): `volatile` objects
     // carry no value-derived fact; a custody decision on a volatile read
-    // refuses.
-    if let Some((index, facts)) = parser.storage_facts() {
+    // refuses. Asked only where the unit spells `volatile` before the body's
+    // end, so a unit with none asks Clang for nothing more.
+    if storage_duration_route::mentions_volatile(tokens, body_start)
+        && let Some((index, facts)) = parser.storage_facts()
+    {
         storage_duration_route::settle_volatile(&mut cfg, &facts, function);
         parser.record_volatile_traces(&index);
     }

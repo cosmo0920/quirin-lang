@@ -248,6 +248,21 @@ impl Parser<'_> {
     }
 }
 
+/// Whether the token stream spells a `volatile` qualifier anywhere up to the
+/// end of the body opening at `body_start`: every object a function names is
+/// declared there (a file-scope one before its use), so a `volatile` object
+/// it names is spelled there. Complete, and cheap: a unit with none needs no
+/// Clang AST for rule 11h.
+pub(super) fn mentions_volatile(tokens: &[Token], body_start: usize) -> bool {
+    let end = super::matching(tokens, body_start, "{", "}").map_or(tokens.len(), |end| end + 1);
+    tokens[..end.min(tokens.len())].iter().any(|token| {
+        matches!(
+            token.text.as_str(),
+            "volatile" | "__volatile" | "__volatile__"
+        )
+    })
+}
+
 fn visit(node: &Value, f: &mut impl FnMut(&Value)) {
     f(node);
     for child in children(node) {
@@ -255,24 +270,28 @@ fn visit(node: &Value, f: &mut impl FnMut(&Value)) {
     }
 }
 
-/// The names a node binds, hands to a custody-taking position, or reads as a
-/// pointer identity, when it is not custody-neutral in the name.
-fn custody_names(instruction: &LegacyInstruction) -> Vec<&str> {
+/// The names a node binds (`true`: a destination), hands to a custody-taking
+/// position or reads as a pointer identity (`false`), when it is not
+/// custody-neutral in the name.
+fn custody_names(instruction: &LegacyInstruction) -> Vec<(&str, bool)> {
     use LegacyInstruction::*;
     match instruction {
-        Acquire { destination, .. } => vec![destination],
+        Acquire { destination, .. } => vec![(destination, true)],
         Alias {
             destination,
             source,
-        } => vec![destination, source],
-        Release { source } | Escape { source } => vec![source],
+        } => vec![(destination, true), (source, false)],
+        Release { source } | Escape { source } => vec![(source, false)],
         ContractCall {
             destination,
             arguments,
             contract,
             ..
         } => {
-            let mut names = destination.iter().map(String::as_str).collect::<Vec<_>>();
+            let mut names = destination
+                .iter()
+                .map(|name| (name.as_str(), true))
+                .collect::<Vec<_>>();
             for (position, argument) in arguments.iter().enumerate() {
                 let borrowed = contract.parameters.get(position).is_some_and(|mode| {
                     matches!(
@@ -283,7 +302,7 @@ fn custody_names(instruction: &LegacyInstruction) -> Vec<&str> {
                 if let Some(argument) = argument
                     && !borrowed
                 {
-                    names.push(argument);
+                    names.push((argument, false));
                 }
             }
             names
@@ -292,7 +311,7 @@ fn custody_names(instruction: &LegacyInstruction) -> Vec<&str> {
             destination,
             source,
             ..
-        } => vec![destination, source],
+        } => vec![(destination, true), (source, false)],
         _ => Vec::new(),
     }
 }
@@ -385,6 +404,7 @@ pub(crate) fn decided_region(cfg: &LegacyCfg, branch: usize) -> BTreeSet<usize> 
 /// carry no value-derived fact, and a custody decision on a `volatile` read
 /// refuses. `function` names the parity rows.
 pub(super) fn settle_volatile(cfg: &mut LegacyCfg, facts: &FunctionFacts, function: &str) {
+    let static_storage = cfg.publications.destinations.clone();
     for node in &mut cfg.nodes {
         let replacement = match &node.instruction {
             LegacyInstruction::Clear { destination } if facts.is_volatile(destination) => {
@@ -422,10 +442,15 @@ pub(super) fn settle_volatile(cfg: &mut LegacyCfg, facts: &FunctionFacts, functi
                     destination: index.clone(),
                 },
             )),
+            // A store into a static-storage object is rule 10's to decide
+            // (a tracked identity is refused there as a publication); the
+            // binding it leaves is kept from every refinement above.
             instruction => custody_names(instruction)
                 .into_iter()
-                .find(|name| facts.is_volatile(name))
-                .map(|name| {
+                .find(|(name, destination)| {
+                    facts.is_volatile(name) && !(*destination && static_storage.contains(*name))
+                })
+                .map(|(name, _)| {
                     debug_assert_eq!(decide(Form::VolatileBinding), Disposition::Refused);
                     (
                         "binding",
