@@ -14,6 +14,7 @@ fn main() -> ExitCode {
         eprintln!("       {}", qcore_audit::checkpoint_cli::USAGE);
         eprintln!("       {}", qcore_audit::plugin_cli::USAGE);
         eprintln!("       {}", qcore_audit::subcommand_plugins::USAGE);
+        eprintln!("       {}", qcore_audit::atomic_publication::USAGE);
         return ExitCode::FAILURE;
     };
     if path == "pinned" {
@@ -111,6 +112,36 @@ fn main() -> ExitCode {
             }
         }
         return qcore_audit::no_build::main(rest);
+    }
+    if path == "atomic-publication" {
+        // Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): a failed or
+        // undecided publication check is Unknown and exits non-zero.
+        let Some(config) = arguments.next() else {
+            eprintln!("usage: {}", qcore_audit::atomic_publication::USAGE);
+            return ExitCode::FAILURE;
+        };
+        if arguments.next().is_some() {
+            eprintln!("usage: {}", qcore_audit::atomic_publication::USAGE);
+            return ExitCode::FAILURE;
+        }
+        return match qcore_audit::atomic_publication::run_atomic_publication_config(&PathBuf::from(
+            config,
+        )) {
+            Ok(true) => {
+                println!(
+                    "Bounded atomic publication checked (Safe, one candidate execution); report written."
+                );
+                ExitCode::SUCCESS
+            }
+            Ok(false) => {
+                eprintln!("atomic publication not established (Unknown); report written.");
+                ExitCode::FAILURE
+            }
+            Err(error) => {
+                eprintln!("atomic publication rejected (Unknown): {error}");
+                ExitCode::FAILURE
+            }
+        };
     }
     if path == "callback-task-handoff" {
         let Some(config) = arguments.next() else {

@@ -57,8 +57,10 @@ fn texts(tokens: &[Token]) -> Vec<&str> {
 
 /// A value operand's node under Clang's value conversions.
 fn strip_value(mut node: &Value) -> &Value {
-    while matches!(kind(node), "ParenExpr" | "ImplicitCastExpr" | "CStyleCastExpr")
-        && node["castKind"].as_str() != Some("AtomicToNonAtomic")
+    while matches!(
+        kind(node),
+        "ParenExpr" | "ImplicitCastExpr" | "CStyleCastExpr"
+    ) && node["castKind"].as_str() != Some("AtomicToNonAtomic")
     {
         let [child] = children(node) else { break };
         node = child;
@@ -386,9 +388,10 @@ impl Parser<'_> {
         let index = self.typed_positions_index().cloned()?;
         let mut wanted = vec!["return"];
         wanted.extend(texts(expression));
-        let statement = Self::elaboration_node(&index, expression.first()?.line, &wanted, &|node| {
-            kind(node) == "ReturnStmt"
-        })?;
+        let statement =
+            Self::elaboration_node(&index, expression.first()?.line, &wanted, &|node| {
+                kind(node) == "ReturnStmt"
+            })?;
         let [value] = children(statement) else {
             return None;
         };
@@ -399,15 +402,15 @@ impl Parser<'_> {
             destination: None,
         };
         let never_bound = |name: &str| self.position_never_bound(name);
-        let outcome = self
-            .lower_site(&index, &site, &never_bound)
-            .and_then(|(routed, instructions)| {
-                if routed.operation == Operation::Load {
-                    Ok((routed, instructions))
-                } else {
-                    Err(AtomicRouteRefusal::UnsupportedShape(routed.form.clone()))
-                }
-            });
+        let outcome =
+            self.lower_site(&index, &site, &never_bound)
+                .and_then(|(routed, instructions)| {
+                    if routed.operation == Operation::Load {
+                        Ok((routed, instructions))
+                    } else {
+                        Err(AtomicRouteRefusal::UnsupportedShape(routed.form.clone()))
+                    }
+                });
         self.record_atomic_route(
             "atomic-route-return",
             line,

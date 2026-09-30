@@ -118,8 +118,14 @@ pub const ATOMIC_FORM_TABLE: [(&str, FormClass); 51] = [
     ("__sync_add_and_fetch", FormClass::ReadModifyWrite),
     ("__sync_sub_and_fetch", FormClass::ReadModifyWrite),
     ("__sync_lock_test_and_set", FormClass::ReadModifyWrite),
-    ("__c11_atomic_compare_exchange_strong", FormClass::CompareExchange),
-    ("__c11_atomic_compare_exchange_weak", FormClass::CompareExchange),
+    (
+        "__c11_atomic_compare_exchange_strong",
+        FormClass::CompareExchange,
+    ),
+    (
+        "__c11_atomic_compare_exchange_weak",
+        FormClass::CompareExchange,
+    ),
     ("__atomic_compare_exchange_n", FormClass::CompareExchange),
     ("__atomic_compare_exchange", FormClass::CompareExchange),
     ("__sync_bool_compare_and_swap", FormClass::CompareExchange),
@@ -278,14 +284,16 @@ impl AtomicRouteRefusal {
             Self::CompareExchange(name) => format!(
                 "atomic compare-exchange `{name}` is not represented by the weak-memory model (CG28)"
             ),
-            Self::Fence(name) => format!(
-                "atomic fence `{name}` is not represented by the weak-memory model (CG28)"
-            ),
+            Self::Fence(name) => {
+                format!("atomic fence `{name}` is not represented by the weak-memory model (CG28)")
+            }
             Self::ConsumeLoad(name) => format!(
                 "memory_order_consume load `{name}` is not represented by the weak-memory model (CG28)"
             ),
             Self::InvalidOrder(name) => {
-                format!("memory order of atomic `{name}` is not valid for its operation (C11 7.17.7)")
+                format!(
+                    "memory order of atomic `{name}` is not valid for its operation (C11 7.17.7)"
+                )
             }
             Self::UnevaluatedOrder(name) => format!(
                 "memory order of atomic `{name}` is not an integer constant the atomic route evaluates (CG19)"
@@ -311,7 +319,10 @@ fn type_of(node: &Value) -> Option<&str> {
 }
 
 fn strip_value(mut node: &Value) -> &Value {
-    while matches!(kind(node), "ParenExpr" | "ImplicitCastExpr" | "ConstantExpr") {
+    while matches!(
+        kind(node),
+        "ParenExpr" | "ImplicitCastExpr" | "ConstantExpr"
+    ) {
         let [child] = children(node) else { break };
         node = child;
     }
@@ -426,8 +437,8 @@ pub fn classify_builtin<'a>(
         Some(order) => {
             let decoded = order_value(order, enum_value)
                 .ok_or_else(|| AtomicRouteRefusal::UnevaluatedOrder(name.clone()))?;
-            let decoded =
-                decode_order(decoded).ok_or_else(|| AtomicRouteRefusal::InvalidOrder(name.clone()))?;
+            let decoded = decode_order(decoded)
+                .ok_or_else(|| AtomicRouteRefusal::InvalidOrder(name.clone()))?;
             Some(route_order(&name, operation, decoded)?)
         }
     };
@@ -457,8 +468,14 @@ pub fn classify_builtin<'a>(
 pub const QUALIFIED_FORMS: [(&str, Option<FormClass>); 4] = [
     ("_Atomic lvalue conversion", Some(FormClass::Load)),
     ("_Atomic assignment", Some(FormClass::Store)),
-    ("_Atomic compound assignment", Some(FormClass::ReadModifyWrite)),
-    ("_Atomic increment or decrement", Some(FormClass::ReadModifyWrite)),
+    (
+        "_Atomic compound assignment",
+        Some(FormClass::ReadModifyWrite),
+    ),
+    (
+        "_Atomic increment or decrement",
+        Some(FormClass::ReadModifyWrite),
+    ),
 ];
 
 fn atomic_type(node: &Value) -> bool {
@@ -473,7 +490,9 @@ fn atomic_type(node: &Value) -> bool {
 pub fn classify_qualified(node: &Value) -> Option<Result<RoutedAtomic<'_>, AtomicRouteRefusal>> {
     let refuse = |form: &str| Some(Err(AtomicRouteRefusal::ReadModifyWrite(form.to_owned())));
     match (kind(node), node["opcode"].as_str(), children(node)) {
-        ("ImplicitCastExpr", _, [read]) if node["castKind"].as_str() == Some("AtomicToNonAtomic") => {
+        ("ImplicitCastExpr", _, [read])
+            if node["castKind"].as_str() == Some("AtomicToNonAtomic") =>
+        {
             let form = QUALIFIED_FORMS[0].0;
             let value_type = type_of(node).unwrap_or_default().to_owned();
             if !scalar_value_type(&value_type) {
@@ -519,7 +538,9 @@ pub fn classify_qualified(node: &Value) -> Option<Result<RoutedAtomic<'_>, Atomi
                 value_type,
             }))
         }
-        ("CompoundAssignOperator", _, [left, _]) if atomic_type(left) => refuse(QUALIFIED_FORMS[2].0),
+        ("CompoundAssignOperator", _, [left, _]) if atomic_type(left) => {
+            refuse(QUALIFIED_FORMS[2].0)
+        }
         ("UnaryOperator", Some("++" | "--"), [operand]) if atomic_type(operand) => {
             refuse(QUALIFIED_FORMS[3].0)
         }

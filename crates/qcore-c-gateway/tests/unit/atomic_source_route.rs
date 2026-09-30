@@ -4,9 +4,7 @@
 //! validity.
 
 use super::*;
-use qcore_core::{
-    C11Execution, MemoryEvent, RelationEdge, WeakMemoryError, check_c11_execution,
-};
+use qcore_core::{C11Execution, MemoryEvent, RelationEdge, WeakMemoryError, check_c11_execution};
 use serde_json::json;
 
 const LEAN: &str = include_str!("../../../../proof/QCore/AtomicSourceRoute.lean");
@@ -126,7 +124,11 @@ fn check_outcome(answer: Result<(Operation, Option<MemoryOrder>), AtomicRouteRef
         assert!(lean_refusal(refusal)(&refused), "{lean}: {refused:?}");
     } else if let Some(routed) = lean.strip_prefix(".routed ") {
         let (op, order) = routed.split_once(' ').expect(lean);
-        assert_eq!(answer.expect(lean), (operation(op), model_order(order)), "{lean}");
+        assert_eq!(
+            answer.expect(lean),
+            (operation(op), model_order(order)),
+            "{lean}"
+        );
     } else {
         panic!("unparsed Lean outcome {lean}");
     }
@@ -151,8 +153,8 @@ fn cg19_lean_route_vectors_match_classify_builtin() {
         };
         let outcome = tuple_tail(outcome);
         let node = atomic_expr(name, order);
-        let answer = classify_builtin(&node, &|_| None)
-            .map(|routed| (routed.operation, routed.order));
+        let answer =
+            classify_builtin(&node, &|_| None).map(|routed| (routed.operation, routed.order));
         check_outcome(answer, outcome);
     }
 }
@@ -167,7 +169,11 @@ fn cg19_lean_order_vectors_match_route_order() {
         .collect::<Vec<_>>();
     assert_eq!(rows.len(), 16);
     for row in &rows {
-        let fields = row.trim().trim_start_matches('(').splitn(3, ", ").collect::<Vec<_>>();
+        let fields = row
+            .trim()
+            .trim_start_matches('(')
+            .splitn(3, ", ")
+            .collect::<Vec<_>>();
         let op = operation(fields[0]);
         let value = fields[1].parse::<i64>().unwrap();
         let outcome = tuple_tail(fields[2]);
@@ -207,8 +213,16 @@ fn cg19_routed_orders_are_the_models_own() {
             value: 0,
             order,
         };
-        assert_eq!(event_order_represented(&load), represented(".load", name), "{name}");
-        assert_eq!(event_order_represented(&store), represented(".store", name), "{name}");
+        assert_eq!(
+            event_order_represented(&load),
+            represented(".load", name),
+            "{name}"
+        );
+        assert_eq!(
+            event_order_represented(&store),
+            represented(".store", name),
+            "{name}"
+        );
     }
     for value in -1..=6 {
         for op in [Operation::Load, Operation::Store, Operation::Init] {
@@ -239,8 +253,8 @@ fn cg19_routed_events_run_through_the_core_checker() {
     let load = atomic_expr("__c11_atomic_load", Some(2));
     let store = classify_builtin(&store, &|_| None).unwrap();
     let load = classify_builtin(&load, &|_| None).unwrap();
-    let execution = |store_kind: MemoryEventKind, load_kind: MemoryEventKind, sw: bool| {
-        C11Execution {
+    let execution =
+        |store_kind: MemoryEventKind, load_kind: MemoryEventKind, sw: bool| C11Execution {
             events: vec![
                 MemoryEvent {
                     id: 0,
@@ -269,8 +283,7 @@ fn cg19_routed_events_run_through_the_core_checker() {
                 vec![]
             },
             ..C11Execution::default()
-        }
-    };
+        };
     let checked = check_c11_execution(&execution(
         store.event_kind(7, 1),
         load.event_kind(7, 1),
@@ -287,22 +300,37 @@ fn cg19_routed_events_run_through_the_core_checker() {
         true,
     ))
     .unwrap_err();
-    assert!(refused.contains(&WeakMemoryError::InvalidSynchronizesWith(RelationEdge::new(1, 2))));
+    assert!(refused.contains(&WeakMemoryError::InvalidSynchronizesWith(
+        RelationEdge::new(1, 2)
+    )));
 }
 
 /// Every listed refusing class, and an unlisted family member, refuse by name.
 #[test]
 fn cg19_refusals_name_the_form_and_card() {
     for (name, text) in [
-        ("__c11_atomic_fetch_add", "atomic read-modify-write `__c11_atomic_fetch_add` is not represented by the weak-memory model (CG28)"),
-        ("__c11_atomic_compare_exchange_strong", "atomic compare-exchange `__c11_atomic_compare_exchange_strong` is not represented by the weak-memory model (CG28)"),
-        ("__c11_atomic_thread_fence", "atomic fence `__c11_atomic_thread_fence` is not represented by the weak-memory model (CG28)"),
-        ("__atomic_fetch_umax", "unlisted atomic form `__atomic_fetch_umax` (CG19)"),
+        (
+            "__c11_atomic_fetch_add",
+            "atomic read-modify-write `__c11_atomic_fetch_add` is not represented by the weak-memory model (CG28)",
+        ),
+        (
+            "__c11_atomic_compare_exchange_strong",
+            "atomic compare-exchange `__c11_atomic_compare_exchange_strong` is not represented by the weak-memory model (CG28)",
+        ),
+        (
+            "__c11_atomic_thread_fence",
+            "atomic fence `__c11_atomic_thread_fence` is not represented by the weak-memory model (CG28)",
+        ),
+        (
+            "__atomic_fetch_umax",
+            "unlisted atomic form `__atomic_fetch_umax` (CG19)",
+        ),
     ] {
         let refused = classify_builtin(&atomic_expr(name, Some(5)), &|_| None).unwrap_err();
         assert_eq!(refused.reason(), text);
     }
-    let consume = classify_builtin(&atomic_expr("__c11_atomic_load", Some(1)), &|_| None).unwrap_err();
+    let consume =
+        classify_builtin(&atomic_expr("__c11_atomic_load", Some(1)), &|_| None).unwrap_err();
     assert_eq!(
         consume.reason(),
         "memory_order_consume load `__c11_atomic_load` is not represented by the weak-memory model (CG28)"

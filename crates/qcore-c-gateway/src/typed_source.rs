@@ -597,7 +597,9 @@ fn qual_type(ty: &Value) -> Result<String, String> {
     // own arm, asked first (a `volatile _Atomic` object is atomic). The
     // `volatile` and `restrict` arm below is unchanged (CG15, CG18).
     if ty.contains("_Atomic") {
-        return Err(crate::atomic_source_route::typed_source_qualifier_refusal(ty));
+        return Err(crate::atomic_source_route::typed_source_qualifier_refusal(
+            ty,
+        ));
     }
     if ty.contains("volatile") || ty.contains("_Atomic") || ty.contains("restrict") {
         return Err("qualified access requires additional synchronization/alias evidence".into());

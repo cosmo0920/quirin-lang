@@ -31,7 +31,9 @@ fn g_routes_the_cmetrics_plain_load_and_store() {
     if !clang_available() {
         return;
     }
-    let load = ga("uint64_t subject(uint64_t *storage) { return __atomic_load_n(storage, __ATOMIC_SEQ_CST); }");
+    let load = ga(
+        "uint64_t subject(uint64_t *storage) { return __atomic_load_n(storage, __ATOMIC_SEQ_CST); }",
+    );
     assert!(load.safe(), "{load:?}");
     let store = ga(
         "void subject(uint64_t *storage, uint64_t new_value) { __atomic_store_n(storage, new_value, __ATOMIC_SEQ_CST); }",
@@ -58,16 +60,22 @@ fn g_routes_stdatomic_plain_forms() {
     assert!(ga("int subject(atomic_int *a) { return atomic_load(a); }").safe());
     assert!(ga("void subject(atomic_int *a, int v) { atomic_store(a, v); }").safe());
     assert!(ga("int subject(atomic_int *a) { int x = atomic_load(a); return x; }").safe());
-    assert!(ga("int subject(int *p) { int x; x = __atomic_load_n(p, __ATOMIC_ACQUIRE); return x; }").safe());
+    assert!(
+        ga("int subject(int *p) { int x; x = __atomic_load_n(p, __ATOMIC_ACQUIRE); return x; }")
+            .safe()
+    );
     // An enumerator order is not evaluated from the function's AST.
-    let explicit = ga("int subject(atomic_int *a) { return atomic_load_explicit(a, memory_order_acquire); }");
+    let explicit =
+        ga("int subject(atomic_int *a) { return atomic_load_explicit(a, memory_order_acquire); }");
     assert!(
         explicit.refused("memory order of atomic `__c11_atomic_load` is not an integer constant the atomic route evaluates (CG19)"),
         "{explicit:?}"
     );
     // A routed access still carries the dereference obligation: a released
     // object's address is not read through.
-    let released = ga("void subject(void) { int *p = q_alloc(); q_free(p); __atomic_store_n(p, 1, __ATOMIC_RELAXED); }");
+    let released = ga(
+        "void subject(void) { int *p = q_alloc(); q_free(p); __atomic_store_n(p, 1, __ATOMIC_RELAXED); }",
+    );
     assert!(!released.safe(), "{released:?}");
 }
 
@@ -81,17 +89,28 @@ fn g_refuses_rmw_cas_fence_and_consume_by_name() {
     }
     let rmw = ga("void subject(atomic_int *a) { atomic_fetch_add(a, 1); }");
     assert!(rmw.unknown() && rmw.refused(RMW), "{rmw:?}");
-    let rmw_value = ga("int subject(atomic_int *a) { int old = atomic_fetch_add(a, 1); return old; }");
-    assert!(rmw_value.unknown() && rmw_value.refused(RMW), "{rmw_value:?}");
+    let rmw_value =
+        ga("int subject(atomic_int *a) { int old = atomic_fetch_add(a, 1); return old; }");
+    assert!(
+        rmw_value.unknown() && rmw_value.refused(RMW),
+        "{rmw_value:?}"
+    );
     let rmw_return = ga("int subject(atomic_int *a) { return atomic_fetch_add(a, 1); }");
-    assert!(rmw_return.unknown() && rmw_return.refused(RMW), "{rmw_return:?}");
-    let cas = ga("int subject(atomic_int *a) { int e = 0; return atomic_compare_exchange_strong(a, &e, 1); }");
+    assert!(
+        rmw_return.unknown() && rmw_return.refused(RMW),
+        "{rmw_return:?}"
+    );
+    let cas = ga(
+        "int subject(atomic_int *a) { int e = 0; return atomic_compare_exchange_strong(a, &e, 1); }",
+    );
     assert!(cas.unknown() && cas.refused(CAS), "{cas:?}");
     let fence = ga("void subject(void) { atomic_thread_fence(memory_order_seq_cst); }");
     assert!(fence.unknown() && fence.refused(FENCE), "{fence:?}");
-    let consume = ga("int subject(atomic_int *a) { return atomic_load_explicit(a, memory_order_consume); }");
+    let consume =
+        ga("int subject(atomic_int *a) { return atomic_load_explicit(a, memory_order_consume); }");
     assert!(consume.unknown() && consume.refused(CONSUME), "{consume:?}");
-    let consume_literal = ga("int subject(int *p) { return __atomic_load_n(p, __ATOMIC_CONSUME); }");
+    let consume_literal =
+        ga("int subject(int *p) { return __atomic_load_n(p, __ATOMIC_CONSUME); }");
     assert!(
         consume_literal.refused("memory_order_consume load `__atomic_load_n` is not represented by the weak-memory model (CG28)"),
         "{consume_literal:?}"
@@ -99,11 +118,14 @@ fn g_refuses_rmw_cas_fence_and_consume_by_name() {
     // An order C11 does not allow for the operation.
     let release_load = ga("int subject(int *p) { return __atomic_load_n(p, __ATOMIC_RELEASE); }");
     assert!(
-        release_load.refused("memory order of atomic `__atomic_load_n` is not valid for its operation (C11 7.17.7)"),
+        release_load.refused(
+            "memory order of atomic `__atomic_load_n` is not valid for its operation (C11 7.17.7)"
+        ),
         "{release_load:?}"
     );
     // A pointer-valued atomic is not custody-neutral data.
-    let pointer = ga("void *subject(void **slot) { return __atomic_load_n(slot, __ATOMIC_ACQUIRE); }");
+    let pointer =
+        ga("void *subject(void **slot) { return __atomic_load_n(slot, __ATOMIC_ACQUIRE); }");
     assert!(!pointer.safe(), "{pointer:?}");
 }
 

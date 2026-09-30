@@ -7,6 +7,9 @@
 //! mode joins contract-backed source obligations with one bounded native run;
 //! the existing compatibility adapters retain their original scopes.
 
+// Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): the production caller of
+// the bounded atomic-publication judgment.
+pub mod atomic_publication;
 pub mod callback_task_handoff;
 pub mod certificate_context;
 pub mod checkpoint;

@@ -470,7 +470,10 @@ int consume(void) { int seen = __atomic_load_n(&done, __ATOMIC_ACQUIRE); if (see
     );
     // `_Atomic` operator forms: sequentially consistent both ways.
     let qualified = SOURCE
-        .replace("atomic_store_explicit(&done, 1, memory_order_release);", "done = 1;")
+        .replace(
+            "atomic_store_explicit(&done, 1, memory_order_release);",
+            "done = 1;",
+        )
         .replace("atomic_load_explicit(&done, memory_order_acquire)", "done");
     let certificate = check(&qualified).unwrap();
     assert_eq!(
@@ -500,7 +503,10 @@ int consume(void) { int seen = __atomic_load_n(&done, __ATOMIC_ACQUIRE); if (see
     );
     // A test that reads the payload on the branch that did NOT observe the
     // ready value is not a publication shape.
-    let inverted = gnu.replace("if (seen == 1) return payload; return 0;", "if (seen != 1) return payload; return 0;");
+    let inverted = gnu.replace(
+        "if (seen == 1) return payload; return 0;",
+        "if (seen != 1) return payload; return 0;",
+    );
     assert_eq!(
         check(&inverted),
         Err(AtomicPublicationSourceRefusal::UnsupportedConsumer)
