@@ -33,7 +33,10 @@
 use std::collections::BTreeSet;
 use std::fmt;
 
-use crate::scalar_types::{self as st, ArithmeticError, Cmp, Op, RecordedTarget, ScalarType};
+use crate::scalar_floats::{FloatLiteral, LiteralError};
+use crate::scalar_types::{
+    self as st, ArithmeticError, Cmp, FloatEffect, FloatEffects, Op, RecordedTarget, ScalarType,
+};
 
 /// One operand as the decision sees it: a value its route already typed, with
 /// its number when that is known at check time, or a literal.
@@ -46,6 +49,10 @@ pub enum Operand {
     /// An integer literal, typed by its context (`i32` when there is none).
     Integer(i128),
     Bool(bool),
+    /// A float literal (card `W48-QR-FLOATING-POINT`), typed by its context
+    /// (`f64` when there is none) and read once at that type. Only a route
+    /// whose reader admits floats produces one.
+    Float(FloatLiteral),
 }
 
 /// The one operation a value statement performs.
@@ -106,6 +113,22 @@ pub enum ValueRefusal {
         declared: ScalarType,
         supplied: ScalarType,
     },
+    /// An integer literal where a float is wanted, or a float literal where
+    /// an integer or `bool` is (card `W48-QR-FLOATING-POINT`): there is no
+    /// implicit conversion between them.
+    LiteralKind { ty: ScalarType, float: bool },
+    /// A float literal that is no value of its type: it rounds to infinity,
+    /// or a nonzero one rounds to zero.
+    FloatLiteral {
+        ty: ScalarType,
+        error: LiteralError,
+    },
+    /// `%` of a float: a float has `+ - * /` and unary `-` only.
+    NoFloatRemainder { ty: ScalarType },
+    /// A float comparison in a function whose row does not declare its effect
+    /// (`partial_eq` for `==`/`!=`, `partial_ord` for the orderings), which is
+    /// never inferred.
+    NeedsFloatEffect { effect: FloatEffect, ty: ScalarType },
 }
 
 impl fmt::Display for ValueRefusal {
@@ -164,6 +187,29 @@ impl fmt::Display for ValueRefusal {
                 "argument {parameter} is a `{supplied}` and the parameter is declared `{declared}`; \
                  there is no implicit conversion, so bind `let v = NAME as {declared};` first"
             ),
+            Self::LiteralKind { ty, float: true } => write!(
+                f,
+                "a float literal is not a `{ty}`; a float is never implicitly an integer, so \
+                 convert with `as`"
+            ),
+            Self::LiteralKind { ty, float: false } => write!(
+                f,
+                "an integer literal is not a `{ty}`; an integer is never implicitly a float, so \
+                 write a float literal (`1.0`) or convert with `as`"
+            ),
+            Self::FloatLiteral { ty, error } => write!(f, "this `{ty}` literal {error}"),
+            Self::NoFloatRemainder { ty } => write!(
+                f,
+                "`%` is an integer operation; `{ty}` has `+ - * /` and unary `-` only"
+            ),
+            Self::NeedsFloatEffect { effect, ty } => write!(
+                f,
+                "a `{ty}` comparison needs the `{}` effect, and the row does not declare it; float \
+                 comparisons are partial (a NaN is unordered and `x == x` can be false), so `{}` is \
+                 never inferred",
+                effect.name(),
+                effect.name()
+            ),
         }
     }
 }
@@ -174,6 +220,12 @@ impl fmt::Display for ValueRefusal {
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Decider {
     pub used_target: bool,
+    /// The comparison effects the function's row declares (card
+    /// `W48-QR-FLOATING-POINT`): empty by default, so a route that does not
+    /// set them admits no float comparison.
+    pub permitted: FloatEffects,
+    /// The comparison effects the decided statements used.
+    pub used: FloatEffects,
 }
 
 impl Decider {
@@ -193,6 +245,19 @@ impl Decider {
         Ok(ty.range(target).expect("a width is known here"))
     }
 
+    /// The width check of `ty` when it has one: an integer's range (and, for
+    /// `isize`/`usize`, the record); nothing for `bool` or a float.
+    fn width(
+        &mut self,
+        ty: ScalarType,
+        target: Option<&RecordedTarget>,
+    ) -> Result<(), ValueRefusal> {
+        if ty.is_integer() {
+            self.range(ty, target)?;
+        }
+        Ok(())
+    }
+
     /// A literal at `ty`: its number when it is a value of `ty`.
     pub fn literal_at(
         &mut self,
@@ -202,6 +267,9 @@ impl Decider {
     ) -> Result<i128, ValueRefusal> {
         if ty == ScalarType::Bool {
             return Err(ValueRefusal::LiteralOutOfRange { literal, ty });
+        }
+        if ty.is_float() {
+            return Err(ValueRefusal::LiteralKind { ty, float: false });
         }
         let (low, high) = self.range(ty, target)?;
         if low <= literal && literal <= high {
@@ -226,6 +294,16 @@ impl Decider {
                 let ty = context.unwrap_or(ScalarType::I32);
                 Ok((ty, Some(self.literal_at(literal, ty, target)?)))
             }
+            Operand::Float(literal) => {
+                let ty = context.unwrap_or(ScalarType::F64);
+                if !ty.is_float() {
+                    return Err(ValueRefusal::LiteralKind { ty, float: true });
+                }
+                let value = literal
+                    .at(ty)
+                    .map_err(|error| ValueRefusal::FloatLiteral { ty, error })?;
+                Ok((ty, Some(value)))
+            }
         }
     }
 
@@ -241,7 +319,7 @@ impl Decider {
         let declared = |operand: Operand| match operand {
             Operand::Typed { ty, .. } => Some(ty),
             Operand::Bool(_) => Some(ScalarType::Bool),
-            Operand::Integer(_) => None,
+            Operand::Integer(_) | Operand::Float(_) => None,
         };
         let context = declared(left).or(declared(right));
         let (lt, lk) = self.operand(left, context, target)?;
@@ -271,7 +349,10 @@ impl Decider {
                         operation: "arithmetic",
                     });
                 }
-                self.range(ty, target)?;
+                if ty.is_float() && op == Op::Rem {
+                    return Err(ValueRefusal::NoFloatRemainder { ty });
+                }
+                self.width(ty, target)?;
                 let known = match (a, b) {
                     (Some(a), Some(b)) => Some(
                         st::checked_error(op, ty, a, b, target)
@@ -279,7 +360,8 @@ impl Decider {
                     ),
                     _ => None,
                 };
-                (ty, ty, known, true)
+                // Card `W48-QR-FLOATING-POINT`: IEEE arithmetic never faults.
+                (ty, ty, known, !ty.is_float())
             }
             Operation::Compare(cmp, left, right) => {
                 let (ty, a, b) = self.pair(left, right, target)?;
@@ -290,6 +372,15 @@ impl Decider {
                 }
                 if ty.is_integer() {
                     self.range(ty, target)?;
+                }
+                // Card `W48-QR-FLOATING-POINT`: a float comparison needs its
+                // effect in the row, which is never inferred.
+                if ty.is_float() {
+                    let effect = FloatEffect::of(cmp);
+                    if !self.permitted.contains(effect) {
+                        return Err(ValueRefusal::NeedsFloatEffect { effect, ty });
+                    }
+                    self.used.insert(effect);
                 }
                 let known = match (a, b) {
                     (Some(a), Some(b)) => st::compare(cmp, ty, a, b).map(i128::from),
@@ -304,7 +395,7 @@ impl Decider {
                         operation: "negation",
                     });
                 }
-                self.range(ty, target)?;
+                self.width(ty, target)?;
                 let known = match a {
                     Some(a) => Some(
                         st::negate_error(ty, a, target)
@@ -312,15 +403,18 @@ impl Decider {
                     ),
                     None => None,
                 };
-                (ty, ty, known, true)
+                (ty, ty, known, !ty.is_float())
             }
             Operation::Convert(operand, to) => {
-                let (from, a) = self.operand(operand, None, target)?;
+                // Card `W48-QR-FLOATING-POINT`: a float literal converted to a
+                // float type is read at that type, so it is rounded once.
+                let context = matches!(operand, Operand::Float(_) if to.is_float()).then_some(to);
+                let (from, a) = self.operand(operand, context, target)?;
                 if from == ScalarType::Bool || to == ScalarType::Bool {
                     return Err(ValueRefusal::NoConversion { from, to });
                 }
-                self.range(from, target)?;
-                self.range(to, target)?;
+                self.width(from, target)?;
+                self.width(to, target)?;
                 let known = match a {
                     Some(a) => Some(
                         st::convert_error(from, to, a, target)

@@ -370,6 +370,71 @@ impl Cmp {
     }
 }
 
+/// One of the two comparison effects (card `W48-QR-FLOATING-POINT`): what a
+/// function's row must declare to compare floats. `partial_ord` does not imply
+/// `partial_eq`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum FloatEffect {
+    /// `==` and `!=` on `f32`/`f64`.
+    PartialEq,
+    /// `<`, `<=`, `>` and `>=` on `f32`/`f64`.
+    PartialOrd,
+}
+impl FloatEffect {
+    pub const ALL: [FloatEffect; 2] = [FloatEffect::PartialEq, FloatEffect::PartialOrd];
+    /// The effect-row spelling.
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::PartialEq => "partial_eq",
+            Self::PartialOrd => "partial_ord",
+        }
+    }
+    pub fn parse(name: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|effect| effect.name() == name)
+    }
+    /// The effect a float comparison needs.
+    pub fn of(cmp: Cmp) -> Self {
+        if cmp.is_ordering() {
+            Self::PartialOrd
+        } else {
+            Self::PartialEq
+        }
+    }
+}
+
+/// A set of [`FloatEffect`]s that is `Copy` (card `W48-QR-FLOATING-POINT`),
+/// for the shared value-statement decision: the effects a row permits, or the
+/// effects decided statements used.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
+pub struct FloatEffects {
+    pub partial_eq: bool,
+    pub partial_ord: bool,
+}
+impl FloatEffects {
+    #[must_use]
+    pub fn contains(self, effect: FloatEffect) -> bool {
+        match effect {
+            FloatEffect::PartialEq => self.partial_eq,
+            FloatEffect::PartialOrd => self.partial_ord,
+        }
+    }
+    pub fn insert(&mut self, effect: FloatEffect) {
+        match effect {
+            FloatEffect::PartialEq => self.partial_eq = true,
+            FloatEffect::PartialOrd => self.partial_ord = true,
+        }
+    }
+    /// The effects of a row, in the set's two flags.
+    #[must_use]
+    pub fn from_effects(effects: impl IntoIterator<Item = FloatEffect>) -> Self {
+        let mut set = Self::default();
+        for effect in effects {
+            set.insert(effect);
+        }
+        set
+    }
+}
+
 /// Checked arithmetic at `ty`. `None` is the typed fault: the exact result is
 /// outside the type, the divisor is zero, or it is `MIN / -1` / `MIN % -1` of
 /// a signed type. Division truncates toward zero. `None` too for `bool` and

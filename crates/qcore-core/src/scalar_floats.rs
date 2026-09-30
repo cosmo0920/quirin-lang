@@ -42,6 +42,8 @@
 //! for every purpose this module has (rendering, comparison), and a reference
 //! and a native run are compared NaN-for-NaN, never bit for bit.
 
+use std::fmt;
+
 use crate::scalar_types::{ArithmeticError, Cmp, Op, RecordedTarget, ScalarType};
 
 /// The largest bit pattern of `ty`, `None` for a type that is not a float.
@@ -231,6 +233,60 @@ pub enum LiteralError {
     Overflows,
     /// A nonzero value that rounds to zero at the type.
     Underflows,
+}
+
+/// A float literal as a value-statement operand (card `W48-QR-FLOATING-POINT`):
+/// read once **at each float type** when it is read, so the operand is `Copy`
+/// and its value at whichever type its context gives it is the literal rounded
+/// once, directly at that type. `negative` records a leading unary minus, which
+/// flips the sign bit exactly.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct FloatLiteral {
+    pub f32: Result<i128, LiteralError>,
+    pub f64: Result<i128, LiteralError>,
+}
+
+impl FloatLiteral {
+    /// Read `text` (a float literal of [`is_literal_spelling`]), negated when
+    /// `negative`; `None` when the spelling is not a float literal.
+    #[must_use]
+    pub fn read(text: &str, negative: bool) -> Option<Self> {
+        if !is_literal_spelling(text) {
+            return None;
+        }
+        let at = |ty| {
+            parse_literal(text, ty).map(|bits| {
+                if negative {
+                    negate(ty, bits).unwrap_or(bits)
+                } else {
+                    bits
+                }
+            })
+        };
+        Some(Self {
+            f32: at(ScalarType::F32),
+            f64: at(ScalarType::F64),
+        })
+    }
+
+    /// The literal at `ty`: its bits, or why it is no value of `ty`.
+    pub fn at(self, ty: ScalarType) -> Result<i128, LiteralError> {
+        match ty {
+            ScalarType::F32 => self.f32,
+            ScalarType::F64 => self.f64,
+            _ => Err(LiteralError::NotAFloatLiteral),
+        }
+    }
+}
+
+impl fmt::Display for LiteralError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(match self {
+            Self::NotAFloatLiteral => "is not a float literal",
+            Self::Overflows => "rounds to infinity: it is outside the type",
+            Self::Underflows => "is nonzero and rounds to zero at the type",
+        })
+    }
 }
 
 /// Whether `text` is a decimal float literal of the card's grammar:

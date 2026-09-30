@@ -26,6 +26,7 @@
 //! them, and the derived row must be admitted by the declared one. Integer and
 //! `bool` comparisons stay ungated.
 pub use crate::scalar_types::ArithmeticError;
+pub use crate::scalar_types::FloatEffect;
 use crate::scalar_types::{self as st, Cmp, RecordedTarget, ScalarType};
 use crate::std_io::{Level, ObservedLine, Rendering};
 use std::collections::BTreeSet;
@@ -83,37 +84,6 @@ impl Type {
     }
 }
 
-/// One of the two comparison effects (card `W48-QR-FLOATING-POINT`): what a
-/// function's row must declare to compare floats. `partial_ord` does not imply
-/// `partial_eq`.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum FloatEffect {
-    /// `==` and `!=` on `f32`/`f64`.
-    PartialEq,
-    /// `<`, `<=`, `>` and `>=` on `f32`/`f64`.
-    PartialOrd,
-}
-impl FloatEffect {
-    pub const ALL: [FloatEffect; 2] = [FloatEffect::PartialEq, FloatEffect::PartialOrd];
-    /// The effect-row spelling.
-    pub fn name(self) -> &'static str {
-        match self {
-            Self::PartialEq => "partial_eq",
-            Self::PartialOrd => "partial_ord",
-        }
-    }
-    pub fn parse(name: &str) -> Option<Self> {
-        Self::ALL.into_iter().find(|effect| effect.name() == name)
-    }
-    /// The effect a float comparison needs.
-    pub fn of(cmp: Cmp) -> Self {
-        if cmp.is_ordering() {
-            Self::PartialOrd
-        } else {
-            Self::PartialEq
-        }
-    }
-}
 impl fmt::Display for Type {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
