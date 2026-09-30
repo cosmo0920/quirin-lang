@@ -1,0 +1,12 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a39a2c78010453eaf/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 49.19s
+     Running tests/clang_gap_phase1.rs (target/debug/deps/clang_gap_phase1-1dbc0dcb5bdd6c7e)
+
+running 3 tests
+test c02_t_has_no_switch ... ok
+test c03_t_has_no_jumps ... ok
+test c01_t_has_no_general_loops ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 27 filtered out; finished in 1.43s
+
+exit 0
