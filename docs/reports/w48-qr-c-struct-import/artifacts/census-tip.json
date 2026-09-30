@@ -1,0 +1,47 @@
+{
+ "card_words_reserved": [],
+ "counts": {
+  "c_ffi_attribute": 2,
+  "c_ffi_word": 2,
+  "c_string": 3,
+  "pipe_copy": 0,
+  "quant_close": 2,
+  "quant_open": 2,
+  "std_ffi_import": 1,
+  "struct_bang": 1
+ },
+ "files": 634,
+ "hits": {
+  "c_ffi_attribute": [
+   "examples/ffi/contracts/qr_header.qv:12",
+   "examples/ffi/contracts/qr_header.qv:21"
+  ],
+  "c_ffi_word": [
+   "examples/ffi/contracts/qr_header.qv:12",
+   "examples/ffi/contracts/qr_header.qv:21"
+  ],
+  "c_string": [
+   "examples/ffi/contracts/qr_header.qv:13",
+   "examples/ffi/contracts/qr_header.qv:22",
+   "examples/ffi/header_sum.qr:20"
+  ],
+  "pipe_copy": [],
+  "quant_close": [
+   "examples/ffi/contracts/qr_header.qv:12",
+   "examples/ffi/contracts/qr_header.qv:21"
+  ],
+  "quant_open": [
+   "examples/ffi/contracts/qr_header.qv:12",
+   "examples/ffi/contracts/qr_header.qv:21"
+  ],
+  "std_ffi_import": [
+   "examples/ffi/header_sum.qr:1"
+  ],
+  "struct_bang": [
+   "examples/ffi/header_sum.qr:19"
+  ]
+ },
+ "reserved_word_count": 118,
+ "struct_word_files": 1,
+ "struct_word_tokens": 1
+}

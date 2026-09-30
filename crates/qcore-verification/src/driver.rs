@@ -1416,6 +1416,25 @@ fn compile_files_with_registry_inner(
         )]
     })?;
     parsed.mode = mode;
+    // Card `W48-QR-C-STRUCT-IMPORT` (user decision 4): the FFI marker belongs
+    // to the contract side, the `.qv` files, so an auditor finds every FFI
+    // function there. A runtime or library module carrying one is refused
+    // rather than ignored. Decided on the bundle's mode, which is the module
+    // header's (the per-file staged text no longer carries it).
+    if mode != SourceModuleMode::Contract
+        && let Some(span) = parsed
+            .declarations
+            .iter()
+            .find_map(|declaration| declaration.value.c_ffi)
+    {
+        return Err(vec![map_raw_diagnostic(
+            "Q033",
+            SemanticPass::UncheckedLinkage,
+            span,
+            "`[| quant #c_ffi |]` marks an FFI function definition in a `.qv` contract module; a runtime or library module declares its callee with a plain `extern fn` and calls it through the marked contract".into(),
+            &ranges,
+        )]);
+    }
     // Card `NATIVE-LIBRARY-SOURCE-BINDING`. A binding is checked **wherever it
     // is written**, not only where a route happens to read it. Without this a
     // module that declares `extern library NAME;` and is routed somewhere with

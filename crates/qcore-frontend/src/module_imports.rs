@@ -112,22 +112,6 @@ pub fn check_source_imports_in_scope(
             ),
         }]);
     }
-    // User decision 4: the marker belongs to the FFI side, the `.qv` contract
-    // files, so an auditor finds every FFI function there. A runtime or
-    // library module carrying one is refused rather than ignored.
-    if program.mode != crate::frontend::SourceModuleMode::Contract
-        && let Some(span) = program
-            .declarations
-            .iter()
-            .find_map(|declaration| declaration.value.c_ffi)
-    {
-        return Err(vec![SourceDiagnostic {
-            code: "Q033",
-            pass: SemanticPass::UncheckedLinkage,
-            span,
-            message: "`[| quant #c_ffi |]` marks an FFI function definition in a `.qv` contract module; a runtime or library module declares its callee with a plain `extern fn` and calls it through the marked contract".into(),
-        }]);
-    }
     // Card `STD-MODULES`. Each capability is gated by its own module, and by no
     // other: `std.io` never grants the logger, `std.logger` never grants
     // standard output, and `std.fmt` alone opens no stream at all. `flush`
