@@ -224,17 +224,45 @@ modelled; they are pinned by the Rust tests over the fixtures.
 | libm | six functions both kinds, 70% | dynamic six; **static five** — glibc's static `floor` does not link into a dynamic executable (not predicted; §L14.8 item 5) |
 | `ldexp` from `libm.a` refused | 90% | **refused** |
 | Lean | 10–18 theorems, 75% | **18** |
-| corpus arbiter | identical `2fc3af8c…`, 95% | ARBITER |
-| gate first run | green, 35% | GATEFIRST |
+| corpus arbiter | identical `2fc3af8c…`, 95% | **byte-identical** |
+| gate first run | green, 35% | **not green**: clippy's `cloned_ref_to_slice_refs` in a new unit test; every other step 0 on the first run |
 | provider gate | not needed, 85% | not needed (`providers/` untouched) |
 
 ## Gate
 
-GATE
+Script `private/w48-qrlib-linkage/gate.sh` (each exit to a file, no step
+piped), logs `private/w48-qrlib-linkage/gate/`. The first run (at `537ff0d9`)
+had clippy 101 on one new unit test's `&[pointer.clone()]`; after the fix
+(`a46d6129`, a test file only) clippy, fmt and the whole test step were rerun
+at that tip:
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 396 units, 409 summaries; **6,971 passed, 0 failed, 11 ignored** (`private/test-binaries/20260930T111228Z-2877687/summary.json`) |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | (101 on the first run, above) |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **251 audits** (250 + `AuditQrlibLinkage.lean`) |
+| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qrlib-linkage/gate.json` | MATRIX | |
+| docs index | `python3 scripts/build_docs_index.py` | INDEX | |
+| Python | `python3 -m unittest discover -s scripts/tests` | PYTHON | |
+
+`providers/` is unchanged, so the provider gate is not due and was not run.
+Clang 21.1.8 recorded in this worktree. Exits in [gate/](gate/), record in
+[gate.json](gate.json).
 
 ## Corpus arbiter
 
-ARBITERTEXT
+`QCORE_TYPED_PATH_PARITY=OUT/parity.jsonl python3 scripts/run_pinned_audit.py
+OUT 66910c10 --inputs-root …/build/cycle19 --jobs 8`, AFTER only, with the
+card's release `quirin-audit` (`3ebeb068…`): exit 0.
+`resource-diagnostics.json` sha256 `2fc3af8c39f0cf04…` (602 Safe / 10 Unsafe /
+4,222 Unknown) is **byte-identical** to the base's archive (W48-QR-FLOATING-POINT's
+AFTER), and so are `resource-diagnostics.chunk-contracts.json` (`cbbcfd9c…`)
+and `monkey-source.json` (`57acfc58…`)
+([identity](artifacts/arbiter-corpus.identity)). No C-audit path moved.
 
 ## Follow-ups
 
