@@ -679,6 +679,52 @@ fn the_composed_string_route_admits_floats() {
     }
 }
 
+/// `examples/scalar/float_buffer.qr`: the page publishes the reference's
+/// lines, per stream, and the native run under the three builds prints them.
+#[test]
+fn the_float_buffer_example_prints_its_transcript() {
+    let m = admitted(include_str!("../../examples/scalar/float_buffer.qr"));
+    assert_eq!(
+        m.execution_profile,
+        SourceExecutionProfile::StandardBufferV1
+    );
+    let page = include_str!("../../examples/scalar/README.md");
+    for (stream, marker) in [
+        ("out", "float_buffer stdout"),
+        ("err", "float_buffer stderr"),
+    ] {
+        let block = page
+            .split(&format!("<!-- transcript: {marker} -->"))
+            .nth(1)
+            .and_then(|rest| rest.split("```text\n").nth(1))
+            .and_then(|rest| rest.split("```").next())
+            .unwrap_or_else(|| panic!("the page has no `{marker}` transcript"));
+        let published = block
+            .lines()
+            .map(|line| format!("{stream}: {line}"))
+            .collect::<Vec<_>>();
+        let observed = lines(&m)
+            .into_iter()
+            .filter(|line| line.starts_with(&format!("{stream}: ")))
+            .collect::<Vec<_>>();
+        assert_eq!(published, observed, "{marker}");
+    }
+    #[cfg(unix)]
+    {
+        use native::*;
+        let (out, err) = streams(&lines(&m));
+        for (label, flags) in BUILDS {
+            let run = build_and_run(m.c_source.as_deref().unwrap(), flags)
+                .unwrap_or_else(|e| panic!("{label}: {e}"));
+            assert_eq!(
+                (run.stdout.as_str(), run.stderr.as_str()),
+                (out.as_str(), err.as_str())
+            );
+            assert_eq!(run.status, Some(0), "{label}");
+        }
+    }
+}
+
 // ------------------------------------------------------------ payloads
 
 fn float_literal(ty: ScalarType, bits: i128) -> Option<String> {

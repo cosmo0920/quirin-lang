@@ -1,0 +1,48 @@
+// Floats on the byte-buffer route (card W48-QR-FLOAT-BUFFER-PAYLOADS).
+//
+// A record field may be `f32` or `f64`, a float literal binds an `f64`, `as`
+// converts to and from floats, and a value statement computes one IEEE
+// operation — at the top level and in a loop body. Every value on this route
+// is known when the program is checked, so every statement is decided then;
+// the emitted C computes each again. A comparison of floats needs its effect
+// in the row (`partial_ord` here), and a float is never a loop bound: convert
+// it with `as` first.
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+#import std.logger;
+
+type Sample { value: f64, weight: f32 }
+
+fn main() -> unit effects { io, alloc, mut, partial_ord } {
+    let b = bytes(4);
+    let s = Sample { value: 1.5e1, weight: 0.25 };
+    let v = s.value;
+    let half = v / 2.0;
+    print dec half;
+    print hex half;
+    let w = s.weight;
+    let wide = w as f64;
+    let sum = half + wide;
+    print dec sum;
+    let count = sum as i32;
+    print dec count;
+    let limit = 3.75;
+    let n = limit as i32;
+    for i in 0..n {
+        let f = i as f32;
+        let g = f * 0.5;
+        let small = g < 1.0;
+        log info dec small;
+        let at = i % 4;
+        b[at] = 1;
+    }
+    s.weight = -0.0;
+    let z = s.weight;
+    print dec z;
+    let tenth = 0.1 as f32;
+    print hex tenth;
+    drop b;
+    flush;
+    return;
+}
