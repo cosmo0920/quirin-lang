@@ -212,8 +212,8 @@ not by extraction.
 | negative controls | each refused, 85% | **each refused**, each a test row |
 | native runs incl. a real C library | clean, 0 reports, 75% | **clean**, 9 runs, 0 reports |
 | Lean | one module, ~15–25 theorems, 75% | one module, **26** theorems |
-| corpus arbiter | identical to card 1's AFTER `c012e785…` (586 / 10 / 4,238), 95% | @@ARBITER@@ |
-| standing gate first run | green, 50% | @@GATE_FIRST@@ |
+| corpus arbiter | identical to card 1's AFTER `c012e785…` (586 / 10 / 4,238), 95% | **identical**: `c012e785…`, 586 / 10 / 4,238, full hash, sidecars identical |
+| standing gate first run | green, 50% | every gate step 0 on the first run; the Python suite afterwards failed 3 of 365 (two the matrix not yet regenerated, one constraint 29's tripwire on the new survey test's directory walk) |
 | items | 1 (85%), 2 (60%), 3 by value (55%) / with owned fields (25%), 4 (55%), 5 (15%) | **1, 2, 4 done; 3 done by value, not with owned fields; 5 not done** |
 
 Not predicted: the read-after-release correction (found by the survey's own
@@ -223,11 +223,43 @@ cannot state `mut`.
 
 ## Gate
 
-@@GATE@@
+[`gate.json`](gate.json), exits in [`gate/`](gate/), logs private to the
+worktree (`private/w48-c2/gate`), run at `0f486097` by `private/w48-c2/gate.sh`
+(each exit to a file, no step piped):
+
+| Step | Exit | Count |
+|---|---|---|
+| submodule (`--init --recursive`) | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `scripts/run_test_binaries.py` | 0 | 387 units, 400 summaries: 6,809 passed / 0 failed / 11 ignored |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `scripts/check_lean_audits.py` | 0 | 245 audits (244 + `AuditUsableRecords.lean`) |
+| provider suite, `--no-fail-fast` (providers unchanged, run anyway) | 0 | 129 passed / 0 failed / 1 ignored, 43 summaries |
+| matrix (`build_matrix.py --gate gate.json`) | 0 | `named_followups` 637 |
+| docs index | 0 | |
+| Python (`unittest discover -s scripts/tests`) | 0 | 365 tests |
+| Clang | present | Ubuntu clang 21.1.8 ([record](gate/clang-version.txt)) |
+
+The first Python run after the gate failed 3 of 365: two rows were the matrix
+not yet regenerated for the ledger, and the third was constraint 29's
+tripwire, which found a `read_dir` walk in this card's new survey test. The
+survey now lists its cells with the tracked-file helper (an untracked decoy
+cell left in the directory is ignored, measured once); that test, fmt and
+clippy of that target were rerun, each 0, before the matrix, docs index and
+Python ran.
 
 ## Corpus arbiter
 
-@@ARBITER_SECTION@@
+[Identity record](artifacts/arbiter-corpus.identity). `scripts/run_pinned_audit.py`
+at pin `66910c10` over the recorded Cycle-19 inputs, `--jobs 8`, release
+`quirin-audit` (`72288e2f…`) built at `029c7019`, the last commit that changes
+a crate: exit 0; `resource-diagnostics.json` `c012e78506cdb4ca…`, **byte-identical**
+to the base archive (W48-QR-C-STRUCT-IMPORT's AFTER), so 586 Safe / 10 Unsafe /
+4,238 Unknown; `resource-diagnostics.chunk-contracts.json` and
+`monkey-source.json` byte-identical to every archive since card 0. No C
+analysis path changed: the card's code is the `.qr` routes, the ownership
+IR's path generalisation and the driver's `.qr` route selection.
 
 ## Follow-ups
 

@@ -19,6 +19,9 @@ use std::path::{Path, PathBuf};
 use qcore_compiler::scalar_types::{PointerWidth, RecordedTarget};
 use qcore_compiler::{CompileOptions, SourceFile, compile_files_for_target};
 
+#[path = "../../tests/support/tracked_files.rs"]
+mod tracked_files;
+
 fn survey_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/usable_records/survey")
 }
@@ -128,11 +131,15 @@ fn measure(route: &str, file: &str) -> (Option<String>, String) {
 
 fn cells() -> Vec<(String, String, String)> {
     let mut cells = Vec::new();
-    let mut names: Vec<String> = std::fs::read_dir(survey_dir())
-        .unwrap()
-        .map(|entry| entry.unwrap().file_name().into_string().unwrap())
+    // The tracked files only (constraint 29): an untracked or ignored file
+    // left in the directory is not a cell.
+    let names: Vec<String> = tracked_files::tracked_files(&survey_dir())
+        .into_iter()
+        .map(|path| {
+            let relative = path.strip_prefix(survey_dir()).unwrap();
+            relative.to_str().unwrap().to_owned()
+        })
         .collect();
-    names.sort();
     let (names, support): (Vec<String>, Vec<String>) =
         names.into_iter().partition(|name| name.ends_with(".qr"));
     assert_eq!(
@@ -151,9 +158,9 @@ fn cells() -> Vec<(String, String, String)> {
 
 #[test]
 fn every_survey_cell_has_its_pinned_outcome() {
-    // The walk is bounded to this test's own declared fixture directory, and
-    // every file there is a cell or one of the two support files: an extra
-    // file fails the inventory below (constraint 29's first stated walk).
+    // The tracked files of this test's own fixture directory, each a cell or
+    // one of the two support files: an extra tracked file fails the
+    // inventory (constraint 29).
     let mut rows = Vec::new();
     let mut mismatches = Vec::new();
     let expected: BTreeMap<&str, Option<&str>> = EXPECTED.iter().copied().collect();
