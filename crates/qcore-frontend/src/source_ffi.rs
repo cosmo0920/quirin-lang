@@ -1,7 +1,10 @@
 //! Source reading for `source.ffi.v1` (card `W48-QR-C-STRUCT-IMPORT`).
 //!
 //! ```text
-//! module      ::= "#import std.ffi.unsafe;" (import)* (struct_import | extern-decl | entry)*
+//! module      ::= "#import std.ffi.unsafe;" (import)* (struct_import | extern-decl | function)*
+//! function    ::= the entry, or a `.qr` helper (card W48-QR-USABLE-RECORDS):
+//!                 "fn" NAME "(" [NAME ":" (SCALAR | TYPE) {"," …}] ")"
+//!                 ["->" ("unit" | SCALAR | TYPE)] ["effects" "{" … "}"] "{" stmt* "}"
 //! struct_import ::= "struct" "!" "{" "type" NAME "=" "c" STRING "from" STRING ";"
 //!                   "fields" "{" field ("," field)* [","] "}" "}"
 //! field       ::= NAME ":" SCALAR                      -- §G02t
@@ -9,7 +12,9 @@
 //!               | "let" NAME "=" NAME "." NAME ";"
 //!               | ["let" NAME "="] CALLEE "(" [arg ("," arg)*] ")" ["succeeds" outcome] ";"
 //!               | <`print`, `log`, `flush` of §G02g>
-//!               | "return" ";"
+//!               | NAME "." NAME "=" value ";"             -- a listed field (W48-QR-USABLE-RECORDS)
+//!               | "let" NAME "=" NAME ";"                 -- a copy (W48-QR-USABLE-RECORDS)
+//!               | "return" [value] ";"                    -- a value from a helper
 //! assign      ::= NAME ":" value
 //! value       ::= ["-"] INTEGER | "true" | "false" | NAME
 //! outcome     ::= ["-"] INTEGER | "true" | "false" | TYPE "{" assign ("," assign)* [","] "}"

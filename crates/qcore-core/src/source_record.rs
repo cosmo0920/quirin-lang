@@ -32,10 +32,14 @@
 //! exactly what it was. The view-field step (`AGGREGATE-VIEW-FIELD`) stays a
 //! named follow-on with its missing piece stated.
 //!
-//! # Immutable by construction, and what that buys
+//! # Construction is total, and what that buys
 //!
-//! A v1 record is **constructed once and read**; there is no field write
-//! (`AGGREGATE-FIELD-WRITE`). The construction is *total* — every declared field
+//! Card `W48-QR-USABLE-RECORDS` added the field write
+//! ([`RecordValue::write_path`]: one field replaced, nothing else) and the
+//! record field ([`FieldType::Record`], a record held by value, the
+//! declaration graph acyclic — [`admit_graph`]). Neither weakens what follows:
+//! a write replaces a value the construction supplied, so every declared
+//! path still has one. The construction is *total* — every declared field
 //! is supplied exactly once, checked here — so a constructed value has a value
 //! for every field it can be asked for, and [`RecordValue::project`] is total on
 //! the declared field names. That totality is what makes the field-access rule a
@@ -78,7 +82,7 @@ pub const MAX_FIELDS: usize = 32;
 
 /// The type of a record field.
 ///
-/// Two constructors. A **scalar** field is one type of the §G02t fixed-width
+/// Three constructors. A **scalar** field is one type of the §G02t fixed-width
 /// table (card `W48-QR-SCALAR-TYPES-R3`; before it, `i32` only): a field read
 /// binds a value of exactly that type, which the admitting route then checks
 /// at every position it reaches — `i32` is the one its indices, stored bytes
@@ -87,7 +91,9 @@ pub const MAX_FIELDS: usize = 32;
 /// rather than the task route's `Buffer`, because that word names a different
 /// resource (`qcore_buffer_new`'s four-byte payload) with a different model,
 /// and a field type that spelled one while meaning the other would be a
-/// collision by design. Widening this enum further is `AGGREGATE-FIELD-TYPES`.
+/// collision by design. A **record** field (card `W48-QR-USABLE-RECORDS`)
+/// holds another declared record by value. Widening this enum further is
+/// `AGGREGATE-FIELD-TYPES`.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum FieldType {
     /// A §G02t scalar, held by value.
@@ -489,7 +495,8 @@ impl RecordValue {
     /// value at `path` and nothing else. Returns the value the path held, or
     /// `None` — changing nothing — when the path is not a declared path of
     /// this value. `QCore.UsableRecords.write_changes_exactly_that_field` and
-    /// `…_leaves_every_other_path` are the Lean statements.
+    /// `QCore.UsableRecords.write_leaves_every_other_path` are the Lean
+    /// statements.
     pub fn write_path(&mut self, path: &[String], value: FieldValue) -> Option<FieldValue> {
         let (first, rest) = path.split_first()?;
         let slot = self.fields.get_mut(first)?;
@@ -1071,8 +1078,10 @@ pub fn admit_types(declared: &[RecordType]) -> Result<BTreeMap<String, RecordTyp
 /// longer than [`MAX_NESTING`], and no type's expanded tree has more than
 /// [`MAX_LEAVES`] leaves. With the graph acyclic every value is a finite tree
 /// and every walk over one — construction, projection, the drop-through, the
-/// emitted C's member order — ends; `QCore.UsableRecords.acyclic_depth_bounds_every_path`
-/// is the Lean statement. Checked in declaration order, so the first
+/// emitted C's member order — ends. The Lean model's values are finite trees
+/// by construction (`QCore.UsableRecords.Val`); the graph check itself is
+/// pinned by `compiler/tests/owned_field_route_reach.rs` and
+/// `compiler/tests/usable_records.rs`. Checked in declaration order, so the first
 /// offending declaration is the one reported. A record field naming a type
 /// the module does not declare cannot reach here: the reader classifies the
 /// spelling against the module's declared names.

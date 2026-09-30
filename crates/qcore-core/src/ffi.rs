@@ -12,10 +12,12 @@
 //!   the listed order must be the members' offset order. Nothing about the
 //!   layout is declared by hand: the listing names fields and types only, and
 //!   the offsets, the size and the alignment are the compiler's.
-//! * [`check_ffi_program`]: the one entry's statements — construction and field
-//!   reads of imported records (§G07.13's construct-then-read, over the listed
-//!   fields only), calls through admitted callees, and rendered lines — with
-//!   the reference observation and the certificate.
+//! * [`check_ffi_program`]: the entry's statements — construction, field reads
+//!   and (card `W48-QR-USABLE-RECORDS`) field writes and copies of imported
+//!   records, over the listed fields only; calls through admitted callees;
+//!   calls of the file's `.qr` helper functions, which take and return
+//!   imported records by value and are checked at every call; and rendered
+//!   lines — with the reference observation and the certificate.
 //! * [`recheck_ffi_certificate`]: the certificate rederived and compared.
 //!
 //! # The trust mark

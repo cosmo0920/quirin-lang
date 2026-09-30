@@ -3,13 +3,16 @@
 //!
 //! ```text
 //! decl    ::= "type" NAME "{" FIELD ":" FTYPE { "," FIELD ":" FTYPE } [","] "}"
-//! FTYPE   ::= "i32" | "bytes"                -- `bytes`: card AGGREGATE-OWNED-FIELD
+//! FTYPE   ::= SCALAR | "bytes" | RECORD      -- `bytes`: AGGREGATE-OWNED-FIELD;
+//!                                            -- RECORD: W48-QR-USABLE-RECORDS
+//! PATH    ::= "." FIELD { "." FIELD }        -- W48-QR-USABLE-RECORDS
 //! stmt    ::= "let" NAME "=" TYPE "{" FIELD ":" OPERAND
 //!                                     { "," FIELD ":" OPERAND } [","] "}" ";"
-//!           | "let" NAME "=" NAME "." FIELD ";"            -- field read, or move out
-//!           | "let" NAME "=" NAME "." FIELD "[" OPERAND "]" ";"   -- load through a field
-//!           | NAME "." FIELD "[" OPERAND "]" "=" OPERAND ";"      -- store through a field
-//!           | "drop" NAME "." FIELD ";"                            -- release one field
+//!           | "let" NAME "=" NAME PATH ";"                 -- field read, or move out
+//!           | "let" NAME "=" NAME PATH "[" OPERAND "]" ";" -- load through a field
+//!           | NAME PATH "[" OPERAND "]" "=" OPERAND ";"    -- store through a field
+//!           | NAME PATH "=" VALUE ";"                      -- field write (refill)
+//!           | "drop" NAME PATH ";"                         -- release one field
 //! OPERAND ::= ["-"] INTEGER | NAME          -- `source.buffer.v1`'s own
 //! ```
 //!
@@ -71,13 +74,12 @@
 //!
 //! # What this lowering does not establish
 //!
-//! No field write (`AGGREGATE-FIELD-WRITE`), no view field
-//! (`AGGREGATE-VIEW-FIELD`), no nested record (`AGGREGATE-NESTED`), no
-//! record-valued parameter or result (`AGGREGATE-ACROSS-CALL`), and no field
-//! type but `i32` and `bytes` (`AGGREGATE-FIELD-TYPES`). Each is a named
-//! follow-on in `docs/reports/aggregates-v1/README.md` §12 — and, for the
-//! owned field's own boundaries, `docs/reports/aggregate-owned-field/README.md`
-//! — with its missing capability stated.
+//! No view field (`AGGREGATE-VIEW-FIELD`), no field type but a scalar, `bytes`
+//! or a record (`AGGREGATE-FIELD-TYPES`), no whole sub-record write
+//! (`W48-QR-RECORD-FIELD-WHOLE-WRITE`). Card `W48-QR-USABLE-RECORDS` landed the
+//! field write, the nested record and — on `source.scalar-calls.v1` — the
+//! record-valued parameter and result; its report is
+//! `docs/reports/w48-qr-usable-records/README.md`.
 
 use crate::frontend::{DeclarationKind, SourceBlock, SourceProgram};
 use crate::lexer::{Span, Symbol, Token, TokenKind};
