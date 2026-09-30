@@ -246,9 +246,9 @@ at that tip:
 | follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
 | Lean | `python3 scripts/check_lean_audits.py` | 0 | **251 audits** (250 + `AuditQrlibLinkage.lean`) |
 | provider suite | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | 129 passed, 0 failed, 1 ignored, 43 summaries (`providers/` unchanged) |
-| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qrlib-linkage/gate.json` | MATRIX | |
-| docs index | `python3 scripts/build_docs_index.py` | INDEX | |
-| Python | `python3 -m unittest discover -s scripts/tests` | PYTHON | |
+| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qrlib-linkage/gate.json` | 0 | |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | **365 tests OK** (after the matrix) |
 
 `providers/` is unchanged, so the provider gate is not due; the provider suite was run anyway because the matrix records its count: `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` exit 0, 129 passed, 0 failed, 1 ignored, 43 summaries.
 Clang 21.1.8 recorded in this worktree. Exits in [gate/](gate/), record in
