@@ -26,7 +26,7 @@ def main():
     runs = pathlib.Path(sys.argv[1])
     slices = pathlib.Path(sys.argv[2])
     out = {}
-    for run in ("before", "after1", "after2"):
+    for run in ("before", "after1", "after2", "after3"):
         directory = runs / run
         out[run] = {
             path.name: digest(path)
@@ -48,7 +48,7 @@ def main():
         "corpus arbiter scripts/run_pinned_audit.py 66910c10 --jobs 4 over "
         "/home/cosmo/Documents/GitHub/qcore-c/build/cycle19; BEFORE at base c374de96 (binary built "
         "there); after1 at 1937b10f; after2 binary built from dd84ce7b's sources (its recorded head "
-        "56ffcc9f differs from dd84ce7b only in tests/storage_duration_volatile.rs). System route "
+        "56ffcc9f differs from dd84ce7b only in tests/storage_duration_volatile.rs); after3 at 8b556dc0 (the final sources but a `#[cfg(test)]` on a function the release build never calls), byte-identical to after2 in every artifact. System route "
         "and tail-pause slice per scripts/measure.sh."
     )
     with open(sys.argv[3], "w") as handle:
