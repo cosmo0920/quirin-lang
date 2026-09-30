@@ -66,6 +66,6 @@ it as a number.
 | native boundary table (f32, f64: ±0, ±min/max subnormal, ±min normal, ±max, ±1, NaN, ±inf, around 2^24/2^53; every operation, conversion, comparison) at `-O0`/`-O2` UBSan and plain `-O2`, `-ffp-contract=off`, `-Wall -Wextra -Werror -pedantic` | bit-identical to the reference (NaN compared as NaN), every float → int fault on the typed path, 0 sanitizer reports | 75% |
 | native renderer vs the Rust reference (boundary table plus a seeded random sample) | byte-identical | 70% |
 | Lean | one new module and audit, ~10–20 theorems, no placeholder or project axiom | 75% |
-| corpus arbiter `resource-diagnostics.json` | identical to the base's archive (`c012e785…`) — no C-audit path touched | 95% |
+| corpus arbiter `resource-diagnostics.json` | identical to the base's archive (`2fc3af8c…`, 602 / 10 / 4,222, W48-QR-CLOSURES' AFTER = CG08's) — no C-audit path touched | 95% |
 | standing gate first run | green | 40% |
 | items completed | 1 (80%); 2 in full (35%), records + extern values at least (65%); 3 (55%) | |
