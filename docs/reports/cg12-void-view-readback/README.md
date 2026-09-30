@@ -278,3 +278,35 @@ mutation +3, indirect-access +1 (moved). System +2 (the same two functions),
 slice unchanged in status (one function's leaves). No Safe → non-Safe, no
 leak or violation added, no Unsafe changed. On the final merge the 116
 readback sites and the 58 residual M05 leaves are unchanged.
+
+## 10. Gate
+
+`scripts/gate.sh` runs the standing gate; exits under [`gate/`](gate/).
+
+**The full gate was stopped at the shared-host disk threshold.** On the
+final merge the test build of `scripts/run_test_binaries.py` took this
+worktree's `target/` to 25 GB while free disk fell from 48 GB to 23 GB (the
+brief's floor is 40 GB). The run was stopped (its captured task only),
+`cargo clean --profile dev` freed the build (48 GB free again), and no build
+was restarted. What ran:
+
+| Step | Exit | Figures |
+|---|---:|---|
+| submodule update | 0 | |
+| `python3 scripts/run_test_binaries.py` | **not completed** (stopped mid-build) | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 on `cbfa044e` (base plus `b59aaae2`); not re-run after the later merges | |
+| reevaluation probe / follow-up | not run | |
+| `python3 scripts/check_lean_audits.py` | 0 | 259 audits (258 on main + `AuditVoidViewReadback.lean`) |
+| `build_matrix.py .` (gate figures carried, labelled as such) | 0 | derived Lean audits 258 → 259 |
+| `python3 -m unittest discover -s scripts/tests` | 1, then **0** after the regeneration | 365 |
+
+Targeted Rust evidence: `qcore-c-gateway`'s whole suite on the base (2,164
+passed, 4 failed: the four pins §4 flips, since updated), then every touched
+and adjacent target on the `fe9c5b48` merge (`cg12_void_view_readback` 8,
+`clang_gap_phase2` 14, `indirect_chain_access` 15, `sub_object_stores` 22,
+`typed_const_pointer_value` 7, `cg14_aggregate_values` 9,
+`w48_callee_closure_r3` 4, `access_path_statements` 7, all passed). The
+workspace suite, clippy on the final tree and the two probes are owed to the
+integrator's check. `providers/` is untouched, so the provider gate is not
+due.
