@@ -233,13 +233,17 @@ fn atomic_spelling_extracts_orders_without_claiming_synchronization() {
         check(&relaxed_load).unwrap().load_order,
         AtomicPublicationOrder::Relaxed
     );
+    // Flipped by card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): an
+    // `_Atomic` simple assignment is a sequentially consistent store (C11
+    // 6.5.16.1p2, 7.17.7), read through the atomic source route. BEFORE it
+    // was refused as an unsupported publisher.
     let ordinary_store = SOURCE.replace(
         "atomic_store_explicit(&done, 1, memory_order_release);",
         "done = 1;",
     );
     assert_eq!(
-        check(&ordinary_store),
-        Err(AtomicPublicationSourceRefusal::UnsupportedPublisher)
+        check(&ordinary_store).unwrap().store_order,
+        AtomicPublicationOrder::SequentiallyConsistent
     );
     let shadowed_order = SOURCE.replace(
         "void publish(void) {",
@@ -415,4 +419,90 @@ fn memory_order_enum_values_are_semantic_not_name_only() {
             "{to}"
         );
     }
+}
+
+/// Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): publication beyond the
+/// one `atomic_*_explicit` shape, each derived stage recorded, and the route's
+/// named refusals.
+#[test]
+fn cg19_publication_forms_through_the_atomic_route() {
+    if !clang_available() {
+        return;
+    }
+    // Clang's builtins with literal orders: no `memory_order` enumeration.
+    let builtins = r#"
+static _Atomic int done = 0;
+static int payload;
+void publish(void) { payload = 7; __c11_atomic_store(&done, 1, __ATOMIC_RELEASE); }
+int consume(void) { int seen = __c11_atomic_load(&done, __ATOMIC_ACQUIRE); if (seen != 1) return 0; return payload; }
+"#;
+    let certificate = check(builtins).unwrap();
+    assert_eq!(certificate.store_order, AtomicPublicationOrder::Release);
+    assert_eq!(certificate.load_order, AtomicPublicationOrder::Acquire);
+    assert_eq!(certificate.stages.initialise, "static `done` = 0");
+    assert!(certificate.stages.publish.contains("__c11_atomic_store"));
+    assert!(certificate.stages.observe.contains("`seen != 1`"));
+    assert_eq!(
+        certificate.stages.reclaim,
+        "not derived: reclamation is outside this route (CG29)"
+    );
+    // GNU builtins on a non-`_Atomic` flag every access of which is one.
+    let gnu = r#"
+static int done = 0;
+static int payload;
+void publish(void) { payload = 7; __atomic_store_n(&done, 1, __ATOMIC_RELEASE); }
+int consume(void) { int seen = __atomic_load_n(&done, __ATOMIC_ACQUIRE); if (seen == 1) return payload; return 0; }
+"#;
+    let certificate = check(gnu).unwrap();
+    assert!(certificate.stages.observe.contains("`seen == 1`"));
+    assert!(
+        certificate
+            .assumptions
+            .iter()
+            .any(|a| a.starts_with("GNU __atomic builtins on a non-_Atomic int object"))
+    );
+    // One GNU access and one plain access: not the GNU atomic reading; the
+    // plain arm's shape reads no builtin store.
+    let mixed = gnu.replace("__atomic_load_n(&done, __ATOMIC_ACQUIRE)", "done");
+    assert_eq!(
+        check(&mixed),
+        Err(AtomicPublicationSourceRefusal::UnsupportedPublisher)
+    );
+    // `_Atomic` operator forms: sequentially consistent both ways.
+    let qualified = SOURCE
+        .replace("atomic_store_explicit(&done, 1, memory_order_release);", "done = 1;")
+        .replace("atomic_load_explicit(&done, memory_order_acquire)", "done");
+    let certificate = check(&qualified).unwrap();
+    assert_eq!(
+        (certificate.store_order, certificate.load_order),
+        (
+            AtomicPublicationOrder::SequentiallyConsistent,
+            AtomicPublicationOrder::SequentiallyConsistent
+        )
+    );
+    // A consume load and a read-modify-write are refused by the route's name.
+    let consume = SOURCE.replace("memory_order_acquire", "memory_order_consume");
+    assert_eq!(
+        check(&consume),
+        Err(AtomicPublicationSourceRefusal::NamedAtomicRefusal(
+            "memory_order_consume load `__c11_atomic_load` is not represented by the weak-memory model (CG28)".into()
+        ))
+    );
+    let exchange = SOURCE.replace(
+        "atomic_store_explicit(&done, 1, memory_order_release);",
+        "atomic_exchange_explicit(&done, 1, memory_order_release);",
+    );
+    assert_eq!(
+        check(&exchange),
+        Err(AtomicPublicationSourceRefusal::NamedAtomicRefusal(
+            "atomic read-modify-write `__c11_atomic_exchange` is not represented by the weak-memory model (CG28)".into()
+        ))
+    );
+    // A test that reads the payload on the branch that did NOT observe the
+    // ready value is not a publication shape.
+    let inverted = gnu.replace("if (seen == 1) return payload; return 0;", "if (seen != 1) return payload; return 0;");
+    assert_eq!(
+        check(&inverted),
+        Err(AtomicPublicationSourceRefusal::UnsupportedConsumer)
+    );
 }

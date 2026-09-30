@@ -1,0 +1,48 @@
+{
+ "functions": 3,
+ "leaves": 3,
+ "by_builtin": {
+  "__atomic_compare_exchange": 1,
+  "__atomic_load_n": 1,
+  "__atomic_store_n": 1
+ },
+ "by_description": {
+  "call to uncontracted function `__atomic_compare_exchange`": 1,
+  "call to uncontracted function `__atomic_load_n`": 1,
+  "call to uncontracted function `__atomic_store_n`": 1
+ },
+ "functions_with_only_atomic_leaves": [
+  "cmt_atomic_clang.c::cmt_atomic_compare_exchange",
+  "cmt_atomic_clang.c::cmt_atomic_load",
+  "cmt_atomic_clang.c::cmt_atomic_store"
+ ],
+ "rows": [
+  {
+   "unit": "cmt_atomic_clang.c",
+   "function": "cmt_atomic_compare_exchange",
+   "status": "Unknown",
+   "atomic_leaves": {
+    "call to uncontracted function `__atomic_compare_exchange`": 1
+   },
+   "only_atomic_leaves": true
+  },
+  {
+   "unit": "cmt_atomic_clang.c",
+   "function": "cmt_atomic_load",
+   "status": "Unknown",
+   "atomic_leaves": {
+    "call to uncontracted function `__atomic_load_n`": 1
+   },
+   "only_atomic_leaves": true
+  },
+  {
+   "unit": "cmt_atomic_clang.c",
+   "function": "cmt_atomic_store",
+   "status": "Unknown",
+   "atomic_leaves": {
+    "call to uncontracted function `__atomic_store_n`": 1
+   },
+   "only_atomic_leaves": true
+  }
+ ]
+}
