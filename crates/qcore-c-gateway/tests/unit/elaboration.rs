@@ -360,13 +360,14 @@ fn cg02_unlisted_and_out_of_scope_forms_are_refused_by_name() {
             "int subject(volatile int v) { int x = 0; x = v++; return x; }",
             "volatile access",
         ),
+        // Card CG07 (rule 11g) flipped the `generic selection` and
+        // `statement expression` rows that stood here: the selected
+        // association and a straight-line block are elaborated, pinned by
+        // `cg07_selection_and_block_elaboration`; a block with a control
+        // statement keeps a refusal by name.
         (
-            "int subject(int a) { int x = 0; x = _Generic(a, int: a++, default: 0); return x; }",
-            "generic selection",
-        ),
-        (
-            "int subject(int a) { int x = 0; x = ({ a++; a; }); return x; }",
-            "statement expression",
+            "int subject(int a) { int x = 0; x = ({ if (a) a++; a; }); return x; }",
+            "statement expression control",
         ),
         (
             "struct P { int a; }; int subject(int a) { int x = 0; x = (struct P){ a++ }.a; return x; }",
@@ -712,4 +713,103 @@ fn cg08_casts_and_type_queries_are_elaborated_by_their_rows() {
         run("void f(unsigned long n); void subject(int n) { f(sizeof(char[n++])); }").err(),
         Some(refused("type query operand"))
     );
+}
+
+/// Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): only Clang's
+/// selected association is elaborated; a straight-line statement expression
+/// is its inner full expressions in order, each inner object's lifetime from
+/// its declaration to after the value, and the whole before its value's use.
+#[test]
+fn cg07_selection_and_block_elaboration() {
+    if !clang_available() {
+        return;
+    }
+    // The selected association's increment, and nothing of the controlling
+    // expression's or the unselected association's.
+    let selected = run(
+        "int subject(int a, int b) { int x = 0; x = _Generic(b++, int: a++, default: b--); return x; }",
+    )
+    .unwrap();
+    assert!(selected.graph.events.iter().any(object("a")));
+    assert!(!selected.graph.events.iter().any(object("b")), "{selected:?}");
+    let selected = run(
+        "int subject(int a, long b) { int x = 0; x = _Generic(b, int: a++, default: 7); return x; }",
+    )
+    .unwrap();
+    assert!(!selected.graph.events.iter().any(object("a")), "{selected:?}");
+    // A block: `t`'s lifetime starts, `t` is written, read into the value,
+    // then its lifetime ends, all before the write of `x`.
+    let block =
+        run("int subject(int a) { int x = 0; x = ({ int t = a; t + 1; }); return x; }").unwrap();
+    let events = &block.graph.events;
+    let position = |wanted: &dyn Fn(&Event) -> bool| events.iter().position(wanted).unwrap();
+    let named = |place: &Place, wanted: &str| matches!(place, Place::Object { name, .. } if name == wanted);
+    let start = position(&|e| matches!(e, Event::LifetimeStart(p) if named(p, "t")));
+    let end = position(&|e| matches!(e, Event::LifetimeEnd(p) if named(p, "t")));
+    let store = position(&|e| matches!(e, Event::Write { place, .. } if named(place, "x")));
+    assert!(block.graph.sequenced(start, end));
+    assert!(block.graph.sequenced(end, store), "{block:?}");
+    // Inner full expressions are sequenced: `a++; a++;` inside a block is no
+    // unsequenced pair.
+    assert!(run("int subject(int a) { int x = 0; x = ({ a++; a++; a; }); return x; }").is_ok());
+    // The block is unsequenced with a sibling operand: a write inside it
+    // against a read of the same object outside is refused.
+    assert!(matches!(
+        run("int subject(int a) { int x = 0; x = a + ({ a = 2; 1; }); return x; }"),
+        Err(Refusal::UnsequencedConflict(_))
+    ));
+    // A pointer value where the block takes an inner address.
+    assert!(matches!(
+        run("int *subject(void) { int *p = 0; p = ({ int t = 1; &t; }); return p; }"),
+        Err(Refusal::InnerEscape(name)) if name == "t"
+    ));
+    assert_eq!(
+        run("int subject(int a) { int x = 0; x = ({ while (a) a--; a; }); return x; }").err(),
+        Some(refused("statement expression control"))
+    );
+}
+
+/// `proof/QCore/StatementExpressions.lean`'s `lifetimeVectors` against
+/// `commutes`: a lifetime event touches its own object only.
+#[test]
+fn cg07_lifetime_vectors_match_commutes() {
+    let lean = include_str!("../../../../proof/QCore/StatementExpressions.lean");
+    let body = lean
+        .split("def lifetimeVectors : List (LEv × LEv × Bool) := [")
+        .nth(1)
+        .unwrap();
+    let body = &body[..body.find("\n]").unwrap()];
+    let place = |n: &str| Place::Object {
+        decl: n.to_owned(),
+        name: format!("o{n}"),
+    };
+    let event = |text: &str| -> Event {
+        let text = text.trim().trim_start_matches('(').trim();
+        let (head, arg) = text.split_once(' ').unwrap();
+        let p = place(arg.trim().trim_end_matches(')'));
+        match head {
+            ".start" => Event::LifetimeStart(p),
+            ".stop" => Event::LifetimeEnd(p),
+            ".read" => Event::Read(p),
+            ".write" => Event::Write {
+                place: p,
+                pointer: false,
+            },
+            other => panic!("unknown {other}"),
+        }
+    };
+    let mut rows = 0;
+    for line in body.lines().map(str::trim).filter(|l| l.starts_with('(')) {
+        let fields = line
+            .trim_end_matches(',')
+            .trim_end_matches(')')
+            .split(", ")
+            .collect::<Vec<_>>();
+        let (a, b) = (event(fields[0]), event(fields[1]));
+        let expected = fields[2].trim() == "true";
+        let decided = commutes(&a, &b, &|_| true) == Commutation::Commutes;
+        assert_eq!(decided, expected, "{line}");
+        rows += 1;
+    }
+    assert!(rows >= 6);
 }

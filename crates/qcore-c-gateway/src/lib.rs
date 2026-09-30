@@ -101,6 +101,11 @@ mod union_bitfield;
 // Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): value regions and
 // their order premise; the G hooks are in `legacy_value_connective.rs`.
 mod value_connective;
+// Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): Clang's selected
+// `_Generic` association and GNU statement expressions; the G hooks are in
+// `legacy_statement_expression.rs` and `legacy_generic_selection.rs`.
+mod generic_association;
+mod statement_expression;
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l).
 pub mod typed_c_ast;
 // Card W47-LOOP-OWNER-TYPED-DISPATCH (rule 10p amendment): the record type
