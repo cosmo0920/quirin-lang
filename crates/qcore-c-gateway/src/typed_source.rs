@@ -2100,3 +2100,7 @@ mod symbol_tests;
 #[cfg(test)]
 #[path = "../tests/unit/source_operators.rs"]
 mod operators_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/source_control.rs"]
+mod control_tests;

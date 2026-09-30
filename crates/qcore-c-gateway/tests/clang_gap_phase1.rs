@@ -813,22 +813,92 @@ fn n08_floating_conversions_have_no_representation_in_t() {
 // CG09 — typed-source control (C01 C02 C03)
 // ---------------------------------------------------------------------------
 
+// After CG09-TYPED-SOURCE-CONTROL (rule 11l) route T reads every C01–C03
+// statement. The legacy consumer behind `import_source_functions` refuses each
+// by name; an admitting consumer (`t_control`) lowers the acyclic forms, and
+// every back-edge stays refused in every consumer (no invariant or summary:
+// CG27). The BEFORE refusals are in CG09's report.
+
+/// T over one function `subject` under a consumer admitting every acyclic
+/// control form (as the Monkey wrapper projection does).
+fn t_control(source: &str) -> Result<qcore_c_gateway::typed_source::SourceSummary, String> {
+    use qcore_c_gateway::legacy_c::C11TranslationUnit;
+    use qcore_c_gateway::typed_source::{
+        ControlAdmission, SourceImportProfile, SourceResult,
+        import_source_functions_admitting_control,
+    };
+    use qcore_c_gateway::typed_source_nodes::NodeAdmission;
+    const ACYCLIC: ControlAdmission = ControlAdmission::new(
+        "CG00 control consumer",
+        &["switch", "break", "continue", "goto"],
+    );
+    let results = import_source_functions_admitting_control(
+        &C11TranslationUnit {
+            source,
+            ..Default::default()
+        },
+        "cg00",
+        &["subject"],
+        &SourceImportProfile {
+            records: &[],
+            sizeof_types: T_SIZEOF,
+            signature_constraints: &[],
+            restricted_calls: &[],
+        },
+        &NodeAdmission::LEGACY,
+        &ACYCLIC,
+    )
+    .unwrap();
+    match results.into_iter().next() {
+        Some(SourceResult::Summary(summary)) => Ok(summary),
+        Some(SourceResult::Unknown { reason, .. }) => Err(reason),
+        None => panic!("T returned no result"),
+    }
+}
+
+fn not_admitted(form: &str, consumer: &str) -> String {
+    format!("typed-source control `{form}` is not admitted by the {consumer}")
+}
+
+fn back_edge(form: &str, consumer: &str) -> String {
+    format!(
+        "typed-source control `{form}` has a back-edge, and the {consumer} supplies no \
+         invariant or summary for it (CG27)"
+    )
+}
+
+const LEGACY_T: &str = "legacy typed-source consumer";
+
 #[test]
-fn c01_t_has_no_general_loops() {
+fn c01_t_reads_general_loops_and_refuses_each_back_edge_by_name() {
     if !clang_available() {
         return;
     }
+    let while_loop = "int subject(int a) { while (a) { a = 0; } return a; }";
+    let for_loop = "int subject(int a) { int i; for (i = 0; i < a; i++) { a = 0; } return a; }";
+    let do_loop = "int subject(int a) { do { a = 0; } while (a); return a; }";
+    assert_eq!(t_refusal(while_loop), back_edge("loop while", LEGACY_T));
     assert_eq!(
-        t_refusal("int subject(int a) { while (a) { a = 0; } return a; }"),
-        "unmodeled callback statement WhileStmt"
+        t_refusal(for_loop),
+        format!(
+            "{}; not a canonical scan: scan body requires one conditional early return",
+            back_edge("loop for", LEGACY_T)
+        )
+    );
+    assert_eq!(t_refusal(do_loop), back_edge("loop do", LEGACY_T));
+    // An admitting consumer refuses them too: no invariant or summary exists.
+    assert_eq!(
+        t_control(while_loop).unwrap_err(),
+        back_edge("loop while", "CG00 control consumer")
+    );
+    assert!(
+        t_control(for_loop)
+            .unwrap_err()
+            .starts_with(&back_edge("loop for", "CG00 control consumer"))
     );
     assert_eq!(
-        t_refusal("int subject(int a) { int i; for (i = 0; i < a; i++) { a = 0; } return a; }"),
-        "scan body requires one conditional early return"
-    );
-    assert_eq!(
-        t_refusal("int subject(int a) { do { a = 0; } while (a); return a; }"),
-        "do loop requires a literal zero condition"
+        t_control(do_loop).unwrap_err(),
+        back_edge("loop do", "CG00 control consumer")
     );
     // G has general loop CFGs.
     assert!(
@@ -837,29 +907,45 @@ fn c01_t_has_no_general_loops() {
 }
 
 #[test]
-fn c02_t_has_no_switch() {
+fn c02_t_lowers_switch_where_the_consumer_admits_it() {
     if !clang_available() {
         return;
     }
-    assert_eq!(
-        t_refusal("int subject(int a) { switch (a) { case 1: return 1; default: return 0; } }"),
-        "unmodeled callback statement SwitchStmt"
-    );
+    let source = "int subject(int a) { switch (a) { case 1: return 1; default: return 0; } }";
+    assert_eq!(t_refusal(source), not_admitted("switch", LEGACY_T));
+    // One path per label: `a == 1` taken, and `a == 1` not taken (default).
+    assert_eq!(t_control(source).unwrap().paths().len(), 2);
     assert!(gs("void subject(int n) { void *p = q_alloc(); switch (n) { case 1: break; default: break; } q_free(p); }").safe());
 }
 
 #[test]
-fn c03_t_has_no_jumps() {
+fn c03_t_lowers_forward_jumps_where_the_consumer_admits_them() {
     if !clang_available() {
         return;
     }
+    let goto = "int subject(int a) { if (a) goto out; a = 1; out: return a; }";
+    assert_eq!(t_refusal(goto), not_admitted("goto", LEGACY_T));
+    assert_eq!(t_control(goto).unwrap().paths().len(), 2);
+    // A `break` in a loop: the loop is refused first (its back-edge).
+    let loop_break = "int subject(int a) { int i; for (i = 0; i < a; i++) { break; } return a; }";
     assert_eq!(
-        t_refusal("int subject(int a) { if (a) goto out; a = 1; out: return a; }"),
-        "unmodeled callback statement GotoStmt"
+        t_refusal(loop_break),
+        format!(
+            "{}; not a canonical scan: {}",
+            back_edge("loop for", LEGACY_T),
+            not_admitted("break", LEGACY_T)
+        )
     );
+    // A `break` out of a `switch` or `do … while (0)` is acyclic and lowered.
+    let switch_break = "int subject(int a) { switch (a) { case 1: break; } return a; }";
+    assert_eq!(t_refusal(switch_break), not_admitted("switch", LEGACY_T));
+    assert_eq!(t_control(switch_break).unwrap().paths().len(), 2);
     assert_eq!(
-        t_refusal("int subject(int a) { int i; for (i = 0; i < a; i++) { break; } return a; }"),
-        "unmodeled callback statement BreakStmt"
+        t_control("int subject(int a) { do { if (a) break; a = 1; } while (0); return a; }")
+            .unwrap()
+            .paths()
+            .len(),
+        2
     );
     assert!(
         gs("void subject(int n) { void *p = q_alloc(); if (n) goto out; n = 1; out: q_free(p); }")

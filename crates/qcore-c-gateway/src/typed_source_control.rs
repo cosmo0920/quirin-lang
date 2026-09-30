@@ -99,7 +99,9 @@ pub const CONTROL_STATEMENTS: [(&str, &str); 8] = [
 
 /// The intrinsic facts of a control form, by spelling.
 pub fn control_facts(spelling: &str) -> Option<&'static ControlFacts> {
-    CONTROL_TABLE.iter().find(|facts| facts.spelling == spelling)
+    CONTROL_TABLE
+        .iter()
+        .find(|facts| facts.spelling == spelling)
 }
 
 /// One consumer's list of the control forms it decides. Validated before any
@@ -282,7 +284,9 @@ impl Importer<'_> {
         match (kind(node), children(node)) {
             ("CaseStmt", [constant, inner]) => {
                 if c_type(constant)? != ty {
-                    return Err("switch case constant type differs from its controlling type".into());
+                    return Err(
+                        "switch case constant type differs from its controlling type".into(),
+                    );
                 }
                 let constant = self.case_constant(constant, depth + 1)?;
                 if effects(&constant) != (false, false) {
@@ -311,13 +315,11 @@ impl Importer<'_> {
     fn case_constant(&mut self, node: &Value, depth: usize) -> Result<Expr, String> {
         match (kind(node), children(node)) {
             ("ConstantExpr", [inner]) => self.expression(inner, depth + 1),
-            ("ImplicitCastExpr", [inner]) if node["castKind"] == "IntegralCast" => {
-                Ok(Expr::Cast(
-                    c_type(node)?,
-                    "IntegralCast".into(),
-                    Box::new(self.case_constant(inner, depth + 1)?),
-                ))
-            }
+            ("ImplicitCastExpr", [inner]) if node["castKind"] == "IntegralCast" => Ok(Expr::Cast(
+                c_type(node)?,
+                "IntegralCast".into(),
+                Box::new(self.case_constant(inner, depth + 1)?),
+            )),
             _ => Err("switch case label is not a constant expression".into()),
         }
     }
@@ -364,9 +366,9 @@ fn contains_label(statement: &Stmt, label: &str) -> bool {
             contains_label(yes, label) || no.as_ref().is_some_and(|no| contains_label(no, label))
         }
         Stmt::DoOnce(body, _) | Stmt::ScanLoop(body, ..) => contains_label(body, label),
-        Stmt::Switch(_, items) => items.iter().any(|item| {
-            matches!(item, SwitchItem::Statement(inner) if contains_label(inner, label))
-        }),
+        Stmt::Switch(_, items) => items.iter().any(
+            |item| matches!(item, SwitchItem::Statement(inner) if contains_label(inner, label)),
+        ),
         _ => false,
     }
 }
