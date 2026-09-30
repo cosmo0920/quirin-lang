@@ -1569,6 +1569,10 @@ fn is_written_at(body: &[&str], index: usize) -> bool {
 /// formal the projection already protects is bound at entry. This is a syntactic
 /// over-approximation on purpose: naming too many bases only rejects more.
 fn bound_names(body: &[&str], protected_formals: &BTreeSet<String>) -> BTreeSet<String> {
+    // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): a static-duration
+    // declaration's initialization is no write of the body.
+    let masked = crate::storage_duration::mask_static_declarators(body);
+    let body = masked.as_slice();
     let mut bound = protected_formals.clone();
     let mut argument_depth = 0usize;
     let mut call_closes: BTreeSet<usize> = BTreeSet::new();

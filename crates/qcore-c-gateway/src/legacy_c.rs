@@ -180,6 +180,12 @@ mod field_link_join_route;
 #[path = "legacy_cast_representation.rs"]
 mod cast_representation_route;
 
+// Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): a static-duration
+// declaration is no event, and `volatile` objects carry no value-derived
+// fact. The hooks below naming the card are thin.
+#[path = "legacy_storage_duration.rs"]
+mod storage_duration_route;
+
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the P3 residual shapes
 // C's evaluation order admits. Hooks are thin.
 #[path = "legacy_typed_residuals.rs"]
@@ -3248,6 +3254,13 @@ fn build_function_cfg_with(
                 line: failure_line.max(line),
             })?;
     let mut cfg = CfgBuilder::build(function, &statements, publications);
+    // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): `volatile` objects
+    // carry no value-derived fact; a custody decision on a volatile read
+    // refuses.
+    if let Some((index, facts)) = parser.storage_facts() {
+        storage_duration_route::settle_volatile(&mut cfg, &facts, function);
+        parser.record_volatile_traces(&index);
+    }
     // Card W45-CONTAINER-ROOT-REACH: the foreign unlinks, over the whole body.
     if let Some(body_end) = matching(tokens, body_start, "{", "}") {
         container_publication::settle_foreign_unlinks(
@@ -6403,6 +6416,11 @@ impl Parser<'_> {
         // Card W45-CONTAINER-ROOT-REACH: keep an element binding only
         // when it is the statement's final instruction.
         self.element_origins.clear();
+        // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h), a soundness
+        // repair asked first: a static-duration declaration runs nothing.
+        if let Some(declaration) = self.static_duration_declaration(tokens, line) {
+            return declaration;
+        }
         // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b), a soundness repair
         // asked first: a pointer C converts to a truth value binds nothing.
         if let Some(tested) = self.pointer_test_store(tokens, line) {
@@ -6740,8 +6758,13 @@ impl Parser<'_> {
             self.record_typed_position_legacy(expression, "return", "return-family", &family.0);
             return Some(family);
         }
-        // Card W47-ACCESS-PATH-POSITIONS (rule 10k). Asked last.
-        self.typed_return_instruction(expression)
+        // Card W47-ACCESS-PATH-POSITIONS (rule 10k).
+        if let Some(typed) = self.typed_return_instruction(expression) {
+            return Some(typed);
+        }
+        // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h). Asked last:
+        // the address of a static-duration object carries no identity.
+        self.static_address_return(expression)
     }
 
     /// Classify one complete statement, then apply card
