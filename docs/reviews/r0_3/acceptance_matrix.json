@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "IEEE Lean card integration onto main f7a4c4bb (card 5 and the float buffer/payload card) as integrate/w48-ieee 6ed02022, ledger 657. The card's code is Lean plus one Rust test; the only shared code file is proof/QCore.lean's import list. TARGETED CHECK (logs private/w48-int-ieee/targeted-6ed02022): fmt 0; qcore-compiler clippy --all-targets --locked 0; float_ieee_vectors 14 passed, float_types 3, float_buffer_payloads 13; check_lean_audits.py 253 audits. Workspace and provider figures are carried from the float buffer/payload integration's full gate on main's code (6,985 passed; provider 129/0/1). Card gate at base d11179c9: W48-QR-FLOAT-IEEE-LEAN-MODEL card gate (base d11179c9), script private/w48-qr-float-ieee-lean/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-qr-float-ieee-lean/gate, run 2 at a2c4031a: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 396 units, 409 summaries, 6,927 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T123639Z-3985394/summary.json); clippy 0; both reevaluation probes 0; check_lean_audits.py 251 audits passed (250 + AuditIeee754.lean). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). Run 1 (at 61a06930, logs private/w48-qr-float-ieee-lean/gate-run1) is retained and discarded: clippy 101 (clippy::redundant_locals in the new test, fixed in a2c4031a) and provider suite 101 (two QP006 provider timeouts in configured_source_contract while this card ran cargo clippy and cargo test beside it: load, not a regression); every other step 0 (6,927 passed there too). Matrix, docs index and Python were then run in that order after the records commit. Clang 21.1.8 recorded in this worktree. No corpus arbiter: no analyzer, contract, checker or corpus-path change.",
-  "workspace_tests": 6985,
+  "note": "B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED card gate at 49cc915d (base a235ead6; the code tree of 277707ec, later commits change documentation and one doc comment), script docs/reports/b08-field-link-join-silent-unresolved/scripts/gate.sh, logs private/b08fl/gate of this worktree: submodule 0; run_test_binaries.py 399 units, 412 summaries, 7,014 passed, 0 failed, 11 ignored (private/test-binaries/20260930T142457Z-345674); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 254 audits passed (AuditFieldLinkJoin.lean new); python tests 365 with 1 failure before the matrix was regenerated from this file (the derived Lean audit count 253 carried), then 0 after (09b); docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 8, release quirin-audit): BEFORE at a235ead6 resource-diagnostics.json 2fc3af8c, 602/10/4,222; census build dc296d00 and AFTER (built at 277707ec) byte-identical 2fc3af8c; system 37/2/195 (60f636af) and tail-pause slice 26/1/242/1 Pending (a4cfa035) byte-identical: no move, no correction. Exits in docs/reports/b08-field-link-join-silent-unresolved/gate/.",
+  "workspace_tests": 7014,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 253,
+  "lean_audits": 254,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6851,6 +6851,7 @@
    "AuditEventPayloadBoundary.lean",
    "AuditExternCall.lean",
    "AuditFfiStructImport.lean",
+   "AuditFieldLinkJoin.lean",
    "AuditFixedScalarQuery.lean",
    "AuditFloatPayloads.lean",
    "AuditFloatTypes.lean",
@@ -7019,7 +7020,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-float-ieee-lean/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/b08-field-link-join-silent-unresolved/gate.json)"
  },
  "named_followups": [
   {
@@ -11412,13 +11413,6 @@
    "recorded_by": "W48-QR-TASK-RECORD-CAPTURES"
   },
   {
-   "id": "B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED",
-   "title": "Soundness: the B08 field-link join marks a one-sided child unresolved without a diagnostic, so its leak is withheld from a Safe result",
-   "why": "Found by CG04-LOOP-SITE-GENERATIONS in its sibling search. `AbstractState::join_field_links` (legacy_c.rs) records every child linked on one side of a join only as an unresolved effect; its comment says this makes the exit `Unknown`, but no diagnostic is reported, and `report_leaks` skips an unresolved identity, so the function stays `Safe`. Under P-B08-SHALLOW a member's child leaks when its owner is released: `b = k_make(n); it = k_take(n); if (n) { b->item = it; } else { k_release(it); } k_drop(b);` is `Safe` although the straight-line form is reported (pinned as observed: crates/qcore-c-gateway/tests/loop_site_generations.rs `the_field_link_join_sibling_is_pinned`). `cascade_field_links_on_escape` withholds the same way. Not a generation defect: the loop form of the fixture is now refused by rule 11a (a correction of that fixture), the branch form is not. Measured exposure: the card's census of Safe results whose settled exit withholds a possibly-live identity with an unresolved effect no diagnostic reported (parity `position: withheld-obligation`, scripts/withheld.py) finds 0 reported functions in the corpus, the system slice and the tail-pause slice on the card's final run. DISCHARGE: a join (and an escape cascade) that leaves an obligation unresolved also reports a refusal, with Lean parity, the pinned branch row flipped, and a measured re-pin naming every Safe -> non-Safe move.",
-   "source": "docs/reports/cg04-loop-site-generations/README.md",
-   "recorded_by": "CG04-LOOP-SITE-GENERATIONS"
-  },
-  {
    "id": "LOOP-GENERATION-COUNTER-CORRELATION",
    "title": "An acquisition guarded by a loop counter (`if (pass == 1) p = malloc(n)`) is read as re-executable: extra leak leaves in rd_kafka_snappy_java_uncompress",
    "why": "Found by CG04-LOOP-SITE-GENERATIONS (gateway rule 11a). The flow does not relate a guard on a loop counter to the iteration, so an acquisition only the first pass runs (`for (pass = 1; pass <= 2; pass++) { ... if (pass == 1) outbuf = rd_malloc(uof); }`, snappy.c:1705) is re-acquired on the abstract second pass and its earlier generation is reported leaking at four exits (snappy.c:1680, 1694, 1712, 1721) where the source frees or returns the one buffer. The function was already provisional Unsafe on real leaks (pass-2 `return NULL` at 1648 and 1660 without freeing `outbuf`); the four new leaves are the flow's imprecision, not source leaks, and are not presented as upstream defects. `rd_kafka_sasl_safe_string` (`if (pass == 0) d = safe = rd_malloc(...)`) and, once rule 10x admits its condition, `rd_gz_decompress` (`if (pass == 1) ... decompressed = rd_malloc(...)`) take a rule-11a refusal instead. DISCHARGE: a counted-loop fact that decides a `pass == k` guard per iteration (or a recorded decision to keep the reading), re-measured.",
@@ -11564,6 +11558,13 @@
    "why": "Found by W48-QRLIB-LINKAGE. `quirin qrlib generate`, `quirin qrlib check` and `quirin build` take `--contracts`, but `quirin check` and `quirin emit` select none, so an FFI program that calls C is checked from the command line only by `quirin build` (or the library API) and refuses at `Q023` under `check`. Size S. DISCHARGE: `--contracts` on `check` and `emit`, keyed exactly as `build` keys it, with a CLI test.",
    "source": "docs/reports/w48-qrlib-linkage/README.md",
    "recorded_by": "W48-QRLIB-LINKAGE"
+  },
+  {
+   "id": "FIELD-LINK-ESCAPE-PATH-CORRELATION",
+   "title": "An escape of an owner whose child is linked on one arm and discharged on the other is refused although every path is correct",
+   "why": "Residual of B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (gateway rule 11c). The flow joins a child's status bits across paths, so after `if (n) b->item = it; else k_release(it); return b;` it knows the child may be live (the linking arm) and is linked on some path only, but not that the live bit comes from exactly the linking arm. The escape therefore refuses (`field-link escape: ...`, Unknown) a program that is correct on every path; the refusal is the conservative reading, never an accusation (crates/qcore-c-gateway/tests/field_link_join.rs `released-arm-escape`). Measured on the card's AFTER: 0 functions in the corpus, the system slice and the tail-pause slice reach a partial-link escape at all (escape census, parity `position: field-link-escape`, `partial: true`: 0 rows). DISCHARGE: a path correlation between a field link and its child's status (for instance a per-link status carried with the partial triple) that escapes such a child without refusing, with Lean parity and a measured re-pin; or a recorded decision to keep the refusal.",
+   "source": "docs/reports/b08-field-link-join-silent-unresolved/README.md",
+   "recorded_by": "B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED"
   },
   {
    "id": "CG10-BOUND-ROOT-PATH-REFUSED",

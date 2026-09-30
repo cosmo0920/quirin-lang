@@ -306,5 +306,6 @@ import QCore.Ieee754Vectors32
 import QCore.Ieee754Vectors64
 import QCore.FloatPayloads
 import QCore.QrlibLinkage
+import QCore.FieldLinkJoin
 
 /-! The executable formal core of QCore-C revision 0.1. -/

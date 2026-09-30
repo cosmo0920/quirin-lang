@@ -167,6 +167,12 @@ mod value_connective_route;
 #[path = "legacy_loop_generations.rs"]
 mod loop_generations_route;
 
+// Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): a field link that
+// holds on some paths only never leaves an obligation unresolved without a
+// diagnostic. The hooks below naming the card are thin.
+#[path = "legacy_field_link_join.rs"]
+mod field_link_join_route;
+
 // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the null test is no escape or
 // binding, pointer-to-pointer casts at a pointer destination, the cast return
 // the reader does not commit to, and Clang-confirmed unevaluated `sizeof`
@@ -9947,6 +9953,13 @@ struct AbstractState {
     /// *releasing* the owner does not cascade, because a plain C field store
     /// carries no declared destructor obligation (premise P-B08-SHALLOW).
     field_links: BTreeMap<usize, BTreeMap<String, BTreeSet<usize>>>,
+    /// Card **B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED** (rule 11c): the
+    /// `(owner, field, child)` triples of `field_links` that may not hold on
+    /// every path reaching here (linked on one side of a join). Always a
+    /// subset of `field_links`; empty in every function whose joins meet no
+    /// one-sided link, which keeps the join, and with it the work-list
+    /// schedule, as it was there (constraint 6).
+    partial_links: BTreeMap<usize, BTreeMap<String, BTreeSet<usize>>>,
     /// Custody retained after a rejected effect; its residual is not a proven
     /// leak because the unmodeled action may have discharged it.
     unresolved_effect_sites: BTreeSet<usize>,
@@ -10473,49 +10486,15 @@ impl AbstractState {
     ///
     /// The union alone would be unsound in the escaping direction: a child
     /// linked on one path only would be carried away by an escape of the
-    /// aggregate on a path that never stored it, hiding a leak. Every child in
-    /// the symmetric difference is therefore recorded as an unresolved effect,
-    /// which makes its disposition `Mixed` and the exit `Unknown`. The union
-    /// and `unresolved_effect_sites` both only grow, so the work list still
-    /// terminates.
+    /// aggregate on a path that never stored it, hiding a leak. Card
+    /// **B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED** (rule 11c): every child in
+    /// the symmetric difference is recorded as a *partial* link, which the
+    /// escape refuses and a member read declines. It used to be recorded as
+    /// an unresolved effect that no diagnostic reported, so the exit stayed
+    /// `Safe` with the child's leak withheld. The union and the partial
+    /// triples both only grow, so the work list still terminates.
     fn join_field_links(&mut self, incoming: &Self) {
-        let owners = self
-            .field_links
-            .keys()
-            .chain(incoming.field_links.keys())
-            .copied()
-            .collect::<BTreeSet<_>>();
-        for owner in owners {
-            let mine = self.field_links.get(&owner).cloned().unwrap_or_default();
-            let theirs = incoming
-                .field_links
-                .get(&owner)
-                .cloned()
-                .unwrap_or_default();
-            let fields = mine
-                .keys()
-                .chain(theirs.keys())
-                .cloned()
-                .collect::<BTreeSet<_>>();
-            let mut joined: BTreeMap<String, BTreeSet<usize>> = BTreeMap::new();
-            for field in fields {
-                let left = mine.get(&field).cloned().unwrap_or_default();
-                let right = theirs.get(&field).cloned().unwrap_or_default();
-                if left != right {
-                    self.unresolved_effect_sites
-                        .extend(left.symmetric_difference(&right).copied());
-                }
-                let union = left.union(&right).copied().collect::<BTreeSet<_>>();
-                if !union.is_empty() {
-                    joined.insert(field, union);
-                }
-            }
-            if joined.is_empty() {
-                self.field_links.remove(&owner);
-            } else {
-                self.field_links.insert(owner, joined);
-            }
-        }
+        field_link_join_route::join(self, incoming);
     }
 }
 
@@ -11551,6 +11530,9 @@ pub(crate) fn analyze_cfg_with_entry(
         joined_provenance::finish_release(conditional_release, &mut output, &local);
         refused_operands::apply(&mut output, &handed, &local);
         loop_generations_route::settle_refused(&shifted, &mut output, &local);
+        // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: partial triples stay a
+        // subset of the links.
+        field_link_join_route::prune(&mut output);
         output.unmodeled |= local.iter().any(is_path_poisoning);
         diagnostics.append(&mut local);
         if node.is_exit {
@@ -11798,6 +11780,15 @@ pub(crate) fn analyze_cfg_with_entry(
             node.line,
             loop_generations_route::withheld(&output, &entry_custody.exempt_sites(&output)),
         ));
+        // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: the floor under every
+        // rule, from the settled exit state.
+        field_link_join_route::exit_backstop(
+            &cfg.function,
+            node.line,
+            &output,
+            &entry_custody.exempt_sites(&output),
+            &mut diagnostics,
+        );
     }
 
     let diagnostics = diagnostics.into_iter().collect::<Vec<_>>();
@@ -13757,11 +13748,13 @@ fn transfer_base(
         if children.is_empty() {
             entry.remove(&field);
         } else {
-            entry.insert(field, children);
+            entry.insert(field.clone(), children);
         }
         if entry.is_empty() {
             state.field_links.remove(&owner_site);
         }
+        // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: the store holds here.
+        field_link_join_route::stored(&mut state, owner_site, &field);
     }
     state
 }
@@ -13821,6 +13814,11 @@ fn bound_read_resolves(state: &AbstractState, place: &str, caller_sites: &BTreeS
         .and_then(|fields| fields.get(field))
         != Some(&pointer.targets)
     {
+        return false;
+    }
+    // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: a link that may not hold
+    // on every path denotes no identity on every path.
+    if field_link_join_route::partial_field(state, owner_site, field) {
         return false;
     }
     pointer.targets.iter().all(|site| {
@@ -13949,6 +13947,13 @@ impl crate::indirect_chain_access::ChainView for AbstractState {
     }
 
     fn field_link(&self, owner: usize, field: &str) -> Option<&BTreeSet<usize>> {
+        // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: a link that may not
+        // hold on every path is a link that equals no binding, so the chain
+        // refuses at it rather than reading it as untracked.
+        static NO_CHILD: BTreeSet<usize> = BTreeSet::new();
+        if field_link_join_route::partial_field(self, owner, field) {
+            return Some(&NO_CHILD);
+        }
         self.field_links.get(&owner)?.get(field)
     }
 }
@@ -14097,7 +14102,14 @@ fn apply_resource_action(
                 .resources
                 .insert(site, (status & !(LIVE | CONTAINED)) | RELEASED);
         }
-        cascade_resource_action(state, site, escape);
+        // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: the escape census, and
+        // the refusal of an escape that does not carry a possibly-live child
+        // on every path.
+        if escape {
+            field_link_join_route::record_escape_exposure(function, line, state, site);
+        }
+        let refused = cascade_resource_action(state, site, escape);
+        field_link_join_route::report_escape_refusal(function, line, &refused, diagnostics);
     }
 }
 
@@ -14143,7 +14155,13 @@ fn cascade_is_unambiguous(state: &AbstractState, roots: &BTreeSet<usize>) -> boo
     true
 }
 
-fn cascade_resource_action(state: &mut AbstractState, owner: usize, escape: bool) {
+/// Returns the linked children an escape refused (card
+/// B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED); the caller reports them.
+fn cascade_resource_action(
+    state: &mut AbstractState,
+    owner: usize,
+    escape: bool,
+) -> BTreeSet<usize> {
     let mut pending = state.contained.remove(&owner).unwrap_or_default();
     let mut visited = BTreeSet::new();
     while let Some(site) = pending.pop_first() {
@@ -14160,7 +14178,9 @@ fn cascade_resource_action(state: &mut AbstractState, owner: usize, escape: bool
             .insert(site, (status & !(LIVE | CONTAINED)) | terminal);
     }
     if escape {
-        cascade_field_links_on_escape(state, owner);
+        cascade_field_links_on_escape(state, owner)
+    } else {
+        BTreeSet::new()
     }
 }
 
@@ -14171,40 +14191,19 @@ fn cascade_resource_action(state: &mut AbstractState, owner: usize, escape: bool
 /// identity when its aggregate escapes is a hazard this projection will not
 /// decide in either direction.
 ///
+/// Card **B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED** (rule 11c): a child that
+/// may be live and is not linked on every path, or whose status is mixed, is
+/// not escaped; it keeps its status with an unresolved effect and is
+/// returned, so the caller reports the refusal. Before the card such a child
+/// was escaped, or left unresolved, silently. See
+/// [`field_link_join_route::escape_cascade`].
+///
 /// **Releasing** an owner deliberately does not reach this function
 /// (premise P-B08-SHALLOW): a declared `resource_released` release names one
 /// identity, and a plain C field store carries no declared destructor
 /// obligation, so a child still live there stays live and is reported.
-fn cascade_field_links_on_escape(state: &mut AbstractState, owner: usize) {
-    let mut pending = state
-        .field_links
-        .remove(&owner)
-        .into_iter()
-        .flat_map(|fields| fields.into_values().flatten())
-        .collect::<BTreeSet<_>>();
-    let mut visited = BTreeSet::new();
-    let mut unresolved = BTreeSet::new();
-    while let Some(site) = pending.pop_first() {
-        if !visited.insert(site) {
-            continue;
-        }
-        if let Some(fields) = state.field_links.remove(&site) {
-            pending.extend(fields.into_values().flatten());
-        }
-        if let Some(children) = state.contained.remove(&site) {
-            pending.extend(children);
-        }
-        match state.resources.get(&site).copied() {
-            Some(LIVE) => {
-                state.resources.insert(site, ESCAPED);
-            }
-            Some(ESCAPED) | None => {}
-            Some(_) => {
-                unresolved.insert(site);
-            }
-        }
-    }
-    state.unresolved_effect_sites.extend(unresolved);
+fn cascade_field_links_on_escape(state: &mut AbstractState, owner: usize) -> BTreeSet<usize> {
+    field_link_join_route::escape_cascade(state, owner)
 }
 
 #[allow(clippy::too_many_arguments)]

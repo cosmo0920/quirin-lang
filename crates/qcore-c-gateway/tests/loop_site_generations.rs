@@ -419,20 +419,23 @@ fn analyze_k(body: &str) -> Run {
     }
 }
 
-/// The sibling this card found and registered, pinned as observed
-/// (`B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED`): the B08 join marks a child
-/// linked on one side only as unresolved, which suppresses its leak, but no
-/// diagnostic reports it, so the branch form is `Safe`. Under P-B08-SHALLOW
-/// the member's child leaks when the owner is released; the straight-line
-/// control reports it. Not a generation defect, so it is not this card's to
-/// fix; the follow-up flips the branch row.
+/// The sibling this card found and registered
+/// (`B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED`), flipped by that card (gateway
+/// rule 11c). The B08 join marked a child linked on one side only as
+/// unresolved, which suppressed its leak, and no diagnostic reported it, so
+/// the branch form was `Safe`. Under P-B08-SHALLOW the member's child leaks
+/// when the owner is released; the repaired join adds no unresolved effect,
+/// so the branch form reports the straight-line form's leak.
 ///
-/// The loop form was `Safe` on the base too (every stored generation but the
-/// last is overwritten in the member and leaks). With generations, the live
-/// previous generation meets the summary the join left unresolved, and the
-/// merge refuses (rule 11a): `Unknown`, a correction of this fixture.
+/// The loop form was `Safe` on CG04's base too (every stored generation but
+/// the last is overwritten in the member and leaks, and the last one leaks
+/// with the owner's release). With generations and the old join, the live
+/// previous generation met the summary the join left unresolved and the
+/// merge refused (rule 11a): `Unknown`. With the repaired join nothing is
+/// left unresolved, the earlier generations merge into a live summary no
+/// place holds, and the leak is reported: `Unsafe`, the source's own leak.
 #[test]
-fn the_field_link_join_sibling_is_pinned() {
+fn the_field_link_join_sibling_stays_fixed() {
     if !clang_available() {
         return;
     }
@@ -450,10 +453,11 @@ fn the_field_link_join_sibling_is_pinned() {
          if (n) { b->item = it; } else { k_release(it); } \
          k_drop(b); }",
     );
+    assert_eq!(branch.status, AnalysisStatus::Unsafe, "{branch:?}");
     assert_eq!(
-        branch.status,
-        AnalysisStatus::Safe,
-        "pinned as observed: {branch:?}"
+        branch.leaks(),
+        straight.leaks(),
+        "{branch:?} vs {straight:?}"
     );
     let looped = analyze_k(
         "void k_chain(int n) { struct k_item *it; struct k_box *b; int i; \
@@ -461,9 +465,11 @@ fn the_field_link_join_sibling_is_pinned() {
          for (i = 0; i < n; i++) { it = k_take(n); if (!it) break; b->item = it; } \
          k_drop(b); }",
     );
-    assert_eq!(looped.status, AnalysisStatus::Unknown, "{looped:?}");
+    assert_eq!(looped.status, AnalysisStatus::Unsafe, "{looped:?}");
+    assert!(looped.leaks() >= 1, "{looped:?}");
     assert!(
-        looped.refused("loop re-acquisition: an earlier generation that may be live is still held"),
+        !looped
+            .refused("loop re-acquisition: an earlier generation that may be live is still held"),
         "{looped:?}"
     );
 }
