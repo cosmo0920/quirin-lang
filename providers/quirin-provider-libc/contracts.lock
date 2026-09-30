@@ -32,6 +32,11 @@
       "contract_sha256": "3dd76e345b16abffd8dad9a62a975851341a0d57d76ec6a7302826f1c8f2043c"
     },
     {
+      "function": "clock_gettime",
+      "module": "libc/time.qv",
+      "contract_sha256": "cf3f501d3d9343253608f6201efcb7e6344c99fa41410a850bdb19ecccdc1021"
+    },
+    {
       "function": "close",
       "module": "libc/unistd.qv",
       "contract_sha256": "0b4424f08d057594b5aeb04c54a41450b34fef63d3a9a21a216bc89b14e18e64"
@@ -165,6 +170,11 @@
       "function": "localtime_r",
       "module": "libc/time.qv",
       "contract_sha256": "a0b09836999b13f7f2705676d7d5e38cf59f443f416c8eae64be1de74f3cad5a"
+    },
+    {
+      "function": "lstat",
+      "module": "libc/sys_stat.qv",
+      "contract_sha256": "d5b70b1bb1e885b16d50fa88679a21afb70374daaa816fa9827d1a09f6b6e1e4"
     },
     {
       "function": "malloc",

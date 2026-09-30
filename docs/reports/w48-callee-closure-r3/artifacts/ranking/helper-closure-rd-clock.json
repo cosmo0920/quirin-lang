@@ -1,0 +1,34 @@
+{
+ "closed_rounds": [
+  [
+   "rd_interval0",
+   "rd_interval_reset_to_now",
+   "rd_kafka_buf_set_abs_timeout0",
+   "rd_kafka_buf_set_timeout",
+   "rd_timeout_init",
+   "rd_timeout_init_us",
+   "rd_timeout_remains_us"
+  ],
+  [
+   "rd_timeout_remains"
+  ],
+  [
+   "rd_timeout_remains_limit"
+  ]
+ ],
+ "freed": [
+  "rdkafka_timer.c::rd_kafka_timer_next"
+ ],
+ "seeds": [
+  "rd_clock"
+ ],
+ "touched": {
+  "rd_clock": 51,
+  "rd_interval0": 1,
+  "rd_kafka_buf_set_abs_timeout0": 16,
+  "rd_timeout_init": 19,
+  "rd_timeout_init_us": 1,
+  "rd_timeout_remains": 7,
+  "rd_timeout_remains_limit": 1
+ }
+}

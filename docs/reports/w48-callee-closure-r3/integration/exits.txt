@@ -1,0 +1,34 @@
+submodule 0
+fmt 0
+clippy 0
+gateway-tests 0
+contract-tests 0
+lean 0
+provider-tests 0
+provider-clean-dev 0
+provider-fmt 0
+provider-clippy 0
+provider-contracts 0
+package-build 1
+verify-qcore.chunkio 1
+verify-qcore.cmetrics 1
+verify-qcore.ctraces 1
+verify-qcore.libevent 1
+verify-qcore.librdkafka 1
+provider-python 0
+provider-clean 0
+build-release 0
+pin-check 0
+arbiter 0
+clean 0
+rm-release 0
+DONE
+package-build-rerun 0
+verify-rerun-qcore.chunkio 0
+verify-rerun-qcore.cmetrics 0
+verify-rerun-qcore.ctraces 0
+verify-rerun-qcore.libevent 0
+verify-rerun-qcore.librdkafka 0
+provider-clean-rerun 0
+DONE2
+pyunit 0

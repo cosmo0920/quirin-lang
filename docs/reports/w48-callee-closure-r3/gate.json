@@ -1,0 +1,13 @@
+{
+  "note": "W48-CALLEE-CLOSURE-R3 card gate at 7cd4f79c (base c374de96), script docs/reports/w48-callee-closure-r3/scripts/gate.sh, logs private/w48cc/gate of this worktree. The docs-only commit 7e4c1abd (two ledger amendment texts, the report and scripts) landed while the Rust suite ran, so the Python and docs-index steps read that tree. Standing gate: submodule 0; run_test_binaries.py 401 units, 414 summaries, 7,034 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T173243Z-1135215); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 255 audits passed (no new module: the card changes no route); Python 365 tests OK; docs index check 0. Provider gate (providers/ changed): cargo test exit 101 twice under host load average 45-62, each time a different process-provider conformance binary (11: configured_audit::configured_helper_is_imported_from_its_real_pinned_compile_entry; 11c: configured_source_contract, two tests, QP006 'provider timed out'); the first failing test alone passed (11b, exit 0), and the whole suite re-run with --no-fail-fast passed 129, 0 failed, 1 ignored (11d, exit 0); constraint 16's instruction applied, nothing weakened. Provider fmt 0, clippy 0, contracts.py check 0, package build 0 and all five package verifies 0, provider Python 24 tests OK. pin at 66910c10 and 046accf6 exit 0, pin --check at both exit 0 (gate/pin/). Clang 21.1.8. Measurements (--jobs 4, release quirin-audit): corpus 608/10/4,216 -> 608/10/4,216 (3a25c4e9 -> c452aa9a, one condition leaf); system 41/2/191 unchanged (verdict-identical); tail-pause slice 28/1/240/1 Pending -> 29/1/239/1 Pending.",
+  "workspace_tests": 7034,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 255,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

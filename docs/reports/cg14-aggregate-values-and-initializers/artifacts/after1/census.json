@@ -1,0 +1,95 @@
+{
+ "compound-literal": {
+  "statements": 48,
+  "admitted_in_some_analysis": 0,
+  "admitted_in_every_analysis": 0,
+  "functions": 37,
+  "functions_with_an_admission": 0,
+  "refusals": {
+   "literal-position": 48
+  },
+  "classes": {},
+  "statements_with_leaf": {}
+ },
+ "copy": {
+  "statements": 5499,
+  "admitted_in_some_analysis": 76,
+  "admitted_in_every_analysis": 76,
+  "functions": 1711,
+  "functions_with_an_admission": 61,
+  "refusals": {
+   "declaration:not a record": 5308,
+   "pointer-members": 75,
+   "copy-operand:source": 34,
+   "unread-record": 4,
+   "reader": 2
+  },
+  "classes": {
+   "pointer": 3240,
+   "scalar": 2068,
+   "custody-free": 112,
+   "pointer-bearing": 75,
+   "unread": 4
+  },
+  "statements_with_leaf": {}
+ },
+ "initializer": {
+  "statements": 1645,
+  "admitted_in_some_analysis": 310,
+  "admitted_in_every_analysis": 310,
+  "functions": 770,
+  "functions_with_an_admission": 188,
+  "refusals": {
+   "declaration:not a record or array": 914,
+   "declaration:several declarators": 130,
+   "declaration:not an automatic object": 94,
+   "declaration:no single initializer": 84,
+   "leaf:address": 27,
+   "leaf:pointer-bearing-record": 24,
+   "leaf:formal-pointer": 22,
+   "reader": 20,
+   "leaf:call": 13,
+   "leaf:local-pointer": 4,
+   "leaf:pointer-read": 3
+  },
+  "classes": {
+   "scalar": 539,
+   "pointer": 491,
+   "pointer-bearing": 223,
+   "custody-free": 46,
+   "unread": 38
+  },
+  "statements_with_leaf": {
+   "scalar": 210,
+   "zero": 91,
+   "string": 82,
+   "null": 74,
+   "function": 27,
+   "address": 27,
+   "pointer-bearing-record": 24,
+   "formal-pointer": 22,
+   "call": 13,
+   "local-pointer": 4,
+   "pointer-read": 3,
+   "custody-free-record": 1
+  }
+ },
+ "string-initializer": {
+  "statements": 18,
+  "admitted_in_some_analysis": 18,
+  "admitted_in_every_analysis": 18,
+  "functions": 13,
+  "functions_with_an_admission": 13,
+  "refusals": {},
+  "classes": {},
+  "statements_with_leaf": {}
+ },
+ "initializer-guard-flow": {
+  "decisions": {
+   "admit": 552
+  },
+  "functions": {
+   "admit": 119
+  }
+ }
+}
