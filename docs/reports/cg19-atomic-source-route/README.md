@@ -254,34 +254,34 @@ contracts, with no ordering claim.
 
 ## 9. Gate
 
-Script [`scripts/gate.sh`](scripts/gate.sh), logs `private/cg19/gate2` of
+Script [`scripts/gate.sh`](scripts/gate.sh), logs `private/cg19/gate3` of
 the card's worktree, record [`gate.json`](gate.json), exits in [`gate/`](gate/).
-GATE_TIP_LINE
+Tip code `0b8c1b2d` (the final `main` `e93dbe4e` merged at `e8cc26bd`).
 
 | Step | Command | Exit | Count |
 |---|---|---:|---|
 | 01 | `git submodule update --init --recursive` | 0 | |
-| 03 | `python3 scripts/run_test_binaries.py` | 101 | 402 units, 415 summaries, 7,060 passed, 1 failed, 11 ignored |
-| 03b | `cargo test -p qcore-audit --test checkpoint_cli` (alone) | 0 | 7 / 7 |
-| 03c | `python3 scripts/run_test_binaries.py` (re-run) | 101 | 7,059 passed, 2 failed, 11 ignored |
-| 03d | `cargo test -p qcore-compiler --test cycle20_verifier_plugins` (alone) | 0 | 20 / 20 |
-| 03e | `cargo test -p qcore-audit --test checkpoint_cli` (alone) | 0 | 7 / 7 |
+| 03 | `python3 scripts/run_test_binaries.py` | 101 | 405 units, 418 summaries, 7,094 passed, 1 failed, 11 ignored |
+| 03b | `cargo test -p qcore-verifier-host --test package_identity` (alone) | 0 | 10 / 10 |
 | 02 | `cargo fmt --all -- --check` | 0 | |
 | 05 | `cargo clippy --all-targets -- -D warnings` | 0 | |
 | 06 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
 | 07 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
-| 08 | `python3 scripts/check_lean_audits.py` | 0 | 257 audits (256 + `AuditAtomicSourceRoute.lean`) |
-| 09 | `python3 -m unittest discover -s scripts/tests` | 1 | 365; the derived Lean audit count 256 → 257 |
+| 08 | `python3 scripts/check_lean_audits.py` | 0 | 259 audits (258 + `AuditAtomicSourceRoute.lean`) |
+| 09 | `python3 -m unittest discover -s scripts/tests` | 1 | 365; the derived Lean audit count 258 → 259 |
 | 09a | `build_matrix.py . --gate gate.json` | 0 | |
 | 09b | `python3 -m unittest discover -s scripts/tests` | 0 | 365 |
 | 10 | `python3 scripts/build_docs_index.py` | 0 | |
 
-The failures of 03 and 03c are timing assertions under a shared host at load
-45–72 (`checkpoint_cli`'s `no unit checkpoint before timeout`,
-`cycle20_verifier_plugins`' `elapsed < 500ms`); each passes alone
-(constraint 16: verified in isolation, not weakened), and every one of the
-7,061 tests passed in at least one run. A first gate run (`private/cg19/gate`)
-found one real failure, fixed at `095c0c63`: the new `atomic-publication`
-subcommand was missing from `subcommand_plugins::BUILTINS`, so an external
-plugin of that name could have shadowed it. The provider gate is not due
-(`providers/` unchanged). Clang 21.1.8.
+The one failure of 03 is `package_identity`'s
+`a_symbolic_entrypoint_is_checked_where_it_is_executed`,
+`Spawn("Text file busy (os error 26)")`: an ETXTBSY race on the executable
+the test has just written, in a crate this card does not touch; alone the
+binary passes 10/10, so all 7,095 tests passed. Earlier gates of this card
+(`private/cg19/gate`, `gate2`, on the `b59aaae2` merge) found one real
+failure, fixed at `095c0c63`: the new `atomic-publication` subcommand was
+missing from `subcommand_plugins::BUILTINS`, so an external plugin of that
+name could have shadowed it; their other failures were timing assertions
+under host load 45–72 (`checkpoint_cli`, `cycle20_verifier_plugins`), each
+passing alone (constraint 16). The provider gate is not due (`providers/`
+unchanged by this card). Clang 21.1.8.
