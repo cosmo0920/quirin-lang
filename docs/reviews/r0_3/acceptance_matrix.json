@@ -6757,7 +6757,7 @@
   "workspace_tests": 7058,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 258,
+  "lean_audits": 259,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -7012,6 +7012,7 @@
    "AuditValueConnectives.lean",
    "AuditVariadicNested.lean",
    "AuditVerdictSemigroup.lean",
+   "AuditVoidViewReadback.lean",
    "AuditW4.lean",
    "AuditWaitFailurePaths.lean",
    "AuditWriteLend.lean",
@@ -7024,7 +7025,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg15-storage-duration-and-volatile/integration/gate.json)"
+  "measurement_provenance": "carried_from_previous_matrix: these numbers were NOT measured for this regeneration; pass --gate PATH with the standing-gate results of this checkpoint to replace them"
  },
  "named_followups": [
   {
