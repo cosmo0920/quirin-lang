@@ -465,7 +465,11 @@ fn table(ty: ScalarType) -> Table {
                 _ => f32b(f64::from_bits(a as u64) as f32),
             };
             assert!(sf::same_value(other, r, host), "{a:#x}");
-            format!("  ({}, {})", hex(ty, a), hex(other, sf::canonical(other, r)))
+            format!(
+                "  ({}, {})",
+                hex(ty, a),
+                hex(other, sf::canonical(other, r))
+            )
         })
         .collect();
     let convert = rows.len();
