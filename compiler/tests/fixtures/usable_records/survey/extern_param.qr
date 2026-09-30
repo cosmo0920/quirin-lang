@@ -1,0 +1,16 @@
+// Survey cell (extern, param) of card W48-QR-USABLE-RECORDS; written by
+// docs/reports/w48-qr-usable-records/make_survey.py.
+#import std.extern;
+#import std.logger;
+type P { x: i32, y: i32 }
+extern fn survey_scale(value: i32, factor: i32) -> i32;
+fn get(p: P) -> i32 {
+    let v = p.x;
+    return v;
+}
+fn main() -> unit effects { io } {
+    let p = P { x: 1, y: 2 };
+    let v = get(p);
+    let s = survey_scale(3, 2) succeeds 6;
+    return;
+}

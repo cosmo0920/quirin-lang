@@ -1,0 +1,42 @@
+#import std.fmt;
+#import std.io;
+
+// Records passed to and returned from functions, by value (card
+// `W48-QR-USABLE-RECORDS`).
+//
+// `Point` is a record of scalars and `Box` holds two of them. A record of
+// scalars is a plain value: a call copies it in, a `return` copies it out, and
+// no custody is involved, so `grow` building a new `Box` leaves the caller's
+// `b` exactly as it was. A field is read through its path, `b.hi.x`, and a
+// construction names every field, in any order.
+type Point { x: i32, y: i32 }
+type Box { lo: Point, hi: Point, tag: u8 }
+
+fn point(x: i32, y: i32) -> Point {
+    return Point { y: y, x: x };
+}
+
+fn width(b: Box) -> i32 {
+    return b.hi.x - b.lo.x;
+}
+
+fn grow(b: Box, by: i32) -> Box {
+    let hi = Point { x: b.hi.x + by, y: b.hi.y + by };
+    return Box { lo: b.lo, hi: hi, tag: b.tag };
+}
+
+fn main() -> unit effects { io } {
+    let b = Box { lo: point(1, 2), hi: point(10, 20), tag: 7 };
+    let w = width(b);
+    print dec w;
+    let g = grow(b, 5);
+    let gw = width(g);
+    print dec gw;
+    let top = g.hi.y;
+    print dec top;
+    let tag = g.tag;
+    print hex tag;
+    let unchanged = b.hi.x;
+    print dec unchanged;
+    return;
+}

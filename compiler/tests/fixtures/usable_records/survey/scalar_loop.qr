@@ -1,0 +1,16 @@
+// Survey cell (scalar, loop) of card W48-QR-USABLE-RECORDS; written by
+// docs/reports/w48-qr-usable-records/make_survey.py.
+#import std.fmt;
+#import std.io;
+type P { x: i32, y: i32 }
+fn twice(v: i32) -> i32 {
+    return v * 2;
+}
+fn main() -> unit effects { io } {
+    for i in 0..2 {
+        let p = P { x: 1, y: 2 };
+    }
+    let t = twice(3);
+    print dec t;
+    return;
+}

@@ -15,6 +15,7 @@ and this family is its named follow-on `EXAMPLES-AGGREGATES`. Card
 | [`point.qr`](point.qr) | CT09's "distinct ordinary struct fields" scenario — three fields, three different values, three reads — with no buffer anywhere: a record of scalars is a plain value, so this program's effect row is `io` alone |
 | [`pixel_writes.qr`](pixel_writes.qr) | A record beside a real resource: fields drive a buffer's stored values and one store's *index*, the buffer owes its `drop`, and the records owe nothing |
 | [`owned_field.qr`](owned_field.qr) | A record that **owns** two buffers: construction moves them in, the fields stand at every custody position a buffer name does, a field read moves one out, and `drop f;` releases the field still held — the four rules of the ownership IR, exercised in one program |
+| [`nested_writes.qr`](nested_writes.qr) | A record holding a record and a buffer (card `W48-QR-USABLE-RECORDS`): fields read and **written** through a path, each write of exactly the field's type, the held record a copy, and a whole owned field **refilled** after a move out left a hole |
 
 ## The form
 
@@ -120,6 +121,42 @@ field and read back, and one byte written through the moved-out binding:
 81
 67
 111
+```
+
+## Nested records and field writes
+
+Card `W48-QR-USABLE-RECORDS` lets a field's type be another record the module
+declares, in either declaration order, and lets a field be **written**:
+
+```ebnf
+field   = NAME, ":", ( SCALAR | "bytes" | RECORD ) ;
+stmt    = NAME, ".", NAME, { ".", NAME }, "=", VALUE, ";"      (* a write *)
+        | "let", NAME, "=", NAME, ".", NAME, { ".", NAME }, ";" (* a read at a path *)
+        | … ;                                  (* every field-path form takes a path *)
+```
+
+* A record field holds a whole record by value. A record of scalars is
+  **copied** in, so writing `f.span.hi` leaves the `Span` the construction named
+  as it was; a record that owns a buffer somewhere below is **moved** in, its
+  buffers becoming the outer record's. A record that contains itself refuses
+  by name (`Q051`): the record fields of a module form an acyclic graph.
+* A write stores a value of **exactly** the field's type — a literal
+  range-checked, `true`/`false` at a `bool`, or a name of that type — and
+  replaces that field and nothing else. It mutates the record, so it derives
+  `mut`.
+* A write of a whole **owned** field is the refill: it moves a buffer in, and
+  only into a hole — a field moved out or released. A write over a field still
+  holding its buffer would lose that buffer's release, and refuses at `Q054`.
+* On a record that owns, a read or a write of a scalar field asks that the
+  record is still live: after `drop f;` both are a use after drop (`Q054`).
+
+<!-- transcript: nested_writes stdout -->
+```text
+10
+5
+200
+81
+67
 ```
 
 ## What the C looks like
@@ -249,18 +286,22 @@ the refusal table with codes and the native run beside this suite's.
 
 ## What this is not
 
-* **No field write.** `p.x = 5;` is not a statement of this revision
-  (`AGGREGATE-FIELD-WRITE`); a v1 record is construct-then-read, and an owned
-  field is moved in once and moved out at most once.
-* **No view field, no nesting, no field type but `i32` and `bytes`.** Each is a
+* **No whole sub-record write, and no whole read of a sub-record that owns.**
+  A field write names a scalar field or refills an owned one
+  (`W48-QR-RECORD-FIELD-WHOLE-WRITE`), and a held record that owns is read
+  field by field (`W48-QR-NESTED-OWNED-SUBRECORD-MOVE`).
+* **No view field, no field type but a scalar, `bytes` or a record.** Each is a
   named follow-on with the machinery it is missing recorded
-  (`AGGREGATE-VIEW-FIELD`, `AGGREGATE-NESTED`, `AGGREGATE-FIELD-TYPES`).
+  (`AGGREGATE-VIEW-FIELD`, `AGGREGATE-FIELD-TYPES`).
 * **No lend beside a record that owns, and no such record in a `for` body.**
   Both are refused by name (`OWNED-FIELD-LEND-WINDOW`,
   `OWNED-FIELD-LOOP-BODY`) rather than modelled.
-* **One route.** v1 admits the construct on `source.buffer.v1` only; every
-  other route keeps the refusal it already had, measured and pinned rather
-  than widened (`AGGREGATE-ROUTE-WIDENING`).
+* **One route for this family.** The construct is admitted on
+  `source.buffer.v1`; a record of scalars also crosses `.qr` calls on
+  `source.scalar-calls.v1` ([`../scalar/record_calls.qr`](../scalar/record_calls.qr)),
+  and an imported C struct is written and passed on `source.ffi.v1`
+  ([`../ffi/record_passing.qr`](../ffi/record_passing.qr)); every other route
+  keeps the refusal it already had.
 * **No loop bound out of a field.** A field read stands at an index or a
   stored byte, but a `for` bound read out of a field is refused — the value is
   one the checker computes and the lowering does not

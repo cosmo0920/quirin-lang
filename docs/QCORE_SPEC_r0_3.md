@@ -1162,10 +1162,21 @@ changes after checking fails the C build rather than running under the old
 reading.
 
 **Values crossing the boundary.** An imported struct is a record in the sense
-of §G07.13, construct-then-read. It crosses a call as data — by value, or by a
-`const` pointer the callee reads and does not retain — only through a marked
-contract function; a C result carries a number only where the source declares
-the outcome (`succeeds`), which the emitted C compares before it is read.
+of §G07.13. It crosses a call as data — by value, or by a `const` pointer the
+callee reads and does not retain — only through a marked contract function; a
+C result carries a number only where the source declares the outcome
+(`succeeds`), which the emitted C compares before it is read.
+
+**Usable imported records (card `W48-QR-USABLE-RECORDS`).** A listed field is
+written with `RECORD.FIELD = VALUE;`, the value of exactly its type, and the
+write derives `Mut`; an opaque member is never written. A record is copied
+with `let q = r;`. A function of the file other than its entry takes and
+returns scalars and imported records **by value** and is checked at every
+call with the values it is given, the calls acyclic and every helper reached
+from the entry; it is under the same file-wide assumption. The mark is a
+**file's**: in a bundle of several files, a function in a file that does not
+itself import `std.ffi.unsafe` is refused (`Q032`), so no code is checked under
+the assumption in a file that never took it.
 
 ## L15. Lowering, observations, and translation certificates
 
@@ -1538,6 +1549,31 @@ outside the FFI table, a missing or mistyped binding or declared outcome, a
 declaration or statement the route does not model, a signature disagreeing
 with its contract or a failed recheck); `Q028`–`Q030` the line conditions; and
 `Q043` a rendering of a C result no declared outcome determined.
+
+**Card `W48-QR-USABLE-RECORDS` allocates no code either.** On
+`source.buffer.v1` (§G07.13): `Q051` is widened to a record that contains
+itself, a whole sub-record write and a whole read of a sub-record that owns;
+`Q052` to a path continuing through a field that is not a record, a record
+field given something other than a record of its type, and a field write of
+a value of another type; `Q053` to a record nested more than 8 deep or holding
+more than 256 leaves, and a field write's literal outside its type; `Q054`
+(the inherited ownership checker's) to a refill over an owned field that still
+holds its buffer and to a scalar field read or write of a record with an owned
+field after that record was dropped or moved — the latter a narrowing of what
+was admitted before (a read after `drop f;`), in the refusing direction.
+`AGGREGATE-NESTED`'s by-name refusal is lifted. On `source.scalar-calls.v1`
+(§G02s), `Q020` is widened to the record conditions of that route: a record
+parameter other than by value, a record in arithmetic, a comparison, a
+conversion or a line, a construction that is not total, a path its record does
+not declare, a field write, a record holding an owned field, and a record
+result of a function that may raise. On `source.ffi.v1` (§G02u), `Q051` carries
+a write of an opaque or unknown member; `Q052`/`Q053` a written value of another
+type or out of range; `Q029` a write (`Mut`) or a helper's effect its row does
+not admit; `Q025` a declared outcome on a `.qr` helper call and a helper
+`return` of another type; `Q026` a helper nothing calls, a helper call cycle
+or chain deeper than 16, and a helper parameter other than a scalar or a
+record by value; and `Q032` is widened to a function of an FFI bundle in a file
+that does not itself import `std.ffi.unsafe`.
 
 Reserving all four of `Q700`–`Q703` corrects a documentation drift, not a code change: `Q702` and `Q703` have existed in `crates/qcore-verification/src/verify_dispatch.rs` since the W3 dispatch increment, and the code is the authority. An earlier revision of this row named only `Q700` and `Q701`, which was narrower than the implementation; `AGENTS.md` was already accurate.
 

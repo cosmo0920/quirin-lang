@@ -66,11 +66,72 @@ struct Emitter<'a> {
     /// The current block's indentation.
     indent: String,
 }
-fn c_type(ty: Type) -> &'static str {
+fn c_type(checked: &Checked, ty: Type) -> String {
     match ty {
-        Type::Unit => "void",
-        Type::Scalar(ty) => st::c_type(ty),
+        Type::Unit => "void".to_owned(),
+        Type::Scalar(ty) => st::c_type(ty).to_owned(),
+        // Card `W48-QR-USABLE-RECORDS`: a record is its C struct, by value.
+        Type::Record(id) => format!("struct {}", record_tag(checked, id)),
     }
+}
+
+/// The C tag of record `id` — `source.record.v1`'s own prefix, so a record
+/// name that is a C keyword still emits a compilable struct (card
+/// `W48-QR-USABLE-RECORDS`).
+fn record_tag(checked: &Checked, id: usize) -> String {
+    let name = checked
+        .program()
+        .records
+        .get(id)
+        .map_or("record", |record| record.name.as_str());
+    format!("qcore_record_{name}")
+}
+
+/// The C member of a record field, prefixed for [`record_tag`]'s reason.
+fn record_member(checked: &Checked, id: usize, field: usize) -> String {
+    let name = checked
+        .program()
+        .records
+        .get(id)
+        .and_then(|record| record.fields.get(field))
+        .map_or("field", |(name, _)| name.as_str());
+    format!("f_{name}")
+}
+
+/// The struct definitions of the module's records, each after every record
+/// it holds (card `W48-QR-USABLE-RECORDS`); empty for a module declaring none.
+fn record_definitions(checked: &Checked) -> String {
+    fn visit(checked: &Checked, id: usize, done: &mut Vec<usize>, text: &mut String) {
+        if done.contains(&id) {
+            return;
+        }
+        done.push(id);
+        let Some(record) = checked.program().records.get(id) else {
+            return;
+        };
+        for (_, ty) in &record.fields {
+            if let Type::Record(inner) = ty {
+                visit(checked, *inner, done, text);
+            }
+        }
+        writeln!(text, "struct {} {{", record_tag(checked, id)).unwrap();
+        for (field, (_, ty)) in record.fields.iter().enumerate() {
+            writeln!(
+                text,
+                "    {} {};",
+                c_type(checked, *ty),
+                record_member(checked, id, field)
+            )
+            .unwrap();
+        }
+        writeln!(text, "}};").unwrap();
+    }
+    let mut done = Vec::new();
+    let mut text = String::new();
+    for id in 0..checked.program().records.len() {
+        visit(checked, id, &mut done, &mut text);
+    }
+    text
 }
 fn op_name(op: Op) -> &'static str {
     op.name()
@@ -99,7 +160,9 @@ impl Emitter<'_> {
             TKind::Literal(v) => match e.ty {
                 Type::I32 => format!("((int32_t)INT64_C({v}))"),
                 Type::Scalar(ty) => st::c_literal(ty, *v),
-                Type::Unit => unreachable!("a checked literal has a scalar type"),
+                Type::Unit | Type::Record(_) => {
+                    unreachable!("a checked literal has a scalar type")
+                }
             },
             TKind::Local(i) => return format!("v{i}"),
             TKind::Neg(x) => {
@@ -110,7 +173,9 @@ impl Emitter<'_> {
                         self.helpers.insert(Helper::Neg(ty));
                         format!("q_scalar_neg_{ty}({v})")
                     }
-                    Type::Unit => unreachable!("a checked negation has a scalar type"),
+                    Type::Unit | Type::Record(_) => {
+                        unreachable!("a checked negation has a scalar type")
+                    }
                 }
             }
             TKind::Binary(op, a, b) => {
@@ -135,7 +200,9 @@ impl Emitter<'_> {
                         self.helpers.insert(Helper::Op(*op, ty));
                         format!("q_scalar_{}_{ty}({a}, {b})", op_name(*op))
                     }
-                    Type::Unit => unreachable!("a checked operation has a scalar type"),
+                    Type::Unit | Type::Record(_) => {
+                        unreachable!("a checked operation has a scalar type")
+                    }
                 }
             }
             TKind::Compare(cmp, a, b) => {
@@ -170,9 +237,44 @@ impl Emitter<'_> {
                 call
             }
             TKind::Try(_) => unreachable!("`?` is checked to stand in a throwing function"),
+            // Card `W48-QR-USABLE-RECORDS`: a construction is one designated
+            // initializer naming every member; a field is a member access.
+            TKind::Construct(fields) => {
+                let Type::Record(id) = e.ty else {
+                    unreachable!("a checked construction has a record type")
+                };
+                let values = fields
+                    .iter()
+                    .enumerate()
+                    .map(|(field, value)| {
+                        let v = self.expr(value);
+                        format!(".{} = {v}", record_member(self.checked, id, field))
+                    })
+                    .collect::<Vec<_>>();
+                format!("{{ {} }}", values.join(", "))
+            }
+            TKind::Field(base, path) => {
+                let Type::Record(mut id) = base.ty else {
+                    unreachable!("a checked field has a record operand")
+                };
+                let mut access = self.expr(base);
+                for field in path {
+                    access = format!("{access}.{}", record_member(self.checked, id, *field));
+                    if let Some((_, Type::Record(inner))) = self
+                        .checked
+                        .program()
+                        .records
+                        .get(id)
+                        .and_then(|record| record.fields.get(*field))
+                    {
+                        id = *inner;
+                    }
+                }
+                access
+            }
         };
         let name = self.fresh();
-        self.line(&format!("{} {name} = {rhs};", c_type(e.ty)));
+        self.line(&format!("{} {name} = {rhs};", c_type(self.checked, e.ty)));
         name
     }
     fn total(&self, from: ScalarType, to: ScalarType) -> bool {
@@ -228,7 +330,7 @@ impl Emitter<'_> {
                     return Some(String::new());
                 }
                 let name = self.fresh();
-                self.line(&format!("{} {name} = 0;", c_type(e.ty)));
+                self.line(&format!("{} {name} = 0;", c_type(self.checked, e.ty)));
                 let separator = if args.is_empty() { "" } else { ", " };
                 self.propagate(&format!("q_scalar_fn_{id}({args}{separator}&{name})"));
                 return Some(name);
@@ -237,7 +339,7 @@ impl Emitter<'_> {
         };
         self.helpers.insert(helper);
         let name = self.fresh();
-        self.line(&format!("{} {name} = 0;", c_type(e.ty)));
+        self.line(&format!("{} {name} = 0;", c_type(self.checked, e.ty)));
         self.propagate(&format!("{call}, &{name})"));
         Some(name)
     }
@@ -246,7 +348,7 @@ impl Emitter<'_> {
         match s {
             TStatement::Let(slot, expr) => {
                 let v = self.expr(expr);
-                self.line(&format!("{} v{slot} = {v};", c_type(expr.ty)));
+                self.line(&format!("{} v{slot} = {v};", c_type(checked, expr.ty)));
                 self.line(&format!("(void)v{slot};"));
             }
             TStatement::Evaluate(expr) => {
@@ -321,7 +423,10 @@ impl Emitter<'_> {
                     unreachable!("found by pattern")
                 };
                 let args = self.arguments(args);
-                self.line(&format!("{} v{value} = 0;", c_type(m.call.ty)));
+                self.line(&format!(
+                    "{} v{value} = 0;",
+                    c_type(self.checked, m.call.ty)
+                ));
                 let separator = if args.is_empty() { "" } else { ", " };
                 self.line(&format!(
                     "int e{error} = q_scalar_fn_{id}({args}{separator}&v{value});"
@@ -525,15 +630,15 @@ fn signature(checked: &Checked, id: usize) -> String {
         .parameters
         .iter()
         .enumerate()
-        .map(|(i, ty)| format!("{} v{i}", c_type(*ty)))
+        .map(|(i, ty)| format!("{} v{i}", c_type(checked, *ty)))
         .collect::<Vec<_>>();
     let result = if f.throws {
         if let Type::Scalar(ty) = f.result {
             parameters.push(format!("{} *q_result", st::c_type(ty)));
         }
-        "int"
+        "int".to_owned()
     } else {
-        c_type(f.result)
+        c_type(checked, f.result)
     };
     format!(
         "static {result} q_scalar_fn_{id}({})",
@@ -591,6 +696,9 @@ pub fn fragments(checked: &Checked) -> Vec<Fragment> {
     if let Some(assertions) = target_assertions(checked) {
         text.push_str(&assertions);
     }
+    // Card `W48-QR-USABLE-RECORDS`: the record types, before any function
+    // that takes or returns one; nothing for a module declaring none.
+    text.push_str(&record_definitions(checked));
     for helper in &e.helpers {
         text.push_str(&helper_definition(*helper, checked));
     }
@@ -621,6 +729,7 @@ pub fn entry_body(checked: &Checked, entry: usize) -> Result<String, Refusal> {
                 format!("q_scalar_fn_{entry}(&q_entry_value)")
             }
             Type::Unit => format!("q_scalar_fn_{entry}()"),
+            Type::Record(_) => unreachable!("an executable entry returns i32 or unit"),
         };
         writeln!(
             body,

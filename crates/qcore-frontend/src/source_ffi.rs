@@ -1,7 +1,10 @@
 //! Source reading for `source.ffi.v1` (card `W48-QR-C-STRUCT-IMPORT`).
 //!
 //! ```text
-//! module      ::= "#import std.ffi.unsafe;" (import)* (struct_import | extern-decl | entry)*
+//! module      ::= "#import std.ffi.unsafe;" (import)* (struct_import | extern-decl | function)*
+//! function    ::= the entry, or a `.qr` helper (card W48-QR-USABLE-RECORDS):
+//!                 "fn" NAME "(" [NAME ":" (SCALAR | TYPE) {"," …}] ")"
+//!                 ["->" ("unit" | SCALAR | TYPE)] ["effects" "{" … "}"] "{" stmt* "}"
 //! struct_import ::= "struct" "!" "{" "type" NAME "=" "c" STRING "from" STRING ";"
 //!                   "fields" "{" field ("," field)* [","] "}" "}"
 //! field       ::= NAME ":" SCALAR                      -- §G02t
@@ -9,7 +12,9 @@
 //!               | "let" NAME "=" NAME "." NAME ";"
 //!               | ["let" NAME "="] CALLEE "(" [arg ("," arg)*] ")" ["succeeds" outcome] ";"
 //!               | <`print`, `log`, `flush` of §G02g>
-//!               | "return" ";"
+//!               | NAME "." NAME "=" value ";"             -- a listed field (W48-QR-USABLE-RECORDS)
+//!               | "let" NAME "=" NAME ";"                 -- a copy (W48-QR-USABLE-RECORDS)
+//!               | "return" [value] ";"                    -- a value from a helper
 //! assign      ::= NAME ":" value
 //! value       ::= ["-"] INTEGER | "true" | "false" | NAME
 //! outcome     ::= ["-"] INTEGER | "true" | "false" | TYPE "{" assign ("," assign)* [","] "}"
@@ -28,8 +33,8 @@ use crate::frontend::{
 };
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use qcore_core::ffi::{
-    self, CheckedStruct, FfiCallee, FfiOutcome, FfiProgram, FfiStatement, FfiType, FfiValue,
-    ImportedStruct,
+    self, CheckedStruct, FfiCallee, FfiFunction, FfiOutcome, FfiProgram, FfiStatement, FfiType,
+    FfiValue, ImportedStruct,
 };
 use qcore_core::module_imports::FFI_MODULE;
 use qcore_core::scalar_types::{RecordedTarget, ScalarType};
@@ -338,16 +343,19 @@ pub struct LoweredFfiModule {
     pub scope_span: Span,
 }
 
+/// The declared `effects { … }` row, or `None` when the declaration writes
+/// none (card `W48-QR-USABLE-RECORDS`: a helper then infers its row; the
+/// entry reads `None` as the empty row it always read).
 fn declared_effects(
     declaration: &SourceDeclaration,
     span: Span,
-) -> Result<EffectRow, SourceDiagnostic> {
+) -> Result<Option<EffectRow>, SourceDiagnostic> {
     let tokens = &declaration.tokens;
     let Some(index) = tokens
         .iter()
         .position(|token| matches!(token, TokenKind::Word(word) if word == "effects"))
     else {
-        return Ok(EffectRow::default());
+        return Ok(None);
     };
     if !matches!(
         tokens.get(index + 1),
@@ -394,7 +402,7 @@ fn declared_effects(
             }
         }
     }
-    Ok(EffectRow::new(effects))
+    Ok(Some(EffectRow::new(effects)))
 }
 
 fn value(tokens: &[&Token], cursor: usize) -> Option<(FfiValue, usize)> {
@@ -498,11 +506,16 @@ fn call(
 
 /// Lower the entry `entry` of an FFI module into its program.
 ///
+/// Card `W48-QR-USABLE-RECORDS`: every other function of the module is a
+/// `.qr` **helper** — parameters and a result of §G02t scalars or imported
+/// records by value, an optional effect row, and a body of this route's own
+/// statements — lowered here and checked at every call by the model.
+///
 /// # Errors
 ///
 /// Every statement this route does not model (`Q026`), and every entry shape
-/// it does not model: parameters, a result other than `unit`, a second
-/// function, or a declaration the route does not read.
+/// it does not model: parameters, a result other than `unit`, or a
+/// declaration the route does not read.
 pub fn lower_source_ffi(
     parsed: &SourceProgram,
     typed: &TypedSourceProgram,
@@ -516,16 +529,17 @@ pub fn lower_source_ffi(
         |span: Span, message: String| diagnostic("Q026", SemanticPass::ExternCall, span, message);
     let mut errors = Vec::new();
     for declaration in &parsed.declarations {
-        let admitted = match declaration.value.kind {
-            DeclarationKind::ImportedStruct | DeclarationKind::ExternFunction => true,
-            DeclarationKind::Function => declaration.value.name == entry,
-            _ => false,
-        };
+        let admitted = matches!(
+            declaration.value.kind,
+            DeclarationKind::ImportedStruct
+                | DeclarationKind::ExternFunction
+                | DeclarationKind::Function
+        );
         if !admitted {
             errors.push(context(
                 declaration.span,
                 format!(
-                    "`{}` is a declaration `source.ffi.v1` does not model; an FFI file declares imported structs, extern functions and one entry",
+                    "`{}` is a declaration `source.ffi.v1` does not model; an FFI file declares imported structs, extern functions, `.qr` functions and one entry",
                     declaration.value.name
                 ),
             ));
@@ -552,100 +566,84 @@ pub fn lower_source_ffi(
             format!("the entry `{entry}` takes no parameter and returns `unit` on `source.ffi.v1`"),
         ));
     }
-    let declared_effects = match declared_effects(&declaration.value, scope_span) {
-        Ok(row) => row,
+    let entry_effects = match declared_effects(&declaration.value, scope_span) {
+        Ok(row) => row.unwrap_or_default(),
         Err(error) => {
             errors.push(error);
             EffectRow::default()
         }
     };
     let records: Vec<String> = structs.iter().map(|record| record.name.clone()).collect();
-    let mut statements = Vec::new();
     let mut statement_spans = Vec::new();
-    let body = declaration
-        .value
-        .body
-        .as_ref()
-        .map(|body| body.statements.as_slice())
-        .unwrap_or(&[]);
-    for statement in body {
-        let tokens = window(parsed, statement.span);
-        let lowered = (|| -> Result<FfiStatement, String> {
-            if let Some(event) = crate::source_std_io::std_io_statement_tokens(&tokens) {
-                return event.map(FfiStatement::Line).map_err(str::to_owned);
-            }
-            if word(&tokens, 0) == Some("return") {
-                return if symbol(&tokens, 1, Symbol::Semicolon) && tokens.len() == 2 {
-                    Ok(FfiStatement::Return)
-                } else {
-                    Err("`return;` takes no value on this route".into())
-                };
-            }
-            if word(&tokens, 0) == Some("let") {
-                let binding = word(&tokens, 1).ok_or("`let` binds a name")?.to_owned();
-                if !symbol(&tokens, 2, Symbol::Equal) {
-                    return Err("`let NAME = …;`".into());
-                }
-                // A construction.
-                if let Some(record) =
-                    word(&tokens, 3).filter(|name| records.iter().any(|record| record == name))
-                    && symbol(&tokens, 4, Symbol::LeftBrace)
-                {
-                    let (fields, next) = assignments(&tokens, 4)
-                        .ok_or("a construction is `TYPE { FIELD: VALUE, … }`")?;
-                    if !(symbol(&tokens, next, Symbol::Semicolon) && next + 1 == tokens.len()) {
-                        return Err("a construction ends with `;`".into());
-                    }
-                    return Ok(FfiStatement::Construct {
-                        binding,
-                        record: record.to_owned(),
-                        fields,
-                    });
-                }
-                // A field read.
-                if symbol(&tokens, 4, Symbol::Dot) {
-                    let source = word(&tokens, 3).ok_or("a field read is `RECORD.FIELD`")?;
-                    let field = word(&tokens, 5).ok_or("a field read is `RECORD.FIELD`")?;
-                    if !(symbol(&tokens, 6, Symbol::Semicolon) && tokens.len() == 7) {
-                        return Err("a field read is `let NAME = RECORD.FIELD;`".into());
-                    }
-                    return Ok(FfiStatement::Read {
-                        binding,
-                        source: source.to_owned(),
-                        field: field.to_owned(),
-                    });
-                }
-                let (callee, arguments, outcome) = call(&tokens, 3, &records).ok_or(
-                    "a binding on `source.ffi.v1` is a construction, a field read or a call",
-                )?;
-                return Ok(FfiStatement::Call {
-                    binding: Some(binding),
-                    callee,
-                    arguments,
-                    outcome,
-                });
-            }
-            let (callee, arguments, outcome) =
-                call(&tokens, 0, &records).ok_or("a statement `source.ffi.v1` does not model")?;
-            Ok(FfiStatement::Call {
-                binding: None,
-                callee,
-                arguments,
-                outcome,
-            })
-        })();
-        match lowered {
-            Ok(lowered) => {
-                statements.push(lowered);
-                statement_spans.push(statement.span);
-            }
-            Err(message) => errors.push(context(
-                statement.span,
-                format!(
-                    "{message}; `source.ffi.v1` admits constructions, field reads, calls, `print`/`log`/`flush` and `return;`"
-                ),
-            )),
+    let statements = lower_body(
+        parsed,
+        declaration,
+        &records,
+        &mut statement_spans,
+        &mut errors,
+    );
+    // Card `W48-QR-USABLE-RECORDS`: the helpers, in declaration order, each
+    // numbered after the statements lowered before it.
+    let mut functions = Vec::new();
+    for helper in &parsed.declarations {
+        if helper.value.kind != DeclarationKind::Function || helper.value.name == entry {
+            continue;
         }
+        let name = helper.value.name.clone();
+        let mut parameters = Vec::new();
+        for parameter in &helper.value.parameters {
+            match ffi_type(&parameter.type_source, &records) {
+                Some(ty @ (FfiType::Scalar(_) | FfiType::Record(_))) => {
+                    parameters.push((parameter.name.value.clone(), ty));
+                }
+                _ => errors.push(context(
+                    helper.span,
+                    format!(
+                        "parameter `{}` of `{name}` is `{}`; a `.qr` function on `source.ffi.v1` takes §G02t scalars and imported records by value",
+                        parameter.name.value,
+                        parameter.type_source.trim()
+                    ),
+                )),
+            }
+        }
+        let result = match helper
+            .value
+            .result_type
+            .as_ref()
+            .map_or(Some(FfiType::Unit), |result| {
+                ffi_type(&result.source, &records)
+            }) {
+            Some(ty @ (FfiType::Unit | FfiType::Scalar(_) | FfiType::Record(_))) => ty,
+            _ => {
+                errors.push(context(
+                    helper.span,
+                    format!(
+                        "`{name}` returns a type `source.ffi.v1` does not model; a `.qr` function returns `unit`, a §G02t scalar or an imported record by value"
+                    ),
+                ));
+                FfiType::Unit
+            }
+        };
+        let declared = match declared_effects(&helper.value, helper.span) {
+            Ok(row) => row,
+            Err(error) => {
+                errors.push(error);
+                None
+            }
+        };
+        let base = statement_spans.len();
+        let statements = lower_body(parsed, helper, &records, &mut statement_spans, &mut errors);
+        if statements.is_empty() {
+            statement_spans.push(helper.span);
+        }
+        functions.push(FfiFunction {
+            name,
+            parameters,
+            result,
+            statements,
+            declared_effects: declared,
+            base,
+        });
     }
     if !errors.is_empty() {
         return Err(errors);
@@ -656,10 +654,149 @@ pub fn lower_source_ffi(
             structs,
             callees,
             statements,
-            declared_effects,
+            declared_effects: entry_effects,
             target: target.clone(),
+            functions,
         },
         statement_spans,
         scope_span,
+    })
+}
+
+/// Lower one function body's statements, pushing each one's span.
+fn lower_body(
+    parsed: &SourceProgram,
+    declaration: &crate::frontend::Located<SourceDeclaration>,
+    records: &[String],
+    statement_spans: &mut Vec<Span>,
+    errors: &mut Vec<SourceDiagnostic>,
+) -> Vec<FfiStatement> {
+    let context =
+        |span: Span, message: String| diagnostic("Q026", SemanticPass::ExternCall, span, message);
+    let mut statements = Vec::new();
+    let body = declaration
+        .value
+        .body
+        .as_ref()
+        .map(|body| body.statements.as_slice())
+        .unwrap_or(&[]);
+    for statement in body {
+        let tokens = window(parsed, statement.span);
+        match lower_statement(&tokens, records) {
+            Ok(lowered) => {
+                statements.push(lowered);
+                statement_spans.push(statement.span);
+            }
+            Err(message) => errors.push(context(
+                statement.span,
+                format!(
+                    "{message}; `source.ffi.v1` admits constructions, field reads and writes, copies, calls, `print`/`log`/`flush` and `return`"
+                ),
+            )),
+        }
+    }
+    statements
+}
+
+/// Lower one statement's tokens.
+fn lower_statement(tokens: &[&Token], records: &[String]) -> Result<FfiStatement, String> {
+    if let Some(event) = crate::source_std_io::std_io_statement_tokens(tokens) {
+        return event.map(FfiStatement::Line).map_err(str::to_owned);
+    }
+    if word(tokens, 0) == Some("return") {
+        if symbol(tokens, 1, Symbol::Semicolon) && tokens.len() == 2 {
+            return Ok(FfiStatement::Return(None));
+        }
+        // Card `W48-QR-USABLE-RECORDS`: a helper's `return VALUE;`.
+        return match value(tokens, 1) {
+            Some((returned, next))
+                if symbol(tokens, next, Symbol::Semicolon) && next + 1 == tokens.len() =>
+            {
+                Ok(FfiStatement::Return(Some(returned)))
+            }
+            _ => Err("`return;` or `return VALUE;` with one literal or name".into()),
+        };
+    }
+    if word(tokens, 0) == Some("let") {
+        let binding = word(tokens, 1).ok_or("`let` binds a name")?.to_owned();
+        if !symbol(tokens, 2, Symbol::Equal) {
+            return Err("`let NAME = …;`".into());
+        }
+        // A construction.
+        if let Some(record) =
+            word(tokens, 3).filter(|name| records.iter().any(|record| record == name))
+            && symbol(tokens, 4, Symbol::LeftBrace)
+        {
+            let (fields, next) =
+                assignments(tokens, 4).ok_or("a construction is `TYPE { FIELD: VALUE, … }`")?;
+            if !(symbol(tokens, next, Symbol::Semicolon) && next + 1 == tokens.len()) {
+                return Err("a construction ends with `;`".into());
+            }
+            return Ok(FfiStatement::Construct {
+                binding,
+                record: record.to_owned(),
+                fields,
+            });
+        }
+        // A field read.
+        if symbol(tokens, 4, Symbol::Dot) {
+            let source = word(tokens, 3).ok_or("a field read is `RECORD.FIELD`")?;
+            let field = word(tokens, 5).ok_or("a field read is `RECORD.FIELD`")?;
+            if !(symbol(tokens, 6, Symbol::Semicolon) && tokens.len() == 7) {
+                return Err("a field read is `let NAME = RECORD.FIELD;`".into());
+            }
+            return Ok(FfiStatement::Read {
+                binding,
+                source: source.to_owned(),
+                field: field.to_owned(),
+            });
+        }
+        // Card `W48-QR-USABLE-RECORDS`: a copy, `let NAME = SOURCE;`.
+        if let Some(source) = word(tokens, 3)
+            && symbol(tokens, 4, Symbol::Semicolon)
+            && tokens.len() == 5
+            && !matches!(source, "true" | "false")
+        {
+            return Ok(FfiStatement::Copy {
+                binding,
+                source: source.to_owned(),
+            });
+        }
+        let (callee, arguments, outcome) = call(tokens, 3, records).ok_or(
+            "a binding on `source.ffi.v1` is a construction, a field read, a copy or a call",
+        )?;
+        return Ok(FfiStatement::Call {
+            binding: Some(binding),
+            callee,
+            arguments,
+            outcome,
+        });
+    }
+    // Card `W48-QR-USABLE-RECORDS`: the field write, `RECORD.FIELD = VALUE;`.
+    if let Some(record) = word(tokens, 0)
+        && symbol(tokens, 1, Symbol::Dot)
+        && symbol(tokens, 3, Symbol::Equal)
+    {
+        let field = word(tokens, 2).ok_or("a field write is `RECORD.FIELD = VALUE;`")?;
+        return match value(tokens, 4) {
+            Some((written, next))
+                if symbol(tokens, next, Symbol::Semicolon) && next + 1 == tokens.len() =>
+            {
+                Ok(FfiStatement::Write {
+                    record: record.to_owned(),
+                    field: field.to_owned(),
+                    value: written,
+                })
+            }
+            _ => Err("a field write is `RECORD.FIELD = VALUE;` with one literal or name".into()),
+        };
+    }
+    let (callee, arguments, outcome) =
+        call(tokens, 0, records).ok_or("a statement `source.ffi.v1` does not model")?;
+    Ok(FfiStatement::Call {
+        binding: None,
+        callee,
+        arguments,
+        outcome,
     })
 }

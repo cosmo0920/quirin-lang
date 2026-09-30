@@ -1,0 +1,17 @@
+// Survey cell (buffer, lend) of card W48-QR-USABLE-RECORDS; written by
+// docs/reports/w48-qr-usable-records/make_survey.py.
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+type P { x: i32, y: i32 }
+fn main() -> unit effects { io, alloc, mut } {
+    let b = bytes(4);
+    let p = P { x: 1, y: 2 };
+    let l = lend(b, 0, 2);
+    let a = p.x;
+    l[0] = a;
+    let v = b[0];
+    print dec v;
+    drop b;
+    return;
+}

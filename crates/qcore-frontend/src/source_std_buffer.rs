@@ -476,9 +476,10 @@ fn lower_let(
             return None;
         };
         // Card `AGGREGATE-OWNED-FIELD`: `extent(RECORD.FIELD)`, the extent
-        // of the buffer an owned field holds.
+        // of the buffer an owned field holds — since card
+        // `W48-QR-USABLE-RECORDS`, at a path.
         if symbol(window, 4, Symbol::LeftParen) && symbol(window, 6, Symbol::Dot) {
-            let Some(field) = word(window, 7) else {
+            let Some((path, after)) = crate::source_record::read_path(window, 6) else {
                 diagnostics.push(diagnostic(
                     "Q051",
                     span,
@@ -486,14 +487,15 @@ fn lower_let(
                 ));
                 return None;
             };
-            if !symbol(window, 8, Symbol::RightParen) || !ends_with_semicolon(window, 9) {
+            if !symbol(window, after, Symbol::RightParen) || !ends_with_semicolon(window, after + 1)
+            {
                 diagnostics.push(diagnostic("Q051", span, "this `extent(…)` is not closed"));
                 return None;
             }
             return Some(BufferEvent::FieldExtent {
                 binding: binding.to_owned(),
                 record: name.to_owned(),
-                field: field.to_owned(),
+                path,
             });
         }
         if !symbol(window, 4, Symbol::LeftParen)
@@ -743,18 +745,18 @@ fn lower_record(
         crate::source_record::RecordStatement::Field {
             binding,
             record,
-            field,
+            path,
         } => Some(Some(BufferEvent::Field {
             binding,
             record,
-            field,
+            path,
         })),
         // Card `AGGREGATE-OWNED-FIELD`: the index is this route's operand,
         // read by the reader above out of the span the record reader returned.
         crate::source_record::RecordStatement::FieldLoad {
             binding,
             record,
-            field,
+            path,
             index: (start, end),
         } => {
             let Some((index, next)) = operand(window, start) else {
@@ -777,7 +779,7 @@ fn lower_record(
             Some(Some(BufferEvent::FieldLoad {
                 binding,
                 record,
-                field,
+                path,
                 index,
             }))
         }
@@ -795,7 +797,7 @@ fn lower_record(
                 // type does not declare) is read exactly as before the card.
                 if let Some(ty) = constants
                     .field_type(&type_name, &field)
-                    .and_then(FieldType::scalar)
+                    .and_then(|declared| declared.scalar())
                     .filter(|ty| *ty != ScalarType::I32)
                 {
                     match typed_field_operand(window, start, end) {
@@ -915,12 +917,36 @@ fn lower_field_path(
         }
     };
     match statement {
-        crate::source_record::FieldPathStatement::Release { record, field } => {
-            Some(Some(BufferEvent::FieldRelease { record, field }))
+        crate::source_record::FieldPathStatement::Release { record, path } => {
+            Some(Some(BufferEvent::FieldRelease { record, path }))
         }
+        // Card `W48-QR-USABLE-RECORDS`: the field write. The value is read at
+        // its written form — a literal of any magnitude, `true`/`false` or one
+        // name — and the checker types it against the field it names, so an
+        // `i32`, a narrower type and an owned field (whose value names a
+        // buffer) are one reader.
+        crate::source_record::FieldPathStatement::Write {
+            record,
+            path,
+            value: (start, end),
+        } => match typed_field_operand(window, start, end) {
+            Ok(value) => Some(Some(BufferEvent::FieldWrite {
+                record,
+                path,
+                value,
+            })),
+            Err(message) => {
+                diagnostics.push(diagnostic(
+                    "Q051",
+                    span,
+                    format!("a field write stores one value: {message}"),
+                ));
+                Some(None)
+            }
+        },
         crate::source_record::FieldPathStatement::Store {
             record,
-            field,
+            path,
             index: (index_start, index_end),
             value: (value_start, value_end),
         } => {
@@ -960,7 +986,7 @@ fn lower_field_path(
             }
             Some(Some(BufferEvent::FieldStore {
                 record,
-                field,
+                path,
                 index,
                 value,
             }))
@@ -1437,6 +1463,10 @@ impl LoweringConstants {
             | BufferEvent::FieldLoad { .. }
             | BufferEvent::FieldExtent { .. }
             | BufferEvent::FieldRelease { .. }
+            // Card `W48-QR-USABLE-RECORDS`: a field write binds nothing, and
+            // a later read of the field it wrote is a field read — outside
+            // this tier for the reason above.
+            | BufferEvent::FieldWrite { .. }
             // Card `SLICE-PERMISSIONS-WRITE-LEND`: a lend binds a loan, not a
             // constant, so it contributes no bound.
             | BufferEvent::Lend { .. }

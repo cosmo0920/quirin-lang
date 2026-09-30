@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-USABLE-RECORDS card gate (base ca634dc1), script private/w48-c2/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-c2/gate, run at 0f486097: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 387 units, 400 summaries, 6,809 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T042442Z-4091019/summary.json), no load-sensitive rerun needed; clippy 0; both reevaluation probes 0; check_lean_audits.py 245 audits passed (244 + AuditUsableRecords.lean, 26 theorems). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). The first Python run after the gate failed 3 of 365: two were the matrix not yet regenerated for the ledger (631 -> 637), and one was constraint 29's tripwire, which found a read_dir walk in the card's new survey test. That walk was converted to the tracked-file helper (no test count changes); the test, fmt and clippy of that target were rerun, each 0, and an untracked decoy cell left in the survey directory was ignored. Matrix, docs index and Python (365 tests) were then run in that order. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit built at 029c7019, the last crate change): resource-diagnostics.json c012e785..., 586 Safe / 10 Unsafe / 4,238 Unknown, byte-identical to the base archive (W48-QR-C-STRUCT-IMPORT AFTER); sidecars byte-identical. Exits in gate/.",
+  "workspace_tests": 6809,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 245,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

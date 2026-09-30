@@ -3,7 +3,7 @@ use crate::frontend::{DeclarationKind, SemanticPass, SourceDiagnostic, SourcePro
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use qcore_core::scalar_calls::{
     self as ir, ArithmeticError, Arm, Block, End, Expr, Function, Line, Match, Op, Pattern,
-    Program, Raise, Statement, Type,
+    Program, Raise, RecordDecl, Statement, Type,
 };
 use qcore_core::scalar_types::Cmp;
 use qcore_core::std_io::{StdIoEvent, StdIoOperand};
@@ -109,6 +109,8 @@ struct Reader<'a> {
     errors: BTreeMap<String, usize>,
     next_error: usize,
     functions: &'a BTreeMap<String, usize>,
+    /// The module's record types by name (card `W48-QR-USABLE-RECORDS`).
+    records: &'a BTreeMap<String, usize>,
 }
 impl Reader<'_> {
     fn bad(&self, message: &str) -> SourceDiagnostic {
@@ -148,10 +150,31 @@ impl Reader<'_> {
         Ok(w)
     }
     fn ty(&mut self) -> Result<Type, SourceDiagnostic> {
-        Type::parse(&self.name()?).ok_or_else(|| {
+        let name = self.name()?;
+        // Card `W48-QR-USABLE-RECORDS`: a record type this module declares.
+        if let Some(id) = self.records.get(&name) {
+            return Ok(Type::Record(*id));
+        }
+        Type::parse(&name).ok_or_else(|| {
             self.bad(
-                "only explicit scalar types (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize) and unit are supported",
+                "only explicit scalar types (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize), unit and the module's record types are supported",
             )
+        })
+    }
+    /// `{ . FIELD }` after an operand (card `W48-QR-USABLE-RECORDS`): the field
+    /// path, resolved against the operand's type by the checker.
+    fn fields(&mut self, operand: Expr) -> Result<Expr, SourceDiagnostic> {
+        let mut path = Vec::new();
+        while self.take(Symbol::Dot) {
+            path.push(
+                self.name()
+                    .map_err(|_| self.bad("a field path names a declared field after each `.`"))?,
+            );
+        }
+        Ok(if path.is_empty() {
+            operand
+        } else {
+            Expr::Field(Box::new(operand), path)
         })
     }
     fn integer_literal(&self, text: &str, negative: bool) -> Result<Expr, SourceDiagnostic> {
@@ -242,6 +265,10 @@ impl Reader<'_> {
         Ok(lhs)
     }
     fn primary(&mut self, depth: usize) -> Result<Expr, SourceDiagnostic> {
+        let operand = self.operand(depth)?;
+        self.fields(operand)
+    }
+    fn operand(&mut self, depth: usize) -> Result<Expr, SourceDiagnostic> {
         if self.take(Symbol::LeftParen) {
             let e = self.expression(0, depth + 1)?;
             self.need(Symbol::RightParen)?;
@@ -257,6 +284,23 @@ impl Reader<'_> {
             "true" => return Ok(Expr::Bool(true)),
             "false" => return Ok(Expr::Bool(false)),
             _ => {}
+        }
+        // Card `W48-QR-USABLE-RECORDS`: `TYPE { FIELD: EXPR, … }`.
+        if let Some(id) = self.records.get(&name).copied()
+            && self.take(Symbol::LeftBrace)
+        {
+            let mut fields = Vec::new();
+            while !self.peek(Symbol::RightBrace) {
+                let field = self.name()?;
+                self.need(Symbol::Colon)?;
+                let value = self.expression(0, depth + 1)?;
+                fields.push((field, value));
+                if !self.take(Symbol::Comma) {
+                    break;
+                }
+            }
+            self.need(Symbol::RightBrace)?;
+            return Ok(Expr::Construct(id, fields));
         }
         if self.take(Symbol::LeftParen) {
             if self.locals.contains_key(&name) {
@@ -379,6 +423,23 @@ impl Reader<'_> {
                     self.next_local += 1;
                     self.locals.insert(name, id);
                     statements.push(Statement::Let(annotation, e));
+                }
+                // Card `W48-QR-USABLE-RECORDS`: a field write is refused here
+                // by name. This route's effect rows admit `io` and the typed
+                // error only, and a write derives `mut` on every route that
+                // spells one (`W48-QR-SCALAR-CALLS-FIELD-WRITE`).
+                Some(_)
+                    if self
+                        .tokens
+                        .get(self.at + 1)
+                        .is_some_and(|t| symbol(t, Symbol::Dot))
+                        && (self.at + 2..self.tokens.len())
+                            .take_while(|at| !symbol(self.tokens[*at], Symbol::Semicolon))
+                            .any(|at| symbol(self.tokens[at], Symbol::Equal)) =>
+                {
+                    return Err(self.bad(
+                        "a field write is not a statement this route models: its effect rows admit `io` and `throws<ArithmeticError>` only, and a field write derives `mut` (`W48-QR-SCALAR-CALLS-FIELD-WRITE`); build the record you mean with a construction instead",
+                    ));
                 }
                 Some(_) => {
                     let e = self.expression(0, 0)?;
@@ -531,10 +592,70 @@ impl Reader<'_> {
         Ok(Statement::Line(line, operand))
     }
 }
+/// The module's record declarations as this route's types (card
+/// `W48-QR-USABLE-RECORDS`), read by `source.record.v1`'s own reader so a
+/// declaration one route admits and the other refuses is not expressible.
+/// A record with an owned (`bytes`) field anywhere is refused by name: an
+/// owned field would cross a call, and custody across a call on this route
+/// is not modelled (`W48-QR-OWNED-RECORD-ACROSS-CALL`).
+fn record_types(
+    p: &SourceProgram,
+) -> Result<(Vec<RecordDecl>, BTreeMap<String, usize>), SourceDiagnostic> {
+    use qcore_core::source_record::FieldType;
+    let declared = crate::source_record::record_declarations(p).map_err(|(span, message)| {
+        SourceDiagnostic {
+            code: "Q020",
+            pass: SemanticPass::OrdinaryTypes,
+            span,
+            message: format!("source.scalar-calls.v1: {message}"),
+        }
+    })?;
+    let ids = declared
+        .iter()
+        .enumerate()
+        .map(|(i, record)| (record.name.clone(), i))
+        .collect::<BTreeMap<_, _>>();
+    let mut records = Vec::new();
+    for record in &declared {
+        let span = p
+            .declarations
+            .iter()
+            .find(|d| d.value.kind == DeclarationKind::Record && d.value.name == record.name)
+            .map_or(Span { start: 0, end: 0 }, |d| d.span);
+        let mut fields = Vec::new();
+        for field in &record.fields {
+            let ty = match &field.field_type {
+                FieldType::Scalar(scalar) => Type::Scalar(*scalar),
+                FieldType::Record(inner) => Type::Record(ids[inner]),
+                FieldType::Bytes => {
+                    return Err(SourceDiagnostic {
+                        code: "Q020",
+                        pass: SemanticPass::OrdinaryTypes,
+                        span,
+                        message: format!(
+                            "source.scalar-calls.v1: `{}.{}` is declared `bytes`, an owned buffer, and a record holding one would carry custody across a call, which this route does not model (`W48-QR-OWNED-RECORD-ACROSS-CALL`); records here are plain values of scalars and records",
+                            record.name, field.name
+                        ),
+                    });
+                }
+            };
+            fields.push((field.name.clone(), ty));
+        }
+        records.push(RecordDecl {
+            name: record.name.clone(),
+            fields,
+        });
+    }
+    Ok((records, ids))
+}
 pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
+    let (records, record_ids) = record_types(p)?;
+    // Card `W48-QR-USABLE-RECORDS`: a function's id counts functions only,
+    // so a record declaration between two functions moves neither.
     let names = p
         .declarations
         .iter()
+        .filter(|d| d.value.kind != DeclarationKind::Record)
         .map(|d| d.value.name.clone())
         .collect::<Vec<_>>();
     let ids = names
@@ -544,7 +665,11 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
         .collect::<BTreeMap<_, _>>();
     let mut functions = Vec::new();
     let mut spans = Vec::new();
-    for d in &p.declarations {
+    for d in p
+        .declarations
+        .iter()
+        .filter(|d| d.value.kind != DeclarationKind::Record)
+    {
         let mut r = Reader {
             tokens: p
                 .lexical_tokens()
@@ -558,6 +683,7 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
             errors: BTreeMap::new(),
             next_error: 0,
             functions: &ids,
+            records: &record_ids,
         };
         if d.value.kind != DeclarationKind::Function {
             return Err(r.bad("only source function declarations are supported"));
@@ -656,7 +782,7 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
         spans.push(d.span);
     }
     Ok(Lowered {
-        program: Program { functions },
+        program: Program { functions, records },
         names,
         spans,
     })

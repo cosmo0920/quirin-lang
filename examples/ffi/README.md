@@ -7,9 +7,12 @@ contract functions marked `[| quant #c_ffi |]`.
 | Program | What it shows |
 |---|---|
 | [header_sum.qr](header_sum.qr) | `struct qr_header` imported with four listed fields; a construction and field reads; a call by `const` pointer and a call returning the struct by value, both with declared outcomes; rendering through `std.fmt`/`std.io`/`std.logger` |
+| [record_passing.qr](record_passing.qr) | `struct qr_point` imported with three listed fields (card `W48-QR-USABLE-RECORDS`): `.qr` functions taking and returning it **by value**, a listed field **written**, and the struct handed to real C by `const` pointer and by value |
 
 The library is [qr_header.h](qr_header.h) and [qr_header.c](qr_header.c); the
 two marked contracts are [contracts/qr_header.qv](contracts/qr_header.qv).
+`record_passing.qr`'s library is [qr_point.h](qr_point.h) and
+[qr_point.c](qr_point.c), with [contracts/qr_point.qv](contracts/qr_point.qv).
 
 ## The file is unsafe as a whole
 
@@ -57,3 +60,25 @@ compiled with `-I examples/ffi` and linked with `qr_header.c`.
 under `-fsanitize=undefined,integer` and at plain `-O2`, all
 `-Wall -Wextra -Werror -pedantic`, and compares both streams with the reference
 observation.
+
+## Writing and passing an imported struct
+
+`record_passing.qr` writes a listed field with `RECORD.FIELD = VALUE;` — a
+value of exactly the field's type; an opaque member (`note`) is never written —
+and declares two `.qr` functions that take the struct **by value**:
+`with_weight` writes its copy and returns it, so the caller's `p` keeps its
+weight, and `show_x` renders a field of the struct C returned. A `.qr`
+function is checked at every call, with the values it is given; one nothing
+calls, one that calls itself, and one taking a pointer are refused. Every
+function of the file is under the same unsafe-FFI assumption, and a function
+in another file of the bundle that does not itself import `std.ffi.unsafe`
+refuses (`Q032`). `compiler/tests/usable_records.rs` builds it with
+[qr_point.c](qr_point.c) under the three builds above:
+
+<!-- transcript: record_passing stdout -->
+```text
+1
+5
+50
+7
+```

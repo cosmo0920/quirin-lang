@@ -292,6 +292,7 @@ import QCore.UnionBitfieldPlace
 import QCore.ConditionAcquisition
 import QCore.NestedCallEffects
 import QCore.FfiStructImport
+import QCore.UsableRecords
 import QCore.CastRepresentation
 
 /-! The executable formal core of QCore-C revision 0.1. -/

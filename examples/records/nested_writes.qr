@@ -1,0 +1,63 @@
+// Records that hold records, and fields that are written (card
+// `W48-QR-USABLE-RECORDS`).
+//
+// `Span` is a record of scalars; `Frame` holds one `Span` by value, a `u8`,
+// and an owned buffer. The construction `Frame { span: s, flags: 1, body: b }`
+// copies the `Span` in and moves the buffer in; from then on `f.span.lo` is
+// one field of `f`, read and written through its path.
+//
+// A field write names a field and stores a value of exactly its type:
+// `f.span.hi = 12;` is an `i32` write, `f.flags = 200;` a `u8` one, and a
+// value of another type is refused rather than converted. A write mutates
+// the record, so the entry's row admits `mut`.
+//
+// A write of a whole owned field is the refill: `f.body = c;` moves `c` in,
+// and it is admitted only because `let old = f.body;` left a hole first — a
+// write over a field still holding its buffer would lose that buffer's
+// release, and refuses. `drop f;` then releases the refilled buffer, and
+// `drop old;` the one moved out.
+//
+// Five numbers are printed: the span's width after a write, the copied `Span`
+// left as it was, the flags, and one byte of each buffer.
+
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+
+type Span { lo: i32, hi: i32 }
+type Frame { span: Span, flags: u8, body: bytes }
+
+fn main() -> unit effects { io, alloc, mut } {
+    let s = Span { lo: 2, hi: 5 };
+    let b = bytes(4);
+    b[0] = 81;
+    let f = Frame { span: s, flags: 1, body: b };
+
+    // Writes through a path, each of exactly the field's type.
+    f.span.hi = 12;
+    f.flags = 200;
+    let lo = f.span.lo;
+    let hi = f.span.hi;
+    let width = hi - lo;
+    width |> print dec;
+
+    // The construction copied `s`: writing `f.span` left `s` as it was.
+    let original = s.hi;
+    original |> print dec;
+    let flags = f.flags;
+    flags |> print dec;
+
+    // The refill: move the old buffer out, then write a new one in.
+    let old = f.body;
+    let c = bytes(2);
+    c[1] = 67;
+    f.body = c;
+    let first = old[0];
+    let second = f.body[1];
+    first |> print dec;
+    second |> print dec;
+
+    drop f;
+    drop old;
+    return;
+}

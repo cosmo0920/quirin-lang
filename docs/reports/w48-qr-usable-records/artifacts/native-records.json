@@ -1,0 +1,17 @@
+{
+ "compiler": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+ "triple": "x86_64-pc-linux-gnu",
+ "flags": "-std=c11 -Wall -Wextra -Werror -pedantic",
+ "ffi_library": "examples/ffi/qr_point.c",
+ "runs": [
+  {"program": "examples/records/nested_writes.qr", "build": "O0-ubsan", "exit": 0, "stdout_lines": 5, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/records/nested_writes.qr", "build": "O2-ubsan", "exit": 0, "stdout_lines": 5, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/records/nested_writes.qr", "build": "O2", "exit": 0, "stdout_lines": 5, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/scalar/record_calls.qr", "build": "O0-ubsan", "exit": 0, "stdout_lines": 5, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/scalar/record_calls.qr", "build": "O2-ubsan", "exit": 0, "stdout_lines": 5, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/scalar/record_calls.qr", "build": "O2", "exit": 0, "stdout_lines": 5, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/ffi/record_passing.qr", "build": "O0-ubsan", "exit": 0, "stdout_lines": 4, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/ffi/record_passing.qr", "build": "O2-ubsan", "exit": 0, "stdout_lines": 4, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/ffi/record_passing.qr", "build": "O2", "exit": 0, "stdout_lines": 4, "stderr_lines": 0, "sanitizer_reports": 0}
+ ]
+}

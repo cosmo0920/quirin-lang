@@ -1,0 +1,56 @@
+#import std.ffi.unsafe;
+#import std.extern;
+#import std.fmt;
+#import std.io;
+
+// An imported C struct written and passed between `.qr` functions, then
+// handed to real C (card `W48-QR-USABLE-RECORDS`, `source.ffi.v1`).
+//
+// `#import std.ffi.unsafe;` marks this whole file unsafe: every result holds
+// only if the imported layout is faithful and each `#c_ffi` function behaves
+// as its contract states, and `quirin check` says so.
+//
+// `note` is not listed, so it is opaque bytes: no statement reads or writes
+// it. A listed field is written with `RECORD.FIELD = VALUE;`, the value of
+// exactly the field's type.
+struct! {
+    type Point = c"struct qr_point" from "qr_point.h";
+    fields { x: i32, y: i32, weight: u16 }
+}
+
+extern fn qr_point_norm(point: ptr<const, Point>) -> i32;
+extern fn qr_point_moved(point: Point, dx: i32, dy: i32) -> Point;
+
+// A `.qr` function takes the struct by value — a copy — writes the copy and
+// returns it. The caller's record is left as it was.
+fn with_weight(p: Point, weight: u16) -> Point effects { mut } {
+    p.weight = weight;
+    return p;
+}
+
+// A `.qr` function rendering a field of the struct it is given.
+fn show_x(p: Point) -> unit effects { io } {
+    let x = p.x;
+    print dec x;
+    return;
+}
+
+fn main() -> unit effects { io, mut } {
+    let p = Point { x: 3, y: -4, weight: 1 };
+    let q = with_weight(p, 5);
+    let before = p.weight;
+    print dec before;
+    let after = q.weight;
+    print dec after;
+
+    // A write, then the struct to C through a `const` pointer: `(|6| + |-4|)
+    // * 5`. The declared outcome is compared by the emitted C.
+    q.x = 6;
+    let norm = qr_point_norm(q) succeeds 50;
+    print dec norm;
+
+    // By value both ways, and the returned struct passed on to `.qr` again.
+    let moved = qr_point_moved(q, 1, 1) succeeds Point { x: 7, y: -3, weight: 5 };
+    show_x(moved);
+    return;
+}

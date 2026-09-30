@@ -395,16 +395,22 @@ pub enum BufferEvent {
     /// ([`OwnershipOp::MoveOut`]): the binding is a buffer this entry now owns
     /// and the field is a hole a later `drop RECORD;` tolerates. Which of the
     /// two a statement is, is decided by the declared type and nowhere else.
+    ///
+    /// Card `W48-QR-USABLE-RECORDS`: the field is a **path** (`o.inner.a`,
+    /// never empty), each component but the last a field whose type is a
+    /// record; a one-element path is the field read it always was. A path
+    /// ending at a record field of a record of scalars copies that sub-record.
+    /// This is true of every field-path event below.
     Field {
         binding: String,
         record: String,
-        field: String,
+        path: Vec<String>,
     },
     /// `RECORD.FIELD[INDEX] = VALUE;` — write one byte through an owned field
     /// (card `AGGREGATE-OWNED-FIELD`). [`Self::Store`] at a field path.
     FieldStore {
         record: String,
-        field: String,
+        path: Vec<String>,
         index: BufferOperand,
         value: BufferOperand,
     },
@@ -412,19 +418,38 @@ pub enum BufferEvent {
     FieldLoad {
         binding: String,
         record: String,
-        field: String,
+        path: Vec<String>,
         index: BufferOperand,
     },
     /// `let BINDING = extent(RECORD.FIELD);` — [`Self::Extent`] at a field path.
     FieldExtent {
         binding: String,
         record: String,
-        field: String,
+        path: Vec<String>,
     },
     /// `drop RECORD.FIELD;` — release one owned field, leaving a hole
     /// ([`OwnershipOp::DropField`]). `drop RECORD;` is [`Self::Release`] naming
     /// the record, and releases every live owned field.
-    FieldRelease { record: String, field: String },
+    FieldRelease { record: String, path: Vec<String> },
+    /// `RECORD.FIELD = VALUE;` — **the field write** (card
+    /// `W48-QR-USABLE-RECORDS`, which lifted `AGGREGATE-FIELD-WRITE`).
+    ///
+    /// At a scalar field the value is checked against the field's declared
+    /// type by the construction's own typing ([`BufferEvaluation::field_value`]:
+    /// a literal range-checked, `true`/`false` at a `bool`, or a name of
+    /// exactly that type) and replaces that field's value and nothing else
+    /// ([`RecordValue::write_path`]). At an owned field the value names an
+    /// owned buffer and the statement is **the refill** —
+    /// [`OwnershipOp::RefillField`], admitted only into a hole. On a record
+    /// with an owned field anywhere, a scalar write asks the IR that the
+    /// record is live ([`OwnershipOp::AccessRecord`]), so a write through a
+    /// released record is a use after drop. A path ending at a record field
+    /// is refused by name (`W48-QR-RECORD-FIELD-WHOLE-WRITE`).
+    FieldWrite {
+        record: String,
+        path: Vec<String>,
+        value: FieldOperand,
+    },
     /// `let BINDING = SOURCE;` — **the copy bind** (card
     /// `OWNED-FIELD-ROUTE-REACH`, wave 41).
     ///
@@ -542,6 +567,32 @@ pub struct RecordConstruction {
     /// binding the construction moved into it (card `AGGREGATE-OWNED-FIELD`).
     /// Empty for every record of scalars.
     pub owned: Vec<(String, String)>,
+    /// The record fields, in declared order, each with the record binding the
+    /// construction copied — or, for a record with an owned field, moved —
+    /// into it (card `W48-QR-USABLE-RECORDS`). That binding's own construction
+    /// publishes its fields. Empty for every record declaring no record field.
+    pub records: Vec<(String, String)>,
+}
+
+/// One checked field write (card `W48-QR-USABLE-RECORDS`): which record,
+/// which field path, and what it now holds — a scalar's type and number, or
+/// the buffer a refill moved in.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RecordWrite {
+    pub event: usize,
+    pub record: String,
+    /// The path below the record, spelled `inner.a`.
+    pub field: String,
+    pub value: WrittenValue,
+}
+
+/// What a field write stored (card `W48-QR-USABLE-RECORDS`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum WrittenValue {
+    /// A scalar of the field's declared type.
+    Scalar { ty: ScalarType, value: i128 },
+    /// The buffer a refill moved into an owned field, with its extent.
+    Refill { buffer: String, extent: u32 },
 }
 
 /// One partial move: an owned field's buffer leaving its record for a plain
@@ -641,6 +692,9 @@ pub struct BufferCertificate {
     /// Every read of a field of a type other than `i32`, in program order
     /// (card `W48-QR-SCALAR-TYPES-R3`).
     pub typed_projections: Vec<TypedProjection>,
+    /// Every field write, in program order (card `W48-QR-USABLE-RECORDS`).
+    /// Empty for every program written before it.
+    pub writes: Vec<RecordWrite>,
     /// The final scalar environment, so a reader can see what each rendered
     /// name denoted.
     pub scalars: BTreeMap<String, i32>,
@@ -1052,7 +1106,14 @@ pub fn derived_effects(program: &BufferProgram) -> EffectRow {
                 | BufferEvent::FieldRelease { .. } => {
                     effects.insert(Effect::Alloc);
                 }
-                BufferEvent::Store { .. } | BufferEvent::FieldStore { .. } => {
+                // Card `W48-QR-USABLE-RECORDS`: a field write mutates an object
+                // of the program — the record — exactly as a byte store mutates
+                // a buffer, so it derives `Mut`; a read of the same field
+                // observes and derives nothing. A refill moves a buffer in and
+                // allocates nothing.
+                BufferEvent::Store { .. }
+                | BufferEvent::FieldStore { .. }
+                | BufferEvent::FieldWrite { .. } => {
                     effects.insert(Effect::Mut);
                 }
                 BufferEvent::Line(
@@ -1220,15 +1281,33 @@ pub fn custody_operations_with_gates(
             self.acquired.contains(name) || self.moved_out.contains(name)
         }
 
-        /// Whether `record.field` is an owned field of a record this walk
-        /// composed — the one question every field-path arm below asks. A
-        /// field that is not one contributes no operation, and the value half
-        /// refuses the statement by name.
-        fn owned_field(&self, record: &str, field: &str) -> bool {
-            self.composed
-                .get(record)
-                .and_then(|type_name| self.types.get(type_name.as_str()))
-                .is_some_and(|declared| declared.field(field) == Some(FieldType::Bytes))
+        /// The declared type at `record.path` for a record this walk composed
+        /// — `None` for a record it did not compose (a record of scalars
+        /// contributes no operation) or a path its type does not declare (the
+        /// value half refuses it by name).
+        fn composed_field(&self, record: &str, path: &[String]) -> Option<FieldType> {
+            let type_name = self.composed.get(record)?;
+            source_record::field_type_at(
+                &|name: &str| self.types.get(name).copied(),
+                record,
+                type_name,
+                path,
+            )
+            .ok()
+        }
+
+        /// Whether `record.path` is an owned leaf of a record this walk
+        /// composed — the one question every field-path custody arm below
+        /// asks. A path that is not one contributes no operation, and the
+        /// value half refuses the statement by name.
+        fn owned_field(&self, record: &str, path: &[String]) -> bool {
+            self.composed_field(record, path) == Some(FieldType::Bytes)
+        }
+
+        /// Whether a value of `type_name` owns anything at any depth (card
+        /// `W48-QR-USABLE-RECORDS`).
+        fn owns(&self, type_name: &str) -> bool {
+            source_record::owns(&|name: &str| self.types.get(name).copied(), type_name)
         }
 
         /// The owner name this occurrence denotes in the flat operation list.
@@ -1289,75 +1368,155 @@ pub fn custody_operations_with_gates(
                     // by name at `Q052`); and a record of scalars contributes
                     // **no operation at all**, which is what keeps every
                     // program written before the card byte-identical.
+                    //
+                    // Card `W48-QR-USABLE-RECORDS`: a type holding a record
+                    // field whose type owns is a custody shape too, and is a
+                    // `ComposeNested` whose record part moves the named
+                    // aggregate — every leaf of it — under the field. A type
+                    // declaring no record field builds exactly the `Compose`
+                    // it always built, so every program written before the
+                    // card presents the IR with the operation list it always
+                    // did.
                     BufferEvent::Construct {
                         binding,
                         type_name,
                         fields,
                     } => {
-                        if let Some(declared) = self.types.get(type_name.as_str())
-                            && declared.has_owned_field()
+                        if let Some(declared) = self.types.get(type_name.as_str()).copied()
+                            && self.owns(type_name)
                         {
-                            let moved: Vec<(String, String)> = declared
-                                .owned_field_names()
-                                .filter_map(|owned| {
-                                    fields.iter().find(|(name, _)| name == owned).and_then(
-                                        |(_, operand)| match operand {
-                                            FieldOperand::Name(from) if self.names(from) => {
-                                                Some((owned.to_owned(), Self::owner(renames, from)))
+                            let supplied = |field: &str| {
+                                fields.iter().find(|(name, _)| name == field).and_then(
+                                    |(_, operand)| match operand {
+                                        FieldOperand::Name(from) => Some(from),
+                                        FieldOperand::Literal(_) | FieldOperand::Bool(_) => None,
+                                    },
+                                )
+                            };
+                            let nests = declared
+                                .fields
+                                .iter()
+                                .any(|field| matches!(field.field_type, FieldType::Record(_)));
+                            if nests {
+                                let mut parts = Vec::new();
+                                for field in &declared.fields {
+                                    match &field.field_type {
+                                        FieldType::Bytes => {
+                                            if let Some(from) = supplied(&field.name)
+                                                && self.names(from)
+                                            {
+                                                parts.push(ownership::ComposePart::Buffer {
+                                                    field: field.name.clone(),
+                                                    from: Self::owner(renames, from),
+                                                });
                                             }
-                                            FieldOperand::Name(_)
-                                            | FieldOperand::Literal(_)
-                                            | FieldOperand::Bool(_) => None,
-                                        },
-                                    )
-                                })
-                                .collect();
-                            self.operations.push(OwnershipOp::Compose {
-                                owner: binding.clone(),
-                                fields: moved,
-                            });
+                                        }
+                                        FieldType::Record(inner) if self.owns(inner) => {
+                                            if let Some(from) = supplied(&field.name)
+                                                && self.composed.contains_key(from)
+                                            {
+                                                parts.push(ownership::ComposePart::Record {
+                                                    field: field.name.clone(),
+                                                    from: Self::owner(renames, from),
+                                                });
+                                            }
+                                        }
+                                        FieldType::Record(_) | FieldType::Scalar(_) => {}
+                                    }
+                                }
+                                self.operations.push(OwnershipOp::ComposeNested {
+                                    owner: binding.clone(),
+                                    parts,
+                                });
+                            } else {
+                                let moved: Vec<(String, String)> = declared
+                                    .owned_field_names()
+                                    .filter_map(|owned| {
+                                        supplied(owned).filter(|from| self.names(from)).map(
+                                            |from| (owned.to_owned(), Self::owner(renames, from)),
+                                        )
+                                    })
+                                    .collect();
+                                self.operations.push(OwnershipOp::Compose {
+                                    owner: binding.clone(),
+                                    fields: moved,
+                                });
+                            }
                             self.composed.insert(binding.clone(), type_name.clone());
                         }
                     }
                     // The partial move: a read of an owned field is the
                     // `MoveOut`, and its binding is a custody name from here on.
+                    // Card `W48-QR-USABLE-RECORDS`: a read of a scalar field
+                    // — or a copy of a sub-record of scalars — of a composed
+                    // record asks that the record is live.
                     BufferEvent::Field {
                         binding,
                         record,
-                        field,
+                        path,
                     } => {
-                        if self.owned_field(record, field) {
+                        if self.owned_field(record, path) {
                             self.operations.push(OwnershipOp::MoveOut {
-                                from: FieldPath::new(record.clone(), field.clone()),
+                                from: FieldPath::nested(record.clone(), path.clone()),
                                 to: binding.clone(),
                             });
                             self.moved_out.insert(binding.clone());
+                        } else if self.composed_field(record, path).is_some() {
+                            self.operations
+                                .push(OwnershipOp::AccessRecord(record.clone()));
                         }
                     }
-                    BufferEvent::FieldStore { record, field, .. }
-                        if self.owned_field(record, field) =>
-                    {
-                        self.operations.push(OwnershipOp::WriteField(FieldPath::new(
-                            record.clone(),
-                            field.clone(),
-                        )));
+                    // Card `W48-QR-USABLE-RECORDS`: the field write. At an
+                    // owned leaf it is the refill, moving the named buffer in;
+                    // at a scalar field of a composed record it asks that the
+                    // record is live. A write to a record of scalars
+                    // contributes nothing, like every other operation on one.
+                    BufferEvent::FieldWrite {
+                        record,
+                        path,
+                        value,
+                    } => {
+                        if self.owned_field(record, path) {
+                            if let FieldOperand::Name(from) = value
+                                && self.names(from)
+                            {
+                                self.operations.push(OwnershipOp::RefillField {
+                                    from: Self::owner(renames, from),
+                                    into: FieldPath::nested(record.clone(), path.clone()),
+                                });
+                            }
+                        } else if self.composed_field(record, path).is_some() {
+                            self.operations
+                                .push(OwnershipOp::AccessRecord(record.clone()));
+                        }
                     }
-                    BufferEvent::FieldLoad { record, field, .. }
-                    | BufferEvent::FieldExtent { record, field, .. }
-                        if self.owned_field(record, field) =>
+                    BufferEvent::FieldStore { record, path, .. }
+                        if self.owned_field(record, path) =>
                     {
-                        self.operations.push(OwnershipOp::ReadField(FieldPath::new(
-                            record.clone(),
-                            field.clone(),
-                        )));
+                        self.operations
+                            .push(OwnershipOp::WriteField(FieldPath::nested(
+                                record.clone(),
+                                path.clone(),
+                            )));
                     }
-                    BufferEvent::FieldRelease { record, field }
-                        if self.owned_field(record, field) =>
+                    BufferEvent::FieldLoad { record, path, .. }
+                    | BufferEvent::FieldExtent { record, path, .. }
+                        if self.owned_field(record, path) =>
                     {
-                        self.operations.push(OwnershipOp::DropField(FieldPath::new(
-                            record.clone(),
-                            field.clone(),
-                        )));
+                        self.operations
+                            .push(OwnershipOp::ReadField(FieldPath::nested(
+                                record.clone(),
+                                path.clone(),
+                            )));
+                    }
+                    BufferEvent::FieldRelease { record, path }
+                        if self.owned_field(record, path) =>
+                    {
+                        self.operations
+                            .push(OwnershipOp::DropField(FieldPath::nested(
+                                record.clone(),
+                                path.clone(),
+                            )));
                     }
                     // `drop p;` of a composed record is the plain `Drop` — the
                     // IR sees an aggregate binding and walks its fields.
@@ -1528,7 +1687,7 @@ enum WindowName<'a> {
     /// window that forgot a use — the shortening, and therefore admitting,
     /// direction. It is refused by [`window_unnameable_events`] rather than
     /// dropped.
-    FieldPath { record: &'a str, field: &'a str },
+    FieldPath { record: &'a str, path: &'a [String] },
 }
 
 /// Every buffer or loan name one event names at a custody or access position,
@@ -1601,13 +1760,28 @@ fn custody_names_at_any_depth<'a>(event: &'a BufferEvent, into: &mut Vec<WindowN
         // Card `AGGREGATE-OWNED-FIELD`'s four field-path events address a
         // buffer the window's key space cannot name. Reported rather than
         // dropped; see [`WindowName::FieldPath`].
-        BufferEvent::FieldStore { record, field, .. }
-        | BufferEvent::FieldLoad { record, field, .. }
-        | BufferEvent::FieldExtent { record, field, .. }
-        | BufferEvent::FieldRelease { record, field } => into.push(WindowName::FieldPath {
+        BufferEvent::FieldStore { record, path, .. }
+        | BufferEvent::FieldLoad { record, path, .. }
+        | BufferEvent::FieldExtent { record, path, .. }
+        | BufferEvent::FieldRelease { record, path } => into.push(WindowName::FieldPath {
             record: record.as_str(),
-            field: field.as_str(),
+            path: path.as_slice(),
         }),
+        // Card `W48-QR-USABLE-RECORDS`: a field write **names its value** when
+        // that is a name, pushed for the copy bind's reason — a loan written
+        // into a field is refused at `Q055` by the value half, and a window
+        // ending before the statement naming the loan would be the mistake
+        // this function exists to prevent. Its target is a record's field: at
+        // a scalar field that is no buffer and no loan, and at an owned field
+        // — the refill — the record is one with an owned field, whose
+        // construction the owned-field gate refuses beside any lend before a
+        // window is computed (`OWNED-FIELD-LEND-WINDOW`), so no window is ever
+        // computed over a refill.
+        BufferEvent::FieldWrite { value, .. } => {
+            if let FieldOperand::Name(name) = value {
+                into.push(WindowName::Binding(name.as_str()));
+            }
+        }
         // These name no buffer and no loan. `Acquire` names a buffer, but a
         // freshly acquired one: a name the entry has not bound before, so it
         // is no loan of this window map (a rebinding is `Q012`, refused by
@@ -1654,8 +1828,8 @@ pub fn window_unnameable_events(events: &[BufferEvent]) -> Vec<(usize, String)> 
         let mut names = Vec::new();
         custody_names_at_any_depth(event, &mut names);
         for name in names {
-            if let WindowName::FieldPath { record, field } = name {
-                found.push((index, format!("{record}.{field}")));
+            if let WindowName::FieldPath { record, path } = name {
+                found.push((index, source_record::spell_path(record, path)));
             }
         }
     }
@@ -1983,9 +2157,13 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                     // record beside a lend before this projection is
                     // consulted (`OWNED-FIELD-LEND-WINDOW`). A direct
                     // model-level caller gets no operation for any of them,
-                    // and the refusal it already received stands.
+                    // and the refusal it already received stands. Card
+                    // `W48-QR-USABLE-RECORDS`: a field write is in this class
+                    // — on a record of scalars it contributes nothing, and a
+                    // record with an owned field is refused beside a lend.
                     BufferEvent::Construct { .. }
                     | BufferEvent::Field { .. }
+                    | BufferEvent::FieldWrite { .. }
                     | BufferEvent::FieldStore { .. }
                     | BufferEvent::FieldLoad { .. }
                     | BufferEvent::FieldExtent { .. }
@@ -2194,6 +2372,7 @@ fn lend_custody_operations(program: &BufferProgram) -> Vec<OwnershipOp> {
                         | BufferEvent::Convert { .. }
                         | BufferEvent::Compute { .. }
                         | BufferEvent::Field { .. }
+                        | BufferEvent::FieldWrite { .. }
                         | BufferEvent::FieldStore { .. }
                         | BufferEvent::FieldLoad { .. }
                         | BufferEvent::FieldExtent { .. }
@@ -2274,7 +2453,11 @@ pub struct BufferEvaluation {
     /// is, and it records liveness only so that a whole-record `drop` can
     /// **publish** which fields it released. It refuses no custody question;
     /// those are the IR's, at `Q054`.
-    pub owned_fields: BTreeMap<String, BTreeMap<String, OwnedField>>,
+    ///
+    /// Card `W48-QR-USABLE-RECORDS`: keyed by the owned leaf's **path** below
+    /// the record (`["inner", "buf"]`), so a record holding a record holding a
+    /// buffer carries that buffer under its own binding.
+    pub owned_fields: BTreeMap<String, BTreeMap<Vec<String>, OwnedField>>,
     /// The live write lends, by binding name (card
     /// `SLICE-PERMISSIONS-WRITE-LEND`). A loan never leaves this map, and that
     /// is not a leak: the loan's window runs to the last statement naming it,
@@ -2350,6 +2533,8 @@ pub struct BufferStep {
     /// The owned fields this event released, by path, in declaration order:
     /// one for `drop RECORD.FIELD;`, every live one for `drop RECORD;`.
     pub field_releases: Vec<String>,
+    /// The field this event wrote (card `W48-QR-USABLE-RECORDS`).
+    pub write: Option<RecordWrite>,
     /// The write lend this event opened, with its **resolved** footprint in the
     /// owner's coordinates (card `SLICE-PERMISSIONS-WRITE-LEND`). The window is
     /// the caller's to pair in, because `through` is a whole-program fact.
@@ -2413,11 +2598,9 @@ impl BufferEvaluation {
                     // Card `W48-QR-SCALAR-TYPES-R3`: a copy keeps its type.
                     self.typed.insert(binding.clone(), value);
                 } else if let Some(value) = self.records.get(source).cloned() {
-                    let owns = self
-                        .record_types
-                        .get(&value.type_name)
-                        .is_some_and(RecordType::has_owned_field);
-                    if !owns {
+                    // Card `W48-QR-USABLE-RECORDS`: a record owns when an owned
+                    // field lies anywhere below it.
+                    if !self.owns(&value.type_name) {
                         self.records.insert(binding.clone(), value);
                     }
                 } else if !self.extents.contains_key(source) && !self.loans.contains_key(source) {
@@ -2592,11 +2775,11 @@ impl BufferEvaluation {
             BufferEvent::Release { name } => {
                 if self.extents.contains_key(name) {
                     step.release = Some(name.clone());
-                } else if let Some(declared) = self
+                } else if let Some(type_name) = self
                     .records
                     .get(name)
-                    .and_then(|value| self.record_types.get(&value.type_name))
-                    .filter(|declared| declared.has_owned_field())
+                    .map(|value| value.type_name.clone())
+                    .filter(|type_name| self.owns(type_name))
                 {
                     // Card `AGGREGATE-OWNED-FIELD`: `drop RECORD;` of a record
                     // with an owned field. The value half publishes which
@@ -2604,17 +2787,19 @@ impl BufferEvaluation {
                     // declaration order — and marks them released; the custody
                     // of the drop, the tolerated hole and the double drop are
                     // the IR's. A record of scalars falls through to the
-                    // "is not a buffer" refusal it always had.
+                    // "is not a buffer" refusal it always had. Card
+                    // `W48-QR-USABLE-RECORDS`: the owned **leaves**, at every
+                    // depth, in the IR's own order.
                     let mut released = Vec::new();
-                    for field in declared.owned_field_names() {
+                    for leaf in self.owned_leaves(&type_name) {
                         if let Some(owned) = self
                             .owned_fields
                             .get_mut(name)
-                            .and_then(|fields| fields.get_mut(field))
+                            .and_then(|fields| fields.get_mut(&leaf))
                             && owned.state == OwnedFieldState::Live
                         {
                             owned.state = OwnedFieldState::Released;
-                            released.push(format!("{name}.{field}"));
+                            released.push(source_record::spell_path(name, &leaf));
                         }
                     }
                     step.field_releases = released;
@@ -2786,6 +2971,25 @@ impl BufferEvaluation {
                                 field: field.clone(),
                             },
                         }),
+                        // Card `W48-QR-USABLE-RECORDS`: a record field takes a
+                        // record this entry bound — the whole value, copied
+                        // for a record of scalars and moved for one that owns
+                        // (the move is the IR's `ComposeNested`). Its type is
+                        // checked by the construction rule itself.
+                        (Some(FieldType::Record(_)), FieldOperand::Name(name))
+                            if self.records.contains_key(name) =>
+                        {
+                            Ok(FieldValue::Record(self.records[name].clone()))
+                        }
+                        (Some(FieldType::Record(declared)), _) => Err(BufferError::Record {
+                            event: index,
+                            refusal: RecordRefusal::FieldTakesARecord {
+                                type_name: type_name.clone(),
+                                field: field.clone(),
+                                declared,
+                                supplied: None,
+                            },
+                        }),
                         // Card `W48-QR-SCALAR-TYPES-R3`: a scalar field takes a
                         // value of exactly its declared type.
                         (Some(FieldType::Scalar(ty)), operand) => {
@@ -2842,20 +3046,47 @@ impl BufferEvaluation {
                         // leaves to the checker.
                         let mut owned_fields = BTreeMap::new();
                         let mut owned = Vec::new();
-                        for field in declared.owned_field_names() {
-                            if let Some(FieldValue::Bytes { moved_from }) = value.project(field) {
-                                let extent = self.extents.get(moved_from).copied().unwrap_or(0);
-                                let contents =
-                                    self.contents.get(moved_from).cloned().unwrap_or_default();
-                                owned_fields.insert(
-                                    field.to_owned(),
-                                    OwnedField {
-                                        extent,
-                                        contents,
-                                        state: OwnedFieldState::Live,
-                                    },
-                                );
-                                owned.push((field.to_owned(), moved_from.clone()));
+                        let mut records = Vec::new();
+                        for field in &declared.fields {
+                            match value.project(&field.name) {
+                                Some(FieldValue::Bytes { moved_from }) => {
+                                    let extent = self.extents.get(moved_from).copied().unwrap_or(0);
+                                    let contents =
+                                        self.contents.get(moved_from).cloned().unwrap_or_default();
+                                    owned_fields.insert(
+                                        vec![field.name.clone()],
+                                        OwnedField {
+                                            extent,
+                                            contents,
+                                            state: OwnedFieldState::Live,
+                                        },
+                                    );
+                                    owned.push((field.name.clone(), moved_from.clone()));
+                                }
+                                // Card `W48-QR-USABLE-RECORDS`: a record moved
+                                // in brings its owned leaves, in their states,
+                                // under the field — the value half's mirror of
+                                // the IR's `ComposePart::Record`.
+                                Some(FieldValue::Record(_)) => {
+                                    let from = fields
+                                        .iter()
+                                        .find_map(|(name, operand)| match operand {
+                                            FieldOperand::Name(from) if *name == field.name => {
+                                                Some(from.clone())
+                                            }
+                                            _ => None,
+                                        })
+                                        .unwrap_or_default();
+                                    if let Some(inner) = self.owned_fields.get(&from) {
+                                        for (leaf, held) in inner {
+                                            let mut path = vec![field.name.clone()];
+                                            path.extend(leaf.iter().cloned());
+                                            owned_fields.insert(path, held.clone());
+                                        }
+                                    }
+                                    records.push((field.name.clone(), from));
+                                }
+                                _ => {}
                             }
                         }
                         if !owned_fields.is_empty() {
@@ -2869,6 +3100,7 @@ impl BufferEvaluation {
                             fields: published,
                             typed,
                             owned,
+                            records,
                         });
                     }
                     Err(refusal) => step.errors.push(BufferError::Record {
@@ -2880,7 +3112,7 @@ impl BufferEvaluation {
             BufferEvent::Field {
                 binding,
                 record,
-                field,
+                path,
             } => {
                 let Some(value) = self.records.get(record) else {
                     step.errors.push(BufferError::Record {
@@ -2891,14 +3123,31 @@ impl BufferEvaluation {
                     });
                     return step;
                 };
-                match value.project(field) {
+                let type_name = value.type_name.clone();
+                // Card `W48-QR-USABLE-RECORDS`: the path is typed first, so a
+                // component the type does not declare and a component reached
+                // through a field that has no fields are refused by name.
+                if let Err(refusal) = source_record::field_type_at(
+                    &|name: &str| self.record_types.get(name),
+                    record,
+                    &type_name,
+                    path,
+                ) {
+                    step.errors.push(BufferError::Record {
+                        event: index,
+                        refusal,
+                    });
+                    return step;
+                }
+                let spelling = path.join(".");
+                match value.project_path(path) {
                     Some(FieldValue::Scalar(read)) => {
                         let read = *read;
                         step.projection = Some(RecordProjection {
                             event: index,
                             record: record.clone(),
-                            type_name: value.type_name.clone(),
-                            field: field.clone(),
+                            type_name,
+                            field: spelling,
                             value: read,
                         });
                         self.scalars.insert(binding.clone(), read);
@@ -2910,12 +3159,31 @@ impl BufferEvaluation {
                         step.typed_projection = Some(TypedProjection {
                             event: index,
                             record: record.clone(),
-                            type_name: value.type_name.clone(),
-                            field: field.clone(),
+                            type_name,
+                            field: spelling,
                             ty,
                             value: read,
                         });
                         self.typed.insert(binding.clone(), (ty, read));
+                    }
+                    // Card `W48-QR-USABLE-RECORDS`: a sub-record of scalars is
+                    // a plain value and is copied out; one with an owned field
+                    // below it would be a partial move of a whole aggregate,
+                    // which this revision does not spell — it is read field by
+                    // field instead.
+                    Some(FieldValue::Record(inner)) => {
+                        if self.owns(&inner.type_name) {
+                            step.errors.push(BufferError::Record {
+                                event: index,
+                                refusal: RecordRefusal::SubRecordOwns {
+                                    path: source_record::spell_path(record, path),
+                                    declared: inner.type_name.clone(),
+                                },
+                            });
+                            return step;
+                        }
+                        let inner = inner.clone();
+                        self.records.insert(binding.clone(), inner);
                     }
                     // Card `AGGREGATE-OWNED-FIELD`: the partial move. The
                     // binding owns the field's buffer from here on — its
@@ -2924,18 +3192,17 @@ impl BufferEvaluation {
                     // `Q054`; the value half still binds the name so that the
                     // one refusal is the custody one.
                     Some(FieldValue::Bytes { .. }) => {
-                        let type_name = value.type_name.clone();
                         let Some(owned) = self
                             .owned_fields
                             .get_mut(record)
-                            .and_then(|fields| fields.get_mut(field))
+                            .and_then(|fields| fields.get_mut(path))
                         else {
                             step.errors.push(BufferError::Record {
                                 event: index,
                                 refusal: RecordRefusal::NoSuchField {
                                     name: record.clone(),
                                     type_name,
-                                    field: field.clone(),
+                                    field: spelling,
                                 },
                             });
                             return step;
@@ -2950,7 +3217,7 @@ impl BufferEvaluation {
                         step.field_move = Some(FieldMove {
                             event: index,
                             record: record.clone(),
-                            field: field.clone(),
+                            field: spelling,
                             binding: binding.clone(),
                             extent,
                         });
@@ -2959,8 +3226,125 @@ impl BufferEvaluation {
                         event: index,
                         refusal: RecordRefusal::NoSuchField {
                             name: record.clone(),
-                            type_name: value.type_name.clone(),
-                            field: field.clone(),
+                            type_name,
+                            field: spelling,
+                        },
+                    }),
+                }
+            }
+            // --- The field write (card `W48-QR-USABLE-RECORDS`). ---
+            //
+            // A scalar field takes a value of exactly its declared type, by the
+            // construction's own typing, and the write replaces that field and
+            // nothing else. An owned field takes a buffer this entry owns —
+            // the refill — whose custody (into a hole only) is the IR's. A
+            // record field is refused by name. The record must be one this
+            // entry bound; whether a record with an owned field is still live
+            // is the IR's question too (`AccessRecord`), at `Q054`.
+            BufferEvent::FieldWrite {
+                record,
+                path,
+                value: operand,
+            } => {
+                let Some(type_name) = self.records.get(record).map(|v| v.type_name.clone()) else {
+                    step.errors.push(BufferError::Record {
+                        event: index,
+                        refusal: RecordRefusal::NotARecord {
+                            name: record.clone(),
+                        },
+                    });
+                    return step;
+                };
+                let declared = match source_record::field_type_at(
+                    &|name: &str| self.record_types.get(name),
+                    record,
+                    &type_name,
+                    path,
+                ) {
+                    Ok(declared) => declared,
+                    Err(refusal) => {
+                        step.errors.push(BufferError::Record {
+                            event: index,
+                            refusal,
+                        });
+                        return step;
+                    }
+                };
+                let spelling = path.join(".");
+                let holder =
+                    source_record::spell_path(&type_name, &path[..path.len().saturating_sub(1)]);
+                let last = path.last().cloned().unwrap_or_default();
+                match declared {
+                    FieldType::Scalar(ty) => {
+                        match self.field_value(index, &holder, &last, ty, operand) {
+                            Ok(written) => {
+                                let number = match &written {
+                                    FieldValue::Scalar(number) => i128::from(*number),
+                                    FieldValue::Typed { value, .. } => *value,
+                                    FieldValue::Bytes { .. } | FieldValue::Record(_) => 0,
+                                };
+                                if let Some(value) = self.records.get_mut(record) {
+                                    value.write_path(path, written);
+                                }
+                                step.write = Some(RecordWrite {
+                                    event: index,
+                                    record: record.clone(),
+                                    field: spelling,
+                                    value: WrittenValue::Scalar { ty, value: number },
+                                });
+                            }
+                            Err(error) => step.errors.push(error),
+                        }
+                    }
+                    FieldType::Bytes => match operand {
+                        FieldOperand::Name(name) if self.extents.contains_key(name) => {
+                            let extent = self.extents[name];
+                            let contents = self.contents.get(name).cloned().unwrap_or_default();
+                            if let Some(value) = self.records.get_mut(record) {
+                                value.write_path(
+                                    path,
+                                    FieldValue::Bytes {
+                                        moved_from: name.clone(),
+                                    },
+                                );
+                            }
+                            self.owned_fields.entry(record.clone()).or_default().insert(
+                                path.clone(),
+                                OwnedField {
+                                    extent,
+                                    contents,
+                                    state: OwnedFieldState::Live,
+                                },
+                            );
+                            step.write = Some(RecordWrite {
+                                event: index,
+                                record: record.clone(),
+                                field: spelling,
+                                value: WrittenValue::Refill {
+                                    buffer: name.clone(),
+                                    extent,
+                                },
+                            });
+                        }
+                        FieldOperand::Name(name) if self.loans.contains_key(name) => {
+                            step.errors.push(BufferError::Lend {
+                                event: index,
+                                refusal: LendRefusal::CrossesBoundary { name: name.clone() },
+                            });
+                        }
+                        _ => step.errors.push(BufferError::Record {
+                            event: index,
+                            refusal: RecordRefusal::FieldTakesABuffer {
+                                type_name: holder,
+                                field: last,
+                            },
+                        }),
+                    },
+                    FieldType::Record(inner) => step.errors.push(BufferError::Record {
+                        event: index,
+                        refusal: RecordRefusal::WriteOfRecordField {
+                            path: source_record::spell_path(record, path),
+                            declared: inner,
                         },
                     }),
                 }
@@ -2975,12 +3359,12 @@ impl BufferEvaluation {
             // "which bytes".
             BufferEvent::FieldStore {
                 record,
-                field,
+                path,
                 index: at,
                 value,
             } => {
-                let spelling = format!("{record}.{field}");
-                let place = self.owned_field(index, record, field).and_then(|owned| {
+                let spelling = source_record::spell_path(record, path);
+                let place = self.owned_field(index, record, path).and_then(|owned| {
                     field_place(index, &spelling, owned.extent, self.operand(index, at))
                 });
                 let value = self.operand(index, value);
@@ -2996,7 +3380,7 @@ impl BufferEvaluation {
                         if let Some(owned) = self
                             .owned_fields
                             .get_mut(record)
-                            .and_then(|fields| fields.get_mut(field))
+                            .and_then(|fields| fields.get_mut(path))
                         {
                             owned.contents[at] = byte;
                         }
@@ -3017,18 +3401,18 @@ impl BufferEvaluation {
             BufferEvent::FieldLoad {
                 binding,
                 record,
-                field,
+                path,
                 index: at,
             } => {
-                let spelling = format!("{record}.{field}");
-                match self.owned_field(index, record, field).and_then(|owned| {
+                let spelling = source_record::spell_path(record, path);
+                match self.owned_field(index, record, path).and_then(|owned| {
                     field_place(index, &spelling, owned.extent, self.operand(index, at))
                 }) {
                     Ok(at) => {
                         let byte = self
                             .owned_fields
                             .get(record)
-                            .and_then(|fields| fields.get(field))
+                            .and_then(|fields| fields.get(path))
                             .and_then(|owned| owned.contents.get(at).copied())
                             .unwrap_or(0);
                         self.scalars.insert(binding.clone(), i32::from(byte));
@@ -3046,15 +3430,15 @@ impl BufferEvaluation {
             BufferEvent::FieldExtent {
                 binding,
                 record,
-                field,
-            } => match self.owned_field(index, record, field) {
+                path,
+            } => match self.owned_field(index, record, path) {
                 Ok(owned) => {
                     self.scalars.insert(binding.clone(), owned.extent as i32);
                 }
                 Err(error) => step.errors.push(error),
             },
-            BufferEvent::FieldRelease { record, field } => {
-                match self.owned_field(index, record, field) {
+            BufferEvent::FieldRelease { record, path } => {
+                match self.owned_field(index, record, path) {
                     Ok(_) => {
                         // Published only while live: a release of a hole is
                         // the IR's double drop or use after move, the one
@@ -3062,11 +3446,11 @@ impl BufferEvaluation {
                         if let Some(owned) = self
                             .owned_fields
                             .get_mut(record)
-                            .and_then(|fields| fields.get_mut(field))
+                            .and_then(|fields| fields.get_mut(path))
                             && owned.state == OwnedFieldState::Live
                         {
                             owned.state = OwnedFieldState::Released;
-                            step.field_releases = vec![format!("{record}.{field}")];
+                            step.field_releases = vec![source_record::spell_path(record, path)];
                         }
                     }
                     Err(error) => step.errors.push(error),
@@ -3291,16 +3675,17 @@ impl BufferEvaluation {
             })
     }
 
-    /// Resolve `RECORD.FIELD` to the owned field it names, or refuse by name:
-    /// not a record this entry constructed, a field the type does not declare,
-    /// or a field declared `i32` (card `AGGREGATE-OWNED-FIELD`). Whether the
-    /// field still holds its buffer is not asked here — that is the IR's
-    /// question, and its answer arrives at `Q054`.
+    /// Resolve `RECORD.PATH` to the owned field it names, or refuse by name:
+    /// not a record this entry constructed, a path the type does not declare,
+    /// or a field that is a scalar or a record rather than `bytes` (cards
+    /// `AGGREGATE-OWNED-FIELD`, `W48-QR-USABLE-RECORDS`). Whether the field
+    /// still holds its buffer is not asked here — that is the IR's question,
+    /// and its answer arrives at `Q054`.
     fn owned_field(
         &self,
         event: usize,
         record: &str,
-        field: &str,
+        path: &[String],
     ) -> Result<&OwnedField, BufferError> {
         let Some(value) = self.records.get(record) else {
             return Err(BufferError::Record {
@@ -3310,45 +3695,49 @@ impl BufferEvaluation {
                 },
             });
         };
-        match self
-            .record_types
-            .get(&value.type_name)
-            .and_then(|declared| declared.field(field))
+        let refused = |refusal| BufferError::Record { event, refusal };
+        match source_record::field_type_at(
+            &|name: &str| self.record_types.get(name),
+            record,
+            &value.type_name,
+            path,
+        )
+        .map_err(refused)?
         {
-            Some(FieldType::Bytes) => {}
-            Some(FieldType::Scalar(declared)) => {
-                return Err(BufferError::Record {
-                    event,
-                    refusal: RecordRefusal::FieldIsNotABuffer {
-                        name: record.to_owned(),
-                        type_name: value.type_name.clone(),
-                        field: field.to_owned(),
-                        declared,
-                    },
-                });
-            }
-            None => {
-                return Err(BufferError::Record {
-                    event,
-                    refusal: RecordRefusal::NoSuchField {
-                        name: record.to_owned(),
-                        type_name: value.type_name.clone(),
-                        field: field.to_owned(),
-                    },
-                });
+            FieldType::Bytes => {}
+            declared @ (FieldType::Scalar(_) | FieldType::Record(_)) => {
+                return Err(refused(RecordRefusal::FieldIsNotABuffer {
+                    name: record.to_owned(),
+                    type_name: value.type_name.clone(),
+                    field: path.join("."),
+                    declared: declared.spelling().to_owned(),
+                }));
             }
         }
         self.owned_fields
             .get(record)
-            .and_then(|fields| fields.get(field))
-            .ok_or_else(|| BufferError::Record {
-                event,
-                refusal: RecordRefusal::NoSuchField {
+            .and_then(|fields| fields.get(path))
+            .ok_or_else(|| {
+                refused(RecordRefusal::NoSuchField {
                     name: record.to_owned(),
                     type_name: value.type_name.clone(),
-                    field: field.to_owned(),
-                },
+                    field: path.join("."),
+                })
             })
+    }
+
+    /// Whether a value of `type_name` owns anything at any depth (card
+    /// `W48-QR-USABLE-RECORDS`).
+    #[must_use]
+    pub fn owns(&self, type_name: &str) -> bool {
+        source_record::owns(&|name: &str| self.record_types.get(name), type_name)
+    }
+
+    /// The owned leaves of `type_name`, in the IR's order (card
+    /// `W48-QR-USABLE-RECORDS`).
+    #[must_use]
+    pub fn owned_leaves(&self, type_name: &str) -> Vec<Vec<String>> {
+        source_record::owned_leaves(&|name: &str| self.record_types.get(name), type_name)
     }
 
     /// Resolve `LOAN[INDEX]` to a validated index **in the loan's own
@@ -3454,9 +3843,11 @@ fn field_place(
 /// The two window gates in [`check_buffer_program`] ask it.
 fn owned_field_event(event: &BufferEvent, types: &BTreeMap<String, RecordType>) -> bool {
     match event {
-        BufferEvent::Construct { type_name, .. } => types
-            .get(type_name)
-            .is_some_and(RecordType::has_owned_field),
+        // Card `W48-QR-USABLE-RECORDS`: a type owns when an owned field lies
+        // anywhere below it, a record field's included.
+        BufferEvent::Construct { type_name, .. } => {
+            source_record::owns(&|name: &str| types.get(name), type_name)
+        }
         BufferEvent::FieldStore { .. }
         | BufferEvent::FieldLoad { .. }
         | BufferEvent::FieldExtent { .. }
@@ -3615,10 +4006,7 @@ pub fn check_buffer_program_for_target(
             .filter_map(|event| match event {
                 BufferEvent::Construct {
                     binding, type_name, ..
-                } if record_types
-                    .get(type_name)
-                    .is_some_and(RecordType::has_owned_field) =>
-                {
+                } if source_record::owns(&|name: &str| record_types.get(name), type_name) => {
                     Some(binding.as_str())
                 }
                 _ => None,
@@ -3630,7 +4018,12 @@ pub fn check_buffer_program_for_target(
             };
             let offending = any_event(body, |inner| {
                 owned_field_event(inner, &record_types)
-                    || matches!(inner, BufferEvent::Field { record, .. } | BufferEvent::Release { name: record }
+                    || matches!(inner, BufferEvent::Field { record, .. }
+                        | BufferEvent::Release { name: record }
+                        // Card `W48-QR-USABLE-RECORDS`: a write of an outer
+                        // composed record in a body — a refill would recur,
+                        // and a scalar write keeps the reads' company.
+                        | BufferEvent::FieldWrite { record, .. }
                         if composed_outside.contains(record.as_str()))
             });
             if offending {
@@ -3831,6 +4224,7 @@ pub fn check_buffer_program_for_target(
         constructions,
         projections,
         typed_projections,
+        writes,
         lines,
         flushes,
         renderings,
@@ -3871,6 +4265,7 @@ pub fn check_buffer_program_for_target(
             constructions,
             projections,
             typed_projections,
+            writes,
             scalars: evaluation.scalars,
             typed_scalars: evaluation.typed,
             target_assumption,
@@ -3916,6 +4311,8 @@ pub struct BufferRun {
     pub projections: Vec<RecordProjection>,
     /// Card `W48-QR-SCALAR-TYPES-R3`: reads of fields of other types.
     pub typed_projections: Vec<TypedProjection>,
+    /// Card `W48-QR-USABLE-RECORDS`: every field write.
+    pub writes: Vec<RecordWrite>,
     pub lines: Vec<ObservedLine>,
     pub flushes: usize,
     pub renderings: BTreeSet<Rendering>,
@@ -3938,6 +4335,7 @@ impl BufferRun {
             constructions: Vec::new(),
             projections: Vec::new(),
             typed_projections: Vec::new(),
+            writes: Vec::new(),
             lines: Vec::new(),
             flushes: 0,
             renderings: BTreeSet::new(),
@@ -3995,6 +4393,7 @@ impl BufferRun {
             constructions,
             projections,
             typed_projections,
+            writes,
             lines,
             flushes,
             renderings,
@@ -4041,6 +4440,9 @@ impl BufferRun {
             | BufferEvent::FieldLoad { .. }
             | BufferEvent::FieldExtent { .. }
             | BufferEvent::FieldRelease { .. }
+            // Card `W48-QR-USABLE-RECORDS`: a field write is value-bearing and
+            // reaches the same stepper.
+            | BufferEvent::FieldWrite { .. }
             // Card `OWNED-FIELD-ROUTE-REACH`: the copy bind is value-bearing —
             // it binds a scalar or a record value — and reaches the same
             // stepper, so a copy inside a `for` body is decided by the one
@@ -4061,6 +4463,7 @@ impl BufferRun {
                 constructions.extend(step.construction);
                 projections.extend(step.projection);
                 typed_projections.extend(step.typed_projection);
+                writes.extend(step.write);
                 if let Some((binding, shape)) = step.lend {
                     lends.push(LendRecord {
                         event: index,
@@ -4355,6 +4758,8 @@ fn body_bindings(events: &[BufferEvent]) -> BTreeSet<String> {
                 | BufferEvent::Release { .. }
                 | BufferEvent::FieldStore { .. }
                 | BufferEvent::FieldRelease { .. }
+                // Card `W48-QR-USABLE-RECORDS`: a field write binds nothing.
+                | BufferEvent::FieldWrite { .. }
                 | BufferEvent::Line(_)
                 | BufferEvent::Return => {}
             }
@@ -4415,6 +4820,7 @@ pub enum BufferRecheckFailure {
     Constructions,
     Projections,
     TypedProjections,
+    Writes,
     Scalars,
     TypedScalars,
     TargetAssumption,
@@ -4438,6 +4844,7 @@ impl fmt::Display for BufferRecheckFailure {
             Self::Constructions => "the constructed record values and the fields they supply",
             Self::Projections => "the checked field reads",
             Self::TypedProjections => "the checked reads of fields of other scalar types",
+            Self::Writes => "the checked field writes",
             Self::Scalars => "the scalar environment",
             Self::TypedScalars => "the environment of every other scalar type",
             Self::TargetAssumption => "the recorded-target assumption",
@@ -4501,6 +4908,9 @@ pub fn recheck_buffer_certificate_for_target(
     }
     if rederived.typed_projections != certificate.typed_projections {
         return Err(BufferRecheckFailure::TypedProjections);
+    }
+    if rederived.writes != certificate.writes {
+        return Err(BufferRecheckFailure::Writes);
     }
     if rederived.scalars != certificate.scalars {
         return Err(BufferRecheckFailure::Scalars);

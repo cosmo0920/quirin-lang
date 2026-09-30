@@ -87,7 +87,9 @@ const PACKET: &str = "type Packet { tag: i32, buf: bytes }";
 // --- The custody family: the operation list, and refusals arriving from the IR. ---
 
 /// **The operation list the route builds for the flagship**, pinned exactly.
-/// A scalar field read contributes nothing; every owned-field statement is one
+/// A scalar field read contributes one live-record check (card
+/// `W48-QR-USABLE-RECORDS`, which made a read of a released record a use
+/// after drop; before it, nothing); every owned-field statement is one
 /// operation of the path-extended IR; the construction is a `Compose` of the
 /// owned fields in declared order, and the whole-record `drop` is the plain
 /// `Drop` the IR walks.
@@ -108,6 +110,7 @@ fn the_flagship_builds_exactly_the_aggregate_operations() {
             OwnershipOp::WriteField(p) => format!("write-field {}", p.spelling()),
             OwnershipOp::MoveOut { from, to } => format!("move-out {} -> {to}", from.spelling()),
             OwnershipOp::DropField(p) => format!("drop-field {}", p.spelling()),
+            OwnershipOp::AccessRecord(base) => format!("access {base}"),
             other => format!("{other:?}"),
         })
         .collect();
@@ -120,6 +123,7 @@ fn the_flagship_builds_exactly_the_aggregate_operations() {
             "acquire b",
             "write b",
             "compose f [(\"head\", \"h\"), (\"body\", \"b\")]",
+            "access f",
             "read-field f.body",
             "write-field f.body",
             "read-field f.head",
@@ -162,7 +166,7 @@ fn a_record_of_scalars_still_contributes_no_operation() {
             BufferEvent::Field {
                 binding: "a".to_owned(),
                 record: "p".to_owned(),
-                field: "x".to_owned(),
+                path: vec!["x".to_owned()],
             },
             BufferEvent::Return,
         ],

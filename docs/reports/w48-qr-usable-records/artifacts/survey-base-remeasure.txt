@@ -1,0 +1,13 @@
+Base re-measure of the two survey cells whose fixtures gained 'mut' in their effect row after the base survey (debug quirin built at base ca634dc1, sha256 055394939d6a51fa...):
+
+$ quirin check compiler/tests/fixtures/usable_records/survey/buffer_write.qr
+compiler/tests/fixtures/usable_records/survey/buffer_write.qr:8:5: Q051: `p` is not a statement `source.buffer.v1` models
+    p.x = 5;
+    ^
+exit=1
+
+$ quirin check --recorded-target <host clang> compiler/tests/fixtures/usable_records/survey/ffi_write.qr
+compiler/tests/fixtures/usable_records/survey/ffi_write.qr:12:5: Q026: a statement `source.ffi.v1` does not model; `source.ffi.v1` admits constructions, field reads, calls, `print`/`log`/`flush` and `return;`
+    r.len = 9;
+    ^
+exit=1

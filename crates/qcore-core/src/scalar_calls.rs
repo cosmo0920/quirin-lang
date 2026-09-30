@@ -29,12 +29,17 @@ pub const MAX_DEPTH: usize = 64;
 pub const MAX_NODES: usize = 16384;
 pub const MAX_STEPS: usize = 100000;
 
-/// A parameter, local, result or expression type: a scalar of the table, or
-/// `unit`, which has no value.
+/// A parameter, local, result or expression type: a scalar of the table,
+/// `unit`, which has no value, or — card `W48-QR-USABLE-RECORDS` — a record
+/// the module declares, by its index in [`Program::records`].
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Type {
     Unit,
     Scalar(ScalarType),
+    /// A record of scalars (and records of scalars), held and passed **by
+    /// value**: a plain copyable value, so a call copies it in and a return
+    /// copies it out, and no custody is involved.
+    Record(usize),
 }
 impl Type {
     pub const I32: Type = Type::Scalar(ScalarType::I32);
@@ -50,7 +55,14 @@ impl Type {
     pub fn scalar(self) -> Option<ScalarType> {
         match self {
             Self::Scalar(ty) => Some(ty),
-            Self::Unit => None,
+            Self::Unit | Self::Record(_) => None,
+        }
+    }
+    /// The record a record type names.
+    pub fn record(self) -> Option<usize> {
+        match self {
+            Self::Record(id) => Some(id),
+            Self::Unit | Self::Scalar(_) => None,
         }
     }
     fn integer(self) -> Option<ScalarType> {
@@ -62,6 +74,7 @@ impl fmt::Display for Type {
         match self {
             Self::Unit => f.write_str("unit"),
             Self::Scalar(ty) => write!(f, "{ty}"),
+            Self::Record(id) => write!(f, "record #{id}"),
         }
     }
 }
@@ -83,7 +96,28 @@ pub enum Expr {
     /// `CALL?` (card `W48-QR-SCALAR-TYPES-R2`): propagate the `ArithmeticError`
     /// a call to a function whose row declares `throws<ArithmeticError>` raised.
     Try(Box<Expr>),
+    /// `TYPE { FIELD: EXPR, … }` (card `W48-QR-USABLE-RECORDS`): a record of
+    /// [`Program::records`]'s entry, its fields by name in the order written;
+    /// the checker decides totality and orders them as declared.
+    Construct(usize, Vec<(String, Expr)>),
+    /// `EXPR.F1.….Fn` (card `W48-QR-USABLE-RECORDS`): the field at a path of
+    /// field names, each but the last naming a record field; the checker
+    /// resolves the names against the operand's type.
+    Field(Box<Expr>, Vec<String>),
 }
+
+/// A record type of the module (card `W48-QR-USABLE-RECORDS`): its source
+/// name and its fields, each a scalar or another record, in declared order.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RecordDecl {
+    pub name: String,
+    pub fields: Vec<(String, Type)>,
+}
+
+/// The deepest nesting of records this route admits, the outermost counted.
+pub const MAX_RECORD_NESTING: usize = 8;
+/// The most scalar leaves one record may hold once its record fields expand.
+pub const MAX_RECORD_LEAVES: usize = 256;
 /// One `source.std-io.v1` line-producing statement's selector.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Line {
@@ -174,6 +208,82 @@ pub struct Function {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Program {
     pub functions: Vec<Function>,
+    /// The module's record types (card `W48-QR-USABLE-RECORDS`). Empty for
+    /// every program written before it.
+    pub records: Vec<RecordDecl>,
+}
+
+impl Program {
+    /// The scalar leaves of a value of `ty`, in declared order at every level
+    /// — the flattened layout the evaluator carries a record in. A scalar is
+    /// its own one leaf and `unit` has none.
+    #[must_use]
+    pub fn leaves(&self, ty: Type) -> Vec<ScalarType> {
+        let mut leaves = Vec::new();
+        self.push_leaves(ty, &mut leaves, 0);
+        leaves
+    }
+    fn push_leaves(&self, ty: Type, into: &mut Vec<ScalarType>, depth: usize) {
+        match ty {
+            Type::Unit => {}
+            Type::Scalar(scalar) => into.push(scalar),
+            Type::Record(id) => {
+                if depth > MAX_RECORD_NESTING {
+                    return;
+                }
+                if let Some(record) = self.records.get(id) {
+                    for (_, field) in &record.fields {
+                        self.push_leaves(*field, into, depth + 1);
+                    }
+                }
+            }
+        }
+    }
+    /// Where the field at `path` below a record of `id` lies in the record's
+    /// leaves — its first leaf and its width — and its type; `None` for a
+    /// path the record does not declare.
+    #[must_use]
+    pub fn field_slice(&self, id: usize, path: &[usize]) -> Option<(usize, usize, Type)> {
+        let (first, rest) = path.split_first()?;
+        let record = self.records.get(id)?;
+        let (_, ty) = record.fields.get(*first)?;
+        let start: usize = record.fields[..*first]
+            .iter()
+            .map(|(_, field)| self.leaves(*field).len())
+            .sum();
+        if rest.is_empty() {
+            return Some((start, self.leaves(*ty).len(), *ty));
+        }
+        let inner = ty.record()?;
+        let (offset, width, found) = self.field_slice(inner, rest)?;
+        Some((start + offset, width, found))
+    }
+    /// The declared field indices of a path of field names below a record of
+    /// `id`, or `None` when a name is not declared or a non-final component
+    /// is not a record.
+    #[must_use]
+    pub fn field_path(&self, id: usize, names: &[String]) -> Option<Vec<usize>> {
+        let mut path = Vec::new();
+        let mut current = Some(id);
+        for name in names {
+            let record = self.records.get(current?)?;
+            let index = record.fields.iter().position(|(field, _)| field == name)?;
+            current = record.fields[index].1.record();
+            path.push(index);
+        }
+        Some(path)
+    }
+    /// A type's source name: a scalar's, `unit`, or the record's own.
+    #[must_use]
+    pub fn type_name(&self, ty: Type) -> String {
+        match ty {
+            Type::Record(id) => self
+                .records
+                .get(id)
+                .map_or_else(|| ty.to_string(), |record| record.name.clone()),
+            _ => ty.to_string(),
+        }
+    }
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Refusal {
@@ -209,6 +319,12 @@ pub enum TKind {
     /// `CALL?`: the operand is a [`TKind::Call`] of a function that may raise
     /// `ArithmeticError`, in a function whose row permits it.
     Try(Box<TExpr>),
+    /// A record value built from its fields in declared order (card
+    /// `W48-QR-USABLE-RECORDS`).
+    Construct(Vec<TExpr>),
+    /// The field at a path of declared field indices below a record operand
+    /// (card `W48-QR-USABLE-RECORDS`).
+    Field(Box<TExpr>, Vec<usize>),
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TStatement {
@@ -284,10 +400,21 @@ struct Output {
     lines: Vec<ObservedLine>,
 }
 /// How one invocation ended: with its value, or with the typed error.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Outcome {
     Value(Option<i128>),
     Raised(ArithmeticError),
+    /// A record result, as its leaves in declared order (card
+    /// `W48-QR-USABLE-RECORDS`).
+    Record(Vec<i128>),
+}
+
+/// One argument of an invocation: a scalar, or a record's leaves (card
+/// `W48-QR-USABLE-RECORDS`).
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum Arg {
+    Scalar(i128),
+    Record(Vec<i128>),
 }
 /// Why evaluation stopped early: a refusal (a fault where no error is
 /// permitted, or a bound), or a raised `ArithmeticError` unwinding the function.
@@ -300,9 +427,12 @@ impl From<Refusal> for Stop {
         Self::Refused(refusal)
     }
 }
-/// One invocation's slots.
+/// One invocation's slots. A record local's value is its leaves, held in
+/// `records` at its slot (card `W48-QR-USABLE-RECORDS`); a scalar local's is
+/// in `locals` at its slot, as before.
 struct Frame {
     locals: Vec<i128>,
+    records: Vec<Vec<i128>>,
     errors: Vec<Option<ArithmeticError>>,
 }
 impl Checked {
@@ -346,11 +476,16 @@ impl Checked {
             stdout: Vec::new(),
             lines: Vec::new(),
         };
-        let outcome = self.call(entry, arguments, &mut budget, &mut out, 0)?;
+        let arguments = arguments
+            .iter()
+            .map(|a| Arg::Scalar(*a))
+            .collect::<Vec<_>>();
+        let outcome = self.call(entry, &arguments, &mut budget, &mut out, 0)?;
         let f = &self.typed[entry];
         let (result, error) = match outcome {
             Outcome::Value(value) => (value, None),
             Outcome::Raised(error) => (None, Some(error)),
+            Outcome::Record(_) => (None, None),
         };
         Ok(Observation {
             value: result
@@ -371,12 +506,16 @@ impl Checked {
             stdout: Vec::new(),
             lines: Vec::new(),
         };
-        self.call(id, arguments, &mut budget, &mut out, 0)
+        let arguments = arguments
+            .iter()
+            .map(|a| Arg::Scalar(*a))
+            .collect::<Vec<_>>();
+        self.call(id, &arguments, &mut budget, &mut out, 0)
     }
     fn call(
         &self,
         id: usize,
-        args: &[i128],
+        args: &[Arg],
         budget: &mut usize,
         out: &mut Output,
         depth: usize,
@@ -391,19 +530,43 @@ impl Checked {
         if args.len() != f.parameters.len() {
             return Err(bad(id, "argument count mismatch"));
         }
-        for (value, ty) in args.iter().zip(&f.parameters) {
-            let fits = ty
-                .scalar()
-                .is_some_and(|ty| ty.contains(*value, self.target.as_ref()));
-            if !fits {
-                return Err(bad(id, &format!("argument {value} is not a value of {ty}")));
-            }
-        }
         let mut frame = Frame {
             locals: vec![0; f.locals.len()],
+            records: vec![Vec::new(); f.locals.len()],
             errors: vec![None; f.error_slots],
         };
-        frame.locals[..args.len()].copy_from_slice(args);
+        // Card `W48-QR-USABLE-RECORDS`: a record argument is **copied** into
+        // its parameter slot, leaf by leaf, each leaf a value of its type.
+        for (slot, (value, ty)) in args.iter().zip(&f.parameters).enumerate() {
+            match (value, ty) {
+                (Arg::Scalar(value), Type::Scalar(scalar))
+                    if scalar.contains(*value, self.target.as_ref()) =>
+                {
+                    frame.locals[slot] = *value;
+                }
+                (Arg::Record(leaves), Type::Record(_)) => {
+                    let types = self.program.leaves(*ty);
+                    let fits = leaves.len() == types.len()
+                        && leaves
+                            .iter()
+                            .zip(&types)
+                            .all(|(value, leaf)| leaf.contains(*value, self.target.as_ref()));
+                    if !fits {
+                        return Err(bad(id, "a record argument is not a value of its type"));
+                    }
+                    frame.records[slot] = leaves.clone();
+                }
+                (Arg::Scalar(value), _) => {
+                    return Err(bad(id, &format!("argument {value} is not a value of {ty}")));
+                }
+                (Arg::Record(_), _) => {
+                    return Err(bad(
+                        id,
+                        &format!("a record argument is not a value of {ty}"),
+                    ));
+                }
+            }
+        }
         let outcome = self.block(id, &f.body, &mut frame, budget, out, depth)?;
         if matches!(outcome, Outcome::Raised(_)) && !f.throws {
             return Err(bad(
@@ -431,6 +594,15 @@ impl Checked {
         }
         match &b.end {
             TEnd::Return(None) => Ok(Outcome::Value(None)),
+            // Card `W48-QR-USABLE-RECORDS`: a record result is returned by
+            // value, its leaves copied out.
+            TEnd::Return(Some(e)) if e.ty.record().is_some() => {
+                match self.eval_record(id, e, frame, budget, out, depth) {
+                    Ok(leaves) => Ok(Outcome::Record(leaves)),
+                    Err(Stop::Raised(error)) => Ok(Outcome::Raised(error)),
+                    Err(Stop::Refused(refusal)) => Err(refusal),
+                }
+            }
             TEnd::Return(Some(e)) => match self.eval(id, e, frame, budget, out, depth) {
                 Ok(value) => Ok(Outcome::Value(value)),
                 Err(Stop::Raised(error)) => Ok(Outcome::Raised(error)),
@@ -448,18 +620,16 @@ impl Checked {
                 let TKind::Call(callee, args) = &m.call.kind else {
                     return Err(bad(id, "a match scrutinee is a call"));
                 };
-                let mut values = Vec::new();
-                for a in args {
-                    match self.eval(id, a, frame, budget, out, depth) {
-                        Ok(v) => values.push(v.ok_or_else(|| bad(id, "expected a scalar"))?),
-                        Err(Stop::Raised(error)) => return Ok(Outcome::Raised(error)),
-                        Err(Stop::Refused(refusal)) => return Err(refusal),
-                    }
-                }
+                let values = match self.arguments(id, args, frame, budget, out, depth) {
+                    Ok(values) => values,
+                    Err(Stop::Raised(error)) => return Ok(Outcome::Raised(error)),
+                    Err(Stop::Refused(refusal)) => return Err(refusal),
+                };
                 let outcome = self.call(*callee, &values, budget, out, depth + 1)?;
                 for arm in &m.arms {
-                    match (arm.pattern, outcome) {
+                    match (arm.pattern, &outcome) {
                         (Pattern::Ok(slot), Outcome::Value(value)) => {
+                            let value = *value;
                             *frame
                                 .locals
                                 .get_mut(slot)
@@ -471,7 +641,7 @@ impl Checked {
                             *frame
                                 .errors
                                 .get_mut(slot)
-                                .ok_or_else(|| bad(id, "unbound error"))? = Some(error);
+                                .ok_or_else(|| bad(id, "unbound error"))? = Some(*error);
                             return self.block(id, &arm.body, frame, budget, out, depth);
                         }
                         _ => {}
@@ -491,6 +661,14 @@ impl Checked {
         depth: usize,
     ) -> Result<(), Stop> {
         match s {
+            // Card `W48-QR-USABLE-RECORDS`: a record local holds its leaves.
+            TStatement::Let(slot, e) if e.ty.record().is_some() => {
+                let leaves = self.eval_record(id, e, frame, budget, out, depth)?;
+                *frame
+                    .records
+                    .get_mut(*slot)
+                    .ok_or_else(|| bad(id, "unbound local"))? = leaves;
+            }
             TStatement::Let(slot, e) => {
                 let v = self.eval(id, e, frame, budget, out, depth)?;
                 let v = v.ok_or_else(|| bad(id, "unit local"))?;
@@ -498,6 +676,9 @@ impl Checked {
                     .locals
                     .get_mut(*slot)
                     .ok_or_else(|| bad(id, "unbound local"))? = v;
+            }
+            TStatement::Evaluate(e) if e.ty.record().is_some() => {
+                self.eval_record(id, e, frame, budget, out, depth)?;
             }
             TStatement::Evaluate(e) => {
                 self.eval(id, e, frame, budget, out, depth)?;
@@ -595,10 +776,7 @@ impl Checked {
                 )
             }
             TKind::Call(f, args) => {
-                let args = args
-                    .iter()
-                    .map(&mut scalar)
-                    .collect::<Result<Vec<_>, _>>()?;
+                let args = self.arguments(id, args, frame, budget, out, depth)?;
                 match self.call(*f, &args, budget, out, depth + 1)? {
                     Outcome::Value(value) => value,
                     Outcome::Raised(_) => {
@@ -607,22 +785,133 @@ impl Checked {
                             "a call that raised `ArithmeticError` was neither propagated nor matched",
                         )));
                     }
+                    Outcome::Record(_) => {
+                        return Err(Stop::Refused(bad(id, "expected a scalar, found a record")));
+                    }
                 }
             }
             TKind::Try(call) => {
                 let TKind::Call(f, args) = &call.kind else {
                     return Err(Stop::Refused(bad(id, "`?` applies to a call")));
                 };
-                let args = args
-                    .iter()
-                    .map(&mut scalar)
-                    .collect::<Result<Vec<_>, _>>()?;
+                let args = self.arguments(id, args, frame, budget, out, depth)?;
                 match self.call(*f, &args, budget, out, depth + 1)? {
                     Outcome::Value(value) => value,
                     Outcome::Raised(error) => return Err(Stop::Raised(error)),
+                    Outcome::Record(_) => {
+                        return Err(Stop::Refused(bad(id, "expected a scalar, found a record")));
+                    }
                 }
             }
+            // Card `W48-QR-USABLE-RECORDS`: a scalar field of a record is its
+            // leaf at the path's offset.
+            TKind::Field(base, path) => {
+                let record = base
+                    .ty
+                    .record()
+                    .ok_or_else(|| bad(id, "a field of a non-record"))?;
+                let (start, _, _) = self
+                    .program
+                    .field_slice(record, path)
+                    .ok_or_else(|| bad(id, "an undeclared field path"))?;
+                let leaves = self.eval_record(id, base, frame, budget, out, depth)?;
+                Some(
+                    *leaves
+                        .get(start)
+                        .ok_or_else(|| bad(id, "a field path outside its record"))?,
+                )
+            }
+            TKind::Construct(_) => {
+                return Err(Stop::Refused(bad(id, "expected a scalar, found a record")));
+            }
         })
+    }
+    /// The arguments of a call, each a scalar or a record's leaves (card
+    /// `W48-QR-USABLE-RECORDS`).
+    fn arguments(
+        &self,
+        id: usize,
+        args: &[TExpr],
+        frame: &Frame,
+        budget: &mut usize,
+        out: &mut Output,
+        depth: usize,
+    ) -> Result<Vec<Arg>, Stop> {
+        args.iter()
+            .map(|a| {
+                if a.ty.record().is_some() {
+                    self.eval_record(id, a, frame, budget, out, depth)
+                        .map(Arg::Record)
+                } else {
+                    self.eval(id, a, frame, budget, out, depth)?
+                        .map(Arg::Scalar)
+                        .ok_or_else(|| Stop::Refused(bad(id, "expected a scalar")))
+                }
+            })
+            .collect()
+    }
+    /// A record-typed expression's value: its leaves in declared order at
+    /// every level (card `W48-QR-USABLE-RECORDS`).
+    fn eval_record(
+        &self,
+        id: usize,
+        e: &TExpr,
+        frame: &Frame,
+        budget: &mut usize,
+        out: &mut Output,
+        depth: usize,
+    ) -> Result<Vec<i128>, Stop> {
+        *budget = budget
+            .checked_sub(1)
+            .ok_or_else(|| bad(id, "scalar execution step bound exceeded"))?;
+        match &e.kind {
+            TKind::Local(i) => Ok(frame
+                .records
+                .get(*i)
+                .cloned()
+                .ok_or_else(|| bad(id, "unbound local"))?),
+            TKind::Construct(fields) => {
+                let mut leaves = Vec::new();
+                for field in fields {
+                    if field.ty.record().is_some() {
+                        leaves.extend(self.eval_record(id, field, frame, budget, out, depth)?);
+                    } else {
+                        leaves.push(
+                            self.eval(id, field, frame, budget, out, depth)?
+                                .ok_or_else(|| Stop::Refused(bad(id, "expected a scalar")))?,
+                        );
+                    }
+                }
+                Ok(leaves)
+            }
+            TKind::Field(base, path) => {
+                let record = base
+                    .ty
+                    .record()
+                    .ok_or_else(|| bad(id, "a field of a non-record"))?;
+                let (start, width, _) = self
+                    .program
+                    .field_slice(record, path)
+                    .ok_or_else(|| bad(id, "an undeclared field path"))?;
+                let leaves = self.eval_record(id, base, frame, budget, out, depth)?;
+                Ok(leaves
+                    .get(start..start + width)
+                    .ok_or_else(|| bad(id, "a field path outside its record"))?
+                    .to_vec())
+            }
+            TKind::Call(f, args) => {
+                let args = self.arguments(id, args, frame, budget, out, depth)?;
+                match self.call(*f, &args, budget, out, depth + 1)? {
+                    Outcome::Record(leaves) => Ok(leaves),
+                    Outcome::Raised(_) => Err(Stop::Refused(bad(
+                        id,
+                        "a call that raised `ArithmeticError` was neither propagated nor matched",
+                    ))),
+                    Outcome::Value(_) => Err(Stop::Refused(bad(id, "expected a record"))),
+                }
+            }
+            _ => Err(Stop::Refused(bad(id, "expected a record expression"))),
+        }
     }
 }
 /// The i32 wording is the route's established message; the other types name
@@ -696,7 +985,34 @@ impl Elab<'_> {
                     .result,
             ),
             Expr::Try(call) => self.synth(call, depth + 1)?,
+            // Card `W48-QR-USABLE-RECORDS`.
+            Expr::Construct(record, _) => Some(Type::Record(*record)),
+            Expr::Field(base, names) => {
+                let Some(Type::Record(record)) = self.synth(base, depth + 1)? else {
+                    return Err(self.bad(NOT_A_RECORD));
+                };
+                let path = self.path(record, names)?;
+                Some(self.field_type(record, &path)?)
+            }
         })
+    }
+    /// The declared field indices of a path of names below record `record`,
+    /// or the refusal naming the first component that is not a field.
+    fn path(&self, record: usize, names: &[String]) -> Result<Vec<usize>, Refusal> {
+        self.program.field_path(record, names).ok_or_else(|| {
+            self.bad(&format!(
+                "`{}` declares no field path `{}`; a path names declared fields, each but the last a record",
+                self.program.type_name(Type::Record(record)),
+                names.join(".")
+            ))
+        })
+    }
+    /// The declared type at `path` below record `record`, or the refusal.
+    fn field_type(&self, record: usize, path: &[usize]) -> Result<Type, Refusal> {
+        self.program
+            .field_slice(record, path)
+            .map(|(_, _, ty)| ty)
+            .ok_or_else(|| self.bad("a field path the record does not declare"))
     }
     /// The common type of arithmetic operands. No implicit conversion: two
     /// operands of different types refuse, and so does a `bool` or `unit`.
@@ -716,6 +1032,7 @@ impl Elab<'_> {
                     return Err(self.bad(&format!("expected {want} expression, found unit")));
                 }
                 Type::Scalar(ScalarType::Bool) => return Err(self.bad(BOOL_ARITHMETIC)),
+                Type::Record(_) => return Err(self.bad(RECORD_ARITHMETIC)),
                 _ => {}
             }
             match common {
@@ -730,7 +1047,11 @@ impl Elab<'_> {
         Ok(common)
     }
     fn mismatch(&self, want: Type, found: Type) -> Refusal {
-        self.bad(&format!("expected {want} expression, found {found}"))
+        self.bad(&format!(
+            "expected {} expression, found {}",
+            self.program.type_name(want),
+            self.program.type_name(found)
+        ))
     }
     /// Type `e` at the type `synth` or its context decided.
     fn default(&mut self, e: &Expr, depth: usize) -> Result<TExpr, Refusal> {
@@ -794,7 +1115,7 @@ impl Elab<'_> {
                     Type::Scalar(ScalarType::Bool) => {
                         return Err(self.bad("expected bool expression, found an integer literal"));
                     }
-                    Type::Unit => return Err(self.mismatch(want, Type::I32)),
+                    Type::Unit | Type::Record(_) => return Err(self.mismatch(want, Type::I32)),
                     Type::Scalar(ty) => ty,
                 };
                 self.width(ty)?;
@@ -924,12 +1245,78 @@ impl Elab<'_> {
                 let call = self.call(*c, args, want, depth + 1)?;
                 expr(TKind::Try(Box::new(call)), None)
             }
+            // Card `W48-QR-USABLE-RECORDS`: a construction supplies every
+            // field — in declared order, which the reader decided by name —
+            // each value typed at its field's own type, a record field's at
+            // that record.
+            Expr::Construct(record, values) => {
+                if want != Type::Record(*record) {
+                    return Err(self.mismatch(want, Type::Record(*record)));
+                }
+                let declared = self
+                    .program
+                    .records
+                    .get(*record)
+                    .ok_or_else(|| self.bad("an undeclared record"))?;
+                // Totality and distinctness, by name: every declared field
+                // exactly once, and no other.
+                for (position, (name, _)) in values.iter().enumerate() {
+                    if !declared.fields.iter().any(|(field, _)| field == name) {
+                        return Err(
+                            self.bad(&format!("`{}` declares no field `{name}`", declared.name))
+                        );
+                    }
+                    if values[..position]
+                        .iter()
+                        .any(|(earlier, _)| earlier == name)
+                    {
+                        return Err(self.bad(&format!(
+                            "this `{}` construction supplies `{name}` twice",
+                            declared.name
+                        )));
+                    }
+                }
+                let mut ordered = Vec::new();
+                for (field, _) in &declared.fields {
+                    let Some((_, value)) = values.iter().find(|(name, _)| name == field) else {
+                        return Err(self.bad(&format!(
+                            "this `{}` construction supplies no `{field}`; a construction supplies every declared field",
+                            declared.name
+                        )));
+                    };
+                    ordered.push(value);
+                }
+                let mut fields = Vec::new();
+                for (value, (_, ty)) in ordered.into_iter().zip(&declared.fields) {
+                    if let Some(found) = self.synth(value, depth + 1)?
+                        && found != *ty
+                    {
+                        return Err(self.mismatch(*ty, found));
+                    }
+                    fields.push(self.elab(value, *ty, depth + 1)?);
+                }
+                expr(TKind::Construct(fields), None)
+            }
+            // A field at a path of a record operand, of its declared type.
+            Expr::Field(base, names) => {
+                let Some(Type::Record(record)) = self.synth(base, depth + 1)? else {
+                    return Err(self.bad(NOT_A_RECORD));
+                };
+                let path = self.path(record, names)?;
+                let found = self.field_type(record, &path)?;
+                if found != want {
+                    return Err(self.mismatch(want, found));
+                }
+                let base = self.elab(base, Type::Record(record), depth + 1)?;
+                expr(TKind::Field(Box::new(base), path), None)
+            }
         })
     }
     fn integer_at(&self, want: Type) -> Result<ScalarType, Refusal> {
         match want {
             Type::Scalar(ScalarType::Bool) => Err(self.bad(BOOL_ARITHMETIC)),
             Type::Unit => Err(self.mismatch(want, Type::I32)),
+            Type::Record(_) => Err(self.bad(RECORD_ARITHMETIC)),
             Type::Scalar(ty) => {
                 self.width(ty)?;
                 Ok(ty)
@@ -939,6 +1326,10 @@ impl Elab<'_> {
 }
 const BOOL_ARITHMETIC: &str =
     "arithmetic requires integer operands; `bool` is not an integer and has no arithmetic";
+/// Card `W48-QR-USABLE-RECORDS`.
+const RECORD_ARITHMETIC: &str =
+    "a record has no arithmetic, comparison or conversion; read the field you mean first (`p.x`)";
+const NOT_A_RECORD: &str = "a field path continues only through a record; this operand is not one";
 const NO_TARGET: &str = "`isize` and `usize` take their width from a recorded target, and none was supplied; the width is never guessed (supply one with `--recorded-target FILE`)";
 
 fn uses_target_width(ty: Type) -> bool {
@@ -948,11 +1339,13 @@ fn expr_uses_target(e: &TExpr) -> bool {
     uses_target_width(e.ty)
         || match &e.kind {
             TKind::Literal(_) | TKind::Local(_) => false,
-            TKind::Neg(x) | TKind::Convert(x) | TKind::Try(x) => expr_uses_target(x),
+            TKind::Neg(x) | TKind::Convert(x) | TKind::Try(x) | TKind::Field(x, _) => {
+                expr_uses_target(x)
+            }
             TKind::Binary(_, a, b) | TKind::Compare(_, a, b) => {
                 expr_uses_target(a) || expr_uses_target(b)
             }
-            TKind::Call(_, args) => args.iter().any(expr_uses_target),
+            TKind::Call(_, args) | TKind::Construct(args) => args.iter().any(expr_uses_target),
         }
 }
 fn block_uses_target(b: &TBlock) -> bool {
@@ -1051,6 +1444,13 @@ impl FunctionCheck<'_> {
                         return Err(bad(
                             id,
                             "a rendered line requires a scalar operand, not unit",
+                        ));
+                    }
+                    // Card `W48-QR-USABLE-RECORDS`.
+                    Type::Record(_) => {
+                        return Err(bad(
+                            id,
+                            "a rendered line renders one scalar, and this operand is a record; read a field first",
                         ));
                     }
                     Type::Scalar(ScalarType::Bool) if line.rendering() == Rendering::Hex => {
@@ -1177,6 +1577,7 @@ pub fn check_for_target(
     if program.functions.is_empty() || program.functions.len() > MAX_FUNCTIONS {
         return Err(bad(0, "scalar function count bound exceeded"));
     }
+    check_records(&program, target)?;
     let mut graph = Vec::new();
     let mut io_functions = BTreeSet::new();
     let mut nodes = 0;
@@ -1200,6 +1601,22 @@ pub fn check_for_target(
         }
         if f.parameters.contains(&Type::Unit) {
             return Err(bad(id, "parameters require a scalar type, not unit"));
+        }
+        // Card `W48-QR-USABLE-RECORDS`: a throwing function returns its value
+        // through a scalar out-parameter, and a record result there is not a
+        // shape this revision emits (`W48-QR-RECORD-THROWS-RESULT`).
+        if f.throws && f.result.record().is_some() {
+            return Err(bad(
+                id,
+                "a function whose row permits `throws<ArithmeticError>` returns a scalar or `unit` on this route; a record result there is `W48-QR-RECORD-THROWS-RESULT`",
+            ));
+        }
+        for ty in f.parameters.iter().chain([&f.result]) {
+            if let Type::Record(record) = ty
+                && program.records.get(*record).is_none()
+            {
+                return Err(bad(id, "an undeclared record type"));
+            }
         }
         let mut check = FunctionCheck {
             program: &program,
@@ -1289,11 +1706,12 @@ pub fn check_for_target(
         }
     }
     let uses_target = typed.iter().any(|f| {
-        f.locals
-            .iter()
-            .chain([&f.result])
-            .any(|ty| uses_target_width(*ty))
-            || block_uses_target(&f.body)
+        f.locals.iter().chain([&f.result]).any(|ty| {
+            program
+                .leaves(*ty)
+                .iter()
+                .any(|leaf| leaf.is_target_width())
+        }) || block_uses_target(&f.body)
     });
     Ok(Checked {
         program,
@@ -1303,6 +1721,86 @@ pub fn check_for_target(
         uses_target,
         widened,
     })
+}
+
+/// **The record types' formation** (card `W48-QR-USABLE-RECORDS`): each
+/// field a scalar or a declared record, no two fields of one name, the graph
+/// of record fields acyclic and at most [`MAX_RECORD_NESTING`] deep, at most
+/// [`MAX_RECORD_LEAVES`] leaves, and a target-width field only with a
+/// recorded target. The frontend reads the declarations through
+/// `source.record.v1`'s own reader, which refuses the rest first.
+fn check_records(program: &Program, target: Option<&RecordedTarget>) -> Result<(), Refusal> {
+    fn depth(program: &Program, record: usize, stack: &mut Vec<usize>) -> Result<usize, Refusal> {
+        if stack.contains(&record) {
+            return Err(bad(
+                0,
+                &format!(
+                    "record `{}` contains itself; the record fields of a module form an acyclic graph",
+                    program.type_name(Type::Record(record))
+                ),
+            ));
+        }
+        if stack.len() >= MAX_RECORD_NESTING {
+            return Err(bad(
+                0,
+                &format!("records nest more than {MAX_RECORD_NESTING} deep"),
+            ));
+        }
+        let declared = program
+            .records
+            .get(record)
+            .ok_or_else(|| bad(0, "an undeclared record type"))?;
+        stack.push(record);
+        let mut deepest = 0;
+        for (_, ty) in &declared.fields {
+            if let Type::Record(inner) = ty {
+                deepest = deepest.max(depth(program, *inner, stack)?);
+            }
+        }
+        stack.pop();
+        Ok(deepest + 1)
+    }
+    for (id, record) in program.records.iter().enumerate() {
+        if record.fields.is_empty() || record.fields.len() > crate::source_record::MAX_FIELDS {
+            return Err(bad(
+                0,
+                &format!(
+                    "record `{}` declares 1 to {} fields",
+                    record.name,
+                    crate::source_record::MAX_FIELDS
+                ),
+            ));
+        }
+        for (position, (name, ty)) in record.fields.iter().enumerate() {
+            if record.fields[..position]
+                .iter()
+                .any(|(earlier, _)| earlier == name)
+            {
+                return Err(bad(
+                    0,
+                    &format!("record `{}` declares `{name}` twice", record.name),
+                ));
+            }
+            if *ty == Type::Unit {
+                return Err(bad(0, "a record field is a scalar or a record, not unit"));
+            }
+        }
+        depth(program, id, &mut Vec::new())?;
+        let leaves = program.leaves(Type::Record(id));
+        if leaves.len() > MAX_RECORD_LEAVES {
+            return Err(bad(
+                0,
+                &format!(
+                    "record `{}` holds more than {MAX_RECORD_LEAVES} fields once expanded",
+                    record.name
+                ),
+            ));
+        }
+        if target.is_none() && leaves.iter().any(|leaf| leaf.is_target_width()) {
+            return Err(bad(0, NO_TARGET));
+        }
+    }
+    Ok(())
 }
 
 /// The number of statements, ends and arms in a block, bounded like a

@@ -569,7 +569,7 @@ fn a_record_contributes_no_custody_operation() {
             BufferEvent::Field {
                 binding: "a".to_owned(),
                 record: "p".to_owned(),
-                field: "x".to_owned(),
+                path: vec!["x".to_owned()],
             },
             BufferEvent::Return,
         ],
@@ -746,16 +746,32 @@ fn a_task_module_declaring_a_record_keeps_its_own_refusal() {
     );
 }
 
-/// A record construct outside the entry is refused rather than left unmodelled
-/// — this route lowers the entry only, and a construct nothing checks is what
-/// invariant 1 forbids.
+/// A record construct outside the entry is never left unmodelled (invariant
+/// one). Before card `W48-QR-USABLE-RECORDS` the buffer route, which lowers the
+/// entry only, refused it by name ("models the entry only"); since that card a
+/// module declaring a record and a second function, and holding no buffer,
+/// reaches `source.scalar-calls.v1`, which **checks** every function: this
+/// helper, which has no final `return`, is refused there, and the same helper
+/// with one is admitted.
 #[test]
-fn a_record_outside_the_entry_refuses_rather_than_going_unchecked() {
+fn a_record_outside_the_entry_is_checked_rather_than_going_unchecked() {
     let source = "#import std.fmt;\n#import std.io;\n\ntype Point { x: i32 }\n\nfn helper() -> unit \
                   {\n    let p = Point { x: 1 };\n}\n\nfn main() -> unit effects { io } {\n    let \
                   q = Point { x: 2 };\n    let a = q.x;\n    print dec a;\n    return;\n}\n";
     let messages = messages(source);
-    assert!(messages.contains("models the entry only"), "{messages}");
+    assert!(
+        messages.contains("source.scalar-calls.v1: a final explicit return is required"),
+        "{messages}"
+    );
+    let returning = source.replace(
+        "let p = Point { x: 1 };\n}",
+        "let p = Point { x: 1 };\n    return;\n}",
+    );
+    let module = compile(&returning).expect("the helper is checked and admitted");
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::ScalarCallsV1
+    );
 }
 
 /// The composed string/buffer route models no record, and says so rather than

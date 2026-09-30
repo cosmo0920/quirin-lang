@@ -519,7 +519,7 @@ fn a_scalar_record_reaches_the_window_function_and_names_nothing() {
         BufferEvent::Field {
             binding: "x".to_owned(),
             record: "p".to_owned(),
-            field: "a".to_owned(),
+            path: vec!["a".to_owned()],
         },
     ];
     assert!(window_unnameable_events(&events).is_empty());
@@ -543,7 +543,7 @@ fn a_field_path_is_refused_by_the_window_functions_own_gate() {
             "FieldStore",
             BufferEvent::FieldStore {
                 record: "p".to_owned(),
-                field: "buf".to_owned(),
+                path: vec!["buf".to_owned()],
                 index: BufferOperand::Literal(0),
                 value: BufferOperand::Literal(1),
             },
@@ -553,7 +553,7 @@ fn a_field_path_is_refused_by_the_window_functions_own_gate() {
             BufferEvent::FieldLoad {
                 binding: "x".to_owned(),
                 record: "p".to_owned(),
-                field: "buf".to_owned(),
+                path: vec!["buf".to_owned()],
                 index: BufferOperand::Literal(0),
             },
         ),
@@ -562,14 +562,14 @@ fn a_field_path_is_refused_by_the_window_functions_own_gate() {
             BufferEvent::FieldExtent {
                 binding: "e".to_owned(),
                 record: "p".to_owned(),
-                field: "buf".to_owned(),
+                path: vec!["buf".to_owned()],
             },
         ),
         (
             "FieldRelease",
             BufferEvent::FieldRelease {
                 record: "p".to_owned(),
-                field: "buf".to_owned(),
+                path: vec!["buf".to_owned()],
             },
         ),
     ] {
@@ -780,7 +780,7 @@ fn the_lean_window_model_and_the_rust_window_function_agree_on_shared_vectors() 
                         chars.next();
                         events.push(BufferEvent::FieldStore {
                             record: "p".to_owned(),
-                            field: "buf".to_owned(),
+                            path: vec!["buf".to_owned()],
                             index: BufferOperand::Literal(0),
                             value: BufferOperand::Literal(1),
                         });

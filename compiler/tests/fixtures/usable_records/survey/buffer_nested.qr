@@ -1,0 +1,13 @@
+// Survey cell (buffer, nested) of card W48-QR-USABLE-RECORDS; written by
+// docs/reports/w48-qr-usable-records/make_survey.py.
+#import std.fmt;
+#import std.io;
+type I { a: i32 }
+type O { inner: I, n: i32 }
+fn main() -> unit effects { io } {
+    let i = I { a: 1 };
+    let o = O { inner: i, n: 2 };
+    let v = o.inner.a;
+    print dec v;
+    return;
+}

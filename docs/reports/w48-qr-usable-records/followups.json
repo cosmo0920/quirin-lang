@@ -1,0 +1,73 @@
+{
+ "retired": [
+  {
+   "id": "AGGREGATE-NESTED",
+   "reason": "Discharged by W48-QR-USABLE-RECORDS on its own stated condition: the one-level `ownership::FieldPath` is generalised to a path of any depth (not a second path type); the drop-through walks the aggregate's owned leaves depth-first in declaration order, nothing twice (`ComposeNested`, `drop_through`); `source_record` constructs and projects recursively (`FieldValue::Record`, `project_path`, `write_path`); the declaration graph is checked acyclic, at most 8 deep and 256 leaves (`admit_graph`); Lean `QCore.UsableRecords` (`nested_composition_conserves_custody`, `drop_through_tree_releases_exactly_the_live_leaves`, `compose_keeps_paths_distinct`, `a_nested_path_addresses_exactly_one_sub_object`); and the byte-identity census re-run: 634 of 634 fixtures byte-identical."
+  }
+ ],
+ "amended": [
+  {
+   "id": "W48-QR-FFI-ROUTE-SCOPE",
+   "amendment": "W48-QR-USABLE-RECORDS discharges the records part: `.qr` helper functions in an FFI file take and return imported structs by value and are checked at every call (the call graph acyclic, at most 16 deep, every helper reached from the entry), listed fields are written and records copied, and a function in a file of the bundle that does not itself import `std.ffi.unsafe` refuses (`Q032`), every result still under the unsafe-FFI assumption. Still refused: a library-mode FFI module, a value statement, a branch, a loop, a buffer or a task in an FFI file, and a nested imported struct (`W48-QR-FFI-NESTED-AND-ARRAY-FIELDS`). Remaining size M; cards 3–4 compose the rest."
+  },
+  {
+   "id": "W48-QR-FFI-MUT-POINTER",
+   "amendment": "W48-QR-USABLE-RECORDS landed the field write (`RECORD.FIELD = VALUE;`, listed fields only, a value of exactly the field's type, deriving `Mut`), which the discharge's declared post-state or havoc can now reuse; `ptr<mut, STRUCT>` itself is unchanged and still refused."
+  },
+  {
+   "id": "W48-QR-TYPES-MSVC-NATIVE",
+   "amendment": "W48-QR-USABLE-RECORDS adds nested record structs (a held struct defined before its holder), record parameters and results by value on `source.scalar-calls.v1`, member assignment through a path on `source.buffer.v1`, and `static` FFI helper functions passing `struct TAG` by value with `exit(70)` on a disagreeing outcome — each built natively with Clang only."
+  }
+ ],
+ "registered": [
+  {
+   "id": "W48-QR-OWNED-RECORD-ACROSS-CALL",
+   "title": "A record holding an owned `bytes` field does not cross a `.qr` call",
+   "why": "Found by W48-QR-USABLE-RECORDS: records of scalars cross calls by value on `source.scalar-calls.v1`, which has no buffer vocabulary, and the buffer route that owns records with `bytes` fields models its entry only; a record type holding `bytes` anywhere refuses on the scalar-calls route by name (`Q020`), and a module with a buffer and a second function stays on the buffer route's entry-only refusal (`Q051`). `source.resource-calls.v1` has `own<bytes>`/`borrow<bytes>`/`lend<bytes>` but its own byte representation (`qcore_bytes { data, len }`) and no record events. Size L. DISCHARGE: `own<R>`/`borrow<R>` record parameters and `move`/`borrow` arguments on `source.resource-calls.v1` following C04 custody — an IR move of a whole aggregate (its leaves re-keyed, as `ComposeNested` does), per-leaf extent obligations, the flattened record events checked by the buffer checker — with Lean parity for custody conservation across the call and native runs under ASan/LSan.",
+   "source": "docs/reports/w48-qr-usable-records/README.md",
+   "recorded_by": "W48-QR-USABLE-RECORDS"
+  },
+  {
+   "id": "W48-QR-RECORD-WHOLE-MOVE",
+   "title": "A whole record with an owned field cannot be moved to another binding",
+   "why": "Found by W48-QR-USABLE-RECORDS's survey: `let g = f;` is the copy bind (constraint 15k), and for a record that owns it refuses at `Q054` (`CopyOfOwned`); there is no move spelling, and `let j = o.inner;` of a sub-record that owns refuses by name (`W48-QR-NESTED-OWNED-SUBRECORD-MOVE`). Card 3's task record captures need a move of a whole record. Size S–M. DISCHARGE: a move spelling (for example `let g = move f;`) as an IR move of an aggregate re-keying its leaves, with the use-after-move of the source and a Lean statement.",
+   "source": "docs/reports/w48-qr-usable-records/README.md",
+   "recorded_by": "W48-QR-USABLE-RECORDS"
+  },
+  {
+   "id": "W48-QR-NESTED-OWNED-SUBRECORD-MOVE",
+   "title": "A whole sub-record that owns a buffer is read field by field only",
+   "why": "Found by W48-QR-USABLE-RECORDS: `let j = o.inner;` copies a sub-record of scalars, and refuses by name (`Q051`) when `inner` holds an owned field anywhere below, since that would move an aggregate out of another and the IR has `MoveOut` for one leaf only. Size S–M. DISCHARGE: an IR `MoveOutRecord` re-keying every leaf under the path to the new binding and leaving holes, with the whole-record drop tolerating them, and Lean parity.",
+   "source": "docs/reports/w48-qr-usable-records/README.md",
+   "recorded_by": "W48-QR-USABLE-RECORDS"
+  },
+  {
+   "id": "W48-QR-RECORD-FIELD-WHOLE-WRITE",
+   "title": "A field whose type is a record is written field by field only",
+   "why": "Found by W48-QR-USABLE-RECORDS: `o.inner = k;` refuses by name (`Q051`); a write names a scalar field or refills an owned one. Size S for a record of scalars (a copy); M for one that owns (a refill of every leaf, each a hole). DISCHARGE: the whole write, by the copy rule for a record of scalars and by the refill rule over the sub-record's leaves for one that owns.",
+   "source": "docs/reports/w48-qr-usable-records/README.md",
+   "recorded_by": "W48-QR-USABLE-RECORDS"
+  },
+  {
+   "id": "W48-QR-SCALAR-CALLS-FIELD-WRITE",
+   "title": "`source.scalar-calls.v1` has records but no field write",
+   "why": "Found by W48-QR-USABLE-RECORDS: a field write derives `mut` on `source.buffer.v1` and `source.ffi.v1`, and this route's rows admit `io` and `throws<ArithmeticError>` only, so `p.x = e;` refuses by name (`Q020`); a function builds the record it means with a construction instead. Size S. DISCHARGE: admit `mut` in this route's rows (or decide that a write of a local record derives no effect, on every route at once), then the write with the checked value of the field's type.",
+   "source": "docs/reports/w48-qr-usable-records/README.md",
+   "recorded_by": "W48-QR-USABLE-RECORDS"
+  },
+  {
+   "id": "W48-QR-RECORD-THROWS-RESULT",
+   "title": "A function that may raise `ArithmeticError` cannot return a record",
+   "why": "Found by W48-QR-USABLE-RECORDS: a throwing function returns its value through a scalar out-parameter in the emitted C, so a record result there refuses by name (`Q020`), and no `match` can bind a record `Result::Ok`. Size S. DISCHARGE: a struct out-parameter and a record slot in the `Ok` arm, checked and emitted, with a native run.",
+   "source": "docs/reports/w48-qr-usable-records/README.md",
+   "recorded_by": "W48-QR-USABLE-RECORDS"
+  },
+  {
+   "id": "W48-QR-EXTERN-ROUTE-UNREAD-RECORD-DECLARATION",
+   "title": "The extern route admits a module whose record type declaration it never reads",
+   "why": "Found by W48-QR-USABLE-RECORDS's survey (`extern_move.qr`): a module declaring `type F { tag: i32, buf: bytes }` beside an admitted extern entry that never names `F` is admitted by `source.extern.v1`, which reads no record declaration (every record statement there refuses at `Q025`/`Q026`). The declaration has no code and no custody, so no result is wrong, but a declaration is admitted unread — the shape W48-QR-SCALAR-TYPES-R2's `refuse_unmodeled_functions` closed for functions. Size S. DISCHARGE: refuse a record declaration on every route that does not model records, at that route's own code, or read it.",
+   "source": "docs/reports/w48-qr-usable-records/README.md",
+   "recorded_by": "W48-QR-USABLE-RECORDS"
+  }
+ ]
+}
