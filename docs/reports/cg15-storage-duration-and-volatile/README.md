@@ -111,6 +111,23 @@ step the formatter buffer (`*ret[reti] = …`, `ret[reti] + of`, a `memcpy`
 destination), 18 sit in debug-macro actuals, sub-object stores and nested
 calls. M23's one leaf (`rd_kafka_desensitize_str`) stays.
 
+### On main `b59aaae2`
+
+Main moved during the card (CG07-GENERIC-AND-STATEMENT-EXPRESSIONS landed);
+the card merged it at `09e61220` (conflicts only in the shared records and the
+two rule, router and Lean import lists, each resolved as a union) and
+re-measured. BEFORE with a binary built at `b59aaae2`: corpus 608 / 10 /
+4,216 (`8b9e4047…`, the integrator's figure), system 41 / 2 / 191
+(`8a98515b…`), slice 28 / 1 / 240 / 1 Pending (`4e2f5265…`). AFTER on the
+merge: corpus **615 / 10 / 4,209** (`66c2f850…`) with exactly the seven
+moves and the same leaf deltas on the same 81 other functions as against
+`c374de96` ([artifacts/compare-corpus-main.json.gz](artifacts/compare-corpus-main.json.gz),
+[artifacts/identity.json](artifacts/identity.json)).
+
+System on the merge **42 / 2 / 190** (`264a553a…`; the same one move,
+`flb_engine_adaptive_flush_interval`, and the same two functions losing
+leaves); slice byte-identical to its BEFORE (`4e2f5265…`).
+
 ## 5. The rule
 
 Rule 11h's text is the authority; in short:
