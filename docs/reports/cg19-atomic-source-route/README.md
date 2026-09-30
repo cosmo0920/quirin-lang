@@ -112,11 +112,52 @@ re-export), `AtomicPublicationSourceRefusal::NamedAtomicRefusal`,
 disclosure that the route's code preceded it, and an amendment for the
 `_Atomic` statement hook, also before any AFTER run).
 
-AFTER_TABLE
+| Prediction | Outcome |
+|---|---|
+| `cmt_atomic_load` Unknown → Safe | **Unknown → Safe** (its one leaf, the uncontracted `__atomic_load_n`, gone) |
+| `cmt_atomic_store` Unknown → Safe | **Unknown → Safe** (the uncontracted `__atomic_store_n` gone) |
+| `cmt_atomic_compare_exchange` stays Unknown, leaf renamed | **stays Unknown**, its one leaf now ``atomic compare-exchange `__atomic_compare_exchange` is not represented by the weak-memory model (CG28)`` |
+| nothing else moves; 610 / 10 / 4,214 | **610 / 10 / 4,214**; 2 moves, 1 same-status function with a changed leaf, no other leaf changed |
+| no Safe → non-Safe, no added leak or violation | none |
+| `_Atomic` statement hook: no corpus effect | none (no arbiter unit spells `_Atomic`) |
+| slices unreachable | not re-run (0 atomic-builtin leaves in either) |
+
+The prediction held exactly. No correction: no function moved Safe → non-Safe.
+CG00's measured upper bound for CG19 (2 functions freed alone, 2 with no alias
+leaf) is met.
 
 ## 4. Measurement
 
-AFTER_MEASUREMENT
+Corpus arbiter (`scripts/run_pinned_audit.py … 66910c10 --jobs 4`, release
+`quirin-audit`, `QCORE_TYPED_PATH_PARITY` on), each into a fresh
+`private/cg19/<run>/arbiter`:
+
+| Run | Tree | Binary | `resource-diagnostics.json` | Safe / Unsafe / Unknown |
+|---|---|---|---|---|
+| BEFORE (base) | `c374de96` | built at `c374de96` | `3a25c4e9…` (the brief's baseline) | 608 / 10 / 4,216 |
+| BEFORE (merged main) | `b59aaae2` | `b8bcc25c…` | `8b9e4047…` (the integrator's figure for `b59aaae2`) | 608 / 10 / 4,216 |
+| AFTER | tip (merge `5b8cd34c`, code as built at `95b7f93e`) | `220c2b92…` | `c7d4dfa4bd55685faddcf0d8abdccf483f4f98e48a94cca1c0e1b1fdb2ae2a49` | **610 / 10 / 4,214** |
+
+Attribution ([`artifacts/corpus-comparison.json`](artifacts/corpus-comparison.json),
+`scripts/compare.py`): the two moves above, each by removing its only leaf;
+`cmt_atomic_compare_exchange`'s one leaf renamed; leaf delta otherwise empty.
+Atomic-builtin census ([before](artifacts/before-census.json),
+[after](artifacts/after-census.json), `scripts/census.py`): 3 leaves on 3
+functions → 1 leaf on 1 function. The AFTER parity stream holds 7
+`atomic-route-*` rows on those 3 sites (repeats are the rebuilds of the W4
+re-check): the load and store routed with `SequentiallyConsistent`, the
+compare-exchange refused by name. The elaborator's `atomic access (CG19)` row
+and the atomic cast rows appear in no parity row of either run (0).
+
+**Slices.** The system slice and the tail-pause slice are not re-run: neither
+carries a leaf naming an atomic builtin (CG15's BEFORE system run on main
+`f9deddc3…` and the shared tail-pause run `w48cc-after`: 0 each), none of
+their 21 source files spells an atomic builtin, and every hook of this card
+fires only on an atomic builtin's refusal or an `_Atomic` statement. System
+41 / 2 / 191 and tail-pause 28 / 1 / 240 / 1 Pending are carried.
+
+**CT stages.** `python3 scripts/ct_stage_summary.py . --check`: exit 0,
+mapped 50 / unmapped 0, no stage moved.
 
 ## 5. Tests and pins
 

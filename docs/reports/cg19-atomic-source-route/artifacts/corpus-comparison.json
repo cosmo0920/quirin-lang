@@ -1,0 +1,44 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4216,
+   "Safe": 608,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4214,
+   "Safe": 610,
+   "Unsafe": 10
+  }
+ },
+ "moves": [
+  {
+   "unit": "cmt_atomic_clang.c",
+   "function": "cmt_atomic_load",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__atomic_load_n`": -1
+   }
+  },
+  {
+   "unit": "cmt_atomic_clang.c",
+   "function": "cmt_atomic_store",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__atomic_store_n`": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 2
+ },
+ "same_status_functions_with_changed_diagnostics": 1,
+ "leaf_delta": {
+  "unsupported: call to uncontracted function `__atomic_compare_exchange`": -1,
+  "unsupported: call to uncontracted function `__atomic_load_n`": -1,
+  "unsupported: call to uncontracted function `__atomic_store_n`": -1,
+  "unsupported: atomic compare-exchange `__atomic_compare_exchange` is not represented by the weak-memory model (CG28)": 1
+ }
+}
