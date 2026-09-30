@@ -1050,6 +1050,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w47-typed-root-declaration-reader](w47-typed-root-declaration-reader/README.md) | W47-TYPED-ROOT-DECLARATION-READER |
 
+| [w48-callee-closure-r3](w48-callee-closure-r3/README.md) | W48-CALLEE-CLOSURE-R3: every blocking callee ranked, two libc facts declared |
+
 | [w48-qr-c-struct-import](w48-qr-c-struct-import/README.md) | W48-QR-C-STRUCT-IMPORT: importing a C struct into `.qr` |
 
 | [w48-qr-closures](w48-qr-closures/README.md) | W48-QR-CLOSURES: closures that capture into concurrent workers |
@@ -1077,6 +1079,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w48-qr-usable-records](w48-qr-usable-records/README.md) | W48-QR-USABLE-RECORDS: records usable as values |
 
 | [w48-qrlib-linkage](w48-qrlib-linkage/README.md) | W48-QRLIB-LINKAGE: `.qrlib` as the C linkage manifest of the FFI route |
+
+| [w48-qrlib-macos](w48-qrlib-macos/README.md) | W48-QRLIB-MACOS — card 5m: the macOS linkage path, run |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 

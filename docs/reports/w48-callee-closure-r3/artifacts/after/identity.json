@@ -1,0 +1,95 @@
+{
+ "corpus": {
+  "before": {
+   "digest": "3a25c4e968e8f646f85a61378fb50fd41287534a7d6a2e91725ef47b018a19ca",
+   "normalised": "3a25c4e968e8f646f85a61378fb50fd41287534a7d6a2e91725ef47b018a19ca",
+   "totals": {
+    "Unknown": 4216,
+    "Safe": 608,
+    "Unsafe": 10
+   }
+  },
+  "after": {
+   "digest": "c452aa9ad012ccee18c19b83be9bbb3cb5ddf46ef15836d89ac742654bd18411",
+   "normalised": "c452aa9ad012ccee18c19b83be9bbb3cb5ddf46ef15836d89ac742654bd18411",
+   "totals": {
+    "Unknown": 4216,
+    "Safe": 608,
+    "Unsafe": 10
+   }
+  },
+  "moves": [],
+  "move_counts": {},
+  "same_status_functions_with_changed_diagnostics": 1,
+  "leaf_delta": {
+   "unsupported: unmodeled call, aggregate or indirect access in branch condition": -1
+  }
+ },
+ "system": {
+  "before": {
+   "digest": "b389e2881cd71076d88817e1d0ba5b69c5e7b494dc92baf0bfbfb51f8adb4b87",
+   "normalised": "10bc956024a51d8ed034f520ba2b24f436b90cd16fa0f96a90da5b86901e931d",
+   "totals": {
+    "Unknown": 191,
+    "Safe": 41,
+    "Unsafe": 2
+   }
+  },
+  "after": {
+   "digest": "584416b1eecc85abff31b9b7f51fa88700a92c50a8f4e485c62278b16cf362a2",
+   "normalised": "c402092322e1322f687be60d2f695008bfed08c1c23e7abdfdf8961b97bb3597",
+   "totals": {
+    "Unknown": 191,
+    "Safe": 41,
+    "Unsafe": 2
+   }
+  },
+  "moves": [],
+  "move_counts": {},
+  "same_status_functions_with_changed_diagnostics": 0,
+  "leaf_delta": {}
+ },
+ "slice": {
+  "before": {
+   "digest": "a19e3d6521459f5de1245378f0850fc022b217e39a20415e071576250a132bbb",
+   "normalised": "c8fd5951e3792ed4f32b1c6fe038b5c304cdd9fec9f02e453fafd913c03818e4",
+   "totals": {
+    "Unknown": 240,
+    "Safe": 28,
+    "Pending": 1,
+    "Unsafe": 1
+   }
+  },
+  "after": {
+   "digest": "4ef3fcfdc4aa3bd9c633d5f8453347a1c8e37391f5373041e3ccd335615c4844",
+   "normalised": "86c2a666719195e3efc0d026899c57bd4cb5fcc3c7d8b121edb79213061db8d5",
+   "totals": {
+    "Unknown": 239,
+    "Safe": 29,
+    "Pending": 1,
+    "Unsafe": 1
+   }
+  },
+  "moves": [
+   {
+    "unit": "plugins/in_tail/tail_file.c",
+    "function": "tail_file_lstat",
+    "before": "Unknown",
+    "after": "Safe",
+    "leaf_delta": {
+     "unsupported: call to uncontracted function `lstat`": -1
+    }
+   }
+  ],
+  "move_counts": {
+   "Unknown -> Safe": 1
+  },
+  "same_status_functions_with_changed_diagnostics": 2,
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -6,
+   "unsupported: call to uncontracted function `tail_file_lstat`": -1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: call to uncontracted function `lstat`": -1
+  }
+ }
+}
