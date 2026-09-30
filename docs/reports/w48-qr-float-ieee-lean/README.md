@@ -202,9 +202,9 @@ exit to a file, logs `private/w48-qr-float-ieee-lean/gate/`):
 | follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
 | Lean | `python3 scripts/check_lean_audits.py` | 0 | **251 audits** (250 + `AuditIeee754.lean`) |
 | provider suite | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast` | 0 | 129 passed, 0 failed, 1 ignored, 43 summaries (`providers/` unchanged) |
-| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qr-float-ieee-lean/gate.json` | MATRIX_EXIT | |
-| docs index | `python3 scripts/build_docs_index.py` | INDEX_EXIT | |
-| Python | `python3 -m unittest discover -s scripts/tests` | PYTHON_EXIT | PYTHON_COUNT (after the matrix) |
+| matrix | `python3 docs/reports/remaining-d02/build_matrix.py . --gate docs/reports/w48-qr-float-ieee-lean/gate.json` | 0 | |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0 | **365 tests OK** (after the matrix) |
 | ledger | `python3 docs/reports/w48-qr-float-ieee-lean/apply_ledger.py` (twice) | 0, 0 | 649 → 650, then 650 → 650 |
 
 Run 1 (at `61a06930`, logs `private/w48-qr-float-ieee-lean/gate-run1/`) is
