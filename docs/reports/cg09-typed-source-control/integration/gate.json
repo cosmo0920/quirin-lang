@@ -1,0 +1,13 @@
+{
+  "note": "TARGETED CHECK (user policy 2026-09-30: main moved with non-overlapping, already-gated commits) on integrate/w48-cg09 ead68b28: main 2b7b387d (CG19-ATOMIC-SOURCE-ROUTE) merged with CG09-TYPED-SOURCE-CONTROL's tip 828b10e8; typed_source.rs merged without conflict; shared records resolved by hand; the card's increment paragraph opens the new record file wave-48-part3.md (wave-48-continuation.md had reached 38,376 bytes). Logs private/int-cg09/targeted of the quirin-spec-cards-compass worktree: submodule 0; fmt 0; workspace clippy --locked 0; qcore-c-gateway tests 2,225 passed, 0 failed; qcore-core tests 1,139 passed, 0 failed; ct_stage_summary --check 0; 260 Lean audits; providers cargo check --locked 0; release quirin-audit build 0; corpus arbiter (--jobs 4) 0, resource-diagnostics.json ac2d4e19..., byte-identical to CG19's AFTER (625 / 10 / 4,199; route T does not reach the corpus). The card's deliberately flipped monkey_source pin: quirin-source-analysis --lib monkey_source 2 passed and qcore-compiler --lib typed_source 21 passed (a first attempt named a nonexistent `unit` test target and exited 101 on target resolution only). The full run_test_binaries.py was NOT re-run on this merge: the card's gate ran it (7,089 passed, 2 failed on process-timing rows, each passing alone).",
+  "workspace_tests": 7091,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 260,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

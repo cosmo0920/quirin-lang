@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG19-ATOMIC-SOURCE-ROUTE card gate at tip code 0b8c1b2d (base c374de96; main b59aaae2, 60cb0895, fe9c5b48 and the final e93dbe4e merged, the last at e8cc26bd), script docs/reports/cg19-atomic-source-route/scripts/gate.sh, logs private/cg19/gate3 of this worktree: submodule 0; run_test_binaries.py 405 units, 418 summaries, 7,094 passed, 1 failed, 11 ignored, exit 101 (03-tests, private/test-binaries/20260930T231034Z-249162): qcore-verifier-host::test::package_identity a_symbolic_entrypoint_is_checked_where_it_is_executed (`Spawn(\"Text file busy (os error 26)\")`, an ETXTBSY race on its freshly written executable, a crate this card does not touch); alone it passed 10/10 (03b, exit 0), so all 7,095 tests passed. fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 259 audits passed (258 + AuditAtomicSourceRoute.lean); python tests 365, exit 1 before the matrix regeneration (test_build_matrix_sections: the derived Lean audit count 258 -> 259), then rerun after build_matrix.py --gate this file (09b); docs index 0. Earlier gates on this card (private/cg19/gate, gate2, on the b59aaae2 merge) found one real failure, fixed at 095c0c63 (`atomic-publication` missing from subcommand_plugins::BUILTINS), and otherwise only timing assertions that passed alone. providers/ is unchanged by this card, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE c374de96 3a25c4e9 608/10/4,216 -> AFTER on b59aaae2 c7d4dfa4 610/10/4,214 (BEFORE b59aaae2 8b9e4047); on 60cb0895 c2cc1db9 608/10/4,216 -> 31503cba 610/10/4,214; on the final e93dbe4e d42a99e5 623/10/4,201 -> ac2d4e19 625/10/4,199; each +2 Unknown -> Safe (cmt_atomic_load, cmt_atomic_store). System 42/2/190 and tail-pause slice 29/1/239/1 Pending carried (not reachable, 0 atomic-builtin leaves). CT stage summary --check exit 0. Exits in docs/reports/cg19-atomic-source-route/gate/.",
-  "workspace_tests": 7095,
+  "note": "TARGETED CHECK (user policy 2026-09-30: main moved with non-overlapping, already-gated commits) on integrate/w48-cg09 ead68b28: main 2b7b387d (CG19-ATOMIC-SOURCE-ROUTE) merged with CG09-TYPED-SOURCE-CONTROL's tip 828b10e8; typed_source.rs merged without conflict; shared records resolved by hand; the card's increment paragraph opens the new record file wave-48-part3.md (wave-48-continuation.md had reached 38,376 bytes). Logs private/int-cg09/targeted of the quirin-spec-cards-compass worktree: submodule 0; fmt 0; workspace clippy --locked 0; qcore-c-gateway tests 2,225 passed, 0 failed; qcore-core tests 1,139 passed, 0 failed; ct_stage_summary --check 0; 260 Lean audits; providers cargo check --locked 0; release quirin-audit build 0; corpus arbiter (--jobs 4) 0, resource-diagnostics.json ac2d4e19..., byte-identical to CG19's AFTER (625 / 10 / 4,199; route T does not reach the corpus). The card's deliberately flipped monkey_source pin: quirin-source-analysis --lib monkey_source 2 passed and qcore-compiler --lib typed_source 21 passed (a first attempt named a nonexistent `unit` test target and exited 101 on target resolution only). The full run_test_binaries.py was NOT re-run on this merge: the card's gate ran it (7,089 passed, 2 failed on process-timing rows, each passing alone).",
+  "workspace_tests": 7091,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 259,
+  "lean_audits": 260,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -7026,7 +7026,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg19-atomic-source-route/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg09-typed-source-control/integration/gate.json)"
  },
  "named_followups": [
   {
