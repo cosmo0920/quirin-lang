@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W48-QR-C-STRUCT-IMPORT card gate (base 96764798), script private/w48-c1/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-c1/gate, run at 68f5ebf0 (later commits move records only): submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 385 units, 398 summaries, 6,781 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T022905Z-3407117/summary.json), no load-sensitive rerun needed; clippy 0 (a pre-gate clippy at b5f140e7 exited 101 on two lints in the new code, too_many_arguments and type_complexity, fixed at 68f5ebf0 before the gate ran); both reevaluation probes 0; check_lean_audits.py 244 audits passed (243 + AuditFfiStructImport.lean, 16 theorems). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway so this record carries a measured count: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries), provider fmt 0, provider clippy 0. Matrix, docs index and Python (365 tests OK) after the ledger (625 -> 631); matrix and docs index rerun after the counts were recorded, then Python again. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit): resource-diagnostics.json c012e785..., 586 Safe / 10 Unsafe / 4,238 Unknown, matching the base archive (CG06-VALUE-CONNECTIVES-AND-CONDITIONAL AFTER; only the prefix is archived), sidecars byte-identical. Exits in gate/.",
-  "workspace_tests": 6781,
+  "note": "CG04-LOOP-SITE-GENERATIONS card gate at tip 2aafb214 (base ca634dc1), script docs/reports/cg04-loop-site-generations/scripts/gate.sh, logs private/cg04lsg/gate of this worktree: submodule 0; run_test_binaries.py 386 units, 399 summaries, 6,809 passed, 0 failed, 11 ignored (private/test-binaries/20260930T051010Z-387716); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 245 audits passed (244 + AuditLoopSiteGenerations.lean); python tests 365, exit 1 before the matrix regeneration (test_build_matrix_sections: the Lean audit count derived value), then exit 0 after build_matrix.py --gate this file (09b); docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 8, release quirin-audit): BEFORE (binary built at 030e90a5, census rows only) resource-diagnostics.json c012e785, byte-identical to CG06's AFTER, 586/10/4,238; step 1 (266fcf9c, guard kept) 7cdcba4e; final (99b0701a, tree = 1f9103e7) 454ecd00, 586/10/4,238, no status move; system 34/2/198 and tail-pause slice 26/1/242/1 Pending unmoved. Exits in docs/reports/cg04-loop-site-generations/gate/.",
+  "workspace_tests": 6809,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 244,
+  "lean_audits": 245,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6870,6 +6870,7 @@
    "AuditLiteralTailActual.lean",
    "AuditLoopBudget.lean",
    "AuditLoopOwner.lean",
+   "AuditLoopSiteGenerations.lean",
    "AuditLoopSwitchCallEvaluation.lean",
    "AuditLoopWindows.lean",
    "AuditMayAlias.lean",
@@ -7010,7 +7011,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-c-struct-import/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg04-loop-site-generations/gate.json)"
  },
  "named_followups": [
   {

@@ -258,7 +258,25 @@ sibling above is where one does not); faithful extraction (trust boundary 28).
 
 ## 9. Gate
 
-See [gate.json](gate.json) and [gate/](gate/).
+[scripts/gate.sh](scripts/gate.sh) at tip `2aafb214`, logs
+`private/cg04lsg/gate`; every exit in [gate/](gate/), figures in
+[gate.json](gate.json).
+
+| Step | Exit | Count |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 386 units, 399 summaries, 6,809 passed, 0 failed, 11 ignored (`private/test-binaries/20260930T051010Z-387716`) |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 245 audits (244 + `AuditLoopSiteGenerations.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then **0** after `build_matrix.py . --gate gate.json` (`09a` 0, `09b`) | 365 |
+| `python3 scripts/build_docs_index.py` | 0, 0 | |
+
+The first Python run failed only on the matrix's derived Lean audit count
+(244 → 245), which the regeneration moves. `providers/` is unchanged, so the
+provider gate was not due. Clang 21.1.8 recorded in
+[gate/clang-version.txt](gate/clang-version.txt).
 
 ## 10. Ledger
 
