@@ -104,11 +104,65 @@ theorem log2_lt_of_lt {N k : Nat} (h : N < 2 ^ k) (hk : 0 < k) : N.log2 < k := b
 
 theorem pow_pos_ne (k : Nat) : 2 ^ k ≠ 0 := Nat.pos_iff_ne_zero.mp (Nat.two_pow_pos k)
 
+/-! ## A logarithm the kernel computes
+
+`Nat.log2` is not one of the kernel's accelerated operations, so evaluating
+it on the magnitudes of binary64 arithmetic (up to about `2^4200`) unfolds
+thousands of recursive steps. `ilog2` finds the same number by a 16-step
+binary search over `2^k ≤ n` (powers and comparisons are accelerated) and is
+proved equal to `Nat.log2` (`ilog2_eq`); the model's definitions use it, and
+every proof rewrites it away first. -/
+
+/-- The binary search: with `2^acc ≤ n` (or `acc = 0`) and `n < 2^(acc + 2^k)`,
+the largest `r` with `2^r ≤ n`. -/
+def log2Search : Nat → Nat → Nat → Nat
+  | 0, _, acc => acc
+  | k + 1, n, acc =>
+    if 2 ^ (acc + 2 ^ k) ≤ n then log2Search k n (acc + 2 ^ k) else log2Search k n acc
+
+/-- `Nat.log2`, computed by `log2Search` below `2^65536`. -/
+def ilog2 (n : Nat) : Nat := if n < 2 ^ 65536 then log2Search 16 n 0 else n.log2
+
+theorem log2Search_spec (n : Nat) :
+    ∀ k acc, (acc = 0 ∨ 2 ^ acc ≤ n) → n < 2 ^ (acc + 2 ^ k) →
+      (log2Search k n acc = 0 ∨ 2 ^ log2Search k n acc ≤ n) ∧
+        n < 2 ^ (log2Search k n acc + 1) := by
+  intro k
+  induction k with
+  | zero => intro acc h1 h2; simpa [log2Search] using ⟨h1, h2⟩
+  | succ k ih =>
+    intro acc h1 h2
+    have hk : 2 ^ (k + 1) = 2 ^ k + 2 ^ k := by rw [Nat.pow_succ]; omega
+    simp only [log2Search]
+    split
+    · rename_i h
+      exact ih _ (Or.inr h) (by rw [Nat.add_assoc, ← hk]; exact h2)
+    · rename_i h
+      exact ih _ h1 (Nat.not_le.mp h)
+
+theorem ilog2_eq (n : Nat) : ilog2 n = n.log2 := by
+  unfold ilog2
+  split
+  · rename_i hn
+    obtain ⟨h1, h2⟩ := log2Search_spec n 16 0 (Or.inl rfl)
+      (by rw [show 0 + 2 ^ 16 = 65536 from rfl]; exact hn)
+    generalize log2Search 16 n 0 = r at h1 h2
+    by_cases h0 : n = 0
+    · subst h0
+      rcases h1 with h1 | h1
+      · rw [h1, Nat.log2_zero]
+      · exact absurd h1 (by have := Nat.two_pow_pos r; omega)
+    · rw [eq_comm, Nat.log2_eq_iff h0]
+      rcases h1 with h1 | h1
+      · subst h1; exact ⟨by omega, h2⟩
+      · exact ⟨h1, h2⟩
+  · rfl
+
 /-! ## Magnitudes -/
 
 /-- The scale of a magnitude's canonical form: `log2 N - tw`, zero for a
 subnormal or the least binade. -/
-def shift (f : Format) (N : Nat) : Nat := N.log2 - f.tw
+def shift (f : Format) (N : Nat) : Nat := ilog2 N - f.tw
 
 /-- The canonical significand `N / 2^shift`, the integer significand IEEE
 754 writes as `1.T` (or `0.T` for a subnormal) scaled by `2^tw`. -/
@@ -132,20 +186,20 @@ def UnbRep (f : Format) (N : Nat) : Prop := ∃ M k, M < 2 ^ f.p ∧ N = M * 2 ^
 def Rep (f : Format) (N : Nat) : Prop := UnbRep f N ∧ N ≤ f.maxN
 
 theorem sig_lt (f : Format) (N : Nat) : sig f N < 2 ^ f.p := by
-  unfold sig shift Format.p
+  simp only [sig, shift, ilog2_eq, Format.p]
   rw [Nat.div_lt_iff_lt_mul (Nat.two_pow_pos _), ← Nat.pow_add]
   exact Nat.lt_of_lt_of_le Nat.lt_log2_self (Nat.pow_le_pow_right (by decide) (by omega))
 
 theorem sig_ge (f : Format) {N : Nat} (hN : N ≠ 0) (h : f.tw ≤ N.log2) :
     2 ^ f.tw ≤ sig f N := by
-  unfold sig shift
+  simp only [sig, shift, ilog2_eq]
   rw [Nat.le_div_iff_mul_le (Nat.two_pow_pos _), ← Nat.pow_add,
     show f.tw + (N.log2 - f.tw) = N.log2 by omega]
   exact Nat.log2_self_le hN
 
 theorem shift_of_lt (f : Format) {N : Nat} (h : N < 2 ^ f.p) : shift f N = 0 := by
   have := log2_lt_of_lt h (by unfold Format.p; omega)
-  unfold shift; unfold Format.p at this; omega
+  simp only [shift, ilog2_eq]; unfold Format.p at this; omega
 
 theorem sig_of_lt (f : Format) {N : Nat} (h : N < 2 ^ f.p) : sig f N = N := by
   unfold sig; rw [shift_of_lt f h]; simp
@@ -155,10 +209,10 @@ theorem sig_mul_shift {f : Format} {N : Nat} (h : UnbRep f N) :
     sig f N * 2 ^ shift f N = N := by
   obtain ⟨M, k, hM, rfl⟩ := h
   by_cases h0 : M = 0
-  · subst h0; simp [sig, shift, Nat.log2_zero]
+  · subst h0; simp [sig, shift, ilog2_eq, Nat.log2_zero]
   · have hlog := log2_lt_of_lt hM (by unfold Format.p; omega)
     have hs : shift f (M * 2 ^ k) ≤ k := by
-      unfold shift; rw [log2_mul_pow k h0]; unfold Format.p at hlog; omega
+      simp only [shift, ilog2_eq]; rw [log2_mul_pow k h0]; unfold Format.p at hlog; omega
     unfold sig
     generalize shift f (M * 2 ^ k) = S at hs ⊢
     have hsplit : M * 2 ^ k = M * 2 ^ (k - S) * 2 ^ S := by
@@ -171,7 +225,7 @@ theorem unbRep_iff {f : Format} {N : Nat} : UnbRep f N ↔ sig f N * 2 ^ shift f
 /-- Every representable magnitude has scale at most `kmax`. -/
 theorem shift_le_kmax {f : Format} {N : Nat} (h : Rep f N) : shift f N ≤ f.kmax := by
   by_cases h0 : N = 0
-  · subst h0; simp [shift, Nat.log2_zero]
+  · subst h0; simp [shift, ilog2_eq, Nat.log2_zero]
   · have hlt : N < 2 ^ (f.p + f.kmax) := by
       have := h.2
       unfold Format.maxN at this
@@ -181,7 +235,7 @@ theorem shift_le_kmax {f : Format} {N : Nat} (h : Rep f N) : shift f N ≤ f.kma
         Nat.mul_lt_mul_of_pos_right (by omega) (Nat.two_pow_pos _)
       omega
     have := (Nat.log2_lt h0).mpr hlt
-    unfold shift; unfold Format.p at this; omega
+    simp only [shift, ilog2_eq]; unfold Format.p at this; omega
 
 theorem decodeMag_encodeMag {f : Format} {N : Nat} (h : UnbRep f N) :
     decodeMag f (encodeMag f N) = N := by
@@ -196,10 +250,10 @@ theorem decodeMag_encodeMag {f : Format} {N : Nat} (h : UnbRep f N) :
   · -- a subnormal, zero, or the first binade's significand: scale zero
     have hsh : shift f N = 0 := by
       by_cases h0 : N = 0
-      · subst h0; simp [shift, Nat.log2_zero]
+      · subst h0; simp [shift, ilog2_eq, Nat.log2_zero]
       · by_cases hl : f.tw ≤ N.log2
         · exact absurd (sig_ge f h0 hl) (by omega)
-        · unfold shift; omega
+        · simp only [shift, ilog2_eq]; omega
     rw [Nat.div_eq_of_lt hs, Nat.mod_eq_of_lt hs, hsh]
     rw [hsh] at hc; simpa using hc
   · have hd : sig f N / 2 ^ f.tw = 1 := by
@@ -257,7 +311,7 @@ theorem encodeMag_decodeMag (f : Format) (m : Nat) :
       · omega
       · rw [Nat.pow_succ]; omega
     have hsh : shift f ((2 ^ f.tw + m % 2 ^ f.tw) * 2 ^ (m / 2 ^ f.tw - 1)) = m / 2 ^ f.tw - 1 := by
-      unfold shift; rw [log2_mul_pow _ (by omega), hlog]; omega
+      simp only [shift, ilog2_eq]; rw [log2_mul_pow _ (by omega), hlog]; omega
     unfold encodeMag sig
     rw [hsh, Nat.mul_div_cancel _ (Nat.two_pow_pos _)]
     have hE1 : 1 ≤ m / 2 ^ f.tw := Nat.pos_of_ne_zero hE

@@ -298,5 +298,10 @@ import QCore.TaskRecordCaptures
 import QCore.CastRepresentation
 import QCore.Closures
 import QCore.FloatTypes
+import QCore.Ieee754
+import QCore.Ieee754Round
+import QCore.Ieee754Ops
+import QCore.Ieee754Vectors32
+import QCore.Ieee754Vectors64
 
 /-! The executable formal core of QCore-C revision 0.1. -/

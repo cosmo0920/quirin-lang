@@ -31,7 +31,7 @@ def dist (n d N : Nat) : Nat := if N * d ≤ n then n - N * d else N * d - n
 
 /-- The scale of `x`'s rounding: `log2 ⌊x⌋ + 1 - p`, zero below `2^p` units
 (the subnormal and least normal binades share the unit grid). -/
-def rshift (f : Format) (n d : Nat) : Nat := ((n / d).log2 + 1) - f.p
+def rshift (f : Format) (n d : Nat) : Nat := (ilog2 (n / d) + 1) - f.p
 
 /-- The unit in the last place of `x`'s rounding, times `d`: `d · 2^s`. -/
 def ru (f : Format) (n d : Nat) : Nat := d * 2 ^ rshift f n d
@@ -83,7 +83,7 @@ theorem quotient_bounds (f : Format) (n d : Nat) :
   rw [← Nat.div_div_eq_div_mul]
   have hp := p_pos f
   generalize hi : n / d = i
-  have hs : rshift f n d = (i.log2 + 1) - f.p := by unfold rshift; rw [hi]
+  have hs : rshift f n d = (i.log2 + 1) - f.p := by simp only [rshift, ilog2_eq]; rw [hi]
   rw [hs]
   constructor
   · rw [Nat.div_lt_iff_lt_mul (Nat.two_pow_pos _), ← Nat.pow_add]
@@ -135,7 +135,7 @@ theorem sig_grid (f : Format) {c s : Nat} (hc : c < 2 ^ f.p) (hn : s = 0 ∨ 2 ^
       unfold Format.p at *
       simp only [Nat.add_sub_cancel] at hn
       exact ⟨hn, by omega⟩
-    unfold sig shift
+    simp only [sig, shift, ilog2_eq]
     rw [log2_mul_pow _ hc0, hlog, show f.tw + s - f.tw = s by omega,
       Nat.mul_div_cancel _ (Nat.two_pow_pos _)]
 
@@ -433,7 +433,7 @@ theorem roundMag_exact (f : Format) {N d : Nat} (hd : 0 < d) (h : Rep f N) :
 normal binade) the grid is every unit: the scale is zero, so `x` rounds to
 the nearer integer, ties to the even one. -/
 theorem rshift_small (f : Format) {n d : Nat} (h : n / d < 2 ^ f.p) : rshift f n d = 0 := by
-  unfold rshift
+  simp only [rshift, ilog2_eq]
   have := log2_lt_of_lt h (p_pos f)
   omega
 

@@ -397,19 +397,26 @@ def Datum.toFValue (f : Format) : Datum → QCore.FloatTypes.FValue
 
 /-- Float → integer: `QCore.FloatTypes.toInt` of the exact value — the
 truncation toward zero, `none` (the typed `OutOfRange`) for NaN, ±inf and a
-truncation that is not a value of the target. -/
+truncation that is not a value of the target. `bool` is no integer target: a
+float `as bool` is no conversion (`scalar_types::convert` is `None`). -/
 def toInt (f : Format) (t : Option Width) (ty : Ty) (d : Datum) : Option Int :=
-  QCore.FloatTypes.toInt t ty (d.toFValue f)
+  if ty = .bool then none else QCore.FloatTypes.toInt t ty (d.toFValue f)
+
+/-- The ten integer targets, in the order of the vector tables. -/
+def integerTargets : List Ty := [.i8, .i16, .i32, .i64, .isize, .u8, .u16, .u32, .u64, .usize]
+
+/-- A float `as bool` converts nothing, as in the kernel. -/
+theorem toInt_bool (f : Format) (t : Option Width) (d : Datum) : toInt f t .bool d = none := rfl
 
 theorem roundUnb_scaled (f : Format) (a Q : Nat) :
     roundUnb f (a * 2 ^ Q) 1 = QCore.FloatTypes.roundNat f.p a * 2 ^ Q := by
   have hp := p_pos f
   by_cases ha : a = 0
   · subst ha
-    simp [roundUnb, rq, rr, ru, rshift, QCore.FloatTypes.roundNat, Nat.log2_zero]
+    simp [roundUnb, rq, rr, ru, rshift, ilog2_eq, QCore.FloatTypes.roundNat, Nat.log2_zero]
   have hlog : (a * 2 ^ Q).log2 = a.log2 + Q := log2_mul_pow Q ha
   have hs : rshift f (a * 2 ^ Q) 1 = (a.log2 + Q + 1) - f.p := by
-    unfold rshift; rw [Nat.div_one, hlog]
+    simp only [rshift, ilog2_eq]; rw [Nat.div_one, hlog]
   unfold roundUnb rq rr ru QCore.FloatTypes.roundNat
   rw [hs, Nat.one_mul]
   by_cases hsmall : a.log2 + 1 ≤ f.p
@@ -513,10 +520,11 @@ theorem truncDyadic_fin (f : Format) (hq : 0 < f.qneg) (s : Bool) (N : Nat) :
 and its truncation toward zero, `signed s N` divided by `2^qneg`, is a value
 of the target. -/
 theorem toInt_some_iff (f : Format) {t : Option Width} {ty : Ty} {d : Datum} {n : Int}
-    (hq : 0 < f.qneg) :
+    (hq : 0 < f.qneg) (hty : ty ≠ .bool) :
     toInt f t ty d = some n ↔
       ∃ s N, d = .fin s N ∧ n = (signed s N).tdiv (2 ^ f.qneg) ∧ fits t ty n = true := by
   unfold toInt
+  simp only [hty, ↓reduceIte]
   rw [QCore.FloatTypes.toInt_succeeds_iff]
   constructor
   · rintro ⟨m, e, hd, rfl, hfit⟩
@@ -533,15 +541,16 @@ theorem toInt_some_iff (f : Format) {t : Option Width} {ty : Ty} {d : Datum} {n 
 /-- **The `OutOfRange` condition.** Float → integer fails exactly for NaN,
 an infinity, or a finite value whose truncation is not a value of the
 target. -/
-theorem toInt_none_iff (f : Format) {t : Option Width} {ty : Ty} {d : Datum} (hq : 0 < f.qneg) :
+theorem toInt_none_iff (f : Format) {t : Option Width} {ty : Ty} {d : Datum} (hq : 0 < f.qneg)
+    (hty : ty ≠ .bool) :
     toInt f t ty d = none ↔
       d = .nan ∨ (∃ s, d = .inf s) ∨
         ∃ s N, d = .fin s N ∧ fits t ty ((signed s N).tdiv (2 ^ f.qneg)) = false := by
   cases d with
-  | nan => simp [toInt, Datum.toFValue, QCore.FloatTypes.toInt]
-  | inf s => simp [toInt, Datum.toFValue, QCore.FloatTypes.toInt]
+  | nan => simp [toInt, hty, Datum.toFValue, QCore.FloatTypes.toInt]
+  | inf s => simp [toInt, hty, Datum.toFValue, QCore.FloatTypes.toInt]
   | fin s N =>
-    simp only [toInt, Datum.toFValue, QCore.FloatTypes.toInt, truncDyadic_fin f hq,
+    simp only [toInt, hty, ↓reduceIte, Datum.toFValue, QCore.FloatTypes.toInt, truncDyadic_fin f hq,
       reduceCtorEq, false_or, exists_false, Datum.fin.injEq]
     cases s <;> cases hfit : fits t ty _ <;> simp [hfit]
 
