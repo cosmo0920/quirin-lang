@@ -156,7 +156,10 @@ fn rename(state: &mut AbstractState, from: usize, into: usize) {
     if !mentioned(state, from) {
         return;
     }
-    debug_assert!(summary || !mentioned(state, into), "a renaming target is fresh");
+    debug_assert!(
+        summary || !mentioned(state, into),
+        "a renaming target is fresh"
+    );
     let into_present = state.resources.contains_key(&into);
     let from_present = state.resources.contains_key(&from);
     if let Some(status) = state.resources.remove(&from) {
@@ -223,19 +226,20 @@ fn rename(state: &mut AbstractState, from: usize, into: usize) {
 }
 
 /// Shift the generations of every site `node` produces that `state` already
-/// mentions (see the module comment). Every other state is returned
-/// unchanged.
+/// mentions (see the module comment), and return the sites shifted. Every
+/// other state is returned unchanged.
 pub(super) fn shift(
     function: &str,
     node: &LegacyCfgNode,
     mut state: AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
-) -> AbstractState {
+) -> (AbstractState, Vec<usize>) {
     let sites = instruction_produced_sites(&node.instruction);
     if sites.iter().all(|site| !mentioned(&state, *site)) {
-        return state;
+        return (state, Vec::new());
     }
     let overwritten = overwritten_names(&node.instruction);
+    let mut shifted = Vec::new();
     for site in sites {
         if !mentioned(&state, site) {
             continue;
@@ -270,8 +274,32 @@ pub(super) fn shift(
         if step == Step::ShiftRefused {
             refuse(&mut state, diagnostics, SHIFT_REFUSED, older(site));
         }
+        shifted.push(site);
     }
-    state
+    (state, shifted)
+}
+
+/// After the transfer of a node that shifted `shifted` and was refused (a
+/// diagnostic in `diagnostics` poisons the path): a shifted site the refused
+/// transfer did not create may still have been produced by the call C ran,
+/// so it is present, possibly live, with an unresolved effect. Before this
+/// card the site stood there for the earlier generation, with the refusal's
+/// unresolved effect; a fresh generation never produced must not leave a
+/// join with another iteration's owed generation claiming more than that.
+pub(super) fn settle_refused(
+    shifted: &[usize],
+    state: &mut AbstractState,
+    diagnostics: &BTreeSet<LegacyDiagnostic>,
+) {
+    if shifted.is_empty() || !diagnostics.iter().any(super::is_path_poisoning) {
+        return;
+    }
+    for &site in shifted {
+        if !state.resources.contains_key(&site) {
+            state.resources.insert(site, LIVE);
+            state.unresolved_effect_sites.insert(site);
+        }
+    }
 }
 
 /// Record every re-acquisition an earlier generation reaches, with its step

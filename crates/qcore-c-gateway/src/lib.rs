@@ -40,7 +40,6 @@ mod elaboration;
 mod index_traversal;
 // Card CG04-LOOP-SITE-GENERATIONS: generation-indexed acquisition sites; the G
 // hooks are in `legacy_loop_generations.rs`.
-mod loop_generations;
 pub mod indexed_collection;
 #[cfg(feature = "indirect-census")]
 pub mod indirect_census;
@@ -50,6 +49,7 @@ pub mod indirect_chain_census;
 pub mod legacy_c;
 pub mod legacy_census;
 mod legacy_condition_call;
+mod loop_generations;
 mod nested_call_effects; // CG05-NESTED-CALL-EFFECTS (rule 10y); G hook in legacy_nested_call.rs
 // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o).
 mod legacy_summary;

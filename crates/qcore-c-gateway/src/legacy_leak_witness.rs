@@ -330,7 +330,8 @@ fn settle(
             };
             // Card CG04-LOOP-SITE-GENERATIONS: as in the work list.
             let mut local = BTreeSet::new();
-            let state = super::loop_generations_route::shift(&cfg.function, node, state, &mut local);
+            let (state, shifted) =
+                super::loop_generations_route::shift(&cfg.function, node, state, &mut local);
             let read = refused_operands::handed_sites(
                 &state,
                 &cfg.publications.line_reads,
@@ -357,6 +358,7 @@ fn settle(
             );
             joined_provenance::finish_release(conditional, &mut output, &local);
             refused_operands::apply(&mut output, &withdrawn, &local);
+            super::loop_generations_route::settle_refused(&shifted, &mut output, &local);
             let refused = refused_operands::refused(&local);
             let marked = if refused && !withdrawn.is_empty() {
                 let mut probe = output.clone();

@@ -170,13 +170,34 @@ pub(crate) const STEP_VECTORS: &[StepVector] = &[
     ((true, true, false, false, true, false, false), "shift"),
     ((true, false, true, false, false, true, false), "shift"),
     ((true, false, false, true, false, false, true), "shift"),
-    ((true, true, true, false, false, false, false), "shift-refused"),
-    ((true, true, false, false, false, true, false), "shift-refused"),
-    ((true, false, true, false, true, false, false), "shift-refused"),
-    ((true, false, false, false, true, true, false), "shift-refused"),
-    ((true, true, false, false, false, false, true), "shift-refused"),
-    ((true, false, false, true, true, false, false), "shift-refused"),
-    ((true, true, true, false, true, true, false), "shift-refused"),
+    (
+        (true, true, true, false, false, false, false),
+        "shift-refused",
+    ),
+    (
+        (true, true, false, false, false, true, false),
+        "shift-refused",
+    ),
+    (
+        (true, false, true, false, true, false, false),
+        "shift-refused",
+    ),
+    (
+        (true, false, false, false, true, true, false),
+        "shift-refused",
+    ),
+    (
+        (true, true, false, false, false, false, true),
+        "shift-refused",
+    ),
+    (
+        (true, false, false, true, true, false, false),
+        "shift-refused",
+    ),
+    (
+        (true, true, true, false, true, true, false),
+        "shift-refused",
+    ),
 ];
 
 /// `(identity, base, generation code)`, shared with

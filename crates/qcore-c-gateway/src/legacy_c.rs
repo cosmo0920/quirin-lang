@@ -11473,7 +11473,8 @@ pub(crate) fn analyze_cfg_with_entry(
         // Card CG04-LOOP-SITE-GENERATIONS: a re-acquisition shifts its site's
         // generations first, so every read below and the transfer see the
         // earlier generation under its own identity.
-        let state = loop_generations_route::shift(&cfg.function, node, state, &mut local);
+        let (state, shifted) =
+            loop_generations_route::shift(&cfg.function, node, state, &mut local);
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
         // Card W44-LEAK-PIN-AUDIT: the live identities this statement hands
         // on, read from the state it runs in (`refused_operands`).
@@ -11492,6 +11493,7 @@ pub(crate) fn analyze_cfg_with_entry(
         // *this* node rather than anything reported elsewhere in the function.
         joined_provenance::finish_release(conditional_release, &mut output, &local);
         refused_operands::apply(&mut output, &handed, &local);
+        loop_generations_route::settle_refused(&shifted, &mut output, &local);
         output.unmodeled |= local.iter().any(is_path_poisoning);
         diagnostics.append(&mut local);
         if node.is_exit {
@@ -11689,7 +11691,8 @@ pub(crate) fn analyze_cfg_with_entry(
         };
         let mut ignored = BTreeSet::new();
         // Card CG04-LOOP-SITE-GENERATIONS: as in the work list.
-        let state = loop_generations_route::shift(&cfg.function, node, state, &mut ignored);
+        let (state, shifted) =
+            loop_generations_route::shift(&cfg.function, node, state, &mut ignored);
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
         // Card W44-LEAK-PIN-AUDIT: the refused hand-on rule, as in the work list.
         let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
@@ -11704,6 +11707,7 @@ pub(crate) fn analyze_cfg_with_entry(
         );
         joined_provenance::finish_release(conditional_release, &mut output, &ignored);
         refused_operands::apply(&mut output, &handed, &ignored);
+        loop_generations_route::settle_refused(&shifted, &mut output, &ignored);
         output.unmodeled |= ignored.iter().any(is_path_poisoning);
         // Card W43-INDEXED-RESOURCE-COLLECTIONS: an element obligation left at
         // this settled exit.
