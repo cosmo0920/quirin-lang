@@ -1398,7 +1398,12 @@ runtime premise R (dynamic), under ABI premises Z (§L20).
    name and OS build — without pinning it: the OS owns the file the program
    loads, and a run against another one is outside the premise. The generator
    reads a Windows runtime DLL's export directory to refuse a missing or
-   forwarded export; it does not hash it.
+   forwarded export; it does not hash it. A `.tbd` is read for the recorded
+   target's slice; an `arm64-macos` target whose stub lists `arm64e-macos` but
+   not `arm64-macos` reads the `arm64e-macos` slice, as Apple `ld` does (the
+   macOS 27 SDK's `libSystem.tbd` lists no `arm64` slice). The substitution is
+   a function of the pinned stub's bytes, so the manifest records nothing new;
+   no other slice stands in for another.
 3. **Weak-symbol interposition.** A defined weak symbol is admitted and
    recorded `weak`; a strong definition of the same name elsewhere in the link
    (another object, or the executable itself) takes its place, and at run time
@@ -1446,9 +1451,11 @@ runtime premise R (dynamic), under ABI premises Z (§L20).
     linker's own `--trace`. A builder that links otherwise is outside every
     verdict, as it is for the recorded compiler.
 12. **Evidence.** The native runs are Linux/Clang; the MSVC static library and
-    the `ntdll.dll` import are wired into the `msvc-core` CI job and the macOS
-    `.tbd` path is written for card `W48-QRLIB-MACOS` (5m), neither run by the
-    card.
+    the `ntdll.dll` import are wired into the `msvc-core` CI job, not run. The
+    macOS path (card `W48-QRLIB-MACOS`) ran green on one arm64 Mac (macOS
+    27.0.1, Apple clang 21.0.0): libm through the SDK's `libm.tbd` under the
+    three builds, a Mach-O C archive and a Rust `staticlib`; the `macos` CI job
+    runs the same commands. Intel macOS is out of scope: the current macOS no longer runs on Intel Macs (user decision, 2026-09-30).
 
 ## L15. Lowering, observations, and translation certificates
 

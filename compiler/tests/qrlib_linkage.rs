@@ -19,7 +19,7 @@
 //!   functions, linked through its generated manifest.
 //! * **Windows (MSVC)**, wired into the `msvc-core` job: an MSVC static `.lib`
 //!   and one `ntdll.dll` function through the SDK's `ntdll.lib`.
-//! * **macOS**, written for card 5m: libm through the SDK's `libm.tbd`.
+//! * **macOS**, run by card 5m (`W48-QRLIB-MACOS`): libm through the SDK's `libm.tbd`.
 //!
 //! No test here writes output of its own: native results are compared through
 //! the program's own `print` lines and its exit status.
@@ -1016,7 +1016,7 @@ fn a_rust_staticlib_exporting_extern_c_links_through_its_generated_manifest() {
 }
 
 // ---------------------------------------------------------------------------
-// macOS (card 5m): libm through the SDK's text stub. Written, not run here.
+// macOS (card 5m): libm through the SDK's text stub. Run by W48-QRLIB-MACOS.
 // ---------------------------------------------------------------------------
 
 #[cfg(target_os = "macos")]

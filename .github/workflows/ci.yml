@@ -211,3 +211,33 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cargo test -p qcore-verification --test counter_source
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+  # Card W48-QRLIB-MACOS (5m). The Mach-O linkage path on an Apple Silicon
+  # runner: the readers from bytes plus the SDK's own `libm.tbd`, and the
+  # native rows (libm through the SDK text stub, a Mach-O C archive, a Rust
+  # `staticlib`) under the three builds.
+  macos:
+    runs-on: macos-15
+    steps:
+      - name: Check out pinned sources
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Record the SDK and toolchain
+        run: |
+          xcrun --show-sdk-path
+          xcrun --show-sdk-version
+          clang --version
+          ld -v
+
+      - name: Read linkage artifacts, including the SDK stubs
+        run: cargo test -p qcore-c-gateway --lib "linkage::"
+
+      - name: Link FFI calls through generated manifests on macOS
+        run: >-
+          cargo test -p qcore-compiler --test qrlib_linkage --test ffi_struct_import
+          --test float_ffi --test usable_records -- --nocapture

@@ -2221,7 +2221,9 @@ DIGEST        = "sha256:", 64 * LOWER_HEX ;
 * **Static and dynamic.** `static` pins the code (an ELF, Mach-O or COFF
   archive, or a script naming archives) and states no `runtime`; `dynamic`
   pins the link-time stub (an ELF shared object or a script naming them, a
-  `.tbd` text stub or a dylib export trie, a COFF import library) and states
+  `.tbd` text stub — read for the target's slice, `arm64e-macos` standing in
+  for an unlisted `arm64-macos` — or a dylib export trie, a COFF import
+  library) and states
   at least one `runtime` premise, because the OS owns the library the program
   loads. A script naming both kinds, the linkage kind the artifact is not, a
   static link resolving to an import and a dynamic COFF link resolving to code
