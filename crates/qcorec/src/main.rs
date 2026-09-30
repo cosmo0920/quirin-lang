@@ -1,4 +1,5 @@
 mod plugin_config;
+mod qrlib;
 
 use std::env;
 use std::fs;
@@ -14,7 +15,7 @@ use qcore_compiler::{
 use qcore_contract::contract_loader::{PublishedModuleRef, load_published_resource_contracts};
 use qcore_contract::load_path_manifest::{LoadPathManifest, load_contract_load_path_manifest};
 
-const USAGE: &str = "quirin 0.1.0 — the Quirin language driver\n\nUsage:\n  quirin check [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [--recorded-target FILE] FILE...\n  quirin check --contract-load-path MANIFEST FILE.qv\n  quirin emit [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [--recorded-target FILE] [-o FILE] FILE...\n  Source modes: module contract; | module library; | module executable;\n  Extensions: .qv contracts; .qr runtime/library; .qrlib native ABI manifests.\n  Legacy .qcore/.qcorelib inputs remain supported with outdated-name warnings.\n  Contract load-path check validates trusted resource-v1 assumptions and published\n  includes; it does not check C bodies or establish a safety verdict.\n  quirin plugins list [--config CONFIG]\n  quirin plugins profile [--config CONFIG]\n  quirin plugins inspect PLUGIN_ID [--config CONFIG]\n  quirin plugins verify PACKAGE_DIR\n  quirin plugins enable PACKAGE_DIR --config CONFIG\n  quirin plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
+const USAGE: &str = "quirin 0.1.0 — the Quirin language driver\n\nUsage:\n  quirin check [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [--recorded-target FILE] FILE...\n  quirin check --contract-load-path MANIFEST FILE.qv\n  quirin emit [--entry NAME] [--plugins CONFIG] [--native-library MANIFEST]... [--recorded-target FILE] [-o FILE] FILE...\n  quirin qrlib generate --library NAME --version V --linkage static|dynamic --artifact REF [--header REF]\n      --contracts FILE.qv... --recorded-target FILE --unwinding abort --allocator-custody closed\n      --thread-posture single_caller [--os-build BUILD] [--runtime-dir DIR] -o OUT.qrlib\n  quirin qrlib check STORED.qrlib (the generate flags, without -o)\n  quirin build --recorded-target FILE --contracts FILE.qv... --native-library M.qrlib... [--entry NAME]\n      [--runtime-dir DIR] -o EXE FILE...\n  A .qrlib is generated from the artifact on every build; REF resolves against the manifest's\n  directory; check and build refuse a stored manifest the regenerated one differs from.\n  Source modes: module contract; | module library; | module executable;\n  Extensions: .qv contracts; .qr runtime/library; .qrlib native ABI manifests.\n  Legacy .qcore/.qcorelib inputs remain supported with outdated-name warnings.\n  Contract load-path check validates trusted resource-v1 assumptions and published\n  includes; it does not check C bodies or establish a safety verdict.\n  quirin plugins list [--config CONFIG]\n  quirin plugins profile [--config CONFIG]\n  quirin plugins inspect PLUGIN_ID [--config CONFIG]\n  quirin plugins verify PACKAGE_DIR\n  quirin plugins enable PACKAGE_DIR --config CONFIG\n  quirin plugins disable PLUGIN_ID --config CONFIG\n\n  verify/enable read the package without executing it: manifest syntax, path\n  containment, the declared executable digest, and every other declaration\n  against the template embedded in the executable's bytes. That is a snapshot\n  binding, not a signature or an immutable-execution guarantee.\n";
 
 fn main() -> ExitCode {
     match run(env::args().skip(1).collect()) {
@@ -42,6 +43,14 @@ fn run(arguments: Vec<String>) -> Result<(), String> {
     let command = arguments[0].as_str();
     if command == "plugins" {
         return plugins_command(&arguments[1..]);
+    }
+    // Card `W48-QRLIB-LINKAGE`: the generated `.qrlib` and the build that
+    // regenerates it, checks the program and links exactly the pinned artifact.
+    if command == "qrlib" {
+        return qrlib::qrlib_command(&arguments[1..]);
+    }
+    if command == "build" {
+        return qrlib::build_command(&arguments[1..]);
     }
     if !matches!(command, "check" | "emit") {
         return Err(format!("unknown command `{command}`\n\n{USAGE}"));
