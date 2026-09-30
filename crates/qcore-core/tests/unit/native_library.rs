@@ -489,8 +489,10 @@ fn a_contract_slice_entry_binds_its_symbol_to_a_declared_contract_module() {
     assert!(manifest.unchecked.is_empty());
     assert_eq!(manifest.contracted.len(), 2);
     let alloc = &manifest.contracted["k_alloc"];
-    assert_eq!(alloc.parameters, vec![AbiType::Usize]);
-    assert_eq!(alloc.result, AbiType::PtrMutU8);
+    assert_eq!(alloc.parameters, vec![EntryType::Abi(AbiType::Usize)]);
+    assert_eq!(alloc.result, EntryType::Abi(AbiType::PtrMutU8));
+    // Card `W48-QRLIB-LINKAGE`: a v1 entry states no export.
+    assert_eq!(alloc.export, None);
     assert_eq!(alloc.contract_module, SLICE);
     assert_eq!(manifest.slice(), BTreeSet::from([SLICE]));
 }

@@ -507,6 +507,7 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
                     identity.hash,
                     match premises.data_model {
                         DataModel::Lp64 => "data model lp64",
+                        DataModel::Llp64 => "data model llp64",
                     },
                     match premises.unwinding {
                         UnwindingPosture::Abort => "no unwinding across the boundary",
@@ -550,6 +551,7 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
                     identity.hash,
                     match premises.data_model {
                         DataModel::Lp64 => "data model lp64",
+                        DataModel::Llp64 => "data model llp64",
                     },
                     match premises.unwinding {
                         UnwindingPosture::Abort => "no unwinding across the boundary",
@@ -591,6 +593,7 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
                     // must not be shown two vocabularies for one vocabulary.
                     match premises.data_model {
                         DataModel::Lp64 => "data model lp64",
+                        DataModel::Llp64 => "data model llp64",
                     },
                     match premises.unwinding {
                         UnwindingPosture::Abort => "no unwinding across the boundary",
