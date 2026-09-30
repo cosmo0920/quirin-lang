@@ -1,6 +1,6 @@
 {
-  "note": "CG08-CASTS-AND-TYPE-QUERIES card gate at tip d82563f7 (base ca634dc1; main bcdc13b9 merged at 998b0353), script docs/reports/cg08-casts-and-type-queries/scripts/gate.sh, logs private/cg08/gate-d82563f7 of this worktree: submodule 0; run_test_binaries.py 388 units, 401 summaries, 6,832 passed, 0 failed, 11 ignored; fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 246 audits passed (AuditCastRepresentation.lean new); python tests 365 with 1 failure before the matrix was regenerated from this file (test_the_derived_facts_are_recomputed_rather_than_carried: lean_audits 245 carried), 365 OK after (09b); docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 8): BEFORE at ca634dc1 (binary 393ce0f1) resource-diagnostics.json c012e785, 586/10/4,238; AFTER at 998b0353 (binary d699f988) be132742, 602/10/4,222 (+16, no correction); system 34/2/198 -> 37/2/195; tail-pause slice 26/1/242/1 Pending unmoved. Measured before CG04-LOOP-SITE-GENERATIONS landed. Exits in docs/reports/cg08-casts-and-type-queries/gate/.",
-  "workspace_tests": 6832,
+  "note": "CG08-CASTS-AND-TYPE-QUERIES card gate at tip b8f92395 (base ca634dc1; main bcdc13b9 merged at 998b0353, main 9290ff1a with CG04-LOOP-SITE-GENERATIONS merged at 9d1a9588), script docs/reports/cg08-casts-and-type-queries/scripts/gate.sh, logs private/cg08/gate-b8f92395 of this worktree: submodule 0; run_test_binaries.py 389 units, 402 summaries, 6,860 passed, 0 failed, 11 ignored; fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 247 audits passed (AuditCastRepresentation.lean new); python tests 365 with 1 failure before the matrix was regenerated from this file (test_the_derived_facts_are_recomputed_rather_than_carried: lean_audits 246 carried), 365 OK after (09b); docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 8) on the repaired base: BEFORE at main 9290ff1a (binary 7e611b2c) resource-diagnostics.json 454ecd00, 586/10/4,238; AFTER at 9d1a9588 (binary 3c8c2d16) 2fc3af8c, 602/10/4,222 (+16, no correction); system 34/2/198 -> 37/2/195; tail-pause slice 26/1/242/1 Pending unmoved. Exits in docs/reports/cg08-casts-and-type-queries/gate/.",
+  "workspace_tests": 6860,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "reevaluation_probe_exit": 0,
@@ -8,6 +8,6 @@
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
   "standing_gate": "complete",
-  "lean_audits": 246,
+  "lean_audits": 247,
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }
