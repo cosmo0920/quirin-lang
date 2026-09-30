@@ -167,6 +167,12 @@ mod value_connective_route;
 #[path = "legacy_loop_generations.rs"]
 mod loop_generations_route;
 
+// Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): a field link that
+// holds on some paths only never leaves an obligation unresolved without a
+// diagnostic. The hooks below naming the card are thin.
+#[path = "legacy_field_link_join.rs"]
+mod field_link_join_route;
+
 // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the null test is no escape or
 // binding, pointer-to-pointer casts at a pointer destination, the cast return
 // the reader does not commit to, and Clang-confirmed unevaluated `sizeof`
@@ -14073,6 +14079,10 @@ fn apply_resource_action(
             state
                 .resources
                 .insert(site, (status & !(LIVE | CONTAINED)) | RELEASED);
+        }
+        // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: the escape census.
+        if escape {
+            field_link_join_route::record_escape_exposure(function, line, state, site);
         }
         cascade_resource_action(state, site, escape);
     }
