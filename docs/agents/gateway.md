@@ -2829,8 +2829,12 @@ own anchor here.
     boundary 28), C11 6.3.2.3p7, and **P-CG12-VIEW-EFFECTIVE-TYPE** (an access
     through a view of a root or of a never-bound load reads the object at its
     effective type, C11 6.5p7; the view is checked against a stored type only
-    by premise 2). MEASURED-PLACEHOLDER
-    `QCore.VoidViewReadback` (the view decision and position, the readback
+    by premise 2). Measured (corpus `66910c10`, system, tail-pause slice,
+    base `c374de96`): **+2 / +2 / 0 Unknown → Safe** (`LZ4_write16`,
+    `LZ4_write32`; `sb_get_context` and its caller), no Safe → non-Safe, no
+    leak or violation added; 18 of CG00's 76 M05 leaves lifted; 116 corpus
+    readback sites, none bound to an identity (115 with no store base,
+    `CG12-READBACK-NO-STORE-BASE`). `QCore.VoidViewReadback` (the view decision and position, the readback
     decision with `a_type_mismatched_view_is_refused`, the event model with
     `a_readback_returns_the_stored_identity`,
     `an_intervening_unknown_store_yields_no_identity`,
