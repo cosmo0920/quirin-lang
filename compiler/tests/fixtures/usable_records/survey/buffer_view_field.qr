@@ -1,0 +1,8 @@
+// Survey cell (buffer, view_field) of card W48-QR-USABLE-RECORDS; written by
+// docs/reports/w48-qr-usable-records/make_survey.py.
+#import std.fmt;
+#import std.io;
+type V { s: string }
+fn main() -> unit effects { io } {
+    return;
+}

@@ -1,0 +1,11 @@
+module contract;
+
+// The scalar contract the extern survey cells of card W48-QR-USABLE-RECORDS
+// select: scalar in, scalar out, no custody in any position.
+extern fn survey_scale(value: i32, factor: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_borrowed(factor);
+    ensures normal resource_return_none();
+};

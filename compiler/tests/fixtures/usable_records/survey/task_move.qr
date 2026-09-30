@@ -1,0 +1,19 @@
+// Survey cell (task, move) of card W48-QR-USABLE-RECORDS; written by
+// docs/reports/w48-qr-usable-records/make_survey.py.
+#import std.concurrency;
+#import std.fmt;
+#import std.io;
+concurrency checked;
+type F { tag: i32, buf: bytes }
+fn work(a: i32) -> i32 {
+    return a;
+}
+fn main() -> i32 effects { throws<SpawnError>, spawn, join, may_block, io } {
+    let a = 1;
+    thread scope s {
+        let h = spawn s work(copy a)?;
+        let r = join move h?;
+        print dec r;
+        return 0;
+    }
+}

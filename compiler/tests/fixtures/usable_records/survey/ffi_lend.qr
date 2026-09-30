@@ -1,0 +1,17 @@
+// Survey cell (ffi, lend) of card W48-QR-USABLE-RECORDS; written by
+// docs/reports/w48-qr-usable-records/make_survey.py.
+#import std.ffi.unsafe;
+#import std.buffer;
+#import std.fmt;
+#import std.io;
+struct! {
+    type R = c"struct survey_rec" from "survey_rec.h";
+    fields { len: u32, flags: u8 }
+}
+fn main() -> unit effects { io, alloc, mut } {
+    let r = R { len: 4, flags: 1 };
+    let b = bytes(4);
+    let l = lend(b, 0, 2);
+    drop b;
+    return;
+}
