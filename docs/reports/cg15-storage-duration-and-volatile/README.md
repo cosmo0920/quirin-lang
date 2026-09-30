@@ -281,4 +281,36 @@ Bound to Rust by `cg15_lean_form_table_matches_the_rust_table` and
 
 ## 11. Gate
 
-See §12 (filled from `gate/` and [gate.json](gate.json)).
+[`scripts/gate.sh`](scripts/gate.sh) on the merged tip `4fc762bb` (code of
+`09e61220`), exits in [gate/](gate/), figures in [gate.json](gate.json); logs
+in `private/cg15/gate3`.
+
+| Step | Exit | Count |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | |
+| `python3 scripts/run_test_binaries.py` | **101** | 402 units, 415 summaries, **7,057 passed, 1 failed, 11 ignored** (`private/test-binaries/20260930T202532Z-2782636`) |
+| its one failure alone (`cargo test -p qcore-compiler --test cycle20_verifier_plugins`) | 101, 101, then **0** (`03b`–`03d`) | 20 passed on the third |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 257 audits (256 + `AuditStorageDuration.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then **0** after `build_matrix.py . --gate gate.json` (`09a`, `09c` 0; `09b`, `09d` 0) | 365 |
+| `python3 scripts/build_docs_index.py` | 0, 0 | |
+
+The runner's one failure is constraint 16's load-sensitive exclusive row
+`vp04_vp07_vp08_process_lifecycle_and_payload_budgets` (`elapsed < 500ms`),
+in a crate this card does not touch, at host load average 50–68 from the
+concurrent cards; checked alone it failed twice more under that load and
+passed at the third attempt. It is not weakened. The first Python run failed
+only on the matrix's derived Lean audit count (256 → 257), which the
+regeneration moves.
+
+Two earlier runs on the card's own tree are kept as evidence
+(`private/cg15/gate`, `private/cg15/gate2`). The first (tip `b67715df`)
+failed three gateway and audit tests and clippy, each repaired as §6 says
+(`container_root_reach`, `publication_custody`, `configured_cli`; a
+test-only function), plus the same timing row; the second (the repaired
+code, before the merge) passed 401 units, **7,043 passed, 0 failed**, exit 0,
+clippy 0, 256 Lean audits, Python 1 only on the audit count. `providers/` is
+unchanged, so the provider gate was not due. Clang 21.1.8
+([gate/clang-version.txt](gate/clang-version.txt)).
