@@ -2839,6 +2839,98 @@ own anchor here.
     `tests/cg07_statement_expressions.rs`;
     [report](../reports/cg07-generic-and-statement-expressions/README.md).
 
+<a id="constraint-11h"></a>
+
+11h. **Storage duration decides lifetime and custody: a static-duration
+    declaration runs nothing, a static object's value carries no identity,
+    and no value-derived fact is kept about a `volatile` object.** Card
+    CG15-STORAGE-DURATION-AND-VOLATILE (`storage_duration.rs`, the route-G
+    adapter `legacy_storage_duration.rs`, thin hooks in `legacy_c.rs` (the
+    statement walker, the `return` routes, the built CFG),
+    `legacy_call_argument_access.rs` (the typed actual),
+    `typed_root_declarations.rs` and `typed_field_access.rs` (the two
+    never-bound closures) and `typed_source.rs` (route T's refusal)). It
+    names rule 10's publication as this card's escape and amends the
+    never-bound closures (rules 10l, 10o) for static initializers.
+    (1) **Storage.** An object's storage duration is Clang's (`storage_of`):
+    automatic (no storage class or `register`, one frame), static (`static`,
+    `extern`, file scope, the program) or thread (`_Thread_local`/`__thread`,
+    its thread); a static- or thread-duration object outlives every frame of
+    the function that names it. (2) **Static initialisation is no event** (a
+    soundness repair, asked first): a statement Clang confirms is one
+    `DeclStmt` whose every declarator has static or thread duration (a tag
+    it defines runs nothing either) is lowered to nothing, whatever its
+    constant initializer (C11 6.7.9p4), and neither never-bound closure
+    counts that initializer as a write. Before this rule a braced one was
+    refused and `static void *cache = 0;` was lowered as a store on **every**
+    call, so `if (cache) free(cache);` was `Safe` by pruning an arm the
+    second call takes. (3) **A static object's value carries no identity.**
+    A read of one is a borrowed alias with no identity (a custody-taking use
+    refuses, as rule 10k(3) and the unresolved alias already did); its
+    address (an array of one decaying, or `&` of a place in one, reached by
+    array subscripts and `.` members whose indices only read) is a pointer
+    with no identity (`static_address`), admitted as a `return` value and as
+    a borrowed or data-tail actual after every older route declined. (4)
+    **A tracked identity stored into static storage escapes the frame to no
+    named party** and is refused (rule 10, unchanged): never `Safe` and never
+    a per-call leak; a function-local `static` holding an allocation across
+    calls is this form. A registry contract with a release protocol would
+    decide it; none exists (`CG15-STATIC-REGISTRY-CONTRACT`). (5) **The
+    premise, stated** (`GATEWAY-VOLATILE-PREMISE`, beside 5a and 10a): the
+    abstract state assumes that no object it holds a value-derived fact
+    about is modified asynchronously. For a non-`volatile` object that is
+    the no-undefined-behaviour reading (a data race and a signal handler's
+    store to a non-`volatile sig_atomic_t` object are undefined), so it is
+    `AOM-POISON-NO-UB`'s. For a `volatile` object it is false (C11 5.1.2.3p2),
+    and the importer now reads the qualifier (`settle_volatile`, over the
+    built CFG, in a unit that spells `volatile`): a node that binds a
+    `volatile` object (a store into a static-storage one stays rule 10's), or
+    hands one to a position that is not `Borrowed`, refuses; a known-value
+    store to one is
+    forgotten; its null, validity, distinctness and counted-loop tests
+    refine nothing. Every value-derived fact the flow keeps (the census in
+    the report: `refine_edge`'s null and validity pruning, the distinct-pair
+    fact, collection and counted-loop facts, a non-nullable release's
+    nullness, scalar facts) reads a binding keyed by a name or an element
+    place, so none reads a `volatile` object named directly; a `volatile`
+    member or element is refused by the typed-place, store and collection
+    rules. (6) **A custody decision on a `volatile` read refuses**: a branch
+    node whose condition Clang shows reading a `volatile` object, and whose
+    successors' reaches differ in a custody-bearing node, refuses by name.
+    This is policy, not what soundness rests on (a branch on an unbound value
+    explores both arms). A branch whose arms carry no custody (a spin-wait on
+    a flag) stays admitted. (7) **The observable trace.** A `volatile` access
+    is an event of its own (`volatile_trace`, parity rows only): each access
+    counted once, ordered only where C sequences it, an unsequenced pair on
+    one object named and never ordered (C11 6.5p2). No verdict reads it.
+    `volatile` is not `_Atomic` (CG19's). (8) **Route T** refuses a static-
+    or thread-duration local by name: no typed-source consumer decides a
+    lifetime longer than the frame. **Do not** lower a static-duration
+    declaration as a store, count its initializer as a binding, give a
+    static object's value or address an identity, model a store of an
+    identity into static storage as a discharge, keep a binding, known value
+    or refinement of a `volatile` object, or order two unsequenced accesses.
+    Premises stated, not proved: faithful Clang extraction of storage
+    classes, qualifiers, node lines and call and return nodes (trust boundary
+    28), and that a branch's decided region (the nodes one successor reaches
+    and another does not) holds every node the branch decides. Measured
+    (corpus `66910c10`, system, tail-pause slice, base `c374de96`): **+7 /
+    +1 / 0 Unknown → Safe**, no Safe → non-Safe, no leak or violation added
+    (the five librdkafka name tables, `rd_kafka_broker_name`'s thread-local
+    buffer, `LZ4F_getErrorName`'s static pointer; system
+    `flb_engine_adaptive_flush_interval`); M24's 132 corpus leaves → 52; one
+    corpus function holds a `volatile` object (`rd_kafka_desensitize_str`,
+    two refusals of this rule in place of four older ones) and none decides
+    custody on a `volatile` read. The two repairs have no corpus instance.
+    `QCore.StorageDuration` (lifetimes, the declaration's no event and the
+    per-call misreading, the escape refused and never a leak, no identity
+    from a static read, the environment's volatile value, the refused and
+    the sound neutral volatile branch, the trace's count and order, the
+    table and unlisted refusal), bound to `FORM_TABLE` and the gateway's
+    verdicts on the pinned shapes (`SHAPE_VECTORS`) by shared-vector tests
+    (`tests/storage_duration_volatile.rs`);
+    [report](../reports/cg15-storage-duration-and-volatile/README.md).
+
 <a id="constraint-11k"></a>
 
 11k. **Two places are disjoint only by the core footprint model's decision:

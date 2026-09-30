@@ -319,10 +319,26 @@ fn m24_static_storage_is_refused_or_unresolved() {
         t_refusal("int g_counter; int subject(void) { return g_counter; }"),
         "global or unresolved local reference"
     );
+    // CG15 (rule 11h): T names the form it refuses. BEFORE: the generic
+    // "unmodeled callback statement DeclStmt".
     assert_eq!(
         t_refusal("int subject(void) { static int s; return s; }"),
-        "unmodeled callback statement DeclStmt"
+        "typed-source static- or thread-duration local is decided by no typed-source consumer (CG15)"
     );
+    // CG15 flip (rule 11h): a braced static table is no event and reading it
+    // yields a pointer with no identity. BEFORE: refused (INITIALIZER, RETURN).
+    let run = gs(
+        "const char *subject(int i) { static const char *names[] = {\"a\", \"b\"}; \
+         return names[i & 1]; }",
+    );
+    assert!(run.safe(), "{run:?}");
+    // CG15 flip (rule 11h): a thread-local array element's address is a
+    // pointer with no identity. BEFORE: refused (IND, RETURN).
+    let run = gs(
+        "char *subject(void) { static _Thread_local char ret[2][8]; \
+         cg_log(ret[1]); return ret[1]; }",
+    );
+    assert!(run.safe(), "{run:?}");
     let run = gs("void *g_slot; void subject(void) { g_slot = q_alloc(); }");
     assert!(run.refused(
         "publication of a tracked resource into the static-storage object `g_slot` is outside the resource projection"

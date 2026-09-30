@@ -139,8 +139,6 @@ fn an_initial_alias_is_refused() {
         "void subject(void) { int x; struct S s = { .p = &x }; q_observe(&s); }",
         "void subject(void) { struct S s = { .p = q_alloc() }; q_observe(&s); }",
         "void subject(void) { struct S s = { .a = opaque() }; q_observe(&s); }",
-        // A static local is CG15's.
-        "void subject(void) { static struct S s = { 0 }; q_observe(&s); }",
         // An unnamed record that can hold a pointer, with an initial alias.
         "void subject(void *q) { struct { void *p; } s = { q }; q_observe(&s); }",
     ] {
@@ -148,6 +146,21 @@ fn an_initial_alias_is_refused() {
         assert!(!run.safe(), "{source}: {run:?}");
         assert!(run.refused(INITIALIZER), "{source}: {run:?}");
     }
+}
+
+/// Integration of CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): the static
+/// local this card left to CG15 is decided there. A block-scope static
+/// declaration with a constant initializer is no event, and the static
+/// object's address is a borrowed actual with no identity, so the body is
+/// Safe. It was this card's refused row until rule 11h landed.
+#[test]
+fn a_static_local_initializer_is_decided_by_rule_11h() {
+    if !clang_available() {
+        return;
+    }
+    let source = "void subject(void) { static struct S s = { 0 }; q_observe(&s); }";
+    let run = gs(source);
+    assert!(run.safe(), "{source}: {run:?}");
 }
 
 // ---------------------------------------------------------------------------

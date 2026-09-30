@@ -105,6 +105,9 @@ mod aggregate_value;
 // Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): union-member and bit-field
 // place steps.
 mod union_bitfield;
+// Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): storage duration and
+// `volatile`; the G hooks are in `legacy_storage_duration.rs`.
+mod storage_duration;
 // Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): value regions and
 // their order premise; the G hooks are in `legacy_value_connective.rs`.
 mod value_connective;
