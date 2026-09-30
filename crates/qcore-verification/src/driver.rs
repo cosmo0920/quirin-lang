@@ -7799,15 +7799,249 @@ pub fn ffi_verdict(
             FfiAssumption::UnsafeFfi { .. } => UNSAFE_FFI_ASSUMPTION.to_owned(),
             FfiAssumption::RecordedCompiler { .. } => "recorded-compiler".to_owned(),
             FfiAssumption::DeclaredContract(callee) => format!("declared-contract:{callee}"),
-            FfiAssumption::BuilderIncludesAndLinks { .. } => {
-                "builder-includes-and-links".to_owned()
-            }
+            FfiAssumption::BuilderIncludes { .. } => "builder-includes".to_owned(),
+            // Card `W48-QRLIB-LINKAGE`: which code each called function is.
+            FfiAssumption::Linked(link) => format!("linked:{}", link.callee),
         });
     let verdict = AssumedVerdict::new(Verdict::Safe, names);
     if verdict.is_plain_safe() || !verdict.holds_under(UNSAFE_FFI_ASSUMPTION) {
         return Err("an FFI result would be published as plain `Safe`".into());
     }
     Ok(verdict)
+}
+
+/// Card `W48-QRLIB-LINKAGE` (user decision 5): resolve every admitted callee
+/// of an FFI module through a **generated** `.qrlib` its declaring file binds
+/// with `extern library NAME;`, or refuse.
+///
+/// Each refusal widens an existing `NativeLibrary` condition and allocates no
+/// code: a file calling C that binds no library, a binding that does not
+/// resolve, or one that resolves to a hand-written v1 manifest (`Q065`); a
+/// callee no manifest the file bound binds (`Q066`, including a foreign one);
+/// an entry naming another contract module or another C signature (`Q041`,
+/// refused, not withdrawn: the weaker reading — no manifest — is refused
+/// here too); a struct position whose `struct!` header is not the manifest's
+/// header, by digest (`Q064`); a slice that is not total (`Q047`).
+fn resolve_ffi_links(
+    parsed: &SourceProgram,
+    options: &CompileOptions,
+    callees: &BTreeMap<String, qcore_core::ffi::FfiCallee>,
+    structs: &[qcore_core::ffi::CheckedStruct],
+    spans: &BTreeMap<String, Span>,
+    declared_modules: &BTreeMap<String, String>,
+    ranges: &[FileRange],
+) -> Result<BTreeMap<String, qcore_core::ffi::FfiLink>, Vec<FileDiagnostic>> {
+    use qcore_core::ffi::{FfiLink, FfiType};
+    use qcore_core::native_library::{EntryType, check_ffi_agreement};
+
+    let mut links = BTreeMap::new();
+    if callees.is_empty() {
+        return Ok(links);
+    }
+    let first = spans.values().next().copied().unwrap_or(Span { start: 0, end: 0 });
+    let libraries = load_native_libraries(options, first, ranges)?;
+    let views = bind_source_libraries(parsed, &libraries, ranges)?;
+    qcore_core::native_library::check_slice_totality(&libraries, Some(declared_modules)).map_err(
+        |refusal| {
+            vec![map_raw_diagnostic(
+                "Q047",
+                SemanticPass::NativeLibrary,
+                first,
+                format!("the selected generated manifests do not bind the contract selection totally: {refusal}"),
+                ranges,
+            )]
+        },
+    )?;
+    let tag_of = |name: &str| {
+        structs
+            .iter()
+            .find(|record| record.name == name)
+            .map(|record| record.tag.clone())
+    };
+    let mut errors = Vec::new();
+    for (name, callee) in callees {
+        let span = spans.get(name).copied().unwrap_or(first);
+        let mut refuse = |code: &'static str, message: String| {
+            errors.push(map_raw_diagnostic(
+                code,
+                SemanticPass::NativeLibrary,
+                span,
+                message,
+                ranges,
+            ));
+        };
+        let view = &views[file_index(span, ranges)];
+        if !view.is_bound() {
+            refuse(
+                "Q065",
+                format!(
+                    "`{name}` is C an FFI file calls, and its file binds no library; a `#c_ffi` call resolves through a generated `.qrlib` bound with `extern library NAME;`"
+                ),
+            );
+            continue;
+        }
+        if let Some(refusal) = view.foreign_symbol(name) {
+            refuse("Q066", refusal.to_string());
+            continue;
+        }
+        let Some(binding) = view.contracted_binding(name) else {
+            refuse(
+                "Q066",
+                format!(
+                    "`{name}` is bound by no generated manifest this file binds ({}); every C function an FFI file calls is linked from a pinned artifact",
+                    view.bindings()
+                        .iter()
+                        .map(|binding| format!("`{}`", binding.named))
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                ),
+            );
+            continue;
+        };
+        let (Some(linkage), Some(export)) = (binding.linkage, binding.entry.export.as_ref()) else {
+            refuse(
+                "Q065",
+                format!(
+                    "`{name}` resolves through `{}`, a hand-written v1 manifest; the FFI route links only through a generated (`native_library manifest v2`) one",
+                    binding.module
+                ),
+            );
+            continue;
+        };
+        if binding.entry.contract_module != callee.module {
+            refuse(
+                "Q041",
+                format!(
+                    "`{name}` is admitted through the contract `{}`, and the manifest `{}` binds it to `{}`",
+                    callee.module, binding.module, binding.entry.contract_module
+                ),
+            );
+            continue;
+        }
+        let project = |ty: &FfiType| -> Option<EntryType> {
+            Some(match ty {
+                FfiType::Unit => EntryType::Abi(qcore_core::extern_call::AbiType::Unit),
+                FfiType::Scalar(scalar) => EntryType::Abi(
+                    [
+                        qcore_core::extern_call::AbiType::Bool,
+                        qcore_core::extern_call::AbiType::I8,
+                        qcore_core::extern_call::AbiType::I16,
+                        qcore_core::extern_call::AbiType::I32,
+                        qcore_core::extern_call::AbiType::I64,
+                        qcore_core::extern_call::AbiType::Isize,
+                        qcore_core::extern_call::AbiType::U8,
+                        qcore_core::extern_call::AbiType::U16,
+                        qcore_core::extern_call::AbiType::U32,
+                        qcore_core::extern_call::AbiType::U64,
+                        qcore_core::extern_call::AbiType::Usize,
+                        qcore_core::extern_call::AbiType::F32,
+                        qcore_core::extern_call::AbiType::F64,
+                    ]
+                    .into_iter()
+                    .find(|abi| abi.scalar() == Some(*scalar))?,
+                ),
+                FfiType::Record(record) => EntryType::Struct(tag_of(record)?),
+                FfiType::ConstRecordPointer(record) => EntryType::StructPointer {
+                    tag: tag_of(record)?,
+                    constant: true,
+                },
+            })
+        };
+        let parameters: Option<Vec<EntryType>> =
+            callee.parameters.iter().map(|(_, ty)| project(ty)).collect();
+        let (Some(parameters), Some(result)) = (parameters, project(&callee.result)) else {
+            refuse(
+                "Q041",
+                format!("`{name}`'s signature has no manifest spelling"),
+            );
+            continue;
+        };
+        if let Err(disagreement) = check_ffi_agreement(binding.entry, &parameters, &result) {
+            refuse(
+                "Q041",
+                format!(
+                    "`{name}` is declared otherwise by the manifest `{}`: {disagreement}",
+                    binding.module
+                ),
+            );
+            continue;
+        }
+        // User decision 5: the manifest's header digest must equal the header
+        // the `struct!` read, for every struct the callee's signature carries.
+        let tags: BTreeSet<&str> = parameters
+            .iter()
+            .chain([&result])
+            .filter_map(|ty| match ty {
+                EntryType::Struct(tag) | EntryType::StructPointer { tag, .. } => Some(tag.as_str()),
+                EntryType::Abi(_) => None,
+            })
+            .collect();
+        let mut header_ok = true;
+        for tag in tags {
+            let Some(record) = structs.iter().find(|record| record.tag == tag) else {
+                continue;
+            };
+            let read = format!("sha256:{}", record.facts.header_sha256);
+            match binding.header {
+                Some(header) if header.digest == read => {}
+                Some(header) => {
+                    refuse(
+                        "Q064",
+                        format!(
+                            "`{name}` carries `struct {tag}`, which the `struct!` read from \"{}\" at {read}, and the manifest `{}` binds the header `{}` at {}; the two must be the same bytes",
+                            record.header, binding.module, header.reference, header.digest
+                        ),
+                    );
+                    header_ok = false;
+                }
+                None => {
+                    refuse(
+                        "Q064",
+                        format!(
+                            "`{name}` carries `struct {tag}`, and the manifest `{}` binds no header to compare with the `struct!` read of \"{}\"",
+                            binding.module, record.header
+                        ),
+                    );
+                    header_ok = false;
+                }
+            }
+        }
+        if !header_ok {
+            continue;
+        }
+        let named = view
+            .bindings()
+            .iter()
+            .find(|source| source.manifest == binding.module)
+            .map_or_else(String::new, |source| source.named.clone());
+        links.insert(
+            name.clone(),
+            FfiLink {
+                callee: name.clone(),
+                named,
+                manifest: binding.module.to_owned(),
+                library: binding.identity.library.clone(),
+                version: binding.identity.version.clone(),
+                kind: linkage.kind,
+                target: linkage.target.clone(),
+                artifact: binding.identity.artifact.clone(),
+                hash: binding.identity.hash.clone(),
+                inputs: linkage
+                    .inputs
+                    .iter()
+                    .map(|input| (input.reference.clone(), input.digest.clone()))
+                    .collect(),
+                export: export.clone(),
+                runtime: linkage.runtime.clone(),
+                data_model: binding.premises.data_model,
+            },
+        );
+    }
+    if errors.is_empty() {
+        Ok(links)
+    } else {
+        Err(errors)
+    }
 }
 
 /// Compile one `source.ffi.v1` module (card `W48-QR-C-STRUCT-IMPORT`).
@@ -7954,6 +8188,7 @@ fn compile_ffi_source(
         .filter(|declaration| declaration.value.kind == DeclarationKind::ExternFunction)
         .collect();
     let mut callees = BTreeMap::new();
+    let mut links = BTreeMap::new();
     if !declarations.is_empty() {
         let first = declarations[0].span;
         let Some(sources) = options.extern_contracts.as_ref() else {
@@ -8181,14 +8416,36 @@ fn compile_ffi_source(
         if !errors.is_empty() {
             return Err(errors);
         }
+        // Card `W48-QRLIB-LINKAGE`: every admitted callee resolves through a
+        // generated manifest its declaring file binds.
+        let spans: BTreeMap<String, Span> = parsed
+            .declarations
+            .iter()
+            .filter(|declaration| declaration.value.kind == DeclarationKind::ExternFunction)
+            .map(|declaration| (declaration.value.name.clone(), declaration.span))
+            .collect();
+        let declared_modules: BTreeMap<String, String> = signatures
+            .iter()
+            .map(|(name, signature)| (name.clone(), signature.module.clone()))
+            .collect();
+        links = resolve_ffi_links(
+            parsed,
+            options,
+            &callees,
+            &structs,
+            &spans,
+            &declared_modules,
+            ranges,
+        )?;
     }
-    let lowered = source_ffi::lower_source_ffi(parsed, typed, &entry, structs, callees, target)
+    let mut lowered = source_ffi::lower_source_ffi(parsed, typed, &entry, structs, callees, target)
         .map_err(|errors| {
             errors
                 .into_iter()
                 .map(|error| map_diagnostic(error, ranges))
                 .collect::<Vec<_>>()
         })?;
+    lowered.program.links = links;
     let certificate = ffi::check_ffi_program(&lowered.program).map_err(|errors| {
         errors
             .into_iter()
@@ -8217,6 +8474,18 @@ fn compile_ffi_source(
             ranges,
         )]
     })?;
+    // Card `W48-QRLIB-LINKAGE`: the linkage tripwire, `Q067`'s condition
+    // widened to the FFI route — a published certificate names the pinned
+    // artifact of every function it calls.
+    if !ffi::certificate_carries_linkage(&certificate) {
+        return Err(vec![map_raw_diagnostic(
+            "Q067",
+            SemanticPass::NativeLibrary,
+            lowered.scope_span,
+            "the published FFI certificate does not name the generated manifest's pinned artifact for every function it calls".into(),
+            ranges,
+        )]);
+    }
     let verdict = ffi_verdict(&certificate).map_err(|message| {
         vec![map_raw_diagnostic(
             "Q035",

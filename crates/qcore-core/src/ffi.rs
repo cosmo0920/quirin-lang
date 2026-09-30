@@ -521,6 +521,119 @@ pub struct FfiProgram {
     /// The `.qr` helper functions (card `W48-QR-USABLE-RECORDS`). Empty for
     /// every program written before it.
     pub functions: Vec<FfiFunction>,
+    /// How each admitted callee is linked, from the generated manifest its
+    /// file binds (card `W48-QRLIB-LINKAGE`). A called function with no link
+    /// refuses (`Q066`).
+    pub links: BTreeMap<String, FfiLink>,
+}
+
+/// How one callee is linked (card `W48-QRLIB-LINKAGE`): symbol X from artifact
+/// Y@sha256 (static), or stub Y@sha256 plus runtime premise R (dynamic), under
+/// ABI premises Z. This says **which code** is linked, never that it is safe.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct FfiLink {
+    pub callee: String,
+    /// The `extern library NAME;` spelling that bound it.
+    pub named: String,
+    /// The manifest's selection key.
+    pub manifest: String,
+    pub library: String,
+    pub version: String,
+    pub kind: crate::native_library::LinkageKind,
+    pub target: String,
+    /// The file the link names, and its sha256.
+    pub artifact: String,
+    pub hash: String,
+    /// Every file an `ld` script artifact names, with its sha256.
+    pub inputs: Vec<(String, String)>,
+    pub export: crate::native_library::ExportFacts,
+    /// The runtime library's identity, for a dynamic link.
+    pub runtime: Vec<crate::native_library::RuntimePremise>,
+    /// The ABI premises, as the manifest states them.
+    pub data_model: crate::native_library::DataModel,
+}
+
+impl fmt::Display for FfiLink {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        use crate::native_library::{ExportBinding, LinkageKind, RuntimePremise};
+        let export = &self.export;
+        let mut facts = vec![match export.binding {
+            ExportBinding::Global => "global".to_owned(),
+            ExportBinding::Weak => "weak".to_owned(),
+        }];
+        if let Some(version) = &export.version {
+            facts.push(format!("version {version}"));
+        }
+        if export.ifunc {
+            facts.push("ifunc".to_owned());
+        }
+        write!(
+            f,
+            "linked: `{}` is the symbol `{}` ({}) defined in `{}`",
+            self.callee,
+            export.symbol,
+            facts.join(", "),
+            export.file
+        )?;
+        match self.kind {
+            LinkageKind::Static => write!(
+                f,
+                ", from the static artifact `{}` at {}",
+                self.artifact, self.hash
+            )?,
+            LinkageKind::Dynamic => write!(
+                f,
+                ", through the link-time stub `{}` at {}",
+                self.artifact, self.hash
+            )?,
+        }
+        if !self.inputs.is_empty() {
+            write!(
+                f,
+                " (an `ld` script naming {})",
+                self.inputs
+                    .iter()
+                    .map(|(reference, digest)| format!("`{reference}` at {digest}"))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )?;
+        }
+        write!(
+            f,
+            ", of library `{} {}` for `{}`, bound by `extern library {}` through the generated manifest `{}`",
+            self.library, self.version, self.target, self.named, self.manifest
+        )?;
+        if !self.runtime.is_empty() {
+            write!(
+                f,
+                "; runtime premise: the OS supplies {}",
+                self.runtime
+                    .iter()
+                    .map(|premise| match premise {
+                        RuntimePremise::Soname { soname, file } => {
+                            format!("the library whose soname is `{soname}` (read from `{file}`)")
+                        }
+                        RuntimePremise::InstallName {
+                            name,
+                            current_version,
+                        } => match current_version {
+                            Some(version) => format!("`{name}` (current version {version})"),
+                            None => format!("`{name}`"),
+                        },
+                        RuntimePremise::Dll { name, os_build } => {
+                            format!("`{name}` as on OS build {os_build}")
+                        }
+                    })
+                    .collect::<Vec<_>>()
+                    .join(" and ")
+            )?;
+        }
+        write!(
+            f,
+            "; under ABI premises (data model {}, no unwinding across the boundary, closed allocator custody, single-threaded caller); the build hashes every pinned file before it links exactly that artifact — which code is linked, not that the code is safe",
+            self.data_model.spelling()
+        )
+    }
 }
 
 impl FfiProgram {
@@ -553,8 +666,13 @@ pub enum FfiAssumption {
     /// An admitted callee behaves as its selected contract states.
     DeclaredContract(String),
     /// The emitted C is compiled with the header's directory on its include
-    /// path, and the library supplying each callee is linked by the builder.
-    BuilderIncludesAndLinks { directories: Vec<String> },
+    /// path. Card `W48-QRLIB-LINKAGE` split off what this premise used to add —
+    /// "and the library supplying each callee is linked by the builder" — and
+    /// replaced it by one [`FfiAssumption::Linked`] per called function.
+    BuilderIncludes { directories: Vec<String> },
+    /// A called function's linkage, from a generated manifest (card
+    /// `W48-QRLIB-LINKAGE`).
+    Linked(FfiLink),
 }
 
 impl fmt::Display for FfiAssumption {
@@ -584,15 +702,16 @@ impl fmt::Display for FfiAssumption {
                     "declared contract: `{callee}` behaves as its selected contract states"
                 )
             }
-            Self::BuilderIncludesAndLinks { directories } => write!(
+            Self::BuilderIncludes { directories } => write!(
                 f,
-                "builder: the emitted C is compiled with {} on its include path and linked with the library that supplies each callee",
+                "builder: the emitted C is compiled with {} on its include path",
                 directories
                     .iter()
                     .map(|directory| format!("`{directory}`"))
                     .collect::<Vec<_>>()
                     .join(", ")
             ),
+            Self::Linked(link) => write!(f, "{link}"),
         }
     }
 }
@@ -1235,6 +1354,18 @@ impl Checker<'_> {
                     ));
                 };
                 self.called.insert(callee.clone());
+                // Card `W48-QRLIB-LINKAGE`: a called C function is linked from
+                // a pinned artifact a generated manifest names, never supplied
+                // by the builder unnamed.
+                if !program.links.contains_key(callee) {
+                    return Err(error(
+                        index,
+                        "Q066",
+                        format!(
+                            "`{callee}` is called and resolves through no generated `.qrlib` this file binds with `extern library NAME;`; a C function is linked from a pinned artifact"
+                        ),
+                    ));
+                }
                 if arguments.len() != admitted.parameters.len() {
                     return Err(error(
                         index,
@@ -1685,8 +1816,30 @@ fn derive_assumptions(program: &FfiProgram, functions: &[FfiFunctionUse]) -> Vec
         .collect();
     directories.sort();
     directories.dedup();
-    assumptions.push(FfiAssumption::BuilderIncludesAndLinks { directories });
+    if !directories.is_empty() {
+        assumptions.push(FfiAssumption::BuilderIncludes { directories });
+    }
+    // Card `W48-QRLIB-LINKAGE`: one linkage premise per called function, in
+    // the order the certificate lists them.
+    for function in functions {
+        if let Some(link) = program.links.get(&function.name) {
+            assumptions.push(FfiAssumption::Linked(link.clone()));
+        }
+    }
     assumptions
+}
+
+/// Whether a certificate carries a linkage premise for every function it
+/// lists as called (card `W48-QRLIB-LINKAGE`). The driver refuses to publish
+/// one that does not (`Q067`): a called C function whose certificate stopped
+/// naming the pinned artifact would be supplied by the builder unnamed again.
+#[must_use]
+pub fn certificate_carries_linkage(certificate: &FfiCertificate) -> bool {
+    certificate.functions.iter().all(|function| {
+        certificate.assumptions.iter().any(|assumption| {
+            matches!(assumption, FfiAssumption::Linked(link) if link.callee == function.name)
+        })
+    })
 }
 
 /// Whether a certificate carries the file-wide trust mark, naming every

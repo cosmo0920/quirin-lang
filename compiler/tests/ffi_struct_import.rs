@@ -51,6 +51,33 @@ fn example_contracts() -> BTreeMap<String, String> {
     )])
 }
 
+#[path = "../../tests/support/qrlib.rs"]
+mod qrlib;
+
+/// Card `W48-QRLIB-LINKAGE`: `qr_header.c` built once into a static library,
+/// and its `.qrlib` generated from the archive, binding the example contracts.
+fn example_library() -> &'static qrlib::Generated {
+    static LIBRARY: std::sync::OnceLock<qrlib::Generated> = std::sync::OnceLock::new();
+    LIBRARY.get_or_init(|| {
+        let dir = std::env::temp_dir().join(format!("qcore-w48-ffi-lib-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let archive = qrlib::static_library(
+            &dir,
+            "qr_header",
+            &[examples().join("qr_header.c")],
+            &[&examples()],
+        );
+        qrlib::manifest(
+            "qr_header",
+            qcore_core::native_library::LinkageKind::Static,
+            &archive,
+            Some(&examples().join("qr_header.h")),
+            &host_target(),
+            &example_contracts(),
+        )
+    })
+}
+
 fn compile_at(
     path: &Path,
     source: &str,
@@ -61,6 +88,11 @@ fn compile_at(
         &[SourceFile::new(path.display().to_string(), source)],
         &CompileOptions {
             extern_contracts: contracts,
+            // Selected for a file that binds the library, and only then, so a
+            // row about another route selects exactly what it did before.
+            native_libraries: source
+                .contains("extern library")
+                .then(|| example_library().selection()),
             ..CompileOptions::default()
         },
         target,
@@ -120,7 +152,7 @@ fn example_header() -> String {
     std::fs::read_to_string(examples().join("qr_header.h")).unwrap()
 }
 
-const HEAD: &str = "#import std.ffi.unsafe;\n#import std.extern;\n#import std.fmt;\n#import std.io;\n#import std.logger;\n";
+const HEAD: &str = "#import std.ffi.unsafe;\n#import std.extern;\n#import std.fmt;\n#import std.io;\n#import std.logger;\nextern library qr_header;\n";
 
 const IMPORT: &str = "struct! { type Header = c\"struct qr_header\" from \"qr_header.h\"; fields { len: u32, flags: u8, id: i64, valid: bool } }\n";
 
@@ -357,7 +389,7 @@ fn the_example_runs_against_the_real_library_under_three_builds() {
     let c = module.c_source.as_deref().unwrap();
     let mut summary = Vec::new();
     for (label, flags) in native::BUILDS {
-        let run = native::build_and_run(c, &examples(), &examples().join("qr_header.c"), flags)
+        let run = native::build_and_run(c, &examples(), &example_library().link_plan().input, flags)
             .unwrap_or_else(|error| panic!("{label}: the emitted C does not build: {error}"));
         assert_eq!(run.status, Some(0), "{label}: {}", run.stderr);
         assert_eq!(run.stdout, stdout, "{label}");
@@ -403,7 +435,7 @@ fn a_false_declared_outcome_exits_70_before_its_line() {
     let run = native::build_and_run(
         module.c_source.as_deref().unwrap(),
         &examples(),
-        &examples().join("qr_header.c"),
+        &example_library().link_plan().input,
         &[
             "-O0",
             "-fsanitize=undefined,integer",

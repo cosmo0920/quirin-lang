@@ -57,10 +57,44 @@ fn compile_files(
         &sources,
         &CompileOptions {
             extern_contracts: contracts,
+            // Card `W48-QRLIB-LINKAGE`: a file binding `qr_point` resolves its
+            // calls through the manifest generated from the built library.
+            native_libraries: files
+                .iter()
+                .any(|(_, source)| source.contains("extern library"))
+                .then(|| point_library().selection()),
             ..CompileOptions::default()
         },
         target,
     )
+}
+
+#[path = "../../tests/support/qrlib.rs"]
+mod qrlib;
+
+/// `examples/ffi/qr_point.c` built once into a static library, and its `.qrlib`
+/// generated from the archive (card `W48-QRLIB-LINKAGE`).
+fn point_library() -> &'static qrlib::Generated {
+    static LIBRARY: std::sync::OnceLock<qrlib::Generated> = std::sync::OnceLock::new();
+    LIBRARY.get_or_init(|| {
+        let dir =
+            std::env::temp_dir().join(format!("qcore-w48-records-lib-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let archive = qrlib::static_library(
+            &dir,
+            "qr_point",
+            &[ffi_dir().join("qr_point.c")],
+            &[&ffi_dir()],
+        );
+        qrlib::manifest(
+            "qr_point",
+            qcore_core::native_library::LinkageKind::Static,
+            &archive,
+            Some(&ffi_dir().join("qr_point.h")),
+            &host_target(),
+            &point_contracts(),
+        )
+    })
 }
 
 fn compile(source: &str) -> Result<CompiledModule, Vec<FileDiagnostic>> {
@@ -509,7 +543,7 @@ fn point_contracts() -> BTreeMap<String, String> {
 }
 
 const FFI_HEAD: &str =
-    "#import std.ffi.unsafe;\n#import std.extern;\n#import std.fmt;\n#import std.io;\n";
+    "#import std.ffi.unsafe;\n#import std.extern;\n#import std.fmt;\n#import std.io;\nextern library qr_point;\n";
 const POINT_IMPORT: &str = "struct! {\n    type Point = c\"struct qr_point\" from \"qr_point.h\";\n    fields { x: i32, y: i32, weight: u16 }\n}\n";
 
 /// An FFI program beside the example's header.
@@ -819,7 +853,7 @@ fn the_published_examples_run_clean_under_three_builds() {
     let ffi_err = qcore_core::ffi::reference_stream(&checked.certificate, Stream::Err);
     let (nested_out, nested_err) = projections(&nested);
     let (calls_out, calls_err) = projections(&calls);
-    let library = ffi_dir().join("qr_point.c");
+    let library = point_library().link_plan().input;
     let cases: [NativeCase; 3] = [
         (
             "examples/records/nested_writes.qr",
