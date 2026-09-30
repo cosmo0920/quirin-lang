@@ -1,0 +1,77 @@
+#import std.concurrency;
+#import std.logger;
+#import std.fmt;
+#import std.io;
+// Two closures run at the same time, each taking what it needs from the
+// enclosing scope through its capture list. The first copies an outer scalar,
+// moves an outer record that owns a buffer, and leases the low half of a second
+// buffer for writing; the second copies the scalar under another name and
+// leases the high half. Both are joined, and the parent renders what came back.
+concurrency checked;
+
+type Job { count: i32, data: own<Buffer<u32>> }
+
+fn main() -> i32 effects { io, alloc, throws<AllocError>, spawn, join, may_block } {
+    log_level trace;
+    let bonus = 41;
+    let start: u32 = 21;
+    let data = qcore_buffer_new(start)?;
+    let job = Job { count: 1, data: data };
+    match qcore_buffer_new(0) {
+        Result::Ok { value: pixels } => {
+            thread scope lanes {
+                match spawn lanes |copy bonus, move job, lend pixels 0..2| -> Job effects { mut } {
+                    // The record is this worker's until it hands it back.
+                    let seen = qcore_buffer_read(job.data);
+                    let written = qcore_buffer_write(job.data, 64);
+                    job.count = bonus;
+                    // Bytes 0 and 1 of the leased range [0, 2).
+                    let low = qcore_buffer_write(pixels, 0, 17);
+                    let high = qcore_buffer_write(pixels, 1, 34);
+                    return move job;
+                } {
+                    Result::Ok { value: first } => {
+                        match spawn lanes |copy bonus as mark, lend pixels 2..4| -> i32 {
+                            // Bytes 0 and 1 of the leased range [2, 4).
+                            let low = qcore_buffer_write(pixels, 0, 51);
+                            let high = qcore_buffer_write(pixels, 1, 68);
+                            return mark;
+                        } {
+                            Result::Ok { value: second } => {
+                                // Both closures are running; join both.
+                                let done = join move first?;
+                                let mark = join move second?;
+                                print dec done.count;
+                                let value = qcore_buffer_read(done.data);
+                                print dec value;
+                                print dec mark;
+                                let bytes = qcore_buffer_read(pixels);
+                                print hex bytes;
+                                drop done;
+                                drop pixels;
+                                return 0;
+                            }
+                            Result::Err { error: refused } => {
+                                let done = join move first?;
+                                drop done;
+                                drop pixels;
+                                return 1;
+                            }
+                        }
+                    }
+                    Result::Err { error: failure } => {
+                        // A refused creation leaves the record with the parent.
+                        print dec job.count;
+                        drop job;
+                        drop pixels;
+                        return 2;
+                    }
+                }
+            }
+        }
+        Result::Err { error: shortfall } => {
+            drop job;
+            return 3;
+        }
+    }
+}

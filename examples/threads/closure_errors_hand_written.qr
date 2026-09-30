@@ -1,0 +1,47 @@
+#import std.concurrency;
+#import std.logger;
+#import std.fmt;
+#import std.io;
+// The hand-written twin of closure_errors.qr: each closure written as a named
+// worker declared before `main`, spawned with the same captures. It checks and
+// emits byte for byte as closure_errors.qr does.
+concurrency checked;
+
+fn first_sum(base: i8, step: i8) -> i8 effects { throws<ArithmeticError> } {
+    let sum = base + step;
+    return sum;
+}
+
+fn second_sum(base: i8, more: i8) -> i8 effects { throws<ArithmeticError> } {
+    let sum = base + more;
+    let again = sum + more;
+    return again;
+}
+
+fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
+    log_level trace;
+    let base: i8 = 100;
+    let step: i8 = 20;
+    thread scope sums {
+        let first = spawn sums first_sum(copy base, copy step)?;
+        match join move first {
+            Result::Ok { value: sum } => {
+                print dec sum;
+            }
+            Result::Err { error: fault } => {
+                log warn dec 1;
+            }
+        }
+        let second = spawn sums second_sum(copy base, copy step)?;
+        match join move second {
+            Result::Ok { value: again } => {
+                print dec again;
+                return 0;
+            }
+            Result::Err { error: fault } => {
+                log warn dec 2;
+                return 2;
+            }
+        }
+    }
+}

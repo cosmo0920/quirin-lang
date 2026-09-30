@@ -592,6 +592,18 @@ fn parse_captures(
     while cursor < close {
         let begin = cursor;
         let mode = parser.word_value(cursor).unwrap_or("");
+        // Card `W48-QR-CLOSURES`: a closure passed to a named worker is a
+        // closure as a value, which is not admitted.
+        if !closure
+            && (parser.symbol(cursor, Symbol::Pipe) || parser.symbol(cursor, Symbol::PipePipe))
+        {
+            return Err(parser.error(
+                cursor,
+                "a closure is a spawn target only, `spawn SCOPE |CAPTURES| -> TYPE { … }`; \
+                 passing one to a worker is passing it as a value, which is not admitted \
+                 (W48-QR-CLOSURE-VALUES)",
+            ));
+        }
         if !matches!(mode, "copy" | "move" | "read" | "write" | "lend") {
             return Err(parser.error(
                 cursor,

@@ -1,0 +1,20 @@
+{
+ "compiler": "Ubuntu clang version 21.1.8 (6ubuntu1)",
+ "triple": "x86_64-pc-linux-gnu",
+ "flags": "-std=c11 -pthread -Wall -Wextra -Werror -pedantic",
+ "runs": [
+  {"program": "examples/threads/closures.qr", "arm": "created", "build": "O0-ubsan", "exit": 0, "stdout_lines": 29, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/threads/closures.qr", "arm": "created", "build": "O2-ubsan", "exit": 0, "stdout_lines": 29, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/threads/closures.qr", "arm": "created", "build": "O2", "exit": 0, "stdout_lines": 29, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/threads/closures.qr", "arm": "creation-refused", "build": "O0-ubsan", "exit": 0, "stdout_lines": 7, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/threads/closures.qr", "arm": "creation-refused", "build": "O2-ubsan", "exit": 0, "stdout_lines": 7, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/threads/closures.qr", "arm": "creation-refused", "build": "O2", "exit": 0, "stdout_lines": 7, "stderr_lines": 0, "sanitizer_reports": 0},
+  {"program": "examples/threads/closure_errors.qr", "arm": "created", "build": "O0-ubsan", "exit": 0, "stdout_lines": 8, "stderr_lines": 1, "sanitizer_reports": 0},
+  {"program": "examples/threads/closure_errors.qr", "arm": "created", "build": "O2-ubsan", "exit": 0, "stdout_lines": 8, "stderr_lines": 1, "sanitizer_reports": 0},
+  {"program": "examples/threads/closure_errors.qr", "arm": "created", "build": "O2", "exit": 0, "stdout_lines": 8, "stderr_lines": 1, "sanitizer_reports": 0},
+  {"program": "examples/threads/closures.qr", "arm": "created", "build": "tsan-unforced", "exit": 0, "stdout_lines": 29, "sanitizer_reports": 0},
+  {"program": "examples/threads/closures.qr", "arm": "created", "build": "tsan-forced-together", "exit": 0, "stdout_lines": 29, "sanitizer_reports": 0},
+  {"program": "examples/threads/closures.qr", "arm": "created", "build": "tsan-forced-reverse", "exit": 0, "stdout_lines": 29, "sanitizer_reports": 0},
+  {"program": "examples/threads/closure_errors.qr", "arm": "created", "build": "tsan-unforced", "exit": 0, "stdout_lines": 8, "sanitizer_reports": 0}
+ ]
+}

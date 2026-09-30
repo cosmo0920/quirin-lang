@@ -1,0 +1,45 @@
+#import std.concurrency;
+#import std.logger;
+#import std.fmt;
+#import std.io;
+// Two sibling closures in one scope, one after the other, each copying two
+// outer `i8` values and adding them with checked arithmetic. The first sum
+// fits; the second overflows, and the closure's `ArithmeticError` reaches the
+// parent through `join`, where a `match` recovers from it.
+concurrency checked;
+
+fn main() -> i32 effects { io, throws<SpawnError>, spawn, join, may_block } {
+    log_level trace;
+    let base: i8 = 100;
+    let step: i8 = 20;
+    thread scope sums {
+        let first = spawn sums |copy base, copy step| -> i8 effects { throws<ArithmeticError> } {
+            let sum = base + step;
+            return sum;
+        }?;
+        match join move first {
+            Result::Ok { value: sum } => {
+                print dec sum;
+            }
+            Result::Err { error: fault } => {
+                log warn dec 1;
+            }
+        }
+        let second = spawn sums |copy base, copy step as more| -> i8 effects { throws<ArithmeticError> } {
+            let sum = base + more;
+            let again = sum + more;
+            return again;
+        }?;
+        match join move second {
+            Result::Ok { value: again } => {
+                print dec again;
+                return 0;
+            }
+            Result::Err { error: fault } => {
+                // 100 + 20 + 20 does not fit an `i8`: the closure raised.
+                log warn dec 2;
+                return 2;
+            }
+        }
+    }
+}

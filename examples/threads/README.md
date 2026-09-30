@@ -291,3 +291,79 @@ example also with both workers forced live together and forced in reverse.
 The spawn-failure example is run a second time with every creation refused
 through the runtime's own `QCORE_TASK_CREATE` seam, against the reference run
 whose creation fails: `3`, then `65` read back out of the restored buffer.
+
+## Closures
+
+Card `W48-QR-CLOSURES` lets a spawn name its worker's body in place:
+`spawn SCOPE |CAPTURES| -> TYPE [effects { … }] { BODY }`. The capture list
+uses a named worker's capture spellings — `copy x`, `copy r.f`, `move b`,
+`move r.buf`, `read b share N`, `lend b LOW..HIGH` — each optionally followed
+by `as NAME`, the name it has inside the body. The compiler lifts the closure
+into a hidden named worker whose parameters are the captures, at the types the
+captured places have, so the same transferability judgment, task ledger and
+emitter decide it. The body sees only what the list names: any other name of
+the enclosing scope is refused. Each example below has a hand-written twin
+beside it — each closure written as a named worker — and the two check and
+emit byte for byte the same C (`compiler/tests/closures.rs`).
+
+| Example | What it demonstrates | Successful main result |
+|---|---|---|
+| [closures.qr](closures.qr) ([twin](closures_hand_written.qr)) | Two closures running at once: the first copies an outer scalar, moves an outer record that owns a `Buffer<u32>` and leases bytes `[0, 2)` of a second buffer; the second copies the scalar under another name and leases `[2, 4)`. Both are joined; the parent prints the returned record's fields, the second result and the four bytes the two closures wrote | `0` (created), `2` (refused) |
+| [closure_errors.qr](closure_errors.qr) ([twin](closure_errors_hand_written.qr)) | Two sibling closures one after the other, each adding copied `i8` values with checked arithmetic: the first sum fits and is printed; the second overflows, and its `ArithmeticError` reaches the parent through `join`, where a `match` recovers | `2` |
+
+<!-- transcript:closures -->
+
+```text
+QCORE_BUFFER_ALLOC 0 1 U32 21
+QCORE_BUFFER_ALLOC 0 2 0
+QCORE_TASK_SPAWN 1 1
+QCORE_BUFFER_LEASE 1 2 0 2
+QCORE_TASK_SPAWN 2 2
+QCORE_BUFFER_LEASE 2 2 2 4
+QCORE_BUFFER_READ 1 1 U32 21
+QCORE_BUFFER_WRITE 1 1 U32 64
+QCORE_BUFFER_BYTE_WRITE 1 2 0 17
+QCORE_BUFFER_BYTE_WRITE 1 2 1 34
+QCORE_TASK_RESULT 1 RECORD 2
+QCORE_TASK_RESULT 1 I32 41
+QCORE_TASK_RESULT 1 BUFFER 1
+QCORE_TASK_JOIN 1
+QCORE_BUFFER_LEASE_RETURN 1 2
+QCORE_BUFFER_BYTE_WRITE 2 2 2 51
+QCORE_BUFFER_BYTE_WRITE 2 2 3 68
+QCORE_TASK_RESULT 2 I32 41
+QCORE_TASK_JOIN 2
+QCORE_BUFFER_LEASE_RETURN 2 2
+41
+QCORE_BUFFER_READ 0 1 U32 64
+64
+41
+QCORE_BUFFER_READ 0 2 1144201745
+0x44332211
+QCORE_BUFFER_DROP 0 1
+QCORE_BUFFER_DROP 0 2
+QCORE_TASK_RESULT 0 I32 0
+```
+
+<!-- transcript:closure_errors -->
+
+```text
+QCORE_TASK_SPAWN 1 0
+QCORE_TASK_RESULT 1 I8 120
+QCORE_TASK_JOIN 1
+120
+QCORE_TASK_SPAWN 2 1
+QCORE_TASK_RESULT 2 ERROR ArithmeticError::Overflow
+QCORE_TASK_JOIN 2
+QCORE_TASK_RESULT 0 I32 2
+```
+
+A leased range is addressed from its own start, so the second closure's byte
+writes `0` and `1` land on bytes `2` and `3` of the buffer. The transcripts are
+the reference execution's stdout, compared with the native run at `-O0` and
+`-O2` under UBSan, at plain `-O2`, and under ThreadSanitizer through the
+harness's pthread binding — `closures.qr` also with both closures forced live
+together and forced in reverse, and a second time with every creation refused,
+where the record is the parent's again and its `count` is printed before it is
+released. The reference encoding sits outside F02 for the same reasons as the
+record examples above.
