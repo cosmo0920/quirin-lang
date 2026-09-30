@@ -2,8 +2,8 @@
 
 Card CG15 of the Clang gap queue (wave 48, round 7), gap entries M24 and M23,
 routes G and T. Gateway rule [11h](../../agents/gateway.md#constraint-11h).
-Base local `main` `c374de96` (= `origin/main`; `main` did not move during the
-card). Evidence Q10, Q11, Q12, Q16, Q29 and Q39 of the
+Base local `main` `c374de96` (= `origin/main`); `main` moved to `b59aaae2`
+(CG07) during the card, which merged it at `09e61220` and re-measured (§4). Evidence Q10, Q11, Q12, Q16, Q29 and Q39 of the
 [supplied analysis](../../reviews/clang-gap-2026-09-29/supplied/).
 
 ## 1. What changed
