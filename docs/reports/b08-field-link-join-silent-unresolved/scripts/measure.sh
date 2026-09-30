@@ -13,13 +13,14 @@ out="$repo/private/b08fl"
 mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
 # SKIP_BUILD=1 measures the release binary already in target/release (the
-# BEFORE on a merged base, built at that base's commit).
+# BEFORE on a merged base, built at that base's commit, or with BINARY).
 if [ "${SKIP_BUILD:-0}" != 1 ]; then
   CARGO_INCREMENTAL=0 cargo build --release -p qcore-audit --bin quirin-audit \
     > "$out/build-$name.log" 2>&1
   echo $? > "$out/build-$name.exit"
 fi
-binary="$repo/target/release/quirin-audit"
+# BINARY=PATH measures a binary kept aside (the census build of the base).
+binary="${BINARY:-$repo/target/release/quirin-audit}"
 sha256sum "$binary" > "$out/$name.binary.sha256"
 QCORE_TYPED_PATH_PARITY="$out/$name-parity.jsonl" python3 scripts/run_pinned_audit.py \
   "$out/$name" 66910c10 --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 \
