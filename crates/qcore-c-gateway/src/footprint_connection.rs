@@ -415,29 +415,6 @@ fn enclosing_members(place: &Value) -> Vec<&Value> {
     }
 }
 
-/// The struct a member step selects from: its base's type, desugared, is
-/// `struct NAME` (or `struct NAME *` through `->`).
-fn struct_name(member: &Value) -> Option<String> {
-    let base = children(member).first()?;
-    let text = crate::typed_access_path::qual(base)?;
-    let mut words = text
-        .split_whitespace()
-        .filter(|word| !matches!(*word, "const" | "volatile" | "restrict"))
-        .collect::<Vec<_>>();
-    if member["isArrow"].as_bool() == Some(true) {
-        if words.last() != Some(&"*") {
-            return None;
-        }
-        words.pop();
-    }
-    match words.as_slice() {
-        ["struct", name] if name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') => {
-            Some((*name).to_owned())
-        }
-        _ => None,
-    }
-}
-
 /// Every node under `node` whose place spelling is `spelling`.
 fn places<'a>(node: &'a Value, spelling: &str, out: &mut Vec<&'a Value>) {
     if matches!(kind(node), "MemberExpr" | "ParenExpr")
@@ -517,9 +494,17 @@ fn decide_members(
             if facts.union_owner.contains_key(lf) || facts.union_owner.contains_key(rf) {
                 return Err("union-member");
             }
-            let (Some(ln), Some(rn)) = (l["name"].as_str(), r["name"].as_str()) else {
-                return Err("unread-member");
+            // Both members of one complete `struct`, read from its own
+            // declaration (never from the base's type spelling, which a
+            // typedef hides).
+            let (Some((lrec, ln)), Some((rrec, rn))) =
+                (facts.struct_members.get(lf), facts.struct_members.get(rf))
+            else {
+                return Err("not-a-struct-member");
             };
+            if lrec != rrec {
+                return Err("two-records");
+            }
             if ln.is_empty() || rn.is_empty() {
                 return Err("anonymous-member");
             }
@@ -532,13 +517,10 @@ fn decide_members(
             if same_unit {
                 return Err("shared-unit");
             }
-            let Some(name) = struct_name(l) else {
+            let Some(name) = facts.names.get(lrec) else {
                 return Err("unnamed-record");
             };
-            if struct_name(r).as_deref() != Some(name.as_str()) {
-                return Err("unnamed-record");
-            }
-            let Some(layout) = layout_dump().and_then(|dump| parse_member_layout(&dump, &name))
+            let Some(layout) = layout_dump().and_then(|dump| parse_member_layout(&dump, name))
             else {
                 return Err("layout-unread");
             };

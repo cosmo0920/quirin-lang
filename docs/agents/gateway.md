@@ -2787,7 +2787,9 @@ own anchor here.
     same on both sides **structurally** (Clang kinds, declarations, member
     steps, literal values; never the place spelling, which erases indices),
     and the core model admits `AssertDisjoint` on the two members' field
-    handles of one allocation generation under a two-member layout contract
+    handles of one allocation generation (the struct read from the members'
+    own declarations, never from a type spelling a typedef hides) under a
+    two-member layout contract
     read from Clang's `-fdump-record-layouts-complete` (an ordinary member
     spans to the next member's first byte, a superset; a bit-field spans the
     bytes of its bits). A union member, an anonymous member, an unnamed or

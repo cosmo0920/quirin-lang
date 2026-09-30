@@ -33,6 +33,10 @@ fn members_of_one_object_are_decided_by_the_core_model() {
         "int subject(struct S *s) { s->a = s->bf++; return 0; }",
         "int subject(struct S *s) { int y; y = (s->bf = 1) + (s->bh = 1); return y; }",
         "int subject(struct S *s) { int y; y = (s->bg = 1) + (s->c = 1); return y; }",
+        // Through a typedef, whose pointer type Clang does not desugar: the
+        // struct is read from the member's own declaration.
+        "typedef struct P_s { long pid; signed char window; int hi; int lo; } P_t; \
+         int subject(P_t *p) { p->lo = p->hi = p->window = 0; return 0; }",
     ] {
         let run = gs(source);
         assert!(run.safe(), "{source}: {run:?}");
@@ -61,6 +65,8 @@ fn every_other_pair_keeps_its_refusal() {
         "int subject(struct S **v) { v[0]->a = v[1]->b++; return 0; }",
         // Two members of a union overlap.
         "int subject(struct W *w) { int y; y = (w->u.i = 1) + (w->u.l = 2); return y; }",
+        // An unnamed struct: Clang's layout dump cannot be matched to it.
+        "typedef struct { int a; int b; } A_t; int subject(A_t *p) { p->a = p->b++; return 0; }",
     ] {
         let run = gs(source);
         assert!(!run.safe(), "{source}: {run:?}");
