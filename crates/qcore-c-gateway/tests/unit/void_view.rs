@@ -19,6 +19,38 @@ fn every_view_vector_is_the_class_decision() {
     }
 }
 
+/// Each row's spelling, read by Clang: the one explicit cast of
+/// `(TARGET) a` with `a` declared `OPERAND`, classified by
+/// [`classify_view`], is the row's decision.
+#[test]
+fn every_view_vector_is_clang_s_reading() {
+    use crate::legacy_c::CCompilerDialect;
+    use crate::typed_access_path::{StatementIndex, enter_source};
+    if !crate::test_support::clang_available() {
+        return;
+    }
+    for (operand, cast, target, decision) in VIEW_VECTORS {
+        let source = format!(
+            "struct T {{ int x; }}; struct A {{ int y; }}; void f({operand} a) {{ (void) ({target}) a; }}"
+        );
+        let _scope = enter_source(&source, CCompilerDialect::C11, None);
+        let index = StatementIndex::read("f").expect("the fixture parses");
+        let mut casts = Vec::new();
+        let mut parents = Vec::new();
+        walk(&index.function, &mut parents, &mut |node, _| {
+            if kind(node) == "CStyleCastExpr" && qual(node) != Some("void") {
+                casts.push(node.clone());
+            }
+        });
+        let [node] = casts.as_slice() else {
+            panic!("{source}: {} casts", casts.len());
+        };
+        assert_eq!(node["castKind"].as_str(), Some(*cast), "{source}");
+        let got = classify_view(node).map(|_| ());
+        assert_eq!(code(got), *decision, "{source}");
+    }
+}
+
 #[test]
 fn only_a_bit_cast_from_void_to_an_object_pointer_is_a_view() {
     for cast in [CastClass::BitCast, CastClass::NoOp, CastClass::Other] {

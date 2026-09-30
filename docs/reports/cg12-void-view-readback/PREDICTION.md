@@ -55,4 +55,23 @@ base); the prediction is 0 followed, with the reason per class measured.
 
 ## 2. From the BEFORE run
 
-(Added from the BEFORE run before any AFTER run; see the report.)
+Added from the BEFORE run on the base `c374de96` (corpus `3a25c4e9…`,
+608 / 10 / 4,216, reproducing the brief's baseline), before any AFTER run.
+`scripts/rederive.py` re-derives CG00's list: all 33 functions are still
+Unknown and every one of CG00's 76 M05 origins still carries its leaf.
+
+| Class on the base | Functions | Prediction |
+|---|---|---|
+| M05 leaves only | `rd_strcmp3`, `XXH_readLE32_align`, `XXH_readLE64_align` | **Safe**: `rd_strcmp3` 85% (two views over formals as call actuals of a `return`); the two `XXH_*` 55% (the views are operands of a `return ?:`, CG06's lowering, and one is an actual of `XXH_swap32`) |
+| one other leaf | `rd_kafka_assignor_topic_cmp` (IND at `:256`), `rd_list_cmp_trampoline` (uncontracted `rd_list_cmp_curr`), `rd_list_get_int32` (`rd_assert`, CG07), `rd_kafka_partition_internal_find_rack` (`bsearch`) | **Unknown**, M05 leaves lifted in the first three; `topic_cmp` keeps `:256` (its pointer is the borrowed alias, 80%) |
+| several other leaves | the other 26 | **Unknown** (95%); M05 leaves lifted where the view is over a formal or a never-bound load |
+
+Leaf-level (upper bound): of the 76 origins, 9 (`_RK_PTR`), 8
+(`pb_dec_varint`'s chained assignment) and 6 (a view over a call result)
+stay by construction, so **at most 53** lift; some lifted leaves are
+replaced by the next statement's leaf (a borrowed alias with no identity is
+unknown at a custody position). Corpus totals: **+1 to +3 Safe**, no
+Safe → non-Safe, no Unsafe added (90%). System slice: **+0 to +1**; the
+tail-pause slice: **+0** (85%): the one Fluent Bit M05 site
+(`flb_input_chunk_set_limits`) is a view over a loaded `in->storage` whose
+root must be proved never bound, inside a function with 9 other leaves.
