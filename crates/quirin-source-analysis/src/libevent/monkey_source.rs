@@ -7,7 +7,8 @@ pub use crate::typed_source::{
     SourceSummary as MonkeySourceSummary,
 };
 use crate::typed_source::{
-    import_source_functions_from_profile, import_source_functions_from_profile_admitting,
+    ControlAdmission, import_source_functions_from_profile,
+    import_source_functions_from_profile_admitting_control,
 };
 use qcore_c_gateway::typed_source_nodes::{Classification, NodeAdmission};
 use qcore_schemas::profile::ImportRole;
@@ -71,6 +72,17 @@ pub const MONKEY_WRAPPER_ADMISSION: NodeAdmission = NodeAdmission::new(
     ],
 );
 
+/// The Monkey wrapper projection's control admission (card
+/// CG09-TYPED-SOURCE-CONTROL, rule 11l): every acyclic form, lowered by route
+/// T into guarded paths of the existing vocabulary. The projection certifies
+/// nothing, as for [`MONKEY_WRAPPER_ADMISSION`]: a lowered path is reported
+/// as opaque calls and custody Unknown. No admission can list a back-edge
+/// form (a general loop or a backward `goto`), so those stay refused.
+pub const MONKEY_WRAPPER_CONTROL: ControlAdmission = ControlAdmission::new(
+    "Monkey wrapper projection",
+    &["switch", "break", "continue", "goto"],
+);
+
 /// Preserve the bounded wrapper grammar and opaque-call behavior. No missing
 /// profile or malformed selection can fall back to a Rust table.
 pub fn import_monkey_wrappers(
@@ -80,13 +92,14 @@ pub fn import_monkey_wrappers(
     let profile =
         crate::source_profiles::load_profile(crate::source_profiles::FLUENT_BIT_SOURCE_SET)
             .map_err(|error| error.to_string())?;
-    let mut results = import_source_functions_from_profile_admitting(
+    let mut results = import_source_functions_from_profile_admitting_control(
         unit,
         source_revision,
         &profile,
         "monkey",
         ImportRole::Wrapper,
         &MONKEY_WRAPPER_ADMISSION,
+        &MONKEY_WRAPPER_CONTROL,
     )?;
     let names = wrapper_source_order()?;
     let result_name = |result: &MonkeySourceResult| match result {

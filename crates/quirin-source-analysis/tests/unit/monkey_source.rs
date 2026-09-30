@@ -26,3 +26,22 @@ fn monkey_wrapper_admission_classifies_every_cg01_node() {
     // The callbacks keep the legacy admission: nothing is admitted.
     assert!(NodeAdmission::LEGACY.admit("binary ^").is_err());
 }
+
+/// CG09 (rule 11l): the wrapper projection admits exactly the acyclic control
+/// forms, each lowered into guarded paths of the existing vocabulary; no
+/// admission can list a back-edge form, and the callbacks list nothing.
+#[test]
+fn monkey_wrapper_control_admits_exactly_the_acyclic_forms() {
+    use qcore_c_gateway::typed_source::CONTROL_TABLE;
+    MONKEY_WRAPPER_CONTROL.validate().unwrap();
+    let acyclic = CONTROL_TABLE
+        .iter()
+        .filter(|facts| !facts.back_edge)
+        .map(|facts| facts.spelling)
+        .collect::<Vec<_>>();
+    assert_eq!(MONKEY_WRAPPER_CONTROL.rows(), acyclic.as_slice());
+    for facts in CONTROL_TABLE.iter().filter(|facts| facts.back_edge) {
+        assert!(MONKEY_WRAPPER_CONTROL.admit(facts.spelling).is_err());
+    }
+    assert!(ControlAdmission::LEGACY.admit("switch").is_err());
+}

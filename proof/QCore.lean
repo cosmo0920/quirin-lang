@@ -283,6 +283,7 @@ import QCore.ReviewHoldStanding
 
 import QCore.SourceExtensions
 import QCore.TypedSourceOperators
+import QCore.TypedSourceControl
 import QCore.ElaborationCore
 import QCore.TypedPlace
 import QCore.BoundUntracked
