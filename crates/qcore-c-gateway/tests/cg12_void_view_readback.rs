@@ -68,22 +68,40 @@ fn every_position_vector_is_the_route_outcome() {
     if !clang_available() {
         return;
     }
-    let rows = table("POSITION_VECTORS", 4);
-    assert_eq!(rows.len(), 6);
+    let rows = table("POSITION_VECTORS", 5);
+    assert_eq!(rows.len(), 8);
     for row in rows {
-        let (spelling, position, never_bound, admitted) =
-            (&row[0], &row[1], row[2] == "true", row[3] == "true");
-        let body = match (position.as_str(), never_bound, spelling.starts_with("((struct T *)o)")) {
-            (_, true, _) => format!(
+        let (spelling, position, never_bound, tracked, admitted) = (
+            &row[0],
+            &row[1],
+            row[2] == "true",
+            row[3] == "true",
+            row[4] == "true",
+        );
+        let root = spelling
+            .trim_start_matches(['*', '(', ' '])
+            .split(')')
+            .nth(1)
+            .and_then(|rest| rest.trim_start().chars().next())
+            .expect("root");
+        let body = match (root, never_bound, tracked) {
+            ('a' | 'f', true, false) => format!(
                 "void subject(void *a, struct S *f) {{ int x = {spelling}; cg_sink(x); }}"
             ),
-            (_, false, true) => format!(
-                "void subject(void) {{ void *o = q_alloc(); int x = {spelling}; cg_sink(x); q_free(o); }}"
+            // Bound later in the body (not never bound), untracked at the
+            // access: rule 11d's premise.
+            ('o', false, false) => format!(
+                "void subject(void *o) {{ int x = {spelling}; cg_sink(x); o = 0; }}"
             ),
-            (_, false, false) => format!(
+            ('o' | 'h', false, true) => format!(
+                "void subject(void) {{ void *{root} = q_alloc(); int x = {spelling}; cg_sink(x); \
+                 q_free({root}); }}"
+            ),
+            ('s', false, true) => format!(
                 "void subject(void) {{ struct S *s = q_alloc(); struct T *t = q_alloc(); s->v = t; \
                  int x = {spelling}; cg_sink(x); q_free(t); q_free(s); }}"
             ),
+            other => panic!("no body for {spelling}: {other:?}"),
         };
         let run = gs(&body);
         assert_eq!(run.safe(), admitted, "{spelling} ({position}): {run:?}");
@@ -129,6 +147,9 @@ fn unlisted_views_are_refused() {
          int x = ((struct T *) s->v)->x; cg_sink(x); q_free(t); q_free(s); }",
         "void *cg_get(void); void subject(void) { int x = *(int *)cg_get(); cg_sink(x); }",
         "void subject(struct S *s, int k) { int x = *(int *)((char *)s->p + k); cg_sink(x); }",
+        // C02-P-ALIAS: a view of a `void *` root as `struct T *` where the
+        // body declares another `struct T *` (a may-alias peer) is refused.
+        "void subject(struct T *t, void *a) { q_free(t); int x = ((struct T *)a)->x; cg_sink(x); }",
     ] {
         let run = gs(body);
         assert!(!run.safe(), "{body}: {run:?}");

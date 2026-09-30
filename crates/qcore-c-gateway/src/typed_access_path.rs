@@ -1192,15 +1192,22 @@ impl<'a> Reader<'a> {
         let mut after_view = false;
         let mut load_view = false;
         let mut saw_view = false;
+        let mut pending_key = None;
+        let mut root_view_key: Option<String> = None;
         let mut cursor = node;
         loop {
             cursor = strip(cursor)?;
-            if std::mem::take(&mut after_view) && kind(cursor) != "DeclRefExpr" {
-                load_view = true;
+            if std::mem::take(&mut after_view) {
+                if kind(cursor) == "DeclRefExpr" {
+                    root_view_key = pending_key.take();
+                } else {
+                    load_view = true;
+                }
             }
             if std::mem::take(&mut pointer_operand)
                 && let Some(view) = crate::void_view::explicit_view(cursor)
             {
+                pending_key = qual(cursor).and_then(crate::void_view::pointee_key);
                 cursor = view.ok()?;
                 after_view = true;
                 saw_view = true;
@@ -1291,7 +1298,22 @@ impl<'a> Reader<'a> {
                     crate::void_view::ViewPosition::Root
                 },
                 (self.never_bound)(root),
+                false,
             )
+        {
+            return None;
+        }
+        // A view of the root as `struct TAG *` must not escape C02-P-ALIAS:
+        // where the body declares another name of that record-pointer class,
+        // a peer's release would relate it, and the `void *` root has no
+        // class to carry the obligation. Refused there.
+        if root_view_key.as_deref().is_some_and(|key| {
+                crate::void_view::view_has_alias_peers(
+                    self.function,
+                    cursor["referencedDecl"]["id"].as_str(),
+                    key,
+                )
+            })
         {
             return None;
         }
@@ -1374,10 +1396,16 @@ impl<'a> Reader<'a> {
                             crate::bound_untracked::eligible_root(function, root, decl)
                         })
                     }),
-                root_untracked_only: false,
+                // Card CG12-VOID-VIEW-READBACK (rule 11j): a view is read
+                // only over an untracked object; the flow refuses a tracked
+                // root (its object's type is the contract's, not the view's).
+                root_untracked_only: saw_view,
                 links,
                 member: members.last()?.clone(),
             });
+        } else if saw_view {
+            // A view with no chain to carry the untracked-only reading.
+            return None;
         }
         if store
             && (matches!(first.0, "*" | "[]")

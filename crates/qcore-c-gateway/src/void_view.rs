@@ -20,15 +20,22 @@
 //! pointer names no object, a `NoOp` or any other kind is not a view.
 //!
 //! In a typed access path ([`crate::typed_access_path::Reader::path`]) a view
-//! may stand only where a pointer is read through (`*`, `->`, `[]`), and is
-//! admitted in one of two positions:
+//! may stand only where a pointer is read through (`*`, `->`, `[]`), is read
+//! only over an **untracked** object, and is admitted in one of two positions:
 //!
 //! * over the **root** itself (`*(T *)a`, `((T *)a)->x`, `((T *)a)[i]`): the
-//!   root keeps its own obligation, exactly as `T *t = a; t->x` already does
-//!   through rule 10m's implicit conversion;
+//!   chain is marked `root_untracked_only`, so the flow reads the root only
+//!   as never bound or bound-untracked (rule 11d) and refuses a tracked one:
+//!   a tracked identity's object has the type its contract gives it, and a
+//!   view of it would be a type claim this route cannot check;
 //! * over a pointer **loaded** from a place of a root the custody closure
 //!   proves never bound (`*(T *)f->p`): under rule 10k's premise every pointer
 //!   loaded there is outside the tracked graph.
+//!
+//! A view of a root as `struct TAG *` where the body declares another name of
+//! that record-pointer class is refused too: C02-P-ALIAS would relate that
+//! name to a `struct TAG *` use, and the `void *` root has no class to carry
+//! the obligation.
 //!
 //! A view over a pointer loaded from any other root (`((T *)s->v)->x` on a
 //! tracked `s`) is refused (`view-over-link`): the loaded pointer is a field
@@ -327,6 +334,31 @@ pub(crate) fn local_declaration(decl: &Value) -> bool {
     kind(decl) == "VarDecl" && decl["storageClass"].is_null()
 }
 
+/// Whether `function` declares a name (other than the root `root_decl`) whose
+/// pointee is the record `key` (`struct TAG`): C02-P-ALIAS relates such a
+/// name to a `struct TAG *` use, and a view of a `void *` root as `struct TAG
+/// *` has no declared class to carry that obligation, so the reader refuses
+/// it there. Any other key names no may-alias class.
+pub(crate) fn view_has_alias_peers(function: Option<&Value>, root_decl: Option<&str>, key: &str) -> bool {
+    if !key.starts_with("struct ") {
+        return false;
+    }
+    let Some(function) = function else {
+        return true;
+    };
+    let mut found = false;
+    let mut parents = Vec::new();
+    walk(function, &mut parents, &mut |node, _| {
+        if matches!(kind(node), "VarDecl" | "ParmVarDecl")
+            && node["id"].as_str() != root_decl
+            && qual(node).and_then(pointee_key).as_deref() == Some(key)
+        {
+            found = true;
+        }
+    });
+    found
+}
+
 /// Where a view stands in a path.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum ViewPosition {
@@ -336,14 +368,23 @@ pub(crate) enum ViewPosition {
     Load,
 }
 
-/// The position decision: a view over the root is admitted on any root; a
-/// view over a loaded pointer only when the root is never bound.
-/// `QCore.VoidViewReadback.positionAdmits` is the same function.
-pub(crate) fn view_position(position: ViewPosition, root_never_bound: bool) -> bool {
-    match position {
-        ViewPosition::Root => true,
-        ViewPosition::Load => root_never_bound,
-    }
+/// The position decision: a view is read only over an untracked object. A
+/// view over the root is admitted where the root carries no tracked identity
+/// (never bound, or rule 11d's bound-untracked premise at the node); a view
+/// over a loaded pointer only when the root is never bound. The reader asks
+/// it with `root_tracked` false and marks the chain `root_untracked_only`, so
+/// the flow supplies the tracked half. `QCore.VoidViewReadback.positionAdmits`
+/// is the same function.
+pub(crate) fn view_position(
+    position: ViewPosition,
+    root_never_bound: bool,
+    root_tracked: bool,
+) -> bool {
+    !root_tracked
+        && match position {
+            ViewPosition::Root => true,
+            ViewPosition::Load => root_never_bound,
+        }
 }
 
 /// The view vectors shared with `proof/QCore/VoidViewReadback.lean`
@@ -366,15 +407,21 @@ pub(crate) const VIEW_VECTORS: &[(&str, &str, &str, &str)] = &[
 ];
 
 /// The position vectors (`positionVectors`): a path spelling, the view's
-/// position, whether the root is never bound, and whether it is admitted.
+/// position, whether the root is never bound, whether it carries a tracked
+/// identity at the access, and whether it is admitted. The Rust test runs
+/// each through the gateway (`a`: a `void *` formal; `f`: a `struct S *`
+/// formal; `o`: a local bound to an untracked copy, or to `q_alloc()` where
+/// tracked; `h`: a tracked handle; `s`: a store base holding a tracked child).
 #[cfg(test)]
-pub(crate) const POSITION_VECTORS: &[(&str, &str, bool, bool)] = &[
-    ("*(int *)a", "root", true, true),
-    ("((struct T *)a)->x", "root", true, true),
-    ("((char *)a)[1]", "root", true, true),
-    ("((struct T *)o)->x", "root", false, true),
-    ("*(int *)f->p", "load", true, true),
-    ("((struct T *)s->v)->x", "load", false, false),
+pub(crate) const POSITION_VECTORS: &[(&str, &str, bool, bool, bool)] = &[
+    ("*(int *)a", "root", true, false, true),
+    ("((struct T *)a)->x", "root", true, false, true),
+    ("((char *)a)[1]", "root", true, false, true),
+    ("((struct T *)o)->x", "root", false, false, true),
+    ("((struct T *)o)->x", "root", false, true, false),
+    ("*(int *)h", "root", false, true, false),
+    ("*(int *)f->p", "load", true, false, true),
+    ("((struct T *)s->v)->x", "load", false, true, false),
 ];
 
 // ---------------------------------------------------------------------------

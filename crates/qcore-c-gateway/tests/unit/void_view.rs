@@ -79,15 +79,15 @@ fn only_a_bit_cast_from_void_to_an_object_pointer_is_a_view() {
 
 #[test]
 fn every_position_vector_is_the_position_decision() {
-    assert_eq!(POSITION_VECTORS.len(), 6);
-    for (spelling, position, never_bound, admitted) in POSITION_VECTORS {
+    assert_eq!(POSITION_VECTORS.len(), 8);
+    for (spelling, position, never_bound, tracked, admitted) in POSITION_VECTORS {
         let position = match *position {
             "root" => ViewPosition::Root,
             "load" => ViewPosition::Load,
             other => panic!("unknown position {other}"),
         };
         assert_eq!(
-            view_position(position, *never_bound),
+            view_position(position, *never_bound, *tracked),
             *admitted,
             "{spelling}"
         );

@@ -10,7 +10,8 @@ import QCore.VoidViewReadback
 #print axioms QCore.VoidViewReadback.a_non_object_target_is_never_a_view
 #print axioms QCore.VoidViewReadback.position_vectors_hold
 #print axioms QCore.VoidViewReadback.a_view_over_a_link_is_refused
-#print axioms QCore.VoidViewReadback.a_view_over_the_root_adds_no_premise
+#print axioms QCore.VoidViewReadback.a_view_over_a_tracked_identity_is_refused
+#print axioms QCore.VoidViewReadback.a_view_over_an_untracked_root_adds_no_premise
 
 -- The readback's static premises: a type-mismatched view is refused.
 #print axioms QCore.VoidViewReadback.decision_vectors_hold

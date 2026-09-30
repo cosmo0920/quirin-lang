@@ -118,32 +118,45 @@ inductive ViewPosition where
   | load
   deriving DecidableEq, Repr
 
-/-- `view_position` in `void_view.rs`. -/
-def positionAdmits : ViewPosition → Bool → Bool
-  | .root, _ => true
-  | .load, neverBound => neverBound
+/-- `view_position` in `void_view.rs`: whether the root is never bound, and
+whether it carries a tracked identity at the access (the flow's half, through
+the chain's untracked-only reading). -/
+def positionAdmits : ViewPosition → Bool → Bool → Bool
+  | _, _, true => false
+  | .root, _, false => true
+  | .load, neverBound, false => neverBound
 
 /-- The Rust `POSITION_VECTORS`. -/
-def positionVectors : List (String × ViewPosition × Bool × Bool) := [
-  ("*(int *)a", .root, true, true),
-  ("((struct T *)a)->x", .root, true, true),
-  ("((char *)a)[1]", .root, true, true),
-  ("((struct T *)o)->x", .root, false, true),
-  ("*(int *)f->p", .load, true, true),
-  ("((struct T *)s->v)->x", .load, false, false)
+def positionVectors : List (String × ViewPosition × Bool × Bool × Bool) := [
+  ("*(int *)a", .root, true, false, true),
+  ("((struct T *)a)->x", .root, true, false, true),
+  ("((char *)a)[1]", .root, true, false, true),
+  ("((struct T *)o)->x", .root, false, false, true),
+  ("((struct T *)o)->x", .root, false, true, false),
+  ("*(int *)h", .root, false, true, false),
+  ("*(int *)f->p", .load, true, false, true),
+  ("((struct T *)s->v)->x", .load, false, true, false)
 ]
 
 theorem position_vectors_hold :
-    positionVectors.all (fun (_, p, n, a) => positionAdmits p n == a) = true := by
+    positionVectors.all (fun (_, p, n, t, a) => positionAdmits p n t == a) = true := by
   decide
+
+/-- A view is never read over a tracked identity: its object has the type its
+contract gives it, which the view does not check. -/
+theorem a_view_over_a_tracked_identity_is_refused (p : ViewPosition) (n : Bool) :
+    positionAdmits p n true = false := by
+  cases p <;> rfl
 
 /-- A view over a pointer loaded from a root the closure does not prove never
 bound (a field link) is refused. -/
-theorem a_view_over_a_link_is_refused : positionAdmits .load false = false := rfl
+theorem a_view_over_a_link_is_refused (t : Bool) : positionAdmits .load false t = false := by
+  cases t <;> rfl
 
-/-- A view over the root keeps the root's own obligation: it is admitted
-whatever the root, and adds no premise. -/
-theorem a_view_over_the_root_adds_no_premise (n : Bool) : positionAdmits .root n = true := rfl
+/-- A view over an untracked root keeps the root's own obligation: it adds no
+premise. -/
+theorem a_view_over_an_untracked_root_adds_no_premise (n : Bool) :
+    positionAdmits .root n false = true := rfl
 
 /-! ## 2. The readback: static premises -/
 

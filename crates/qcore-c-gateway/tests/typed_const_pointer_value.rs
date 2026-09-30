@@ -270,26 +270,43 @@ fn a_void_pointer_bit_cast_is_a_borrowed_read() {
 /// the middle of a path (in a statement and in a condition) and a bit-cast
 /// from another object pointer (in a statement and in a condition
 /// assignment) keep the refusal they had at the base.
+///
+/// CG12 flip (rule 11j): an explicit `void *` view to the destination's own
+/// type is read as the implicit one, and a view in the middle of a path over
+/// a pointer loaded from a never-bound root is a view step; the three rows
+/// below were refused (`GATE`, and `BRANCH` for the condition) BEFORE.
 #[test]
 fn every_other_cast_keeps_the_refusal() {
     if !clang_available() {
         return;
     }
     for body in [
-        "int w(struct c_box *b) { struct c_leaf *l = (struct c_leaf *) b->conf.opaque; c_peek(l); return 0; }",
         "int w(struct c_box *b) { c_fn f = b->conf.opaque; return f != 0; }",
         "int w(struct c_box *b) { long v = (long) b->conf.opaque; return v != 0; }",
-        "int w(struct c_box *b) { struct c_leaf *l = ((struct c_item *) b->conf.opaque)->leaf; c_peek(l); return 0; }",
         "int w(struct c_box *b, int i) { struct c_leaf *l = b->item->cells[i].name; c_peek(l); return 0; }",
     ] {
         assert_eq!(outcome(body), unknown(&[GATE]), "{body}");
     }
     for body in [
-        "int w(struct c_box *b, int i) { if (((struct c_item *) b->conf.opaque)->slots[i]) return 1; return 0; }",
         "int w(struct c_box *b, int i) { struct c_leaf *l; if (!(l = b->item->cells[i].name)) return 0; return 1; }",
     ] {
         assert_eq!(outcome(body), unknown(&[BRANCH]), "{body}");
     }
+    for body in [
+        "int w(struct c_box *b) { struct c_leaf *l = (struct c_leaf *) b->conf.opaque; c_peek(l); return 0; }",
+        "int w(struct c_box *b) { struct c_leaf *l = ((struct c_item *) b->conf.opaque)->leaf; c_peek(l); return 0; }",
+        "int w(struct c_box *b, int i) { if (((struct c_item *) b->conf.opaque)->slots[i]) return 1; return 0; }",
+    ] {
+        assert_eq!(outcome(body), safe(), "CG12 flip: {body}");
+    }
+    // An explicit view to a type other than the destination's keeps the
+    // refusal (a pun between object pointers).
+    assert_eq!(
+        outcome(
+            "int w(struct c_box *b) { struct c_leaf *l = (struct c_leaf *)(struct c_item *) b->conf.opaque; c_peek(l); return 0; }"
+        ),
+        unknown(&[GATE])
+    );
 }
 
 /// librdkafka's `rd_kafka_topic_partition_cmp` / `…_cmp_opaque` shape. This
