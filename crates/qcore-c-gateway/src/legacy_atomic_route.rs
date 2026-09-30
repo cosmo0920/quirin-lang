@@ -30,8 +30,9 @@
 //! The custody projection is order-insensitive, so a routed access's order
 //! is carried only into the parity row: route G publishes no ordering,
 //! race-freedom or liveness claim (the route's single-graph assumption).
-//! A memory order spelled as an enumeration constant is refused here: the
-//! function's AST does not carry the enumerator's value.
+//! A memory order spelled as an enumeration constant is refused here (the
+//! function's AST does not carry the enumerator's value), `memory_order_consume`
+//! by its own name ([`atomic_source_route::consume_only`]).
 
 use serde_json::{Value, json};
 
@@ -63,6 +64,33 @@ fn strip_value(mut node: &Value) -> &Value {
         node = child;
     }
     node
+}
+
+/// Whether a pointer object's type points at a scalar the route reads, the
+/// pointee possibly `_Atomic(T)`: `is_pointer` refuses every `_Atomic`
+/// spelling, including the pointee's, which is this route's own case. The
+/// pointer itself is unqualified, and a `volatile` pointee stays CG15's.
+fn atomic_object_pointer(node: &Value) -> bool {
+    let Some(text) = node["type"]["desugaredQualType"]
+        .as_str()
+        .or_else(|| node["type"]["qualType"].as_str())
+    else {
+        return false;
+    };
+    let Some(pointee) = text.trim_end().strip_suffix('*') else {
+        return false;
+    };
+    let pointee = pointee.trim_end();
+    let inner = pointee
+        .strip_prefix("_Atomic(")
+        .and_then(|rest| rest.strip_suffix(')'))
+        .unwrap_or(pointee);
+    !inner.is_empty()
+        && !inner.contains(['(', ')', '*', '['])
+        && !inner.contains("union ")
+        && !inner.contains("struct ")
+        && !inner.contains("volatile")
+        && !inner.contains("_Atomic")
 }
 
 /// Whether a stored value is custody-neutral data: a literal, or a read of a
@@ -194,7 +222,7 @@ impl Parser<'_> {
                 if matches!(
                     object["referencedDecl"]["kind"].as_str(),
                     Some("VarDecl" | "ParmVarDecl")
-                ) && is_pointer(object) =>
+                ) && atomic_object_pointer(object) =>
             {
                 let dereference = json!({
                     "kind": "UnaryOperator",
@@ -244,7 +272,7 @@ impl Parser<'_> {
         site: &Site<'n>,
         never_bound: &dyn Fn(&str) -> bool,
     ) -> Result<(RoutedAtomic<'n>, Vec<LegacyInstruction>), AtomicRouteRefusal> {
-        let routed = classify_builtin(site.atomic, &|_| None)?;
+        let routed = classify_builtin(site.atomic, &atomic_source_route::consume_only)?;
         let mut instructions = self.lower_routed(index, &routed, never_bound)?;
         if let Some(destination) = &site.destination {
             if routed.operation != Operation::Load

@@ -229,6 +229,13 @@ theorem consume_load_refused (name : String) (h : lookup name = some .load) :
     route name (some 1) = .error .consumeLoad := by
   simp [route, h, classOperation, decodeOrder, routeOrder]
 
+/-- Order value 1 (consume) is admitted for no load or store: a resolver
+that answers 1 for `memory_order_consume` alone is fail-closed. -/
+theorem order_one_never_routed (name : String)
+    (h : lookup name = some .load ∨ lookup name = some .store)
+    (r : Operation × Option ModelOrder) : route name (some 1) ≠ .ok r := by
+  rcases h with h | h <;> simp [route, h, classOperation, decodeOrder, routeOrder]
+
 theorem consume_never_routed (op : Operation) (m : ModelOrder) :
     routeOrder op .consume ≠ .ok m := by
   cases op <;> simp [routeOrder]

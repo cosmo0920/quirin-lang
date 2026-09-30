@@ -377,6 +377,19 @@ pub fn atomic_node_name(node: &Value) -> Option<String> {
     }
 }
 
+/// The enumerator resolver of a route that has only the function's AST
+/// (routes G and T): `memory_order_consume` answers 1, its standard value,
+/// and every other enumerator is unevaluated. Fail-closed whatever the unit's
+/// enumeration says: 1 is admitted for no operation
+/// (`QCore.AtomicSourceRoute.order_one_never_routed`), so the answer only
+/// names a consume load as one.
+#[must_use]
+pub fn consume_only(node: &Value) -> Option<i64> {
+    (node["referencedDecl"]["kind"].as_str() == Some("EnumConstantDecl")
+        && node["referencedDecl"]["name"].as_str() == Some("memory_order_consume"))
+    .then_some(1)
+}
+
 /// Route one atomic builtin node (`AtomicExpr`, or a builtin fence call).
 /// `enum_value` evaluates a `memory_order` enumeration constant; a route that
 /// cannot pass `|_| None` and refuses such an order by name.
@@ -550,7 +563,7 @@ pub fn typed_source_qualifier_refusal(c_type: &str) -> String {
 #[must_use]
 pub fn typed_source_refusal(node: &Value) -> Option<String> {
     atomic_node_name(node)?;
-    Some(match classify_builtin(node, &|_| None) {
+    Some(match classify_builtin(node, &consume_only) {
         Ok(routed) => format!(
             "atomic `{}` is routed to the weak-memory model, which no typed-source consumer decides (CG19)",
             routed.form
