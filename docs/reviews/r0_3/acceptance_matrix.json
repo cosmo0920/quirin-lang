@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 637
+  "named_followups": 642
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "W48-QR-USABLE-RECORDS card gate (base ca634dc1), script private/w48-c2/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-c2/gate, run at 0f486097: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 387 units, 400 summaries, 6,809 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T042442Z-4091019/summary.json), no load-sensitive rerun needed; clippy 0; both reevaluation probes 0; check_lean_audits.py 245 audits passed (244 + AuditUsableRecords.lean, 26 theorems). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). The first Python run after the gate failed 3 of 365: two were the matrix not yet regenerated for the ledger (631 -> 637), and one was constraint 29's tripwire, which found a read_dir walk in the card's new survey test. That walk was converted to the tracked-file helper (no test count changes); the test, fmt and clippy of that target were rerun, each 0, and an untracked decoy cell left in the survey directory was ignored. Matrix, docs index and Python (365 tests) were then run in that order. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit built at 029c7019, the last crate change): resource-diagnostics.json c012e785..., 586 Safe / 10 Unsafe / 4,238 Unknown, byte-identical to the base archive (W48-QR-C-STRUCT-IMPORT AFTER); sidecars byte-identical. Exits in gate/.",
-  "workspace_tests": 6809,
+  "note": "W48-QR-TASK-RECORD-CAPTURES card gate (base bcdc13b9), script private/w48-c3/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-c3/gate, first run at caba384f: submodule (--init --recursive) 0; fmt 1 (one assertion in the card's new test not yet formatted); run_test_binaries.py 388 units, 401 summaries, 6,832 passed, 1 failed, 11 ignored, exit 101 (private/test-binaries/20260930T061330Z-1052281/summary.json) - the failure was compiler/tests/source_record.rs's a_task_module_declaring_a_record_keeps_its_own_refusal, a pin of the refusal this card lifts (now admitted on the task route; moved by name at adb0aea4); clippy 0; both reevaluation probes 0; check_lean_audits.py 246 audits passed (245 + AuditTaskRecordCaptures.lean). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). Rerun at adb0aea4 (private/w48-c3/gate-rerun.sh, logs private/w48-c3/gate-rerun): fmt 0; run_test_binaries.py 388 units, 401 summaries, 6,833 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T062745Z-1286290/summary.json), no load-sensitive rerun needed; clippy 0. Matrix, docs index and Python were then run in that order. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit built at b3b7d7ca, the last crate change before the test-only commits): resource-diagnostics.json c012e785..., 586 Safe / 10 Unsafe / 4,238 Unknown, byte-identical to the base archive (W48-QR-USABLE-RECORDS AFTER); sidecars byte-identical. Exits in gate/ (the first run's failing steps as *.first-run.exit).",
+  "workspace_tests": 6833,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 245,
+  "lean_audits": 246,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6977,6 +6977,7 @@
    "AuditSummaryValidationPremises.lean",
    "AuditSymbolicClassAdmission.lean",
    "AuditTaskExecution.lean",
+   "AuditTaskRecordCaptures.lean",
    "AuditTaskTraceFixedOutcomes.lean",
    "AuditTaskTraceLeaseBoundary.lean",
    "AuditTaskTraceRelation.lean",
@@ -7011,7 +7012,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-usable-records/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-qr-task-record-captures/gate.json)"
  },
  "named_followups": [
   {

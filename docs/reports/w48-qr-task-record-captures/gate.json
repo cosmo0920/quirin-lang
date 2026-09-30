@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-TASK-RECORD-CAPTURES card gate (base bcdc13b9), script private/w48-c3/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-c3/gate, first run at caba384f: submodule (--init --recursive) 0; fmt 1 (one assertion in the card's new test not yet formatted); run_test_binaries.py 388 units, 401 summaries, 6,832 passed, 1 failed, 11 ignored, exit 101 (private/test-binaries/20260930T061330Z-1052281/summary.json) - the failure was compiler/tests/source_record.rs's a_task_module_declaring_a_record_keeps_its_own_refusal, a pin of the refusal this card lifts (now admitted on the task route; moved by name at adb0aea4); clippy 0; both reevaluation probes 0; check_lean_audits.py 246 audits passed (245 + AuditTaskRecordCaptures.lean). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). Rerun at adb0aea4 (private/w48-c3/gate-rerun.sh, logs private/w48-c3/gate-rerun): fmt 0; run_test_binaries.py 388 units, 401 summaries, 6,833 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T062745Z-1286290/summary.json), no load-sensitive rerun needed; clippy 0. Matrix, docs index and Python were then run in that order. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit built at b3b7d7ca, the last crate change before the test-only commits): resource-diagnostics.json c012e785..., 586 Safe / 10 Unsafe / 4,238 Unknown, byte-identical to the base archive (W48-QR-USABLE-RECORDS AFTER); sidecars byte-identical. Exits in gate/ (the first run's failing steps as *.first-run.exit).",
+  "workspace_tests": 6833,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 246,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

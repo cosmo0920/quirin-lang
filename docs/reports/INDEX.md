@@ -1056,6 +1056,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-qr-scalar-types-r6](w48-qr-scalar-types-r6/README.md) | W48-QR-SCALAR-TYPES-R6: typed payloads and the remaining positions |
 
+| [w48-qr-task-record-captures](w48-qr-task-record-captures/README.md) | W48-QR-TASK-RECORD-CAPTURES: task workers receive and return records |
+
 | [w48-qr-usable-records](w48-qr-usable-records/README.md) | W48-QR-USABLE-RECORDS: records usable as values |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |

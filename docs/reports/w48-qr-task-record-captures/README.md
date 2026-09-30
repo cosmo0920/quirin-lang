@@ -94,6 +94,7 @@ the lift moves.
 | What | Before | After | Why |
 |---|---|---|---|
 | Card 2's survey, task row (`usable_records_survey.rs` pins; the ten `task_*` cells) | all `Q500` (`AGGREGATE-TASK-CAPTURE`) | construct, read, copy, nested, param, lend admitted; `result` `Q050` (a whole record rendered); `write` `Q300` (no `mut`); `move` `Q500` (`bytes`, `WRITE-LEND-TASKS-EXTENT`); `loop` `Q500` (the route's `for`) | the lift; card 2's archived survey JSON is frozen and not edited |
+| `source_record.rs`'s `a_task_module_declaring_a_record_keeps_its_own_refusal` | refused (`Q500`/`Q600`) on the task route | admitted there (`ScopedCopyTasksV1`), the route still the concurrent one | moved by name; found by the gate's first run |
 | `owned_field_route_reach.rs`'s named row | both records refused, naming `AGGREGATE-TASK-CAPTURE` | a record of scalars admitted; a `bytes` field refused at `Q500` naming `WRITE-LEND-TASKS-EXTENT` | moved by name, not deleted |
 | "at most one write-leased resource at a time" | global | per resource | two fields leased at once; no tracked program moves |
 | `WorkerExit::returned`, `AbstractSlot::Handle::returned`, `State::exit` | one optional identity | a list | a record result hands back one identity per owned leaf |
@@ -184,12 +185,12 @@ transcriptions of the Rust, bound to it by the test rows, not by extraction.
 | Measure | Predicted | Outcome |
 |---|---|---|
 | fixture freeze | byte-identical except the ten `task_*` survey cells, with the listed movements, 70% | **as predicted**, cell for cell: 684 / 694 identical, the ten cells moved exactly as listed |
-| existing tests changed | 2–5 files, 60% | **2** pinned-outcome files (the survey table, the route-reach row) plus mechanical `records:` fields in two core test files |
+| existing tests changed | 2–5 files, 60% | **3** pinned-outcome files (the survey table, the route-reach row, `source_record.rs`'s task-module row) plus mechanical `records:` fields in two core test files |
 | negative controls | each refused, the restoration admitted and observed, 85% | **as predicted** |
 | native incl. TSan | clean, 60% | **clean**: 12 sanitizer runs, 5 TSan rows, rendering row × 3, 0 reports |
 | Lean | one module, ~15–25 theorems, plus the judgment re-decided, 70% | one module (**12** theorems) and **13** judgment theorems in `QCore.Transferability` |
-| corpus arbiter | identical to the base's archive, 95% | ARBITER-OUTCOME |
-| standing gate first run | green, 45% | GATE-OUTCOME |
+| corpus arbiter | identical to the base's archive, 95% | **identical**: `c012e785…`, 586 / 10 / 4,238, full hash, sidecars identical |
+| standing gate first run | green, 45% | **not green**: fmt 1 and one test (a pin of the lifted refusal) failed; both fixed and rerun green, every other step 0 on the first run |
 | items | 1 (70%), 2 (60%), 3 (65%), 4 (55%), 5 (15% / 10%) | **1–4 done; 5 not done** |
 
 Not predicted: the per-resource lift of the one-leased-resource bound was the
@@ -201,11 +202,45 @@ while it holds a record that owns (the existing exit rule, per leaf).
 
 ## Gate
 
-GATE-TABLE
+[`gate.json`](gate.json), exits in [`gate/`](gate/), logs private to the
+worktree (`private/w48-c3/gate`, `private/w48-c3/gate-rerun`), run by
+`private/w48-c3/gate.sh` at `caba384f` and, for the two steps that failed,
+`private/w48-c3/gate-rerun.sh` at `adb0aea4` (each exit to a file, no step
+piped):
+
+| Step | Exit | Count |
+|---|---|---|
+| submodule (`--init --recursive`) | 0 | |
+| `cargo fmt --all -- --check` | first run 1, rerun **0** | one assertion of the card's new test not yet formatted |
+| `scripts/run_test_binaries.py` | first run 101, rerun **0** | first run 6,832 passed / **1** failed / 11 ignored; rerun 388 units, 401 summaries: **6,833** passed / 0 failed / 11 ignored |
+| `cargo clippy --all-targets -- -D warnings` | 0, rerun 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `scripts/check_lean_audits.py` | 0 | **246** audits (245 + `AuditTaskRecordCaptures.lean`) |
+| provider suite, `--no-fail-fast` (providers unchanged, run anyway) | 0 | 129 passed / 0 failed / 1 ignored, 43 summaries |
+| matrix (`build_matrix.py --gate gate.json`) | 0 | `named_followups` 642 |
+| docs index | 0 | |
+| Python (`unittest discover -s scripts/tests`) | 0 | 365 tests |
+| Clang | present | Ubuntu clang 21.1.8 ([record](gate/clang-version.txt)) |
+
+The first run's one failing test was `compiler/tests/source_record.rs`'s
+`a_task_module_declaring_a_record_keeps_its_own_refusal`, a pin of the very
+refusal this card lifts: its module now checks on the task route, and the row
+was moved by name to pin that route (a correction, above). A Python run before
+the matrix was regenerated failed its two matrix self-consistency rows, as
+expected for a ledger change.
 
 ## Corpus arbiter
 
-ARBITER-TEXT
+[Identity record](artifacts/arbiter-corpus.identity). `scripts/run_pinned_audit.py`
+at pin `66910c10` over the recorded Cycle-19 inputs, `--jobs 8`, release
+`quirin-audit` (`73d4ba13…`) built at `b3b7d7ca`, the last commit that changes
+a crate: exit 0; `resource-diagnostics.json` `c012e78506cdb4ca…`,
+**byte-identical** to the base archive (W48-QR-USABLE-RECORDS's AFTER), so
+586 Safe / 10 Unsafe / 4,238 Unknown; `resource-diagnostics.chunk-contracts.json`
+and `monkey-source.json` byte-identical to every archive since card 0. No C
+analysis path changed: the card's code is the scoped-task route (lowering,
+checker, reference, emitter), the ledger's record outcome and the
+transferability judgment's aggregate kind.
 
 ## Follow-ups
 
