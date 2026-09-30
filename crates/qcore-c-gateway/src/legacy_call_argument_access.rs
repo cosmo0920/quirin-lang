@@ -1330,12 +1330,19 @@ mod tests {
         let model = TypedAccessModel::read(&texts(unit));
         let types = FunctionTypes::read(&model, &texts("int i"), &texts("{ }"), &BTreeSet::new());
         let mut count = 0;
-        for line in body.lines().filter(|line| line.trim_start().starts_with('(')) {
+        for line in body
+            .lines()
+            .filter(|line| line.trim_start().starts_with('('))
+        {
             let argument = line.split('"').nth(1).expect("an argument");
             let expected = line.contains("true");
             let folded = fold_type_sizes(&texts(argument), &model, &types);
             assert_eq!(folded.contains(&"1"), expected, "{argument}: {folded:?}");
-            assert_eq!(!folded.contains(&"sizeof"), expected, "{argument}: {folded:?}");
+            assert_eq!(
+                !folded.contains(&"sizeof"),
+                expected,
+                "{argument}: {folded:?}"
+            );
             count += 1;
         }
         assert_eq!(count, 8);

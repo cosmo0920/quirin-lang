@@ -733,8 +733,7 @@ fn e16_type_queries_are_read_only_in_fixed_shapes() {
     // the return read the unevaluated operand from Clang's node (no event),
     // and the evaluated VLA operand's size expression `n` is read once.
     assert!(
-        gs("unsigned long subject(struct S *s) { unsigned long z = sizeof(*s); return z; }")
-            .safe()
+        gs("unsigned long subject(struct S *s) { unsigned long z = sizeof(*s); return z; }").safe()
     );
     assert!(gs("unsigned long subject(struct S *s) { return sizeof(*s); }").safe());
     let run = gs(

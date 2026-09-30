@@ -15,7 +15,8 @@ fn gs(source: &str) -> G {
     g(&format!("{S}{source}"))
 }
 
-const CAST_RETURN: &str = "cast of a possibly tracked value to another carrier in return expression";
+const CAST_RETURN: &str =
+    "cast of a possibly tracked value to another carrier in return expression";
 
 // ---------------------------------------------------------------------------
 // The soundness repair: a pointer converted to a truth value is no escape.
@@ -58,9 +59,12 @@ fn a_truth_value_member_store_publishes_nothing() {
     if !clang_available() {
         return;
     }
-    let run = gs("struct B { bool f; }; void subject(struct B *s) { void *p = q_alloc(); s->f = p; }");
+    let run =
+        gs("struct B { bool f; }; void subject(struct B *s) { void *p = q_alloc(); s->f = p; }");
     assert!(run.unsafe_() && run.has("Leak"), "{run:?}");
-    let run = gs("struct B { bool f; }; void subject(struct B *s) { void *p = q_alloc(); s->f = p; q_free(p); }");
+    let run = gs(
+        "struct B { bool f; }; void subject(struct B *s) { void *p = q_alloc(); s->f = p; q_free(p); }",
+    );
     assert!(run.safe(), "{run:?}");
 }
 
@@ -73,7 +77,8 @@ fn an_explicit_truth_value_condition_is_not_yet_refined() {
     if !clang_available() {
         return;
     }
-    let run = gs("void subject(void) { void *p = q_maybe_alloc(); if ((bool)p) q_nullable_free(p); }");
+    let run =
+        gs("void subject(void) { void *p = q_maybe_alloc(); if ((bool)p) q_nullable_free(p); }");
     assert!(run.unsafe_() && run.has("Leak"), "{run:?}");
     let run = gs("void subject(void) { void *p = q_maybe_alloc(); if (p) q_nullable_free(p); }");
     assert!(run.safe(), "{run:?}");
@@ -176,7 +181,9 @@ fn unevaluated_operands_read_nothing() {
         assert!(run.safe(), "{body}: {run:?}");
     }
     // A released pointer inside an unevaluated operand is not a use.
-    let run = gs("unsigned long subject(void) { void *p = q_alloc(); q_free(p); return sizeof(*(char *)p); }");
+    let run = gs(
+        "unsigned long subject(void) { void *p = q_alloc(); q_free(p); return sizeof(*(char *)p); }",
+    );
     assert!(run.safe(), "{run:?}");
 }
 
@@ -197,7 +204,9 @@ fn an_evaluated_operand_with_an_effect_is_refused() {
         assert!(!run.unsupported.is_empty(), "{body}: {run:?}");
     }
     // The same VLA operand with a read only is evaluated once.
-    assert!(gs("unsigned long subject(int n) { unsigned long z = sizeof(int[n]); return z; }").safe());
+    assert!(
+        gs("unsigned long subject(int n) { unsigned long z = sizeof(int[n]); return z; }").safe()
+    );
 }
 
 /// Refusal control (example D): the marker `1` never reaches a bound or a
@@ -258,10 +267,8 @@ fn the_nanopb_comma_return_still_refuses_past_the_boolean_conversion() {
     if !clang_available() {
         return;
     }
-    let run = gs(
-        "struct stream { const char *errmsg; }; \
+    let run = gs("struct stream { const char *errmsg; }; \
          bool subject(struct stream *stream) { \
-         return (stream->errmsg = (stream)->errmsg ? (stream)->errmsg : (\"x\")), 0; }",
-    );
+         return (stream->errmsg = (stream)->errmsg ? (stream)->errmsg : (\"x\")), 0; }");
     assert!(run.unknown(), "{run:?}");
 }

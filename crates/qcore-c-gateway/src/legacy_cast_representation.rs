@@ -185,7 +185,12 @@ impl Parser<'_> {
             return Some(elaborated);
         }
         if self.root_never_bound(pointer, &|name| self.position_never_bound(name)) {
-            self.record_cast("return", line, expression, "null-test-untracked-older-route");
+            self.record_cast(
+                "return",
+                line,
+                expression,
+                "null-test-untracked-older-route",
+            );
             return None;
         }
         self.record_cast("return", line, expression, "null-test-refused");
@@ -207,7 +212,11 @@ impl Parser<'_> {
     /// Hook (soundness repair): a declaration or assignment whose value C
     /// converts from a pointer to a truth value, asked before the older
     /// routes. `None` leaves them the statement.
-    pub(super) fn pointer_test_store(&mut self, tokens: &[Token], line: usize) -> Option<Statement> {
+    pub(super) fn pointer_test_store(
+        &mut self,
+        tokens: &[Token],
+        line: usize,
+    ) -> Option<Statement> {
         let statement_texts = texts(tokens);
         if !statement_texts.contains(&"=") {
             return None;
@@ -218,7 +227,8 @@ impl Parser<'_> {
         })?;
         let (_, value) = store_value(node)?;
         let pointer = pointer_test(value)?;
-        if let Some(elaborated) = self.elaborated_statement(tokens, line, POINTER_TEST_STORE_REFUSAL)
+        if let Some(elaborated) =
+            self.elaborated_statement(tokens, line, POINTER_TEST_STORE_REFUSAL)
         {
             self.record_cast("store", line, tokens, "null-test-elaborated");
             return Some(elaborated);
@@ -453,8 +463,10 @@ fn collect_callee_cast_sites(
                 }
                 if parenthesised
                     && kind(cursor) == "DeclRefExpr"
-                    && let (Some(name), Some(line)) =
-                        (cursor["referencedDecl"]["name"].as_str(), index.node_line(node))
+                    && let (Some(name), Some(line)) = (
+                        cursor["referencedDecl"]["name"].as_str(),
+                        index.node_line(node),
+                    )
                 {
                     out.push((line, name.to_owned(), "call"));
                 }
@@ -535,22 +547,27 @@ fn run_of(tokens: &[Token], from: usize, wanted: &[String]) -> Option<Vec<Token>
     let start = rest.len().checked_sub(wanted.len())?;
     let run = &rest[start..];
     // Everything before the run is the cast groups and parentheses.
-    if !run.iter().zip(wanted).all(|(token, text)| &token.text == text) {
+    if !run
+        .iter()
+        .zip(wanted)
+        .all(|(token, text)| &token.text == text)
+    {
         return None;
     }
     let before = &rest[..start];
     if !before.iter().all(|token| {
-        matches!(token.text.as_str(), "(" | ")" | "*" | "const")
-            || is_identifier(&token.text)
+        matches!(token.text.as_str(), "(" | ")" | "*" | "const") || is_identifier(&token.text)
     }) {
         return None;
     }
     // Every `(` opened before the value is closed before it.
-    let depth = before.iter().fold(0i32, |depth, token| match token.text.as_str() {
-        "(" => depth + 1,
-        ")" => depth - 1,
-        _ => depth,
-    });
+    let depth = before
+        .iter()
+        .fold(0i32, |depth, token| match token.text.as_str() {
+            "(" => depth + 1,
+            ")" => depth - 1,
+            _ => depth,
+        });
     (depth == 0).then(|| run.to_vec())
 }
 

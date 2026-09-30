@@ -41,8 +41,7 @@ use serde_json::{Value, json};
 
 use super::condition_desugar::{ConditionPlan, PlanNode, Position, Target};
 use super::{
-    LegacyInstruction, Parser, RefusedWrites, Statement, Token, contains_braces,
-    is_identifier,
+    LegacyInstruction, Parser, RefusedWrites, Statement, Token, contains_braces, is_identifier,
 };
 use crate::elaboration::{
     self, Context, Elaboration, Event, Operand, Place, Refusal, strip_parens,

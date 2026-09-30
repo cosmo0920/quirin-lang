@@ -146,7 +146,12 @@ pub(crate) const CAST_TABLE: [Representation; 17] = [
     row("ToVoid", Preserving, None_, A::Discard),
     row("AtomicToNonAtomic", Preserving, Kept, A::Refused("CG19")),
     row("NonAtomicToAtomic", Preserving, Kept, A::Refused("CG19")),
-    row("AddressSpaceConversion", Preserving, Kept, A::Refused("CG08")),
+    row(
+        "AddressSpaceConversion",
+        Preserving,
+        Kept,
+        A::Refused("CG08"),
+    ),
     row("ArrayToPointerDecay", Preserving, Kept, A::Refused("CG16")),
 ];
 

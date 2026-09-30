@@ -353,7 +353,10 @@ fn ambiguous_accesses_keep_their_existing_unknown_and_diagnostic() {
         "void subject(struct doc *d) { void *p = q_alloc(); \
          d->revision = (long) p; q_free(p); }",
     );
-    assert!(!reasons.is_empty(), "a tracked pointer's integer must refuse");
+    assert!(
+        !reasons.is_empty(),
+        "a tracked pointer's integer must refuse"
+    );
     for (case, body) in cases {
         let reasons = unknown_reasons(body);
         assert!(

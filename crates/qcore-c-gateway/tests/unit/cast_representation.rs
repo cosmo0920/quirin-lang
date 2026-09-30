@@ -84,7 +84,12 @@ fn cg08_lean_cast_table_matches_the_rust_table() {
         );
     }
     // An unlisted kind has no row: the elaborator refuses it by name.
-    for unlisted in ["LValueToRValue", "FunctionToPointerDecay", "VectorSplat", "FixedPointCast"] {
+    for unlisted in [
+        "LValueToRValue",
+        "FunctionToPointerDecay",
+        "VectorSplat",
+        "FixedPointCast",
+    ] {
         assert!(representation(unlisted).is_none(), "{unlisted}");
     }
 }
@@ -116,7 +121,10 @@ fn cg08_lean_query_vectors_match_query_operand() {
         return;
     }
     let mut count = 0;
-    for row in block("def queryVectors : List (String × QueryClass) := [").split("\n  (\"").skip(1) {
+    for row in block("def queryVectors : List (String × QueryClass) := [")
+        .split("\n  (\"")
+        .skip(1)
+    {
         let (source, rest) = row.split_once('"').expect("a source");
         let node = first_query(source);
         let class = match query_operand(&node) {
@@ -134,7 +142,8 @@ fn cg08_lean_query_vectors_match_query_operand() {
 /// Clang gives an enumerator initialised with it (an integer constant
 /// expression, C11 6.6), never a host computation.
 fn clang_constant(prelude: &str, expression: &str) -> i128 {
-    let source = format!("{prelude}\nenum __qcore_cg08_probe {{ __qcore_cg08_value = ({expression}) }};\n");
+    let source =
+        format!("{prelude}\nenum __qcore_cg08_probe {{ __qcore_cg08_value = ({expression}) }};\n");
     let unit = C11TranslationUnit {
         source: &source,
         ..Default::default()
@@ -191,7 +200,11 @@ fn cg08_lean_constant_vectors_are_clangs_constants() {
             .trim_end_matches(')')
             .parse()
             .unwrap();
-        assert_eq!(clang_constant(prelude, expression), expected, "{expression}");
+        assert_eq!(
+            clang_constant(prelude, expression),
+            expected,
+            "{expression}"
+        );
         count += 1;
     }
     assert_eq!(count, 8);
@@ -204,7 +217,13 @@ fn only_the_gate_kinds_open_a_consultation() {
         assert!(form(&cast(gate)).is_some(), "{gate}");
         assert!(representation(gate).is_some(), "{gate}");
     }
-    for quiet in ["LValueToRValue", "NoOp", "BitCast", "IntegralCast", "NullToPointer"] {
+    for quiet in [
+        "LValueToRValue",
+        "NoOp",
+        "BitCast",
+        "IntegralCast",
+        "NullToPointer",
+    ] {
         assert!(form(&cast(quiet)).is_none(), "{quiet}");
     }
     assert!(form(&serde_json::json!({"kind": "CStyleCastExpr", "castKind": "BitCast"})).is_some());

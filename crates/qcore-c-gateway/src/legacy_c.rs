@@ -6300,7 +6300,9 @@ impl Parser<'_> {
                     // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b,
                     // `CAST-RETURN-UNCOMMITTED-OPERAND`): Clang's
                     // `PointerToIntegral` of a possibly tracked pointer.
-                    cast_return::CastReturn::PreCard if self.pointer_integer_return(&expression) => {
+                    cast_return::CastReturn::PreCard
+                        if self.pointer_integer_return(&expression) =>
+                    {
                         return cast_return::refusal(line, self.expression_writes(&expression));
                     }
                     cast_return::CastReturn::PreCard => expression,
@@ -7786,19 +7788,19 @@ impl Parser<'_> {
         // so the gate below sees it as the scalar marker. Only for a statement
         // whose first call is an ordinary callee; everything after the gate
         // reads the original tokens. Empty (the gate unchanged) otherwise.
-        let unevaluated =
-            if find_call(&texts).is_some_and(|(_, callee)| !TYPE_OPERATORS.contains(&callee)) {
-                let mut spans =
-                    crate::sizeof_operand::unevaluated_spans(&texts, &self.sizeof_operands);
-                // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): operands Clang
-                // shows unevaluated join the lexically admitted ones.
-                let confirmed = self.clang_unevaluated_spans(tokens, &spans);
-                spans.extend(confirmed);
-                spans.sort_unstable();
-                spans
-            } else {
-                Vec::new()
-            };
+        let unevaluated = if find_call(&texts)
+            .is_some_and(|(_, callee)| !TYPE_OPERATORS.contains(&callee))
+        {
+            let mut spans = crate::sizeof_operand::unevaluated_spans(&texts, &self.sizeof_operands);
+            // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): operands Clang
+            // shows unevaluated join the lexically admitted ones.
+            let confirmed = self.clang_unevaluated_spans(tokens, &spans);
+            spans.extend(confirmed);
+            spans.sort_unstable();
+            spans
+        } else {
+            Vec::new()
+        };
         let gate_view = |from: usize| {
             if unevaluated.is_empty() {
                 outside_spans(&texts, &borrowed_actuals, from)
