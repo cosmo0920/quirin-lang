@@ -703,6 +703,7 @@ impl Parser<'_> {
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: plan.chains.clone(),
             borrowed_destination: false,
+            readback: None,
         }
     }
 

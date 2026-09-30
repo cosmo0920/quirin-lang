@@ -718,6 +718,7 @@ impl Parser<'_> {
                 // per-link obligation.
                 chains,
                 borrowed_destination: false,
+                readback: None,
             });
         }
         if !names.is_empty() || !pointer_bases.is_empty() || !pointer_places.is_empty() {

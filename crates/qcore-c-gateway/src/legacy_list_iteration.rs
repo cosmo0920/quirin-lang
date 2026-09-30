@@ -836,6 +836,7 @@ impl super::Parser<'_> {
                 frame: None,
                 chains,
                 borrowed_destination: false,
+                readback: None,
             }
         };
         let cursor = shape.cursor.clone();
@@ -989,6 +990,7 @@ impl super::Parser<'_> {
             frame: None,
             chains,
             borrowed_destination: false,
+            readback: None,
         })
     }
 
