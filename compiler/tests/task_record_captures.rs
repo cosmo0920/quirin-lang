@@ -748,7 +748,7 @@ mod thread_sanitizer;
 /// of any kind — and prints the reference stdout. Returns the summary rows.
 #[cfg(target_os = "linux")]
 fn tsan_rows() -> Vec<String> {
-    use thread_sanitizer::{Row, Schedule};
+    use thread_sanitizer::{Row, Schedule, ScheduleEvent};
     let mut rows = Vec::new();
     for (name, source) in EXAMPLES {
         let module = example(name, source);
@@ -780,6 +780,16 @@ fn tsan_rows() -> Vec<String> {
                 run.stderr
             );
             assert_eq!(run.races, 0);
+            // A forced row means the schedule was forced: both workers of the
+            // cohort were released and ran their bodies.
+            if schedule.is_forced() {
+                let started = run
+                    .schedule
+                    .iter()
+                    .filter(|event| matches!(event, ScheduleEvent::Start(_)))
+                    .count();
+                assert_eq!(started, *cohort, "{name} {}: {:?}", schedule.tag(), run.schedule);
+            }
             assert_eq!(run.stdout, stdout, "{name} {}", schedule.tag());
             rows.push(format!(
                 "{{\"program\": \"examples/threads/{name}.qr\", \"arm\": \"created\", \"build\": \

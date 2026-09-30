@@ -1,0 +1,82 @@
+{
+ "retired": [
+  {
+   "id": "AGGREGATE-TASK-CAPTURE",
+   "reason": "Discharged by W48-QR-TASK-RECORD-CAPTURES on its own stated condition: the transferability judgment has an aggregate kind decided from its leaves (`qcore_core::transfer::{leaf_mode, aggregate_class, admits_aggregate, admits_aggregate_capture}`; a record crosses by `copy` exactly when every leaf does and by `move` exactly when every leaf crosses in its induced mode and some leaf carries custody, a refusal naming the first failing leaf and the contract it lacks); the scoped-task route addresses a record by its leaves — one task slot per scalar or owned-`Buffer<T>` leaf — so the ledger's per-resource custody is the record's; the capture's move of the whole record into the worker and back through `join` is the IR's `ScalarType::Record` result, `TaskOutcome::Record` completion and `UnpackRecord`; CT47-COPY-CAPTURE's refusal is re-measured for the aggregate (`copy` of a record that owns names the owned leaf, `write` is refused by name for every record); and Lean parity: `QCore.Transferability.theAggregateJudgmentIsTheConjunctionOfItsLeaves`, `theAggregateBoundaryIsDecidedExactlyOnce`, `theBoundaryIsDecidedExactlyOnceOverRecords`, `aWriteCaptureIsRefusedByNameOverRecords`, and `QCore.TaskRecordCaptures` (custody conserved across spawn and join, spawn failure restoring the record exactly, no byte with two write authorities under per-leaf lends)."
+  }
+ ],
+ "amended": [
+  {
+   "id": "W48-QR-FFI-ROUTE-SCOPE",
+   "amendment": "W48-QR-TASK-RECORD-CAPTURES composes records with the scoped-task route, not with an FFI file: a task in an FFI file still refuses (`Q026`), so an imported C struct is not yet a worker value, registered as `W48-QR-TASK-FFI-STRUCT-WORKER`. Remaining size unchanged (M)."
+  },
+  {
+   "id": "W48-QR-OWNED-RECORD-ACROSS-CALL",
+   "amendment": "W48-QR-TASK-RECORD-CAPTURES moves a record that owns across a spawn and a `join` on the scoped-task route as its leaves (the ledger's per-leaf custody, a record result carried as one completion outcome and unpacked into leaf slots); the representation would carry over to a `.qr` call, but `source.resource-calls.v1`'s own byte representation and statement set still hold no record. Size unchanged (L)."
+  },
+  {
+   "id": "W48-QR-NESTED-OWNED-SUBRECORD-MOVE",
+   "amendment": "W48-QR-TASK-RECORD-CAPTURES refuses the same shape on the scoped-task route by the same name: a whole read `let j = r.inner;` and a whole `move r.inner` capture of a sub-record that owns (`Q600`); a sub-record of scalars is read and captured by `copy`."
+  },
+  {
+   "id": "W48-QR-RECORD-WHOLE-MOVE",
+   "amendment": "W48-QR-TASK-RECORD-CAPTURES moves a record that owns whole across a spawn (`move r`) and a return (`return move r;`) on the scoped-task route; `let q = r;` of one that owns still has no spelling there and refuses by this name (`Q600`)."
+  },
+  {
+   "id": "W48-QR-RECORD-FIELD-WHOLE-WRITE",
+   "amendment": "W48-QR-TASK-RECORD-CAPTURES refuses a whole sub-record write on the scoped-task route by this name too (`Q020`); a scalar field is written and an owned one refilled."
+  },
+  {
+   "id": "WRITE-LEND-TASKS-EXTENT",
+   "amendment": "W48-QR-TASK-RECORD-CAPTURES: a record field of type `bytes` in a task module refuses by this name (`Q500`) — the task route's owned record field is `own<Buffer<T>>`, and a byte-extent buffer still crosses no spawn."
+  },
+  {
+   "id": "W48-QR-TYPES-MSVC-NATIVE",
+   "amendment": "W48-QR-TASK-RECORD-CAPTURES adds a record result travelling in the task result's `leaves` array and three `examples/threads` record programs, built natively with Clang on Linux only (the Windows script builds the four earlier examples)."
+  }
+ ],
+ "registered": [
+  {
+   "id": "W48-QR-TASK-RECORD-ARM-MERGE",
+   "title": "A record changed on one continuing `match` arm is unusable after the match",
+   "why": "Found by W48-QR-TASK-RECORD-CAPTURES: the scoped-task lowering represents a record as leaf slots and a field write as a fresh slot (slots are single-assignment), so after a `match` whose continuing arms leave a record in different states — a field written on one arm, moved whole on one, a creation that moved it succeeding on one — the lowering has no join of the two slot maps and marks the record unsettled: every later use refuses (`Q600`). Arms that return, and arms that agree, are unaffected. Size S. DISCHARGE: a join of leaf slot maps at a continuation (a fresh slot per disagreeing scalar leaf, bound on each arm before its `Goto`), with the owned leaves still decided per path by the checker.",
+   "source": "docs/reports/w48-qr-task-record-captures/README.md",
+   "recorded_by": "W48-QR-TASK-RECORD-CAPTURES"
+  },
+  {
+   "id": "W48-QR-TASK-RECORD-EPOCH",
+   "title": "A record type in a composed epoch module is refused",
+   "why": "Found by W48-QR-TASK-RECORD-CAPTURES: `source.epoch.tasks.v1` runs the whole scoped-task route on its task half and then derives the epoch's capture and retained-result shape per argument and per owned Buffer result; no card has measured what a record's leaves and a record result mean against the epoch's allocation axis, so a record declaration in such a module refuses by name (`Q500`) before the task half is compiled. Size M. DISCHARGE: the epoch's derived shape over a record's leaf captures and a record result's owned leaves, with the credit and recovery plan re-derived and Lean parity with `QCore.ScalarEpochTasks`.",
+   "source": "docs/reports/w48-qr-task-record-captures/README.md",
+   "recorded_by": "W48-QR-TASK-RECORD-CAPTURES"
+  },
+  {
+   "id": "W48-QR-TASK-RECORD-F02",
+   "title": "A worker's record result has no F02 observable outcome",
+   "why": "Found by W48-QR-TASK-RECORD-CAPTURES: a record result is rendered `QCORE_TASK_RESULT TASK RECORD N` followed by one result line per leaf, and the F02 observable alphabet has no record outcome, so `reference_trace` refuses such a run (`UnsupportedOutcome`) rather than flattening it into several completions of one task (constraint 15n's refusing side). Record-returning programs sit outside F02 relational comparison; their native evidence is the byte comparison of the maintained trace. Size S/M. DISCHARGE: an `ObservedOutcome::Record` over the leaf outcomes, parsed from the header and its leaves, with CT03's conservativity method and no pinned digest moved.",
+   "source": "docs/reports/w48-qr-task-record-captures/README.md",
+   "recorded_by": "W48-QR-TASK-RECORD-CAPTURES"
+  },
+  {
+   "id": "W48-QR-TASK-FFI-STRUCT-WORKER",
+   "title": "An imported C struct is not a task worker value",
+   "why": "Registered by W48-QR-TASK-RECORD-CAPTURES from its stretch item: an imported struct (`struct!`, `source.ffi.v1`) as a worker parameter or result needs the FFI route to host tasks, which it does not (`W48-QR-FFI-ROUTE-SCOPE`: a task in an FFI file refuses, `Q026`), and the FFI file-wide unsafe assumption must travel with every result the worker's creator publishes (`AssumedVerdict`). Size L. DISCHARGE: a composition of `source.ffi.v1` with the scoped-task route in which an imported struct's listed fields are leaves (opaque members never crossing as values), every published result carrying the unsafe-FFI assumption, with native runs against a real C library and Lean parity with `QCore.FfiStructImport`.",
+   "source": "docs/reports/w48-qr-task-record-captures/README.md",
+   "recorded_by": "W48-QR-TASK-RECORD-CAPTURES"
+  },
+  {
+   "id": "W48-QR-TASK-RECORD-BYTE-ACCESS",
+   "title": "Byte access and error payloads through a record field on the task route",
+   "why": "Found by W48-QR-TASK-RECORD-CAPTURES: the scoped-task route reads and writes an owned record field whole (`qcore_buffer_read(r.buf)`, `qcore_buffer_write(r.buf, v)`), leases and lends it by a field capture, and drops or refills it, but the owner's byte read `qcore_buffer_read(r.buf, i)` and an error payload raised from a field `raise E::V(r.buf);` still take a plain name only, so each refuses at the route's shape `Q500`. Size S. DISCHARGE: the field path at those two argument positions, resolved to the leaf slot as every other field operand is.",
+   "source": "docs/reports/w48-qr-task-record-captures/README.md",
+   "recorded_by": "W48-QR-TASK-RECORD-CAPTURES"
+  },
+  {
+   "id": "W48-QR-TASK-LEAF-SHARE-BOUNDS",
+   "title": "Read shares of two record fields, and a share beside a lease of another field, stay refused",
+   "why": "Found by W48-QR-TASK-RECORD-CAPTURES: the card lifted the one-write-leased-resource-at-a-time bound to a per-resource rule, so two fields may be leased to two workers at once, but two bounds it did not need stay global: at most one outstanding read loan at a time (so `read r.a share N` and `read r.b share N` to two workers refuse), and no outstanding read loan beside a write lease even of another resource (so a read share of one field and a lease of another refuse). Both are sound to lift per resource by the same argument — the ledger decides every share and lease per resource — but each is pinned by earlier tests (`crates/qcore-frontend/tests/read_loans.rs`, `read_shares.rs`). Size S. DISCHARGE: the two bounds per resource, those pins moved by name, and the per-leaf Lean statement extended to read shares.",
+   "source": "docs/reports/w48-qr-task-record-captures/README.md",
+   "recorded_by": "W48-QR-TASK-RECORD-CAPTURES"
+  }
+ ]
+}
