@@ -569,6 +569,14 @@ fn indirect_file_scope_destinations_keep_their_pre_existing_refusal() {
 /// The invariance is asserted in both directions, over a publication shape and
 /// over an admitted local-acquisition shape, on the whole verdict: the unit
 /// result, the withdrawal reason verbatim, and the complete diagnostic vector.
+///
+/// Card CG15-STORAGE-DURATION-AND-VOLATILE (gateway rule 11h) narrows it: the
+/// projection keeps no *value* fact about a `volatile` object (a binding, a
+/// known value, a null refinement), because C11 5.1.2.3p2 lets one change
+/// asynchronously. These three shapes carry no such fact the verdict reads
+/// (a store into the static-storage `g_published` stays rule 10's publication
+/// refusal), so they stay invariant; the shapes where the qualifier moves a
+/// verdict are pinned in `tests/storage_duration_volatile.rs`.
 #[test]
 fn a_volatile_qualifier_moves_no_resource_projection_verdict() {
     if !clang_available() {

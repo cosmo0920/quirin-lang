@@ -819,6 +819,11 @@ impl Parser<'_> {
                             pointer_valued: typed.pointer_valued,
                             chains: typed.plan.chains,
                         })
+                        // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h):
+                        // the address of a static-duration object.
+                        .or_else(|| {
+                            self.static_address_argument(callee, index, argument, lines[start])
+                        })
                         .ok_or(refusal),
                     other => other,
                 }

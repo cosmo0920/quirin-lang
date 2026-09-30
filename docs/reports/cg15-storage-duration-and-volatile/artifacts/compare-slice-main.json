@@ -1,0 +1,21 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 240,
+   "Safe": 28,
+   "Pending": 1,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 240,
+   "Safe": 28,
+   "Pending": 1,
+   "Unsafe": 1
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 0,
+ "changed": [],
+ "leaf_delta": {}
+}

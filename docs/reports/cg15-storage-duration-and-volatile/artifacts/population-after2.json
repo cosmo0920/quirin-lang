@@ -1,0 +1,76 @@
+{
+ "cg00_alone_list_now": {
+  "already_safe": [
+   "rdkafka_admin.c::rd_kafka_AclOperation_name",
+   "rdkafka_admin.c::rd_kafka_AclPermissionType_name",
+   "rdkafka_admin.c::rd_kafka_ConfigSource_name",
+   "rdkafka_admin.c::rd_kafka_ResourcePatternType_name",
+   "rdkafka_admin.c::rd_kafka_ResourceType_name",
+   "rdkafka_broker.c::rd_kafka_broker_name"
+  ],
+  "other": [],
+  "still_alone": [
+   "rdkafka_partition.c::rd_kafka_fetch_pos2str"
+  ]
+ },
+ "current_leaf_total": {
+  "M23": 1,
+  "M24": 52
+ },
+ "current_leaves": {
+  "M23 volatile-atomic": 1,
+  "M24 path:static-local": 52
+ },
+ "current_unknown_functions": {
+  "M23": 1,
+  "M24": 17
+ },
+ "entry_functions": [
+  "rdbuf.c::do_unittest_erase",
+  "rdkafka_conf.c::rd_kafka_desensitize_str",
+  "rdkafka_feature.c::rd_kafka_features2str",
+  "rdkafka_feature.c::rd_kafka_get_legacy_ApiVersions",
+  "rdkafka_msg.c::unittest_msg_seq_wrap",
+  "rdkafka_msgset_writer.c::rd_kafka_msgset_writer_select_MsgVersion",
+  "rdkafka_offset.c::rd_kafka_offset_store_init",
+  "rdkafka_op.c::rd_kafka_op2str",
+  "rdkafka_partition.c::rd_kafka_fetch_pos2str",
+  "rdkafka_sasl_oauthbearer.c::do_unittest_config_empty_value_should_fail",
+  "rdkafka_sasl_oauthbearer.c::do_unittest_config_value_with_quote_should_fail",
+  "rdkafka_sasl_oauthbearer.c::do_unittest_illegal_extension_keys_should_fail",
+  "rdkafka_sasl_oauthbearer.c::rd_kafka_sasl_oauthbearer_fsm",
+  "rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_jwt_bearer_base64url_encode",
+  "rdkafka_sasl_scram.c::rd_kafka_sasl_scram_fsm",
+  "rdmap.c::rd_map_alloc_buckets",
+  "rdstring.c::ut_strcasestr",
+  "rdstring.c::ut_string_split"
+ ],
+ "freed_alone": {
+  "strict": [
+   "rdkafka_feature.c::rd_kafka_features2str",
+   "rdkafka_partition.c::rd_kafka_fetch_pos2str"
+  ],
+  "with_alias": [
+   "rdkafka_feature.c::rd_kafka_features2str",
+   "rdkafka_partition.c::rd_kafka_fetch_pos2str"
+  ]
+ },
+ "freed_alone_counts": {
+  "strict": 2,
+  "with_alias": 2
+ },
+ "freed_with_one_other_card": {
+  "CG07": 2
+ },
+ "moved_leaves": {
+  "M24 path:static-local": 15,
+  "M24 static-storage-declaration": 65
+ },
+ "new_unattributed_leaves": 192,
+ "schema": "qcore.cg15-population.v1",
+ "status": {
+  "Safe": 615,
+  "Unknown": 4209,
+  "Unsafe": 10
+ }
+}
