@@ -1078,6 +1078,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w48-qrlib-linkage](w48-qrlib-linkage/README.md) | W48-QRLIB-LINKAGE: `.qrlib` as the C linkage manifest of the FFI route |
 
+| [w48-qrlib-macos](w48-qrlib-macos/README.md) | W48-QRLIB-MACOS — card 5m: the macOS linkage path, run |
+
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
 | [w5-cli-packages](w5-cli-packages/README.md) | W5 CLI package selection |
