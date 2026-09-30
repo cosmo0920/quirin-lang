@@ -1,0 +1,56 @@
+[
+ {
+  "unit": "plugins/in_storage_backlog/sb.c",
+  "function": "sb_allocate_backlogs",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 17893, \"origin\": \"plugins/in_storage_backlog/sb.c:160\"}"
+  ],
+  "removed": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `backlog`\", \"line\": 17898, \"origin\": \"plugins/in_storage_backlog/sb.c:169\"}"
+  ]
+ },
+ {
+  "unit": "plugins/in_storage_backlog/sb.c",
+  "function": "sb_destroy_backlogs",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 17911, \"origin\": \"plugins/in_storage_backlog/sb.c:188\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "src/flb_output.c",
+  "function": "flb_output_plugin_property_check",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 18656, \"origin\": \"src/flb_output.c:1459\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "src/flb_task.c",
+  "function": "flb_task_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 17789, \"origin\": \"src/flb_task.c:707\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 17864, \"origin\": \"src/flb_task.c:806\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 17907, \"origin\": \"src/flb_task.c:860\"}"
+  ],
+  "removed": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `route`\", \"line\": 17795, \"origin\": \"src/flb_task.c:714\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `route`\", \"line\": 17796, \"origin\": \"src/flb_task.c:715\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `route`\", \"line\": 17797, \"origin\": \"src/flb_task.c:716\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `route`\", \"line\": 17875, \"origin\": \"src/flb_task.c:818\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `route`\", \"line\": 17876, \"origin\": \"src/flb_task.c:819\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `route`\", \"line\": 17877, \"origin\": \"src/flb_task.c:820\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `route`\", \"line\": 17912, \"origin\": \"src/flb_task.c:866\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `route`\", \"line\": 17913, \"origin\": \"src/flb_task.c:867\"}",
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `route`\", \"line\": 17914, \"origin\": \"src/flb_task.c:868\"}"
+  ]
+ }
+]

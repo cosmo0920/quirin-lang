@@ -223,21 +223,34 @@ inductive PlacementDecision where
   | acquisitionOnCycle
   deriving DecidableEq, Repr
 
-/-- `placement`: a custody split only on a node no CFG cycle passes through. -/
-def placement (custody onCycle : Bool) : PlacementDecision :=
-  if custody && onCycle then .acquisitionOnCycle else .accept
+/-- `placement`: a custody split on a node a CFG cycle may pass through only
+when the flow keeps the site's generations apart (`generations`). Card
+CG04-LOOP-SITE-GENERATIONS gives the flow generation-indexed sites
+(`QCore.LoopSiteGenerations`), so the production call passes `true` and the
+guard is lifted. -/
+def placement (custody onCycle generations : Bool) : PlacementDecision :=
+  if custody && onCycle && !generations then .acquisitionOnCycle else .accept
 
 /-- `PLACEMENT_VECTORS` of `condition_acquisition.rs`, row by row. -/
-def placementVectors : List (Bool × Bool × PlacementDecision) := [
-  (true, false, .accept),
-  (true, true, .acquisitionOnCycle),
-  (false, true, .accept),
-  (false, false, .accept)
+def placementVectors : List (Bool × Bool × Bool × PlacementDecision) := [
+  (true, false, false, .accept),
+  (true, true, false, .acquisitionOnCycle),
+  (false, true, false, .accept),
+  (false, false, false, .accept),
+  (true, false, true, .accept),
+  (true, true, true, .accept),
+  (false, true, true, .accept),
+  (false, false, true, .accept)
 ]
 
 theorem placement_vectors_hold :
-    placementVectors.all (fun (c, o, d) => placement c o == d) = true := by
+    placementVectors.all (fun (c, o, g, d) => placement c o g == d) = true := by
   decide
+
+/-- With generation-indexed sites every split is placed. -/
+theorem with_generations_every_split_is_placed (custody onCycle : Bool) :
+    placement custody onCycle true = .accept := by
+  cases custody <;> cases onCycle <;> rfl
 
 /-- The flow keeps one abstract site per acquisition node. On a path that
 visits no node twice (no cycle passes through it), that site stands for at

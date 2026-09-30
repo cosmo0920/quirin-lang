@@ -179,25 +179,42 @@ fn cg04_lean_leaf_vectors_match_the_rust_table() {
 
 #[test]
 fn the_placement_vectors_hold() {
-    for (custody, on_cycle, expected) in PLACEMENT_VECTORS {
-        let decided = match placement(*custody, *on_cycle) {
+    for (custody, on_cycle, generations, expected) in PLACEMENT_VECTORS {
+        let decided = match placement(*custody, *on_cycle, *generations) {
             Ok(()) => "accept",
             Err(refusal) => refusal.code(),
         };
-        assert_eq!(decided, *expected, "{custody} {on_cycle}");
+        assert_eq!(decided, *expected, "{custody} {on_cycle} {generations}");
     }
+}
+
+/// Card CG04-LOOP-SITE-GENERATIONS lifted the guard: the flow indexes its
+/// sites by generation, so no production consultation takes the refusal arm.
+#[test]
+fn the_flow_indexes_generations_so_the_guard_is_lifted() {
+    const { assert!(crate::loop_generations::SITES_ARE_GENERATION_INDEXED) };
+    assert_eq!(
+        placement(
+            true,
+            true,
+            crate::loop_generations::SITES_ARE_GENERATION_INDEXED
+        ),
+        Ok(())
+    );
 }
 
 #[test]
 fn cg04_lean_placement_vectors_match_the_rust_table() {
-    let rows = lean_rows("def placementVectors : List (Bool × Bool × PlacementDecision) := [");
+    let rows =
+        lean_rows("def placementVectors : List (Bool × Bool × Bool × PlacementDecision) := [");
     assert_eq!(rows.len(), PLACEMENT_VECTORS.len());
-    for (row, (custody, on_cycle, decision)) in rows.iter().zip(PLACEMENT_VECTORS) {
+    for (row, (custody, on_cycle, generations, decision)) in rows.iter().zip(PLACEMENT_VECTORS) {
         assert_eq!(
             row,
             &[
                 custody.to_string(),
                 on_cycle.to_string(),
+                generations.to_string(),
                 (*decision).to_owned()
             ]
         );

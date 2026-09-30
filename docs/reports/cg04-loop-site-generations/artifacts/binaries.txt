@@ -1,0 +1,5 @@
+eb8a0870a5345c666d4eb7d8f2780baae1cbe3054a921e4ab4af6bb6c2c3e0c6  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/target/release/quirin-audit
+b41362f32a5664da07950102a661f603c154d94e3c76b2a7455d2bb937451ea8  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/target/release/quirin-audit
+ba275363f3d5d2b86268e02941cf3189302e5994358acff42d3588f4d770ec68  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/target/release/quirin-audit
+e426de2d8ac679a2d8c16d89d583221463ec5518fde88e5033f9829a0df091ac  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/target/release/quirin-audit
+64f177ca4ac496c9215c73e9dc3e8d53b0f0a7a117a6d01faed8a2ba13d643df  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/target/release/quirin-audit

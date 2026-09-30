@@ -1,0 +1,9 @@
+c012e785 {'Safe': 586, 'Unknown': 4238, 'Unsafe': 10} /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/private/cg04lsg/before
+7cdcba4e {'Safe': 586, 'Unknown': 4238, 'Unsafe': 10} /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/private/cg04lsg/step1
+454ecd00 {'Safe': 586, 'Unknown': 4238, 'Unsafe': 10} /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/private/cg04lsg/final
+7045bba5 {'Safe': 66, 'Unknown': 378, 'Unsafe': 4} /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/private/cg04lsg/before-system
+1c245435 {'Safe': 66, 'Unknown': 378, 'Unsafe': 4} /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/private/cg04lsg/step1-system
+1c245435 {'Safe': 66, 'Unknown': 378, 'Unsafe': 4} /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aabe18ded410680a2/private/cg04lsg/final-system
+86f7fb30 {'Pending': 2, 'Safe': 40, 'Unknown': 361, 'Unsafe': 1} /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/cg04lsg-before
+a407d738 {'Pending': 2, 'Safe': 40, 'Unknown': 361, 'Unsafe': 1} /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/cg04lsg-step1
+a407d738 {'Pending': 2, 'Safe': 40, 'Unknown': 361, 'Unsafe': 1} /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/cg04lsg-final

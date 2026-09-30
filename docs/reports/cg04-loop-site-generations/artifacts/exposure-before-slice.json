@@ -1,0 +1,91 @@
+{
+ "exposed": [],
+ "not_exposed": [
+  {
+   "function": "flb_input_new",
+   "source": "33ad1885b59f",
+   "reported": [
+    [
+     "src/flb_input.c",
+     "Unknown"
+    ],
+    [
+     "src/flb_input.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 18101,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "-",
+     "unresolved": true
+    },
+    {
+     "line": 18157,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "-",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "flb_input_plugin_property_check",
+   "source": "33ad1885b59f",
+   "reported": [
+    [
+     "src/flb_input.c",
+     "Unknown"
+    ],
+    [
+     "src/flb_input.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 18957,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "-",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "flb_tail_mult_destroy",
+   "source": "daa51b6ca93a",
+   "reported": [
+    [
+     "plugins/in_tail/tail_multiline.c",
+     "Safe"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 20065,
+     "site": 0,
+     "status": 2,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "-",
+     "unresolved": false
+    }
+   ]
+  }
+ ],
+ "unreported": [],
+ "exposed_by_status": {}
+}

@@ -162,6 +162,11 @@ mod condition_acquisition_route;
 #[path = "legacy_value_connective.rs"]
 mod value_connective_route;
 
+// Card CG04-LOOP-SITE-GENERATIONS: a re-acquired site on a CFG cycle keeps
+// its earlier generation apart. The hooks below naming the card are thin.
+#[path = "legacy_loop_generations.rs"]
+mod loop_generations_route;
+
 // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the null test is no escape or
 // binding, pointer-to-pointer casts at a pointer destination, the cast return
 // the reader does not commit to, and Clang-confirmed unevaluated `sizeof`
@@ -11407,7 +11412,11 @@ struct TransferContext<'a> {
 
 /// The kind of `site` under `kinds`: heap unless recorded otherwise.
 fn kind_of(kinds: &BTreeMap<usize, ResourceKind>, site: usize) -> ResourceKind {
-    kinds.get(&site).copied().unwrap_or_default()
+    // Card CG04-LOOP-SITE-GENERATIONS: every generation of a site has its kind.
+    kinds
+        .get(&crate::loop_generations::base(site))
+        .copied()
+        .unwrap_or_default()
 }
 
 /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: whether `place` is bound here to at
@@ -11504,6 +11513,11 @@ pub(crate) fn analyze_cfg_with_entry(
         };
         let node = &cfg.nodes[node_id];
         let mut local = BTreeSet::new();
+        // Card CG04-LOOP-SITE-GENERATIONS: a re-acquisition shifts its site's
+        // generations first, so every read below and the transfer see the
+        // earlier generation under its own identity.
+        let (state, shifted) =
+            loop_generations_route::shift(&cfg.function, node, state, &mut local);
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
         // Card W44-LEAK-PIN-AUDIT: the live identities this statement hands
         // on, read from the state it runs in (`refused_operands`).
@@ -11522,6 +11536,7 @@ pub(crate) fn analyze_cfg_with_entry(
         // *this* node rather than anything reported elsewhere in the function.
         joined_provenance::finish_release(conditional_release, &mut output, &local);
         refused_operands::apply(&mut output, &handed, &local);
+        loop_generations_route::settle_refused(&shifted, &mut output, &local);
         output.unmodeled |= local.iter().any(is_path_poisoning);
         diagnostics.append(&mut local);
         if node.is_exit {
@@ -11656,6 +11671,9 @@ pub(crate) fn analyze_cfg_with_entry(
         &mut diagnostics,
     );
     report_retained_loop_exit_edges(&cfg, &incoming, &context.site_kinds, &mut diagnostics);
+    // Card CG04-LOOP-SITE-GENERATIONS: the re-acquisitions an earlier
+    // generation reaches, from the settled states (parity only).
+    loop_generations_route::record_exposure(&cfg, &incoming);
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kind-mismatched release and the
     // use-after-close candidates, from the same settled states.
     report_kind_violations(
@@ -11707,6 +11725,7 @@ pub(crate) fn analyze_cfg_with_entry(
     // this pass only observes.
     let mut observations = Vec::new();
     let mut exits = Vec::new();
+    let mut withheld = Vec::new();
     for (node_id, node) in cfg.nodes.iter().enumerate() {
         if !node.is_exit {
             continue;
@@ -11715,6 +11734,9 @@ pub(crate) fn analyze_cfg_with_entry(
             continue;
         };
         let mut ignored = BTreeSet::new();
+        // Card CG04-LOOP-SITE-GENERATIONS: as in the work list.
+        let (state, shifted) =
+            loop_generations_route::shift(&cfg.function, node, state, &mut ignored);
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
         // Card W44-LEAK-PIN-AUDIT: the refused hand-on rule, as in the work list.
         let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
@@ -11729,6 +11751,7 @@ pub(crate) fn analyze_cfg_with_entry(
         );
         joined_provenance::finish_release(conditional_release, &mut output, &ignored);
         refused_operands::apply(&mut output, &handed, &ignored);
+        loop_generations_route::settle_refused(&shifted, &mut output, &ignored);
         output.unmodeled |= ignored.iter().any(is_path_poisoning);
         // Card W43-INDEXED-RESOURCE-COLLECTIONS: an element obligation left at
         // this settled exit.
@@ -11754,10 +11777,17 @@ pub(crate) fn analyze_cfg_with_entry(
             &acquisition_lines,
             entry_custody,
         ));
+        withheld.push((
+            node.line,
+            loop_generations_route::withheld(&output, &entry_custody.exempt_sites(&output)),
+        ));
     }
 
     let diagnostics = diagnostics.into_iter().collect::<Vec<_>>();
     let status = classify_diagnostics(&diagnostics);
+    // Card CG04-LOOP-SITE-GENERATIONS: the census of Safe results resting on
+    // a possibly-live identity whose effect is unresolved (parity only).
+    loop_generations_route::record_withheld(&cfg.function, status, &withheld, &acquisition_lines);
     (
         LegacyFunctionSummary {
             function: cfg.function.clone(),
@@ -15162,7 +15192,12 @@ fn refine_pointer_null(
 }
 
 fn acquisition_line(acquisition_lines: &BTreeMap<usize, usize>, site: usize) -> usize {
-    acquisition_lines.get(&site).copied().unwrap_or(0)
+    // Card CG04-LOOP-SITE-GENERATIONS: every generation of a site was acquired
+    // at its line.
+    acquisition_lines
+        .get(&crate::loop_generations::base(site))
+        .copied()
+        .unwrap_or(0)
 }
 
 fn report_leaks(

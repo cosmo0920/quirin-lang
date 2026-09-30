@@ -827,6 +827,7 @@ impl Parser<'_> {
                 acquisition_rule::placement(
                     !result.resource_free(),
                     self.condition_on_cycle(position),
+                    crate::loop_generations::SITES_ARE_GENERATION_INDEXED,
                 )
                 .map_err(Refusal::LeafShape)?;
                 // A descriptor destination holds only its own acquisition.

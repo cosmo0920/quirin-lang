@@ -290,6 +290,7 @@ import QCore.ValueConnectives
 import QCore.PointerStore
 import QCore.UnionBitfieldPlace
 import QCore.ConditionAcquisition
+import QCore.LoopSiteGenerations
 import QCore.NestedCallEffects
 import QCore.FfiStructImport
 import QCore.UsableRecords

@@ -1,0 +1,21 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 198,
+   "Safe": 34,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 198,
+   "Safe": 34,
+   "Unsafe": 2
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 4,
+ "leaf_delta": {
+  "unknown_alias: unresolved resource identity": -10,
+  "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 6
+ }
+}
