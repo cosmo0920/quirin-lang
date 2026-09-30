@@ -81,13 +81,28 @@
 //!
 //! # What it does not do
 //!
-//! It does not reproduce the compiler's selection (card route 2, reading
-//! Clang's `GenericSelectionExpr`, was not built: the ABI and mode readers are
-//! kept off the typed AST so that W4 derivation, W4 validation and certificate
-//! rechecking reproduce every decision from the preprocessed tokens, and route 1
-//! already admits every corpus occurrence). It does not widen what the
-//! classifier admits: the lowered core meets exactly the rules it would meet if
-//! the source had spelled it.
+//! It does not widen what the classifier admits: the lowered core meets
+//! exactly the rules it would meet if the source had spelled it.
+//!
+//! # Clang's selection (card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS, rule 11g)
+//!
+//! Route 2, reading Clang's `GenericSelectionExpr`, is the fallback for a
+//! selection route 1 refuses as not selection-invariant (or whose removed cast
+//! it cannot justify): it is asked only after route 1, so every selection
+//! route 1 lowers keeps its lowering (hard invariant 3). The keyword is matched
+//! to one `GenericSelectionExpr` of the body's Clang AST by its line and its
+//! ordinal among the `_Generic` keywords of that line, and only when the
+//! line's tokens are exactly the analysed source's and the line holds as many
+//! selections in the AST as keywords in the stream. The associations this
+//! reader splits must be Clang's, kind for kind and in order
+//! ([`crate::generic_association::associations`]); the selection is then
+//! lowered to the **selected association's** expression (nested selections
+//! resolved first), parenthesised unless it is a direct call or a name. The
+//! controlling expression and every other association are dropped: C
+//! evaluates neither, so neither yields an event or an obligation. The AST is
+//! read from the same preprocessed text W4 derivation, W4 validation and
+//! certificate rechecking hold, so each reproduces the choice; with no AST the
+//! selection keeps its refusal.
 
 use std::collections::BTreeMap;
 
@@ -142,7 +157,12 @@ pub(crate) fn resolve_in_body(tokens: &[Token], function: &str) -> Option<Vec<To
         texts: &texts,
         read: BTreeMap::new(),
     };
-    let (body, changed) = resolve_span(&tokens[start + 1..end], &mut declarations);
+    let clang = ClangSelections {
+        stream: tokens,
+        function,
+        read: std::cell::OnceCell::new(),
+    };
+    let (body, changed) = resolve_span(&tokens[start + 1..end], &mut declarations, &clang);
     if !changed {
         return None;
     }
@@ -184,7 +204,11 @@ impl PointerResults<'_> {
 
 /// Resolve every selection in `span`, left to right; an admitted one is
 /// replaced by its core, a refused one is copied unchanged.
-fn resolve_span(span: &[Token], declarations: &mut PointerResults<'_>) -> (Vec<Token>, bool) {
+fn resolve_span(
+    span: &[Token],
+    declarations: &mut PointerResults<'_>,
+    clang: &ClangSelections<'_>,
+) -> (Vec<Token>, bool) {
     let mut out = Vec::with_capacity(span.len());
     let mut changed = false;
     let mut index = 0;
@@ -192,11 +216,24 @@ fn resolve_span(span: &[Token], declarations: &mut PointerResults<'_>) -> (Vec<T
         if span[index].text == GENERIC_KEYWORD
             && let Some(close) = selection_close(span, index)
         {
-            match read_selection(span, index, close, declarations) {
+            match read_selection(span, index, close, declarations, clang) {
                 Ok(core) => {
                     out.extend(core);
                     changed = true;
                 }
+                // Card CG07 (rule 11g): route 2, Clang's selection, asked only
+                // after route 1 refused.
+                Err(
+                    Refusal::NotSelectionInvariant
+                    | Refusal::CastOperandNotACall
+                    | Refusal::CalleeResultNotADeclaredPointer,
+                ) => match clang_selection(span, index, close, declarations, clang) {
+                    Some(selected) => {
+                        out.extend(selected);
+                        changed = true;
+                    }
+                    None => out.extend_from_slice(&span[index..=close]),
+                },
                 Err(_) => out.extend_from_slice(&span[index..=close]),
             }
             index = close + 1;
@@ -222,6 +259,7 @@ fn read_selection(
     at: usize,
     close: usize,
     declarations: &mut PointerResults<'_>,
+    clang: &ClangSelections<'_>,
 ) -> Result<Vec<Token>, Refusal> {
     let parts = split_top_level(&span[at + 2..close], ",");
     if parts.len() < 2 || parts[0].is_empty() {
@@ -242,7 +280,7 @@ fn read_selection(
         }
         // Innermost first: a selection nested in this association is lowered
         // before the associations are compared.
-        let (resolved, _) = resolve_span(expression, declarations);
+        let (resolved, _) = resolve_span(expression, declarations, clang);
         let (start, end, cast) = strip(&resolved);
         cores.push((resolved[start..end].to_vec(), cast));
     }
@@ -267,12 +305,16 @@ fn read_selection(
     }
     // The default association's spelling (glibc's is the bare call).
     let core = cores.swap_remove(chosen).0;
+    Ok(primary(core, span[at].line))
+}
+
+/// `core` as a primary expression: a direct call or a name as it is, anything
+/// else parenthesised, keeping the selection's precedence.
+fn primary(core: Vec<Token>, line: usize) -> Vec<Token> {
     let texts = core.iter().map(|t| t.text.as_str()).collect::<Vec<_>>();
     if is_direct_call(&texts) || (texts.len() == 1 && is_identifier(texts[0])) {
-        return Ok(core);
+        return core;
     }
-    // Anything else keeps the selection's primary-expression precedence.
-    let line = span[at].line;
     let mut parenthesised = Vec::with_capacity(core.len() + 2);
     parenthesised.push(Token {
         text: "(".to_owned(),
@@ -283,7 +325,132 @@ fn read_selection(
         text: ")".to_owned(),
         line,
     });
-    Ok(parenthesised)
+    parenthesised
+}
+
+/// Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): the body's Clang
+/// selections, keyed by `(line, ordinal of the keyword on its line)`, each
+/// with its associations and the index Clang selected. Read on first use.
+struct ClangSelections<'a> {
+    /// The whole stream `resolve_in_body` was given: a keyword is counted on
+    /// its line in it.
+    stream: &'a [Token],
+    function: &'a str,
+    read: std::cell::OnceCell<BTreeMap<(usize, usize), ClangSelection>>,
+}
+
+type ClangSelection = (Vec<crate::generic_association::Association>, usize);
+
+impl ClangSelections<'_> {
+    fn map(&self) -> &BTreeMap<(usize, usize), ClangSelection> {
+        fn walk<'v>(
+            index: &crate::typed_access_path::StatementIndex,
+            node: &'v serde_json::Value,
+            found: &mut BTreeMap<usize, Vec<(usize, &'v serde_json::Value)>>,
+        ) {
+            if crate::typed_c_ast::kind(node) == "GenericSelectionExpr"
+                && let (Some(line), Some(begin)) = (
+                    index.node_line(node),
+                    crate::typed_access_path::offset(&node["range"]["begin"]),
+                )
+            {
+                found.entry(line).or_default().push((begin, node));
+            }
+            for child in crate::typed_c_ast::children(node) {
+                walk(index, child, found);
+            }
+        }
+        self.read.get_or_init(|| {
+            let mut map = BTreeMap::new();
+            let Some(index) = crate::typed_access_path::StatementIndex::read(self.function) else {
+                return map;
+            };
+            let mut found = BTreeMap::new();
+            walk(&index, &index.function, &mut found);
+            for (line, mut nodes) in found {
+                // The line must be the analysed source's own, token for token,
+                // and hold exactly as many keywords as Clang has selections.
+                let stream = self
+                    .stream
+                    .iter()
+                    .filter(|token| token.line == line)
+                    .map(|token| token.text.as_str())
+                    .collect::<Vec<_>>();
+                let original = index.original_line_texts(line);
+                let keywords = stream.iter().filter(|t| **t == GENERIC_KEYWORD).count();
+                if !stream
+                    .iter()
+                    .copied()
+                    .eq(original.iter().map(String::as_str))
+                    || keywords != nodes.len()
+                {
+                    continue;
+                }
+                nodes.sort_by_key(|(begin, _)| *begin);
+                for (ordinal, (_, node)) in nodes.into_iter().enumerate() {
+                    if let Some(reading) = crate::generic_association::associations(node) {
+                        map.insert((line, ordinal), reading);
+                    }
+                }
+            }
+            map
+        })
+    }
+
+    /// The `(line, ordinal)` of `keyword`, a token of the stream.
+    fn site(&self, keyword: &Token) -> Option<(usize, usize)> {
+        let mut ordinal = 0usize;
+        for token in self
+            .stream
+            .iter()
+            .filter(|token| token.line == keyword.line)
+        {
+            if std::ptr::eq(token, keyword) {
+                return Some((keyword.line, ordinal));
+            }
+            if token.text == GENERIC_KEYWORD {
+                ordinal += 1;
+            }
+        }
+        None
+    }
+}
+
+/// Card CG07 (rule 11g): the selection spanning `at..=close` lowered to the
+/// expression of the association Clang selected, or `None` when the keyword
+/// has no Clang reading or this reader's associations are not Clang's.
+fn clang_selection(
+    span: &[Token],
+    at: usize,
+    close: usize,
+    declarations: &mut PointerResults<'_>,
+    clang: &ClangSelections<'_>,
+) -> Option<Vec<Token>> {
+    use crate::generic_association::Association;
+    let (kinds, chosen) = clang.map().get(&clang.site(&span[at])?)?.clone();
+    let parts = split_top_level(&span[at + 2..close], ",");
+    if parts.len() != kinds.len() + 1 || parts[0].is_empty() {
+        return None;
+    }
+    let mut selected = None;
+    for (index, (association, kind)) in parts[1..].iter().zip(&kinds).enumerate() {
+        let colon = first_top_level(association, ":")?;
+        let (key, expression) = (&association[..colon], &association[colon + 1..]);
+        if key.is_empty() || expression.is_empty() {
+            return None;
+        }
+        let default = key.len() == 1 && key[0].text == "default";
+        if default != (*kind == Association::Default) {
+            return None;
+        }
+        if index == chosen {
+            selected = Some(expression);
+        }
+    }
+    // Only the selected association is resolved and kept: nothing of the
+    // controlling expression or of another association survives.
+    let (resolved, _) = resolve_span(selected?, declarations, clang);
+    Some(primary(resolved, span[at].line))
 }
 
 /// Remove enclosing parentheses and leading pointer casts. Returns the core's

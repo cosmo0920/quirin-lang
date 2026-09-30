@@ -58,8 +58,8 @@ def formTable : List (String × Disposition) := [
   ("pointer store", .refused "CG11"),
   ("pointer arithmetic", .refused "CG16"),
   ("type query operand", .refused "CG08"),
-  ("generic selection", .refused "CG07"),
-  ("statement expression", .refused "CG07"),
+  ("generic selection", .admitted),
+  ("statement expression", .admitted),
   ("compound literal", .refused "CG14"),
   ("volatile access", .refused "CG15"),
   ("atomic access", .refused "CG19"),
@@ -72,7 +72,9 @@ def formTable : List (String × Disposition) := [
   ("null pointer constant", .admitted),
   ("discarded value", .admitted),
   ("unevaluated type query", .admitted),
-  ("evaluated type query", .admitted)
+  ("evaluated type query", .admitted),
+  -- Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): `QCore.StatementExpressions`.
+  ("statement expression control", .refused "CG07")
 ]
 
 def disposition (form : String) : Option Disposition :=

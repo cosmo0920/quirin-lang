@@ -161,18 +161,6 @@ fn same_as_the_call(label: &str, body: &str, status: &str, vector: &[&str]) {
     );
 }
 
-/// `body` (spelled with `_Generic` directly) is refused, and the refusal names
-/// the selection.
-fn refused(label: &str, body: &str) {
-    let (status, keys) = outcome(PLAIN, body);
-    assert_ne!(status, "Safe", "{label}\n{body}");
-    assert!(
-        keys.iter()
-            .any(|key| key == "unsupported:call to uncontracted function `_Generic`"),
-        "{label}: {keys:?}\n{body}"
-    );
-}
-
 // -- The glibc shape, in its two selections -----------------------------------
 
 #[test]
@@ -323,52 +311,80 @@ fn a_controlling_expression_with_a_side_effect_contributes_nothing() {
     assert_eq!(outcome(PLAIN, evaluated).1, vec!["leak".to_owned()]);
 }
 
-// -- What refuses ---------------------------------------------------------------
+// -- Clang's selection (card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS) ------------
+//
+// The selections below were refused by route 1 (the associations differ, or a
+// removed cast cannot be justified) and pinned as `call to uncontracted
+// function \`_Generic\``. **Flipped by CG07 (rule 11g):** route 2 now lowers
+// each to the association Clang selected, so each is analysed exactly as that
+// association spelled directly, and no refusal names the selection.
+
+/// `body` is analysed exactly as `spelled` (the selected association written
+/// out), and nothing names `_Generic`.
+fn as_selected(label: &str, body: &str, spelled: &str) {
+    let selected = outcome(PLAIN, body);
+    assert_eq!(selected, outcome(PLAIN, spelled), "{label}\n{body}");
+    assert!(
+        !selected.1.iter().any(|key| key.contains("_Generic")),
+        "{label}: {selected:?}"
+    );
+}
 
 #[test]
-fn associations_that_differ_refuse() {
+fn associations_that_differ_read_clangs_selection() {
     if !clang_available() {
         return;
     }
-    refused(
+    as_selected(
         "two different calls",
         "void w(const char *s) { const char *p; \
          p = _Generic(s, const char *: d_chr(s, 58), default: d_chr(s, 59)); \
          if (p) { d_len(p); } }",
+        "void w(const char *s) { const char *p; p = d_chr(s, 58); if (p) { d_len(p); } }",
     );
-    refused(
+    as_selected(
         "a call and a name",
         "void w(const char *s) { const char *p; \
          p = _Generic(s, const char *: d_chr(s, 58), default: s); \
          if (p) { d_len(p); } }",
+        "void w(const char *s) { const char *p; p = d_chr(s, 58); if (p) { d_len(p); } }",
+    );
+    // The default selected: the other association's call is not evaluated.
+    as_selected(
+        "the default association",
+        "void w(const char *s) { const char *p; \
+         p = _Generic(s, int: d_chr(s, 58), default: s); \
+         if (p) { d_len(p); } }",
+        "void w(const char *s) { const char *p; p = s; if (p) { d_len(p); } }",
     );
 }
 
 #[test]
-fn a_cast_of_an_integer_result_refuses() {
+fn a_cast_of_an_integer_result_reads_clangs_selection() {
     if !clang_available() {
         return;
     }
-    // `(const char *) (d_len (s))` converts an integer: the value differs by
-    // selection, so the cast cannot be removed.
-    refused(
+    // `s` is `const char *`: no association names its type, so Clang selects
+    // the default, `d_len (s)`; the cast of the other is never evaluated.
+    as_selected(
         "a pointer cast of an integer call",
         "void w(const char *s) { \
          _Generic(s, const void *: (const char *) (d_len(s)), default: d_len(s)); }",
+        "void w(const char *s) { d_len(s); }",
     );
 }
 
 #[test]
-fn a_cast_that_does_not_cover_the_association_refuses() {
+fn a_cast_that_does_not_cover_the_association_reads_clangs_selection() {
     if !clang_available() {
         return;
     }
-    // `(const char *) d_chr (s, 58) + 1` casts the call and then adds: the
-    // association is not the call.
-    refused(
+    // Clang selects the default, `d_chr (s, 58) + 1`, kept parenthesised.
+    as_selected(
         "a cast of a prefix",
         "void w(const char *s) { const char *p; \
          p = _Generic(s, const void *: (const char *) d_chr(s, 58) + 1, \
          default: d_chr(s, 58) + 1); if (p) { d_len(p); } }",
+        "void w(const char *s) { const char *p; p = (d_chr(s, 58) + 1); if (p) { d_len(p); } }",
     );
 }
