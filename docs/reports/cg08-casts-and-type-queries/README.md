@@ -334,4 +334,21 @@ pointer↔integer assignments of a tracked pointer still refuse; N11's T control
 
 ## 7. Gate
 
-GATE-SECTION
+`scripts/gate.sh private/cg08/gate-d82563f7` at tip `d82563f7` (each exit to a
+file, no step piped; exits copied to [gate/](gate/), summary in
+[gate.json](gate.json)):
+
+| Step | Command | Exit | Counts |
+|---|---|---|---|
+| Submodule | `git submodule update --init --recursive` | 0 | |
+| Rust | `python3 scripts/run_test_binaries.py` | 0 | 388 units, 401 summaries; 6,832 passed, 0 failed, 11 ignored |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Probes | `cargo run -p qcore-compiler --example reevaluation_probe` / `…_followup` | 0 / 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | 246 audits (AuditCastRepresentation.lean new) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then 0 | 365; the one failure was the matrix not yet regenerated (`lean_audits` 245 carried); after `remaining-d02/build_matrix.py --gate gate.json`, 365 OK (`09b-python.exit`) |
+| Index | `python3 scripts/build_docs_index.py` | 0 | |
+
+Clang 21.1.8, recorded in this worktree. `providers/` is unchanged, so the
+provider gate is not due and was not run. Logs:
+`private/cg08/gate-d82563f7/` of this worktree.
