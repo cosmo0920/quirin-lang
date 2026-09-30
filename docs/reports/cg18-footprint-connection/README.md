@@ -145,6 +145,13 @@ composition). Source profile: the custody gateway; `source.mutex.guard.v1`.
   (`core_footprint_refuses_every_listed_construct`,
   `m21_core_refuses_disjointness_across_allocations`) still hold for traces
   without the new events.
+- **One flip, named:** CG13's `unsequenced_stores_to_two_bitfields_are_refused`
+  (`tests/union_bitfield_places.rs`) pinned `(r->bf = 1) + (r->bh = 2)`, two
+  bit-fields of two units, as refused "field disjointness is not admitted by
+  this card"; it is now `Safe` by rule 11k, asserted in the same test. The two
+  one-unit rows stay refused. CG02's `cg02_path_pairs_are_not_disjoint_and_not_called_undefined`
+  and CG13's unit test run the elaborator with contexts that decline the new
+  hook, so they are unchanged.
 - **Admissions** (`tests/footprint_connection.rs`): member pairs through `->`
   and `.`, nested members, bit-fields of two units, a typedef'd pointer.
 - **Refusal controls**: two allocations assumed disjoint without the premise
@@ -201,7 +208,28 @@ no corpus population).
 
 ## 8. Records and gate
 
-GATE
+Standing gate by [`scripts/gate.sh`](scripts/gate.sh) at `c4e5942b`, logs
+`private/cg18fc/gate` (worktree-private), exits in [`gate/`](gate/),
+summary in [`gate.json`](gate.json). Clang 21.1.8.
+
+| Step | Exit | Count |
+|---|---|---|
+| submodule update (`--init --recursive`) | 0 | — |
+| `python3 scripts/run_test_binaries.py` | 101, then **0** on the full re-run at `1d2ded8c` (`03c`) | 7,071 passed / 3 failed, then **7,074 passed / 0 failed** / 11 ignored (403 units, 416 summaries; `private/test-binaries/20260930T210140Z-3481004`) |
+| `cargo fmt --all -- --check` | 0 | — |
+| `cargo clippy --all-targets -- -D warnings` | 0, and 0 after the flip (`05b`) | — |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | — |
+| `python3 scripts/check_lean_audits.py` | 0 | 256 audits |
+| `python3 -m unittest discover -s scripts/tests` | 0, and 0 after `build_matrix.py . --gate gate.json` (`09a` 0, `09b`) | 365 |
+| `python3 scripts/build_docs_index.py` | 0 | — |
+
+The first runner's three failures: CG13's two-unit control, which rule 11k
+admits (the deliberate flip of §5, made at `1d2ded8c`), and two
+timing-sensitive rows in crates the card does not touch
+(`checkpoint_cli::interrupted_run_preserves_completed_units_for_resume`,
+`cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
+constraint 16), both green in the full re-run. `providers/` is unchanged, so
+the provider gate was not due.
 
 ## 9. Follow-ups
 

@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "TARGETED CHECK (user policy 2026-09-30: main moved with non-overlapping, already-gated commits) on integrate/w48-cg07 f5680e14: main 18f55de9 (W48-QRLIB-MACOS; shared records resolved by hand) merged with CG07-GENERIC-AND-STATEMENT-EXPRESSIONS' tip be8585b3. Logs private/int-cg07/targeted of the quirin-spec-cards-compass worktree: submodule 0; fmt 0; workspace clippy --locked 0; qcore-c-gateway tests 2,166 passed, 0 failed, 7 ignored; qcore-core tests 1,139 passed, 0 failed, 1 ignored; 256 Lean audits; providers cargo check --locked 0; release quirin-audit build 0; corpus arbiter (--jobs 4) 0, resource-diagnostics.json 8b9e4047..., byte-identical to the card's AFTER measured at 5220b1a9, which confirms the tip's post-measurement operand reorder moves nothing (608 / 10 / 4,216). The full run_test_binaries.py was NOT re-run on this merge: CG07's card gate at 692e1c07 ran it (7,045 passed, 0 failed).",
-  "workspace_tests": 7045,
+  "note": "CG18-FOOTPRINT-CONNECTION card gate at tip c4e5942b (base b59aaae2), script docs/reports/cg18-footprint-connection/scripts/gate.sh, logs private/cg18fc/gate of this worktree: submodule 0; run_test_binaries.py 403 units, 416 summaries, 7,071 passed, 3 failed, 11 ignored, exit 101 (03-tests): union_bitfield_places::unsequenced_stores_to_two_bitfields_are_refused was CG13's control pinning a two-unit bit-field pair refused, which rule 11k admits, a deliberate flip made at 1d2ded8c; qcore-audit checkpoint_cli::interrupted_run_preserves_completed_units_for_resume and qcore-compiler cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets are timing-sensitive rows (constraint 16) in crates this card does not touch; the full runner re-run at 1d2ded8c passed 7,074, 0 failed, 11 ignored (03c, exit 0, private/test-binaries/20260930T210140Z-3481004); fmt 0; clippy 0 (05b re-run after the flip, 0); both reevaluation probes exit 0; check_lean_audits.py 256 audits passed (AuditDisjointFootprint.lean extended by 21 theorems, no new audit file); python tests 365, exit 0; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE b59aaae2 8b9e4047 608/10/4,216; AFTER a03ef0d4 41c7cefd 608/10/4,216 (no move; leaves change in 2 functions); system 41/2/191 and tail-pause slice 28/1/240/1 Pending byte-identical. Exits in docs/reports/cg18-footprint-connection/gate/.",
+  "workspace_tests": 7074,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 256,
@@ -7022,7 +7022,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg07-generic-and-statement-expressions/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg18-footprint-connection/gate.json)"
  },
  "named_followups": [
   {
