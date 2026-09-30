@@ -408,6 +408,20 @@ pub(super) fn settle_volatile(cfg: &mut LegacyCfg, facts: &FunctionFacts, functi
             {
                 Some(("refinement", LegacyInstruction::NoOp))
             }
+            // A counted loop's index and bound facts are value-derived too.
+            LegacyInstruction::CountedLoopHeader { index, bound }
+                if facts.is_volatile(index)
+                    || matches!(bound, crate::indexed_collection::Term::Var { name, .. }
+                        if facts.is_volatile(name)) =>
+            {
+                Some(("refinement", LegacyInstruction::NoOp))
+            }
+            LegacyInstruction::CountedLoopStep { index } if facts.is_volatile(index) => Some((
+                "value-fact",
+                LegacyInstruction::ForgetScalar {
+                    destination: index.clone(),
+                },
+            )),
             instruction => custody_names(instruction)
                 .into_iter()
                 .find(|name| facts.is_volatile(name))
