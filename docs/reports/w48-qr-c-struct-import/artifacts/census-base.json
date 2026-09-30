@@ -1,0 +1,27 @@
+{
+ "card_words_reserved": [],
+ "counts": {
+  "c_ffi_attribute": 0,
+  "c_ffi_word": 0,
+  "c_string": 0,
+  "pipe_copy": 0,
+  "quant_close": 0,
+  "quant_open": 0,
+  "std_ffi_import": 0,
+  "struct_bang": 0
+ },
+ "files": 632,
+ "hits": {
+  "c_ffi_attribute": [],
+  "c_ffi_word": [],
+  "c_string": [],
+  "pipe_copy": [],
+  "quant_close": [],
+  "quant_open": [],
+  "std_ffi_import": [],
+  "struct_bang": []
+ },
+ "reserved_word_count": 118,
+ "struct_word_files": 0,
+ "struct_word_tokens": 0
+}
