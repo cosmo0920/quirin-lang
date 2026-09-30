@@ -8,8 +8,11 @@ route. Gateway rule [11i](../../agents/gateway.md#constraint-11i);
 ([`proof/QCore/AtomicSourceRoute.lean`](../../../proof/QCore/AtomicSourceRoute.lean),
 audited in `proof/AuditAtomicSourceRoute.lean`). Base `c374de96`; `main`
 `b59aaae2` (CG07-GENERIC-AND-STATEMENT-EXPRESSIONS, W48-QRLIB-MACOS) merged
-at `5b8cd34c`, then `main` `60cb0895` (W48-CALLEE-CLOSURE-R3) at `4fd89b6f`,
-and every figure below re-measured on each (§4).
+at `5b8cd34c`, `main` `60cb0895` (W48-CALLEE-CLOSURE-R3) at `4fd89b6f`,
+`main` `fe9c5b48` (CG14) at `0d846040` and the final `main` `e93dbe4e` (CG15)
+at `e8cc26bd`; every figure below is re-measured on `b59aaae2`, `60cb0895`
+and `e93dbe4e` (§4; `fe9c5b48` is contained in `e93dbe4e` and was not
+measured separately).
 
 ## 1. What changed
 
@@ -118,7 +121,7 @@ disclosure that the route's code preceded it, and an amendment for the
 | `cmt_atomic_load` Unknown → Safe | **Unknown → Safe** (its one leaf, the uncontracted `__atomic_load_n`, gone) |
 | `cmt_atomic_store` Unknown → Safe | **Unknown → Safe** (the uncontracted `__atomic_store_n` gone) |
 | `cmt_atomic_compare_exchange` stays Unknown, leaf renamed | **stays Unknown**, its one leaf now ``atomic compare-exchange `__atomic_compare_exchange` is not represented by the weak-memory model (CG28)`` |
-| nothing else moves; 610 / 10 / 4,214 | **610 / 10 / 4,214**; 2 moves, 1 same-status function with a changed leaf, no other leaf changed |
+| nothing else moves; 610 / 10 / 4,214 | **610 / 10 / 4,214** on `c374de96`+`b59aaae2` (and on `60cb0895`); **625 / 10 / 4,199** on the final `e93dbe4e` (623 / 10 / 4,201 before); each time 2 moves, 1 same-status function with a changed leaf, no other leaf changed |
 | no Safe → non-Safe, no added leak or violation | none |
 | `_Atomic` statement hook: no corpus effect | none (no arbiter unit spells `_Atomic`) |
 | slices unreachable | not re-run (0 atomic-builtin leaves in either) |
@@ -139,11 +142,13 @@ Corpus arbiter (`scripts/run_pinned_audit.py … 66910c10 --jobs 4`, release
 | BEFORE (merged main) | `b59aaae2` | `b8bcc25c…` | `8b9e4047…` (the integrator's figure for `b59aaae2`) | 608 / 10 / 4,216 |
 | AFTER (on `b59aaae2`) | merge `5b8cd34c`, code as built at `95b7f93e` | `220c2b92…` | `c7d4dfa4…` | **610 / 10 / 4,214** |
 | BEFORE (merged main) | `60cb0895` | built at `60cb0895` | `c2cc1db902f24bfb131f6f8453f040a1f535a8923ff03f5f8c58ef1ac4fdb49a` | 608 / 10 / 4,216 |
-| AFTER (tip) | merge `4fd89b6f` | `a16e1630…` | `31503cba2745acec7a0ebfece98c461da30ec22d4837b6c29cb4b5f4cd71b100` | **610 / 10 / 4,214** |
+| AFTER (on `60cb0895`) | merge `4fd89b6f` | `a16e1630…` | `31503cba…` | **610 / 10 / 4,214** |
+| BEFORE (final main) | `e93dbe4e` | built at `e93dbe4e` | `d42a99e5e677a44584e883b984085a8e246190fe39bb7987fc4e67b508ba2f33` (623 / 10 / 4,201, the integrator's figure) | 623 / 10 / 4,201 |
+| AFTER (tip) | merge `e8cc26bd` | `ea5a3ce5…` | `ac2d4e19cfc465b9a8ce1eade5b83f4e670865192429d2d0cc821c7cad76c97f` | **625 / 10 / 4,199** |
 
 Attribution ([`artifacts/corpus-comparison.json`](artifacts/corpus-comparison.json),
-`scripts/compare.py`, BEFORE `60cb0895` → AFTER tip; the `b59aaae2` pair gave
-the identical record): the two moves above, each by removing its only leaf;
+`scripts/compare.py`, BEFORE `e93dbe4e` → AFTER tip; the `b59aaae2` and
+`60cb0895` pairs gave the identical record): the two moves above, each by removing its only leaf;
 `cmt_atomic_compare_exchange`'s one leaf renamed; leaf delta otherwise empty.
 Atomic-builtin census ([before](artifacts/before-census.json),
 [after](artifacts/after-census.json), `scripts/census.py`): 3 leaves on 3
@@ -158,7 +163,8 @@ carries a leaf naming an atomic builtin (CG15's BEFORE system run on main
 `f9deddc3…` and the shared tail-pause run `w48cc-after`: 0 each), none of
 their 21 source files spells an atomic builtin, and every hook of this card
 fires only on an atomic builtin's refusal or an `_Atomic` statement. System
-41 / 2 / 191 and tail-pause 28 / 1 / 240 / 1 Pending are carried.
+42 / 2 / 190 and tail-pause 29 / 1 / 239 / 1 Pending (the integrator's figures
+at `e93dbe4e`) are carried.
 
 **CT stages.** `python3 scripts/ct_stage_summary.py . --check`: exit 0,
 mapped 50 / unmapped 0, no stage moved.

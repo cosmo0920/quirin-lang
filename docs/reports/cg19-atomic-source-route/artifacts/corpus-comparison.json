@@ -1,13 +1,13 @@
 {
  "totals": {
   "before": {
-   "Unknown": 4216,
-   "Safe": 608,
+   "Unknown": 4201,
+   "Safe": 623,
    "Unsafe": 10
   },
   "after": {
-   "Unknown": 4214,
-   "Safe": 610,
+   "Unknown": 4199,
+   "Safe": 625,
    "Unsafe": 10
   }
  },
