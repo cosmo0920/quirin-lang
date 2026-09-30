@@ -7,8 +7,9 @@ than the brief's `3e69322c`, which it contains).
 **Deviation, stated:** the brief asks for the prediction before implementing.
 The exposure census below was measured first, with a behaviour-neutral
 instrumentation build (`030e90a5`: parity rows only). The repair's code was
-then written, but no build of it had run, no test of it had run and no corpus
-figure of it had been read when this file was committed. CG00 froze no
+then written and compiled (`cargo build -p qcore-c-gateway`; the Lean model
+checked with `lean`), but no test of it had run and no analysis of any input
+by it had run when this file was committed (`ebe68a53`). CG00 froze no
 prediction for this card (it is a repair the queue did not list), so there is
 no `predictions/CG04-LOOP-SITE-GENERATIONS.md` to re-freeze; this file is the
 first one.
