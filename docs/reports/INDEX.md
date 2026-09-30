@@ -91,6 +91,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg06-value-connectives-and-conditional](cg06-value-connectives-and-conditional/README.md) | CG06-VALUE-CONNECTIVES-AND-CONDITIONAL: value `&&`, `&#124;&#124;` and `?:` by branching |
 
+| [cg07-generic-and-statement-expressions](cg07-generic-and-statement-expressions/README.md) | CG07-GENERIC-AND-STATEMENT-EXPRESSIONS: Clang's selected `_Generic` association and GNU statement expressions |
+
 | [cg08-casts-and-type-queries](cg08-casts-and-type-queries/README.md) | CG08-CASTS-AND-TYPE-QUERIES: casts as representations and type-query operands |
 
 | [cg10-bound-untracked-roots](cg10-bound-untracked-roots/README.md) | CG10-BOUND-UNTRACKED-ROOTS |

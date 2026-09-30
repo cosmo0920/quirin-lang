@@ -1,0 +1,53 @@
+{
+ "consultations": {
+  "statement-expression-return admitted=True": 1,
+  "statement-expression-statement admitted=False": 46,
+  "statement-expression-statement admitted=True": 1413
+ },
+ "functions_with_an_admitted_consultation": 593,
+ "functions_with_a_declined_consultation": 28,
+ "declined_by_reason": {
+  "statement expression in the condition position (CG07)": 14,
+  "statement expression in the call actual position (CG07)": 11,
+  "statement expression in the assigned path position (CG07)": 11,
+  "no unique Clang node": 9,
+  "statement expression in the cast value position (CG07)": 1
+ },
+ "statement_expressions_by_position": {
+  "assigned admitted=True": 80,
+  "discarded admitted=True": 1328,
+  "initializer admitted=True": 5,
+  "returned admitted=True": 1
+ },
+ "families": {
+  "glibc assert": {
+   "admitted": 1327
+  },
+  "const char * __old": {
+   "admitted": 41
+  },
+  "typeof temporary": {
+   "admitted": 39
+  },
+  "rd_kafka_fetch_pos_t _fetchpos = {": {
+   "admitted": 6
+  },
+  "volatile unsigned long int": {
+   "admitted": 1
+  }
+ },
+ "leaves": {
+  "braced": {
+   "leaves": 689,
+   "functions": 414
+  },
+  "__assert_fail call": {
+   "leaves": 1232,
+   "functions": 533
+  },
+  "bsearch call": {
+   "leaves": 7,
+   "functions": 6
+  }
+ }
+}
