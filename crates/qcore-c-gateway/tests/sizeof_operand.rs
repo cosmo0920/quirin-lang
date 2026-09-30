@@ -318,3 +318,14 @@ fn a_statement_whose_first_call_is_a_type_operator_is_the_elaborators() {
         &[],
     );
 }
+
+/// Card CG08-CASTS-AND-TYPE-QUERIES: W44 residual (d), a `sizeof` operand
+/// followed by `* n` at a borrowed actual beside a formal pointer.
+#[test]
+fn a_multiplied_operand_beside_a_formal_is_read_from_clang() {
+    expect(
+        "int w(struct item *q, unsigned long n) { x_zero(q, sizeof(*q) * n); return 0; }",
+        "Safe",
+        &[],
+    );
+}

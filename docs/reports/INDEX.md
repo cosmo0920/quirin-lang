@@ -87,6 +87,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg06-value-connectives-and-conditional](cg06-value-connectives-and-conditional/README.md) | CG06-VALUE-CONNECTIVES-AND-CONDITIONAL: value `&&`, `&#124;&#124;` and `?:` by branching |
 
+| [cg08-casts-and-type-queries](cg08-casts-and-type-queries/README.md) | CG08-CASTS-AND-TYPE-QUERIES: casts as representations and type-query operands |
+
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
 
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |
