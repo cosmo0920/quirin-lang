@@ -129,8 +129,10 @@ fn bitfield_reads_and_stores_are_unit_accesses() {
 
 /// Refusal control: concurrent (unsequenced) stores to two bit-fields of one
 /// storage unit are refused; their bit ranges are disjoint, their memory
-/// location is not. Two units are refused too (field disjointness is not
-/// admitted by this card).
+/// location is not. Two units were refused too while CG13 admitted no field
+/// pair; card CG18-FOOTPRINT-CONNECTION (rule 11k) admits them, the core
+/// model deciding the two units disjoint from Clang's layout (a deliberate
+/// flip of this control).
 #[test]
 fn unsequenced_stores_to_two_bitfields_are_refused() {
     if !clang_available() {
@@ -138,11 +140,12 @@ fn unsequenced_stores_to_two_bitfields_are_refused() {
     }
     for body in [
         "void subject(struct R *r) { int y; y = (r->bf = 1) + (r->bg = 2); (void)y; }",
-        "void subject(struct R *r) { int y; y = (r->bf = 1) + (r->bh = 2); (void)y; }",
         "void subject(struct R *r) { int y; y = (r->bf = 1) + r->bg; (void)y; }",
     ] {
         let result = run(body);
         assert!(!result.safe(), "{body}");
         assert!(result.unknown(), "{body}: {result:?}");
     }
+    let two_units = "void subject(struct R *r) { int y; y = (r->bf = 1) + (r->bh = 2); (void)y; }";
+    assert!(run(two_units).safe(), "{two_units}: {:?}", run(two_units));
 }
