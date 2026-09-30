@@ -1146,6 +1146,11 @@ impl CompiledModule {
                     .iter()
                     .any(|ty| ty.is_float())
             }
+            CheckedSourceModule::ComposedEpochTasks(module) => {
+                qcore_core::task_execution::fixed_types(module.tasks.module())
+                    .iter()
+                    .any(|ty| ty.is_float())
+            }
             _ => false,
         };
         uses.then_some(qcore_core::scalar_floats::ASSUMPTION)

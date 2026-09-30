@@ -400,3 +400,94 @@ fn native_float_workers_match_the_reference_under_three_builds() {
         std::fs::write(path, format!("[\n  {}\n]\n", rows.join(",\n  "))).unwrap();
     }
 }
+
+/// The composed epoch route's task half lowers workers exactly as the task
+/// route does, so a float worker is accounted there too; the program runs
+/// under the three builds with its trace equal to the reference's.
+#[cfg(unix)]
+#[test]
+fn a_float_worker_on_the_epoch_route_matches_the_reference() {
+    use native::*;
+    let source = "#import std.concurrency;
+concurrency checked;
+fn scale(x: f64, y: f64) -> f64 {
+    let z = x * y;
+    return z;
+}
+fn keep(buffer: own<Buffer<u16>> use one) -> own<Buffer<u16>> {
+    let seen = qcore_buffer_read(buffer);
+    return move buffer;
+}
+fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn, join, may_block } {
+    thread scope plan epoch {
+        bound 65536 effort 1000;
+        overhead scope 512 thread 128;
+        thread scope scale {
+            copy;
+            copy;
+            peak 256;
+            effort 4;
+            credit 512 effort 20;
+        }
+        thread scope keep {
+            move;
+            peak 1024;
+            effort 10;
+            credit 4096 effort 100;
+            retained 64;
+            join(drop);
+        }
+    }
+    let a: f64 = 1.5;
+    let b: f64 = -0.0;
+    let seed: u16 = 65535;
+    let buffer = qcore_buffer_new(seed)?;
+    thread scope s {
+        match spawn s scale(copy a, copy b) {
+            Result::Ok { value: first } => {
+                match spawn s keep(move buffer) {
+                    Result::Ok { value: second } => {
+                        let returned = join move second?;
+                        let back = qcore_buffer_read(returned);
+                        drop returned;
+                        let product = join move first?;
+                        let doubled = product + product;
+                        return 0;
+                    }
+                    Result::Err { error: failure } => {
+                        drop buffer;
+                        let product = join move first?;
+                        raise failure;
+                    }
+                }
+            }
+            Result::Err { error: failure } => {
+                drop buffer;
+                raise failure;
+            }
+        }
+    }
+}
+";
+    let module = admitted(source);
+    assert_eq!(module.execution_profile, SourceExecutionProfile::ComposedEpochTasksV1);
+    assert_eq!(module.float_assumption(), Some(sf::ASSUMPTION));
+    let composed = module.checked.as_composed_epoch_tasks().expect("the epoch route");
+    let trace = render_task_observation(
+        &execute_task_module(&composed.tasks, &TaskExecutionScript::default()).unwrap(),
+    );
+    assert!(trace.contains(&format!("F64 {}\n", sf::of_f64(-0.0))), "{trace}");
+    use qcore_compiler::diagnostic_log_c_emit as d;
+    let c = format!(
+        "{}\n{}\n{}",
+        d::diagnostic_stdout_adapter_declaration(qcore_compiler::std_io::Level::Trace),
+        module.c_source.as_deref().unwrap(),
+        d::with_float_results(&d::diagnostic_stdout_adapter_definition_for(true, true))
+    );
+    for (build, flags) in BUILDS {
+        let run = build_and_run(&c, flags).unwrap_or_else(|e| panic!("{build}: {e}"));
+        assert_eq!(run.stderr, "", "{build}");
+        assert_eq!(run.stdout, trace, "{build}");
+        assert_eq!(run.status, Some(0), "{build}");
+    }
+}
