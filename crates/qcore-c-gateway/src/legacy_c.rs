@@ -11369,7 +11369,11 @@ struct TransferContext<'a> {
 
 /// The kind of `site` under `kinds`: heap unless recorded otherwise.
 fn kind_of(kinds: &BTreeMap<usize, ResourceKind>, site: usize) -> ResourceKind {
-    kinds.get(&site).copied().unwrap_or_default()
+    // Card CG04-LOOP-SITE-GENERATIONS: every generation of a site has its kind.
+    kinds
+        .get(&crate::loop_generations::base(site))
+        .copied()
+        .unwrap_or_default()
 }
 
 /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: whether `place` is bound here to at
@@ -11466,6 +11470,10 @@ pub(crate) fn analyze_cfg_with_entry(
         };
         let node = &cfg.nodes[node_id];
         let mut local = BTreeSet::new();
+        // Card CG04-LOOP-SITE-GENERATIONS: a re-acquisition shifts its site's
+        // generations first, so every read below and the transfer see the
+        // earlier generation under its own identity.
+        let state = loop_generations_route::shift(&cfg.function, node, state, &mut local);
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
         // Card W44-LEAK-PIN-AUDIT: the live identities this statement hands
         // on, read from the state it runs in (`refused_operands`).
@@ -11680,6 +11688,8 @@ pub(crate) fn analyze_cfg_with_entry(
             continue;
         };
         let mut ignored = BTreeSet::new();
+        // Card CG04-LOOP-SITE-GENERATIONS: as in the work list.
+        let state = loop_generations_route::shift(&cfg.function, node, state, &mut ignored);
         let conditional_release = joined_provenance::release_site(node, &state, &joined[node_id]);
         // Card W44-LEAK-PIN-AUDIT: the refused hand-on rule, as in the work list.
         let handed = refused_operands::read_sites(&state, &cfg.publications.line_reads, node);
@@ -15127,7 +15137,12 @@ fn refine_pointer_null(
 }
 
 fn acquisition_line(acquisition_lines: &BTreeMap<usize, usize>, site: usize) -> usize {
-    acquisition_lines.get(&site).copied().unwrap_or(0)
+    // Card CG04-LOOP-SITE-GENERATIONS: every generation of a site was acquired
+    // at its line.
+    acquisition_lines
+        .get(&crate::loop_generations::base(site))
+        .copied()
+        .unwrap_or(0)
 }
 
 fn report_leaks(

@@ -38,6 +38,9 @@ mod condition_acquisition;
 // its order model; the G hooks are in `legacy_elaboration.rs`.
 mod elaboration;
 mod index_traversal;
+// Card CG04-LOOP-SITE-GENERATIONS: generation-indexed acquisition sites; the G
+// hooks are in `legacy_loop_generations.rs`.
+mod loop_generations;
 pub mod indexed_collection;
 #[cfg(feature = "indirect-census")]
 pub mod indirect_census;
