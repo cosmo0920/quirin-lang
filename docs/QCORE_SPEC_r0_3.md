@@ -1875,9 +1875,10 @@ declaration, and the declaration read's `Q020` no longer refuses an uncalled
 `extern fn` stating one (the extern ABI table gained both), whose message now
 lists them. On `source.std-io.v1` itself a comparison effect keeps its `Q030`
 refusal; on the composed extern + io route the row's `partial_eq`/`partial_ord`
-are the extern model's permission. Whole-tree fixture freeze: only the two
-`usable_records/survey` FFI fixtures' `Q051` message moves (it now lists
-`f32, f64`).
+are the extern model's permission. Whole-tree fixture freeze: four existing
+files' messages move and nothing else — the two `usable_records/survey` FFI
+fixtures' `Q051` and `remaining-v04`'s P08/P10 declaration-read `Q020`, each
+now listing `f32, f64` — at the same code, exit and span.
 
 `W48-QR-CLOSURES` allocates no code and changes no existing program's
 diagnostic (the whole-tree fixture freeze). A closure's lifted worker meets

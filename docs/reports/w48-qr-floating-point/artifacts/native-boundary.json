@@ -1,0 +1,8 @@
+[
+  {"type": "f32", "build": "O0-ubsan", "cases": 4972, "arithmetic": 1764, "negation": 21, "comparisons": 2646, "to_integer_values": 122, "to_integer_typed_out_of_range": 88, "to_integer_fault_exit_86": 88, "float_to_float": 21, "integer_to_float": 100, "agreeing": 4884, "sanitizer_reports": 0},
+  {"type": "f32", "build": "O2", "cases": 4972, "arithmetic": 1764, "negation": 21, "comparisons": 2646, "to_integer_values": 122, "to_integer_typed_out_of_range": 88, "to_integer_fault_exit_86": 88, "float_to_float": 21, "integer_to_float": 100, "agreeing": 4884, "sanitizer_reports": 0},
+  {"type": "f32", "build": "O2-ubsan", "cases": 4972, "arithmetic": 1764, "negation": 21, "comparisons": 2646, "to_integer_values": 122, "to_integer_typed_out_of_range": 88, "to_integer_fault_exit_86": 88, "float_to_float": 21, "integer_to_float": 100, "agreeing": 4884, "sanitizer_reports": 0},
+  {"type": "f64", "build": "O0-ubsan", "cases": 4972, "arithmetic": 1764, "negation": 21, "comparisons": 2646, "to_integer_values": 113, "to_integer_typed_out_of_range": 97, "to_integer_fault_exit_86": 97, "float_to_float": 21, "integer_to_float": 100, "agreeing": 4875, "sanitizer_reports": 0},
+  {"type": "f64", "build": "O2", "cases": 4972, "arithmetic": 1764, "negation": 21, "comparisons": 2646, "to_integer_values": 113, "to_integer_typed_out_of_range": 97, "to_integer_fault_exit_86": 97, "float_to_float": 21, "integer_to_float": 100, "agreeing": 4875, "sanitizer_reports": 0},
+  {"type": "f64", "build": "O2-ubsan", "cases": 4972, "arithmetic": 1764, "negation": 21, "comparisons": 2646, "to_integer_values": 113, "to_integer_typed_out_of_range": 97, "to_integer_fault_exit_86": 97, "float_to_float": 21, "integer_to_float": 100, "agreeing": 4875, "sanitizer_reports": 0}
+]

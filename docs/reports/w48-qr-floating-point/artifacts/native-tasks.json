@@ -1,0 +1,4 @@
+[
+  {"type": "f32", "programs": 5, "workers_per_program": 49, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "runs": 15, "sanitizer_reports": 0},
+  {"type": "f64", "programs": 5, "workers_per_program": 49, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "runs": 15, "sanitizer_reports": 0}
+]

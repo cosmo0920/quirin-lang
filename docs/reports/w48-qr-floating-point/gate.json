@@ -1,0 +1,13 @@
+{
+  "note": "W48-QR-FLOATING-POINT card gate (base 2ef0f8b5), script private/w48-qr-floating-point/gate.sh of this worktree (each exit to a file, no step piped), logs private/w48-qr-floating-point/gate, one run at dabdc595: submodule (--init --recursive) 0; fmt 0; run_test_binaries.py 395 units, 408 summaries, 6,924 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20260930T093257Z-2213596/summary.json); clippy 0; both reevaluation probes 0; check_lean_audits.py 250 audits passed (249 + AuditFloatTypes.lean). providers/ is unchanged, so the provider gate is not due; the provider suite was run anyway: cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline --no-fail-fast 0 (129 passed, 0 failed, 1 ignored, 43 summaries). Matrix, docs index and Python were then run in that order after the records commit. Clang 21.1.8 recorded in this worktree. Corpus arbiter AFTER only (--jobs 8, release quirin-audit 1bfd0e8a built at dabdc595): resource-diagnostics.json 2fc3af8c..., 602 Safe / 10 Unsafe / 4,222 Unknown, byte-identical to the base archive; sidecars byte-identical. Exits in gate/.",
+  "workspace_tests": 6924,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 250,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
