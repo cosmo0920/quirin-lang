@@ -173,3 +173,27 @@ fn t_discriminates_atomic_from_volatile() {
         "atomic read-modify-write `__atomic_fetch_add` is not represented by the weak-memory model (CG28)"
     );
 }
+
+/// `_Atomic` operator forms in G: a simple assignment through a pointer is
+/// the plain store's custody effect (BEFORE: `unsupported assignment
+/// expression`); a compound assignment or increment is a read-modify-write,
+/// refused by the route's name (BEFORE: the older routes' refusals).
+#[test]
+fn g_routes_qualified_stores_and_names_qualified_rmw() {
+    if !clang_available() {
+        return;
+    }
+    assert!(g("void subject(_Atomic int *a) { *a = 2; }").safe());
+    assert!(g("void subject(_Atomic int *a, int v) { *a = v; }").safe());
+    let increment = "atomic read-modify-write `_Atomic increment or decrement` is not represented by the weak-memory model (CG28)";
+    let compound = "atomic read-modify-write `_Atomic compound assignment` is not represented by the weak-memory model (CG28)";
+    let run = g("void subject(_Atomic int *a) { (*a)++; }");
+    assert!(run.unknown() && run.refused(increment), "{run:?}");
+    let run = g("void subject(_Atomic int *a) { *a += 2; }");
+    assert!(run.unknown() && run.refused(compound), "{run:?}");
+    let run = g("_Atomic int counter; void subject(void) { counter++; }");
+    assert!(run.unknown() && run.refused(increment), "{run:?}");
+    // A store of a value the route does not read as data stays refused.
+    let run = g("void subject(_Atomic int *a) { *a = opaque(); }");
+    assert!(run.unknown(), "{run:?}");
+}

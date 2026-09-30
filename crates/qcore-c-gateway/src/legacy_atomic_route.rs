@@ -22,6 +22,13 @@
 //!   (read-modify-write, compare-exchange, fence, consume, an invalid or
 //!   unevaluated order, an unread operand shape) with the same writes: still
 //!   `Unknown`, never a neutral call.
+//! * **`_Atomic` statements.** A statement any route refused whose Clang node
+//!   is an `_Atomic` operator form at the top
+//!   ([`atomic_source_route::classify_qualified`]): a simple assignment
+//!   `*p = v` through a pointer object is the plain store's custody effect
+//!   (the typed reader's dereference and refused-write frame, read with the
+//!   value type); every other such store, and every compound assignment or
+//!   increment (a read-modify-write), is the route's named refusal.
 //! * **Returns.** A refused `return` whose value is one atomic builtin is
 //!   lowered the same way when the function's result is a scalar: a routed
 //!   load is its access then an exit that escapes nothing; any other atomic
@@ -39,6 +46,7 @@ use serde_json::{Value, json};
 use super::{LegacyInstruction, Parser, RefusedWrites, Statement, Token};
 use crate::atomic_source_route::{
     self, AtomicRouteRefusal, Operation, RoutedAtomic, atomic_node_name, classify_builtin,
+    classify_qualified,
 };
 use crate::typed_access_path::{StatementIndex, StatementPlan, is_pointer, record_row, strip};
 use crate::typed_c_ast::{children, kind};
@@ -49,6 +57,14 @@ const UNCONTRACTED: &str = "call to uncontracted function `";
 fn refused_atomic_builtin(description: &str) -> Option<&str> {
     let name = description.strip_prefix(UNCONTRACTED)?.strip_suffix('`')?;
     atomic_source_route::names_atomic_builtin(name).then_some(name)
+}
+
+fn strip_parens(mut node: &Value) -> &Value {
+    while kind(node) == "ParenExpr" {
+        let [child] = children(node) else { break };
+        node = child;
+    }
+    node
 }
 
 fn texts(tokens: &[Token]) -> Vec<&str> {
@@ -267,6 +283,48 @@ impl Parser<'_> {
         }
     }
 
+    /// The custody effect of one routed `_Atomic` simple assignment: the
+    /// plain store `*p = v` or `x = v` it is, read by the typed reader through
+    /// the lvalue with its value type (the reader refuses every `_Atomic`
+    /// type spelling, which is this route's own case).
+    fn lower_qualified_store(
+        &self,
+        index: &StatementIndex,
+        routed: &RoutedAtomic<'_>,
+        never_bound: &dyn Fn(&str) -> bool,
+    ) -> Result<Vec<LegacyInstruction>, AtomicRouteRefusal> {
+        let shape = || AtomicRouteRefusal::UnsupportedShape(routed.form.clone());
+        if routed.operation != Operation::Store
+            || routed.value.is_none_or(|value| !neutral_value(value))
+        {
+            return Err(shape());
+        }
+        let place = strip_parens(routed.object);
+        match kind(place) {
+            "UnaryOperator" if place["opcode"].as_str() == Some("*") => {
+                let [pointer] = children(place) else {
+                    return Err(shape());
+                };
+                let pointer = strip(pointer).ok_or_else(shape)?;
+                if kind(pointer) != "DeclRefExpr"
+                    || !matches!(
+                        pointer["referencedDecl"]["kind"].as_str(),
+                        Some("VarDecl" | "ParmVarDecl")
+                    )
+                    || !atomic_object_pointer(pointer)
+                {
+                    return Err(shape());
+                }
+                let mut dereference = place.clone();
+                dereference["type"] = json!({"qualType": routed.value_type});
+                let mut reader = index.reader(never_bound);
+                reader.path(&dereference, true, false).ok_or_else(shape)?;
+                Ok(vec![self.atomic_path_instruction(&reader.plan, true)])
+            }
+            _ => Err(shape()),
+        }
+    }
+
     /// Route one site: the access, then the loaded value's destination.
     fn lower_site<'n>(
         &self,
@@ -328,7 +386,7 @@ impl Parser<'_> {
         else {
             return None;
         };
-        refused_atomic_builtin(description)?;
+        let builtin = refused_atomic_builtin(description).is_some();
         let index = self.typed_positions_index().cloned()?;
         let wanted = texts(tokens);
         let node = Self::elaboration_node(&index, tokens.first()?.line, &wanted, &|node| {
@@ -346,9 +404,26 @@ impl Parser<'_> {
                     | "LabelStmt"
             )
         })?;
-        let site = site(node)?;
         let never_bound = |name: &str| self.joined_never_bound(name);
-        let outcome = self.lower_site(&index, &site, &never_bound);
+        let outcome = if builtin {
+            let site = site(node)?;
+            self.lower_site(&index, &site, &never_bound)
+        } else {
+            // An `_Atomic` store or read-modify-write statement another route
+            // refused (any refusal): the qualified form at the statement's top.
+            let bare = strip_parens(node);
+            if !matches!(
+                kind(bare),
+                "BinaryOperator" | "CompoundAssignOperator" | "UnaryOperator"
+            ) {
+                return None;
+            }
+            let answer = classify_qualified(bare)?;
+            answer.and_then(|routed| {
+                let instructions = self.lower_qualified_store(&index, &routed, &never_bound)?;
+                Ok((routed, instructions))
+            })
+        };
         self.record_atomic_route(
             "atomic-route-statement",
             line,
