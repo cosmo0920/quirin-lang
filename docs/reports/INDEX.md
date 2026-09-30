@@ -105,6 +105,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg14-aggregate-values-and-initializers](cg14-aggregate-values-and-initializers/README.md) | CG14-AGGREGATE-VALUES-AND-INITIALIZERS |
 
+| [cg15-storage-duration-and-volatile](cg15-storage-duration-and-volatile/README.md) | CG15-STORAGE-DURATION-AND-VOLATILE |
+
 | [cg19-atomic-source-route](cg19-atomic-source-route/README.md) | CG19-ATOMIC-SOURCE-ROUTE |
 
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |

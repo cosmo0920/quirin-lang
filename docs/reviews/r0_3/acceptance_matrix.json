@@ -195,7 +195,7 @@
   "ct_stage_names": 20,
   "ct_cells": 1000,
   "unverified_spec_items": 10,
-  "named_followups": 666
+  "named_followups": 665
  },
  "derivation": {
   "rule": "no count in a section this file marks `derived` is hand-copied from a status ledger; each is read from the manifest or validated run record named beside it. Sections marked `hand_maintained` are recorded analysis carried verbatim from the previous matrix, and `integrator_supplied` numbers name whether they were measured for this run or carried - see section_ownership.",
@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "TARGETED CHECK (user policy 2026-09-30: main moved with non-overlapping, already-gated commits) on integrate/w48-cg14 1846362a: main 60cb0895 (CG07 + W48-CALLEE-CLOSURE-R3) merged with CG14-AGGREGATE-VALUES-AND-INITIALIZERS' tip 533002d7. One code conflict: CG07's and CG14's last-refusal hooks at the end of expression_statement in legacy_c.rs, both kept, CG07's first (disjoint shapes: StmtExpr vs initializer lists and record copies); rule 11f placed before 11g. Logs private/int-cg14/targeted of the quirin-spec-cards-compass worktree: submodule 0; fmt 0; workspace clippy --locked 0; qcore-c-gateway tests 2186/0 passed/failed; qcore-core tests 1139/0 passed/failed; Lean audits 0; providers cargo check --locked 0; release quirin-audit build 0; corpus arbiter (--jobs 4) 0: 616 / 10 / 4,208, the same 8 Unknown -> Safe moves as the card's own measurement (LZ4_hash5, LZ4_isLittleEndian, LZ4_readLE16, XXH32_hashFromCanonical, XXH64_hashFromCanonical, XXH_isLittleEndian, XXH_readBE32, XXH_readBE64); 279 functions change against the pre-merge main (the card measured 275 on its base: 8 moves + 267 diagnostic-only), the 4 extra are diagnostic-only composition effects with CG07 and W48-CALLEE-CLOSURE-R3, no status move. The full run_test_binaries.py was NOT re-run on this merge: the card's gate ran it (7,046 passed, 0 failed).",
-  "workspace_tests": 7046,
+  "note": "TARGETED CHECK (user policy 2026-09-30: main moved with non-overlapping, already-gated commits) on integrate/w48-cg15 36693295: main fe9c5b48 (W48-CALLEE-CLOSURE-R3 and CG14 landed after the card's merged base b59aaae2) merged with CG15-STORAGE-DURATION-AND-VOLATILE's tip f4b24652; shared records resolved by hand. Logs private/int-cg15/targeted of the quirin-spec-cards-compass worktree: submodule 0; fmt 0; workspace clippy --locked 0; qcore-c-gateway tests first run 101 (2,198 passed, 1 failed): cg14_aggregate_values::an_initial_alias_is_refused, whose row `static struct S s = { 0 }; q_observe(&s);` CG14 left refused with the comment 'A static local is CG15's'; rule 11h decides it Safe as intended (static declaration no event, static address a borrowed actual), so the integrator moved the row into its own test a_static_local_initializer_is_decided_by_rule_11h asserting Safe (test-only composition fix); rerun fmt 0, qcore-c-gateway tests 2,200 passed, 0 failed, 7 ignored, gateway clippy 0; qcore-core tests 0; Lean audits 0; providers cargo check --locked 0; release quirin-audit build 0; corpus arbiter (--jobs 4) 0: 623 / 10 / 4,201, exactly CG15's 7 Unknown -> Safe moves over CG14's 616 (LZ4F_getErrorName, five rd_kafka_*_name, rd_kafka_broker_name) and 88 changed functions (7 moves + 81 diagnostic-only, as the card measured). The full run_test_binaries.py was NOT re-run on this merge: the card's gate ran it (7,057 passed, 1 failed on the constraint-16 cycle20 timing row, passed 20/20 alone).",
+  "workspace_tests": 7058,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 257,
+  "lean_audits": 258,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6981,6 +6981,7 @@
    "AuditStdIo.lean",
    "AuditStdSocket.lean",
    "AuditStdString.lean",
+   "AuditStorageDuration.lean",
    "AuditStringConcat.lean",
    "AuditStringSliceIo.lean",
    "AuditSubObjectStore.lean",
@@ -7023,7 +7024,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg14-aggregate-values-and-initializers/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg15-storage-duration-and-volatile/integration/gate.json)"
  },
  "named_followups": [
   {
@@ -8088,13 +8089,6 @@
    "why": "Card SCALAR-ROUTE-EXIT-EDGE (wave 37) restricted the EXIT direction of refine_pointer_null's Infeasible arm and deliberately left the sibling BACK edge alone. A positively spelled loop header - `while (flag)` with a known-null binding, `while (p)` with a known-non-null one - still loses its BODY edge, decided from a modelled value, on exactly the two premises the card found unverifiable: the volatile witness applies unchanged (a volatile zero flag with `while (flag) { q_free(p); q_free(p); }` was measured Safe, swallowing a double release INSIDE the body), and constraint 10a's Sparing completeness applies unchanged. It is not folded in because deleting a body edge is what C-GATEWAY-CONSTANT-DO-WHILE proved for a literal token, and CONSTANT-DO-WHILE-OTHER-CONSTANTS gives the ground for the mirror case: the other direction must not be folded into this rule. Measured corpus reach today: 0 of 201 loop-header BranchOnNull nodes delete a body edge. DISCHARGE: a card that either proves the back-edge deletion sound under a premise it states and the analyzer can check, or restricts it, in both cases with its own measured re-pin and a test driving a volatile flag and a spared body write."
   },
   {
-   "id": "GATEWAY-VOLATILE-PREMISE",
-   "recorded_by": "SCALAR-ROUTE-EXIT-EDGE",
-   "source": "docs/reports/scalar-route-exit-edge/README.md",
-   "title": "The gateway's abstract state assumes no asynchronous modification, and that premise is written down nowhere",
-   "why": "Card SCALAR-ROUTE-EXIT-EDGE (wave 37) measured a value-derived must-fact in legacy_c.rs to be FALSE for a volatile object: C11 5.1.2.3 lets such an object be modified by means outside the program, so `while (!flag) { }` on a volatile flag terminates in well-defined C while the abstract state still calls flag null. The reduced importer does not read the volatile qualifier, so every value-derived must-fact in the file inherits this premise silently - it is a global premise of the same kind as AOM-POISON-NO-UB (constraint 10a), which IS recorded, where this one is not. The card's restriction removes the premise's LOAD at a loop header's exit edge and nowhere else. DISCHARGE: a census of the places in legacy_c.rs where a value-derived must-fact decides an admission or a CFG edge, followed either by recording the premise as a standing constraint beside 5a and 10a with that census as its evidence, or by giving the importer the qualifier so the premise can be checked rather than assumed."
-  },
-  {
    "id": "SCALAR-ROUTE-BRANCH-PRUNING-UNPROVED",
    "recorded_by": "SCALAR-ROUTE-EXIT-EDGE",
    "source": "docs/reports/scalar-route-exit-edge/README.md",
@@ -8637,13 +8631,6 @@
    "id": "CT41-BOUNDS-ARE-CALLER-DECLARED-PREMISES",
    "title": "CT41's fixture pins the one-publisher/one-successful-consumer bounds; nothing establishes them",
    "why": "The route admits exactly `publisher_invocations: 1` and `successful_consumer_invocations: 1`, and card CT41-SYNC-MODEL states in its own words that these are caller-declared premises: the AST proves the static declarations, source order and absence of other visible accesses and entry references, and explicitly does not prove dynamic call counts. The landed fixture records the pair in `expected.json` and the landed runner asserts both on the issued certificate, so the premise is visible in the case record rather than only in the runner -- but pinning a premise is not discharging it. Re-verified against main: the case's own refusal does not depend on them (the landed route checks the full publication shape and access inventory first, then attributes the qualifier refusal, and neither step reads an invocation count), so the exposure is entirely on the ADMITTED control, whose happens-before claim is conditional on a bound nothing checks. Discharge: derive the invocation bounds from a whole-program fact, or state the conditionality in any text that cites the control's certificate. Do not let the certificate be quoted without its bounds.",
-   "source": "docs/reports/ct41-map/README.md",
-   "recorded_by": "CT41-MAP"
-  },
-  {
-   "id": "CT41-VOLATILE-COMPLEMENT-UNMEASURED",
-   "title": "Nothing in this corpus says what volatile IS for; CT41 says only what it is not",
-   "why": "CT41's mapping establishes that a `volatile` completion flag buys no synchronization proof. The complement -- whether a use of `volatile` for its actual C11 purposes (a memory-mapped device register, an object accessed from a signal handler, an object live across `setjmp`) is expressible, judged or even admitted anywhere in this toolchain -- is measured nowhere, by either CT41 card or any other. The legacy resource projection derives no fact about it; the atomic-publication route refuses every volatile flag by construction, and since the landed change does so only after validating the full publication shape, it says nothing at all about a volatile object that is not a completion flag; the typed_source importer refuses the qualifier wholesale (see CT41-TYPED-SOURCE-QUALIFIER-ARM-STILL-UNDISCRIMINATING). No CT case names it, so no row is missing and nothing is overstated -- this is registered so that `CT41 is mapped` and `50/50` are not read as `volatile is handled`. Discharge: measure the three complement shapes through whatever route would see them and record what each answers, or record that the corpus deliberately asks nothing about them.",
    "source": "docs/reports/ct41-map/README.md",
    "recorded_by": "CT41-MAP"
   },
@@ -10961,13 +10948,6 @@
    "recorded_by": "CLANG-GAP-CARD-QUEUE"
   },
   {
-   "id": "CG15-STORAGE-DURATION-AND-VOLATILE",
-   "title": "Candidate implementation card: Global/static/thread-local identity and volatile access effects",
-   "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M24 M23; routes G, T. Effort: High. Prerequisite: CG10. Absorbs: GATEWAY-VOLATILE-PREMISE, CT41-VOLATILE-COMPLEMENT-UNMEASURED. Scope: Storage-duration identity and lifetime (T rejects them today); volatile accesses as separate observable effects with count and order, apart from custody. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies. MEASURED by CG00-CLANG-GAP-BASELINE (corpus ae17152b, upper bounds): 133 unsupported corpus leaves over 68 Unknown functions; frees 7 alone (7 with no unknown_alias leaf) and 6 with exactly one other card (top partners CG10 2, CG13 1, CG08 1); phase 1-3 rank 12 by functions freed. BEFORE controls: crates/qcore-c-gateway/tests/clang_gap_phase*.rs; frozen function list and predicted verdicts: docs/reports/cg00-clang-gap-baseline/predictions/CG15.md. Absorbed follow-ups' registered sizes carried unchanged (not re-run under their own definitions).",
-   "source": "docs/plans/clang-gap-cards/README.md",
-   "recorded_by": "CLANG-GAP-CARD-QUEUE"
-  },
-  {
    "id": "CG16-INDEX-AND-OFFSET-EXTENTS",
    "title": "Candidate implementation card: Connect computed indices and pointer arithmetic to extent obligations",
    "why": "Candidate implementation card from the supplied Quirin-Clang gap analysis (declared input, static, no Rust run; archived under docs/reviews/clang-gap-2026-09-29/supplied/). Not dispatched. Entries: M14 M15 M16 M17; core connection. Effort: High. Prerequisite: CG10; CG20 for ranges. Absorbs: W43-INDEX-TRAVERSAL-STEP-COMPUTED, W43-INDEX-TRAVERSAL-COMPUTED-POINTER-ACCESS, W46-ROUTING-QUERY-EXTENTS. Scope: 0 <= i < count against extent contracts (indexed_collection intervals are release obligations, not bounds, Q25); byte offset = element size x index; same-object obligations for pointer difference/ordering; one-past formation separated from dereference. DISCHARGE: the card's BEFORE reproduces the cited refusals (a non-reproducing claim is a correction to the input), a frozen PREDICTION.md, AFTER with every moving function attributed, absorbed follow-ups closed or re-registered with re-measured sizes, Rust refusal controls and matching audited Lean with no placeholders or project axioms; the queue's §4 acceptance applies.",
@@ -11617,6 +11597,20 @@
    "why": "Measured by CG14-AGGREGATE-VALUES-AND-INITIALIZERS on its AFTER corpus run (scripts/residuals.py): a refused declaration is read by rule 11f only as one automatic local with one initializer. 96 statements on 84 functions declare several objects, 102 on 85 are not automatic (static or thread storage: CG15-STORAGE-DURATION-AND-VOLATILE's), and 93 on 70 carry no single initializer (not every one of them is an aggregate: the checks precede the type's). DISCHARGE: per-declarator lowering with each declarator read by the rule, and CG15's storage-duration identity for the static ones, measured.",
    "source": "docs/reports/cg14-aggregate-values-and-initializers/README.md",
    "recorded_by": "CG14-AGGREGATE-VALUES-AND-INITIALIZERS"
+  },
+  {
+   "id": "CG15-STATIC-TABLE-RESIDUALS",
+   "title": "Reads and writes of static-duration tables and buffers the typed routes still refuse: 52 corpus leaves on 17 Unknown functions",
+   "why": "Measured by CG15-STORAGE-DURATION-AND-VOLATILE (gateway rule 11h) on its AFTER corpus run (base c374de96, scripts/population.py with CG00's attribution): of M24's 132 leaves on 67 Unknown functions, 52 on 17 remain, all path leaves (every static declaration is now no event). By reading: 29 read an element of an untagged static table (`static const struct { ... } t[]`), which the typed place refuses as an untagged aggregate, mostly in loop conditions with increments (unit tests of rdbuf, rdstring, rdkafka_msg, rd_kafka_get_legacy_ApiVersions); 3 write through or step a static formatter buffer (`*ret[reti] = ...`, `ret[reti] + of`, a memcpy destination; rd_kafka_features2str), pointer arithmetic being CG16's; 18 sit in debug-macro actuals, sub-object stores and nested calls whose other refusal the static root hid. Two functions are freed by this class together with CG07. Route T refuses every static-duration local and global reference by name: no typed-source consumer decides a lifetime longer than the frame. DISCHARGE: untagged-aggregate element reads in the typed place (or a tag the reader synthesises from Clang's RecordDecl id), and static-buffer stores and offsets with CG16's extents, each measured with Lean parity; a T consumer that decides static lifetime, if one is wanted.",
+   "source": "docs/reports/cg15-storage-duration-and-volatile/README.md",
+   "recorded_by": "CG15-STORAGE-DURATION-AND-VOLATILE"
+  },
+  {
+   "id": "CG15-STATIC-REGISTRY-CONTRACT",
+   "title": "A tracked identity stored into static storage is refused, never discharged: no contract states a registry with a release protocol (1 corpus leaf)",
+   "why": "Recorded by CG15-STORAGE-DURATION-AND-VOLATILE (gateway rule 11h, rule 10 unchanged): a pointer stored into a global, a file-scope static or a function-local static escapes the frame's custody to no named party, so it is refused (never Safe, never a per-call leak); a function-local static holding an allocation across calls is this form. The contract model (crates/qcore-schemas/src/contract.rs, Q29) has no registry, static owner or release-protocol vocabulary, so nothing can decide it. Measured on the card's AFTER corpus run: 1 leaf, rdunittest_fetcher.c::unittest_fetcher_share_filter_forward storing a created handle into the file-scope `ut_mock_rk`. DISCHARGE: a product decision on a registry contract form (which static object, which release protocol, where the obligation is discharged), its checker and Lean model, and a measured re-pin; or a recorded decision that static publication stays refused.",
+   "source": "docs/reports/cg15-storage-duration-and-volatile/README.md",
+   "recorded_by": "CG15-STORAGE-DURATION-AND-VOLATILE"
   },
   {
    "id": "CG19-ENUMERATOR-ORDER-UNEVALUATED-IN-G-AND-T",

@@ -1,0 +1,52 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 191,
+   "Safe": 41,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 190,
+   "Safe": 42,
+   "Unsafe": 2
+  }
+ },
+ "moves": [
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_adaptive_flush_interval",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: braced initializer, expression, or declaration is not modeled": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 1
+ },
+ "same_status_functions_with_changed_diagnostics": 2,
+ "changed": [
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_adaptive_flush_init",
+   "status": "Unknown",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": -4
+   }
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "flb_engine_adaptive_flush_update",
+   "status": "Unknown",
+   "leaf_delta": {
+    "unsupported: indirect memory access is outside the resource projection": -1
+   }
+  }
+ ],
+ "leaf_delta": {
+  "unknown_alias: unresolved resource identity": -4,
+  "unsupported: braced initializer, expression, or declaration is not modeled": -1,
+  "unsupported: indirect memory access is outside the resource projection": -1
+ }
+}
