@@ -757,6 +757,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/sys_stat.qv", "umask", 4),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
     ("libc/sys_stat.qv", "stat", 5),
+    // Card W48-CALLEE-CLOSURE-R3: `stat`'s neutral statement for `lstat`
+    // (2 + 1 per parameter).
+    ("libc/sys_stat.qv", "lstat", 5),
     ("libc/threads.qv", "mtx_lock", 4),
     ("libc/threads.qv", "mtx_unlock", 4),
     ("libc/threads.qv", "cnd_wait", 5),
@@ -781,6 +784,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: neutral (2 + 1 per parameter).
     ("libc/time.qv", "strftime", 7),
     ("libc/time.qv", "gettimeofday", 5),
+    // Card W48-CALLEE-CLOSURE-R3: `clock_gettime`, neutral (2 + 1 per
+    // parameter).
+    ("libc/time.qv", "clock_gettime", 5),
     ("libc/unistd.qv", "sleep", 4),
     ("libc/unistd.qv", "usleep", 4),
     ("libc/unistd.qv", "sysconf", 4),

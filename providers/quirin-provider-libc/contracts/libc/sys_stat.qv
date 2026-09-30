@@ -81,3 +81,27 @@ contract {
     ensures normal resource_borrowed(buf);
     ensures normal resource_return_none();
 };
+
+// ## Card W48-CALLEE-CLOSURE-R3: `lstat`
+//
+//   extern int lstat (const char *__restrict __file,
+//                     struct stat *__restrict __buf) __THROW __nonnull ((1, 2));
+//
+// `lstat` is `stat` that does not follow a final symbolic link: it reads the
+// path and fills the caller's `struct stat`, a value write through a borrowed
+// pointer into caller storage. Nothing is allocated, freed or retained, and
+// the `int` result is a scalar: `resource_borrowed` on both parameters,
+// `resource_return_none()`, the statement `stat` above makes. TRUSTED
+// ASSUMPTION. Ranked by the card's callee closure: the Fluent Bit tail-pause
+// slice's `tail_file_lstat` (`plugins/in_tail/tail_file.c`) is blocked by
+// this call alone. Nothing here says anything about the file system,
+// symbolic links, permissions or `errno`.
+
+extern fn lstat(file: ptr<const, u8>, buf: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_return_none();
+};
