@@ -198,6 +198,49 @@ would refuse the module rather than overflow:
 [INFO] true
 ```
 
+## Floating point
+
+[floating_point.qr](floating_point.qr) uses `f32` and `f64`, IEEE 754
+binary32 and binary64 (card `W48-QR-FLOATING-POINT`). A float literal is
+written with a point or an exponent (`2.5`, `1.5e1`), takes its context's
+type (`f64` when nothing gives one) and is rounded once, at that type; an
+integer literal is never a float. Arithmetic (`+ - * /`, unary `-`) never
+faults — `0.0 / 0.0` is a NaN and `-1.0 / 0.0` is `-inf` — and a comparison
+is partial, so it needs its effect in the row: `partial_eq` for `==`/`!=`,
+`partial_ord` for the orderings, never inferred, and declared by every caller
+of a function that compares (here `main` declares `below`'s `partial_ord`). A
+NaN is not equal to itself. `as` converts: an integer or `f64` to `f32` rounds
+to nearest, ties to even (`9007199254740993` becomes `9007199254740992`), and
+a float to an integer truncates toward zero, refused when it does not fit.
+`dec` prints the shortest decimal that reads back to the same value, `hex`
+C's hexadecimal form, `nan`, `inf`, `-inf` and `-0` as written:
+
+<!-- transcript: floating_point stdout -->
+```text
+6.25
+0x1.9p+2
+0.1
+0.10000000149011612
+nan
+-inf
+-0
+false
+true
+```
+
+<!-- transcript: floating_point stderr -->
+```text
+[INFO] 6
+[INFO] 9007199254740992
+```
+
+The result holds under a named assumption the check prints: IEEE 754
+binary32/binary64 evaluated at their own type, round-to-nearest-even,
+subnormals kept, no fast-math and no contraction. The emitted C asserts the
+formats and `FLT_EVAL_METHOD == 0` when it is compiled; build it with
+`-ffp-contract=off`. The limitations are the specification's
+[§L14.7](../../docs/QCORE_SPEC_r0_3.md#l147-floating-point-and-its-limitations).
+
 See [the exact grammar](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02s-scalar-functions-and-explicit-output-sourcescalar-callsv1)
 and [implementation evidence](../../docs/reports/source-scalar-calls-v1/README.md);
 the fixed-width types are [§G02t](../../docs/QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g02t-fixed-width-scalar-types)
@@ -205,4 +248,5 @@ and [their evidence](../../docs/reports/w48-qr-scalar-types/README.md); the type
 error is [its evidence](../../docs/reports/w48-qr-scalar-types-r2/README.md), and
 the typed record fields are [card R3's](../../docs/reports/w48-qr-scalar-types-r3/README.md), and the
 typed task values are [card R4's](../../docs/reports/w48-qr-scalar-types-r4/README.md), and the
-typed loops and buffer-route arithmetic are [card R5's](../../docs/reports/w48-qr-scalar-types-r5/README.md).
+typed loops and buffer-route arithmetic are [card R5's](../../docs/reports/w48-qr-scalar-types-r5/README.md);
+floating point is [its evidence](../../docs/reports/w48-qr-floating-point/README.md).

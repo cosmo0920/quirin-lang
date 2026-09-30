@@ -1329,9 +1329,17 @@ impl Elab<'_> {
                 if want != Type::Scalar(*to) {
                     return Err(self.mismatch(want, Type::Scalar(*to)));
                 }
-                let from = self
-                    .synth(x, depth + 1)?
-                    .unwrap_or_else(|| literal_default(x));
+                // Card `W48-QR-FLOATING-POINT`: a literal-only float operand
+                // converted to a float type is typed at that type, so a float
+                // literal is rounded once, directly at the type it becomes.
+                let from = self.synth(x, depth + 1)?.unwrap_or_else(|| {
+                    let default = literal_default(x);
+                    if to.is_float() && default.numeric().is_some_and(ScalarType::is_float) {
+                        Type::Scalar(*to)
+                    } else {
+                        default
+                    }
+                });
                 let (Some(from_ty), true) = (from.numeric(), to.is_integer() || to.is_float())
                 else {
                     return Err(self.bad(

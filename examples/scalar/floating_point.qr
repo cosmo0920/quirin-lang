@@ -1,0 +1,54 @@
+// IEEE floating point on the scalar-call route (card W48-QR-FLOATING-POINT).
+//
+// `f32` and `f64` are IEEE 754 binary32/binary64 values. Arithmetic never
+// faults: NaN and the infinities are ordinary values. A float comparison is
+// partial, so it needs an effect the row declares — `partial_eq` for `==`/`!=`
+// and `partial_ord` for the orderings — and a caller declares every comparison
+// effect its callees derive. Conversions are written with `as`: an integer or
+// an `f64` becomes an `f32` rounded to nearest (ties to even), and a float
+// becomes an integer truncated toward zero, refused (or, at run time, raised as
+// `ArithmeticError::OutOfRange`) when it does not fit.
+#import std.fmt;
+#import std.io;
+#import std.logger;
+
+type Sample { value: f64, weight: f32 }
+
+fn mean(a: Sample, b: Sample) -> f64 {
+    let total = a.value + b.value;
+    return total / 2.0;
+}
+
+fn below(x: f64, limit: f64) -> bool effects { partial_ord } {
+    return x < limit;
+}
+
+fn main() -> unit effects { io, partial_eq, partial_ord } {
+    let a = Sample { value: 1.5e1, weight: 0.25 };
+    let b = Sample { value: -2.5, weight: 0.75 };
+    let m = mean(a, b);
+    print dec m;
+    print hex m;
+    let tenth: f32 = 0.1;
+    print dec tenth;
+    let wide = tenth as f64;
+    print dec wide;
+    let zero = 0.0;
+    let nothing = zero / zero;
+    let unbounded = -1.0 / zero;
+    let negative_zero = -zero;
+    print dec nothing;
+    print dec unbounded;
+    print dec negative_zero;
+    let same = nothing == nothing;
+    print dec same;
+    let ok = below(m, 10.0);
+    print dec ok;
+    let whole = m as i32;
+    log info dec whole;
+    let big: u64 = 9007199254740993;
+    let rounded = big as f64;
+    log info dec rounded;
+    flush;
+    return;
+}

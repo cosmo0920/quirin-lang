@@ -471,6 +471,12 @@ fn literals_are_exact_rounded_once_and_typed_by_context() {
         "{HEADER}fn main() -> unit {{ let a: f32 = 1.00000005960464477539062500000001; print hex a; return; }}"
     ));
     assert_eq!(lines(&m), ["out: 0x1.000002p+0"]);
+    // A literal converted to a float type is read at that type too, never
+    // through `f64` first.
+    let m = admitted(&format!(
+        "{HEADER}fn main() -> unit {{ let a = 1.00000005960464477539062500000001 as f32; let b = -16777217.0 as f32; print hex a; print dec b; return; }}"
+    ));
+    assert_eq!(lines(&m), ["out: 0x1.000002p+0", "out: -16777216"]);
     // Negative controls: not a float, overflow, underflow.
     for (body, needle) in [
         // `1.5e` is the literal `1.5` and the name `e`: no digit follows the
