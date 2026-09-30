@@ -67,9 +67,14 @@ fn refused(source: &str, needle: &str) {
 fn reference(module: &CompiledModule) -> (String, String) {
     let script = TaskExecutionScript::default();
     if let Some(composed) = module.checked.as_composed_tasks() {
-        execute_with_source_lines(composed.tasks(), &script, &BTreeMap::new(), composed.sites())
-            .unwrap()
-            .projections()
+        execute_with_source_lines(
+            composed.tasks(),
+            &script,
+            &BTreeMap::new(),
+            composed.sites(),
+        )
+        .unwrap()
+        .projections()
     } else {
         let tasks = module.checked.as_scoped_tasks().expect("a task module");
         (
@@ -100,14 +105,29 @@ fn main() -> i32 effects {{ {ENTRY}, io }} {{
 "
     );
     let module = admitted(&source);
-    assert_eq!(module.execution_profile, SourceExecutionProfile::ComposedStdIoTasksV1);
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::ComposedStdIoTasksV1
+    );
     let (out, err) = reference(&module);
     assert!(err.is_empty());
     let narrowed = sf::of_f32(-0.1f64 as f32);
     assert!(out.contains("1.5\n"), "{out}");
-    assert!(out.contains(&format!("{}\n", sf::render_hex(ScalarType::F32, narrowed).unwrap())), "{out}");
-    assert!(out.contains(&format!("QCORE_TASK_RESULT 1 F64 {}\n", sf::of_f64(1.5))), "{out}");
-    assert!(out.contains(&format!("QCORE_TASK_RESULT 2 F32 {narrowed}\n")), "{out}");
+    assert!(
+        out.contains(&format!(
+            "{}\n",
+            sf::render_hex(ScalarType::F32, narrowed).unwrap()
+        )),
+        "{out}"
+    );
+    assert!(
+        out.contains(&format!("QCORE_TASK_RESULT 1 F64 {}\n", sf::of_f64(1.5))),
+        "{out}"
+    );
+    assert!(
+        out.contains(&format!("QCORE_TASK_RESULT 2 F32 {narrowed}\n")),
+        "{out}"
+    );
     assert_eq!(module.float_assumption(), Some(sf::ASSUMPTION));
 }
 
@@ -154,12 +174,30 @@ fn main() -> i32 effects {{ {ENTRY}, io }} {{
 #[test]
 fn negative_controls_refuse() {
     for (worker, needle) in [
-        ("fn w(x: f64) -> bool { let b = x < 1.0; return b; }", "needs the `partial_ord` effect"),
-        ("fn w(x: f64) -> bool effects { partial_ord } { let b = x == 1.0; return b; }", "needs the `partial_eq` effect"),
-        ("fn w(x: f64) -> f64 { let y: f32 = 1.0; let z = x + y; return z; }", "the operands are a `f64` and a `f32`"),
-        ("fn w(x: f64) -> f64 { let y: f64 = 1; return y; }", "an integer literal is not a `f64`"),
-        ("fn w(x: f64) -> i32 { let y = x as i32; return y; }", "`throws<ArithmeticError>`"),
-        ("fn w(x: f64) -> f64 { let y = x % 2.0; return y; }", "`%` is an integer operation"),
+        (
+            "fn w(x: f64) -> bool { let b = x < 1.0; return b; }",
+            "needs the `partial_ord` effect",
+        ),
+        (
+            "fn w(x: f64) -> bool effects { partial_ord } { let b = x == 1.0; return b; }",
+            "needs the `partial_eq` effect",
+        ),
+        (
+            "fn w(x: f64) -> f64 { let y: f32 = 1.0; let z = x + y; return z; }",
+            "the operands are a `f64` and a `f32`",
+        ),
+        (
+            "fn w(x: f64) -> f64 { let y: f64 = 1; return y; }",
+            "an integer literal is not a `f64`",
+        ),
+        (
+            "fn w(x: f64) -> i32 { let y = x as i32; return y; }",
+            "`throws<ArithmeticError>`",
+        ),
+        (
+            "fn w(x: f64) -> f64 { let y = x % 2.0; return y; }",
+            "`%` is an integer operation",
+        ),
     ] {
         refused(
             &format!(
@@ -170,7 +208,9 @@ fn negative_controls_refuse() {
     }
     // A float payload stays refused: `Buffer<f64>` is not a payload type.
     refused(
-        &format!("{IMPORTS}fn w(b: own<Buffer<f64>> use one) -> own<Buffer<f64>> {{ return move b; }}\nfn main() -> i32 effects {{ {ENTRY} }} {{ return 0; }}\n"),
+        &format!(
+            "{IMPORTS}fn w(b: own<Buffer<f64>> use one) -> own<Buffer<f64>> {{ return move b; }}\nfn main() -> i32 effects {{ {ENTRY} }} {{ return 0; }}\n"
+        ),
         "",
     );
 }
@@ -234,7 +274,15 @@ mod native {
         let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
         let mut command = Command::new(compiler);
         command
-            .args(["-std=c11", "-pthread", "-Wall", "-Wextra", "-Werror", "-pedantic", "-ffp-contract=off"])
+            .args([
+                "-std=c11",
+                "-pthread",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-ffp-contract=off",
+            ])
             .args(flags);
         if cfg!(target_os = "macos") {
             command.arg("-I").arg(concat!(
@@ -270,7 +318,15 @@ mod native {
 #[cfg(unix)]
 fn values(ty: ScalarType) -> Vec<i128> {
     if ty == ScalarType::F32 {
-        vec![0x0000_0000, 0x8000_0000, 0x0000_0001, 0xBF80_0000, 0x7F7F_FFFF, 0x7F80_0000, 0x7FC0_0000]
+        vec![
+            0x0000_0000,
+            0x8000_0000,
+            0x0000_0001,
+            0xBF80_0000,
+            0x7F7F_FFFF,
+            0x7F80_0000,
+            0x7FC0_0000,
+        ]
     } else {
         vec![
             0,
@@ -288,7 +344,9 @@ fn values(ty: ScalarType) -> Vec<i128> {
 /// quotients for NaN and inf, and an `f32` read from its own literal.
 #[cfg(unix)]
 fn bindings(ty: ScalarType) -> String {
-    let mut text = String::from("    let q_zero = 0.0;\n    let q_one = 1.0;\n    let q_nan = q_zero / q_zero;\n    let q_inf = q_one / q_zero;\n");
+    let mut text = String::from(
+        "    let q_zero = 0.0;\n    let q_one = 1.0;\n    let q_nan = q_zero / q_zero;\n    let q_inf = q_one / q_zero;\n",
+    );
     for (index, bits) in values(ty).into_iter().enumerate() {
         let wide = if ty == ScalarType::F32 {
             f64::from(f32::from_bits(bits as u32))
@@ -296,12 +354,24 @@ fn bindings(ty: ScalarType) -> String {
             f64::from_bits(bits as u64)
         };
         let line = if wide.is_nan() {
-            if ty == ScalarType::F32 { format!("    let v{index} = q_nan as f32;\n") } else { format!("    let v{index} = q_nan as f64;\n") }
+            if ty == ScalarType::F32 {
+                format!("    let v{index} = q_nan as f32;\n")
+            } else {
+                format!("    let v{index} = q_nan as f64;\n")
+            }
         } else if wide.is_infinite() {
-            if ty == ScalarType::F32 { format!("    let v{index} = q_inf as f32;\n") } else { format!("    let v{index} = q_inf as f64;\n") }
+            if ty == ScalarType::F32 {
+                format!("    let v{index} = q_inf as f32;\n")
+            } else {
+                format!("    let v{index} = q_inf as f64;\n")
+            }
         } else {
             let dec = sf::render_dec(ty, bits).unwrap();
-            let literal = if dec.trim_start_matches('-').contains(['.', 'e']) { dec } else { format!("{dec}.0") };
+            let literal = if dec.trim_start_matches('-').contains(['.', 'e']) {
+                dec
+            } else {
+                format!("{dec}.0")
+            };
             format!("    let v{index}: {ty} = {literal};\n")
         };
         text.push_str(&line);
@@ -470,13 +540,22 @@ fn main() -> i32 effects { alloc, throws<AllocError>, throws<SpawnError>, spawn,
 }
 ";
     let module = admitted(source);
-    assert_eq!(module.execution_profile, SourceExecutionProfile::ComposedEpochTasksV1);
+    assert_eq!(
+        module.execution_profile,
+        SourceExecutionProfile::ComposedEpochTasksV1
+    );
     assert_eq!(module.float_assumption(), Some(sf::ASSUMPTION));
-    let composed = module.checked.as_composed_epoch_tasks().expect("the epoch route");
+    let composed = module
+        .checked
+        .as_composed_epoch_tasks()
+        .expect("the epoch route");
     let trace = render_task_observation(
         &execute_task_module(&composed.tasks, &TaskExecutionScript::default()).unwrap(),
     );
-    assert!(trace.contains(&format!("F64 {}\n", sf::of_f64(-0.0))), "{trace}");
+    assert!(
+        trace.contains(&format!("F64 {}\n", sf::of_f64(-0.0))),
+        "{trace}"
+    );
     use qcore_compiler::diagnostic_log_c_emit as d;
     let c = format!(
         "{}\n{}\n{}",

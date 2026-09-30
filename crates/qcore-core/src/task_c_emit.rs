@@ -151,7 +151,6 @@ fn float_result_log(ty: st::ScalarType, field: &str, indent: &str) -> String {
     )
 }
 
-
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskCMapping {
     pub generated_start_line: usize,
@@ -1162,8 +1161,10 @@ pub fn emit_task_c11_with_source_lines(
                 if let crate::std_io::StdIoEvent::Print { rendering, .. }
                 | crate::std_io::StdIoEvent::Log { rendering, .. } = &site.event
                     && let Some(slot) = site.operand
-                    && let Some(ScalarType::Fixed(ty)) =
-                        checked.function_slot_types(site.function).get(&slot).copied()
+                    && let Some(ScalarType::Fixed(ty)) = checked
+                        .function_slot_types(site.function)
+                        .get(&slot)
+                        .copied()
                     && ty.is_float()
                 {
                     renderers.insert((*rendering == crate::std_io::Rendering::Hex, ty));

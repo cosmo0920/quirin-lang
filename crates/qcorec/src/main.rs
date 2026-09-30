@@ -473,7 +473,10 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
     }
     println!(
         "under {} declared assumption(s):",
-        assumptions.len() + usize::from(target.is_some()) + ffi.len() + usize::from(float.is_some())
+        assumptions.len()
+            + usize::from(target.is_some())
+            + ffi.len()
+            + usize::from(float.is_some())
     );
     for assumption in ffi {
         println!("  - {assumption}");

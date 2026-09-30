@@ -40,7 +40,8 @@ impl<V> ValueExpressionSyntax<V> {
     /// Whether an operand is a float literal (card `W48-QR-FLOATING-POINT`),
     /// which only [`parse_value_expression_admitting_floats`] reads.
     pub fn has_float_literal(&self) -> bool {
-        let float = |operand: &ValueOperandSyntax<V>| matches!(operand, ValueOperandSyntax::Float(_));
+        let float =
+            |operand: &ValueOperandSyntax<V>| matches!(operand, ValueOperandSyntax::Float(_));
         match self {
             Self::Binary(_, a, b) | Self::Compare(_, a, b) => float(a) || float(b),
             Self::Negate(a) | Self::Convert(a, _) => float(a),

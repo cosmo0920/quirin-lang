@@ -1758,8 +1758,7 @@ impl<'a> Builder<'a> {
         // literal at a float type is refused by the literal check below.
         if let [.., last] = tokens
             && let TokenKind::Float(text) = &last.kind
-            && (tokens.len() == 1
-                || (tokens.len() == 2 && symbol(tokens.first(), Symbol::Minus)))
+            && (tokens.len() == 1 || (tokens.len() == 2 && symbol(tokens.first(), Symbol::Minus)))
         {
             let negative = tokens.len() == 2;
             return Some(if !ty.is_float() {
@@ -1878,19 +1877,19 @@ impl<'a> Builder<'a> {
             ..Decider::default()
         }
         .decide(operation, self.raises_arithmetic(), self.target)
-            .map_err(|refusal| match refusal {
-                ValueRefusal::NeedsPermission { ty } => failure(
-                    span,
-                    SemanticPass::TypedErrors,
-                    format!(
-                        "this `{ty}` operation reads a value known only at run time and can \
+        .map_err(|refusal| match refusal {
+            ValueRefusal::NeedsPermission { ty } => failure(
+                span,
+                SemanticPass::TypedErrors,
+                format!(
+                    "this `{ty}` operation reads a value known only at run time and can \
                          fault; the function's row must declare `throws<ArithmeticError>` for \
                          the fault to be raised as a typed error, and without it the operation \
                          is refused"
-                    ),
                 ),
-                other => failure(span, SemanticPass::OrdinaryTypes, other.to_string()),
-            })?;
+            ),
+            other => failure(span, SemanticPass::OrdinaryTypes, other.to_string()),
+        })?;
         // A literal takes the operation's own type, as the decision typed it.
         let lower_operand = |operand: Operand<(SymbolId, Scalar)>| match operand {
             Operand::Value((symbol, _)) => TaskValueOperand::Slot(symbol.0 as usize),

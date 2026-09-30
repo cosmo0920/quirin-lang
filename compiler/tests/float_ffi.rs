@@ -61,7 +61,10 @@ impl Scratch {
 
     fn compile(&self, source: &str) -> Result<CompiledModule, Vec<FileDiagnostic>> {
         compile_files_for_target(
-            &[SourceFile::new(self.0.join("main.qr").display().to_string(), source)],
+            &[SourceFile::new(
+                self.0.join("main.qr").display().to_string(),
+                source,
+            )],
             &CompileOptions {
                 extern_contracts: Some(BTreeMap::from([(
                     "qr_point.qv".to_owned(),
@@ -89,7 +92,9 @@ impl Drop for Scratch {
 const HELPER: &str = "fn pick(p: Point, k: f64) -> f64 {\n    let x = p.x;\n    return k;\n}\n";
 
 fn program(body: &str) -> String {
-    format!("{HEAD}{IMPORT}{DECLARATIONS}{HELPER}fn main() -> unit effects {{ io }} {{\n{body}    return;\n}}\n")
+    format!(
+        "{HEAD}{IMPORT}{DECLARATIONS}{HELPER}fn main() -> unit effects {{ io }} {{\n{body}    return;\n}}\n"
+    )
 }
 
 const BODY: &str = "    let p = Point { x: 1.5, y: -0.25, n: 3 };\n    let x = p.x;\n    print dec x;\n    let y = p.y;\n    print hex y;\n    let s = qr_point_sum(p) succeeds 4.25;\n    print dec s;\n    let q = qr_point_scale(p, 2.0) succeeds Point { x: 3.0, y: -0.5, n: 3 };\n    let qx = q.x;\n    log info dec qx;\n    let h = qr_half(1e-45) succeeds 0.0;\n    print dec h;\n    let k = pick(p, -2.5);\n    print dec k;\n    flush;\n";
@@ -122,9 +127,18 @@ fn float_fields_calls_and_outcomes_check_and_render() {
 fn negative_controls_refuse() {
     let scratch = Scratch::new();
     for (body, needle) in [
-        ("    let p = Point { x: 1, y: 0.5, n: 3 };\n", "is not a `f64` value"),
-        ("    let p = Point { x: 1.0, y: 0.5, n: 3.0 };\n", "is not a `i32` value"),
-        ("    let h = qr_half(1.0) succeeds 1;\n", "is not a `f32` literal"),
+        (
+            "    let p = Point { x: 1, y: 0.5, n: 3 };\n",
+            "is not a `f64` value",
+        ),
+        (
+            "    let p = Point { x: 1.0, y: 0.5, n: 3.0 };\n",
+            "is not a `i32` value",
+        ),
+        (
+            "    let h = qr_half(1.0) succeeds 1;\n",
+            "is not a `f32` literal",
+        ),
         ("    let h = qr_half(4e38);\n", "is not a `f32` value"),
     ] {
         // Without the helper, which only the admitted program calls.
@@ -153,15 +167,32 @@ fn the_program_runs_against_the_card_library_under_three_builds() {
     let stderr = qcore_core::ffi::reference_stream(&checked.certificate, Stream::Err);
     let c = module.c_source.clone().unwrap();
     let builds: [&[&str]; 3] = [
-        &["-O0", "-fsanitize=undefined,integer", "-fno-sanitize=float-divide-by-zero", "-fno-sanitize-recover=all"],
-        &["-O2", "-fsanitize=undefined,integer", "-fno-sanitize=float-divide-by-zero", "-fno-sanitize-recover=all"],
+        &[
+            "-O0",
+            "-fsanitize=undefined,integer",
+            "-fno-sanitize=float-divide-by-zero",
+            "-fno-sanitize-recover=all",
+        ],
+        &[
+            "-O2",
+            "-fsanitize=undefined,integer",
+            "-fno-sanitize=float-divide-by-zero",
+            "-fno-sanitize-recover=all",
+        ],
         &["-O2"],
     ];
     std::fs::write(scratch.path().join("main.c"), &c).unwrap();
     for flags in builds {
         let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
         let out = Command::new(&compiler)
-            .args(["-std=c11", "-Wall", "-Wextra", "-Werror", "-pedantic", "-ffp-contract=off"])
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-ffp-contract=off",
+            ])
             .args(flags)
             .arg("-I")
             .arg(scratch.path())
@@ -171,9 +202,18 @@ fn the_program_runs_against_the_card_library_under_three_builds() {
             .arg(scratch.path().join("main"))
             .output()
             .unwrap();
-        assert!(out.status.success(), "{flags:?}: {}", String::from_utf8_lossy(&out.stderr));
+        assert!(
+            out.status.success(),
+            "{flags:?}: {}",
+            String::from_utf8_lossy(&out.stderr)
+        );
         let run = Command::new(scratch.path().join("main")).output().unwrap();
-        assert_eq!(run.status.code(), Some(0), "{flags:?}: {}", String::from_utf8_lossy(&run.stderr));
+        assert_eq!(
+            run.status.code(),
+            Some(0),
+            "{flags:?}: {}",
+            String::from_utf8_lossy(&run.stderr)
+        );
         assert_eq!(String::from_utf8_lossy(&run.stdout), stdout, "{flags:?}");
         assert_eq!(String::from_utf8_lossy(&run.stderr), stderr, "{flags:?}");
     }
@@ -185,7 +225,15 @@ fn the_program_runs_against_the_card_library_under_three_builds() {
     std::fs::write(scratch.path().join("main.c"), wrong.c_source.unwrap()).unwrap();
     let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
     let out = Command::new(&compiler)
-        .args(["-std=c11", "-Wall", "-Wextra", "-Werror", "-pedantic", "-ffp-contract=off", "-O0"])
+        .args([
+            "-std=c11",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-pedantic",
+            "-ffp-contract=off",
+            "-O0",
+        ])
         .arg("-I")
         .arg(scratch.path())
         .arg(scratch.path().join("main.c"))
@@ -194,7 +242,11 @@ fn the_program_runs_against_the_card_library_under_three_builds() {
         .arg(scratch.path().join("main"))
         .output()
         .unwrap();
-    assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
+    assert!(
+        out.status.success(),
+        "{}",
+        String::from_utf8_lossy(&out.stderr)
+    );
     let run = Command::new(scratch.path().join("main")).output().unwrap();
     assert_eq!(run.status.code(), Some(70));
 }

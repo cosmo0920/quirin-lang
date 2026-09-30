@@ -75,7 +75,13 @@ fn callees_c() -> String {
     );
     for (ty, c, word, exponent, fraction) in [
         ("f32", "float", "uint32_t", "0x7F800000u", "0x007FFFFFu"),
-        ("f64", "double", "uint64_t", "UINT64_C(0x7FF0000000000000)", "UINT64_C(0x000FFFFFFFFFFFFF)"),
+        (
+            "f64",
+            "double",
+            "uint64_t",
+            "UINT64_C(0x7FF0000000000000)",
+            "UINT64_C(0x000FFFFFFFFFFFFF)",
+        ),
     ] {
         text.push_str(&format!(
             "{c} q_seq_{ty}(void);\nvoid q_expect_{ty}({c} value);\n{c} q_half_{ty}({c} x);\n{c} q_seq_{ty}(void)\n{{\n    {word} bits = ({word})strtoull(q_next(), NULL, 16);\n    {c} v;\n    memcpy(&v, &bits, sizeof v);\n    return v;\n}}\nstatic int q_nan_{ty}({word} b) {{ return (b & {exponent}) == {exponent} && (b & {fraction}) != 0; }}\nvoid q_expect_{ty}({c} value)\n{{\n    {word} got;\n    {word} want = ({word})strtoull(q_next(), NULL, 16);\n    memcpy(&got, &value, sizeof got);\n    if (!(got == want || (q_nan_{ty}(got) && q_nan_{ty}(want)))) {{\n        exit(99);\n    }}\n}}\n{c} q_half_{ty}({c} x) {{ return x / 2; }}\n"
@@ -133,7 +139,10 @@ fn known_source() -> String {
 
 #[test]
 fn known_float_values_fold_and_render_at_their_type() {
-    let m = admitted(&known_source(), SourceExecutionProfile::ComposedStdIoExternV1);
+    let m = admitted(
+        &known_source(),
+        SourceExecutionProfile::ComposedStdIoExternV1,
+    );
     let t = 0.1f32;
     let u = t * 3.0;
     assert_eq!(
@@ -142,12 +151,21 @@ fn known_float_values_fold_and_render_at_their_type() {
             "out: 1.5".to_owned(),
             "out: 0x1.8p+0".to_owned(),
             "out: -0".to_owned(),
-            format!("out: {}", sf::render_dec(ScalarType::F64, sf::of_f64(1.5 + 0.1)).unwrap()),
+            format!(
+                "out: {}",
+                sf::render_dec(ScalarType::F64, sf::of_f64(1.5 + 0.1)).unwrap()
+            ),
             "out: 0x1.99999ap-4".to_owned(),
-            format!("out: {}", sf::render_dec(ScalarType::F32, sf::of_f32(u)).unwrap()),
+            format!(
+                "out: {}",
+                sf::render_dec(ScalarType::F32, sf::of_f32(u)).unwrap()
+            ),
             "out: true".to_owned(),
             "out: 1".to_owned(),
-            format!("err: [INFO] {}", sf::render_dec(ScalarType::F64, sf::of_f64(f64::from(u))).unwrap()),
+            format!(
+                "err: [INFO] {}",
+                sf::render_dec(ScalarType::F64, sf::of_f64(f64::from(u))).unwrap()
+            ),
         ]
     );
     assert_eq!(m.float_assumption(), Some(sf::ASSUMPTION));
@@ -156,33 +174,79 @@ fn known_float_values_fold_and_render_at_their_type() {
 #[test]
 fn negative_controls_refuse() {
     for (body, code, needle) in [
-        ("let h = q_half_f64(3) succeeds 1.5;", "Q024", "an integer literal is not a `f64`"),
-        ("q_expect_i32(1.5);", "Q024", "is the float literal `1.5` and the parameter is declared `i32`"),
-        ("let h = q_half_f64(3.0) succeeds 2;", "Q024", "`succeeds` names an integer literal"),
-        ("let n = q_seq_i32() succeeds 2.0;", "Q024", "`succeeds` names a float literal"),
-        ("let a = q_seq_f32(); let b = q_seq_f64(); let c = a + b;", "Q024", "the operands are a `f32` and a `f64`"),
-        ("let a = q_seq_f64(); let c = a == a;", "Q024", "needs the `partial_eq` effect"),
-        ("let a = q_seq_f64(); let c = a < 1.0;", "Q024", "needs the `partial_ord` effect"),
-        ("let a = q_seq_f64(); let c = a % 2.0;", "Q024", "`%` is an integer operation"),
+        (
+            "let h = q_half_f64(3) succeeds 1.5;",
+            "Q024",
+            "an integer literal is not a `f64`",
+        ),
+        (
+            "q_expect_i32(1.5);",
+            "Q024",
+            "is the float literal `1.5` and the parameter is declared `i32`",
+        ),
+        (
+            "let h = q_half_f64(3.0) succeeds 2;",
+            "Q024",
+            "`succeeds` names an integer literal",
+        ),
+        (
+            "let n = q_seq_i32() succeeds 2.0;",
+            "Q024",
+            "`succeeds` names a float literal",
+        ),
+        (
+            "let a = q_seq_f32(); let b = q_seq_f64(); let c = a + b;",
+            "Q024",
+            "the operands are a `f32` and a `f64`",
+        ),
+        (
+            "let a = q_seq_f64(); let c = a == a;",
+            "Q024",
+            "needs the `partial_eq` effect",
+        ),
+        (
+            "let a = q_seq_f64(); let c = a < 1.0;",
+            "Q024",
+            "needs the `partial_ord` effect",
+        ),
+        (
+            "let a = q_seq_f64(); let c = a % 2.0;",
+            "Q024",
+            "`%` is an integer operation",
+        ),
         ("let a = q_half_f64(1e400);", "Q024", "rounds to infinity"),
-        ("let a = q_half_f64(1.5); let b = a + 1;", "Q024", "an integer literal is not a `f64`"),
-        ("let a = q_seq_f64(); q_expect_f32(a);", "Q024", "argument 0 is a `f64` and the parameter is declared `f32`"),
+        (
+            "let a = q_half_f64(1.5); let b = a + 1;",
+            "Q024",
+            "an integer literal is not a `f64`",
+        ),
+        (
+            "let a = q_seq_f64(); q_expect_f32(a);",
+            "Q024",
+            "argument 0 is a `f64` and the parameter is declared `f32`",
+        ),
     ] {
         refused_at(
-            &format!("{EXTERN}{DECLARATIONS}fn main() -> unit effects {{ io }} {{\n    {body}\n    return;\n}}\n"),
+            &format!(
+                "{EXTERN}{DECLARATIONS}fn main() -> unit effects {{ io }} {{\n    {body}\n    return;\n}}\n"
+            ),
             code,
             needle,
         );
     }
     // A run-time float → int conversion without `throws<ArithmeticError>`.
     refused_at(
-        &format!("{EXTERN}{DECLARATIONS}fn main() -> unit effects {{ io }} {{\n    let a = q_seq_f64();\n    let n = a as i32;\n    return;\n}}\n"),
+        &format!(
+            "{EXTERN}{DECLARATIONS}fn main() -> unit effects {{ io }} {{\n    let a = q_seq_f64();\n    let n = a as i32;\n    return;\n}}\n"
+        ),
         "Q024",
         "`throws<ArithmeticError>`",
     );
     // A known float → int conversion out of range is refused at check time.
     refused_at(
-        &format!("{EXTERN}{DECLARATIONS}fn main() -> unit effects {{ io }} {{\n    let a = q_half_f64(1e300) succeeds 5e299;\n    let n = a as i32;\n    return;\n}}\n"),
+        &format!(
+            "{EXTERN}{DECLARATIONS}fn main() -> unit effects {{ io }} {{\n    let a = q_half_f64(1e300) succeeds 5e299;\n    let n = a as i32;\n    return;\n}}\n"
+        ),
         "Q024",
         "`ArithmeticError::OutOfRange`",
     );
@@ -238,7 +302,14 @@ mod native {
         std::fs::write(dir.join("callees.c"), callees).unwrap();
         let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
         let out = Command::new(compiler)
-            .args(["-std=c11", "-Wall", "-Wextra", "-Werror", "-pedantic", "-ffp-contract=off"])
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-ffp-contract=off",
+            ])
             .args(flags)
             .arg(dir.join("main.c"))
             .arg(dir.join("callees.c"))
@@ -263,7 +334,10 @@ mod native {
 #[cfg(unix)]
 #[test]
 fn known_program_links_real_float_callees_under_three_builds() {
-    let m = admitted(&known_source(), SourceExecutionProfile::ComposedStdIoExternV1);
+    let m = admitted(
+        &known_source(),
+        SourceExecutionProfile::ComposedStdIoExternV1,
+    );
     let reference = lines(&m);
     let project = |stream: &str| {
         reference
@@ -274,11 +348,25 @@ fn known_program_links_real_float_callees_under_three_builds() {
     };
     let c = m.c_source.clone().unwrap();
     for (label, flags) in native::BUILDS {
-        let built = native::build(&c, &callees_c(), flags).unwrap_or_else(|e| panic!("{label}: {e}"));
+        let built =
+            native::build(&c, &callees_c(), flags).unwrap_or_else(|e| panic!("{label}: {e}"));
         let out = std::process::Command::new(&built.binary).output().unwrap();
-        assert_eq!(out.status.code(), Some(0), "{label}: {}", String::from_utf8_lossy(&out.stderr));
-        assert_eq!(String::from_utf8_lossy(&out.stdout), project("out"), "{label}");
-        assert_eq!(String::from_utf8_lossy(&out.stderr), project("err"), "{label}");
+        assert_eq!(
+            out.status.code(),
+            Some(0),
+            "{label}: {}",
+            String::from_utf8_lossy(&out.stderr)
+        );
+        assert_eq!(
+            String::from_utf8_lossy(&out.stdout),
+            project("out"),
+            "{label}"
+        );
+        assert_eq!(
+            String::from_utf8_lossy(&out.stderr),
+            project("err"),
+            "{label}"
+        );
     }
     // A callee that disagrees with its declared outcome stops the run at 70
     // before the value is read: `q_half_f64(3.0)` declared `-0.0`'s twin.
@@ -293,11 +381,32 @@ fn known_program_links_real_float_callees_under_three_builds() {
 /// The boundary table of each float type, as bit patterns.
 fn boundary(ty: ScalarType) -> Vec<u64> {
     let (sign, positives): (u64, Vec<u64>) = if ty == ScalarType::F32 {
-        (0x8000_0000, vec![0, 1, 0x007F_FFFF, 0x0080_0000, 0x7F7F_FFFF, 0x3F80_0000, 0x7F80_0000, 0x4B80_0001])
+        (
+            0x8000_0000,
+            vec![
+                0,
+                1,
+                0x007F_FFFF,
+                0x0080_0000,
+                0x7F7F_FFFF,
+                0x3F80_0000,
+                0x7F80_0000,
+                0x4B80_0001,
+            ],
+        )
     } else {
         (
             0x8000_0000_0000_0000,
-            vec![0, 1, 0x000F_FFFF_FFFF_FFFF, 0x0010_0000_0000_0000, 0x7FEF_FFFF_FFFF_FFFF, 0x3FF0_0000_0000_0000, 0x7FF0_0000_0000_0000, 0x4340_0000_0000_0001],
+            vec![
+                0,
+                1,
+                0x000F_FFFF_FFFF_FFFF,
+                0x0010_0000_0000_0000,
+                0x7FEF_FFFF_FFFF_FFFF,
+                0x3FF0_0000_0000_0000,
+                0x7FF0_0000_0000_0000,
+                0x4340_0000_0000_0001,
+            ],
         )
     };
     let mut values = Vec::new();
@@ -305,7 +414,11 @@ fn boundary(ty: ScalarType) -> Vec<u64> {
         values.push(p);
         values.push(p | sign);
     }
-    values.push(if ty == ScalarType::F32 { 0x7FC0_0000 } else { 0x7FF8_0000_0000_0000 });
+    values.push(if ty == ScalarType::F32 {
+        0x7FC0_0000
+    } else {
+        0x7FF8_0000_0000_0000
+    });
     values
 }
 
@@ -318,7 +431,12 @@ fn boundary(ty: ScalarType) -> Vec<u64> {
 fn dynamic_float_values_take_the_reference_under_three_builds() {
     use qcore_compiler::scalar_types::{self as st, Op};
     for ty in FLOATS {
-        let symbols = [(Op::Add, "+"), (Op::Sub, "-"), (Op::Mul, "*"), (Op::Div, "/")];
+        let symbols = [
+            (Op::Add, "+"),
+            (Op::Sub, "-"),
+            (Op::Mul, "*"),
+            (Op::Div, "/"),
+        ];
         let mut body = String::new();
         for (op, symbol) in symbols {
             body.push_str(&format!(
@@ -354,10 +472,18 @@ fn dynamic_float_values_take_the_reference_under_three_builds() {
             }
         }
         for (label, flags) in native::BUILDS {
-            let built = native::build(&c, &callees_c(), flags).unwrap_or_else(|e| panic!("{ty} {label}: {e}"));
+            let built = native::build(&c, &callees_c(), flags)
+                .unwrap_or_else(|e| panic!("{ty} {label}: {e}"));
             for (sequence, status) in &runs {
-                let out = std::process::Command::new(&built.binary).env("QSEQ", sequence).output().unwrap();
-                assert!(out.stdout.is_empty() && out.stderr.is_empty(), "{ty} {label} {sequence}: {}", String::from_utf8_lossy(&out.stderr));
+                let out = std::process::Command::new(&built.binary)
+                    .env("QSEQ", sequence)
+                    .output()
+                    .unwrap();
+                assert!(
+                    out.stdout.is_empty() && out.stderr.is_empty(),
+                    "{ty} {label} {sequence}: {}",
+                    String::from_utf8_lossy(&out.stderr)
+                );
                 assert_eq!(out.status.code(), Some(*status), "{ty} {label} {sequence}");
             }
         }

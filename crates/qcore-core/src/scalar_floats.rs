@@ -458,7 +458,11 @@ fn fields(ty: ScalarType, value: i128) -> Option<(bool, u64, u64)> {
         }
         ScalarType::F64 => {
             let bits = u64::try_from(value).ok()?;
-            Some((bits >> 63 == 1, (bits >> 52) & 0x7ff, bits & 0xf_ffff_ffff_ffff))
+            Some((
+                bits >> 63 == 1,
+                (bits >> 52) & 0x7ff,
+                bits & 0xf_ffff_ffff_ffff,
+            ))
         }
         _ => None,
     }

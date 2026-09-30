@@ -2702,7 +2702,7 @@ fn decide_value(
         ..Decider::default()
     }
     .decide(operation, raises_permitted, target)
-        .map_err(|refusal| value_refusal_message(&refusal))
+    .map_err(|refusal| value_refusal_message(&refusal))
 }
 
 fn shared_operation(

@@ -268,6 +268,29 @@ card 1's `[|`/`|]` free: one touching `[` or `]` is refused at `Q000`.
 
 Add `w48-qr-closures` to the rule's closing evidence list.
 
+### 14 — census entry, card `W48-QR-FLOATING-POINT` (wave 48)
+
+Reserves **+0 words and +0 tokens**, and claims four **positions** and one
+token extension. `f32`/`f64` at a type position of the routes the card widens
+and after the already-reserved `as` (the fourth name-resolution exclusion now
+reads the float names too, `ScalarType::parse_admitting_floats`); `partial_eq`
+and `partial_ord` inside an `effects { … }` row of those routes (read by each
+route's own row reader, never by name resolution); and a float literal at an
+operand position. The lexer's existing `Float` token (`DIGITS . DIGITS`) gains
+an exponent written directly after the digits, `(e|E) [+|-] DIGITS`, taken
+only when a digit follows, so `1.5e` and `1e+` lex as before. The census
+(`docs/reports/w48-qr-floating-point/census_float_spelling.py`, all 701 tracked
+`.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` files before the card) found **zero**
+exponent spellings, `f32`, `partial_eq`, `partial_ord`, `as f32`/`as f64` and
+either word in an effect row; `f64` only in `.qv` contract signatures and two
+gateway fixtures (the loader's NEIGHBOURS vocabulary, which it already read);
+10 `DIGITS . DIGITS` tokens (socket addresses and `.qrlib` version strings,
+whose readings are unchanged). After the card the only new occurrences are the
+card's example, and the whole-tree fixture freeze found every other file's
+token stream unchanged in effect.
+
+Add `w48-qr-floating-point` to the rule's closing evidence list.
+
 ### 14 — CT implementation source forms
 
 CT24 reuses the parsed error-region and spawn-success-arm forms. CT10 uses

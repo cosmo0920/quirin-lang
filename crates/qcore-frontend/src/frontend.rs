@@ -3287,10 +3287,11 @@ fn lexical_references(
         // same contextual terms; the census found `as f32`/`as f64` in no
         // tracked file, and a route that does not admit the conversion refuses
         // it at its own reader.
-        let conversion_type = matches!(
-            previous.map(|token| &token.kind),
-            Some(TokenKind::Word(previous)) if previous == "as"
-        ) && qcore_core::scalar_types::ScalarType::parse_admitting_floats(word).is_some();
+        let conversion_type =
+            matches!(
+                previous.map(|token| &token.kind),
+                Some(TokenKind::Word(previous)) if previous == "as"
+            ) && qcore_core::scalar_types::ScalarType::parse_admitting_floats(word).is_some();
         // Card `W48-QR-SCALAR-TYPES-R6`: `let NAME = protected TYPE;` names a
         // typed protected payload, never a binding. Contextual on both sides —
         // `protected` before it and a scalar type name — so no word is newly

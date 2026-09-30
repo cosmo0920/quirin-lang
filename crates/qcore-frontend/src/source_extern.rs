@@ -86,10 +86,10 @@ use qcore_core::extern_call::{
     ValueOperation, ValueStatement, binds_scalar, derived_custody, derived_effects,
 };
 use qcore_core::native_library::SourceLibraryBinding;
-use qcore_core::scalar_floats::FloatLiteral;
-use qcore_core::scalar_types::{FloatEffect, FloatEffects};
 use qcore_core::ownership::{Footprint, OwnershipOp, ResourceId};
 use qcore_core::resource_flow::{Flow, Quantity, ResourceBounds};
+use qcore_core::scalar_floats::FloatLiteral;
+use qcore_core::scalar_types::{FloatEffect, FloatEffects};
 use qcore_core::typed_errors::{Effect, EffectRow, ErrorLedger, ErrorOp};
 use qcore_core::usage::UsageExpr;
 
@@ -718,10 +718,8 @@ impl Lowering<'_> {
                             return None;
                         }
                         None => {
-                            self.diagnostics.push(bridging(
-                                span,
-                                format!("`{text}` is not a float literal"),
-                            ));
+                            self.diagnostics
+                                .push(bridging(span, format!("`{text}` is not a float literal")));
                             return None;
                         }
                     }
@@ -1557,13 +1555,20 @@ fn lower_scalar_binding(
     // result's own kind — a float literal, read once at a float result's type,
     // or an integer at an integer result — never one read as the other.
     let result_float = callee.result_abi.scalar().filter(|ty| ty.is_float());
-    let outcome = match (&parsed_call.float_outcome, parsed_call.outcome, result_float) {
+    let outcome = match (
+        &parsed_call.float_outcome,
+        parsed_call.outcome,
+        result_float,
+    ) {
         (Some(literal), _, Some(ty)) => match literal.at(ty) {
             Ok(bits) => Some(bits),
             Err(error) => {
                 lowering.diagnostics.push(bridging(
                     span,
-                    format!("`{}` declares a `{ty}` result and its outcome literal {error}", callee.name),
+                    format!(
+                        "`{}` declares a `{ty}` result and its outcome literal {error}",
+                        callee.name
+                    ),
                 ));
                 return Vec::new();
             }
@@ -1910,9 +1915,8 @@ fn parse_value_statement(
         Operand::Float(literal) => ValueOperand::Float(literal),
     };
     // Card `W48-QR-FLOATING-POINT`: this route admits floats.
-    let parsed = parse_value_expression_admitting_floats(&tokens[3..], |name| {
-        values.get(name).copied()
-    })?;
+    let parsed =
+        parse_value_expression_admitting_floats(&tokens[3..], |name| values.get(name).copied())?;
     Some(parsed.map(|syntax| match syntax {
         Syntax::Binary(op, a, b) => ValueOperation::Binary(op, operand(a), operand(b)),
         Syntax::Compare(cmp, a, b) => ValueOperation::Compare(cmp, operand(a), operand(b)),

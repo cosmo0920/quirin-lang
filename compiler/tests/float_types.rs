@@ -242,7 +242,11 @@ fn reference_from_integer(n: i128, to: ScalarType) -> i128 {
         ScalarType::F32 => (24u32, 127i64),
         _ => (53, 1023),
     };
-    let sign: u128 = if n < 0 { 1 << (precision - 1 + if precision == 24 { 8 } else { 11 }) } else { 0 };
+    let sign: u128 = if n < 0 {
+        1 << (precision - 1 + if precision == 24 { 8 } else { 11 })
+    } else {
+        0
+    };
     let magnitude = n.unsigned_abs();
     if magnitude == 0 {
         return sign as i128;
@@ -268,8 +272,12 @@ fn reference_from_integer(n: i128, to: ScalarType) -> i128 {
 
 fn reference_float_to_float(from: ScalarType, to: ScalarType, bits: i128) -> i128 {
     match (from, to) {
-        (ScalarType::F64, ScalarType::F32) => i128::from((f64::from_bits(bits as u64) as f32).to_bits()),
-        (ScalarType::F32, ScalarType::F64) => i128::from(f64::from(f32::from_bits(bits as u32)).to_bits()),
+        (ScalarType::F64, ScalarType::F32) => {
+            i128::from((f64::from_bits(bits as u64) as f32).to_bits())
+        }
+        (ScalarType::F32, ScalarType::F64) => {
+            i128::from(f64::from(f32::from_bits(bits as u32)).to_bits())
+        }
         _ => bits,
     }
 }
@@ -304,17 +312,27 @@ fn the_kernel_matches_the_independent_reference_on_the_boundary_table() {
             for &a in &values {
                 for &b in &values {
                     let kernel = st::checked(op, ty, a, b, None).expect("never faults");
-                    assert!(same(ty, kernel, reference_arithmetic(op, ty, a, b)), "{op:?} {ty} {a:#x} {b:#x}");
+                    assert!(
+                        same(ty, kernel, reference_arithmetic(op, ty, a, b)),
+                        "{op:?} {ty} {a:#x} {b:#x}"
+                    );
                     cases += 1;
                 }
             }
         }
         assert_eq!(st::checked(Op::Rem, ty, values[0], values[1], None), None);
         for &a in &values {
-            assert!(same(ty, st::negate(ty, a, None).unwrap(), reference_negation(ty, a)));
+            assert!(same(
+                ty,
+                st::negate(ty, a, None).unwrap(),
+                reference_negation(ty, a)
+            ));
             for &b in &values {
                 for cmp in Cmp::ALL {
-                    assert_eq!(st::compare(cmp, ty, a, b), Some(reference_compare(cmp, ty, a, b)));
+                    assert_eq!(
+                        st::compare(cmp, ty, a, b),
+                        Some(reference_compare(cmp, ty, a, b))
+                    );
                     cases += 1;
                 }
             }
@@ -329,7 +347,10 @@ fn the_kernel_matches_the_independent_reference_on_the_boundary_table() {
             }
             for to in FLOATS {
                 let kernel = st::convert(ty, to, a, None).unwrap();
-                assert!(same(to, kernel, reference_float_to_float(ty, to, a)), "{ty} {a:#x} as {to}");
+                assert!(
+                    same(to, kernel, reference_float_to_float(ty, to, a)),
+                    "{ty} {a:#x} as {to}"
+                );
                 assert_eq!(st::conversion_is_total(ty, to, None), Ok(true));
             }
         }
@@ -357,7 +378,12 @@ fn source_value(ty: ScalarType, bits: i128) -> String {
         return "(0.0 / 0.0)".into();
     }
     if v.is_infinite() {
-        return if v < 0.0 { "(-1.0 / 0.0)" } else { "(1.0 / 0.0)" }.into();
+        return if v < 0.0 {
+            "(-1.0 / 0.0)"
+        } else {
+            "(1.0 / 0.0)"
+        }
+        .into();
     }
     let dec = sf::render_dec(ty, bits).unwrap();
     let (negative, digits) = match dec.strip_prefix('-') {
@@ -403,11 +429,22 @@ fn the_checker_renders_the_reference_value_of_every_boundary_case() {
                 let mut body = format!("let a: {ty} = {lit_a}; let b: {ty} = {lit_b};");
                 let mut expected = Vec::new();
                 for op in [Op::Add, Op::Sub, Op::Mul, Op::Div] {
-                    body.push_str(&format!(" let c{} = a {} b; print hex c{};", op.name(), symbol(op), op.name()));
-                    expected.push(format!("out: {}", sf::render_hex(ty, reference_arithmetic(op, ty, a, b)).unwrap()));
+                    body.push_str(&format!(
+                        " let c{} = a {} b; print hex c{};",
+                        op.name(),
+                        symbol(op),
+                        op.name()
+                    ));
+                    expected.push(format!(
+                        "out: {}",
+                        sf::render_hex(ty, reference_arithmetic(op, ty, a, b)).unwrap()
+                    ));
                 }
                 for (i, cmp) in Cmp::ALL.into_iter().enumerate() {
-                    body.push_str(&format!(" let k{i} = a {} b; print dec k{i};", cmp.c_operator()));
+                    body.push_str(&format!(
+                        " let k{i} = a {} b; print dec k{i};",
+                        cmp.c_operator()
+                    ));
                     expected.push(format!("out: {}", reference_compare(cmp, ty, a, b)));
                 }
                 let source = format!(
@@ -421,7 +458,13 @@ fn the_checker_renders_the_reference_value_of_every_boundary_case() {
             let m = admitted(&format!(
                 "{HEADER}fn main() -> unit {{ let a: {ty} = {lit_a}; let n = -a; print hex n; return; }}"
             ));
-            assert_eq!(lines(&m), [format!("out: {}", sf::render_hex(ty, reference_negation(ty, a)).unwrap())]);
+            assert_eq!(
+                lines(&m),
+                [format!(
+                    "out: {}",
+                    sf::render_hex(ty, reference_negation(ty, a)).unwrap()
+                )]
+            );
             for to in INTEGERS {
                 let closed = format!(
                     "{HEADER}fn main() -> unit {{ let a: {ty} = {lit_a}; let c = a as {to}; print dec c; return; }}"
@@ -429,12 +472,14 @@ fn the_checker_renders_the_reference_value_of_every_boundary_case() {
                 // A library's constant fold, which never runs: a float literal
                 // alone is an `f64` (there is no `f32` literal spelling), so
                 // the fold is checked at `f64`.
-                let library = format!("module library;\nfn f() -> {to} {{ return {lit_a} as {to}; }}");
+                let library =
+                    format!("module library;\nfn f() -> {to} {{ return {lit_a} as {to}; }}");
                 match reference_to_integer(ty, to, a, &target) {
                     Some(v) => {
                         assert_eq!(lines(&admitted(&closed)), [format!("out: {v}")], "{closed}");
                         if ty == ScalarType::F64 {
-                            compile_for(&library, Some(&target)).unwrap_or_else(|e| panic!("{library}\n{e:?}"));
+                            compile_for(&library, Some(&target))
+                                .unwrap_or_else(|e| panic!("{library}\n{e:?}"));
                         }
                     }
                     None => {
@@ -464,7 +509,10 @@ fn literals_are_exact_rounded_once_and_typed_by_context() {
     let m = admitted(&format!(
         "{HEADER}fn main() -> unit {{ let a: f32 = 16777217.0; let b = 16777217.0; let c: f32 = 0.1; print dec a; print dec b; print hex c; return; }}"
     ));
-    assert_eq!(lines(&m), ["out: 16777216", "out: 16777217", "out: 0x1.99999ap-4"]);
+    assert_eq!(
+        lines(&m),
+        ["out: 16777216", "out: 16777217", "out: 0x1.99999ap-4"]
+    );
     // A value that rounds twice would differ: 1.00000005960464477539062500000001
     // is just above the f32 midpoint between 1 and 1 + 2^-23.
     let m = admitted(&format!(
@@ -489,7 +537,10 @@ fn literals_are_exact_rounded_once_and_typed_by_context() {
         ("let a = 1e-400;", "nonzero and rounds to zero at f64"),
         ("let a: f32 = 1e-50;", "nonzero and rounds to zero at f32"),
     ] {
-        refused(&format!("{HEADER}fn main() -> unit {{ {body} return; }}"), needle);
+        refused(
+            &format!("{HEADER}fn main() -> unit {{ {body} return; }}"),
+            needle,
+        );
     }
     // The smallest subnormals are values, not underflows.
     let m = admitted(&format!(
@@ -501,25 +552,63 @@ fn literals_are_exact_rounded_once_and_typed_by_context() {
 #[test]
 fn there_is_no_implicit_conversion_and_no_mixed_float_arithmetic() {
     for (body, needle) in [
-        ("let a: f64 = 1;", "expected f64 expression, found an integer literal"),
-        ("let a: i32 = 1.0;", "expected i32 expression, found the float literal `1.0`"),
-        ("let a = 1 + 2.0;", "expected f64 expression, found an integer literal"),
-        ("let a: f32 = 1.0; let b: f64 = 2.0; let c = a + b;", "mixed-type operands f32 and f64"),
-        ("let a: f32 = 1.0; let b: f64 = a;", "expected f64 expression, found f32"),
-        ("let a: i32 = 1; let b: f64 = a;", "expected f64 expression, found i32"),
-        ("let a: f64 = 1.0; let b: i64 = a;", "expected i64 expression, found f64"),
-        ("let a: f64 = 1.0; let b: i32 = 2; let c = a * b;", "mixed-type operands f64 and i32"),
-        ("let a: f64 = 5.0; let b = a % 2.0;", "`%` is an integer operation"),
+        (
+            "let a: f64 = 1;",
+            "expected f64 expression, found an integer literal",
+        ),
+        (
+            "let a: i32 = 1.0;",
+            "expected i32 expression, found the float literal `1.0`",
+        ),
+        (
+            "let a = 1 + 2.0;",
+            "expected f64 expression, found an integer literal",
+        ),
+        (
+            "let a: f32 = 1.0; let b: f64 = 2.0; let c = a + b;",
+            "mixed-type operands f32 and f64",
+        ),
+        (
+            "let a: f32 = 1.0; let b: f64 = a;",
+            "expected f64 expression, found f32",
+        ),
+        (
+            "let a: i32 = 1; let b: f64 = a;",
+            "expected f64 expression, found i32",
+        ),
+        (
+            "let a: f64 = 1.0; let b: i64 = a;",
+            "expected i64 expression, found f64",
+        ),
+        (
+            "let a: f64 = 1.0; let b: i32 = 2; let c = a * b;",
+            "mixed-type operands f64 and i32",
+        ),
+        (
+            "let a: f64 = 5.0; let b = a % 2.0;",
+            "`%` is an integer operation",
+        ),
         ("let a = 1.0 as bool;", "no conversion to or from `bool`"),
-        ("let t = true; let a = t as f64;", "no conversion to or from `bool`"),
+        (
+            "let t = true; let a = t as f64;",
+            "no conversion to or from `bool`",
+        ),
     ] {
-        refused(&format!("{HEADER}fn main() -> unit effects {{ partial_eq, partial_ord }} {{ {body} return; }}"), needle);
+        refused(
+            &format!(
+                "{HEADER}fn main() -> unit effects {{ partial_eq, partial_ord }} {{ {body} return; }}"
+            ),
+            needle,
+        );
     }
     // The explicit conversions all exist.
     let m = admitted(&format!(
         "{HEADER}fn main() -> unit {{ let a: i32 = 7; let b = a as f64; let c = b as f32; let d = c as f64; let e = d as u8; let f: u64 = 18446744073709551615; let g = f as f32; print dec b; print dec c; print dec e; print dec g; return; }}"
     ));
-    assert_eq!(lines(&m), ["out: 7", "out: 7", "out: 7", "out: 18446744000000000000"]);
+    assert_eq!(
+        lines(&m),
+        ["out: 7", "out: 7", "out: 7", "out: 18446744000000000000"]
+    );
 }
 
 #[test]
@@ -528,24 +617,57 @@ fn comparisons_are_gated_by_partial_eq_and_partial_ord() {
     let m = admitted(&format!(
         "{HEADER}fn same(a: f64, b: f64) -> bool effects {{ partial_eq }} {{ return a == b; }}\nfn before(a: f32, b: f32) -> bool effects {{ partial_ord }} {{ return a < b; }}\nfn main() -> unit effects {{ io, partial_eq, partial_ord }} {{ let z = 0.0; let n = z / z; let s = same(n, n); let t = same(-0.0, 0.0); let u = before(1.0, 2.0); let v = n != n; print dec s; print dec t; print dec u; print dec v; return; }}"
     ));
-    assert_eq!(lines(&m), ["out: false", "out: true", "out: true", "out: true"]);
+    assert_eq!(
+        lines(&m),
+        ["out: false", "out: true", "out: true", "out: true"]
+    );
     for (program, needle) in [
         // Without either effect.
-        ("fn main() -> unit { let a = 1.0; let b = a == a; return; }", "needs the `partial_eq` effect"),
-        ("fn main() -> unit { let a = 1.0; let b = a < a; return; }", "needs the `partial_ord` effect"),
+        (
+            "fn main() -> unit { let a = 1.0; let b = a == a; return; }",
+            "needs the `partial_eq` effect",
+        ),
+        (
+            "fn main() -> unit { let a = 1.0; let b = a < a; return; }",
+            "needs the `partial_ord` effect",
+        ),
         // `partial_ord` does not imply `partial_eq`, nor the converse.
-        ("fn main() -> unit effects { partial_ord } { let a = 1.0; let b = a != a; return; }", "needs the `partial_eq` effect"),
-        ("fn main() -> unit effects { partial_ord } { let a = 1.0; let b = a == 2.0; return; }", "needs the `partial_eq` effect"),
-        ("fn main() -> unit effects { partial_eq } { let a: f32 = 1.0; let b = a >= a; return; }", "needs the `partial_ord` effect"),
+        (
+            "fn main() -> unit effects { partial_ord } { let a = 1.0; let b = a != a; return; }",
+            "needs the `partial_eq` effect",
+        ),
+        (
+            "fn main() -> unit effects { partial_ord } { let a = 1.0; let b = a == 2.0; return; }",
+            "needs the `partial_eq` effect",
+        ),
+        (
+            "fn main() -> unit effects { partial_eq } { let a: f32 = 1.0; let b = a >= a; return; }",
+            "needs the `partial_ord` effect",
+        ),
         // A caller that does not declare its callee's effect.
-        ("fn eq(a: f64) -> bool effects { partial_eq } { return a == 1.0; }\nfn main() -> unit { let b = eq(1.0); return; }", "derive `partial_eq`"),
-        ("fn lt(a: f64) -> bool effects { partial_ord } { return a < 1.0; }\nfn mid(a: f64) -> bool effects { partial_eq } { return lt(a); }\nfn main() -> unit effects { partial_eq, partial_ord } { let b = mid(1.0); return; }", "derive `partial_ord`"),
+        (
+            "fn eq(a: f64) -> bool effects { partial_eq } { return a == 1.0; }\nfn main() -> unit { let b = eq(1.0); return; }",
+            "derive `partial_eq`",
+        ),
+        (
+            "fn lt(a: f64) -> bool effects { partial_ord } { return a < 1.0; }\nfn mid(a: f64) -> bool effects { partial_eq } { return lt(a); }\nfn main() -> unit effects { partial_eq, partial_ord } { let b = mid(1.0); return; }",
+            "derive `partial_ord`",
+        ),
         // Transitively: the middle function declares it, the top does not.
-        ("fn lt(a: f64) -> bool effects { partial_ord } { return a < 1.0; }\nfn mid(a: f64) -> bool effects { partial_ord } { return lt(a); }\nfn main() -> unit effects { io } { let b = mid(1.0); return; }", "derive `partial_ord`"),
+        (
+            "fn lt(a: f64) -> bool effects { partial_ord } { return a < 1.0; }\nfn mid(a: f64) -> bool effects { partial_ord } { return lt(a); }\nfn main() -> unit effects { io } { let b = mid(1.0); return; }",
+            "derive `partial_ord`",
+        ),
         // A comparison of two float literals is a float comparison too.
-        ("fn main() -> unit { let b = 1.0 < 2.0; return; }", "needs the `partial_ord` effect"),
+        (
+            "fn main() -> unit { let b = 1.0 < 2.0; return; }",
+            "needs the `partial_ord` effect",
+        ),
         // A row lists each effect at most once.
-        ("fn main() -> unit effects { partial_eq, partial_eq } { let a = 1.0; return; }", "each at most once"),
+        (
+            "fn main() -> unit effects { partial_eq, partial_eq } { let a = 1.0; return; }",
+            "each at most once",
+        ),
     ] {
         refused(&format!("{HEADER}{program}"), needle);
     }
@@ -577,18 +699,40 @@ fn renderings_are_shortest_round_trip_and_normalised_hex() {
         (0.0, "0", "0x0p+0"),
         (-0.0, "-0", "-0x0p+0"),
         (5e-324, "5e-324", "0x1p-1074"),
-        (2.2250738585072014e-308, "2.2250738585072014e-308", "0x1p-1022"),
-        (1.7976931348623157e308, "1.7976931348623157e+308", "0x1.fffffffffffffp+1023"),
+        (
+            2.2250738585072014e-308,
+            "2.2250738585072014e-308",
+            "0x1p-1022",
+        ),
+        (
+            1.7976931348623157e308,
+            "1.7976931348623157e+308",
+            "0x1.fffffffffffffp+1023",
+        ),
         (f64::INFINITY, "inf", "inf"),
         (f64::NEG_INFINITY, "-inf", "-inf"),
     ];
     for (v, dec, hex) in f64s {
         let bits = sf::of_f64(v);
-        assert_eq!(st::render(false, ScalarType::F64, bits, None).unwrap(), dec, "{v}");
-        assert_eq!(st::render(true, ScalarType::F64, bits, None).unwrap(), hex, "{v}");
+        assert_eq!(
+            st::render(false, ScalarType::F64, bits, None).unwrap(),
+            dec,
+            "{v}"
+        );
+        assert_eq!(
+            st::render(true, ScalarType::F64, bits, None).unwrap(),
+            hex,
+            "{v}"
+        );
     }
-    assert_eq!(st::render(false, ScalarType::F64, sf::of_f64(f64::NAN), None).unwrap(), "nan");
-    assert_eq!(st::render(true, ScalarType::F64, sf::of_f64(-f64::NAN), None).unwrap(), "nan");
+    assert_eq!(
+        st::render(false, ScalarType::F64, sf::of_f64(f64::NAN), None).unwrap(),
+        "nan"
+    );
+    assert_eq!(
+        st::render(true, ScalarType::F64, sf::of_f64(-f64::NAN), None).unwrap(),
+        "nan"
+    );
     let f32s: [(f32, &str, &str); 6] = [
         (0.1, "0.1", "0x1.99999ap-4"),
         (1.0e-45, "1e-45", "0x1p-149"),
@@ -599,8 +743,16 @@ fn renderings_are_shortest_round_trip_and_normalised_hex() {
     ];
     for (v, dec, hex) in f32s {
         let bits = sf::of_f32(v);
-        assert_eq!(st::render(false, ScalarType::F32, bits, None).unwrap(), dec, "{v}");
-        assert_eq!(st::render(true, ScalarType::F32, bits, None).unwrap(), hex, "{v}");
+        assert_eq!(
+            st::render(false, ScalarType::F32, bits, None).unwrap(),
+            dec,
+            "{v}"
+        );
+        assert_eq!(
+            st::render(true, ScalarType::F32, bits, None).unwrap(),
+            hex,
+            "{v}"
+        );
     }
     // Every `dec` rendering reads back to the value at its own type.
     for ty in FLOATS {
@@ -623,7 +775,9 @@ fn renderings_are_shortest_round_trip_and_normalised_hex() {
 /// and of no other.
 #[test]
 fn a_float_program_carries_the_ieee_assumption() {
-    let m = admitted(&format!("{HEADER}fn main() -> unit {{ let a = 1.0; print dec a; return; }}"));
+    let m = admitted(&format!(
+        "{HEADER}fn main() -> unit {{ let a = 1.0; print dec a; return; }}"
+    ));
     assert_eq!(m.float_assumption(), Some(sf::ASSUMPTION));
     let c = m.c_source.unwrap();
     for needle in [
@@ -636,7 +790,9 @@ fn a_float_program_carries_the_ieee_assumption() {
     }
     // Only the renderers the program uses are emitted.
     assert!(!c.contains("q_float_hex_bits") && !c.contains("q_float_dec_f32"));
-    let plain = admitted(&format!("{HEADER}fn main() -> unit {{ let a: u8 = 1; print dec a; return; }}"));
+    let plain = admitted(&format!(
+        "{HEADER}fn main() -> unit {{ let a: u8 = 1; print dec a; return; }}"
+    ));
     assert_eq!(plain.float_assumption(), None);
     assert!(!plain.c_source.unwrap().contains("FLT_EVAL_METHOD"));
 }
@@ -661,7 +817,9 @@ fn a_runtime_float_to_int_conversion_raises_out_of_range() {
     ));
     assert_eq!(lines(&m), ["out: 255"]);
     refused(
-        &format!("{HEADER}fn to_u8(x: f32) -> u8 {{ return x as u8; }}\nfn main() -> unit {{ let a = to_u8(256.0); return; }}"),
+        &format!(
+            "{HEADER}fn to_u8(x: f32) -> u8 {{ return x as u8; }}\nfn main() -> unit {{ let a = to_u8(256.0); return; }}"
+        ),
         "from f32 to u8 is out of range",
     );
 }
@@ -684,12 +842,26 @@ fn lean_float_vectors_match_the_rust_kernel() {
     // (precision, integer, rounded integer): `roundInt`.
     let mut rows = 0;
     for row in table("roundingVectors").split('(').skip(1) {
-        let fields = row.split(')').next().unwrap().split(',').map(str::trim).collect::<Vec<_>>();
+        let fields = row
+            .split(')')
+            .next()
+            .unwrap()
+            .split(',')
+            .map(str::trim)
+            .collect::<Vec<_>>();
         let precision: u32 = fields[0].parse().unwrap();
         let n: i128 = fields[1].parse().unwrap();
         let rounded: i128 = fields[2].parse().unwrap();
-        let ty = if precision == 24 { ScalarType::F32 } else { ScalarType::F64 };
-        let from = if n < 0 { ScalarType::I64 } else { ScalarType::U64 };
+        let ty = if precision == 24 {
+            ScalarType::F32
+        } else {
+            ScalarType::F64
+        };
+        let from = if n < 0 {
+            ScalarType::I64
+        } else {
+            ScalarType::U64
+        };
         let bits = st::convert(from, ty, n, None).unwrap();
         assert_eq!(wide(ty, bits), rounded as f64, "{precision} {n}");
         assert_eq!(wide(ty, bits) as i128, rounded, "{precision} {n}");
@@ -700,7 +872,13 @@ fn lean_float_vectors_match_the_rust_kernel() {
     // false is the typed `OutOfRange`.
     let mut rows = 0;
     for row in table("truncationVectors").split('(').skip(1) {
-        let fields = row.split(')').next().unwrap().split(',').map(str::trim).collect::<Vec<_>>();
+        let fields = row
+            .split(')')
+            .next()
+            .unwrap()
+            .split(',')
+            .map(str::trim)
+            .collect::<Vec<_>>();
         let m: i128 = fields[0].parse().unwrap();
         let e: i32 = fields[1].parse().unwrap();
         let to = ScalarType::parse(fields[2].trim_start_matches('.')).unwrap();
@@ -711,7 +889,11 @@ fn lean_float_vectors_match_the_rust_kernel() {
             value = if e < 0 { value / 2.0 } else { value * 2.0 };
         }
         let expected = (fields[3] == "true").then(|| fields[4].parse::<i128>().unwrap());
-        assert_eq!(st::convert(ScalarType::F64, to, sf::of_f64(value), None), expected, "{row}");
+        assert_eq!(
+            st::convert(ScalarType::F64, to, sf::of_f64(value), None),
+            expected,
+            "{row}"
+        );
         rows += 1;
     }
     assert!(rows >= 12, "{rows}");
@@ -771,7 +953,14 @@ mod native {
         std::fs::write(dir.join("main.c"), source).unwrap();
         let compiler = std::env::var("QCORE_CLANG").unwrap_or("clang".into());
         let out = Command::new(compiler)
-            .args(["-std=c11", "-Wall", "-Wextra", "-Werror", "-pedantic", "-ffp-contract=off"])
+            .args([
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror",
+                "-pedantic",
+                "-ffp-contract=off",
+            ])
             .args(flags)
             .arg(dir.join("main.c"))
             .arg("-o")
@@ -814,7 +1003,10 @@ mod native {
                 hi = mid;
             }
         }
-        Err(format!("case {lo} disagrees (exit {:?})", status(lo, lo + 1)))
+        Err(format!(
+            "case {lo} disagrees (exit {:?})",
+            status(lo, lo + 1)
+        ))
     }
 }
 
@@ -822,7 +1014,11 @@ mod native {
 /// this order, so the harness names each by its function index.
 #[cfg(unix)]
 fn harness_source(ty: ScalarType) -> (String, usize, usize, usize, usize, usize) {
-    let other = if ty == ScalarType::F32 { ScalarType::F64 } else { ScalarType::F32 };
+    let other = if ty == ScalarType::F32 {
+        ScalarType::F64
+    } else {
+        ScalarType::F32
+    };
     let mut source = String::from(HEADER);
     for op in [Op::Add, Op::Sub, Op::Mul, Op::Div] {
         source.push_str(&format!(
@@ -833,7 +1029,11 @@ fn harness_source(ty: ScalarType) -> (String, usize, usize, usize, usize, usize)
     }
     source.push_str(&format!("fn neg(a: {ty}) -> {ty} {{ return -a; }}\n"));
     for (i, cmp) in Cmp::ALL.into_iter().enumerate() {
-        let effect = if cmp.is_ordering() { "partial_ord" } else { "partial_eq" };
+        let effect = if cmp.is_ordering() {
+            "partial_ord"
+        } else {
+            "partial_eq"
+        };
         source.push_str(&format!(
             "fn cmp{i}(a: {ty}, b: {ty}) -> bool effects {{ {effect} }} {{ return a {} b; }}\n",
             cmp.c_operator()
@@ -841,7 +1041,9 @@ fn harness_source(ty: ScalarType) -> (String, usize, usize, usize, usize, usize)
     }
     let to_int = 11;
     for to in INTEGERS {
-        source.push_str(&format!("fn to_{to}(a: {ty}) -> {to} {{ return a as {to}; }}\n"));
+        source.push_str(&format!(
+            "fn to_{to}(a: {ty}) -> {to} {{ return a as {to}; }}\n"
+        ));
     }
     let try_int = to_int + INTEGERS.len();
     for to in INTEGERS {
@@ -850,10 +1052,14 @@ fn harness_source(ty: ScalarType) -> (String, usize, usize, usize, usize, usize)
         ));
     }
     let to_other = try_int + INTEGERS.len();
-    source.push_str(&format!("fn to_{other}(a: {ty}) -> {other} {{ return a as {other}; }}\n"));
+    source.push_str(&format!(
+        "fn to_{other}(a: {ty}) -> {other} {{ return a as {other}; }}\n"
+    ));
     let from_int = to_other + 1;
     for from in INTEGERS {
-        source.push_str(&format!("fn from_{from}(a: {from}) -> {ty} {{ return a as {ty}; }}\n"));
+        source.push_str(&format!(
+            "fn from_{from}(a: {from}) -> {ty} {{ return a as {ty}; }}\n"
+        ));
     }
     source.push_str("fn main() -> unit { return; }\n");
     (source, 11, to_int, try_int, to_other, from_int)
@@ -962,16 +1168,22 @@ fn native_boundary_table_is_bit_identical_to_the_reference() {
                 for (label, flags) in BUILDS {
                     let built = build(&harness, flags).unwrap_or_else(|e| panic!("{ty} {label}: {e}"));
                     run_range(&built.binary, 0, cases.len()).unwrap_or_else(|e| panic!("{ty} {label}: {e}"));
-                    for index in 0..faults.len() {
+                    for (index, fault) in faults.iter().enumerate() {
                         let out = Command::new(&built.binary).args(["fault", &index.to_string()]).output().unwrap();
                         assert!(out.stdout.is_empty() && out.stderr.is_empty(), "{ty} {label} fault {index}: {}", String::from_utf8_lossy(&out.stderr));
-                        assert_eq!(out.status.code(), Some(86), "{ty} {label} fault {index}: {}", faults[index]);
+                        assert_eq!(out.status.code(), Some(86), "{ty} {label} fault {index}: {fault}");
                     }
+                    let n = values.len();
+                    let raises = cases.iter().filter(|case| case.contains("q_try_tag_")).count();
                     summary.lock().unwrap().push(format!(
-                        "{{\"type\": \"{ty}\", \"build\": \"{label}\", \"cases\": {}, \"bit_identical\": {}, \"fault_exit_86\": {}, \"sanitizer_reports\": 0}}",
+                        "{{\"type\": \"{ty}\", \"build\": \"{label}\", \"cases\": {}, \"arithmetic\": {}, \"negation\": {n}, \"comparisons\": {}, \"to_integer_values\": {}, \"to_integer_typed_out_of_range\": {raises}, \"to_integer_fault_exit_86\": {}, \"float_to_float\": {n}, \"integer_to_float\": {}, \"agreeing\": {}, \"sanitizer_reports\": 0}}",
                         cases.len() + faults.len(),
-                        cases.len(),
-                        faults.len()
+                        4 * n * n,
+                        6 * n * n,
+                        cases.iter().filter(|case| case.contains("q_try_ok_")).count(),
+                        faults.len(),
+                        cases.len() - 4 * n * n - n - 6 * n * n - 2 * cases.iter().filter(|case| case.contains("q_try_ok_")).count() - raises - n,
+                        cases.len()
                     ));
                 }
             });
@@ -1021,8 +1233,16 @@ fn native_renderings_equal_the_reference_per_stream() {
         let built = build(&c, flags).unwrap_or_else(|e| panic!("{label}: {e}"));
         let out = Command::new(&built.binary).output().unwrap();
         assert_eq!(out.status.code(), Some(0), "{label}");
-        assert_eq!(String::from_utf8_lossy(&out.stdout), project("out"), "{label}");
-        assert_eq!(String::from_utf8_lossy(&out.stderr), project("err"), "{label}");
+        assert_eq!(
+            String::from_utf8_lossy(&out.stdout),
+            project("out"),
+            "{label}"
+        );
+        assert_eq!(
+            String::from_utf8_lossy(&out.stderr),
+            project("err"),
+            "{label}"
+        );
     }
 }
 
@@ -1038,7 +1258,10 @@ fn native_renderers_agree_with_the_reference_on_a_seeded_sample() {
     let m = admitted(&format!(
         "{HEADER}fn main() -> unit {{ let a: f32 = 1.0; let b = 1.0; print dec a; print hex a; print dec b; print hex b; return; }}"
     ));
-    let c = m.c_source.unwrap().replace("int main(void)", "int checked_entry(void)");
+    let c = m
+        .c_source
+        .unwrap()
+        .replace("int main(void)", "int checked_entry(void)");
     let mut state: u64 = 0x9E37_79B9_7F4A_7C15;
     let mut next = || {
         state ^= state << 13;
@@ -1053,11 +1276,19 @@ fn native_renderers_agree_with_the_reference_on_a_seeded_sample() {
     }
     // Every power of two, built from its fields.
     for e in -1074i64..=1023 {
-        let bits: u64 = if e >= -1022 { ((e + 1023) as u64) << 52 } else { 1u64 << (e + 1074) };
+        let bits: u64 = if e >= -1022 {
+            ((e + 1023) as u64) << 52
+        } else {
+            1u64 << (e + 1074)
+        };
         samples.push((ScalarType::F64, i128::from(bits)));
     }
     for e in -149i64..=127 {
-        let bits: u32 = if e >= -126 { ((e + 127) as u32) << 23 } else { 1u32 << (e + 149) };
+        let bits: u32 = if e >= -126 {
+            ((e + 127) as u32) << 23
+        } else {
+            1u32 << (e + 149)
+        };
         samples.push((ScalarType::F32, i128::from(bits)));
     }
     for k in 1..2000u32 {
@@ -1084,7 +1315,11 @@ fn native_renderers_agree_with_the_reference_on_a_seeded_sample() {
         run_range(&built.binary, 0, samples.len()).unwrap_or_else(|e| {
             let index: usize = e.split_whitespace().nth(1).unwrap().parse().unwrap();
             let (ty, bits) = samples[index];
-            panic!("{label}: {e}: {ty} {bits:#x} dec {} hex {}", sf::render_dec(ty, bits).unwrap(), sf::render_hex(ty, bits).unwrap())
+            panic!(
+                "{label}: {e}: {ty} {bits:#x} dec {} hex {}",
+                sf::render_dec(ty, bits).unwrap(),
+                sf::render_hex(ty, bits).unwrap()
+            )
         });
     }
 }
@@ -1095,13 +1330,25 @@ fn native_renderers_agree_with_the_reference_on_a_seeded_sample() {
 #[test]
 fn an_excess_precision_or_fast_math_build_is_refused() {
     use native::*;
-    let m = admitted(&format!("{HEADER}fn main() -> unit {{ let a = 1.0 / 3.0; print dec a; return; }}"));
+    let m = admitted(&format!(
+        "{HEADER}fn main() -> unit {{ let a = 1.0 / 3.0; print dec a; return; }}"
+    ));
     let c = m.c_source.unwrap();
     build(&c, &["-O0"]).expect("the plain build");
-    let error = build(&c, &["-O0", "-ffp-eval-method=extended"]).err().expect("a static assertion");
+    let error = build(&c, &["-O0", "-ffp-eval-method=extended"])
+        .err()
+        .expect("a static assertion");
     assert!(error.contains("no excess precision"), "{error}");
     let error = build(&c, &["-O0", "-ffast-math"]).err().expect("an #error");
-    assert!(error.contains("fast-math and finite-math-only are refused"), "{error}");
-    let error = build(&c, &["-O0", "-ffinite-math-only"]).err().expect("an #error");
-    assert!(error.contains("fast-math and finite-math-only are refused"), "{error}");
+    assert!(
+        error.contains("fast-math and finite-math-only are refused"),
+        "{error}"
+    );
+    let error = build(&c, &["-O0", "-ffinite-math-only"])
+        .err()
+        .expect("an #error");
+    assert!(
+        error.contains("fast-math and finite-math-only are refused"),
+        "{error}"
+    );
 }

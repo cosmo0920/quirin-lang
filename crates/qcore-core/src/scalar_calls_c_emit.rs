@@ -536,7 +536,10 @@ pub fn scalar_helper_definition(helper: Helper, target: Option<&st::RecordedTarg
         Helper::Neg(ty) | Helper::TryNeg(ty) if ty.is_float() => {
             let c = st::c_type(ty);
             return if matches!(helper, Helper::Neg(_)) {
-                format!("static {c} {}({c} a) {{\n    return -a;\n}}\n", helper.name())
+                format!(
+                    "static {c} {}({c} a) {{\n    return -a;\n}}\n",
+                    helper.name()
+                )
             } else {
                 format!(
                     "static int {}({c} a, {c} *r) {{\n    *r = -a;\n    return 0;\n}}\n",

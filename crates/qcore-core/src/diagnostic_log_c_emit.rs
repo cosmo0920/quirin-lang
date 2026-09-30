@@ -152,7 +152,11 @@ const FIXED_RESULT_ARM: &str = r#"        if (event->name != NULL && event->name
 #[must_use]
 pub fn with_float_results(text: &str) -> String {
     let anchor = "            if (event->name[1] == 'U')\n                (void)fprintf(stdout, \"QCORE_TASK_RESULT";
-    assert_eq!(text.matches(anchor).count(), 1, "the fixed result arm is installed once");
+    assert_eq!(
+        text.matches(anchor).count(),
+        1,
+        "the fixed result arm is installed once"
+    );
     text.replace(
         anchor,
         &format!(

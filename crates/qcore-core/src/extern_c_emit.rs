@@ -183,7 +183,10 @@ fn value_observation(
         callee.name,
         value_name(value),
         argument_lines(arguments, 0),
-        outcome.map_or_else(String::new, |outcome| format!(" -> {}", outcome_text(callee, outcome)))
+        outcome.map_or_else(String::new, |outcome| format!(
+            " -> {}",
+            outcome_text(callee, outcome)
+        ))
     )
 }
 

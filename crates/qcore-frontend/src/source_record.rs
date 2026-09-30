@@ -461,10 +461,7 @@ pub fn record_declarations_admitting_floats(
     declarations(program, true)
 }
 
-fn declarations(
-    program: &SourceProgram,
-    floats: bool,
-) -> Result<Vec<RecordType>, (Span, String)> {
+fn declarations(program: &SourceProgram, floats: bool) -> Result<Vec<RecordType>, (Span, String)> {
     let tokens = program.lexical_tokens();
     // Card `OWNED-FIELD-ROUTE-REACH`: the module's record type **names**,
     // collected before any field is read, so a field naming a record declared

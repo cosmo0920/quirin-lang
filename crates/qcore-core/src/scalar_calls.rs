@@ -1350,9 +1350,10 @@ impl Elab<'_> {
                 self.width(from_ty)?;
                 let x = self.elab(x, from, depth + 1)?;
                 let constant = match x.constant {
-                    Some(v) => Some(st::convert(from_ty, *to, v, target).ok_or_else(|| {
-                        self.bad(&conversion_fault(v, from_ty, *to, target))
-                    })?),
+                    Some(v) => Some(
+                        st::convert(from_ty, *to, v, target)
+                            .ok_or_else(|| self.bad(&conversion_fault(v, from_ty, *to, target)))?,
+                    ),
                     None => None,
                 };
                 expr(TKind::Convert(Box::new(x)), constant)
@@ -1912,12 +1913,11 @@ pub fn check_for_target(
         }) || block_uses_target(&f.body)
     });
     let uses_floats = typed.iter().any(|f| {
-        f.locals.iter().chain([&f.result]).any(|ty| {
-            program
-                .leaves(*ty)
-                .iter()
-                .any(|leaf| leaf.is_float())
-        }) || block_uses_float(&f.body)
+        f.locals
+            .iter()
+            .chain([&f.result])
+            .any(|ty| program.leaves(*ty).iter().any(|leaf| leaf.is_float()))
+            || block_uses_float(&f.body)
     });
     Ok(Checked {
         program,

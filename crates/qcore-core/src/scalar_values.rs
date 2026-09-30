@@ -119,10 +119,7 @@ pub enum ValueRefusal {
     LiteralKind { ty: ScalarType, float: bool },
     /// A float literal that is no value of its type: it rounds to infinity,
     /// or a nonzero one rounds to zero.
-    FloatLiteral {
-        ty: ScalarType,
-        error: LiteralError,
-    },
+    FloatLiteral { ty: ScalarType, error: LiteralError },
     /// `%` of a float: a float has `+ - * /` and unary `-` only.
     NoFloatRemainder { ty: ScalarType },
     /// A float comparison in a function whose row does not declare its effect
