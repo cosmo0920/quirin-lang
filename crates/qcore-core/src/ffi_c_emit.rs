@@ -25,7 +25,8 @@ use std::fmt::Write as _;
 
 use crate::c_program::{self, Fragment, Section};
 use crate::ffi::{
-    CheckedStruct, FfiCertificate, FfiOutcome, FfiProgram, FfiStatement, FfiType, FfiValue,
+    CheckedStruct, FfiCertificate, FfiFunction, FfiOutcome, FfiProgram, FfiStatement, FfiType,
+    FfiValue,
 };
 use crate::scalar_types::{self as st, ScalarType};
 use crate::std_io::{Rendering, StdIoEvent, StdIoOperand, Stream};
@@ -127,6 +128,12 @@ pub fn emit_ffi_c11(
     let mut includes = String::from(
         "#include <inttypes.h>\n#include <stdbool.h>\n#include <stddef.h>\n#include <stdint.h>\n#include <stdio.h>\n#include <string.h>\n",
     );
+    // Card `W48-QR-USABLE-RECORDS`: a helper stops the program with
+    // `exit(70)` on a disagreeing outcome, so a file with one includes
+    // `<stdlib.h>`; every file without one keeps its bytes.
+    if !program.functions.is_empty() {
+        includes.push_str("#include <stdlib.h>\n");
+    }
     let mut headers = BTreeSet::new();
     for record in &program.structs {
         if record.header.contains(['"', '\\', '\n', '\r']) {
@@ -148,6 +155,15 @@ pub fn emit_ffi_c11(
                 .iter()
                 .map(|(_, ty)| ty)
                 .chain([&callee.result])
+                .any(|ty| matches!(ty, FfiType::Scalar(scalar) if scalar.is_target_width()))
+        })
+        // Card `W48-QR-USABLE-RECORDS`: a helper's own signature too.
+        || program.functions.iter().any(|function| {
+            function
+                .parameters
+                .iter()
+                .map(|(_, ty)| ty)
+                .chain([&function.result])
                 .any(|ty| matches!(ty, FfiType::Scalar(scalar) if scalar.is_target_width()))
         });
     if uses_target_width {
@@ -194,11 +210,120 @@ pub fn emit_ffi_c11(
         prototypes,
     ));
 
+    let mut helpers_text = String::new();
+    if !program.functions.is_empty() {
+        let mut prototypes = String::from("\n");
+        for function in &program.functions {
+            let _ = writeln!(prototypes, "{};", helper_signature(program, function)?);
+        }
+        helpers_text.push_str(&prototypes);
+        for function in &program.functions {
+            let mut env = Emission::default();
+            let mut discards = String::new();
+            for (name, ty) in &function.parameters {
+                match ty {
+                    FfiType::Scalar(scalar) => {
+                        env.scalars.insert(name.clone());
+                        env.scalar_types.insert(name.clone(), *scalar);
+                        let _ = writeln!(discards, "    (void) {};", value_variable(name));
+                    }
+                    FfiType::Record(record) => {
+                        env.records.insert(name.clone(), record.clone());
+                        let _ = writeln!(discards, "    (void) {};", record_variable(name));
+                    }
+                    FfiType::Unit | FfiType::ConstRecordPointer(_) => {
+                        return Err(FfiEmissionRefusal::CertificateDisagrees);
+                    }
+                }
+            }
+            let mut body = discards;
+            emit_statements(program, &function.statements, &mut env, Some(function), &mut body)?;
+            let _ = write!(
+                helpers_text,
+                "\n{}\n{{\n{body}}}\n",
+                helper_signature(program, function)?
+            );
+        }
+        fragments.push(Fragment::new(
+            Section::FileScope,
+            "ffi.helpers",
+            helpers_text,
+        ));
+    }
+
     let mut body = String::new();
-    let mut scalars: BTreeSet<String> = BTreeSet::new();
-    let mut scalar_types: std::collections::BTreeMap<String, ScalarType> = Default::default();
-    let mut records: std::collections::BTreeMap<String, String> = Default::default();
-    for statement in &program.statements {
+    let mut env = Emission::default();
+    emit_statements(program, &program.statements, &mut env, None, &mut body)?;
+    Ok(c_program::assemble(
+        &fragments,
+        &c_program::Entry::source_route(body),
+    ))
+}
+
+/// The C name of a `.qr` helper function (card `W48-QR-USABLE-RECORDS`),
+/// prefixed so a helper and a C callee of one name cannot collide.
+fn helper_name(name: &str) -> String {
+    format!("qr_fn_{name}")
+}
+
+/// `static RESULT qr_fn_NAME(PARAMETERS)`: a helper takes and returns
+/// scalars and imported records **by value**, which is what C's own struct
+/// parameters and results are.
+fn helper_signature(
+    program: &FfiProgram,
+    function: &FfiFunction,
+) -> Result<String, FfiEmissionRefusal> {
+    let result =
+        c_type(program, &function.result).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+    let parameters = if function.parameters.is_empty() {
+        "void".to_owned()
+    } else {
+        function
+            .parameters
+            .iter()
+            .map(|(name, ty)| {
+                let c = c_type(program, ty).ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                Ok(match ty {
+                    FfiType::Record(_) => format!("{c} {}", record_variable(name)),
+                    _ => format!("{c} {}", value_variable(name)),
+                })
+            })
+            .collect::<Result<Vec<_>, FfiEmissionRefusal>>()?
+            .join(", ")
+    };
+    Ok(format!(
+        "static {result} {}({parameters})",
+        helper_name(&function.name)
+    ))
+}
+
+/// What one function's emission knows about its names.
+#[derive(Default)]
+struct Emission {
+    scalars: BTreeSet<String>,
+    scalar_types: std::collections::BTreeMap<String, ScalarType>,
+    records: std::collections::BTreeMap<String, String>,
+}
+
+/// Emit `statements` of the entry (`function` is `None`) or of a helper.
+#[allow(clippy::too_many_lines)]
+fn emit_statements(
+    program: &FfiProgram,
+    statements: &[FfiStatement],
+    env: &mut Emission,
+    function: Option<&FfiFunction>,
+    body: &mut String,
+) -> Result<(), FfiEmissionRefusal> {
+    // A declared outcome that disagrees stops the program with status 70
+    // before anything reads the result: `return 70;` from the entry, and —
+    // card `W48-QR-USABLE-RECORDS` — `exit(70)` from a helper, the same
+    // status from inside a call.
+    let stop = if function.is_some() {
+        "exit(70);"
+    } else {
+        "return 70;"
+    };
+    for statement in statements {
         match statement {
             FfiStatement::Construct {
                 binding,
@@ -220,18 +345,19 @@ pub fn emit_ffi_c11(
                         body,
                         "    {variable}.{} = {};",
                         field.name,
-                        operand(value, field.ty, &scalars)?
+                        operand(value, field.ty, &env.scalars)?
                     );
                 }
                 let _ = writeln!(body, "    (void) {variable};");
-                records.insert(binding.clone(), record.clone());
+                env.records.insert(binding.clone(), record.clone());
             }
             FfiStatement::Read {
                 binding,
                 source,
                 field,
             } => {
-                let record = records
+                let record = env
+                    .records
                     .get(source)
                     .ok_or_else(|| FfiEmissionRefusal::Unbound(source.clone()))?;
                 let checked = program
@@ -247,8 +373,59 @@ pub fn emit_ffi_c11(
                     st::c_type(listed.ty),
                     record_variable(source)
                 );
-                scalars.insert(binding.clone());
-                scalar_types.insert(binding.clone(), listed.ty);
+                env.scalars.insert(binding.clone());
+                env.scalar_types.insert(binding.clone(), listed.ty);
+            }
+            // Card `W48-QR-USABLE-RECORDS`: one member assignment of a listed
+            // field, of a value the checker proved a value of its type.
+            FfiStatement::Write {
+                record: source,
+                field,
+                value,
+            } => {
+                let record = env
+                    .records
+                    .get(source)
+                    .ok_or_else(|| FfiEmissionRefusal::Unbound(source.clone()))?;
+                let checked = program
+                    .record(record)
+                    .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                let listed = checked
+                    .field(field)
+                    .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                let _ = writeln!(
+                    body,
+                    "    {}.{field} = {};",
+                    record_variable(source),
+                    operand(value, listed.ty, &env.scalars)?
+                );
+            }
+            FfiStatement::Copy { binding, source } => {
+                if let Some(record) = env.records.get(source).cloned() {
+                    let checked = program
+                        .record(&record)
+                        .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                    let variable = record_variable(binding);
+                    let _ = writeln!(
+                        body,
+                        "    {} {variable} = {};\n    (void) {variable};",
+                        c_struct(checked),
+                        record_variable(source)
+                    );
+                    env.records.insert(binding.clone(), record);
+                } else if let Some(ty) = env.scalar_types.get(source).copied() {
+                    let variable = value_variable(binding);
+                    let _ = writeln!(
+                        body,
+                        "    {} {variable} = {};\n    (void) {variable};",
+                        st::c_type(ty),
+                        value_variable(source)
+                    );
+                    env.scalars.insert(binding.clone());
+                    env.scalar_types.insert(binding.clone(), ty);
+                } else {
+                    return Err(FfiEmissionRefusal::Unbound(source.clone()));
+                }
             }
             FfiStatement::Call {
                 binding,
@@ -256,6 +433,53 @@ pub fn emit_ffi_c11(
                 arguments,
                 outcome,
             } => {
+                // Card `W48-QR-USABLE-RECORDS`: a `.qr` helper, by value.
+                if let Some(helper) = program.function(callee) {
+                    let mut actuals = Vec::new();
+                    for ((_, ty), argument) in helper.parameters.iter().zip(arguments) {
+                        actuals.push(match (ty, argument) {
+                            (FfiType::Scalar(scalar), value) => {
+                                operand(value, *scalar, &env.scalars)?
+                            }
+                            (FfiType::Record(_), FfiValue::Name(name))
+                                if env.records.contains_key(name) =>
+                            {
+                                record_variable(name)
+                            }
+                            _ => return Err(FfiEmissionRefusal::CertificateDisagrees),
+                        });
+                    }
+                    let call = format!("{}({})", helper_name(callee), actuals.join(", "));
+                    match (&helper.result, binding) {
+                        (FfiType::Unit, None) => {
+                            let _ = writeln!(body, "    {call};");
+                        }
+                        (FfiType::Scalar(ty), Some(name)) => {
+                            let variable = value_variable(name);
+                            let _ = writeln!(
+                                body,
+                                "    {} {variable} = {call};\n    (void) {variable};",
+                                st::c_type(*ty)
+                            );
+                            env.scalars.insert(name.clone());
+                            env.scalar_types.insert(name.clone(), *ty);
+                        }
+                        (FfiType::Record(record), Some(name)) => {
+                            let checked = program
+                                .record(record)
+                                .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
+                            let variable = record_variable(name);
+                            let _ = writeln!(
+                                body,
+                                "    {} {variable} = {call};\n    (void) {variable};",
+                                c_struct(checked)
+                            );
+                            env.records.insert(name.clone(), record.clone());
+                        }
+                        _ => return Err(FfiEmissionRefusal::CertificateDisagrees),
+                    }
+                    continue;
+                }
                 let admitted = program
                     .callees
                     .get(callee)
@@ -263,14 +487,14 @@ pub fn emit_ffi_c11(
                 let mut actuals = Vec::new();
                 for ((_, ty), argument) in admitted.parameters.iter().zip(arguments) {
                     actuals.push(match (ty, argument) {
-                        (FfiType::Scalar(scalar), value) => operand(value, *scalar, &scalars)?,
+                        (FfiType::Scalar(scalar), value) => operand(value, *scalar, &env.scalars)?,
                         (FfiType::Record(_), FfiValue::Name(name))
-                            if records.contains_key(name) =>
+                            if env.records.contains_key(name) =>
                         {
                             record_variable(name)
                         }
                         (FfiType::ConstRecordPointer(_), FfiValue::Name(name))
-                            if records.contains_key(name) =>
+                            if env.records.contains_key(name) =>
                         {
                             format!("&{}", record_variable(name))
                         }
@@ -294,11 +518,11 @@ pub fn emit_ffi_c11(
                                 .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
                             let _ = writeln!(
                                 body,
-                                "    if ({variable} != {expected}) {{\n        return 70;\n    }}"
+                                "    if ({variable} != {expected}) {{\n        {stop}\n    }}"
                             );
                         }
-                        scalars.insert(name.clone());
-                        scalar_types.insert(name.clone(), *ty);
+                        env.scalars.insert(name.clone());
+                        env.scalar_types.insert(name.clone(), *ty);
                     }
                     (FfiType::Record(record), Some(name)) => {
                         let checked = program
@@ -323,11 +547,11 @@ pub fn emit_ffi_c11(
                             }
                             let _ = writeln!(
                                 body,
-                                "    if ({}) {{\n        return 70;\n    }}",
+                                "    if ({}) {{\n        {stop}\n    }}",
                                 tests.join(" || ")
                             );
                         }
-                        records.insert(name.clone(), record.clone());
+                        env.records.insert(name.clone(), record.clone());
                     }
                     _ => return Err(FfiEmissionRefusal::CertificateDisagrees),
                 }
@@ -352,7 +576,7 @@ pub fn emit_ffi_c11(
                             st::c_literal(ScalarType::I32, i128::from(*number)),
                         ),
                         StdIoOperand::Scalar(name) => (
-                            *scalar_types
+                            *env.scalar_types
                                 .get(name)
                                 .ok_or_else(|| FfiEmissionRefusal::Unbound(name.clone()))?,
                             value_variable(name),
@@ -386,11 +610,28 @@ pub fn emit_ffi_c11(
                     return Err(FfiEmissionRefusal::CertificateDisagrees);
                 }
             },
-            FfiStatement::Return => {}
+            // The entry's `return;` is the assembler's; a helper returns its
+            // value — a scalar operand or a record binding — or nothing.
+            FfiStatement::Return(value) => match (function, value) {
+                (None, None) => {}
+                (Some(_), None) => {
+                    let _ = writeln!(body, "    return;");
+                }
+                (Some(helper), Some(value)) => {
+                    let expression = match (&helper.result, value) {
+                        (FfiType::Scalar(ty), value) => operand(value, *ty, &env.scalars)?,
+                        (FfiType::Record(_), FfiValue::Name(name))
+                            if env.records.contains_key(name) =>
+                        {
+                            record_variable(name)
+                        }
+                        _ => return Err(FfiEmissionRefusal::CertificateDisagrees),
+                    };
+                    let _ = writeln!(body, "    return {expression};");
+                }
+                (None, Some(_)) => return Err(FfiEmissionRefusal::CertificateDisagrees),
+            },
         }
     }
-    Ok(c_program::assemble(
-        &fragments,
-        &c_program::Entry::source_route(body),
-    ))
+    Ok(())
 }
