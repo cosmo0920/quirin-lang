@@ -1,0 +1,46 @@
+{
+ "retired": [],
+ "amended": [
+  {
+   "id": "W48-QR-TASK-FFI-STRUCT-WORKER",
+   "amendment": "W48-QR-CLOSURES refuses a closure in an FFI file by name at the driver (`Q600`, naming this entry) before `source.ffi.v1` reads it, so a closure capturing an imported struct stays refused until the FFI route hosts tasks; landing this lifts the closure form with the named one, since a closure is lifted into a named worker. Remaining size unchanged (L)."
+  }
+ ],
+ "registered": [
+  {
+   "id": "W48-QR-CLOSURE-VALUES",
+   "title": "A closure is a spawn target only: no closure stored, passed or called as a value",
+   "why": "Found by W48-QR-CLOSURES (user decision of 2026-09-29: closures with an explicit capture list, lifted into a hidden named worker). The lift makes a closure a named worker at its one spawn site, so a capture list anywhere else — `let c = |copy x| -> T { … };`, a closure passed to a worker, a closure called — is refused (`Q038` for a capture-list shape outside `spawn SCOPE`, `Q000` for one in a named worker's argument list). A closure value needs a type for it (its captures' custody travels with the value: a closure that moved an owned Buffer is itself affine), a spawn of a closure-typed binding, and a rule for when its captures are taken (at the value's creation or at its spawn). Size L. DISCHARGE: a closure type in the task route's value vocabulary whose custody is its captures', with the transferability judgment deciding each capture at the value's creation, a spawn of such a binding lowering to the same hidden worker, and Lean parity with `QCore.Closures`.",
+   "source": "docs/reports/w48-qr-closures/README.md",
+   "recorded_by": "W48-QR-CLOSURES"
+  },
+  {
+   "id": "W48-QR-CLOSURE-EPOCH",
+   "title": "Closures are not lowered on the epoch routes",
+   "why": "Found by W48-QR-CLOSURES (the brief's stretch item 4). A closure on `source.epoch.tasks.v1` or the pure epoch route is refused at `Q600` by name at the driver. The composed epoch route's plan names each worker it accounts for (`thread scope NAME { copy; peak …; effort …; }` inside the `epoch` scope), and a closure's hidden worker is named `ENCLOSING#closureN`, which no source can spell: lifting it needs a spelling for a plan entry that accounts for a closure (for example keyed by the closure's position, or a plan clause written beside the closure), which is a language decision, and the route's source split (`split.task_source`) must keep the closure whole. Size M. DISCHARGE: a decided plan spelling for a closure, the composed route lowering the hidden worker with the plan entry bound to it, and an epoch example twin-identical to its hand-written form.",
+   "source": "docs/reports/w48-qr-closures/README.md",
+   "recorded_by": "W48-QR-CLOSURES"
+  },
+  {
+   "id": "W48-QR-CLOSURE-MUTEX",
+   "title": "Closures are not lowered on the mutex route, and `share … under M` is no capture",
+   "why": "Found by W48-QR-CLOSURES (the brief's stretch item 4). A closure in a module declaring a mutex generation is refused at `Q600` by name at the driver. On `source.mutex.guard.v1` a child is a lexical `thread scope NAME [share PLACE under MUTEX] { … }` block, not a spawned worker, and `share PLACE under MUTEX` is a clause of that scope (card MUTEX-SHARE-CROSS), not a capture a named worker's list admits — so the brief's `share NAME under M` capture spelling has no named-worker twin to lift to. Size M. DISCHARGE: a decision whether a closure on this route is the lexical child scope with a capture list (the clause moving into it) or a spawned worker the route learns to lower, then the lift with the mutex crossing's three-half decision (constraint 15o) unchanged.",
+   "source": "docs/reports/w48-qr-closures/README.md",
+   "recorded_by": "W48-QR-CLOSURES"
+  },
+  {
+   "id": "W48-QR-CLOSURE-ROUTES",
+   "title": "Closures are not lowered on the field-footprint route",
+   "why": "Found by W48-QR-CLOSURES. `source.bitfield-concurrency.v1` is selected before the task route and reads named workers' `write OBJECT.FIELD` captures against an explicit layout; a closure there is refused at `Q600` by name at the driver rather than handed to a route that reads no hidden worker. Size S. DISCHARGE: the route reading a closure's capture list as its spawn's (the lift already gives the capture list and the hidden worker), with its `DisjointFootprintsV1` certificate unchanged and a twin-identity row.",
+   "source": "docs/reports/w48-qr-closures/README.md",
+   "recorded_by": "W48-QR-CLOSURES"
+  },
+  {
+   "id": "W48-QR-CLOSURE-FIRST-REFUSAL-ORDER",
+   "title": "A module refused in both a closure's body and its enclosing function may report the other refusal first",
+   "why": "Found by W48-QR-CLOSURES. A closure's parameter types are decided by lowering its enclosing function to the spawn site first; when that function refuses before the spawn site is reached, its refusal is the module's, while the hand-written twin — whose worker is declared, and lowered, first — would report the worker's own refusal when the body also refuses. The refused set is the same (each program is refused either way) and every admitted program is twin-identical; only which of two refusals a doubly-refused module shows first can differ. Size S. DISCHARGE: decide a closure's parameter types by a pass that reads the environment at the spawn site without stopping at an earlier refusal, so the worker can be lowered first as the twin's is; or record the order as the rule (a closure's types come from its spawn site).",
+   "source": "docs/reports/w48-qr-closures/README.md",
+   "recorded_by": "W48-QR-CLOSURES"
+  }
+ ]
+}

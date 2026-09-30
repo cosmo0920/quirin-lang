@@ -249,6 +249,25 @@ single bars (`ffi_struct_import.rs::the_marker_tokens_leave_the_capture_list_spe
 
 Add `w48-qr-c-struct-import` to the rule's closing evidence list.
 
+### 14 — census entry, card `W48-QR-CLOSURES` (wave 48)
+
+Reserves **+0 words and +0 tokens**, and claims three **positions**. `|` and
+`||` directly after `spawn SCOPE` open a closure's capture list (a `|` was a
+`Q038` refusal there, a `||` too), and the list's closing `|`; `as NAME` after
+a capture inside that list (the name is a binder, excluded from the enclosing
+statement's references). A closure's header and body are its hidden worker's,
+so a window that contains a closure without lying inside it skips them
+(`SourceProgram::outside_closure_window`) — a sixth name-resolution
+exclusion, bounded by the closure's own extent. The census
+(`docs/reports/w48-qr-closures/census_closure_spelling.py`, all 697 tracked
+`.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` files) found **zero** `spawn NAME |`,
+`spawn NAME ||`, `spawn NAME [|`, `|` before a capture-mode word, `|`/`||`
+before `->` and `as NAME` in a spawn's capture list, and the whole-tree
+fixture freeze found every existing file byte-identical. A capture list keeps
+card 1's `[|`/`|]` free: one touching `[` or `]` is refused at `Q000`.
+
+Add `w48-qr-closures` to the rule's closing evidence list.
+
 ### 14 — CT implementation source forms
 
 CT24 reuses the parsed error-region and spawn-success-arm forms. CT10 uses

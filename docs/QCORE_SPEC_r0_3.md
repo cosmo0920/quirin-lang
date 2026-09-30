@@ -1233,6 +1233,22 @@ leased at once and no byte of any leaf has two write authorities
 outside the F02 observable alphabet and is refused by the reference encoding,
 never flattened into its leaves.
 
+**Closures** (card `W48-QR-CLOSURES`, implemented grammars §G02v). A closure
+`spawn SCOPE |CAPTURES| -> TYPE [effects { … }] { BODY }` is syntax over a
+named worker and adds no concurrency rule: the parser lifts it into a hidden
+worker declared before the function that spawns it, whose parameters are the
+explicit captures, and the task route decides each parameter's type from the
+captured place at the spawn site — the only type the transferability judgment
+could admit there (`QCore.Closures.theClosureParameterIsTheOnlyAdmissibleOne`)
+— so a closure is admitted exactly when a hand-written twin is, with the same
+transfers and the same worker IR (`desugaringPreservesTheTaskIR`), and its
+emitted C and certificate are the twin's byte for byte. There is no implicit
+capture: the hidden worker's scope is its capture binders and the module's
+globals, so a body naming any other outer name is refused
+(`theBodysFreeOuterNamesAreExactlyTheCaptureBinders`). Closures are spawn
+targets of the scoped-task routes only; on an epoch, mutex, field-footprint or
+FFI route, and as values, they are refused by name.
+
 `source.bitfield-concurrency.v1` derives field footprints from explicit source
 layouts and simultaneous worker write captures, then independently rechecks
 `DisjointFootprintsV1` evidence. Its claim is **field independence only**, under
@@ -1697,6 +1713,22 @@ and, on the composed epoch route, to any record type (`W48-QR-TASK-RECORD-EPOCH`
 the composed route's `Q050` to a rendering of a sub-record, an owned field or a
 whole record. `AGGREGATE-TASK-CAPTURE`'s by-name `Q500` refusal of every record
 declaration in a task module is lifted.
+
+`W48-QR-CLOSURES` allocates no code and changes no existing program's
+diagnostic (the whole-tree fixture freeze). A closure's lifted worker meets
+every existing condition as its hand-written twin does, at the closure's own
+source span. The card widens five conditions, each only for a closure
+spelling: the parse `Q000` to a closure's shape (a capture list touching `[`
+or `]`, a missing `-> TYPE`, a missing body, an empty list spelled `| |`, a
+closure passed to a worker); `Q011` to a place captured twice and to two
+captures bound to one name; `Q013` names an outer name a closure's body uses
+without capturing it as such; `Q038`'s bitwise-`|` condition no longer covers
+a closure's two bars, and covers a capture-list shape anywhere else
+(`W48-QR-CLOSURE-VALUES`); and `Q600` to a capture naming something that is
+not a value (a handle, a Result, a scope, an error, `unit`), to a closure on a
+route that does not lower it (`W48-QR-CLOSURE-EPOCH`, `W48-QR-CLOSURE-MUTEX`,
+`W48-QR-CLOSURE-ROUTES`, `W48-QR-TASK-FFI-STRUCT-WORKER`, or no scoped-task
+route at all), and to a closure whose spawn site was never lowered.
 
 `W48-QR-SCALAR-TYPES-R6` allocates no code. On the scoped-task route it widens
 the OrdinaryTypes `Q020` condition (a payload type in a Buffer, loan or lease

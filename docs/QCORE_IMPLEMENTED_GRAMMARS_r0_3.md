@@ -1015,12 +1015,100 @@ task_effect = … | "mut" ;                             (* in a module declaring
   the reference encoding rather than flattened (`W48-QR-TASK-RECORD-F02`).
   See [the card's report](reports/w48-qr-task-record-captures/README.md).
 
+**Closures** (card `W48-QR-CLOSURES`, §G02v). A spawn may write its worker in
+place, `spawn SCOPE |CAPTURES| -> TYPE [effects { … }] { BODY }`; the capture
+list uses exactly this section's capture spellings, and the closure is lifted
+into a hidden named worker before any rule above applies.
+
 The native driver supports Linux C11 threads, macOS through an emitted pthread
 adapter, and Windows through an emitted winpthreads-derived C11 thread subset;
 it explicitly rejects other targets. Its start record survives until successful native join; failed
 join aborts without reclaiming possibly accessed storage. These rules do not
 establish general C11/shared-memory or cross-platform refinement. See the
 [recovery execution record](reports/w6-task-recovery/README.md).
+
+## G02v. Closures with explicit capture lists
+
+Card `W48-QR-CLOSURES` (user decision of 2026-09-29: an explicit capture list,
+lifted into a hidden named worker; no implicit capture). On the scoped-task
+routes (§G02a–§G02bc and the composed route §G02j) a spawn may write its worker
+in place:
+
+```ebnf
+spawn      = "spawn", SCOPE, closure ;
+closure    = captures, "->", TYPE, [ "effects", "{", EFFECTS, "}" ], block ;
+captures   = "||"                                     (* no capture: one token *)
+           | "|", capture, { ",", capture }, "|" ;
+capture    = G02a_capture, [ "as", NAME ] ;           (* a named worker's spellings *)
+G02a_capture = ( "copy" | "move" ), PLACE
+           | "read", PLACE, "share", SHARE
+           | "lend", PLACE, LOW, "..", HIGH
+           | "write", PLACE ;                         (* refused by the judgment *)
+```
+
+```qcore
+thread scope lanes {
+    match spawn lanes |copy bonus, move job, lend pixels 0..2| -> Job effects { mut } {
+        job.count = bonus;
+        let low = qcore_buffer_write(pixels, 0, 17);
+        return move job;
+    } {
+        Result::Ok { value: first } => { … }
+        Result::Err { error: failure } => { … }
+    }
+}
+```
+
+* **The lift.** The parser lifts each closure into a **hidden worker** named
+  `ENCLOSING#closureN` — the enclosing function's name and the closure's
+  ordinal there in source order; `#` is no identifier character, so no source
+  name collides — declared immediately before the enclosing function (a
+  closure's own closures before it), with one parameter per capture, the
+  written result type and effect row, and the closure's body. The spawn is an
+  ordinary spawn of that worker with the written captures, in either spawn
+  form: `let h = spawn … { … }?;` or `match spawn … { … } { arms }`. The
+  closure's tokens stay where they are written; a statement that contains a
+  closure reads its capture list and skips its header and body, which are the
+  hidden worker's.
+* **Parameter names and types.** A capture binds the place's root name, a field
+  capture's last segment (`copy r.f` binds `f`), or the name after `as`. The
+  **type** is the captured place's type at the spawn site, decided by the task
+  route there: a scalar's type, a record's record type, an owned Buffer's
+  `own<Buffer<T>> use one` (for `move`), its `borrow<Buffer<T>>` (for `read …
+  share`) and its `lend<Buffer<T>>` (for `lend …`). That is the only type the
+  transferability judgment could admit for the place and mode, so the judgment
+  decides each capture exactly as for a named worker, and the lifted program
+  checks and emits byte for byte as its hand-written twin — each closure a
+  named worker before the enclosing function (`QCore.Closures`).
+* **No implicit capture.** The hidden worker's scope is its capture binders and
+  the module's globals (record, error and function names). A body naming any
+  other name of the enclosing scope is refused (`Q013`), naming it and saying
+  the closure does not capture it. A place captured twice, or two captures
+  bound to one name, is refused (`Q011`); `as NAME` resolves a clash.
+* **Required, not inferred.** The result type is required (`Q000` without
+  `->`); the effect row follows the worker rules, so a closure that raises
+  `ArithmeticError` declares `throws<ArithmeticError>`, and the error reaches
+  the creator through `join` unchanged.
+* **Spawn targets only.** A capture list anywhere but directly after
+  `spawn SCOPE` — a closure stored in a binding, passed to a worker or called —
+  is refused (`Q038`, `Q000`; `W48-QR-CLOSURE-VALUES`). A capture list never
+  touches `[` or `]` (`Q000`): `[|` and `|]` are the quant delimiters.
+* **Worker rules unchanged.** A closure that spawns — another closure in its
+  own scope, or anything else — is a task-bearing worker and refused by the
+  first-order leaf rule, at the closure's span; a closure has no name, so it
+  cannot recur. Closures are lowered by the scoped-task and composed task
+  routes only: on an epoch route (`W48-QR-CLOSURE-EPOCH`), the mutex route
+  (`W48-QR-CLOSURE-MUTEX`), the field-footprint route (`W48-QR-CLOSURE-ROUTES`)
+  and the FFI route (`W48-QR-TASK-FFI-STRUCT-WORKER`) a closure refuses at
+  `Q600` by name.
+* **Lexical.** No reserved word is added. `|` and `||` are claimed only
+  directly after `spawn SCOPE` (and the closing `|` of that list); `as` is
+  claimed only after a capture inside a closure's list. The census
+  (`docs/reports/w48-qr-closures/census_closure_spelling.py`) found none of
+  these shapes in any tracked `.qr`/`.qv`/`.qrlib`/`.qcore`/`.qc` file.
+
+See [the card's report](reports/w48-qr-closures/README.md) and
+[`examples/threads`](../examples/threads/README.md#closures).
 
 ## G02b. Owned-buffer task execution
 
