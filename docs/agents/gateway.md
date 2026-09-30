@@ -2841,7 +2841,14 @@ own anchor here.
     "footprint-member-pair"`, the pair and its decision). Premises stated,
     not proved: faithful Clang extraction of member steps, record types and
     layouts (trust boundary 28), and the three named core premises where a
-    certificate carries them. MEASURED. `QCore.DisjointFootprint`'s CG18
+    certificate carries them. Measured (corpus `66910c10`, system, tail-pause
+    slice, base `b59aaae2`): **no function moved on any route** (608 / 10 /
+    4,216, `8b9e4047…` → `41c7cefd…`; system and slice byte-identical); 5
+    member pairs admitted in 2 corpus functions (`mk_http_parser`,
+    `rd_kafka_mock_partition_pidstate_get`, whose statements now reach the
+    flow as `unknown_alias` leaves), 5 cross-object pairs refused
+    (`CG18-CROSS-OBJECT-PATH-PAIRS`); no new premise in a published verdict.
+    `QCore.DisjointFootprint`'s CG18
     section (`without_the_premise_nothing_changes`,
     `cross_allocation_disjointness_needs_the_premise`,
     `an_admitted_judgement_is_grounded_or_premised`,
