@@ -77,7 +77,9 @@ pub const USAGE: &str = "usage: quirin-audit [--plugin-path DIR]... --output DIR
 
 /// Every built-in subcommand of `quirin-audit` (`src/main.rs`). An external
 /// executable of one of these names is never run.
-pub const BUILTINS: [&str; 17] = [
+pub const BUILTINS: [&str; 18] = [
+    // Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i).
+    "atomic-publication",
     "callback-task-handoff",
     "callback-task-handoff-fixture",
     "checkpoint",
