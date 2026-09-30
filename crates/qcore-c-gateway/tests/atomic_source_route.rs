@@ -184,7 +184,15 @@ fn g_routes_qualified_stores_and_names_qualified_rmw() {
         return;
     }
     assert!(g("void subject(_Atomic int *a) { *a = 2; }").safe());
-    assert!(g("void subject(_Atomic int *a, int v) { *a = v; }").safe());
+    // A formal-valued store keeps the older route's own answer: the classifier
+    // does not refuse it, so the hook is not asked, and the flow's out-parameter
+    // check refuses it (for `int *` the same store is `Safe`). Registered as
+    // CG19-ATOMIC-FORMAL-VALUE-STORE-OUT-PARAMETER.
+    let run = g("void subject(_Atomic int *a, int v) { *a = v; }");
+    assert!(
+        run.unknown() && run.refused("store through `*a` without an out-parameter contract"),
+        "{run:?}"
+    );
     let increment = "atomic read-modify-write `_Atomic increment or decrement` is not represented by the weak-memory model (CG28)";
     let compound = "atomic read-modify-write `_Atomic compound assignment` is not represented by the weak-memory model (CG28)";
     let run = g("void subject(_Atomic int *a) { (*a)++; }");
