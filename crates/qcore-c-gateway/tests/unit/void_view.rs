@@ -14,7 +14,11 @@ fn code(result: Result<(), ViewRefusal>) -> &'static str {
 fn every_view_vector_is_the_class_decision() {
     assert_eq!(VIEW_VECTORS.len(), 11);
     for (operand, cast, target, decision) in VIEW_VECTORS {
-        let result = view_of(cast_class(cast), operand_class(operand), target_class(target));
+        let result = view_of(
+            cast_class(cast),
+            operand_class(operand),
+            target_class(target),
+        );
         assert_eq!(code(result), *decision, "{operand} {cast} {target}");
     }
 }
@@ -97,8 +101,7 @@ fn every_position_vector_is_the_position_decision() {
 #[test]
 fn every_decision_vector_is_the_readback_decision() {
     assert_eq!(DECISION_VECTORS.len(), 7);
-    for (body, store_base, types_agree, owner_escapes, member_escapes, decision) in
-        DECISION_VECTORS
+    for (body, store_base, types_agree, owner_escapes, member_escapes, decision) in DECISION_VECTORS
     {
         assert_eq!(
             decide_readback(*store_base, *types_agree, *owner_escapes, *member_escapes).code(),
@@ -139,7 +142,10 @@ fn only_every_premise_gives_an_identity_and_a_pun_is_refused_on_a_store_base() {
 fn the_event_vectors_are_the_lean_rows() {
     // Their outcomes are run through the gateway by
     // `tests/cg12_void_view_readback.rs`; the Lean rows are the same list.
-    let outcomes = EVENT_VECTORS.iter().map(|(_, yields)| *yields).collect::<Vec<_>>();
+    let outcomes = EVENT_VECTORS
+        .iter()
+        .map(|(_, yields)| *yields)
+        .collect::<Vec<_>>();
     assert_eq!(outcomes, [true, true, false, false, false, false]);
 }
 

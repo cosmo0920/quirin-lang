@@ -287,11 +287,8 @@ fn every_other_cast_keeps_the_refusal() {
     ] {
         assert_eq!(outcome(body), unknown(&[GATE]), "{body}");
     }
-    for body in [
-        "int w(struct c_box *b, int i) { struct c_leaf *l; if (!(l = b->item->cells[i].name)) return 0; return 1; }",
-    ] {
-        assert_eq!(outcome(body), unknown(&[BRANCH]), "{body}");
-    }
+    let body = "int w(struct c_box *b, int i) { struct c_leaf *l; if (!(l = b->item->cells[i].name)) return 0; return 1; }";
+    assert_eq!(outcome(body), unknown(&[BRANCH]), "{body}");
     for body in [
         "int w(struct c_box *b) { struct c_leaf *l = (struct c_leaf *) b->conf.opaque; c_peek(l); return 0; }",
         "int w(struct c_box *b) { struct c_leaf *l = ((struct c_item *) b->conf.opaque)->leaf; c_peek(l); return 0; }",

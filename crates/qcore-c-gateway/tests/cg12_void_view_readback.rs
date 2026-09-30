@@ -85,14 +85,14 @@ fn every_position_vector_is_the_route_outcome() {
             .and_then(|rest| rest.trim_start().chars().next())
             .expect("root");
         let body = match (root, never_bound, tracked) {
-            ('a' | 'f', true, false) => format!(
-                "void subject(void *a, struct S *f) {{ int x = {spelling}; cg_sink(x); }}"
-            ),
+            ('a' | 'f', true, false) => {
+                format!("void subject(void *a, struct S *f) {{ int x = {spelling}; cg_sink(x); }}")
+            }
             // Bound later in the body (not never bound), untracked at the
             // access: rule 11d's premise.
-            ('o', false, false) => format!(
-                "void subject(void *o) {{ int x = {spelling}; cg_sink(x); o = 0; }}"
-            ),
+            ('o', false, false) => {
+                format!("void subject(void *o) {{ int x = {spelling}; cg_sink(x); o = 0; }}")
+            }
             ('o' | 'h', false, true) => format!(
                 "void subject(void) {{ void *{root} = q_alloc(); int x = {spelling}; cg_sink(x); \
                  q_free({root}); }}"
@@ -207,7 +207,10 @@ fn every_event_vector_is_the_route_outcome() {
         assert_eq!(run.safe(), yields, "{events}: {run:?}");
         if !yields {
             // No identity: the release through the readback resolves nothing.
-            assert!(run.has("UnknownAlias { variable: \"c\" }"), "{events}: {run:?}");
+            assert!(
+                run.has("UnknownAlias { variable: \"c\" }"),
+                "{events}: {run:?}"
+            );
         }
     }
 }
@@ -220,13 +223,14 @@ fn a_store_then_an_uncontracted_call_taking_the_owner_leaves_the_readback_unknow
     if !clang_available() {
         return;
     }
-    let run = gs(
-        "void cg_opaque_take(struct S *s); \
+    let run = gs("void cg_opaque_take(struct S *s); \
          void subject(void) { struct S *s = q_alloc(); struct T *t = q_alloc(); s->v = t; \
-         cg_opaque_take(s); struct T *c = s->v; q_free(c); q_free(s); }",
-    );
+         cg_opaque_take(s); struct T *c = s->v; q_free(c); q_free(s); }");
     assert!(!run.safe(), "{run:?}");
-    assert!(run.refused("call to uncontracted function `cg_opaque_take`"), "{run:?}");
+    assert!(
+        run.refused("call to uncontracted function `cg_opaque_take`"),
+        "{run:?}"
+    );
     assert!(run.has("UnknownAlias { variable: \"c\" }"), "{run:?}");
 }
 

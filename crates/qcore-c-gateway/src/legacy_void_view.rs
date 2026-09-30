@@ -14,8 +14,7 @@ use crate::void_view::{Readback, ReadbackDecision, body_facts, decide_readback, 
 
 /// The refusal of a readback whose view differs from a known stored type or
 /// from another view of the member (type punning, M22).
-pub(super) const PUN_REFUSAL: &str =
-    "void * member read back as a type other than the one stored (type punning) is outside \
+pub(super) const PUN_REFUSAL: &str = "void * member read back as a type other than the one stored (type punning) is outside \
      the resource projection";
 
 /// The static readback decision for `candidate` at the statement `tokens`.

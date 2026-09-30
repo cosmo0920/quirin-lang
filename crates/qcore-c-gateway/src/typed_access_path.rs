@@ -1321,13 +1321,12 @@ impl<'a> Reader<'a> {
         // a peer's release would relate it, and the `void *` root has no
         // class to carry the obligation. Refused there.
         if root_view_key.as_deref().is_some_and(|key| {
-                crate::void_view::view_has_alias_peers(
-                    self.function,
-                    cursor["referencedDecl"]["id"].as_str(),
-                    key,
-                )
-            })
-        {
+            crate::void_view::view_has_alias_peers(
+                self.function,
+                cursor["referencedDecl"]["id"].as_str(),
+                key,
+            )
+        }) {
             return None;
         }
         // Card CG13 (rule 10w): decide every union-member and bit-field step;

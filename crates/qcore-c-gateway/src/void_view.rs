@@ -339,7 +339,11 @@ pub(crate) fn local_declaration(decl: &Value) -> bool {
 /// name to a `struct TAG *` use, and a view of a `void *` root as `struct TAG
 /// *` has no declared class to carry that obligation, so the reader refuses
 /// it there. Any other key names no may-alias class.
-pub(crate) fn view_has_alias_peers(function: Option<&Value>, root_decl: Option<&str>, key: &str) -> bool {
+pub(crate) fn view_has_alias_peers(
+    function: Option<&Value>,
+    root_decl: Option<&str>,
+    key: &str,
+) -> bool {
     if !key.starts_with("struct ") {
         return false;
     }
@@ -577,7 +581,11 @@ impl BodyFacts {
 }
 
 /// Walk `node` with its ancestors (nearest last).
-fn walk<'a>(node: &'a Value, parents: &mut Vec<&'a Value>, f: &mut impl FnMut(&'a Value, &[&'a Value])) {
+fn walk<'a>(
+    node: &'a Value,
+    parents: &mut Vec<&'a Value>,
+    f: &mut impl FnMut(&'a Value, &[&'a Value]),
+) {
     f(node, parents);
     parents.push(node);
     for child in children(node) {
@@ -602,7 +610,10 @@ fn enclosing<'a>(parents: &[&'a Value], mut from: usize) -> Option<(usize, &'a V
 }
 
 fn is_cast(node: &Value, kinds: &[&str]) -> bool {
-    kind(node) == "ImplicitCastExpr" && node["castKind"].as_str().is_some_and(|k| kinds.contains(&k))
+    kind(node) == "ImplicitCastExpr"
+        && node["castKind"]
+            .as_str()
+            .is_some_and(|k| kinds.contains(&k))
 }
 
 /// The known pointee type of a value stored into a `void *` member: the
@@ -613,7 +624,8 @@ fn stored_type(mut value: &Value) -> Option<String> {
             "ParenExpr" => value = children(value).first()?,
             "ImplicitCastExpr" | "CStyleCastExpr"
                 if matches!(value["castKind"].as_str(), Some("BitCast" | "NoOp"))
-                    && qual(value).is_some_and(|t| operand_class(t) == OperandClass::VoidPointer) =>
+                    && qual(value)
+                        .is_some_and(|t| operand_class(t) == OperandClass::VoidPointer) =>
             {
                 value = children(value).first()?;
             }
@@ -654,7 +666,9 @@ fn released_argument(call: &Value, argument: usize, contracts: &ResourceContract
         };
         callee = inner;
     }
-    if kind(callee) != "DeclRefExpr" || callee["referencedDecl"]["kind"].as_str() != Some("FunctionDecl") {
+    if kind(callee) != "DeclRefExpr"
+        || callee["referencedDecl"]["kind"].as_str() != Some("FunctionDecl")
+    {
         return false;
     }
     let Some(name) = callee["referencedDecl"]["name"].as_str() else {
@@ -776,9 +790,9 @@ fn owner_use_admitted(node: &Value, parents: &[&Value], contracts: &ResourceCont
                 return true;
             }
             "BinaryOperator" if matches!(above["opcode"].as_str(), Some("==" | "!=")) => {
-                return children(above).iter().any(|side| {
-                    !std::ptr::eq(strip_parens(side), value) && is_null(side)
-                });
+                return children(above)
+                    .iter()
+                    .any(|side| !std::ptr::eq(strip_parens(side), value) && is_null(side));
             }
             "UnaryOperator" if above["opcode"].as_str() == Some("!") => return true,
             // A whole argument that releases or consumes the owner.

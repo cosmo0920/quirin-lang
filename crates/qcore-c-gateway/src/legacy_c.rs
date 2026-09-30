@@ -4787,11 +4787,7 @@ impl Parser<'_> {
         }
         // Card CG12-VOID-VIEW-READBACK (rule 11j): a borrowed destination
         // reading a `void *` member back; a type pun refuses the statement.
-        let readback = match plan
-            .readback
-            .as_ref()
-            .filter(|_| plan.borrowed_destination)
-        {
+        let readback = match plan.readback.as_ref().filter(|_| plan.borrowed_destination) {
             None => None,
             Some(candidate) => match void_view_route::decide(self, tokens, candidate) {
                 crate::void_view::ReadbackDecision::Identity => Some(candidate.place()),
