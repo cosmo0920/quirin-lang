@@ -2994,7 +2994,8 @@ own anchor here.
     effective type, C11 6.5p7; the view is checked against a stored type only
     by premise 2). Measured (corpus `66910c10`, system, tail-pause slice,
     base `c374de96`): **+2 / +2 / 0 Unknown → Safe** (`LZ4_write16`,
-    `LZ4_write32`; `sb_get_context` and its caller), no Safe → non-Safe, no
+    `LZ4_write32`; `sb_get_context` and its caller), and on main `e93dbe4e`
+    +3 / +2 / 0 (with `LZ4_writeLE16`, jointly with CG14), no Safe → non-Safe, no
     leak or violation added; 18 of CG00's 76 M05 leaves lifted; 116 corpus
     readback sites, none bound to an identity (115 with no store base,
     `CG12-READBACK-NO-STORE-BASE`). `QCore.VoidViewReadback` (the view decision and position, the readback

@@ -19,7 +19,7 @@ AMEND = {
         "read-through position, over an untracked root or a load from a never-bound root) and the readback "
         "(a void * member of an admitted store base read back as the linked identity when the body alone writes "
         "it, every view names the stored type, else a pun refusal, and bound_read_resolves holds). Corpus "
-        "+2 Safe (LZ4_write16, LZ4_write32), no correction; 18 of the 76 M05 origins lifted, 58 remain "
+        "+2 Safe on its base (LZ4_write16, LZ4_write32) and +3 on main e93dbe4e (with LZ4_writeLE16, jointly with CG14), system +2, no correction; 18 of the 76 M05 origins lifted, 58 remain "
         "(CG12-VIEW-RESIDUAL-FORMS)."
     ),
     "W47-FIELDS-BY-MEMBER-VOID-ESCAPES": (

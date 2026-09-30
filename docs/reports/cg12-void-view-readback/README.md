@@ -247,3 +247,34 @@ Applied by [`scripts/update_ledger.py`](scripts/update_ledger.py) (text in
   `CG12-VIEW-RESIDUAL-FORMS` (58 of CG00's 76 M05 leaves on 26 functions,
   and the 90 unresolved-identity leaves on 40 functions that replace
   indirect-access refusals).
+
+## 9. On the final main (`e93dbe4e`)
+
+Main moved while the card ran; the card merged `b59aaae2` (CG07), then
+`fe9c5b48` (W48-CALLEE-CLOSURE-R3, CG14) and last `e93dbe4e` (CG15), and
+re-took BEFORE on each main tip before its AFTER (the `fe9c5b48` AFTER was
+stopped when `e93dbe4e` was announced). Binaries:
+[`artifacts/runs/binaries.sha256`](artifacts/runs/binaries.sha256).
+
+| Route | BEFORE, main `b59aaae2` | AFTER, merge `2ed80c5d` | BEFORE, main `e93dbe4e` | AFTER, merge `dc6dbea4` |
+|---|---|---|---|---|
+| corpus | 608 / 10 / 4,216, `8b9e4047…` | 610 / 10 / 4,214, `6b65aba4…` | 623 / 10 / 4,201, `d42a99e5…` | **626 / 10 / 4,198**, `08b9a260…` |
+| system | 41 / 2 / 191, `0f6d2051…` | 43 / 2 / 189, `f6e36791…` | 42 / 2 / 190, `8572e708…` | **44 / 2 / 188**, `5e4143cf…` |
+| slice | 28 / 1 / 240 / 1 P, `b82c9954…` | 28 / 1 / 240 / 1 P, `ce39fea6…` | 29 / 1 / 239 / 1 P, `aebf9346…` | **29 / 1 / 239 / 1 P**, `7bd764fb…` |
+
+The `b59aaae2` merge moves exactly what the base did (the same 65 corpus and 8
+system functions, the same leaf totals). On `e93dbe4e` the corpus gains
+**+3**: `LZ4_write16` and `LZ4_write32` as on the base, and
+**`LZ4_writeLE16`**, a joint move with CG14 (its `LZ4_isLittleEndian` call
+became Safe on main; its `LZ4_write16` call is now Safe through CG12's
+summary; its `BYTE *p = (BYTE *) memPtr;` is the explicit view at a pointer
+destination). One more function changes leaves only:
+`LZ4_compress_generic_validated`, whose `LZ4_write*` call leaves go (the new
+summaries) and whose three `op++`-style refusals are reported by the formal
+mutation gate instead of the increment refusal, on the same lines. Totals
+there: indirect-access −81, uncontracted −7, increment −3, unrecognized
+destination −2, branch and return −1 each, unresolved identity +90 −4, formal
+mutation +3, indirect-access +1 (moved). System +2 (the same two functions),
+slice unchanged in status (one function's leaves). No Safe → non-Safe, no
+leak or violation added, no Unsafe changed. On the final merge the 116
+readback sites and the 58 residual M05 leaves are unchanged.
