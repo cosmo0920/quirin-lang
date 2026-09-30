@@ -290,6 +290,17 @@ High for anything that could publish a wrong Safe, Medium for measurement.
   - *Volatile.* Volatile accesses become separate observable effects with a
     count and an order, kept apart from custody.
   - *Absorbs:* GATEWAY-VOLATILE-PREMISE and CT41-VOLATILE-COMPLEMENT-UNMEASURED.
+  - *Status (wave 48, round 7).* Landed on route G (gateway rule 11h): a
+    static-duration declaration is no event and its constant initializer
+    binds nothing, a static object's value and address carry no identity,
+    `volatile` objects carry no value fact and a custody decision on a
+    `volatile` read refuses, each `volatile` access a counted, C-ordered trace
+    event; T names its static refusal. Corpus **+7**, system +1, no
+    correction; two synthetic wrong Safes repaired (a static initializer
+    re-applied per call; a `volatile` pointer's binding). Both absorbed
+    entries closed; residuals `CG15-STATIC-TABLE-RESIDUALS` (52 leaves) and
+    `CG15-STATIC-REGISTRY-CONTRACT`.
+    [Report](../../reports/cg15-storage-duration-and-volatile/README.md).
 
 ### Phase 3: connections to existing core checkers (R)
 
