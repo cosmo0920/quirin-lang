@@ -224,6 +224,13 @@ High for anything that could publish a wrong Safe, Medium for measurement.
   - *Lifetimes.* Local lifetime ends on every jump.
   - *Precision.* G already has all of these (Q06, Q07). This is not a
     precision card.
+  - *Status (wave 48, round 7).* Landed on route T with T edges (gateway
+    rule 11l). The acyclic forms are lowered into guarded paths and admitted
+    only by the Monkey wrapper projection. The other 19 import sites refuse
+    each by name (`CG01-T-CONSUMER-ADMISSIONS`). Every back-edge is refused
+    by name, since no invariant or summary exists (CG27). No function moves.
+    Residual: `CG09-CONTROL-SHAPE-RESIDUALS`.
+    [Report](../../reports/cg09-typed-source-control/README.md).
 
 ### Phase 2: typed places and stores (F/R)
 

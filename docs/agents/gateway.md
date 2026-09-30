@@ -2838,3 +2838,67 @@ own anchor here.
     `commutes` by shared-vector tests and to route G by
     `tests/cg07_statement_expressions.rs`;
     [report](../reports/cg07-generic-and-statement-expressions/README.md).
+
+<a id="constraint-11l"></a>
+
+11l. **Route T reads the control statements, lowers an acyclic form only
+    where the importing consumer lists it, ends every left scope's locals on
+    every path, and refuses every back-edge by name.** Card
+    CG09-TYPED-SOURCE-CONTROL (`crates/qcore-c-gateway/src/typed_source_control.rs`,
+    a child module of `typed_source.rs`, with thin hooks there: three `Stmt`
+    variants, the `Path::jump` field, the block-entry, `do … while (0)` and
+    derive hooks, and the `import_…_admitting_control` entry points). It amends
+    rule 10r only by adding a second, independent admission.
+    (1) **Reading.** The importer reads `switch` / `case` / `default` (with
+    fallthrough), `break`, `continue`, forward `goto` and labels, `while`, and
+    a `for` or `do` outside its legacy shape (a canonical scan; a literal zero
+    condition). Every other statement keeps the generic refusal.
+    (2) **Admission.** Every importer call passes a `ControlAdmission`,
+    validated against `CONTROL_TABLE` before any function is read. A form
+    the consumer does not list is refused by name, and the legacy entry points
+    list nothing.
+    (3) **Back-edges.** A back-edge form (a general loop, or a `goto` to a
+    label already read) cannot be listed. Route T checks no invariant or
+    summary (card CG27), so every consumer refuses one by name. A `for` that
+    is not a canonical scan names the scan shape's own reason. `continue`
+    is acyclic because only `do … while (0)` can take it: every loop is refused
+    at its own node first.
+    (4) **Lowering.** A `switch` evaluates its selector once. Its promoted
+    integer type comes from Clang, and each case label is Clang's constant
+    under Clang's own conversion, never evaluated on the host. Each label is
+    an entry path:
+    - a `case` carries `selector == constant` taken;
+    - `default` carries every case guard not taken;
+    - with no `default`, one more path carries every case guard not taken.
+
+    From its entry, a path runs every later statement (fallthrough) until a
+    `break`, which the `switch` takes. `do … while (0)` takes `break` before
+    its condition, and takes `continue` into it. A forward `goto` skips
+    statements until a block resumes it at its label.
+    (5) **Refused shapes.** Each is refused by name:
+    - a `goto` whose label no enclosing block reaches later (a jump into an
+      `if`, a loop or a `switch`);
+    - a `goto` that skips a declaration into its own scope;
+    - a declaration or an ordinary label at a switch body's top level;
+    - a case label anywhere else;
+    - a GNU case range;
+    - a selector that is not a promoted integer.
+    (6) **Lifetimes.** Every path that leaves a block, by its end, by `return`
+    or by a jump, ends that block's locals, innermost first. A use of a
+    local's storage after its `LocalEnd` is refused on every path, jump or
+    not.
+    (7) **Budgets.** The budgets are unchanged: 64 paths, 512 operations,
+    depth 64 and 2,048 nodes. Exceeding one is Unknown.
+    **Consumers.** The Monkey wrapper projection lists the four acyclic forms
+    (`MONKEY_WRAPPER_CONTROL`); it certifies nothing. The other 19 production
+    import sites keep `ControlAdmission::LEGACY`. **Do not** list a form for a
+    consumer without reading every reader of its summaries
+    (`CG01-T-CONSUMER-ADMISSIONS`). Do not admit a back-edge without a checked
+    invariant or summary. Do not evaluate a case label on the host.
+    `QCore.TypedSourceControl` (the table and admission, `back_edge_refused`,
+    `unlisted_statement_refused`, `jump_out_ends_locals`,
+    `jump_then_use_refused`, `fallthrough_composes`, `switch_vectors_hold`,
+    `exhausted_never_safe`) is bound to `CONTROL_TABLE`, `LEGACY_STATEMENTS`,
+    `CONTROL_STATEMENTS`, the four budgets and the importer's own `switch`
+    lowering by a shared-vector test;
+    [report](../reports/cg09-typed-source-control/README.md).
