@@ -1,0 +1,54 @@
+{
+ "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a273d094b01689083/private/cg14/before": {
+  "M08 path:aggregate-value": {
+   "cg00": 287,
+   "present": 279
+  },
+  "M08 path:aggregate-value,static-local": {
+   "cg00": 3,
+   "present": 3
+  },
+  "M09 construct-feature": {
+   "cg00": 432,
+   "present": 427
+  },
+  "M10 construct-feature": {
+   "cg00": 99,
+   "present": 97
+  },
+  "M11 path:root:StringLiteral": {
+   "cg00": 12,
+   "present": 12
+  },
+  "M11 string-array-initializer": {
+   "cg00": 4,
+   "present": 3
+  }
+ },
+ "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a273d094b01689083/private/cg14/after2": {
+  "M08 path:aggregate-value": {
+   "cg00": 287,
+   "present": 219
+  },
+  "M08 path:aggregate-value,static-local": {
+   "cg00": 3,
+   "present": 2
+  },
+  "M09 construct-feature": {
+   "cg00": 432,
+   "present": 129
+  },
+  "M10 construct-feature": {
+   "cg00": 99,
+   "present": 97
+  },
+  "M11 path:root:StringLiteral": {
+   "cg00": 12,
+   "present": 12
+  },
+  "M11 string-array-initializer": {
+   "cg00": 4,
+   "present": 1
+  }
+ }
+}

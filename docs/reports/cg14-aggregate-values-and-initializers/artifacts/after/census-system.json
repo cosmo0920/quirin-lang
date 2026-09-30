@@ -1,0 +1,59 @@
+{
+ "compound-literal": {
+  "statements": 77,
+  "admitted_in_some_analysis": 0,
+  "admitted_in_every_analysis": 0,
+  "functions": 11,
+  "functions_with_an_admission": 0,
+  "refusals": {
+   "literal-callee-uncontracted": 60,
+   "literal-position": 17
+  },
+  "classes": {},
+  "statements_with_leaf": {}
+ },
+ "copy": {
+  "statements": 310,
+  "admitted_in_some_analysis": 0,
+  "admitted_in_every_analysis": 0,
+  "functions": 87,
+  "functions_with_an_admission": 0,
+  "refusals": {
+   "declaration:not a record": 310
+  },
+  "classes": {
+   "pointer": 192,
+   "scalar": 118
+  },
+  "statements_with_leaf": {}
+ },
+ "initializer": {
+  "statements": 6,
+  "admitted_in_some_analysis": 1,
+  "admitted_in_every_analysis": 1,
+  "functions": 4,
+  "functions_with_an_admission": 1,
+  "refusals": {
+   "declaration:not a record or array": 2,
+   "declaration:not an automatic object": 1,
+   "declaration:no single initializer": 1,
+   "declaration:several declarators": 1
+  },
+  "classes": {
+   "pointer": 2,
+   "pointer-bearing": 1
+  },
+  "statements_with_leaf": {
+   "scalar": 1,
+   "zero": 1
+  }
+ },
+ "initializer-guard-flow": {
+  "decisions": {
+   "admit": 12
+  },
+  "functions": {
+   "admit": 1
+  }
+ }
+}
