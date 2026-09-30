@@ -13,8 +13,10 @@
 //! existing vocabulary: guards (`selector == constant`, taken or not) and the
 //! statements that run. The selector is evaluated once. Every path that leaves
 //! a block, by falling off its end, by `return` or by a jump, ends that block's
-//! locals (`LocalEnd`) on the way out. A use of a local's storage after its
-//! `LocalEnd` is refused on every path ([`check_local_lifetimes`]).
+//! locals (`LocalEnd`) on the way out. Under a consumer that lists any control
+//! form, a use of a local's storage after its `LocalEnd` is refused on every
+//! path ([`ControlAdmission::check_local_lifetimes`]); the legacy admission
+//! keeps T's pre-CG09 projection of ended storage.
 //!
 //! **A back-edge needs an invariant or a summary.** A general loop or a
 //! backward `goto` closes a cycle. T's product is a finite set of paths, so a
@@ -484,10 +486,22 @@ pub(super) fn untaken(jump: &Jump) -> String {
     }
 }
 
-/// Refuse a path that uses a local's storage after that local's `LocalEnd`:
-/// a jump (or a block's end) closed the scope, so any later address of it
-/// dangles. Checked on every path, jump or not.
-pub(super) fn check_local_lifetimes(path: &SourcePath) -> Result<(), String> {
+impl ControlAdmission {
+    /// Under a consumer that lists any control form, refuse a path that uses
+    /// a local's storage after that local's `LocalEnd`: a jump (or a block's
+    /// end) closed the scope, so any later address of it dangles. Checked on
+    /// every path, jump or not. The legacy admission keeps route T's
+    /// pre-CG09 projection, which retains ended storage for the consumer to
+    /// decide (pinned by the Monkey callback tests).
+    pub(super) fn check_local_lifetimes(&self, path: &SourcePath) -> Result<(), String> {
+        if self.rows.is_empty() {
+            return Ok(());
+        }
+        local_lifetimes(path)
+    }
+}
+
+fn local_lifetimes(path: &SourcePath) -> Result<(), String> {
     let mut ended = std::collections::BTreeSet::new();
     for operation in &path.operations {
         if let SourceOperation::LocalEnd { local } = operation {

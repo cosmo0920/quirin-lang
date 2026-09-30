@@ -2884,9 +2884,11 @@ own anchor here.
     - a GNU case range;
     - a selector that is not a promoted integer.
     (6) **Lifetimes.** Every path that leaves a block, by its end, by `return`
-    or by a jump, ends that block's locals, innermost first. A use of a
-    local's storage after its `LocalEnd` is refused on every path, jump or
-    not.
+    or by a jump, ends that block's locals, innermost first. Under a
+    consumer that lists any control form, a use of a local's storage after
+    its `LocalEnd` is refused on every path, jump or not. The legacy
+    admission keeps T's pre-CG09 projection of ended storage, which the
+    Monkey callback tests pin; the legacy consumer decides it.
     (7) **Budgets.** The budgets are unchanged: 64 paths, 512 operations,
     depth 64 and 2,048 nodes. Exceeding one is Unknown.
     **Consumers.** The Monkey wrapper projection lists the four acyclic forms

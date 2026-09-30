@@ -397,6 +397,16 @@ fn cg09_goto_out_of_a_scope_holding_a_live_local_is_refused() {
     for path in summary.paths() {
         assert!(local_ends(path).contains(&2), "{path:?}");
     }
+    // With no jump, the same dangling use: refused under an admitting
+    // consumer, while the legacy admission keeps T's pre-CG09 projection of
+    // the ended storage (the legacy consumer decides it; the Monkey callback
+    // tests pin that).
+    let dangling = "int f(int a) { int *p = 0; { int x = 1; p = &x; } return *p; }";
+    assert_eq!(
+        refused(dangling, &ACYCLIC),
+        "local storage used after its lifetime ended"
+    );
+    assert!(import(dangling, &ControlAdmission::LEGACY).unwrap().is_ok());
 }
 
 /// Refusal control: `switch` fallthrough into a case that releases again.

@@ -1,0 +1,2 @@
+mapped 50 / unmapped 0; depth {'atomic_publication_check': 1, 'elaborate': 4, 'epoch_bound_check': 4, 'footprint_check': 1, 'legacy_c_twin': 3, 'mutex_invariant_check': 8, 'native_execution': 6, 'native_sanitized': 8, 'proof': 5, 'sequential_whole_program': 1, 'task_ledger_check': 8, 'task_lowering': 1}
+exit 0

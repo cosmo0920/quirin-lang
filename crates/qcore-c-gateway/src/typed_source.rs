@@ -2076,7 +2076,7 @@ fn derive(
                 operations: path.operations,
             };
             check_path_symbols(&path)?;
-            control::check_local_lifetimes(&path)?;
+            control.check_local_lifetimes(&path)?;
             Ok(path)
         })
         .collect::<Result<_, String>>()?;
