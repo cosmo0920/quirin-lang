@@ -237,10 +237,12 @@ fn typed_extended_paths_preserve_unlisted_refusals() {
             "void w(struct c_box *b) { b->item->inline_leaf.weight = 1; }",
             "Safe",
         ),
-        // A `void *` link.
+        // A `void *` link. CG12 flip (rule 11j): under a never-bound root the
+        // loaded `void *` is outside the tracked graph and its view is a view
+        // step. BEFORE: Unknown.
         (
             "void w(struct c_box *b) { ((struct c_leaf *)b->item->leaf->any)->weight = 1; }",
-            "Unknown",
+            "Safe",
         ),
         // A union pointee: card CG13 (rule 10w) reads the scalar store
         // through the union step. BEFORE: Unknown.

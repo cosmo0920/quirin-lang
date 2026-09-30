@@ -254,6 +254,9 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             // Card W44-INDIRECT-CHAIN-ACCESS: printed only when present, so
             // every single-selection line reads exactly as before.
             chains,
+            // Card CG12-VOID-VIEW-READBACK: not printed, so every line reads
+            // exactly as before.
+            readback: _,
         } => format!(
             "IndirectScalarAccess bases={} alias_reads={} destination={} frame={}{}{}",
             bases.join(","),

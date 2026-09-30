@@ -312,5 +312,6 @@ import QCore.FieldLinkJoin
 import QCore.StatementExpressions
 import QCore.StorageDuration
 import QCore.AtomicSourceRoute
+import QCore.VoidViewReadback
 
 /-! The executable formal core of QCore-C revision 0.1. -/

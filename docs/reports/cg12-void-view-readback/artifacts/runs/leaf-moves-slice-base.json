@@ -1,0 +1,29 @@
+{
+ "functions": 1,
+ "status_moves": {
+  "Unknown -> Unknown": 1
+ },
+ "added": {
+  "unknown_alias: unresolved resource identity": 2
+ },
+ "removed": {
+  "unsupported: indirect memory access is outside the resource projection": 1
+ },
+ "functions_with_added_leaves_by_category": {
+  "unknown_alias": 1
+ },
+ "rows": [
+  {
+   "unit": "plugins/in_tail/tail_scan.c",
+   "function": "flb_tail_scan_fetch_aged_out_inode",
+   "before": "Unknown",
+   "after": "Unknown",
+   "added": [
+    "2x unknown_alias: unresolved resource identity @ plugins/in_tail/tail_scan.c:100"
+   ],
+   "removed": [
+    "1x unsupported: indirect memory access is outside the resource projection @ plugins/in_tail/tail_scan.c:100"
+   ]
+  }
+ ]
+}

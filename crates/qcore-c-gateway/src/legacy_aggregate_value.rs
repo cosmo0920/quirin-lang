@@ -293,6 +293,8 @@ impl Parser<'_> {
                     .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
                 chains: plan.chains,
                 borrowed_destination: false,
+                // Card CG12-VOID-VIEW-READBACK (rule 11j): no readback here.
+                readback: None,
             },
             line,
         )

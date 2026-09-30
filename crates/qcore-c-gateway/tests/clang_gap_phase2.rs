@@ -145,16 +145,26 @@ fn m04_nested_array_and_function_pointer_stores_are_refused() {
 // CG12 — typed readback from `void *` fields (M05)
 // ---------------------------------------------------------------------------
 
+/// CG12's correction to CG00's control: over this file's `struct S` (a
+/// bit-field, arrays, a function pointer) the IND refusal is the *store*
+/// `s->v = q_alloc()`, which ALIAS-AGGREGATE's record reader does not admit
+/// for a record it did not read whole; the readback is never reached, so it
+/// stays refused after CG12 too.
+///
+/// CG12 flip (rule 11j): over a record the reader reads, the same body is
+/// `Safe`: the readback binds `c` to the identity the store linked, and
+/// `q_free(c)` releases it. BEFORE: `UnknownAlias { variable: "c" }`.
 #[test]
 fn m05_readback_from_a_void_field_is_refused() {
     if !clang_available() {
         return;
     }
-    let run = gs(
-        "void subject(void) { struct S *s = q_alloc(); s->v = q_alloc(); char *c = s->v; q_free(c); q_free(s); }",
-    );
+    let body = "void subject(void) { struct S *s = q_alloc(); s->v = q_alloc(); char *c = s->v; q_free(c); q_free(s); }";
+    let run = gs(body);
     assert!(run.refused(IND), "{run:?}");
     assert!(run.has("UnknownAlias { variable: \"c\" }"));
+    let run = g(&format!("struct S {{ int a; void *v; }};\n{body}"));
+    assert!(run.safe(), "{run:?}");
 }
 
 // ---------------------------------------------------------------------------

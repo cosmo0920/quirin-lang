@@ -1,0 +1,108 @@
+{
+ "functions": 8,
+ "status_moves": {
+  "Unknown -> Safe": 2,
+  "Unknown -> Unknown": 6
+ },
+ "added": {
+  "unknown_alias: unresolved resource identity": 4
+ },
+ "removed": {
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": 1,
+  "unsupported: indirect memory access is outside the resource projection": 7,
+  "unsupported: call to uncontracted function": 1
+ },
+ "functions_with_added_leaves_by_category": {
+  "unknown_alias": 3
+ },
+ "rows": [
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_get_context",
+   "before": "Unknown",
+   "after": "Safe",
+   "added": [],
+   "removed": [
+    "1x unsupported: unmodeled call, aggregate or indirect access in return expression @ plugins/in_storage_backlog/sb.c:111"
+   ]
+  },
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_get_releasable_output_queue_space",
+   "before": "Unknown",
+   "after": "Safe",
+   "added": [],
+   "removed": [
+    "1x unsupported: indirect memory access is outside the resource projection @ plugins/in_storage_backlog/sb.c:497"
+   ]
+  },
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_release_output_queue_space",
+   "before": "Unknown",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    "1x unsupported: indirect memory access is outside the resource projection @ plugins/in_storage_backlog/sb.c:536"
+   ]
+  },
+  {
+   "unit": "plugins/in_storage_backlog/sb.c",
+   "function": "sb_segregate_chunks",
+   "before": "Unknown",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    "1x unsupported: call to uncontracted function @ plugins/in_storage_backlog/sb.c:388"
+   ]
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "function": "handle_dlq_if_available",
+   "before": "Unknown",
+   "after": "Unknown",
+   "added": [
+    "1x unknown_alias: unresolved resource identity @ src/flb_engine.c:546"
+   ],
+   "removed": [
+    "1x unsupported: indirect memory access is outside the resource projection @ src/flb_engine.c:546"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "flb_input_chunk_get_projected_write_size",
+   "before": "Unknown",
+   "after": "Unknown",
+   "added": [
+    "1x unknown_alias: unresolved resource identity @ src/flb_input_chunk.c:1020"
+   ],
+   "removed": [
+    "1x unsupported: indirect memory access is outside the resource projection @ src/flb_input_chunk.c:1020"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "function": "input_chunk_append_raw",
+   "before": "Unknown",
+   "after": "Unknown",
+   "added": [
+    "1x unknown_alias: unresolved resource identity @ src/flb_input_chunk.c:3558",
+    "1x unknown_alias: unresolved resource identity @ src/flb_input_chunk.c:3559"
+   ],
+   "removed": [
+    "1x unsupported: indirect memory access is outside the resource projection @ src/flb_input_chunk.c:3558"
+   ]
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "function": "sort_chunk_cmp",
+   "before": "Unknown",
+   "after": "Unknown",
+   "added": [],
+   "removed": [
+    "1x unsupported: indirect memory access is outside the resource projection @ src/flb_storage.c:416",
+    "1x unsupported: indirect memory access is outside the resource projection @ src/flb_storage.c:417"
+   ]
+  }
+ ]
+}

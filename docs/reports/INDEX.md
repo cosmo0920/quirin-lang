@@ -103,6 +103,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |
 
+| [cg12-void-view-readback](cg12-void-view-readback/README.md) | CG12-VOID-VIEW-READBACK: `void *` views and readbacks |
+
 | [cg13-union-and-bitfield-places](cg13-union-and-bitfield-places/README.md) | CG13-UNION-AND-BITFIELD-PLACES: union-member and bit-field place steps |
 
 | [cg14-aggregate-values-and-initializers](cg14-aggregate-values-and-initializers/README.md) | CG14-AGGREGATE-VALUES-AND-INITIALIZERS |

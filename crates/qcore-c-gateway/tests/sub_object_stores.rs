@@ -430,14 +430,25 @@ fn a_pointer_store_through_a_tracked_base_keeps_its_refusal() {
     );
 }
 
-/// An untyped or unresolved base keeps its refusal.
+/// An untyped or unresolved base keeps its refusal on this card's route.
+///
+/// CG12 flip (rule 11j): a `void *` formal viewed as `struct x_rec *` is read
+/// by the typed path route (an untracked root, a scalar store), after this
+/// route declined. BEFORE: Unknown with the gate's refusal. A view of a
+/// tracked `void *` keeps the refusal.
 #[test]
 fn a_cast_base_keeps_its_refusal() {
     expect(
         "`((struct x_rec *) p)->count = 1`",
         "void w(void *p) { ((struct x_rec *) p)->count = 1; }",
+        "Safe",
+        &[],
+    );
+    expect(
+        "a view of a tracked `void *`",
+        "void w(void) { void *p = x_record(); ((struct x_rec *) p)->count = 1; x_record_free(p); }",
         "Unknown",
-        &[GATE],
+        &["unknown_alias:p"],
     );
 }
 

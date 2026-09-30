@@ -74,6 +74,7 @@ impl Parser<'_> {
             frame: None,
             chains: plan.chains,
             borrowed_destination: false,
+            readback: None,
         }
     }
 
@@ -219,6 +220,7 @@ impl Parser<'_> {
                 frame: None,
                 chains: plan.chains,
                 borrowed_destination: plan.borrowed_destination,
+                readback: None,
             }
         };
         // The residual decides on `NAME` exactly as `if (NAME …)` would.

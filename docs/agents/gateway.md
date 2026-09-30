@@ -3000,6 +3000,85 @@ own anchor here.
     `event_order_represented` by `tests/unit/atomic_source_route.rs`;
     [report](../reports/cg19-atomic-source-route/README.md).
 
+<a id="constraint-11j"></a>
+
+11j. **A `void *` value is viewed only through an object-pointer bit-cast
+    where a pointer is read through, and a `void *` member is read back as
+    the identity an admitted store linked only where the body alone writes
+    it and every view names the stored type.** Card CG12-VOID-VIEW-READBACK
+    (`void_view.rs`, the route-G adapter `legacy_void_view.rs`, additive
+    items in `typed_access_path.rs` (`StatementPlan::readback`, the view step
+    of `Reader::path`, the explicit view at a pointer destination) and
+    `legacy_c.rs` (`IndirectScalarAccess::readback`, a hook in
+    `typed_path_statement` and in the access's transfer)). It amends rule
+    10m (an explicit cast and a cast inside a path) and card ALIAS-AGGREGATE's
+    store-only `void *` member; `bound_read_actuals` still refuses the member
+    at every call actual. (1) **The view.** An explicit cast whose Clang kind
+    is `BitCast`, from `void *` (`const`/`restrict` allowed) to an object
+    pointer, is the same pointer with the target's pointee type (C11
+    6.3.2.3p1/p7; CG08's `CAST_TABLE` row, no custody effect). In a typed path
+    it may stand only as the pointer a `*`, `->` or `[]` reads through, and
+    only over an untracked object: over the root, whose chain is then read
+    only as untracked (`root_untracked_only`: never bound, or rule 11d's
+    premise at the node; a tracked identity's object has its contract's type,
+    which the view does not check), or over a pointer loaded from a place of
+    a root the closure proves never bound (rule 10k's premise: every such
+    load is outside the tracked graph). A view over a load from any other
+    root (`view-over-link`), a view of a root as `struct TAG *` where the body
+    declares another name of that C02-P-ALIAS class, a cast from another
+    object pointer (a pun, M22 and CG18), to a function or `void` pointer, a
+    `NoOp` or any other kind, and a view over a call result or arithmetic keep
+    their refusal. At a pointer
+    destination `T *c = (T *) E;` / `c = (T *) E;` the explicit view to the
+    destination's own pointee type is read as rule 10m's implicit one.
+    (2) **The readback.** A pointer destination (an automatic local) whose
+    value is a read of a `void *` member `R->F` (directly, through rule 10m's
+    implicit bit-cast or through an explicit view) takes the member's
+    identity, instead of P2's target-free borrowed alias, only when:
+    `R` is an admitted store base and `F` its `void *` member (premise 1);
+    every stored value of known type and every view of `R->F` in the body
+    name one pointee type (premise 2; otherwise the statement is **refused**,
+    "void * member read back as a type other than the one stored (type
+    punning) …"); every reference to `R` is a member access (never `&R->G`),
+    its own assignment, a null test or a whole `Released`/`Consumed` actual
+    of a contracted call (premise 3); every occurrence of `R->F` is a simple
+    store destination or a read (premise 4); and, at the node,
+    `bound_read_resolves` holds (premise 5: the owner one live identity this
+    body acquired, the binding exactly the field link, on every path, its
+    child live with no unresolved effect). A refused statement or an
+    uncontracted call poisons the binding and a later admitted store replaces
+    the link, so the value read is the last store's identity or has none.
+    Where premise 1, 3, 4 or 5 fails the destination is the borrowed alias it
+    was, never a guessed identity. **Do not** admit a view outside a
+    read-through position, over a load of a root the closure does not prove
+    never bound, or from a type other than `void *`; bind a readback whose
+    owner reaches any callee but its release, whose member is addressed or
+    whose views disagree; or consult either rule before an older route of the
+    position (hard invariant 3). Parity runs record each static decision
+    (`position: "void-view-readback"`) and each flow decision
+    (`"void-view-readback-flow"`). Premises stated, not proved: faithful Clang
+    extraction of cast kinds, types and declaration and field ids (trust
+    boundary 28), C11 6.3.2.3p7, and **P-CG12-VIEW-EFFECTIVE-TYPE** (an access
+    through a view of a root or of a never-bound load reads the object at its
+    effective type, C11 6.5p7; the view is checked against a stored type only
+    by premise 2). Measured (corpus `66910c10`, system, tail-pause slice,
+    base `c374de96`): **+2 / +2 / 0 Unknown → Safe** (`LZ4_write16`,
+    `LZ4_write32`; `sb_get_context` and its caller), and on main `e93dbe4e`
+    +3 / +2 / 0 (with `LZ4_writeLE16`, jointly with CG14), no Safe → non-Safe, no
+    leak or violation added; 18 of CG00's 76 M05 leaves lifted; 116 corpus
+    readback sites, none bound to an identity (115 with no store base,
+    `CG12-READBACK-NO-STORE-BASE`). `QCore.VoidViewReadback` (the view decision and position, the readback
+    decision with `a_type_mismatched_view_is_refused`, the event model with
+    `a_readback_returns_the_stored_identity`,
+    `an_intervening_unknown_store_yields_no_identity`,
+    `a_partial_link_yields_no_identity`,
+    `a_released_child_is_never_read_back` and
+    `a_readback_returns_only_a_stored_identity`), bound to `VIEW_VECTORS`
+    (read by Clang), `POSITION_VECTORS`, `DECISION_VECTORS` and
+    `EVENT_VECTORS`, whose bodies the gateway runs
+    (`tests/cg12_void_view_readback.rs`);
+    [report](../reports/cg12-void-view-readback/README.md).
+
 <a id="constraint-11l"></a>
 
 11l. **Route T reads the control statements, lowers an acyclic form only

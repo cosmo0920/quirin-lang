@@ -233,6 +233,10 @@ mod bound_untracked_route;
 // braced initializers, compound literals and string initializers, asked last.
 #[path = "legacy_aggregate_value.rs"]
 mod aggregate_value_route;
+// Card CG12-VOID-VIEW-READBACK (rule 11j): the readback of a `void *`
+// member, its static premises on the parser and its flow decision.
+#[path = "legacy_void_view.rs"]
+mod void_view_route;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
@@ -499,6 +503,14 @@ pub enum LegacyInstruction {
         /// It carries no custody and any later dereference/release must resolve
         /// under its own rules. Older scalar routes always set this false.
         borrowed_destination: bool,
+        /// Card **CG12-VOID-VIEW-READBACK** (rule 11j): the `void *` member
+        /// place (`R->F`) a borrowed destination reads back, when every
+        /// static premise of the readback holds. The flow then binds the
+        /// destination to the member's identity where
+        /// `bound_read_resolves` holds at the node, and leaves it the
+        /// target-free borrowed alias otherwise. `None` on every other
+        /// access, which is then exactly as before.
+        readback: Option<String>,
     },
     /// Card **W43-INDEXED-RESOURCE-COLLECTIONS**: `BASE[INDEX] = CALL(...)`
     /// or `BASE[INDEX] = NULL`, where `BASE` is declared `T **BASE` and the
@@ -4799,6 +4811,25 @@ impl Parser<'_> {
                 None => LegacyInstruction::NoOp,
             });
         }
+        // Card CG12-VOID-VIEW-READBACK (rule 11j): a borrowed destination
+        // reading a `void *` member back; a type pun refuses the statement.
+        let readback = match plan.readback.as_ref().filter(|_| plan.borrowed_destination) {
+            None => None,
+            Some(candidate) => match void_view_route::decide(self, tokens, candidate) {
+                crate::void_view::ReadbackDecision::Identity => Some(candidate.place()),
+                crate::void_view::ReadbackDecision::Pun => {
+                    let texts = tokens
+                        .iter()
+                        .map(|token| token.text.as_str())
+                        .collect::<Vec<_>>();
+                    return Some(LegacyInstruction::Unknown {
+                        description: void_view_route::PUN_REFUSAL.to_owned(),
+                        writes: self.refused_writes(&texts),
+                    });
+                }
+                _ => None,
+            },
+        };
         let access = LegacyInstruction::IndirectScalarAccess {
             alias_reads: plan
                 .scalar
@@ -4814,6 +4845,7 @@ impl Parser<'_> {
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: plan.chains,
             borrowed_destination: plan.borrowed_destination,
+            readback,
         };
         // Card CG11-POINTER-VALUED-STORES (rule 10v).
         Some(match plan.pointer_store {
@@ -5648,6 +5680,7 @@ impl Parser<'_> {
                     frame: None,
                     chains: Vec::new(),
                     borrowed_destination: false,
+                    readback: None,
                 }));
             };
             return Some(Box::new(self.chain_access_instruction(chained, false)));
@@ -5663,6 +5696,7 @@ impl Parser<'_> {
             frame: None,
             chains: Vec::new(),
             borrowed_destination: false,
+            readback: None,
         }))
     }
 
@@ -7079,6 +7113,7 @@ impl Parser<'_> {
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: Vec::new(),
             borrowed_destination: false,
+            readback: None,
         }
     }
 
@@ -7233,6 +7268,7 @@ impl Parser<'_> {
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: chained.chains,
             borrowed_destination: false,
+            readback: None,
         }
     }
 
@@ -7299,6 +7335,7 @@ impl Parser<'_> {
                 .then(|| RefusedWrites::Sparing(self.frame_protected.clone())),
             chains: Vec::new(),
             borrowed_destination: false,
+            readback: None,
         }];
         sequence.extend(effects.into_iter().map(|effect| match effect {
             crate::index_traversal::TraversalEffect::Step(step) => LegacyInstruction::PointerStep {
@@ -13225,9 +13262,18 @@ fn transfer_base(
         frame,
         chains,
         borrowed_destination,
+        readback,
         ..
     } = &node.instruction
     {
+        // Card CG12-VOID-VIEW-READBACK (rule 11j): the member's identity,
+        // read on the state entering the node, where the readback resolves.
+        let read_back = readback
+            .as_deref()
+            .filter(|_| *borrowed_destination)
+            .and_then(|place| {
+                void_view_route::readback_binding(function, node.line, &state, place, context)
+            });
         for base in bases {
             let sanctioned = context.sanctioned.contains(format!("*{base}").as_str());
             if sanctioned || !indirect_scalar_base_resolves(&state, base) {
@@ -13256,12 +13302,12 @@ fn transfer_base(
             if *borrowed_destination {
                 state.pointers.insert(
                     destination.clone(),
-                    AbstractPointer {
+                    read_back.unwrap_or(AbstractPointer {
                         targets: BTreeSet::new(),
                         unknown: true,
                         may_be_null: true,
                         derivation: Derivation::Identity,
-                    },
+                    }),
                 );
             } else {
                 state.pointers.remove(destination);

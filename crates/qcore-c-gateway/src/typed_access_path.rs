@@ -254,6 +254,10 @@ pub(crate) struct StatementPlan {
     /// Card CG11-POINTER-VALUED-STORES (rule 10v): the statement is a
     /// pointer-valued store this rule read; the flow decides it.
     pub(crate) pointer_store: Option<crate::pointer_store::PointerStore>,
+    /// Card CG12-VOID-VIEW-READBACK (rule 11j): the pointer destination's
+    /// value is a read of a `void *` member; the gateway decides whether it
+    /// is a readback of the stored identity.
+    pub(crate) readback: Option<crate::void_view::Readback>,
 }
 
 /// An AST and the exact token rendering handed to Clang. This is created
@@ -724,6 +728,7 @@ impl StatementIndex {
                 accesses: 0,
                 borrowed_destination: false,
                 pointer_store: None,
+                readback: None,
             },
             fields: &self.fields,
             enums: &self.enums,
@@ -1031,7 +1036,14 @@ impl<'a> Reader<'a> {
                 if let Some(destination) = pointer_name(&pair[0]) {
                     self.plan.scalar.destination = Some(destination.to_owned());
                     self.plan.borrowed_destination = true;
-                    return self.path(pointer_source(&pair[1], &pair[0])?, false, true);
+                    // Card CG12-VOID-VIEW-READBACK (rule 11j): or an explicit
+                    // view to the destination's type (asked first: `strip`
+                    // stops at a cast, which `path` then always refused).
+                    let source = crate::void_view::explicit_source(&pair[1], &pair[0])
+                        .or_else(|| pointer_source(&pair[1], &pair[0]))?;
+                    self.plan.readback = crate::void_view::readback_of(source)
+                        .filter(|_| crate::void_view::local_destination(&pair[0], self.function));
+                    return self.path(source, false, true);
                 }
                 // Card CG11-POINTER-VALUED-STORES (rule 10v): a store into a
                 // place of pointer type, which `store` never admits.
@@ -1083,7 +1095,14 @@ impl<'a> Reader<'a> {
                 self.plan.scalar.destination = Some(name);
                 if pointer {
                     self.plan.borrowed_destination = true;
-                    self.path(pointer_source(&children(decl)[0], decl)?, false, true)
+                    // Card CG12-VOID-VIEW-READBACK (rule 11j): or an explicit
+                    // view to the declared type (asked first, as above).
+                    let value = &children(decl)[0];
+                    let source = crate::void_view::explicit_source(value, decl)
+                        .or_else(|| pointer_source(value, decl))?;
+                    self.plan.readback = crate::void_view::readback_of(source)
+                        .filter(|_| crate::void_view::local_declaration(decl));
+                    self.path(source, false, true)
                 } else {
                     self.expression(&children(decl)[0])
                 }
@@ -1198,9 +1217,34 @@ impl<'a> Reader<'a> {
         // memory after it (`seen_hop`, walking from the outermost step in).
         let mut member_steps = Vec::new();
         let mut seen_hop = false;
+        // Card CG12-VOID-VIEW-READBACK (rule 11j): a `void *` view may stand
+        // only where a pointer is read through (`pointer_operand`), and one
+        // over a loaded pointer needs a never-bound root (`load_view`).
+        let mut pointer_operand = false;
+        let mut after_view = false;
+        let mut load_view = false;
+        let mut saw_view = false;
+        let mut pending_key = None;
+        let mut root_view_key: Option<String> = None;
         let mut cursor = node;
         loop {
             cursor = strip(cursor)?;
+            if std::mem::take(&mut after_view) {
+                if kind(cursor) == "DeclRefExpr" {
+                    root_view_key = pending_key.take();
+                } else {
+                    load_view = true;
+                }
+            }
+            if std::mem::take(&mut pointer_operand)
+                && let Some(view) = crate::void_view::explicit_view(cursor)
+            {
+                pending_key = qual(cursor).and_then(crate::void_view::pointee_key);
+                cursor = view.ok()?;
+                after_view = true;
+                saw_view = true;
+                continue;
+            }
             match kind(cursor) {
                 "MemberExpr" => {
                     let field_id = cursor["referencedMemberDecl"].as_str()?;
@@ -1243,6 +1287,7 @@ impl<'a> Reader<'a> {
                     seen_hop |= arrow;
                     steps.push((if arrow { "->" } else { "." }, member));
                     cursor = base;
+                    pointer_operand = arrow;
                 }
                 "ArraySubscriptExpr" => {
                     let pair = children(cursor);
@@ -1253,11 +1298,13 @@ impl<'a> Reader<'a> {
                     seen_hop |= crate::union_bitfield::subscript_hop(&pair[0]);
                     steps.push(("[]", String::new()));
                     cursor = &pair[0];
+                    pointer_operand = true;
                 }
                 "UnaryOperator" if cursor["opcode"].as_str() == Some("*") => {
                     seen_hop = true;
                     steps.push(("*", String::new()));
                     cursor = children(cursor).first()?;
+                    pointer_operand = true;
                 }
                 "DeclRefExpr" => break,
                 _ => return None,
@@ -1271,6 +1318,34 @@ impl<'a> Reader<'a> {
             return None;
         }
         if steps.is_empty() {
+            return None;
+        }
+        // Card CG12-VOID-VIEW-READBACK (rule 11j): a view over a loaded
+        // pointer is read only on a root the closure proves never bound.
+        if saw_view
+            && !crate::void_view::view_position(
+                if load_view {
+                    crate::void_view::ViewPosition::Load
+                } else {
+                    crate::void_view::ViewPosition::Root
+                },
+                (self.never_bound)(root),
+                false,
+            )
+        {
+            return None;
+        }
+        // A view of the root as `struct TAG *` must not escape C02-P-ALIAS:
+        // where the body declares another name of that record-pointer class,
+        // a peer's release would relate it, and the `void *` root has no
+        // class to carry the obligation. Refused there.
+        if root_view_key.as_deref().is_some_and(|key| {
+            crate::void_view::view_has_alias_peers(
+                self.function,
+                cursor["referencedDecl"]["id"].as_str(),
+                key,
+            )
+        }) {
             return None;
         }
         // Card CG13 (rule 10w): decide every union-member and bit-field step;
@@ -1352,10 +1427,16 @@ impl<'a> Reader<'a> {
                             crate::bound_untracked::eligible_root(function, root, decl)
                         })
                     }),
-                root_untracked_only: false,
+                // Card CG12-VOID-VIEW-READBACK (rule 11j): a view is read
+                // only over an untracked object; the flow refuses a tracked
+                // root (its object's type is the contract's, not the view's).
+                root_untracked_only: saw_view,
                 links,
                 member: members.last()?.clone(),
             });
+        } else if saw_view {
+            // A view with no chain to carry the untracked-only reading.
+            return None;
         }
         if store
             && (matches!(first.0, "*" | "[]")

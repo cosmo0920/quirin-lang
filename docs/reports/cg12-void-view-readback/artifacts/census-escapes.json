@@ -1,0 +1,610 @@
+{
+ "escapes": 80,
+ "other_types": [
+  "struct flb_input_instance plugins/in_blob/blob.c:761 in_blob_notification conv:struct blob_ctx*|value"
+ ],
+ "classes": {
+  "discard": 62,
+  "local": 2,
+  "member-store": 7,
+  "argument": 9
+ },
+ "followed_by_11j": 0,
+ "rows": [
+  {
+   "site": "plugins/filter_alter_size/alter_size.c:109",
+   "function": "cb_alter_size_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_aws/aws.c:974",
+   "function": "cb_aws_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_checklist/checklist.c:445",
+   "function": "cb_checklist_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_ecs/ecs.c:1471",
+   "function": "cb_ecs_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_expect/expect.c:419",
+   "function": "cb_expect_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_geoip2/geoip2.c:397",
+   "function": "cb_geoip2_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_grep/grep.c:304",
+   "function": "cb_grep_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_kubernetes/kubernetes.c:683",
+   "function": "cb_kube_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_lua/lua.c:470",
+   "function": "cb_lua_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_modify/modify.c:1502",
+   "function": "cb_modify_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_nest/nest.c:646",
+   "function": "cb_nest_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_nightfall/nightfall.c:480",
+   "function": "cb_nightfall_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_parser/filter_parser.c:207",
+   "function": "cb_parser_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_record_modifier/filter_modifier.c:326",
+   "function": "cb_modifier_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_rewrite_tag/rewrite_tag.c:451",
+   "function": "cb_rewrite_tag_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_stdout/stdout.c:61",
+   "function": "cb_stdout_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_sysinfo/sysinfo.c:191",
+   "function": "cb_sysinfo_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_throttle/throttle.c:206",
+   "function": "cb_throttle_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_type_converter/type_converter.c:211",
+   "function": "cb_type_converter_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/filter_wasm/filter_wasm.c:70",
+   "function": "cb_wasm_filter",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_emitter/emitter.c:342",
+   "function": "in_emitter_ingest_ring_buffer",
+   "kind": "conv:void|value",
+   "line": "(void) in;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_exec/in_exec.c:576",
+   "function": "in_exec_prerun",
+   "kind": "conv:void|value",
+   "line": "(void) ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_exec_wasi/in_exec_wasi.c:397",
+   "function": "in_exec_wasi_prerun",
+   "kind": "conv:void|value",
+   "line": "(void) ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_fluentbit_logs/fluentbit_logs.c:107",
+   "function": "cb_fluentbit_logs_collect",
+   "kind": "conv:void|value",
+   "line": "(void) ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_forward/fw.c:135",
+   "function": "in_fw_collect",
+   "kind": "conv:void|value",
+   "line": "(void) ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_node_exporter_metrics/ne_powersupply_linux.c:212",
+   "function": "ne_powersupply_update",
+   "kind": "conv:void|value",
+   "line": "(void) ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_syslog/syslog.c:47",
+   "function": "in_syslog_collect_tcp",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_syslog/syslog.c:89",
+   "function": "in_syslog_collect_udp",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_systemd/systemd.c:601",
+   "function": "in_systemd_pre_run",
+   "kind": "conv:void|value",
+   "line": "(void) ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_tail/tail.c:501",
+   "function": "in_tail_pre_run",
+   "kind": "conv:void|value",
+   "line": "(void) ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_tail/tail_fs_inotify.c:298",
+   "function": "tail_fs_event",
+   "kind": "conv:void|value",
+   "line": "(void) ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_tail/tail_fs_inotify.c:386",
+   "function": "in_tail_progress_check_callback",
+   "kind": "conv:void|value",
+   "line": "(void) ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_tcp/tcp.c:265",
+   "function": "in_tcp_collect",
+   "kind": "conv:void|value",
+   "line": "(void) in;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/in_udp/udp.c:228",
+   "function": "in_udp_collect",
+   "kind": "conv:void|value",
+   "line": "(void) in;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_arvancloud_cloudlogs/arvancloud_cloudlogs.c:268",
+   "function": "cb_arvancloud_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_arvancloud_cloudlogs/arvancloud_cloudlogs.c:83",
+   "function": "arvancloud_format",
+   "kind": "conv:void|value",
+   "line": "(void) ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_azure/azure.c:353",
+   "function": "cb_azure_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_azure_blob/azure_blob.c:2194",
+   "function": "cb_azure_blob_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_azure_kusto/azure_kusto.c:1335",
+   "function": "cb_azure_kusto_flush",
+   "kind": "conv:void|value",
+   "line": "(void)i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_azure_logs_ingestion/azure_logs_ingestion.c:263",
+   "function": "cb_azure_logs_ingestion_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_bigquery/bigquery.c:998",
+   "function": "cb_bigquery_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_calyptia/calyptia.c:950",
+   "function": "cb_calyptia_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_chronicle/chronicle.c:1304",
+   "function": "cb_chronicle_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_cloudwatch_logs/cloudwatch_logs.c:447",
+   "function": "cb_cloudwatch_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_counter/counter.c:45",
+   "function": "cb_counter_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_exit/exit.c:85",
+   "function": "cb_exit_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_flowcounter/out_flowcounter.c:203",
+   "function": "out_fcount_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_forward/forward.c:1704",
+   "function": "cb_forward_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_gcs/gcs.c:2188",
+   "function": "cb_gcs_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_http/http.c:645",
+   "function": "cb_http_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_kafka_rest/kafka.c:262",
+   "function": "cb_kafka_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_kinesis_firehose/firehose.c:375",
+   "function": "cb_firehose_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_kinesis_streams/kinesis.c:379",
+   "function": "cb_kinesis_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_lib/out_lib.c:130",
+   "function": "out_lib_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_plot/plot.c:83",
+   "function": "cb_plot_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_splunk/splunk.c:923",
+   "function": "cb_splunk_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_stackdriver/stackdriver.c:3009",
+   "function": "cb_stackdriver_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_tcp/tcp.c:155",
+   "function": "cb_tcp_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_td/td.c:156",
+   "function": "cb_td_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "plugins/out_udp/udp.c:275",
+   "function": "cb_udp_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "src/flb_chunk_trace.c:184",
+   "function": "trace_chunk_pipeline_thread",
+   "kind": "conv:void*|value",
+   "line": "input = (void *)flb_input_new(ctx->flb->config, \"emitter\", NULL, FLB_FALSE);",
+   "class": "local"
+  },
+  {
+   "site": "src/flb_chunk_trace.c:223",
+   "function": "trace_chunk_pipeline_thread",
+   "kind": "conv:void*|value",
+   "line": "ctx->input = (void *)input;",
+   "class": "member-store",
+   "owner": "ctx",
+   "member": "input",
+   "owner_is_a_local_bound_by_a_call": false,
+   "reads_back_in_the_function": 0,
+   "followed_by_11j": false
+  },
+  {
+   "site": "src/flb_chunk_trace.c:554",
+   "function": "flb_chunk_trace_do_input",
+   "kind": "conv:void*|arg:flb_chunk_trace_context_hit_limit",
+   "line": "if (flb_chunk_trace_context_hit_limit(ic->in) == FLB_TRUE) {",
+   "class": "argument"
+  },
+  {
+   "site": "src/flb_chunk_trace.c:555",
+   "function": "flb_chunk_trace_do_input",
+   "kind": "conv:void*|arg:flb_chunk_trace_context_destroy",
+   "line": "flb_chunk_trace_context_destroy(ic->in);",
+   "class": "argument"
+  },
+  {
+   "site": "src/flb_config.c:1337",
+   "function": "configure_plugins_type",
+   "kind": "conv:void*|value",
+   "line": "ins = flb_input_new(config, tmp, NULL, FLB_TRUE);",
+   "class": "local"
+  },
+  {
+   "site": "src/flb_input.c:1249",
+   "function": "flb_input_instance_destroy",
+   "kind": "conv:void*|arg:flb_chunk_trace_context_destroy",
+   "line": "flb_chunk_trace_context_destroy(ins);",
+   "class": "argument"
+  },
+  {
+   "site": "src/flb_input.c:1383",
+   "function": "input_instance_channel_events_init",
+   "kind": "conv:void*|arg:mk_event_channel_create",
+   "line": "ins);",
+   "class": "argument"
+  },
+  {
+   "site": "src/flb_input.c:2689",
+   "function": "flb_input_rate_gate_timer_schedule",
+   "kind": "conv:void*|arg:flb_sched_timer_cb_create",
+   "line": "ins,",
+   "class": "argument"
+  },
+  {
+   "site": "src/flb_input.c:680",
+   "function": "flb_input_new",
+   "kind": "conv:void*|arg:flb_processor_create",
+   "line": "instance->processor = flb_processor_create(config, instance->name, instance, FLB_PLUGIN_INPUT);",
+   "class": "argument"
+  },
+  {
+   "site": "src/flb_input_chunk.c:747",
+   "function": "generate_chunk_name",
+   "kind": "conv:void|value",
+   "line": "(void) in;",
+   "class": "discard"
+  },
+  {
+   "site": "src/flb_input_thread.c:353",
+   "function": "input_thread",
+   "kind": "conv:void*|arg:flb_sched_timer_cb_create",
+   "line": "1500, cb_thread_sched_timer, ins, NULL);",
+   "class": "argument"
+  },
+  {
+   "site": "src/flb_lib.c:352",
+   "function": "flb_input_set_processor",
+   "kind": "conv:void*|value",
+   "line": "proc->data = i_ins;",
+   "class": "member-store",
+   "owner": "proc",
+   "member": "data",
+   "owner_is_a_local_bound_by_a_call": false,
+   "reads_back_in_the_function": 0,
+   "followed_by_11j": false
+  },
+  {
+   "site": "src/flb_plugin_proxy.c:120",
+   "function": "flb_proxy_input_cb_init",
+   "kind": "conv:void*|value",
+   "line": "pc->proxy->instance = ins;",
+   "class": "member-store",
+   "owner": "pc->proxy",
+   "member": "instance",
+   "owner_is_a_local_bound_by_a_call": false,
+   "reads_back_in_the_function": 0,
+   "followed_by_11j": false
+  },
+  {
+   "site": "src/flb_plugin_proxy.c:51",
+   "function": "proxy_cb_flush",
+   "kind": "conv:void|value",
+   "line": "(void) i_ins;",
+   "class": "discard"
+  },
+  {
+   "site": "src/flb_storage.c:751",
+   "function": "flb_storage_create",
+   "kind": "conv:void*|value",
+   "line": "ctx->storage_input_plugin = in;",
+   "class": "member-store",
+   "owner": "ctx",
+   "member": "storage_input_plugin",
+   "owner_is_a_local_bound_by_a_call": false,
+   "reads_back_in_the_function": 0,
+   "followed_by_11j": false
+  },
+  {
+   "site": "src/http_server/api/v1/trace.c:107",
+   "function": "disable_trace_input",
+   "kind": "conv:void*|arg:flb_chunk_trace_context_destroy",
+   "line": "flb_chunk_trace_context_destroy(in);",
+   "class": "argument"
+  },
+  {
+   "site": "src/http_server/api/v1/trace.c:86",
+   "function": "enable_trace_input",
+   "kind": "conv:void*|arg:flb_chunk_trace_context_new",
+   "line": "flb_chunk_trace_context_new(in, output_name, prefix, NULL, props);",
+   "class": "argument"
+  },
+  {
+   "site": "src/stream_processor/flb_sp.c:170",
+   "function": "sp_task_to_instance",
+   "kind": "conv:void*|value",
+   "line": "task->source_instance = in;",
+   "class": "member-store",
+   "owner": "task",
+   "member": "source_instance",
+   "owner_is_a_local_bound_by_a_call": false,
+   "reads_back_in_the_function": 0,
+   "followed_by_11j": false
+  },
+  {
+   "site": "src/stream_processor/flb_sp.c:176",
+   "function": "sp_task_to_instance",
+   "kind": "conv:void*|value",
+   "line": "task->source_instance = in;",
+   "class": "member-store",
+   "owner": "task",
+   "member": "source_instance",
+   "owner_is_a_local_bound_by_a_call": false,
+   "reads_back_in_the_function": 0,
+   "followed_by_11j": false
+  },
+  {
+   "site": "src/stream_processor/flb_sp_stream.c:132",
+   "function": "flb_sp_stream_create",
+   "kind": "conv:void*|value",
+   "line": "stream->in = in;",
+   "class": "member-store",
+   "owner": "stream",
+   "member": "in",
+   "owner_is_a_local_bound_by_a_call": true,
+   "reads_back_in_the_function": 0,
+   "followed_by_11j": false
+  }
+ ]
+}
