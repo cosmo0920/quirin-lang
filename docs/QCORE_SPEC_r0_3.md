@@ -860,6 +860,13 @@ closures, the composed epoch route's task half):
 * Every result holding a float value carries the IEEE premise as a named
   assumption (§L20), and the emitted C MUST refuse to build where the premise's
   checkable parts fail (§L14.7).
+* Card `W48-QR-FLOAT-BUFFER-PAYLOADS` extends these positions to the
+  byte-buffer route (§G07.13 records, conversions, value statements, loop
+  bodies), the composed string route, `Buffer<f32>`/`Buffer<f64>` payloads
+  and `protected f32`/`protected f64`, under the same rules; the entry rows of
+  the buffer and string routes carry `partial_eq`/`partial_ord`. A float loop
+  bound MUST be refused on every route, including one a lowering folds, and a
+  float payload's byte extent MUST be its format's size (4, 8).
 
 ### L14.1. Unchecked linkage
 
@@ -1303,12 +1310,44 @@ formalised.
     reference natively on the boundary table and a seeded sample — agreement
     observed, not proved. `hex` normalises subnormals (`0x1p-1074`), unlike
     some C libraries' `%a`.
-14. **Positions not widened** keep their refusals: a float field on
-    `source.buffer.v1` (§G07.13), the byte-buffer route's conversions, value
-    statements and loop bodies, a float `Buffer<T>` or `protected T` payload,
-    and the composed string route (`W48-QR-FLOAT-BUFFER-ROUTE`,
-    `W48-QR-FLOAT-PAYLOADS`); a float loop bound is refused on every route.
-    The native evidence is Linux/Clang only (`W48-QR-FLOAT-MSVC-NATIVE`).
+14. **Positions.** Card `W48-QR-FLOAT-BUFFER-PAYLOADS` widened the last
+    positions card 0 had widened for integers: `source.buffer.v1`'s records,
+    conversions, value statements and loop bodies, the composed string route,
+    and the `Buffer<T>`/`protected T` payloads. A float loop bound is refused
+    on every route — directly, and through a lowering's constant tier, before
+    its number (a bit pattern, which is no count) is read. The `.qrlib`
+    manifest's `float`/`double` spellings are card 5's
+    (`W48-QR-FLOAT-QRLIB-SPELLING`). The native evidence is Linux/Clang only
+    (`W48-QR-FLOAT-MSVC-NATIVE`).
+15. **Check-time floats on the byte-buffer and string routes.** Every value on
+    these routes is a check-time constant, so every float statement is
+    computed by the checker with the host's IEEE operations and computed again
+    by the emitted C at run time; their agreement is observed (the card's
+    boundary table, bit for bit through `hex`), not proved. A float → integer
+    conversion that faults is refused at check time; these routes have no
+    run-time `OutOfRange` path.
+16. **A byte view of a float payload is its IEEE object representation** in
+    the host's byte order, every byte pattern of the payload's size is a value
+    (so a byte write into a float payload is admitted, unlike `bool`), and a
+    **NaN's sign and payload bits in it are not specified**: the same source
+    division `0.0 / 0.0` yields x86-64's sign-set default NaN when computed at
+    run time and the sign-clear quiet NaN when Clang folds it at `-O2`
+    (measured), so a byte read of a NaN payload's top byte may differ between
+    the reference and a native run in the sign bit. A verdict claims nothing
+    about those bits; the reference trace names a whole NaN payload `nan`.
+17. **A float payload's trace** is its bit pattern (`F32 BITS`/`F64 BITS`),
+    every NaN `nan`, and the F02 alphabet has no typed payload event, so a run
+    carrying one is refused by the encoding rather than narrowed
+    (`W48-QR-F02-TYPED-PAYLOADS`).
+18. **`protected f32`/`protected f64` hold bytes.** The mutex route has no
+    value position: a write stores the route's fill bytes, which a float
+    reading would see as whatever IEEE pattern they spell (a NaN included);
+    nothing on the route reads the cell as a float, and the IEEE environment
+    is asserted only so the declared size is binary32's and binary64's.
+19. **Comparisons on the byte-buffer and string routes** are gated by the
+    entry's row alone: the route models its entry only, with no calls, so the
+    derived row is the entry's own statements' — every loop iteration's
+    included — and the certificate publishes the effects they used.
 
 ## L15. Lowering, observations, and translation certificates
 

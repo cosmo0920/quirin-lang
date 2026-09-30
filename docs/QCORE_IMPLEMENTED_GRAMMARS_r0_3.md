@@ -735,10 +735,53 @@ effect   = ... | "partial_eq" | "partial_ord" ;                 (* each once *)
 | §G02d.1 unchecked declarations | admitted (the `Q033` vocabulary now has them) |
 | §G02u `struct!` fields (`float`/`double` members), `#c_ffi` parameters and results, literals, outcomes, helpers | admitted |
 | §G02a/§G02j worker parameters, results, `copy` captures, value statements, record leaves (card `W48-QR-TASK-RECORD-CAPTURES`); §G02v closures; §G02f the epoch route's task half | admitted |
-| §G07.13 records of `source.buffer.v1`, its conversions and value statements, loop bodies (§G07.12); the composed string route | refused (`W48-QR-FLOAT-BUFFER-ROUTE`) |
-| §G02b `Buffer<T>` and §G02c `protected T` payloads | refused (`W48-QR-FLOAT-PAYLOADS`) |
-| a loop bound | refused on every route |
+| §G07.13 records of `source.buffer.v1`, its conversions and value statements, loop bodies (§G07.12); the composed string route (card `W48-QR-FLOAT-BUFFER-PAYLOADS`, below) | admitted |
+| §G02b `Buffer<f32>`/`Buffer<f64>` and §G02c `protected f32`/`protected f64` payloads (card `W48-QR-FLOAT-BUFFER-PAYLOADS`, below) | admitted |
+| a loop bound | refused on every route, by name (`Q098`) |
 | the `.qrlib` manifest's C declaration spellings (`double`, `float`) | unspellable, as before (card 5) |
+
+**Floats on the byte-buffer route and in payloads** (card
+`W48-QR-FLOAT-BUFFER-PAYLOADS`; limitations §L14.7 items 14–19).
+
+```ebnf
+EFFECT  = "io" | "alloc" | "mut" | "partial_eq" | "partial_ord" ;  (* source.buffer.v1, source.string.v1 *)
+stmt    = ... | "let", NAME, "=", ["-"], FLOAT, ";"               (* an f64 *)
+        | "let", NAME, "=", ["-"], FLOAT, "as", SCALAR, ";" ;      (* read once at a float SCALAR *)
+field   = NAME, ":", (SCALAR | "f32" | "f64" | "bytes" | RECORD) ;
+payload = "Buffer", "<", (SCALAR | "f32" | "f64"), ">" ;
+protected = "let", NAME, "=", "protected", (NAT | SCALAR | "f32" | "f64"), ";" ;
+```
+
+* **`source.buffer.v1`** reads its record declarations, conversions and value
+  statements with the float-admitting readers (§G07.13, §G02k): a field may be
+  `f32`/`f64` and takes a float literal (read once at the field's type) or a
+  name of exactly its type; `as` converts to and from floats; a value
+  statement takes float literals and names; `let NAME = FLOAT;` binds an
+  `f64`. Loop bodies read the same statements. Every value on the route is a
+  check-time constant, so every statement is folded by the shared decision: a
+  float → integer conversion that does not fit (NaN and ±inf included) is
+  refused at check time (`Q053`), and the emitted C computes each operation
+  again through §G02t's helpers and renders through the language's own
+  renderers, under the float environment of this section. A float comparison
+  needs `partial_eq`/`partial_ord` in the entry's row (`Q052` otherwise); the
+  certificate publishes the comparison effects its statements used. A float
+  loop bound — a float name, directly or through the lowering's constant tier
+  — is refused by name (`Q098`) before its number is read. A float at an
+  `i32` position (an index, a stored byte, a lend bound) is refused (`Q052`).
+* **The composed string route** reads the same statements through the buffer
+  route's reader, under its own entry row's `partial_eq`/`partial_ord`, and
+  refuses each at its own `Q077`.
+* **`Buffer<f32>`/`Buffer<f64>`** (§G02b): the payload's lease and byte extent
+  is 4 or 8 bytes (`size_bytes`), a byte view is the value's IEEE object
+  representation — every byte pattern is a value, so a byte write into a float
+  payload is admitted — and whole writes take exactly the payload's type (an
+  integer literal refuses, `Q020`). The payload event is logged as its bit
+  pattern, copied with `memcpy`, and traced `F32 BITS`/`F64 BITS`, every NaN as
+  `nan`, through a sink branch installed only in a program holding a float
+  payload.
+* **`protected f32`/`protected f64`** (§G02c) protect 4 and 8 bytes — `protected
+  4`/`protected 8` to the model, byte for byte — and the emitted C asserts the
+  IEEE environment.
 
 **Diagnostics.** No code is allocated. Every new refusal on this route is a
 widened condition of `Q020` (type, literal-range, mixed-type, `bool`,
