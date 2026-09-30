@@ -178,7 +178,11 @@ pub(crate) const FORM_TABLE: [(Form, &str, Disposition); 12] = [
         Disposition::NoEvent,
     ),
     (Form::StaticRead, "static read", Disposition::NoIdentity),
-    (Form::StaticAddress, "static address", Disposition::NoIdentity),
+    (
+        Form::StaticAddress,
+        "static address",
+        Disposition::NoIdentity,
+    ),
     (
         Form::StaticScalarStore,
         "static scalar store",
@@ -194,7 +198,11 @@ pub(crate) const FORM_TABLE: [(Form, &str, Disposition); 12] = [
         "static read released",
         Disposition::Refused,
     ),
-    (Form::VolatileNeutral, "volatile neutral", Disposition::Neutral),
+    (
+        Form::VolatileNeutral,
+        "volatile neutral",
+        Disposition::Neutral,
+    ),
     (
         Form::VolatileBinding,
         "volatile binding",
@@ -244,6 +252,11 @@ pub(crate) fn volatile_binding_refusal(name: &str) -> String {
         "custody through the volatile object `{name}` is outside the resource projection: its value may change asynchronously (rule 11h)"
     )
 }
+
+/// Route T's refusal of a block-scope static- or thread-duration declaration:
+/// no typed-source consumer decides a lifetime longer than the frame.
+pub(crate) const T_STATIC_REFUSAL: &str =
+    "typed-source static- or thread-duration local is decided by no typed-source consumer (CG15)";
 
 /// The refusal a custody decision on a `volatile` read reports (rule 11h).
 pub(crate) const VOLATILE_DECISION_REFUSAL: &str = "custody decision on a volatile read: the branch's arms differ in custody and the value may change asynchronously (rule 11h)";
@@ -306,9 +319,7 @@ fn deciding_operand(node: &Value) -> Option<&Value> {
         // clauses read volatile anywhere is treated as deciding on it.
         "ForStmt" => None,
         "ConditionalOperator" | "BinaryConditionalOperator" => inner.first(),
-        "BinaryOperator" if matches!(node["opcode"].as_str(), Some("&&" | "||")) => {
-            inner.first()
-        }
+        "BinaryOperator" if matches!(node["opcode"].as_str(), Some("&&" | "||")) => inner.first(),
         _ => None,
     }
 }
@@ -424,10 +435,12 @@ fn pure_index(node: &Value) -> bool {
             ) && !volatile_read(node)
                 && inner.iter().all(pure_index)
         }
-        "DeclRefExpr" => matches!(
-            node["referencedDecl"]["kind"].as_str(),
-            Some("VarDecl" | "ParmVarDecl" | "EnumConstantDecl")
-        ) && crate::typed_access_path::is_scalar(node),
+        "DeclRefExpr" => {
+            matches!(
+                node["referencedDecl"]["kind"].as_str(),
+                Some("VarDecl" | "ParmVarDecl" | "EnumConstantDecl")
+            ) && crate::typed_access_path::is_scalar(node)
+        }
         "BinaryOperator" => {
             matches!(
                 node["opcode"].as_str(),
@@ -435,8 +448,7 @@ fn pure_index(node: &Value) -> bool {
             ) && inner.iter().all(pure_index)
         }
         "UnaryOperator" => {
-            matches!(node["opcode"].as_str(), Some("-" | "+" | "~"))
-                && inner.iter().all(pure_index)
+            matches!(node["opcode"].as_str(), Some("-" | "+" | "~")) && inner.iter().all(pure_index)
         }
         "UnaryExprOrTypeTraitExpr" => {
             node["name"].as_str() == Some("sizeof")
@@ -512,7 +524,8 @@ pub(crate) fn static_address(value: &Value, automatic: &BTreeSet<String>) -> boo
 
 /// The storage-class keywords that open a block-scope static- or
 /// thread-duration declaration.
-pub(crate) const STATIC_STORAGE_KEYWORDS: &[&str] = &["static", "extern", "_Thread_local", "__thread"];
+pub(crate) const STATIC_STORAGE_KEYWORDS: &[&str] =
+    &["static", "extern", "_Thread_local", "__thread"];
 
 /// A copy of a function body's token texts in which the declarator part of
 /// every block-scope static-duration declaration (a statement whose first
@@ -525,11 +538,13 @@ pub(crate) fn mask_static_declarators<'a>(body: &[&'a str]) -> Vec<&'a str> {
     let mut masked = body.to_vec();
     let mut start = 0;
     while start < body.len() {
-        let opens = |at: usize| body.get(at).is_some_and(|t| STATIC_STORAGE_KEYWORDS.contains(t));
+        let opens = |at: usize| {
+            body.get(at)
+                .is_some_and(|t| STATIC_STORAGE_KEYWORDS.contains(t))
+        };
         let is_start = start == 0 || matches!(body[start - 1], ";" | "{" | "}");
         let declaration = is_start
-            && (opens(start)
-                || (matches!(body[start], "const" | "volatile") && opens(start + 1)));
+            && (opens(start) || (matches!(body[start], "const" | "volatile") && opens(start + 1)));
         if !declaration {
             start += 1;
             continue;

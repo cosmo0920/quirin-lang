@@ -67,9 +67,10 @@ impl Parser<'_> {
             return None;
         }
         let index = self.typed_positions_index()?.clone();
-        let node = Self::elaboration_node(&index, tokens.first()?.line, &statement_texts, &|node| {
-            kind(node) == "DeclStmt"
-        });
+        let node =
+            Self::elaboration_node(&index, tokens.first()?.line, &statement_texts, &|node| {
+                kind(node) == "DeclStmt"
+            });
         let Some(node) = node else {
             self.storage_record("declaration", line, tokens, "unmatched");
             return None;
@@ -154,9 +155,12 @@ impl Parser<'_> {
             }
             if let Some(actual) = inner.get(position + 1)
                 && index.node_line(actual) == Some(line)
-                && index
-                    .node_tokens(actual)
-                    .is_some_and(|tokens| tokens.iter().map(String::as_str).eq(argument.iter().copied()))
+                && index.node_tokens(actual).is_some_and(|tokens| {
+                    tokens
+                        .iter()
+                        .map(String::as_str)
+                        .eq(argument.iter().copied())
+                })
             {
                 found.push(actual.clone());
             }
@@ -266,7 +270,10 @@ fn custody_names(instruction: &LegacyInstruction) -> Vec<&str> {
             let mut names = destination.iter().map(String::as_str).collect::<Vec<_>>();
             for (position, argument) in arguments.iter().enumerate() {
                 let borrowed = contract.parameters.get(position).is_some_and(|mode| {
-                    matches!(mode, qcore_schemas::contract::ResourceParameterMode::Borrowed)
+                    matches!(
+                        mode,
+                        qcore_schemas::contract::ResourceParameterMode::Borrowed
+                    )
                 });
                 if let Some(argument) = argument
                     && !borrowed
@@ -377,9 +384,12 @@ pub(super) fn settle_volatile(cfg: &mut LegacyCfg, facts: &FunctionFacts, functi
         let replacement = match &node.instruction {
             LegacyInstruction::Clear { destination } if facts.is_volatile(destination) => {
                 debug_assert_eq!(decide(Form::VolatileValueFact), Disposition::Forgotten);
-                Some(("value-fact", LegacyInstruction::ForgetScalar {
-                    destination: destination.clone(),
-                }))
+                Some((
+                    "value-fact",
+                    LegacyInstruction::ForgetScalar {
+                        destination: destination.clone(),
+                    },
+                ))
             }
             LegacyInstruction::BranchOnNull { source, .. }
             | LegacyInstruction::BranchOnValidity { source, .. }
@@ -429,7 +439,10 @@ pub(super) fn settle_volatile(cfg: &mut LegacyCfg, facts: &FunctionFacts, functi
         let mut decided = false;
         for &branch in &branches {
             // A branch another rule already refused keeps its own refusal.
-            if matches!(cfg.nodes[branch].instruction, LegacyInstruction::Unknown { .. }) {
+            if matches!(
+                cfg.nodes[branch].instruction,
+                LegacyInstruction::Unknown { .. }
+            ) {
                 continue;
             }
             let custody = decided_region(cfg, branch)
