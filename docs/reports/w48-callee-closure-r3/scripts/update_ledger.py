@@ -13,9 +13,14 @@ ensure_ascii=False, trailing newline).
 
 Sizes are the card's BEFORE runs (private/w48cc/before*, corpus arbiter
 --jobs 4 on c374de96, system and tail-pause slice routes), read with
-scripts/closure_r3.py (artifacts/ranking/*-before.json); the corpus and
-system AFTER diagnostics are byte-identical to BEFORE, so the corpus and
-system sizes hold after the card.
+scripts/closure_r3.py (artifacts/ranking/*-before.json); the corpus AFTER
+differs by one condition leaf and the system AFTER is verdict-identical, so
+the corpus and system call-class sizes hold after the card.
+
+Two amendments were corrected in place after the first application
+(W47-ALIAS-CALLEE-BORROWED-CLOSURE, CG10-BOUND-ROOT-PATH-REFUSED: the first
+text assumed a byte-identical corpus, which the AFTER run refuted);
+scripts/fix_ledger_amendments.py rewrote those two texts in the matrix.
 """
 
 import json
@@ -136,8 +141,11 @@ AMEND = {
         "definitions from W44-CALLEE-NO-CORPUS-BODY's mpack rows."
     ),
     "W47-ALIAS-CALLEE-BORROWED-CLOSURE": (
-        " NOTE (W48-CALLEE-CLOSURE-R3): P4 round 3 declares two neutral libc callees (lstat, clock_gettime); "
-        "neither moves a corpus or system leaf, so this class is unchanged (corpus diagnostics byte-identical)."
+        " NOTE (W48-CALLEE-CLOSURE-R3): P4 round 3 declares two neutral libc callees (lstat, clock_gettime). "
+        "Corpus and system alias leaves are unchanged. On the tail-pause slice this class shrinks by 6 leaves: "
+        "tail_file_lstat now publishes a validated all-Borrowed summary, so the formals ctx (flb_tail_file_is_rotated, "
+        "4) and file (flb_tail_file_append, 2), mentioned in its actuals, are no longer refused; both functions stay "
+        "Unknown on other leaves."
     ),
     "CG05-UNCONTRACTED-INNER-CALLEES": (
         " RESIZED (W48-CALLEE-CLOSURE-R3, main c374de96): 164 nested-call leaves on 88 Unknown functions "
@@ -147,8 +155,9 @@ AMEND = {
         "body is refused by CG06's connective and CG10's cast-path readers."
     ),
     "CG10-BOUND-ROOT-PATH-REFUSED": (
-        " RE-MEASURED (W48-CALLEE-CLOSURE-R3): P4 round 3 leaves the corpus diagnostics byte-identical "
-        "(3a25c4e9...), so this class is unchanged at 5,126 corpus leaves."
+        " NOTE (W48-CALLEE-CLOSURE-R3): P4 round 3 changes one corpus leaf (mk_file_get_info's branch "
+        "condition at mk_core/mk_file.c:45, an `lstat` call now contracted), so this class moves by at most 1 from "
+        "5,126; the census was not re-run. The round frees no function whose root refusals it names."
     ),
     "W46-HEADER-INLINE-DECLARED-UNCHECKED": (
         " AMENDED (W48-CALLEE-CLOSURE-R3): the checked route was taken for rd_clock instead of a fourth header "

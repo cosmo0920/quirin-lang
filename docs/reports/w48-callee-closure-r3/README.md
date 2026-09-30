@@ -310,6 +310,9 @@ figures are in [gate.json](gate.json).
 ## 8. Follow-ups
 
 These are applied by [`scripts/update_ledger.py`](scripts/update_ledger.py).
+Its first application assumed a byte-identical corpus in two amendments;
+[`scripts/fix_ledger_amendments.py`](scripts/fix_ledger_amendments.py)
+corrected them after the AFTER run.
 
 **Registered:**
 
@@ -327,9 +330,11 @@ These are applied by [`scripts/update_ledger.py`](scripts/update_ledger.py).
 - `W44-CALLEE-DESTRUCTOR-SUMMARY`: 233 callees, 1,268 leaves;
 - `W44-CALLEE-EXTERNAL-INLINE-DEFINITION`: `mpack_*` 25 callees, 128
   leaves;
-- `W47-ALIAS-CALLEE-BORROWED-CLOSURE`;
+- `W47-ALIAS-CALLEE-BORROWED-CLOSURE`: 6 slice alias leaves released by
+  `tail_file_lstat`'s new summary;
 - `CG05-UNCONTRACTED-INNER-CALLEES`: 164 nested leaves, 88 functions;
-- `CG10-BOUND-ROOT-PATH-REFUSED`: unchanged, 5,126;
+- `CG10-BOUND-ROOT-PATH-REFUSED`: moves by at most 1 from 5,126 (not
+  re-run);
 - `W46-HEADER-INLINE-DECLARED-UNCHECKED`.
 
 **Retired:** none. No listed DISCHARGE clause holds.
