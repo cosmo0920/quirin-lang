@@ -180,6 +180,17 @@ pub fn typed_bound(
             spelling: spelling.to_owned(),
         });
     }
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float bound is refused by name,
+    // before its number is read — a float's number here is its bit pattern,
+    // which is no count, so reading it as one would admit a loop of whatever
+    // count the pattern happened to spell (the float card's rule: a float
+    // loop bound is refused on every route).
+    if ty.is_float() {
+        return Err(BoundRefusal::FloatBound {
+            spelling: spelling.to_owned(),
+            ty,
+        });
+    }
     if ty.is_target_width() && target.is_none() {
         return Err(BoundRefusal::NeedsRecordedTarget { ty });
     }
@@ -208,7 +219,9 @@ pub fn index_admits(
     ty: ScalarType,
     target: Option<&RecordedTarget>,
 ) -> Result<(), BoundRefusal> {
-    if ty == ScalarType::Bool {
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float index holds no count
+    // either (its `contains` is "is a bit pattern", not a range).
+    if !ty.is_integer() {
         return Err(BoundRefusal::CountOutsideIndex { count, ty });
     }
     if ty.is_target_width() && target.is_none() {
@@ -382,6 +395,10 @@ pub enum BoundRefusal {
     /// Card `W48-QR-SCALAR-TYPES-R5`: the bound is a `bool`, which is not an
     /// integer and counts nothing — there is no conversion to make it one.
     NotAnInteger { spelling: String },
+    /// Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: the bound is an `f32`/`f64`. A
+    /// counted loop counts an integer; a float converts to one only with an
+    /// explicit, checked `as`, and a float loop bound is refused on every route.
+    FloatBound { spelling: String, ty: ScalarType },
     /// Card `W48-QR-SCALAR-TYPES-R5`: an `isize`/`usize` bound (and index)
     /// with no recorded target, whose width — and so whose range — nothing
     /// states. Refused, never guessed.
@@ -458,6 +475,12 @@ impl std::fmt::Display for BoundRefusal {
                 "`#bound < {limit}` licenses no bound at all — `source.loop.v1` counts at least \
                  one iteration — so this clause list refuses the loop it was written to permit; \
                  the smallest condition that licenses anything is `#bound < 2`"
+            ),
+            Self::FloatBound { spelling, ty } => write!(
+                f,
+                "`{spelling}` is an `{ty}`, and a counted loop counts an integer; a float loop \
+                 bound is refused on every route — convert it with `as` to an integer type first, \
+                 which truncates and is refused when it does not fit"
             ),
             Self::NotAnInteger { spelling } => write!(
                 f,

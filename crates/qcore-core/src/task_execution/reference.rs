@@ -1443,6 +1443,11 @@ pub fn render_task_observation(observation: &TaskExecutionObservation) -> String
 fn typed_payload(ty: st::ScalarType, value: i128) -> String {
     let number = if ty == st::ScalarType::Bool {
         if value == 1 { "true" } else { "false" }.to_owned()
+    } else if crate::scalar_floats::is_nan(ty, value) {
+        // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: a float payload is its bit
+        // pattern, and every NaN the word `nan` — its payload and sign are
+        // not specified (the float result's rule).
+        "nan".to_owned()
     } else {
         value.to_string()
     };

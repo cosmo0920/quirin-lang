@@ -1217,6 +1217,7 @@ fn the_models_own_loop_arm_runs_a_repeat_through_the_buffer_routes_runner() {
     use qcore_core::typed_errors::EffectRow;
 
     let program = StringProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::new([
             qcore_core::typed_errors::Effect::Alloc,

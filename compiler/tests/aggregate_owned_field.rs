@@ -148,6 +148,7 @@ fn the_flagship_builds_exactly_the_aggregate_operations() {
 #[test]
 fn a_record_of_scalars_still_contributes_no_operation() {
     let program = BufferProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: EffectRow::default(),
         records: vec![RecordType {

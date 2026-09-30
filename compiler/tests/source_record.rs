@@ -551,6 +551,7 @@ fn reading_a_field_the_type_does_not_declare_is_refused() {
 #[test]
 fn a_record_contributes_no_custody_operation() {
     let program = BufferProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: qcore_core::typed_errors::EffectRow::default(),
         records: vec![RecordType {

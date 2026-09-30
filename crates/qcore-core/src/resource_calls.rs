@@ -1222,6 +1222,8 @@ pub fn check(program: Program) -> Result<Checked, Refusal> {
     let flattened = BufferProgram {
         entry: entry.name.clone(),
         declared_effects,
+        // This route has no float value, so no comparison effect.
+        float_effects: Default::default(),
         records: Vec::new(),
         events: expansion.events,
     };

@@ -201,7 +201,9 @@ fn table_scalar(name: &str) -> Option<Scalar> {
 
 /// The payload of a Buffer type's argument: `Buffer` is the `i32` payload
 /// every Buffer had before card `W48-QR-SCALAR-TYPES-R6`, and `Buffer<T>`
-/// names any §G02t type `T` (`Buffer<i32>` is the same type as `Buffer`).
+/// names any §G02t type `T` (`Buffer<i32>` is the same type as `Buffer`) —
+/// `f32`/`f64` included since card `W48-QR-FLOAT-BUFFER-PAYLOADS`, whose byte
+/// extents are their sizes, 4 and 8.
 fn buffer_payload(tokens: &[Token]) -> Option<FixedType> {
     match tokens {
         [buffer] if word(Some(buffer), "Buffer") => Some(FixedType::I32),
@@ -210,7 +212,7 @@ fn buffer_payload(tokens: &[Token]) -> Option<FixedType> {
                 && symbol(Some(lt), Symbol::Less)
                 && symbol(Some(gt), Symbol::Greater) =>
         {
-            name(Some(ty)).and_then(FixedType::parse)
+            name(Some(ty)).and_then(FixedType::parse_admitting_floats)
         }
         _ => None,
     }

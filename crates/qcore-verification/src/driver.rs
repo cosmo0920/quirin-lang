@@ -1151,6 +1151,17 @@ impl CompiledModule {
                     .iter()
                     .any(|ty| ty.is_float())
             }
+            // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: the buffer route, the
+            // composed string route and a `protected f32`/`f64` payload.
+            CheckedSourceModule::StandardBuffer(module) => {
+                std_buffer::uses_floats(&module.lowered.program)
+            }
+            CheckedSourceModule::StandardString(module) => {
+                std_string::uses_floats(&module.lowered.program)
+            }
+            CheckedSourceModule::CheckedMutexGuards(module) => {
+                module.lowered.payloads().values().any(|ty| ty.is_float())
+            }
             _ => false,
         };
         uses.then_some(qcore_core::scalar_floats::ASSUMPTION)

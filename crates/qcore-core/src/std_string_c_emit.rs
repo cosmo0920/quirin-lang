@@ -367,6 +367,10 @@ pub fn emit_string_c11(
     // same typed names, and each helper they use is defined once below. Empty,
     // and so invisible, for every program before the card.
     let mut embedded = std_buffer_c_emit::EmbeddedTyped::new(certificate.target_assumption.clone());
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS`: an entry holding a float carries
+    // the IEEE environment and the renderers its lines use.
+    let floats = crate::std_string::uses_floats(program);
+    embedded.hold_floats(floats);
 
     // Which bindings a later event actually consumes. A binding nothing
     // consumes is still emitted — the program said to bind it — and then
@@ -646,6 +650,9 @@ pub fn emit_string_c11(
                     _ => None,
                 };
                 let (stream, prefix) = line_framing(level);
+                if ty.is_float() {
+                    embedded.use_renderer(*rendering == crate::std_io::Rendering::Hex, ty);
+                }
                 let Some((conversion, operand)) = crate::scalar_types::c_rendering(
                     *rendering == crate::std_io::Rendering::Hex,
                     ty,
@@ -743,6 +750,13 @@ pub fn emit_string_c11(
             "#include <stdbool.h>\n#include <stddef.h>\n",
         ));
     }
+    if floats {
+        fragments.push(Fragment::new(
+            Section::Includes,
+            "scalar-floats.includes",
+            crate::scalar_floats::C_INCLUDES,
+        ));
+    }
     if !typed_prelude.is_empty() {
         fragments.push(Fragment::new(
             Section::Prelude,
@@ -758,9 +772,17 @@ pub fn emit_string_c11(
 /// `W48-QR-SCALAR-TYPES-R6`): `source.buffer.v1`'s own test over its embedded
 /// statements.
 fn uses_typed_scalars(program: &StringProgram) -> bool {
-    std_buffer_c_emit::uses_typed_scalars(&crate::std_buffer::BufferProgram {
+    std_buffer_c_emit::uses_typed_scalars(&embedded_buffer(program))
+}
+
+/// The composed entry's embedded `source.buffer.v1` statements as one
+/// program, for that route's own tests over them (cards
+/// `W48-QR-SCALAR-TYPES-R6` and `W48-QR-FLOAT-BUFFER-PAYLOADS`).
+fn embedded_buffer(program: &StringProgram) -> crate::std_buffer::BufferProgram {
+    crate::std_buffer::BufferProgram {
         entry: program.entry.clone(),
         declared_effects: program.declared_effects.clone(),
+        float_effects: program.float_effects,
         records: Vec::new(),
         events: program
             .events
@@ -770,7 +792,7 @@ fn uses_typed_scalars(program: &StringProgram) -> bool {
                 _ => None,
             })
             .collect(),
-    })
+    }
 }
 
 /// The file-scope text `source.string.v1` contributes to a program it is part

@@ -180,6 +180,51 @@ pub fn with_float_results(text: &str) -> String {
     )
 }
 
+/// The adapter `text` (one with the typed-payload arms) with a float payload's
+/// branch in each of the allocation, read and write cases (card
+/// `W48-QR-FLOAT-BUFFER-PAYLOADS`): an event named `=F32`/`=F64` carries the
+/// payload's bit pattern in `value`, printed as that unsigned number — read
+/// back by the always-defined signed-to-unsigned conversion — and every NaN
+/// as the word `nan`, the float result's rule. Installed only in a program
+/// holding a float payload; every other adapter keeps its bytes.
+#[must_use]
+pub fn with_float_payloads(text: &str) -> String {
+    let mut text = text.to_owned();
+    for tag in [
+        "QCORE_BUFFER_ALLOC",
+        "QCORE_BUFFER_READ",
+        "QCORE_BUFFER_WRITE",
+    ] {
+        let anchor = format!(
+            "            if (event->name[1] == 'U')\n                (void)fprintf(stdout, \"{tag} %"
+        );
+        assert_eq!(
+            text.matches(&anchor).count(),
+            1,
+            "the {tag} typed-payload arm is installed once"
+        );
+        let branch = format!(
+            r#"            if (event->name[1] == 'F') {{
+                uint64_t q_bits = (uint64_t)event->value;
+                int q_nan = event->name[2] == '3'
+                    ? ((q_bits & UINT64_C(0x7F800000)) == UINT64_C(0x7F800000)
+                        && (q_bits & UINT64_C(0x007FFFFF)) != 0)
+                    : ((q_bits & UINT64_C(0x7FF0000000000000)) == UINT64_C(0x7FF0000000000000)
+                        && (q_bits & UINT64_C(0x000FFFFFFFFFFFFF)) != 0);
+                if (q_nan)
+                    (void)fprintf(stdout, "{tag} %" PRIu64 " %" PRIu64 " %s nan\n",
+                        event->subject, event->related, event->name + 1);
+                else
+                    (void)fprintf(stdout, "{tag} %" PRIu64 " %" PRIu64 " %s %" PRIu64 "\n",
+                        event->subject, event->related, event->name + 1, q_bits);
+            }} else
+"#
+        );
+        text = text.replace(&anchor, &format!("{branch}{anchor}"));
+    }
+    text
+}
+
 /// [`DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION`] with [`FIXED_RESULT_ARM`] placed
 /// first in its task-result case (card `W48-QR-SCALAR-TYPES-R4`). A program
 /// whose workers return no fixed-width value never logs such a name, so the

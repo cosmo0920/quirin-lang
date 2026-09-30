@@ -569,6 +569,7 @@ fn a_body_that_releases_an_outer_buffer_is_not_the_identity() {
 #[test]
 fn the_inherited_checker_refuses_a_repeated_release_on_its_own() {
     let program = BufferProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: qcore_core::typed_errors::EffectRow::default(),
         records: Vec::new(),
@@ -664,6 +665,7 @@ fn the_signature_reads_the_footprint_and_the_owners_and_not_the_identity() {
 #[test]
 fn the_body_is_unrolled_exactly_and_its_bindings_are_per_iteration() {
     let program = BufferProgram {
+        float_effects: Default::default(),
         entry: "main".to_owned(),
         declared_effects: qcore_core::typed_errors::EffectRow::default(),
         records: Vec::new(),

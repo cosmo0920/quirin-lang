@@ -206,13 +206,11 @@ fn negative_controls_refuse() {
             needle,
         );
     }
-    // A float payload stays refused: `Buffer<f64>` is not a payload type.
-    refused(
-        &format!(
-            "{IMPORTS}fn w(b: own<Buffer<f64>> use one) -> own<Buffer<f64>> {{ return move b; }}\nfn main() -> i32 effects {{ {ENTRY} }} {{ return 0; }}\n"
-        ),
-        "",
-    );
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS` admits `Buffer<f64>` (its rows are
+    // `float_buffer_payloads.rs`); this row pinned the refusal it discharged.
+    admitted(&format!(
+        "{IMPORTS}fn w(b: own<Buffer<f64>> use one) -> own<Buffer<f64>> {{ return move b; }}\nfn main() -> i32 effects {{ {ENTRY} }} {{ return 0; }}\n"
+    ));
 }
 
 // ------------------------------------------------------------ native
