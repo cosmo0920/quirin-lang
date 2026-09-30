@@ -1986,6 +1986,12 @@ impl<'a> Builder<'a> {
             self.current = success;
             return Ok(Some(ValueType::Scalar(Scalar::OwnedBuffer(payload))));
         }
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: a whole read or write of an owned
+        // field, `qcore_buffer_read(RECORD.PATH)` and
+        // `qcore_buffer_write(RECORD.PATH, VALUE)`, on the field's leaf.
+        if let Some(kind) = self.field_buffer_access(tokens, span, slot)? {
+            return Ok(Some(kind));
+        }
         if word(tokens.first(), "qcore_buffer_write") {
             // `qcore_buffer_write(BUFFER, VALUE)` evaluates to `unit`. Only an
             // owner can name the buffer: a read loan is not an `own<Buffer>`
@@ -2071,12 +2077,6 @@ impl<'a> Builder<'a> {
                 },
             );
             return Ok(Some(ValueType::Scalar(Scalar::Unit)));
-        }
-        // Card `W48-QR-TASK-RECORD-CAPTURES`: a whole read or write of an owned
-        // field, `qcore_buffer_read(RECORD.PATH)` and
-        // `qcore_buffer_write(RECORD.PATH, VALUE)`, on the field's leaf.
-        if let Some(kind) = self.field_buffer_access(tokens, span, slot)? {
-            return Ok(Some(kind));
         }
         if word(tokens.first(), "qcore_buffer_read") {
             // The two-argument spelling `qcore_buffer_read(NAME, INDEX)` reads

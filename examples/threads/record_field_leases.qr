@@ -1,0 +1,60 @@
+#import std.concurrency;
+#import std.logger;
+#import std.fmt;
+#import std.io;
+// Two fields of one record, each leased to its own worker for writing at
+// the same time: two leaves, two resources, no byte with two writers.
+concurrency checked;
+
+type Frame { seq: i32, left: own<Buffer>, right: own<Buffer> }
+
+fn stamp(lane: lend<Buffer>, mark: i32) -> unit {
+    let low = qcore_buffer_write(lane, 0, mark);
+    let high = qcore_buffer_write(lane, 3, mark);
+    return;
+}
+
+fn main() -> i32 effects { io, alloc, throws<AllocError>, spawn, join, may_block } {
+    log_level trace;
+    let l = qcore_buffer_new(0)?;
+    match qcore_buffer_new(0) {
+        Result::Ok { value: r } => {
+            let frame = Frame { seq: 7, left: l, right: r };
+            let a = 1;
+            let b = 2;
+            thread scope lanes {
+                match spawn lanes stamp(lend frame.left 0..4, copy a) {
+                    Result::Ok { value: first } => {
+                        match spawn lanes stamp(lend frame.right 0..4, copy b) {
+                            Result::Ok { value: second } => {
+                                // Both workers write, each its own field.
+                                join move first;
+                                join move second;
+                                let left = qcore_buffer_read(frame.left);
+                                let right = qcore_buffer_read(frame.right);
+                                print dec frame.seq;
+                                print hex left;
+                                print hex right;
+                                drop frame;
+                                return 0;
+                            }
+                            Result::Err { error: refused } => {
+                                join move first;
+                                drop frame;
+                                return 1;
+                            }
+                        }
+                    }
+                    Result::Err { error: failure } => {
+                        drop frame;
+                        return 1;
+                    }
+                }
+            }
+        }
+        Result::Err { error: shortfall } => {
+            drop l;
+            return 1;
+        }
+    }
+}

@@ -1,0 +1,53 @@
+#import std.concurrency;
+#import std.logger;
+#import std.fmt;
+#import std.io;
+// A nested record that owns a buffer moves to a worker, which reads and
+// writes its fields and hands it back whole through join.
+concurrency checked;
+
+type Tag { id: u16, weight: i64 }
+type Job { tag: Tag, count: i32, data: own<Buffer<u32>> }
+
+fn process(job: Job use one, bonus: i32) -> Job effects { mut } {
+    // Read the owned field, then write it and two scalar fields: the worker
+    // holds the record, buffer included, until it hands it back.
+    let seen = qcore_buffer_read(job.data);
+    let written = qcore_buffer_write(job.data, 64);
+    job.count = bonus;
+    let weight = bonus as i64;
+    job.tag.weight = weight;
+    return move job;
+}
+
+fn main() -> i32 effects { io, alloc, throws<AllocError>, spawn, join, may_block } {
+    log_level trace;
+    let start: u32 = 21;
+    let data = qcore_buffer_new(start)?;
+    let id: u16 = 9;
+    let weight: i64 = 500;
+    let tag = Tag { id: id, weight: weight };
+    let job = Job { tag: tag, count: 1, data: data };
+    let bonus = 41;
+    thread scope workers {
+        match spawn workers process(move job, copy bonus) {
+            Result::Ok { value: handle } => {
+                // The record comes back whole: every field, the buffer too.
+                let done = join move handle?;
+                print dec done.count;
+                print dec done.tag.id;
+                print dec done.tag.weight;
+                let value = qcore_buffer_read(done.data);
+                print dec value;
+                drop done;
+                return 0;
+            }
+            Result::Err { error: failure } => {
+                // Failed creation restores the whole record to the parent.
+                print dec job.count;
+                drop job;
+                return 1;
+            }
+        }
+    }
+}

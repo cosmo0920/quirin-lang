@@ -195,3 +195,99 @@ These examples use the implemented scoped-task grammar and the `Buffer`
 intrinsics (one `i32` payload per buffer). They are not a general thread-pool or
 parallel-array API. See the [Windows thread implementation report](../../docs/reports/windows-c11-threads/README.md)
 for the supported adapter subset and validation bounds.
+
+## Records across tasks
+
+Card `W48-QR-TASK-RECORD-CAPTURES` lets a worker receive and return a
+**record**. A record crosses a spawn as its leaves: a record of scalars by
+`copy`, one that owns a Buffer by `move` (every owned field's custody
+transferred, its scalars duplicated), and it comes back through `join` whole.
+A single field crosses by the existing capture of that one leaf — `copy r.f`,
+`move r.buf`, `read r.buf share N`, `lend r.buf LOW..HIGH`. These three are
+built and run with Clang on Linux only (`-std=c11 -pthread -Wall -Wextra
+-Werror -pedantic`, under UBSan and ThreadSanitizer); the Windows script above
+builds the four examples before them.
+
+| Example | What it demonstrates | Successful main result |
+|---|---|---|
+| [record_workers.qr](record_workers.qr) | A nested record that owns a `Buffer<u32>` moves to a worker, which reads and writes the buffer and two scalar fields (one nested) and returns the record with `return move job;`; the parent unpacks it at `join`, prints its fields and releases it with `drop done;` | `0` |
+| [record_field_leases.qr](record_field_leases.qr) | Two owned fields of one record leased for writing to two workers at the same time — two leaves, two resources, so no byte has two writers — and read back by the parent after both joins | `0` |
+| [record_spawn_failure.qr](record_spawn_failure.qr) | A record moved to a worker; on the arm where the creation failed the record is the parent's again, its scalar field readable and its buffer still owned and released | `0` (created), `2` (refused) |
+
+A record result's trace is its header, `QCORE_TASK_RESULT TASK RECORD N`, then
+one result line per leaf in leaf order — depth-first, in declaration order.
+The F02 observable alphabet has no record outcome, so these runs sit outside
+F02 relational comparison (the reference encoding refuses them); their native
+evidence is the byte comparison below.
+
+<!-- transcript:record_workers -->
+
+```text
+QCORE_BUFFER_ALLOC 0 1 U32 21
+QCORE_TASK_SPAWN 1 2
+QCORE_BUFFER_READ 1 1 U32 21
+QCORE_BUFFER_WRITE 1 1 U32 64
+QCORE_TASK_RESULT 1 RECORD 4
+QCORE_TASK_RESULT 1 U16 9
+QCORE_TASK_RESULT 1 I64 41
+QCORE_TASK_RESULT 1 I32 41
+QCORE_TASK_RESULT 1 BUFFER 1
+QCORE_TASK_JOIN 1
+41
+9
+41
+QCORE_BUFFER_READ 0 1 U32 64
+64
+QCORE_BUFFER_DROP 0 1
+QCORE_TASK_RESULT 0 I32 0
+```
+
+<!-- transcript:record_field_leases -->
+
+```text
+QCORE_BUFFER_ALLOC 0 1 0
+QCORE_BUFFER_ALLOC 0 2 0
+QCORE_TASK_SPAWN 1 1
+QCORE_BUFFER_LEASE 1 1 0 4
+QCORE_TASK_SPAWN 2 1
+QCORE_BUFFER_LEASE 2 2 0 4
+QCORE_BUFFER_BYTE_WRITE 1 1 0 1
+QCORE_BUFFER_BYTE_WRITE 1 1 3 1
+QCORE_TASK_RESULT 1 UNIT
+QCORE_TASK_JOIN 1
+QCORE_BUFFER_LEASE_RETURN 1 1
+QCORE_BUFFER_BYTE_WRITE 2 2 0 2
+QCORE_BUFFER_BYTE_WRITE 2 2 3 2
+QCORE_TASK_RESULT 2 UNIT
+QCORE_TASK_JOIN 2
+QCORE_BUFFER_LEASE_RETURN 2 2
+QCORE_BUFFER_READ 0 1 16777217
+QCORE_BUFFER_READ 0 2 33554434
+7
+0x01000001
+0x02000002
+QCORE_BUFFER_DROP 0 1
+QCORE_BUFFER_DROP 0 2
+QCORE_TASK_RESULT 0 I32 0
+```
+
+<!-- transcript:record_spawn_failure -->
+
+```text
+QCORE_BUFFER_ALLOC 0 1 U8 65
+QCORE_TASK_SPAWN 1 1
+QCORE_BUFFER_DROP 1 1
+QCORE_TASK_RESULT 1 I32 3
+QCORE_TASK_JOIN 1
+3
+QCORE_TASK_RESULT 0 I32 0
+```
+
+Each transcript is the reference execution's stdout, and
+`compiler/tests/task_record_captures.rs` compares it with the native run at
+`-O0` and `-O2` under UBSan, at plain `-O2`, and under ThreadSanitizer through
+the harness's pthread binding (`TASK-ROUTE-TSAN-PTHREAD-BINDING`) — the lease
+example also with both workers forced live together and forced in reverse.
+The spawn-failure example is run a second time with every creation refused
+through the runtime's own `QCORE_TASK_CREATE` seam, against the reference run
+whose creation fails: `3`, then `65` read back out of the restored buffer.

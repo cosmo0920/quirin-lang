@@ -1,0 +1,39 @@
+#import std.concurrency;
+#import std.logger;
+#import std.fmt;
+#import std.io;
+// A record moved to a worker whose creation fails is restored to the parent
+// exactly: its scalar field reads as before and its buffer is still owned.
+concurrency checked;
+
+type Order { qty: i32, note: own<Buffer<u8>> }
+
+fn ship(order: Order use one) -> i32 {
+    let qty = order.qty;
+    drop order.note;
+    return qty;
+}
+
+fn main() -> i32 effects { io, alloc, throws<AllocError>, spawn, join, may_block } {
+    log_level trace;
+    let letter: u8 = 65;
+    let note = qcore_buffer_new(letter)?;
+    let order = Order { qty: 3, note: note };
+    thread scope shipping {
+        match spawn shipping ship(move order) {
+            Result::Ok { value: handle } => {
+                let shipped = join move handle?;
+                print dec shipped;
+                return 0;
+            }
+            Result::Err { error: refused } => {
+                // The creation failed: the record is the parent's again.
+                print dec order.qty;
+                let kept = qcore_buffer_read(order.note);
+                print dec kept;
+                drop order;
+                return 2;
+            }
+        }
+    }
+}
