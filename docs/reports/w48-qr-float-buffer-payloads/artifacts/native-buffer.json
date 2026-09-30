@@ -1,0 +1,10 @@
+[
+  {"type": "f32", "part": 0, "programs": 9, "runs": 27, "lines": 4149, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "f32", "part": 1, "programs": 5, "runs": 15, "lines": 3249, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "f32", "part": 2, "programs": 5, "runs": 15, "lines": 3306, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "f32", "part": 3, "programs": 5, "runs": 15, "lines": 3273, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "f64", "part": 0, "programs": 9, "runs": 27, "lines": 4116, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "f64", "part": 1, "programs": 5, "runs": 15, "lines": 3246, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "f64", "part": 2, "programs": 5, "runs": 15, "lines": 3294, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0},
+  {"type": "f64", "part": 3, "programs": 5, "runs": 15, "lines": 3267, "builds": ["O0-ubsan", "O2-ubsan", "O2"], "sanitizer_reports": 0}
+]

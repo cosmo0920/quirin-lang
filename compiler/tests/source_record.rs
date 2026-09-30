@@ -290,8 +290,11 @@ fn a_repeated_field_name_is_refused() {
 /// so the unmodelled spelling is now one outside that table.
 #[test]
 fn a_field_type_this_revision_does_not_model_is_refused() {
+    // Card `W48-QR-FLOAT-BUFFER-PAYLOADS` admits `f64` fields on this route
+    // (its rows are `float_buffer_payloads.rs`), so the row pins a spelling
+    // no route models.
     let source = module(
-        "type Point { x: f64 }",
+        "type Point { x: f16 }",
         "    let a = 1;\n    print dec a;\n",
     );
     assert_eq!(codes(&source), ["Q051"]);
