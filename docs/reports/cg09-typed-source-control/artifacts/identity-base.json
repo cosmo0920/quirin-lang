@@ -1,0 +1,78 @@
+{
+ "method": "identity.py BEFORE_DIR AFTER_DIR -- card CG09-TYPED-SOURCE-CONTROL: compare two\ncorpus arbiter runs file by file.\n\nFor every file of either run it records the SHA-256 on each side. For the two\nfiles that carry run metadata it states what differs: `run.json` (timestamps,\npaths, the binary digest) and `audit.log` (its output-path lines, compared with\nthose lines removed). `parity.jsonl` is compared as a multiset of records with Clang node addresses\nreplaced (they are process addresses), since\n`--jobs` streams it in scheduling order. The deduplicated verdict totals come\nfrom CG14's `compare.py`, which reads `resource-diagnostics.json`.",
+ "before": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a39a2c78010453eaf/private/cg09/arbiter/before",
+ "after": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a39a2c78010453eaf/private/cg09/arbiter/after-80c63f00",
+ "files": {
+  "audit.log": {
+   "before": "f3e11aa600c87d419c953e440e8bfad7a8e76d7b4c97942d2390d9fca41ad135",
+   "after": "e9ec5e3a7942bad98cd2b0cba65f71eea15ffac4bfc05bd59b8b566d0dae9369",
+   "identical": false,
+   "identical_with_output_paths_normalised": true
+  },
+  "monkey-source.json": {
+   "before": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "after": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "identical": true
+  },
+  "parity.jsonl": {
+   "before": "2bfc25014173c4093ce531761ec6e8cb30d53d5ff9121aa8228886c0e07e3210",
+   "after": "68c771da1689ffaa06d1e79a431744c9bd9f7c99b06c3f5a0c166d1c13848895",
+   "identical": false,
+   "same_records_in_any_order": true,
+   "records": [
+    446768,
+    446768
+   ]
+  },
+  "parity.jsonl.contexts.jsonl": {
+   "before": "2c2fc8182d54bc63e09ad5ede9d5aa68dc1f6afb314ad075ca858744326c5e69",
+   "after": "2c2fc8182d54bc63e09ad5ede9d5aa68dc1f6afb314ad075ca858744326c5e69",
+   "identical": true
+  },
+  "resource-diagnostics.chunk-contracts.json": {
+   "before": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "after": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "identical": true
+  },
+  "resource-diagnostics.contracts.json": {
+   "before": "d7e2a298dbffe65dba69c318750004ee326418629c506b7e9eeb23abd159e18a",
+   "after": "d7e2a298dbffe65dba69c318750004ee326418629c506b7e9eeb23abd159e18a",
+   "identical": true
+  },
+  "resource-diagnostics.json": {
+   "before": "d1288b20f1c6079c2872a0fcf1de21fb54bcafda84463e86e866f24caa16e801",
+   "after": "d1288b20f1c6079c2872a0fcf1de21fb54bcafda84463e86e866f24caa16e801",
+   "identical": true
+  },
+  "resource-diagnostics.source-effects.json": {
+   "before": "ef1b220558c0fea436f60b2e005b4d1905b63b3c040d5595d5d0f2fa4185241a",
+   "after": "ef1b220558c0fea436f60b2e005b4d1905b63b3c040d5595d5d0f2fa4185241a",
+   "identical": true
+  },
+  "run.json": {
+   "before": "2c67ac763237b74128df16ac93e3436671e8341fae23eacc30bb8b3d1897a534",
+   "after": "d23d278f7cdccd7aac0de9e0fc7c3d20d523c2402931676915c058e2a1061267",
+   "identical": false,
+   "differing_keys": [
+    "binary_sha256",
+    "command",
+    "end",
+    "start"
+   ]
+  }
+ },
+ "totals": {
+  "before": {
+   "Unknown": 4208,
+   "Safe": 616,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4208,
+   "Safe": 616,
+   "Unsafe": 10
+  }
+ },
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 0
+}

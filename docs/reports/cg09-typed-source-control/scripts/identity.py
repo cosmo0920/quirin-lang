@@ -5,7 +5,8 @@ corpus arbiter runs file by file.
 For every file of either run it records the SHA-256 on each side. For the two
 files that carry run metadata it states what differs: `run.json` (timestamps,
 paths, the binary digest) and `audit.log` (its output-path lines, compared with
-those lines removed). `parity.jsonl` is compared as a multiset of records, since
+those lines removed). `parity.jsonl` is compared as a multiset of records with Clang node addresses
+replaced (they are process addresses), since
 `--jobs` streams it in scheduling order. The deduplicated verdict totals come
 from CG14's `compare.py`, which reads `resource-diagnostics.json`.
 """
@@ -13,6 +14,7 @@ import collections
 import hashlib
 import json
 import pathlib
+import re
 import subprocess
 import sys
 
@@ -28,9 +30,15 @@ def audit_lines(path: pathlib.Path, root: pathlib.Path) -> list[str]:
     return [line.replace(str(root), "OUT") for line in path.read_text().splitlines()]
 
 
+ADDRESS = re.compile(rb"0x[0-9a-f]+")
+
+
 def records(path: pathlib.Path) -> collections.Counter:
+    # Clang JSON node IDs are process addresses (`"decl":"0x652a…"`), which
+    # differ between any two runs; they are replaced before comparing.
     with path.open("rb") as handle:
-        return collections.Counter(hashlib.sha256(line).hexdigest() for line in handle)
+        return collections.Counter(
+            hashlib.sha256(ADDRESS.sub(b"0xADDR", line)).hexdigest() for line in handle)
 
 
 def main() -> int:
