@@ -454,7 +454,11 @@ fn the_field_link_join_sibling_stays_fixed() {
          k_drop(b); }",
     );
     assert_eq!(branch.status, AnalysisStatus::Unsafe, "{branch:?}");
-    assert_eq!(branch.leaks(), straight.leaks(), "{branch:?} vs {straight:?}");
+    assert_eq!(
+        branch.leaks(),
+        straight.leaks(),
+        "{branch:?} vs {straight:?}"
+    );
     let looped = analyze_k(
         "void k_chain(int n) { struct k_item *it; struct k_box *b; int i; \
          b = k_make(n); if (!b) return; \
@@ -464,7 +468,8 @@ fn the_field_link_join_sibling_stays_fixed() {
     assert_eq!(looped.status, AnalysisStatus::Unsafe, "{looped:?}");
     assert!(looped.leaks() >= 1, "{looped:?}");
     assert!(
-        !looped.refused("loop re-acquisition: an earlier generation that may be live is still held"),
+        !looped
+            .refused("loop re-acquisition: an earlier generation that may be live is still held"),
         "{looped:?}"
     );
 }

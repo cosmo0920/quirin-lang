@@ -467,6 +467,10 @@ reaches a bound or a branch.
     its declaration: a declared release does not cascade to members
     (P-B08-SHALLOW, stated). `QCore.MemberReleaseCallee`;
     [report](../reports/w45-sr5-soundness/README.md).
+    Amended by [rule 11c](#constraint-11c): the B08 join records a
+    one-sided link as partial, never as a silent unresolved effect, and the
+    escape cascade refuses a possibly-live child it does not carry on every
+    path.
 
 <a id="constraint-5l"></a>
 
@@ -2451,8 +2455,9 @@ own anchor here.
     not proved: that the shift renames every mention of an identity in the
     state (trust boundary 28) and that every other rule reports a refusal
     wherever it leaves an identity unresolved (the census
-    `position: "withheld-obligation"` measures where one does not,
-    `B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED`). `QCore.LoopSiteGenerations`
+    `position: "withheld-obligation"` measures where one does not; since
+    [rule 11c](#constraint-11c) a settled exit that withholds one on a path
+    no refusal reached is itself refused). `QCore.LoopSiteGenerations`
     (`reacquisition_keeps_the_earlier_obligation`,
     `the_failure_edge_removes_only_the_new_generation`,
     `the_summary_never_discharges`, `a_live_summary_is_never_safe`,
@@ -2541,3 +2546,62 @@ own anchor here.
     type-size fold), bound to `CAST_TABLE`, `query_operand`, Clang's
     constants and `fold_type_sizes` by shared-vector tests;
     [report](../reports/cg08-casts-and-type-queries/README.md).
+
+<a id="constraint-11c"></a>
+
+11c. **A field link that holds on some paths only never leaves its child's
+    obligation unresolved without a diagnostic, and no settled exit that
+    withholds an obligation is `Safe`.** Card
+    B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED, a soundness repair
+    (`field_link_join.rs`, the route-G adapter `legacy_field_link_join.rs`,
+    thin hooks in `legacy_c.rs` (the field-link join, the store, the bound
+    read, the chain view, the escape cascade, the work list and the settled
+    exit pass) and `legacy_loop_generations.rs` (`rename`)). It amends rule
+    5k's B08 join and escape cascade.
+
+    (1) **The defect.** The B08 join recorded every child linked on one side
+    only as an unresolved effect and nothing else: no diagnostic reported it,
+    `report_leaks` skipped it, and the escape cascade escaped a live joined
+    child anyway. `if (n) b->item = it; else k_release(it); k_drop(b);` was
+    `Safe` although the linking arm leaks `it` (P-B08-SHALLOW), and
+    `if (n) b->item = it; return b;` was `Safe` although the other arm leaks
+    it; a must-linked child of mixed status was left unresolved silently at
+    an escape. (2) **The join** keeps the union of the links and records each
+    `(owner, field, child)` that does not hold on both sides as *partial*
+    (`join_link`, `partial_links`, always a subset of `field_links`); it adds
+    **no** unresolved effect, so an owner's release leaves a possibly-live
+    child to be reported exactly as in the straight-line form. A store makes
+    its link hold again; a generation shift renames partial triples with the
+    links. (3) **The escape** decides each child it reaches (`escape_step`):
+    an exactly-live child linked on every path escapes; one already escaped
+    or untracked is kept; one neither live nor contained is withdrawn as
+    before (an unresolved effect, no report: nothing is owed); every other
+    possibly-live child (not carried on every path, or of mixed status)
+    refuses (`Unsupported`, "field-link escape: …"), keeping its status with
+    an unresolved effect. (4) **Reads.** A bound read and a chain step
+    through a partial link decline (the link no longer denotes one identity
+    on every path). (5) **The floor.** A settled exit whose path no refusal
+    reached (`unmodeled` false) and that withholds a possibly-live identity
+    with an unresolved effect, not the caller's, reports a refusal
+    (`exit_refuses`, "exit withholds a possibly-live obligation …"): any
+    other rule that leaves an identity unresolved without reporting is a
+    refusal here, never a `Safe` (and a W4 summary over it is not
+    validated, which requires a body with no diagnostic).
+
+    **Do not** record a one-sided link as an unresolved effect, escape a
+    possibly-live child a partial link reaches, read through a partial link,
+    or leave an identity unresolved on a path without a path-poisoning
+    diagnostic (the floor then refuses the function). Premises stated, not
+    proved: P-B08-SHALLOW (unchanged), that every rule that marks an
+    identity unresolved reports a path-poisoning diagnostic on that path (the
+    audit in the report lists each insertion and its report; the floor turns
+    a violation on a modeled path into a refusal), and faithful extraction
+    (trust boundary 28). MEASURED-PLACEHOLDER `QCore.FieldLinkJoin`
+    (`a_decided_escape_leaves_no_live_child`,
+    `an_escape_over_a_one_sided_live_child_refuses`,
+    `the_join_adds_no_unresolved`, `a_live_child_at_exit_is_reported`,
+    `an_unresolved_possibly_live_obligation_at_exit_is_never_safe`,
+    `the_model_is_sound`, `the_base_flow_hides_the_leak`), bound to
+    `LINK_VECTORS`, `ESCAPE_VECTORS`, `EXIT_VECTORS` and the gateway's
+    verdicts on the pinned shapes (`SHAPE_VECTORS`) by shared-vector tests;
+    [report](../reports/b08-field-link-join-silent-unresolved/README.md).

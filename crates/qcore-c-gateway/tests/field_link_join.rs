@@ -345,7 +345,10 @@ fn b08_lean_shape_vectors_match_the_rust_table() {
             let (shape, verdict) = row.split_once(',').expect("two cells");
             (
                 shape.trim().trim_matches('"').to_owned(),
-                verdict.trim().trim_start_matches('.').replace(['«', '»'], ""),
+                verdict
+                    .trim()
+                    .trim_start_matches('.')
+                    .replace(['«', '»'], ""),
             )
         })
         .collect::<Vec<_>>();

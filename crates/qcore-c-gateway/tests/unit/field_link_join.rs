@@ -21,11 +21,7 @@ fn lean_rows(header: &str) -> Vec<Vec<String>> {
                 .trim_start_matches('(')
                 .trim_end_matches(')')
                 .split(',')
-                .map(|cell| {
-                    cell.trim()
-                        .trim_start_matches('.')
-                        .replace(['«', '»'], "")
-                })
+                .map(|cell| cell.trim().trim_start_matches('.').replace(['«', '»'], ""))
                 .collect()
         })
         .collect()
@@ -77,9 +73,8 @@ fn the_escape_vectors_hold() {
 
 #[test]
 fn b08_lean_escape_vectors_match_the_rust_table() {
-    let rows = lean_rows(
-        "def escapeVectors : List (Bool × Bool × Bool × Bool × Bool × Bool × Step) := [",
-    );
+    let rows =
+        lean_rows("def escapeVectors : List (Bool × Bool × Bool × Bool × Bool × Bool × Step) := [");
     assert_eq!(rows.len(), ESCAPE_VECTORS.len());
     for (row, ((a, b, c, d, e, f), step)) in rows.iter().zip(ESCAPE_VECTORS) {
         assert_eq!(
