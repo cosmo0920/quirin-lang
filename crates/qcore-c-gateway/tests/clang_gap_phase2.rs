@@ -231,6 +231,8 @@ fn m07_bitfield_steps_are_unit_accesses() {
 // CG14 — aggregate values and initializers (M08 M09 M10 M11)
 // ---------------------------------------------------------------------------
 
+/// Unchanged by CG14 (rule 11f): `struct S` holds pointer members, so a whole
+/// copy of it or of its embedded `struct I` refuses (`pointer-members`).
 #[test]
 fn m08_aggregate_copies_are_refused() {
     if !clang_available() {
@@ -238,6 +240,12 @@ fn m08_aggregate_copies_are_refused() {
     }
     assert!(gs("void subject(struct S *a, struct S *b) { *a = *b; }").refused(IND));
     assert!(gs("void subject(struct S *s) { s->in = s->in; }").refused(IND));
+    // CG14 (rule 11f): a custody-free record's copy is its typed read and
+    // store. Added control, not a flip.
+    assert!(
+        gs("struct R { int x; long y[2]; }; void subject(struct R *a, struct R *b) { *a = *b; }")
+            .safe()
+    );
 }
 
 #[test]
@@ -245,10 +253,14 @@ fn m09_braced_initializers_are_refused() {
     if !clang_available() {
         return;
     }
+    // Unchanged: an initial alias (a local's pointer) refuses.
     let run =
         gs("void subject(void) { void *q = q_alloc(); struct S s = { .p = q }; q_free(s.p); }");
     assert!(run.refused(INITIALIZER), "{run:?}");
-    assert!(gs("int subject(void) { struct S s = { .a = 1 }; return s.a; }").refused(INITIALIZER));
+    // CG14 flip (rule 11f): every leaf carries no identity (a scalar, and the
+    // zero-fill of the rest, pointers null). BEFORE: refused (INITIALIZER).
+    assert!(gs("int subject(void) { struct S s = { .a = 1 }; return s.a; }").safe());
+    // Route T is unchanged: no T consumer decides a wider initializer.
     assert_eq!(
         t_refusal(
             "struct R { int a; int b; }; int subject(void) { struct R r = { .a = 1 }; return 0; }"
@@ -270,10 +282,13 @@ fn m10_compound_literals_have_no_identity() {
     if !clang_available() {
         return;
     }
+    // CG14 flip (rule 11f): the literal's address at a `Borrowed` formal,
+    // identity-free and reading nothing. BEFORE: refused (INITIALIZER).
     let run = gs(
         "void subject(void) { void *q = q_alloc(); q_observe(&(struct S){ .p = 0 }); q_free(q); }",
     );
-    assert!(run.refused(INITIALIZER), "{run:?}");
+    assert!(run.safe(), "{run:?}");
+    // Route T is unchanged.
     assert_eq!(
         t_refusal(
             "struct R { int a; int b; }; int f(struct R *); int subject(void) { return f(&(struct R){1, 2}); }"
@@ -282,17 +297,21 @@ fn m10_compound_literals_have_no_identity() {
     );
 }
 
-/// Correction to the input: G does not read a string-initialised local array
-/// at all (an unrecognized destination), and a pointer to a string literal
-/// binds the literal as an unresolved identity. No extent or terminator is
-/// derived on either form.
+/// Correction to the input (CG00): G did not read a string-initialised local
+/// array at all (an unrecognized destination), and a pointer to a string
+/// literal binds the literal as an unresolved identity.
 #[test]
 fn m11_string_initializers_are_refused_or_unresolved() {
     if !clang_available() {
         return;
     }
-    assert!(gs("void subject(void) { char buf[] = \"abc\"; }").refused(DESTINATION));
-    assert!(gs("int subject(void) { char buf[] = \"abc\"; return buf[9]; }").refused(DESTINATION));
+    // CG14 flips (rule 11f): a character array initialised by a string
+    // literal is a declaration with no custody effect; its extent is
+    // recorded, and no bound is claimed (`buf[9]` is read as any array
+    // element is, custody-neutral). BEFORE: both refused (DESTINATION).
+    assert!(gs("void subject(void) { char buf[] = \"abc\"; }").safe());
+    assert!(gs("int subject(void) { char buf[] = \"abc\"; return buf[9]; }").safe());
+    // Unchanged.
     let run = gs("int subject(void) { const char *s = \"abc\"; return s[3]; }");
     assert!(run.unknown() && run.has("__qcore_literal__"), "{run:?}");
 }

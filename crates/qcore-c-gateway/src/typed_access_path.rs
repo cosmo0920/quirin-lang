@@ -272,6 +272,9 @@ pub(crate) struct StatementIndex {
     /// Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): union and bit-field
     /// record facts.
     pub(crate) records: Arc<crate::union_bitfield::RecordFacts>,
+    /// Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f): record and
+    /// typedef facts.
+    pub(crate) aggregates: Arc<crate::aggregate_value::AggregateFacts>,
     by_line: Arc<BTreeMap<usize, Vec<Vec<usize>>>>,
     /// The unit's line starts: a node's line is found by binary search.
     line_starts: Arc<Vec<usize>>,
@@ -381,6 +384,7 @@ struct AstIndex {
     fields: Arc<BTreeMap<String, Option<FieldFacts>>>,
     enums: Arc<EnumFacts>,
     records: Arc<crate::union_bitfield::RecordFacts>,
+    aggregates: Arc<crate::aggregate_value::AggregateFacts>,
     line_starts: Arc<Vec<usize>>,
     line_tokens: Arc<OnceCell<BTreeMap<usize, Vec<String>>>>,
 }
@@ -396,6 +400,7 @@ struct RetainedDeclarations {
     fields: BTreeMap<String, Option<FieldFacts>>,
     enums: EnumFacts,
     records: crate::union_bitfield::RecordFacts,
+    aggregates: crate::aggregate_value::AggregateFacts,
 }
 
 impl RetainedDeclarations {
@@ -403,6 +408,8 @@ impl RetainedDeclarations {
         collect_field_facts(&node, &mut self.fields);
         EnumFacts::collect(&node, &mut self.enums);
         crate::union_bitfield::RecordFacts::collect(&node, &mut self.records);
+        // Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f).
+        crate::aggregate_value::AggregateFacts::collect(&node, &mut self.aggregates);
         if kind(&node) == "FunctionDecl"
             && children(&node)
                 .iter()
@@ -527,6 +534,7 @@ impl AstIndex {
             fields: Arc::new(retained.fields),
             enums: Arc::new(retained.enums),
             records: Arc::new(retained.records),
+            aggregates: Arc::new(retained.aggregates),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         })
@@ -547,6 +555,7 @@ impl AstIndex {
             fields: Arc::new(retained.fields),
             enums: Arc::new(retained.enums),
             records: Arc::new(retained.records),
+            aggregates: Arc::new(retained.aggregates),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         }
@@ -653,6 +662,7 @@ impl StatementIndex {
                 fields: Arc::clone(&ast.fields),
                 enums: Arc::clone(&ast.enums),
                 records: Arc::clone(&ast.records),
+                aggregates: Arc::clone(&ast.aggregates),
                 by_line: Arc::clone(by_line),
                 line_starts: Arc::clone(&ast.line_starts),
                 line_tokens: Arc::clone(&ast.line_tokens),
@@ -711,6 +721,7 @@ impl StatementIndex {
             address_target: false,
             pointer_store_target: false,
             pointer_stores: false,
+            aggregate_target: false,
             plan: StatementPlan {
                 scalar: TypedScalarPlan::default(),
                 chains: Vec::new(),
@@ -983,6 +994,10 @@ pub(crate) struct Reader<'a> {
     /// Card CG11 (rule 10v): this reader reads a pointer-valued store (the
     /// statement route only).
     pub(crate) pointer_stores: bool,
+    /// Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f): the next
+    /// [`Reader::path`] reads or stores a whole custody-free record, so the
+    /// place's type is not required to be a scalar.
+    pub(crate) aggregate_target: bool,
     fields: &'a BTreeMap<String, Option<FieldFacts>>,
     enums: &'a EnumFacts,
     /// Card CG13 (rule 10w): union and bit-field record facts.
@@ -1185,8 +1200,12 @@ impl<'a> Reader<'a> {
     pub(crate) fn path(&mut self, node: &Value, store: bool, pointer_read: bool) -> Option<()> {
         let address = std::mem::take(&mut self.address_target) && !store;
         let pointer_store = std::mem::take(&mut self.pointer_store_target) && store;
+        // Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f): a whole
+        // custody-free record read or stored, whose class the caller checked.
+        let aggregate = std::mem::take(&mut self.aggregate_target);
         if !(address
             || pointer_store
+            || aggregate
             || self.scalar(node)
             || (pointer_read && !store && pointer_value(node)))
         {

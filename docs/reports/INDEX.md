@@ -103,6 +103,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg13-union-and-bitfield-places](cg13-union-and-bitfield-places/README.md) | CG13-UNION-AND-BITFIELD-PLACES: union-member and bit-field place steps |
 
+| [cg14-aggregate-values-and-initializers](cg14-aggregate-values-and-initializers/README.md) | CG14-AGGREGATE-VALUES-AND-INITIALIZERS |
+
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
@@ -1051,6 +1053,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w47-typed-const-pointer-value](w47-typed-const-pointer-value/README.md) | W47-TYPED-CONST-POINTER-VALUE |
 
 | [w47-typed-root-declaration-reader](w47-typed-root-declaration-reader/README.md) | W47-TYPED-ROOT-DECLARATION-READER |
+
+| [w48-callee-closure-r3](w48-callee-closure-r3/README.md) | W48-CALLEE-CLOSURE-R3: every blocking callee ranked, two libc facts declared |
 
 | [w48-qr-c-struct-import](w48-qr-c-struct-import/README.md) | W48-QR-C-STRUCT-IMPORT: importing a C struct into `.qr` |
 

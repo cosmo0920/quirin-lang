@@ -217,6 +217,10 @@ mod pointer_store_flow;
 // root premise, read off one state, and its census.
 #[path = "legacy_bound_untracked.rs"]
 mod bound_untracked_route;
+// Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f): record copies,
+// braced initializers, compound literals and string initializers, asked last.
+#[path = "legacy_aggregate_value.rs"]
+mod aggregate_value_route;
 // Card CG12-VOID-VIEW-READBACK (rule 11j): the readback of a `void *`
 // member, its static premises on the parser and its flow decision.
 #[path = "legacy_void_view.rs"]
@@ -6543,6 +6547,12 @@ impl Parser<'_> {
         {
             self.element_origins.clear();
             return lowered;
+        }
+        // Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f): asked last,
+        // only for a refusal.
+        if let Some(aggregate) = self.aggregate_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return aggregate;
         }
         if let LegacyInstruction::ContractCall { destination, .. } = &instruction {
             let use_ = if destination.is_some() {

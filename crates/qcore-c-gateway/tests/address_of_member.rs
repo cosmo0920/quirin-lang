@@ -407,16 +407,27 @@ fn an_aggregate_member_is_still_not_a_readable_value() {
 }
 
 /// And a member whose typedef defines an aggregate is not a *store*
-/// destination: the aggregate-store rule links single-pointer and `void *`
-/// members only, and this card touched neither set.
+/// destination for the aggregate-store rule, which links single-pointer and
+/// `void *` members only.
+///
+/// Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS flip (gateway rule 11f): the
+/// whole-union copy `hold->lock = hold->aliased_lock` is of a custody-free
+/// union (`int`, `long`), so it is the source's typed read and the
+/// destination's typed store and certifies. BEFORE: `Unknown` with the
+/// indirect-access diagnostic. A pointer-bearing member copy
+/// (`sink->packer = hold->packer`, above) keeps its refusal.
 #[test]
 fn an_aggregate_typedef_member_is_not_a_store_destination() {
     if !clang_available() {
         return;
     }
-    refused(
-        "an aggregate member is not a store destination",
+    let result = analyze(
         "void w(struct a_holder *hold) { hold->lock = hold->aliased_lock; }",
+        "w",
+    );
+    assert!(
+        matches!(result, UnrestrictedLegacyResult::Safe(_)),
+        "a custody-free union copy certifies (rule 11f): {result:?}"
     );
 }
 
