@@ -19,7 +19,7 @@ if [ "${SKIP_BUILD:-0}" != 1 ]; then
     > "$out/build-$name.log" 2>&1
   echo $? > "$out/build-$name.exit"
 fi
-binary="$repo/target/release/quirin-audit"
+binary="${BINARY:-$repo/target/release/quirin-audit}"
 sha256sum "$binary" > "$out/$name.binary.sha256"
 QCORE_TYPED_PATH_PARITY="$out/$name-parity.jsonl" python3 scripts/run_pinned_audit.py \
   "$out/$name" 66910c10 --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 \
