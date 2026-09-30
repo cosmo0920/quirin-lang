@@ -230,7 +230,9 @@ pub(crate) const FORM_TABLE: [(Form, &str, Disposition); 12] = [
     ),
 ];
 
-/// The disposition of a form by name; an unlisted name is refused.
+/// The disposition of a form by name; an unlisted name is refused
+/// (`QCore.StorageDuration.dispositionOf`; the routes ask [`decide`]).
+#[cfg(test)]
 pub(crate) fn disposition(name: &str) -> Disposition {
     FORM_TABLE
         .iter()
