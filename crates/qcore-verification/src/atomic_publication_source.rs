@@ -63,12 +63,66 @@ pub fn check_atomic_publication_source(
         semantic_profile: "c11-bounded-atomic-publication-v1",
         scope: source.scope,
         evidence_version: "ct41-sync-model-v1",
-        assumptions: vec![
-            "the source certificate was derived from the full typed translation-unit AST",
-            "the publisher invocation and successful consumer invocation bounds are caller-declared premises",
-            "the Rust weak-memory checker corresponds to the audited Lean abstraction by review",
-        ],
+        assumptions: publication_assumptions(),
         source,
         model,
     })
+}
+
+/// The assumptions every publication verdict carries, `Safe` or `Unknown`
+/// (`QCore.AtomicSourceRoute.publicationVerdict`): card CG19 adds the
+/// single-graph assumption (W07, CG29; no liveness, W11).
+fn publication_assumptions() -> Vec<&'static str> {
+    vec![
+        "the source certificate was derived from the full typed translation-unit AST",
+        "the publisher invocation and successful consumer invocation bounds are caller-declared premises",
+        "the Rust weak-memory checker corresponds to the audited Lean abstraction by review",
+        qcore_c_gateway::atomic_source_route::SINGLE_GRAPH_ASSUMPTION,
+    ]
+}
+
+/// Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): the production gate of
+/// the composed judgment. `Safe` exactly when the source extraction and the
+/// core model both accept; every refusal, of either half, is `Unknown` with
+/// its reason. Both carry the same assumptions.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum AtomicPublicationVerdict {
+    Safe(Box<AtomicPublicationCertificate>),
+    Unknown {
+        refusal: AtomicPublicationRefusal,
+        assumptions: Vec<&'static str>,
+    },
+}
+
+impl AtomicPublicationVerdict {
+    #[must_use]
+    pub fn status(&self) -> &'static str {
+        match self {
+            Self::Safe(_) => "Safe",
+            Self::Unknown { .. } => "Unknown",
+        }
+    }
+
+    #[must_use]
+    pub fn assumptions(&self) -> &[&'static str] {
+        match self {
+            Self::Safe(certificate) => &certificate.assumptions,
+            Self::Unknown { assumptions, .. } => assumptions,
+        }
+    }
+}
+
+pub fn atomic_publication_verdict(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    profile: &AtomicPublicationSourceProfile<'_>,
+    bounds: AtomicPublicationExecutionBounds,
+) -> AtomicPublicationVerdict {
+    match check_atomic_publication_source(unit, source_revision, profile, bounds) {
+        Ok(certificate) => AtomicPublicationVerdict::Safe(Box::new(certificate)),
+        Err(refusal) => AtomicPublicationVerdict::Unknown {
+            refusal,
+            assumptions: publication_assumptions(),
+        },
+    }
 }

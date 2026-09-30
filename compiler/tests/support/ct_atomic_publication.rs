@@ -221,7 +221,8 @@ pub(super) fn run(case: &ManifestCase) {
             // answer, which is what bounds the volatile arm to a flag that is
             // not atomic -- the discrimination the historical `typed_source`
             // qualifier branch cannot make (it refuses `volatile`, `_Atomic`
-            // and `restrict` in one branch with one message, unchanged here).
+            // and `restrict` in one branch with one message, unchanged here;
+            // card CG19-ATOMIC-SOURCE-ROUTE later gave `_Atomic` its own arm).
             "qualifier_on_atomic_unsupported" => assert_eq!(
                 result,
                 Err(AtomicPublicationRefusal::Source(

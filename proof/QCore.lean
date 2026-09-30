@@ -283,6 +283,7 @@ import QCore.ReviewHoldStanding
 
 import QCore.SourceExtensions
 import QCore.TypedSourceOperators
+import QCore.TypedSourceControl
 import QCore.ElaborationCore
 import QCore.TypedPlace
 import QCore.BoundUntracked
@@ -310,5 +311,6 @@ import QCore.QrlibLinkage
 import QCore.FieldLinkJoin
 import QCore.StatementExpressions
 import QCore.StorageDuration
+import QCore.AtomicSourceRoute
 
 /-! The executable formal core of QCore-C revision 0.1. -/

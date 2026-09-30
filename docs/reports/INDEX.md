@@ -95,6 +95,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg08-casts-and-type-queries](cg08-casts-and-type-queries/README.md) | CG08-CASTS-AND-TYPE-QUERIES: casts as representations and type-query operands |
 
+| [cg09-typed-source-control](cg09-typed-source-control/README.md) | CG09-TYPED-SOURCE-CONTROL: route T's control statements, admitted per consumer |
+
 | [cg10-bound-untracked-roots](cg10-bound-untracked-roots/README.md) | CG10-BOUND-UNTRACKED-ROOTS |
 
 | [cg10-common-typed-place](cg10-common-typed-place/README.md) | CG10-COMMON-TYPED-PLACE |
@@ -108,6 +110,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [cg15-storage-duration-and-volatile](cg15-storage-duration-and-volatile/README.md) | CG15-STORAGE-DURATION-AND-VOLATILE |
 
 | [cg18-footprint-connection](cg18-footprint-connection/README.md) | CG18-FOOTPRINT-CONNECTION |
+
+| [cg19-atomic-source-route](cg19-atomic-source-route/README.md) | CG19-ATOMIC-SOURCE-ROUTE |
 
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 

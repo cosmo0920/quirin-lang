@@ -3,6 +3,18 @@
 //! Acceptance is conditional: if the consumer takes the branch guarded by the
 //! observed ready value, the payload write happens before its payload read.
 //! Termination and eventual observation are deliberately outside this route.
+//!
+//! Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i) reads the flag's store
+//! and load through the atomic source route (`crate::atomic_source_route`):
+//! any routed plain store or load of the flag (`__c11_atomic_*`, the
+//! `<stdatomic.h>` generics, the `_Atomic` operator forms, and GNU `__atomic_*`
+//! builtins on a non-`_Atomic` `int` flag every access of which is one), with
+//! an integer-literal or canonical `memory_order` order; a consume load and
+//! every read-modify-write, compare-exchange or fence is refused by the
+//! route's name. The consumer may test `seen != READY` (return early) or
+//! `seen == READY` (use the payload inside). The certificate records the
+//! initialise -> publish -> observe -> use stages it derived
+//! ([`AtomicPublicationStages`]); reclamation is not derived (card CG29).
 
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -33,6 +45,22 @@ pub enum AtomicPublicationOrder {
     SequentiallyConsistent,
 }
 
+/// Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): the publication stages
+/// the extractor derived from source, each named by the form it read.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct AtomicPublicationStages {
+    /// The flag's static initializer.
+    pub initialise: String,
+    /// The payload write, then the flag's store.
+    pub publish: String,
+    /// The flag's load and the ready-value test.
+    pub observe: String,
+    /// The payload read on the observing branch.
+    pub use_: String,
+    /// Where the route stops.
+    pub reclaim: &'static str,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AtomicPublicationSourceCertificate {
     pub artifact_raw_sha256: String,
@@ -59,6 +87,8 @@ pub struct AtomicPublicationSourceCertificate {
     pub load_order: AtomicPublicationOrder,
     pub bounds: AtomicPublicationExecutionBounds,
     pub assumptions: Vec<&'static str>,
+    /// Card CG19 (rule 11i): the derived stages.
+    pub stages: AtomicPublicationStages,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -81,6 +111,10 @@ pub enum AtomicPublicationSourceRefusal {
     ExtraEntryCall,
     UnsupportedMemoryOrder,
     UnsupportedExecutionBounds,
+    /// Card CG19 (rule 11i): the atomic source route's named refusal of the
+    /// flag's store or load (a consume load, a read-modify-write, a
+    /// compare-exchange or a fence).
+    NamedAtomicRefusal(String),
 }
 
 pub fn extract_atomic_publication_source(
@@ -123,7 +157,13 @@ pub fn extract_atomic_publication_source(
         type_spelling(flag).ok_or(AtomicPublicationSourceRefusal::UnsupportedAtomicFlag)?;
     // Qualifier refusals are attributed only after checking the full bounded
     // publication shape and access inventory, never from the declaration alone.
+    // Card CG19 (rule 11i): a non-`_Atomic` `int` flag whose publisher store
+    // and consumer load are both GNU `__atomic_*` builtins is an atomic
+    // object under those builtins' semantics; the inventory below proves they
+    // are its only accesses.
+    let gnu_atomic = flag_type == "int" && gnu_atomic_flag(publisher, consumer);
     let non_atomic_refusal = match flag_type {
+        "int" if gnu_atomic => None,
         "int" => Some(AtomicPublicationSourceRefusal::PlainFlagHasNoSynchronization),
         "volatile int" => Some(AtomicPublicationSourceRefusal::VolatileFlagHasNoSynchronization),
         "_Atomic(int)" => None,
@@ -152,14 +192,16 @@ pub fn extract_atomic_publication_source(
         node_id(payload).ok_or(AtomicPublicationSourceRefusal::PayloadMustBeStaticInt)?;
 
     let atomic = non_atomic_refusal.is_none();
+    // Card CG19 (rule 11i): the canonical enumeration is needed only for an
+    // enumerator order; a literal order (`__ATOMIC_RELEASE`) is Clang's own.
     let memory_orders = if atomic {
-        canonical_memory_orders(&ast)?
+        canonical_memory_orders(&ast).unwrap_or_default()
     } else {
         BTreeMap::new()
     };
-    let (published_value, store_order) =
+    let (published_value, store_order, publish_form) =
         match_publisher(publisher, flag_id, payload_id, &memory_orders, atomic)?;
-    let load_order = match_consumer(
+    let (load_order, observe_form) = match_consumer(
         consumer,
         flag_id,
         payload_id,
@@ -225,12 +267,117 @@ pub fn extract_atomic_publication_source(
         store_order,
         load_order,
         bounds,
-        assumptions: vec![
-            "the publisher entry is invoked exactly once in the bounded execution",
-            "exactly one consumer takes the successful observation branch",
-            "the full Clang AST faithfully represents the preprocessed C translation unit",
-        ],
+        assumptions: {
+            let mut assumptions = vec![
+                "the publisher entry is invoked exactly once in the bounded execution",
+                "exactly one consumer takes the successful observation branch",
+                "the full Clang AST faithfully represents the preprocessed C translation unit",
+            ];
+            if gnu_atomic {
+                assumptions.push(
+                    "GNU __atomic builtins on a non-_Atomic int object, its only accesses, are atomic operations (Clang/GCC builtin semantics, not C11 text)",
+                );
+            }
+            assumptions
+        },
+        stages: AtomicPublicationStages {
+            initialise: format!("static `{}` = {initial_value}", profile.flag),
+            publish: format!(
+                "`{}` written, then {publish_form} of `{}` = {published_value} ({store_order:?})",
+                profile.payload, profile.flag
+            ),
+            observe: format!("{observe_form} ({load_order:?})"),
+            use_: format!("`{}` read on the observing branch", profile.payload),
+            reclaim: "not derived: reclamation is outside this route (CG29)",
+        },
     })
+}
+
+/// Card CG19 (rule 11i): whether the publisher's flag store and the
+/// consumer's flag load are both GNU `__atomic_*` builtins.
+fn gnu_atomic_flag(publisher: &Value, consumer: &Value) -> bool {
+    let gnu = |node: &Value| {
+        kind(node) == "AtomicExpr"
+            && node["name"]
+                .as_str()
+                .is_some_and(|name| name.starts_with("__atomic_"))
+    };
+    let store = function_body(publisher)
+        .and_then(|body| children(body).get(1))
+        .is_some_and(gnu);
+    let load = function_body(consumer)
+        .and_then(|body| children(body).first())
+        .and_then(|statement| children(statement).first())
+        .and_then(|declaration| children(declaration).first())
+        .is_some_and(|load| gnu(unwrap_implicit(load)));
+    store && load
+}
+
+/// Card CG19 (rule 11i): the atomic source route's answer for a flag access,
+/// with the canonical enumeration (or `memory_order_consume` by name) as the
+/// enumerator resolver.
+fn route_flag_access<'a>(
+    node: &'a Value,
+    canonical: &BTreeMap<String, String>,
+    shape: AtomicPublicationSourceRefusal,
+) -> Result<crate::atomic_source_route::RoutedAtomic<'a>, AtomicPublicationSourceRefusal> {
+    use crate::atomic_source_route::{
+        AtomicRouteRefusal as R, atomic_node_name, classify_builtin, classify_qualified,
+        consume_only,
+    };
+    let resolver = |reference: &Value| {
+        let name = reference["referencedDecl"]["name"].as_str()?;
+        let id = reference["referencedDecl"]["id"].as_str()?;
+        if canonical.get(name).map(String::as_str) == Some(id) {
+            match name {
+                "memory_order_relaxed" => Some(0),
+                "memory_order_acquire" => Some(2),
+                "memory_order_release" => Some(3),
+                "memory_order_seq_cst" => Some(5),
+                _ => None,
+            }
+        } else {
+            consume_only(reference)
+        }
+    };
+    let answer = if atomic_node_name(node).is_some() {
+        classify_builtin(node, &resolver)
+    } else {
+        classify_qualified(node).ok_or_else(|| shape.clone())?
+    };
+    answer.map_err(|refusal| match refusal {
+        R::UnevaluatedOrder(_) | R::InvalidOrder(_) => {
+            AtomicPublicationSourceRefusal::UnsupportedMemoryOrder
+        }
+        R::ConsumeLoad(_) | R::ReadModifyWrite(_) | R::CompareExchange(_) | R::Fence(_) => {
+            AtomicPublicationSourceRefusal::NamedAtomicRefusal(refusal.reason())
+        }
+        R::ByPointer(_) | R::NonScalarValue(_) | R::UnsupportedShape(_) | R::Unlisted(_) => {
+            shape.clone()
+        }
+    })
+}
+
+fn publication_order(order: Option<qcore_core::MemoryOrder>) -> Option<AtomicPublicationOrder> {
+    match order? {
+        qcore_core::MemoryOrder::Relaxed => Some(AtomicPublicationOrder::Relaxed),
+        qcore_core::MemoryOrder::Acquire => Some(AtomicPublicationOrder::Acquire),
+        qcore_core::MemoryOrder::Release => Some(AtomicPublicationOrder::Release),
+        qcore_core::MemoryOrder::SequentiallyConsistent => {
+            Some(AtomicPublicationOrder::SequentiallyConsistent)
+        }
+        qcore_core::MemoryOrder::AcquireRelease => None,
+    }
+}
+
+/// Whether a routed access's object is the flag: `&flag` for a builtin, the
+/// `flag` lvalue itself for a qualified form.
+fn routed_object_is_flag(node: &Value, object: &Value, flag: &str) -> bool {
+    if crate::atomic_source_route::atomic_node_name(node).is_some() {
+        address_of(unwrap_implicit(object), flag)
+    } else {
+        reference_is(object, flag)
+    }
 }
 
 fn contains_hidden_access(node: &Value) -> bool {
@@ -432,33 +579,13 @@ fn canonical_memory_orders(
     Ok(orders)
 }
 
-fn order(
-    node: &Value,
-    canonical: &BTreeMap<String, String>,
-) -> Result<AtomicPublicationOrder, AtomicPublicationSourceRefusal> {
-    let reference = &unwrap_implicit(node)["referencedDecl"];
-    let name = reference["name"].as_str();
-    if reference["kind"].as_str() != Some("EnumConstantDecl")
-        || name.and_then(|name| canonical.get(name).map(String::as_str)) != reference["id"].as_str()
-    {
-        return Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder);
-    }
-    match name {
-        Some("memory_order_relaxed") => Ok(AtomicPublicationOrder::Relaxed),
-        Some("memory_order_acquire") => Ok(AtomicPublicationOrder::Acquire),
-        Some("memory_order_release") => Ok(AtomicPublicationOrder::Release),
-        Some("memory_order_seq_cst") => Ok(AtomicPublicationOrder::SequentiallyConsistent),
-        _ => Err(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder),
-    }
-}
-
 fn match_publisher(
     function: &Value,
     flag: &str,
     payload: &str,
     orders: &BTreeMap<String, String>,
     atomic: bool,
-) -> Result<(i64, AtomicPublicationOrder), AtomicPublicationSourceRefusal> {
+) -> Result<(i64, AtomicPublicationOrder, String), AtomicPublicationSourceRefusal> {
     let body =
         function_body(function).ok_or(AtomicPublicationSourceRefusal::UnsupportedPublisher)?;
     let [payload_write, flag_store] = children(body) else {
@@ -487,19 +614,26 @@ fn match_publisher(
         let value = integer(value).ok_or(AtomicPublicationSourceRefusal::UnsupportedPublisher)?;
         // This placeholder never leaves extraction: the non-atomic arm refuses
         // after the common inventory checks, before constructing a certificate.
-        return Ok((value, AtomicPublicationOrder::Relaxed));
+        return Ok((value, AtomicPublicationOrder::Relaxed, String::new()));
     }
-    let [address, ordering, value] = children(flag_store) else {
-        return Err(AtomicPublicationSourceRefusal::UnsupportedPublisher);
-    };
-    if kind(flag_store) != "AtomicExpr"
-        || flag_store["name"].as_str() != Some("__c11_atomic_store")
-        || !address_of(address, flag)
+    // Card CG19 (rule 11i): the flag store through the atomic source route.
+    let routed = route_flag_access(
+        flag_store,
+        orders,
+        AtomicPublicationSourceRefusal::UnsupportedPublisher,
+    )?;
+    if routed.operation != crate::atomic_source_route::Operation::Store
+        || !routed_object_is_flag(flag_store, routed.object, flag)
     {
         return Err(AtomicPublicationSourceRefusal::UnsupportedPublisher);
     }
+    let value = routed
+        .value
+        .ok_or(AtomicPublicationSourceRefusal::UnsupportedPublisher)?;
     let published = integer(value).ok_or(AtomicPublicationSourceRefusal::UnsupportedPublisher)?;
-    Ok((published, order(ordering, orders)?))
+    let order = publication_order(routed.order)
+        .ok_or(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder)?;
+    Ok((published, order, routed.form))
 }
 
 fn match_consumer(
@@ -509,7 +643,7 @@ fn match_consumer(
     published: i64,
     orders: &BTreeMap<String, String>,
     atomic: bool,
-) -> Result<AtomicPublicationOrder, AtomicPublicationSourceRefusal> {
+) -> Result<(AtomicPublicationOrder, String), AtomicPublicationSourceRefusal> {
     let body =
         function_body(function).ok_or(AtomicPublicationSourceRefusal::UnsupportedConsumer)?;
     let [load_statement, gate, payload_return] = children(body) else {
@@ -528,42 +662,77 @@ fn match_consumer(
     {
         return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
     }
-    let load_order = if atomic {
-        let [address, ordering] = children(load) else {
-            return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
-        };
-        if kind(load) != "AtomicExpr"
-            || load["name"].as_str() != Some("__c11_atomic_load")
-            || !address_of(address, flag)
+    let (load_order, form) = if atomic {
+        // Card CG19 (rule 11i): the flag load through the atomic source route.
+        let load = unwrap_integral_free(load);
+        let routed = route_flag_access(
+            load,
+            orders,
+            AtomicPublicationSourceRefusal::UnsupportedConsumer,
+        )?;
+        if routed.operation != crate::atomic_source_route::Operation::Load
+            || !routed_object_is_flag(load, routed.object, flag)
         {
             return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
         }
-        order(ordering, orders)?
+        let order = publication_order(routed.order)
+            .ok_or(AtomicPublicationSourceRefusal::UnsupportedMemoryOrder)?;
+        (order, routed.form)
     } else {
         if !reference_is(load, flag) {
             return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
         }
-        AtomicPublicationOrder::Relaxed
+        (AtomicPublicationOrder::Relaxed, String::new())
     };
-    let [condition, rejected_return] = children(gate) else {
+    let [condition, then_return] = children(gate) else {
         return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
     };
     let [observed, ready] = children(condition) else {
         return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
     };
+    let returns_integer = |statement: &Value| {
+        kind(statement) == "ReturnStmt"
+            && matches!(children(statement), [value] if integer(value).is_some())
+    };
+    let returns_payload = |statement: &Value| {
+        kind(statement) == "ReturnStmt"
+            && matches!(children(statement), [value] if reference_is(value, payload))
+    };
+    // `if (seen != READY) return K; return payload;`, or (card CG19, rule
+    // 11i) `if (seen == READY) return payload; return K;`: the payload is
+    // read only on the branch that observed READY.
+    let gate_shape = match condition["opcode"].as_str() {
+        Some("!=") => returns_integer(then_return) && returns_payload(payload_return),
+        Some("==") => returns_payload(then_return) && returns_integer(payload_return),
+        _ => false,
+    };
     if kind(gate) != "IfStmt"
         || kind(condition) != "BinaryOperator"
-        || condition["opcode"].as_str() != Some("!=")
         || !reference_is(observed, seen)
         || integer(ready) != Some(published)
-        || kind(rejected_return) != "ReturnStmt"
-        || !matches!(children(rejected_return), [value] if integer(value).is_some())
-        || kind(payload_return) != "ReturnStmt"
-        || !matches!(children(payload_return), [value] if reference_is(value, payload))
+        || !gate_shape
     {
         return Err(AtomicPublicationSourceRefusal::UnsupportedConsumer);
     }
-    Ok(load_order)
+    let test = if condition["opcode"].as_str() == Some("==") {
+        "=="
+    } else {
+        "!="
+    };
+    Ok((
+        load_order,
+        format!("{form} of the flag, tested `seen {test} {published}`"),
+    ))
+}
+
+/// The load under the declaration's own value conversion: only Clang's
+/// identity-preserving wrappers, never an integer conversion.
+fn unwrap_integral_free(mut node: &Value) -> &Value {
+    while kind(node) == "ParenExpr" {
+        let [child] = children(node) else { break };
+        node = child;
+    }
+    node
 }
 
 fn count_references(node: &Value, id: &str, count: &mut usize) {

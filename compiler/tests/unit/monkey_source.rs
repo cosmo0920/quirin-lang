@@ -617,16 +617,44 @@ fn single_iteration_macros_do_not_erase_control_or_terminal_failures() {
             MonkeySourceResult::Unknown { .. }
         ));
     }
-    for body in [
-        "stop(); while (0) {}",
-        "do { break; } while (0)",
-        "do { continue; } while (0)",
+    // A loop stays refused, by name: its back-edge has no invariant (CG09,
+    // rule 11l).
+    let source =
+        format!("{prefix} int _mk_event_init(void) {{ stop(); while (0) {{}}; return 0; }}");
+    assert!(matches!(
+        &wrappers(&source)[1],
+        MonkeySourceResult::Unknown { reason, .. } if reason.contains("`loop while` has a back-edge")
+    ));
+    // Flipped by CG09-TYPED-SOURCE-CONTROL: the wrapper projection admits
+    // `break` and `continue` out of `do … while (0)`. `break` leaves before
+    // the condition; `continue` evaluates it (the literal zero, not taken).
+    let zero_guard = |path: &MonkeySourcePath| {
+        path.operations.iter().any(|op| matches!(op, SourceOperation::Guard { taken: false, condition: SourceValue { expression: SourceExpression::Integer { value }, .. } } if value == "0"))
+    };
+    for (body, guarded) in [
+        ("do { break; } while (0)", false),
+        ("do { continue; } while (0)", true),
     ] {
         let source = format!("{prefix} int _mk_event_init(void) {{ {body}; return 0; }}");
-        assert!(matches!(
-            &wrappers(&source)[1],
-            MonkeySourceResult::Unknown { .. }
-        ));
+        let results = wrappers(&source);
+        let imported = summary(&results, 1);
+        assert_eq!(imported.paths().len(), 1, "{body}");
+        assert_eq!(zero_guard(&imported.paths()[0]), guarded, "{body}");
+    }
+    // The callbacks keep the legacy admission and refuse both by name.
+    for (body, form) in [
+        ("do { break; } while (0)", "break"),
+        ("do { continue; } while (0)", "continue"),
+    ] {
+        let results = import(&with_event_body(&format!("{body};")));
+        assert!(
+            matches!(
+                &results[0],
+                MonkeySourceResult::Unknown { reason, .. }
+                    if reason == &format!("typed-source control `{form}` is not admitted by the legacy typed-source consumer")
+            ),
+            "{results:?}"
+        );
     }
     let source = "int stop(void) __attribute__((noreturn)); int _mk_event_init(void) { int x = stop(); return x; }";
     assert!(matches!(

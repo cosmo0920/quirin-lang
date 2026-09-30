@@ -2931,6 +2931,75 @@ own anchor here.
     (`tests/storage_duration_volatile.rs`);
     [report](../reports/cg15-storage-duration-and-volatile/README.md).
 
+<a id="constraint-11i"></a>
+
+11i. **A C atomic reaches the weak-memory model only as a plain load or
+    store with an order the model represents; every other atomic is refused
+    by name, and nothing a route admits claims ordering beyond one checked
+    execution.** Card CG19-ATOMIC-SOURCE-ROUTE (`atomic_source_route.rs`, the
+    route-G adapter `legacy_atomic_route.rs`, additive
+    `qcore_core::event_order_represented`, thin hooks in `legacy_c.rs` (the
+    end of `expression_statement` and of the `return` chain) and
+    `typed_source.rs` (`qual_type`, `extended_expression`), the
+    atomic-publication extractor, `qcore_verification::atomic_publication_verdict`
+    and `quirin-audit atomic-publication`). (1) **The route.**
+    `ATOMIC_FORM_TABLE` (51 builtins) classifies `AtomicExpr` and the builtin
+    fence/`__sync` calls; `<stdatomic.h>` reaches it through Clang's
+    `__c11_atomic_*` lowering. The `_Atomic` operator forms are an lvalue
+    conversion (`AtomicToNonAtomic`: a seq_cst load), a simple assignment
+    (`NonAtomicToAtomic` value: a seq_cst store), and a compound assignment or
+    increment (a read-modify-write). A plain load, store or `__c11_atomic_init`
+    maps to `AtomicLoad`/`AtomicStore`/`AtomicInit` with Clang's numeric order
+    decoded (0–5) and admitted per C11 7.17.7 (a load relaxed, acquire or
+    seq_cst; a store relaxed, release or seq_cst); read-modify-writes,
+    compare-exchange, fences, a consume load (by value or by the enumerator
+    `memory_order_consume`), an invalid or unevaluated order, a generic
+    by-pointer form, a pointer or aggregate value and every unlisted builtin
+    of the families refuse by name, CG28 owning the unrepresented events.
+    (2) **Route G.** Asked last, only where the classifier refused: an
+    uncontracted atomic builtin's statement or `return`, and an `_Atomic`
+    store or read-modify-write statement. A routed plain access is its
+    custody effect, that of the plain access: the typed reader's dereference
+    of a pointer object (`*p`, the pointee possibly `_Atomic(T)`), read with
+    the value type, as `IndirectScalarAccess` (a store with the refused-write
+    frame); `&x` reads nothing and stores forget a scalar local; a loaded
+    value's scalar destination forgets its fact; a returned scalar escapes
+    nothing. A stored value must be a literal, an enumerator or a non-pointer
+    named object. Every other answer replaces the refusal's text with the
+    route's named refusal and keeps its writes. G's verdict is custody
+    only: the order goes to the parity row, never into a claim. (3) **Route
+    T** names an `_Atomic` type in its own arm, asked before the unchanged
+    `volatile`/`restrict` arm, and an atomic builtin by the route's answer; no
+    T consumer reads a routed access. (4) **Publication.** The extractor reads
+    the flag's store and load through the route (`__c11_atomic_*`, the
+    generics, the `_Atomic` forms, and GNU `__atomic_*` builtins on a
+    non-`_Atomic` `int` flag both of whose accesses are one, with the stated
+    assumption that those builtins are atomic operations), accepts a literal
+    or canonical-enumerator order, a `seen != READY` early return or a
+    `seen == READY` guarded use, and records the initialise → publish →
+    observe → use stages; reclamation is not derived (CG29).
+    `atomic_publication_verdict` is `Safe` exactly when extraction and the
+    core model accept; any refusal is `Unknown`; both carry
+    `SINGLE_GRAPH_ASSUMPTION` (one candidate execution, not race freedom over
+    every execution, W07/CG29; no liveness, W11). `quirin-audit
+    atomic-publication CONFIG.json` is its production caller, writing the
+    verdict contract's fields and exiting non-zero on `Unknown`. **Do not**
+    read a routed access's order as an ordering or race-freedom claim of
+    route G, admit a read-modify-write, compare-exchange, fence or consume
+    load as a neutral call, strengthen consume to acquire, evaluate an
+    enumerator order from the function's AST alone, or publish a publication
+    verdict without the single-graph assumption. Premises stated, not
+    proved: faithful Clang extraction of the builtin name, operands and order
+    (trust boundary 28); the Rust-to-Lean correspondence by review. Measured
+    (corpus `66910c10`): see the report. `QCore.AtomicSourceRoute` (the form
+    table, `routed_plain_agrees_with_model`, the per-class refusals,
+    `consume_load_refused`, `order_one_never_routed`, `unlisted_refused`,
+    agreement with `QCore.AtomicPublication` on Clang's numbering, the
+    publication verdict's single-graph assumption and gate), bound to
+    `ATOMIC_FORM_TABLE`, `decode_order`, `route_order` and
+    `event_order_represented` by `tests/unit/atomic_source_route.rs`;
+    [report](../reports/cg19-atomic-source-route/README.md).
+
 <a id="constraint-11k"></a>
 
 11k. **Two places are disjoint only by the core footprint model's decision:
@@ -3025,3 +3094,69 @@ own anchor here.
     `COPY_VECTORS` and the replay's generation vectors by shared-vector
     tests and to route G by `tests/footprint_connection.rs`;
     [report](../reports/cg18-footprint-connection/README.md).
+
+<a id="constraint-11l"></a>
+
+11l. **Route T reads the control statements, lowers an acyclic form only
+    where the importing consumer lists it, ends every left scope's locals on
+    every path, and refuses every back-edge by name.** Card
+    CG09-TYPED-SOURCE-CONTROL (`crates/qcore-c-gateway/src/typed_source_control.rs`,
+    a child module of `typed_source.rs`, with thin hooks there: three `Stmt`
+    variants, the `Path::jump` field, the block-entry, `do … while (0)` and
+    derive hooks, and the `import_…_admitting_control` entry points). It amends
+    rule 10r only by adding a second, independent admission.
+    (1) **Reading.** The importer reads `switch` / `case` / `default` (with
+    fallthrough), `break`, `continue`, forward `goto` and labels, `while`, and
+    a `for` or `do` outside its legacy shape (a canonical scan; a literal zero
+    condition). Every other statement keeps the generic refusal.
+    (2) **Admission.** Every importer call passes a `ControlAdmission`,
+    validated against `CONTROL_TABLE` before any function is read. A form
+    the consumer does not list is refused by name, and the legacy entry points
+    list nothing.
+    (3) **Back-edges.** A back-edge form (a general loop, or a `goto` to a
+    label already read) cannot be listed. Route T checks no invariant or
+    summary (card CG27), so every consumer refuses one by name. A `for` that
+    is not a canonical scan names the scan shape's own reason. `continue`
+    is acyclic because only `do … while (0)` can take it: every loop is refused
+    at its own node first.
+    (4) **Lowering.** A `switch` evaluates its selector once. Its promoted
+    integer type comes from Clang, and each case label is Clang's constant
+    under Clang's own conversion, never evaluated on the host. Each label is
+    an entry path:
+    - a `case` carries `selector == constant` taken;
+    - `default` carries every case guard not taken;
+    - with no `default`, one more path carries every case guard not taken.
+
+    From its entry, a path runs every later statement (fallthrough) until a
+    `break`, which the `switch` takes. `do … while (0)` takes `break` before
+    its condition, and takes `continue` into it. A forward `goto` skips
+    statements until a block resumes it at its label.
+    (5) **Refused shapes.** Each is refused by name:
+    - a `goto` whose label no enclosing block reaches later (a jump into an
+      `if`, a loop or a `switch`);
+    - a `goto` that skips a declaration into its own scope;
+    - a declaration or an ordinary label at a switch body's top level;
+    - a case label anywhere else;
+    - a GNU case range;
+    - a selector that is not a promoted integer.
+    (6) **Lifetimes.** Every path that leaves a block, by its end, by `return`
+    or by a jump, ends that block's locals, innermost first. Under a
+    consumer that lists any control form, a use of a local's storage after
+    its `LocalEnd` is refused on every path, jump or not. The legacy
+    admission keeps T's pre-CG09 projection of ended storage, which the
+    Monkey callback tests pin; the legacy consumer decides it.
+    (7) **Budgets.** The budgets are unchanged: 64 paths, 512 operations,
+    depth 64 and 2,048 nodes. Exceeding one is Unknown.
+    **Consumers.** The Monkey wrapper projection lists the four acyclic forms
+    (`MONKEY_WRAPPER_CONTROL`); it certifies nothing. The other 19 production
+    import sites keep `ControlAdmission::LEGACY`. **Do not** list a form for a
+    consumer without reading every reader of its summaries
+    (`CG01-T-CONSUMER-ADMISSIONS`). Do not admit a back-edge without a checked
+    invariant or summary. Do not evaluate a case label on the host.
+    `QCore.TypedSourceControl` (the table and admission, `back_edge_refused`,
+    `unlisted_statement_refused`, `jump_out_ends_locals`,
+    `jump_then_use_refused`, `fallthrough_composes`, `switch_vectors_hold`,
+    `exhausted_never_safe`) is bound to `CONTROL_TABLE`, `LEGACY_STATEMENTS`,
+    `CONTROL_STATEMENTS`, the four budgets and the importer's own `switch`
+    lowering by a shared-vector test;
+    [report](../reports/cg09-typed-source-control/README.md).

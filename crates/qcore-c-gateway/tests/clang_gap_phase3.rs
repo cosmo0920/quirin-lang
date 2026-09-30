@@ -214,6 +214,12 @@ fn w08_field_updates_carry_no_lock_invariant() {
 // CG19 — atomic source route (W01 W09)
 // ---------------------------------------------------------------------------
 
+/// Flipped by card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i). BEFORE: T
+/// refused `_Atomic` under the volatile/restrict sentence and an atomic
+/// builtin as an unmodeled `AtomicExpr`; G read an atomic builtin as an
+/// uncontracted call. AFTER: T names the atomic arm and the route's answer; G
+/// routes the plain load to the weak-memory vocabulary (custody-`Safe`, no
+/// ordering claim).
 #[test]
 fn w01_atomic_accesses_do_not_reach_the_atomic_model() {
     if !clang_available() {
@@ -221,21 +227,24 @@ fn w01_atomic_accesses_do_not_reach_the_atomic_model() {
     }
     assert_eq!(
         t_refusal("int subject(_Atomic int *p) { return *p; }"),
-        "qualified access requires additional synchronization/alias evidence"
+        "atomic-qualified type `int (_Atomic(int) *)` is read by the atomic source route, which no typed-source consumer decides (CG19)"
     );
     assert_eq!(
         t_refusal("int subject(int *p) { return __atomic_load_n(p, 5); }"),
-        "unmodeled callback expression AtomicExpr"
+        "atomic `__atomic_load_n` is routed to the weak-memory model, which no typed-source consumer decides (CG19)"
     );
-    // G: an `_Atomic` load is a neutral scalar; an atomic builtin is an
-    // uncontracted call.
+    // G: an `_Atomic` load is a neutral scalar (unchanged); a plain atomic
+    // builtin load is routed (CG19).
     assert!(gs("int subject(_Atomic int *a) { return *a; }").safe());
-    assert!(
-        gs("int subject(_Atomic int *a) { return __c11_atomic_load(a, 5); }")
-            .refused("call to uncontracted function `__c11_atomic_load`")
-    );
+    assert!(gs("int subject(_Atomic int *a) { return __c11_atomic_load(a, 5); }").safe());
 }
 
+/// Flipped by card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i). BEFORE: G
+/// refused the release store as an uncontracted call. AFTER: G routes it and
+/// admits the function's custody, which says nothing about publication; the
+/// publication judgment is the atomic-publication route's, which decides only
+/// static flag/payload objects of one closed unit and refuses this
+/// parameter-based shape (`crates/qcore-verification/tests/atomic_publication_source.rs`).
 #[test]
 fn w09_general_publication_is_not_derived_from_source() {
     if !clang_available() {
@@ -244,8 +253,5 @@ fn w09_general_publication_is_not_derived_from_source() {
     let run = gs(
         "void subject(_Atomic int *flag, int *data) { *data = 1; __c11_atomic_store(flag, 1, 3); }",
     );
-    assert!(
-        run.refused("call to uncontracted function `__c11_atomic_store`"),
-        "{run:?}"
-    );
+    assert!(run.safe(), "{run:?}");
 }

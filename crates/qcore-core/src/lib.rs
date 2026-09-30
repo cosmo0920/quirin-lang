@@ -166,7 +166,7 @@ pub use translation_validation::{
 pub use weak_memory::{
     C11Execution, C11ExecutionCertificate, MemoryEvent, MemoryEventId, MemoryEventKind,
     MemoryLocation, MemoryOrder, MemoryThreadId, RelationEdge, WeakMemoryError,
-    check_c11_execution,
+    check_c11_execution, event_order_represented,
 };
 
 pub mod chunk_lifecycle;

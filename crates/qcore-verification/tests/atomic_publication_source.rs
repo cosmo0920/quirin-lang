@@ -99,3 +99,47 @@ fn misleading_enum_names_cannot_publish_an_ordering_certificate() {
         qcore_c_gateway::atomic_publication_source::AtomicPublicationSourceRefusal::UnsupportedMemoryOrder
     )));
 }
+
+/// Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): the production gate is
+/// `Safe` only when both halves accept (`QCore.AtomicSourceRoute.
+/// safe_publication_only_when_checked`), and every verdict carries the
+/// single-graph assumption (`publication_verdict_carries_single_graph`).
+#[test]
+fn cg19_publication_verdict_gates_on_the_composed_check() {
+    use qcore_verification::atomic_publication_source::{
+        AtomicPublicationVerdict, atomic_publication_verdict,
+    };
+    let verdict = |source: &str| {
+        atomic_publication_verdict(
+            &C11TranslationUnit {
+                source,
+                ..Default::default()
+            },
+            "fixture-revision",
+            &profile(),
+            AtomicPublicationExecutionBounds {
+                publisher_invocations: 1,
+                successful_consumer_invocations: 1,
+            },
+        )
+    };
+    let single_graph = qcore_c_gateway::atomic_source_route::SINGLE_GRAPH_ASSUMPTION;
+    let safe = verdict(SOURCE);
+    assert_eq!(safe.status(), "Safe");
+    assert!(safe.assumptions().contains(&single_graph));
+    // A model refusal and a source refusal are both Unknown, with the same
+    // assumptions.
+    for control in [
+        SOURCE.replace("memory_order_release", "memory_order_relaxed"),
+        SOURCE.replace("static _Atomic int done", "static volatile int done"),
+        SOURCE.replace("memory_order_acquire", "memory_order_consume"),
+    ] {
+        let unknown = verdict(&control);
+        assert!(
+            matches!(unknown, AtomicPublicationVerdict::Unknown { .. }),
+            "{control}"
+        );
+        assert_eq!(unknown.status(), "Unknown");
+        assert_eq!(unknown.assumptions(), safe.assumptions());
+    }
+}

@@ -16,6 +16,13 @@ use crate::legacy_c::{C11TranslationUnit, validate_unrestricted_c11};
 use crate::typed_c_ast::{ast_declarations, children, function_ast, kind};
 use crate::typed_source_nodes::{self, NodeAdmission};
 
+// CG09-TYPED-SOURCE-CONTROL (rule 11l): route T's control statements, read
+// only where the importing consumer admits them. A child module, so it sees
+// the importer's private statement and path types.
+#[path = "typed_source_control.rs"]
+pub mod control;
+pub use control::{CONTROL_TABLE, ControlAdmission, ControlFacts};
+
 /// Default declarative acceptance rules used by the legacy typed-path importer.
 /// This is shared policy data, not source evidence or a safety certificate.
 pub const DEFAULT_SOURCE_RULES: &str = include_str!(
@@ -28,6 +35,10 @@ fn check_source_rule(name: &str, facts: &[(&str, i128)]) -> Result<(), String> {
 
 const MAX_PATHS: usize = 64;
 const MAX_OPERATIONS: usize = 512;
+/// The importer's statement/expression depth and node budgets. CG09 binds
+/// all four budgets to `QCore.TypedSourceControl.budgets`.
+const MAX_DEPTH: usize = 64;
+const MAX_NODES: usize = 2048;
 
 /// Typed symbolic values. A symbol refers to an earlier Read or Call in this
 /// same path. Integer casts and sizeof remain explicit, never host-evaluated.
@@ -270,6 +281,28 @@ pub fn import_source_functions_from_profile_admitting(
     role: qcore_schemas::profile::ImportRole,
     admission: &NodeAdmission,
 ) -> Result<Vec<SourceResult>, String> {
+    import_source_functions_from_profile_admitting_control(
+        unit,
+        source_revision,
+        profile,
+        library,
+        role,
+        admission,
+        &ControlAdmission::LEGACY,
+    )
+}
+
+/// As [`import_source_functions_from_profile_admitting`], also admitting
+/// exactly the control forms the calling consumer lists (rule 11l).
+pub fn import_source_functions_from_profile_admitting_control(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    profile: &qcore_contract::profile_loader::LoadedProfile,
+    library: &str,
+    role: qcore_schemas::profile::ImportRole,
+    admission: &NodeAdmission,
+    control: &ControlAdmission,
+) -> Result<Vec<SourceResult>, String> {
     let selected = profile
         .library(library)
         .ok_or_else(|| format!("no library `{library}` in source profile"))?;
@@ -314,7 +347,7 @@ pub fn import_source_functions_from_profile_admitting(
         .zip(&parameters)
         .map(|((name, s), p)| (name.as_str(), s.result.as_str(), p.as_slice()))
         .collect::<Vec<_>>();
-    let mut results = import_source_functions_admitting(
+    let mut results = import_source_functions_admitting_control(
         unit,
         source_revision,
         &functions,
@@ -325,6 +358,7 @@ pub fn import_source_functions_from_profile_admitting(
             restricted_calls: &restricted_calls,
         },
         admission,
+        control,
     )?;
     let mut assumptions = profile.assumptions();
     assumptions.insert("library".into(), library.into());
@@ -363,7 +397,29 @@ pub fn import_source_functions_admitting(
     profile: &SourceImportProfile<'_>,
     admission: &NodeAdmission,
 ) -> Result<Vec<SourceResult>, String> {
+    import_source_functions_admitting_control(
+        unit,
+        source_revision,
+        functions,
+        profile,
+        admission,
+        &ControlAdmission::LEGACY,
+    )
+}
+
+/// Import admitting exactly the CG01 nodes `admission` classifies (rule 10r)
+/// and the control forms `control` lists (rule 11l). Every other node or form
+/// is refused by name.
+pub fn import_source_functions_admitting_control(
+    unit: &C11TranslationUnit<'_>,
+    source_revision: &str,
+    functions: &[&str],
+    profile: &SourceImportProfile<'_>,
+    admission: &NodeAdmission,
+    control: &ControlAdmission,
+) -> Result<Vec<SourceResult>, String> {
     admission.validate()?;
+    control.validate()?;
     let source = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
     // Field IDs from independent Clang invocations are not stable. Validate the
     // selected complete records by name/type, then bind each MemberExpr to its
@@ -408,7 +464,7 @@ pub fn import_source_functions_admitting(
                     &fields,
                     &constants,
                     &arrays,
-                    (profile, admission),
+                    (profile, admission, control),
                 )
             });
             match result {
@@ -593,6 +649,14 @@ fn qual_type(ty: &Value) -> Result<String, String> {
         .as_str()
         .or_else(|| ty["qualType"].as_str())
         .ok_or("missing C type")?;
+    // Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): `_Atomic` has its
+    // own arm, asked first (a `volatile _Atomic` object is atomic). The
+    // `volatile` and `restrict` arm below is unchanged (CG15, CG18).
+    if ty.contains("_Atomic") {
+        return Err(crate::atomic_source_route::typed_source_qualifier_refusal(
+            ty,
+        ));
+    }
     if ty.contains("volatile") || ty.contains("_Atomic") || ty.contains("restrict") {
         return Err("qualified access requires additional synchronization/alias evidence".into());
     }
@@ -636,10 +700,20 @@ enum Stmt {
     ScanLoop(Box<Self>, String, String, Expr, Expr, Expr),
     If(Expr, Box<Self>, Option<Box<Self>>),
     Return(Option<Expr>),
+    /// CG09: the controlling value (evaluated once) and the switch body's
+    /// top level, flattened into labels and statements.
+    Switch(Expr, Vec<control::SwitchItem>),
+    /// CG09: a label (Clang's declaration ID) on its statement.
+    Label(String, Box<Self>),
+    /// CG09: `break`, `continue` or a forward `goto`.
+    Jump(control::Jump),
 }
 
 struct Importer<'a> {
     admission: &'a NodeAdmission,
+    control: &'a ControlAdmission,
+    /// Labels already read, in source order: a `goto` to one is backward.
+    labels: BTreeSet<String>,
     fields: &'a BTreeMap<(String, String), String>,
     constants: &'a BTreeMap<String, SourceValue>,
     allowed_calls: Option<&'a [&'a str]>,
@@ -652,7 +726,7 @@ struct Importer<'a> {
 impl Importer<'_> {
     fn budget(&mut self, depth: usize) -> Result<(), String> {
         self.nodes += 1;
-        if depth > 64 || self.nodes > 2048 {
+        if depth > MAX_DEPTH || self.nodes > MAX_NODES {
             return Err("callback exceeds bounded source import size/depth".into());
         }
         Ok(())
@@ -877,6 +951,11 @@ impl Importer<'_> {
         if let Some(form) = crate::elaboration::value_form(node) {
             return Err(crate::elaboration::t_refusal(form));
         }
+        // CG19-ATOMIC-SOURCE-ROUTE (rule 11i): an atomic builtin is named by
+        // the atomic route's answer. No route-T consumer reads a routed one.
+        if let Some(reason) = crate::atomic_source_route::typed_source_refusal(node) {
+            return Err(reason);
+        }
         let Some(spelling) = typed_source_nodes::expression_spelling(node) else {
             return Err(format!("unmodeled callback expression {}", kind(node)));
         };
@@ -975,6 +1054,68 @@ impl Importer<'_> {
             .unwrap_or_else(|| format!("unmodeled callback statement {}", kind(node)))
     }
 
+    // A canonical scan loop, the only `for` shape route T projects.
+    fn scan_loop(&mut self, node: &Value, depth: usize) -> Result<Stmt, String> {
+        let [initial, condition_variable, condition, increment, body] = children(node) else {
+            return Err("scan loop requires a five-part for statement".into());
+        };
+        if !kind(condition_variable).is_empty() {
+            return Err("scan loop has a condition variable".into());
+        }
+        let [index] = children(increment) else {
+            return Err("scan loop requires a local increment".into());
+        };
+        let Expr::Local(id, ty) = self.expression(index, depth + 1)? else {
+            return Err("scan index is not local".into());
+        };
+        if kind(increment) != "UnaryOperator"
+            || increment["opcode"] != "++"
+            || !matches!(
+                ty.as_str(),
+                "int" | "unsigned int" | "unsigned long" | "unsigned long long"
+            )
+        {
+            return Err("scan loop requires a supported integer increment".into());
+        }
+        let initial = self.statement(initial, depth + 1)?;
+        if !matches!(&initial, Stmt::Assign(Expr::Local(target, _), _) if target == &id) {
+            return Err("scan initializer must assign its induction local".into());
+        }
+        let condition = self.expression(condition, depth + 1)?;
+        let body = self.statement(body, depth + 1)?;
+        fn single(stmt: &Stmt) -> &Stmt {
+            if let Stmt::Block(statements) = stmt
+                && let [only] = statements.as_slice()
+            {
+                single(only)
+            } else {
+                stmt
+            }
+        }
+        let Stmt::If(matches, yes, None) = single(&body) else {
+            return Err("scan body requires one conditional early return".into());
+        };
+        let Stmt::Return(Some(result)) = single(yes) else {
+            return Err("scan match must return from the function".into());
+        };
+        check_source_rule(
+            "source_scan_effects",
+            &[
+                ("header_calls", i128::from(effects(&condition).1)),
+                ("match_calls", i128::from(effects(matches).1)),
+                ("return_calls", i128::from(effects(result).1)),
+            ],
+        )?;
+        Ok(Stmt::ScanLoop(
+            Box::new(initial),
+            id,
+            ty,
+            condition,
+            matches.clone(),
+            result.clone(),
+        ))
+    }
+
     fn statement(&mut self, node: &Value, depth: usize) -> Result<Stmt, String> {
         self.budget(depth)?;
         match (kind(node), children(node)) {
@@ -985,72 +1126,22 @@ impl Importer<'_> {
                     .collect::<Result<_, _>>()?,
             )),
             ("NullStmt", []) => Ok(Stmt::Block(vec![])),
-            ("ForStmt", [initial, condition_variable, condition, increment, body]) => {
-                if !kind(condition_variable).is_empty() {
-                    return Err("scan loop has a condition variable".into());
-                }
-                let [index] = children(increment) else {
-                    return Err("scan loop requires a local increment".into());
-                };
-                let Expr::Local(id, ty) = self.expression(index, depth + 1)? else {
-                    return Err("scan index is not local".into());
-                };
-                if kind(increment) != "UnaryOperator"
-                    || increment["opcode"] != "++"
-                    || !matches!(
-                        ty.as_str(),
-                        "int" | "unsigned int" | "unsigned long" | "unsigned long long"
-                    )
-                {
-                    return Err("scan loop requires a supported integer increment".into());
-                }
-                let initial = self.statement(initial, depth + 1)?;
-                if !matches!(&initial, Stmt::Assign(Expr::Local(target, _), _) if target == &id) {
-                    return Err("scan initializer must assign its induction local".into());
-                }
-                let condition = self.expression(condition, depth + 1)?;
-                let body = self.statement(body, depth + 1)?;
-                fn single(stmt: &Stmt) -> &Stmt {
-                    if let Stmt::Block(statements) = stmt
-                        && let [only] = statements.as_slice()
-                    {
-                        single(only)
-                    } else {
-                        stmt
-                    }
-                }
-                let Stmt::If(matches, yes, None) = single(&body) else {
-                    return Err("scan body requires one conditional early return".into());
-                };
-                let Stmt::Return(Some(result)) = single(yes) else {
-                    return Err("scan match must return from the function".into());
-                };
-                check_source_rule(
-                    "source_scan_effects",
-                    &[
-                        ("header_calls", i128::from(effects(&condition).1)),
-                        ("match_calls", i128::from(effects(matches).1)),
-                        ("return_calls", i128::from(effects(result).1)),
-                    ],
-                )?;
-                Ok(Stmt::ScanLoop(
-                    Box::new(initial),
-                    id,
-                    ty,
-                    condition,
-                    matches.clone(),
-                    result.clone(),
-                ))
-            }
+            // CG09 (rule 11l): a `for` that is not a canonical scan is a
+            // general loop. Its back-edge carries no invariant, so it is
+            // refused by name, with the scan shape's own reason.
+            ("ForStmt", [_, _, _, _, _]) => self
+                .scan_loop(node, depth)
+                .map_err(|scan| self.control.back_edge_refusal("loop for", Some(&scan))),
             ("DoStmt", [body, condition]) => {
                 // Macro-style single execution only. Parse the entire body;
-                // break/continue and nonliteral conditions still fail closed.
+                // `break` and `continue` target this statement (CG09), and a
+                // nonliteral condition is a loop, refused by name.
                 let mut literal = condition;
                 while kind(literal) == "ParenExpr" && children(literal).len() == 1 {
                     literal = &children(literal)[0];
                 }
                 if kind(literal) != "IntegerLiteral" || literal["value"] != "0" {
-                    return Err("do loop requires a literal zero condition".into());
+                    return Err(self.control.back_edge_refusal("loop do", None));
                 }
                 Ok(Stmt::DoOnce(
                     Box::new(self.statement(body, depth + 1)?),
@@ -1154,7 +1245,9 @@ impl Importer<'_> {
             {
                 Err(crate::storage_duration::T_STATIC_REFUSAL.to_owned())
             }
-            _ => Err(format!("unmodeled callback statement {}", kind(node))),
+            // CG09 (rule 11l): control statements, each admitted or refused
+            // by name; any other statement keeps the generic refusal.
+            _ => self.control_statement(node, depth),
         }
     }
 }
@@ -1168,6 +1261,10 @@ struct Path {
     terminated: bool,
     return_value: Option<SourceValue>,
     next_local: usize,
+    /// CG09: a pending `break`, `continue` or forward `goto`. Statements are
+    /// skipped until its target takes it; every scope it leaves ends its
+    /// locals on the way.
+    jump: Option<control::Jump>,
 }
 
 impl Path {
@@ -1655,8 +1752,11 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
             })
             .collect();
         let mut paths = paths;
-        for statement in statements {
-            paths = execute(statement, paths)?;
+        for index in 0..statements.len() {
+            // CG09: a forward `goto` resumes at its label here; one that
+            // would skip a declaration into its own scope is refused.
+            control::enter_statement(statements, index, &mut paths)?;
+            paths = execute(&statements[index], paths)?;
         }
         for path in &mut paths {
             // Remove block storage even on an early return. The final Return
@@ -1671,7 +1771,7 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
     }
     let mut output = Vec::new();
     for mut path in paths {
-        if path.returned || path.terminated {
+        if path.returned || path.terminated || path.jump.is_some() {
             output.push(path);
             continue;
         }
@@ -1820,7 +1920,9 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
             Stmt::DoOnce(body, condition) => {
                 let mut once = execute(body, vec![path])?;
                 for path in &mut once {
-                    if !path.returned && !path.terminated {
+                    // CG09: `break` leaves before the condition, `continue`
+                    // evaluates it; a `goto` passes through.
+                    if control::do_once_reaches_condition(path) {
                         let condition = path.evaluate(condition)?;
                         path.push(SourceOperation::Guard {
                             condition,
@@ -1855,6 +1957,21 @@ fn execute(statement: &Stmt, paths: Vec<Path>) -> Result<Vec<Path>, String> {
                     .transpose()?;
                 path.returned = true;
             }
+            Stmt::Switch(controlling, items) => {
+                output.extend(control::switch(path, controlling, items)?);
+                if output.len() > MAX_PATHS {
+                    return Err("callback path limit exceeded".into());
+                }
+                continue;
+            }
+            Stmt::Label(_, inner) => {
+                output.extend(execute(inner, vec![path])?);
+                if output.len() > MAX_PATHS {
+                    return Err("callback path limit exceeded".into());
+                }
+                continue;
+            }
+            Stmt::Jump(jump) => path.jump = Some(jump.clone()),
             Stmt::Block(_) => unreachable!(),
         }
         output.push(path);
@@ -1872,7 +1989,7 @@ fn derive(
     fields: &BTreeMap<(String, String), String>,
     constants: &BTreeMap<String, SourceValue>,
     arrays: &BTreeSet<String>,
-    (profile, admission): (&SourceImportProfile<'_>, &NodeAdmission),
+    (profile, admission, control): (&SourceImportProfile<'_>, &NodeAdmission, &ControlAdmission),
 ) -> Result<SourceSummary, String> {
     let expected_signature = profile
         .signature_constraints
@@ -1911,6 +2028,8 @@ fn derive(
     }
     let mut importer = Importer {
         admission,
+        control,
+        labels: BTreeSet::new(),
         fields,
         constants,
         allowed_calls: expected_signature.map(|_| profile.restricted_calls),
@@ -1954,6 +2073,11 @@ fn derive(
     let paths = execute(&statement, vec![path])?
         .into_iter()
         .map(|mut path| {
+            // CG09: a jump no statement took (a `goto` into a scope it does
+            // not enclose) is refused, never dropped.
+            if let Some(jump) = &path.jump {
+                return Err(control::untaken(jump));
+            }
             if path.operations.iter().any(|operation| matches!(operation, SourceOperation::ScanLoop { early_return, .. } if early_return.result.c_type != return_type)) {
                 return Err("scan early return type differs from function signature".into());
             }
@@ -1976,6 +2100,7 @@ fn derive(
                 operations: path.operations,
             };
             check_path_symbols(&path)?;
+            control.check_local_lifetimes(&path)?;
             Ok(path)
         })
         .collect::<Result<_, String>>()?;
@@ -1999,3 +2124,7 @@ mod symbol_tests;
 #[cfg(test)]
 #[path = "../tests/unit/source_operators.rs"]
 mod operators_tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/source_control.rs"]
+mod control_tests;
