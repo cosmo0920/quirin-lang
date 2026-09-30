@@ -2449,7 +2449,10 @@ own anchor here. `11a` is reserved for CG04-LOOP-SITE-GENERATIONS.
     call-free premise. (6) **Values.** No route decides a bound or a branch
     from a query's number: the marker `1` stays a class marker of the
     custody predicates (rule 5a), and a consumer that needs the number takes
-    Clang's evaluated constant or refuses. **Do not** read a tracked
+    Clang's evaluated constant (`clang_constant`: the value Clang's
+    evaluator gives a probe enumerator) or refuses; route T's enumerator
+    values are Clang's (an explicit initializer's `ConstantExpr`, and since
+    this rule an implicit enumerator's `clang_constant`, N11). **Do not** read a tracked
     pointer's integer as data, give an integer-to-pointer value an identity,
     escape or bind a pointer through its truth value, evaluate an operand C
     does not evaluate or evaluate one twice, use the marker in a bound or a
