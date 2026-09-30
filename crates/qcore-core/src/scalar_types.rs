@@ -42,7 +42,19 @@ pub enum ScalarType {
     U32,
     U64,
     Usize,
+    /// IEEE 754 binary32 (card `W48-QR-FLOATING-POINT`). Not in [`ALL`] and
+    /// not read by [`ScalarType::parse`]: a position admits a float only by
+    /// reading its types with [`ScalarType::parse_admitting_floats`], so every
+    /// position that has not been widened keeps refusing one. A value is its
+    /// bit pattern (`crate::scalar_floats`).
+    F32,
+    /// IEEE 754 binary64, on the same terms as [`ScalarType::F32`].
+    F64,
 }
+
+/// The two float types (card `W48-QR-FLOATING-POINT`), in the order the
+/// grammar lists them after the integer table.
+pub const FLOATS: [ScalarType; 2] = [ScalarType::F32, ScalarType::F64];
 
 /// Every type of the table, in the order the grammar lists them.
 pub const ALL: [ScalarType; 11] = [
@@ -167,15 +179,23 @@ impl fmt::Display for RecordedTarget {
 /// Why a type has no width here.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum WidthError {
-    /// `bool` is not an integer.
+    /// `bool` is not an integer, and neither is a float: neither has an
+    /// integer width or range.
     NotAnInteger,
     /// `isize`/`usize` without a recorded target.
     NoRecordedTarget,
 }
 
 impl ScalarType {
+    /// The integer table and `bool` — never a float (see [`ScalarType::F32`]).
     pub fn parse(name: &str) -> Option<Self> {
         ALL.into_iter().find(|ty| ty.name() == name)
+    }
+
+    /// The whole table with the float types (card `W48-QR-FLOATING-POINT`),
+    /// for a position that admits every rule floats bring.
+    pub fn parse_admitting_floats(name: &str) -> Option<Self> {
+        Self::parse(name).or_else(|| FLOATS.into_iter().find(|ty| ty.name() == name))
     }
 
     pub fn name(self) -> &'static str {
@@ -191,11 +211,18 @@ impl ScalarType {
             Self::U32 => "u32",
             Self::U64 => "u64",
             Self::Usize => "usize",
+            Self::F32 => "f32",
+            Self::F64 => "f64",
         }
     }
 
     pub fn is_integer(self) -> bool {
-        self != Self::Bool
+        !matches!(self, Self::Bool | Self::F32 | Self::F64)
+    }
+
+    /// Whether the type is `f32` or `f64` (card `W48-QR-FLOATING-POINT`).
+    pub fn is_float(self) -> bool {
+        matches!(self, Self::F32 | Self::F64)
     }
 
     pub fn is_signed(self) -> bool {
@@ -214,7 +241,7 @@ impl ScalarType {
     /// can supply.
     pub fn bits(self, target: Option<&RecordedTarget>) -> Result<u32, WidthError> {
         Ok(match self {
-            Self::Bool => return Err(WidthError::NotAnInteger),
+            Self::Bool | Self::F32 | Self::F64 => return Err(WidthError::NotAnInteger),
             Self::I8 | Self::U8 => 8,
             Self::I16 | Self::U16 => 16,
             Self::I32 | Self::U32 => 32,
@@ -239,7 +266,12 @@ impl ScalarType {
         })
     }
 
+    /// Whether `value` is a value of the type: a number in its range, or — for
+    /// a float — one of its bit patterns (every pattern is a value).
     pub fn contains(self, value: i128, target: Option<&RecordedTarget>) -> bool {
+        if self.is_float() {
+            return crate::scalar_floats::is_pattern(self, value);
+        }
         self.range(target)
             .is_ok_and(|(low, high)| low <= value && value <= high)
     }
@@ -255,6 +287,8 @@ impl ScalarType {
     pub fn size_bytes(self, target: Option<&RecordedTarget>) -> Result<u64, WidthError> {
         Ok(match self {
             Self::Bool => 1,
+            Self::F32 => 4,
+            Self::F64 => 8,
             _ => u64::from(self.bits(target)? / 8),
         })
     }
@@ -348,6 +382,11 @@ pub fn checked(
     b: i128,
     target: Option<&RecordedTarget>,
 ) -> Option<i128> {
+    // Card `W48-QR-FLOATING-POINT`: IEEE arithmetic never faults; `%` has no
+    // float meaning and is `None`, which no checked program reaches.
+    if ty.is_float() {
+        return crate::scalar_floats::arithmetic(op, ty, a, b);
+    }
     if !ty.is_integer() || !ty.contains(a, target) || !ty.contains(b, target) {
         return None;
     }
@@ -368,6 +407,10 @@ pub fn checked(
 /// Checked negation, defined as `0 - a`: for an unsigned type it succeeds only
 /// at zero.
 pub fn negate(ty: ScalarType, a: i128, target: Option<&RecordedTarget>) -> Option<i128> {
+    // A float's negation flips its sign bit (`-0.0` from `0.0`), never `0 - a`.
+    if ty.is_float() {
+        return crate::scalar_floats::negate(ty, a);
+    }
     checked(Op::Sub, ty, 0, a, target)
 }
 
@@ -478,6 +521,15 @@ pub fn conversion_is_total(
     to: ScalarType,
     target: Option<&RecordedTarget>,
 ) -> Result<bool, WidthError> {
+    // Card `W48-QR-FLOATING-POINT`: to a float is total (it rounds, silently),
+    // from a float to an integer never is. A target-width side still needs
+    // its recorded width.
+    if let Some(total) = crate::scalar_floats::conversion_is_total(from, to) {
+        if (from.is_target_width() || to.is_target_width()) && target.is_none() {
+            return Err(WidthError::NoRecordedTarget);
+        }
+        return Ok(total);
+    }
     if !from.is_integer() || !to.is_integer() {
         return Err(WidthError::NotAnInteger);
     }
@@ -494,6 +546,17 @@ pub fn convert(
     value: i128,
     target: Option<&RecordedTarget>,
 ) -> Option<i128> {
+    // Card `W48-QR-FLOATING-POINT`: a conversion with a float side rounds or
+    // truncates (`crate::scalar_floats::convert`).
+    if from.is_float() || to.is_float() {
+        if from == ScalarType::Bool || to == ScalarType::Bool {
+            return None;
+        }
+        if (from.is_target_width() || to.is_target_width()) && target.is_none() {
+            return None;
+        }
+        return crate::scalar_floats::convert(from, to, value, target).ok();
+    }
     if !from.is_integer() || !to.is_integer() || !from.contains(value, target) {
         return None;
     }
@@ -502,6 +565,10 @@ pub fn convert(
 
 /// A comparison of two values of one type. Orderings of `bool` are `None`.
 pub fn compare(cmp: Cmp, ty: ScalarType, a: i128, b: i128) -> Option<bool> {
+    // Card `W48-QR-FLOATING-POINT`: IEEE, NaN unordered.
+    if ty.is_float() {
+        return crate::scalar_floats::compare(cmp, ty, a, b);
+    }
     if ty == ScalarType::Bool && cmp.is_ordering() {
         return None;
     }
@@ -533,6 +600,14 @@ pub fn render(
 ) -> Option<String> {
     if !ty.contains(value, target) {
         return None;
+    }
+    // Card `W48-QR-FLOATING-POINT`: shortest round-trip `dec`, C hex-float `hex`.
+    if ty.is_float() {
+        return if hex {
+            crate::scalar_floats::render_hex(ty, value)
+        } else {
+            crate::scalar_floats::render_dec(ty, value)
+        };
     }
     if ty == ScalarType::Bool {
         return (!hex).then(|| if value == 1 { "true" } else { "false" }.to_owned());
@@ -630,6 +705,8 @@ pub fn c_type(ty: ScalarType) -> &'static str {
         ScalarType::U32 => "uint32_t",
         ScalarType::U64 => "uint64_t",
         ScalarType::Usize => "size_t",
+        ScalarType::F32 => "float",
+        ScalarType::F64 => "double",
     }
 }
 
@@ -648,6 +725,9 @@ pub fn c_limits(ty: ScalarType) -> (&'static str, &'static str) {
         ScalarType::U32 => ("0", "UINT32_MAX"),
         ScalarType::U64 => ("0", "UINT64_MAX"),
         ScalarType::Usize => ("0", "SIZE_MAX"),
+        // Never read for a float: no float operation tests a limit.
+        ScalarType::F32 => ("-FLT_MAX", "FLT_MAX"),
+        ScalarType::F64 => ("-DBL_MAX", "DBL_MAX"),
     }
 }
 
@@ -655,6 +735,9 @@ pub fn c_limits(ty: ScalarType) -> (&'static str, &'static str) {
 /// value of `ty`. The one C literal that has no direct spelling, the 64-bit
 /// minimum, is spelled through its limit macro.
 pub fn c_literal(ty: ScalarType, value: i128) -> String {
+    if ty.is_float() {
+        return crate::scalar_floats::c_literal(ty, value);
+    }
     if ty == ScalarType::Bool {
         return if value == 1 { "true" } else { "false" }.to_owned();
     }
@@ -680,6 +763,9 @@ pub fn c_rendering(
     target: Option<&RecordedTarget>,
 ) -> Option<(String, String)> {
     let e = expression;
+    if ty.is_float() {
+        return crate::scalar_floats::c_rendering(hex, ty, e);
+    }
     Some(match (hex, ty) {
         (false, ScalarType::Bool) => ("%s".into(), format!("(({e}) ? \"true\" : \"false\")")),
         (true, ScalarType::Bool) => return None,
@@ -709,6 +795,7 @@ pub fn c_rendering(
             format!("0x%0{}zX", ty.bits(target).ok()? / 4),
             format!("(size_t)({e})"),
         ),
+        (_, ScalarType::F32 | ScalarType::F64) => return None,
     })
 }
 
@@ -736,6 +823,14 @@ pub fn c_conversion_test(
     to: ScalarType,
     target: Option<&RecordedTarget>,
 ) -> Option<String> {
+    // Card `W48-QR-FLOATING-POINT`: to a float never faults; from a float to
+    // an integer is the exact threshold test.
+    if to.is_float() {
+        return (from != ScalarType::Bool).then(String::new);
+    }
+    if from.is_float() {
+        return crate::scalar_floats::c_to_integer_test(from, to, target);
+    }
     let (to_min, to_max) = c_limits(to);
     let (from_low, from_high) = from.range(target).ok()?;
     let (to_low, to_high) = to.range(target).ok()?;

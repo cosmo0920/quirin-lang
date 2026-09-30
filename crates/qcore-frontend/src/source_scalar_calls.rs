@@ -2,8 +2,8 @@
 use crate::frontend::{DeclarationKind, SemanticPass, SourceDiagnostic, SourceProgram};
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use qcore_core::scalar_calls::{
-    self as ir, ArithmeticError, Arm, Block, End, Expr, Function, Line, Match, Op, Pattern,
-    Program, Raise, RecordDecl, Statement, Type,
+    self as ir, ArithmeticError, Arm, Block, End, Expr, FloatEffect, Function, Line, Match, Op,
+    Pattern, Program, Raise, RecordDecl, Statement, Type,
 };
 use qcore_core::scalar_types::Cmp;
 use qcore_core::std_io::{StdIoEvent, StdIoOperand};
@@ -157,7 +157,7 @@ impl Reader<'_> {
         }
         Type::parse(&name).ok_or_else(|| {
             self.bad(
-                "only explicit scalar types (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize), unit and the module's record types are supported",
+                "only explicit scalar types (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize, f32, f64), unit and the module's record types are supported",
             )
         })
     }
@@ -276,6 +276,12 @@ impl Reader<'_> {
         }
         if let Some(TokenKind::Integer(n)) = self.tokens.get(self.at).map(|t| &t.kind) {
             let literal = self.integer_literal(n, false)?;
+            self.at += 1;
+            return Ok(literal);
+        }
+        // Card `W48-QR-FLOATING-POINT`: a float literal, typed by the checker.
+        if let Some(TokenKind::Float(text)) = self.tokens.get(self.at).map(|t| &t.kind) {
+            let literal = Expr::Float(text.clone());
             self.at += 1;
             return Ok(literal);
         }
@@ -730,16 +736,22 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
         let result = r.ty()?;
         let mut declared_io = None;
         let mut throws = false;
+        let mut float_effects = std::collections::BTreeSet::new();
         if r.tokens.get(r.at).and_then(|t| word(t)) == Some("effects") {
             r.at += 1;
             r.need(Symbol::LeftBrace)?;
             declared_io = Some(false);
             // Card `W48-QR-SCALAR-TYPES-R2`: the row lists `io` and/or
             // `throws<ArithmeticError>`, each at most once, in either order.
+            // Card `W48-QR-FLOATING-POINT`: and `partial_eq`/`partial_ord`,
+            // each at most once.
             if !r.peek(Symbol::RightBrace) {
                 loop {
-                    match r.name()?.as_str() {
+                    let effect = r.name()?;
+                    match effect.as_str() {
                         "io" if declared_io != Some(true) => declared_io = Some(true),
+                        _ if FloatEffect::parse(&effect)
+                            .is_some_and(|float| float_effects.insert(float)) => {}
                         "throws" if !throws => {
                             r.need(Symbol::Less)?;
                             if r.name()? != ArithmeticError::NAME {
@@ -752,7 +764,7 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
                         }
                         _ => {
                             return Err(r.bad(
-                                "only the io effect and `throws<ArithmeticError>` are supported, each at most once",
+                                "only the io effect, `throws<ArithmeticError>`, `partial_eq` and `partial_ord` are supported, each at most once",
                             ));
                         }
                     }
@@ -775,6 +787,7 @@ pub fn lower(p: &SourceProgram) -> Result<Lowered, SourceDiagnostic> {
         functions.push(Function {
             declared_io,
             throws,
+            float_effects,
             parameters,
             result,
             body,

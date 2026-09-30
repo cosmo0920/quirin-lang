@@ -16,6 +16,15 @@
 //! refuses the module rather than reaching the emitted program. The emitted C
 //! still checks every operation before performing it and exits 86 on a fault,
 //! the route's established fault status, which no admitted closed entry reaches.
+//!
+//! Card `W48-QR-FLOATING-POINT` adds `f32`/`f64` ([`crate::scalar_floats`]):
+//! float literals (typed by context, `f64` by default, never an integer
+//! literal), IEEE `+ - * /` and unary `-` that never fault, conversions with a
+//! float side, and the two comparison effects of the effect row — `partial_eq`
+//! permits `==`/`!=` on floats and `partial_ord` the orderings. They are never
+//! inferred: a function that compares floats, or calls one that does, declares
+//! them, and the derived row must be admitted by the declared one. Integer and
+//! `bool` comparisons stay ungated.
 pub use crate::scalar_types::ArithmeticError;
 use crate::scalar_types::{self as st, Cmp, RecordedTarget, ScalarType};
 use crate::std_io::{Level, ObservedLine, Rendering};
@@ -45,11 +54,13 @@ impl Type {
     pub const I32: Type = Type::Scalar(ScalarType::I32);
     pub const BOOL: Type = Type::Scalar(ScalarType::Bool);
 
+    /// `unit` or a type of the table, the float types included (card
+    /// `W48-QR-FLOATING-POINT`: this route admits every float rule).
     pub fn parse(name: &str) -> Option<Self> {
         if name == "unit" {
             Some(Self::Unit)
         } else {
-            ScalarType::parse(name).map(Self::Scalar)
+            ScalarType::parse_admitting_floats(name).map(Self::Scalar)
         }
     }
     pub fn scalar(self) -> Option<ScalarType> {
@@ -65,8 +76,42 @@ impl Type {
             Self::Unit | Self::Scalar(_) => None,
         }
     }
-    fn integer(self) -> Option<ScalarType> {
-        self.scalar().filter(|ty| ty.is_integer())
+    /// An integer or a float: a type with arithmetic and a conversion (card
+    /// `W48-QR-FLOATING-POINT`).
+    fn numeric(self) -> Option<ScalarType> {
+        self.scalar().filter(|ty| ty.is_integer() || ty.is_float())
+    }
+}
+
+/// One of the two comparison effects (card `W48-QR-FLOATING-POINT`): what a
+/// function's row must declare to compare floats. `partial_ord` does not imply
+/// `partial_eq`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum FloatEffect {
+    /// `==` and `!=` on `f32`/`f64`.
+    PartialEq,
+    /// `<`, `<=`, `>` and `>=` on `f32`/`f64`.
+    PartialOrd,
+}
+impl FloatEffect {
+    pub const ALL: [FloatEffect; 2] = [FloatEffect::PartialEq, FloatEffect::PartialOrd];
+    /// The effect-row spelling.
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::PartialEq => "partial_eq",
+            Self::PartialOrd => "partial_ord",
+        }
+    }
+    pub fn parse(name: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|effect| effect.name() == name)
+    }
+    /// The effect a float comparison needs.
+    pub fn of(cmp: Cmp) -> Self {
+        if cmp.is_ordering() {
+            Self::PartialOrd
+        } else {
+            Self::PartialEq
+        }
     }
 }
 impl fmt::Display for Type {
@@ -83,6 +128,10 @@ impl fmt::Display for Type {
 pub enum Expr {
     /// An integer literal; its type comes from context and defaults to `i32`.
     Literal(i128),
+    /// A float literal as written (card `W48-QR-FLOATING-POINT`); its type
+    /// comes from context and defaults to `f64`, and it is parsed once, at
+    /// that type. An integer literal is never a float, nor this an integer.
+    Float(String),
     /// `true` or `false`.
     Bool(bool),
     Local(usize),
@@ -201,6 +250,9 @@ pub struct Function {
     /// Whether the declared row permits `throws<ArithmeticError>`. An absent
     /// row permits no error: the permission is never inferred.
     pub throws: bool,
+    /// The comparison effects the declared row lists (card
+    /// `W48-QR-FLOATING-POINT`). Empty for an absent row: never inferred.
+    pub float_effects: BTreeSet<FloatEffect>,
     pub parameters: Vec<Type>,
     pub result: Type,
     pub body: Block,
@@ -380,6 +432,11 @@ pub struct Checked {
     target: Option<RecordedTarget>,
     uses_target: bool,
     widened: bool,
+    /// Per function, the comparison effects its body and its callees derive
+    /// (card `W48-QR-FLOATING-POINT`).
+    float_effects: Vec<BTreeSet<FloatEffect>>,
+    /// Whether any type of the program is `f32` or `f64`.
+    uses_floats: bool,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Observation {
@@ -464,6 +521,19 @@ impl Checked {
     }
     pub fn io_functions(&self) -> &BTreeSet<usize> {
         &self.io_functions
+    }
+    /// The comparison effects function `id` derives: its own float
+    /// comparisons and its callees', transitively (card
+    /// `W48-QR-FLOATING-POINT`). Each is admitted by its declared row.
+    pub fn float_effects(&self, id: usize) -> Option<&BTreeSet<FloatEffect>> {
+        self.float_effects.get(id)
+    }
+    /// Whether the program holds an `f32` or `f64` value anywhere — the
+    /// condition under which its result carries the float assumption
+    /// ([`crate::scalar_floats::ASSUMPTION`]) and its C the environment
+    /// assertions.
+    pub fn uses_floats(&self) -> bool {
+        self.uses_floats
     }
     pub fn observe(&self, entry: usize, arguments: &[i32]) -> Result<Observation, Refusal> {
         let arguments = arguments.iter().map(|a| i128::from(*a)).collect::<Vec<_>>();
@@ -742,7 +812,7 @@ impl Checked {
                     .ok_or_else(|| bad(id, "unbound local"))?,
             ),
             TKind::Neg(x) => {
-                let ty = e.ty.integer().ok_or_else(|| bad(id, "expected i32"))?;
+                let ty = e.ty.numeric().ok_or_else(|| bad(id, "expected i32"))?;
                 let v = scalar(x)?;
                 Some(
                     st::negate_error(ty, v, target)
@@ -750,7 +820,7 @@ impl Checked {
                 )
             }
             TKind::Binary(op, a, b) => {
-                let ty = e.ty.integer().ok_or_else(|| bad(id, "expected i32"))?;
+                let ty = e.ty.numeric().ok_or_else(|| bad(id, "expected i32"))?;
                 let a = scalar(a)?;
                 let b = scalar(b)?;
                 Some(
@@ -767,13 +837,12 @@ impl Checked {
                 Some(i128::from(holds))
             }
             TKind::Convert(x) => {
-                let from = x.ty.integer().ok_or_else(|| bad(id, "expected i32"))?;
-                let to = e.ty.integer().ok_or_else(|| bad(id, "expected i32"))?;
+                let from = x.ty.numeric().ok_or_else(|| bad(id, "expected i32"))?;
+                let to = e.ty.numeric().ok_or_else(|| bad(id, "expected i32"))?;
                 let v = scalar(x)?;
-                Some(
-                    st::convert_error(from, to, v, target)
-                        .map_err(|error| self.fault(id, error, conversion_fault(v, from, to)))?,
-                )
+                Some(st::convert_error(from, to, v, target).map_err(|error| {
+                    self.fault(id, error, conversion_fault(v, from, to, target))
+                })?)
             }
             TKind::Call(f, args) => {
                 let args = self.arguments(id, args, frame, budget, out, depth)?;
@@ -922,8 +991,16 @@ fn neg_fault(ty: ScalarType) -> String {
 fn op_fault(ty: ScalarType) -> String {
     format!("{ty} arithmetic overflow or division by zero")
 }
-fn conversion_fault(value: i128, from: ScalarType, to: ScalarType) -> String {
-    format!("conversion of {value} from {from} to {to} is out of range")
+/// A float operand is named by its `dec` rendering (card
+/// `W48-QR-FLOATING-POINT`); an integer's rendering is its number, as before.
+fn conversion_fault(
+    value: i128,
+    from: ScalarType,
+    to: ScalarType,
+    target: Option<&RecordedTarget>,
+) -> String {
+    let shown = st::render(false, from, value, target).unwrap_or_else(|| value.to_string());
+    format!("conversion of {shown} from {from} to {to} is out of range")
 }
 /// Division truncates toward zero. MIN / -1 and MIN % -1 both refuse.
 pub fn arithmetic(op: Op, a: i32, b: i32) -> Option<i32> {
@@ -940,6 +1017,28 @@ struct Elab<'a> {
     edges: &'a mut BTreeSet<usize>,
     nodes: &'a mut usize,
     widened: &'a mut bool,
+    /// The comparison effects this function's row declares, and those its own
+    /// float comparisons use (card `W48-QR-FLOATING-POINT`).
+    declared_effects: &'a BTreeSet<FloatEffect>,
+    used_effects: &'a mut BTreeSet<FloatEffect>,
+}
+/// The type an expression made of literals alone takes when its context
+/// gives none (card `W48-QR-FLOATING-POINT`): `f64` when a float literal is
+/// among its leaves, `i32` otherwise, as before.
+fn literal_default(e: &Expr) -> Type {
+    fn has_float(e: &Expr) -> bool {
+        match e {
+            Expr::Float(_) => true,
+            Expr::Neg(x) => has_float(x),
+            Expr::Binary(_, a, b) => has_float(a) || has_float(b),
+            _ => false,
+        }
+    }
+    if has_float(e) {
+        Type::Scalar(ScalarType::F64)
+    } else {
+        Type::I32
+    }
 }
 const UNHANDLED: &str = "a call to a function that may raise `ArithmeticError` is unhandled; propagate it with `?` or handle it with `match … Result::Err`";
 const NOT_PERMITTED: &str = "this function's effect row does not permit `throws<ArithmeticError>`, so it cannot propagate or raise one; declare the permission or handle the error with `match … Result::Err`";
@@ -965,7 +1064,7 @@ impl Elab<'_> {
             return Err(self.bad("scalar syntax bound exceeded"));
         }
         Ok(match e {
-            Expr::Literal(_) => None,
+            Expr::Literal(_) | Expr::Float(_) => None,
             Expr::Bool(_) => Some(Type::BOOL),
             Expr::Local(i) => Some(
                 *self
@@ -1055,7 +1154,7 @@ impl Elab<'_> {
     }
     /// Type `e` at the type `synth` or its context decided.
     fn default(&mut self, e: &Expr, depth: usize) -> Result<TExpr, Refusal> {
-        let ty = self.synth(e, depth)?.unwrap_or(Type::I32);
+        let ty = self.synth(e, depth)?.unwrap_or_else(|| literal_default(e));
         self.elab(e, ty, depth)
     }
     /// A direct call at `want`, whether or not its callee may raise; the
@@ -1115,6 +1214,12 @@ impl Elab<'_> {
                     Type::Scalar(ScalarType::Bool) => {
                         return Err(self.bad("expected bool expression, found an integer literal"));
                     }
+                    // Card `W48-QR-FLOATING-POINT`: no implicit int -> float.
+                    Type::Scalar(ty) if ty.is_float() => {
+                        return Err(self.bad(&format!(
+                            "expected {ty} expression, found an integer literal; an integer is never implicitly a float, so write a float literal (`{n}.0`) or convert with `as {ty}`"
+                        )));
+                    }
                     Type::Unit | Type::Record(_) => return Err(self.mismatch(want, Type::I32)),
                     Type::Scalar(ty) => ty,
                 };
@@ -1123,6 +1228,29 @@ impl Elab<'_> {
                     return Err(self.bad(&format!("integer literal outside {ty}")));
                 }
                 expr(TKind::Literal(*n), Some(*n))
+            }
+            // Card `W48-QR-FLOATING-POINT`: parsed once, at the context's type.
+            Expr::Float(text) => {
+                let Some(ty) = want.scalar().filter(|ty| ty.is_float()) else {
+                    return Err(self.bad(&format!(
+                        "expected {} expression, found the float literal `{text}`; a float is never implicitly an integer, so convert with `as`",
+                        self.program.type_name(want)
+                    )));
+                };
+                let value = crate::scalar_floats::parse_literal(text, ty).map_err(|error| {
+                    self.bad(&match error {
+                        crate::scalar_floats::LiteralError::NotAFloatLiteral => {
+                            format!("`{text}` is not a float literal")
+                        }
+                        crate::scalar_floats::LiteralError::Overflows => format!(
+                            "the float literal `{text}` is outside {ty}: it rounds to infinity"
+                        ),
+                        crate::scalar_floats::LiteralError::Underflows => format!(
+                            "the float literal `{text}` is nonzero and rounds to zero at {ty}"
+                        ),
+                    })
+                })?;
+                expr(TKind::Literal(value), Some(value))
             }
             Expr::Bool(b) => {
                 if want != Type::BOOL {
@@ -1154,6 +1282,11 @@ impl Elab<'_> {
             }
             Expr::Binary(op, a, b) => {
                 let ty = self.integer_at(want)?;
+                if ty.is_float() && *op == Op::Rem {
+                    return Err(self.bad(&format!(
+                        "`%` is an integer operation; {ty} has `+ - * /` and unary `-` only (a float remainder is a libm function, not an operator)"
+                    )));
+                }
                 self.arithmetic_operands(&[a, b], depth)?;
                 let a = self.elab(a, want, depth + 1)?;
                 let b = self.elab(b, want, depth + 1)?;
@@ -1180,11 +1313,34 @@ impl Elab<'_> {
                         )));
                     }
                     (Some(x), _) | (None, Some(x)) => x,
-                    (None, None) => Type::I32,
+                    (None, None) => {
+                        let (l, r) = (literal_default(a), literal_default(b));
+                        if l != r {
+                            return Err(self.bad(&format!(
+                                "mixed-type operands {l} and {r}; convert one explicitly with `as`"
+                            )));
+                        }
+                        l
+                    }
                 };
                 let Type::Scalar(scalar) = ty else {
                     return Err(self.bad("a comparison requires scalar operands, not unit"));
                 };
+                // Card `W48-QR-FLOATING-POINT`: a float comparison needs its
+                // effect in this function's declared row.
+                if scalar.is_float() {
+                    let effect = FloatEffect::of(*cmp);
+                    if !self.declared_effects.contains(&effect) {
+                        return Err(self.bad(&format!(
+                            "a {scalar} `{}` needs the `{}` effect, and this function's row does not declare it; float comparisons are partial (a NaN is unordered and `x == x` can be false), so `{}` is never inferred: declare `effects {{ {} }}`",
+                            cmp.c_operator(),
+                            effect.name(),
+                            effect.name(),
+                            effect.name()
+                        )));
+                    }
+                    self.used_effects.insert(effect);
+                }
                 if scalar == ScalarType::Bool && cmp.is_ordering() {
                     return Err(
                         self.bad("`bool` has no ordering; only `==` and `!=` compare two `bool`s")
@@ -1203,20 +1359,22 @@ impl Elab<'_> {
                 if want != Type::Scalar(*to) {
                     return Err(self.mismatch(want, Type::Scalar(*to)));
                 }
-                let from = self.synth(x, depth + 1)?.unwrap_or(Type::I32);
-                let (Some(from_ty), true) = (from.integer(), to.is_integer()) else {
+                let from = self
+                    .synth(x, depth + 1)?
+                    .unwrap_or_else(|| literal_default(x));
+                let (Some(from_ty), true) = (from.numeric(), to.is_integer() || to.is_float())
+                else {
                     return Err(self.bad(
-                        "`as` converts between integer types only; there is no conversion to or from `bool` or `unit`",
+                        "`as` converts between integer and float types only; there is no conversion to or from `bool` or `unit`",
                     ));
                 };
                 self.width(*to)?;
                 self.width(from_ty)?;
                 let x = self.elab(x, from, depth + 1)?;
                 let constant = match x.constant {
-                    Some(v) => Some(
-                        st::convert(from_ty, *to, v, target)
-                            .ok_or_else(|| self.bad(&conversion_fault(v, from_ty, *to)))?,
-                    ),
+                    Some(v) => Some(st::convert(from_ty, *to, v, target).ok_or_else(|| {
+                        self.bad(&conversion_fault(v, from_ty, *to, target))
+                    })?),
                     None => None,
                 };
                 expr(TKind::Convert(Box::new(x)), constant)
@@ -1364,6 +1522,35 @@ fn block_uses_target(b: &TBlock) -> bool {
     }
 }
 
+fn expr_uses_float(e: &TExpr) -> bool {
+    e.ty.scalar().is_some_and(ScalarType::is_float)
+        || match &e.kind {
+            TKind::Literal(_) | TKind::Local(_) => false,
+            TKind::Neg(x) | TKind::Convert(x) | TKind::Try(x) | TKind::Field(x, _) => {
+                expr_uses_float(x)
+            }
+            TKind::Binary(_, a, b) | TKind::Compare(_, a, b) => {
+                expr_uses_float(a) || expr_uses_float(b)
+            }
+            TKind::Call(_, args) | TKind::Construct(args) => args.iter().any(expr_uses_float),
+        }
+}
+fn block_uses_float(b: &TBlock) -> bool {
+    b.statements.iter().any(|s| match s {
+        TStatement::Let(_, e)
+        | TStatement::Evaluate(e)
+        | TStatement::Print(e)
+        | TStatement::Line(_, e) => expr_uses_float(e),
+        TStatement::Flush => false,
+    }) || match &b.end {
+        TEnd::Return(e) => e.as_ref().is_some_and(expr_uses_float),
+        TEnd::Raise(_) => false,
+        TEnd::Match(m) => {
+            expr_uses_float(&m.call) || m.arms.iter().any(|arm| block_uses_float(&arm.body))
+        }
+    }
+}
+
 pub fn check(program: Program) -> Result<Checked, Refusal> {
     check_for_target(program, None)
 }
@@ -1382,6 +1569,8 @@ struct FunctionCheck<'a> {
     widened: &'a mut bool,
     io: bool,
     builtin_print: bool,
+    /// The comparison effects this function's own float comparisons use.
+    used_effects: BTreeSet<FloatEffect>,
 }
 impl FunctionCheck<'_> {
     fn elab(&mut self) -> Elab<'_> {
@@ -1394,6 +1583,8 @@ impl FunctionCheck<'_> {
             edges: &mut self.edges,
             nodes: self.nodes,
             widened: self.widened,
+            declared_effects: &self.function.float_effects,
+            used_effects: &mut self.used_effects,
         }
     }
     fn statement(&mut self, s: &Statement) -> Result<TStatement, Refusal> {
@@ -1415,7 +1606,7 @@ impl FunctionCheck<'_> {
                         }
                         *ty
                     }
-                    None => found.unwrap_or(Type::I32),
+                    None => found.unwrap_or_else(|| literal_default(e)),
                 };
                 if let Some(found) = found
                     && found != ty
@@ -1483,7 +1674,7 @@ impl FunctionCheck<'_> {
                 let found = self.elab().synth(e, 0)?;
                 let matches = match found {
                     Some(ty) => ty == result,
-                    None => result.integer().is_some(),
+                    None => result.numeric().is_some(),
                 };
                 if !matches {
                     return Err(bad(id, "return type mismatch"));
@@ -1584,7 +1775,11 @@ pub fn check_for_target(
     let mut widened = false;
     let mut builtin_print = None;
     let mut typed = Vec::new();
+    let mut float_effects: Vec<BTreeSet<FloatEffect>> = Vec::new();
     for (id, f) in program.functions.iter().enumerate() {
+        if !f.float_effects.is_empty() {
+            widened = true;
+        }
         if f.parameters.len() > MAX_NODES || block_size(&f.body) > MAX_NODES {
             return Err(bad(id, "scalar function size bound exceeded"));
         }
@@ -1630,6 +1825,7 @@ pub fn check_for_target(
             widened: &mut widened,
             io: false,
             builtin_print: false,
+            used_effects: BTreeSet::new(),
         };
         let body = check.block(&f.body)?;
         let FunctionCheck {
@@ -1638,8 +1834,10 @@ pub fn check_for_target(
             edges,
             io,
             builtin_print: printed,
+            used_effects,
             ..
         } = check;
+        float_effects.push(used_effects);
         if io {
             io_functions.insert(id);
         }
@@ -1698,6 +1896,28 @@ pub fn check_for_target(
         if graph[id].iter().any(|callee| io_functions.contains(callee)) {
             io_functions.insert(id);
         }
+        // Card `W48-QR-FLOATING-POINT`: the comparison effects propagate like
+        // `io`, but are never inferred: the derived row — this function's own
+        // float comparisons (checked against its row while typed) and every
+        // callee's derived row — must be admitted by the declared row.
+        // Callees are earlier in `order`, so their rows are final here.
+        for callee in &graph[id] {
+            let derived = float_effects[*callee].clone();
+            for effect in derived {
+                if !program.functions[id].float_effects.contains(&effect) {
+                    return Err(bad(
+                        id,
+                        &format!(
+                            "this function calls a function whose float comparisons derive `{}`, and its own row does not declare it; a caller declares every comparison effect its callees derive (`effects {{ {} }}`), since `{}` is never inferred",
+                            effect.name(),
+                            effect.name(),
+                            effect.name()
+                        ),
+                    ));
+                }
+                float_effects[id].insert(effect);
+            }
+        }
         if program.functions[id].declared_io == Some(false) && io_functions.contains(&id) {
             return Err(bad(
                 id,
@@ -1713,6 +1933,14 @@ pub fn check_for_target(
                 .any(|leaf| leaf.is_target_width())
         }) || block_uses_target(&f.body)
     });
+    let uses_floats = typed.iter().any(|f| {
+        f.locals.iter().chain([&f.result]).any(|ty| {
+            program
+                .leaves(*ty)
+                .iter()
+                .any(|leaf| leaf.is_float())
+        }) || block_uses_float(&f.body)
+    });
     Ok(Checked {
         program,
         typed,
@@ -1720,6 +1948,8 @@ pub fn check_for_target(
         target: target.cloned(),
         uses_target,
         widened,
+        float_effects,
+        uses_floats,
     })
 }
 

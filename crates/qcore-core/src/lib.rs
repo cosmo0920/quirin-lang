@@ -201,6 +201,9 @@ pub mod scalar_calls;
 // Card W48-QR-SCALAR-TYPES: the fixed-width scalar table of `.qr` sources.
 pub mod scalar_types;
 
+// Card W48-QR-FLOATING-POINT: IEEE binary32/binary64 values of the table.
+pub mod scalar_floats;
+
 // Card W48-QR-SCALAR-TYPES-R4: the value statement's decision, shared by the
 // extern and task routes.
 pub mod scalar_values;

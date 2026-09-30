@@ -19,6 +19,17 @@
 //! does the same with a callee's tag, and `match` branches on it. An entry that
 //! propagates one exits with `80 + tag`. A function without the permission
 //! emits exactly what it emitted before.
+//!
+//! Card `W48-QR-FLOATING-POINT`: a float operation is its IEEE operation in a
+//! helper of one operation (`q_scalar_add_f64`), so no C expression holds two
+//! float operations and contraction has nothing to fuse; it never faults, so a
+//! throwing function calls it directly. A float-to-integer conversion tests
+//! the operand against exact hexadecimal thresholds before the cast (NaN and
+//! ±inf included) and faults like every other checked conversion. A program
+//! holding a float value includes `<float.h>`, `<math.h>` and `<string.h>`,
+//! asserts the IEEE environment ([`crate::scalar_floats::c_environment`]) and
+//! renders through the emitted shortest round-trip and hex-float renderers,
+//! never `printf`'s float conversions.
 use crate::c_program::{self, Fragment, Section};
 use crate::scalar_calls::{
     ArithmeticError, Checked, Line, Pattern, Raise, Refusal, TBlock, TEnd, TExpr, TKind,
@@ -65,6 +76,8 @@ struct Emitter<'a> {
     throws: bool,
     /// The current block's indentation.
     indent: String,
+    /// The float renderings used, `(hex, type)` (card `W48-QR-FLOATING-POINT`).
+    renderers: BTreeSet<(bool, ScalarType)>,
 }
 fn c_type(checked: &Checked, ty: Type) -> String {
     match ty {
@@ -290,6 +303,13 @@ impl Emitter<'_> {
     /// callee that returns the typed error's tag. `None` for every other
     /// expression, which is emitted as in a function without the permission.
     fn typed_step(&mut self, e: &TExpr) -> Option<String> {
+        // Card `W48-QR-FLOATING-POINT`: float arithmetic never faults, so it
+        // has no typed step.
+        if matches!(e.kind, TKind::Neg(_) | TKind::Binary(..))
+            && e.ty.scalar().is_some_and(ScalarType::is_float)
+        {
+            return None;
+        }
         let (helper, call) = match &e.kind {
             TKind::Neg(x) => {
                 let ty = e.ty.scalar().expect("a checked negation has a scalar type");
@@ -370,6 +390,9 @@ impl Emitter<'_> {
                     Line::Print(rendering) => (*rendering, None),
                     Line::Log(level, rendering) => (*rendering, Some(*level)),
                 };
+                if ty.is_float() {
+                    self.renderers.insert((rendering == Rendering::Hex, ty));
+                }
                 let (stream, prefix) = crate::std_io::line_framing(level);
                 let (conversion, operand) =
                     st::c_rendering(rendering == Rendering::Hex, ty, &v, checked.target())
@@ -487,6 +510,42 @@ fn cmp_name(cmp: st::Cmp) -> &'static str {
 #[must_use]
 pub fn scalar_helper_definition(helper: Helper, target: Option<&st::RecordedTarget>) -> String {
     let fault = "{ exit(86); }";
+    // Card `W48-QR-FLOATING-POINT`: a float operation is its IEEE operation,
+    // with no test (it never faults); its typed form never raises.
+    match helper {
+        Helper::Op(op, ty) | Helper::TryOp(op, ty) if ty.is_float() => {
+            let c = st::c_type(ty);
+            let operator = match op {
+                Op::Add => "+",
+                Op::Sub => "-",
+                Op::Mul => "*",
+                Op::Div | Op::Rem => "/",
+            };
+            return if matches!(helper, Helper::Op(..)) {
+                format!(
+                    "static {c} {}({c} a, {c} b) {{\n    return a {operator} b;\n}}\n",
+                    helper.name()
+                )
+            } else {
+                format!(
+                    "static int {}({c} a, {c} b, {c} *r) {{\n    *r = a {operator} b;\n    return 0;\n}}\n",
+                    helper.name()
+                )
+            };
+        }
+        Helper::Neg(ty) | Helper::TryNeg(ty) if ty.is_float() => {
+            let c = st::c_type(ty);
+            return if matches!(helper, Helper::Neg(_)) {
+                format!("static {c} {}({c} a) {{\n    return -a;\n}}\n", helper.name())
+            } else {
+                format!(
+                    "static int {}({c} a, {c} *r) {{\n    *r = -a;\n    return 0;\n}}\n",
+                    helper.name()
+                )
+            };
+        }
+        _ => {}
+    }
     match helper {
         Helper::Compare(cmp, ty) => {
             let c = st::c_type(ty);
@@ -665,6 +724,13 @@ pub fn fragments(checked: &Checked) -> Vec<Fragment> {
             "#include <stdbool.h>\n#include <stddef.h>\n",
         ));
     }
+    if checked.uses_floats() {
+        pieces.push(Fragment::new(
+            Section::Includes,
+            "scalar-floats.includes",
+            crate::scalar_floats::C_INCLUDES,
+        ));
+    }
     if !checked.io_functions().is_empty() {
         pieces.push(io_emit::stdio_include_fragment());
         pieces.push(io_emit::io_prelude_fragment());
@@ -676,6 +742,7 @@ pub fn fragments(checked: &Checked) -> Vec<Fragment> {
         helpers: BTreeSet::new(),
         throws: false,
         indent: "    ".into(),
+        renderers: BTreeSet::new(),
     };
     for (id, f) in checked.typed().iter().enumerate() {
         e.throws = f.throws;
@@ -695,6 +762,12 @@ pub fn fragments(checked: &Checked) -> Vec<Fragment> {
     );
     if let Some(assertions) = target_assertions(checked) {
         text.push_str(&assertions);
+    }
+    // Card `W48-QR-FLOATING-POINT`: the IEEE environment is asserted when the
+    // C is compiled, and only the renderers the program uses are emitted.
+    if checked.uses_floats() {
+        text.push_str(&crate::scalar_floats::c_environment());
+        text.push_str(&crate::scalar_floats::c_renderers(&e.renderers));
     }
     // Card `W48-QR-USABLE-RECORDS`: the record types, before any function
     // that takes or returns one; nothing for a module declaring none.

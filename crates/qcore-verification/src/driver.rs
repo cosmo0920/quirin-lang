@@ -1119,6 +1119,19 @@ impl CompiledModule {
         }
     }
 
+    /// Card `W48-QR-FLOATING-POINT`: the IEEE premise a result holding an
+    /// `f32`/`f64` value carries ([`qcore_core::scalar_floats::ASSUMPTION`]),
+    /// a named assumption printed beside the declared ones; `None` for a
+    /// module holding no float, so no existing output moves.
+    #[must_use]
+    pub fn float_assumption(&self) -> Option<&'static str> {
+        let uses = match &self.checked {
+            CheckedSourceModule::ScalarCalls(checked) => checked.uses_floats(),
+            _ => false,
+        };
+        uses.then_some(qcore_core::scalar_floats::ASSUMPTION)
+    }
+
     /// Card `W48-QR-C-STRUCT-IMPORT`: the premises a `source.ffi.v1` result
     /// holds relative to — the unsafe-FFI trust mark first — and the empty
     /// slice on every other route.

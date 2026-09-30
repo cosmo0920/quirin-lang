@@ -119,8 +119,8 @@ fn size(ty: ScalarType) -> usize {
     match ty {
         ScalarType::Bool | ScalarType::I8 | ScalarType::U8 => 1,
         ScalarType::I16 | ScalarType::U16 => 2,
-        ScalarType::I32 | ScalarType::U32 => 4,
-        ScalarType::I64 | ScalarType::U64 => 8,
+        ScalarType::I32 | ScalarType::U32 | ScalarType::F32 => 4,
+        ScalarType::I64 | ScalarType::U64 | ScalarType::F64 => 8,
         ScalarType::Isize | ScalarType::Usize => std::mem::size_of::<usize>(),
     }
 }

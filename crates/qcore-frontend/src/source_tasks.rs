@@ -951,6 +951,8 @@ fn fixed_spelling(ty: FixedType) -> &'static str {
         FixedType::U32 => "`u32`",
         FixedType::U64 => "`u64`",
         FixedType::Usize => "`usize`",
+        FixedType::F32 => "`f32`",
+        FixedType::F64 => "`f64`",
     }
 }
 

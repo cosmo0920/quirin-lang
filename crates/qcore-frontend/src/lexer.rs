@@ -208,6 +208,7 @@ impl Lexer<'_> {
             while self.peek().is_some_and(|next| next.is_ascii_digit()) {
                 self.bump();
             }
+            let mut float = false;
             if self.peek() == Some('.')
                 && self.peek_second().is_some_and(|next| next.is_ascii_digit())
             {
@@ -215,6 +216,25 @@ impl Lexer<'_> {
                 while self.peek().is_some_and(|next| next.is_ascii_digit()) {
                     self.bump();
                 }
+                float = true;
+            }
+            // Card `W48-QR-FLOATING-POINT`: an exponent `(e|E) [+|-] DIGITS`
+            // written directly after the digits is part of the literal
+            // (`1e5`, `1.5e-3`). It is taken only when a digit follows the
+            // `e` and its optional sign, so `1.5e`, `1e+` and `1 e5` lex as
+            // before; the census found no tracked file spelling one.
+            if matches!(self.peek(), Some('e' | 'E')) {
+                let rest = &self.source[self.offset + 1..];
+                let sign = usize::from(rest.starts_with(['+', '-']));
+                if rest[sign..].starts_with(|c: char| c.is_ascii_digit()) {
+                    self.offset += 1 + sign;
+                    while self.peek().is_some_and(|next| next.is_ascii_digit()) {
+                        self.bump();
+                    }
+                    float = true;
+                }
+            }
+            if float {
                 TokenKind::Float(self.source[start..self.offset].to_owned())
             } else {
                 TokenKind::Integer(self.source[start..self.offset].to_owned())

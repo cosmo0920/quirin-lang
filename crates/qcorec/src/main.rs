@@ -462,7 +462,10 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
     // Card `W48-QR-C-STRUCT-IMPORT`: an FFI file's premises, the unsafe-FFI
     // trust mark first. Empty on every other route, so no existing output moves.
     let ffi = module.ffi_assumptions();
-    if assumptions.is_empty() && target.is_none() && ffi.is_empty() {
+    // Card `W48-QR-FLOATING-POINT`: a program holding an `f32`/`f64` value
+    // holds only for an IEEE evaluation, and says so here too.
+    let float = module.float_assumption();
+    if assumptions.is_empty() && target.is_none() && ffi.is_empty() && float.is_none() {
         return;
     }
     if let Some(verdict) = module.published_verdict() {
@@ -470,13 +473,16 @@ fn print_declared_assumptions(module: &qcore_compiler::CompiledModule) {
     }
     println!(
         "under {} declared assumption(s):",
-        assumptions.len() + usize::from(target.is_some()) + ffi.len()
+        assumptions.len() + usize::from(target.is_some()) + ffi.len() + usize::from(float.is_some())
     );
     for assumption in ffi {
         println!("  - {assumption}");
     }
     if let Some(target) = target {
         println!("  - recorded target: {target}");
+    }
+    if let Some(float) = float {
+        println!("  - IEEE floating point: {float}");
     }
     for assumption in assumptions {
         let line = match assumption {
