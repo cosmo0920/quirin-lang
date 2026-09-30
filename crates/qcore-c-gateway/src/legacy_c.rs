@@ -162,6 +162,11 @@ mod condition_acquisition_route;
 #[path = "legacy_value_connective.rs"]
 mod value_connective_route;
 
+// Card CG04-LOOP-SITE-GENERATIONS: a re-acquired site on a CFG cycle keeps
+// its earlier generation apart. The hooks below naming the card are thin.
+#[path = "legacy_loop_generations.rs"]
+mod loop_generations_route;
+
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the P3 residual shapes
 // C's evaluation order admits. Hooks are thin.
 #[path = "legacy_typed_residuals.rs"]
@@ -11613,6 +11618,9 @@ pub(crate) fn analyze_cfg_with_entry(
         &mut diagnostics,
     );
     report_retained_loop_exit_edges(&cfg, &incoming, &context.site_kinds, &mut diagnostics);
+    // Card CG04-LOOP-SITE-GENERATIONS: the re-acquisitions an earlier
+    // generation reaches, from the settled states (parity only).
+    loop_generations_route::record_exposure(&cfg, &incoming);
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kind-mismatched release and the
     // use-after-close candidates, from the same settled states.
     report_kind_violations(
