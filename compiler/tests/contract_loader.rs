@@ -351,6 +351,11 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("pthread_sigmask", 3),
         ("strftime", 4),
         ("gettimeofday", 2),
+        // Card W48-CALLEE-CLOSURE-R3: `stat`'s statement for `lstat`, and
+        // `gettimeofday`'s for `clock_gettime` (a scalar clock id and a
+        // written-through `struct timespec`), both the neutral element.
+        ("lstat", 2),
+        ("clock_gettime", 2),
         // Card W43-LIBC-PRINTF-FAMILY: the formatted-output family. Every
         // declared parameter is borrowed (a written-through buffer or stream
         // the caller keeps, a size, a read format), the result is an `int`
@@ -1453,9 +1458,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 252 -> 253 by card W47-SERVICE-PROPERTY-KEYS: `flb_config_set_property`
     // in `fluent_bit/input_instance.qv`, loaded and withheld for human
     // review. Selected and rejected unchanged.
+    // 253 -> 255 by card W48-CALLEE-CLOSURE-R3: `lstat` appended to
+    // `libc/sys_stat.qv` and `clock_gettime` to `libc/time.qv`, both already
+    // selected, both neutral and flexible. Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (58, 253, 216)
+        (58, 255, 216)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

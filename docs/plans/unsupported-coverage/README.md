@@ -212,6 +212,17 @@ Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CAL
   short-circuit operand's obligations only where it is evaluated.
 
 ### P4: CALLEE-CLOSURE
+- **Status (round 3):** ranked over every callee class on the corpus, system
+  and tail-pause routes by
+  [W48-CALLEE-CLOSURE-R3](../../reports/w48-callee-closure-r3/README.md)
+  (main `c374de96`). 469 corpus functions are blocked only by calls; the
+  summary rules free 0, a cross-unit route 5 (6 at its ceiling; registered
+  with that size, not built), every in-corpus callee body taken Safe 390 in
+  one round. No bodiless callee in existing vocabulary frees 2 functions
+  alone. Two libc facts declared (`lstat`, `clock_gettime`): slice +1 Safe,
+  corpus and system no move. The remaining leverage is the callees' own
+  bodies (Clang-gap residuals) and the eight decision classes, sized in
+  `W48-CALLEE-DECISION-TABLE`.
 - **Status (round 2):** measured and contracted by
   [W47-CALLEE-CLOSURE-R2](../../reports/w47-callee-closure-r2/README.md) on
   the post-P3 corpus. The in-corpus closure frees 0 functions under the

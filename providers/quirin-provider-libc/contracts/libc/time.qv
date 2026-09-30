@@ -123,3 +123,27 @@ contract {
     ensures normal resource_borrowed(tz);
     ensures normal resource_return_none();
 };
+
+// ## Card W48-CALLEE-CLOSURE-R3: `clock_gettime`
+//
+//   extern int clock_gettime (clockid_t __clock_id, struct timespec *__tp)
+//        __THROW __nonnull((2));                      // clockid_t is int
+//
+// `clock_gettime` writes the caller's `struct timespec` and returns an `int`:
+// a value write through a borrowed pointer into caller storage, exactly
+// `gettimeofday`'s statement above. Nothing is allocated, freed or retained:
+// `resource_borrowed` on both parameters, `resource_return_none()`. TRUSTED
+// ASSUMPTION. Ranked by the card's callee closure: it is the only call in
+// librdkafka's `rd_clock` (`src/rdtime.h`, the Linux arm), a `static`
+// header body W4 derives but cannot validate while this call is
+// uncontracted, and whose callers carry 65 uncontracted-call leaves. Nothing
+// here says anything about clocks, their resolution or `errno`.
+
+extern fn clock_gettime(clock_id: i32, tp: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(clock_id);
+    ensures normal resource_borrowed(tp);
+    ensures normal resource_return_none();
+};

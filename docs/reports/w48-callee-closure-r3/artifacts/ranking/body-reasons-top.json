@@ -1,0 +1,302 @@
+{
+ "LZ4_compress_fast": [
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "unlisted form: no value form of this card",
+   "rows": 3,
+   "texts": "LZ4_stream_t * const ctxPtr = & ctx"
+  },
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "unlisted form: no value form of this card",
+   "rows": 3,
+   "texts": "result = LZ4_compress_fast_extState ( ctxPtr , source , dest , inputSize , maxOutputSize , accelerat"
+  }
+ ],
+ "XXH_readLE64_align": [
+  {
+   "features": "",
+   "position": "elaboration-return",
+   "refusal": "unlisted form: no value form of this card",
+   "rows": 3,
+   "texts": "endian = = XXH_littleEndian ? XXH_read64 ( ptr ) : XXH_swap64 ( XXH_read64 ( ptr ) )"
+  },
+  {
+   "features": "",
+   "position": "call-instantiation",
+   "refusal": "a connective (CG06)",
+   "rows": 3,
+   "texts": "endian = = XXH_littleEndian ? XXH_read64 ( ptr ) : XXH_swap64 ( XXH_read64 ( ptr ) )"
+  },
+  {
+   "features": "",
+   "position": "nested-call",
+   "refusal": "data actual: conditional (CG06)",
+   "rows": 3,
+   "texts": "endian = = XXH_littleEndian ? XXH_read64 ( ptr ) : XXH_swap64 ( XXH_read64 ( ptr ) )"
+  },
+  {
+   "features": "",
+   "position": "elaboration-return",
+   "refusal": "place: path through CStyleCastExpr (CG10)",
+   "rows": 3,
+   "texts": "endian = = XXH_littleEndian ? * ( const U64 * ) ptr : XXH_swap64 ( * ( const U64 * ) ptr )"
+  },
+  {
+   "features": "",
+   "position": "call-instantiation",
+   "refusal": "a connective (CG06)",
+   "rows": 3,
+   "texts": "endian = = XXH_littleEndian ? * ( const U64 * ) ptr : XXH_swap64 ( * ( const U64 * ) ptr )"
+  },
+  {
+   "features": "",
+   "position": "nested-call",
+   "refusal": "data actual: conditional (CG06)",
+   "rows": 3,
+   "texts": "endian = = XXH_littleEndian ? * ( const U64 * ) ptr : XXH_swap64 ( * ( const U64 * ) ptr )"
+  },
+  {
+   "features": "",
+   "position": "value-connective-return",
+   "refusal": "an arm's expression an older route refuses",
+   "rows": 3,
+   "texts": "endian = = XXH_littleEndian ? * ( const U64 * ) ptr : XXH_swap64 ( * ( const U64 * ) ptr )"
+  }
+ ],
+ "cJSON_New_Item": [
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "indirect call (CG22)",
+   "rows": 4,
+   "texts": "cJSON * node = ( cJSON * ) hooks - > allocate ( sizeof ( cJSON ) )"
+  },
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "unlisted form: no unique Clang node for the statement",
+   "rows": 4,
+   "texts": "cJSON * node = hooks - > allocate ( sizeof ( cJSON ) )"
+  },
+  {
+   "features": "",
+   "position": "cast-representation-pointer-statement",
+   "refusal": null,
+   "rows": 4,
+   "texts": "cJSON * node = ( cJSON * ) hooks - > allocate ( sizeof ( cJSON ) )"
+  }
+ ],
+ "metric_sum_exchange": [
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "unlisted form: no value form of this card",
+   "rows": 3,
+   "texts": "result = cmt_atomic_compare_exchange ( & metric - > hist_sum , tmp_old , tmp_new )"
+  },
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "unlisted form: no value form of this card",
+   "rows": 3,
+   "texts": "cmt_atomic_store ( & metric - > timestamp , timestamp )"
+  }
+ ],
+ "mk_fifo_queue_destroy": [
+  {
+   "features": "",
+   "position": "call-argument",
+   "refusal": null,
+   "rows": 3,
+   "texts": "& q - > _head"
+  },
+  {
+   "features": "address,aggregate-value",
+   "position": "residual-shape",
+   "refusal": null,
+   "rows": 3,
+   "texts": "& q - > _head"
+  },
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "unlisted form: no value form of this card",
+   "rows": 3,
+   "texts": "mk_list_del ( & q - > _head )"
+  }
+ ],
+ "rd_clock": [
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "unlisted form: no value form of this card",
+   "rows": 62,
+   "texts": "clock_gettime ( 1 , & ts )"
+  },
+  {
+   "features": "",
+   "position": "return",
+   "refusal": null,
+   "rows": 62,
+   "texts": "( ( rd_ts_t ) ts . tv_sec * 1000000LLU ) + ( ( rd_ts_t ) ts . tv_nsec / 1000LLU )"
+  },
+  {
+   "features": "aggregate-value",
+   "position": "residual-shape",
+   "refusal": null,
+   "rows": 62,
+   "texts": "( ( rd_ts_t ) ts . tv_sec * 1000000LLU ) + ( ( rd_ts_t ) ts . tv_nsec / 1000LLU )"
+  },
+  {
+   "features": "",
+   "position": "elaboration-return",
+   "refusal": "place: the typed access-path reader refused it (CG10)",
+   "rows": 62,
+   "texts": "( ( rd_ts_t ) ts . tv_sec * 1000000LLU ) + ( ( rd_ts_t ) ts . tv_nsec / 1000LLU )"
+  },
+  {
+   "features": "",
+   "position": "nested-call",
+   "refusal": "no nested call",
+   "rows": 62,
+   "texts": "( ( rd_ts_t ) ts . tv_sec * 1000000LLU ) + ( ( rd_ts_t ) ts . tv_nsec / 1000LLU )"
+  }
+ ],
+ "rd_kafka_admin_result_ret_groups": [
+  {
+   "features": "",
+   "position": "union-bitfield",
+   "refusal": null,
+   "rows": 12,
+   "texts": ""
+  },
+  {
+   "features": "",
+   "position": "cast-representation-callee-census",
+   "refusal": null,
+   "rows": 6,
+   "texts": ""
+  },
+  {
+   "features": "",
+   "position": "return",
+   "refusal": null,
+   "rows": 3,
+   "texts": "rko - > rko_u . admin_result . results . rl_elems"
+  },
+  {
+   "features": "aggregate-value,const-pointer,function-pointer,union",
+   "position": "residual-shape",
+   "refusal": null,
+   "rows": 3,
+   "texts": "rko - > rko_u . admin_result . results . rl_elems"
+  },
+  {
+   "features": "",
+   "position": "elaboration-return",
+   "refusal": "place: the typed access-path reader refused it (CG10)",
+   "rows": 3,
+   "texts": "( const rd_kafka_group_result_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+  },
+  {
+   "features": "",
+   "position": "nested-call",
+   "refusal": "a value holding calls outside a scalar-result function",
+   "rows": 3,
+   "texts": "( const rd_kafka_group_result_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+  }
+ ],
+ "rd_kafka_admin_result_ret_topics": [
+  {
+   "features": "",
+   "position": "union-bitfield",
+   "refusal": null,
+   "rows": 12,
+   "texts": ""
+  },
+  {
+   "features": "",
+   "position": "cast-representation-callee-census",
+   "refusal": null,
+   "rows": 6,
+   "texts": ""
+  },
+  {
+   "features": "",
+   "position": "return",
+   "refusal": null,
+   "rows": 3,
+   "texts": "rko - > rko_u . admin_result . results . rl_elems"
+  },
+  {
+   "features": "aggregate-value,const-pointer,function-pointer,union",
+   "position": "residual-shape",
+   "refusal": null,
+   "rows": 3,
+   "texts": "rko - > rko_u . admin_result . results . rl_elems"
+  },
+  {
+   "features": "",
+   "position": "elaboration-return",
+   "refusal": "place: the typed access-path reader refused it (CG10)",
+   "rows": 3,
+   "texts": "( const rd_kafka_topic_result_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+  },
+  {
+   "features": "",
+   "position": "nested-call",
+   "refusal": "a value holding calls outside a scalar-result function",
+   "rows": 3,
+   "texts": "( const rd_kafka_topic_result_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+  }
+ ],
+ "rd_kafka_topic_partition_list_grow": [
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "unlisted form: no value form of this card",
+   "rows": 3,
+   "texts": "add_size = ( ( rktparlist - > size ) > ( 32 ) ? ( rktparlist - > size ) : ( 32 ) )"
+  },
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "unlisted form: no unique Clang node for the statement",
+   "rows": 3,
+   "texts": "add_size = ( ( rktparlist - > size ) )"
+  },
+  {
+   "features": "",
+   "position": "call-argument",
+   "refusal": null,
+   "rows": 3,
+   "texts": "sizeof ( * rktparlist - > elems ) * rktparlist - > size"
+  },
+  {
+   "features": "sizeof-operand",
+   "position": "residual-shape",
+   "refusal": null,
+   "rows": 3,
+   "texts": "sizeof ( * rktparlist - > elems ) * rktparlist - > size"
+  },
+  {
+   "features": "",
+   "position": "elaboration-statement",
+   "refusal": "place: the typed access-path reader refused it (CG10)",
+   "rows": 3,
+   "texts": "rktparlist - > elems = rd_realloc ( rktparlist - > elems , sizeof ( * rktparlist - > elems ) * rktpa"
+  }
+ ],
+ "rd_timeout_init": [
+  {
+   "features": "",
+   "position": "nested-call",
+   "refusal": "nested call `rd_clock` has no contract in force",
+   "rows": 18,
+   "texts": "rd_timeout_init0 ( rd_clock ( ) , timeout_ms )"
+  }
+ ]
+}
