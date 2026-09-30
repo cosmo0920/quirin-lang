@@ -5,6 +5,8 @@ Card CG09 of the [Clang gap card queue](../../plans/clang-gap-cards/README.md)
 
 - **Base:** `fe9c5b48`, main after CG14's integration. The brief named
   `60cb0895` or later.
+- **Merged main:** `e93dbe4e` (CG15), at the integrator's request. It was
+  re-measured there.
 - **Scope:** gap entries C01, C02 and C03, with evidence Q06, Q07 and Q12.
 - **Route:** **T**, the bounded typed-source importer
   `crates/qcore-c-gateway/src/typed_source.rs`. Route G is unchanged.
@@ -145,7 +147,69 @@ flipped controls are named in §5.
 
 ## 4. Measurements
 
-AFTER_MEASUREMENTS
+**Corpus arbiter.** Each run used
+`QCORE_TYPED_PATH_PARITY=OUT/parity.jsonl python3 scripts/run_pinned_audit.py
+OUT 66910c10 --inputs-root …/build/cycle19 --jobs 4`, with the release
+`quirin-audit` built at the named revision, and exited 0. The comparison
+script is [scripts/identity.py](scripts/identity.py). It compares every file
+by SHA-256. `audit.log` is compared with the output path normalised, and
+`parity.jsonl` as a record multiset with Clang node addresses normalised,
+since those are process addresses and differ between any two runs.
+
+| Pair | Verdict artifacts | Totals | Moves |
+|---|---|---|---|
+| base `fe9c5b48` → card `80c63f00` ([identity](artifacts/identity-base.json)) | `resource-diagnostics.json` `d1288b20…`, `…chunk-contracts.json` `cbbcfd9c…`, `…contracts.json` `d7e2a298…`, `…source-effects.json` `ef1b2205…`, `monkey-source.json` `57acfc58…`: **all byte-identical** | 616 / 10 / 4,208 | **none** |
+| main `e93dbe4e` → merged tip `5cdd58ae` ([identity](artifacts/identity-merged.json)) | `resource-diagnostics.json` `d42a99e5…`; the other four as above: **all byte-identical** | 623 / 10 / 4,201 (the integrator's figures) | **none** |
+
+In both pairs:
+
+- `audit.log` is identical once the output path is normalised;
+- `parity.jsonl` holds the same records (446,768 and 459,348);
+- `run.json` differs only in `binary_sha256`, `command`, `start` and `end`.
+
+No function moves, there is no correction, and there is no leak or violation
+to classify.
+
+- **Base.** The BEFORE on `fe9c5b48` has a digest of its own, `d1288b20…`,
+  not the brief's `3a25c4e9…`. That digest belongs to `c374de96`, and
+  CG07, W48-CALLEE-CLOSURE-R3 and CG14 landed since. Its totals, 616 / 10 /
+  4,208, are CG14's AFTER.
+- **The first AFTER attempt** (`562d7fff`) was stopped when the first gate
+  found the universal lifetime check. It is kept, unused, as
+  `private/cg09/arbiter/after-stopped-562d7fff`.
+
+**Why nothing moves (prediction 1 held).** Route T reaches the arbiter only
+through the Monkey callback and wrapper imports and `monkey-source.json`.
+
+- Every one of them imports at base: BEFORE's `audit.log` carries no
+  `source Unknown` row and no typed-source refusal.
+- `monkey-source.json` is byte-identical.
+- The callbacks keep the legacy admission, whose statement grammar and
+  projection are the base's. The only differences are refusal texts for
+  forms no pinned function holds.
+
+**System and tail-pause slices.** Not run: route T does not reach them.
+
+**CT and source profiles (prediction 5 held).**
+`python3 scripts/ct_stage_summary.py . --check` exits 0 before and after
+(mapped 50 / unmapped 0, the same stage depths;
+[before](artifacts/ct-stage-before.log)). No CT stage moves.
+
+The source-profile tests import through T: Monkey profiles, `observed_wait`,
+`callback_task_handoff`, cycle 18, the close compositions, teardown, counter
+and call-use. They all pass in the gate. Only the pin named in §5 changed, and
+it belongs to the wrapper projection that now admits the forms.
+
+**Prediction against outcome** ([PREDICTION.md](PREDICTION.md)):
+
+| Prediction | Outcome |
+|---|---|
+| 1. Corpus arbiter byte-identical, 0 moves | **Held**, on the base and on the merged main. |
+| 2. Slices not run | **Held.** |
+| 3. Wrapper admits the acyclic forms; 19 LEGACY; loops refused everywhere | **Held.** |
+| 4. C01–C03 controls flip to named refusals, C02/C03 admitted where listed | **Held**, plus one unpredicted pin flip (the wrapper's `do … while (0)` `break`/`continue`, §5). |
+| 5. No CT or source-profile test moves | **Held for CT.** For the profiles it held only after a correction: the universal lifetime check flipped a pinned legacy projection, and it now runs only under an admitting consumer. |
+| 6. One Lean audit module with the five properties | **Held.** 258 → 259 audits after the merge. |
 
 ## 5. Evidence
 
@@ -260,7 +324,47 @@ Clang-JSON-to-statement reading remains a review premise.
 
 ## 7. Gate
 
-GATE_TABLE
+See [gate.json](gate.json) and [gate/](gate/). The commands are those of
+[scripts/gate.sh](scripts/gate.sh). They ran on the merged tip `7c3e5779`
+(main `e93dbe4e` merged), with logs in `private/cg09/gate`.
+
+| Step | Exit | Count |
+|---|---:|---|
+| submodule update (`--init --recursive`) | 0 | |
+| `run_test_binaries.py` | 101 | 404 units, 417 summaries, 7,089 passed, 2 failed, 11 ignored (`private/test-binaries/20260930T223532Z-28649`) |
+| the two failures, alone | 0; 101, then 0, 0, 0 | see below |
+| `cargo fmt --all -- --check` | 1, then **0** at `5cdd58ae` (`02b`) | one post-merge line; rustfmt applied |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `check_lean_audits.py` | 0 | 259 audits (258 + `AuditTypedSourceControl.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then **0** after `build_matrix.py . --gate gate.json` (`09a` 0, `09b` 0) | 365 |
+| `ct_stage_summary.py . --check` | 0 | mapped 50 / unmapped 0, the same as BEFORE |
+| `build_docs_index.py` | 0 (`11`, `11b`) | |
+
+- **The two test failures** are process-timing rows outside route T.
+  - `subcommand_plugins::a_timeout_is_unknown_and_kills_the_process_group`
+    reported "the plugin's child survived the group kill". It passed alone.
+  - `cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
+    failed `elapsed < 500ms`. It failed once more alone at load 28, then passed
+    three times alone. CG15 recorded the same row.
+
+  Neither test reads typed-source output. Both ran under load averages of
+  30–50 beside this card's own arbiter runs (constraint 16: checked alone,
+  never weakened).
+- **The first Python run** failed only on the derived Lean audit count,
+  258 → 259. The matrix regeneration repairs it.
+- **The pre-merge gate**, at `80c63f00`, found the two real problems that
+  §1 and §5 describe:
+  - the universal lifetime check;
+  - the wrapper `do … while (0)` pin (the first run, at `562d7fff`).
+
+  It also found clippy's `large_enum_variant` on `SwitchItem`, fixed in
+  `3b2688f4`. Its remaining failures were the same timing rows. The
+  first run's `checkpoint_cli::interrupted_run_preserves_completed_units_for_resume`
+  passed alone.
+- **Provider gate.** Not due, because `providers/` is unchanged; the 129
+  provider tests are carried.
+- **Host.** `target/release` is deleted after the measurements are archived.
 
 ## 8. Follow-ups
 
