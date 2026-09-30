@@ -924,12 +924,20 @@ fn type_queries_do_not_hide_evaluated_calls_or_pointer_results() {
     for body in [
         "return sizeof(unsigned int) + (q_alloc() != 0);",
         "return sizeof(int[(q_free(p), 3)]);",
+    ] {
+        let run = run(&format!("unsigned long queries(int *p) {{ {body} }}"));
+        assert_eq!(run.status("queries"), AnalysisStatus::Unknown, "{body}");
+    }
+    // Flipped by card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): Clang's node
+    // shows these operands unevaluated (C11 6.5.3.4p2), so no call, read or
+    // pointer result is hidden: `q_alloc` is never called and `*p` never read.
+    for body in [
         "return sizeof(q_alloc());",
         "return sizeof(*p);",
         "return sizeof(void *);",
     ] {
         let run = run(&format!("unsigned long queries(int *p) {{ {body} }}"));
-        assert_eq!(run.status("queries"), AnalysisStatus::Unknown, "{body}");
+        assert_eq!(run.status("queries"), AnalysisStatus::Safe, "{body}");
     }
 }
 
@@ -958,10 +966,16 @@ fn expression_queries_do_not_erase_scalar_mutations() {
         }}"
         ));
         assert_ne!(run.status("subject"), AnalysisStatus::Safe, "{condition}");
+        // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the condition is now
+        // call-free to the elaborator, which forgets `n` (`ForgetScalar`)
+        // rather than keeping its old zero, so the leak on `if (n)` is
+        // reported; a refusal would be as good. Never the stale zero.
         assert!(
             run.unsupported("subject")
                 .iter()
                 .any(|text| text.contains("branch condition"))
+                || run.leaks("subject") > 0,
+            "{condition}"
         );
     }
 }

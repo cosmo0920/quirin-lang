@@ -228,16 +228,17 @@ fn a_borrowed_data_argument_operand_is_unevaluated() {
     );
 }
 
+/// Flipped by card CG08-CASTS-AND-TYPE-QUERIES (rule 11b; W44 residual (c)).
+/// `( n * sizeof` still begins like a declaration `n *…` to the lexical
+/// declarator reader, but Clang's node shows the operand unevaluated, so the
+/// gate reads the marker.
 #[test]
-fn a_leading_multiplication_the_declaration_reader_refuses_keeps_the_refusal() {
-    // `( n * sizeof` begins like a declaration `n *…` to the total-or-reject
-    // declarator reader, which then refuses the whole function's declarations;
-    // with no declaration facts no operand is admitted.
+fn a_leading_multiplication_the_declaration_reader_refuses_is_read_from_clang() {
     expect(
         "int w(unsigned long n) { struct item *p = x_alloc(n * sizeof(*p)); \
          if (!p) return -1; x_free(p); return 0; }",
-        "Unknown",
-        &["unknown_alias:p", ACCESS],
+        "Safe",
+        &[],
     );
 }
 
@@ -262,50 +263,58 @@ fn a_block_scope_variable_length_typedef_keeps_the_refusal() {
     );
 }
 
+// Flipped by card CG08-CASTS-AND-TYPE-QUERIES (rule 11b), the residuals of
+// `W44-SIZEOF-OPERAND-RESIDUALS`: Clang's node decides the operand's
+// evaluation class where the lexical reader could not. An array declarator,
+// a file-scope name and a member operand are unevaluated in an ordinary call
+// statement (the gate reads the marker); a statement with no ordinary call is
+// the elaborator's (the operand has no event). The variably modified operands
+// above keep their refusal.
+
 #[test]
-fn an_array_declarator_keeps_the_refusal() {
+fn an_array_declarator_is_read_from_clang() {
     expect(
         "int w(void) { struct item *a[4]; struct item *p = x_alloc(sizeof(*a)); \
          x_free(p); return 0; }",
-        "Unknown",
-        &["unknown_alias:p", ACCESS],
+        "Safe",
+        &[],
     );
 }
 
 #[test]
-fn a_file_scope_name_keeps_the_refusal() {
+fn a_file_scope_name_is_read_from_clang() {
     expect(
         "struct item *g; int w(void) { struct item *p = x_alloc(sizeof(*g)); \
          x_free(p); return 0; }",
-        "Unknown",
-        &["unknown_alias:p", ACCESS],
+        "Safe",
+        &[],
     );
 }
 
 #[test]
-fn a_member_operand_keeps_the_refusal() {
+fn a_member_operand_is_read_from_clang() {
     expect(
         "int w(struct item **v) { long *p = x_alloc(sizeof((*v)->b)); x_free(p); return 0; }",
-        "Unknown",
-        &["unknown_alias:p", ACCESS],
+        "Safe",
+        &[],
     );
 }
 
 #[test]
-fn a_statement_without_a_call_keeps_the_refusal_it_had() {
+fn a_statement_without_a_call_is_the_elaborators() {
     expect(
         "unsigned long w(void) { struct item *p = 0; unsigned long n; n = sizeof(*p); return n; }",
-        "Unknown",
-        &[ACCESS],
+        "Safe",
+        &[],
     );
 }
 
 #[test]
-fn a_statement_whose_first_call_is_a_type_operator_keeps_the_refusal_it_had() {
+fn a_statement_whose_first_call_is_a_type_operator_is_the_elaborators() {
     expect(
         "int w(void) { struct item *p; unsigned long n; \
          n = sizeof(*p) + sizeof(struct item) * 2; p = x_alloc(n); x_free(p); return 0; }",
-        "Unknown",
-        &[ACCESS],
+        "Safe",
+        &[],
     );
 }

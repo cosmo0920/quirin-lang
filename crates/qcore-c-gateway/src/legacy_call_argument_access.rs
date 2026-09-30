@@ -1314,6 +1314,33 @@ mod tests {
         assert!(answer(&facts, "sizeof ( g ) * i").is_err());
     }
 
+    /// Card CG08-CASTS-AND-TYPE-QUERIES (`SIZEOF-TYPE-FOLD-NO-LEAN`): the
+    /// mechanical binding of `QCore.CastRepresentation.foldVectors` to
+    /// `fold_type_sizes`, over the fixed reader of the test above.
+    #[test]
+    fn cg08_lean_fold_vectors_match_fold_type_sizes() {
+        let lean = include_str!("../../../proof/QCore/CastRepresentation.lean");
+        let body = lean
+            .split("def foldVectors : List (String × Bool) := [")
+            .nth(1)
+            .expect("foldVectors");
+        let body = &body[..body.find("\n]").expect("list end")];
+        let unit: &'static str =
+            "struct rec { int len ; } ; typedef struct rec rec_t ; struct rec * g ; int i ;";
+        let model = TypedAccessModel::read(&texts(unit));
+        let types = FunctionTypes::read(&model, &texts("int i"), &texts("{ }"), &BTreeSet::new());
+        let mut count = 0;
+        for line in body.lines().filter(|line| line.trim_start().starts_with('(')) {
+            let argument = line.split('"').nth(1).expect("an argument");
+            let expected = line.contains("true");
+            let folded = fold_type_sizes(&texts(argument), &model, &types);
+            assert_eq!(folded.contains(&"1"), expected, "{argument}: {folded:?}");
+            assert_eq!(!folded.contains(&"sizeof"), expected, "{argument}: {folded:?}");
+            count += 1;
+        }
+        assert_eq!(count, 8);
+    }
+
     #[test]
     fn a_type_size_is_a_constant_and_an_expression_size_is_not() {
         let facts = facts(PARAMETERS, BODY);

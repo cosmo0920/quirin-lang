@@ -729,16 +729,23 @@ fn e16_type_queries_are_read_only_in_fixed_shapes() {
         gs("void subject(struct S *s) { void *p = q_alloc(); cg_sink(sizeof(*s)); q_free(p); }")
             .safe()
     );
+    // Flipped by CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the initializer and
+    // the return read the unevaluated operand from Clang's node (no event),
+    // and the evaluated VLA operand's size expression `n` is read once.
     assert!(
         gs("unsigned long subject(struct S *s) { unsigned long z = sizeof(*s); return z; }")
-            .refused(IND)
+            .safe()
     );
-    assert!(gs("unsigned long subject(struct S *s) { return sizeof(*s); }").refused(RETURN));
-    // An evaluated VLA operand is refused.
+    assert!(gs("unsigned long subject(struct S *s) { return sizeof(*s); }").safe());
     let run = gs(
         "unsigned long subject(int n) { void *p = q_alloc(); unsigned long z = sizeof(int[n]); q_free(p); return z; }",
     );
-    assert!(run.refused(IND), "{run:?}");
+    assert!(run.safe(), "{run:?}");
+    // An evaluated operand with an effect stays refused.
+    let run = gs(
+        "unsigned long subject(int n) { void *p = q_alloc(); unsigned long z = sizeof(int[n++]); q_free(p); return z; }",
+    );
+    assert!(run.unknown(), "{run:?}");
 }
 
 #[test]

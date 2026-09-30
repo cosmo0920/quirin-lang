@@ -32,9 +32,9 @@
 //!   ordinary callee, a parenthesised `sizeof ( … )` whose every Clang node
 //!   on its line is a query with an unevaluated operand joins W44's operand
 //!   spans: the gate sees the marker, never a value (constraint 5a).
-//! * **The null test in a condition.** A call-free controlling expression
-//!   that is, through parentheses, a `PointerToBoolean` conversion of one
-//!   named pointer branches with the existing null refinement.
+//! * **Type queries in conditions.** A parenthesised type-query operand is
+//!   no call to the elaborator's call-free premise
+//!   ([`calls_outside_type_queries`]); the elaborator decides the operand.
 
 use serde_json::{Value, json};
 
@@ -367,26 +367,6 @@ impl Parser<'_> {
             }
         }
         spans
-    }
-
-    /// Card CG08 (rule 11b): the null refinement of a call-free condition that
-    /// is, through parentheses, one `PointerToBoolean` conversion of a named
-    /// automatic pointer.
-    pub(super) fn null_test_condition(node: &Value) -> Option<LegacyInstruction> {
-        let pointer = pointer_test(node)?;
-        let operand = pointer_operand(pointer);
-        if kind(operand) != "DeclRefExpr"
-            || !matches!(
-                operand["referencedDecl"]["kind"].as_str(),
-                Some("VarDecl" | "ParmVarDecl")
-            )
-        {
-            return None;
-        }
-        Some(LegacyInstruction::BranchOnNull {
-            source: operand["referencedDecl"]["name"].as_str()?.to_owned(),
-            true_is_null: false,
-        })
     }
 }
 

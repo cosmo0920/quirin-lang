@@ -146,8 +146,12 @@ fn the_unknown_call_result_keeps_both_branch_arms() {
     assert_eq!(summary.functions["subject"].status, AnalysisStatus::Unsafe);
 }
 
+/// Flipped by card CG08-CASTS-AND-TYPE-QUERIES (rule 11b). The branch-call
+/// route still never applies a call inside `sizeof` (C does not evaluate
+/// it); the elaborator now reads the query's operand as unevaluated, so the
+/// condition is call-free, no `q_probe` node exists and nothing is refused.
 #[test]
-fn a_call_inside_sizeof_stays_refused_because_c_does_not_evaluate_it() {
+fn a_call_inside_sizeof_is_never_applied_because_c_does_not_evaluate_it() {
     if !clang_available() {
         return;
     }
@@ -162,17 +166,23 @@ fn a_call_inside_sizeof_stays_refused_because_c_does_not_evaluate_it() {
         &probe_contracts(),
     )
     .unwrap();
-    let partial = match outcome {
-        UnrestrictedLegacyResult::Unknown { partial, .. } => partial.unwrap(),
-        other => panic!("expected Unknown, got {other:?}"),
+    let certificate = match outcome {
+        UnrestrictedLegacyResult::Safe(certificate) => certificate,
+        other => panic!("expected Safe, got {other:?}"),
     };
-    assert!(has_branch_refusal(
-        &partial.functions["subject"]
+    let function = &certificate.summary.functions["subject"];
+    assert!(!has_branch_refusal(
+        &function
             .diagnostics
             .iter()
             .map(|diagnostic| diagnostic.kind.clone())
             .collect::<Vec<_>>()
     ));
+    assert!(!function.cfg.nodes.iter().any(|node| matches!(
+        &node.instruction,
+        qcore_c_gateway::legacy_c::LegacyInstruction::ContractCall { function, .. }
+            if function == "q_probe"
+    )));
 }
 
 #[test]

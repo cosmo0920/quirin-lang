@@ -897,11 +897,8 @@ impl Parser<'_> {
                 successors: vec![Target::Node(at + 1)],
             })
             .collect::<Vec<_>>();
-        // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): a pointer's truth value
-        // is its null test, refined as the older routes refine `if (p)`.
-        let branch = Self::null_test_condition(node).unwrap_or(LegacyInstruction::NoOp);
         nodes.push(PlanNode {
-            instruction: branch,
+            instruction: LegacyInstruction::NoOp,
             successors: vec![Target::True, Target::False],
         });
         Ok(ConditionPlan { nodes, entry: 0 })
