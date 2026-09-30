@@ -1,0 +1,98 @@
+{
+ "exposed": [],
+ "not_exposed": [
+  {
+   "function": "flb_input_new",
+   "source": "33ad1885b59f",
+   "reported": [
+    [
+     "src/flb_input.c",
+     "Unknown"
+    ],
+    [
+     "src/flb_input.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 18101,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    },
+    {
+     "line": 18157,
+     "site": 1,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "flb_input_plugin_property_check",
+   "source": "33ad1885b59f",
+   "reported": [
+    [
+     "src/flb_input.c",
+     "Unknown"
+    ],
+    [
+     "src/flb_input.c",
+     "Unknown"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 18957,
+     "site": 0,
+     "status": 1,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift-refused",
+     "unresolved": true
+    }
+   ]
+  },
+  {
+   "function": "flb_tail_mult_destroy",
+   "source": "daa51b6ca93a",
+   "reported": [
+    [
+     "plugins/in_tail/tail_multiline.c",
+     "Safe"
+    ]
+   ],
+   "acquisitions": [
+    {
+     "line": 20065,
+     "site": 0,
+     "status": 2,
+     "live": false,
+     "referenced": false,
+     "held": false,
+     "step": "shift",
+     "unresolved": false
+    }
+   ]
+  }
+ ],
+ "unreported": [],
+ "exposed_by_status": {}
+}
+== exposed 0
+== not_exposed 3
+  flb_input_new [('src/flb_input.c', 'Unknown'), ('src/flb_input.c', 'Unknown')] [(18101, 1, False, False, True, 'shift-refused'), (18157, 1, False, False, True, 'shift-refused')]
+  flb_input_plugin_property_check [('src/flb_input.c', 'Unknown'), ('src/flb_input.c', 'Unknown')] [(18957, 1, False, False, True, 'shift-refused')]
+  flb_tail_mult_destroy [('plugins/in_tail/tail_multiline.c', 'Safe')] [(20065, 2, False, False, False, 'shift')]
+== unreported 0
+exposed by status {}

@@ -1,0 +1,21 @@
+plugins/in_storage_backlog/sb.c::sb_allocate_backlogs Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @plugins/in_storage_backlog/sb.c:160
+   - unknown_alias unresolved resource identity `backlog` @plugins/in_storage_backlog/sb.c:169
+plugins/in_storage_backlog/sb.c::sb_destroy_backlogs Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @plugins/in_storage_backlog/sb.c:188
+src/flb_output.c::flb_output_plugin_property_check Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @src/flb_output.c:1459
+src/flb_task.c::flb_task_create Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @src/flb_task.c:707
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @src/flb_task.c:806
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @src/flb_task.c:860
+   - unknown_alias unresolved resource identity `route` @src/flb_task.c:714
+   - unknown_alias unresolved resource identity `route` @src/flb_task.c:715
+   - unknown_alias unresolved resource identity `route` @src/flb_task.c:716
+   - unknown_alias unresolved resource identity `route` @src/flb_task.c:818
+   - unknown_alias unresolved resource identity `route` @src/flb_task.c:819
+   - unknown_alias unresolved resource identity `route` @src/flb_task.c:820
+   - unknown_alias unresolved resource identity `route` @src/flb_task.c:866
+   - unknown_alias unresolved resource identity `route` @src/flb_task.c:867
+   - unknown_alias unresolved resource identity `route` @src/flb_task.c:868
+4 functions changed

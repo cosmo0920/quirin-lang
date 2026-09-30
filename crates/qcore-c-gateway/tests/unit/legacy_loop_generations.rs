@@ -241,3 +241,16 @@ fn a_refused_reacquisition_leaves_its_generation_unresolved() {
     assert_eq!(state.resources.get(&SITE), Some(&LIVE));
     assert!(state.unresolved_effect_sites.contains(&SITE));
 }
+
+/// The withheld-obligation census reads exactly the possibly-live identities
+/// with an unresolved effect that the caller does not receive.
+#[test]
+fn the_withheld_census_reads_live_unresolved_unexempt_identities() {
+    let mut state = AbstractState::default();
+    state.resources.insert(1, LIVE);
+    state.resources.insert(2, LIVE);
+    state.resources.insert(3, RELEASED);
+    state.resources.insert(4, LIVE);
+    state.unresolved_effect_sites.extend([1, 3, 4]);
+    assert_eq!(withheld(&state, &BTreeSet::from([4])), BTreeSet::from([1]));
+}

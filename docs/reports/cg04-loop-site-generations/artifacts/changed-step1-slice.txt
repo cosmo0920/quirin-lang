@@ -1,0 +1,6 @@
+src/flb_input.c::flb_input_new Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @src/flb_input.c:394
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @src/flb_input.c:467
+src/flb_input.c::flb_input_plugin_property_check Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @src/flb_input.c:1471
+2 functions changed

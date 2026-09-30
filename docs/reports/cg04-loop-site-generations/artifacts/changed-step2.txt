@@ -1,0 +1,11 @@
+rdgz.c::rd_gz_decompress Unknown -> Unknown
+   + unsupported loop re-acquisition: an earlier generation that may be live is still held @rdgz.c:100
+   + unsupported nullable resource `decompressed` used by a non-null contract @rdgz.c:114
+   - unknown_alias unresolved resource identity `decompressed` @rdgz.c:108
+   - unknown_alias unresolved resource identity `decompressed` @rdgz.c:117
+   - unknown_alias unresolved resource identity `decompressed` @rdgz.c:118
+   - unsupported unmodeled call, aggregate or indirect access in branch condition @rdgz.c:100
+rdkafka_lz4.c::rd_kafka_lz4_decompress Unknown -> Unknown
+   + unknown_alias unresolved resource identity `out` @rdkafka_lz4.c:280
+   - unsupported unmodeled call, aggregate or indirect access in branch condition @rdkafka_lz4.c:280
+2 functions changed

@@ -1,0 +1,24 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4238,
+   "Safe": 586,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4238,
+   "Safe": 586,
+   "Unsafe": 10
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 30,
+ "leaf_delta": {
+  "unknown_alias: unresolved resource identity": -3,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": -2,
+  "unsupported: nullable resource `decompressed` used by a non-null contract": 1,
+  "leak: live obligation acquired at snappy.c:1705": 4,
+  "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 38
+ }
+}

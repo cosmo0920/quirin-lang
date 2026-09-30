@@ -1,0 +1,297 @@
+[
+ {
+  "unit": "cmt_encode_prometheus.c",
+  "function": "initialize_temporary_metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 6049, \"origin\": \"cmt_encode_prometheus.c:271\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "cmt_encode_splunk_hec.c",
+  "function": "initialize_temporary_metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 5631, \"origin\": \"cmt_encode_splunk_hec.c:86\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "cmt_map.c",
+  "function": "cmt_map_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 5585, \"origin\": \"cmt_map.c:146\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "cmt_map.c",
+  "function": "map_metric_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 5713, \"origin\": \"cmt_map.c:297\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "ctr_encode_opentelemetry.c",
+  "function": "otel_span_set_links",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 9083, \"origin\": \"ctr_encode_opentelemetry.c:785\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "function": "mk_rconf_free",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 2197, \"origin\": \"mk_core/mk_rconf.c:675\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 2203, \"origin\": \"mk_core/mk_rconf.c:683\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 2210, \"origin\": \"mk_core/mk_rconf.c:692\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "function": "mk_rconf_free_entries",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 2227, \"origin\": \"mk_core/mk_rconf.c:716\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_core/mk_string.c",
+  "function": "mk_string_split_free",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 2236, \"origin\": \"mk_core/mk_string.c:399\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_core/mk_string.c",
+  "function": "mk_string_split_line",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 2214, \"origin\": \"mk_core/mk_string.c:370\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 2218, \"origin\": \"mk_core/mk_string.c:374\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 2222, \"origin\": \"mk_core/mk_string.c:381\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_server/mk_config.c",
+  "function": "mk_config_listeners_free",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 5972, \"origin\": \"mk_server/mk_config.c:62\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "function": "mk_fifo_worker_destroy_all",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 5275, \"origin\": \"mk_server/mk_fifo.c:267\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_server/mk_http.c",
+  "function": "mk_http_request_free_list",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 7121, \"origin\": \"mk_server/mk_http.c:1535\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_server/mk_server.c",
+  "function": "mk_server_listen_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 6290, \"origin\": \"mk_server/mk_server.c:205\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 6521, \"origin\": \"mk_server/mk_vhost.c:785\"}"
+  ],
+  "removed": [
+   "{\"category\": \"unknown_alias\", \"description\": \"unresolved resource identity `ep`\", \"line\": 6522, \"origin\": \"mk_server/mk_vhost.c:786\"}"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_fdt_worker_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 5984, \"origin\": \"mk_server/mk_vhost.c:95\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_handler_free",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 6486, \"origin\": \"mk_server/mk_vhost.c:742\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_read",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 6218, \"origin\": \"mk_server/mk_vhost.c:407\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 6273, \"origin\": \"mk_server/mk_vhost.c:481\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 6297, \"origin\": \"mk_server/mk_vhost.c:511\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 6323, \"origin\": \"mk_server/mk_vhost.c:539\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "rd_kafka_member_subscriptions_map",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 20361, \"origin\": \"rdkafka_assignor.c:298\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_anyconf_dump",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 25292, \"origin\": \"rdkafka_conf.c:3469\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 25298, \"origin\": \"rdkafka_conf.c:3478\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_share_acknowledge_reply_handle",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 21479, \"origin\": \"rdkafka_fetcher.c:2164\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 21279, \"origin\": \"rdkafka_mock_cgrp.c:910\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_EndTxn",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 23673, \"origin\": \"rdkafka_mock_handlers.c:2525\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "rdkafka_mock_sharegrp.c",
+  "function": "rd_kafka_mock_sharegroup_get_members_for_topic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 22098, \"origin\": \"rdkafka_mock_sharegrp.c:443\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_OffsetFetch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 21196, \"origin\": \"rdkafka_request.c:1335\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "rdkafka_sasl_scram.c",
+  "function": "rd_kafka_sasl_safe_string",
+  "before": "Unsafe",
+  "after": "Unsafe",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 20282, \"origin\": \"rdkafka_sasl_scram.c:243\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "rdstring.c",
+  "function": "rd_string_render",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 2988, \"origin\": \"rdstring.c:93\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 3007, \"origin\": \"rdstring.c:125\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "rdunittest.c",
+  "function": "ut_tq_test",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 20342, \"origin\": \"rdunittest.c:179\"}"
+  ],
+  "removed": []
+ },
+ {
+  "unit": "snappy.c",
+  "function": "rd_kafka_snappy_java_uncompress",
+  "before": "Unsafe",
+  "after": "Unsafe",
+  "added": [
+   "{\"category\": \"leak\", \"description\": \"live obligation acquired at snappy.c:1705\", \"line\": 20490, \"origin\": \"snappy.c:1680\"}",
+   "{\"category\": \"leak\", \"description\": \"live obligation acquired at snappy.c:1705\", \"line\": 20499, \"origin\": \"snappy.c:1694\"}",
+   "{\"category\": \"leak\", \"description\": \"live obligation acquired at snappy.c:1705\", \"line\": 20509, \"origin\": \"snappy.c:1712\"}",
+   "{\"category\": \"leak\", \"description\": \"live obligation acquired at snappy.c:1705\", \"line\": 20515, \"origin\": \"snappy.c:1721\"}",
+   "{\"category\": \"unsupported\", \"description\": \"loop re-acquisition: an earlier generation that may be live is still held\", \"line\": 20506, \"origin\": \"snappy.c:1705\"}"
+  ],
+  "removed": []
+ }
+]
