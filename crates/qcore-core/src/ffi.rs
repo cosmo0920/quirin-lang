@@ -406,6 +406,10 @@ impl FfiCallee {
 pub enum FfiValue {
     /// An integer literal, `-` included.
     Literal(i128),
+    /// A float literal, `-` included (card `W48-QR-FLOATING-POINT`): read once
+    /// at the float type of the position it stands at, never at an integer
+    /// one.
+    Float(crate::scalar_floats::FloatLiteral),
     /// `true` / `false`.
     Bool(bool),
     /// A name this entry bound.
@@ -670,6 +674,7 @@ fn literal_at(value: &FfiValue, ty: ScalarType, target: &RecordedTarget) -> Opti
         (FfiValue::Literal(number), ty) if ty.is_integer() => {
             ty.contains(*number, Some(target)).then_some(*number)
         }
+        (FfiValue::Float(literal), ty) if ty.is_float() => literal.at(ty).ok(),
         _ => None,
     }
 }
@@ -718,6 +723,14 @@ fn scalar_operand(
 fn show(value: &FfiValue) -> String {
     match value {
         FfiValue::Literal(number) => format!("`{number}`"),
+        // The literal as its `f64` reading renders (card `W48-QR-FLOATING-POINT`).
+        FfiValue::Float(literal) => match literal.f64 {
+            Ok(bits) => format!(
+                "the float literal `{}`",
+                st::render(false, ScalarType::F64, bits, None).unwrap_or_default()
+            ),
+            Err(error) => format!("a float literal that {error}"),
+        },
         FfiValue::Bool(flag) => format!("`{flag}`"),
         FfiValue::Name(name) => format!("`{name}`"),
     }

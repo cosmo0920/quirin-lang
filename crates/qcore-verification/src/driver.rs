@@ -1133,6 +1133,9 @@ impl CompiledModule {
             CheckedSourceModule::Composed(module) => {
                 qcore_core::extern_c_emit::uses_floats(&module.lowered.program.externs)
             }
+            CheckedSourceModule::Ffi(module) => {
+                qcore_core::ffi_c_emit::uses_floats(&module.lowered.program)
+            }
             _ => false,
         };
         uses.then_some(qcore_core::scalar_floats::ASSUMPTION)

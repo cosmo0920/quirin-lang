@@ -243,13 +243,15 @@ fn imported_struct(
         if !symbol(&tokens, cursor + 1, Symbol::Colon) {
             return Err(shape("a field is `NAME: TYPE`"));
         }
-        let Some(ty) = word(&tokens, cursor + 2).and_then(ScalarType::parse) else {
+        // Card `W48-QR-FLOATING-POINT`: `f32`/`f64` fields, a C `float`/`double`.
+        let Some(ty) = word(&tokens, cursor + 2).and_then(ScalarType::parse_admitting_floats)
+        else {
             return Err(diagnostic(
                 "Q051",
                 SemanticPass::StandardBuffer,
                 span,
                 format!(
-                    "field `{field}` of `{name}` is not a §G02t type (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize); a C member of any other type stays unlisted, as opaque bytes"
+                    "field `{field}` of `{name}` is not a §G02t type (bool, i8, i16, i32, i64, isize, u8, u16, u32, u64, usize, f32, f64); a C member of any other type stays unlisted, as opaque bytes"
                 ),
             ));
         };
@@ -310,7 +312,7 @@ pub fn ffi_type(source: &str, records: &[String]) -> Option<FfiType> {
             let name = word(0)?;
             if name == "unit" {
                 Some(FfiType::Unit)
-            } else if let Some(scalar) = ScalarType::parse(name) {
+            } else if let Some(scalar) = ScalarType::parse_admitting_floats(name) {
                 Some(FfiType::Scalar(scalar))
             } else {
                 records
@@ -412,12 +414,21 @@ fn value(tokens: &[&Token], cursor: usize) -> Option<(FfiValue, usize)> {
                 Some(TokenKind::Integer(digits)) => {
                     Some((FfiValue::Literal(-digits.parse::<i128>().ok()?), cursor + 2))
                 }
+                // Card `W48-QR-FLOATING-POINT`: `-FLOAT`.
+                Some(TokenKind::Float(text)) => Some((
+                    FfiValue::Float(qcore_core::scalar_floats::FloatLiteral::read(text, true)?),
+                    cursor + 2,
+                )),
                 _ => None,
             }
         }
         Some(TokenKind::Integer(digits)) => {
             Some((FfiValue::Literal(digits.parse().ok()?), cursor + 1))
         }
+        Some(TokenKind::Float(text)) => Some((
+            FfiValue::Float(qcore_core::scalar_floats::FloatLiteral::read(text, false)?),
+            cursor + 1,
+        )),
         Some(TokenKind::Word(word)) if word == "true" => Some((FfiValue::Bool(true), cursor + 1)),
         Some(TokenKind::Word(word)) if word == "false" => Some((FfiValue::Bool(false), cursor + 1)),
         Some(TokenKind::Word(word)) => Some((FfiValue::Name(word.clone()), cursor + 1)),

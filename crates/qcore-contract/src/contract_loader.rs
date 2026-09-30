@@ -1732,7 +1732,9 @@ fn ffi_abi_type(source: &str, result: bool) -> Result<qcore_core::ffi::CAbiType,
     let kinds: Vec<&TokenKind> = tokens.iter().map(|token| &token.kind).collect();
     match kinds.as_slice() {
         [TokenKind::Word(word)] if result && word == "unit" => Ok(CAbiType::Unit),
-        [TokenKind::Word(word)] => ScalarType::parse(word)
+        // Card `W48-QR-FLOATING-POINT`: `f32`/`f64` are in the `#c_ffi` type
+        // table too, a C `float`/`double`.
+        [TokenKind::Word(word)] => ScalarType::parse_admitting_floats(word)
             .map(CAbiType::Scalar)
             .ok_or_else(refuse),
         [TokenKind::Word(_), TokenKind::StringLiteral(_)] => c_struct(0).map(CAbiType::Struct),

@@ -353,7 +353,7 @@ fn a_unit_parameter_refuses() {
 fn a_spelling_outside_the_abi_vocabulary_refuses() {
     // The contract is waived; the ABI is not. A declaration this repository
     // cannot project into C is not a linking story, it is a guess.
-    for spelling in ["f64", "Buffer", "own<Buffer>"] {
+    for spelling in ["fnptr", "Buffer", "own<Buffer>"] {
         let source = ROUND_TRIP.replace(
             "unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;",
             &format!("unsafe extern fn k_unchecked_add(a: {spelling}, b: i32) -> i32;"),
@@ -363,6 +363,17 @@ fn a_spelling_outside_the_abi_vocabulary_refuses() {
             ["Q033"],
             "`{spelling}` is not a projected C ABI type"
         );
+    }
+    // Card `W48-QR-FLOATING-POINT` added `f32`/`f64` to the extern route's ABI
+    // table (it listed `f64` here before): the declaration now projects, and
+    // the call's integer literal at the float parameter is refused as the
+    // value it is — an integer is never implicitly a float.
+    for spelling in ["f32", "f64"] {
+        let source = ROUND_TRIP.replace(
+            "unsafe extern fn k_unchecked_add(a: i32, b: i32) -> i32;",
+            &format!("unsafe extern fn k_unchecked_add(a: {spelling}, b: i32) -> i32;"),
+        );
+        assert_eq!(codes(&source, None), ["Q024"], "`{spelling}` projects");
     }
 }
 

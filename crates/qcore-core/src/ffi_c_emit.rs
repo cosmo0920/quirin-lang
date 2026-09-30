@@ -66,8 +66,67 @@ fn literal(value: &FfiValue, ty: ScalarType) -> Option<String> {
     match value {
         FfiValue::Literal(number) => Some(st::c_literal(ty, *number)),
         FfiValue::Bool(flag) => Some(st::c_literal(ty, i128::from(*flag))),
+        FfiValue::Float(literal) => Some(st::c_literal(ty, literal.at(ty).ok()?)),
         FfiValue::Name(_) => None,
     }
+}
+
+/// The C test that a result disagrees with its declared outcome: `!=` for an
+/// integer or `bool`, and — card `W48-QR-FLOATING-POINT` — a bitwise
+/// comparison for a float, so `-0.0` is not `0.0` and no NaN is ever equal to
+/// a literal (no literal is a NaN).
+fn differs(expression: &str, ty: ScalarType, expected: &str) -> String {
+    if ty.is_float() {
+        format!(
+            "memcmp(&{expression}, &({}){{{expected}}}, sizeof({})) != 0",
+            st::c_type(ty),
+            st::c_type(ty)
+        )
+    } else {
+        format!("{expression} != {expected}")
+    }
+}
+
+/// Whether a program holds a float value anywhere (card
+/// `W48-QR-FLOATING-POINT`): a listed field, a callee's or helper's position,
+/// or a float literal.
+#[must_use]
+pub fn uses_floats(program: &FfiProgram) -> bool {
+    let float_type = |ty: &FfiType| matches!(ty, FfiType::Scalar(scalar) if scalar.is_float());
+    let float_value = |value: &FfiValue| matches!(value, FfiValue::Float(_));
+    let statements_use = |statements: &[FfiStatement]| {
+        statements.iter().any(|statement| match statement {
+            FfiStatement::Construct { fields, .. } => fields.iter().any(|(_, v)| float_value(v)),
+            FfiStatement::Call {
+                arguments, outcome, ..
+            } => {
+                arguments.iter().any(float_value)
+                    || match outcome {
+                        Some(FfiOutcome::Scalar(value)) => float_value(value),
+                        Some(FfiOutcome::Record { fields, .. }) => {
+                            fields.iter().any(|(_, v)| float_value(v))
+                        }
+                        None => false,
+                    }
+            }
+            FfiStatement::Write { value, .. } => float_value(value),
+            FfiStatement::Return(Some(value)) => float_value(value),
+            _ => false,
+        })
+    };
+    program
+        .structs
+        .iter()
+        .any(|record| record.listed.iter().any(|field| field.ty.is_float()))
+        || program.callees.values().any(|callee| {
+            float_type(&callee.result) || callee.parameters.iter().any(|(_, ty)| float_type(ty))
+        })
+        || program.functions.iter().any(|function| {
+            float_type(&function.result)
+                || function.parameters.iter().any(|(_, ty)| float_type(ty))
+                || statements_use(&function.statements)
+        })
+        || statements_use(&program.statements)
 }
 
 fn operand(
@@ -134,6 +193,12 @@ pub fn emit_ffi_c11(
     if !program.functions.is_empty() {
         includes.push_str("#include <stdlib.h>\n");
     }
+    // Card `W48-QR-FLOATING-POINT`: a file holding a float value asserts the
+    // IEEE environment when compiled; every file without one keeps its bytes.
+    let floats = uses_floats(program);
+    if floats {
+        includes.push_str("#include <float.h>\n");
+    }
     let mut headers = BTreeSet::new();
     for record in &program.structs {
         if record.header.contains(['"', '\\', '\n', '\r']) {
@@ -168,6 +233,9 @@ pub fn emit_ffi_c11(
         });
     if uses_target_width {
         assertions.push_str(&st::c_target_assertions(&program.target));
+    }
+    if floats {
+        assertions.push_str(&crate::scalar_floats::c_environment());
     }
     for record in &program.structs {
         assertions.push_str(&layout_assertions(record));
@@ -211,6 +279,7 @@ pub fn emit_ffi_c11(
     ));
 
     let mut helpers_text = String::new();
+    let mut renderers = BTreeSet::new();
     if !program.functions.is_empty() {
         let mut prototypes = String::from("\n");
         for function in &program.functions {
@@ -244,6 +313,7 @@ pub fn emit_ffi_c11(
                 Some(function),
                 &mut body,
             )?;
+            renderers.extend(env.renderers);
             let _ = write!(
                 helpers_text,
                 "\n{}\n{{\n{body}}}\n",
@@ -260,6 +330,16 @@ pub fn emit_ffi_c11(
     let mut body = String::new();
     let mut env = Emission::default();
     emit_statements(program, &program.statements, &mut env, None, &mut body)?;
+    renderers.extend(env.renderers);
+    // Card `W48-QR-FLOATING-POINT`: the renderers the lines use, before the
+    // helpers and the entry that call them.
+    if !renderers.is_empty() {
+        fragments.push(Fragment::new(
+            Section::Prelude,
+            "scalar-floats.renderers",
+            format!("\n{}", crate::scalar_floats::c_renderers(&renderers)),
+        ));
+    }
     Ok(c_program::assemble(
         &fragments,
         &c_program::Entry::source_route(body),
@@ -309,6 +389,8 @@ struct Emission {
     scalars: BTreeSet<String>,
     scalar_types: std::collections::BTreeMap<String, ScalarType>,
     records: std::collections::BTreeMap<String, String>,
+    /// The float renderings used, `(hex, type)` (card `W48-QR-FLOATING-POINT`).
+    renderers: BTreeSet<(bool, ScalarType)>,
 }
 
 /// Emit `statements` of the entry (`function` is `None`) or of a helper.
@@ -524,7 +606,8 @@ fn emit_statements(
                                 .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
                             let _ = writeln!(
                                 body,
-                                "    if ({variable} != {expected}) {{\n        {stop}\n    }}"
+                                "    if ({}) {{\n        {stop}\n    }}",
+                                differs(&variable, *ty, &expected)
                             );
                         }
                         env.scalars.insert(name.clone());
@@ -549,7 +632,11 @@ fn emit_statements(
                                     .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
                                 let expected = literal(value, field.ty)
                                     .ok_or(FfiEmissionRefusal::CertificateDisagrees)?;
-                                tests.push(format!("{variable}.{} != {expected}", field.name));
+                                tests.push(differs(
+                                    &format!("{variable}.{}", field.name),
+                                    field.ty,
+                                    &expected,
+                                ));
                             }
                             let _ = writeln!(
                                 body,
@@ -592,6 +679,9 @@ fn emit_statements(
                         }
                     };
                     let (stream, prefix) = crate::std_io::line_framing(level);
+                    if ty.is_float() {
+                        env.renderers.insert((*rendering == Rendering::Hex, ty));
+                    }
                     let (conversion, argument) = st::c_rendering(
                         *rendering == Rendering::Hex,
                         ty,

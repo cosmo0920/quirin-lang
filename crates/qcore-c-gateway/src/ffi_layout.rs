@@ -272,7 +272,9 @@ pub fn read_struct_layout(
     let mut probe =
         String::from("#include <stdbool.h>\n#include <stddef.h>\n#include <stdint.h>\n");
     probe.push_str(&format!("#include \"{path_text}\"\n"));
-    for ty in st::ALL {
+    // Card `W48-QR-FLOATING-POINT`: the float types are probed too, so a
+    // `float`/`double` member can be listed as `f32`/`f64`.
+    for ty in st::ALL.into_iter().chain(st::FLOATS) {
         probe.push_str(&format!(
             "extern {} {};\n",
             st::c_type(ty),
@@ -308,7 +310,7 @@ pub fn read_struct_layout(
     }
     // The canonical type of every §G02t spelling under this compiler.
     let mut spellings = Vec::new();
-    for ty in st::ALL {
+    for ty in st::ALL.into_iter().chain(st::FLOATS) {
         let name = probe_name(tag, ty);
         let node = nodes
             .iter()
