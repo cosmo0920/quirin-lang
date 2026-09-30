@@ -26,6 +26,7 @@ pub mod diagnostic_log_c_emit;
 pub mod disjoint_footprint;
 pub mod error_region;
 pub mod executable_model;
+pub mod footprint_mutex;
 pub mod extern_c_emit;
 pub mod extern_call;
 pub mod ffi;
