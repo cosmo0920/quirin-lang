@@ -1797,6 +1797,25 @@ fn compile_elaborated_source(
     if qcore_frontend::source_resource_calls::has_resource_calls(parsed) {
         return compile_resource_call_source(parsed, typed, mode, options, ranges);
     }
+    // Card `W48-QR-USABLE-RECORDS`, and **the whole of the route-selection
+    // change it makes**: a module that declares a record, holds no buffer and
+    // declares a function besides its entry reaches `source.scalar-calls.v1`,
+    // which since that card carries records of scalars across calls by
+    // value. Every such module was refused before — the buffer route models
+    // its entry only (`Q051`) — so the door opens only for modules that were
+    // refused, and a module with one function keeps the buffer route byte for
+    // byte.
+    if qcore_frontend::source_record::has_source_record(parsed)
+        && !qcore_frontend::source_std_buffer::has_source_buffer(parsed)
+        && parsed
+            .declarations
+            .iter()
+            .filter(|declaration| declaration.value.kind == DeclarationKind::Function)
+            .count()
+            > 1
+    {
+        return compile_scalar_calls(parsed, typed, mode, options, ranges, target);
+    }
     if qcore_frontend::source_std_buffer::has_source_buffer(parsed)
         || qcore_frontend::source_record::has_source_record(parsed)
     {
@@ -7707,6 +7726,41 @@ fn compile_ffi_source(
         )]);
     }
     let entry = select_entry(typed, options).map_err(|error| vec![error])?;
+    // Card `W48-QR-USABLE-RECORDS`: an FFI bundle is checked as a whole under
+    // the unsafe-FFI assumption, and the assumption is a mark a **file** takes
+    // with `#import std.ffi.unsafe;` (user decision 1). A function in a file
+    // of the bundle that does not import it would be checked under a mark
+    // its file never took — an imported record reaching a file that is not
+    // an FFI file — so it is refused, at the import gate's own `Q032`.
+    let marked_files: BTreeSet<usize> = parsed
+        .imports()
+        .iter()
+        .filter(|import| import.value == qcore_core::module_imports::FFI_MODULE)
+        .map(|import| file_index(import.span, ranges))
+        .collect();
+    let unmarked: Vec<FileDiagnostic> = parsed
+        .declarations
+        .iter()
+        .filter(|declaration| declaration.value.kind == DeclarationKind::Function)
+        .filter(|declaration| !marked_files.contains(&file_index(declaration.span, ranges)))
+        .map(|declaration| {
+            map_raw_diagnostic(
+                "Q032",
+                SemanticPass::UncheckedLinkage,
+                declaration.span,
+                format!(
+                    "`{}` is checked with an FFI file's imported C records under the unsafe-FFI assumption, and its own file does not import `{}`; every file whose code an FFI module checks takes the mark itself with `#import {};`",
+                    declaration.value.name,
+                    qcore_core::module_imports::FFI_MODULE,
+                    qcore_core::module_imports::FFI_MODULE
+                ),
+                ranges,
+            )
+        })
+        .collect();
+    if !unmarked.is_empty() {
+        return Err(unmarked);
+    }
     let imports = source_ffi::imported_structs(parsed).map_err(|errors| {
         errors
             .into_iter()
@@ -8232,7 +8286,9 @@ fn compile_scalar_calls(
         .filter_map(|(name, f)| match f.result {
             Type::I32 => Some((name, ExecutableResultType::I32)),
             Type::Unit => Some((name, ExecutableResultType::Unit)),
-            Type::Scalar(_) => None,
+            // Card `W48-QR-USABLE-RECORDS`: a record result is checked, and is
+            // not a result a caller outside the module runs.
+            Type::Scalar(_) | Type::Record(_) => None,
         })
         .collect();
     let (entry, c_source, reference_observation, line_observation) =
@@ -8248,7 +8304,8 @@ fn compile_scalar_calls(
                 return Err(report(scalar_calls::Refusal {
                     function: id,
                     message: format!(
-                        "an executable entry returns i32 or unit; `{name}` returns {result}"
+                        "an executable entry returns i32 or unit; `{name}` returns {}",
+                        checked.program().type_name(result)
                     ),
                 }));
             }
