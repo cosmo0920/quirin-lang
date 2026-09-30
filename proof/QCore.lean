@@ -291,5 +291,6 @@ import QCore.PointerStore
 import QCore.UnionBitfieldPlace
 import QCore.ConditionAcquisition
 import QCore.NestedCallEffects
+import QCore.FfiStructImport
 
 /-! The executable formal core of QCore-C revision 0.1. -/

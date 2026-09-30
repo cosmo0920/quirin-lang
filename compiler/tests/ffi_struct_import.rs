@@ -613,6 +613,29 @@ fn a_marked_declaration_outside_the_ffi_table_does_not_load() {
     assert_eq!(marked.keys().cloned().collect::<Vec<_>>(), ["qr_header_make", "qr_header_total"]);
 }
 
+/// The family page prints the transcript the program produces.
+#[test]
+fn the_ffi_page_publishes_the_transcript_its_program_prints() {
+    let page = std::fs::read_to_string(examples().join("README.md")).unwrap();
+    let block = page
+        .split("```text\n")
+        .nth(1)
+        .and_then(|rest| rest.split("```").next())
+        .expect("the page prints a transcript");
+    let module = example();
+    let qcore_compiler::CheckedSourceModule::Ffi(checked) = &module.checked else {
+        panic!("not the FFI route");
+    };
+    assert_eq!(
+        block,
+        qcore_core::ffi::reference_stream(&checked.certificate, Stream::Out)
+    );
+    assert!(page.contains(&format!(
+        "logs `{}` on standard error",
+        qcore_core::ffi::reference_stream(&checked.certificate, Stream::Err).trim_end()
+    )));
+}
+
 /// Card 4's closure capture list `|copy x, …|` keeps its lexical space: the
 /// marker's `[|`/`|]` are two-byte tokens that only an adjacent `[` or `]`
 /// forms, and a capture list lexes as single bars.
