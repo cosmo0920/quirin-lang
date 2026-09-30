@@ -200,6 +200,10 @@ pub(crate) mod sub_object_store;
 // Card CG11-POINTER-VALUED-STORES (rule 10v): the flow of a pointer store.
 #[path = "legacy_pointer_store.rs"]
 mod pointer_store_flow;
+// Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): the per-path bound-untracked
+// root premise, read off one state, and its census.
+#[path = "legacy_bound_untracked.rs"]
+mod bound_untracked_route;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
@@ -3367,6 +3371,16 @@ fn typed_access_facts(
         variadic_tails,
         &model,
         &types,
+    );
+    // Card CG10-BOUND-UNTRACKED-ROOTS: why the closure binds each name it
+    // binds (parity only).
+    bound_untracked_route::record_closure(
+        function,
+        &texts[body_start + 1..body_end],
+        protected_formals,
+        contracts,
+        variadic_tails,
+        &bases,
     );
     // O00 blocker B08: the local aggregate pointers a store may target, read
     // from the same token stream for the same reason.
@@ -11674,6 +11688,9 @@ pub(crate) fn analyze_cfg_with_entry(
     // Card CG04-LOOP-SITE-GENERATIONS: the re-acquisitions an earlier
     // generation reaches, from the settled states (parity only).
     loop_generations_route::record_exposure(&cfg, &incoming);
+    // Card CG10-BOUND-UNTRACKED-ROOTS: every chain root the never-bound
+    // premise does not cover, from the settled states (parity only).
+    bound_untracked_route::record_census(&cfg, &incoming);
     // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the kind-mismatched release and the
     // use-after-close candidates, from the same settled states.
     report_kind_violations(

@@ -115,6 +115,12 @@ pub struct AccessChain {
     pub dereferenced_root: bool,
     /// `UntrackedBases::never_bound` for the root, read by the classifier.
     pub root_never_bound: bool,
+    /// Card **CG10-BOUND-UNTRACKED-ROOTS** (rule 11d): the root is eligible
+    /// for the per-path bound-untracked premise
+    /// ([`crate::bound_untracked::eligible_root`]); the flow decides it
+    /// ([`ChainView::bound_untracked`]). False on every route but the typed
+    /// place reader's, and never read where `root_never_bound` holds.
+    pub root_bound_untracked: bool,
     /// The members selected and then dereferenced, in order: every selection
     /// but the last.
     pub links: Vec<String>,
@@ -372,6 +378,7 @@ fn scalar_chains(
                 index = chain.end;
                 chains.push(AccessChain {
                     root_never_bound: bases.never_bound(&chain.root),
+                    root_bound_untracked: false,
                     root: chain.root,
                     dereferenced_root: chain.dereferenced_root,
                     links: chain.links,
@@ -464,6 +471,14 @@ pub(crate) trait ChainView {
     fn exactly_live(&self, site: usize) -> bool;
     /// The field link an admitted store recorded under `owner` for `field`.
     fn field_link(&self, owner: usize, field: &str) -> Option<&BTreeSet<usize>>;
+    /// Card **CG10-BOUND-UNTRACKED-ROOTS** (rule 11d): whether the eligible
+    /// root `root`, whose binding is absent or known target-free and non-null,
+    /// is an untracked borrowed object on every path reaching this state
+    /// ([`crate::bound_untracked::decide`]). The default reads nothing and
+    /// answers no.
+    fn bound_untracked(&self, _root: &str) -> bool {
+        false
+    }
 }
 
 /// The reading of the object a pointer on the chain designates.
@@ -494,13 +509,19 @@ pub(crate) fn chain_resolves(view: &impl ChainView, chain: &AccessChain) -> Resu
 /// `QCore.PointerStore.finalOwner`.
 pub(crate) fn chain_owner(view: &impl ChainView, chain: &AccessChain) -> Result<Owner, String> {
     let root = || chain.root.clone();
+    // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): asked only where the
+    // never-bound premise fails, for an eligible root with no tracked
+    // identity; every other answer below is unchanged.
+    let bound_untracked =
+        || !chain.root_never_bound && chain.root_bound_untracked && view.bound_untracked(&chain.root);
     let mut owner = if chain.dereferenced_root {
         match view.binding(&chain.root) {
             None if chain.root_never_bound => Owner::Untracked,
+            None if bound_untracked() => Owner::Untracked,
             None => return Err(root()),
             Some(binding) if binding.may_be_null => return Err(root()),
             Some(binding) if binding.targets.is_empty() => {
-                if binding.unknown && chain.root_never_bound {
+                if binding.unknown && (chain.root_never_bound || bound_untracked()) {
                     Owner::Untracked
                 } else {
                     return Err(root());
@@ -651,6 +672,7 @@ mod tests {
                 root: "p".to_owned(),
                 dereferenced_root: true,
                 root_never_bound: true,
+            root_bound_untracked: false,
                 links: vec!["b".to_owned(), "c".to_owned()],
                 member: "n".to_owned(),
             }]
@@ -770,6 +792,7 @@ mod tests {
             root: "r".to_owned(),
             dereferenced_root: true,
             root_never_bound: never_bound,
+            root_bound_untracked: false,
             links: links.iter().map(|link| (*link).to_owned()).collect(),
             member: "n".to_owned(),
         }

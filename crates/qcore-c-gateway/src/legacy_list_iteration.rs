@@ -334,6 +334,7 @@ pub(crate) fn head_read(
             }
             read.chains.push(AccessChain {
                 root_never_bound: bases.never_bound(&chain.root),
+                root_bound_untracked: false,
                 root: chain.root,
                 dereferenced_root: chain.dereferenced_root,
                 links: chain.links,

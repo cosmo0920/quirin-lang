@@ -653,6 +653,11 @@ fn tracked_chain_of(place: &TypedPlace, function: Option<&Value>) -> Result<Trac
             // The flow decides: a tracked root must be exactly one live
             // identity; this route never reads the never-bound premise.
             root_never_bound: false,
+            // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): or, for an
+            // eligible root, an untracked borrowed object on every path.
+            root_bound_untracked: function.is_some_and(|function| {
+                crate::bound_untracked::eligible_root(function, &place.name, &place.decl)
+            }),
             links,
             member,
         },

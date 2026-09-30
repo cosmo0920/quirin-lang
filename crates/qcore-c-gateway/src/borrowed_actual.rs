@@ -210,6 +210,117 @@ pub(crate) fn untracked_bases(
     }
 }
 
+/// Card **CG10-BOUND-UNTRACKED-ROOTS** (rule 11d), census only: why the
+/// closure binds each name it binds, by the direct seed that names it (class
+/// (a) a non-`Borrowed` actual of a contracted callee, with its mode; (b) an
+/// actual of an uncontracted callee or beyond its declaration; (c) an
+/// assignment whose value holds a call, with the callee's result mode or
+/// `uncontracted`; (d) an address; (e) every other seed: an increment, a
+/// compound assignment, a protected formal, a rule-10o nested reading, an
+/// assignment from a bound name or an address). Decides nothing.
+pub(crate) fn closure_reasons(
+    body: &[&str],
+    protected_formals: &BTreeSet<String>,
+    contracts: &ResourceContracts,
+    variadic_tails: &BTreeSet<String>,
+    bases: &UntrackedBases,
+) -> std::collections::BTreeMap<String, BTreeSet<String>> {
+    let mut reasons = std::collections::BTreeMap::<String, BTreeSet<String>>::new();
+    let mut add = |name: &str, reason: String| {
+        if bases.risky.contains(name) {
+            reasons.entry(name.to_owned()).or_default().insert(reason);
+        }
+    };
+    for name in protected_formals {
+        add(name, "e:protected-formal".into());
+    }
+    let mut seeded = BTreeSet::new();
+    seed_addresses_and_writes(body, &mut seeded);
+    for index in 0..body.len() {
+        let text = body[index];
+        if !seeded.contains(text) {
+            continue;
+        }
+        let previous = index.checked_sub(1).map(|at| body[at]);
+        let next = body.get(index + 1).copied();
+        let reason = if previous == Some("&") {
+            "d:address"
+        } else if (matches!(next, Some("+") | Some("-")) && body.get(index + 2).copied() == next)
+            || matches!(previous, Some("+") | Some("-"))
+        {
+            "e:increment"
+        } else {
+            "e:compound"
+        };
+        add(text, reason.into());
+    }
+    for (open, callee) in call_sites(body) {
+        let contract = contracts.contract(callee);
+        let Some(arguments) = argument_spans(body, open) else {
+            continue;
+        };
+        for (index, (start, end)) in arguments.iter().copied().enumerate() {
+            let reason = match contract.map(|contract| contract.parameters.get(index)) {
+                None => "b:uncontracted".to_owned(),
+                Some(Some(ResourceParameterMode::Borrowed)) => continue,
+                Some(None) if variadic_tails.contains(callee) => continue,
+                Some(None) => "b:beyond-declaration".to_owned(),
+                Some(Some(mode)) => format!("a:{}", mode_code(*mode)),
+            };
+            for name in root_names(&body[start..end]) {
+                add(&name, reason.clone());
+            }
+        }
+    }
+    for assignment in crate::lexical_nested_assignment::assignments(body) {
+        let right = &body[assignment.value.clone()];
+        let calls = call_sites(right);
+        let reason = if let Some((_, callee)) = calls.first() {
+            match contracts.contract(callee) {
+                None => "c:uncontracted".to_owned(),
+                Some(contract) => format!("c:{}", result_code(contract.result)),
+            }
+        } else if right.contains(&"&") {
+            "e:assign-address".to_owned()
+        } else if right.iter().any(|text| bases.risky.contains(*text)) {
+            "e:assign-bound".to_owned()
+        } else {
+            continue;
+        };
+        add(assignment.destination, reason);
+    }
+    for name in &bases.nested {
+        add(name, "e:nested".into());
+    }
+    for name in &bases.risky {
+        if !reasons.contains_key(name) {
+            reasons.insert(name.clone(), BTreeSet::from(["e:other".to_owned()]));
+        }
+    }
+    reasons
+}
+
+fn mode_code(mode: ResourceParameterMode) -> &'static str {
+    match mode {
+        ResourceParameterMode::Borrowed => "borrowed",
+        ResourceParameterMode::Owned { .. } => "owned",
+        ResourceParameterMode::Consumed { .. } => "consumed",
+        ResourceParameterMode::Released { .. } => "released",
+        ResourceParameterMode::Out { .. } => "out",
+        ResourceParameterMode::Stored { .. } => "stored",
+        ResourceParameterMode::Removed { .. } => "removed",
+    }
+}
+
+fn result_code(result: qcore_schemas::contract::ResourceReturnMode) -> &'static str {
+    match result {
+        qcore_schemas::contract::ResourceReturnMode::None => "none",
+        qcore_schemas::contract::ResourceReturnMode::Owned { .. } => "owned",
+        qcore_schemas::contract::ResourceReturnMode::Reallocated { .. } => "reallocated",
+        qcore_schemas::contract::ResourceReturnMode::Derived { .. } => "derived",
+    }
+}
+
 /// Rule 10o: the parenthesised whole-object writes and addresses the seeds
 /// above do not spell (`&(p)`, `(p)++`, `++(p)`, `(p) op= …`), not already
 /// seeded.

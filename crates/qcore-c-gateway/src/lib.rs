@@ -89,6 +89,9 @@ mod typed_position_shapes;
 mod typed_place;
 // Card CG11-POINTER-VALUED-STORES (rule 10v): pointer-valued stores.
 mod pointer_store;
+// Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): the per-path bound-untracked
+// root premise; the flow hook is `legacy_bound_untracked.rs`.
+mod bound_untracked;
 // Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): union-member and bit-field
 // place steps.
 mod union_bitfield;

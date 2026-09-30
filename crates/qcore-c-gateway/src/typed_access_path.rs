@@ -1305,10 +1305,21 @@ impl<'a> Reader<'a> {
             } else {
                 Vec::new()
             };
+            let root_never_bound = (self.never_bound)(root);
             self.plan.chains.push(AccessChain {
                 root: root.to_owned(),
                 dereferenced_root: first.0 != ".",
-                root_never_bound: (self.never_bound)(root),
+                root_never_bound,
+                // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): a dereferenced
+                // root the closure does not prove never bound may still be
+                // an untracked borrowed object on every path; the flow decides.
+                root_bound_untracked: !root_never_bound
+                    && first.0 != "."
+                    && self.function.is_some_and(|function| {
+                        cursor["referencedDecl"]["id"].as_str().is_some_and(|decl| {
+                            crate::bound_untracked::eligible_root(function, root, decl)
+                        })
+                    }),
                 links,
                 member: members.last()?.clone(),
             });
