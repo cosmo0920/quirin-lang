@@ -636,6 +636,11 @@ fn e07_conditional_values_are_refused_outside_conditions() {
 // CG07 — `_Generic` and statement expressions (E17 E19)
 // ---------------------------------------------------------------------------
 
+/// **Flipped by CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g):** G's
+/// selection-invariance route (W44) refused differing associations as a call
+/// to an uncontracted function `_Generic`; Clang's selected association is
+/// now its fallback, so both selections below read the selected call (the
+/// release is evaluated where it is selected). Route T is unchanged.
 #[test]
 fn e17_only_selection_invariant_generics_are_read() {
     if !clang_available() {
@@ -645,24 +650,23 @@ fn e17_only_selection_invariant_generics_are_read() {
         t_refusal("int subject(int a) { return _Generic(a, int: 1, default: 2); }"),
         "unmodeled callback expression GenericSelectionExpr"
     );
+    // CG07 flip: formerly `call to uncontracted function \`_Generic\``.
     let run = gs(
         "void subject(void) { void *p = q_alloc(); int x = _Generic(0, int: r_borrow_code(p), default: 0); q_free(p); }",
     );
-    assert!(
-        run.refused("call to uncontracted function `_Generic`"),
-        "{run:?}"
-    );
+    assert!(run.safe(), "{run:?}");
     let run = gs(
         "void subject(int a) { void *p = q_alloc(); int x = _Generic(a, int: r_release_code(p), default: 0); }",
     );
-    assert!(
-        run.refused("call to uncontracted function `_Generic`"),
-        "{run:?}"
-    );
-    // Control: identical associations.
+    assert!(run.safe(), "{run:?}");
+    // Control: identical associations (route 1, unchanged).
     assert!(gs("void subject(void) { void *p = q_alloc(); int x = _Generic(0, int: r_borrow_code(p), default: r_borrow_code(p)); q_free(p); }").safe());
 }
 
+/// **Flipped by CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g):** a
+/// statement expression that is a declaration's whole initializer is lowered
+/// as its block's statements, then the declaration of its last expression.
+/// Route T is unchanged.
 #[test]
 fn e19_statement_expressions_are_refused() {
     if !clang_available() {
@@ -672,13 +676,17 @@ fn e19_statement_expressions_are_refused() {
         t_refusal("int subject(int a) { return ({ int t = a; t; }); }"),
         "unmodeled callback expression StmtExpr"
     );
+    // CG07 flip: formerly `INITIALIZER`.
     for body in [
         "void *p = q_alloc(); int x = ({ int t = r_borrow_code(p); t; }); q_free(p);",
         "void *p = q_alloc(); int x = ({ q_free(p); 0; });",
     ] {
         let run = gs(&format!("void subject(void) {{ {body} }}"));
-        assert!(run.refused(INITIALIZER), "{body}: {run:?}");
+        assert!(run.safe(), "{body}: {run:?}");
     }
+    // Still refused: an operand position.
+    let run = gs("void subject(void) { void *p = q_alloc(); int x = 1 + ({ q_free(p); 0; }); }");
+    assert!(run.refused(INITIALIZER), "{run:?}");
 }
 
 // ---------------------------------------------------------------------------

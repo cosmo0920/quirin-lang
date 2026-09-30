@@ -108,7 +108,24 @@ libm (`ilogb`, `sqrt`, `fabs`, `fmax`, `nextafter`, `floor`) links through
 (the file is in the dyld shared cache, not on disk; the premise names it, as
 §L14.8 item 2 says) and matches the reference under the three builds.
 
-The standing gate is recorded in [gate.json](gate.json) and `gate/`.
+## Standing gate (merged tree `c374de96`)
+
+Recorded in [gate.json](gate.json) and `gate/`; logs `private/5m-gate4/`.
+**Not fully green on macOS**, for pre-existing harness reasons only
+(`W48-MACOS-GATE-HARNESS`):
+
+| Step | Exit | Result |
+|---|---|---|
+| submodule, fmt, clippy, both probes | 0 | clean |
+| `check_lean_audits.py` | 0 | 255 audits |
+| `run_test_binaries.py` | 101 | 6,966 passed, 1 failed, 10 ignored; the failure, `subcommand_plugins::a_timeout_is_unknown_and_kills_the_process_group`, is an exclusive load-sensitive row, green 3/3 in isolation |
+| provider suite | 101 | 126 passed, 1 failed (`packages::real_packages_preserve_unknown_and_reject_mutations`; the five packages verify by hand) |
+| matrix, docs index | 0 | regenerated with this gate |
+| Python | 1 | 365 ran, 15 failed: 13 `/var` → `/private/var` alias (none with a resolved `TMPDIR`), 2 `__CF_USER_TEXT_ENCODING` |
+
+Gate run 1 (at `e9f909c0`) found the vector-table and clippy failures fixed
+above; runs 2 and 3 were stopped as superseded by later commits and the merge.
+No analysis route changed, so no corpus arbiter was run.
 
 ## IEEE 754 floats on macOS
 
@@ -148,6 +165,7 @@ diagnosis (`W48-QR-FLOAT-APPLE-TSAN`).
 ## Ledger
 
 [followups.json](followups.json), applied by [apply_ledger.py](apply_ledger.py)
-(`named_followups` 657 → 658 on the base; 658 → 659 after merging main `0631c00b`): retired `W48-QRLIB-MACOS`; registered
-`W48-QRLIB-MACOS-CI-RUN` (S) and `W48-QR-FLOAT-APPLE-TSAN` (M). An Intel-run follow-up was drafted and dropped
+(`named_followups` 658 → 660 after merging main `0631c00b`): retired
+`W48-QRLIB-MACOS`; registered `W48-QRLIB-MACOS-CI-RUN` (S),
+`W48-QR-FLOAT-APPLE-TSAN` (M) and `W48-MACOS-GATE-HARNESS` (M). An Intel-run follow-up was drafted and dropped
 on the user's decision above.

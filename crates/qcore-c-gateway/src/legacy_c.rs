@@ -168,6 +168,13 @@ mod condition_acquisition_route;
 #[path = "legacy_value_connective.rs"]
 mod value_connective_route;
 
+// Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): GNU statement
+// expressions in a discarded, initializer, assigned or returned position,
+// lowered from the stream in C's order, a fallback after every existing route
+// of the position. The hooks below naming the card are thin.
+#[path = "legacy_statement_expression.rs"]
+mod statement_expression_route;
+
 // Card CG04-LOOP-SITE-GENERATIONS: a re-acquired site on a CFG cycle keeps
 // its earlier generation apart. The hooks below naming the card are thin.
 #[path = "legacy_loop_generations.rs"]
@@ -6247,6 +6254,8 @@ impl Parser<'_> {
             }
             Some("return") => {
                 self.cursor += 1;
+                // Card CG07 (rule 11g): the expression's place in the stream.
+                let expression_origin = self.cursor;
                 let expression = self.consume_to_semicolon()?;
                 // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b), a soundness
                 // repair asked first: a pointer C converts to a truth value
@@ -6280,6 +6289,14 @@ impl Parser<'_> {
                     && let Some(branched) = self.connective_return(&expression, line)
                 {
                     return Ok(branched);
+                }
+                // Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g):
+                // asked last, only for a refused return.
+                if return_refused(&statement)
+                    && let Some(lowered) =
+                        self.statement_expression_return(&expression, line, expression_origin)
+                {
+                    return Ok(lowered);
                 }
                 // Card CG19-ATOMIC-SOURCE-ROUTE (rule 11i): asked last, only
                 // for a refused return or an uncontracted atomic builtin's.
@@ -6497,8 +6514,18 @@ impl Parser<'_> {
             self.element_origins.clear();
             return branched;
         }
-        // Card CG19-ATOMIC-SOURCE-ROUTE (rule 11i): asked last, only for the
-        // uncontracted-call refusal of an atomic builtin.
+        // Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): asked last,
+        // only for a refusal.
+        if let LegacyInstruction::Unknown { description, .. } = &instruction
+            && let Some(lowered) =
+                self.statement_expression_statement(tokens, line, origin, description)
+        {
+            self.element_origins.clear();
+            return lowered;
+        }
+        // Card CG19-ATOMIC-SOURCE-ROUTE (rule 11i): asked last, only for a
+        // refusal: an uncontracted atomic builtin's, or an `_Atomic` store or
+        // read-modify-write statement's.
         if let Some(routed) = self.atomic_routed_statement(tokens, line, &instruction) {
             self.element_origins.clear();
             return routed;

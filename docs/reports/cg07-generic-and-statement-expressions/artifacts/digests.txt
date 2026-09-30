@@ -1,0 +1,6 @@
+3a25c4e968e8f646f85a61378fb50fd41287534a7d6a2e91725ef47b018a19ca  private/cg07/before/resource-diagnostics.json
+8b9e404731425edb686293ec613e4e6bd4d2119629a88d7c3dcfafee3960a050  private/cg07/after2/resource-diagnostics.json
+408297ae76e795c3f283612761293eb530e900270120e9e404eafcc10196beb7  private/cg07/before-system/resource-diagnostics.json
+f21ea97f3d08c6dbc032e6312ab6e5d4ac496fb487de2c4359f84a2696e77373  private/cg07/after2-system/resource-diagnostics.json
+c9f8f999489d7f9f94c9df68bce4c412429e4a3ec363d15f3159ef627f503e83  /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/cg07-before/resource-diagnostics.json
+c8f4287d5c381727a30660352f800d9222eebf5403afff4fd1ca828dc564032e  /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/cg07-after2/resource-diagnostics.json
