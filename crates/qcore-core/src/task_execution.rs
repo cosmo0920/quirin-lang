@@ -199,6 +199,11 @@ pub struct TaskEffects {
     pub spawn: bool,
     pub join: bool,
     pub may_block: bool,
+    /// The comparison effects the row declares (card `W48-QR-FLOATING-POINT`):
+    /// the permission a float comparison of this function's own body needs.
+    /// A spawn is not a call — like `alloc`, a worker's comparison effects are
+    /// its own row's — so nothing propagates through it.
+    pub comparisons: crate::scalar_types::FloatEffects,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskModule {
@@ -1415,6 +1420,7 @@ fn check_function(
     let raises_permitted = ArithmeticError::ALL
         .iter()
         .all(|error| function.errors.contains(&error.to_string()));
+    let comparisons = function.declared_effects.comparisons;
     let target = module.target.as_ref();
     let mut state = State {
         slots: BTreeMap::new(),
@@ -1555,7 +1561,8 @@ fn check_function(
                         }
                     }
                     TaskInstructionKind::Compute { slot, operation } => {
-                        let decision = decide_value(&state, operation, raises_permitted, target)?;
+                        let decision =
+                            decide_value(&state, operation, raises_permitted, comparisons, target)?;
                         if decision.raises {
                             return Err(
                                 "this value statement reads a value known only at run time and \
@@ -1948,7 +1955,8 @@ fn check_function(
                     success,
                     error,
                 } => {
-                    let decision = decide_value(&state, operation, raises_permitted, target)?;
+                    let decision =
+                        decide_value(&state, operation, raises_permitted, comparisons, target)?;
                     if !decision.raises {
                         return Err(
                             "this value statement cannot raise ArithmeticError here — its \
@@ -2685,11 +2693,15 @@ fn decide_value(
     state: &State,
     operation: &TaskValueOperation,
     raises_permitted: bool,
+    comparisons: crate::scalar_types::FloatEffects,
     target: Option<&RecordedTarget>,
 ) -> Result<scalar_values::Decision, String> {
     let operation = shared_operation(state, operation)?;
-    Decider::default()
-        .decide(operation, raises_permitted, target)
+    Decider {
+        permitted: comparisons,
+        ..Decider::default()
+    }
+    .decide(operation, raises_permitted, target)
         .map_err(|refusal| value_refusal_message(&refusal))
 }
 

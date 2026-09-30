@@ -102,6 +102,28 @@ pub fn is_nan(ty: ScalarType, value: i128) -> bool {
     wide(ty, value).is_some_and(f64::is_nan)
 }
 
+/// The one NaN pattern a trace names every NaN of `ty` by (card
+/// `W48-QR-FLOATING-POINT`): a NaN's payload and sign are not specified, so a
+/// reference and a native run agree on "a NaN", never on its bits.
+#[must_use]
+pub fn canonical_nan(ty: ScalarType) -> i128 {
+    match ty {
+        ScalarType::F32 => 0x7FC0_0000,
+        _ => 0x7FF8_0000_0000_0000,
+    }
+}
+
+/// `value` with every NaN replaced by [`canonical_nan`]; every other value,
+/// and every value of a type that is not a float, unchanged.
+#[must_use]
+pub fn canonical(ty: ScalarType, value: i128) -> i128 {
+    if is_nan(ty, value) {
+        canonical_nan(ty)
+    } else {
+        value
+    }
+}
+
 /// Two patterns of `ty` denote the same value for every purpose the language
 /// has: equal bits, or both NaN (payload and sign are not specified).
 #[must_use]

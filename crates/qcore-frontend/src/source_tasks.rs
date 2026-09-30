@@ -147,6 +147,9 @@ struct ParsedEffects {
     /// from a use site, so one tag cannot carry a payload in one function and
     /// not in another.
     error_payloads: BTreeSet<String>,
+    /// Card `W48-QR-FLOATING-POINT`: `partial_eq`/`partial_ord`, the
+    /// permission a float comparison of this function's own body needs.
+    comparisons: qcore_core::scalar_types::FloatEffects,
 }
 
 /// A declared nominal error type: its complete variant set and the subset that
@@ -182,9 +185,12 @@ enum Scalar {
 use qcore_core::scalar_types::{RecordedTarget, ScalarType as FixedType};
 
 /// A §G02t type name as a task scalar: `i32` is [`Scalar::I32`], every other
-/// name of the table [`Scalar::Fixed`].
+/// name of the table [`Scalar::Fixed`] — `f32`/`f64` included (card
+/// `W48-QR-FLOATING-POINT`: parameters, results, `copy` captures and record
+/// fields). A Buffer's payload is read by [`buffer_payload`], which keeps the
+/// integer table.
 fn table_scalar(name: &str) -> Option<Scalar> {
-    FixedType::parse(name).map(|ty| {
+    FixedType::parse_admitting_floats(name).map(|ty| {
         if ty == FixedType::I32 {
             Scalar::I32
         } else {
@@ -670,6 +676,15 @@ fn result_and_effects(
                 // in a module that declares a record, which a field write needs.
                 "mut" if !records.is_empty() => {
                     effects.mutates = true;
+                    key = effect.to_owned();
+                    cursor += 1;
+                }
+                // Card `W48-QR-FLOATING-POINT`: the comparison effects.
+                "partial_eq" | "partial_ord" => {
+                    effects.comparisons.insert(
+                        qcore_core::scalar_types::FloatEffect::parse(effect)
+                            .expect("matched above"),
+                    );
                     key = effect.to_owned();
                     cursor += 1;
                 }
@@ -1363,6 +1378,7 @@ fn lower(
                     spawn: signature.effects.spawn,
                     join: signature.effects.join,
                     may_block: signature.effects.may_block,
+                    comparisons: signature.effects.comparisons,
                 },
                 entry: 0,
                 blocks: builder.blocks,
@@ -1737,6 +1753,41 @@ impl<'a> Builder<'a> {
         ty: FixedType,
         span: Span,
     ) -> Option<Result<ScalarOperand, SourceDiagnostic>> {
+        // Card `W48-QR-FLOATING-POINT`: `["-"] FLOAT`, read once at a float
+        // `ty`; at any other type a float literal is refused, and an integer
+        // literal at a float type is refused by the literal check below.
+        if let [.., last] = tokens
+            && let TokenKind::Float(text) = &last.kind
+            && (tokens.len() == 1
+                || (tokens.len() == 2 && symbol(tokens.first(), Symbol::Minus)))
+        {
+            let negative = tokens.len() == 2;
+            return Some(if !ty.is_float() {
+                Err(failure(
+                    span,
+                    SemanticPass::OrdinaryTypes,
+                    qcore_core::scalar_values::ValueRefusal::LiteralKind { ty, float: true }
+                        .to_string(),
+                ))
+            } else {
+                match qcore_core::scalar_floats::FloatLiteral::read(text, negative)
+                    .map(|literal| literal.at(ty))
+                {
+                    Some(Ok(value)) => Ok(ScalarOperand::Fixed { ty, value }),
+                    Some(Err(error)) => Err(failure(
+                        span,
+                        SemanticPass::OrdinaryTypes,
+                        qcore_core::scalar_values::ValueRefusal::FloatLiteral { ty, error }
+                            .to_string(),
+                    )),
+                    None => Err(failure(
+                        span,
+                        SemanticPass::OrdinaryTypes,
+                        format!("`{text}` is not a float literal"),
+                    )),
+                }
+            });
+        }
         let value = match tokens {
             [
                 Token {
@@ -1822,8 +1873,11 @@ impl<'a> Builder<'a> {
             Syntax::Negate(a) => scalar_values::Operation::Negate(shared(a, &self.known)),
             Syntax::Convert(a, to) => scalar_values::Operation::Convert(shared(a, &self.known), to),
         };
-        let decision = Decider::default()
-            .decide(operation, self.raises_arithmetic(), self.target)
+        let decision = Decider {
+            permitted: self.signature.effects.comparisons,
+            ..Decider::default()
+        }
+        .decide(operation, self.raises_arithmetic(), self.target)
             .map_err(|refusal| match refusal {
                 ValueRefusal::NeedsPermission { ty } => failure(
                     span,
@@ -3714,8 +3768,15 @@ impl<'a> Builder<'a> {
                             &errors,
                             error_payload,
                         )?
-                    } else if let Some(Scalar::Fixed(ty)) = annotation
-                        && let Some(literal) = self.fixed_literal(rhs, ty, statement.span)
+                    } else if let Some(Scalar::Fixed(ty)) = annotation.or_else(|| {
+                        // Card `W48-QR-FLOATING-POINT`: an unannotated float
+                        // literal is an `f64`, as on every route.
+                        matches!(
+                            rhs.last().map(|token| &token.kind),
+                            Some(TokenKind::Float(_))
+                        )
+                        .then_some(Scalar::Fixed(FixedType::F64))
+                    }) && let Some(literal) = self.fixed_literal(rhs, ty, statement.span)
                     {
                         // Card `W48-QR-SCALAR-TYPES-R4`: a literal takes the
                         // annotation's type, range-checked against it.
@@ -3733,7 +3794,8 @@ impl<'a> Builder<'a> {
                         ValueType::Scalar(Scalar::Fixed(ty))
                     } else if let Some(parsed) = {
                         let environment = &self.environment;
-                        crate::source_value_statement::parse_value_expression(
+                        // Card `W48-QR-FLOATING-POINT`: this route admits floats.
+                        crate::source_value_statement::parse_value_expression_admitting_floats(
                             &tokens[equal + 1..],
                             |name| {
                                 environment

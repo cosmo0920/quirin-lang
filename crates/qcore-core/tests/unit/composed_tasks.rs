@@ -375,6 +375,7 @@ fn spawning() -> TaskModule {
             spawn: true,
             join: true,
             may_block: true,
+            comparisons: Default::default(),
         },
         entry: 0,
         span: SPAN,

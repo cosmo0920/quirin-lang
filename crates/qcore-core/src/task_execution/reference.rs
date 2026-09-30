@@ -1477,6 +1477,11 @@ fn render_result(output: &mut String, task: u64, outcome: &TaskOutcome) {
                 } else {
                     "false".to_owned()
                 }
+            } else if crate::scalar_floats::is_nan(*ty, *value) {
+                // Card `W48-QR-FLOATING-POINT`: a float result is its bit
+                // pattern, and every NaN the word `nan` — its payload and sign
+                // are not specified.
+                "nan".to_owned()
             } else {
                 value.to_string()
             }

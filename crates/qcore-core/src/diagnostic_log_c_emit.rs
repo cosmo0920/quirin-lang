@@ -143,6 +143,39 @@ const FIXED_RESULT_ARM: &str = r#"        if (event->name != NULL && event->name
         }
 "#;
 
+/// The adapter `text` (one with [`FIXED_RESULT_ARM`]) with a float result's
+/// branch (card `W48-QR-FLOATING-POINT`): a result named `=F32`/`=F64` carries
+/// its bit pattern in `related`, printed as that unsigned number, and every NaN
+/// as the word `nan` — a NaN's payload and sign are not specified, so a native
+/// run and the reference agree on "a NaN", never on its bits. Installed only
+/// in a program that logs a float result; every other adapter keeps its bytes.
+#[must_use]
+pub fn with_float_results(text: &str) -> String {
+    let anchor = "            if (event->name[1] == 'U')\n                (void)fprintf(stdout, \"QCORE_TASK_RESULT";
+    assert_eq!(text.matches(anchor).count(), 1, "the fixed result arm is installed once");
+    text.replace(
+        anchor,
+        &format!(
+            "{}{}",
+            r#"            if (event->name[1] == 'F') {
+                int q_nan = event->name[2] == '3'
+                    ? ((event->related & UINT64_C(0x7F800000)) == UINT64_C(0x7F800000)
+                        && (event->related & UINT64_C(0x007FFFFF)) != 0)
+                    : ((event->related & UINT64_C(0x7FF0000000000000)) == UINT64_C(0x7FF0000000000000)
+                        && (event->related & UINT64_C(0x000FFFFFFFFFFFFF)) != 0);
+                if (q_nan)
+                    (void)fprintf(stdout, "QCORE_TASK_RESULT %" PRIu64 " %s nan\n",
+                        event->subject, event->name + 1);
+                else
+                    (void)fprintf(stdout, "QCORE_TASK_RESULT %" PRIu64 " %s %" PRIu64 "\n",
+                        event->subject, event->name + 1, event->related);
+            } else
+"#,
+            anchor
+        ),
+    )
+}
+
 /// [`DIAGNOSTIC_STDOUT_ADAPTER_DEFINITION`] with [`FIXED_RESULT_ARM`] placed
 /// first in its task-result case (card `W48-QR-SCALAR-TYPES-R4`). A program
 /// whose workers return no fixed-width value never logs such a name, so the

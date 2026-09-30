@@ -1136,6 +1136,16 @@ impl CompiledModule {
             CheckedSourceModule::Ffi(module) => {
                 qcore_core::ffi_c_emit::uses_floats(&module.lowered.program)
             }
+            CheckedSourceModule::ScopedTasks(checked) => {
+                qcore_core::task_execution::fixed_types(checked.module())
+                    .iter()
+                    .any(|ty| ty.is_float())
+            }
+            CheckedSourceModule::ComposedTasks(module) => {
+                qcore_core::task_execution::fixed_types(module.tasks().module())
+                    .iter()
+                    .any(|ty| ty.is_float())
+            }
             _ => false,
         };
         uses.then_some(qcore_core::scalar_floats::ASSUMPTION)

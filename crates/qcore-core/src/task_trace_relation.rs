@@ -294,8 +294,10 @@ fn signed(word: Option<&str>) -> Option<i32> {
 /// reference's, which is a value of the recorded one.
 fn fixed_outcome(kind: &str, word: Option<&str>) -> Option<ObservedOutcome> {
     use crate::scalar_types::{PointerWidth, RecordedTarget, ScalarType};
+    // Card `W48-QR-FLOATING-POINT`: `F32`/`F64` too, a bit pattern or `nan`.
     let ty = crate::scalar_types::ALL
         .into_iter()
+        .chain(crate::scalar_types::FLOATS)
         .find(|ty| *ty != ScalarType::I32 && ty.name().to_ascii_uppercase() == kind)?;
     let word = word?;
     let value = if ty == ScalarType::Bool {
@@ -304,6 +306,8 @@ fn fixed_outcome(kind: &str, word: Option<&str>) -> Option<ObservedOutcome> {
             "false" => 0,
             _ => return None,
         }
+    } else if ty.is_float() && word == "nan" {
+        crate::scalar_floats::canonical_nan(ty)
     } else {
         word.parse::<i128>().ok()?
     };
@@ -476,7 +480,8 @@ fn outcome(value: &TaskOutcome, index: usize) -> Result<ObservedOutcome, Referen
         // one is encoded rather than refused. Card R4 had refused it.
         TaskOutcome::Fixed { ty, value } => Ok(ObservedOutcome::Fixed {
             ty: *ty,
-            value: *value,
+            // Card `W48-QR-FLOATING-POINT`: every NaN is one observation.
+            value: crate::scalar_floats::canonical(*ty, *value),
         }),
         TaskOutcome::ErrorWithBuffer { .. } => {
             Err(ReferenceTraceError::UnsupportedOutcome { index })

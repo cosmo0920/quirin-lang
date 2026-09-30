@@ -124,13 +124,33 @@ fn value_expression(
 }
 
 /// The `result.kind` of a worker result of fixed-width type `ty`: `10` plus
-/// its position in the §G02t table, clear of the historical `0`/`1`/`2`.
+/// its position in the §G02t table, clear of the historical `0`/`1`/`2`; and
+/// (card `W48-QR-FLOATING-POINT`) `f32`/`f64` after the integer table, `21`
+/// and `22`.
 fn fixed_kind(ty: st::ScalarType) -> usize {
     10 + st::ALL
         .iter()
+        .chain(st::FLOATS.iter())
         .position(|candidate| *candidate == ty)
         .unwrap_or(0)
 }
+
+/// The logger arm of one float result (card `W48-QR-FLOATING-POINT`): the
+/// value's bit pattern, copied with `memcpy` into the event's unsigned
+/// `related`, under the name `=F32`/`=F64` — never a conversion to an
+/// integer, which would be undefined for a NaN or an out-of-range value.
+fn float_result_log(ty: st::ScalarType, field: &str, indent: &str) -> String {
+    let label = ty.name().to_ascii_uppercase();
+    let (bits, c) = if ty == st::ScalarType::F32 {
+        ("uint32_t", "float")
+    } else {
+        ("uint64_t", "double")
+    };
+    format!(
+        "{{\n{indent}    {c} q_value = {field}; {bits} q_bits = 0; memcpy(&q_bits, &q_value, sizeof q_bits);\n{indent}    qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_TASK_RESULT, identity,\n{indent}        (uint64_t)q_bits, INT64_C(0), \"={label}\");\n{indent}}}"
+    )
+}
+
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TaskCMapping {
@@ -399,6 +419,8 @@ pub fn emit_task_c11_with_source_lines(
     // gets the typed runtime; every other module the historical bytes.
     let fixed = crate::task_execution::fixed_types(module);
     let fixed_width = crate::task_execution::uses_fixed_width(module);
+    // Card `W48-QR-FLOATING-POINT`: a module holding a float value.
+    let floats = fixed.iter().any(|ty| ty.is_float());
     // A module whose task value carries the fixed-width union initializes it
     // explicitly in every positional initializer (`-Wmissing-field-initializers`);
     // every other module keeps its historical bytes.
@@ -461,6 +483,11 @@ pub fn emit_task_c11_with_source_lines(
                 fixed_arm,
                 !payloads.is_empty(),
             );
+            // Card `W48-QR-FLOATING-POINT`: a float result's arm, only in a
+            // program that can log one.
+            if floats {
+                fragment.text = diagnostic_log_c_emit::with_float_results(&fragment.text);
+            }
         }
     }
 
@@ -1107,12 +1134,16 @@ pub fn emit_task_c11_with_source_lines(
             Fragment::new(
                 Section::Includes,
                 "task.scalar-types.includes",
-                if payloads.is_empty() {
+                if payloads.is_empty() && !floats {
                     "#include <stdbool.h>\n#include <stddef.h>\n"
-                } else {
+                } else if !floats {
                     // The typed payload's unsigned event bits are copied with
                     // `memcpy` (card `W48-QR-SCALAR-TYPES-R6`).
                     "#include <stdbool.h>\n#include <stddef.h>\n#include <string.h>\n"
+                } else {
+                    // Card `W48-QR-FLOATING-POINT`: `<float.h>` for the
+                    // environment assertions, `memcpy` for a float's bits.
+                    "#include <stdbool.h>\n#include <stddef.h>\n#include <string.h>\n#include <float.h>\n"
                 },
             ),
         );
@@ -1120,6 +1151,25 @@ pub fn emit_task_c11_with_source_lines(
         if let Some(target) = checked.target_assumption() {
             text.push('\n');
             text.push_str(&st::c_target_assertions(target));
+        }
+        // Card `W48-QR-FLOATING-POINT`: the IEEE environment, asserted when the
+        // C is compiled, and the renderers the module's lines use.
+        if floats {
+            text.push('\n');
+            text.push_str(&crate::scalar_floats::c_environment());
+            let mut renderers = BTreeSet::new();
+            for site in sites {
+                if let crate::std_io::StdIoEvent::Print { rendering, .. }
+                | crate::std_io::StdIoEvent::Log { rendering, .. } = &site.event
+                    && let Some(slot) = site.operand
+                    && let Some(ScalarType::Fixed(ty)) =
+                        checked.function_slot_types(site.function).get(&slot).copied()
+                    && ty.is_float()
+                {
+                    renderers.insert((*rendering == crate::std_io::Rendering::Hex, ty));
+                }
+            }
+            text.push_str(&crate::scalar_floats::c_renderers(&renderers));
         }
         // Card `W48-QR-SCALAR-TYPES-R6`: every typed payload's byte extent is
         // the size the checker decided leases against, asserted to the C
@@ -1284,6 +1334,16 @@ fn fixed_width_runtime(
     for ty in results {
         let label = ty.name().to_ascii_uppercase();
         let field = format!("result.value.typed.{}", member(*ty));
+        if ty.is_float() {
+            write!(
+                arms,
+                " else if (result.kind == {}) {}\n   ",
+                fixed_kind(*ty),
+                float_result_log(*ty, &field, "    ")
+            )
+            .unwrap();
+            continue;
+        }
         // A signed value (and `bool`) travels in the event's signed `value`,
         // an unsigned one in its unsigned `related`: both are lossless for
         // every width of the table, so no conversion is implementation-defined.
@@ -1357,6 +1417,10 @@ fn record_runtime(
                     "        qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_TASK_RESULT, identity,\n            UINT64_C(0), (int64_t){value}.scalar, \"i32\");\n"
                 )
                 .unwrap(),
+                ScalarType::Fixed(ty) if ty.is_float() => {
+                    let field = format!("{value}.typed.{}", member(ty));
+                    writeln!(arms, "        {}", float_result_log(ty, &field, "        ")).unwrap();
+                }
                 ScalarType::Fixed(ty) => {
                     let label = ty.name().to_ascii_uppercase();
                     let field = format!("{value}.typed.{}", member(ty));

@@ -29,6 +29,7 @@ fn module(worker_error: Option<&str>) -> TaskModule {
             spawn: true,
             join: true,
             may_block: true,
+            comparisons: Default::default(),
         },
         entry: 0,
         span: span(),
@@ -361,6 +362,7 @@ fn declared_rows_permit_unused_operations_and_multiple_error_variants() {
         spawn: true,
         join: true,
         may_block: true,
+        comparisons: Default::default(),
     };
     let checked = check_task_module(&input).unwrap();
     let observation = execute_task_module(&checked, &TaskExecutionScript::default()).unwrap();
@@ -728,6 +730,7 @@ fn byte_access_function(
             spawn: false,
             join: false,
             may_block: false,
+            comparisons: Default::default(),
         },
         entry: 0,
         span: span(),
