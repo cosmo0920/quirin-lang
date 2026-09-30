@@ -309,5 +309,6 @@ import QCore.FloatPayloads
 import QCore.QrlibLinkage
 import QCore.FieldLinkJoin
 import QCore.StatementExpressions
+import QCore.StorageDuration
 
 /-! The executable formal core of QCore-C revision 0.1. -/
