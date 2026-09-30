@@ -124,7 +124,13 @@ impl Parser<'_> {
         Result<(StatementPlan, Option<String>), Refusal>,
         Value,
     ) {
-        let [declaration] = children(node) else {
+        // One declarator; a record defined inline in the declaration
+        // (`const union { … } one = { 1 };`) is its type, not a declarator.
+        let declarators = children(node)
+            .iter()
+            .filter(|child| kind(child) != "RecordDecl")
+            .collect::<Vec<_>>();
+        let [declaration] = declarators.as_slice() else {
             return (
                 "initializer",
                 Err(Refusal::Declaration("several declarators")),
@@ -155,7 +161,21 @@ impl Parser<'_> {
             .is_some_and(|text| text.trim().ends_with(']') || text.contains("(*["));
         // For an array, the element's class: whether the local can hold a
         // pointer.
-        let class = facts.class_of(declaration);
+        let mut class = facts.class_of(declaration);
+        // An unnamed record defined inline in this declaration is its type.
+        if let [inline] = children(node)
+            .iter()
+            .filter(|child| kind(child) == "RecordDecl")
+            .collect::<Vec<_>>()
+            .as_slice()
+            && class == TypeClass::Unread
+            && !is_array
+            && qual(declaration)
+                .is_some_and(|text| text.contains("(unnamed") || text.contains("(anonymous"))
+            && let Some(id) = inline["id"].as_str()
+        {
+            class = facts.record_class_of(id);
+        }
         if !is_array && !matches!(class, TypeClass::CustodyFree | TypeClass::PointerBearing) {
             return (
                 "initializer",
@@ -308,7 +328,10 @@ impl Parser<'_> {
         }
         let callee = texts[call_index].to_owned();
         let Some(contract) = self.contracts.contract(&callee).cloned() else {
-            return (Err(Refusal::LiteralPosition), json!({ "callee": callee }));
+            return (
+                Err(Refusal::UncontractedCallee),
+                json!({ "callee": callee }),
+            );
         };
         let actuals = children(call).get(1..).unwrap_or_default();
         let Some(spans) = argument_spans(&texts, call_index) else {

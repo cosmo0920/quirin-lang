@@ -117,6 +117,8 @@ fn an_identity_free_initializer_is_admitted() {
         "void subject(void) { struct S s = { .p = \"x\" }; q_observe(&s); }",
         "void subject(void) { void (*table[])(void) = { cg_noop, 0 }; }",
         "int subject(void) { const union N one = { 1 }; return one.i; }",
+        // `LZ4_isLittleEndian`'s shape: an unnamed union defined inline.
+        "int subject(void) { const union { unsigned u; unsigned char c[4]; } one = { 1 }; return one.c[0]; }",
     ] {
         let run = g(&format!("void cg_noop(void);\n{S}{source}"));
         assert!(run.safe(), "{source}: {run:?}");
@@ -139,6 +141,8 @@ fn an_initial_alias_is_refused() {
         "void subject(void) { struct S s = { .a = opaque() }; q_observe(&s); }",
         // A static local is CG15's.
         "void subject(void) { static struct S s = { 0 }; q_observe(&s); }",
+        // An unnamed record that can hold a pointer, with an initial alias.
+        "void subject(void *q) { struct { void *p; } s = { q }; q_observe(&s); }",
     ] {
         let run = gs(source);
         assert!(!run.safe(), "{source}: {run:?}");

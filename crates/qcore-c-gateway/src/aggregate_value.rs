@@ -262,6 +262,12 @@ impl AggregateFacts {
         }
     }
 
+    /// The class of the complete record `id` (an unnamed record defined
+    /// inline in a declaration).
+    pub(crate) fn record_class_of(&self, id: &str) -> TypeClass {
+        self.record_class(id, 0)
+    }
+
     /// The class of the type of a Clang node (`node["type"]`).
     pub(crate) fn class_of(&self, node: &Value) -> TypeClass {
         self.class_of_type(&node["type"], 0)
@@ -404,6 +410,9 @@ pub(crate) enum Refusal {
     LiteralCustodyPosition,
     /// A compound literal whose initializer reads memory.
     LiteralReads,
+    /// A compound literal at an actual of a call with no contract in force:
+    /// no formal mode says the literal is only borrowed.
+    UncontractedCallee,
     /// A compound literal anywhere but a whole actual of a contracted call.
     LiteralPosition,
     /// A declaration this rule does not read (static, several declarators,
@@ -427,6 +436,7 @@ impl Refusal {
             Self::InitializerForm(what) => format!("initializer-form:{what}"),
             Self::LiteralCustodyPosition => "literal-custody-position".into(),
             Self::LiteralReads => "literal-reads".into(),
+            Self::UncontractedCallee => "literal-callee-uncontracted".into(),
             Self::LiteralPosition => "literal-position".into(),
             Self::Declaration(what) => format!("declaration:{what}"),
             Self::Node => "node".into(),
