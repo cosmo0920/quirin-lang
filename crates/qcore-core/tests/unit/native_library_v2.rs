@@ -252,7 +252,10 @@ fn the_ffi_type_gate_compares_struct_positions_and_the_abi_gate_refuses_them() {
         constant: true,
     };
     let value = EntryType::Struct("qr_pair".into());
-    assert_eq!(check_ffi_agreement(sum, &[pointer.clone()], &value), Ok(()));
+    assert_eq!(
+        check_ffi_agreement(sum, std::slice::from_ref(&pointer), &value),
+        Ok(())
+    );
     let other = EntryType::Struct("qr_other".into());
     assert_eq!(
         check_ffi_agreement(sum, &[pointer], &other)
