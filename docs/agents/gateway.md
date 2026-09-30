@@ -2733,8 +2733,10 @@ own anchor here.
     store to a non-`volatile sig_atomic_t` object are undefined), so it is
     `AOM-POISON-NO-UB`'s. For a `volatile` object it is false (C11 5.1.2.3p2),
     and the importer now reads the qualifier (`settle_volatile`, over the
-    built CFG): a node that binds a `volatile` object, or hands one to a
-    position that is not `Borrowed`, refuses; a known-value store to one is
+    built CFG, in a unit that spells `volatile`): a node that binds a
+    `volatile` object (a store into a static-storage one stays rule 10's), or
+    hands one to a position that is not `Borrowed`, refuses; a known-value
+    store to one is
     forgotten; its null, validity, distinctness and counted-loop tests
     refine nothing. Every value-derived fact the flow keeps (the census in
     the report: `refine_edge`'s null and validity pruning, the distinct-pair

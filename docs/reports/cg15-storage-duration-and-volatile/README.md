@@ -80,7 +80,9 @@ AFTER2 (`private/cg15/after2`, binary from `dd84ce7b`'s sources): corpus
 tail-pause slice 28 / 1 / 240 / 1 Pending, byte-identical to BEFORE.
 AFTER1 (`1937b10f`, before a statement defining its record tag was admitted)
 had the same statuses; the seven functions whose leaves differ between the
-two are the tag-defining tables.
+two are the tag-defining tables. AFTER3 (`8b556dc0`: the final sources, the
+gate's two repairs included, less a `#[cfg(test)]` on a function the release
+build never calls) is byte-identical to AFTER2 in every corpus artifact.
 
 | Function | Move | Cause |
 |---|---|---|
@@ -159,6 +161,28 @@ Rule 11h's text is the authority; in short:
   (were refused). The remaining M24 controls (a global publication refused,
   a global release an unresolved alias, a thread-local scalar read Safe) and
   every M23 control hold unchanged.
+* **Flipped elsewhere** (found by the first gate run, §11):
+  `tests/container_root_reach.rs`'s
+  `a_member_of_a_static_record_is_still_refused_before_the_effect`, now
+  `a_member_of_a_static_record_reaches_the_container_rule`: the head actual
+  `&global_queue.items` is a static address, so `mk_list_add(&e->_head,
+  &global_queue.items)` reaches the container rule and discharges into the
+  static list exactly as the existing `&registry` case does (Unknown →
+  Safe; the refusal was the recorded conservative class of
+  `W47-JOIN-AST-CONSERVATIVE-CLASSES`, not a boundary). No corpus function
+  has this shape (no corpus Safe beyond the seven).
+* **Narrowed, not flipped:** `tests/publication_custody.rs`'s
+  `a_volatile_qualifier_moves_no_resource_projection_verdict` (CT-CTWIN-SYNC's
+  invariance). Its third shape stores into `struct b_handle *volatile
+  g_published`; the first build refused that store as a `volatile` binding,
+  replacing rule 10's publication reason. Rule 10 decides a store into a
+  static-storage object, so the binding refusal now skips a destination
+  there (the binding it leaves keeps no refinement), and the shape is
+  invariant again; the test's comment records the narrowed claim.
+* The first build also asked Clang for the AST of every function
+  (`configured_cli`'s one-invocation-per-stage pin went red): rule 11h's CFG
+  pass is now asked only where the unit spells `volatile` up to the body's
+  end, which every `volatile` object a function names must be.
 
 ## 7. `GATEWAY-VOLATILE-PREMISE`: the census
 

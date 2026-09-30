@@ -101,6 +101,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg13-union-and-bitfield-places](cg13-union-and-bitfield-places/README.md) | CG13-UNION-AND-BITFIELD-PLACES: union-member and bit-field place steps |
 
+| [cg15-storage-duration-and-volatile](cg15-storage-duration-and-volatile/README.md) | CG15-STORAGE-DURATION-AND-VOLATILE |
+
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
@@ -1077,6 +1079,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [w48-qr-usable-records](w48-qr-usable-records/README.md) | W48-QR-USABLE-RECORDS: records usable as values |
 
 | [w48-qrlib-linkage](w48-qrlib-linkage/README.md) | W48-QRLIB-LINKAGE: `.qrlib` as the C linkage manifest of the FFI route |
+
+| [w48-qrlib-macos](w48-qrlib-macos/README.md) | W48-QRLIB-MACOS — card 5m: the macOS linkage path, run |
 
 | [w5-chunk-summary-boundary](w5-chunk-summary-boundary/README.md) | W5 chunk lifecycle and summary boundary |
 
