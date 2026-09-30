@@ -31,6 +31,10 @@ pub mod ffi_layout;
 // acceptance and the typed per-formal substitution; the G hooks are in
 // `legacy_call_instantiation.rs`.
 mod call_instantiation;
+// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): casts as representations and
+// type-query operands by evaluation class; the G hooks are in
+// `legacy_cast_representation.rs`.
+mod cast_representation;
 // Card CG04-CONDITION-ACQUISITION (rule 10x): acquisitions in conditions and
 // complex condition leaves; the G hooks are in `legacy_condition_acquisition.rs`.
 mod condition_acquisition;

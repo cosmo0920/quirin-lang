@@ -162,6 +162,13 @@ mod condition_acquisition_route;
 #[path = "legacy_value_connective.rs"]
 mod value_connective_route;
 
+// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): the null test is no escape or
+// binding, pointer-to-pointer casts at a pointer destination, the cast return
+// the reader does not commit to, and Clang-confirmed unevaluated `sizeof`
+// operands at the gate. The hooks below naming the card are thin.
+#[path = "legacy_cast_representation.rs"]
+mod cast_representation_route;
+
 // Card W47-ACCESS-PATH-POSITION-RESIDUALS (rule 10n): the P3 residual shapes
 // C's evaluation order admits. Hooks are thin.
 #[path = "legacy_typed_residuals.rs"]
@@ -6207,6 +6214,12 @@ impl Parser<'_> {
             Some("return") => {
                 self.cursor += 1;
                 let expression = self.consume_to_semicolon()?;
+                // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b), a soundness
+                // repair asked first: a pointer C converts to a truth value
+                // is no escape.
+                if let Some(tested) = self.pointer_test_return(&expression, line) {
+                    return Ok(tested);
+                }
                 let statement = self.return_statement(expression.clone(), line);
                 // Card CG02-ELABORATION-CORE (rule 10s): asked last, only for
                 // a refused return.
@@ -6279,6 +6292,12 @@ impl Parser<'_> {
                 ) {
                     cast_return::CastReturn::Operand(start) => expression[start..].to_vec(),
                     cast_return::CastReturn::Refuse => {
+                        return cast_return::refusal(line, self.expression_writes(&expression));
+                    }
+                    // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b,
+                    // `CAST-RETURN-UNCOMMITTED-OPERAND`): Clang's
+                    // `PointerToIntegral` of a possibly tracked pointer.
+                    cast_return::CastReturn::PreCard if self.pointer_integer_return(&expression) => {
                         return cast_return::refusal(line, self.expression_writes(&expression));
                     }
                     cast_return::CastReturn::PreCard => expression,
@@ -6354,6 +6373,12 @@ impl Parser<'_> {
         // Card W45-CONTAINER-ROOT-REACH: keep an element binding only
         // when it is the statement's final instruction.
         self.element_origins.clear();
+        // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b), a soundness repair
+        // asked first: a pointer C converts to a truth value binds nothing.
+        if let Some(tested) = self.pointer_test_store(tokens, line) {
+            self.element_origins.clear();
+            return tested;
+        }
         // Card CG10 (I04): this run's own place in the stream.
         self.typed_place_origin
             .set(origin.map(|origin| (origin, tokens.len())));
@@ -6392,6 +6417,12 @@ impl Parser<'_> {
         {
             self.element_origins.clear();
             return elaborated;
+        }
+        // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): asked after the
+        // elaborator, only for a refusal.
+        if let Some(uncast) = self.uncast_pointer_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return uncast;
         }
         // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): asked last, only
         // for a call whose lexical substitution was refused or incomplete.
@@ -7754,7 +7785,14 @@ impl Parser<'_> {
         // reads the original tokens. Empty (the gate unchanged) otherwise.
         let unevaluated =
             if find_call(&texts).is_some_and(|(_, callee)| !TYPE_OPERATORS.contains(&callee)) {
-                crate::sizeof_operand::unevaluated_spans(&texts, &self.sizeof_operands)
+                let mut spans =
+                    crate::sizeof_operand::unevaluated_spans(&texts, &self.sizeof_operands);
+                // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): operands Clang
+                // shows unevaluated join the lexically admitted ones.
+                let confirmed = self.clang_unevaluated_spans(tokens, &spans);
+                spans.extend(confirmed);
+                spans.sort_unstable();
+                spans
             } else {
                 Vec::new()
             };

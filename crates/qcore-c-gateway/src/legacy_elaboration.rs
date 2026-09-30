@@ -41,7 +41,7 @@ use serde_json::{Value, json};
 
 use super::condition_desugar::{ConditionPlan, PlanNode, Position, Target};
 use super::{
-    LegacyInstruction, Parser, RefusedWrites, Statement, Token, contains_braces, contains_call,
+    LegacyInstruction, Parser, RefusedWrites, Statement, Token, contains_braces,
     is_identifier,
 };
 use crate::elaboration::{
@@ -95,6 +95,23 @@ impl Context for GContext<'_> {
             &crate::typed_access_path::record_layout_dump,
         )
     }
+
+    /// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): a pointer read of one
+    /// automatic local or formal the custody closure proves never bound to a
+    /// resource identity. Every other pointer value (a path, a call, a
+    /// static or file-scope object) may carry one.
+    fn untracked_pointer(&self, node: &Value) -> bool {
+        let operand = elaboration::pointer_operand(node);
+        if kind(operand) != "DeclRefExpr" {
+            return false;
+        }
+        let reference = &operand["referencedDecl"];
+        let (Some(id), Some(name)) = (reference["id"].as_str(), reference["name"].as_str()) else {
+            return false;
+        };
+        let (automatic, _) = self.aliasing.get_or_init(|| aliasing(&self.index.function));
+        automatic.contains(id) && (self.never_bound)(name)
+    }
 }
 
 /// Walk a function's AST once for its automatic objects and taken addresses.
@@ -129,9 +146,12 @@ pub(super) fn aliasing(function: &Value) -> (BTreeSet<String>, BTreeSet<String>)
     (automatic, taken)
 }
 
-/// Whether a node holds one of this card's value forms.
+/// Whether a node holds one of this card's value forms, or (card CG08, rule
+/// 11b) a cast or type query `cast_representation::form` names.
 fn holds_value_form(node: &Value) -> bool {
-    elaboration::value_form(node).is_some() || children(node).iter().any(holds_value_form)
+    elaboration::value_form(node).is_some()
+        || crate::cast_representation::form(node).is_some()
+        || children(node).iter().any(holds_value_form)
 }
 
 /// Whether a statement holds one of this card's forms: a compound
@@ -809,7 +829,9 @@ impl Parser<'_> {
         line: usize,
         position: Position,
     ) -> Option<Box<ConditionPlan>> {
-        if self.elaboration_declines(condition) || contains_call(condition) {
+        if self.elaboration_declines(condition)
+            || super::cast_representation_route::calls_outside_type_queries(condition)
+        {
             return None;
         }
         let index = self.elaboration_index()?;
@@ -829,7 +851,9 @@ impl Parser<'_> {
     /// call-free condition, under the same premises. Its events in order; the
     /// caller adds the leaf's branch, which refines nothing.
     pub(super) fn elaborated_leaf(&self, leaf: &[Token]) -> Option<Vec<LegacyInstruction>> {
-        if self.elaboration_declines(leaf) || contains_call(leaf) {
+        if self.elaboration_declines(leaf)
+            || super::cast_representation_route::calls_outside_type_queries(leaf)
+        {
             return None;
         }
         let index = self.elaboration_index()?;
@@ -873,8 +897,11 @@ impl Parser<'_> {
                 successors: vec![Target::Node(at + 1)],
             })
             .collect::<Vec<_>>();
+        // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): a pointer's truth value
+        // is its null test, refined as the older routes refine `if (p)`.
+        let branch = Self::null_test_condition(node).unwrap_or(LegacyInstruction::NoOp);
         nodes.push(PlanNode {
-            instruction: LegacyInstruction::NoOp,
+            instruction: branch,
             successors: vec![Target::True, Target::False],
         });
         Ok(ConditionPlan { nodes, entry: 0 })
