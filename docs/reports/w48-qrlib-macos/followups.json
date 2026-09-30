@@ -20,6 +20,13 @@
    "why": "Found by W48-QRLIB-MACOS. The float card's native rows run on macOS (arm64, the six float test binaries green under the host triple), but `float_payload_rows_are_clean_under_thread_sanitizer` is `cfg(target_os = \"linux\")` because `tests/support/thread_sanitizer.rs` is Linux-only by its own x86-64/glibc diagnosis; Apple clang ships TSan for arm64, and the pthread binding the harness uses is the Apple `c11_threads_compat.h` one. Size M. DISCHARGE: the harness ported to Apple with its own measurement, the float TSan row run green on a Mac, or a stated reason it cannot be.",
    "source": "docs/reports/w48-qrlib-macos/README.md",
    "recorded_by": "W48-QRLIB-MACOS"
+  },
+  {
+   "id": "W48-MACOS-GATE-HARNESS",
+   "title": "Make the standing gate's harnesses pass on macOS",
+   "why": "Found by W48-QRLIB-MACOS's gate run on the user's Mac (merged tree c374de96). Four pre-existing harness faults, none in shipped code: (1) 13 Python tests (`test_reconciliation_sweep` 12, `test_w42_unprojected_census` 1) compare temp paths across the `/var` -> `/private/var` alias and pass with a resolved TMPDIR; (2) 2 `test_run_test_binaries` tests refuse the Apple-injected `__CF_USER_TEXT_ENCODING` variable; (3) provider `conformance/tests/packages.rs::real_packages_preserve_unknown_and_reject_mutations` fails its first `package.py verify` (line 290) inside the test while all five packages verify by hand in the repository, `/var` and `/private/var`, and the test discards verify's stderr; (4) `qcore-audit` `subcommand_plugins::a_timeout_is_unknown_and_kills_the_process_group` failed once under full-suite load (no `child.pid` within the 500 ms timeout), passed 3/3 in isolation, and its group-kill check reads `/proc`, so on macOS it passes vacuously. Size M. DISCHARGE: each fixed and the full standing gate green on a Mac, or a stated platform reason per row.",
+   "source": "docs/reports/w48-qrlib-macos/README.md",
+   "recorded_by": "W48-QRLIB-MACOS"
   }
  ]
 }

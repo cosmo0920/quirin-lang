@@ -1,0 +1,26 @@
+{
+ "description": "call to uncontracted function `__assert_fail`",
+ "leaves": 1232,
+ "functions_touched": 533,
+ "unknown_functions_blocked_only_by_it": 10,
+ "by_unit": {
+  "tinycthread_extra.c": 4,
+  "rdkafka_cgrp.c": 2,
+  "rdkafka_assignor.c": 1,
+  "rdkafka_conf.c": 1,
+  "rdlist.c": 1,
+  "snappy.c": 1
+ },
+ "functions": [
+  "rdkafka_assignor.c::isFullyBalanced0",
+  "rdkafka_cgrp.c::rd_kafka_cgrp_clear_wait_resp",
+  "rdkafka_cgrp.c::rd_kafka_cgrp_set_wait_resp",
+  "rdkafka_conf.c::rd_kafka_confval_get_int",
+  "rdlist.c::rd_list_set_cnt",
+  "snappy.c::get_u32_at_offset",
+  "tinycthread_extra.c::rwlock_rdlock",
+  "tinycthread_extra.c::rwlock_rdunlock",
+  "tinycthread_extra.c::rwlock_wrlock",
+  "tinycthread_extra.c::rwlock_wrunlock"
+ ]
+}

@@ -190,6 +190,16 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     operands. G uses invariance today (Q21).
   - *Statement expressions.* GNU statement expressions get their inner scope,
     final value, internal calls and escape composed into the outer scope.
+  - *Status (wave 48, round 7).* Landed on route G (gateway rule 11g):
+    Clang's selected association after route 1 (no corpus selection needs
+    it: every one is glibc's invariant shape), and statement expressions
+    lowered from the stream when discarded, a whole initializer, assigned to
+    a named object or returned, under hygiene and escape premises: 1,414 of
+    them in the corpus (1,327 glibc `assert`), braced leaves on their lines
+    1,338 → 69, **0** corpus moves (their inner leaves remain, above all
+    `__assert_fail`, CG21's). Residuals `CG07-STATEMENT-EXPRESSION-POSITIONS`
+    and `CG07-GENERIC-TOKEN-AST-MATCH`.
+    [Report](../../reports/cg07-generic-and-statement-expressions/README.md).
 - **CG08: casts and type queries.**
   - *Cast kinds.* Pointer↔integer, ToVoid, the ToBoolean kinds, integer↔FP and
     FP-width, atomic and address-space conversions, each a *representation*

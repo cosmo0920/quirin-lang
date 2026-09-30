@@ -146,7 +146,8 @@ pub(crate) enum Event {
     Branch,
     Merge,
     /// An object's lifetime (compound literals, statement expressions: cards
-    /// CG07/CG14). Not emitted by this card's forms.
+    /// CG07/CG14). Card CG07 (rule 11g) emits them for a statement
+    /// expression's inner objects.
     LifetimeStart(Place),
     LifetimeEnd(Place),
 }
@@ -164,7 +165,10 @@ pub(crate) enum Commutation {
     Overlap(String, String),
     /// A call unordered with another event (card CG05).
     Call(String),
-    /// An event kind this card never leaves unordered.
+    /// An event kind this card never leaves unordered. Since card CG07
+    /// (rule 11g) every pair of event kinds has a decision, so none is
+    /// constructed; the check keeps refusing it should a kind be added.
+    #[allow(dead_code, reason = "a future event kind with no commutation row")]
     Unlisted,
 }
 
@@ -184,8 +188,22 @@ pub(crate) fn commutes(a: &Event, b: &Event, unaliased: &dyn Fn(&str) -> bool) -
                 Commutation::Overlap(p.spelling().to_owned(), q.spelling().to_owned())
             }
         }
+        // Card CG07 (rule 11g): an inner object's lifetime start or end
+        // touches that object only.
+        (
+            LifetimeStart(p) | LifetimeEnd(p),
+            LifetimeStart(q) | LifetimeEnd(q) | Read(q) | Write { place: q, .. },
+        )
+        | (Read(q) | Write { place: q, .. }, LifetimeStart(p) | LifetimeEnd(p)) => {
+            if p.disjoint(q, unaliased) {
+                Commutation::Commutes
+            } else if matches!((p, q), (Place::Object { .. }, Place::Object { .. })) {
+                Commutation::Conflict(p.spelling().to_owned())
+            } else {
+                Commutation::Overlap(p.spelling().to_owned(), q.spelling().to_owned())
+            }
+        }
         (Call { callee }, _) | (_, Call { callee }) => Commutation::Call(callee.clone()),
-        _ => Commutation::Unlisted,
     }
 }
 
@@ -495,6 +513,10 @@ pub(crate) enum Refusal {
     PointerEscape(String),
     /// The route's place reader refused the place (card CG10).
     Place(String),
+    /// Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): a statement
+    /// expression's pointer value where its block takes the address of one
+    /// of its own objects, whose lifetime ends at the block.
+    InnerEscape(String),
     Declaration(&'static str),
     Unlisted(&'static str),
     UnlistedKind(String),
@@ -536,6 +558,9 @@ impl Refusal {
                 "pointer `{pointer}` converted to an integer may carry a tracked identity (CG08)"
             ),
             Refusal::Place(reason) => format!("place: {reason} (CG10)"),
+            Refusal::InnerEscape(name) => {
+                format!("statement expression value may point into its own object `{name}` (CG07)")
+            }
             Refusal::Declaration(reason) => format!("declaration: {reason}"),
             Refusal::Unlisted(form) => format!("unlisted form: {form}"),
             Refusal::UnlistedKind(kind) => format!("unlisted form `{kind}`"),
@@ -560,7 +585,7 @@ pub(crate) enum Disposition {
 
 /// Every form the elaborator names, with its disposition. A form not listed is
 /// refused as unlisted.
-pub(crate) const FORM_TABLE: [(&str, Disposition); 38] = [
+pub(crate) const FORM_TABLE: [(&str, Disposition); 39] = [
     ("literal", Disposition::Admitted),
     ("object read", Disposition::Admitted),
     ("path read", Disposition::Admitted),
@@ -585,8 +610,10 @@ pub(crate) const FORM_TABLE: [(&str, Disposition); 38] = [
     ("pointer store", Disposition::Refused("CG11")),
     ("pointer arithmetic", Disposition::Refused("CG16")),
     ("type query operand", Disposition::Refused("CG08")),
-    ("generic selection", Disposition::Refused("CG07")),
-    ("statement expression", Disposition::Refused("CG07")),
+    // Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): the selected
+    // association only.
+    ("generic selection", Disposition::Admitted),
+    ("statement expression", Disposition::Admitted),
     ("compound literal", Disposition::Refused("CG14")),
     ("volatile access", Disposition::Refused("CG15")),
     ("atomic access", Disposition::Refused("CG19")),
@@ -601,6 +628,10 @@ pub(crate) const FORM_TABLE: [(&str, Disposition); 38] = [
     ("discarded value", Disposition::Admitted),
     ("unevaluated type query", Disposition::Admitted),
     ("evaluated type query", Disposition::Admitted),
+    // Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): a statement
+    // expression's block holding a statement other than a declaration, an
+    // expression or a null statement (route G lowers it structurally).
+    ("statement expression control", Disposition::Refused("CG07")),
 ];
 
 /// The disposition of a form, `None` for an unlisted one.
@@ -965,12 +996,134 @@ impl<C: Context> Elaborator<'_, C> {
             // Card CG06 (rule 10z).
             "ConditionalOperator" => self.conditional(node),
             "BinaryConditionalOperator" => self.omitted_middle(node),
-            "GenericSelectionExpr" => Err(refused("generic selection")),
-            "StmtExpr" => Err(refused("statement expression")),
+            // Card CG07 (rule 11g): only Clang's selected association is
+            // evaluated; the controlling expression and every other
+            // association yield no event.
+            "GenericSelectionExpr" => match crate::generic_association::selected(node) {
+                Some(selected) => self.expression(selected),
+                None => Err(Refusal::Unlisted(
+                    "generic selection with no selected association",
+                )),
+            },
+            // Card CG07 (rule 11g).
+            "StmtExpr" => self.statement_expression(node),
             "CompoundLiteralExpr" => Err(refused("compound literal")),
             "InitListExpr" => Err(refused("compound literal")),
             other => Err(Refusal::UnlistedKind(other.to_owned())),
         }
+    }
+
+    /// Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): a statement
+    /// expression whose block is straight-line (declarations, expression
+    /// statements, null statements). Each full expression is sequenced before
+    /// the next; an inner object's lifetime starts at its declaration and
+    /// ends after the value is computed; the value is the last expression's;
+    /// and the whole block completes before the value is used (every event is
+    /// a value event of the whole). A block with any other statement is
+    /// refused by name (route G lowers it structurally), and so is a pointer
+    /// value where the block takes an inner object's address.
+    fn statement_expression(&mut self, node: &Value) -> Result<Part, Refusal> {
+        use crate::statement_expression::{address_taken, is_expression, items};
+        let items = items(node).map_err(|_| refused("statement expression control"))?;
+        let mut all: Vec<EventId> = Vec::new();
+        let mut inner: Vec<Place> = Vec::new();
+        let mut result = Operand::Void;
+        let mut arithmetic = false;
+        for (at, item) in items.iter().enumerate() {
+            let last = at + 1 == items.len();
+            let mut events = Vec::new();
+            match kind(item) {
+                "NullStmt" => {}
+                "DeclStmt" => {
+                    for declaration in children(item) {
+                        if kind(declaration) != "VarDecl"
+                            || declaration["storageClass"].as_str().is_some()
+                        {
+                            return Err(Refusal::Declaration("inner declaration"));
+                        }
+                        let place = Place::Object {
+                            decl: declaration["id"]
+                                .as_str()
+                                .ok_or(Refusal::Declaration("no id"))?
+                                .to_owned(),
+                            name: declaration["name"]
+                                .as_str()
+                                .ok_or(Refusal::Declaration("no name"))?
+                                .to_owned(),
+                        };
+                        let start = self.graph.push(Event::LifetimeStart(place.clone()));
+                        self.graph.order(&all, start);
+                        self.graph.order(&events, start);
+                        events.push(start);
+                        inner.push(place.clone());
+                        match children(declaration) {
+                            [] => {}
+                            [initializer] => {
+                                let pointer = self.value(declaration)?;
+                                let value = self.expression(initializer)?;
+                                if value.pointer() != pointer {
+                                    return Err(Refusal::Unlisted("initializer of another class"));
+                                }
+                                arithmetic |= value.arithmetic;
+                                let write = self.graph.push(Event::Write {
+                                    place: place.clone(),
+                                    pointer,
+                                });
+                                self.graph.order(&[start], write);
+                                self.graph.order(&value.values, write);
+                                for &event in &value.all {
+                                    self.graph.order(&[start], event);
+                                }
+                                events.extend(value.all);
+                                events.push(write);
+                            }
+                            _ => return Err(Refusal::Declaration("no single initializer")),
+                        }
+                    }
+                }
+                _ if is_expression(item) => {
+                    let part = self.expression(item)?;
+                    arithmetic |= part.arithmetic;
+                    if last {
+                        result = part.result;
+                    }
+                    events = part.all;
+                }
+                _ => return Err(refused("statement expression control")),
+            }
+            // A full expression: everything before it is sequenced before it.
+            for &event in &events {
+                self.graph.order(&all, event);
+            }
+            all.extend(events);
+        }
+        // An inner object's lifetime ends at the block, after the value.
+        for place in &inner {
+            let end = self.graph.push(Event::LifetimeEnd(place.clone()));
+            self.graph.order(&all, end);
+            all.push(end);
+        }
+        if let Operand::Value { pointer, source } = &result {
+            if *pointer && let Some(name) = address_taken(node) {
+                return Err(Refusal::InnerEscape(name));
+            }
+            // The value is a copy: it never names an object whose lifetime
+            // has ended.
+            if let ValueSource::Old(place) | ValueSource::New(place) = source
+                && inner.contains(place)
+            {
+                result = Operand::Value {
+                    pointer: *pointer,
+                    source: ValueSource::Computed,
+                };
+            }
+        }
+        Ok(Part {
+            values: all.clone(),
+            all,
+            result,
+            arithmetic,
+        })
     }
 
     fn implicit_cast(&mut self, node: &Value) -> Result<Part, Refusal> {

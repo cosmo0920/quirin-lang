@@ -7,9 +7,10 @@ Retires CG15-STORAGE-DURATION-AND-VOLATILE (every DISCHARGE clause holds) and
 the two follow-ups it absorbs, GATEWAY-VOLATILE-PREMISE and
 CT41-VOLATILE-COMPLEMENT-UNMEASURED (each discharge met: README sections 7
 and 8); registers the two residual classes with their sizes; keeps
-`dimensions.named_followups` equal to the list length (it was 658 against 659
-entries on the base). Writes the matrix back in its own form (indent=1,
-ensure_ascii=False, trailing newline).
+`dimensions.named_followups` equal to the list length (658 against 659 entries
+at the card's base c374de96; 661 against 661 at main b59aaae2, where the
+script was re-applied to main's matrix at the merge). Writes the matrix back
+in its own form (indent=1, ensure_ascii=False, trailing newline).
 
 Sizes are the card's AFTER2 corpus run (private/cg15/after2, corpus arbiter
 --jobs 4, base c374de96), read with scripts/population.py and
