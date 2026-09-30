@@ -368,6 +368,65 @@ fn a_tbd_stub_exports_what_its_first_document_and_its_reexports_list() {
     assert!(tbd::read(TBD_V4.as_bytes(), "x86_64-maccatalyst").is_err());
 }
 
+/// A one-document stub listing `targets` with `_qr_probe` exported for
+/// `exported`.
+fn probe_stub(targets: &str, exported: &str) -> String {
+    format!(
+        "--- !tapi-tbd\ntbd-version:     4\ntargets:         [ {targets} ]\ninstall-name:    '/usr/lib/libSystem.B.dylib'\nexports:\n  - targets:         [ {exported} ]\n    symbols:         [ _qr_probe ]\n...\n"
+    )
+}
+
+#[test]
+fn an_arm64_link_reads_an_arm64e_slice_only_when_no_arm64_slice_is_listed() {
+    // As Apple `ld` does (card W48-QRLIB-MACOS's probe): arm64e stands in for
+    // an unlisted arm64, an exact arm64 slice hides the arm64e entries, and no
+    // other architecture stands in.
+    let only_e = probe_stub("arm64e-macos", "arm64e-macos");
+    let stub = tbd::read(only_e.as_bytes(), "arm64-macos").unwrap();
+    assert_eq!(stub.slice, "arm64e-macos");
+    assert!(resolve(&stub.table, "_qr_probe").is_ok());
+    let both = probe_stub("arm64-macos, arm64e-macos", "arm64e-macos");
+    let stub = tbd::read(both.as_bytes(), "arm64-macos").unwrap();
+    assert_eq!(stub.slice, "arm64-macos");
+    assert!(resolve(&stub.table, "_qr_probe").is_err());
+    let intel = probe_stub("x86_64-macos", "x86_64-macos");
+    assert!(tbd::read(intel.as_bytes(), "arm64-macos").is_err());
+    assert!(tbd::read(only_e.as_bytes(), "x86_64-macos").is_err());
+    let exact = tbd::read(TBD_V4.as_bytes(), "arm64-macos").unwrap();
+    assert_eq!(exact.slice, "arm64-macos");
+    let v5 = r#"{"tapi_tbd_version": 5, "main_library": {"target_info": [{"target": "arm64e-macos"}], "install_names": [{"name": "/usr/lib/libSystem.B.dylib"}], "exported_symbols": [{"text": {"global": ["_qr_probe"]}}]}}"#;
+    let stub = tbd::read(v5.as_bytes(), "arm64-macos").unwrap();
+    assert_eq!(stub.slice, "arm64e-macos");
+    assert!(resolve(&stub.table, "_qr_probe").is_ok());
+}
+
+/// The SDK's own `libm.tbd` (a link to `libSystem.tbd`) read for this host.
+#[cfg(target_os = "macos")]
+#[test]
+fn the_sdk_libm_stub_exports_the_math_functions_through_libsystem_m() {
+    let sdk = std::process::Command::new("xcrun")
+        .arg("--show-sdk-path")
+        .output()
+        .unwrap();
+    assert!(sdk.status.success(), "xcrun --show-sdk-path failed");
+    let path = std::path::PathBuf::from(String::from_utf8(sdk.stdout).unwrap().trim())
+        .join("usr/lib/libm.tbd");
+    let data = std::fs::read(&path).unwrap();
+    let triple = if cfg!(target_arch = "aarch64") {
+        "arm64-apple-darwin"
+    } else {
+        "x86_64-apple-darwin"
+    };
+    let stub = tbd::read(&data, &tbd::tbd_target(triple).unwrap()).unwrap();
+    assert_eq!(stub.install_name, "/usr/lib/libSystem.B.dylib");
+    for name in ["_ilogb", "_sqrt", "_fabs", "_fmax", "_nextafter", "_floor"] {
+        let symbol = resolve(&stub.table, name).unwrap_or_else(|refusal| {
+            panic!("{name} in {} ({}): {refusal:?}", path.display(), stub.slice)
+        });
+        assert_eq!(symbol.origin, "/usr/lib/system/libsystem_m.dylib", "{name}");
+    }
+}
+
 #[test]
 fn a_tbd_stub_is_read_as_an_artifact_for_a_mac_target_only() {
     let loader = files(&[("libm.tbd", TBD_V4.as_bytes())]);

@@ -75,17 +75,25 @@ requirements that are part of the gate.
     through `run_msvc_with_libraries`. The card ran on Linux only: the
     integrator reads the job after landing, and no Windows result is claimed
     until then.
-- **macOS path for card `W48-QRLIB-MACOS` (5m), written, not run.** The Mach-O
-  readers (`__.SYMDEF` archives, `.tbd` v3/v4/v5, the dylib export trie) are
-  unit-tested from bytes on every host. The native path is
-  `compiler/tests/qrlib_linkage.rs`'s `cfg(target_os = "macos")` row
-  `libm_links_through_the_sdk_text_stub_under_three_builds` — libm through
-  `$(xcrun --show-sdk-path)/usr/lib/libm.tbd`, the runtime premise
-  `/usr/lib/libSystem.B.dylib` — plus the `cfg(unix)` rows that build a Mach-O
-  C archive and a Rust `staticlib` there. Commands:
-  `cargo test -p qcore-c-gateway --lib linkage::` and
-  `cargo test -p qcore-compiler --test qrlib_linkage --test ffi_struct_import --test float_ffi --test usable_records`.
-  No macOS CI job is added by that card and no macOS run is claimed.
+- **`W48-QRLIB-MACOS` (5m) discharged (user's Mac, 2026-09-30).** On macOS
+  27.0.1 (arm64, Apple clang 21.0.0, `ld-27037.1`) the first run refused one
+  shape: the SDK's `libm.tbd` (a link to `libSystem.tbd`) lists `arm64e-macos`
+  and no `arm64-macos`. The reader now takes the `arm64e-macos` slice for an
+  unlisted `arm64-macos`, the rule Apple `ld` was probed to follow; then
+  `cargo test -p qcore-c-gateway --lib linkage::` (31 passed, including the
+  real SDK stub) and
+  `cargo test -p qcore-compiler --test qrlib_linkage --test ffi_struct_import --test float_ffi --test usable_records`
+  (10 + 23 + 3 + 19 passed) ran green: libm through the stub under the three
+  builds (runtime premise `/usr/lib/libSystem.B.dylib`), a Mach-O C archive
+  and a Rust `staticlib`. The `macos` CI job (`macos-15`) runs the same
+  commands; its first run is not yet read (`W48-QRLIB-MACOS-CI-RUN`). Intel macOS is out of scope: the current macOS no longer runs on Intel Macs (user decision, 2026-09-30).
+  The float card's native rows ran on the same Mac under its own triple
+  (`aarch64-apple-darwin`): `float_types`, `float_extern`, `float_tasks`,
+  `float_buffer_payloads`, `float_ffi` and `float_ieee_vectors`, 42 tests
+  green, after the Lean IEEE vector tables were made host-independent (they
+  held x86-64's negative default NaN). The float ThreadSanitizer row stays
+  Linux-only (`W48-QR-FLOAT-APPLE-TSAN`).
+  [Report](../reports/w48-qrlib-macos/README.md).
 - **macOS:** pthread-backed C11 thread subset, Apple ASan/UBSan (LSan is
   Linux-only, so leak detection stays a Linux observation), and Apple Clang
   option transport — `docs/reports/macos-cycle19-compiler-options/README.md`.

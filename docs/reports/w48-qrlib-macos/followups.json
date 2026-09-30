@@ -1,0 +1,25 @@
+{
+ "retired": [
+  {
+   "id": "W48-QRLIB-MACOS",
+   "why": "Discharged by W48-QRLIB-MACOS: the report's macOS commands ran green on the user's Mac (macOS 27.0.1, Apple clang 21.0.0, ld-27037.1, arm64). The one refusal, `/usr/lib/libSystem.B.dylib` does not list `arm64-macos` (the SDK's `libSystem.tbd`, which `libm.tbd` links to, lists only `arm64e-macos` among Apple Silicon slices), is fixed by reading the `arm64e-macos` slice for an unlisted `arm64-macos`, the rule Apple `ld` was measured to follow; the Mach-O C archive and Rust `staticlib` rows passed unchanged. A `macos` CI job (`macos-15`) runs the same commands."
+  }
+ ],
+ "amended": [],
+ "registered": [
+  {
+   "id": "W48-QRLIB-MACOS-CI-RUN",
+   "title": "Read the first run of the macOS CI job",
+   "why": "Found by W48-QRLIB-MACOS. The card added `.github/workflows/ci.yml`'s `macos` job (`macos-15`) and ran its commands on the user's Mac only; no GitHub-hosted run is claimed. The runner's SDK may differ from macOS 27's (it may list an `arm64-macos` slice, which is read exactly). Size S. DISCHARGE: the integrator reads the job's first run on main, green, or each refusal fixed.",
+   "source": "docs/reports/w48-qrlib-macos/README.md",
+   "recorded_by": "W48-QRLIB-MACOS"
+  },
+  {
+   "id": "W48-QR-FLOAT-APPLE-TSAN",
+   "title": "ThreadSanitizer rows for the float task and payload programs on macOS",
+   "why": "Found by W48-QRLIB-MACOS. The float card's native rows run on macOS (arm64, the six float test binaries green under the host triple), but `float_payload_rows_are_clean_under_thread_sanitizer` is `cfg(target_os = \"linux\")` because `tests/support/thread_sanitizer.rs` is Linux-only by its own x86-64/glibc diagnosis; Apple clang ships TSan for arm64, and the pthread binding the harness uses is the Apple `c11_threads_compat.h` one. Size M. DISCHARGE: the harness ported to Apple with its own measurement, the float TSan row run green on a Mac, or a stated reason it cannot be.",
+   "source": "docs/reports/w48-qrlib-macos/README.md",
+   "recorded_by": "W48-QRLIB-MACOS"
+  }
+ ]
+}

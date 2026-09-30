@@ -11,6 +11,13 @@
 //! for the recorded target in the first document, or in a document of the same
 //! file that document re-exports (transitively). Any other version, or a target
 //! the stub does not list, is refused.
+//!
+//! One substitution follows Apple `ld` as measured (card `W48-QRLIB-MACOS`):
+//! an `arm64-macos` link reads a stub whose first document lists `arm64e-macos`
+//! but not `arm64-macos` through its `arm64e-macos` slice — the macOS 27 SDK's
+//! `libSystem.tbd` lists no `arm64` slice. When `arm64-macos` is listed, only
+//! that slice is read, as `ld` does. The slice is chosen once, from the first
+//! document; a re-exported document that does not list it contributes nothing.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -45,6 +52,9 @@ pub struct TextStub {
     /// The first document's install name: the runtime library's identity.
     pub install_name: String,
     pub current_version: Option<String>,
+    /// The tbd target whose entries were read: the requested one, or
+    /// `arm64e-macos` substituted for an unlisted `arm64-macos`.
+    pub slice: String,
     /// Every symbol reachable from the first document, `origin` the install
     /// name of the document that lists it.
     pub table: SymbolTable,
@@ -74,14 +84,31 @@ pub fn tbd_target(triple: &str) -> Option<String> {
 /// # Errors
 ///
 /// A [`ReadError`] for an unknown version, malformed text, no document, or a
-/// first document that does not list the target.
+/// first document that lists neither the target nor its substitute.
 pub fn read(data: &[u8], target: &str) -> Result<TextStub, ReadError> {
     let text =
         std::str::from_utf8(data).map_err(|_| ReadError::new("tbd", "the stub is not UTF-8"))?;
-    let documents = if text.trim_start().starts_with('{') {
-        read_v5(text, target)?
-    } else {
-        read_yaml(text, target)?
+    let parse = |slice: &str| {
+        if text.trim_start().starts_with('{') {
+            read_v5(text, slice)
+        } else {
+            read_yaml(text, slice)
+        }
+    };
+    let (slice, documents) = match parse(target)? {
+        Ok(documents) => (target, documents),
+        Err(install_name) => {
+            let substitute = (target == "arm64-macos").then_some("arm64e-macos");
+            match substitute.map(parse).transpose()? {
+                Some(Ok(documents)) => ("arm64e-macos", documents),
+                _ => {
+                    return Err(ReadError::new(
+                        "tbd",
+                        format!("`{install_name}` does not list the target `{target}`"),
+                    ));
+                }
+            }
+        }
     };
     let first = documents
         .first()
@@ -125,6 +152,7 @@ pub fn read(data: &[u8], target: &str) -> Result<TextStub, ReadError> {
     Ok(TextStub {
         install_name: first.install_name.clone(),
         current_version: first.current_version.clone(),
+        slice: slice.to_owned(),
         table,
     })
 }
@@ -273,7 +301,11 @@ fn items<'a>(document: &'a [(String, Value)], key: &str) -> &'a [Vec<(String, Va
         .unwrap_or(&[])
 }
 
-fn read_yaml(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
+/// The documents read for `target`, or `Err(install_name)` when the first
+/// document does not list it.
+type Documents = Result<Vec<Document>, String>;
+
+fn read_yaml(text: &str, target: &str) -> Result<Documents, ReadError> {
     let mut documents = Vec::new();
     let mut current: Option<(String, String)> = None;
     for line in text.lines() {
@@ -346,10 +378,7 @@ fn read_yaml(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
         };
         if !matches(own) {
             if index == 0 {
-                return Err(ReadError::new(
-                    "tbd",
-                    format!("`{install_name}` does not list the target `{target}`"),
-                ));
+                return Ok(Err(install_name));
             }
             continue;
         }
@@ -390,14 +419,14 @@ fn read_yaml(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
         }
         out.push(document);
     }
-    Ok(out)
+    Ok(Ok(out))
 }
 
 // ---------------------------------------------------------------------------
 // JSON (v5)
 // ---------------------------------------------------------------------------
 
-fn read_v5(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
+fn read_v5(text: &str, target: &str) -> Result<Documents, ReadError> {
     let root: serde_json::Value = serde_json::from_str(text)
         .map_err(|error| ReadError::new("tbd", format!("the v5 stub is not JSON: {error}")))?;
     if root
@@ -464,10 +493,7 @@ fn read_v5(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
             .to_owned();
         if !targets.iter().any(|t| t == target) {
             if index == 0 {
-                return Err(ReadError::new(
-                    "tbd",
-                    format!("`{install_name}` does not list the target `{target}`"),
-                ));
+                return Ok(Err(install_name));
             }
             continue;
         }
@@ -506,5 +532,5 @@ fn read_v5(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
         }
         out.push(document);
     }
-    Ok(out)
+    Ok(Ok(out))
 }

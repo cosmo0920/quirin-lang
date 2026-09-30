@@ -15,7 +15,9 @@
 //! native runs on real threads.
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
+#[cfg(target_os = "linux")]
 use std::process::Command;
+#[cfg(target_os = "linux")]
 use std::sync::atomic::{AtomicU64, Ordering};
 
 use qcore_compiler::{CompileOptions, CompiledModule, FileDiagnostic, SourceFile, compile_files};
@@ -24,6 +26,7 @@ use qcore_core::task_execution::{
     execute_with_source_lines,
 };
 
+#[cfg(target_os = "linux")]
 static NEXT: AtomicU64 = AtomicU64::new(0);
 
 fn root() -> PathBuf {
@@ -600,6 +603,7 @@ fn reference(module: &CompiledModule, spawn_outcomes: Vec<bool>) -> (String, Str
 }
 
 /// The three builds every native row of the track uses.
+#[cfg(target_os = "linux")]
 const BUILDS: [(&str, &[&str]); 3] = [
     (
         "O0-ubsan",
@@ -622,6 +626,7 @@ const BUILDS: [(&str, &[&str]); 3] = [
     ("O2", &["-O2"]),
 ];
 
+#[cfg(target_os = "linux")]
 struct Run {
     stdout: String,
     stderr: String,
@@ -631,6 +636,7 @@ struct Run {
 /// Build the emitted C with `-std=c11 -Wall -Wextra -Werror -pedantic` and the
 /// build's flags (and `defines`, which the spawn-failure row uses to refuse a
 /// creation through the runtime's own `QCORE_TASK_CREATE` seam), and run it.
+#[cfg(target_os = "linux")]
 fn build_and_run(c: &str, flags: &[&str], prelude: Option<&str>) -> Result<Run, String> {
     let dir = std::env::temp_dir().join(format!(
         "qcore-task-records-{}-{}",
@@ -676,6 +682,7 @@ fn build_and_run(c: &str, flags: &[&str], prelude: Option<&str>) -> Result<Run, 
 
 /// A prelude that refuses every task creation through the runtime's own
 /// `QCORE_TASK_CREATE` seam, so the program takes its spawn-failure arm.
+#[cfg(target_os = "linux")]
 const REFUSE_CREATION: &str = "#include <threads.h>\nstatic int qcore_refuse_create(thrd_t *thread, \
      int (*function)(void *), void *argument) {\n    (void)thread; (void)function; (void)argument;\n    \
      return thrd_error;\n}\n#define QCORE_TASK_CREATE qcore_refuse_create\n";
