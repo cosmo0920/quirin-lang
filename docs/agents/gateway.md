@@ -2596,7 +2596,15 @@ own anchor here.
     identity unresolved reports a path-poisoning diagnostic on that path (the
     audit in the report lists each insertion and its report; the floor turns
     a violation on a modeled path into a refusal), and faithful extraction
-    (trust boundary 28). MEASURED-PLACEHOLDER `QCore.FieldLinkJoin`
+    (trust boundary 28). Measured (corpus `66910c10`, system,
+    tail-pause slice): no Safe result withheld an obligation at its exit
+    (CG04's census) and no escape reached a possibly-live child that was
+    one-sided or mixed (the census, parity `position: "field-link-escape"`),
+    so nothing moved: every report is byte-identical (602 / 10 / 4,222,
+    `2fc3af8c…`; 37 / 2 / 195; 26 / 1 / 242 / 1 Pending). The repair closes
+    the class for the code widening cards admit; the fixtures were `Safe`
+    on the base. The residual imprecision (a correct one-sided escape is
+    refused) is `FIELD-LINK-ESCAPE-PATH-CORRELATION`. `QCore.FieldLinkJoin`
     (`a_decided_escape_leaves_no_live_child`,
     `an_escape_over_a_one_sided_live_child_refuses`,
     `the_join_adds_no_unresolved`, `a_live_child_at_exit_is_reported`,

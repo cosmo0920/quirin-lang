@@ -1,0 +1,9 @@
+2fc3af8c rows {'Safe': 602, 'Unknown': 4222, 'Unsafe': 10} keyed {'Safe': 602, 'Unknown': 4222, 'Unsafe': 10} private/b08fl/before
+2fc3af8c rows {'Safe': 602, 'Unknown': 4222, 'Unsafe': 10} keyed {'Safe': 602, 'Unknown': 4222, 'Unsafe': 10} private/b08fl/census
+2fc3af8c rows {'Safe': 602, 'Unknown': 4222, 'Unsafe': 10} keyed {'Safe': 602, 'Unknown': 4222, 'Unsafe': 10} private/b08fl/after
+60f636af rows {'Safe': 72, 'Unknown': 372, 'Unsafe': 4} keyed {'Safe': 37, 'Unknown': 195, 'Unsafe': 2} private/b08fl/before-system
+60f636af rows {'Safe': 72, 'Unknown': 372, 'Unsafe': 4} keyed {'Safe': 37, 'Unknown': 195, 'Unsafe': 2} private/b08fl/census-system
+60f636af rows {'Safe': 72, 'Unknown': 372, 'Unsafe': 4} keyed {'Safe': 37, 'Unknown': 195, 'Unsafe': 2} private/b08fl/after-system
+a4cfa035 rows {'Pending': 2, 'Safe': 40, 'Unknown': 361, 'Unsafe': 1} keyed {'Pending': 1, 'Safe': 26, 'Unknown': 242, 'Unsafe': 1} /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/b08fl-before
+a4cfa035 rows {'Pending': 2, 'Safe': 40, 'Unknown': 361, 'Unsafe': 1} keyed {'Pending': 1, 'Safe': 26, 'Unknown': 242, 'Unsafe': 1} /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/b08fl-census
+a4cfa035 rows {'Pending': 2, 'Safe': 40, 'Unknown': 361, 'Unsafe': 1} keyed {'Pending': 1, 'Safe': 26, 'Unknown': 242, 'Unsafe': 1} /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/b08fl-after

@@ -1,0 +1,3 @@
+163f6f47bedebbea64a5aa9787c0d22bc62a89444ef3700dc32ff33f53fd5229  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae434b31db84c9aa1/target/release/quirin-audit
+91f1d76c45387533c3e200c2722dc0fd913555b5dccceb42a8ba241e248021e7  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae434b31db84c9aa1/private/b08fl/quirin-audit-census-dc296d00
+085925625f5fe926aeba193084252c533e15ec2be72fffd6d8699a2a69c373d3  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ae434b31db84c9aa1/target/release/quirin-audit

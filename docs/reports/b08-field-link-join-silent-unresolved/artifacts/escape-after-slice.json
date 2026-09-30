@@ -1,0 +1,29 @@
+{
+ "reported_safe": [],
+ "other": [
+  {
+   "function": "flb_create",
+   "source": "4fe27c2621e5",
+   "reported": [
+    [
+     "src/flb_lib.c",
+     "Unknown"
+    ],
+    [
+     "src/flb_lib.c",
+     "Unknown"
+    ]
+   ],
+   "escapes": [
+    [
+     18450,
+     "0x1",
+     1,
+     false,
+     true,
+     false
+    ]
+   ]
+  }
+ ]
+}
