@@ -247,7 +247,10 @@ pub fn read_artifact(
             if ld_script::is_ld_script(&bytes) {
                 return Err(ArtifactRefusal::MixedScript {
                     reference: reference.to_owned(),
-                    reason: format!("it names another script, `{}`; a library script is followed one level", input.path),
+                    reason: format!(
+                        "it names another script, `{}`; a library script is followed one level",
+                        input.path
+                    ),
                 });
             }
             let file = read_file(&input.path, &bytes, target)?;

@@ -41,9 +41,10 @@ impl Flags {
         let mut index = 0;
         while index < arguments.len() {
             let argument = &arguments[index];
-            if let Some(name) = argument.strip_prefix("--").or_else(|| {
-                (argument == "-o").then_some("output")
-            }) {
+            if let Some(name) = argument
+                .strip_prefix("--")
+                .or_else(|| (argument == "-o").then_some("output"))
+            {
                 if !known.contains(&name) {
                     return Err(format!("unknown option `{argument}`"));
                 }
@@ -51,7 +52,10 @@ impl Flags {
                 let value = arguments
                     .get(index)
                     .ok_or_else(|| format!("`{argument}` requires a value"))?;
-                values.entry(name.to_owned()).or_default().push(value.clone());
+                values
+                    .entry(name.to_owned())
+                    .or_default()
+                    .push(value.clone());
             } else if argument.starts_with('-') {
                 return Err(format!("unknown option `{argument}`"));
             } else {
@@ -90,7 +94,8 @@ fn read_text(path: &Path) -> Result<String, String> {
 
 fn recorded_target(path: &str) -> Result<RecordedTarget, String> {
     let text = read_text(Path::new(path))?;
-    qcore_compiler::scalar_types::load_recorded_target(&text).map_err(|error| format!("{path}: {error}"))
+    qcore_compiler::scalar_types::load_recorded_target(&text)
+        .map_err(|error| format!("{path}: {error}"))
 }
 
 /// The contract selection, keyed by the path as spelled.
@@ -101,7 +106,9 @@ fn contracts(paths: &[String]) -> Result<BTreeMap<String, String>, String> {
             .insert(path.clone(), read_text(Path::new(path))?)
             .is_some()
         {
-            return Err(format!("the contract module `{path}` is selected more than once"));
+            return Err(format!(
+                "the contract module `{path}` is selected more than once"
+            ));
         }
     }
     Ok(selected)
@@ -127,7 +134,9 @@ fn linkage(text: &str) -> Result<LinkageKind, String> {
     match text {
         "static" => Ok(LinkageKind::Static),
         "dynamic" => Ok(LinkageKind::Dynamic),
-        other => Err(format!("--linkage `{other}` is neither `static` nor `dynamic`")),
+        other => Err(format!(
+            "--linkage `{other}` is neither `static` nor `dynamic`"
+        )),
     }
 }
 
@@ -250,7 +259,11 @@ pub fn qrlib_command(arguments: &[String]) -> Result<(), String> {
                 manifest.identity.library,
                 owned.linkage.spelling(),
                 manifest.contracted.len(),
-                if manifest.contracted.len() == 1 { "y" } else { "ies" },
+                if manifest.contracted.len() == 1 {
+                    "y"
+                } else {
+                    "ies"
+                },
                 manifest.identity.artifact,
                 manifest.identity.hash
             );
@@ -361,7 +374,13 @@ pub fn build_command(arguments: &[String]) -> Result<(), String> {
         let text = read_text(&path)?;
         let manifest = load_native_library_manifest(&text)
             .map_err(|refusal| format!("{}: {refusal}", path.display()))?;
-        let owned = declared_inputs(&path, &manifest, &selection, &target, runtime_dir.as_deref())?;
+        let owned = declared_inputs(
+            &path,
+            &manifest,
+            &selection,
+            &target,
+            runtime_dir.as_deref(),
+        )?;
         owned
             .regenerate(Some(&text))
             .map_err(|refusal| format!("{}: {refusal}", path.display()))?;
@@ -372,9 +391,7 @@ pub fn build_command(arguments: &[String]) -> Result<(), String> {
     let files = flags
         .positional
         .iter()
-        .map(|path| {
-            read_text(Path::new(path)).map(|source| SourceFile::new(path.clone(), source))
-        })
+        .map(|path| read_text(Path::new(path)).map(|source| SourceFile::new(path.clone(), source)))
         .collect::<Result<Vec<_>, _>>()?;
     let options = CompileOptions {
         entry: flags.one("entry")?.map(ToOwned::to_owned),
@@ -434,7 +451,10 @@ pub fn build_command(arguments: &[String]) -> Result<(), String> {
         .status()
         .map_err(|error| format!("{compiler}: {error}"))?;
     if !status.success() {
-        return Err(format!("{compiler} failed ({status}) linking {}", output.display()));
+        return Err(format!(
+            "{compiler} failed ({status}) linking {}",
+            output.display()
+        ));
     }
     println!(
         "built {}: {} regenerated manifest(s) identical to the stored ones; linked {}",

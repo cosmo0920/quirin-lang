@@ -72,7 +72,10 @@ struct Section {
 
 fn header(bytes: &Bytes<'_>) -> Result<Header, ReadError> {
     if !is_elf(bytes.data()) {
-        return Err(ReadError::new("ELF header", "the `\\x7fELF` magic is absent"));
+        return Err(ReadError::new(
+            "ELF header",
+            "the `\\x7fELF` magic is absent",
+        ));
     }
     let wide = match bytes.u8(4)? {
         1 => false,
@@ -131,7 +134,10 @@ fn sections(bytes: &Bytes<'_>, header: &Header) -> Result<Vec<Section>, ReadErro
     if header.shentsize < minimum {
         return Err(ReadError::new(
             "ELF section headers",
-            format!("section header size {} is below {minimum}", header.shentsize),
+            format!(
+                "section header size {} is below {minimum}",
+                header.shentsize
+            ),
         ));
     }
     checked_extent("ELF section headers", header.shnum, header.shentsize)?;
@@ -188,12 +194,12 @@ fn symbols(
         table.entsize
     };
     let strings = sections.get(table.link as usize).ok_or_else(|| {
-        ReadError::new(
-            "ELF symbol table",
-            "its string table link names no section",
-        )
+        ReadError::new("ELF symbol table", "its string table link names no section")
     })?;
-    let strings = Bytes::new(bytes.slice(strings.offset, strings.size)?, "ELF string table");
+    let strings = Bytes::new(
+        bytes.slice(strings.offset, strings.size)?,
+        "ELF string table",
+    );
     let raw = Bytes::new(bytes.slice(table.offset, table.size)?, "ELF symbol table");
     let count = table.size / step;
     let mut out = Vec::with_capacity(count as usize);
@@ -354,8 +360,9 @@ pub fn shared_object(data: &[u8], origin: &str) -> Result<SharedObject, ReadErro
         };
         let version = match (versym, &definition) {
             (Some(versym), Definition::Defined { .. }) => {
-                let value = Bytes::new(bytes.slice(versym.offset, versym.size)?, "ELF .gnu.version")
-                    .u16(index as u64 * 2, e)?;
+                let value =
+                    Bytes::new(bytes.slice(versym.offset, versym.size)?, "ELF .gnu.version")
+                        .u16(index as u64 * 2, e)?;
                 let hidden = value & VERSYM_HIDDEN != 0;
                 let number = value & !VERSYM_HIDDEN;
                 if number <= 1 {
@@ -404,10 +411,19 @@ fn version_names(
         return Ok(Vec::new());
     };
     let strings = sections.get(verdef.link as usize).ok_or_else(|| {
-        ReadError::new("ELF .gnu.version_d", "its string table link names no section")
+        ReadError::new(
+            "ELF .gnu.version_d",
+            "its string table link names no section",
+        )
     })?;
-    let strings = Bytes::new(bytes.slice(strings.offset, strings.size)?, "ELF string table");
-    let raw = Bytes::new(bytes.slice(verdef.offset, verdef.size)?, "ELF .gnu.version_d");
+    let strings = Bytes::new(
+        bytes.slice(strings.offset, strings.size)?,
+        "ELF string table",
+    );
+    let raw = Bytes::new(
+        bytes.slice(verdef.offset, verdef.size)?,
+        "ELF .gnu.version_d",
+    );
     let e = header.endian;
     let mut out = Vec::new();
     let mut at = 0u64;
@@ -437,10 +453,13 @@ fn soname(
     let Some(dynamic) = sections.iter().find(|s| s.kind == SHT_DYNAMIC) else {
         return Ok(None);
     };
-    let strings = sections.get(dynamic.link as usize).ok_or_else(|| {
-        ReadError::new("ELF .dynamic", "its string table link names no section")
-    })?;
-    let strings = Bytes::new(bytes.slice(strings.offset, strings.size)?, "ELF string table");
+    let strings = sections
+        .get(dynamic.link as usize)
+        .ok_or_else(|| ReadError::new("ELF .dynamic", "its string table link names no section"))?;
+    let strings = Bytes::new(
+        bytes.slice(strings.offset, strings.size)?,
+        "ELF string table",
+    );
     let raw = Bytes::new(bytes.slice(dynamic.offset, dynamic.size)?, "ELF .dynamic");
     let e = header.endian;
     let step = if header.wide { 16 } else { 8 };

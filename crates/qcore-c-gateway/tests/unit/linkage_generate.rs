@@ -27,7 +27,11 @@ fn loader(entries: &[(&str, &[u8])]) -> impl Fn(&str) -> Result<Vec<u8>, String>
         .iter()
         .map(|(name, bytes)| ((*name).to_owned(), bytes.to_vec()))
         .collect();
-    move |name: &str| map.get(name).cloned().ok_or_else(|| format!("no file `{name}`"))
+    move |name: &str| {
+        map.get(name)
+            .cloned()
+            .ok_or_else(|| format!("no file `{name}`"))
+    }
 }
 
 fn scalar_contract(name: &str, parameters: &[(&str, &str)], result: &str) -> String {
@@ -133,7 +137,10 @@ fn a_stored_manifest_that_differs_from_the_regenerated_one_is_stale() {
     rebuilt[last] ^= 0x01;
     let moved = loader(&[("libqr_demo.a", &rebuilt)]);
     let refusal = check_stale(&fresh.text, &inputs, &moved, None).unwrap_err();
-    assert!(matches!(refusal, GenerationRefusal::Stale { line: 9, .. }), "{refusal}");
+    assert!(
+        matches!(refusal, GenerationRefusal::Stale { line: 9, .. }),
+        "{refusal}"
+    );
 }
 
 #[test]
@@ -190,7 +197,12 @@ fn a_dynamic_elf_manifest_records_the_version_weakness_and_soname() {
     )]);
     let files = loader(&[("libqr_versioned.so", ELF_VERSIONED)]);
     let generated = generate(
-        &inputs(LinkageKind::Dynamic, "libqr_versioned.so", &target, &contracts),
+        &inputs(
+            LinkageKind::Dynamic,
+            "libqr_versioned.so",
+            &target,
+            &contracts,
+        ),
         &files,
         None,
     )
@@ -201,9 +213,11 @@ fn a_dynamic_elf_manifest_records_the_version_weakness_and_soname() {
     assert!(generated.text.contains(
         "contract fn qr_soft() -> int32_t from v.qv export qr_soft version VERS_1 weak in libqr_versioned.so;"
     ));
-    assert!(generated
-        .text
-        .contains("runtime soname libqr_versioned.so.1 in libqr_versioned.so;"));
+    assert!(
+        generated
+            .text
+            .contains("runtime soname libqr_versioned.so.1 in libqr_versioned.so;")
+    );
     // A symbol with only a hidden version is not generated.
     let hidden = BTreeMap::from([(
         "v.qv".to_owned(),
@@ -244,12 +258,16 @@ fn a_windows_import_is_by_name_and_its_runtime_export_is_not_a_forwarder() {
     };
     let generated = generate_for("qr_by_name", Some("10.0.20348")).unwrap();
     assert!(generated.text.contains("data_model llp64;"));
-    assert!(generated.text.contains(
-        "export qr_by_name global dll qr_runtime.dll in qr_import.lib(qr_runtime.dll);"
-    ));
-    assert!(generated
-        .text
-        .contains("runtime dll qr_runtime.dll os_build 10.0.20348;"));
+    assert!(
+        generated.text.contains(
+            "export qr_by_name global dll qr_runtime.dll in qr_import.lib(qr_runtime.dll);"
+        )
+    );
+    assert!(
+        generated
+            .text
+            .contains("runtime dll qr_runtime.dll os_build 10.0.20348;")
+    );
     assert_eq!(
         generated.manifest.linkage.as_ref().unwrap().runtime,
         vec![RuntimePremise::Dll {
@@ -263,7 +281,10 @@ fn a_windows_import_is_by_name_and_its_runtime_export_is_not_a_forwarder() {
         ("qr_gone", "does not export `qr_gone` by name"),
     ] {
         let refusal = generate_for(symbol, Some("10.0.20348")).unwrap_err();
-        assert!(refusal.to_string().contains(expected), "{symbol}: {refusal}");
+        assert!(
+            refusal.to_string().contains(expected),
+            "{symbol}: {refusal}"
+        );
     }
     assert!(matches!(
         generate_for("qr_by_name", None),
@@ -330,11 +351,7 @@ fn the_link_plan_hashes_every_pinned_file_and_admits_only_the_artifact() {
     let archive = root.join("lib/libqr_demo.a");
     std::fs::write(&archive, ELF_DEMO).unwrap();
     let script = root.join("libqr.a");
-    std::fs::write(
-        &script,
-        format!("GROUP ( {} )\n", archive.display()),
-    )
-    .unwrap();
+    std::fs::write(&script, format!("GROUP ( {} )\n", archive.display())).unwrap();
     let target = target("x86_64-pc-linux-gnu");
     let contracts = demo_contracts();
     let script_ref = script.display().to_string();

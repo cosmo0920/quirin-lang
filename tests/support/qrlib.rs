@@ -105,9 +105,7 @@ pub fn manifest(
         version: "0.1.0",
         linkage,
         artifact: &artifact_ref,
-        header: header_ref
-            .as_deref()
-            .zip(header_bytes.as_deref()),
+        header: header_ref.as_deref().zip(header_bytes.as_deref()),
         target,
         unwinding: "abort",
         allocator_custody: "closed",
@@ -116,8 +114,9 @@ pub fn manifest(
         os_build: None,
     };
     let loader = |reference: &str| std::fs::read(reference).map_err(|error| error.to_string());
-    let generated = generate(&inputs, &loader, None)
-        .unwrap_or_else(|refusal| panic!("the manifest of `{library}` is not generated: {refusal}"));
+    let generated = generate(&inputs, &loader, None).unwrap_or_else(|refusal| {
+        panic!("the manifest of `{library}` is not generated: {refusal}")
+    });
     Generated {
         key: artifact
             .with_file_name(format!("{library}.qrlib"))

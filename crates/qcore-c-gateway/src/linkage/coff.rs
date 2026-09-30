@@ -80,7 +80,9 @@ pub fn object_symbols(data: &[u8], origin: &str) -> Result<SymbolTable, ReadErro
     if machine == 0 && bytes.u16(2, E)? == 0xffff {
         return Err(ReadError::new(
             "COFF object",
-            format!("{origin} is an anonymous object (`/bigobj` or link-time code generation), whose symbol table is not read here"),
+            format!(
+                "{origin} is an anonymous object (`/bigobj` or link-time code generation), whose symbol table is not read here"
+            ),
         ));
     }
     let pointer = u64::from(bytes.u32(8, E)?);
@@ -291,12 +293,18 @@ pub fn pe_exports(data: &[u8]) -> Result<PeExports, ReadError> {
     };
     let count_at = directories - 4;
     if bytes.u32(count_at, E)? == 0 {
-        return Err(ReadError::new("PE image", "the image has no data directories"));
+        return Err(ReadError::new(
+            "PE image",
+            "the image has no data directories",
+        ));
     }
     let export_rva = u64::from(bytes.u32(directories, E)?);
     let export_size = u64::from(bytes.u32(directories + 4, E)?);
     if export_rva == 0 {
-        return Err(ReadError::new("PE image", "the image has no export directory"));
+        return Err(ReadError::new(
+            "PE image",
+            "the image has no export directory",
+        ));
     }
     let section_table = optional + optional_size;
     let mut map = Vec::new();

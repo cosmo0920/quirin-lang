@@ -270,7 +270,10 @@ pub enum EntryType {
     /// `struct TAG`.
     Struct(String),
     /// `struct TAG *` (`constant == false`) or `const struct TAG *`.
-    StructPointer { tag: String, constant: bool },
+    StructPointer {
+        tag: String,
+        constant: bool,
+    },
 }
 
 impl EntryType {
@@ -614,7 +617,10 @@ pub enum ManifestRefusal {
     IncludeWithoutHeader { spelling: String },
     /// A field of the generated (v2) grammar in a v1 manifest, or a v1-only
     /// statement (`include`) in a v2 one (card `W48-QRLIB-LINKAGE`).
-    WrongVersionField { field: String, version: &'static str },
+    WrongVersionField {
+        field: String,
+        version: &'static str,
+    },
     /// A contract-less `unchecked fn` entry in a generated manifest, which binds
     /// declared contracts only: a waiver is a v1 manifest's.
     UncheckedInGenerated { symbol: String },
@@ -1294,7 +1300,12 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
     // Card `W48-QRLIB-LINKAGE`: the marker selects the grammar. `v2` is the
     // generated manifest; `v1` loads exactly as before.
     let generated = match iterator.next() {
-        Some(first) => match first.split_whitespace().collect::<Vec<_>>().join(" ").as_str() {
+        Some(first) => match first
+            .split_whitespace()
+            .collect::<Vec<_>>()
+            .join(" ")
+            .as_str()
+        {
             MARKER => false,
             MARKER_V2 => true,
             _ => return Err(ManifestRefusal::MissingMarker),
@@ -1331,7 +1342,10 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
             }
             "input" => {
                 let input = parse_input(rest, statement)?;
-                if inputs.iter().any(|known| known.reference == input.reference) {
+                if inputs
+                    .iter()
+                    .any(|known| known.reference == input.reference)
+                {
                     return Err(ManifestRefusal::RepeatedField {
                         field: format!("input {}", input.reference),
                     });
@@ -1494,8 +1508,7 @@ pub fn load_native_library_manifest(text: &str) -> Result<NativeLibraryManifest,
             })
         }
     }
-    let data_model = if generated && fields.get("data_model").map(String::as_str) == Some("llp64")
-    {
+    let data_model = if generated && fields.get("data_model").map(String::as_str) == Some("llp64") {
         DataModel::Llp64
     } else {
         closed_value(&fields, "data_model", "lp64", DataModel::Lp64)?
@@ -1607,7 +1620,11 @@ pub fn render_manifest(manifest: &NativeLibraryManifest) -> Option<String> {
     for premise in &linkage.runtime {
         let _ = writeln!(out, "runtime {};", premise.render());
     }
-    let _ = writeln!(out, "data_model {};", manifest.premises.data_model.spelling());
+    let _ = writeln!(
+        out,
+        "data_model {};",
+        manifest.premises.data_model.spelling()
+    );
     let _ = writeln!(out, "unwinding abort;");
     let _ = writeln!(out, "allocator_custody closed;");
     let _ = writeln!(out, "thread_posture single_caller;");
@@ -1628,7 +1645,11 @@ pub fn render_manifest(manifest: &NativeLibraryManifest) -> Option<String> {
                 .join(", "),
             entry.result.c_spelling(),
             entry.contract_module,
-            entry.export.as_ref().map(ExportFacts::render).unwrap_or_default()
+            entry
+                .export
+                .as_ref()
+                .map(ExportFacts::render)
+                .unwrap_or_default()
         );
     }
     Some(out)
@@ -2215,7 +2236,9 @@ pub enum ManifestDisagreement {
     },
     /// The entry carries a struct (card `W48-QRLIB-LINKAGE`), which only the
     /// FFI route calls.
-    StructEntry { symbol: String },
+    StructEntry {
+        symbol: String,
+    },
 }
 
 impl fmt::Display for ManifestDisagreement {

@@ -26,8 +26,7 @@ use qcore_core::ffi::CAbiType;
 use qcore_core::native_library::{
     AbiPremises, AllocatorCustody, ArtifactIdentity, ContractedEntry, DataModel, EntryType,
     ExportBinding, ExportFacts, LinkageKind, LinkageSection, LinkedInput, NativeLibraryManifest,
-    RuntimePremise, ThreadPosture, UnwindingPosture, load_native_library_manifest,
-    render_manifest,
+    RuntimePremise, ThreadPosture, UnwindingPosture, load_native_library_manifest, render_manifest,
 };
 use qcore_core::native_library_header::HeaderIdentity;
 use qcore_core::scalar_types::{PointerWidth, RecordedTarget, ScalarType};
@@ -99,7 +98,10 @@ impl fmt::Display for GenerationRefusal {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Target { triple, reason } => {
-                write!(f, "the recorded target `{triple}` is not one linkage reads: {reason}")
+                write!(
+                    f,
+                    "the recorded target `{triple}` is not one linkage reads: {reason}"
+                )
             }
             Self::Input { field, value } => write!(
                 f,
@@ -116,7 +118,10 @@ impl fmt::Display for GenerationRefusal {
                 "`{symbol}` has the type `{spelling}`, which no manifest entry spells"
             ),
             Self::Symbol { symbol, refusal } => {
-                write!(f, "`{symbol}` does not link from the pinned artifact: {refusal}")
+                write!(
+                    f,
+                    "`{symbol}` does not link from the pinned artifact: {refusal}"
+                )
             }
             Self::WrongProvenance { symbol, reason } => write!(f, "`{symbol}`: {reason}"),
             Self::StructWithoutHeader { symbol } => write!(
@@ -204,9 +209,7 @@ struct Declared {
     result: EntryType,
 }
 
-fn declarations(
-    contracts: &BTreeMap<String, String>,
-) -> Result<Vec<Declared>, GenerationRefusal> {
+fn declarations(contracts: &BTreeMap<String, String>) -> Result<Vec<Declared>, GenerationRefusal> {
     use qcore_contract::contract_loader::{ffi_declarations, load_resource_contract_sources};
     use qcore_contract::extern_bridge::declared_signatures;
 
@@ -224,7 +227,11 @@ fn declarations(
             out.push(Declared {
                 symbol: name.clone(),
                 module: ffi.module.clone(),
-                parameters: ffi.parameters.iter().map(|(_, ty)| entry_type(ty)).collect(),
+                parameters: ffi
+                    .parameters
+                    .iter()
+                    .map(|(_, ty)| entry_type(ty))
+                    .collect(),
                 result: entry_type(&ffi.result),
             });
             continue;
@@ -264,7 +271,10 @@ fn declarations(
     Ok(out)
 }
 
-fn data_model(target: &RecordedTarget, facts: &TargetFacts) -> Result<DataModel, GenerationRefusal> {
+fn data_model(
+    target: &RecordedTarget,
+    facts: &TargetFacts,
+) -> Result<DataModel, GenerationRefusal> {
     match (target.pointer_width, facts.format) {
         (PointerWidth::W64, Format::Coff) => Ok(DataModel::Llp64),
         (PointerWidth::W64, Format::Elf | Format::MachO) => Ok(DataModel::Lp64),
@@ -349,12 +359,11 @@ pub fn generate(
     };
     for item in declared {
         let object = facts.object_name(&item.symbol);
-        let resolved = resolve(&artifact.table, &object).map_err(|refusal| {
-            GenerationRefusal::Symbol {
+        let resolved =
+            resolve(&artifact.table, &object).map_err(|refusal| GenerationRefusal::Symbol {
                 symbol: item.symbol.clone(),
                 refusal,
-            }
-        })?;
+            })?;
         match (declared_kind, &resolved.import) {
             (LinkageKind::Static, Some(import)) => {
                 return Err(GenerationRefusal::WrongProvenance {
@@ -368,7 +377,9 @@ pub fn generate(
             (LinkageKind::Dynamic, None) if facts.format == Format::Coff => {
                 return Err(GenerationRefusal::WrongProvenance {
                     symbol: item.symbol,
-                    reason: "a dynamic COFF link resolved it to code in the library, not to an import".into(),
+                    reason:
+                        "a dynamic COFF link resolved it to code in the library, not to an import"
+                            .into(),
                 });
             }
             (LinkageKind::Dynamic, Some(import)) => {
@@ -569,7 +580,11 @@ pub fn check_stale(
         .unwrap_or(stored_lines.len().min(generated_lines.len()));
     Err(GenerationRefusal::Stale {
         line: index + 1,
-        stored: stored_lines.get(index).copied().unwrap_or("<end of file>").to_owned(),
+        stored: stored_lines
+            .get(index)
+            .copied()
+            .unwrap_or("<end of file>")
+            .to_owned(),
         generated: generated_lines
             .get(index)
             .copied()

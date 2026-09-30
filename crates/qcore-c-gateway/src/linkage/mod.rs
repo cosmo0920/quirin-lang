@@ -287,7 +287,12 @@ pub fn resolve(table: &SymbolTable, symbol: &str) -> Result<ResolvedSymbol, Symb
     let linkable: Vec<&SymbolRecord> = defined
         .iter()
         .copied()
-        .filter(|record| record.version.as_ref().is_none_or(|version| version.default))
+        .filter(|record| {
+            record
+                .version
+                .as_ref()
+                .is_none_or(|version| version.default)
+        })
         .collect();
     if linkable.is_empty() {
         let mut versions: Vec<String> = defined

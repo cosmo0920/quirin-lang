@@ -187,7 +187,10 @@ pub fn dylib(data: &[u8], origin: &str) -> Result<Dylib, ReadError> {
     if header.filetype != MH_DYLIB {
         return Err(ReadError::new(
             "Mach-O dylib",
-            format!("{origin} is not a dynamic library (type {})", header.filetype),
+            format!(
+                "{origin} is not a dynamic library (type {})",
+                header.filetype
+            ),
         ));
     }
     let mut install_name = None;
@@ -204,13 +207,11 @@ pub fn dylib(data: &[u8], origin: &str) -> Result<Dylib, ReadError> {
                     u64::from(bytes.u32(at + 12, Endian::Little)?),
                 ));
             }
-            LC_DYLD_INFO | LC_DYLD_INFO_ONLY => {
-                if trie.is_none() {
-                    trie = Some((
-                        u64::from(bytes.u32(at + 40, Endian::Little)?),
-                        u64::from(bytes.u32(at + 44, Endian::Little)?),
-                    ));
-                }
+            LC_DYLD_INFO | LC_DYLD_INFO_ONLY if trie.is_none() => {
+                trie = Some((
+                    u64::from(bytes.u32(at + 40, Endian::Little)?),
+                    u64::from(bytes.u32(at + 44, Endian::Little)?),
+                ));
             }
             _ => {}
         }
@@ -238,7 +239,10 @@ fn walk_trie(
     depth: usize,
 ) -> Result<(), ReadError> {
     if depth > 4096 {
-        return Err(ReadError::new("Mach-O export trie", "the trie is deeper than 4096 edges"));
+        return Err(ReadError::new(
+            "Mach-O export trie",
+            "the trie is deeper than 4096 edges",
+        ));
     }
     let mut at = node;
     let terminal = trie.uleb128(&mut at)?;
@@ -279,7 +283,14 @@ fn walk_trie(
                 format!("an edge `{edge}` points at offset {child}, outside the trie"),
             ));
         }
-        walk_trie(trie, child, format!("{prefix}{edge}"), origin, table, depth + 1)?;
+        walk_trie(
+            trie,
+            child,
+            format!("{prefix}{edge}"),
+            origin,
+            table,
+            depth + 1,
+        )?;
     }
     Ok(())
 }

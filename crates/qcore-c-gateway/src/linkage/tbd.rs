@@ -101,7 +101,11 @@ pub fn read(data: &[u8], target: &str) -> Result<TextStub, ReadError> {
             table.records.push(SymbolRecord {
                 name: name.clone(),
                 definition: Definition::Defined {
-                    binding: if *weak { Binding::Weak } else { Binding::Global },
+                    binding: if *weak {
+                        Binding::Weak
+                    } else {
+                        Binding::Global
+                    },
                     ifunc: false,
                 },
                 version: None,
@@ -201,11 +205,14 @@ fn parse_document(text: &str) -> Result<Vec<(String, Value)>, ReadError> {
         if indent(line) != 0 {
             return Err(ReadError::new(
                 "tbd",
-                format!("`{}` is indented where a top-level key belongs", line.trim()),
+                format!(
+                    "`{}` is indented where a top-level key belongs",
+                    line.trim()
+                ),
             ));
         }
-        let (key, rest) =
-            split_key(line).ok_or_else(|| ReadError::new("tbd", format!("`{line}` is not `key: value`")))?;
+        let (key, rest) = split_key(line)
+            .ok_or_else(|| ReadError::new("tbd", format!("`{line}` is not `key: value`")))?;
         if !rest.trim().is_empty() {
             out.push((key.to_owned(), value(rest, &mut lines)?));
             continue;
@@ -226,7 +233,10 @@ fn parse_document(text: &str) -> Result<Vec<(String, Value)>, ReadError> {
                 items.push(Vec::new());
             }
             let item = items.last_mut().ok_or_else(|| {
-                ReadError::new("tbd", format!("`{trimmed}` precedes any `- ` item of `{key}`"))
+                ReadError::new(
+                    "tbd",
+                    format!("`{trimmed}` precedes any `- ` item of `{key}`"),
+                )
             })?;
             let (sub, rest) = split_key(entry)
                 .ok_or_else(|| ReadError::new("tbd", format!("`{entry}` is not `key: value`")))?;
@@ -311,17 +321,23 @@ fn read_yaml(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
             other => {
                 return Err(ReadError::new(
                     "tbd",
-                    format!("document {index} is tagged `{other}`, not a text stub version read here"),
+                    format!(
+                        "document {index} is tagged `{other}`, not a text stub version read here"
+                    ),
                 ));
             }
         };
         let install_name = scalar(&parsed, "install-name")
-            .ok_or_else(|| ReadError::new("tbd", format!("document {index} names no `install-name`")))?
+            .ok_or_else(|| {
+                ReadError::new("tbd", format!("document {index} names no `install-name`"))
+            })?
             .to_owned();
-        let (scope_key, matches): (&str, Box<dyn Fn(&[String]) -> bool>) = if v3 {
-            ("archs", Box::new(move |listed: &[String]| listed.iter().any(|a| a == arch)))
-        } else {
-            ("targets", Box::new(move |listed: &[String]| listed.iter().any(|t| t == target)))
+        // v3 scopes an entry by architecture, v4 by `ARCH-PLATFORM` target.
+        let scope_key = if v3 { "archs" } else { "targets" };
+        let matches = |listed: &[String]| {
+            listed
+                .iter()
+                .any(|entry| if v3 { entry == arch } else { entry == target })
         };
         let own = if v3 {
             list(&parsed, "archs")
@@ -345,7 +361,9 @@ fn read_yaml(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
         if !v3 {
             for item in items(&parsed, "reexported-libraries") {
                 if matches(list(item, scope_key)) {
-                    document.reexports.extend(list(item, "libraries").iter().cloned());
+                    document
+                        .reexports
+                        .extend(list(item, "libraries").iter().cloned());
                 }
             }
         }
@@ -356,12 +374,18 @@ fn read_yaml(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
             for name in list(item, "symbols") {
                 document.symbols.push((name.clone(), false));
             }
-            let weak_key = if v3 { "weak-def-symbols" } else { "weak-symbols" };
+            let weak_key = if v3 {
+                "weak-def-symbols"
+            } else {
+                "weak-symbols"
+            };
             for name in list(item, weak_key) {
                 document.symbols.push((name.clone(), true));
             }
             if v3 {
-                document.reexports.extend(list(item, "re-exports").iter().cloned());
+                document
+                    .reexports
+                    .extend(list(item, "re-exports").iter().cloned());
             }
         }
         out.push(document);
@@ -376,8 +400,15 @@ fn read_yaml(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
 fn read_v5(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
     let root: serde_json::Value = serde_json::from_str(text)
         .map_err(|error| ReadError::new("tbd", format!("the v5 stub is not JSON: {error}")))?;
-    if root.get("tapi_tbd_version").and_then(serde_json::Value::as_u64) != Some(5) {
-        return Err(ReadError::new("tbd", "a JSON stub whose `tapi_tbd_version` is not 5"));
+    if root
+        .get("tapi_tbd_version")
+        .and_then(serde_json::Value::as_u64)
+        != Some(5)
+    {
+        return Err(ReadError::new(
+            "tbd",
+            "a JSON stub whose `tapi_tbd_version` is not 5",
+        ));
     }
     let mut libraries = Vec::new();
     if let Some(main) = root.get("main_library") {
@@ -415,7 +446,11 @@ fn read_v5(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
             .map(|infos| {
                 infos
                     .iter()
-                    .filter_map(|info| info.get("target").and_then(|t| t.as_str()).map(ToOwned::to_owned))
+                    .filter_map(|info| {
+                        info.get("target")
+                            .and_then(|t| t.as_str())
+                            .map(ToOwned::to_owned)
+                    })
                     .collect()
             })
             .unwrap_or_default();
@@ -443,7 +478,11 @@ fn read_v5(text: &str, target: &str) -> Result<Vec<Document>, ReadError> {
                 .and_then(serde_json::Value::as_array)
                 .and_then(|versions| versions.first())
                 .and_then(|entry| entry.get("version"))
-                .and_then(|v| v.as_str().map(ToOwned::to_owned).or_else(|| Some(v.to_string()))),
+                .and_then(|v| {
+                    v.as_str()
+                        .map(ToOwned::to_owned)
+                        .or_else(|| Some(v.to_string()))
+                }),
             ..Document::default()
         };
         if let Some(serde_json::Value::Array(entries)) = library.get("reexported_libraries") {

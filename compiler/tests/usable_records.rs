@@ -542,8 +542,7 @@ fn point_contracts() -> BTreeMap<String, String> {
     )])
 }
 
-const FFI_HEAD: &str =
-    "#import std.ffi.unsafe;\n#import std.extern;\n#import std.fmt;\n#import std.io;\nextern library qr_point;\n";
+const FFI_HEAD: &str = "#import std.ffi.unsafe;\n#import std.extern;\n#import std.fmt;\n#import std.io;\nextern library qr_point;\n";
 const POINT_IMPORT: &str = "struct! {\n    type Point = c\"struct qr_point\" from \"qr_point.h\";\n    fields { x: i32, y: i32, weight: u16 }\n}\n";
 
 /// An FFI program beside the example's header.

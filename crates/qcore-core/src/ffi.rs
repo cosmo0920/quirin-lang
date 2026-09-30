@@ -672,7 +672,7 @@ pub enum FfiAssumption {
     BuilderIncludes { directories: Vec<String> },
     /// A called function's linkage, from a generated manifest (card
     /// `W48-QRLIB-LINKAGE`).
-    Linked(FfiLink),
+    Linked(Box<FfiLink>),
 }
 
 impl fmt::Display for FfiAssumption {
@@ -1823,7 +1823,7 @@ fn derive_assumptions(program: &FfiProgram, functions: &[FfiFunctionUse]) -> Vec
     // the order the certificate lists them.
     for function in functions {
         if let Some(link) = program.links.get(&function.name) {
-            assumptions.push(FfiAssumption::Linked(link.clone()));
+            assumptions.push(FfiAssumption::Linked(Box::new(link.clone())));
         }
     }
     assumptions

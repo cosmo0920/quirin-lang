@@ -34,7 +34,11 @@ pub(super) fn files(entries: &[(&str, &[u8])]) -> impl Fn(&str) -> Result<Vec<u8
         .iter()
         .map(|(name, bytes)| ((*name).to_owned(), bytes.to_vec()))
         .collect();
-    move |name: &str| map.get(name).cloned().ok_or_else(|| format!("no file `{name}`"))
+    move |name: &str| {
+        map.get(name)
+            .cloned()
+            .ok_or_else(|| format!("no file `{name}`"))
+    }
 }
 
 fn table(reference: &str, bytes: &[u8], target: &TargetFacts) -> SymbolTable {
@@ -55,7 +59,11 @@ fn an_elf_archive_admits_a_global_and_a_weak_definition_from_its_index() {
     assert_eq!(add.origin, "libqr_demo.a(qr_ok.o)");
     assert_eq!(add.version, None);
     let weak = resolve(&table, "qr_weak").unwrap();
-    assert_eq!(weak.binding, Binding::Weak, "a defined weak symbol is admitted, recorded weak");
+    assert_eq!(
+        weak.binding,
+        Binding::Weak,
+        "a defined weak symbol is admitted, recorded weak"
+    );
 }
 
 #[test]
@@ -144,13 +152,23 @@ fn an_elf_shared_object_records_versions_weakness_and_its_soname() {
 
 #[test]
 fn an_elf_file_for_another_machine_or_format_is_refused() {
-    let refusal = read_artifact("libqr_demo.a", &files(&[("libqr_demo.a", ELF_DEMO)]), &mac())
-        .unwrap_err();
-    assert!(matches!(refusal, ArtifactRefusal::WrongTarget { .. }), "{refusal}");
+    let refusal = read_artifact(
+        "libqr_demo.a",
+        &files(&[("libqr_demo.a", ELF_DEMO)]),
+        &mac(),
+    )
+    .unwrap_err();
+    assert!(
+        matches!(refusal, ArtifactRefusal::WrongTarget { .. }),
+        "{refusal}"
+    );
     let arm = TargetFacts::from_triple("aarch64-unknown-linux-gnu").unwrap();
     let refusal =
         read_artifact("libqr_demo.a", &files(&[("libqr_demo.a", ELF_DEMO)]), &arm).unwrap_err();
-    assert!(matches!(refusal, ArtifactRefusal::WrongTarget { .. }), "{refusal}");
+    assert!(
+        matches!(refusal, ArtifactRefusal::WrongTarget { .. }),
+        "{refusal}"
+    );
 }
 
 #[test]
@@ -221,7 +239,11 @@ fn a_script_is_followed_and_every_file_it_names_is_pinned() {
     let kinds: Vec<FileKind> = read.files.iter().map(|file| file.kind).collect();
     assert_eq!(
         kinds,
-        [FileKind::LdScript, FileKind::StaticArchive, FileKind::StaticArchive]
+        [
+            FileKind::LdScript,
+            FileKind::StaticArchive,
+            FileKind::StaticArchive
+        ]
     );
     assert_eq!(
         read.files[1].digest,
@@ -319,15 +341,24 @@ exports:
 
 #[test]
 fn a_tbd_stub_exports_what_its_first_document_and_its_reexports_list() {
-    assert_eq!(tbd::tbd_target("x86_64-apple-darwin23.1.0").as_deref(), Some("x86_64-macos"));
-    assert_eq!(tbd::tbd_target("arm64-apple-macosx14.0.0").as_deref(), Some("arm64-macos"));
+    assert_eq!(
+        tbd::tbd_target("x86_64-apple-darwin23.1.0").as_deref(),
+        Some("x86_64-macos")
+    );
+    assert_eq!(
+        tbd::tbd_target("arm64-apple-macosx14.0.0").as_deref(),
+        Some("arm64-macos")
+    );
     assert_eq!(tbd::tbd_target("x86_64-pc-linux-gnu"), None);
     let stub = tbd::read(TBD_V4.as_bytes(), "x86_64-macos").unwrap();
     assert_eq!(stub.install_name, "/usr/lib/libSystem.B.dylib");
     assert_eq!(stub.current_version.as_deref(), Some("1351"));
     let sqrt = resolve(&stub.table, "_sqrt").unwrap();
     assert_eq!(sqrt.origin, "/usr/lib/system/libsystem_m.dylib");
-    assert_eq!(resolve(&stub.table, "_weak_m").unwrap().binding, Binding::Weak);
+    assert_eq!(
+        resolve(&stub.table, "_weak_m").unwrap().binding,
+        Binding::Weak
+    );
     assert!(resolve(&stub.table, "_system_only").is_ok());
     // Listed for another target only, or in a document nothing re-exports.
     assert!(resolve(&stub.table, "_arm_only").is_err());
@@ -359,7 +390,10 @@ fn a_v3_and_a_v5_stub_are_read_and_an_unknown_version_refused() {
     let stub = tbd::read(v3.as_bytes(), "x86_64-macos").unwrap();
     assert_eq!(stub.install_name, "/usr/lib/libz.1.dylib");
     assert!(resolve(&stub.table, "_deflate").is_ok());
-    assert_eq!(resolve(&stub.table, "_zweak").unwrap().binding, Binding::Weak);
+    assert_eq!(
+        resolve(&stub.table, "_zweak").unwrap().binding,
+        Binding::Weak
+    );
     let v5 = r#"{"tapi_tbd_version": 5, "main_library": {"target_info": [{"target": "x86_64-macos"}], "install_names": [{"name": "/usr/lib/libSystem.B.dylib"}], "current_versions": [{"version": "1351"}], "reexported_libraries": [{"names": ["/usr/lib/system/libsystem_m.dylib"]}], "exported_symbols": [{"text": {"global": ["_sys"]}}]}, "libraries": [{"target_info": [{"target": "x86_64-macos"}], "install_names": [{"name": "/usr/lib/system/libsystem_m.dylib"}], "exported_symbols": [{"text": {"global": ["_sqrt"], "weak": ["_w"]}}]}]}"#;
     let stub = tbd::read(v5.as_bytes(), "x86_64-macos").unwrap();
     assert_eq!(
@@ -367,7 +401,13 @@ fn a_v3_and_a_v5_stub_are_read_and_an_unknown_version_refused() {
         "/usr/lib/system/libsystem_m.dylib"
     );
     assert_eq!(resolve(&stub.table, "_w").unwrap().binding, Binding::Weak);
-    assert!(tbd::read(b"--- !tapi-tbd\ntbd-version: 9\ninstall-name: /x\n", "x86_64-macos").is_err());
+    assert!(
+        tbd::read(
+            b"--- !tapi-tbd\ntbd-version: 9\ninstall-name: /x\n",
+            "x86_64-macos"
+        )
+        .is_err()
+    );
 }
 
 /// A minimal thin x86_64 dylib: `LC_ID_DYLIB` and an export trie holding
@@ -412,7 +452,12 @@ fn dylib_bytes() -> Vec<u8> {
         out.extend_from_slice(&word.to_le_bytes());
     }
     out.extend_from_slice(name);
-    for word in [0x8000_0033u32, trie_cmd_size, trie_offset, trie.len() as u32] {
+    for word in [
+        0x8000_0033u32,
+        trie_cmd_size,
+        trie_offset,
+        trie.len() as u32,
+    ] {
         out.extend_from_slice(&word.to_le_bytes());
     }
     out.extend_from_slice(&trie);
@@ -423,9 +468,18 @@ fn dylib_bytes() -> Vec<u8> {
 fn a_dylib_export_trie_is_walked() {
     let dylib = macho::dylib(&dylib_bytes(), "libqr.dylib").unwrap();
     assert_eq!(dylib.install_name.as_deref(), Some("/usr/lib/libqr.dylib"));
-    assert_eq!(resolve(&dylib.table, "_qr_add").unwrap().binding, Binding::Global);
-    assert_eq!(resolve(&dylib.table, "_qr_weak").unwrap().binding, Binding::Weak);
-    assert!(resolve(&dylib.table, "_qr_fwd").is_err(), "a re-export is not this image's code");
+    assert_eq!(
+        resolve(&dylib.table, "_qr_add").unwrap().binding,
+        Binding::Global
+    );
+    assert_eq!(
+        resolve(&dylib.table, "_qr_weak").unwrap().binding,
+        Binding::Weak
+    );
+    assert!(
+        resolve(&dylib.table, "_qr_fwd").is_err(),
+        "a re-export is not this image's code"
+    );
     let loader = files(&[("libqr.dylib", &dylib_bytes())]);
     let read = read_artifact("libqr.dylib", &loader, &mac()).unwrap();
     assert_eq!(read.files[0].kind, FileKind::Dylib);
@@ -457,8 +511,12 @@ fn a_coff_static_library_is_read_through_its_linker_members() {
 
 #[test]
 fn an_import_library_is_by_name_or_refused_as_ordinal_only() {
-    let read = read_artifact("qr_import.lib", &files(&[("qr_import.lib", COFF_IMPORT)]), &win())
-        .unwrap();
+    let read = read_artifact(
+        "qr_import.lib",
+        &files(&[("qr_import.lib", COFF_IMPORT)]),
+        &win(),
+    )
+    .unwrap();
     assert!(read.dynamic);
     assert_eq!(read.files[0].kind, FileKind::ImportLibrary);
     let by_name = resolve(&read.table, "qr_by_name").unwrap();
@@ -548,7 +606,10 @@ fn the_target_facts_derive_format_and_decoration() {
     assert_eq!(elf().format, Format::Elf);
     assert_eq!(mac().format, Format::MachO);
     assert_eq!(win().format, Format::Coff);
-    assert_eq!(win().object_name("RtlNtStatusToDosError"), "RtlNtStatusToDosError");
+    assert_eq!(
+        win().object_name("RtlNtStatusToDosError"),
+        "RtlNtStatusToDosError"
+    );
     assert!(TargetFacts::from_triple("riscv64-unknown-linux-gnu").is_none());
     assert!(TargetFacts::from_triple("x86_64-unknown-none").is_none());
 }

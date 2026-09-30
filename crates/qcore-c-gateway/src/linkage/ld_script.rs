@@ -114,7 +114,9 @@ pub fn read(data: &[u8]) -> Result<Vec<ScriptInput>, ReadError> {
                 let close = tokens[index + 1..]
                     .iter()
                     .position(|token| token == ")")
-                    .ok_or_else(|| ReadError::new("ld script", "an unterminated `OUTPUT_FORMAT(`"))?;
+                    .ok_or_else(|| {
+                        ReadError::new("ld script", "an unterminated `OUTPUT_FORMAT(`")
+                    })?;
                 index += close + 2;
             }
             "GROUP" | "INPUT" => {
@@ -148,13 +150,17 @@ pub fn read(data: &[u8]) -> Result<Vec<ScriptInput>, ReadError> {
                         path if path.starts_with("-l") => {
                             return Err(ReadError::new(
                                 "ld script",
-                                format!("`{path}` names a library search, not a file; the manifest cannot pin a search"),
+                                format!(
+                                    "`{path}` names a library search, not a file; the manifest cannot pin a search"
+                                ),
                             ));
                         }
                         path if !path.starts_with('/') => {
                             return Err(ReadError::new(
                                 "ld script",
-                                format!("`{path}` is a relative path, which `ld` resolves against the working directory and then the search path; only an absolute path is pinned"),
+                                format!(
+                                    "`{path}` is a relative path, which `ld` resolves against the working directory and then the search path; only an absolute path is pinned"
+                                ),
                             ));
                         }
                         path => inputs.push(ScriptInput {
@@ -168,7 +174,9 @@ pub fn read(data: &[u8]) -> Result<Vec<ScriptInput>, ReadError> {
             other => {
                 return Err(ReadError::new(
                     "ld script",
-                    format!("`{other}` is not a command of the library-script subset read here (`GROUP`, `INPUT`, `AS_NEEDED`, `OUTPUT_FORMAT`)"),
+                    format!(
+                        "`{other}` is not a command of the library-script subset read here (`GROUP`, `INPUT`, `AS_NEEDED`, `OUTPUT_FORMAT`)"
+                    ),
                 ));
             }
         }

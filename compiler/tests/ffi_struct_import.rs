@@ -389,8 +389,9 @@ fn the_example_runs_against_the_real_library_under_three_builds() {
     let c = module.c_source.as_deref().unwrap();
     let mut summary = Vec::new();
     for (label, flags) in native::BUILDS {
-        let run = native::build_and_run(c, &examples(), &example_library().link_plan().input, flags)
-            .unwrap_or_else(|error| panic!("{label}: the emitted C does not build: {error}"));
+        let run =
+            native::build_and_run(c, &examples(), &example_library().link_plan().input, flags)
+                .unwrap_or_else(|error| panic!("{label}: the emitted C does not build: {error}"));
         assert_eq!(run.status, Some(0), "{label}: {}", run.stderr);
         assert_eq!(run.stdout, stdout, "{label}");
         assert_eq!(

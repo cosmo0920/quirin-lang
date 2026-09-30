@@ -7838,7 +7838,11 @@ fn resolve_ffi_links(
     if callees.is_empty() {
         return Ok(links);
     }
-    let first = spans.values().next().copied().unwrap_or(Span { start: 0, end: 0 });
+    let first = spans
+        .values()
+        .next()
+        .copied()
+        .unwrap_or(Span { start: 0, end: 0 });
     let libraries = load_native_libraries(options, first, ranges)?;
     let views = bind_source_libraries(parsed, &libraries, ranges)?;
     qcore_core::native_library::check_slice_totality(&libraries, Some(declared_modules)).map_err(
@@ -7947,8 +7951,11 @@ fn resolve_ffi_links(
                 },
             })
         };
-        let parameters: Option<Vec<EntryType>> =
-            callee.parameters.iter().map(|(_, ty)| project(ty)).collect();
+        let parameters: Option<Vec<EntryType>> = callee
+            .parameters
+            .iter()
+            .map(|(_, ty)| project(ty))
+            .collect();
         let (Some(parameters), Some(result)) = (parameters, project(&callee.result)) else {
             refuse(
                 "Q041",

@@ -261,8 +261,7 @@ mod unix {
     }
 
     pub const DEMO_IMPORT: &str = "struct! { type Pair = c\"struct qr_pair\" from \"qr_demo.h\"; fields { a: i32, b: i32 } }\n";
-    pub const DEMO_DECLARATIONS: &str =
-        "extern fn qr_pair_sum(pair: ptr<const, Pair>) -> i32;\nextern fn qr_twice(x: i32) -> i32;\n";
+    pub const DEMO_DECLARATIONS: &str = "extern fn qr_pair_sum(pair: ptr<const, Pair>) -> i32;\nextern fn qr_twice(x: i32) -> i32;\n";
     pub const DEMO_BODY: &str = "    let p = Pair { a: 20, b: 22 };\n    let s = qr_pair_sum(p) succeeds 42;\n    print dec s;\n    let t = qr_twice(21) succeeds 42;\n    print dec t;\n";
 
     pub struct Demo {
@@ -354,7 +353,12 @@ fn a_hand_written_v1_manifest_does_not_link_an_ffi_call() {
     );
     refused(
         demo.compile(
-            &program(Some("qr_demo"), "", "extern fn qr_twice(x: i32) -> i32;\n", "    let t = qr_twice(21) succeeds 42;\n    print dec t;\n"),
+            &program(
+                Some("qr_demo"),
+                "",
+                "extern fn qr_twice(x: i32) -> i32;\n",
+                "    let t = qr_twice(21) succeeds 42;\n    print dec t;\n",
+            ),
             Some(BTreeMap::from([("hand.qrlib".to_owned(), v1)])),
         ),
         "Q065",
@@ -549,7 +553,9 @@ fn a_certificate_that_drops_its_linkage_premise_is_not_published() {
     let qcore_compiler::CheckedSourceModule::Ffi(checked) = &module.checked else {
         panic!("not the FFI route");
     };
-    assert!(qcore_core::ffi::certificate_carries_linkage(&checked.certificate));
+    assert!(qcore_core::ffi::certificate_carries_linkage(
+        &checked.certificate
+    ));
     let mut edited = checked.certificate.clone();
     edited
         .assumptions
@@ -588,8 +594,10 @@ fn a_card_built_c_archive_links_through_its_generated_manifest_under_three_build
         .collect();
     assert_eq!(linked.len(), 2, "{linked:#?}");
     assert!(
-        linked.iter().all(|line| line.contains("from the static artifact")
-            && line.contains("which code is linked, not that the code is safe")),
+        linked
+            .iter()
+            .all(|line| line.contains("from the static artifact")
+                && line.contains("which code is linked, not that the code is safe")),
         "{linked:#?}"
     );
     let (stdout, stderr) = reference(&module);
@@ -618,11 +626,35 @@ fn a_card_built_c_archive_links_through_its_generated_manifest_under_three_build
 /// is an exact IEEE operation, so this platform's own libm must return the
 /// declared outcome bit for bit.
 #[cfg(any(target_os = "linux", target_os = "macos"))]
-const LIBM: [(&str, &[(&str, &str)], &str, &str, &str, &str); 6] = [
+type LibmRow = (
+    &'static str,
+    &'static [(&'static str, &'static str)],
+    &'static str,
+    &'static str,
+    &'static str,
+    &'static str,
+);
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+const LIBM: [LibmRow; 6] = [
     ("ilogb", &[("x", "f64")], "i32", "1024.0", "10", "dec"),
-    ("sqrt", &[("x", "f64")], "f64", "2.0", "1.4142135623730951", "hex"),
+    (
+        "sqrt",
+        &[("x", "f64")],
+        "f64",
+        "2.0",
+        "1.4142135623730951",
+        "hex",
+    ),
     ("fabs", &[("x", "f64")], "f64", "-3.5", "3.5", "dec"),
-    ("fmax", &[("x", "f64"), ("y", "f64")], "f64", "1.0, 2.0", "2.0", "dec"),
+    (
+        "fmax",
+        &[("x", "f64"), ("y", "f64")],
+        "f64",
+        "1.0, 2.0",
+        "2.0",
+        "dec",
+    ),
     (
         "nextafter",
         &[("x", "f64"), ("y", "f64")],
@@ -729,7 +761,10 @@ fn libm_links_statically_and_dynamically_and_runs_under_three_builds() {
             match kind {
                 LinkageKind::Dynamic => {
                     assert!(
-                        export.version.as_deref().is_some_and(|v| v.starts_with("GLIBC_")),
+                        export
+                            .version
+                            .as_deref()
+                            .is_some_and(|v| v.starts_with("GLIBC_")),
                         "{}",
                         generated.text
                     );
@@ -761,7 +796,13 @@ fn libm_links_statically_and_dynamically_and_runs_under_three_builds() {
                 flags,
             )
             .unwrap_or_else(|error| panic!("{} {label}: {error}", kind.spelling()));
-            assert_eq!(run.status, Some(0), "{} {label}: {}", kind.spelling(), run.stderr);
+            assert_eq!(
+                run.status,
+                Some(0),
+                "{} {label}: {}",
+                kind.spelling(),
+                run.stderr
+            );
             assert_eq!(run.stdout, stdout, "{} {label}", kind.spelling());
             assert_eq!(run.stderr, stderr, "{} {label}", kind.spelling());
             // The linker's own trace names the pinned artifact and every file
@@ -829,7 +870,9 @@ fn ldexp_is_not_generated_from_the_static_libm() {
     let loader = |reference: &str| std::fs::read(reference).map_err(|e| e.to_string());
     let refusal = qcore_c_gateway::linkage::generate::generate(&inputs, &loader, None).unwrap_err();
     assert!(
-        refusal.to_string().contains("`ldexp` does not link from the pinned artifact"),
+        refusal
+            .to_string()
+            .contains("`ldexp` does not link from the pinned artifact"),
         "{refusal}"
     );
 }
@@ -875,9 +918,8 @@ fn a_symbol_version_that_differs_from_the_artifact_is_stale() {
         os_build: None,
     };
     let loader = |reference: &str| std::fs::read(reference).map_err(|e| e.to_string());
-    let refusal =
-        qcore_c_gateway::linkage::generate::check_stale(&edited, &inputs, &loader, None)
-            .unwrap_err();
+    let refusal = qcore_c_gateway::linkage::generate::check_stale(&edited, &inputs, &loader, None)
+        .unwrap_err();
     assert!(refusal.to_string().contains("is stale"), "{refusal}");
 }
 
@@ -981,14 +1023,25 @@ fn a_rust_staticlib_exporting_extern_c_links_through_its_generated_manifest() {
 #[test]
 fn libm_links_through_the_sdk_text_stub_under_three_builds() {
     use unix::*;
-    let sdk = Command::new("xcrun").arg("--show-sdk-path").output().unwrap();
+    let sdk = Command::new("xcrun")
+        .arg("--show-sdk-path")
+        .output()
+        .unwrap();
     assert!(sdk.status.success(), "xcrun --show-sdk-path failed");
-    let stub = PathBuf::from(String::from_utf8(sdk.stdout).unwrap().trim()).join("usr/lib/libm.tbd");
+    let stub =
+        PathBuf::from(String::from_utf8(sdk.stdout).unwrap().trim()).join("usr/lib/libm.tbd");
     assert!(stub.is_file(), "{} is absent", stub.display());
     let target = host_target();
     let functions = ["ilogb", "sqrt", "fabs", "fmax", "nextafter", "floor"];
     let (contracts, source) = libm_program(&functions);
-    let generated = qrlib::manifest("libm", LinkageKind::Dynamic, &stub, None, &target, &contracts);
+    let generated = qrlib::manifest(
+        "libm",
+        LinkageKind::Dynamic,
+        &stub,
+        None,
+        &target,
+        &contracts,
+    );
     assert!(
         generated
             .text
@@ -1059,7 +1112,10 @@ mod windows {
     pub fn os_build() -> String {
         let out = Command::new("cmd").args(["/c", "ver"]).output().unwrap();
         let text = String::from_utf8_lossy(&out.stdout).into_owned();
-        let start = text.find("Version ").map(|at| at + "Version ".len()).unwrap();
+        let start = text
+            .find("Version ")
+            .map(|at| at + "Version ".len())
+            .unwrap();
         text[start..]
             .chars()
             .take_while(|ch| ch.is_ascii_digit() || *ch == '.')
@@ -1117,7 +1173,8 @@ fn an_msvc_static_library_links_through_its_generated_manifest() {
     .unwrap_or_else(|errors| panic!("{errors:#?}"));
     let (stdout, _) = reference(&module);
     let plan = generated.link_plan();
-    let run = windows_c::run_msvc_with_libraries(module.c_source.as_deref().unwrap(), &[&plan.input]);
+    let run =
+        windows_c::run_msvc_with_libraries(module.c_source.as_deref().unwrap(), &[&plan.input]);
     assert_eq!(run.status.code(), Some(0), "{run:?}");
     assert_eq!(String::from_utf8_lossy(&run.stdout), stdout);
 }
@@ -1144,7 +1201,10 @@ fn one_ntdll_function_links_through_the_sdk_import_library() {
         .into_iter()
         .find(|name| {
             resolve(&read.table, name).is_ok_and(|resolved| {
-                resolved.import.as_ref().is_some_and(|import| import.by_name)
+                resolved
+                    .import
+                    .as_ref()
+                    .is_some_and(|import| import.by_name)
             }) && exports
                 .find(name)
                 .is_some_and(|export| export.forwarder.is_none())
@@ -1176,7 +1236,11 @@ fn one_ntdll_function_links_through_the_sdk_import_library() {
     let generated =
         qcore_c_gateway::linkage::generate::generate(&inputs, &loader, Some(&runtime_loader))
             .unwrap_or_else(|refusal| panic!("{refusal}"));
-    assert!(generated.text.contains("runtime dll ntdll.dll os_build "), "{}", generated.text);
+    assert!(
+        generated.text.contains("runtime dll ntdll.dll os_build "),
+        "{}",
+        generated.text
+    );
     let selection = BTreeMap::from([(
         import_library
             .with_file_name("ntdll.qrlib")
@@ -1189,7 +1253,9 @@ fn one_ntdll_function_links_through_the_sdk_import_library() {
         Some("ntdll"),
         "",
         &format!("extern fn {name}(status: i32) -> u32;\n"),
-        &format!("    let ok = {name}(0) succeeds 0;\n    print dec ok;\n    let denied = {name}(-1073741790) succeeds 5;\n    print dec denied;\n"),
+        &format!(
+            "    let ok = {name}(0) succeeds 0;\n    print dec ok;\n    let denied = {name}(-1073741790) succeeds 5;\n    print dec denied;\n"
+        ),
     );
     let module = compile(
         &scratch.path().join("main.qr"),
@@ -1205,7 +1271,8 @@ fn one_ntdll_function_links_through_the_sdk_import_library() {
         PathBuf::from(reference)
     })
     .unwrap();
-    let run = windows_c::run_msvc_with_libraries(module.c_source.as_deref().unwrap(), &[&plan.input]);
+    let run =
+        windows_c::run_msvc_with_libraries(module.c_source.as_deref().unwrap(), &[&plan.input]);
     assert_eq!(run.status.code(), Some(0), "{run:?}");
     assert_eq!(String::from_utf8_lossy(&run.stdout), "0\n5\n");
 }

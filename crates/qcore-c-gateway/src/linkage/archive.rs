@@ -97,7 +97,10 @@ pub fn read(data: &[u8]) -> Result<Archive<'_>, ReadError> {
         ));
     }
     if !data.starts_with(MAGIC) {
-        return Err(ReadError::new("ar archive", "the `!<arch>` magic is absent"));
+        return Err(ReadError::new(
+            "ar archive",
+            "the `!<arch>` magic is absent",
+        ));
     }
     let bytes = Bytes::new(data, "ar archive");
     let mut offset = MAGIC.len() as u64;
@@ -108,7 +111,11 @@ pub fn read(data: &[u8]) -> Result<Archive<'_>, ReadError> {
     while offset < bytes.len() as u64 {
         // A single `\n` pads a member to an even offset; tolerate it at the end.
         if bytes.len() as u64 - offset < HEADER {
-            if bytes.slice(offset, bytes.len() as u64 - offset)?.iter().all(|b| *b == b'\n') {
+            if bytes
+                .slice(offset, bytes.len() as u64 - offset)?
+                .iter()
+                .all(|b| *b == b'\n')
+            {
                 break;
             }
             return Err(ReadError::new("ar archive", "a truncated member header"));
@@ -200,7 +207,10 @@ fn resolve_name(name: &str, long_names: Option<&[u8]>) -> Result<String, ReadErr
         && reference.bytes().all(|b| b.is_ascii_digit())
     {
         let offset: usize = reference.parse().map_err(|_| {
-            ReadError::new("ar member header", format!("`{name}` is not a long-name offset"))
+            ReadError::new(
+                "ar member header",
+                format!("`{name}` is not a long-name offset"),
+            )
         })?;
         let table = long_names.ok_or_else(|| {
             ReadError::new(
@@ -313,7 +323,9 @@ fn read_index(
         if !known.contains(target) {
             return Err(ReadError::new(
                 what,
-                format!("the index entry for `{name}` points at offset {target}, where no member starts"),
+                format!(
+                    "the index entry for `{name}` points at offset {target}, where no member starts"
+                ),
             ));
         }
     }
