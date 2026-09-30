@@ -437,10 +437,14 @@ fn every_other_unknown_field_type_keeps_the_message_it_had() {
     }
 }
 
-/// `AGGREGATE-TASK-CAPTURE` refuses by name. The refusal already existed — a
-/// record declaration in a checked-concurrency module is outside the task
-/// route's declaration set — but it carried the generic sentence, so the
-/// boundary was met and never said so. Same code, same span, same refused set.
+/// `AGGREGATE-TASK-CAPTURE` refused by name here until card
+/// `W48-QR-TASK-RECORD-CAPTURES` lifted it: the task route now reads a record
+/// declaration, and a record crosses a spawn as its leaves under the aggregate
+/// judgment. What this row pins now, **moved by name** rather than deleted: a
+/// record of scalars in a task module is admitted, and a record with a `bytes`
+/// field — the buffer route's byte buffer, which crosses no spawn on the task
+/// route — still refuses at the code it always had, `Q500`, naming the residual
+/// that would lift it (`WRITE-LEND-TASKS-EXTENT`) instead of the lifted one.
 #[test]
 fn a_record_in_a_task_module_refuses_by_its_own_name() {
     const TASK_MODULE: &str = concat!(
@@ -474,18 +478,15 @@ fn a_record_in_a_task_module_refuses_by_its_own_name() {
     let baseline = TASK_MODULE.replace("RECORD", "");
     compile(&baseline).expect("the task module itself is admitted");
 
-    for record in [
-        "type Frame { body: bytes }\n\n",
-        "type Point { x: i32 }\n\n",
-    ] {
-        let source = TASK_MODULE.replace("RECORD", record);
-        let (codes, message) = refusal(&source);
-        assert_eq!(codes, vec!["Q500"], "the code it already had");
-        assert!(
-            message.contains("AGGREGATE-TASK-CAPTURE"),
-            "the boundary names itself: {message}"
-        );
-    }
+    let source = TASK_MODULE.replace("RECORD", "type Frame { body: bytes }\n\n");
+    let (codes, message) = refusal(&source);
+    assert_eq!(codes, vec!["Q500"], "the code it already had");
+    assert!(
+        message.contains("WRITE-LEND-TASKS-EXTENT") && !message.contains("AGGREGATE-TASK-CAPTURE"),
+        "the boundary names what would lift it: {message}"
+    );
+    let source = TASK_MODULE.replace("RECORD", "type Point { x: i32 }\n\n");
+    compile(&source).expect("a record of scalars in a task module is admitted");
 }
 
 // --- Family three: what deliberately did not move. ---

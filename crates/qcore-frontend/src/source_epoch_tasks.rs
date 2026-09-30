@@ -1102,7 +1102,10 @@ fn ledger(checked: &CheckedTaskModule) -> Result<Vec<LedgerSpawn>, SourceDiagnos
                          `WRITE-LEND-TASKS-EPOCH` names the missing residency rule",
                     ));
                 }
-                ScalarOperand::Unit | ScalarOperand::I32(_) | ScalarOperand::Fixed { .. } => {
+                ScalarOperand::Unit
+                | ScalarOperand::I32(_)
+                | ScalarOperand::Fixed { .. }
+                | ScalarOperand::Record(_) => {
                     return Err(failure(
                         span,
                         "a spawn argument that is neither a place copy nor a move has no \

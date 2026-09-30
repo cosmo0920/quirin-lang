@@ -363,6 +363,8 @@ fn operand_slots(operand: &ScalarOperand) -> Vec<SlotId> {
             vec![*slot]
         }
         ScalarOperand::Unit | ScalarOperand::I32(_) | ScalarOperand::Fixed { .. } => Vec::new(),
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: a returned record's leaves.
+        ScalarOperand::Record(leaves) => leaves.iter().flat_map(operand_slots).collect(),
     }
 }
 
@@ -432,6 +434,17 @@ fn instruction_slots(kind: &TaskInstructionKind) -> Vec<SlotId> {
         TaskInstructionKind::Compute { slot, operation } => {
             let mut slots = vec![*slot];
             slots.extend(value_operation_slots(operation));
+            slots
+        }
+        // Card `W48-QR-TASK-RECORD-CAPTURES`.
+        TaskInstructionKind::UnpackRecord { record, leaves } => {
+            let mut slots = vec![*record];
+            slots.extend(leaves.iter().copied());
+            slots
+        }
+        TaskInstructionKind::RefillField { hole, slot, value } => {
+            let mut slots = vec![*hole, *slot];
+            slots.extend(operand_slots(value));
             slots
         }
     }

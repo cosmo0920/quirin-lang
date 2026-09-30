@@ -86,6 +86,14 @@ pub enum ScalarType {
     /// lease's own `low`. It carries the leased Buffer's payload type, whose
     /// size — not a fixed four — is the extent a lease must stay inside.
     WriteLease(st::ScalarType),
+    /// A record, named by its key in [`TaskModule::records`] (card
+    /// `W48-QR-TASK-RECORD-CAPTURES`). It is a **result** type only: a record
+    /// binding, parameter and capture is its leaves — one slot, parameter or
+    /// argument per scalar or owned-Buffer leaf, depth-first in declaration
+    /// order — so the one place a record is one value is a worker's result,
+    /// which crosses `join` as a single outcome naming every owned leaf and is
+    /// unpacked into leaf slots by [`TaskInstructionKind::UnpackRecord`].
+    Record(usize),
 }
 impl ScalarType {
     /// The owned Buffer of an `i32` payload: `own<Buffer>`, every Buffer
@@ -100,8 +108,36 @@ impl ScalarType {
     pub fn payload(self) -> Option<st::ScalarType> {
         match self {
             Self::OwnedBuffer(ty) | Self::ReadLoan(ty) | Self::WriteLease(ty) => Some(ty),
-            Self::Unit | Self::I32 | Self::Fixed(_) => None,
+            Self::Unit | Self::I32 | Self::Fixed(_) | Self::Record(_) => None,
         }
+    }
+}
+
+/// One record type a task module's results name (card
+/// `W48-QR-TASK-RECORD-CAPTURES`): its source name and its **leaves**, each a
+/// dotted field path from the record and a leaf type — `i32`, a
+/// [`ScalarType::Fixed`] or an [`ScalarType::OwnedBuffer`] — depth-first in
+/// declaration order, a nested record contributing its own leaves under its
+/// field's name. The lowering flattens; the checker reads only the leaf list.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct TaskRecord {
+    pub name: String,
+    pub leaves: Vec<TaskRecordLeaf>,
+}
+
+/// One leaf of a [`TaskRecord`].
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct TaskRecordLeaf {
+    pub path: String,
+    pub ty: ScalarType,
+}
+
+impl TaskRecord {
+    /// Whether any leaf is an owned Buffer — a record that carries custody.
+    pub fn owns(&self) -> bool {
+        self.leaves
+            .iter()
+            .any(|leaf| matches!(leaf.ty, ScalarType::OwnedBuffer(_)))
     }
 }
 
@@ -145,6 +181,12 @@ pub enum ScalarOperand {
         low: u64,
         high: u64,
     },
+    /// A whole record, as its leaf operands in leaf order (card
+    /// `W48-QR-TASK-RECORD-CAPTURES`): a copy of each scalar leaf and a
+    /// [`ScalarOperand::Move`] of each owned leaf. Admitted only as the value
+    /// of a [`TaskTerminatorKind::Return`] of a function whose result is a
+    /// [`ScalarType::Record`]; at every other position it is refused.
+    Record(Vec<ScalarOperand>),
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ErrorOperand {
@@ -167,6 +209,10 @@ pub struct TaskModule {
     /// alone gives `isize`/`usize` a width. A module naming either type with
     /// no record is refused; a module naming neither never reads it.
     pub target: Option<RecordedTarget>,
+    /// The record types this module's results name, by the key a
+    /// [`ScalarType::Record`] carries (card `W48-QR-TASK-RECORD-CAPTURES`).
+    /// Empty for every module written before that card.
+    pub records: BTreeMap<usize, TaskRecord>,
 }
 
 /// The one §G02t operation a task value statement performs (card
@@ -304,6 +350,27 @@ pub enum TaskInstructionKind {
     Compute {
         slot: SlotId,
         operation: TaskValueOperation,
+    },
+    /// Split a whole record value — a record a `join` collected — into one
+    /// slot per leaf, in leaf order (card `W48-QR-TASK-RECORD-CAPTURES`). The
+    /// record slot is consumed and each leaf slot receives exactly the leaf
+    /// the record held: a scalar's type, or an owned leaf's identity and
+    /// payload type, so custody is moved and never duplicated.
+    UnpackRecord {
+        record: SlotId,
+        leaves: Vec<SlotId>,
+    },
+    /// Refill an owned leaf of a record (card `W48-QR-TASK-RECORD-CAPTURES`;
+    /// card `W48-QR-USABLE-RECORDS`' `RefillField`): `hole` is the leaf's
+    /// current slot, which must be a **hole** — its Buffer moved away or
+    /// released — on this path; `value` is a [`ScalarOperand::Move`] of an
+    /// owned Buffer of the leaf's payload type, which `slot` receives. A refill
+    /// over a live leaf is refused (`OverwriteOfLiveField`): it would leave the
+    /// old Buffer with no binding to release it.
+    RefillField {
+        hole: SlotId,
+        slot: SlotId,
+        value: ScalarOperand,
     },
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -445,6 +512,15 @@ pub fn fixed_types(module: &TaskModule) -> BTreeSet<st::ScalarType> {
         .functions
         .values()
         .flat_map(function_fixed_types)
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: a record result's leaves are
+        // values of their types wherever the record is unpacked.
+        .chain(module.records.values().flat_map(|record| {
+            record.leaves.iter().filter_map(|leaf| match leaf.ty {
+                ScalarType::Fixed(ty) => Some(ty),
+                ScalarType::OwnedBuffer(ty) if ty != st::ScalarType::I32 => Some(ty),
+                _ => None,
+            })
+        }))
         .collect()
 }
 
@@ -463,11 +539,20 @@ pub fn function_fixed_types(function: &TaskFunction) -> BTreeSet<st::ScalarType>
             types.insert(ty);
         }
     };
-    let literal = |types: &mut BTreeSet<st::ScalarType>, operand: &ScalarOperand| {
-        if let ScalarOperand::Fixed { ty, .. } = operand {
-            types.insert(*ty);
+    fn literal(types: &mut BTreeSet<st::ScalarType>, operand: &ScalarOperand) {
+        match operand {
+            ScalarOperand::Fixed { ty, .. } => {
+                types.insert(*ty);
+            }
+            // Card `W48-QR-TASK-RECORD-CAPTURES`: a returned record's leaves.
+            ScalarOperand::Record(leaves) => {
+                for leaf in leaves {
+                    literal(types, leaf);
+                }
+            }
+            _ => {}
         }
-    };
+    }
     let operation = |types: &mut BTreeSet<st::ScalarType>, operation: &TaskValueOperation| {
         for operand in operation.operands() {
             if let TaskValueOperand::Literal { ty, .. } = operand
@@ -583,6 +668,12 @@ enum AbstractValue {
     /// since card `WRITE-LEND-TASKS-EXERCISE` the operations that reach it are
     /// the byte access pair, never the whole-payload read or write.
     Lease(ResourceId, st::ScalarType),
+    /// A whole record — a record result a `join` collected — as its leaves in
+    /// leaf order (card `W48-QR-TASK-RECORD-CAPTURES`). It lives only between
+    /// the collection that binds it and the [`TaskInstructionKind::UnpackRecord`]
+    /// that splits it: no operand reads it, and an exit that finds one live is
+    /// refused, so its owned leaves are never discarded unseen.
+    Record(usize, Vec<AbstractValue>),
 }
 impl AbstractValue {
     fn ty(&self) -> ScalarType {
@@ -591,6 +682,16 @@ impl AbstractValue {
             Self::Owned(_, payload) => ScalarType::OwnedBuffer(*payload),
             Self::Loan(_, payload) => ScalarType::ReadLoan(*payload),
             Self::Lease(_, payload) => ScalarType::WriteLease(*payload),
+            Self::Record(record, _) => ScalarType::Record(*record),
+        }
+    }
+    /// The owned identities this value carries, in leaf order: one for an
+    /// owned Buffer, each owned leaf's for a record, none otherwise.
+    fn resources(&self) -> Vec<ResourceId> {
+        match self {
+            Self::Owned(id, _) => vec![*id],
+            Self::Record(_, leaves) => leaves.iter().flat_map(Self::resources).collect(),
+            _ => vec![],
         }
     }
     /// The payload type of a Buffer, a loan or a lease.
@@ -612,7 +713,7 @@ impl AbstractValue {
     fn readable(&self) -> Option<ResourceId> {
         match self {
             Self::Owned(id, _) | Self::Loan(id, _) => Some(*id),
-            Self::Scalar(_) | Self::Lease(..) => None,
+            Self::Scalar(_) | Self::Lease(..) | Self::Record(..) => None,
         }
     }
 }
@@ -675,7 +776,10 @@ enum AbstractSlot {
         worker: FunctionId,
         child: u64,
         handle: u64,
-        returned: Option<ResourceId>,
+        /// Every owned identity the normal outcome hands back, in leaf order:
+        /// none, one Buffer, or each owned leaf of a record result (card
+        /// `W48-QR-TASK-RECORD-CAPTURES`).
+        returned: Vec<ResourceId>,
         error_payload: Option<ResourceId>,
         errors: BTreeSet<String>,
         normal: bool,
@@ -691,7 +795,10 @@ enum WorkerReturn {
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct WorkerExit {
-    returned: Option<WorkerReturn>,
+    /// The owned identities a normal exit hands back, in leaf order: empty for
+    /// a scalar or unit result, one for an owned Buffer, and one per owned
+    /// leaf for a record result (card `W48-QR-TASK-RECORD-CAPTURES`).
+    returned: Vec<WorkerReturn>,
     dropped: Vec<usize>,
     error: Option<String>,
     /// The owned Buffer this error exit carries out of the worker. It is
@@ -822,6 +929,11 @@ impl State {
                     "slot {slot} is not an owned buffer this task may lease for writing"
                 )),
             },
+            // Card `W48-QR-TASK-RECORD-CAPTURES`: a whole record is an operand
+            // of a record-valued `return` only, which takes its leaves itself.
+            ScalarOperand::Record(_) => {
+                Err("a whole record is an operand only of a record-valued return".into())
+            }
         }
     }
     /// The number a copy-scalar operand is known to hold at check time, if any.
@@ -913,7 +1025,7 @@ impl State {
         self.slots.insert(id, value);
         Ok(())
     }
-    fn exit(&self, returned: Option<ResourceId>) -> Result<(), String> {
+    fn exit(&self, returned: &[ResourceId]) -> Result<(), String> {
         if !self.scopes.is_empty() {
             return Err("return/error leaves an open thread scope".into());
         }
@@ -923,6 +1035,9 @@ impl State {
                 AbstractSlot::Handle { .. }
                     | AbstractSlot::Result { .. }
                     | AbstractSlot::Value(AbstractValue::Owned(..))
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`: a collected record
+                    // not yet unpacked is a value this exit would discard.
+                    | AbstractSlot::Value(AbstractValue::Record(..))
             )
         }) {
             return Err("return/error discards a handle, unconsumed Result or owned buffer".into());
@@ -957,7 +1072,7 @@ impl State {
             ));
         }
         for &resource in &self.resources {
-            if Some(resource) != returned
+            if !returned.contains(&resource)
                 && self.ledger.resource_state(resource) != Some(ResourceState::Dropped)
             {
                 return Err("return/error leaves unaccounted resource custody".into());
@@ -1108,19 +1223,22 @@ fn check_function(
                 ));
             }
             let defined = match &instruction.kind {
-                TaskInstructionKind::BindScalar { slot, .. } => Some(*slot),
-                TaskInstructionKind::ReadBuffer { value_slot, .. } => Some(*value_slot),
-                TaskInstructionKind::UnwrapInfallible { value_slot, .. } => Some(*value_slot),
-                TaskInstructionKind::TakeErrorPayload { buffer_slot, .. } => Some(*buffer_slot),
-                TaskInstructionKind::Compute { slot, .. } => Some(*slot),
+                TaskInstructionKind::BindScalar { slot, .. } => vec![*slot],
+                TaskInstructionKind::ReadBuffer { value_slot, .. } => vec![*value_slot],
+                TaskInstructionKind::UnwrapInfallible { value_slot, .. } => vec![*value_slot],
+                TaskInstructionKind::TakeErrorPayload { buffer_slot, .. } => vec![*buffer_slot],
+                TaskInstructionKind::Compute { slot, .. } => vec![*slot],
+                // Card `W48-QR-TASK-RECORD-CAPTURES`.
+                TaskInstructionKind::UnpackRecord { leaves, .. } => leaves.clone(),
+                TaskInstructionKind::RefillField { slot, .. } => vec![*slot],
                 TaskInstructionKind::Join { outcome_slot, .. } => {
                     effects.join = true;
                     effects.may_block = true;
-                    *outcome_slot
+                    outcome_slot.iter().copied().collect()
                 }
-                _ => None,
+                _ => vec![],
             };
-            if defined.is_some_and(|slot| !definitions.insert(slot)) {
+            if defined.into_iter().any(|slot| !definitions.insert(slot)) {
                 return Err(fail(
                     instruction.span,
                     "slot identity has multiple definitions".into(),
@@ -1193,6 +1311,52 @@ fn check_function(
         return Err(fail(
             function.span,
             "owned task entry results have no external custodian in this profile".into(),
+        ));
+    }
+    // Card `W48-QR-TASK-RECORD-CAPTURES`: a record result names a declared
+    // record whose every leaf is a copy scalar or an owned Buffer, and it is a
+    // worker's result — the entry's result is published, never collected.
+    // No parameter is a record: a record parameter is its leaves.
+    if let ScalarType::Record(record) = function.result {
+        let Some(declared) = module.records.get(&record) else {
+            return Err(fail(
+                function.span,
+                format!("record result {record} names no declared record"),
+            ));
+        };
+        if declared.leaves.is_empty()
+            || declared.leaves.iter().any(|leaf| {
+                !matches!(
+                    leaf.ty,
+                    ScalarType::I32 | ScalarType::Fixed(_) | ScalarType::OwnedBuffer(_)
+                )
+            })
+        {
+            return Err(fail(
+                function.span,
+                format!(
+                    "record `{}`'s leaves must be copy scalars or owned Buffers",
+                    declared.name
+                ),
+            ));
+        }
+        if id == module.entry {
+            return Err(fail(
+                function.span,
+                "a task entry returns i32, unit or its error; a record is returned by a \
+                 worker and collected by join"
+                    .into(),
+            ));
+        }
+    }
+    if function
+        .parameters
+        .iter()
+        .any(|(_, kind)| matches!(kind, ScalarType::Record(_)))
+    {
+        return Err(fail(
+            function.span,
+            "a record parameter is its leaves; no parameter is a whole record".into(),
         ));
     }
     // A read loan is bound to the creation that opened it. Returning one would
@@ -1291,6 +1455,13 @@ fn check_function(
                 AbstractValue::Lease(resource, payload)
             }
             ScalarType::I32 | ScalarType::Unit | ScalarType::Fixed(_) => AbstractValue::Scalar(ty),
+            // Refused above, before any path: a record parameter is its leaves.
+            ScalarType::Record(_) => {
+                return Err(fail(
+                    function.span,
+                    "a record parameter is its leaves; no parameter is a whole record".into(),
+                ));
+            }
         };
         if let Some(payload) = value.payload() {
             state.bound_payloads.insert(slot, payload);
@@ -1598,6 +1769,72 @@ fn check_function(
                             AbstractSlot::Value(AbstractValue::Owned(payload, st::ScalarType::I32)),
                         )?;
                     }
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`: each leaf slot takes
+                    // exactly the leaf the record held; the record is consumed,
+                    // so an owned leaf changes binding and never duplicates.
+                    TaskInstructionKind::UnpackRecord { record, leaves } => {
+                        let Some(AbstractSlot::Value(AbstractValue::Record(_, values))) =
+                            state.slots.get(record).cloned()
+                        else {
+                            return Err(format!(
+                                "slot {record} is not a collected record to unpack"
+                            ));
+                        };
+                        if values.len() != leaves.len() {
+                            return Err(format!(
+                                "unpacking a record of {} leaves into {} slots",
+                                values.len(),
+                                leaves.len()
+                            ));
+                        }
+                        state.slots.insert(*record, AbstractSlot::Consumed);
+                        for (slot, value) in leaves.iter().zip(values) {
+                            state.bind(*slot, AbstractSlot::Value(value))?;
+                        }
+                    }
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`: a refill is admitted
+                    // exactly into a hole — the leaf's Buffer moved away or
+                    // released on this path — and the Buffer moved in has the
+                    // leaf's payload type.
+                    TaskInstructionKind::RefillField { hole, slot, value } => {
+                        match state.slots.get(hole) {
+                            Some(AbstractSlot::Consumed) => {}
+                            Some(AbstractSlot::Value(AbstractValue::Owned(resource, _))) => {
+                                return Err(format!(
+                                    "OverwriteOfLiveField: the field still holds resource \
+                                     {resource}; a refill moves a Buffer into a hole only, so \
+                                     release or move the field's Buffer first"
+                                ));
+                            }
+                            _ => {
+                                return Err(format!(
+                                    "slot {hole} is not an owned field of a record this task \
+                                     holds"
+                                ));
+                            }
+                        }
+                        if !matches!(value, ScalarOperand::Move(_)) {
+                            return Err("a refill moves exactly one owned Buffer in".into());
+                        }
+                        let expected = state.bound_payloads.get(hole).copied();
+                        let moved = state.take(value)?;
+                        match (&moved, expected) {
+                            (AbstractValue::Owned(_, payload), Some(expected))
+                                if *payload == expected => {}
+                            (AbstractValue::Owned(_, payload), Some(expected)) => {
+                                return Err(format!(
+                                    "a refill of a `{expected}` field requires an \
+                                     own<Buffer<{expected}>>, not a `{payload}` payload"
+                                ));
+                            }
+                            _ => {
+                                return Err(format!(
+                                    "slot {hole} was never an owned field of this task"
+                                ));
+                            }
+                        }
+                        state.bind(*slot, AbstractSlot::Value(moved))?;
+                    }
                     TaskInstructionKind::EnterScope { scope } => {
                         state
                             .ledger
@@ -1643,7 +1880,8 @@ fn check_function(
                         // identities the completion was recorded to hold.
                         if capsule.resources
                             != returned
-                                .into_iter()
+                                .iter()
+                                .copied()
                                 .chain(error_payload)
                                 .collect::<Vec<_>>()
                         {
@@ -1656,15 +1894,31 @@ fn check_function(
                         }
                         state.slots.insert(*handle, AbstractSlot::Consumed);
                         if let Some(slot) = outcome_slot {
-                            let value = normal.then_some(match (returned, worker.result) {
-                                (Some(resource), ScalarType::OwnedBuffer(payload)) => {
-                                    AbstractValue::Owned(resource, payload)
-                                }
-                                (Some(resource), _) => {
-                                    AbstractValue::Owned(resource, st::ScalarType::I32)
-                                }
-                                (None, result) => AbstractValue::Scalar(result),
-                            });
+                            let value = if normal {
+                                Some(match (returned.as_slice(), worker.result) {
+                                    // Card `W48-QR-TASK-RECORD-CAPTURES`: a record
+                                    // result, its owned leaves exactly the
+                                    // identities the completion carried, in
+                                    // leaf order.
+                                    (_, ScalarType::Record(record)) => {
+                                        record_value(module, record, &returned)?
+                                    }
+                                    ([resource], ScalarType::OwnedBuffer(payload)) => {
+                                        AbstractValue::Owned(*resource, payload)
+                                    }
+                                    ([resource], _) => {
+                                        AbstractValue::Owned(*resource, st::ScalarType::I32)
+                                    }
+                                    ([], result) => AbstractValue::Scalar(result),
+                                    _ => {
+                                        return Err("a non-record outcome carries at most one \
+                                             owned identity"
+                                            .into());
+                                    }
+                                })
+                            } else {
+                                None
+                            };
                             state.bind(
                                 *slot,
                                 AbstractSlot::Result {
@@ -1853,18 +2107,17 @@ fn check_function(
                                 .into(),
                         );
                     }
-                    if leases.iter().any(|(resource, _)| {
-                        state
-                            .ledger
-                            .outstanding_write_leases()
-                            .iter()
-                            .any(|outstanding| outstanding != resource)
-                    }) {
-                        return Err(
-                            "this profile admits at most one write-leased resource at a time"
-                                .into(),
-                        );
-                    }
+                    // Card `W48-QR-TASK-RECORD-CAPTURES` lifts card
+                    // `WRITE-LEND-TASKS`' "at most one write-leased resource at
+                    // a time" to a **per-resource** rule: the ledger keys every
+                    // lease by its resource and decides disjointness per
+                    // resource, and two resources are two allocations whose
+                    // bytes never coincide, so a lease of one field and a
+                    // lease of another — two leaves, two resources — hold no
+                    // byte in common. What stays is every per-resource bound:
+                    // pairwise-disjoint ranges, `MAX_WRITERS` holders, no
+                    // owner authority while any lease of that resource is out
+                    // (`QCore.TaskRecordCaptures.no_byte_has_two_write_authorities_per_leaf`).
                     if (!leases.is_empty() && !state.ledger.outstanding_loans().is_empty())
                         || (!loans.is_empty()
                             && !state.ledger.outstanding_write_leases().is_empty())
@@ -1949,7 +2202,7 @@ fn check_function(
                         // worker's own checked identity rather than a caller
                         // assertion.
                         let resolve =
-                            |carried: &Option<WorkerReturn>,
+                            |carried: Option<&WorkerReturn>,
                              state: &mut State|
                              -> Result<Option<ResourceId>, String> {
                                 Ok(match carried {
@@ -1975,9 +2228,19 @@ fn check_function(
                                     None => None,
                                 })
                             };
-                        let returned = resolve(&exit.returned, &mut success_state)?;
-                        let error_payload = resolve(&exit.error_payload, &mut success_state)?;
-                        if returned.is_some() && error_payload.is_some() {
+                        // Card `W48-QR-TASK-RECORD-CAPTURES`: a record result
+                        // hands back one identity per owned leaf, each resolved
+                        // exactly as a single owned result is.
+                        let mut returned = Vec::with_capacity(exit.returned.len());
+                        for carried in &exit.returned {
+                            returned.push(
+                                resolve(Some(carried), &mut success_state)?
+                                    .ok_or("a returned identity did not resolve")?,
+                            );
+                        }
+                        let error_payload =
+                            resolve(exit.error_payload.as_ref(), &mut success_state)?;
+                        if !returned.is_empty() && error_payload.is_some() {
                             return Err(
                                 "a worker exit cannot both return and raise a Buffer".into()
                             );
@@ -2004,7 +2267,8 @@ fn check_function(
                                 // scalar outcome carries no custody.
                                 ScalarType::Fixed(ty) => TaskOutcome::Fixed { ty, value: 0 },
                                 ScalarType::OwnedBuffer(_) => TaskOutcome::OwnedBuffer(
-                                    returned
+                                    *returned
+                                        .first()
                                         .ok_or("owned worker outcome has no checked identity")?,
                                 ),
                                 ScalarType::ReadLoan(_) => {
@@ -2012,6 +2276,12 @@ fn check_function(
                                 }
                                 ScalarType::WriteLease(_) => {
                                     return Err("a write lease is not a worker outcome".into());
+                                }
+                                // Card `W48-QR-TASK-RECORD-CAPTURES`: placeholder
+                                // scalars, as for `I32(0)`, and every owned leaf's
+                                // checked identity.
+                                ScalarType::Record(record) => {
+                                    abstract_record_outcome(module, record, &returned)?
                                 }
                             }
                         };
@@ -2021,7 +2291,8 @@ fn check_function(
                                 reservation,
                                 outcome,
                                 &returned
-                                    .into_iter()
+                                    .iter()
+                                    .copied()
                                     .chain(error_payload)
                                     .collect::<Vec<_>>(),
                             )
@@ -2068,11 +2339,12 @@ fn check_function(
                     // creation has a genuine error alternative that checks the
                     // same arm — and if the worker never raises it, the arm is
                     // unreachable and the profile refuses the program.
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`: "owned" is "carries an
+                    // identity", which a record carries when any leaf is owned;
+                    // for every value written before the card the two agree.
                     if !errors.is_empty()
                         || (!declared_payloads
-                            && value
-                                .as_ref()
-                                .is_some_and(|v| !matches!(v.ty(), ScalarType::OwnedBuffer(_))))
+                            && value.as_ref().is_some_and(|v| v.resources().is_empty()))
                     {
                         let mut failed = state.clone();
                         failed.bind(
@@ -2095,24 +2367,81 @@ fn check_function(
                     }
                 }
                 TaskTerminatorKind::Return { value } => {
-                    let value = state.take(value)?;
+                    let value = match (value, function.result) {
+                        // Card `W48-QR-TASK-RECORD-CAPTURES`: a record-valued
+                        // return takes each leaf operand — a copy of a scalar
+                        // leaf, a move of an owned one — against the declared
+                        // leaf types, in leaf order.
+                        (ScalarOperand::Record(operands), ScalarType::Record(record)) => {
+                            let declared = module.records.get(&record).ok_or_else(|| {
+                                format!("record result {record} names no declared record")
+                            })?;
+                            if operands.len() != declared.leaves.len() {
+                                return Err(format!(
+                                    "record `{}` has {} leaves and this return supplies {}",
+                                    declared.name,
+                                    declared.leaves.len(),
+                                    operands.len()
+                                ));
+                            }
+                            let mut leaves = Vec::with_capacity(operands.len());
+                            for (operand, leaf) in operands.iter().zip(&declared.leaves) {
+                                if matches!(leaf.ty, ScalarType::OwnedBuffer(_))
+                                    != matches!(operand, ScalarOperand::Move(_))
+                                {
+                                    return Err(format!(
+                                        "record `{}`'s leaf `{}` returns by {}",
+                                        declared.name,
+                                        leaf.path,
+                                        if matches!(leaf.ty, ScalarType::OwnedBuffer(_)) {
+                                            "move of its owned Buffer"
+                                        } else {
+                                            "copy of its scalar"
+                                        }
+                                    ));
+                                }
+                                let taken = state.take(operand)?;
+                                if taken.ty() != leaf.ty {
+                                    return Err(format!(
+                                        "record `{}`'s leaf `{}` has type {:?}, and this \
+                                         return supplies {:?}",
+                                        declared.name,
+                                        leaf.path,
+                                        leaf.ty,
+                                        taken.ty()
+                                    ));
+                                }
+                                leaves.push(taken);
+                            }
+                            AbstractValue::Record(record, leaves)
+                        }
+                        (ScalarOperand::Record(_), _) | (_, ScalarType::Record(_)) => {
+                            return Err("a record result returns a whole record, and only a \
+                                 record result does"
+                                .into());
+                        }
+                        (value, _) => state.take(value)?,
+                    };
                     if value.ty() != function.result {
                         return Err("return scalar/owned type mismatch".into());
                     }
-                    let returned = value.resource();
-                    state.exit(returned)?;
+                    let returned = value.resources();
+                    state.exit(&returned)?;
                     exits.push(WorkerExit {
-                        returned: returned.map(|r| {
-                            inputs
-                                .get(&r)
-                                .copied()
-                                .map(WorkerReturn::Input)
-                                .unwrap_or(WorkerReturn::Fresh)
-                        }),
+                        returned: returned
+                            .iter()
+                            .map(|r| {
+                                inputs
+                                    .get(r)
+                                    .copied()
+                                    .map(WorkerReturn::Input)
+                                    .unwrap_or(WorkerReturn::Fresh)
+                            })
+                            .collect(),
                         dropped: inputs
                             .iter()
-                            .filter_map(|(&resource, &index)| {
-                                (Some(resource) != returned).then_some(index)
+                            .filter_map(|(resource, &index)| {
+                                (!returned.contains(resource)).then_some(index)
                             })
                             .collect(),
                         error: None,
@@ -2195,7 +2524,7 @@ fn check_function(
                         }
                         None => None,
                     };
-                    state.exit(carried)?;
+                    state.exit(carried.as_slice())?;
                     let carried_index = carried.and_then(|resource| {
                         inputs
                             .get(&resource)
@@ -2205,7 +2534,7 @@ fn check_function(
                     });
                     for error in errors {
                         exits.push(WorkerExit {
-                            returned: None,
+                            returned: vec![],
                             dropped: inputs
                                 .iter()
                                 .filter_map(|(&resource, &index)| {
@@ -2236,19 +2565,26 @@ fn check_function(
     // an identity back instead of dropping it, so the overapproximation would
     // be wrong rather than conservative. Those functions keep their actual
     // checked exits, which is what an owned result already does.
-    if id != module.entry
-        && !matches!(function.result, ScalarType::OwnedBuffer(_))
-        && function.error_payloads.is_empty()
-    {
+    //
+    // Card `W48-QR-TASK-RECORD-CAPTURES`: a record result that owns a Buffer
+    // hands identities back exactly as an owned result does, so it keeps its
+    // actual exits too; a record of scalars carries no custody and is
+    // overapproximated like any scalar result.
+    let result_owns = match function.result {
+        ScalarType::OwnedBuffer(_) => true,
+        ScalarType::Record(record) => module.records.get(&record).is_some_and(TaskRecord::owns),
+        _ => false,
+    };
+    if id != module.entry && !result_owns && function.error_payloads.is_empty() {
         let dropped = inputs.values().copied().collect::<Vec<_>>();
         exits = std::iter::once(WorkerExit {
-            returned: None,
+            returned: vec![],
             dropped: dropped.clone(),
             error: None,
             error_payload: None,
         })
         .chain(function.errors.iter().cloned().map(|error| WorkerExit {
-            returned: None,
+            returned: vec![],
             dropped: dropped.clone(),
             error: Some(error),
             error_payload: None,
@@ -2271,6 +2607,68 @@ fn check_function(
         slot_types,
         buffer_payloads,
     })
+}
+
+/// The abstract completion outcome of a record result (card
+/// `W48-QR-TASK-RECORD-CAPTURES`): each scalar leaf a placeholder of its type —
+/// the abstract run tracks types, not numbers — and each owned leaf the next
+/// identity the checked exit hands back.
+fn abstract_record_outcome(
+    module: &TaskModule,
+    record: usize,
+    owned: &[ResourceId],
+) -> Result<TaskOutcome, String> {
+    let AbstractValue::Record(_, leaves) = record_value(module, record, owned)? else {
+        unreachable!("record_value builds a record")
+    };
+    Ok(TaskOutcome::Record(
+        leaves
+            .into_iter()
+            .map(|leaf| match leaf {
+                AbstractValue::Owned(resource, _) => TaskOutcome::OwnedBuffer(resource),
+                AbstractValue::Scalar(ScalarType::Fixed(ty)) => TaskOutcome::Fixed { ty, value: 0 },
+                _ => TaskOutcome::I32(0),
+            })
+            .collect(),
+    ))
+}
+
+/// The whole value of a collected record result (card
+/// `W48-QR-TASK-RECORD-CAPTURES`): its declared leaves in leaf order, each
+/// scalar leaf a value of its type and each owned leaf the next identity the
+/// completion carried. Every carried identity is used, exactly once.
+fn record_value(
+    module: &TaskModule,
+    record: usize,
+    owned: &[ResourceId],
+) -> Result<AbstractValue, String> {
+    let declared = module
+        .records
+        .get(&record)
+        .ok_or_else(|| format!("record result {record} names no declared record"))?;
+    let mut carried = owned.iter();
+    let mut leaves = Vec::with_capacity(declared.leaves.len());
+    for leaf in &declared.leaves {
+        leaves.push(match leaf.ty {
+            ScalarType::OwnedBuffer(payload) => {
+                let resource = carried.next().ok_or_else(|| {
+                    format!(
+                        "record `{}`'s owned leaf `{}` has no carried identity",
+                        declared.name, leaf.path
+                    )
+                })?;
+                AbstractValue::Owned(*resource, payload)
+            }
+            ty => AbstractValue::Scalar(ty),
+        });
+    }
+    if carried.next().is_some() {
+        return Err(format!(
+            "record `{}` was completed with more identities than it has owned leaves",
+            declared.name
+        ));
+    }
+    Ok(AbstractValue::Record(record, leaves))
 }
 
 /// The task type of a §G02t type: `i32` keeps its own variant.
@@ -2373,16 +2771,33 @@ fn validate_fixed_width(module: &TaskModule, function: &TaskFunction) -> Result<
         }
         Ok(())
     };
-    let check_operand = |operand: &ScalarOperand| -> Result<(), String> {
+    let check_leaf_operand = |operand: &ScalarOperand| -> Result<(), String> {
         match operand {
             ScalarOperand::Fixed {
                 ty: st::ScalarType::I32,
                 ..
             } => Err("an i32 literal has one representation; Fixed { i32 } is malformed".into()),
             ScalarOperand::Fixed { ty, value } => check_literal(*ty, *value),
+            // Card `W48-QR-TASK-RECORD-CAPTURES`: a record's leaves are flat.
+            ScalarOperand::Record(_) => Err("a record operand's leaves are not records".into()),
             _ => Ok(()),
         }
     };
+    let check_operand = |operand: &ScalarOperand| -> Result<(), String> {
+        match operand {
+            ScalarOperand::Record(leaves) => leaves.iter().try_for_each(check_leaf_operand),
+            other => check_leaf_operand(other),
+        }
+    };
+    // Card `W48-QR-TASK-RECORD-CAPTURES`: a record result's leaf types are part
+    // of this function's surface.
+    if let ScalarType::Record(record) = function.result
+        && let Some(declared) = module.records.get(&record)
+    {
+        for leaf in &declared.leaves {
+            check_kind(&leaf.ty)?;
+        }
+    }
     let check_operation = |operation: &TaskValueOperation| -> Result<(), String> {
         for operand in operation.operands() {
             if let TaskValueOperand::Literal { ty, value } = operand {

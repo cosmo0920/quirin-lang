@@ -4841,6 +4841,10 @@ fn task_route(
         .any(|function| !function.error_payloads.is_empty());
     let owned_profile = checked.module().functions.values().any(|function| {
         matches!(function.result, ScalarType::OwnedBuffer(_))
+            // Card `W48-QR-TASK-RECORD-CAPTURES`: a record result that owns a
+            // Buffer transfers custody through join as an owned result does.
+            || matches!(function.result, ScalarType::Record(record)
+                if checked.module().records.get(&record).is_some_and(|declared| declared.owns()))
             || function
                 .parameters
                 .iter()
@@ -4874,6 +4878,9 @@ fn task_route(
                     | ScalarType::WriteLease(_) => {
                         return None;
                     }
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`: a record result is a
+                    // worker's, collected by join, never one a caller runs.
+                    ScalarType::Record(_) => return None,
                 };
                 Some((function.name.clone(), scalar))
             })
@@ -7377,6 +7384,24 @@ fn compile_composed_epoch_source(
             .map(|diagnostic| map_diagnostic(diagnostic, ranges))
             .collect::<Vec<_>>()
     })?;
+    // Card `W48-QR-TASK-RECORD-CAPTURES`: the scoped-task route now admits
+    // records, but the composed epoch's derived shape reads a capture per
+    // argument and a retained result per owned Buffer, and no card has
+    // measured what a record's leaves mean against the epoch's allocation
+    // axis. So a record on this route refuses by name, at the code and pass
+    // the task route's record refusal always had (`W48-QR-TASK-RECORD-EPOCH`).
+    if let Some(span) = qcore_frontend::source_record::record_declaration_span(&task_parsed) {
+        return Err(vec![map_raw_diagnostic(
+            "Q500",
+            SemanticPass::CEmission,
+            span,
+            "a record type in a composed epoch module is not admitted: the epoch's derived \
+             shape has no reading of a record's leaves against its allocation axis \
+             (W48-QR-TASK-RECORD-EPOCH)"
+                .to_owned(),
+            ranges,
+        )]);
+    }
     // The whole scoped-task route, unedited, on the task half alone.
     let task_module =
         compile_task_source(&task_parsed, &task_typed, mode, options, ranges, target)?;

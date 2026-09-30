@@ -154,10 +154,20 @@ fn scalar(value: &ScalarOperand) -> String {
         ScalarOperand::I32(value) if *value < 0 => format!("(-INT32_C({}))", -value),
         ScalarOperand::I32(value) => format!("INT32_C({value})"),
         ScalarOperand::Slot(slot) => format!("s_{slot}.value.scalar"),
-        ScalarOperand::Move(_) | ScalarOperand::Loan { .. } | ScalarOperand::Lease { .. } => {
-            unreachable!("checked scalar operand is neither owned nor lent")
+        ScalarOperand::Move(_)
+        | ScalarOperand::Loan { .. }
+        | ScalarOperand::Lease { .. }
+        | ScalarOperand::Record(_) => {
+            unreachable!("checked scalar operand is neither owned nor lent nor a record")
         }
     }
+}
+
+/// The `result.kind` of a worker result of record type `record` (card
+/// `W48-QR-TASK-RECORD-CAPTURES`): `100` plus the record's key, clear of the
+/// historical `0`/`1`/`2` and of the fixed-width `10`..`20`.
+fn record_kind(record: usize) -> usize {
+    100 + record
 }
 
 /// The C expression of a copy-scalar operand at its checked type (card
@@ -218,8 +228,18 @@ fn byte_index(operand: &ScalarOperand) -> u64 {
 }
 
 fn consume(source: &mut String, operand: &ScalarOperand) {
-    if let ScalarOperand::Move(slot) = operand {
-        writeln!(source, "    s_{slot}.value.buffer = NULL;").unwrap();
+    match operand {
+        ScalarOperand::Move(slot) => {
+            writeln!(source, "    s_{slot}.value.buffer = NULL;").unwrap();
+        }
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: each owned leaf of a returned
+        // record leaves its binding exactly as a moved Buffer does.
+        ScalarOperand::Record(leaves) => {
+            for leaf in leaves {
+                consume(source, leaf);
+            }
+        }
+        _ => {}
     }
 }
 
@@ -400,20 +420,47 @@ pub fn emit_task_c11_with_source_lines(
         .into_iter()
         .filter(|payload| *payload != st::ScalarType::I32)
         .collect::<BTreeSet<_>>();
+    // Card `W48-QR-TASK-RECORD-CAPTURES`: the record types this module's
+    // workers return. A module returning none keeps every byte it had.
+    let record_results = module
+        .functions
+        .values()
+        .filter_map(|function| match function.result {
+            ScalarType::Record(record) => module
+                .records
+                .get(&record)
+                .map(|declared| (record, declared)),
+            _ => None,
+        })
+        .collect::<BTreeMap<_, _>>();
+    // Every positional result initializer of a module whose result carries
+    // record leaves initializes them too (`-Wmissing-field-initializers`).
+    let result_tail = if record_results.is_empty() {
+        ""
+    } else {
+        ", {{0}}"
+    };
+    // A record result logs its header under `=RECORD`, which only the
+    // fixed-width result arm of the stdout adapter prints.
+    let fixed_arm = !fixed_results.is_empty() || !record_results.is_empty();
     let mut helpers = BTreeSet::new();
-    if fixed_width {
-        for fragment in &mut fragments {
-            if fragment.key == "task.runtime" {
-                fragment.text = fixed_width_runtime(&fixed, &fixed_results, &payloads);
-            }
-            if fragment.key == diagnostic_log_c_emit::ADAPTER_DEFINITION_KEY
-                && (!fixed_results.is_empty() || !payloads.is_empty())
-            {
-                fragment.text = diagnostic_log_c_emit::diagnostic_stdout_adapter_definition_for(
-                    !fixed_results.is_empty(),
-                    !payloads.is_empty(),
-                );
-            }
+    for fragment in &mut fragments {
+        if fixed_width && fragment.key == "task.runtime" {
+            fragment.text = fixed_width_runtime(&fixed, &fixed_results, &payloads);
+        }
+        if !record_results.is_empty() && fragment.key == "task.runtime" {
+            fragment.text = record_runtime(&fragment.text, &record_results);
+        }
+        // A typed payload implies the fixed-width surface, and so does a
+        // fixed-width result, so without a record result this is exactly the
+        // replacement that surface always made.
+        if fragment.key == diagnostic_log_c_emit::ADAPTER_DEFINITION_KEY
+            && (fixed_arm || !payloads.is_empty())
+        {
+            fragment.text = diagnostic_log_c_emit::diagnostic_stdout_adapter_definition_for(
+                fixed_arm,
+                !payloads.is_empty(),
+            );
         }
     }
 
@@ -471,6 +518,13 @@ pub fn emit_task_c11_with_source_lines(
                         outcome_slot: Some(slot),
                         ..
                     } => {
+                        slots.insert(*slot);
+                    }
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`.
+                    InstructionKind::UnpackRecord { leaves, .. } => {
+                        slots.extend(leaves.iter().copied());
+                    }
+                    InstructionKind::RefillField { slot, .. } => {
                         slots.insert(*slot);
                     }
                     _ => {}
@@ -572,6 +626,34 @@ pub fn emit_task_c11_with_source_lines(
                         .collect::<Vec<_>>(),
                 )),
                 _ => None,
+            })
+            .collect::<BTreeMap<_, _>>();
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: the Result slot each collected
+        // record was bound out of. Slots are single-assignment, so the value
+        // slot names exactly one collection, whose leaves are still in that
+        // Result's `leaves` when the unpack that follows it runs.
+        let record_sources = function
+            .blocks
+            .values()
+            .flat_map(|block| {
+                block
+                    .instructions
+                    .iter()
+                    .filter_map(|instruction| match &instruction.kind {
+                        InstructionKind::UnwrapInfallible {
+                            result_slot,
+                            value_slot,
+                        } => Some((*value_slot, *result_slot)),
+                        _ => None,
+                    })
+                    .chain(match &block.terminator.kind {
+                        TerminatorKind::TryOutcome {
+                            result_slot,
+                            value_slot,
+                            ..
+                        } => Some((*value_slot, *result_slot)),
+                        _ => None,
+                    })
             })
             .collect::<BTreeMap<_, _>>();
         writeln!(source, "    goto qcore_block_{};", function.entry).unwrap();
@@ -693,6 +775,30 @@ pub fn emit_task_c11_with_source_lines(
                     }
                     InstructionKind::DropBuffer { buffer } => {
                         writeln!(source, "    qcore_buffer_drop(s_{buffer}.value.buffer, context); s_{buffer}.value.buffer = NULL;").unwrap();
+                    }
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`: each leaf leaves the
+                    // collected Result in the statement it enters its slot, so
+                    // no live C state names an owned leaf twice.
+                    InstructionKind::UnpackRecord { record, leaves } => {
+                        let result = record_sources
+                            .get(record)
+                            .expect("a checked unpack follows the collection that bound it");
+                        for (index, leaf) in leaves.iter().enumerate() {
+                            writeln!(
+                                source,
+                                "    s_{leaf}.value = s_{result}.result.leaves[{index}]; s_{result}.result.leaves[{index}].buffer = NULL;"
+                            )
+                            .unwrap();
+                        }
+                    }
+                    InstructionKind::RefillField { slot, value, .. } => {
+                        writeln!(
+                            source,
+                            "    s_{slot}.value = {};",
+                            self_value(value, &types, tail)
+                        )
+                        .unwrap();
+                        consume(&mut source, value);
                     }
                     InstructionKind::EnterScope { scope } => {
                         writeln!(source, "    /* checked scope {scope} begins */").unwrap()
@@ -896,6 +1002,29 @@ pub fn emit_task_c11_with_source_lines(
                     )
                     .unwrap();
                 }
+                // Card `W48-QR-TASK-RECORD-CAPTURES`: a record result travels
+                // in the result's `leaves`, one task value per leaf, each
+                // spelled exactly as a single result of its type would be.
+                TerminatorKind::Return {
+                    value: value @ ScalarOperand::Record(leaves),
+                } => {
+                    let ScalarType::Record(record) = function.result else {
+                        unreachable!("a checked record return is a record result's")
+                    };
+                    let leaves = leaves
+                        .iter()
+                        .map(|leaf| self_value(leaf, &types, tail))
+                        .collect::<Vec<_>>();
+                    writeln!(
+                        source,
+                        "    {{ struct qcore_task_result returned = {{{}, {{0, NULL{tail}}}, 0, {{{}}}}};",
+                        record_kind(record),
+                        leaves.join(", ")
+                    )
+                    .unwrap();
+                    consume(&mut source, value);
+                    source.push_str("    return returned; }\n");
+                }
                 TerminatorKind::Return { value } => {
                     let kind = match function.result {
                         ScalarType::Unit => 0,
@@ -908,10 +1037,13 @@ pub fn emit_task_c11_with_source_lines(
                         ScalarType::WriteLease(_) => {
                             unreachable!("a checked result is never a write lease")
                         }
+                        ScalarType::Record(_) => {
+                            unreachable!("a checked record result returns a whole record")
+                        }
                     };
                     writeln!(
                         source,
-                        "    {{ struct qcore_task_result returned = {{{kind}, {}, 0}};",
+                        "    {{ struct qcore_task_result returned = {{{kind}, {}, 0{result_tail}}};",
                         self_value(value, &types, tail)
                     )
                     .unwrap();
@@ -926,13 +1058,13 @@ pub fn emit_task_c11_with_source_lines(
                     match payload {
                         None => writeln!(
                             source,
-                            "    return (struct qcore_task_result){{0, {{0, NULL{tail}}}, {tag}}};"
+                            "    return (struct qcore_task_result){{0, {{0, NULL{tail}}}, {tag}{result_tail}}};"
                         )
                         .unwrap(),
                         Some(operand) => {
                             writeln!(
                                 source,
-                                "    {{ struct qcore_task_result raised = {{0, {}, {tag}}};",
+                                "    {{ struct qcore_task_result raised = {{0, {}, {tag}{result_tail}}};",
                                 self_value(operand, &types, tail)
                             )
                             .unwrap();
@@ -1174,6 +1306,86 @@ fn fixed_width_runtime(
     } else {
         typed_payload_runtime(&runtime, payloads)
     }
+}
+
+/// The task runtime of a module whose workers return records (card
+/// `W48-QR-TASK-RECORD-CAPTURES`): the task result gains a `leaves` array of
+/// task values — one per leaf of the largest record, `QCORE_TASK_RECORD_CAPACITY`
+/// — and the result logger an arm per record result kind. The arm logs the
+/// header under `=RECORD`, whose number is the leaf count, and then each leaf
+/// exactly as a single result of that leaf's type is logged, so the trace of a
+/// record result is `QCORE_TASK_RESULT TASK RECORD N` followed by one result
+/// line per leaf in leaf order (the reference's own rendering). Applied only
+/// to a module that returns a record; every other runtime keeps its bytes.
+fn record_runtime(
+    runtime: &str,
+    records: &BTreeMap<usize, &crate::task_execution::TaskRecord>,
+) -> String {
+    let result =
+        "struct qcore_task_result { int kind; struct qcore_task_value value; int error; };\n";
+    let tail = " else abort();\n}\nstatic int qcore_task_trampoline";
+    assert_eq!(
+        runtime.matches(result).count(),
+        1,
+        "the task result is declared once"
+    );
+    assert_eq!(runtime.matches(tail).count(), 1, "the result logger ends once");
+    let capacity = records
+        .values()
+        .map(|record| record.leaves.len())
+        .max()
+        .unwrap_or(1)
+        .max(1);
+    let mut arms = String::new();
+    for (record, declared) in records {
+        write!(
+            arms,
+            " else if (result.kind == {}) {{\n        qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_TASK_RESULT, identity,\n            UINT64_C(0), INT64_C({}), \"=RECORD\");\n",
+            record_kind(*record),
+            declared.leaves.len()
+        )
+        .unwrap();
+        for (index, leaf) in declared.leaves.iter().enumerate() {
+            let value = format!("result.leaves[{index}]");
+            match leaf.ty {
+                ScalarType::I32 => write!(
+                    arms,
+                    "        qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_TASK_RESULT, identity,\n            UINT64_C(0), (int64_t){value}.scalar, \"i32\");\n"
+                )
+                .unwrap(),
+                ScalarType::Fixed(ty) => {
+                    let label = ty.name().to_ascii_uppercase();
+                    let field = format!("{value}.typed.{}", member(ty));
+                    let (related, signed) = if ty.is_integer() && !ty.is_signed() {
+                        (format!("(uint64_t){field}"), "INT64_C(0)".to_owned())
+                    } else {
+                        ("UINT64_C(0)".to_owned(), format!("(int64_t){field}"))
+                    };
+                    write!(
+                        arms,
+                        "        qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_TASK_RESULT, identity,\n            {related}, {signed}, \"={label}\");\n"
+                    )
+                    .unwrap();
+                }
+                ScalarType::OwnedBuffer(_) => write!(
+                    arms,
+                    "        if ({value}.buffer == NULL) abort();\n        qcore_diagnostic_log(QCORE_LOG_DEBUG, QCORE_DIAG_TASK_RESULT, identity,\n            {value}.buffer->generation, INT64_C(0), \"buffer\");\n"
+                )
+                .unwrap(),
+                _ => unreachable!("a checked record leaf is a copy scalar or an owned Buffer"),
+            }
+        }
+        arms.push_str("    }");
+    }
+    arms.push_str(tail);
+    runtime
+        .replace(
+            result,
+            &format!(
+                "#define QCORE_TASK_RECORD_CAPACITY {capacity}\nstruct qcore_task_result {{ int kind; struct qcore_task_value value; int error; struct qcore_task_value leaves[QCORE_TASK_RECORD_CAPACITY]; }};\n"
+            ),
+        )
+        .replace(tail, &arms)
 }
 
 /// The task runtime of a module whose Buffers carry typed payloads (card

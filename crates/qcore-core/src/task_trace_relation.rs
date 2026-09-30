@@ -481,6 +481,11 @@ fn outcome(value: &TaskOutcome, index: usize) -> Result<ObservedOutcome, Referen
         TaskOutcome::ErrorWithBuffer { .. } => {
             Err(ReferenceTraceError::UnsupportedOutcome { index })
         }
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: the observable alphabet has no
+        // record outcome, so a run returning one is refused rather than encoded
+        // — never flattened into its leaves' outcomes, which would read as
+        // several completions of one task (constraint 15n's refusing side).
+        TaskOutcome::Record(_) => Err(ReferenceTraceError::UnsupportedOutcome { index }),
     }
 }
 

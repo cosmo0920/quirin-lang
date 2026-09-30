@@ -688,3 +688,165 @@ fn declared_tags_map_conservatively() {
         );
     }
 }
+
+// ---------------------------------------------------------------------------
+// Card `W48-QR-TASK-RECORD-CAPTURES`: the aggregate kind, decided from its
+// leaves. The matrices below are re-decided **whole** over every leaf list of
+// length at most two drawn from the complete kind vocabulary (1 + 17 + 289 =
+// 307 records) and every mode — and the flat matrices above are untouched.
+// ---------------------------------------------------------------------------
+
+/// Every leaf list of length 0, 1 and 2 over the whole kind vocabulary.
+fn short_leaf_lists() -> Vec<Vec<TransferKind>> {
+    let mut lists = vec![vec![]];
+    for a in TransferKind::ALL {
+        lists.push(vec![a]);
+        for b in TransferKind::ALL {
+            lists.push(vec![a, b]);
+        }
+    }
+    lists
+}
+
+/// The aggregate judgment is the conjunction of its leaves: `copy` of a record
+/// is admitted exactly when every leaf admits `copy`, and `move` exactly when
+/// every leaf admits the mode the record asks of it and some leaf moves.
+#[test]
+fn the_aggregate_judgment_is_the_conjunction_of_its_leaves() {
+    let lists = short_leaf_lists();
+    assert_eq!(lists.len(), 307);
+    for leaves in lists {
+        let copy = admits_aggregate(&leaves, TransferMode::Copy);
+        let every_leaf_copies = leaves
+            .iter()
+            .all(|leaf| admits(*leaf, TransferMode::Copy).is_ok());
+        assert_eq!(copy.is_ok(), every_leaf_copies, "{leaves:?}");
+        if let Ok(admitted) = copy {
+            assert_eq!(admitted, AdmittedTransfer::Duplicate);
+        }
+        let moved = admits_aggregate(&leaves, TransferMode::Move);
+        let every_leaf_crosses = leaves
+            .iter()
+            .all(|leaf| admits(*leaf, leaf_mode(*leaf, TransferMode::Move)).is_ok());
+        let some_leaf_moves = leaves.iter().any(|leaf| {
+            admits(*leaf, leaf_mode(*leaf, TransferMode::Move))
+                == Ok(AdmittedTransfer::MoveCustody)
+        });
+        assert_eq!(
+            moved.is_ok(),
+            every_leaf_crosses && some_leaf_moves,
+            "{leaves:?}"
+        );
+        if let Ok(admitted) = moved {
+            assert_eq!(admitted, AdmittedTransfer::MoveCustody);
+        }
+        // The class agrees with the admission in both modes.
+        let class = aggregate_class(&leaves);
+        assert_eq!(
+            copy.is_ok(),
+            class == TransferClass::Duplicated,
+            "{leaves:?}"
+        );
+        assert_eq!(
+            moved.is_ok(),
+            matches!(class, TransferClass::MovedOnly { .. }),
+            "{leaves:?}"
+        );
+    }
+}
+
+/// A refusal names the first leaf that fails, with that leaf's own flat
+/// refusal — never a later leaf and never a leaf that crosses.
+#[test]
+fn an_aggregate_refusal_names_the_first_failing_leaf() {
+    for leaves in short_leaf_lists() {
+        for mode in [TransferMode::Copy, TransferMode::Move] {
+            if let Err(AggregateRefusal::Leaf { index, refusal }) = admits_aggregate(&leaves, mode)
+            {
+                let leaf = leaves[index];
+                assert_eq!(admits(leaf, leaf_mode(leaf, mode)), Err(refusal));
+                for earlier in &leaves[..index] {
+                    assert!(admits(*earlier, leaf_mode(*earlier, mode)).is_ok());
+                }
+            }
+        }
+    }
+    // The case the task route meets: a record owning a Buffer, asked to copy.
+    assert_eq!(
+        admits_aggregate(
+            &[TransferKind::I32, TransferKind::OwnedBuffer],
+            TransferMode::Copy
+        ),
+        Err(AggregateRefusal::Leaf {
+            index: 1,
+            refusal: TransferRefusal::ModeNotAdmittedForKind
+        })
+    );
+    // A copy record asked to move is refused for its mode, naming no leaf.
+    assert_eq!(
+        admits_aggregate(
+            &[TransferKind::I32, TransferKind::FixedScalar],
+            TransferMode::Move
+        ),
+        Err(AggregateRefusal::ModeNotAdmittedForRecord)
+    );
+}
+
+/// `write` is refused by name for every record, before any leaf is asked; and
+/// no sharing mode admits a record whole.
+#[test]
+fn a_write_capture_of_a_record_is_refused_by_name() {
+    for leaves in short_leaf_lists() {
+        assert_eq!(
+            admits_aggregate(&leaves, TransferMode::Write),
+            Err(AggregateRefusal::WriteCaptureUnimplemented),
+            "{leaves:?}"
+        );
+        for mode in [
+            TransferMode::Lend,
+            TransferMode::LendWrite,
+            TransferMode::ShareUnderMutex,
+        ] {
+            assert_eq!(
+                admits_aggregate(&leaves, mode),
+                Err(AggregateRefusal::NoWholeRecordProtocol),
+                "{leaves:?} {mode:?}"
+            );
+        }
+    }
+}
+
+/// The aggregate boundary is decided exactly once: every (record, mode,
+/// parameter record) cell is admitted or refused, and an admitted one delivers
+/// the record type it left as, so another record type refuses.
+#[test]
+fn the_aggregate_boundary_is_decided_exactly_once() {
+    for leaves in short_leaf_lists() {
+        for mode in TransferMode::ALL {
+            let alone = admits_aggregate(&leaves, mode);
+            let same = admits_aggregate_capture(&"P", &leaves, mode, &"P");
+            let other = admits_aggregate_capture(&"P", &leaves, mode, &"Q");
+            assert_eq!(same, alone, "{leaves:?} {mode:?}");
+            match alone {
+                Ok(_) => assert_eq!(other, Err(AggregateRefusal::ReceivedKindMismatch)),
+                Err(refusal) => assert_eq!(other, Err(refusal)),
+            }
+        }
+    }
+}
+
+/// A one-leaf record never admits more than its leaf does in the mode the
+/// record asks of it.
+#[test]
+fn a_one_leaf_record_never_admits_more_than_its_leaf() {
+    for kind in TransferKind::ALL {
+        for mode in TransferMode::ALL {
+            if admits_aggregate(&[kind], mode).is_ok() {
+                assert!(
+                    admits(kind, leaf_mode(kind, mode)).is_ok(),
+                    "{kind:?} {mode:?}"
+                );
+            }
+        }
+    }
+}

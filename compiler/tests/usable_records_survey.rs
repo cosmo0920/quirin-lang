@@ -80,16 +80,22 @@ const EXPECTED: &[(&str, Option<&str>)] = &[
     ("extern_read.qr", Some("Q025")),
     ("extern_result.qr", Some("Q026")),
     ("extern_write.qr", Some("Q025")),
-    ("task_construct.qr", Some("Q500")),
-    ("task_copy.qr", Some("Q500")),
-    ("task_lend.qr", Some("Q500")),
+    // Card `W48-QR-TASK-RECORD-CAPTURES` moved the task row off the record
+    // declaration's `Q500` (`AGGREGATE-TASK-CAPTURE`): a record of scalars is
+    // constructed, read, copied, nested and passed; `result` now refuses at the
+    // rendering of a whole record (`Q050`), `write` for its missing `mut`
+    // (`Q300`), `loop` at the task route's `for` (`Q500`) and `move` at its
+    // `bytes` field (`Q500`, `WRITE-LEND-TASKS-EXTENT`).
+    ("task_construct.qr", None),
+    ("task_copy.qr", None),
+    ("task_lend.qr", None),
     ("task_loop.qr", Some("Q500")),
     ("task_move.qr", Some("Q500")),
-    ("task_nested.qr", Some("Q500")),
-    ("task_param.qr", Some("Q500")),
-    ("task_read.qr", Some("Q500")),
-    ("task_result.qr", Some("Q500")),
-    ("task_write.qr", Some("Q500")),
+    ("task_nested.qr", None),
+    ("task_param.qr", None),
+    ("task_read.qr", None),
+    ("task_result.qr", Some("Q050")),
+    ("task_write.qr", Some("Q300")),
     ("ffi_construct.qr", None),
     ("ffi_copy.qr", None),
     ("ffi_lend.qr", Some("Q026")),

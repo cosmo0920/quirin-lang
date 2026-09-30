@@ -23,6 +23,10 @@ pub enum ScalarValue {
         resource: ResourceId,
         low: u64,
     },
+    /// A whole record — a record result, between the `return` that builds it
+    /// and the unpack that splits it — as its leaf values in leaf order (card
+    /// `W48-QR-TASK-RECORD-CAPTURES`).
+    Record(Vec<ScalarValue>),
 }
 impl ScalarValue {
     fn outcome(self) -> Result<TaskOutcome, String> {
@@ -33,7 +37,34 @@ impl ScalarValue {
             Self::OwnedBuffer(id) => Ok(TaskOutcome::OwnedBuffer(id)),
             Self::ReadLoan(_) => Err("a read loan is not a reference outcome".into()),
             Self::WriteLease { .. } => Err("a write lease is not a reference outcome".into()),
+            Self::Record(leaves) => Ok(TaskOutcome::Record(
+                leaves
+                    .into_iter()
+                    .map(|leaf| match leaf {
+                        Self::Record(_) => Err("a record leaf is not a record".to_owned()),
+                        leaf => leaf.outcome(),
+                    })
+                    .collect::<Result<_, _>>()?,
+            )),
         }
+    }
+    /// The value a collected normal outcome binds (card
+    /// `W48-QR-TASK-RECORD-CAPTURES` factors the historical arms out so a
+    /// record's leaves take them too). An error outcome binds no value.
+    fn of_outcome(outcome: TaskOutcome) -> Option<Self> {
+        Some(match outcome {
+            TaskOutcome::Unit => Self::Unit,
+            TaskOutcome::I32(value) => Self::I32(value),
+            TaskOutcome::Fixed { ty, value } => Self::Fixed { ty, value },
+            TaskOutcome::OwnedBuffer(id) => Self::OwnedBuffer(id),
+            TaskOutcome::Record(leaves) => Self::Record(
+                leaves
+                    .into_iter()
+                    .map(Self::of_outcome)
+                    .collect::<Option<_>>()?,
+            ),
+            TaskOutcome::Error(_) | TaskOutcome::ErrorWithBuffer { .. } => return None,
+        })
     }
 }
 /// Missing decisions select success; unused supplied decisions reject. These
@@ -253,6 +284,9 @@ fn scalar(slots: &BTreeMap<SlotId, Value>, operand: &ScalarOperand) -> Result<Sc
             }
             _ => Err("reference lessor slot is unavailable".into()),
         },
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: a whole record is taken by
+        // [`take`] alone, leaf by leaf, as the value of a record return.
+        ScalarOperand::Record(_) => Err("reference record operand outside a return".into()),
     }
 }
 
@@ -392,6 +426,18 @@ fn take(
     slots: &mut BTreeMap<SlotId, Value>,
     operand: &ScalarOperand,
 ) -> Result<ScalarValue, String> {
+    // Card `W48-QR-TASK-RECORD-CAPTURES`: a record return takes each leaf.
+    if let ScalarOperand::Record(leaves) = operand {
+        return Ok(ScalarValue::Record(
+            leaves
+                .iter()
+                .map(|leaf| match leaf {
+                    ScalarOperand::Record(_) => Err("reference nested record operand".into()),
+                    leaf => take(slots, leaf),
+                })
+                .collect::<Result<_, String>>()?,
+        ));
+    }
     let value = scalar(slots, operand)?;
     if let ScalarOperand::Move(id) = operand {
         slots.insert(*id, Value::Consumed);
@@ -763,19 +809,10 @@ impl Runtime<'_> {
                             else {
                                 return Err("reference infallible Result unavailable".into());
                             };
-                            let value = match outcome {
-                                TaskOutcome::Unit => ScalarValue::Unit,
-                                TaskOutcome::I32(value) => ScalarValue::I32(value),
-                                TaskOutcome::Fixed { ty, value } => {
-                                    ScalarValue::Fixed { ty, value }
-                                }
-                                TaskOutcome::OwnedBuffer(id) => ScalarValue::OwnedBuffer(id),
-                                TaskOutcome::Error(_) | TaskOutcome::ErrorWithBuffer { .. } => {
-                                    return Err(
-                                        "reference error contradicts checked infallible Result"
-                                            .into(),
-                                    );
-                                }
+                            let Some(value) = ScalarValue::of_outcome(outcome) else {
+                                return Err(
+                                    "reference error contradicts checked infallible Result".into(),
+                                );
                             };
                             slots.insert(*result_slot, Value::Consumed);
                             slots.insert(*value_slot, Value::Scalar(value));
@@ -804,6 +841,31 @@ impl Runtime<'_> {
                                 *buffer_slot,
                                 Value::Scalar(ScalarValue::OwnedBuffer(resource)),
                             );
+                        }
+                        // Card `W48-QR-TASK-RECORD-CAPTURES`.
+                        TaskInstructionKind::UnpackRecord { record, leaves } => {
+                            let Some(Value::Scalar(ScalarValue::Record(values))) =
+                                slots.get(record).cloned()
+                            else {
+                                return Err("reference record to unpack is unavailable".into());
+                            };
+                            if values.len() != leaves.len() {
+                                return Err("reference record leaf count disagrees".into());
+                            }
+                            slots.insert(*record, Value::Consumed);
+                            for (slot, value) in leaves.iter().zip(values) {
+                                slots.insert(*slot, Value::Scalar(value));
+                            }
+                        }
+                        TaskInstructionKind::RefillField { hole, slot, value } => {
+                            if !matches!(slots.get(hole), Some(Value::Consumed)) {
+                                return Err("reference refill of a field that is not a hole".into());
+                            }
+                            let value = take(&mut slots, value)?;
+                            if !matches!(value, ScalarValue::OwnedBuffer(_)) {
+                                return Err("reference refill requires an owned Buffer".into());
+                            }
+                            slots.insert(*slot, Value::Scalar(value));
                         }
                         TaskInstructionKind::EnterScope { scope } => {
                             let actual = self.next_scope;
@@ -1104,13 +1166,9 @@ impl Runtime<'_> {
                             let outcome = self
                                 .execute(*worker, child, arguments.clone())
                                 .map_err(|e| e.to_string())?;
-                            let returned = match outcome {
-                                TaskOutcome::OwnedBuffer(resource)
-                                | TaskOutcome::ErrorWithBuffer {
-                                    buffer: resource, ..
-                                } => vec![resource],
-                                _ => vec![],
-                            };
+                            // Card `W48-QR-TASK-RECORD-CAPTURES`: a record names
+                            // every owned leaf; the historical two outcomes one.
+                            let returned = outcome.owned_identities();
                             self.ledger
                                 .complete(child, outcome.clone(), &returned)
                                 .map_err(|e| format!("{e:?}"))?;
@@ -1171,6 +1229,13 @@ impl Runtime<'_> {
                                     *value_slot,
                                     Value::Scalar(ScalarValue::OwnedBuffer(id)),
                                 );
+                                block_id = *success;
+                            }
+                            // Card `W48-QR-TASK-RECORD-CAPTURES`.
+                            outcome @ TaskOutcome::Record(_) => {
+                                let value = ScalarValue::of_outcome(outcome)
+                                    .ok_or("reference record outcome holds an error")?;
+                                slots.insert(*value_slot, Value::Scalar(value));
                                 block_id = *success;
                             }
                             TaskOutcome::Error(tag) => {
@@ -1384,6 +1449,56 @@ fn typed_payload(ty: st::ScalarType, value: i128) -> String {
     format!("{} {number}", ty.name().to_ascii_uppercase())
 }
 
+/// One task result's lines (card `W48-QR-TASK-RECORD-CAPTURES` factors it out
+/// of [`render_task_event`] byte for byte, so a record's leaves are rendered by
+/// the very arms a single result is). A record is its header,
+/// `QCORE_TASK_RESULT TASK RECORD N`, then one result line per leaf in leaf
+/// order — what the emitted logger prints for a record result.
+fn render_result(output: &mut String, task: u64, outcome: &TaskOutcome) {
+    use std::fmt::Write;
+    match outcome {
+        TaskOutcome::OwnedBuffer(buffer) => {
+            writeln!(output, "QCORE_TASK_RESULT {task} BUFFER {buffer}").unwrap()
+        }
+        TaskOutcome::Unit => writeln!(output, "QCORE_TASK_RESULT {task} UNIT").unwrap(),
+        TaskOutcome::I32(value) => {
+            writeln!(output, "QCORE_TASK_RESULT {task} I32 {value}").unwrap()
+        }
+        // Card `W48-QR-SCALAR-TYPES-R4`: the type's name in upper case
+        // and the number itself (`true`/`false` for `bool`), which is
+        // what the maintained sink's fixed-width arm prints.
+        TaskOutcome::Fixed { ty, value } => writeln!(
+            output,
+            "QCORE_TASK_RESULT {task} {} {}",
+            ty.name().to_ascii_uppercase(),
+            if *ty == st::ScalarType::Bool {
+                if *value == 1 {
+                    "true".to_owned()
+                } else {
+                    "false".to_owned()
+                }
+            } else {
+                value.to_string()
+            }
+        )
+        .unwrap(),
+        TaskOutcome::Error(tag) => {
+            writeln!(output, "QCORE_TASK_RESULT {task} ERROR {tag}").unwrap()
+        }
+        TaskOutcome::ErrorWithBuffer { tag, buffer } => writeln!(
+            output,
+            "QCORE_TASK_RESULT {task} ERROR_BUFFER {tag} {buffer}"
+        )
+        .unwrap(),
+        TaskOutcome::Record(leaves) => {
+            writeln!(output, "QCORE_TASK_RESULT {task} RECORD {}", leaves.len()).unwrap();
+            for leaf in leaves {
+                render_result(output, task, leaf);
+            }
+        }
+    }
+}
+
 pub fn render_task_event(event: &TaskEvent) -> String {
     let mut output = String::new();
     use std::fmt::Write;
@@ -1492,41 +1607,7 @@ pub fn render_task_event(event: &TaskEvent) -> String {
             )
             .unwrap(),
             TaskEvent::Join { task } => writeln!(output, "QCORE_TASK_JOIN {task}").unwrap(),
-            TaskEvent::Result { task, outcome } => match outcome {
-                TaskOutcome::OwnedBuffer(buffer) => {
-                    writeln!(output, "QCORE_TASK_RESULT {task} BUFFER {buffer}").unwrap()
-                }
-                TaskOutcome::Unit => writeln!(output, "QCORE_TASK_RESULT {task} UNIT").unwrap(),
-                TaskOutcome::I32(value) => {
-                    writeln!(output, "QCORE_TASK_RESULT {task} I32 {value}").unwrap()
-                }
-                // Card `W48-QR-SCALAR-TYPES-R4`: the type's name in upper case
-                // and the number itself (`true`/`false` for `bool`), which is
-                // what the maintained sink's fixed-width arm prints.
-                TaskOutcome::Fixed { ty, value } => writeln!(
-                    output,
-                    "QCORE_TASK_RESULT {task} {} {}",
-                    ty.name().to_ascii_uppercase(),
-                    if *ty == st::ScalarType::Bool {
-                        if *value == 1 {
-                            "true".to_owned()
-                        } else {
-                            "false".to_owned()
-                        }
-                    } else {
-                        value.to_string()
-                    }
-                )
-                .unwrap(),
-                TaskOutcome::Error(tag) => {
-                    writeln!(output, "QCORE_TASK_RESULT {task} ERROR {tag}").unwrap()
-                }
-                TaskOutcome::ErrorWithBuffer { tag, buffer } => writeln!(
-                    output,
-                    "QCORE_TASK_RESULT {task} ERROR_BUFFER {tag} {buffer}"
-                )
-                .unwrap(),
-            },
+            TaskEvent::Result { task, outcome } => render_result(&mut output, *task, outcome),
         }
     }
     output

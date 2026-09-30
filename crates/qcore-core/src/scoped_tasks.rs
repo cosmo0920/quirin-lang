@@ -165,6 +165,34 @@ pub enum TaskOutcome {
         tag: String,
         buffer: ResourceId,
     },
+    /// A record, as its leaf outcomes in leaf order (card
+    /// `W48-QR-TASK-RECORD-CAPTURES`): each leaf an [`TaskOutcome::I32`], a
+    /// [`TaskOutcome::Fixed`] or an [`TaskOutcome::OwnedBuffer`]. The owned
+    /// leaves, in order, are exactly the identities the completion carries —
+    /// the record names every identity it holds and holds every identity it
+    /// names, as a single owned result does.
+    Record(Vec<TaskOutcome>),
+}
+
+impl TaskOutcome {
+    /// The owned identities this outcome names, in order: a Buffer result's,
+    /// an error payload's, or each owned leaf of a record's.
+    pub fn owned_identities(&self) -> Vec<ResourceId> {
+        match self {
+            TaskOutcome::OwnedBuffer(resource)
+            | TaskOutcome::ErrorWithBuffer {
+                buffer: resource, ..
+            } => vec![*resource],
+            TaskOutcome::Record(leaves) => leaves
+                .iter()
+                .flat_map(TaskOutcome::owned_identities)
+                .collect(),
+            TaskOutcome::Unit
+            | TaskOutcome::I32(_)
+            | TaskOutcome::Fixed { .. }
+            | TaskOutcome::Error(_) => vec![],
+        }
+    }
 }
 
 /// Returned metadata is not ownership authority: every resource operation still
@@ -1112,6 +1140,22 @@ impl ScopedTaskLedger {
                 && resources != [*resource]
             {
                 return Err(TaskLedgerError::CompletionResourceMismatch);
+            }
+            // Card `W48-QR-TASK-RECORD-CAPTURES`: a record names each owned
+            // leaf's identity, in order, and a record leaf is a value — never a
+            // nested record, an error or unit.
+            if let TaskOutcome::Record(leaves) = &outcome {
+                if leaves.iter().any(|leaf| {
+                    !matches!(
+                        leaf,
+                        TaskOutcome::I32(_)
+                            | TaskOutcome::Fixed { .. }
+                            | TaskOutcome::OwnedBuffer(_)
+                    )
+                }) || resources != outcome.owned_identities().as_slice()
+                {
+                    return Err(TaskLedgerError::CompletionResourceMismatch);
+                }
             }
             let returned = unique(resources)?;
             let owned = ledger

@@ -9,6 +9,10 @@ use crate::frontend::*;
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 use qcore_core::composed_tasks::TaskIoSite;
 
+// Card `W48-QR-TASK-RECORD-CAPTURES`: records on this route.
+mod records;
+use records::{PathTarget, RecordState, RecordValue, Records};
+
 /// Detect source task forms in every definition, including empty/nested scopes
 /// and uncalled bodies. This selects a checker, never grants execution support.
 pub fn has_source_tasks(source: &SourceProgram) -> bool {
@@ -124,6 +128,11 @@ struct ParsedEffects {
     /// effect it has always been, refused at `Q020`, so a module that spawns and
     /// prints without composing keeps its exact refusal.
     io: bool,
+    /// Card `W48-QR-TASK-RECORD-CAPTURES`: `mut`, which a record field write
+    /// derives (card `W48-QR-USABLE-RECORDS`). Admitted **only** in a module
+    /// that declares a record type; in every other module it is still the
+    /// unsupported effect it has always been, refused at `Q020`.
+    mutates: bool,
     errors: BTreeSet<String>,
     /// Card T06. The declared subset of `errors` whose variants carry exactly
     /// one `own<Buffer>`. It is derived from the error type declaration, never
@@ -235,12 +244,30 @@ impl Scalar {
     }
 }
 
+/// The type of a task parameter or result: one of the route's scalars, or a
+/// record type this module declares (card `W48-QR-TASK-RECORD-CAPTURES`),
+/// which the core sees as its leaves — and, as a result, whole.
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum Shape {
+    Scalar(Scalar),
+    Record(String),
+}
+
+impl Shape {
+    fn core(&self, records: &Records) -> ScalarType {
+        match self {
+            Shape::Scalar(scalar) => scalar.core(),
+            Shape::Record(name) => ScalarType::Record(records[name].key),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 struct Signature {
     id: SymbolId,
     name: String,
-    parameters: Vec<(SymbolId, String, Scalar)>,
-    result: Scalar,
+    parameters: Vec<(SymbolId, String, Shape)>,
+    result: Shape,
     effects: ParsedEffects,
 }
 
@@ -357,6 +384,7 @@ fn signature(
     typed: &TypedSourceDeclaration,
     errors: &BTreeMap<String, ErrorType>,
     composing: bool,
+    records: &Records,
 ) -> Result<Signature, SourceDiagnostic> {
     let bad = |message| failure(declaration.span, SemanticPass::OrdinaryTypes, message);
     let body = declaration
@@ -401,6 +429,33 @@ fn signature(
         {
             return Err(bad("task parameters require explicit types"));
         }
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: a record parameter — ungraded for
+        // a record of scalars, `use one` for a record that owns a Buffer, on
+        // `own<Buffer> use one`'s footing.
+        if let Some(record) = name(group.get(2)).and_then(|word| records.get(word)) {
+            let owns = record.owns();
+            let graded = group.len() == 5
+                && word(group.get(3), "use")
+                && word(group.get(4), "one")
+                && parameter
+                    .usage
+                    .as_ref()
+                    .is_some_and(|usage| usage.value == qcore_core::usage::Usage::ONE);
+            let ungraded = group.len() == 3 && parameter.usage.is_none();
+            if (owns && graded) || (!owns && ungraded) {
+                parameters.push((
+                    parameter.symbol,
+                    parameter.name.clone(),
+                    Shape::Record(record.name.clone()),
+                ));
+                continue;
+            }
+            return Err(bad(if owns {
+                "a record parameter that owns a Buffer is spelled `NAME: RECORD use one`"
+            } else {
+                "a record parameter of scalars is spelled `NAME: RECORD`, ungraded"
+            }));
+        }
         let kind = if group.len() == 3
             && let Some(kind) = name(group.get(2)).and_then(table_scalar)
             && parameter.usage.is_none()
@@ -443,7 +498,7 @@ fn signature(
                  or an ungraded lend<Buffer>",
             ));
         };
-        parameters.push((parameter.symbol, parameter.name.clone(), kind));
+        parameters.push((parameter.symbol, parameter.name.clone(), Shape::Scalar(kind)));
     }
     if !symbol(tokens.get(close + 1), Symbol::Arrow) {
         return Err(bad("task functions require an explicit result type"));
@@ -454,9 +509,17 @@ fn signature(
         .skip(close + 2)
         .find_map(|(i, t)| word(Some(t), "effects").then_some(i))
         .unwrap_or(tokens.len());
-    let result = scalar(&tokens[close + 2..result_end])
-        .filter(|kind| !matches!(kind, Scalar::ReadLoan(_) | Scalar::WriteLease(_)))
-        .ok_or_else(|| bad("task functions support i32, unit and own<Buffer> results"))?;
+    let result = match &tokens[close + 2..result_end] {
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: a record result.
+        [token] if name(Some(token)).is_some_and(|word| records.contains_key(word)) => {
+            Shape::Record(name(Some(token)).unwrap_or_default().to_owned())
+        }
+        spelled => Shape::Scalar(
+            scalar(spelled)
+                .filter(|kind| !matches!(kind, Scalar::ReadLoan(_) | Scalar::WriteLease(_)))
+                .ok_or_else(|| bad("task functions support i32, unit and own<Buffer> results"))?,
+        ),
+    };
     let mut cursor = result_end;
     let mut effects = ParsedEffects::default();
     if cursor < tokens.len() {
@@ -503,6 +566,13 @@ fn signature(
                 // not taken and `io` falls to the refusal below, byte for byte.
                 "io" if composing => {
                     effects.io = true;
+                    key = effect.to_owned();
+                    cursor += 1;
+                }
+                // Card `W48-QR-TASK-RECORD-CAPTURES`, gated the same way: only
+                // in a module that declares a record, which a field write needs.
+                "mut" if !records.is_empty() => {
+                    effects.mutates = true;
                     key = effect.to_owned();
                     cursor += 1;
                 }
@@ -714,6 +784,10 @@ fn binding_transfer_kind(kind: &ValueType) -> qcore_core::transfer::TransferKind
         ValueType::Scope => TransferKind::ThreadScope,
         ValueType::KnownError(_) => TransferKind::KnownErrorTag,
         ValueType::Error { .. } => TransferKind::ErrorValue,
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: a record is no flat kind; its
+        // crossing is the aggregate judgment's, over its leaves, decided in
+        // `record_capture` before this guard is reached.
+        ValueType::Record(_) => TransferKind::Unmodeled,
     }
 }
 
@@ -922,7 +996,9 @@ enum ValueType {
     Scalar(Scalar),
     Handle(SymbolId),
     Result {
-        value: Scalar,
+        /// A scalar, or — card `W48-QR-TASK-RECORD-CAPTURES` — a record
+        /// result, unpacked into leaf slots where it is taken.
+        value: Shape,
         errors: BTreeSet<String>,
         /// True when some variant this Result can carry declares an owned
         /// Buffer payload. Such a Result cannot be propagated with `?`: its
@@ -937,6 +1013,8 @@ enum ValueType {
         /// true the binding cannot be re-raised or silently dropped.
         payload: bool,
     },
+    /// A record binding: a slot per leaf (card `W48-QR-TASK-RECORD-CAPTURES`).
+    Record(RecordValue),
 }
 
 /// Lower complete source syntax into task execution IR. This checks the source
@@ -1072,31 +1150,16 @@ fn lower(
                 "reserved owned-buffer intrinsic or error name",
             ));
         }
-        // Card `OWNED-FIELD-ROUTE-REACH` (wave 41): a **record type** in a
-        // checked-concurrency module refuses here already — this is the arm it
-        // reaches — but it refused with the generic declaration-kind sentence,
-        // which named no boundary. `AGGREGATE-TASK-CAPTURE` now names itself,
-        // at the **same code, the same span and over the same refused set**:
-        // no condition is widened and no code is allocated (the
-        // `CT24-CLEANUP-PREEMPTED` shape). It matters because the record route
-        // is never *selected* for a module that spawns — route dispatch takes
-        // the task route first — so this is the only place in the tree where a
-        // reader meets the boundary, and before the card nothing there said so.
-        if declaration.value.kind == DeclarationKind::Record {
-            return Err(failure(
-                declaration.span,
-                SemanticPass::CEmission,
-                "a `source.record.v1` record type is outside the copy-scalar task execution \
-                 profile: the transferability judgment has no aggregate kind and the scoped-task \
-                 ledger is keyed by plain name, so a record — owning or not — can neither be \
-                 captured by a spawn nor held across a join (`AGGREGATE-TASK-CAPTURE`)",
-            ));
-        }
+        // Card `W48-QR-TASK-RECORD-CAPTURES` lifts card `OWNED-FIELD-ROUTE-REACH`'s
+        // named refusal of a record type here (`AGGREGATE-TASK-CAPTURE`): a
+        // record type is read by `records::task_records` below, and a record
+        // crosses a spawn as its leaves under the aggregate judgment.
         if !matches!(
             declaration.value.kind,
             DeclarationKind::ConcurrencyProfile
                 | DeclarationKind::Function
                 | DeclarationKind::ErrorType
+                | DeclarationKind::Record
         ) {
             return Err(failure(
                 declaration.span,
@@ -1106,6 +1169,7 @@ fn lower(
         }
     }
     let errors = error_declarations(source)?;
+    let records = records::task_records(source)?;
     let mut signatures = BTreeMap::new();
     for declaration in source
         .declarations
@@ -1117,7 +1181,7 @@ fn lower(
             .iter()
             .find(|d| d.name == declaration.value.name)
             .expect("independent elaboration preserved functions");
-        let signature = signature(source, declaration, resolved, &errors, composing)?;
+        let signature = signature(source, declaration, resolved, &errors, composing, &records)?;
         signatures.insert(signature.id, signature);
     }
     let entry = typed
@@ -1142,7 +1206,7 @@ fn lower(
     // Card `W48-QR-SCALAR-TYPES-R4`: the entry's result is published, never a
     // value a caller receives, so it stays `i32`/`unit` (card 0's rule); a
     // fixed-width value is a worker's result, collected by `join`.
-    if let Scalar::Fixed(ty) = signatures[&entry].result {
+    if let Shape::Scalar(Scalar::Fixed(ty)) = signatures[&entry].result {
         return Err(failure(
             span,
             SemanticPass::OrdinaryTypes,
@@ -1170,8 +1234,9 @@ fn lower(
             &signatures,
             signature,
             &errors,
+            &records,
             next_temporary(resolved)?,
-        );
+        )?;
         builder.composing = composing;
         builder.function = resolved.symbol.0 as usize;
         builder.target = target;
@@ -1186,12 +1251,10 @@ fn lower(
             resolved.symbol.0 as usize,
             TaskFunction {
                 name: signature.name.clone(),
-                parameters: signature
-                    .parameters
-                    .iter()
-                    .map(|(symbol, _, kind)| (symbol.0 as usize, kind.core()))
-                    .collect(),
-                result: signature.result.core(),
+                // Card `W48-QR-TASK-RECORD-CAPTURES`: a record parameter is
+                // its leaves, one core parameter each, in leaf order.
+                parameters: builder.parameters.clone(),
+                result: signature.result.core(&records),
                 errors: signature.effects.errors.clone(),
                 error_payloads: signature.effects.error_payloads.clone(),
                 declared_effects: TaskEffects {
@@ -1266,11 +1329,42 @@ fn lower(
         functions,
         source_len: source.source().len(),
         target: target.cloned(),
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: every declared record type, by
+        // the key a record result carries.
+        records: records
+            .values()
+            .map(|record| (record.key, record.core()))
+            .collect(),
     };
     // Card `W48-QR-SCALAR-TYPES-R4`: `isize`/`usize` take their width from the
     // recorded target, and a function naming either with none is refused —
     // the width is never guessed.
     if target.is_none() {
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: a record's leaves name their
+        // types wherever the record is held, so a target-width leaf needs the
+        // record too.
+        for record in records.values() {
+            if let Some(ty) = record.leaves.iter().find_map(|leaf| {
+                leaf.kind
+                    .payload()
+                    .or(match leaf.kind {
+                        Scalar::Fixed(ty) => Some(ty),
+                        _ => None,
+                    })
+                    .filter(|ty| ty.is_target_width())
+            }) {
+                let declaration = source
+                    .declarations
+                    .iter()
+                    .find(|declaration| declaration.value.name == record.name)
+                    .map_or(span, |declaration| declaration.span);
+                return Err(failure(
+                    declaration,
+                    SemanticPass::OrdinaryTypes,
+                    qcore_core::scalar_values::ValueRefusal::NoRecordedTarget { ty }.to_string(),
+                ));
+            }
+        }
         for function in module.functions.values() {
             if let Some(ty) = qcore_core::task_execution::function_fixed_types(function)
                 .into_iter()
@@ -1365,6 +1459,11 @@ struct Builder<'a> {
     /// decision, whether a value statement folds or raises — the core decides
     /// the same thing again, independently.
     known: BTreeMap<SymbolId, i128>,
+    /// This module's record types (card `W48-QR-TASK-RECORD-CAPTURES`).
+    records: &'a Records,
+    /// This function's core parameters: a scalar parameter's own slot, and a
+    /// record parameter's leaf slots in leaf order.
+    parameters: Vec<(usize, ScalarType)>,
 }
 
 impl<'a> Builder<'a> {
@@ -1373,20 +1472,15 @@ impl<'a> Builder<'a> {
         signatures: &'a BTreeMap<SymbolId, Signature>,
         signature: &'a Signature,
         errors: &'a BTreeMap<String, ErrorType>,
+        records: &'a Records,
         next_temporary: usize,
-    ) -> Self {
-        Self {
+    ) -> Result<Self, SourceDiagnostic> {
+        let mut builder = Self {
             source,
             signatures,
             signature,
             errors,
-            environment: vec![
-                signature
-                    .parameters
-                    .iter()
-                    .map(|(symbol, name, kind)| (name.clone(), (*symbol, ValueType::Scalar(*kind))))
-                    .collect(),
-            ],
+            environment: vec![BTreeMap::new()],
             scopes: Vec::new(),
             blocks: BTreeMap::new(),
             current: 0,
@@ -1398,7 +1492,37 @@ impl<'a> Builder<'a> {
             sites: Vec::new(),
             target: None,
             known: BTreeMap::new(),
+            records,
+            parameters: Vec::new(),
+        };
+        // A scalar parameter is its own slot; a record parameter binds a fresh
+        // slot per leaf (card `W48-QR-TASK-RECORD-CAPTURES`).
+        let span = Span { start: 0, end: 0 };
+        for (symbol, name, shape) in &signature.parameters {
+            let kind = match shape {
+                Shape::Scalar(scalar) => {
+                    builder
+                        .parameters
+                        .push((symbol.0 as usize, scalar.core()));
+                    ValueType::Scalar(*scalar)
+                }
+                Shape::Record(ty) => {
+                    let leaves = builder.fresh_leaves(ty, span)?;
+                    builder.parameters.extend(
+                        leaves
+                            .iter()
+                            .map(|leaf| (leaf.slot, leaf.kind.core())),
+                    );
+                    ValueType::Record(RecordValue {
+                        ty: ty.clone(),
+                        leaves,
+                        state: RecordState::Live,
+                    })
+                }
+            };
+            builder.environment[0].insert(name.clone(), (*symbol, kind));
         }
+        Ok(builder)
     }
 
     /// Whether this function's row permits raising `ArithmeticError`.
@@ -1740,6 +1864,37 @@ impl<'a> Builder<'a> {
         &self,
         place: &ResolvedTaskPlace,
     ) -> Result<(SymbolId, ValueType), SourceDiagnostic> {
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: a field of a record binding is a
+        // place — its leaf's slot, or a sub-record's leaves.
+        if let SourcePlace::Field { .. } = &place.syntax.value
+            && let Some((root, path)) = records::place_path(&place.syntax.value)
+            && matches!(
+                self.lookup(&root.value, root.span),
+                Ok((_, ValueType::Record(_)))
+            )
+        {
+            let (found, _, target) = self.resolve_path(&root.value, &path, place.syntax.span)?;
+            if found != place.root_symbol {
+                return Err(self.bad(
+                    root.span,
+                    "task place identity disagrees with the lexical value binding",
+                ));
+            }
+            return Ok(match target {
+                PathTarget::Leaf(leaf) => (
+                    SymbolId(leaf.slot as u32),
+                    ValueType::Scalar(leaf.kind),
+                ),
+                PathTarget::Record { ty, leaves } => (
+                    found,
+                    ValueType::Record(RecordValue {
+                        ty,
+                        leaves,
+                        state: RecordState::Live,
+                    }),
+                ),
+            });
+        }
         let SourcePlace::Name(name) = &place.syntax.value else {
             return Err(self.bad(
                 place.syntax.span,
@@ -1917,6 +2072,12 @@ impl<'a> Builder<'a> {
             );
             return Ok(Some(ValueType::Scalar(Scalar::Unit)));
         }
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: a whole read or write of an owned
+        // field, `qcore_buffer_read(RECORD.PATH)` and
+        // `qcore_buffer_write(RECORD.PATH, VALUE)`, on the field's leaf.
+        if let Some(kind) = self.field_buffer_access(tokens, span, slot)? {
+            return Ok(Some(kind));
+        }
         if word(tokens.first(), "qcore_buffer_read") {
             // The two-argument spelling `qcore_buffer_read(NAME, INDEX)` reads
             // one byte (card `WRITE-LEND-TASKS-EXERCISE`) — through a lease,
@@ -1997,6 +2158,126 @@ impl<'a> Builder<'a> {
             return Ok(Some(ValueType::Scalar(Scalar::OWNED_BUFFER)));
         }
         Ok(None)
+    }
+
+    /// `let NAME = …;` of a record (card `W48-QR-TASK-RECORD-CAPTURES`): a
+    /// construction `TYPE { … }`, a field read `RECORD.PATH`, or a copy of a
+    /// record of scalars `RECORD`. `None` when the initializer is none of them.
+    fn record_initializer(
+        &mut self,
+        rhs: &[Token],
+        span: Span,
+        binding: SymbolId,
+    ) -> Result<Option<ValueType>, SourceDiagnostic> {
+        if let Some(ty) = name(rhs.first())
+            && symbol(rhs.get(1), Symbol::LeftBrace)
+            && self.records.contains_key(ty)
+        {
+            let ty = ty.to_owned();
+            return Ok(Some(ValueType::Record(self.construct_record(rhs, span, &ty)?)));
+        }
+        let Some((root, path, after)) = records::token_path(rhs, 0) else {
+            return Ok(None);
+        };
+        if after != rhs.len()
+            || !matches!(self.lookup(&root, span), Ok((_, ValueType::Record(_))))
+        {
+            return Ok(None);
+        }
+        if path.is_empty() {
+            return self.record_copy(&root, span).map(Some);
+        }
+        self.field_read(&root, &path, span, binding).map(Some)
+    }
+
+    /// `qcore_buffer_read(RECORD.PATH)` and `qcore_buffer_write(RECORD.PATH,
+    /// VALUE)` on an owned field (card `W48-QR-TASK-RECORD-CAPTURES`): the
+    /// whole-payload read and write of the field's leaf, with the owner's
+    /// authority gates the core applies to any owned Buffer.
+    fn field_buffer_access(
+        &mut self,
+        tokens: &[Token],
+        span: Span,
+        slot: usize,
+    ) -> Result<Option<ValueType>, SourceDiagnostic> {
+        let reading = word(tokens.first(), "qcore_buffer_read");
+        if !(reading || word(tokens.first(), "qcore_buffer_write"))
+            || !symbol(tokens.get(1), Symbol::LeftParen)
+        {
+            return Ok(None);
+        }
+        let Some((root, path, after)) = records::token_path(tokens, 2) else {
+            return Ok(None);
+        };
+        if path.is_empty() || !matches!(self.lookup(&root, span), Ok((_, ValueType::Record(_)))) {
+            return Ok(None);
+        }
+        let spelled = format!("{root}.{}", path.join("."));
+        let (_, _, target) = self.resolve_path(&root, &path, span)?;
+        let PathTarget::Leaf(leaf) = target else {
+            return Err(self.bad(span, format!("`{spelled}` is a sub-record, not an owned field")));
+        };
+        let Scalar::OwnedBuffer(payload) = leaf.kind else {
+            return Err(self.bad(
+                span,
+                format!("`{spelled}` is a scalar field; read it with `let NAME = {spelled};`"),
+            ));
+        };
+        if reading {
+            if after + 1 != tokens.len() || !symbol(tokens.get(after), Symbol::RightParen) {
+                return Err(self.bad(span, "buffer read requires one exact owned-buffer name"));
+            }
+            self.instruction(
+                span,
+                TaskInstructionKind::ReadBuffer {
+                    buffer: leaf.slot,
+                    value_slot: slot,
+                },
+            );
+            return Ok(Some(ValueType::Scalar(Scalar::of(payload))));
+        }
+        if !symbol(tokens.get(after), Symbol::Comma)
+            || !symbol(tokens.last(), Symbol::RightParen)
+            || after + 2 >= tokens.len()
+        {
+            return Err(self.bad(
+                span,
+                "buffer write requires one owned-buffer name and one value",
+            ));
+        }
+        let value_tokens = &tokens[after + 1..tokens.len() - 1];
+        let (value, value_kind) = if payload != FixedType::I32
+            && let Some(literal) = self.fixed_literal(value_tokens, payload, span)
+        {
+            (literal?, Scalar::Fixed(payload))
+        } else {
+            self.scalar_operand(value_tokens, span)?
+        };
+        if value_kind != Scalar::of(payload) {
+            return Err(self.bad(
+                span,
+                format!(
+                    "a write into `{spelled}` requires {} value: the payload type is part of the \
+                     Buffer's type and nothing converts implicitly",
+                    fixed_spelling(payload)
+                ),
+            ));
+        }
+        self.instruction(
+            span,
+            TaskInstructionKind::WriteBuffer {
+                buffer: leaf.slot,
+                value,
+            },
+        );
+        self.instruction(
+            span,
+            TaskInstructionKind::BindScalar {
+                slot,
+                value: ScalarOperand::Unit,
+            },
+        );
+        Ok(Some(ValueType::Scalar(Scalar::Unit)))
     }
 
     /// Replace the innermost binding of `name` in place. Only the payload
@@ -2199,7 +2480,7 @@ impl<'a> Builder<'a> {
         span: Span,
         result_slot: usize,
         value_slot: usize,
-        value: Scalar,
+        value: Shape,
         errors: &BTreeSet<String>,
         error_payload: bool,
     ) -> Result<ValueType, SourceDiagnostic> {
@@ -2228,7 +2509,7 @@ impl<'a> Builder<'a> {
                     value_slot,
                 },
             );
-            return Ok(ValueType::Scalar(value));
+            return self.collected(value, value_slot, span);
         }
         let success = self.block_id(span)?;
         let error_slot = self.temporary(span)?;
@@ -2244,7 +2525,22 @@ impl<'a> Builder<'a> {
             },
         );
         self.current = success;
-        Ok(ValueType::Scalar(value))
+        self.collected(value, value_slot, span)
+    }
+
+    /// The value a collection bound at `value_slot`: a scalar as before, or a
+    /// record unpacked into fresh leaf slots right here (card
+    /// `W48-QR-TASK-RECORD-CAPTURES`).
+    fn collected(
+        &mut self,
+        value: Shape,
+        value_slot: usize,
+        span: Span,
+    ) -> Result<ValueType, SourceDiagnostic> {
+        match value {
+            Shape::Scalar(scalar) => Ok(ValueType::Scalar(scalar)),
+            Shape::Record(ty) => Ok(ValueType::Record(self.unpack_record(&ty, value_slot, span)?)),
+        }
     }
 
     fn spawn_inputs(
@@ -2253,7 +2549,7 @@ impl<'a> Builder<'a> {
         scope: SymbolId,
         worker: SymbolId,
         captures: &[ResolvedTaskCapture],
-    ) -> Result<(u64, Vec<ScalarOperand>), SourceDiagnostic> {
+    ) -> Result<(u64, Vec<ScalarOperand>, Vec<String>), SourceDiagnostic> {
         if !self.signature.effects.spawn {
             return Err(failure(
                 span,
@@ -2275,7 +2571,44 @@ impl<'a> Builder<'a> {
         let mut arguments = Vec::new();
         let mut loans = 0usize;
         let mut leases = 0usize;
-        for (capture, (_, _, parameter_type)) in captures.iter().zip(&signature.parameters) {
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: records a successful creation
+        // moves whole, which its caller marks moved on that path.
+        let mut moved_records = Vec::new();
+        for (capture, (_, _, parameter_shape)) in captures.iter().zip(&signature.parameters) {
+            let parameter_type = match parameter_shape {
+                // A record parameter takes a whole record: the aggregate
+                // judgment over its leaves, beside the enumeration.
+                Shape::Record(parameter) => {
+                    let (root, path) = records::place_path(&capture.place.syntax.value)
+                        .ok_or_else(|| {
+                            self.bad(
+                                capture.span,
+                                "task execution supports direct local/parameter places only",
+                            )
+                        })?;
+                    let (found, kind) = self.lookup(&root.value, root.span)?;
+                    if found != capture.place.root_symbol {
+                        return Err(self.bad(
+                            root.span,
+                            "task place identity disagrees with the lexical value binding",
+                        ));
+                    }
+                    if !matches!(kind, ValueType::Record(_)) {
+                        return Err(failure(
+                            capture.span,
+                            SemanticPass::OrdinaryTypes,
+                            "capture type does not match worker parameter",
+                        ));
+                    }
+                    let (operands, moved) =
+                        self.record_capture(capture, &root.value, &path, parameter)?;
+                    arguments.extend(operands);
+                    moved_records.extend(moved);
+                    continue;
+                }
+                Shape::Scalar(scalar) => *scalar,
+            };
+            let parameter_type = &parameter_type;
             let (symbol, kind) = self.lookup_place(&capture.place)?;
             // A read loan is the one capture whose place type and parameter
             // type differ on purpose: the lender keeps `own<Buffer>` and the
@@ -2474,7 +2807,57 @@ impl<'a> Builder<'a> {
                 "one creation cannot both lend a read share and lease a write range",
             ));
         }
-        Ok((scope_id, arguments))
+        Ok((scope_id, arguments, moved_records))
+    }
+
+    /// Mark each record a successful creation moved whole (card
+    /// `W48-QR-TASK-RECORD-CAPTURES`).
+    fn mark_moved(&mut self, moved: &[String]) {
+        for name in moved {
+            if let Ok((_, ValueType::Record(mut record))) = self.lookup(name, Span { start: 0, end: 0 }) {
+                record.state = RecordState::Moved;
+                self.rebind(name, ValueType::Record(record));
+            }
+        }
+    }
+
+    /// After a `match`, a record visible outside it takes the state every
+    /// continuing arm left it in, and is unsettled where they disagree (card
+    /// `W48-QR-TASK-RECORD-CAPTURES`, `W48-QR-TASK-RECORD-ARM-MERGE`).
+    fn settle_records(&mut self, continued: &[Vec<BTreeMap<String, (SymbolId, ValueType)>>]) {
+        if continued.is_empty() {
+            return;
+        }
+        for depth in 0..self.environment.len() {
+            let names: Vec<String> = self.environment[depth]
+                .iter()
+                .filter(|(_, (_, kind))| matches!(kind, ValueType::Record(_)))
+                .map(|(name, _)| name.clone())
+                .collect();
+            for name in names {
+                let states: Vec<Option<&(SymbolId, ValueType)>> = continued
+                    .iter()
+                    .map(|environment| environment.get(depth).and_then(|scope| scope.get(&name)))
+                    .collect();
+                let first = states[0].cloned();
+                let settled = if states.iter().all(|state| state.cloned() == first) {
+                    first
+                } else {
+                    None
+                };
+                let entry = self.environment[depth]
+                    .get_mut(&name)
+                    .expect("the name was listed from this scope");
+                match settled {
+                    Some(value) => *entry = value,
+                    None => {
+                        if let ValueType::Record(record) = &mut entry.1 {
+                            record.state = RecordState::Unsettled;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fn result_match(
@@ -2561,6 +2944,11 @@ impl<'a> Builder<'a> {
             err.ok_or_else(|| self.bad(span, "Result match lacks Err arm"))?;
         let success = self.block_id(span)?;
         let error = self.block_id(span)?;
+        // Card `W48-QR-TASK-RECORD-CAPTURES`: the records a successful creation
+        // moves (moved on the `Ok` arm only), and the record type the `Ok`
+        // arm's binder unpacks, when the value is a record.
+        let mut ok_moves = Vec::new();
+        let mut ok_record: Option<String> = None;
         let (ok_type, err_type) = match resolved.scrutinee.as_ref() {
             Some(ResolvedResultMatchScrutinee::Task(task)) => {
                 if task.syntax.propagates_error || task.syntax.span != syntax.scrutinee_span {
@@ -2575,8 +2963,9 @@ impl<'a> Builder<'a> {
                         worker,
                         captures,
                     } => {
-                        let (scope, arguments) =
+                        let (scope, arguments, moved) =
                             self.spawn_inputs(span, *scope, *worker, captures)?;
+                        ok_moves = moved;
                         self.finish(
                             span,
                             TaskTerminatorKind::TrySpawn {
@@ -2623,7 +3012,7 @@ impl<'a> Builder<'a> {
                             },
                         );
                         (
-                            ValueType::Scalar(value),
+                            self.arm_value(value, &mut ok_record),
                             ValueType::Error {
                                 errors,
                                 payload: error_payload,
@@ -2663,7 +3052,7 @@ impl<'a> Builder<'a> {
                     },
                 );
                 (
-                    ValueType::Scalar(value),
+                    self.arm_value(value, &mut ok_record),
                     ValueType::Error {
                         errors,
                         payload: error_payload,
@@ -2693,8 +3082,9 @@ impl<'a> Builder<'a> {
         let outer_environment = self.environment.clone();
         let outer_scopes = self.scopes.clone();
         let mut continuation = None;
+        let mut continued = Vec::new();
         for (index, arm) in resolved.arms.iter().enumerate() {
-            let (target, binder, kind) = if index == ok_index {
+            let (target, binder, mut kind) = if index == ok_index {
                 (success, ok_binder, ok_type.clone())
             } else {
                 debug_assert_eq!(index, err_index);
@@ -2703,6 +3093,15 @@ impl<'a> Builder<'a> {
             self.current = target;
             self.environment = outer_environment.clone();
             self.scopes = outer_scopes.clone();
+            if index == ok_index {
+                // Card `W48-QR-TASK-RECORD-CAPTURES`: on the arm on which the
+                // creation succeeded the records it moved are moved, and a
+                // collected record is unpacked before the arm's first statement.
+                self.mark_moved(&ok_moves);
+                if let Some(ty) = &ok_record {
+                    kind = ValueType::Record(self.unpack_record(ty, binder.0 as usize, span)?);
+                }
+            }
             self.environment.push(BTreeMap::from([(
                 arm.syntax.pattern.as_ref().unwrap().binding.value.clone(),
                 (binder, kind),
@@ -2714,6 +3113,7 @@ impl<'a> Builder<'a> {
             let terminated = self.block(&arm.syntax.body, arm_statements)?;
             self.environment.pop();
             if !terminated {
+                continued.push(self.environment.clone());
                 let join = match continuation {
                     Some(id) => id,
                     None => {
@@ -2727,10 +3127,24 @@ impl<'a> Builder<'a> {
         }
         self.environment = outer_environment;
         self.scopes = outer_scopes;
+        self.settle_records(&continued);
         if let Some(block) = continuation {
             self.current = block;
         }
         Ok(continuation.is_none())
+    }
+
+    /// The `Ok` arm binder's type for a collected value: a scalar as before,
+    /// or — card `W48-QR-TASK-RECORD-CAPTURES` — a record, noted in
+    /// `ok_record` so the arm unpacks it; its placeholder type is never read.
+    fn arm_value(&self, value: Shape, ok_record: &mut Option<String>) -> ValueType {
+        match value {
+            Shape::Scalar(scalar) => ValueType::Scalar(scalar),
+            Shape::Record(ty) => {
+                *ok_record = Some(ty);
+                ValueType::Scalar(Scalar::Unit)
+            }
+        }
     }
 
     fn task_expression(
@@ -2776,7 +3190,8 @@ impl<'a> Builder<'a> {
                         "spawn requires spawn and throws<SpawnError> effects",
                     ));
                 }
-                let (scope_id, arguments) = self.spawn_inputs(span, *scope, *worker, captures)?;
+                let (scope_id, arguments, moved) =
+                    self.spawn_inputs(span, *scope, *worker, captures)?;
                 let success = self.block_id(span)?;
                 let spawn_error = self.error_block(span, ErrorOperand::Tag("SpawnError".into()))?;
                 self.finish(
@@ -2791,6 +3206,9 @@ impl<'a> Builder<'a> {
                     },
                 );
                 self.current = success;
+                // The failure edge exits, so a record moved whole is moved on
+                // every path that continues (card `W48-QR-TASK-RECORD-CAPTURES`).
+                self.mark_moved(&moved);
                 Ok(Some(ValueType::Handle(*worker)))
             }
             ResolvedTaskExpressionKind::Join { handle } => {
@@ -2810,7 +3228,7 @@ impl<'a> Builder<'a> {
                     ));
                 };
                 let worker = &self.signatures[&worker];
-                let value = worker.result;
+                let value = worker.result.clone();
                 let errors = worker.effects.errors.clone();
                 // The worker's own declared payload row, not the caller's: a
                 // caller cannot decide that a joined error holds nothing.
@@ -2832,16 +3250,16 @@ impl<'a> Builder<'a> {
                         span,
                         result_slot,
                         value_slot,
-                        value,
+                        value.clone(),
                         &errors,
                         error_payload,
                     )?;
-                    if slot.is_none() && value != Scalar::Unit {
+                    if slot.is_none() && value != Shape::Scalar(Scalar::Unit) {
                         return Err(self.bad(span, "discarded join result must be unit"));
                     }
                     Ok(slot.map(|_| kind))
                 } else {
-                    if slot.is_none() && (value != Scalar::Unit || !errors.is_empty()) {
+                    if slot.is_none() && (value != Shape::Scalar(Scalar::Unit) || !errors.is_empty()) {
                         return Err(self.bad(span, "discarded join result must be infallible unit"));
                     }
                     self.instruction(
@@ -2967,6 +3385,10 @@ impl<'a> Builder<'a> {
                         self.buffer_initializer(rhs, statement.span, id.0 as usize)?
                     {
                         kind
+                    } else if let Some(kind) = self.record_initializer(rhs, statement.span, id)? {
+                        // Card `W48-QR-TASK-RECORD-CAPTURES`: a construction, a
+                        // field read, or a copy of a record of scalars.
+                        kind
                     } else if rhs.len() == 2 && symbol(rhs.get(1), Symbol::Question) {
                         let source_name = name(rhs.first()).ok_or_else(|| {
                             self.bad(
@@ -3069,6 +3491,26 @@ impl<'a> Builder<'a> {
                         .unwrap()
                         .insert(binding.clone(), (id, kind));
                 }
+                StatementKind::Drop { .. }
+                    if records::token_path(&tokens, 1).is_some_and(|(root, _, _)| {
+                        matches!(
+                            self.lookup(&root, statement.span),
+                            Ok((_, ValueType::Record(_)))
+                        )
+                    }) =>
+                {
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`: `drop RECORD;` or
+                    // `drop RECORD.PATH;`.
+                    let (root, path, after) =
+                        records::token_path(&tokens, 1).expect("the guard read it");
+                    if !word(tokens.first(), "drop")
+                        || after + 1 != tokens.len()
+                        || !symbol(tokens.get(after), Symbol::Semicolon)
+                    {
+                        return Err(self.bad(statement.span, "buffer drop requires one exact name"));
+                    }
+                    self.drop_record_path(&root, &path, statement.span)?;
+                }
                 StatementKind::Drop { place: Some(place) } => {
                     if tokens.len() != 3
                         || !word(tokens.first(), "drop")
@@ -3088,7 +3530,37 @@ impl<'a> Builder<'a> {
                         },
                     );
                 }
+                StatementKind::Assignment { .. }
+                    if records::token_path(&tokens, 0).is_some_and(|(root, path, after)| {
+                        !path.is_empty()
+                            && symbol(tokens.get(after), Symbol::Equal)
+                            && matches!(
+                                self.lookup(&root, statement.span),
+                                Ok((_, ValueType::Record(_)))
+                            )
+                    }) =>
+                {
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`: `RECORD.PATH = VALUE;`.
+                    let (root, path, after) =
+                        records::token_path(&tokens, 0).expect("the guard read it");
+                    if tokens.len() < after + 3 || !symbol(tokens.last(), Symbol::Semicolon) {
+                        return Err(self.bad(
+                            statement.span,
+                            "a field write is `RECORD.FIELD = VALUE;`",
+                        ));
+                    }
+                    let value = tokens[after + 1..tokens.len() - 1].to_vec();
+                    self.field_write(&root, &path, &value, statement.span)?;
+                }
                 StatementKind::Expression => {
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`: a line rendering a
+                    // scalar field of a record, on the composed route only.
+                    if self.composing
+                        && let Some(line) = self.record_line(&tokens, statement.span)
+                    {
+                        line?;
+                        continue;
+                    }
                     // Card `COMPOSE-CONCURRENCY`. Tried first and only when
                     // composing, so off the composed route this statement is the
                     // unsupported expression statement it has always been.
@@ -3131,6 +3603,15 @@ impl<'a> Builder<'a> {
                     {
                         return Err(self.bad(statement.span, "unsupported task return expression"));
                     }
+                    // Card `W48-QR-TASK-RECORD-CAPTURES`: a record result.
+                    if let Shape::Record(ty) = &self.signature.result {
+                        let value = self.record_return(&tokens, statement.span, ty)?;
+                        self.instructions
+                            .extend(self.exit_instructions(statement.span));
+                        self.finish(statement.span, TaskTerminatorKind::Return { value });
+                        terminated = true;
+                        continue;
+                    }
                     let (value, kind) = if tokens.len() == 4 && word(tokens.get(1), "move") {
                         let buffer = name(tokens.get(2)).ok_or_else(|| {
                             self.bad(statement.span, "owned return requires a name")
@@ -3144,7 +3625,7 @@ impl<'a> Builder<'a> {
                         (ScalarOperand::Move(id.0 as usize), returned)
                     } else if tokens.len() == 2 {
                         (ScalarOperand::Unit, Scalar::Unit)
-                    } else if let Scalar::Fixed(ty) = self.signature.result
+                    } else if let Shape::Scalar(Scalar::Fixed(ty)) = self.signature.result
                         && let Some(literal) =
                             self.fixed_literal(&tokens[1..tokens.len() - 1], ty, statement.span)
                     {
@@ -3154,7 +3635,7 @@ impl<'a> Builder<'a> {
                     } else {
                         self.scalar_operand(&tokens[1..tokens.len() - 1], statement.span)?
                     };
-                    if kind != self.signature.result {
+                    if Shape::Scalar(kind) != self.signature.result {
                         return Err(failure(
                             statement.span,
                             SemanticPass::OrdinaryTypes,

@@ -92,6 +92,11 @@
 //!   unmodeled rather than silently absent, and [`of_declared_type`] is total
 //!   over that tag set so a new tag cannot be added without an arm here.
 //!
+//! * **A record — an aggregate, decided from its leaves** (card
+//!   `W48-QR-TASK-RECORD-CAPTURES`). [`admits_aggregate`] asks each leaf the
+//!   flat judgment in the mode the record asks of it ([`leaf_mode`]); the
+//!   section above that function states the whole-record conditions.
+//!
 //! # Composition (fail-closed)
 //!
 //! The frontend computes this judgment *and* its existing enumeration at every
@@ -721,6 +726,150 @@ pub const fn admits_capture(
                 Err(TransferRefusal::ReceivedKindMismatch)
             }
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Card `W48-QR-TASK-RECORD-CAPTURES`: the aggregate kind.
+//
+// A record crosses a spawn boundary as its **leaves** — its scalar fields and
+// its owned `Buffer<T>` fields, depth-first in declaration order — because the
+// task route represents a record binding as exactly those leaves, one task
+// slot each, and every custody question about the record is then the
+// existing per-resource question about an owned leaf. So the aggregate adds
+// no rule of its own over a leaf: it asks each leaf the flat judgment above.
+//
+// What the aggregate does decide is which mode each leaf is asked in, and
+// which whole-record requests exist at all:
+//
+// * `copy` of a record is `copy` of every leaf. It is admitted exactly when
+//   every leaf is duplicated — a record without owned fields, on
+//   [`TransferKind::FixedScalar`]'s footing — and otherwise the first leaf
+//   that is not is named, with its own refusal (the missing contract).
+// * `move` of a record moves every leaf that moves and duplicates every leaf
+//   that duplicates ([`leaf_mode`]): custody of the owned leaves transfers and
+//   the scalars travel with them. It is admitted exactly when every leaf
+//   crosses in its induced mode **and** some leaf carries custody. A record
+//   whose every leaf is duplicated is a copy record, and `move` of it is
+//   refused for its mode exactly as `move` of an `i32` is.
+// * `write` is refused **by name**, before any leaf is asked — the flat
+//   judgment's `WriteCaptureUnimplemented`, unchanged.
+// * A **sharing** mode — `read … share`, `lend … LOW..HIGH`, `share … under`
+//   — names a protocol, and a record shares none whole: a read share or a
+//   write lease reaches **one** owned leaf through a field capture
+//   (`read r.buf share N`, `lend r.buf LOW..HIGH`), which is the flat
+//   judgment of that leaf's kind.
+//
+// This is the transferability half. Whether the owned leaves are live, lent
+// or leased on the path that reaches the creation is the ledger's decision,
+// leaf by leaf, exactly as for separate `own<Buffer>` captures.
+// ---------------------------------------------------------------------------
+
+/// The mode an aggregate capture asks of one leaf (card
+/// `W48-QR-TASK-RECORD-CAPTURES`): a record `move` duplicates a leaf that
+/// duplicates and moves every other; every other mode is asked of each leaf as
+/// it is.
+pub const fn leaf_mode(leaf: TransferKind, mode: TransferMode) -> TransferMode {
+    match (transferable(leaf), mode) {
+        (TransferClass::Duplicated, TransferMode::Move) => TransferMode::Copy,
+        _ => mode,
+    }
+}
+
+/// The class of an aggregate, decided from its leaves: a leaf that never
+/// crosses decides it; otherwise it is moved when some leaf is, and
+/// duplicated when every leaf is. A moved aggregate is shareable under no
+/// protocol — sharing is per leaf, through a field capture.
+pub fn aggregate_class(leaves: &[TransferKind]) -> TransferClass {
+    let mut moved = false;
+    for leaf in leaves {
+        match transferable(*leaf) {
+            TransferClass::Never(reason) => return TransferClass::Never(reason),
+            TransferClass::MovedOnly { .. } => moved = true,
+            TransferClass::Duplicated => {}
+        }
+    }
+    if moved {
+        TransferClass::MovedOnly {
+            shareable_under: None,
+            mutably_shareable_under: None,
+        }
+    } else {
+        TransferClass::Duplicated
+    }
+}
+
+/// Why an aggregate capture is refused (card `W48-QR-TASK-RECORD-CAPTURES`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum AggregateRefusal {
+    /// A `write` capture: refused by name before any leaf is asked.
+    WriteCaptureUnimplemented,
+    /// The leaf at `index` (in leaf order) does not cross in the mode the
+    /// capture asks of it; `refusal` is that leaf's own flat refusal, which
+    /// names the contract it lacks.
+    Leaf {
+        index: usize,
+        refusal: TransferRefusal,
+    },
+    /// Every leaf is duplicated, so the record crosses by `copy` and a `move`
+    /// has no custody to carry — `move` of an `i32`, one level up.
+    ModeNotAdmittedForRecord,
+    /// The mode names a sharing protocol, and a record shares none whole: an
+    /// owned leaf is shared by its own field capture.
+    NoWholeRecordProtocol,
+    /// The capture is admitted, but it delivers a record of another type than
+    /// the one the worker declares it receives.
+    ReceivedKindMismatch,
+}
+
+/// **The aggregate judgment.** Admission of a record whose leaves are
+/// `leaves` in `mode`: the conjunction of each leaf's own admission in the
+/// mode the record asks of it ([`leaf_mode`]), with the two whole-record
+/// conditions above — `move` needs a leaf that carries custody, and a sharing
+/// mode has no whole-record protocol.
+pub fn admits_aggregate(
+    leaves: &[TransferKind],
+    mode: TransferMode,
+) -> Result<AdmittedTransfer, AggregateRefusal> {
+    match mode {
+        TransferMode::Write => return Err(AggregateRefusal::WriteCaptureUnimplemented),
+        TransferMode::Lend | TransferMode::LendWrite | TransferMode::ShareUnderMutex => {
+            return Err(AggregateRefusal::NoWholeRecordProtocol);
+        }
+        TransferMode::Copy | TransferMode::Move => {}
+    }
+    let mut moved = false;
+    for (index, leaf) in leaves.iter().enumerate() {
+        match admits(*leaf, leaf_mode(*leaf, mode)) {
+            Ok(AdmittedTransfer::MoveCustody) => moved = true,
+            Ok(_) => {}
+            Err(refusal) => return Err(AggregateRefusal::Leaf { index, refusal }),
+        }
+    }
+    match (mode, moved) {
+        (TransferMode::Move, true) => Ok(AdmittedTransfer::MoveCustody),
+        (TransferMode::Move, false) => Err(AggregateRefusal::ModeNotAdmittedForRecord),
+        _ => Ok(AdmittedTransfer::Duplicate),
+    }
+}
+
+/// The whole boundary decision for a record: the parent holds a record of type
+/// `place` with leaves `leaves`, the capture asks for `mode`, and the worker
+/// declares it receives a record of type `parameter`. An admitted aggregate
+/// transfer — a duplicate or a custody move — delivers the record type it
+/// left as, so the two types must be the same type. Record types are nominal:
+/// two record types with the same leaves are still two types.
+pub fn admits_aggregate_capture<T: PartialEq>(
+    place: &T,
+    leaves: &[TransferKind],
+    mode: TransferMode,
+    parameter: &T,
+) -> Result<AdmittedTransfer, AggregateRefusal> {
+    let admitted = admits_aggregate(leaves, mode)?;
+    if place == parameter {
+        Ok(admitted)
+    } else {
+        Err(AggregateRefusal::ReceivedKindMismatch)
     }
 }
 
