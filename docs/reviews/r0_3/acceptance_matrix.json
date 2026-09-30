@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "TARGETED CHECK (user policy 2026-09-30: main moved with non-overlapping, already-gated commits) on integrate/w48-cg07 f5680e14: main 18f55de9 (W48-QRLIB-MACOS; shared records resolved by hand) merged with CG07-GENERIC-AND-STATEMENT-EXPRESSIONS' tip be8585b3. Logs private/int-cg07/targeted of the quirin-spec-cards-compass worktree: submodule 0; fmt 0; workspace clippy --locked 0; qcore-c-gateway tests 2,166 passed, 0 failed, 7 ignored; qcore-core tests 1,139 passed, 0 failed, 1 ignored; 256 Lean audits; providers cargo check --locked 0; release quirin-audit build 0; corpus arbiter (--jobs 4) 0, resource-diagnostics.json 8b9e4047..., byte-identical to the card's AFTER measured at 5220b1a9, which confirms the tip's post-measurement operand reorder moves nothing (608 / 10 / 4,216). The full run_test_binaries.py was NOT re-run on this merge: CG07's card gate at 692e1c07 ran it (7,045 passed, 0 failed).",
-  "workspace_tests": 7045,
+  "note": "TARGETED CHECK (user policy 2026-09-30: main moved with non-overlapping, already-gated commits) on integrate/w48-cc3 500c1a45: main b59aaae2 (W48-QRLIB-MACOS + CG07; shared records resolved by hand; the card's increment paragraph moved to wave-48-continuation.md) merged with W48-CALLEE-CLOSURE-R3's tip e092346e. Logs private/int-cc3/targeted of the quirin-spec-cards-compass worktree: submodule 0; fmt 0; workspace clippy --locked 0; qcore-c-gateway tests 2,170 passed, 0 failed, 7 ignored; contract_loader + qcore_contract_corpus 14 passed, 0 failed; 256 Lean audits; provider gate: cargo test --locked --no-fail-fast 129 passed, 0 failed, 1 ignored, fmt 0, clippy 0, contracts.py check 0, package build 0 and all 5 verifies 0 (the first package-build attempt exited 1 because the integrator's script pre-created the output directory, which package.py refuses; the five verifies failed only because of it; rerun into a fresh directory, all 0), provider python OK; pin.sh check-only at 66910c10 and the 046accf6 clone 0; release quirin-audit build 0; corpus arbiter (--jobs 4) 0: 608 / 10 / 4,216 over 4,834 functions, and against CG07's AFTER (8b9e4047) exactly one function differs, mk_core/mk_file.c::mk_file_get_info, the lstat condition leaf the card reported. The full run_test_binaries.py was NOT re-run on this merge: the card's gate ran it (7,034 passed, 0 failed).",
+  "workspace_tests": 7034,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 256,
@@ -7022,7 +7022,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg07-generic-and-statement-expressions/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/w48-callee-closure-r3/integration/gate.json)"
  },
  "named_followups": [
   {
