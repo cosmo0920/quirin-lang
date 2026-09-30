@@ -118,6 +118,7 @@ pub(crate) fn admit(
 /// `ADMISSION_VECTORS` = `QCore.StatementExpressions.admissionVectors`:
 /// `(position_ok, hygienic, automatic, uses_value, address_taken,
 /// last_is_value, admitted)`.
+#[cfg(test)]
 pub(crate) const ADMISSION_VECTORS: [(bool, bool, bool, bool, bool, bool, bool); 10] = [
     (true, true, true, false, false, false, true),
     (true, true, true, false, true, false, true),
@@ -152,7 +153,7 @@ impl Refusal {
     pub(crate) fn reason(&self) -> String {
         match self {
             Refusal::Position(position) => {
-                format!("statement expression in a {position} position (CG07)")
+                format!("statement expression in the {position} position (CG07)")
             }
             Refusal::Shadow(name) => {
                 format!("statement expression declares `{name}`, a name the body also uses (CG07)")
@@ -241,6 +242,33 @@ pub(crate) fn position_of(node: &Value) -> &'static str {
         "BinaryOperator" if bare["opcode"].as_str() == Some("=") => "assigned path",
         _ => "operand",
     }
+}
+
+/// The named object an assignment's left operand designates: `NAME`, or
+/// `*&NAME` (librdkafka's `RD_KAFKAP_STR_DUPA (&dst, src)` spells
+/// `*((&dst)) = …`), through parentheses. Designating a named object
+/// evaluates nothing, so nothing of the left operand is unsequenced with the
+/// right one.
+pub(crate) fn named_destination(left: &Value) -> Option<&str> {
+    let bare = crate::elaboration::strip_parens(left);
+    let object = match kind(bare) {
+        "DeclRefExpr" => bare,
+        "UnaryOperator" if bare["opcode"].as_str() == Some("*") => {
+            let address = crate::elaboration::strip_parens(children(bare).first()?);
+            if kind(address) != "UnaryOperator" || address["opcode"].as_str() != Some("&") {
+                return None;
+            }
+            let object = crate::elaboration::strip_parens(children(address).first()?);
+            (kind(object) == "DeclRefExpr").then_some(object)?
+        }
+        _ => return None,
+    };
+    matches!(
+        object["referencedDecl"]["kind"].as_str(),
+        Some("VarDecl" | "ParmVarDecl")
+    )
+    .then(|| object["referencedDecl"]["name"].as_str())
+    .flatten()
 }
 
 /// The items of a statement expression's block.
@@ -471,17 +499,30 @@ pub(crate) fn decide(body: &Body, node: &Value, position: Position) -> Result<()
     if !body.knows(node) {
         return Err(Refusal::Shape("not a statement expression of this body"));
     }
-    body.hygiene(node)?;
-    automatic(node)?;
-    if position.uses_value() {
-        if let Some(name) = address_taken(node) {
-            return Err(Refusal::Escape(name));
-        }
-        if !items(node)?.last().is_some_and(is_expression) {
-            return Err(Refusal::NoValue);
-        }
+    let hygiene = body.hygiene(node);
+    let storage = automatic(node);
+    let taken = address_taken(node);
+    let last_is_value = items(node)?.last().is_some_and(is_expression);
+    if admit(
+        position_admitted(position.label()),
+        hygiene.is_ok(),
+        storage.is_ok(),
+        position.uses_value(),
+        taken.is_some(),
+        last_is_value,
+    ) {
+        return Ok(());
     }
-    Ok(())
+    // The first premise that failed, by name.
+    hygiene?;
+    storage?;
+    if let Some(name) = taken {
+        return Err(Refusal::Escape(name));
+    }
+    if !last_is_value {
+        return Err(Refusal::NoValue);
+    }
+    Err(Refusal::Position(position.label()))
 }
 
 #[cfg(test)]

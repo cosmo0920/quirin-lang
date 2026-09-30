@@ -255,7 +255,9 @@ impl Parser<'_> {
                 "refusal": outcome.err().map(Refusal::reason),
             }));
         };
-        // The plan: which position each statement expression stands in.
+        // The plan: which position each statement expression stands in, and
+        // an assignment's named destination.
+        let mut destination: Option<String> = None;
         let plan = if returned {
             match se::whole_value(root) {
                 Some(block) => Plan::Value {
@@ -290,19 +292,15 @@ impl Parser<'_> {
                 && let [left, right] = children(bare)
                 && se::holds(right)
             {
-                let named = matches!(
-                    kind(crate::elaboration::strip_parens(left)),
-                    "DeclRefExpr"
-                ) && matches!(
-                    crate::elaboration::strip_parens(left)["referencedDecl"]["kind"].as_str(),
-                    Some("VarDecl" | "ParmVarDecl")
-                );
                 match se::whole_value(right) {
-                    Some(block) if named && !se::holds(left) => Plan::Value {
-                        position: Position::Assigned,
-                        block,
-                        value_span: locate(right).ok_or(Decline::Span)?,
-                    },
+                    Some(block) if !se::holds(left) && se::named_destination(left).is_some() => {
+                        destination = se::named_destination(left).map(str::to_owned);
+                        Plan::Value {
+                            position: Position::Assigned,
+                            block,
+                            value_span: locate(right).ok_or(Decline::Span)?,
+                        }
+                    }
                     Some(_) => return Err(Refusal::Position("assigned path").into()),
                     None => return Err(Refusal::Position(se::position_of(right)).into()),
                 }
@@ -363,7 +361,12 @@ impl Parser<'_> {
                 let items = se::items(block)?;
                 let value = items.last().ok_or(Decline::Span)?;
                 let (value_first, value_last) = locate(value).ok_or(Decline::Span)?;
-                if value_first <= first + 1 || value_last > last - 2 || value_span.1 != texts.len()
+                // The block's value lies inside it; an initializer or a
+                // returned value is the rest of the run (an assignment's
+                // destination is re-spelled below).
+                if value_first <= first + 1
+                    || value_last > last - 2
+                    || (position != Position::Assigned && value_span.1 != texts.len())
                 {
                     return Err(Decline::Span);
                 }
@@ -375,6 +378,24 @@ impl Parser<'_> {
                         line,
                         origin + value_first,
                     ),
+                    Position::Assigned => {
+                        // `NAME = e`: the destination is the named object the
+                        // left operand designates.
+                        let name = destination.clone().ok_or(Decline::Node)?;
+                        let at = value_tokens.first().map_or(line, |token| token.line);
+                        let mut run = vec![
+                            Token {
+                                text: name,
+                                line: at,
+                            },
+                            Token {
+                                text: "=".to_owned(),
+                                line: at,
+                            },
+                        ];
+                        run.extend_from_slice(value_tokens);
+                        self.expression_statement(&run, line, None)
+                    }
                     _ => {
                         let mut run = tokens[..value_span.0].to_vec();
                         run.extend_from_slice(value_tokens);

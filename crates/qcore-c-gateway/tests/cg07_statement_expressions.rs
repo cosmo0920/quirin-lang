@@ -76,6 +76,8 @@ fn statement_expressions_in_admitted_positions() {
         "void subject(void) { void *p = ({ void *q = q_alloc(); q; }); q_free(p); }",
         "void subject(int a) { int x = ({ int t = ({ int u = a; u; }); t; }); }",
         "int subject(int a) { int x = ({ int t = a; t; }); int y = ({ int t = x; t; }); return y; }",
+        // librdkafka's `RD_KAFKAP_STR_DUPA (&dst, src)`: `*(&NAME) = ({ … })`.
+        "int subject(void *p) { int x; (*((&x)) = (__extension__ ({ int t = r_borrow_code(p); t; }))); return x; }",
     ] {
         let run = gs(source);
         assert!(run.safe(), "{source}: {run:?}");
@@ -127,6 +129,31 @@ fn statement_expression_refusals() {
         let run = gs(source);
         assert!(!run.safe(), "{source}: {run:?}");
     }
+}
+
+/// glibc 2.43's `assert (E)`, the corpus's largest family: the unevaluated
+/// `sizeof` operand is no event, the block is its `if`, and the only leaf
+/// left is the call to `__assert_fail`, which does not return and which no
+/// contract declares (`W43-LIBC-NORETURN`, card CG21).
+#[test]
+fn glibc_assert_leaves_only_the_assert_fail_call() {
+    if !clang_available() {
+        return;
+    }
+    const ASSERT: &str = "extern _Bool __assert_single_arg (_Bool); \
+        extern void __assert_fail (const char *a, const char *f, unsigned int l, const char *fn) \
+        __attribute__ ((__noreturn__));\n";
+    let run = gs(&format!(
+        "{ASSERT}void subject(struct S *s) {{ ((void) sizeof (__assert_single_arg (s->a == 1)), \
+         __extension__ ({{ if (s->a == 1) ; else __assert_fail (\"s->a == 1\", \"f.c\", 1, \
+         __extension__ __PRETTY_FUNCTION__); }})); }}"
+    ));
+    assert!(run.unknown(), "{run:?}");
+    assert_eq!(
+        run.unsupported,
+        vec!["call to uncontracted function `__assert_fail`".to_owned()],
+        "{run:?}"
+    );
 }
 
 /// Unsafe is never introduced where the source has none, and fail-closed

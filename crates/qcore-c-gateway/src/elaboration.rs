@@ -165,7 +165,10 @@ pub(crate) enum Commutation {
     Overlap(String, String),
     /// A call unordered with another event (card CG05).
     Call(String),
-    /// An event kind this card never leaves unordered.
+    /// An event kind this card never leaves unordered. Since card CG07
+    /// (rule 11g) every pair of event kinds has a decision, so none is
+    /// constructed; the check keeps refusing it should a kind be added.
+    #[allow(dead_code, reason = "a future event kind with no commutation row")]
     Unlisted,
 }
 

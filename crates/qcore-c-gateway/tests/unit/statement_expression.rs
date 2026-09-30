@@ -128,10 +128,14 @@ mod ast {
             decide_first("int subject(int a) { int x = ({ int t = a; t; }); return x; }", Position::Initializer),
             Ok(())
         );
+        // A block whose last item is no expression has no value to use.
         assert_eq!(
-            decide_first("void subject(int a) { int x; x = ({ if (a) x = 1; }); }", Position::Assigned)
-                .is_err(),
-            true
+            decide_first("void subject(int a) { ({ if (a) a = 1; }); }", Position::Initializer),
+            Err(Refusal::NoValue)
+        );
+        assert_eq!(
+            decide_first("void subject(int a) { ({ if (a) a = 1; }); }", Position::Discarded),
+            Ok(())
         );
         assert_eq!(
             decide_first("int subject(void) { int x = ({ static int s; s; }); return x; }", Position::Initializer),
