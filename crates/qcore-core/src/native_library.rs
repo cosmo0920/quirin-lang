@@ -2639,3 +2639,7 @@ pub fn check_slice_totality(
 #[cfg(test)]
 #[path = "../tests/unit/native_library.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/native_library_v2.rs"]
+mod v2_tests;

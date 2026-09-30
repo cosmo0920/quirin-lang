@@ -676,18 +676,27 @@ fn the_aggregate_typedef_beside_it_is_read_as_a_pointer() {
     );
 }
 
+/// Card `W48-QRLIB-LINKAGE` correction (`W48-QR-FLOAT-QRLIB-SPELLING`): this
+/// row pinned `double` as read and **unspellable** (`UnspellableResult`, the
+/// projection `f64`). The manifest now spells `float` and `double`, so a read
+/// float is compared: a `uint64_t` transcription disagrees, and `double`
+/// agrees.
 #[test]
-fn a_floating_result_is_read_and_cannot_be_spelled() {
+fn a_floating_result_is_read_and_now_spelled() {
     let header = guarded("double demo_now(void);");
     let failure = check("unchecked fn demo_now() -> uint64_t;", &header).unwrap_err();
     assert_eq!(
-        refusal(failure),
-        HeaderRefusal::UnspellableResult {
-            manifest: "demo.qrlib".to_owned(),
-            reference: "include/demo.h".to_owned(),
-            symbol: "demo_now".to_owned(),
-            projection: "f64",
+        disagreement(failure),
+        HeaderDisagreement::Result {
+            header: vec![AbiType::F64],
+            manifest: AbiType::U64,
         }
+    );
+    assert_eq!(check("unchecked fn demo_now() -> double;", &header), Ok(()));
+    let single = guarded("float demo_half(float value);");
+    assert_eq!(
+        check("unchecked fn demo_half(float) -> float;", &single),
+        Ok(())
     );
 }
 
