@@ -74,7 +74,13 @@ fn host_target() -> RecordedTarget {
         } else {
             PointerWidth::W32
         },
-        triple: "x86_64-unknown-linux-gnu".into(),
+        // The host the native rows build and run on; the float route records
+        // the triple and reads only the pointer width (card W48-QRLIB-MACOS).
+        triple: if cfg!(target_os = "macos") {
+            format!("{}-apple-darwin", std::env::consts::ARCH)
+        } else {
+            "x86_64-unknown-linux-gnu".into()
+        },
         compiler: "the host C compiler".into(),
     }
 }

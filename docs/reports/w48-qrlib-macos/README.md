@@ -110,6 +110,33 @@ libm (`ilogb`, `sqrt`, `fabs`, `fmax`, `nextafter`, `floor`) links through
 
 The standing gate is recorded in [gate.json](gate.json) and `gate/`.
 
+## IEEE 754 floats on macOS
+
+The float cards' native rows (W48-QR-FLOATING-POINT,
+W48-QR-FLOAT-BUFFER-PAYLOADS) were already `cfg(unix)` and build through the
+Apple `<threads.h>` shim, but compiled under a recorded target hard-coded to
+`x86_64-unknown-linux-gnu`. The float route records the triple and reads only
+the pointer width, so the verdicts were unaffected, but a Mac run carried a
+Linux label. `float_types.rs`, `float_extern.rs`, `float_tasks.rs` and
+`float_buffer_payloads.rs` now record `{ARCH}-apple-darwin` on macOS (Linux
+unchanged; `float_ffi.rs` already used the running compiler's triple, and
+`float_ieee_vectors.rs`'s generator target is a table identity, not a host).
+Then, logs `private/5m-run3/float.log`:
+
+```sh
+cargo test -p qcore-compiler --test float_types --test float_extern --test float_tasks \
+    --test float_buffer_payloads --test float_ffi --test float_ieee_vectors
+```
+
+Exit 0: 13 + 4 + 13 + 3 + 3 + 6 = 42 passed. That covers the native boundary
+table bit-identical to the reference (NaN as NaN), renderings per stream and the
+seeded renderer sample, the excess-precision/fast-math refusal, float extern
+and FFI callees under the three builds, float task workers, and the buffer,
+string, payload and protected-float rows. The `macos` CI job runs these
+binaries too. `float_payload_rows_are_clean_under_thread_sanitizer` is not
+among them: `tests/support/thread_sanitizer.rs` is Linux-only by its own
+diagnosis (`W48-QR-FLOAT-APPLE-TSAN`).
+
 ## Boundaries
 
 * One arm64 Mac. The CI job's first run is not read
@@ -121,6 +148,6 @@ The standing gate is recorded in [gate.json](gate.json) and `gate/`.
 ## Ledger
 
 [followups.json](followups.json), applied by [apply_ledger.py](apply_ledger.py)
-(`named_followups` 657 → 657): retired `W48-QRLIB-MACOS`; registered
-`W48-QRLIB-MACOS-CI-RUN` (S). An Intel-run follow-up was drafted and dropped
+(`named_followups` 657 → 658): retired `W48-QRLIB-MACOS`; registered
+`W48-QRLIB-MACOS-CI-RUN` (S) and `W48-QR-FLOAT-APPLE-TSAN` (M). An Intel-run follow-up was drafted and dropped
 on the user's decision above.

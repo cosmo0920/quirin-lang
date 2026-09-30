@@ -215,7 +215,7 @@ jobs:
   # Card W48-QRLIB-MACOS (5m). The Mach-O linkage path on an Apple Silicon
   # runner: the readers from bytes plus the SDK's own `libm.tbd`, and the
   # native rows (libm through the SDK text stub, a Mach-O C archive, a Rust
-  # `staticlib`) under the three builds.
+  # `staticlib`) under the three builds, and the float card's native rows.
   macos:
     runs-on: macos-15
     steps:
@@ -241,3 +241,8 @@ jobs:
         run: >-
           cargo test -p qcore-compiler --test qrlib_linkage --test ffi_struct_import
           --test float_ffi --test usable_records -- --nocapture
+
+      - name: Run the IEEE 754 float rows natively on macOS
+        run: >-
+          cargo test -p qcore-compiler --test float_types --test float_extern
+          --test float_tasks --test float_buffer_payloads --test float_ieee_vectors

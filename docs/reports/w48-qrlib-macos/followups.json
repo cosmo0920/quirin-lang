@@ -13,6 +13,13 @@
    "why": "Found by W48-QRLIB-MACOS. The card added `.github/workflows/ci.yml`'s `macos` job (`macos-15`) and ran its commands on the user's Mac only; no GitHub-hosted run is claimed. The runner's SDK may differ from macOS 27's (it may list an `arm64-macos` slice, which is read exactly). Size S. DISCHARGE: the integrator reads the job's first run on main, green, or each refusal fixed.",
    "source": "docs/reports/w48-qrlib-macos/README.md",
    "recorded_by": "W48-QRLIB-MACOS"
+  },
+  {
+   "id": "W48-QR-FLOAT-APPLE-TSAN",
+   "title": "ThreadSanitizer rows for the float task and payload programs on macOS",
+   "why": "Found by W48-QRLIB-MACOS. The float card's native rows run on macOS (arm64, the six float test binaries green under the host triple), but `float_payload_rows_are_clean_under_thread_sanitizer` is `cfg(target_os = \"linux\")` because `tests/support/thread_sanitizer.rs` is Linux-only by its own x86-64/glibc diagnosis; Apple clang ships TSan for arm64, and the pthread binding the harness uses is the Apple `c11_threads_compat.h` one. Size M. DISCHARGE: the harness ported to Apple with its own measurement, the float TSan row run green on a Mac, or a stated reason it cannot be.",
+   "source": "docs/reports/w48-qrlib-macos/README.md",
+   "recorded_by": "W48-QRLIB-MACOS"
   }
  ]
 }
