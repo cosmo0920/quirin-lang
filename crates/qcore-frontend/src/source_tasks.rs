@@ -625,7 +625,7 @@ fn result_and_effects(
         {
             return Err(bad("unsupported function annotation in task execution"));
         }
-        let last = matching(&tokens, cursor + 1, Symbol::LeftBrace, Symbol::RightBrace)
+        let last = matching(tokens, cursor + 1, Symbol::LeftBrace, Symbol::RightBrace)
             .ok_or_else(|| bad("invalid task effect row"))?;
         if last + 1 != tokens.len() {
             return Err(bad(

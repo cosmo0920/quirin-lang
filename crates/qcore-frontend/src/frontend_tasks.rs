@@ -576,6 +576,9 @@ fn parse_task(
     })
 }
 
+/// One parsed capture and the name it is bound to inside a closure's body.
+type BoundCapture = (Located<SourceTaskCapture>, Located<String>);
+
 /// The captures between `start` and `close` (exclusive): a named worker's
 /// parenthesized list, or — card `W48-QR-CLOSURES`, `closure` — a closure's
 /// capture list, where each capture may end in `as NAME`, the name it is bound
@@ -586,7 +589,7 @@ fn parse_captures(
     start: usize,
     close: usize,
     closure: bool,
-) -> Result<Vec<(Located<SourceTaskCapture>, Located<String>)>, SourceParseError> {
+) -> Result<Vec<BoundCapture>, SourceParseError> {
     let mut cursor = start;
     let mut captures = Vec::new();
     while cursor < close {
