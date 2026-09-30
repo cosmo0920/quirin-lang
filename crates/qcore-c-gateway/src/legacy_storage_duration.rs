@@ -75,10 +75,15 @@ impl Parser<'_> {
             self.storage_record("declaration", line, tokens, "unmatched");
             return None;
         };
+        // Every declarator static-duration; a tag the statement defines
+        // (`static const struct { … } t[] = …;`) runs nothing either.
         let declarators = children(node);
-        let all_static = !declarators.is_empty()
+        let all_static = declarators
+            .iter()
+            .any(|declaration| kind(declaration) == "VarDecl")
             && declarators.iter().all(|declaration| {
-                storage_of(declaration, true).is_some_and(|storage| storage.outlives_frame())
+                matches!(kind(declaration), "RecordDecl" | "EnumDecl")
+                    || storage_of(declaration, true).is_some_and(|storage| storage.outlives_frame())
             });
         if !all_static {
             self.storage_record("declaration", line, tokens, "not-static-duration");

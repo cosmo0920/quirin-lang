@@ -200,6 +200,20 @@ fn static_addresses_and_reads_carry_no_identity() {
     if !clang_available() {
         return;
     }
+    // A static table whose statement also defines its record tag is no
+    // event either.
+    let run = g(
+        "int subject(void) { static const struct { const char *pfx; int v; } \
+         map[] = {{\"a\", 1}, {\"b\", 2}}; return 0; }",
+    );
+    assert!(run.safe(), "{run:?}");
+    // Reading an element of the untagged table is the typed place's (an
+    // untagged aggregate is refused there, as before).
+    let run = g(
+        "int subject(int i) { static const struct { const char *pfx; int v; } \
+         map[] = {{\"a\", 1}, {\"b\", 2}}; return map[i & 1].v; }",
+    );
+    assert!(!run.refused(INITIALIZER), "{run:?}");
     // A static array's address handed out or formatted into: no identity.
     assert!(g("char *subject(int i) { static char ret[4][16]; return ret[i & 3]; }").safe());
     assert!(g("char *subject(void) { static char buf[16]; return &buf[2]; }").safe());
