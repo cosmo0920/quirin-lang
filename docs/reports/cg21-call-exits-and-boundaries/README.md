@@ -261,7 +261,10 @@ keeps its continuation. Unit tests (`tests/unit/call_exits.rs`): the
 decision table, the Lean binding, the boundary reader (split `& &` label
 addresses against logical `&&`), the AST resolution. CG00's phase-3/4
 controls (C09, C11, C12, E18, E20, K09) now assert the named refusals, their
-BEFORE wording kept in comments.
+BEFORE wording kept in comments, and the gateway unit control
+`unrestricted_projection_retains_successful_siblings` takes a `do` without its
+`while` as its parse failure (it used a computed `goto *`, which is now a
+refusal inside its own function).
 
 **Not met from the brief's evidence list**: "cleanup releasing on early
 return Safe". A `cleanup` function receives `&p` (`void **`); releasing
@@ -270,7 +273,47 @@ through a pointer-to-pointer is outside v1 (only `resource_out` stands at
 scope-exit call, so the card refuses the attribute by name rather than model
 half of it. Registered as `CG21-CLEANUP-SCOPE-EXITS`.
 
-GATE
+## 8. Gate
+
+Shared host: six, then eleven, cards at load 50–110, the disk at its 40 GB
+floor. Logs under this worktree's `private/cg21/`; exits copied to
+[`gate/`](gate/); summary in [`gate.json`](gate.json).
+
+| Step | Command | Exit | Count / note |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | TESTS_FINAL |
+| clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **264 audits** (263 on main + `AuditCallExits.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then PYTHON_FINAL | 365; the one failure was the matrix's derived `lean_audits` (263 → 264), cleared by `build_matrix.py . --gate gate.json` |
+| docs index | `python3 scripts/build_docs_index.py --check` | 0 | |
+| provider check | `cargo check --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | |
+| libc provider tests | `cargo test --manifest-path providers/Cargo.toml -p quirin-provider-libc --locked --offline` | 0 | 2 passed |
+| contract pins | `cargo test -p qcore-compiler --test contract_loader --test qcore_contract_corpus` | 0 | 10 + 4 passed (v1 declarations 255 → 258) |
+| lock | `scripts/pin.sh` (`quirin-audit pin` at `66910c10` and `046accf6`, then `pin --check` at both) | 0, 0, 0, 0 | three flexible libc rows; every crate 0 not in force, 0 stale |
+
+Not run: `providers/package.py build` / `verify` (constraint 18) and the full
+provider workspace tests. Only `quirin-provider-libc`'s contract text changed;
+that crate is data only and is not packaged (the packages are the
+`qcore-provider-*` executables). Owed to the integrator if the provider gate
+is required for a contract-only change; `provider_tests` in `gate.json` is
+carried (129).
+
+Earlier attempts, retained and not used as evidence of a pass: the first full
+suite at `6db1ce32` (`private/test-binaries/20261001T162038Z-1915279`): 411
+units, 424 summaries, 7,184 passed, **2 failed**, 11 ignored, exit 101 — this
+card's `legacy_c::tests::unrestricted_projection_retains_successful_siblings`
+(it used a computed `goto *` as its parse failure; fixed in `400d9dfa`, the
+test then passed alone) and constraint 16's
+`cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets`
+(`elapsed < 500 ms` under load ~55; it failed again alone on the loaded host,
+untouched by this card and not weakened). A second full gate at `8d8d7587`
+(`private/cg21/gate2`) ran out of disk while building the tests (`No space
+left on device`, an `ld` bus error): it measured the disk, not the program;
+its other steps are the exits above.
 
 ## 9. Follow-ups
 
