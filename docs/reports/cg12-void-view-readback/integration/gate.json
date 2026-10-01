@@ -1,0 +1,13 @@
+{
+  "note": "FULL STANDING GATE (the card's own gate stopped at the 40 GB disk floor, so the targeted-check policy did not apply) on integrate/w48-cg12 d7819710: main 436e0ee7 (CG19 + CG09) merged with CG12-VOID-VIEW-READBACK's tip 89b61eb9 at 5aad9f9b, plus the integrator's composition commit d7819710 (CG19's legacy_atomic_route.rs built IndirectScalarAccess without CG12's new readback field; readback: None, exact for a routed atomic access). Attempt 1 at 5aad9f9b did not compile for that reason; its logs are kept as private/int-cg12/gate-attempt1-compile-error. Attempt 2 logs private/int-cg12/gate2 of the quirin-spec-cards-compass worktree: submodule 0; run_test_binaries.py --jobs 6: 406 units, 419 summaries, 7,123 passed, 0 failed, 11 ignored; fmt 0; clippy --locked 0; reevaluation probe 0; followup 0; 261 Lean audits; ct_stage_summary --check 0; providers cargo check --locked 0; release quirin-audit build 0; corpus arbiter (--jobs 4) 0: 628 / 10 / 4,196 (resource-diagnostics.json 394b190b...), exactly CG12's 3 Unknown -> Safe moves over CG19's 625 (LZ4_write16, LZ4_write32, LZ4_writeLE16), 65 functions changed. Python suite run after this regeneration.",
+  "workspace_tests": 7123,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 261,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
