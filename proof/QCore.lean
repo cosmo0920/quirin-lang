@@ -318,5 +318,6 @@ import QCore.AtomicSourceRoute
 import QCore.VoidViewReadback
 import QCore.LayoutExtents
 import QCore.ResourceKinds
+import QCore.Variadics
 
 /-! The executable formal core of QCore-C revision 0.1. -/

@@ -34,9 +34,17 @@ contract {\n\
     ensures normal resource_borrowed(format);\n\
     ensures normal resource_borrowed(list);\n\
     ensures normal resource_return_none();\n\
+};\n\
+extern fn cg_blog(format: ptr<const, u8>) -> unit\n\
+contract {\n\
+    requires resource_contract_v1;\n\
+    ensures normal resource_borrowed(format);\n\
+    ensures normal resource_return_none();\n\
+    ensures normal resource_variadic_borrowed_tail();\n\
 };\n";
 
-const STDARG: &str = "#include <stdarg.h>\nvoid cg_vlog(const char *format, va_list list);\n";
+const STDARG: &str = "#include <stdarg.h>\nvoid cg_vlog(const char *format, va_list list);\n\
+void cg_blog(const char *format, ...);\n";
 
 fn protocol(reason: &str) -> String {
     format!("va_list protocol refused: {reason}")
@@ -302,28 +310,59 @@ fn va_start_names_the_last_parameter() {
 // Trailing actuals (K08, W46-FCNTL-SETFD-ADDRESS-TAIL)
 // ---------------------------------------------------------------------------
 
-/// A tracked, live identity in the declared tail is a borrowed read: the call
-/// is admitted and the identity's own obligation stays.
+/// A variadic logger declaring `resource_variadic_borrowed_tail()`: a tracked,
+/// live identity in its tail is a borrowed read, the call is admitted and the
+/// identity's own obligation stays. Under the data tail (`cg_log`) the same
+/// actual keeps the O04-TRACE refusal.
 #[test]
-fn a_live_identity_in_a_declared_tail_is_borrowed() {
+fn a_live_identity_in_a_borrowed_tail_is_borrowed() {
     if !clang_available() {
         return;
     }
-    let run = g("void subject(void) { void *p = q_alloc(); cg_log(\"%p\", p); q_free(p); }");
-    assert!(run.safe(), "{run:?}");
-    let leaking = g("void subject(void) { void *p = q_alloc(); cg_log(\"%p\", p); }");
-    assert!(!leaking.safe() && leaking.has("Leak"), "{leaking:?}");
+    let contracts = with_vlog();
+    let run = g_with(
+        &contracts,
+        "void subject(void) { void *p = q_alloc(); cg_blog(\"%p %d\", p, 3); q_free(p); }",
+    );
+    assert_eq!(run.status, AnalysisStatus::Safe, "{:?}", run.diagnostics);
+    let leaking = g_with(
+        &contracts,
+        "void subject(void) { void *p = q_alloc(); cg_blog(\"%p\", p); }",
+    );
+    assert_ne!(leaking.status, AnalysisStatus::Safe, "{:?}", leaking.diagnostics);
+    assert!(
+        leaking
+            .diagnostics
+            .iter()
+            .any(|diagnostic| matches!(diagnostic.kind, LegacyDiagnosticKind::Leak { .. })),
+        "{:?}",
+        leaking.diagnostics
+    );
+    let data_tail = g("void subject(void) { void *p = q_alloc(); cg_log(\"%p\", p); q_free(p); }");
+    assert!(
+        data_tail.refused(
+            "arguments beyond the declared parameters of `cg_log` are outside the resource projection"
+        ),
+        "{data_tail:?}"
+    );
 }
 
-/// A released identity in the tail is a use-after-release candidate, never
-/// `Safe`.
+/// A released identity in the borrowed tail is a use-after-release
+/// candidate, never `Safe`; the address of a pointer keeps the refusal (a
+/// record by value is decided by the promoted-type unit test).
 #[test]
-fn a_released_identity_in_a_declared_tail_is_never_safe() {
+fn the_borrowed_tail_keeps_its_obligations_and_refusals() {
     if !clang_available() {
         return;
     }
-    let run = g("void subject(void) { void *p = q_alloc(); q_free(p); cg_log(\"%p\", p); }");
-    assert!(!run.safe(), "{run:?}");
+    let contracts = with_vlog();
+    for body in [
+        "void subject(void) { void *p = q_alloc(); q_free(p); cg_blog(\"%p\", p); }",
+        "void subject(void) { void *p = q_alloc(); cg_blog(\"%p\", &p); q_free(p); }",
+    ] {
+        let run = g_with(&contracts, body);
+        assert_ne!(run.status, AnalysisStatus::Safe, "{body}: {:?}", run.diagnostics);
+    }
 }
 
 fn fcntl_contracts() -> ResourceContracts {
@@ -495,3 +534,27 @@ fn g_with(contracts: &ResourceContracts, source: &str) -> LegacyFunctionSummary 
     }
 }
 
+
+/// The borrowed tail is the data tail strengthened: it is rederived from the
+/// retained texts, it implies the data tail, and the two never stand together.
+#[test]
+fn the_borrowed_tail_clause_loads_as_a_strengthened_data_tail() {
+    use qcore_contract::contract_loader::{variadic_borrowed_tails, variadic_data_tails};
+    let sources = BTreeMap::from([("cg_vlog.qcore".to_owned(), VLOG.to_owned())]);
+    assert_eq!(
+        variadic_borrowed_tails(&sources).expect("loads"),
+        ["cg_blog".to_owned()].into_iter().collect()
+    );
+    assert!(variadic_data_tails(&sources).expect("loads").contains("cg_blog"));
+    assert!(VLOG.contains("ensures normal resource_variadic_borrowed_tail();\n"));
+    let both = VLOG.replace(
+        "ensures normal resource_variadic_borrowed_tail();\n",
+        "ensures normal resource_variadic_borrowed_tail();\nensures normal resource_variadic_data_tail();\n",
+    );
+    let error = load_resource_contract_sources(&BTreeMap::from([(
+        "both.qcore".to_owned(),
+        both,
+    )]))
+    .expect_err("the data and borrowed tails never stand together");
+    assert!(error.contains("duplicate variadic data tail"), "{error}");
+}

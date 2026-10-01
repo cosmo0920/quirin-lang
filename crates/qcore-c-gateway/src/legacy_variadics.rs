@@ -205,6 +205,7 @@ impl Parser<'_> {
                     &self.typed_types,
                     &|name| self.descriptor_names.contains(name),
                     &self.protected_formals,
+                    self.variadic_borrowed_tails.contains(function),
                 )
                 .is_some()
         })
@@ -265,6 +266,7 @@ impl Parser<'_> {
                                 &self.typed_types,
                                 &|name| self.descriptor_names.contains(name),
                                 &self.protected_formals,
+                                self.variadic_borrowed_tails.contains(&callee),
                             ) {
                                 Some(crate::variadic_tail::WidenedTail::ScalarAddress(name)) => {
                                     Some(name)

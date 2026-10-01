@@ -381,10 +381,10 @@ fn k11_an_exit_specific_disposition_has_no_summary() {
 // CG26 — variadics (K08 K09 K10)
 // ---------------------------------------------------------------------------
 
-/// **Flipped by CG26-VARIADICS (rule 11w)** for route G: a statement's
-/// trailing actual under the declared data tail is read as a declared
-/// `Borrowed` one (T8), so a live identity there is a borrow and the call is
-/// admitted. Route T still refuses a variadic signature.
+/// Unchanged by CG26-VARIADICS (rule 11w): the data tail still refuses an
+/// identity-carrying trailing actual; only a declaration carrying
+/// `resource_variadic_borrowed_tail()` reads it as a borrow
+/// (`tests/cg26_variadics.rs`). Route T still refuses a variadic signature.
 #[test]
 fn k08_variadic_tails_are_data_only() {
     if !clang_available() {
@@ -396,8 +396,7 @@ fn k08_variadic_tails_are_data_only() {
     );
     assert!(gs("void subject(void) { void *p = q_alloc(); cg_log(\"%d\", 5); q_free(p); }").safe());
     let run = gs("void subject(void) { void *p = q_alloc(); cg_log(\"%p\", p); q_free(p); }");
-    assert!(!run.refused("arguments beyond the declared parameters of `cg_log` are outside the resource projection"), "{run:?}");
-    assert!(run.safe(), "{run:?}");
+    assert!(run.refused("arguments beyond the declared parameters of `cg_log` are outside the resource projection"), "{run:?}");
 }
 
 #[test]

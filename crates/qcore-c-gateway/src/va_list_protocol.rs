@@ -97,6 +97,11 @@ impl States {
         Self(self.0 | other.0)
     }
 
+    /// `self ⊆ other`.
+    pub(crate) const fn within_set(self, other: Self) -> bool {
+        self.0 & !other.0 == 0
+    }
+
     /// Whether every member is one of `allowed`.
     fn within(self, allowed: &[ListState]) -> bool {
         ListState::ALL
@@ -139,6 +144,9 @@ pub(crate) enum Violation {
     EndWhenNotStarted,
     /// `va_start`, `va_copy` into or `va_end` on a parameter list.
     ParameterOwnedByCaller,
+    /// The fixed point did not close (never expected: the worklist joins
+    /// until it does); the certificate check refuses rather than trusting it.
+    Unclosed,
 }
 
 /// The transition table. `Err` when some state in `states` makes `operation`
@@ -266,6 +274,7 @@ impl Refusal {
                 Violation::ParameterOwnedByCaller => {
                     format!("`va_start`, `va_copy` into or `va_end` on the parameter list `{list}`")
                 }
+                Violation::Unclosed => format!("the states of `{list}` did not reach a fixed point"),
             },
             Self::MissingEnd { list } => {
                 format!("`{list}` may reach a function exit without `va_end`")
@@ -1035,21 +1044,34 @@ fn decide(
             }
         }
     }
-    for (index, node) in nodes.iter().enumerate() {
-        let Some(event) = &node.event else {
-            continue;
-        };
-        if before[index].iter().all(|states| *states == States::EMPTY) {
-            // Unreachable from entry.
-            continue;
-        }
-        let mut states = before[index].clone();
-        for &(list, operation) in event {
-            states[list] = step(origins[list], states[list], operation)
-                .map_err(|violation| (list, Some(violation)))?;
-        }
-    }
+    // The certificate `QCore.Variadics.certify` checks, list by list: the
+    // entry holds the initial state; every node whose set is non-empty steps
+    // its operations on the list and the result is contained in every
+    // successor's set; the exit's set is accepted.
     for (list, origin) in origins.iter().enumerate() {
+        if !initial_states[list].within_set(before[entry][list]) {
+            return Err((list, Some(Violation::Unclosed)));
+        }
+        for (index, node) in nodes.iter().enumerate() {
+            let mut states = before[index][list];
+            if states == States::EMPTY {
+                // Unreachable from entry on this list's projection.
+                continue;
+            }
+            for &(event_list, operation) in node.event.iter().flatten() {
+                if event_list == list {
+                    states = step(*origin, states, operation)
+                        .map_err(|violation| (list, Some(violation)))?;
+                }
+            }
+            if node
+                .successors
+                .iter()
+                .any(|successor| !states.within_set(before[*successor][list]))
+            {
+                return Err((list, Some(Violation::Unclosed)));
+            }
+        }
         if !exit_ok(*origin, before[EXIT][list]) {
             return Err((list, None));
         }

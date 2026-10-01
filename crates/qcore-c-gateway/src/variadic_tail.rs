@@ -25,8 +25,12 @@
 //!   but the rule does not depend on that), so the statement's lowering
 //!   forgets `NAME`'s scalar fact after the call (`ForgetScalar`). This is
 //!   W46-FCNTL-SETFD-ADDRESS-TAIL's discharge.
-//! * **T8** — one plain name. The position is `Borrowed` with the name as its
-//!   modeled place, so the flow checks it exactly as it checks a declared
+//! * **T8** — one plain name, only for a callee whose declaration carries
+//!   `resource_variadic_borrowed_tail()`. The data tail alone keeps O04-TRACE's
+//!   refusal of an actual that may carry an identity ("the declaration covers
+//!   what it covers"); the borrowed tail is the contract stating that trailing
+//!   arguments are borrowed and not retained. The position is `Borrowed` with
+//!   the name as its modeled place, so the flow checks it exactly as it checks a declared
 //!   `Borrowed` parameter: a released identity there is a use-after-release
 //!   candidate, an unresolved binding is `UnknownAlias`, and nothing is
 //!   acquired, released or transferred.
@@ -61,7 +65,8 @@ pub(crate) enum WidenedTail {
     Borrowed(String),
 }
 
-/// T7 or T8 for one trailing actual, or `None`. `holds_identity` answers
+/// T7 or T8 (T8 only for a callee declaring the borrowed tail) for one
+/// trailing actual, or `None`. `holds_identity` answers
 /// whether the projection may bind a name to an integer-carried identity (the
 /// function's descriptor names): such a scalar's address refuses, since the
 /// callee could rewrite the identity's carrier.
@@ -70,6 +75,7 @@ pub(crate) fn widened_actual(
     types: &FunctionTypes,
     holds_identity: &dyn Fn(&str) -> bool,
     protected: &std::collections::BTreeSet<String>,
+    borrowed_tail: bool,
 ) -> Option<WidenedTail> {
     if !types.is_readable() {
         return None;
@@ -84,7 +90,8 @@ pub(crate) fn widened_actual(
             Some(WidenedTail::ScalarAddress((*name).to_owned()))
         }
         [name]
-            if is_name(name)
+            if borrowed_tail
+                && is_name(name)
                 && !crate::legacy_c::TYPE_OPERATORS.contains(name)
                 && !name.starts_with("__qcore_") =>
         {

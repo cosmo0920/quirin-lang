@@ -41,6 +41,8 @@
 //!   the object `p` points to, and owns nothing. See below.
 //! - `resource_variadic_data_tail()` -> the declaration additionally covers
 //!   calls that pass *more* actuals than it names. See below.
+//! - `resource_variadic_borrowed_tail()` -> the data tail, strengthened: every
+//!   trailing argument is `Borrowed` (card CG26-VARIADICS). See below.
 //! - `resource_kind(p, KIND)` and `resource_return_kind(KIND)` -> the non-heap
 //!   kind of a custody position (card W43-DESCRIPTOR-RESOURCE-TRACKING). See
 //!   below.
@@ -75,6 +77,16 @@
 //! (`qcore_c_gateway::variadic_nested`), and an actual that carries a tracked
 //! resource identity is refused there even under this declaration — the
 //! declaration covers what it covers.
+//!
+//! **The borrowed tail (card CG26-VARIADICS).**
+//! `ensures normal resource_variadic_borrowed_tail();` states the same two
+//! facts and one more: every trailing argument is a `Borrowed` position. A
+//! consumer may then read a tracked identity there as a borrow (its liveness
+//! required, nothing acquired, released or transferred) instead of refusing
+//! it. It is a strengthening of the data tail, not a second clause beside it:
+//! a declaration carries at most one of the two, and the borrowed tail sets
+//! the data-tail flag as well, so every check keyed on the data tail (the C
+//! declaration must be variadic) applies to it unchanged.
 //!
 //! The tail flag is **not** carried on [`ResourceFunctionContract`]. It is
 //! rederived from the retained trusted source texts by
@@ -554,6 +566,9 @@ pub struct DeclaredAbiSignature {
 struct LoadedDeclaration {
     contract: ResourceFunctionContract,
     variadic_data_tail: bool,
+    /// Card CG26-VARIADICS: `resource_variadic_borrowed_tail()` was declared
+    /// (it implies `variadic_data_tail`).
+    variadic_borrowed_tail: bool,
     literal_arguments: Vec<DeclaredLiteralArgument>,
     /// Card W47-LOOP-OWNER-CONTRACTS: the declared loop-owner obligation.
     loop_owner: Option<DeclaredLoopOwner>,
@@ -825,6 +840,32 @@ pub fn variadic_data_tails(sources: &BTreeMap<String, String>) -> Result<BTreeSe
     Ok(tails)
 }
 
+/// The names declaring a `resource_variadic_borrowed_tail()` in `sources`
+/// (card **CG26-VARIADICS**): a subset of [`variadic_data_tails`], derived and
+/// total-or-reject in the same way.
+pub fn variadic_borrowed_tails(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeSet<String>, String> {
+    let mut tails = BTreeSet::new();
+    for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
+        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
+            return Err(format!("{path}: expected a nonempty module contract"));
+        }
+        for declaration in parsed.declarations {
+            let decl = &declaration.value;
+            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if loaded.variadic_borrowed_tail {
+                tails.insert(decl.name.clone());
+            }
+        }
+    }
+    Ok(tails)
+}
+
 /// The declared C ABI projections in `sources`, keyed by function name (card
 /// **LOADER-ABI**).
 ///
@@ -985,6 +1026,18 @@ pub fn declared_variadic_data_tails(
         return Ok(BTreeSet::new());
     }
     variadic_data_tails(contracts.source_assumptions())
+}
+
+/// The borrowed variadic tails of an environment (card **CG26-VARIADICS**),
+/// rederived from its retained trusted sources exactly as
+/// [`declared_variadic_data_tails`]; none without declared sources.
+pub fn declared_variadic_borrowed_tails(
+    contracts: &ResourceContracts,
+) -> Result<BTreeSet<String>, String> {
+    if contracts.source_assumptions().is_empty() {
+        return Ok(BTreeSet::new());
+    }
+    variadic_borrowed_tails(contracts.source_assumptions())
 }
 
 /// Recheck a declarative environment against its declared trusted sources
@@ -1159,6 +1212,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
         })?;
         if child_loaded.contract != parent_loaded.contract
             || child_loaded.variadic_data_tail != parent_loaded.variadic_data_tail
+            || child_loaded.variadic_borrowed_tail != parent_loaded.variadic_borrowed_tail
             || child_loaded.literal_arguments != parent_loaded.literal_arguments
             || child_loaded.loop_owner != parent_loaded.loop_owner
             || child_loaded.thread_sync != parent_loaded.thread_sync
@@ -1262,6 +1316,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     let mut marker = false;
     let mut body_checked = false;
     let mut variadic_data_tail = false;
+    let mut variadic_borrowed_tail = false;
     let mut literal_arguments: Vec<DeclaredLiteralArgument> = Vec::new();
     let mut loop_owner: Option<DeclaredLoopOwner> = None;
     let mut thread_sync: Option<DeclaredThreadSync> = None;
@@ -1459,6 +1514,18 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                 return Err("duplicate variadic data tail".into());
             }
             variadic_data_tail = true;
+            continue;
+        }
+        // Card CG26-VARIADICS: the borrowed tail states that every trailing
+        // argument is `Borrowed` (no custody taken, no pointer retained), so a
+        // consumer may read a tracked identity there as a borrow. It is the
+        // data tail strengthened, never beside it: one spelling per meaning.
+        if words.as_slice() == ["resource_variadic_borrowed_tail"] {
+            if variadic_data_tail {
+                return Err("duplicate variadic data tail".into());
+            }
+            variadic_data_tail = true;
+            variadic_borrowed_tail = true;
             continue;
         }
         // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the two kind clauses. Heap is
@@ -1672,6 +1739,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     Ok(LoadedDeclaration {
         contract,
         variadic_data_tail,
+        variadic_borrowed_tail,
         literal_arguments,
         loop_owner,
         thread_sync,
@@ -1878,6 +1946,7 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
     Ok(LoadedDeclaration {
         contract,
         variadic_data_tail: false,
+        variadic_borrowed_tail: false,
         literal_arguments: Vec::new(),
         loop_owner: None,
         thread_sync: None,

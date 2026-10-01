@@ -3152,6 +3152,13 @@ fn build_function_cfg_with(
     let protected_formals =
         protected_resource_formals_under(tokens, body_start, &parameters, contracts, own_contract);
     let variadic_tails = declared_variadic_tails(contracts);
+    // Card CG26-VARIADICS (rule 11w): the borrowed tails, a subset.
+    let variadic_borrowed_tails = if variadic_tails.is_empty() {
+        BTreeSet::new()
+    } else {
+        qcore_contract::contract_loader::declared_variadic_borrowed_tails(contracts)
+            .unwrap_or_default()
+    };
     let (typed_model, typed_types, typed_bases, store_bases, publications, frame_protected) =
         typed_access_facts(
             tokens,
@@ -3270,6 +3277,7 @@ fn build_function_cfg_with(
         store_bases,
         alias_classes,
         variadic_tails,
+        variadic_borrowed_tails,
         frame_protected,
         collection_types,
         sizeof_operands,
@@ -3384,7 +3392,11 @@ fn declared_variadic_tails(contracts: &ResourceContracts) -> BTreeSet<String> {
     if !contracts
         .source_assumptions()
         .values()
-        .any(|source| source.contains("resource_variadic_data_tail"))
+        .any(|source| {
+            source.contains("resource_variadic_data_tail")
+                // Card CG26-VARIADICS: the borrowed tail implies the data tail.
+                || source.contains("resource_variadic_borrowed_tail")
+        })
     {
         return BTreeSet::new();
     }
@@ -4715,6 +4727,10 @@ struct Parser<'a> {
     /// retained trusted sources. Empty for an environment with no declared
     /// sources, so an inferred summary never acquires a tail.
     variadic_tails: BTreeSet<String>,
+    /// Card CG26-VARIADICS (rule 11w): the subset of `variadic_tails` whose
+    /// declaration is `resource_variadic_borrowed_tail()`; only these admit a
+    /// trailing name as a `Borrowed` place (T8).
+    variadic_borrowed_tails: BTreeSet<String>,
     /// Card **AOM-BINDING-POISON**: the names of this body whose slot no lvalue
     /// but the name itself designates, per [`frame_protected_locals`]. It
     /// admits nothing; it only bounds what a refused statement destroys in the
