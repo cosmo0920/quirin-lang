@@ -15,10 +15,10 @@ complete); main did not move during the card.
 - **Rule:** [gateway 11p](../../agents/gateway.md#constraint-11p).
 - **Lean:** `QCore.IndirectCalls`, `proof/AuditIndirectCalls.lean` (21
   theorems), over `QCore.TypedefProjection`.
-- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `f710db0f` after them)
+- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `9d844473` after them)
   from the census runs before the AFTER binary was measured; the
   implementation existed, no AFTER run did.
-- **Base:** BEFORE main `b6a3dc42`; AFTER of record on main `06ad81cb`; standing gate on main `f6336c9d`; final tip rebased onto main `db1ea764` (CG17, CG20, CG25, CG26, CG28, CG27 landed meanwhile; `cargo check --workspace --all-targets` 0 on each rebased tree; no re-measure on `b934c560`, `f0bbc0eb`, `f6336c9d` or `db1ea764`, owed to the integration).
+- **Base:** BEFORE main `b6a3dc42`; AFTER of record on main `06ad81cb`; final tip and standing gate on main `f1a4c648` (CG17, CG20, CG25, CG26, CG28, CG27, CG21 landed meanwhile; `cargo check --workspace --all-targets` 0 on each rebased tree; no re-measure on `b934c560`, `f0bbc0eb`, `f6336c9d`, `db1ea764` or `f1a4c648`, owed to the integration).
 - **Absorbed:** LOADER-ABI-INLINE-FNPTR-DECLARATOR (closed); EXTERN-CALL-F
   (function-pointer part) and W47-LOOP-OWNER-FIELD-KEYED-V-AND-F amended.
 
@@ -198,7 +198,14 @@ explicit spellings already report (Unsafe). The rows moved to
 `a_closed_callee_expression_is_its_candidate_calls`, which asserts equality
 with `if (c) q_free(p); else zz(p);` and `q_free(p);` (status, double
 releases, unsupported leaves) and, without Clang, the older refusal; the
-cast, comma and call-result rows still refuse.
+cast, comma and call-result rows still refuse. The rebase onto CG27
+(`db1ea764`) met the same class: CG27's
+`a_loop_that_breaks_the_count_invariant_is_refused_never_assumed` used
+`(n ? u_log : u_log)(n)` as an unreadable callee, which rule 11p closes to
+`u_log(n)`, a neutral call, so the loop was summarized Safe. The row now
+uses a cast callee (open, still refused), and
+`a_closed_callee_expression_in_a_loop_is_its_direct_call` asserts the
+closed form equals `u_log(n)` (status, clause verdicts, diagnostics).
 
 **Discarded attempts** (retained in `private/cg22/`, not evidence): `after`
 (corpus killed by `No space left on device` in the parity sink when the shared
@@ -214,7 +221,7 @@ pass; no per-unit timing was taken.
 
 ## 5. Follow-ups
 
-Ledger 672 → 674 (`scripts/update_ledger.py`, applied to main's matrix):
+Ledger 674 → 676 (`scripts/update_ledger.py`, applied to main's matrix):
 
 - **Retired:** `CG22-INDIRECT-CALLS-AND-CALLBACKS` (every DISCHARGE clause
   holds: BEFORE reproduced, corrections recorded, PREDICTION frozen, AFTER
