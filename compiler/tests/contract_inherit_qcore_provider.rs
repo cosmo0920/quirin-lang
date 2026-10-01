@@ -293,6 +293,24 @@ fn the_resource_manifest_selects_the_converted_modules_with_equal_meaning() {
 /// `providers/package.py build` installs them.
 struct ScratchPackage(PathBuf);
 
+/// Recover the published fixture bytes when checkout newline conversion has
+/// changed their spelling. The declared digest still selects the exact bytes:
+/// any content change beyond CRLF conversion fails here, never changes a pin.
+fn pinned_libc_text(pin: &serde_json::Value) -> String {
+    let text = libc_text(pin["module"].as_str().unwrap());
+    let expected = pin["sha256"].as_str().unwrap();
+    if sha256_hex(text.as_bytes()) == expected {
+        return text;
+    }
+    let published = text.replace("\r\n", "\n");
+    assert_eq!(
+        sha256_hex(published.as_bytes()),
+        expected,
+        "the published parent must match its exact inventory pin"
+    );
+    published
+}
+
 impl ScratchPackage {
     fn new(krate: &str) -> Self {
         let root = std::env::temp_dir().join(format!(
@@ -314,7 +332,7 @@ impl ScratchPackage {
         .unwrap();
         let scratch = Self(root);
         for (_, pin) in scratch.pins() {
-            let text = libc_text(pin["module"].as_str().unwrap());
+            let text = pinned_libc_text(&pin);
             let target = scratch.include_path(&pin);
             fs::create_dir_all(target.parent().unwrap()).unwrap();
             fs::write(target, text).unwrap();
@@ -392,7 +410,7 @@ fn real_package_inventories_pin_their_included_parents() {
             let module = pin["module"].as_str().unwrap();
             assert_eq!(*key, format!("{LIBC}:{module}"));
             // The package pin is the load path's pin: one identity per parent.
-            let text = libc_text(module);
+            let text = pinned_libc_text(pin);
             assert_eq!(pin["sha256"], sha256_hex(text.as_bytes()));
             assert!(libc.published.contains(module));
         }
@@ -400,10 +418,7 @@ fn real_package_inventories_pin_their_included_parents() {
             .load(owner)
             .unwrap_or_else(|e| panic!("{krate}: {e}"));
         for (key, pin) in &pins {
-            assert_eq!(
-                bundle.included(key).unwrap(),
-                libc_text(pin["module"].as_str().unwrap())
-            );
+            assert_eq!(bundle.included(key).unwrap(), pinned_libc_text(pin));
         }
         for (key, pin) in &pins {
             let path = scratch.include_path(pin);

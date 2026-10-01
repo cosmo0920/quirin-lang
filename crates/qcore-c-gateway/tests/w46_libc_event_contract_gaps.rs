@@ -69,52 +69,83 @@ fn libc_scalar_contracts_match_the_host_declared_abi() {
         let result = analyze_unrestricted_c11(
             &C11TranslationUnit {
                 source: &source,
+                // Certify the caller fixture. UCRT's unrelated inline helper
+                // definitions are not this control's intended target scope.
+                function_scope:
+                    qcore_c_gateway::legacy_c::LegacyFunctionScope::MainSourceDefinitions,
                 ..Default::default()
             },
             "test",
             &contracts,
         )
         .expect("host declaration parses");
-        // The lexical ABI reader has no target and models LP64 declarations.
-        // MSVC's __cdecl / unsigned __int64 declarations must remain a
-        // withdrawal until that dialect has an audited reader (gateway rule 8).
-        #[cfg(windows)]
-        {
-            let UnrestrictedLegacyResult::Unknown {
-                preprocessed_source,
-                partial: Some(summary),
-                ..
-            } = result
-            else {
-                panic!("MSVC declarations must retain their ABI refusal: {result:?}");
-            };
-            assert!(preprocessed_source.contains("__cdecl"));
-            #[cfg(target_pointer_width = "64")]
-            assert!(preprocessed_source.contains("typedef unsigned __int64 size_t;"));
-            let function = &summary.functions["test"];
-            assert_eq!(function.status, AnalysisStatus::Unknown, "{body}");
-            assert!(
-                function.diagnostics.iter().any(|diagnostic| {
-                    matches!(&diagnostic.kind, LegacyDiagnosticKind::Unsupported { description }
-                    if description.contains("abi-unreadable-declaration"))
-                }),
-                "{body}: {:?}",
-                function.diagnostics
-            );
-        }
-        #[cfg(not(windows))]
-        {
-            let status = match result {
-                UnrestrictedLegacyResult::Safe(_) => AnalysisStatus::Safe,
-                UnrestrictedLegacyResult::Unsafe(s) => s.functions["test"].status,
-                UnrestrictedLegacyResult::Unknown {
-                    partial: Some(s), ..
-                } => s.functions["test"].status,
-                other => panic!("no analyzable summary: {other:?}"),
-            };
-            assert_eq!(status, AnalysisStatus::Safe, "{body}");
-        }
+        let status = match result {
+            UnrestrictedLegacyResult::Safe(certificate) => {
+                qcore_c_gateway::legacy_c::check_legacy_safety_certificate(&certificate)
+                    .expect("the native-header certificate independently rechecks");
+                AnalysisStatus::Safe
+            }
+            UnrestrictedLegacyResult::Unsafe(s) => s.functions["test"].status,
+            UnrestrictedLegacyResult::Unknown {
+                partial: Some(s), ..
+            } => {
+                panic!("{body}: {:?}", s.functions["test"].diagnostics)
+            }
+            other => panic!("no analyzable summary: {other:?}"),
+        };
+        assert_eq!(status, AnalysisStatus::Safe, "{body}");
     }
+}
+
+#[cfg(all(windows, target_pointer_width = "64"))]
+#[test]
+fn the_native_msvc_header_still_withdraws_a_forged_scalar_width() {
+    if !clang_available() {
+        return;
+    }
+    let contracts = load_resource_contract_sources(&BTreeMap::from([(
+        "wrong-width.qv".to_owned(),
+        "module contract;
+extern fn memcmp(a: ptr<const, u8>, b: ptr<const, u8>, n: u32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(a);
+    ensures normal resource_borrowed(b);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};"
+        .to_owned(),
+    )]))
+    .expect("the deliberately wrong-width contract loads");
+    let source = "#include <string.h>\nint test(const void *a, const void *b, size_t n) { return memcmp(a,b,n); }\n";
+    let result = analyze_unrestricted_c11(
+        &C11TranslationUnit {
+            source,
+            function_scope: qcore_c_gateway::legacy_c::LegacyFunctionScope::MainSourceDefinitions,
+            ..Default::default()
+        },
+        "test",
+        &contracts,
+    )
+    .expect("the native header parses");
+    let UnrestrictedLegacyResult::Unknown {
+        partial: Some(summary),
+        ..
+    } = result
+    else {
+        panic!("a forged MSVC parameter width must refuse: {result:?}");
+    };
+    let function = &summary.functions["test"];
+    assert_eq!(function.status, AnalysisStatus::Unknown);
+    assert!(
+        function.diagnostics.iter().any(|diagnostic| {
+            matches!(&diagnostic.kind, LegacyDiagnosticKind::Unsupported { description }
+            if description.contains("abi-parameter-type-disagreement"))
+        }),
+        "{:?}",
+        function.diagnostics
+    );
 }
 
 fn contracts(with_observation: bool) -> ResourceContracts {

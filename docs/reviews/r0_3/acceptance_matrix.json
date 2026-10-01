@@ -6757,7 +6757,7 @@
   "workspace_tests": 7136,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 261,
+  "lean_audits": 262,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6891,6 +6891,7 @@
    "AuditMetricTraceContractGaps.lean",
    "AuditMonkeyWaitProjection.lean",
    "AuditMonkeyWaitSourcePolicy.lean",
+   "AuditMsvcAbiReader.lean",
    "AuditMutexInvariant.lean",
    "AuditMutexShareCross.lean",
    "AuditMutexShareCrossArms.lean",

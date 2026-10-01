@@ -4,6 +4,14 @@ Runtime source imports now support `#import std.fmt;` and relative `.qr` modules
 
 Extension migration: [EXT-01](reports/extension-compatibility/README.md) passed its compatibility gate (6,096 Rust tests, 215 Lean audits, 365 Python tests; provider gate 129 tests and five verified packages). [EXT-02/03 physical renames](reports/extension-physical-migration/README.md) passed the same core counts and a fresh 129-test provider gate with five verified packages: 195 `.qv`, 421 `.qr`, five `.qrlib`, including archived inputs. All 616 tracked source inputs retain their outcomes under proposed aliases (353 accepted, 263 refused); these are source compilation outcomes, not safety coverage. The compatibility measurement kept historical names unchanged; the user subsequently authorized renaming archived sources as well, with explicit original-measurement provenance.
 
+The [MSVC ABI reader](reports/msvc-abi-reader/README.md) has native x86-64
+caller controls for UCRT `memcmp`, `strncmp` and `strnlen`: one `__cdecl` and
+the explicit `__int64` family are read from retained declarations, with
+independently rechecked Safe certificates under the loaded neutral custody
+contracts. A forged native size width remains Unknown. These are scoped caller
+controls, not CRT-body verification or general LLP64 coverage; ordinary `long`
+retains the existing LP64 premise. No pinned corpus count is updated from them.
+
 Audit tooling: the bounded [CPU/memory optimization](reports/audit-memory-performance/README.md) preserves four verdict artifacts byte for byte on three Fluent Bit selections. The four-worker sample took 64.67 → 20.63 seconds with 21.0% lower maximum RSS; shared-host observations, not whole-corpus throughput or safety coverage.
 
 Current corpus and system-slice figures were measured on 2026-09-27 by

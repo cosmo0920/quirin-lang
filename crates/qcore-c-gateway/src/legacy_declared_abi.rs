@@ -172,6 +172,20 @@
 //! glibc's `__gnuc_va_list` names, projects to the loader's parameter-only
 //! `va_list` spelling (see [`BUILTIN_VA_LIST`]). `QCore.GnuBuiltinReader`
 //! models the step.
+//!
+//! # MSVC's default C convention and explicit 64-bit integer
+//!
+//! One `__cdecl` in a function's specifier prefix selects the default C
+//! convention and does not change this opaque parameter/result projection.
+//! It is removed only there, before counting result pointer levels; other
+//! conventions and a repeated annotation remain unreadable. `__int64` with
+//! at most one `signed` or `unsigned` is the explicit 64-bit integer reading.
+//! It shares `long long`'s projection, including the existing 64-bit-pointer
+//! premise for `isize` / `usize`. Ordinary `long` retains its LP64 premise;
+//! a newly readable cdecl position involving it instead refuses, including
+//! typedef chains, because its target width is not established by this reader.
+//! this is not a general LLP64 target model. `QCore.MsvcAbiReader` models both
+//! steps; faithful extraction and correspondence remain boundary-28 premises.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -972,7 +986,20 @@ fn read_declaration(
     if prefix.contains(&"typedef") {
         return None;
     }
-    let result = project_declarator(prefix, typedefs, true);
+    let cdecl_count = prefix.iter().filter(|word| **word == "__cdecl").count();
+    if cdecl_count > 1 {
+        return Some(Err(AbiRefusal::UnreadableDeclaration));
+    }
+    let prefix = prefix
+        .iter()
+        .copied()
+        .filter(|word| *word != "__cdecl")
+        .collect::<Vec<_>>();
+    let result = if cdecl_count == 1 && has_target_dependent_long(&prefix, typedefs) {
+        None
+    } else {
+        project_declarator(&prefix, typedefs, true)
+    };
     let parameters = &texts[index + 2..close];
     if parameters.is_empty() {
         return Some(Ok(CDeclaration {
@@ -1020,7 +1047,13 @@ fn read_declaration(
         }
         // A K&R identifier list declares no types at all: every group is a bare
         // name. It is not a prototype and cannot be compared.
-        projected.push(project_parameter(group, typedefs));
+        projected.push(
+            if cdecl_count == 1 && has_target_dependent_long(group, typedefs) {
+                None
+            } else {
+                project_parameter(group, typedefs)
+            },
+        );
     }
     if projected.is_empty() {
         return Some(Err(AbiRefusal::UnreadableDeclaration));
@@ -1031,6 +1064,19 @@ fn read_declaration(
         variadic,
         unspecified: false,
     }))
+}
+
+/// Ordinary `long` differs between LP64 and MSVC LLP64. A newly readable
+/// cdecl declaration must not inherit the old LP64 reading for it. Refuse
+/// that ambiguity, including typedef chains, until the reader carries a
+/// target. `long long` and `__int64` have the stated 64-bit reading.
+fn has_target_dependent_long(words: &[&str], typedefs: &BTreeMap<String, TypedefTarget>) -> bool {
+    words.iter().filter(|word| **word == "long").count() == 1
+        || words.iter().any(|word| {
+            matches!(resolve_typedef(word, typedefs, 0),
+                Some(TypedefTarget::Declarator { specifiers, .. })
+                    if specifiers.iter().filter(|specifier| *specifier == "long").count() == 1)
+        })
 }
 
 /// Identifiers that are reserved words and can never be a type specifier or a
@@ -1185,8 +1231,8 @@ fn drop_parameter_object_qualifiers(words: &mut Vec<&str>) {
 }
 
 const ARITHMETIC_WORDS: &[&str] = &[
-    "void", "char", "short", "int", "long", "float", "double", "signed", "unsigned", "_Bool",
-    "bool", "_Complex",
+    "__int64", "void", "char", "short", "int", "long", "float", "double", "signed", "unsigned",
+    "_Bool", "bool", "_Complex",
 ];
 
 /// The pointer projection of `stars` levels over a pointee that is or is not
@@ -1405,6 +1451,21 @@ fn resolve_typedef(
 /// `long double` is deliberately absent: this vocabulary has no spelling for
 /// it, so it stays unreadable rather than being folded onto `f64`.
 fn project_arithmetic(core: &[&str], result: bool) -> Option<BTreeSet<&'static str>> {
+    if core.contains(&"__int64") {
+        // A sized keyword cannot be mixed with `int`, `long`, another sized
+        // keyword or conflicting/repeated signs, even if a width coincides.
+        if core.iter().filter(|word| **word == "__int64").count() != 1
+            || core
+                .iter()
+                .any(|word| !matches!(*word, "__int64" | "signed" | "unsigned"))
+            || core.len() > 2
+        {
+            return None;
+        }
+        let mut equivalent = vec!["long", "long"];
+        equivalent.extend(core.iter().copied().filter(|word| *word != "__int64"));
+        return project_arithmetic(&equivalent, result);
+    }
     let mut signed = 0usize;
     let mut unsigned = 0usize;
     let mut char_words = 0usize;

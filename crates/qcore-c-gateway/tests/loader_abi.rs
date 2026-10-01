@@ -271,6 +271,115 @@ const ROWS: &[Row] = &[
         c: "void k_use(void *p, signed char n);",
         outcome: Some(AbiRefusal::ParameterTypeDisagreement),
     },
+    // -- MSVC default C convention and exact-width spelling ----------------
+    Row {
+        label: "MSVC default C convention",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void __cdecl k_use(void *p, int n);",
+        outcome: None,
+    },
+    Row {
+        label: "MSVC explicit signed 64-bit",
+        declared: "p: ptr<mut, u8>, n: i64",
+        c: "void __cdecl k_use(void *p, __int64 n);",
+        outcome: None,
+    },
+    Row {
+        label: "MSVC unsigned size typedef chain",
+        declared: "p: ptr<mut, u8>, n: usize",
+        c: "typedef unsigned __int64 KSize; typedef KSize KAlias; void __cdecl k_use(void *p, KAlias n);",
+        outcome: None,
+    },
+    Row {
+        label: "MSVC unsigned reordered",
+        declared: "p: ptr<mut, u8>, n: u64",
+        c: "void k_use(void *p, __int64 unsigned n);",
+        outcome: None,
+    },
+    Row {
+        label: "MSVC signed reordered",
+        declared: "p: ptr<mut, u8>, n: isize",
+        c: "void k_use(void *p, __int64 signed n);",
+        outcome: None,
+    },
+    Row {
+        label: "MSVC abstract sized parameter retains its type",
+        declared: "p: ptr<mut, u8>, n: u64",
+        c: "void k_use(void *, unsigned __int64);",
+        outcome: None,
+    },
+    Row {
+        label: "MSVC signedness still disagrees",
+        declared: "p: ptr<mut, u8>, n: u64",
+        c: "void k_use(void *p, signed __int64 n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "MSVC width still disagrees",
+        declared: "p: ptr<mut, u8>, n: u32",
+        c: "void k_use(void *p, unsigned __int64 n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "MSVC mixed arithmetic words refuse",
+        declared: "p: ptr<mut, u8>, n: u64",
+        c: "void k_use(void *p, unsigned __int64 int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "MSVC repeated signs refuse",
+        declared: "p: ptr<mut, u8>, n: u64",
+        c: "void k_use(void *p, unsigned unsigned __int64 n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "MSVC conflicting signs refuse",
+        declared: "p: ptr<mut, u8>, n: u64",
+        c: "void k_use(void *p, signed unsigned __int64 n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "MSVC repeated sized keyword refuses",
+        declared: "p: ptr<mut, u8>, n: u64",
+        c: "void k_use(void *p, __int64 __int64 n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "MSVC repeated convention refuses",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void __cdecl __cdecl k_use(void *p, int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "another convention stays refused",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void __stdcall k_use(void *p, int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "vector convention stays refused",
+        declared: "p: ptr<mut, u8>, n: i32",
+        c: "void __vectorcall k_use(void *p, int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "cdecl ordinary long cannot inherit LP64",
+        declared: "p: ptr<mut, u8>, n: u64",
+        c: "void __cdecl k_use(void *p, unsigned long n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "cdecl ordinary long typedef chain stays refused",
+        declared: "p: ptr<mut, u8>, n: usize",
+        c: "typedef unsigned long KLong; typedef KLong KAlias; void __cdecl k_use(void *p, KAlias n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "cdecl explicit long long is still 64-bit",
+        declared: "p: ptr<mut, u8>, n: u64",
+        c: "void __cdecl k_use(void *p, unsigned long long n);",
+        outcome: None,
+    },
     // -- pointers and qualifiers -------------------------------------------
     Row {
         label: "a const pointee is `ptr<const, u8>`, never `ptr<mut, u8>`",
@@ -1181,4 +1290,20 @@ contract {
         ),
         "the agreeing control must still certify"
     );
+}
+
+#[test]
+fn msvc_cdecl_pointer_result_keeps_the_acquisition() {
+    for declaration in [
+        "void * __cdecl k_alloc(unsigned __int64 size);",
+        "void __cdecl *k_alloc(unsigned __int64 size);",
+    ] {
+        let source = format!("{declaration}\n{DISCARDING_BODY}");
+        let summary = analyse(&source, &load(UNIT_RESULT));
+        assert_eq!(function(&summary, "w").status, AnalysisStatus::Unknown);
+        assert_eq!(
+            unsupported(function(&summary, "w")),
+            vec![withdrawal("k_alloc", AbiRefusal::ReturnTypeDisagreement)]
+        );
+    }
 }

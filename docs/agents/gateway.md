@@ -616,6 +616,20 @@ reaches a bound or a branch.
    is not evidence: nothing is withdrawn on a body this unit does not define or
    W4 derives no summary for. The scalar projection assumes the LP64 model of
    the audited targets and the reader has no target (`LOADER-ABI-LP64`).
+   The [MSVC reader](../reports/msvc-abi-reader/README.md) also reads the closed
+   `__int64` / `signed __int64` / `unsigned __int64` family as the existing
+   64-bit projections, with the same 64-bit-pointer premise for `isize` /
+   `usize`; ordinary `long` is not reinterpreted as LLP64. A newly readable
+   cdecl result or parameter involving ordinary `long`, including a typedef
+   chain, instead stays unreadable because its target width is not established.
+   Exactly one
+   function-prefix `__cdecl` preserves the default C parameter/result
+   projection, including result pointer levels and qualifiers. Other
+   conventions, repeated annotations and mixed/repeated sized specifiers
+   remain unreadable. `QCore.MsvcAbiReader` proves the abstract decisions;
+   faithful extraction and implementation correspondence remain boundary-28
+   premises. Native caller certificates use their declared main-source scope,
+   never silently certify unrelated header definitions.
    `remaining-loader-abi`, `remaining-loader-abi-modes`.
    Two precedents fix how the arms read. The **nullability-refinement** arm
    keeps a faithful declaration: `rd_kafka_mem_free` declares
