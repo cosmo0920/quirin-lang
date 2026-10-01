@@ -7,14 +7,16 @@ rebased onto main `8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS, rule 11u, itself
 byte-identical on every route) and then `06ad81cb` (CG20-NUMERIC-DOMAIN, rule
 11q, a separate numeric property beside custody) and `b934c560`
 (CG25-RESOURCE-KINDS, rule 11v: two resource kinds and the
-`status_witnesses` state field; corpus 630 / 10 / 4,194 `5ade5aab…` there).
-The BEFORE/AFTER measurements were taken on `b6a3dc42`; those cards touch
-disjoint code (CG17: `layout_extents.rs` and its hooks; CG20: `c_numeric*.rs`
-and a declared-ABI hook; CG25: resource kinds, the custody state's witnesses
-and libc contracts; this card: the counted-user pass and the ranked recursion
-route, constructing no `AbstractState`), so the arbiter was not repeated on
-the rebased tree, and the gate (§8) was. An integrator re-measure on the
-merged tree would compare against `5ade5aab…`.
+`status_witnesses` state field; corpus 630 / 10 / 4,194 `5ade5aab…` there)
+and `f0bbc0eb` (CG26-VARIADICS, rule 11w: its own per-`va_list` CFG and fixed
+point). The BEFORE/AFTER measurements were taken on `b6a3dc42`; those cards
+touch disjoint code (CG17: `layout_extents.rs` and its hooks; CG20:
+`c_numeric*.rs` and a declared-ABI hook; CG25: resource kinds, the custody
+state's witnesses and libc contracts; CG26: `va_list_protocol.rs`; this card:
+the counted-user pass and the ranked recursion route, constructing no
+`AbstractState`), so the arbiter was not repeated on the rebased tree, and the
+gate (§8) was. An integrator re-measure on the merged tree would compare
+against main's current corpus figures.
 The user's instruction to launch every remaining CG card is the Phase 4 choice
 of guarantee; the property this card publishes is stated in §1.
 
@@ -23,7 +25,7 @@ of guarantee; the property this card publishes is stated in §1.
 - **Lean:** `QCore.LoopInvariants`, `proof/AuditLoopInvariants.lean` (32
   theorems), over `QCore.UnsignedCountdown`, `QCore.CountedUsers` and
   `QCore.VerdictSemigroup`.
-- **Prediction:** [PREDICTION.md](PREDICTION.md), commit `47891c1b` after the rebases onto `b934c560` (`745be99f` before them), before any
+- **Prediction:** [PREDICTION.md](PREDICTION.md), commit `0526f9da` after the rebases onto `f0bbc0eb` (`745be99f` before them), before any
   AFTER run. The implementation had been drafted in the working tree first; the
   file says so.
 
