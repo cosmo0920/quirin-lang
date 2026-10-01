@@ -138,6 +138,9 @@ mod connective_footprints;
 // `legacy_statement_expression.rs` and `legacy_generic_selection.rs`.
 mod generic_association;
 mod statement_expression;
+// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): no-return path ends and the
+// explicit boundaries; the G hooks are in `legacy_call_exits.rs`.
+mod call_exits;
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l).
 pub mod typed_c_ast;
 // Card W47-LOOP-OWNER-TYPED-DISPATCH (rule 10p amendment): the record type

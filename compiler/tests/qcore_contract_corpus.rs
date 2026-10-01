@@ -733,6 +733,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/stdlib.qv", "srand", 4),
     ("libc/stdlib.qv", "rand_r", 4),
     ("libc/stdlib.qv", "system", 4),
+    // Card CG21-CALL-EXITS-AND-BOUNDARIES: the no-return exits (3 + 1 per
+    // parameter: the marker, the revision, the result and the exit).
+    ("libc/stdlib.qv", "abort", 4),
+    ("libc/stdlib.qv", "exit", 5),
+    ("libc/stdlib.qv", "__assert_fail", 8),
     ("libc/string.qv", "strcmp", 5),
     ("libc/string.qv", "strlen", 4),
     // W46-LIBC-EVENT-CONTRACT-GAPS: scalar byte/string reads. These are

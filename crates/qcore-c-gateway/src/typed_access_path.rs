@@ -275,6 +275,9 @@ pub(crate) struct StatementIndex {
     /// Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f): record and
     /// typedef facts.
     pub(crate) aggregates: Arc<crate::aggregate_value::AggregateFacts>,
+    /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): the ids of the unit's
+    /// file-scope function declarations carrying a `noreturn` attribute.
+    pub(crate) no_return_declarations: Arc<BTreeSet<String>>,
     by_line: Arc<BTreeMap<usize, Vec<Vec<usize>>>>,
     /// The unit's line starts: a node's line is found by binary search.
     line_starts: Arc<Vec<usize>>,
@@ -392,6 +395,8 @@ struct AstIndex {
     enums: Arc<EnumFacts>,
     records: Arc<crate::union_bitfield::RecordFacts>,
     aggregates: Arc<crate::aggregate_value::AggregateFacts>,
+    /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o).
+    no_return_declarations: Arc<BTreeSet<String>>,
     line_starts: Arc<Vec<usize>>,
     line_tokens: Arc<OnceCell<BTreeMap<usize, Vec<String>>>>,
 }
@@ -408,10 +413,18 @@ struct RetainedDeclarations {
     enums: EnumFacts,
     records: crate::union_bitfield::RecordFacts,
     aggregates: crate::aggregate_value::AggregateFacts,
+    /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o).
+    no_return_declarations: BTreeSet<String>,
 }
 
 impl RetainedDeclarations {
     fn accept(&mut self, node: Value) {
+        // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o).
+        if crate::call_exits::declares_no_return(&node)
+            && let Some(id) = node["id"].as_str()
+        {
+            self.no_return_declarations.insert(id.to_owned());
+        }
         collect_field_facts(&node, &mut self.fields);
         EnumFacts::collect(&node, &mut self.enums);
         crate::union_bitfield::RecordFacts::collect(&node, &mut self.records);
@@ -542,6 +555,7 @@ impl AstIndex {
             enums: Arc::new(retained.enums),
             records: Arc::new(retained.records),
             aggregates: Arc::new(retained.aggregates),
+            no_return_declarations: Arc::new(retained.no_return_declarations),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         })
@@ -563,6 +577,7 @@ impl AstIndex {
             enums: Arc::new(retained.enums),
             records: Arc::new(retained.records),
             aggregates: Arc::new(retained.aggregates),
+            no_return_declarations: Arc::new(retained.no_return_declarations),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         }
@@ -694,6 +709,7 @@ impl StatementIndex {
                 enums: Arc::clone(&ast.enums),
                 records: Arc::clone(&ast.records),
                 aggregates: Arc::clone(&ast.aggregates),
+                no_return_declarations: Arc::clone(&ast.no_return_declarations),
                 by_line: Arc::clone(by_line),
                 line_starts: Arc::clone(&ast.line_starts),
                 line_tokens: Arc::clone(&ast.line_tokens),

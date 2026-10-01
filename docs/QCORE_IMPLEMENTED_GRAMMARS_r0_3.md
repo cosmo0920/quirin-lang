@@ -3545,6 +3545,7 @@ resource_predicate = "resource_borrowed", "(", IDENT, ")"
   | "resource_return_none", "(", ")"
   | "resource_return_owned", "(", nullability, ")"
   | "resource_return_reallocated", "(", IDENT, ",", nullability, ")"
+  | "resource_no_return", "(", ")"   (* card CG21, contract spec C04.3.3 *)
   | counted_user_predicate
   | container_predicate ;
 nullability = "nullable" | "nonnull" ;
@@ -3566,6 +3567,8 @@ The counted-user and container predicates (card W45-FB-RETRY-LIFETIME) carry sta
 Additional static conditions are mandatory: exactly one marker, exactly one mode per parameter, exactly one result mode, unique names, compatible pointer/scalar types, valid distinct owned parent references, an owned reallocation source, and — for `literal_argument_premise` — a parameter name the same declaration declares (of any admitted type, pointer included: see contract specification C04.5), at most one premise per parameter, and a `DIGITS` run the lexer produces as a single integer token with no leading zero, which excludes suffixed, alternate-base and octal spellings; `-0` is likewise rejected, so the declared literal is canonical. These conditions cannot be represented by context-free productions alone. Signature usage annotations, extra declarations, unsupported predicates and other exit selectors are rejected atomically, not ignored. See contract specification C04–C06 and `crates/qcore-contract/src/contract_loader.rs`.
 
 The whole-declaration tail clauses `resource_variadic_data_tail()` and (card CG26-VARIADICS) `resource_variadic_borrowed_tail()` take no argument; a declaration carries at most one of the two (a second, or both, rejects the module), and either requires the analysed C declaration to be variadic (contract specification C04.1, C04.2).
+
+`resource_no_return()` (card CG21-CALL-EXITS-AND-BOUNDARIES) appears at most once, only on a `unit` result with `resource_return_none()` and `resource_borrowed` on every parameter, and never beside a counted-user, container, loop-owner, thread-synchronization or lifecycle clause; a declaration of a name in `UNDECLARABLE_C_NAMES` (`contract_loader.rs`: the Clang extension nodes spelled like calls, the returns-twice calls and the non-local exits) is rejected whatever its clauses. See contract specification C04.3.3.
 
 `literal_argument_premise` (card HASH-CLAUSE) states where the declaration is applied, not what it means: a consumer treats the callee as undeclared at every call site whose actual at the named parameter is not exactly that integer constant. It never widens a declaration and never changes a mode. Which call-site *spellings* are that constant is fixed by contract specification C04.5.1 (card HASH-REFINE): matched enclosing parentheses and an integer suffix are erased structurally, and every spelling needing arithmetic, a base, a cast or symbol resolution is refused.
 

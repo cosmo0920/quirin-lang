@@ -1058,7 +1058,9 @@ reaches a bound or a branch.
     an effect v1 cannot state exactly to obtain a `Safe`: an in-place
     reallocation through a `T **` (`cfl_sds_cat_safe`), a refcounted keep or
     release, a retained pointer, a callback, an in-place lifecycle, a
-    no-return call or a handle kind stays undeclared with its reason, and a
+    no-return call (**amended by CG21-CALL-EXITS-AND-BOUNDARIES, rule 11o**:
+    a terminating exit is declared with `resource_no_return()`; a non-local
+    exit stays undeclarable) or a handle kind stays undeclared with its reason, and a
     system library outside the audited source has no pinnable identity.
     [Report](../reports/w46-external-callee-contracts/README.md).
     W47-CALLEE-CLOSURE-R2 adds that a pointer result is declared with the mode

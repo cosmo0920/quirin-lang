@@ -191,6 +191,13 @@ mod value_connective_route;
 #[path = "legacy_statement_expression.rs"]
 mod statement_expression_route;
 
+// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): a declared no-return call
+// the Clang declaration establishes ends its path; inline assembly, SEH and
+// `cleanup` attributes are named boundaries asked first. The hooks below
+// naming the card are thin.
+#[path = "legacy_call_exits.rs"]
+mod call_exits_route;
+
 // Card CG04-LOOP-SITE-GENERATIONS: a re-acquired site on a CFG cycle keeps
 // its earlier generation apart. The hooks below naming the card are thin.
 #[path = "legacy_loop_generations.rs"]
@@ -3308,6 +3315,7 @@ fn build_function_cfg_with(
         condition_cycles: condition_acquisition_route::CycleRanges::read(tokens, body_start),
         typed_place_origin: std::cell::Cell::new(None),
         typed_root_declarations: std::cell::OnceCell::new(),
+        declared_no_return: std::cell::OnceCell::new(),
     };
     // Card W47-TYPED-ROOT-DECLARATION-READER: parity runs only.
     parser.record_typed_root_parity();
@@ -4476,6 +4484,11 @@ pub(crate) fn matching(tokens: &[Token], start: usize, open: &str, close: &str) 
 #[derive(Clone, Debug)]
 enum Statement {
     Instruction(LegacyInstruction, usize),
+    /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): a call that ends its
+    /// path. Compiled to a node with no successor that is not an exit, so
+    /// nothing after it is reached and it contributes no exit state; its own
+    /// instruction (the call's preconditions) is still transferred.
+    PathEnd(LegacyInstruction, usize),
     Block(Vec<Statement>),
     If {
         line: usize,
@@ -4694,6 +4707,9 @@ struct Parser<'a> {
     typed_place_origin: std::cell::Cell<Option<(usize, usize)>>,
     /// Card W47-TYPED-ROOT-DECLARATION-READER: the AST reader's answers.
     typed_root_declarations: std::cell::OnceCell<crate::typed_root_declarations::RootDeclarations>,
+    /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): the callees the
+    /// environment declares `resource_no_return()` for, read on first use.
+    declared_no_return: std::cell::OnceCell<BTreeSet<String>>,
     cursor: usize,
     contracts: &'a ResourceContracts,
     next_site: usize,
@@ -6336,6 +6352,13 @@ impl Parser<'_> {
             }
             Some("goto") => {
                 self.cursor += 1;
+                // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): a computed
+                // `goto *E;` is a named boundary, refused in its function
+                // rather than failing the whole parse.
+                if self.text() == Some("*") {
+                    let tokens = self.consume_to_semicolon()?;
+                    return Ok(self.computed_goto(&tokens, line));
+                }
                 let Some(label) = self.text().filter(|text| is_identifier(text)) else {
                     return Err(line);
                 };
@@ -6551,6 +6574,11 @@ impl Parser<'_> {
         // Card W45-CONTAINER-ROOT-REACH: keep an element binding only
         // when it is the statement's final instruction.
         self.element_origins.clear();
+        // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o), a soundness repair
+        // asked first: assembly, SEH and `cleanup` are named boundaries.
+        if let Some(boundary) = self.call_exit_boundary(tokens, line) {
+            return boundary;
+        }
         // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h), a soundness
         // repair asked first: a static-duration declaration runs nothing.
         if let Some(declaration) = self.static_duration_declaration(tokens, line) {
@@ -6568,6 +6596,12 @@ impl Parser<'_> {
         let instruction = self.classify_simple(tokens);
         self.typed_place_origin.set(None);
         self.element_origins.settle(tokens, &instruction);
+        // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): a declared
+        // no-return call (new with the card, so no older lowering is
+        // replaced) ends its path where its declaration establishes it.
+        if let Some(exit) = self.call_exit_statement(tokens, line, &instruction) {
+            return exit;
+        }
         #[cfg(feature = "indirect-census")]
         self.census_statement(line, tokens, &instruction);
         #[cfg(feature = "indirect-census")]
@@ -8670,6 +8704,15 @@ impl Parser<'_> {
                     writes: self.refused_writes(&texts),
                 };
             }
+            // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): an extension
+            // node, a returns-twice call or a non-local exit is named; only the
+            // wording changes.
+            if let Some(description) = crate::call_exits::undeclarable_call(function) {
+                return LegacyInstruction::Unknown {
+                    description,
+                    writes: self.refused_writes(&texts),
+                };
+            }
             return LegacyInstruction::Unknown {
                 description: format!("call to uncontracted function `{function}`"),
                 writes: self.refused_writes(&texts),
@@ -9522,6 +9565,10 @@ impl CfgBuilder {
         match statement {
             Statement::Instruction(instruction, line) => {
                 self.push(instruction.clone(), vec![continuation], *line, false)
+            }
+            // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o).
+            Statement::PathEnd(instruction, line) => {
+                self.push(instruction.clone(), Vec::new(), *line, false)
             }
             Statement::Block(statements) => self.compile_sequence(statements, continuation),
             Statement::Return {

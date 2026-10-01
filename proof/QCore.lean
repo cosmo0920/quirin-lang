@@ -314,6 +314,7 @@ import QCore.FloatPayloads
 import QCore.QrlibLinkage
 import QCore.FieldLinkJoin
 import QCore.StatementExpressions
+import QCore.CallExits
 import QCore.StorageDuration
 import QCore.AtomicSourceRoute
 import QCore.WeakMemory

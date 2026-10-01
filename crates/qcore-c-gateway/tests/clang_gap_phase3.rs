@@ -140,8 +140,11 @@ fn e18_offsetof_and_container_of_are_refused() {
         ),
         "unmodeled callback expression OffsetOfExpr"
     );
+    // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): an extension node is
+    // named, never an uncontracted call (BEFORE: "call to uncontracted
+    // function `__builtin_offsetof`").
     assert!(gs("unsigned long subject(void) { unsigned long o = __builtin_offsetof(struct S, b); return o; }")
-        .refused("call to uncontracted function `__builtin_offsetof`"));
+        .refused("`__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models"));
     assert!(gs("struct S *subject(int *m) { return (struct S *)((char *)m - __builtin_offsetof(struct S, b)); }")
         .refused(RETURN));
     // CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): only a pointer established as

@@ -118,10 +118,18 @@ fn c09_computed_goto_is_refused() {
         t_refusal("int subject(int a) { void *t = &&l; goto *t; l: return a; }"),
         "unmodeled callback expression AddrLabelExpr"
     );
+    // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): both forms are named
+    // boundaries in their own function (BEFORE: the function was not
+    // projected at all, `NOT_PROJECTED`).
     let run =
         gs("void subject(int n) { void *p = q_alloc(); void *t = &&l; goto *t; l: q_free(p); }");
     assert!(
-        run.unknown() && run.diagnostics.first().map(String::as_str) == Some(NOT_PROJECTED),
+        run.unknown()
+            && run.refused("a computed `goto *` has no modelled target set")
+            && run.refused(
+                "a label's address (`&&label`) is the operand of a computed goto, which is not \
+                 modelled"
+            ),
         "{run:?}"
     );
 }
@@ -139,8 +147,12 @@ fn c10_setjmp_has_no_return_twice_edge() {
     assert!(!run.safe());
 }
 
-/// Correction to the input: G refuses a `cleanup` local, but through the
-/// indirect-access family (IND), not as an attribute.
+/// Correction to the input: G refused a `cleanup` local, but through the
+/// indirect-access family (IND), not as an attribute. Card
+/// CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o) names the boundary, asked first
+/// (BEFORE: `IND`).
+const CLEANUP: &str = "a `cleanup` attribute's call at every exit of its scope is not modelled";
+
 #[test]
 fn c11_cleanup_attributes_are_refused() {
     if !clang_available() {
@@ -154,17 +166,19 @@ fn c11_cleanup_attributes_are_refused() {
     );
     assert!(
         gs("void subject(void) { __attribute__((cleanup(q_free))) void *p = q_alloc(); }")
-            .refused(IND)
+            .refused(CLEANUP)
     );
     assert!(
         gs("void g(int *); void subject(void) { __attribute__((cleanup(g))) int x = 0; }")
-            .refused(IND)
+            .refused(CLEANUP)
     );
 }
 
-/// Correction to the input: G's refusal of inline asm is not an explicit
-/// asm rejection; the token reader reads the statement as a call to an
-/// uncontracted function named after its first keyword.
+/// Correction to the input: G's refusal of inline asm was not an explicit
+/// asm rejection; the token reader read the statement as a call to an
+/// uncontracted function named after its first keyword (`volatile`,
+/// `__asm__`, `goto`). Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o) names
+/// the boundary, asked first.
 #[test]
 fn c12_inline_asm_is_refused_as_a_call() {
     if !clang_available() {
@@ -174,15 +188,19 @@ fn c12_inline_asm_is_refused_as_a_call() {
         t_refusal("int subject(int a) { __asm__ volatile(\"\" ::: \"memory\"); return a; }"),
         "unmodeled callback statement GCCAsmStmt"
     );
-    for (statement, word) in [
-        ("__asm__ volatile(\"\" ::: \"memory\");", "volatile"),
-        ("__asm__(\"nop\");", "__asm__"),
-        ("__asm__ goto(\"\" :::: out);", "goto"),
+    const ASM: &str =
+        "inline assembly is an opaque boundary: its clobbers and memory effects are not modelled";
+    const ASM_GOTO: &str = "`asm goto` is an opaque boundary: its clobbers, memory effects and \
+                            label edges are not modelled";
+    for (statement, named) in [
+        ("__asm__ volatile(\"\" ::: \"memory\");", ASM),
+        ("__asm__(\"nop\");", ASM),
+        ("__asm__ goto(\"\" :::: out);", ASM_GOTO),
     ] {
         let run = gs(&format!(
             "void subject(void) {{ void *p = q_alloc(); {statement} out: q_free(p); }}"
         ));
-        assert!(run.refused(&uncontracted(word)), "{statement}: {run:?}");
+        assert!(run.refused(named), "{statement}: {run:?}");
     }
 }
 
@@ -214,22 +232,28 @@ fn e20_builtins_are_ordinary_uncontracted_calls() {
         t_refusal("int subject(int a) { return __builtin_choose_expr(1, a, 0); }"),
         "unmodeled callback expression ChooseExpr"
     );
-    for (source, callee) in [
+    // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): an extension node is
+    // named as one, never as an uncontracted call (BEFORE: "call to
+    // uncontracted function `__builtin_choose_expr`" / `__builtin_bit_cast`);
+    // a builtin that Clang parses as a call stays an ordinary call.
+    for (source, named) in [
         (
             "void subject(void) { void *p = q_alloc(); int x = __builtin_choose_expr(1, 1, 0); q_free(p); }",
-            "__builtin_choose_expr",
+            "`__builtin_choose_expr` is the Clang extension node ChooseExpr, which no resource \
+             contract or route models",
         ),
         (
             "int subject(float f) { return __builtin_bit_cast(int, f); }",
-            "__builtin_bit_cast",
-        ),
-        (
-            "int subject(int a) { return __builtin_expect(a, 0); }",
-            "__builtin_expect",
+            "`__builtin_bit_cast` is the Clang extension node BuiltinBitCastExpr, which no \
+             resource contract or route models",
         ),
     ] {
-        assert!(gs(source).refused(&uncontracted(callee)), "{source}");
+        assert!(gs(source).refused(named), "{source}: {:?}", gs(source));
     }
+    assert!(
+        gs("int subject(int a) { return __builtin_expect(a, 0); }")
+            .refused(&uncontracted("__builtin_expect"))
+    );
 }
 
 /// Clarification of the input: without `-fopenmp` (outside the frontend-flag

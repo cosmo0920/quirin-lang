@@ -356,6 +356,13 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         // written-through `struct timespec`), both the neutral element.
         ("lstat", 2),
         ("clock_gettime", 2),
+        // Card CG21-CALL-EXITS-AND-BOUNDARIES: the three no-return exits in
+        // `libc/stdlib.qv`. Their modes are the neutral element (a scalar
+        // status, three read strings and a scalar line); the exit itself is
+        // the separate `resource_no_return()` clause.
+        ("abort", 0),
+        ("exit", 1),
+        ("__assert_fail", 4),
         // Card W43-LIBC-PRINTF-FAMILY: the formatted-output family. Every
         // declared parameter is borrowed (a written-through buffer or stream
         // the caller keeps, a size, a read format), the result is an `int`
@@ -1499,9 +1506,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 255 -> 259 by card CG25-RESOURCE-KINDS: `dlopen`/`dlclose` appended to
     // `libc/dlfcn.qv` and `regcomp`/`regfree` to `libc/regex.qv`, both already
     // selected. Selection and rejected unchanged.
+    // 259 -> 262 by card CG21-CALL-EXITS-AND-BOUNDARIES: `abort`, `exit`
+    // and `__assert_fail` appended to `libc/stdlib.qv`, already selected,
+    // each with `resource_no_return()`. Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (58, 259, 216)
+        (58, 262, 216)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

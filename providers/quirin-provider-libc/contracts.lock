@@ -7,9 +7,19 @@
   "pinned": [],
   "flexible": [
     {
+      "function": "__assert_fail",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "cc7263baa62dd92251d87e0a339acc3f7f25f0292ac4b985f9f30b4de5d728df"
+    },
+    {
       "function": "__errno_location",
       "module": "libc/errno.qv",
       "contract_sha256": "9e00d4065a62fe1dd8aa9d9476ae77ae47c5b179918b7a717a12f15068935d71"
+    },
+    {
+      "function": "abort",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "16ed9eb63e63bbb6b546a8cdd62c347f4ec2312c9c4e5688819ca403716fd65f"
     },
     {
       "function": "access",
@@ -75,6 +85,11 @@
       "function": "dlsym",
       "module": "libc/dlfcn.qv",
       "contract_sha256": "446134db1c7659773dd6281eab248c04375c749eff0d9c0eecdf317d8d24ebfe"
+    },
+    {
+      "function": "exit",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "fa3ecc2bc5a55155f16bc29d51953a33b8d83726905f2f5f377ada3b639b58f9"
     },
     {
       "function": "fabs",

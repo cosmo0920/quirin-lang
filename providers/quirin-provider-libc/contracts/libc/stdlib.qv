@@ -29,8 +29,9 @@ module contract;
 //
 // ## Deliberately NOT declared here (recorded in the card report)
 //
-//   `exit`/`abort` do not return; v1 has no no-return mode, and a `normal`
-//   return clause would add a continuation the C does not have.
+//   (`exit` and `abort` are declared below with `resource_no_return()`,
+//   card CG21-CALL-EXITS-AND-BOUNDARIES; W43-LIBC-CONTRACTS had declined
+//   them while v1 had no no-return exit.)
 //   `strtol`/`strtoll`/`strtoull`/`strtod` store an alias INTO `__nptr`
 //   through `char **__endptr`; `ptr<mut, ptr<mut, u8>>` admits only
 //   `resource_out`, and the stored value is an alias, not fresh custody.
@@ -74,4 +75,65 @@ contract {
     requires resource_revision(flexible);
     ensures normal resource_borrowed(command);
     ensures normal resource_return_none();
+};
+
+// ## The no-return exits (card CG21-CALL-EXITS-AND-BOUNDARIES)
+//
+//   extern void abort (void) __THROW __attribute__ ((__noreturn__)) __COLD;
+//   extern void exit (int __status) __THROW __attribute__ ((__noreturn__));
+//
+// C17 7.22.4.1 and 7.22.4.4: `abort` raises SIGABRT and does not return;
+// `exit` runs the `atexit` handlers, flushes and closes the streams and
+// terminates the program. Neither returns, and no frame of the calling
+// thread resumes, which is what `resource_no_return()` states (a non-local
+// exit is not this exit). Neither takes custody of anything: the status is a
+// scalar. `exit`'s `atexit` handlers and stream closing are effects of the
+// program's end, not of a frame the custody projection follows. The C
+// gateway lowers either call as a path end only where the call's own Clang
+// declaration is `noreturn` (gateway rule 11o).
+
+extern fn abort() -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_return_none();
+    ensures normal resource_no_return();
+};
+
+extern fn exit(status: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(status);
+    ensures normal resource_return_none();
+    ensures normal resource_no_return();
+};
+
+// ## <assert.h>'s failure call (card CG21-CALL-EXITS-AND-BOUNDARIES)
+//
+// Declared in this module, beside `abort`, because it is `abort`'s caller
+// (C17 7.2.1.1: a failed `assert` writes a diagnostic and calls `abort`), and
+// so every selection that reads this module reads it. From
+// `/usr/include/assert.h` on the audited host (glibc 2.43):
+//
+//   extern void __assert_fail (const char *__assertion, const char *__file,
+//                              unsigned int __line, const char *__function)
+//        __THROW __attribute__ ((__noreturn__)) __COLD;
+//
+// glibc's `assert (E)` calls it when `E` compares equal to 0. It prints the
+// message and aborts: it does not return and no frame of the calling thread
+// resumes. It reads its three strings and takes custody of none of them; the
+// line is a scalar. `__assert_perror_fail` and `__assert` are not declared:
+// no analysed unit calls either.
+
+extern fn __assert_fail(assertion: ptr<const, u8>, file: ptr<const, u8>, line: u32, function: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(assertion);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(function);
+    ensures normal resource_return_none();
+    ensures normal resource_no_return();
 };

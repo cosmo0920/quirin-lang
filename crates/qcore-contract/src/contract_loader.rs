@@ -46,6 +46,9 @@
 //! - `resource_kind(p, KIND)` and `resource_return_kind(KIND)` -> the non-heap
 //!   kind of a custody position (card W43-DESCRIPTOR-RESOURCE-TRACKING). See
 //!   below.
+//! - `resource_no_return()` -> the call never returns and no frame of the
+//!   caller's thread resumes (card CG21-CALL-EXITS-AND-BOUNDARIES). See
+//!   below.
 //!
 //! and one further **precondition** beside the marker:
 //!
@@ -93,6 +96,29 @@
 //! [`variadic_data_tails`], so a contract environment that has no declared
 //! sources — an inferred W4 summary, a provider proposal, a directly
 //! constructed table — has no tails at all, which is the fail-closed direction.
+//!
+//! # The no-return exit (card CG21-CALL-EXITS-AND-BOUNDARIES)
+//!
+//! `ensures normal resource_no_return();` states that the call has **no
+//! normal exit**: its normal postcondition is false, so every other
+//! `ensures normal` clause of the declaration holds vacuously and states only
+//! what the call requires of its actuals. It also states the **kind** of the
+//! exit the call takes instead: the program terminates (or the behaviour is
+//! undefined), and no frame of the calling thread resumes. A non-local exit
+//! (`longjmp`, `pthread_exit`) is not this exit and must never be declared
+//! with it: a frame's live resources are abandoned there, not discharged.
+//! The C attribute `noreturn` alone cannot tell the two apart, which is why
+//! the kind is a declaration and not an inference.
+//!
+//! The loader admits it only on a `unit` result with `resource_return_none()`
+//! and `resource_borrowed` on every parameter (the declaration's whole custody
+//! statement is then its preconditions). Like the variadic tail it is **not**
+//! carried on [`ResourceFunctionContract`]; it is rederived from the retained
+//! trusted texts by [`no_return_callees`]. A consumer that does not read it
+//! applies the declaration as an ordinary borrowing call with a continuation
+//! C does not have, which over-approximates the paths and is never the unsound
+//! direction; the C gateway reads it where it lowers the call as a path end
+//! (rule 11o), and only where the call's own Clang declaration is `noreturn`.
 //!
 //! # Derived results (card W43-LIBC-RESULT-ALIAS)
 //!
@@ -569,6 +595,9 @@ struct LoadedDeclaration {
     /// Card CG26-VARIADICS: `resource_variadic_borrowed_tail()` was declared
     /// (it implies `variadic_data_tail`).
     variadic_borrowed_tail: bool,
+    /// Card CG21-CALL-EXITS-AND-BOUNDARIES: the declaration carries
+    /// `resource_no_return()`.
+    no_return: bool,
     literal_arguments: Vec<DeclaredLiteralArgument>,
     /// Card W47-LOOP-OWNER-CONTRACTS: the declared loop-owner obligation.
     loop_owner: Option<DeclaredLoopOwner>,
@@ -866,6 +895,32 @@ pub fn variadic_borrowed_tails(
     Ok(tails)
 }
 
+/// The names declaring a `resource_no_return()` in `sources` (card
+/// CG21-CALL-EXITS-AND-BOUNDARIES).
+///
+/// Derived from the same trusted texts [`load_resource_contract_sources`]
+/// reads, and total-or-reject in the same way as [`variadic_data_tails`].
+pub fn no_return_callees(sources: &BTreeMap<String, String>) -> Result<BTreeSet<String>, String> {
+    let mut callees = BTreeSet::new();
+    for (path, source) in sources {
+        reject_retired_premise_directive(path, source)?;
+        reject_unresolved_inclusion(path, source)?;
+        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
+            return Err(format!("{path}: expected a nonempty module contract"));
+        }
+        for declaration in parsed.declarations {
+            let decl = &declaration.value;
+            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
+            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
+            if loaded.no_return {
+                callees.insert(decl.name.clone());
+            }
+        }
+    }
+    Ok(callees)
+}
+
 /// The declared C ABI projections in `sources`, keyed by function name (card
 /// **LOADER-ABI**).
 ///
@@ -1038,6 +1093,19 @@ pub fn declared_variadic_borrowed_tails(
         return Ok(BTreeSet::new());
     }
     variadic_borrowed_tails(contracts.source_assumptions())
+}
+
+/// The no-return callees of an environment, rederived from its **retained
+/// trusted sources** (card CG21-CALL-EXITS-AND-BOUNDARIES). An environment
+/// with no declared sources has none: the exit is a declaration, never an
+/// inference.
+pub fn declared_no_return_callees(
+    contracts: &ResourceContracts,
+) -> Result<BTreeSet<String>, String> {
+    if contracts.source_assumptions().is_empty() {
+        return Ok(BTreeSet::new());
+    }
+    no_return_callees(contracts.source_assumptions())
 }
 
 /// Recheck a declarative environment against its declared trusted sources
@@ -1213,6 +1281,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
         if child_loaded.contract != parent_loaded.contract
             || child_loaded.variadic_data_tail != parent_loaded.variadic_data_tail
             || child_loaded.variadic_borrowed_tail != parent_loaded.variadic_borrowed_tail
+            || child_loaded.no_return != parent_loaded.no_return
             || child_loaded.literal_arguments != parent_loaded.literal_arguments
             || child_loaded.loop_owner != parent_loaded.loop_owner
             || child_loaded.thread_sync != parent_loaded.thread_sync
@@ -1240,9 +1309,64 @@ fn token_kinds(source: &str) -> Result<Vec<TokenKind>, String> {
         .collect())
 }
 
+/// Card **CG21-CALL-EXITS-AND-BOUNDARIES** (gateway rule 11o): C names no
+/// resource v1 declaration may carry, with the reason. Each is either a
+/// Clang extension form whose spelling looks like a call but which Clang
+/// parses as another AST node (an ordinary function contract is never applied
+/// to a non-call node), or a C/POSIX facility whose exit no v1 mode states: a
+/// second return (`setjmp`) or a non-local exit (`longjmp`,
+/// `pthread_exit`). Declaring one would give the call the continuation of an
+/// ordinary call and hide the edge or the abandoned frame. The C gateway
+/// names its refusal of an undeclared call with the same reason.
+pub const UNDECLARABLE_C_NAMES: &[(&str, &str)] = &[
+    ("__builtin_choose_expr", "the Clang extension node ChooseExpr"),
+    ("__builtin_bit_cast", "the Clang extension node BuiltinBitCastExpr"),
+    ("__builtin_offsetof", "the Clang extension node OffsetOfExpr"),
+    ("__builtin_types_compatible_p", "the Clang extension node TypeTraitExpr"),
+    ("__builtin_convertvector", "the Clang extension node ConvertVectorExpr"),
+    ("__builtin_shufflevector", "the Clang extension node ShuffleVectorExpr"),
+    ("__builtin_FILE", "the Clang extension node SourceLocExpr"),
+    ("__builtin_FUNCTION", "the Clang extension node SourceLocExpr"),
+    ("__builtin_LINE", "the Clang extension node SourceLocExpr"),
+    ("__builtin_COLUMN", "the Clang extension node SourceLocExpr"),
+    ("setjmp", "a returns-twice call"),
+    ("_setjmp", "a returns-twice call"),
+    ("__setjmp", "a returns-twice call"),
+    ("sigsetjmp", "a returns-twice call"),
+    ("__sigsetjmp", "a returns-twice call"),
+    ("savectx", "a returns-twice call"),
+    ("vfork", "a returns-twice call"),
+    ("getcontext", "a returns-twice call"),
+    ("longjmp", "a non-local exit"),
+    ("_longjmp", "a non-local exit"),
+    ("siglongjmp", "a non-local exit"),
+    ("__longjmp_chk", "a non-local exit"),
+    ("setcontext", "a non-local exit"),
+    ("swapcontext", "a non-local exit"),
+    ("pthread_exit", "a non-local exit"),
+    ("thrd_exit", "a non-local exit"),
+];
+
+/// The reason `name` may carry no resource v1 declaration, if it is one of
+/// [`UNDECLARABLE_C_NAMES`].
+pub fn undeclarable_c_name(name: &str) -> Option<&'static str> {
+    UNDECLARABLE_C_NAMES
+        .iter()
+        .find(|(listed, _)| *listed == name)
+        .map(|(_, reason)| *reason)
+}
+
 fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> {
     if decl.kind != DeclarationKind::ExternFunction {
         return Err("resource modules accept only extern functions".into());
+    }
+    // Card CG21-CALL-EXITS-AND-BOUNDARIES: no declaration for a name whose
+    // exit or node no v1 mode states.
+    if let Some(reason) = undeclarable_c_name(&decl.name) {
+        return Err(format!(
+            "`{}` is {reason}, which no resource v1 declaration states",
+            decl.name
+        ));
     }
     // Card W48-QR-C-STRUCT-IMPORT: a marked declaration is read by its own,
     // narrower vocabulary, and only a marked one may name a C struct.
@@ -1317,6 +1441,8 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     let mut body_checked = false;
     let mut variadic_data_tail = false;
     let mut variadic_borrowed_tail = false;
+    // Card CG21-CALL-EXITS-AND-BOUNDARIES.
+    let mut no_return = false;
     let mut literal_arguments: Vec<DeclaredLiteralArgument> = Vec::new();
     let mut loop_owner: Option<DeclaredLoopOwner> = None;
     let mut thread_sync: Option<DeclaredThreadSync> = None;
@@ -1528,6 +1654,16 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             variadic_borrowed_tail = true;
             continue;
         }
+        // Card CG21-CALL-EXITS-AND-BOUNDARIES: the no-return exit, a
+        // whole-declaration fact like the tail; its premises are checked once
+        // every mode is read, below.
+        if words.as_slice() == ["resource_no_return"] {
+            if no_return {
+                return Err("duplicate no-return exit".into());
+            }
+            no_return = true;
+            continue;
+        }
         // Card W43-DESCRIPTOR-RESOURCE-TRACKING: the two kind clauses. Heap is
         // spelled by the absence of a clause, so `heap` itself is refused: one
         // spelling per meaning.
@@ -1731,6 +1867,26 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         return Err("reallocation requires an owned input parameter".into());
     }
     counted_users::validate(&collected, &parameters, &parameter_types, return_type)?;
+    // Card CG21-CALL-EXITS-AND-BOUNDARIES: a no-return declaration states
+    // preconditions only. It returns nothing and takes no custody, so no
+    // mode it carries could describe an effect a caller ever observes.
+    if no_return
+        && (return_type != "unit"
+            || result != ResourceReturnMode::None
+            || parameters
+                .iter()
+                .any(|mode| *mode != ResourceParameterMode::Borrowed)
+            || !collected.container_effects.is_empty()
+            || !collected.users.is_empty()
+            || loop_owner.is_some()
+            || thread_sync.is_some()
+            || lifecycle.is_some())
+    {
+        return Err(
+            "a no-return declaration returns `unit` with `resource_return_none()` and borrows every parameter"
+                .into(),
+        );
+    }
     let mut contract = ResourceFunctionContract::new(parameters, result);
     contract.parameter_kinds = kinds.parameter_kinds;
     contract.result_kind = kinds.result_kind;
@@ -1740,6 +1896,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         contract,
         variadic_data_tail,
         variadic_borrowed_tail,
+        no_return,
         literal_arguments,
         loop_owner,
         thread_sync,
@@ -1947,6 +2104,7 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
         contract,
         variadic_data_tail: false,
         variadic_borrowed_tail: false,
+        no_return: false,
         literal_arguments: Vec::new(),
         loop_owner: None,
         thread_sync: None,
