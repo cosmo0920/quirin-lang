@@ -1,4 +1,5 @@
 import QCore.ElaborationCore
+import QCore.NestedCallEffects
 
 /-! Value connectives and conditionals (card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL,
 gateway rule 10z): a model of the branch regions of
@@ -28,7 +29,18 @@ Stated here:
   a release through a binding with two identities is refused, never resolved
   to one.
 * **Forms and positions.** The branching forms are elaborated; every other
-  position a connective stands in is refused. -/
+  position a connective stands in is refused.
+* **Siblings with calls** (card CG06-VALUE-CONNECTIVE-RESIDUALS, rule 11m,
+  `connective_footprints.rs`). Where `admit` refuses a sibling's effect or a
+  deciding call beside a sibling that is not inert, the region is composed
+  with its siblings by `QCore.NestedCallEffects`' footprints, one graph per
+  arm: an admitted arm runs alike in every order C permits, the lowering's
+  (deciding operand first) included; the deciding operand reads one value
+  whichever sibling events C runs before it, so C takes the lowering's edge;
+  an overlapping, uncontracted or non-call sibling is refused. Bound by
+  `composedVectors` = `COMPOSED_VECTORS` and `footprintVectors` =
+  `FOOTPRINT_VECTORS` (`tests/unit/value_connective.rs`,
+  `tests/unit/connective_footprints.rs`). -/
 namespace QCore.ValueConnectives
 
 open QCore.ElaborationCore
@@ -362,5 +374,256 @@ def controlVectors : List (String × String × Bool) := [
   ("merge", "call", true),
   ("merge", "branch", true)
 ]
+
+/-! ## Siblings with calls: composition with CG05's footprints (rule 11m)
+
+Card CG06-VALUE-CONNECTIVE-RESIDUALS (sibling-effect part). The events are
+`QCore.NestedCallEffects.Ev`s carrying the footprints the Rust reading gives
+them; the order check is `QCore.NestedCallEffects.check`, unchanged. -/
+
+/-- `admit_composed`: `admit`, where its two order refusals are asked of the
+composition (`c`: `none` when none is asked); an omitted-middle operand with
+an effect is never composed. -/
+def admitComposed (s d i : Bool) (m : Option Bool) (c : Option Bool) : Bool :=
+  admit s d i m || (m != some false && c == some true)
+
+/-- `composedVectors` = `COMPOSED_VECTORS`. -/
+def composedVectors : List (Bool × Bool × Bool × Option Bool × Option Bool × Bool) := [
+  (true, true, true, none, some false, true),
+  (false, true, true, none, none, false),
+  (false, true, true, none, some true, true),
+  (false, true, true, none, some false, false),
+  (true, false, false, none, some true, true),
+  (true, false, false, none, some false, false),
+  (false, false, false, none, some true, true),
+  (true, true, true, some false, some true, false),
+  (false, true, true, some false, some true, false),
+  (false, true, true, some true, some true, true)
+]
+
+theorem composed_vectors_hold :
+    composedVectors.all (fun v =>
+      admitComposed v.1 v.2.1 v.2.2.1 v.2.2.2.1 v.2.2.2.2.1 == v.2.2.2.2.2) = true := by
+  decide
+
+/-- The composition only adds admissions: rule 10z's admissions stand. -/
+theorem composition_extends_admit (s d i : Bool) (m c : Option Bool) (h : admit s d i m = true) :
+    admitComposed s d i m c = true := by
+  simp [admitComposed, h]
+
+/-- With no composition asked, the decision is rule 10z's. -/
+theorem uncomposed_is_admit (s d i : Bool) (m : Option Bool) :
+    admitComposed s d i m none = admit s d i m := by
+  simp [admitComposed]
+
+/-- An omitted-middle operand with an effect is refused whatever the
+composition says (C evaluates it once; the lowering re-reads it). -/
+theorem composition_never_rereads (s d i : Bool) (c : Option Bool) :
+    admitComposed s d i (some false) c = false := by
+  simp [admitComposed, admit]
+
+/-- A control event (`Branch`, `Merge`): an empty footprint and no effect. -/
+def ctlEv {L V : Type} : NestedCallEffects.Ev L V := ⟨⟨[], []⟩, id⟩
+
+theorem ctl_respects {L V : Type} (ρ : NestedCallEffects.Den L) :
+    NestedCallEffects.Respects (V := V) ρ ⟨[], []⟩ id :=
+  { frame := fun _ _ _ => rfl
+    local_ := by
+      rintro s t - l ⟨c, hc, -⟩
+      cases hc }
+
+/-- One arm's graph: the region's events in the order C sequences them (the
+deciding operand, `Branch`, the arm, `Merge`), unsequenced with the siblings'
+tree. -/
+def armTree {L V : Type} (d a : List (NestedCallEffects.Ev L V))
+    (sibs : NestedCallEffects.Tm (NestedCallEffects.Ev L V)) :
+    NestedCallEffects.Tm (NestedCallEffects.Ev L V) :=
+  .pair (.leaf (d ++ [ctlEv] ++ a ++ [ctlEv])) sibs
+
+/-- **An admitted arm runs alike.** If the footprint check admits an arm's
+graph, every order C permits on that arm reaches the state of the order that
+runs the region first (the deciding operand before every sibling), which is
+the lowering's. -/
+theorem composed_arm_runs_alike {L V : Type} (u : Nat → Bool) (ρ : NestedCallEffects.Den L)
+    (hρ : NestedCallEffects.Sound u ρ) (d a : List (NestedCallEffects.Ev L V))
+    (sibs : NestedCallEffects.Tm (NestedCallEffects.Ev L V))
+    (hr : ∀ x ∈ NestedCallEffects.post (armTree d a sibs), NestedCallEffects.Respects ρ x.fp x.eff)
+    (hc : NestedCallEffects.check u (armTree d a sibs) = true)
+    (o : List ((L → V) → (L → V)))
+    (ho : NestedCallEffects.Permitted ((armTree d a sibs).map NestedCallEffects.Ev.eff) o)
+    (s : L → V) :
+    NestedCallEffects.run o s =
+      NestedCallEffects.run ((d ++ [ctlEv] ++ a ++ [ctlEv] ++
+        NestedCallEffects.post sibs).map NestedCallEffects.Ev.eff) s :=
+  NestedCallEffects.every_interleaving_runs_alike u ρ hρ _ hr hc o ho s
+
+/-- **On each arm.** Both arms' graphs admitted: each runs alike. The two
+arms are never in one graph (they never both occur). -/
+theorem composed_region_runs_alike_on_each_arm {L V : Type} (u : Nat → Bool)
+    (ρ : NestedCallEffects.Den L) (hρ : NestedCallEffects.Sound u ρ)
+    (d a₀ a₁ : List (NestedCallEffects.Ev L V))
+    (sibs : NestedCallEffects.Tm (NestedCallEffects.Ev L V))
+    (hr₀ : ∀ x ∈ NestedCallEffects.post (armTree d a₀ sibs),
+      NestedCallEffects.Respects ρ x.fp x.eff)
+    (hr₁ : ∀ x ∈ NestedCallEffects.post (armTree d a₁ sibs),
+      NestedCallEffects.Respects ρ x.fp x.eff)
+    (hc₀ : NestedCallEffects.check u (armTree d a₀ sibs) = true)
+    (hc₁ : NestedCallEffects.check u (armTree d a₁ sibs) = true) (s : L → V) :
+    (∀ o, NestedCallEffects.Permitted ((armTree d a₀ sibs).map NestedCallEffects.Ev.eff) o →
+      NestedCallEffects.run o s = NestedCallEffects.run
+        ((d ++ [ctlEv] ++ a₀ ++ [ctlEv] ++ NestedCallEffects.post sibs).map
+          NestedCallEffects.Ev.eff) s) ∧
+    (∀ o, NestedCallEffects.Permitted ((armTree d a₁ sibs).map NestedCallEffects.Ev.eff) o →
+      NestedCallEffects.run o s = NestedCallEffects.run
+        ((d ++ [ctlEv] ++ a₁ ++ [ctlEv] ++ NestedCallEffects.post sibs).map
+          NestedCallEffects.Ev.eff) s) :=
+  ⟨fun o ho => composed_arm_runs_alike u ρ hρ d a₀ sibs hr₀ hc₀ o ho s,
+    fun o ho => composed_arm_runs_alike u ρ hρ d a₁ sibs hr₁ hc₁ o ho s⟩
+
+/-- A value the deciding operand computes through footprint `D`: it depends
+only on the locations `D` touches. -/
+def ReadsWithin {L V : Type} (ρ : NestedCallEffects.Den L) (D : NestedCallEffects.Footprint)
+    (v : (L → V) → Int) : Prop :=
+  ∀ s t, (∀ l, NestedCallEffects.inCells ρ (NestedCallEffects.touches D) l → s l = t l) →
+    v s = v t
+
+/-- **The deciding operand reads one value.** Whichever sibling events C runs
+before the deciding operand, each commuting with it by footprints, the value
+it decides on is the one the lowering reads first: C takes the lowering's
+edge. -/
+theorem decision_value_stable {L V : Type} (u : Nat → Bool) (ρ : NestedCallEffects.Den L)
+    (hρ : NestedCallEffects.Sound u ρ) (D : NestedCallEffects.Footprint) (v : (L → V) → Int)
+    (hv : ReadsWithin ρ D v) (ys : List (NestedCallEffects.Ev L V))
+    (hr : ∀ y ∈ ys, NestedCallEffects.Respects ρ y.fp y.eff)
+    (hc : ∀ y ∈ ys, NestedCallEffects.fpCommute u D y.fp = true) (s : L → V) :
+    v (NestedCallEffects.run (ys.map NestedCallEffects.Ev.eff) s) = v s := by
+  induction ys generalizing s with
+  | nil => rfl
+  | cons y ys ih =>
+    show v (NestedCallEffects.run (ys.map NestedCallEffects.Ev.eff) (y.eff s)) = v s
+    rw [ih (fun y' h => hr y' (List.mem_cons_of_mem _ h))
+      (fun y' h => hc y' (List.mem_cons_of_mem _ h))]
+    have hyc := hc y (List.mem_cons_self ..)
+    have hclash : NestedCallEffects.clash u y.fp D = false := by
+      unfold NestedCallEffects.fpCommute at hyc
+      cases h : NestedCallEffects.clash u y.fp D <;> simp_all
+    have hdis := NestedCallEffects.disjoint_of_no_clash hρ hclash
+    exact hv _ _ fun l hl =>
+      (hr y (List.mem_cons_self ..)).frame s l fun hw => hdis l hw hl
+
+/-- **An overlapping sibling is refused.** A region event (deciding operand
+or arm) and a sibling event whose footprints do not commute refuse the arm. -/
+theorem an_overlapping_sibling_is_refused {L V : Type} (u : Nat → Bool)
+    (d a : List (NestedCallEffects.Ev L V))
+    (sibs : NestedCallEffects.Tm (NestedCallEffects.Ev L V)) (x y : NestedCallEffects.Ev L V)
+    (hx : x ∈ d ++ a) (hy : y ∈ NestedCallEffects.post sibs)
+    (h : NestedCallEffects.fpCommute u x.fp y.fp = false) :
+    NestedCallEffects.check u (armTree d a sibs) = false := by
+  apply NestedCallEffects.a_non_commuting_pair_is_refused u _ _ x y _ hy h
+  show x ∈ d ++ [ctlEv] ++ a ++ [ctlEv]
+  rcases List.mem_append.mp hx with hx | hx <;> simp [hx]
+
+/-- The brief's controls, by their footprints: the deciding read of `p`
+(its storage `d` and identity `p`) beside a release of `p` is refused ... -/
+theorem the_released_identity_is_refused (u : Nat → Bool) (d p : Nat) :
+    NestedCallEffects.fpCommute u ⟨[.object d, .identity p], []⟩ ⟨[], [.identity p]⟩ = false :=
+  NestedCallEffects.a_read_unordered_with_its_release_is_refused u d p
+
+/-- ... and beside a release of another name too: two identities are never
+proved distinct. -/
+theorem another_name_is_refused (u : Nat → Bool) (d p q : Nat) :
+    NestedCallEffects.fpCommute u ⟨[.object d, .identity p], []⟩ ⟨[], [.identity q]⟩ = false := by
+  simp [NestedCallEffects.fpCommute, NestedCallEffects.clash, NestedCallEffects.touches,
+    NestedCallEffects.overlap]
+
+/-- A release of a fresh identity (`r_release_code(r_wrap(p))`: `r_wrap`
+borrows `p` and yields fresh `k`, released) commutes with the deciding read
+of `p` and with an arm that borrows `p`. -/
+theorem a_fresh_release_commutes (u : Nat → Bool) (d p k : Nat) :
+    NestedCallEffects.fpCommute u ⟨[.object d, .identity p], []⟩ ⟨[.identity p], [.fresh k]⟩ =
+        true ∧
+      NestedCallEffects.fpCommute u ⟨[.object d, .identity p], []⟩ ⟨[], [.fresh k]⟩ = true ∧
+      NestedCallEffects.fpCommute u ⟨[.identity p], []⟩ ⟨[.identity p], [.fresh k]⟩ = true ∧
+      NestedCallEffects.fpCommute u ⟨[.identity p], []⟩ ⟨[], [.fresh k]⟩ = true := by
+  simp [NestedCallEffects.fpCommute, NestedCallEffects.clash, NestedCallEffects.touches,
+    NestedCallEffects.overlap]
+
+/-- A sibling as the composition reads it: its events with their footprints,
+or no reading: an uncontracted call has no footprint, and an effect that is
+not a call is invisible to the footprints. -/
+inductive Sibling (L V : Type) where
+  | read (t : NestedCallEffects.Tm (NestedCallEffects.Ev L V))
+  | uncontracted
+  | nonCall
+
+/-- The siblings' tree, every two siblings unsequenced; `none` when one is
+not read. -/
+def siblingTree {L V : Type} :
+    List (Sibling L V) → Option (NestedCallEffects.Tm (NestedCallEffects.Ev L V))
+  | [] => some (.leaf [])
+  | .read t :: rest => (siblingTree rest).map (.pair t)
+  | .uncontracted :: _ => none
+  | .nonCall :: _ => none
+
+/-- `compose`: every sibling read, and both arms' graphs admitted. -/
+def compose {L V : Type} (u : Nat → Bool) (d a₀ a₁ : List (NestedCallEffects.Ev L V))
+    (sibs : List (Sibling L V)) : Bool :=
+  match siblingTree sibs with
+  | none => false
+  | some t =>
+    NestedCallEffects.check u (armTree d a₀ t) && NestedCallEffects.check u (armTree d a₁ t)
+
+theorem unread_sibling_tree {L V : Type} (sibs : List (Sibling L V))
+    (h : Sibling.uncontracted ∈ sibs ∨ Sibling.nonCall ∈ sibs) : siblingTree sibs = none := by
+  induction sibs with
+  | nil => simp at h
+  | cons x rest ih =>
+    cases x with
+    | read t =>
+      have h' : Sibling.uncontracted ∈ rest ∨ Sibling.nonCall ∈ rest := by
+        rcases h with h | h <;> simp at h <;> simp [h]
+      simp [siblingTree, ih h']
+    | uncontracted => rfl
+    | nonCall => rfl
+
+/-- **An uncontracted sibling is refused.** -/
+theorem an_uncontracted_sibling_is_refused {L V : Type} (u : Nat → Bool)
+    (d a₀ a₁ : List (NestedCallEffects.Ev L V)) (sibs : List (Sibling L V))
+    (h : Sibling.uncontracted ∈ sibs) : compose u d a₀ a₁ sibs = false := by
+  simp [compose, unread_sibling_tree sibs (Or.inl h)]
+
+/-- A sibling whose effect is not a call is refused. -/
+theorem a_non_call_sibling_is_refused {L V : Type} (u : Nat → Bool)
+    (d a₀ a₁ : List (NestedCallEffects.Ev L V)) (sibs : List (Sibling L V))
+    (h : Sibling.nonCall ∈ sibs) : compose u d a₀ a₁ sibs = false := by
+  simp [compose, unread_sibling_tree sibs (Or.inr h)]
+
+/-- An admitted composition: every sibling read, and each arm's graph
+admitted (so `composed_region_runs_alike_on_each_arm` applies). -/
+theorem compose_admits {L V : Type} (u : Nat → Bool) (d a₀ a₁ : List (NestedCallEffects.Ev L V))
+    (sibs : List (Sibling L V)) (h : compose u d a₀ a₁ sibs = true) :
+    ∃ t, siblingTree sibs = some t ∧ NestedCallEffects.check u (armTree d a₀ t) = true ∧
+      NestedCallEffects.check u (armTree d a₁ t) = true := by
+  unfold compose at h
+  split at h
+  · cases h
+  · rename_i t ht
+    simp only [Bool.and_eq_true] at h
+    exact ⟨t, ht, h.1, h.2⟩
+
+/-- `footprintVectors` = `FOOTPRINT_VECTORS` (`connective_footprints.rs`): the
+region of `subject`'s last statement composed over the fixture contracts. -/
+def footprintVectors : List (String × Bool) := [
+  ("cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, r_release_code(r_wrap(p)));", true),
+  ("cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, r_release_code(p));", false),
+  ("void *q = q_alloc(); cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, r_release_code(q));", false),
+  ("cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, r_borrow_code(p));", true),
+  ("cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, opaque());", false),
+  ("int n = 0; cg_log(\"%d %d\", p ? 1 : 0, n++);", false),
+  ("cg_log(\"%d %d\", p ? r_release_code(p) : 0, r_borrow_code(p));", false),
+  ("int n = 0; cg_log(\"%d %d\", n ? 1 : 0, cg_count(&n));", false)
+]
+
+theorem footprint_vectors_count : footprintVectors.length = 8 := by decide
 
 end QCore.ValueConnectives
