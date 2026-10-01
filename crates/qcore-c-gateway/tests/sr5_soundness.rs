@@ -8,6 +8,9 @@
 //! `Safe` for a synthetic declared projection under the premises the report
 //! names, and every `Unsafe` is provisional, never a claim about a library.
 
+#[path = "support/host_abi.rs"]
+mod host_abi;
+
 use std::collections::BTreeMap;
 
 use qcore_c_gateway::legacy_c::counted_users::ClauseVerdict;
@@ -389,12 +392,15 @@ extern fn p_list_add(entry: ptr<mut, u8>, head: ptr<mut, u8>) -> unit
 contract { requires resource_contract_v1; ensures normal resource_borrowed(entry); ensures normal resource_borrowed(head); ensures normal resource_published(entry, head); ensures normal resource_return_none(); };
 "#;
 
-const LIST_PRELUDE: &str = "typedef __SIZE_TYPE__ size_t;\n\
+const LIST_PRELUDE: &str = concat!(
+    host_abi::size_t_declaration!(),
+    "\n\
      struct p_list { struct p_list *prev, *next; };\n\
      struct p_queue { struct p_list pending; };\n\
      struct p_node { int value; struct p_list _head; };\n\
      void *p_malloc(size_t size); void p_free(void *p);\n\
-     void p_list_add(struct p_list *entry, struct p_list *head);\n";
+     void p_list_add(struct p_list *entry, struct p_list *head);\n"
+);
 
 fn publish(body: &str) -> LegacyProgramSummary {
     let contracts = load_resource_contract_sources(&BTreeMap::from([(

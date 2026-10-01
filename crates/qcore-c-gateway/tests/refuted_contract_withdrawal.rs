@@ -21,6 +21,9 @@
 //! `Safe` here is `Safe` for a synthetic declared projection under the
 //! premises the report names, never a statement about Fluent Bit.
 
+#[path = "support/host_abi.rs"]
+mod host_abi;
+
 use std::collections::BTreeMap;
 
 use qcore_c_gateway::legacy_c::{
@@ -116,8 +119,10 @@ contract {
 };
 "#;
 
-const PRELUDE: &str = r#"
-typedef __SIZE_TYPE__ size_t;
+const PRELUDE: &str = concat!(
+    host_abi::size_t_declaration!(),
+    r#"
+
 struct w_task { int refs; };
 struct w_obj { int value; };
 void *w_malloc(size_t size);
@@ -130,7 +135,8 @@ int w_bad(struct w_task *t, int fail);
 void w_keep(struct w_obj *p);
 int w_peek(struct w_obj *p);
 void w_rel(struct w_obj *p);
-"#;
+"#
+);
 
 /// The defining unit: every declared body.
 const BODIES: &str = r#"

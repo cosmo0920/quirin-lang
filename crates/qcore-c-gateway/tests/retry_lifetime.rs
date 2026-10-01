@@ -22,6 +22,9 @@
 //! `Safe` here is `Safe` for a synthetic declared projection under the premises
 //! the report names, never a statement about Fluent Bit.
 
+#[path = "support/host_abi.rs"]
+mod host_abi;
+
 use std::collections::BTreeMap;
 
 use qcore_c_gateway::legacy_c::{
@@ -181,8 +184,10 @@ contract {
 };
 "#;
 
-const PRELUDE: &str = r#"
-typedef __SIZE_TYPE__ size_t;
+const PRELUDE: &str = concat!(
+    host_abi::size_t_declaration!(),
+    r#"
+
 struct p_list { struct p_list *prev, *next; };
 struct p_queue { struct p_list pending; };
 struct p_node { int value; struct p_list _head; };
@@ -201,7 +206,8 @@ int u_flush(struct u_task *t);
 void u_log(int n);
 int u_unknown(void);
 int e_status(struct p_node *node);
-"#;
+"#
+);
 
 fn contracts() -> ResourceContracts {
     load_resource_contract_sources(&BTreeMap::from([(

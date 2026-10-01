@@ -737,7 +737,11 @@ fn a_c_result_with_no_declared_outcome_is_not_rendered() {
 #[test]
 fn a_call_still_needs_std_extern_and_a_line_its_effect() {
     let path = examples().join("header_sum.qr");
-    let source = std::fs::read_to_string(&path).unwrap();
+    let source = std::fs::read_to_string(&path)
+        .unwrap()
+        .replace("\r\n", "\n");
+    assert!(source.contains("#import std.extern;\n"));
+    assert!(source.contains("effects { io }"));
     refused_with(
         compile_at(
             &path,

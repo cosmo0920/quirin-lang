@@ -76,7 +76,7 @@ fn lean_shapes() -> Vec<(String, String)> {
             let quoted = line.split('"').skip(1).step_by(2).collect::<Vec<_>>();
             let class = line
                 .rsplit_once(", .")
-                .map(|(_, class)| class.trim_end_matches([')', ',']).to_owned())
+                .map(|(_, class)| class.trim_end().trim_end_matches([')', ',']).to_owned())
                 .expect("a verdict");
             (quoted[0].to_owned(), class)
         })

@@ -1209,7 +1209,14 @@ fn an_msvc_static_library_links_through_its_generated_manifest() {
 fn one_ntdll_function_links_through_the_sdk_import_library() {
     use qcore_c_gateway::linkage::{artifact, coff, resolve};
     use windows::*;
-    let import_library = sdk_library("ntdll.lib");
+    let scratch = Scratch::new("ntdll");
+    let sdk_import_library = sdk_library("ntdll.lib");
+    // A manifest token cannot carry the spaces in the SDK installation path.
+    // Pin and link an exact copy of that SDK artifact in the fixture directory.
+    let import_library = scratch.path().join("ntdll.lib");
+    let sdk_bytes = std::fs::read(&sdk_import_library).unwrap();
+    std::fs::write(&import_library, &sdk_bytes).unwrap();
+    assert_eq!(std::fs::read(&import_library).unwrap(), sdk_bytes);
     let runtime = system32().join("ntdll.dll");
     let facts = artifact::TargetFacts::from_triple("x86_64-pc-windows-msvc").unwrap();
     let loader = |reference: &str| std::fs::read(reference).map_err(|e| e.to_string());
@@ -1269,7 +1276,6 @@ fn one_ntdll_function_links_through_the_sdk_import_library() {
             .to_string(),
         generated.text.clone(),
     )]);
-    let scratch = Scratch::new("ntdll");
     let source = program(
         Some("ntdll"),
         "",
