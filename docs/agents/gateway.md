@@ -3584,6 +3584,69 @@ own anchor here.
     `conversionVectors` (and to Clang by `clang_records_the_lean_usual_conversions`);
     [report](../reports/cg20-numeric-domain/README.md).
 
+<a id="constraint-11r"></a>
+
+11r. **A return-code disposition is applied only where the caller decides the
+    returned value's class; an untested call keeps the join, which refuses;
+    a body-derived disposition is one class per returned literal, each
+    validated by the ordinary route; a declaration its body contradicts is
+    withdrawn.** Card CG23-RELATIONAL-POSTCONDITIONS (vocabulary
+    `crates/qcore-schemas/src/relational_post.rs` (`RelationOp`,
+    `ReturnRelation::meets`, `ExitClass`, `RelationalContract::{select, join,
+    disjoint, total}`; `ResourceContracts::{relational, relational_contract,
+    insert_relational, withdraw_relational}`, additive, skipped when empty),
+    the loader clause `crates/qcore-contract/src/contract_relational.rs`
+    (contract spec §C04.13, grammar G05), the pure decisions
+    `crates/qcore-c-gateway/src/relational_post.rs` (`read_test`,
+    `class_name`, `integer_constant`), the route-G adapter
+    `legacy_relational_post.rs`, the summary route
+    `legacy_relational_summary.rs`, thin hooks in `legacy_c.rs`
+    (`build_function_cfg_with`, the `if` arm, the uncontracted fallback),
+    `legacy_summary.rs` (`derive_custody_summaries`) and
+    `legacy_reserved_spelling.rs` (the class prefix)). It amends rule 10x's
+    "an out-parameter acquisition gets no split" for callees with a
+    disposition; every other premise of 10x and 5h stands.
+    (1) **Never in the function map.** A disposition lives in
+    `ResourceContracts::relational`, so every route that knows nothing of it
+    sees an uncontracted callee. `build_function_cfg_with` hands the parser an
+    environment with each class installed under a minted, reserved name
+    (`qcore_relational_class__K__f`), only when the stream names a callee
+    with a disposition. (2) **The decided test.** Only an `if` condition that
+    is exactly one call tested against a plain decimal constant (`f(…)`,
+    `!f(…)`, `f(…) OP K`, `K OP f(…)`, the call optionally `(NAME =
+    f(…))`) is read (`read_test`); each edge takes the one disposition every
+    class it can reach agrees on (`select`, reachability decided exactly on
+    the constants' breakpoints), and the plan is a branch that decides
+    nothing, then on each edge the call classified once under that edge's
+    class. A test whose edge reaches disagreeing classes or none, or whose
+    class call the classifier refuses, is the plan of its named refusal.
+    `NAME = f(…);` followed immediately by such an `if` testing `NAME` is
+    rewritten to the same C with the assignment in the condition (statement
+    boundary `;`, `{`, `}` before `NAME`). An out slot a class leaves
+    unwritten (`resource_borrowed` beside `resource_out` in another class)
+    is passed as data on that class, `&NAME` only, and `NAME` then holds an
+    untracked value (`OpaqueValue`). (3) **Untested.** Every other call of a
+    callee with a disposition refuses with `relational-untested` (the join of
+    disagreeing classes; the loader rejects a declaration whose classes all
+    agree, and the summary route publishes none). (4) **Exit-specific
+    summaries.** After every ordinary route published nothing for an
+    undeclared `int NAME(…)` whose every `return` returns a plain integer
+    literal (two values at least), the body is re-read per value `v` with
+    every other `return` replaced by `for (;;);`, and the ordinary inference
+    and validation run unchanged; the class `eq v` takes the validated
+    contract (an exit falling off the end belongs to every class). (5)
+    **Body check.** A declared disposition whose function the unit defines is
+    compared with the body's ordinary or exit-specific summary; a
+    contradiction withdraws it (`relational-withdrawn` at every call site);
+    no summary leaves it a declared assumption (rule 8). **Do not** put a
+    disposition in the function map, apply a class on a call whose value is
+    not decided by its own test, prune an edge a selection calls
+    infeasible, or treat `resource_borrowed` on an out slot as unwritten
+    outside a disposition. Premises stated, not proved: faithful Clang
+    extraction (trust boundary 28), the declared dispositions (constraint 4),
+    and that replacing a `return` by divergence leaves every state on every
+    other path as it was (the CFG's own construction).
+
 <a id="constraint-11s"></a>
 
 11s. **Bounds is a separately selected property: every access is

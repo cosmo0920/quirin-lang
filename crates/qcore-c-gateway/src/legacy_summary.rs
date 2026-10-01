@@ -346,7 +346,7 @@ pub(crate) fn derive_custody_summaries(
         // recursive call site reads, so an inferred record for any member of it
         // repeats that declaration instead of corroborating it. Record the
         // dependence; the declaration keeps governing call sites either way.
-        if recursive && component.iter().any(|n| declared(n)) {
+        if recursive && component.iter().any(&declared) {
             derivation.self_dependent.extend(component.iter().cloned());
         }
         // Census only (C03-REACH): how this recursive component was disposed
@@ -435,7 +435,7 @@ pub(crate) fn derive_custody_summaries(
         }
         if recursive {
             let outcome = outcome.unwrap_or_else(|| {
-                if component.iter().any(|n| declared(n)) {
+                if component.iter().any(&declared) {
                     NeutralComponentOutcome::DeclaredContract
                 } else {
                     NeutralComponentOutcome::PublishedByOrdinaryInference
