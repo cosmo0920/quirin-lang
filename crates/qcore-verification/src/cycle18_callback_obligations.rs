@@ -269,47 +269,13 @@ fn strip(value: &SourceValue) -> &SourceExpression {
     current
 }
 
-fn integer_literal(text: &str) -> Option<i128> {
-    let trimmed = text.trim_end_matches(['u', 'U', 'l', 'L']);
-    let (negative, digits) = match trimmed.strip_prefix('-') {
-        Some(rest) => (true, rest),
-        None => (false, trimmed),
-    };
-    let value = if let Some(hex) = digits
-        .strip_prefix("0x")
-        .or_else(|| digits.strip_prefix("0X"))
-    {
-        i128::from_str_radix(hex, 16).ok()?
-    } else {
-        digits.parse::<i128>().ok()?
-    };
-    Some(if negative { -value } else { value })
-}
-
 /// Evaluate a closed integer expression built from literals, `|`, `&`, `+`
-/// and unary minus. Anything else, including a symbol or parameter, is None.
+/// and unary minus, at each node's C type, to the value it has on every
+/// target (card CG20-NUMERIC-DOMAIN, absorbed `CG01-CYCLE18-EVALUATOR-WIDTH`).
+/// Anything else, including a symbol or parameter, a value outside its
+/// type's portable range, an inexact conversion or an unsigned wrap, is None.
 fn evaluate_integer(value: &SourceValue) -> Option<i128> {
-    match strip(value) {
-        SourceExpression::Integer { value } => integer_literal(value),
-        SourceExpression::Unary { operator, value } if operator == "-" => {
-            evaluate_integer(value).map(|value| -value)
-        }
-        SourceExpression::Binary {
-            operator,
-            left,
-            right,
-        } => {
-            let left = evaluate_integer(left)?;
-            let right = evaluate_integer(right)?;
-            match operator.as_str() {
-                "|" => Some(left | right),
-                "&" => Some(left & right),
-                "+" => left.checked_add(right),
-                _ => None,
-            }
-        }
-        _ => None,
-    }
+    qcore_c_gateway::c_numeric::portable_constant(value)
 }
 
 fn expression_mentions(

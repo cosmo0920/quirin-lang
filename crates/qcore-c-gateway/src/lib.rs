@@ -21,6 +21,10 @@ pub mod boolean_source;
 mod borrow_liveness;
 mod borrowed_actual;
 pub mod call_use_source;
+// Card CG20-NUMERIC-DOMAIN (rule 11q): the C integer domain per target
+// identity, and the integer arithmetic property beside custody.
+pub mod c_numeric;
+pub mod c_numeric_obligations;
 mod clang;
 pub mod cleanup_replay_source;
 pub mod composition_source;

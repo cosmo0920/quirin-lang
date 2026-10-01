@@ -181,11 +181,18 @@
 //! conventions and a repeated annotation remain unreadable. `__int64` with
 //! at most one `signed` or `unsigned` is the explicit 64-bit integer reading.
 //! It shares `long long`'s projection, including the existing 64-bit-pointer
-//! premise for `isize` / `usize`. Ordinary `long` retains its LP64 premise;
-//! a newly readable cdecl position involving it instead refuses, including
-//! typedef chains, because its target width is not established by this reader.
-//! this is not a general LLP64 target model. `QCore.MsvcAbiReader` models both
-//! steps; faithful extraction and correspondence remain boundary-28 premises.
+//! premise for `isize` / `usize`. A newly readable cdecl position involving
+//! ordinary `long` refuses, including typedef chains. `QCore.MsvcAbiReader`
+//! models both steps; faithful extraction and correspondence remain
+//! boundary-28 premises.
+//!
+//! Card CG20-NUMERIC-DOMAIN (rule 11q) removes the reader's LP64 premise for
+//! ordinary `long` everywhere else: [`project_arithmetic`] reads one `long`
+//! word as the 64-bit projection only when the analysing Clang's default
+//! target reports a 64-bit `long` and pointer
+//! ([`crate::c_numeric::plain_long_is_lp64`]); under any other target, or if
+//! the query fails, the declaration is unreadable. A per-unit `-arch` flag is
+//! not seen by this process-wide query (`CG20-ABI-READER-ARCH-FLAG`).
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -1530,6 +1537,11 @@ fn project_arithmetic(core: &[&str], result: bool) -> Option<BTreeSet<&'static s
             }
         }
         (0, 0, 0, 0, 0, 1, 0, 0 | 1) => integer(&["i16"], &["u16"]),
+        // Card CG20-NUMERIC-DOMAIN (rule 11q): plain `long` is read as the
+        // 64-bit, pointer-width projection only when the analysing Clang's
+        // target is LP64; under LLP64 (`x86_64-pc-windows-msvc`), ILP32 or a
+        // failed query it is unreadable, never the LP64 reading.
+        (0, 0, 0, 0, 0, 0, 1, 0 | 1) if !crate::c_numeric::plain_long_is_lp64() => None,
         (0, 0, 0, 0, 0, 0, 1 | 2, 0 | 1) => integer(&["i64", "isize"], &["u64", "usize"]),
         (0, 0, 0, 0, 0, 0, 0, 1) => integer(&["i32"], &["u32"]),
         (0, 0, 0, 0, 0, 0, 0, 0) if signed + unsigned == 1 => integer(&["i32"], &["u32"]),
