@@ -3419,6 +3419,77 @@ own anchor here.
     `QCore.NestedCallEffects.footprint_commute_sound` carries the pair to
     the state; [report](../reports/cg05-elaborator-call-footprints/README.md).
 
+<a id="constraint-11q"></a>
+
+11q. **C integer semantics are the target's as Clang reports them, the core's
+    checked table is reached only through an explicit C interpretation, and
+    integer arithmetic is a separate property whose obligations are never
+    discharged by assumption.** Card CG20-NUMERIC-DOMAIN
+    (`crates/qcore-c-gateway/src/c_numeric.rs`,
+    `crates/qcore-c-gateway/src/c_numeric_obligations.rs`; thin hooks in
+    `legacy_declared_abi.rs` (`project_arithmetic`) and
+    `qcore-verification`'s `cycle18_callback_obligations::evaluate_integer`).
+    (1) **Target identity.** Every integer width is read from the analysing
+    Clang for the unit's flags (and a declared `--target`, for this property
+    only; the custody gateway transports none, CG30): `__CHAR_BIT__`,
+    `__SIZEOF_{SHORT,INT,LONG,LONG_LONG,POINTER}__`, `__CHAR_UNSIGNED__`,
+    the `__*_MANT_DIG__` precisions, cross-checked against the `*_MAX__`
+    values (`TargetIntegerModel::from_macros`; a missing or inconsistent macro
+    refuses). No width comes from a table or from the host. (2)
+    **Conversions are Clang's.** A consumer reads the promotions and usual
+    conversions Clang recorded (`ImplicitCastExpr`, each operator's type,
+    `computeLHSType`/`computeResultType`) and refuses an operator whose
+    operand types differ from its computation type; `promote` and
+    `usual_arithmetic` state C17 6.3.1.1/6.3.1.8 only to bind Clang's records
+    to the Lean vectors under LP64 and LLP64. (3) **The C interpretation.**
+    `c_numeric::binary`/`convert` map a C type to its fixed-width core type
+    and use `scalar_types::checked`/`convert` where they answer; the rest is
+    decided by C: unsigned `+ - *` and conversions to unsigned wrap
+    (defined), signed overflow, `/ %` by zero, `MIN / -1` and `MIN % -1`,
+    a shift count outside `[0, width)` and a left shift of a negative value
+    are undefined, and a right shift of a negative value, a conversion to a
+    signed type that cannot represent the value, an inexact
+    integer-to-floating conversion and pointer/integer conversions are
+    implementation-defined. Implementation-defined cases are obligations:
+    no implementation premise is declared. (4) **The property.**
+    `analyze_numeric_obligations` walks every function body of the unit and
+    gives each integer operation, increment, compound assignment, recorded
+    conversion and bit-field store its fault cases as obligations over
+    intervals (a literal, a Clang `ConstantExpr` value or a Clang-evaluated
+    enumerator is a point; anything read is its type's full range; no flow,
+    path or loop fact). `Safe` only when every obligation is `Discharged` and
+    nothing is refused; a `Violated` obligation (constant operands) is a
+    definite fault *if reached* and makes the function `Unknown`, never
+    `Unsafe`, since reachability is not decided. Floating arithmetic is
+    refused by name (N09/N10); pointer arithmetic is the bounds property's
+    (CG16) and is counted, not discharged. The verdict is published beside
+    custody and never enters the custody denominator; a custody verdict
+    reads none of it. (5) **Width-independent constants.** The cycle-18
+    evaluator accepts a value only inside its type's portable range (C17
+    5.2.4.2.1's minimums; plain `char` refused), with exact casts, so its
+    value is the same under every data model (`portable_constant`). (6)
+    **Plain `long` in the lexical ABI reader.** One `long` word is read as the
+    64-bit, pointer-width projection only when the analysing Clang's default
+    target reports a 64-bit `long` and pointer (`plain_long_is_lp64`); under
+    LLP64, ILP32 or a failed query the declaration is unreadable. This
+    removes the reader's LP64 premise for plain `long` that the MSVC ABI
+    reader's report recorded; `long long` and `__int64` keep their reading.
+    A per-unit `-arch` flag is not seen by this process-wide query
+    (`CG20-ABI-READER-ARCH-FLAG`). **Do not** read a width from a table, the
+    host or a data-model name; re-derive a conversion Clang recorded; call
+    the core's checked result C's; discharge an implementation-defined case
+    by the implementation's documented choice; publish a `Violated`
+    obligation as `Unsafe`; or let a custody verdict depend on this property.
+    Premises stated, not proved: Clang's predefined macros are its target
+    widths and its JSON AST is read faithfully (trust boundary 28); two's
+    complement representation (C23; every Clang target). Measured: MEASURED.
+    `QCore.CNumeric` (37 audited theorems: `long_plus_uint_lp64`,
+    `long_plus_uint_llp64`, `kernel_ok_iff_unreached`,
+    `unsigned_arithmetic_defined`, `wrap_in_range`, the `*_discharge_sound`
+    family, `portable_in_every_model`, …), bound to `c_numeric` by
+    `promotionVectors`, `usualVectors`, `kernelVectors` and
+    `conversionVectors` (and to Clang by `clang_records_the_lean_usual_conversions`);
+    [report](../reports/cg20-numeric-domain/README.md).
 <a id="constraint-11u"></a>
 
 11u. **A layout fact is Clang's: a VLA is admitted only with every use inside

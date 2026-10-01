@@ -466,6 +466,17 @@ CG22.
   - *Precision.* Switch-value case pruning and branch correlation are
     precision work.
   - *Absorbs:* W45-FB-SCHED-RANDOM-RANGE.
+  - *Status (wave 48, round 9).* Landed (gateway rule 11q) as a new property
+    beside custody, *C integer arithmetic*: widths from the analysing Clang's
+    target macros (LP64 and LLP64 by test), Clang's recorded conversions, the
+    core table reached only through `c_numeric`, UB and unstated
+    implementation-defined cases as interval obligations, verdict `Safe` or
+    `Unknown`. The lexical ABI reader's LP64 premise for plain `long` is
+    removed (unreadable unless Clang's target is LP64); the cycle-18
+    evaluator reads C types (`CG01-CYCLE18-EVALUATOR-WIDTH` retired). C04 and
+    C05 not done (`CG20-SWITCH-AND-CORRELATION-PRECISION`);
+    W45-FB-SCHED-RANDOM-RANGE amended, not closed. Custody figures unchanged.
+    [Report](../../reports/cg20-numeric-domain/README.md).
 - **CG21: call exits and boundaries.**
   - *Exits.* `noreturn` in every position, `setjmp`/`longjmp` non-local edges
     with invalidation, and `cleanup` attributes on every scope exit.

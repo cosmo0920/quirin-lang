@@ -121,6 +121,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg19-atomic-source-route](cg19-atomic-source-route/README.md) | CG19-ATOMIC-SOURCE-ROUTE |
 
+| [cg20-numeric-domain](cg20-numeric-domain/README.md) | CG20-NUMERIC-DOMAIN: the C integer domain per target identity |
+
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
