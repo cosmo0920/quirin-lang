@@ -520,13 +520,13 @@ fn definitions<'a>(node: &'a Value, id: &str, values: &mut Vec<&'a Value>, taken
                 values.push(right);
             }
         }
-        "UnaryOperator" if node["opcode"].as_str() == Some("&") => {
-            if children(node)
-                .first()
-                .is_some_and(|operand| refers_to(operand, id))
-            {
-                *taken = true;
-            }
+        "UnaryOperator"
+            if node["opcode"].as_str() == Some("&")
+                && children(node)
+                    .first()
+                    .is_some_and(|operand| refers_to(operand, id)) =>
+        {
+            *taken = true;
         }
         _ => {}
     }
@@ -852,7 +852,7 @@ pub(crate) fn local_definitions<'a>(
     callee: &'a Value,
     function: &'a Value,
 ) -> Option<LocalDefinitions<'a>> {
-    fn count<'a>(node: &'a Value, id: &str, references: &mut usize) {
+    fn count(node: &Value, id: &str, references: &mut usize) {
         if kind(node) == "DeclRefExpr" && node["referencedDecl"]["id"].as_str() == Some(id) {
             *references += 1;
         }

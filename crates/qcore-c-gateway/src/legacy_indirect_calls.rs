@@ -56,6 +56,9 @@ pub(crate) const ADMIT: bool = true;
 /// The prefix of the fresh choice scalars a branch rewrite declares.
 pub(crate) const CHOICE_PREFIX: &str = "qcore_indirect_choice__";
 
+/// The sites of one (line, callee tokens) group: index and resolution.
+type Group = Vec<(usize, Resolution)>;
+
 /// One edit of the stream: `[start, end)` replaced by `tokens`.
 struct Edit {
     start: usize,
@@ -106,6 +109,7 @@ fn token(text: &str, line: usize) -> Token {
 }
 
 /// The census row of one site.
+#[allow(clippy::too_many_arguments)]
 fn site_row(
     function: &str,
     line: usize,
@@ -306,7 +310,7 @@ fn function_edits(
         ),
     > = BTreeMap::new();
     // Group the sites by (line, callee tokens): each group is placed whole.
-    let mut groups: BTreeMap<(usize, Vec<String>), Vec<(usize, Resolution)>> = BTreeMap::new();
+    let mut groups: BTreeMap<(usize, Vec<String>), Group> = BTreeMap::new();
     for (index, site) in sites.iter().enumerate() {
         let Some(callee) = crate::typed_c_ast::children(site.call).first() else {
             continue;
