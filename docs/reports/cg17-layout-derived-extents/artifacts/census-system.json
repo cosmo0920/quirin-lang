@@ -1,0 +1,24 @@
+{
+ "census": {
+  "container-of / unestablished:not-a-member-address": 99,
+  "derived-address / aligned": 5,
+  "derived-address / undecided": 100,
+  "offsetof / expressions": 100
+ },
+ "functions": {
+  "container-of": 66,
+  "derived-address": 69,
+  "offsetof": 66
+ },
+ "hooks": {},
+ "vla": [],
+ "before_leaves_on_census_lines": {
+  "container-of / unsupported: braced initializer, expression, or declaration is not modeled": 2,
+  "container-of / unsupported: call to uncontracted function `__builtin_offsetof`": 6,
+  "container-of / unsupported: indirect memory access is outside the resource projection": 6,
+  "derived-address / unsupported: C operator `sizeof` requires type/operand analysis": 2,
+  "derived-address / unsupported: braced initializer, expression, or declaration is not modeled": 2,
+  "derived-address / unsupported: call to uncontracted function `__builtin_offsetof`": 6,
+  "derived-address / unsupported: indirect memory access is outside the resource projection": 6
+ }
+}

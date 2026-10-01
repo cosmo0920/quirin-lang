@@ -1,0 +1,15 @@
+{
+ "census": {
+  "container-of / unestablished:not-a-member-address": 66,
+  "derived-address / aligned": 4,
+  "derived-address / undecided": 66,
+  "offsetof / expressions": 68
+ },
+ "functions": {
+  "container-of": 52,
+  "derived-address": 55,
+  "offsetof": 52
+ },
+ "hooks": {},
+ "vla": []
+}

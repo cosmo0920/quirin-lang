@@ -3438,7 +3438,8 @@ own anchor here.
     as non-`volatile` integer parameters or automatics; a call, store or
     increment is `bound-effect`), the declared name is declared once, and
     every use of the object is an element access or a `sizeof` operand. It is
-    then lowered to no custody event and carries three numeric obligations it
+    then lowered to a `ForgetScalar` of its name (a new object each time it
+    runs; no custody event) and carries three numeric obligations it
     never discharges (`bound-defined`, `bound-positive` (C11 6.7.6.2p5),
     `size-representable`; CG20's). Any other use (a decay into an actual, a
     return, a pointer store, `&a`, `&a[i]`) may carry the address out of the
@@ -3488,8 +3489,14 @@ own anchor here.
     shapes, derived-address conversions, `offsetof` count). Premises stated,
     not proved: faithful Clang extraction of types, bounds, offsets, sizes,
     alignments, record and declaration ids and the token/AST node match
-    (trust boundary 28), and `P-CG17-POINTER-ALIGNED`. Measured: see the
-    report. `QCore.LayoutExtents` (`every_counted_element_lies_inside`,
+    (trust boundary 28), and `P-CG17-POINTER-ALIGNED`. Measured (corpus
+    `66910c10`, system, tail-pause slice, base `b6a3dc42`): **no function
+    moved and every report is byte-identical** (629 / 10 / 4,195,
+    `3d53a5d0…`); the corpus declares no VLA, its 355 `container_of` shapes
+    (189 functions) are all list lookups (`not-a-member-address`, none
+    reaching the hook), 441 derived-address conversions (232 functions) are
+    41 aligned and 400 undecided, 16 flexible accesses (12 functions) read
+    `size-not-established`. `QCore.LayoutExtents` (`every_counted_element_lies_inside`,
     `the_count_is_maximal`, `an_unestablished_size_counts_nothing`,
     `the_bound_is_read_once`, `the_address_is_dead_after_the_block`,
     `an_escaping_address_is_never_admitted`,

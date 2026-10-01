@@ -387,6 +387,20 @@ High for anything that could publish a wrong Safe, Medium for measurement.
   - *container_of.* `offsetof` values and `container_of` base/subobject
     provenance.
   - *Absorbs:* W45-FB-OR6-ELEMENT-IDENTITY.
+  - *Status (wave 48, round 10).* Landed (gateway rule 11u, `layout_extents.rs`):
+    an automatic VLA of scalar elements whose bound only reads and whose every
+    use is an element access or `sizeof` operand is no custody event (its
+    numeric obligations CG20's; an escaping address keeps the refusal);
+    flexible-array extents and alignment obligations are derived from Clang's
+    numbers (`layout_report`, property `layout.alignment.v1`, misaligned joins
+    to Unknown); `container_of` of an established `&x->m` is `x`. **No function
+    moved** on any route (corpus `3d53a5d0…` byte-identical); the corpus has
+    no VLA, 355 `container_of` shapes all list lookups (unestablished), 441
+    derived-address conversions (41 aligned, 400 undecided), 16 flexible
+    accesses (size not established). OR-6 amended; residuals
+    `CG17-FLEXIBLE-EXTENT-UNESTABLISHED`, `CG17-ALIGNMENT-UNDECIDED`,
+    `CG17-CONTAINER-OF-LIST-LOOKUPS`.
+    [Report](../../reports/cg17-layout-derived-extents/README.md).
 - **CG18: footprint connection.**
   - *Liveness.* Subobject and view places connect to core generations without
     weakening existing liveness checks.

@@ -1,0 +1,50 @@
+{
+ "census": {
+  "container-of / unestablished:not-a-member-address": 355,
+  "derived-address / aligned": 41,
+  "derived-address / undecided": 400,
+  "flexible-array / Refused(SizeNotEstablished)": 16,
+  "offsetof / expressions": 380
+ },
+ "functions": {
+  "container-of": 189,
+  "derived-address": 232,
+  "flexible-array": 12,
+  "offsetof": 192
+ },
+ "hooks": {},
+ "vla": [],
+ "before_leaves_on_census_lines": {
+  "container-of / unknown_alias: unresolved resource identity `bucket_counts`": 1,
+  "container-of / unsupported: braced initializer, expression, or declaration is not modeled": 19,
+  "container-of / unsupported: call to uncontracted function `__builtin_offsetof`": 38,
+  "container-of / unsupported: call to uncontracted function `format_metric_data_points`": 1,
+  "container-of / unsupported: call to uncontracted function `mpack_write_uint`": 1,
+  "container-of / unsupported: call to uncontracted function `pack_summary_metric`": 1,
+  "container-of / unsupported: indirect memory access is outside the resource projection": 46,
+  "container-of / unsupported: unmodeled call, aggregate or indirect access in return expression": 1,
+  "derived-address / unknown_alias: unresolved resource identity `bucket_counts`": 1,
+  "derived-address / unknown_alias: unresolved resource identity `partitions`": 2,
+  "derived-address / unknown_alias: unresolved resource identity `rktparlist`": 2,
+  "derived-address / unknown_alias: unresolved resource identity `unsubscribing`": 1,
+  "derived-address / unsupported: C operator `sizeof` requires type/operand analysis": 4,
+  "derived-address / unsupported: braced initializer, expression, or declaration is not modeled": 19,
+  "derived-address / unsupported: call to `getpeername` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)": 1,
+  "derived-address / unsupported: call to uncontracted function `__assert_fail`": 4,
+  "derived-address / unsupported: call to uncontracted function `__builtin_offsetof`": 38,
+  "derived-address / unsupported: call to uncontracted function `connect`": 1,
+  "derived-address / unsupported: call to uncontracted function `format_metric_data_points`": 1,
+  "derived-address / unsupported: call to uncontracted function `mpack_write_uint`": 1,
+  "derived-address / unsupported: call to uncontracted function `pack_summary_metric`": 1,
+  "derived-address / unsupported: indirect memory access is outside the resource projection": 94,
+  "derived-address / unsupported: unmodeled call, aggregate or indirect access in branch condition": 6,
+  "derived-address / unsupported: unmodeled call, aggregate or indirect access in return expression": 1,
+  "derived-address / unsupported: unmodeled increment or decrement expression": 7,
+  "derived-address / unsupported: unrecognized assignment destination": 2,
+  "derived-address / unsupported: unsupported assignment expression": 2,
+  "flexible-array / unknown_alias: unresolved resource identity `sockaddr_list`": 1,
+  "flexible-array / unsupported: indirect memory access is outside the resource projection": 6,
+  "flexible-array / unsupported: unmodeled call, aggregate or indirect access in return expression": 1,
+  "flexible-array / unsupported: unmodeled increment or decrement expression": 3
+ }
+}
