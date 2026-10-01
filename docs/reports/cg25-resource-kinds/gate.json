@@ -1,0 +1,13 @@
+{
+  "note": "CG25-RESOURCE-KINDS card gate on the tip rebased onto main 06ad81cb, script docs/reports/cg25-resource-kinds/scripts/final_gate.sh gate (gate.sh, under the shared heavy-step lock), logs private/cg25rk/gate3 of this worktree: cargo check --workspace --all-targets 0; submodule 0; run_test_binaries.py 416 units, 429 summaries, 7,222 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T181453Z-3542947); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 266 audits passed (265 on main + AuditResourceKinds.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 265 -> 266, test_build_matrix_sections), then run again after build_matrix.py --gate this file (09a, 09b); docs index 0. An earlier gate on base b6a3dc42 (private/cg25rk/gate1) failed 4 tests: compiler/tests/contract_loader.rs's v1 count and parity table (fixed) and the load-sensitive checkpoint_cli and cycle20_verifier_plugins rows under load ~80 (both pass in gate3). Provider gate (providers/ changed): cargo check 0, cargo test 129 passed / 0 failed / 1 ignored (private/cg25rk/provider-gate2; the first attempt hit ENOSPC on the shared disk and is discarded), fmt 0, clippy 0, package build 0, package verify qcore.libevent 0, contracts.py check 0 (private/cg25rk/provider-gate). Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit) on base b6a3dc42: BEFORE 3d53a5d0 629/10/4,195, AFTER 5ade5aab 630/10/4,194 (+1 Unknown -> Safe, rd_regex_match; 5 functions change); system 44/2/188 and tail-pause slice 29/1/239/1 Pending, no function changes.",
+  "workspace_tests": 7222,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 266,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

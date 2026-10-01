@@ -204,4 +204,27 @@ Rust–Lean correspondence is by review and by the two shared vectors, not proof
   is consumed by the condition that tests it (`if (regcomp(&re, …) != 0)`)
   keeps the condition route's refusal.
 
-GATE_PLACEHOLDER
+## 8. Gate
+
+On the tip rebased onto main `06ad81cb`, under the shared heavy-step lock
+(`scripts/final_gate.sh gate`, then `matrix`); logs `private/cg25rk/gate3`,
+exits in [gate/](gate/), record [gate.json](gate.json):
+
+| Step | Command | Exit | Count |
+|---|---|---:|---|
+| compile | `cargo check --workspace --all-targets` | 0 | |
+| submodule | `git submodule update --init --recursive` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 416 units, 429 summaries, **7,222 passed**, 0 failed, 11 ignored (`private/test-binaries/20261001T181453Z-3542947`) |
+| fmt / clippy | `cargo fmt --all -- --check`; `cargo clippy --all-targets -- -D warnings` | 0 / 0 | |
+| probes | `reevaluation_probe`, `reevaluation_followup` | 0 / 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **266** audits (265 on main + `AuditResourceKinds.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** | 365; the one failure was the matrix's derived `lean_audits` (265 → 266), cleared by `build_matrix.py . --gate gate.json` (exit 0) |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+| provider | `cargo check`/`test`/`fmt`/`clippy` in `providers/`, `package.py build` + `verify qcore.libevent`, `contracts.py check` | 0 each | **129 passed**, 0 failed, 1 ignored (`private/cg25rk/provider-gate2`) |
+
+Earlier attempts, kept: the first gate on base `b6a3dc42` (`gate1`) failed
+four test rows — `compiler/tests/contract_loader.rs`'s v1 count and parity
+table (fixed in this card) and the load-sensitive `checkpoint_cli` and
+`cycle20_verifier_plugins` rows at load ~80, which also failed alone at that
+load and pass in `gate3` (constraint 16; nothing weakened). The first provider
+test run hit ENOSPC on the shared disk and is discarded.

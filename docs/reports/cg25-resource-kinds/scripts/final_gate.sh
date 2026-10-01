@@ -27,5 +27,19 @@ case "$step" in
     sh "$here/gate.sh" "$logs_rel"
     cargo clean --profile dev > "$logs/clean.log" 2>&1
     ;;
+  matrix)
+    # After the gate: regenerate the matrix's derived values from gate.json,
+    # then the steps that read them (light; no lock needed).
+    report="$root/docs/reports/cg25-resource-kinds"
+    mkdir -p "$report/gate"
+    cp "$logs"/*.exit "$logs/clang-version.txt" "$report/gate/"
+    python3 docs/reports/remaining-d02/build_matrix.py . --gate "$report/gate.json" \
+      > "$logs/09a-matrix.log" 2>&1
+    echo $? > "$report/gate/09a-matrix.exit"
+    python3 -m unittest discover -s scripts/tests > "$logs/09b-python.log" 2>&1
+    echo $? > "$report/gate/09b-python.exit"
+    python3 scripts/build_docs_index.py > "$logs/10b-index.log" 2>&1
+    echo $? > "$report/gate/10b-index.exit"
+    ;;
 esac
 df -h / > "$logs/$step-df-after.txt" 2>&1
