@@ -209,5 +209,24 @@ summaries; returns and conditions are not lowered by this route).
 
 ## 9. Gate
 
-See [gate.json](gate.json) and [gate/](gate/); commands in
-[scripts/gate.sh](scripts/gate.sh).
+At tip `1cdf20a4` on main `cfb5d8e1`, with [scripts/gate.sh](scripts/gate.sh);
+exits in [gate/](gate/), record [gate.json](gate.json), logs
+`private/cg05ef/gate2/`.
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | submodule update, `--init --recursive` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 410 units, 423 summaries, **7,171 passed**, 0 failed, 11 ignored (`private/test-binaries/20261001T121514Z-1042180`) |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --all-targets -- -D warnings` | 0 | |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **263 audits** (262 on main + `AuditElaboratorCallFootprints.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** | 365; the one failure was the matrix's derived `lean_audits` (262 → 263), cleared by `build_matrix.py . --gate gate.json` (exit 0) |
+| docs index | `python3 scripts/build_docs_index.py` | 0 | |
+
+`cargo check --workspace --all-targets` exited 0 on each rebased tree. An
+earlier gate at `4674423f` on `0a22a998` (`private/cg05ef/gate`) failed clippy
+on two findings in this card's code, fixed in the next commit; its tests
+passed 7,162 / 0. `providers/` is unchanged, so the provider gate is not due.
+Clang 21.1.8.

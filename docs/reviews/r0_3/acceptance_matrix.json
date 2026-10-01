@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG06-VALUE-CONNECTIVE-RESIDUALS (sibling-effect part, gateway rule 11m) card gate at tip code 8f3a6a18 (base d4df096f rebased onto main 0a22a998), script docs/reports/cg06-connective-footprints/scripts/gate.sh, logs private/cg06r/gate-8f3a6a18 of this worktree: submodule 0; run_test_binaries.py 409 units, 422 summaries, 7,163 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T113425Z-623584); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 262 audits passed (AuditValueConnectives.lean extended by 17 theorems, no new audit file); python tests run after build_matrix.py --gate this file (08a, 08b); docs index (09). cargo check --workspace --all-targets on the rebased tree exit 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main 0a22a998 3b09309a 628/10/4,196, AFTER 8f3a6a18 f9b3420e 628/10/4,196 (no move; 2 functions lose one indirect-access leaf each); system 44/2/188 and tail-pause slice 29/1/239/1 Pending byte-identical. Exits in docs/reports/cg06-connective-footprints/gate/.",
-  "workspace_tests": 7163,
+  "note": "CG05-ELABORATOR-CALL-FOOTPRINTS card gate at tip 1cdf20a4 (base d4df096f rebased onto main 0a22a998, then onto main cfb5d8e1), script docs/reports/cg05-elaborator-call-footprints/scripts/gate.sh, logs private/cg05ef/gate2 of this worktree: submodule 0; run_test_binaries.py 410 units, 423 summaries, 7,171 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T121514Z-1042180); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 263 audits passed (262 on main + AuditElaboratorCallFootprints.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 262 -> 263, test_build_matrix_sections), then run again after build_matrix.py --gate this file (09a, 09b); docs index 0. An earlier gate at 4674423f on main 0a22a998 (private/cg05ef/gate) failed clippy (a needless range loop and a field reassignment in a test, fixed in df46d593) and the same expected python row; its tests passed 7,162 / 0. cargo check --workspace --all-targets on each rebased tree exit 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main cfb5d8e1 f9b3420e 628/10/4,196, AFTER 3d53a5d0 629/10/4,195 (+1 Unknown -> Safe, rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic; 10 functions change); the same attribution on the base d4df096f (3b09309a -> 36941e4c) and on main 0a22a998; system 44/2/188 and tail-pause slice 29/1/239/1 Pending, no status move (2 functions each change leaves). Exits in docs/reports/cg05-elaborator-call-footprints/gate/.",
+  "workspace_tests": 7171,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 262,
+  "lean_audits": 263,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6846,6 +6846,7 @@
    "AuditDescriptorNativeObservation.lean",
    "AuditDisjointFootprint.lean",
    "AuditElaborationCore.lean",
+   "AuditElaboratorCallFootprints.lean",
    "AuditEnumerationAttribution.lean",
    "AuditEpochAccounting.lean",
    "AuditEpochSourceLowering.lean",
@@ -7028,7 +7029,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg06-connective-footprints/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg05-elaborator-call-footprints/gate.json)"
  },
  "named_followups": [
   {
