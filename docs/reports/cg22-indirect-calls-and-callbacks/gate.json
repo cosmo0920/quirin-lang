@@ -1,0 +1,13 @@
+{
+  "note": "CG22-INDIRECT-CALLS-AND-CALLBACKS card gate at tip aea0b798 (base b6a3dc42 rebased onto main f6336c9d), script docs/reports/cg22-indirect-calls-and-callbacks/scripts/gate.sh under the shared heavy lock, logs private/cg22/gate-final2 of this worktree: submodule 0; fmt 0; clippy 0; run_test_binaries.py 419 units, 432 summaries, 7,287 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T212141Z-1626717); both reevaluation probes exit 0; check_lean_audits.py 269 audits passed (268 on main + AuditIndirectCalls.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 268 -> 269), then run again after build_matrix.py . --gate this file; docs index 0. An earlier gate at bc5fc9e4 on main f0bbc0eb (private/cg22/gate-final) failed 2 rows of tests/parenthesised_callee.rs that pinned the conditional and &designator callees as refused (closed sets under rule 11p; moved to a_closed_callee_expression_is_its_candidate_calls in ba430be3) and the same expected python row. cargo check --workspace --all-targets on each rebased tree exit 0. providers/ is unchanged, so the provider gate is not due: provider_tests 129 is carried. Clang 21.1.8, recorded by this gate in gate/clang-version.txt. Corpus arbiter (--jobs 4) measured on main 06ad81cb: 629 / 10 / 4,195 -> 631 / 10 / 4,193; not re-measured on b934c560, f0bbc0eb or f6336c9d.",
+  "workspace_tests": 7287,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 269,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
