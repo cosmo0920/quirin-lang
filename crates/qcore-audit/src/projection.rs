@@ -43,8 +43,10 @@ fn record_bounds(
     result: &Result<UnrestrictedLegacyResult, LegacyCError>,
     report: &mut AuditReport,
 ) {
-    use qcore_c_gateway::index_extent::{analyze_bounds_c11, analyze_bounds_preprocessed, row_verdict};
     use qcore_c_gateway::index_extent::{BoundsVerdict, Request, compose};
+    use qcore_c_gateway::index_extent::{
+        analyze_bounds_c11, analyze_bounds_preprocessed, row_verdict,
+    };
     if std::env::var_os(BOUNDS_SELECTION).is_none() {
         return;
     }
@@ -323,14 +325,24 @@ pub fn project_unit_into(
     // never read by the analysis: `result` above is already settled.
     let locations = origin_coordinates(unit, &result);
     let preprocessed = match &result {
-        Ok(UnrestrictedLegacyResult::Safe(certificate)) => Some(certificate.preprocessed_source.as_str()),
+        Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
+            Some(certificate.preprocessed_source.as_str())
+        }
         Ok(UnrestrictedLegacyResult::Unknown {
             preprocessed_source,
             ..
         }) => Some(preprocessed_source.as_str()),
         _ => None,
     };
-    record_bounds(library, file, unit, preprocessed, source_functions, &result, report);
+    record_bounds(
+        library,
+        file,
+        unit,
+        preprocessed,
+        source_functions,
+        &result,
+        report,
+    );
     record_projection(
         ProjectionContext {
             library,

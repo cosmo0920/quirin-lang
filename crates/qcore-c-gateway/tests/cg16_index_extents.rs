@@ -89,7 +89,11 @@ fn cg16_flagship_out_of_bounds_access_is_a_bounds_violation_and_custody_is_uncha
     assert_eq!(custody(source), Safe, "the custody result is unchanged");
     let r = row(source, &none());
     assert_eq!(r.verdict, "Unsafe", "{r:#?}");
-    assert!(r.accesses.iter().any(|a| a.kind == "element-access" && a.actual == "violation"));
+    assert!(
+        r.accesses
+            .iter()
+            .any(|a| a.kind == "element-access" && a.actual == "violation")
+    );
     assert_eq!(r.scope, "unconditional");
     // CG00's M14 control, the embedded array: custody Safe, bounds Unsafe
     // (the subobject has 4 elements whatever `s` points to).
@@ -97,7 +101,11 @@ fn cg16_flagship_out_of_bounds_access_is_a_bounds_violation_and_custody_is_uncha
     assert_eq!(custody(m14), Safe);
     let r = row(m14, &none());
     assert_eq!(r.verdict, "Unsafe", "{r:#?}");
-    assert!(r.accesses.iter().any(|a| a.kind == "member-access" && a.actual.starts_with("bounds-missing-extent")));
+    assert!(
+        r.accesses
+            .iter()
+            .any(|a| a.kind == "member-access" && a.actual.starts_with("bounds-missing-extent"))
+    );
 }
 
 #[test]
@@ -113,21 +121,51 @@ fn cg16_fixed_array_accesses_at_the_ends() {
     }
     // An enumeration constant and checked constant arithmetic in the C type.
     assert_eq!(
-        verdict("enum { N = 4 }; int subject(void) { int arr[N]; return arr[N - 1]; }", &none()),
+        verdict(
+            "enum { N = 4 }; int subject(void) { int arr[N]; return arr[N - 1]; }",
+            &none()
+        ),
         Safe
     );
     assert_eq!(
-        verdict("enum { N = 4 }; int subject(void) { int arr[N]; return arr[N * 2]; }", &none()),
+        verdict(
+            "enum { N = 4 }; int subject(void) { int arr[N]; return arr[N * 2]; }",
+            &none()
+        ),
         Unsafe
     );
     // Nested arrays: each dimension is its own extent.
-    assert_eq!(verdict("int subject(void) { int m[2][3]; return m[1][2]; }", &none()), Safe);
-    assert_eq!(verdict("int subject(void) { int m[2][3]; return m[1][3]; }", &none()), Unsafe);
+    assert_eq!(
+        verdict(
+            "int subject(void) { int m[2][3]; return m[1][2]; }",
+            &none()
+        ),
+        Safe
+    );
+    assert_eq!(
+        verdict(
+            "int subject(void) { int m[2][3]; return m[1][3]; }",
+            &none()
+        ),
+        Unsafe
+    );
     // A string literal's extent counts its terminator.
-    assert_eq!(verdict("int subject(void) { return \"abc\"[3]; }", &none()), Safe);
-    assert_eq!(verdict("int subject(void) { return \"abc\"[4]; }", &none()), Unsafe);
+    assert_eq!(
+        verdict("int subject(void) { return \"abc\"[3]; }", &none()),
+        Safe
+    );
+    assert_eq!(
+        verdict("int subject(void) { return \"abc\"[4]; }", &none()),
+        Unsafe
+    );
     // `sizeof` does not evaluate its operand.
-    assert_eq!(verdict("int subject(void) { int arr[4]; return sizeof(arr[9]); }", &none()), Safe);
+    assert_eq!(
+        verdict(
+            "int subject(void) { int arr[4]; return sizeof(arr[9]); }",
+            &none()
+        ),
+        Safe
+    );
 }
 
 #[test]
@@ -136,19 +174,31 @@ fn cg16_one_past_formation_is_not_an_access() {
         return;
     }
     assert_eq!(
-        verdict("int subject(void) { int arr[4]; int *e = arr + 4; return e == arr; }", &none()),
+        verdict(
+            "int subject(void) { int arr[4]; int *e = arr + 4; return e == arr; }",
+            &none()
+        ),
         Safe
     );
     assert_eq!(
-        verdict("int subject(void) { int arr[4]; int *e = arr + 4; return *e; }", &none()),
+        verdict(
+            "int subject(void) { int arr[4]; int *e = arr + 4; return *e; }",
+            &none()
+        ),
         Unsafe
     );
     assert_eq!(
-        verdict("int subject(void) { int arr[4]; int *e = &arr[4]; return e != 0; }", &none()),
+        verdict(
+            "int subject(void) { int arr[4]; int *e = &arr[4]; return e != 0; }",
+            &none()
+        ),
         Safe
     );
     assert_eq!(
-        verdict("int subject(void) { int arr[4]; int *e = arr + 5; return e != 0; }", &none()),
+        verdict(
+            "int subject(void) { int arr[4]; int *e = arr + 5; return e != 0; }",
+            &none()
+        ),
         Unsafe
     );
     // CG00's M17 control: formed from an embedded array (custody IND).
@@ -163,11 +213,17 @@ fn cg16_same_object_obligations_of_subtraction_and_ordering() {
         return;
     }
     assert_eq!(
-        verdict("long subject(void) { int a[4]; return &a[3] - &a[0]; }", &none()),
+        verdict(
+            "long subject(void) { int a[4]; return &a[3] - &a[0]; }",
+            &none()
+        ),
         Safe
     );
     assert_eq!(
-        verdict("long subject(void) { int a[4]; int b[4]; return &a[1] - &b[0]; }", &none()),
+        verdict(
+            "long subject(void) { int a[4]; int b[4]; return &a[1] - &b[0]; }",
+            &none()
+        ),
         Unsafe,
         "two distinct named objects"
     );
@@ -218,35 +274,56 @@ fn cg16_guards_and_counted_loops_establish_ranges() {
         return;
     }
     assert_eq!(
-        verdict("int subject(int i) { int arr[4]; if (i >= 0 && i < 4) return arr[i]; return 0; }", &none()),
+        verdict(
+            "int subject(int i) { int arr[4]; if (i >= 0 && i < 4) return arr[i]; return 0; }",
+            &none()
+        ),
         Safe
     );
     assert_eq!(
-        verdict("int subject(unsigned i) { int arr[4]; if (i < 4) return arr[i]; return 0; }", &none()),
+        verdict(
+            "int subject(unsigned i) { int arr[4]; if (i < 4) return arr[i]; return 0; }",
+            &none()
+        ),
         Safe
     );
     // A signed index with no lower bound is not in range.
     assert_eq!(
-        verdict("int subject(int i) { int arr[4]; if (i < 4) return arr[i]; return 0; }", &none()),
+        verdict(
+            "int subject(int i) { int arr[4]; if (i < 4) return arr[i]; return 0; }",
+            &none()
+        ),
         Unknown
     );
     // The negated guard on the else arm.
     assert_eq!(
-        verdict("int subject(unsigned i) { int arr[4]; if (i >= 4) return 0; else return arr[i]; }", &none()),
+        verdict(
+            "int subject(unsigned i) { int arr[4]; if (i >= 4) return 0; else return arr[i]; }",
+            &none()
+        ),
         Safe
     );
     assert_eq!(
-        verdict("void subject(void) { int arr[4]; int i; for (i = 0; i < 4; i++) arr[i] = 0; }", &none()),
+        verdict(
+            "void subject(void) { int arr[4]; int i; for (i = 0; i < 4; i++) arr[i] = 0; }",
+            &none()
+        ),
         Safe
     );
     // A range wider than the extent is not a validated violation.
     assert_eq!(
-        verdict("void subject(void) { int arr[4]; int i; for (i = 0; i < 5; i++) arr[i] = 0; }", &none()),
+        verdict(
+            "void subject(void) { int arr[4]; int i; for (i = 0; i < 5; i++) arr[i] = 0; }",
+            &none()
+        ),
         Unknown
     );
     // A loop that writes its counter in the body is not canonical.
     assert_eq!(
-        verdict("void subject(void) { int arr[4]; int i; for (i = 0; i < 4; i++) { arr[i] = 0; i++; } }", &none()),
+        verdict(
+            "void subject(void) { int arr[4]; int i; for (i = 0; i < 4; i++) { arr[i] = 0; i++; } }",
+            &none()
+        ),
         Unknown
     );
 }
@@ -259,35 +336,56 @@ fn cg16_a_changed_index_or_base_invalidates_the_fact() {
         return;
     }
     assert_eq!(
-        verdict("int subject(unsigned i, unsigned j) { int arr[4]; if (i < 4) { i = j; return arr[i]; } return 0; }", &none()),
+        verdict(
+            "int subject(unsigned i, unsigned j) { int arr[4]; if (i < 4) { i = j; return arr[i]; } return 0; }",
+            &none()
+        ),
         Unknown
     );
     // An address taken: never tracked, whatever the guard.
     assert_eq!(
-        verdict("void cg_take(unsigned *p); int subject(unsigned i) { int arr[4]; if (i < 4) { cg_take(&i); return arr[i]; } return 0; }", &none()),
+        verdict(
+            "void cg_take(unsigned *p); int subject(unsigned i) { int arr[4]; if (i < 4) { cg_take(&i); return arr[i]; } return 0; }",
+            &none()
+        ),
         Unknown
     );
     // A re-derived constant is used again.
     assert_eq!(
-        verdict("int subject(void) { int arr[4]; int i = 7; i = 2; return arr[i]; }", &none()),
+        verdict(
+            "int subject(void) { int arr[4]; int i = 7; i = 2; return arr[i]; }",
+            &none()
+        ),
         Safe
     );
     assert_eq!(
-        verdict("int subject(void) { int arr[4]; int i = 2; i++; i++; return arr[i]; }", &none()),
+        verdict(
+            "int subject(void) { int arr[4]; int i = 2; i++; i++; return arr[i]; }",
+            &none()
+        ),
         Unsafe
     );
     // The base changes.
     assert_eq!(
-        verdict("int subject(int *q) { int arr[4]; int *p = arr; p = q; return p[1]; }", &none()),
+        verdict(
+            "int subject(int *q) { int arr[4]; int *p = arr; p = q; return p[1]; }",
+            &none()
+        ),
         Unknown
     );
     // A step of a known pointer is formed and tracked.
     assert_eq!(
-        verdict("int subject(void) { int arr[4]; int *p = arr; p++; p++; return p[1]; }", &none()),
+        verdict(
+            "int subject(void) { int arr[4]; int *p = arr; p++; p++; return p[1]; }",
+            &none()
+        ),
         Safe
     );
     assert_eq!(
-        verdict("int subject(void) { int arr[4]; int *p = arr; p += 3; return p[1]; }", &none()),
+        verdict(
+            "int subject(void) { int arr[4]; int *p = arr; p += 3; return p[1]; }",
+            &none()
+        ),
         Unsafe
     );
 }
@@ -298,12 +396,24 @@ fn cg16_conversions_and_arithmetic_are_checked() {
         return;
     }
     // A defined conversion to unsigned: an exact, out-of-range index.
-    assert_eq!(verdict("int subject(void) { int arr[4]; return arr[(unsigned)-1]; }", &none()), Unsafe);
+    assert_eq!(
+        verdict(
+            "int subject(void) { int arr[4]; return arr[(unsigned)-1]; }",
+            &none()
+        ),
+        Unsafe
+    );
     // An implementation-defined conversion refuses (no fabricated value).
-    let r = row("int subject(void) { int arr[4]; return arr[(signed char)200]; }", &none());
+    let r = row(
+        "int subject(void) { int arr[4]; return arr[(signed char)200]; }",
+        &none(),
+    );
     assert_eq!(r.verdict, "Unknown");
     // Signed overflow in the index arithmetic refuses.
-    let r = row("int subject(void) { int arr[4]; return arr[2147483647 + 1]; }", &none());
+    let r = row(
+        "int subject(void) { int arr[4]; return arr[2147483647 + 1]; }",
+        &none(),
+    );
     assert_eq!(r.verdict, "Unknown");
 }
 
@@ -317,28 +427,46 @@ fn cg16_reachability_is_validated_before_unsafe() {
         return;
     }
     // Proved unreachable: excluded by the explicit check, still inventoried.
-    let r = row("int subject(void) { int arr[4]; if (0) arr[7] = 1; return 0; }", &none());
+    let r = row(
+        "int subject(void) { int arr[4]; if (0) arr[7] = 1; return 0; }",
+        &none(),
+    );
     assert_eq!(r.verdict, "Safe", "{r:#?}");
     assert!(r.accesses.iter().any(|a| a.actual.starts_with("excluded")));
-    let r = row("int subject(void) { int arr[4]; return 0; arr[7] = 1; }", &none());
+    let r = row(
+        "int subject(void) { int arr[4]; return 0; arr[7] = 1; }",
+        &none(),
+    );
     assert_eq!(r.verdict, "Safe");
     assert!(r.accesses.iter().any(|a| a.actual.starts_with("excluded")));
     // Unresolved reachability: never an unvalidated Unsafe.
-    let r = row("int subject(int x) { int arr[4]; if (x) arr[7] = 1; return 0; }", &none());
+    let r = row(
+        "int subject(int x) { int arr[4]; if (x) arr[7] = 1; return 0; }",
+        &none(),
+    );
     assert_eq!(r.verdict, "Unknown");
     assert!(has_reason(&r, "bounds-violation-reachability-unresolved"));
     // After a call (it may not return) and beside a call.
     assert_eq!(
-        verdict("int subject(void) { int arr[4]; cg_sink(1); return arr[7]; }", &none()),
+        verdict(
+            "int subject(void) { int arr[4]; cg_sink(1); return arr[7]; }",
+            &none()
+        ),
         Unknown
     );
     assert_eq!(
-        verdict("int subject(void) { int arr[4]; return opaque() + arr[7]; }", &none()),
+        verdict(
+            "int subject(void) { int arr[4]; return opaque() + arr[7]; }",
+            &none()
+        ),
         Unknown
     );
     // Under a short-circuit operand.
     assert_eq!(
-        verdict("int subject(int x) { int arr[4]; return x && arr[7]; }", &none()),
+        verdict(
+            "int subject(int x) { int arr[4]; return x && arr[7]; }",
+            &none()
+        ),
         Unknown
     );
 }
@@ -356,14 +484,30 @@ fn cg16_every_position_is_inventoried() {
          for (i = 0; i < 4; i++) *p = arr[i]; return arr[3]; }",
         &none(),
     );
-    let positions = r.accesses.iter().map(|a| a.position.as_str()).collect::<Vec<_>>();
-    for wanted in ["condition", "actual", "loop-body statement", "return", "declaration"] {
-        assert!(positions.iter().any(|p| p.contains(wanted)), "{wanted}: {positions:?}");
+    let positions = r
+        .accesses
+        .iter()
+        .map(|a| a.position.as_str())
+        .collect::<Vec<_>>();
+    for wanted in [
+        "condition",
+        "actual",
+        "loop-body statement",
+        "return",
+        "declaration",
+    ] {
+        assert!(
+            positions.iter().any(|p| p.contains(wanted)),
+            "{wanted}: {positions:?}"
+        );
     }
     assert!(r.accesses.iter().any(|a| a.kind == "dereference"));
     // The pointer actual of an uncontracted callee is a call obligation.
     assert!(r.accesses.iter().all(|a| a.kind != "call-precondition"));
-    let r = row("int subject(void) { int arr[4]; q_observe(arr); return 0; }", &none());
+    let r = row(
+        "int subject(void) { int arr[4]; q_observe(arr); return 0; }",
+        &none(),
+    );
     assert_eq!(r.verdict, "Unknown");
     assert!(r.accesses.iter().any(|a| a.kind == "call-precondition"));
 }
@@ -396,8 +540,17 @@ fn cg16_a_held_relation_is_pending_and_resolution_is_conditional_safe() {
     let held_contracts = contracts(&held(RELATION));
     let r = row(RELATION_C, &held_contracts);
     assert_eq!(r.verdict, "Pending", "{r:#?}");
-    let reason = r.reasons.iter().find(|x| x.contains("awaiting-human-review")).expect("hold reason");
-    for part in ["is p really n elements long?", "cg16-owner", "acceptable-as-written-after-review", "sha256"] {
+    let reason = r
+        .reasons
+        .iter()
+        .find(|x| x.contains("awaiting-human-review"))
+        .expect("hold reason");
+    for part in [
+        "is p really n elements long?",
+        "cg16-owner",
+        "acceptable-as-written-after-review",
+        "sha256",
+    ] {
         assert!(reason.contains(part), "{part}: {reason}");
     }
     assert!(r.scope.contains("held"));
@@ -414,7 +567,8 @@ fn cg16_approval_cannot_hide_another_obstacle() {
     if !clang_available() {
         return;
     }
-    let source = "int subject(int *p, unsigned long n, unsigned long i, int *q) { return p[i] + *q; }";
+    let source =
+        "int subject(int *p, unsigned long n, unsigned long i, int *q) { return p[i] + *q; }";
     let text = held(RELATION).replace("i: usize)", "i: usize, q: ptr<mut, u8>)");
     let r = row(source, &contracts(&text));
     assert_eq!(r.verdict, "Unknown", "{r:#?}");
@@ -452,11 +606,20 @@ contract {
 };";
     // The source states 4: the claim of 8 is a reported contradiction and
     // the source-supported violation remains.
-    let r = row("int table[4]; int subject(void) { return table[7]; }", &contracts(claim));
+    let r = row(
+        "int table[4]; int subject(void) { return table[7]; }",
+        &contracts(claim),
+    );
     assert_eq!(r.verdict, "Unsafe", "{r:#?}");
     assert!(has_reason(&r, "bounds-declaration-contradicted"));
-    let r = row("int table[4]; int subject(void) { return table[2]; }", &contracts(claim));
-    assert_eq!(r.verdict, "Unknown", "a contradicted premise discharges nothing: {r:#?}");
+    let r = row(
+        "int table[4]; int subject(void) { return table[2]; }",
+        &contracts(claim),
+    );
+    assert_eq!(
+        r.verdict, "Unknown",
+        "a contradicted premise discharges nothing: {r:#?}"
+    );
     // External storage the source does not size: the declaration supplies it.
     let external = "extern int table[]; int subject(void) { return table[7]; }";
     assert_eq!(verdict(external, &none()), Unknown);
@@ -464,7 +627,13 @@ contract {
     assert_eq!(verdict(external, &contracts(&held(claim))), Pending);
     // An empty declared extent admits no access.
     let empty = claim.replace("table, 8,", "table, 0,");
-    assert_eq!(verdict("extern int table[]; int subject(void) { return table[0]; }", &contracts(&empty)), Unsafe);
+    assert_eq!(
+        verdict(
+            "extern int table[]; int subject(void) { return table[0]; }",
+            &contracts(&empty)
+        ),
+        Unsafe
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -484,15 +653,44 @@ fn cg16_a_callee_precondition_is_the_callers_obligation() {
     }
     let decl = "int pick(int i); ";
     let c = contracts(PICK);
-    assert_eq!(verdict(&format!("{decl}int subject(int j) {{ return pick(j); }}"), &c), Unknown);
-    assert_eq!(verdict(&format!("{decl}int subject(void) {{ return pick(2); }}"), &c), Safe);
-    assert_eq!(verdict(&format!("{decl}int subject(void) {{ return pick(7); }}"), &c), Unsafe);
     assert_eq!(
-        verdict(&format!("{decl}int subject(int j) {{ if (j >= 0 && j < 4) return pick(j); return 0; }}"), &c),
+        verdict(
+            &format!("{decl}int subject(int j) {{ return pick(j); }}"),
+            &c
+        ),
+        Unknown
+    );
+    assert_eq!(
+        verdict(
+            &format!("{decl}int subject(void) {{ return pick(2); }}"),
+            &c
+        ),
+        Safe
+    );
+    assert_eq!(
+        verdict(
+            &format!("{decl}int subject(void) {{ return pick(7); }}"),
+            &c
+        ),
+        Unsafe
+    );
+    assert_eq!(
+        verdict(
+            &format!(
+                "{decl}int subject(int j) {{ if (j >= 0 && j < 4) return pick(j); return 0; }}"
+            ),
+            &c
+        ),
         Safe
     );
     // Held: the obligation rests on a held declaration.
-    assert_eq!(verdict(&format!("{decl}int subject(void) {{ return pick(2); }}"), &contracts(&held(PICK))), Pending);
+    assert_eq!(
+        verdict(
+            &format!("{decl}int subject(void) {{ return pick(2); }}"),
+            &contracts(&held(PICK))
+        ),
+        Pending
+    );
 }
 
 #[test]
@@ -508,8 +706,20 @@ contract {
     let decl = "void fill(int *p); ";
     let c = contracts(fill);
     // `int` is 4 bytes on the recorded target: 4 ints are 16 bytes, 3 are 12.
-    assert_eq!(verdict(&format!("{decl}void subject(void) {{ int a[4]; fill(a); }}"), &c), Safe);
-    assert_eq!(verdict(&format!("{decl}void subject(void) {{ int a[3]; fill(a); }}"), &c), Unsafe);
+    assert_eq!(
+        verdict(
+            &format!("{decl}void subject(void) {{ int a[4]; fill(a); }}"),
+            &c
+        ),
+        Safe
+    );
+    assert_eq!(
+        verdict(
+            &format!("{decl}void subject(void) {{ int a[3]; fill(a); }}"),
+            &c
+        ),
+        Unsafe
+    );
     // A byte extent on a typed parameter, with a scaled index that overflows
     // the target's object-size limit: a named refusal, not a violation.
     let own = "extern fn subject(p: ptr<mut, u8>) -> i32
@@ -520,7 +730,10 @@ contract {
     let c = contracts(own);
     assert_eq!(verdict("int subject(long *p) { return p[1]; }", &c), Safe);
     assert_eq!(verdict("int subject(long *p) { return p[2]; }", &c), Unsafe);
-    let r = row("int subject(long *p) { return p[1152921504606846976L]; }", &c);
+    let r = row(
+        "int subject(long *p) { return p[1152921504606846976L]; }",
+        &c,
+    );
     assert_eq!(r.verdict, "Unknown", "{r:#?}");
     assert!(has_reason(&r, "bounds-arithmetic-overflow"));
 }
@@ -537,12 +750,27 @@ contract {
 };";
     let decl = "int *get_buf(unsigned long n); ";
     let c = contracts(get);
-    assert_eq!(verdict(&format!("{decl}int subject(void) {{ int *p = get_buf(8); return p[7]; }}"), &c), Safe);
-    assert_eq!(verdict(&format!("{decl}int subject(void) {{ int *p = get_buf(8); return p[8]; }}"), &c), Unknown,
-        "a violation after a call is not definitely reached");
+    assert_eq!(
+        verdict(
+            &format!("{decl}int subject(void) {{ int *p = get_buf(8); return p[7]; }}"),
+            &c
+        ),
+        Safe
+    );
+    assert_eq!(
+        verdict(
+            &format!("{decl}int subject(void) {{ int *p = get_buf(8); return p[8]; }}"),
+            &c
+        ),
+        Unknown,
+        "a violation after a call is not definitely reached"
+    );
     // A call that may release or resize what it reaches withdraws the fact.
     assert_eq!(
-        verdict(&format!("{decl}int subject(void) {{ int *p = get_buf(8); q_free(p); return p[0]; }}"), &c),
+        verdict(
+            &format!("{decl}int subject(void) {{ int *p = get_buf(8); q_free(p); return p[0]; }}"),
+            &c
+        ),
         Unknown
     );
     // A body that refutes its declared return extent: the declaration is
@@ -554,7 +782,13 @@ contract {
 };";
     let c = contracts(fixed);
     let decl = "int *get_buf(void); ";
-    assert_eq!(verdict(&format!("{decl}int subject(void) {{ int *p = get_buf(); return p[7]; }}"), &c), Safe);
+    assert_eq!(
+        verdict(
+            &format!("{decl}int subject(void) {{ int *p = get_buf(); return p[7]; }}"),
+            &c
+        ),
+        Safe
+    );
     let source = format!(
         "{decl}static int store[4]; int *get_buf(void) {{ return store; }} \
          int subject(void) {{ int *p = get_buf(); return p[0]; }}"
@@ -562,7 +796,10 @@ contract {
     let unit_report = {
         let text = text(&source);
         analyze_bounds_c11(
-            &C11TranslationUnit { source: &text, ..Default::default() },
+            &C11TranslationUnit {
+                source: &text,
+                ..Default::default()
+            },
             &["subject".to_owned(), "get_buf".to_owned()],
             &c,
         )
@@ -570,7 +807,12 @@ contract {
     };
     let getter = unit_report.row("get_buf").unwrap();
     assert!(getter.refutes_own_contract, "{getter:#?}");
-    assert!(getter.reasons.iter().any(|r| r.contains("bounds-contract-refuted-by-body")));
+    assert!(
+        getter
+            .reasons
+            .iter()
+            .any(|r| r.contains("bounds-contract-refuted-by-body"))
+    );
     assert_eq!(unit_report.row("subject").unwrap().verdict, "Unknown");
 }
 
@@ -583,7 +825,10 @@ fn cg16_custody_and_bounds_rows_compose_only_when_both_are_requested() {
     if !clang_available() {
         return;
     }
-    let both = Request { custody: true, bounds: true };
+    let both = Request {
+        custody: true,
+        bounds: true,
+    };
     let cases = [
         ("int subject(int *p) { return *p; }", Unknown),
         ("int subject(void) { int arr[4]; return arr[7]; }", Unsafe),
@@ -593,14 +838,31 @@ fn cg16_custody_and_bounds_rows_compose_only_when_both_are_requested() {
         let custody = custody(source);
         assert_eq!(custody, Safe, "{source}");
         let bounds = verdict(source, &none());
-        assert_eq!(compose(both, Some(custody), Some(bounds)), combined, "{source}");
+        assert_eq!(
+            compose(both, Some(custody), Some(bounds)),
+            combined,
+            "{source}"
+        );
         // A custody-only request keeps its narrower verdict.
-        assert_eq!(compose(Request { custody: true, bounds: false }, Some(custody), None), Safe);
+        assert_eq!(
+            compose(
+                Request {
+                    custody: true,
+                    bounds: false
+                },
+                Some(custody),
+                None
+            ),
+            Safe
+        );
         // A requested bounds row that is absent is Unknown, never omitted.
         assert_eq!(compose(both, Some(custody), None), Unknown);
     }
     let pending = row(RELATION_C, &contracts(&held(RELATION)));
-    assert_eq!(compose(both, Some(Safe), Some(row_verdict(&pending))), Pending);
+    assert_eq!(
+        compose(both, Some(Safe), Some(row_verdict(&pending))),
+        Pending
+    );
 }
 
 #[test]
@@ -610,7 +872,10 @@ fn cg16_admission_refuses_changed_or_incomplete_evidence() {
     }
     let source = "int subject(void) { int arr[4]; arr[1] = 0; return arr[2]; }";
     let full = text(source);
-    let unit = C11TranslationUnit { source: &full, ..Default::default() };
+    let unit = C11TranslationUnit {
+        source: &full,
+        ..Default::default()
+    };
     let selection = ["subject".to_owned()];
     let recorded = analyze_bounds_c11(&unit, &selection, &none()).unwrap();
     check_bounds_report(&recorded, &unit, &selection, &none()).expect("unchanged evidence admits");
@@ -633,7 +898,10 @@ fn cg16_admission_refuses_changed_or_incomplete_evidence() {
     assert!(check_bounds_report(&malformed, &unit, &selection, &none()).is_err());
     // A changed source.
     let other = text("int subject(void) { int arr[4]; arr[1] = 0; return arr[3]; }");
-    let changed = C11TranslationUnit { source: &other, ..Default::default() };
+    let changed = C11TranslationUnit {
+        source: &other,
+        ..Default::default()
+    };
     assert!(check_bounds_report(&recorded, &changed, &selection, &none()).is_err());
 }
 
@@ -642,7 +910,10 @@ fn cg16_unsupported_forms_are_named_unknowns() {
     if !clang_available() {
         return;
     }
-    let r = row("int subject(void) { int arr[4]; return ({ arr[1]; }); }", &none());
+    let r = row(
+        "int subject(void) { int arr[4]; return ({ arr[1]; }); }",
+        &none(),
+    );
     assert_eq!(r.verdict, "Unknown");
     assert!(has_reason(&r, "bounds-unsupported-form"));
     let r = row("int subject(int n) { int v[n]; return v[0]; }", &none());

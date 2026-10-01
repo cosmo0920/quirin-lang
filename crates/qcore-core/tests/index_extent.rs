@@ -7,8 +7,8 @@
 use qcore_core::index_extent::{
     BOUNDS_MODEL_VERSION, BOUNDS_PROPERTY, BoundsVerdict, Count, Decision, EvidenceIdentity,
     ExtentResolution, Facts, IndexFact, Judgement, Outcome, PointerFact, Refusal, Request,
-    ScalarFact, Standing, Unit, admit, bounds_verdict, byte_access, compose, element_access,
-    formation, resolve_extent, same_object, scale, SameObject,
+    SameObject, ScalarFact, Standing, Unit, admit, bounds_verdict, byte_access, compose,
+    element_access, formation, resolve_extent, same_object, scale,
 };
 
 const LEAN: &str = include_str!("../../../proof/QCore/IndexExtent.lean");
@@ -205,7 +205,8 @@ fn verdict(term: &Term) -> BoundsVerdict {
 
 #[test]
 fn cg16_element_vectors_match_the_lean_model() {
-    let rows = rows("def elementVectors : List (Option Count × IndexFact × Decision × Decision) := [");
+    let rows =
+        rows("def elementVectors : List (Option Count × IndexFact × Decision × Decision) := [");
     assert_eq!(rows.len(), 16);
     for row in rows {
         let [n, i, access, formed] = row.as_slice() else {
@@ -213,8 +214,16 @@ fn cg16_element_vectors_match_the_lean_model() {
         };
         let n = option(n, count);
         let i = index(i);
-        assert_eq!(element_access(n.as_ref(), &i), decision(access), "{n:?} {i:?}");
-        assert_eq!(formation(n.as_ref(), &i), decision(formed), "{n:?} {i:?} (formation)");
+        assert_eq!(
+            element_access(n.as_ref(), &i),
+            decision(access),
+            "{n:?} {i:?}"
+        );
+        assert_eq!(
+            formation(n.as_ref(), &i),
+            decision(formed),
+            "{n:?} {i:?} (formation)"
+        );
     }
 }
 
@@ -249,7 +258,11 @@ fn cg16_resolve_vectors_match_the_lean_model() {
         let source = option(source, |t| int(t) as u128);
         let declared = option(declared, |t| pair(t, count, standing));
         let expected = option(expected, |t| pair(t, count, standing));
-        assert_eq!(resolve_extent(source, declared.clone()).in_force(), expected, "{row:?}");
+        assert_eq!(
+            resolve_extent(source, declared.clone()).in_force(),
+            expected,
+            "{row:?}"
+        );
     }
 }
 
@@ -277,7 +290,11 @@ fn cg16_verdict_vectors_match_the_lean_model() {
         let reasons = (0..int(reasons))
             .map(|n| format!("function reason {n}"))
             .collect::<Vec<_>>();
-        assert_eq!(bounds_verdict(&judgements, &reasons).0, verdict(expected), "{row:?}");
+        assert_eq!(
+            bounds_verdict(&judgements, &reasons).0,
+            verdict(expected),
+            "{row:?}"
+        );
     }
 }
 
@@ -359,8 +376,14 @@ fn cg16_a_write_withdraws_every_fact_that_names_the_variable() {
     assert!(written.scalars.contains_key("k") && written.pointers.contains_key("a"));
     let mut called = facts.clone();
     called.call();
-    assert!(!called.pointers.contains_key("p"), "a call may resize a declared object");
-    assert!(called.pointers.contains_key("a"), "no call resizes a source object");
+    assert!(
+        !called.pointers.contains_key("p"),
+        "a call may resize a declared object"
+    );
+    assert!(
+        called.pointers.contains_key("a"),
+        "no call resizes a source object"
+    );
     assert_eq!(facts.join(&written), written);
 }
 
@@ -370,7 +393,10 @@ fn cg16_same_object_needs_one_identity() {
     let b = "brr".to_owned();
     assert_eq!(same_object(Some(&a), Some(&a), true), SameObject::Same);
     assert_eq!(same_object(Some(&a), Some(&b), true), SameObject::Different);
-    assert_eq!(same_object(Some(&a), Some(&b), false), SameObject::Unresolved);
+    assert_eq!(
+        same_object(Some(&a), Some(&b), false),
+        SameObject::Unresolved
+    );
     assert_eq!(same_object(Some(&a), None, true), SameObject::Unresolved);
 }
 
@@ -384,7 +410,11 @@ fn cg16_composition_keeps_both_rows() {
     assert_eq!(compose(both, Some(Safe), Some(Unknown)), Unknown);
     assert_eq!(compose(both, Some(Safe), Some(Pending)), Pending);
     assert_eq!(compose(both, Some(Safe), Some(Unsafe)), Unsafe);
-    assert_eq!(compose(both, Some(Safe), None), Unknown, "a requested row is never omitted");
+    assert_eq!(
+        compose(both, Some(Safe), None),
+        Unknown,
+        "a requested row is never omitted"
+    );
     let custody_only = Request {
         custody: true,
         bounds: false,
@@ -401,13 +431,43 @@ fn cg16_admission_binds_the_identity() {
         target: "t".into(),
         contracts_sha256: "c".into(),
     };
-    assert!(admit((&identity, 3, BoundsVerdict::Safe), (&identity, 3, BoundsVerdict::Safe)).is_ok());
+    assert!(
+        admit(
+            (&identity, 3, BoundsVerdict::Safe),
+            (&identity, 3, BoundsVerdict::Safe)
+        )
+        .is_ok()
+    );
     let mut changed = identity.clone();
     changed.target = "other".into();
-    assert!(admit((&identity, 3, BoundsVerdict::Safe), (&changed, 3, BoundsVerdict::Safe)).is_err());
-    assert!(admit((&identity, 2, BoundsVerdict::Safe), (&identity, 3, BoundsVerdict::Safe)).is_err());
-    assert!(admit((&identity, 3, BoundsVerdict::Safe), (&identity, 3, BoundsVerdict::Unknown)).is_err());
+    assert!(
+        admit(
+            (&identity, 3, BoundsVerdict::Safe),
+            (&changed, 3, BoundsVerdict::Safe)
+        )
+        .is_err()
+    );
+    assert!(
+        admit(
+            (&identity, 2, BoundsVerdict::Safe),
+            (&identity, 3, BoundsVerdict::Safe)
+        )
+        .is_err()
+    );
+    assert!(
+        admit(
+            (&identity, 3, BoundsVerdict::Safe),
+            (&identity, 3, BoundsVerdict::Unknown)
+        )
+        .is_err()
+    );
     let mut other = identity.clone();
     other.property = "c.custody".into();
-    assert!(admit((&other, 3, BoundsVerdict::Safe), (&other, 3, BoundsVerdict::Safe)).is_err());
+    assert!(
+        admit(
+            (&other, 3, BoundsVerdict::Safe),
+            (&other, 3, BoundsVerdict::Safe)
+        )
+        .is_err()
+    );
 }

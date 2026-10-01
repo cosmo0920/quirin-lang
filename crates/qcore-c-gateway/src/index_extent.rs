@@ -72,9 +72,8 @@ use qcore_contract::bounds_contract::{
     BoundsUnit, ParameterKind,
 };
 use qcore_core::index_extent::{
-    self as core, BOUNDS_MODEL_VERSION, Count, Decision,
-    EvidenceIdentity, Facts, IndexFact, Judgement, Outcome, PointerFact, Refusal, SameObject,
-    ScalarFact, Standing,
+    self as core, BOUNDS_MODEL_VERSION, Count, Decision, EvidenceIdentity, Facts, IndexFact,
+    Judgement, Outcome, PointerFact, Refusal, SameObject, ScalarFact, Standing,
 };
 use serde_json::Value;
 
@@ -182,7 +181,11 @@ fn target_facts(unit: &C11TranslationUnit<'_>) -> Result<BoundsTarget, String> {
     unit.append_frontend_flags(&mut command);
     command.args(["-x", "c", unit.dialect.clang_argument(), "-dM", "-E", "-"]);
     let key = format!("{command:?}");
-    if let Some(found) = TARGETS.lock().map_err(|_| "target cache poisoned")?.get(&key) {
+    if let Some(found) = TARGETS
+        .lock()
+        .map_err(|_| "target cache poisoned")?
+        .get(&key)
+    {
         return Ok(found.clone());
     }
     let mut child = command
@@ -372,8 +375,8 @@ fn is_pointer(ty: &str) -> bool {
 struct TuIndex<'a> {
     functions: BTreeMap<String, &'a Value>,
     globals: BTreeMap<String, (String, String)>, // id -> (name, type)
-    enums: BTreeMap<String, i128>,                // EnumConstantDecl id -> value
-    prototypes: BTreeMap<String, Vec<String>>,    // function name -> parameter types
+    enums: BTreeMap<String, i128>,               // EnumConstantDecl id -> value
+    prototypes: BTreeMap<String, Vec<String>>,   // function name -> parameter types
 }
 
 fn index_unit(ast: &Value) -> TuIndex<'_> {
@@ -488,7 +491,11 @@ impl State {
             definite: false,
         };
         for (key, clauses) in &other.held {
-            joined.held.entry(key.clone()).or_default().extend(clauses.iter().cloned());
+            joined
+                .held
+                .entry(key.clone())
+                .or_default()
+                .extend(clauses.iter().cloned());
         }
         joined.sync();
         joined
@@ -598,7 +605,11 @@ fn decl_ref(node: &Value) -> Option<(&str, &str, &str)> {
         return None;
     }
     let decl = &node["referencedDecl"];
-    Some((decl["id"].as_str()?, decl["kind"].as_str()?, decl["name"].as_str()?))
+    Some((
+        decl["id"].as_str()?,
+        decl["kind"].as_str()?,
+        decl["name"].as_str()?,
+    ))
 }
 
 /// The variable a read `LValueToRValue(DeclRefExpr)` reads.
@@ -755,18 +766,30 @@ fn render_outcome(outcome: &Outcome) -> String {
 
 fn add_offsets(left: &IndexFact, right: &IndexFact) -> IndexFact {
     match (left, right) {
-        (IndexFact::Const(a), IndexFact::Const(b)) => a.checked_add(*b).map_or(IndexFact::Unknown, IndexFact::Const),
+        (IndexFact::Const(a), IndexFact::Const(b)) => a
+            .checked_add(*b)
+            .map_or(IndexFact::Unknown, IndexFact::Const),
         (IndexFact::Const(0), other) | (other, IndexFact::Const(0)) => other.clone(),
-        (IndexFact::Const(a), IndexFact::Range { lo, hi: Count::Const(hi) })
-        | (IndexFact::Range { lo, hi: Count::Const(hi) }, IndexFact::Const(a)) => {
-            match (lo.checked_add(*a), (*hi as i128).checked_add(*a)) {
-                (Some(lo), Some(hi)) if hi >= 0 => IndexFact::Range {
-                    lo,
-                    hi: Count::Const(hi as u128),
-                },
-                _ => IndexFact::Unknown,
-            }
-        }
+        (
+            IndexFact::Const(a),
+            IndexFact::Range {
+                lo,
+                hi: Count::Const(hi),
+            },
+        )
+        | (
+            IndexFact::Range {
+                lo,
+                hi: Count::Const(hi),
+            },
+            IndexFact::Const(a),
+        ) => match (lo.checked_add(*a), (*hi as i128).checked_add(*a)) {
+            (Some(lo), Some(hi)) if hi >= 0 => IndexFact::Range {
+                lo,
+                hi: Count::Const(hi as u128),
+            },
+            _ => IndexFact::Unknown,
+        },
         _ => IndexFact::Unknown,
     }
 }
@@ -850,15 +873,26 @@ impl<'a> Analysis<'a> {
                 .as_str()
                 .and_then(|v| v.parse().ok())
                 .map_or_else(Val::unknown, Val::constant),
-            "CharacterLiteral" => node["value"].as_i64().map_or_else(Val::unknown, |v| Val::constant(v.into())),
+            "CharacterLiteral" => node["value"]
+                .as_i64()
+                .map_or_else(Val::unknown, |v| Val::constant(v.into())),
             "ConstantExpr" => node["value"]
                 .as_str()
                 .and_then(|v| v.parse().ok())
-                .map_or_else(|| kids(node).next().map_or_else(Val::unknown, |c| self.eval(c, state)), Val::constant),
+                .map_or_else(
+                    || {
+                        kids(node)
+                            .next()
+                            .map_or_else(Val::unknown, |c| self.eval(c, state))
+                    },
+                    Val::constant,
+                ),
             "DeclRefExpr" => match decl_ref(node) {
-                Some((id, "EnumConstantDecl", _)) => {
-                    self.unit.enums.get(id).map_or_else(Val::unknown, |v| Val::constant(*v))
-                }
+                Some((id, "EnumConstantDecl", _)) => self
+                    .unit
+                    .enums
+                    .get(id)
+                    .map_or_else(Val::unknown, |v| Val::constant(*v)),
                 _ => Val::unknown(),
             },
             "ImplicitCastExpr" | "CStyleCastExpr" => {
@@ -1016,18 +1050,30 @@ impl<'a> Analysis<'a> {
         match kind(node) {
             "DeclRefExpr" => match decl_ref(node) {
                 Some((id, _, name)) => (format!("{name}#{id}"), true),
-                None => (format!("object#{}", node["id"].as_str().unwrap_or("?")), false),
+                None => (
+                    format!("object#{}", node["id"].as_str().unwrap_or("?")),
+                    false,
+                ),
             },
             "MemberExpr" => {
-                let base = kids(node).next().map(|b| self.object_name(b).0).unwrap_or_default();
+                let base = kids(node)
+                    .next()
+                    .map(|b| self.object_name(b).0)
+                    .unwrap_or_default();
                 let arrow = if node["isArrow"] == true { "->" } else { "." };
-                (format!("{base}{arrow}{}", node["name"].as_str().unwrap_or("?")), false)
+                (
+                    format!("{base}{arrow}{}", node["name"].as_str().unwrap_or("?")),
+                    false,
+                )
             }
             "ImplicitCastExpr" => kids(node)
                 .next()
                 .map(|c| self.object_name(c))
                 .unwrap_or_else(|| ("?".into(), false)),
-            _ => (format!("{}#{}", kind(node), node["id"].as_str().unwrap_or("?")), false),
+            _ => (
+                format!("{}#{}", kind(node), node["id"].as_str().unwrap_or("?")),
+                false,
+            ),
         }
     }
 
@@ -1042,7 +1088,9 @@ impl<'a> Analysis<'a> {
                     Some("ArrayToPointerDecay") => self.array_target(inner, state),
                     Some("LValueToRValue") => {
                         let Some(id) = read_of(node) else {
-                            return Target::Missing("no extent established for this pointer".into());
+                            return Target::Missing(
+                                "no extent established for this pointer".into(),
+                            );
                         };
                         match state.facts.pointers.get(id) {
                             Some(fact) => Target::Known {
@@ -1086,7 +1134,11 @@ impl<'a> Analysis<'a> {
                 };
                 let base = self.target(pointer, state);
                 let value = self.eval(integer, state);
-                let step = if negative { negate(&value.fact) } else { value.fact };
+                let step = if negative {
+                    negate(&value.fact)
+                } else {
+                    value.fact
+                };
                 match base {
                     Target::Known {
                         object,
@@ -1200,7 +1252,11 @@ impl<'a> Analysis<'a> {
         match shape(&ty) {
             Shape::Fixed { count, element } => {
                 if let Some((declared_count, _, held)) = declared {
-                    let standing = if held.is_empty() { Standing::Resolved } else { Standing::Held };
+                    let standing = if held.is_empty() {
+                        Standing::Resolved
+                    } else {
+                        Standing::Held
+                    };
                     if let core::ExtentResolution::Conflict { source, declared } =
                         core::resolve_extent(Some(count), Some((declared_count, standing)))
                     {
@@ -1234,7 +1290,9 @@ impl<'a> Analysis<'a> {
                     source_object: false,
                     distinct: false,
                 },
-                None => Target::Missing(format!("`{object}` has an incomplete array type and no declared extent")),
+                None => Target::Missing(format!(
+                    "`{object}` has an incomplete array type and no declared extent"
+                )),
             },
             Shape::Variable => Target::Missing(format!(
                 "`{object}` is a variable-length array; its extent is CG17's"
@@ -1257,9 +1315,16 @@ impl<'a> Analysis<'a> {
 
     // -- obligations --------------------------------------------------------
 
-    fn decide_access(&self, target: &Target, index: &IndexFact, formation: bool) -> (Decision, String) {
+    fn decide_access(
+        &self,
+        target: &Target,
+        index: &IndexFact,
+        formation: bool,
+    ) -> (Decision, String) {
         match target {
-            Target::Missing(reason) => (Decision::Undecided(Refusal::MissingExtent), reason.clone()),
+            Target::Missing(reason) => {
+                (Decision::Undecided(Refusal::MissingExtent), reason.clone())
+            }
             Target::Known {
                 object,
                 count,
@@ -1289,7 +1354,12 @@ impl<'a> Analysis<'a> {
                                         Decision::OutOfBounds
                                     }
                                 }
-                                Ok(byte_offset) => core::byte_access(*bytes, byte_offset, width, self.target.ptrdiff_max),
+                                Ok(byte_offset) => core::byte_access(
+                                    *bytes,
+                                    byte_offset,
+                                    width,
+                                    self.target.ptrdiff_max,
+                                ),
                             }
                         }
                         (_, _, None) => Decision::Undecided(Refusal::UnsupportedRange),
@@ -1339,10 +1409,17 @@ impl<'a> Analysis<'a> {
         match node_kind {
             "UnaryExprOrTypeTraitExpr" | "OffsetOfExpr" => {
                 // Unevaluated operands, except a variable-length type.
-                if matches!(shape(&qual(kids(node).next().unwrap_or(node))), Shape::Variable)
-                    || node["argType"]["qualType"].as_str().is_some_and(|t| matches!(shape(t), Shape::Variable))
+                if matches!(
+                    shape(&qual(kids(node).next().unwrap_or(node))),
+                    Shape::Variable
+                ) || node["argType"]["qualType"]
+                    .as_str()
+                    .is_some_and(|t| matches!(shape(t), Shape::Variable))
                 {
-                    self.reason("bounds-unsupported-form: evaluated `sizeof` of a variable-length type".into());
+                    self.reason(
+                        "bounds-unsupported-form: evaluated `sizeof` of a variable-length type"
+                            .into(),
+                    );
                     return false;
                 }
                 return true;
@@ -1357,7 +1434,16 @@ impl<'a> Analysis<'a> {
                 clear &= self.expr(index, state, position, reach);
                 let target = self.target(base, state);
                 let value = self.eval(index, state);
-                clear &= self.access(node, "element-access", position, target, value, false, reach, state);
+                clear &= self.access(
+                    node,
+                    "element-access",
+                    position,
+                    target,
+                    value,
+                    false,
+                    reach,
+                    state,
+                );
                 return clear;
             }
             "UnaryOperator" => {
@@ -1377,7 +1463,16 @@ impl<'a> Analysis<'a> {
                                 clear &= self.expr(index, state, position, reach);
                                 let target = self.target(base, state);
                                 let value = self.eval(index, state);
-                                clear &= self.access(node, "formation", position, target, value, true, reach, state);
+                                clear &= self.access(
+                                    node,
+                                    "formation",
+                                    position,
+                                    target,
+                                    value,
+                                    true,
+                                    reach,
+                                    state,
+                                );
                                 return clear;
                             }
                             "UnaryOperator" if operand["opcode"] == "*" => {
@@ -1391,14 +1486,32 @@ impl<'a> Analysis<'a> {
                     ("*", Some(pointer)) => {
                         clear &= self.expr(pointer, state, position, reach);
                         let target = self.target(pointer, state);
-                        clear &= self.access(node, "dereference", position, target, Val::constant(0), false, reach, state);
+                        clear &= self.access(
+                            node,
+                            "dereference",
+                            position,
+                            target,
+                            Val::constant(0),
+                            false,
+                            reach,
+                            state,
+                        );
                         return clear;
                     }
                     ("++" | "--", Some(operand)) if is_pointer(&qual(operand)) => {
                         clear &= self.expr(operand, state, position, reach);
                         let target = self.target(operand, state);
                         let step = Val::constant(if opcode == "++" { 1 } else { -1 });
-                        clear &= self.access(node, "formation", position, target, step, true, reach, state);
+                        clear &= self.access(
+                            node,
+                            "formation",
+                            position,
+                            target,
+                            step,
+                            true,
+                            reach,
+                            state,
+                        );
                         return clear;
                     }
                     _ => {}
@@ -1410,7 +1523,16 @@ impl<'a> Analysis<'a> {
                 };
                 clear &= self.expr(base, state, position, reach);
                 let target = self.target(base, state);
-                clear &= self.access(node, "member-access", position, target, Val::constant(0), false, reach, state);
+                clear &= self.access(
+                    node,
+                    "member-access",
+                    position,
+                    target,
+                    Val::constant(0),
+                    false,
+                    reach,
+                    state,
+                );
                 return clear;
             }
             "BinaryOperator" | "CompoundAssignOperator" => {
@@ -1437,7 +1559,16 @@ impl<'a> Analysis<'a> {
                         if opcode.starts_with('-') {
                             value.fact = negate(&value.fact);
                         }
-                        clear &= self.access(node, "formation", position, target, value, true, reach, state);
+                        clear &= self.access(
+                            node,
+                            "formation",
+                            position,
+                            target,
+                            value,
+                            true,
+                            reach,
+                            state,
+                        );
                         return clear;
                     }
                     "-" | "<" | "<=" | ">" | ">=" if lp && rp => {
@@ -1471,13 +1602,31 @@ impl<'a> Analysis<'a> {
         clear
     }
 
-    fn same_object(&mut self, node: &Value, position: &str, a: &Target, b: &Target, reach: bool, state: &State) -> bool {
+    fn same_object(
+        &mut self,
+        node: &Value,
+        position: &str,
+        a: &Target,
+        b: &Target,
+        reach: bool,
+        state: &State,
+    ) -> bool {
         let (oa, da, ha) = match a {
-            Target::Known { object, distinct, held, .. } => (Some(object.clone()), *distinct, held.clone()),
+            Target::Known {
+                object,
+                distinct,
+                held,
+                ..
+            } => (Some(object.clone()), *distinct, held.clone()),
             Target::Missing(_) => (None, false, BTreeSet::new()),
         };
         let (ob, db, hb) = match b {
-            Target::Known { object, distinct, held, .. } => (Some(object.clone()), *distinct, held.clone()),
+            Target::Known {
+                object,
+                distinct,
+                held,
+                ..
+            } => (Some(object.clone()), *distinct, held.clone()),
             Target::Missing(_) => (None, false, BTreeSet::new()),
         };
         let decision = match core::same_object(oa.as_ref(), ob.as_ref(), da && db) {
@@ -1492,7 +1641,16 @@ impl<'a> Analysis<'a> {
             oa.as_deref().unwrap_or("an unresolved object"),
             ob.as_deref().unwrap_or("an unresolved object")
         );
-        self.record(node, "same-object", position, subject, decision, &held, reach, state);
+        self.record(
+            node,
+            "same-object",
+            position,
+            subject,
+            decision,
+            &held,
+            reach,
+            state,
+        );
         clear
     }
 
@@ -1555,7 +1713,13 @@ impl<'a> Analysis<'a> {
         }
     }
 
-    fn actual_value(&self, contract: &BoundsFunctionContract, arguments: &[&Value], count: &BoundsCount, state: &State) -> Option<Val> {
+    fn actual_value(
+        &self,
+        contract: &BoundsFunctionContract,
+        arguments: &[&Value],
+        count: &BoundsCount,
+        state: &State,
+    ) -> Option<Val> {
         match count {
             BoundsCount::Const(n) => Some(Val::constant(*n as i128)),
             BoundsCount::Parameter(name) => {
@@ -1576,15 +1740,20 @@ impl<'a> Analysis<'a> {
         let holds = self.callee_holds(contract);
         let mut clear = true;
         if contract.parameters.len() != arguments.len()
-            || contract.parameters.iter().zip(arguments).any(|(p, a)| {
-                (p.kind == ParameterKind::Pointer) != is_pointer(&qual(a))
-            })
+            || contract
+                .parameters
+                .iter()
+                .zip(arguments)
+                .any(|(p, a)| (p.kind == ParameterKind::Pointer) != is_pointer(&qual(a)))
         {
             self.record(
                 node,
                 "call-precondition",
                 "actual",
-                format!("`{}`'s bounds contract does not match the call's arguments", contract.name),
+                format!(
+                    "`{}`'s bounds contract does not match the call's arguments",
+                    contract.name
+                ),
                 Decision::Undecided(Refusal::SymbolMismatch),
                 &BTreeSet::new(),
                 reach,
@@ -1594,12 +1763,18 @@ impl<'a> Analysis<'a> {
         }
         for entry in &contract.clauses {
             match &entry.clause {
-                BoundsClause::Extent { parameter, count, unit } => {
+                BoundsClause::Extent {
+                    parameter,
+                    count,
+                    unit,
+                } => {
                     let Some((index, _)) = contract.parameter(parameter) else {
                         continue;
                     };
                     let target = self.target(arguments[index], state);
-                    let required = self.actual_value(contract, arguments, count, state).unwrap_or_else(Val::unknown);
+                    let required = self
+                        .actual_value(contract, arguments, count, state)
+                        .unwrap_or_else(Val::unknown);
                     let decision = self.covers(&target, &required, *unit);
                     let mut held = holds.clone();
                     held.extend(required.held.iter().cloned());
@@ -1623,7 +1798,9 @@ impl<'a> Analysis<'a> {
                         continue;
                     };
                     let value = self.eval(arguments[index], state);
-                    let bound = self.actual_value(contract, arguments, count, state).unwrap_or_else(Val::unknown);
+                    let bound = self
+                        .actual_value(contract, arguments, count, state)
+                        .unwrap_or_else(Val::unknown);
                     let count = match (&bound.fact, &bound.symbol) {
                         (IndexFact::Const(n), _) if *n >= 0 => Some(Count::Const(*n as u128)),
                         (_, Some(symbol)) => Some(Count::Symbol(symbol.clone())),
@@ -1654,7 +1831,14 @@ impl<'a> Analysis<'a> {
     /// The target can hold `required` units from its offset: forming
     /// `target + required` is valid.
     fn covers(&self, target: &Target, required: &Val, unit: BoundsUnit) -> Decision {
-        let Target::Known { count, unit: have, offset, element, .. } = target else {
+        let Target::Known {
+            count,
+            unit: have,
+            offset,
+            element,
+            ..
+        } = target
+        else {
             return Decision::Undecided(Refusal::MissingExtent);
         };
         let want = match unit {
@@ -1662,7 +1846,9 @@ impl<'a> Analysis<'a> {
             BoundsUnit::Bytes => Unit2::Bytes,
         };
         // A stable symbol at offset zero against the same symbol.
-        if let (Some(symbol), Count::Symbol(have_symbol), IndexFact::Const(0)) = (&required.symbol, count, offset) {
+        if let (Some(symbol), Count::Symbol(have_symbol), IndexFact::Const(0)) =
+            (&required.symbol, count, offset)
+        {
             if symbol == have_symbol && *have == want {
                 return Decision::InBounds;
             }
@@ -1678,13 +1864,18 @@ impl<'a> Analysis<'a> {
         }
         // Elements held, bytes required (or the reverse): convert by the
         // element size when every quantity is a constant.
-        let (Some(width), Count::Const(n), IndexFact::Const(o)) = (element_size(self.target, element), count, offset) else {
+        let (Some(width), Count::Const(n), IndexFact::Const(o)) =
+            (element_size(self.target, element), count, offset)
+        else {
             return Decision::Undecided(Refusal::UnsupportedRange);
         };
         let limit = self.target.ptrdiff_max;
         match have {
             Unit2::Elements => {
-                let (Ok(capacity), Ok(start)) = (core::scale(*n as i128, width, limit), core::scale(*o, width, limit)) else {
+                let (Ok(capacity), Ok(start)) = (
+                    core::scale(*n as i128, width, limit),
+                    core::scale(*o, width, limit),
+                ) else {
                     return Decision::Undecided(Refusal::Overflow);
                 };
                 match start.checked_add(r) {
@@ -1708,7 +1899,8 @@ impl<'a> Analysis<'a> {
             let top = strip(node);
             let is_step = matches!(
                 (kind(top), top["opcode"].as_str()),
-                ("UnaryOperator", Some("++" | "--")) | ("CompoundAssignOperator", Some("+=" | "-="))
+                ("UnaryOperator", Some("++" | "--"))
+                    | ("CompoundAssignOperator", Some("+=" | "-="))
             );
             is_step
                 .then(|| kids(top).next().and_then(decl_ref).map(|d| d.0.to_owned()))
@@ -1757,7 +1949,10 @@ impl<'a> Analysis<'a> {
                 let preserves = name
                     .and_then(|n| analysis.contracts.contract(&n))
                     .is_some_and(|c| {
-                        !c.held() && c.clauses.iter().any(|e| e.clause == BoundsClause::PreservesExtents)
+                        !c.held()
+                            && c.clauses
+                                .iter()
+                                .any(|e| e.clause == BoundsClause::PreservesExtents)
                     });
                 *all &= preserves;
             }
@@ -1769,7 +1964,13 @@ impl<'a> Analysis<'a> {
         all
     }
 
-    fn assignment_updates(&mut self, node: &Value, pre: &State, reading: &State, out: &mut Vec<(String, Update)>) {
+    fn assignment_updates(
+        &mut self,
+        node: &Value,
+        pre: &State,
+        reading: &State,
+        out: &mut Vec<(String, Update)>,
+    ) {
         let node = strip(node);
         match kind(node) {
             "BinaryOperator" if node["opcode"] == "=" => {
@@ -1804,10 +2005,17 @@ impl<'a> Analysis<'a> {
                 let step = match node["opcode"].as_str() {
                     Some("++") => Val::constant(1),
                     Some("--") => Val::constant(-1),
-                    Some("+=") => operands.next().map_or_else(Val::unknown, |r| self.eval(r, reading)),
+                    Some("+=") => operands
+                        .next()
+                        .map_or_else(Val::unknown, |r| self.eval(r, reading)),
                     _ => {
-                        let v = operands.next().map_or_else(Val::unknown, |r| self.eval(r, reading));
-                        Val { fact: negate(&v.fact), ..v }
+                        let v = operands
+                            .next()
+                            .map_or_else(Val::unknown, |r| self.eval(r, reading));
+                        Val {
+                            fact: negate(&v.fact),
+                            ..v
+                        }
                     }
                 };
                 // A step from the variable's own fact before the write.
@@ -1825,8 +2033,13 @@ impl<'a> Analysis<'a> {
                             held,
                         ),
                     }
-                } else if let (Some(ScalarFact { value: IndexFact::Const(v), .. }), IndexFact::Const(d)) =
-                    (pre.facts.scalars.get(id), &step.fact)
+                } else if let (
+                    Some(ScalarFact {
+                        value: IndexFact::Const(v),
+                        ..
+                    }),
+                    IndexFact::Const(d),
+                ) = (pre.facts.scalars.get(id), &step.fact)
                 {
                     let mut held = pre.held.get(id).cloned().unwrap_or_default();
                     held.extend(step.held.iter().cloned());
@@ -1872,7 +2085,11 @@ impl<'a> Analysis<'a> {
                             count,
                             unit,
                             offset,
-                            standing: if held.is_empty() { Standing::Source } else { Standing::Held },
+                            standing: if held.is_empty() {
+                                Standing::Source
+                            } else {
+                                Standing::Held
+                            },
                             source_object,
                         },
                         element,
@@ -1916,7 +2133,11 @@ impl<'a> Analysis<'a> {
         let mut held = self.callee_holds(contract);
         for entry in &contract.clauses {
             let established = match &entry.clause {
-                BoundsClause::Extent { parameter, count, unit } => {
+                BoundsClause::Extent {
+                    parameter,
+                    count,
+                    unit,
+                } => {
                     let (index, _) = contract.parameter(parameter)?;
                     let target = self.target(arguments.get(index)?, reading);
                     if let Target::Known { held: h, .. } = &target {
@@ -1951,8 +2172,14 @@ impl<'a> Analysis<'a> {
             (_, Some(symbol)) => Count::Symbol(symbol.clone()),
             _ => return None,
         };
-        let element = pointee(&qual(call)).map(|t| strip_qualifiers(&t)).unwrap_or_default();
-        for clause in contract.clauses.iter().filter(|e| matches!(e.clause, BoundsClause::ReturnExtent { .. })) {
+        let element = pointee(&qual(call))
+            .map(|t| strip_qualifiers(&t))
+            .unwrap_or_default();
+        for clause in contract
+            .clauses
+            .iter()
+            .filter(|e| matches!(e.clause, BoundsClause::ReturnExtent { .. }))
+        {
             self.assumptions.insert(format!(
                 "{}: `{}` {}",
                 if held.is_empty() { "declared" } else { "held" },
@@ -1969,7 +2196,11 @@ impl<'a> Analysis<'a> {
                     BoundsUnit::Bytes => Unit2::Bytes,
                 },
                 offset: IndexFact::Const(0),
-                standing: if held.is_empty() { Standing::Resolved } else { Standing::Held },
+                standing: if held.is_empty() {
+                    Standing::Resolved
+                } else {
+                    Standing::Held
+                },
                 source_object: false,
             },
             element,
@@ -1985,7 +2216,11 @@ impl<'a> Analysis<'a> {
                     id.to_owned(),
                     ScalarFact {
                         value: fact,
-                        standing: if held.is_empty() { Standing::Source } else { Standing::Held },
+                        standing: if held.is_empty() {
+                            Standing::Source
+                        } else {
+                            Standing::Held
+                        },
                     },
                 );
                 if !held.is_empty() {
@@ -2030,7 +2265,9 @@ impl<'a> Analysis<'a> {
                     match kind(decl) {
                         "VarDecl" => self.declaration(decl, state),
                         "RecordDecl" | "EnumDecl" | "TypedefDecl" | "StaticAssertDecl" => {}
-                        other => self.reason(format!("bounds-unsupported-form: declaration `{other}`")),
+                        other => {
+                            self.reason(format!("bounds-unsupported-form: declaration `{other}`"))
+                        }
                     }
                 }
             }
@@ -2050,7 +2287,9 @@ impl<'a> Analysis<'a> {
                 let entry = self.switch_entries.last().cloned();
                 match entry {
                     Some(entry) => *state = state.join(&entry),
-                    None => self.reason("bounds-unsupported-form: a case label outside a switch".into()),
+                    None => {
+                        self.reason("bounds-unsupported-form: a case label outside a switch".into())
+                    }
                 }
                 state.definite = false;
                 let substatement = if node_kind == "CaseStmt" {
@@ -2068,7 +2307,9 @@ impl<'a> Analysis<'a> {
                     self.stmt(substatement, state);
                 }
             }
-            kind if READ_EXPRESSIONS.contains(&kind) => self.full_expression(node, state, "statement"),
+            kind if READ_EXPRESSIONS.contains(&kind) => {
+                self.full_expression(node, state, "statement")
+            }
             other => {
                 self.reason(format!("bounds-unsupported-form: statement `{other}`"));
                 state.definite = false;
@@ -2098,7 +2339,11 @@ impl<'a> Analysis<'a> {
         let required = match &count {
             BoundsCount::Const(n) => Val::constant(*n as i128),
             BoundsCount::Parameter(name) => {
-                let id = self.params.iter().find(|(_, p)| *p == name).map(|(id, _)| id.clone());
+                let id = self
+                    .params
+                    .iter()
+                    .find(|(_, p)| *p == name)
+                    .map(|(id, _)| id.clone());
                 match id {
                     Some(id) if state.stable.contains(&id) => Val {
                         fact: IndexFact::Unknown,
@@ -2110,7 +2355,8 @@ impl<'a> Analysis<'a> {
             }
         };
         let target = self.target(value, state);
-        let source_only = matches!(&target, Target::Known { source_object: true, held, .. } if held.is_empty());
+        let source_only =
+            matches!(&target, Target::Known { source_object: true, held, .. } if held.is_empty());
         match self.covers(&target, &required, unit) {
             Decision::OutOfBounds if source_only => {
                 self.refuted = true;
@@ -2263,24 +2509,32 @@ impl<'a> Analysis<'a> {
         None
     }
 
-    fn comparison(&self, opcode: &str, left: &Value, right: &Value, truth: bool, state: &mut State) {
+    fn comparison(
+        &self,
+        opcode: &str,
+        left: &Value,
+        right: &Value,
+        truth: bool,
+        state: &mut State,
+    ) {
         let usable = |v: Val| !matches!(v.fact, IndexFact::Unknown) || v.symbol.is_some();
-        let (variable, other, opcode) = match (self.guarded_variable(left), self.guarded_variable(right)) {
-            (Some(v), _) if usable(self.eval(right, state)) => (v, right, opcode.to_owned()),
-            (_, Some(v)) => (
-                v,
-                left,
-                match opcode {
-                    "<" => ">",
-                    "<=" => ">=",
-                    ">" => "<",
-                    ">=" => "<=",
-                    other => other,
-                }
-                .to_owned(),
-            ),
-            _ => return,
-        };
+        let (variable, other, opcode) =
+            match (self.guarded_variable(left), self.guarded_variable(right)) {
+                (Some(v), _) if usable(self.eval(right, state)) => (v, right, opcode.to_owned()),
+                (_, Some(v)) => (
+                    v,
+                    left,
+                    match opcode {
+                        "<" => ">",
+                        "<=" => ">=",
+                        ">" => "<",
+                        ">=" => "<=",
+                        other => other,
+                    }
+                    .to_owned(),
+                ),
+                _ => return,
+            };
         let opcode = if truth {
             opcode
         } else {
@@ -2300,15 +2554,22 @@ impl<'a> Analysis<'a> {
         };
         let (min, max) = type_range(width, signed);
         let bound = self.eval(other, state);
-        let (lo, hi): (Option<i128>, Option<Count>) = match (&bound.fact, &bound.symbol, opcode.as_str()) {
-            (IndexFact::Const(c), _, "<") => (None, (*c > min).then(|| Count::Const((*c).max(0) as u128))),
-            (IndexFact::Const(c), _, "<=") => (None, Some(Count::Const((c + 1).max(0) as u128))),
-            (IndexFact::Const(c), _, ">") => (Some(c + 1), None),
-            (IndexFact::Const(c), _, ">=") => (Some(*c), None),
-            (IndexFact::Const(c), _, "==") => (Some(*c), Some(Count::Const((c + 1).max(0) as u128))),
-            (_, Some(symbol), "<") => (None, Some(Count::Symbol(symbol.clone()))),
-            _ => return,
-        };
+        let (lo, hi): (Option<i128>, Option<Count>) =
+            match (&bound.fact, &bound.symbol, opcode.as_str()) {
+                (IndexFact::Const(c), _, "<") => {
+                    (None, (*c > min).then(|| Count::Const((*c).max(0) as u128)))
+                }
+                (IndexFact::Const(c), _, "<=") => {
+                    (None, Some(Count::Const((c + 1).max(0) as u128)))
+                }
+                (IndexFact::Const(c), _, ">") => (Some(c + 1), None),
+                (IndexFact::Const(c), _, ">=") => (Some(*c), None),
+                (IndexFact::Const(c), _, "==") => {
+                    (Some(*c), Some(Count::Const((c + 1).max(0) as u128)))
+                }
+                (_, Some(symbol), "<") => (None, Some(Count::Symbol(symbol.clone()))),
+                _ => return,
+            };
         let previous = state.facts.scalars.get(&id).map(|f| f.value.clone());
         let previous = previous.unwrap_or(IndexFact::Range {
             lo: min,
@@ -2321,7 +2582,11 @@ impl<'a> Analysis<'a> {
             id.clone(),
             ScalarFact {
                 value: narrowed,
-                standing: if held.is_empty() { Standing::Source } else { Standing::Held },
+                standing: if held.is_empty() {
+                    Standing::Source
+                } else {
+                    Standing::Held
+                },
             },
         );
         if !held.is_empty() {
@@ -2373,12 +2638,19 @@ impl<'a> Analysis<'a> {
         let node_kind = kind(node);
         let parts = kids(node).collect::<Vec<_>>();
         let (init, condition, increment, body) = match node_kind {
-            "ForStmt" => (parts.first().copied(), parts.get(2).copied(), parts.get(3).copied(), parts.get(4).copied()),
+            "ForStmt" => (
+                parts.first().copied(),
+                parts.get(2).copied(),
+                parts.get(3).copied(),
+                parts.get(4).copied(),
+            ),
             "WhileStmt" => (None, parts.first().copied(), None, parts.get(1).copied()),
             _ => (None, parts.get(1).copied(), None, parts.first().copied()),
         };
         // `do … while (0)`: the body runs once.
-        if node_kind == "DoStmt" && condition.is_some_and(|c| self.constant_condition(c, state) == Some(false)) {
+        if node_kind == "DoStmt"
+            && condition.is_some_and(|c| self.constant_condition(c, state) == Some(false))
+        {
             let mut once = state.clone();
             if let Some(body) = body {
                 self.stmt(body, &mut once);
@@ -2420,7 +2692,11 @@ impl<'a> Analysis<'a> {
         for id in &written {
             entry.write(id);
         }
-        if [condition, increment, body].into_iter().flatten().any(has_call) {
+        if [condition, increment, body]
+            .into_iter()
+            .flatten()
+            .any(has_call)
+        {
             entry.call();
         }
         entry.definite = false;
@@ -2462,7 +2738,14 @@ impl<'a> Analysis<'a> {
         state.definite = false;
     }
 
-    fn counted(&self, init: &Value, condition: &Value, increment: &Value, body: &Value, entry: &State) -> Option<(String, IndexFact)> {
+    fn counted(
+        &self,
+        init: &Value,
+        condition: &Value,
+        increment: &Value,
+        body: &Value,
+        entry: &State,
+    ) -> Option<(String, IndexFact)> {
         // init: `i = c0` or a declaration `T i = c0`.
         let (id, start) = match kind(init) {
             "BinaryOperator" if init["opcode"] == "=" => {
@@ -2473,7 +2756,10 @@ impl<'a> Analysis<'a> {
             "DeclStmt" => {
                 let decl = kids(init).next()?;
                 let value = kids(decl).last()?;
-                (decl["id"].as_str()?.to_owned(), self.eval(value, entry).fact)
+                (
+                    decl["id"].as_str()?.to_owned(),
+                    self.eval(value, entry).fact,
+                )
             }
             _ => return None,
         };
@@ -2495,7 +2781,9 @@ impl<'a> Analysis<'a> {
         }
         let bound = self.eval(operands.next()?, entry);
         let hi = match (&bound.fact, &bound.symbol) {
-            (IndexFact::Const(c), _) if *c > start && bound.held.is_empty() => Count::Const(*c as u128),
+            (IndexFact::Const(c), _) if *c > start && bound.held.is_empty() => {
+                Count::Const(*c as u128)
+            }
             (_, Some(symbol)) if bound.held.is_empty() => Count::Symbol(symbol.clone()),
             _ => return None,
         };
@@ -2505,7 +2793,9 @@ impl<'a> Analysis<'a> {
             "UnaryOperator" => increment["opcode"] == "++",
             "CompoundAssignOperator" => {
                 increment["opcode"] == "+="
-                    && kids(increment).nth(1).is_some_and(|r| matches!(self.eval(r, entry).fact, IndexFact::Const(1)))
+                    && kids(increment)
+                        .nth(1)
+                        .is_some_and(|r| matches!(self.eval(r, entry).fact, IndexFact::Const(1)))
             }
             _ => false,
         };
@@ -2586,7 +2876,9 @@ fn analyze_function(
             function: name.to_owned(),
             property: BOUNDS_PROPERTY,
             verdict: "Unknown",
-            reasons: vec!["bounds-import-failure: no definition of the function in the unit's AST".into()],
+            reasons: vec![
+                "bounds-import-failure: no definition of the function in the unit's AST".into(),
+            ],
             scope: "unconditional".into(),
             assumptions: Vec::new(),
             accesses: Vec::new(),
@@ -2709,9 +3001,17 @@ fn analyze_function(
                 );
             }
             for entry in &contract.clauses {
-                let standing = if holds.is_empty() { Standing::Resolved } else { Standing::Held };
+                let standing = if holds.is_empty() {
+                    Standing::Resolved
+                } else {
+                    Standing::Held
+                };
                 match &entry.clause {
-                    BoundsClause::Extent { parameter, count, unit: u } => {
+                    BoundsClause::Extent {
+                        parameter,
+                        count,
+                        unit: u,
+                    } => {
                         let (Some(id), Some(count)) = (id_of(parameter), count_of(count)) else {
                             continue;
                         };
@@ -2761,7 +3061,11 @@ fn analyze_function(
                             state.held.insert(id, holds.clone());
                         }
                     }
-                    BoundsClause::GlobalExtent { object, count, unit: u } => {
+                    BoundsClause::GlobalExtent {
+                        object,
+                        count,
+                        unit: u,
+                    } => {
                         analysis.globals_declared.insert(
                             object.clone(),
                             (
@@ -2818,7 +3122,9 @@ pub fn analyze_bounds_preprocessed(
     std::thread::scope(|scope| {
         std::thread::Builder::new()
             .stack_size(ANALYSIS_STACK)
-            .spawn_scoped(scope, || analyze_on_stack(preprocessed, unit, functions, contracts))
+            .spawn_scoped(scope, || {
+                analyze_on_stack(preprocessed, unit, functions, contracts)
+            })
             .map_err(|error| format!("cannot start the bounds reader: {error}"))?
             .join()
             .map_err(|_| "the bounds reader panicked".to_owned())?
@@ -2985,7 +3291,8 @@ pub fn analyze_bounds_c11(
     functions: &[String],
     contracts: &BoundsContracts,
 ) -> Result<BoundsUnitReport, String> {
-    let preprocessed = crate::legacy_c::validate_unrestricted_c11(unit).map_err(|e| format!("{e:?}"))?;
+    let preprocessed =
+        crate::legacy_c::validate_unrestricted_c11(unit).map_err(|e| format!("{e:?}"))?;
     analyze_bounds_preprocessed(&preprocessed, unit, functions, contracts)
 }
 
@@ -3001,18 +3308,26 @@ pub fn check_bounds_report(
     let fresh = analyze_bounds_c11(unit, functions, contracts)?;
     for name in functions {
         let Some(row) = recorded.row(name) else {
-            return Err(format!("bounds evidence omits the selected function `{name}`"));
+            return Err(format!(
+                "bounds evidence omits the selected function `{name}`"
+            ));
         };
         let Some(fresh_row) = fresh.row(name) else {
             return Err(format!("bounds evidence cannot be re-derived for `{name}`"));
         };
         core::admit(
             (&recorded.identity(), row.accesses.len(), row_verdict(row)),
-            (&fresh.identity(), fresh_row.accesses.len(), row_verdict(fresh_row)),
+            (
+                &fresh.identity(),
+                fresh_row.accesses.len(),
+                row_verdict(fresh_row),
+            ),
         )
         .map_err(|reason| format!("`{name}`: {reason}"))?;
         if row.accesses != fresh_row.accesses {
-            return Err(format!("`{name}`: bounds evidence's accesses differ from their derivation"));
+            return Err(format!(
+                "`{name}`: bounds evidence's accesses differ from their derivation"
+            ));
         }
     }
     Ok(())

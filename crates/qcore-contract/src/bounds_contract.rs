@@ -382,7 +382,9 @@ fn review_note(groups: &[&[TokenKind]]) -> Result<ReviewNote, String> {
         match group {
             [token @ TokenKind::StringLiteral(_)] if !rewrite => strings.push(plain_string(token)?),
             [TokenKind::Word(word)]
-                if word == REWRITE_BEFORE_ACCEPTANCE && index + 1 == groups.len() && !strings.is_empty() =>
+                if word == REWRITE_BEFORE_ACCEPTANCE
+                    && index + 1 == groups.len()
+                    && !strings.is_empty() =>
             {
                 rewrite = true;
             }
@@ -450,7 +452,12 @@ impl Reader<'_> {
 
     fn parameter(&self, group: &[TokenKind], kind: ParameterKind) -> Result<String, String> {
         match single_word(group) {
-            Some(name) if self.parameters.iter().any(|p| p.name == name && p.kind == kind) => {
+            Some(name)
+                if self
+                    .parameters
+                    .iter()
+                    .any(|p| p.name == name && p.kind == kind) =>
+            {
                 Ok(name.to_owned())
             }
             _ => Err(format!(
@@ -496,7 +503,11 @@ impl Reader<'_> {
             _ => Err(format!(
                 "unsupported bounds clause `{}` under `{}`",
                 render(tokens),
-                if requires { "requires" } else { "ensures normal" }
+                if requires {
+                    "requires"
+                } else {
+                    "ensures normal"
+                }
             )),
         }
     }
@@ -558,10 +569,15 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         let tokens = tokens_of(&clause.expression_source)?;
         normalised.push(format!(
             "{} {}",
-            if requires { "requires" } else { "ensures normal" },
+            if requires {
+                "requires"
+            } else {
+                "ensures normal"
+            },
             render(&tokens)
         ));
-        if requires && matches!(tokens.as_slice(), [TokenKind::Word(w)] if w == BOUNDS_CONTRACT_MARKER)
+        if requires
+            && matches!(tokens.as_slice(), [TokenKind::Word(w)] if w == BOUNDS_CONTRACT_MARKER)
         {
             selectors += 1;
             continue;

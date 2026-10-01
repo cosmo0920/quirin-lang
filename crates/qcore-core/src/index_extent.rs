@@ -245,7 +245,11 @@ pub enum SameObject {
     Unresolved,
 }
 
-pub fn same_object(left: Option<&ObjectId>, right: Option<&ObjectId>, distinct: bool) -> SameObject {
+pub fn same_object(
+    left: Option<&ObjectId>,
+    right: Option<&ObjectId>,
+    distinct: bool,
+) -> SameObject {
     match (left, right) {
         (Some(left), Some(right)) if left == right => SameObject::Same,
         (Some(_), Some(_)) if distinct => SameObject::Different,
@@ -262,7 +266,10 @@ pub enum ExtentResolution {
     Declared(Count, Standing),
     /// The declaration differs from the source: the source extent stands for
     /// every decision and the contradiction is reported and withheld.
-    Conflict { source: u128, declared: Count },
+    Conflict {
+        source: u128,
+        declared: Count,
+    },
     Missing,
 }
 
@@ -280,7 +287,10 @@ impl ExtentResolution {
 }
 
 /// A declaration never enlarges (or otherwise overrides) a source extent.
-pub fn resolve_extent(source: Option<u128>, declared: Option<(Count, Standing)>) -> ExtentResolution {
+pub fn resolve_extent(
+    source: Option<u128>,
+    declared: Option<(Count, Standing)>,
+) -> ExtentResolution {
     match (source, declared) {
         (Some(source), None) => ExtentResolution::Source(source),
         (Some(source), Some((Count::Const(declared), _))) if declared == source => {
@@ -334,9 +344,9 @@ impl Facts {
     pub fn write(&mut self, name: &str) {
         self.scalars.remove(name);
         self.pointers.remove(name);
-        self.scalars.retain(|_, fact| {
-            !matches!(&fact.value, IndexFact::Range { hi, .. } if hi.mentions(name))
-        });
+        self.scalars.retain(
+            |_, fact| !matches!(&fact.value, IndexFact::Range { hi, .. } if hi.mentions(name)),
+        );
         self.pointers.retain(|_, fact| !fact.mentions(name));
     }
 
@@ -369,7 +379,10 @@ impl Facts {
 pub fn narrow(previous: Option<&IndexFact>, lo: Option<i128>, hi: Option<Count>) -> IndexFact {
     match previous {
         Some(IndexFact::Const(value)) => IndexFact::Const(*value),
-        Some(IndexFact::Range { lo: old_lo, hi: old_hi }) => {
+        Some(IndexFact::Range {
+            lo: old_lo,
+            hi: old_hi,
+        }) => {
             let lo = lo.map_or(*old_lo, |lo| lo.max(*old_lo));
             let hi = match (hi, old_hi) {
                 (Some(Count::Const(new)), Count::Const(old)) => Count::Const(new.min(*old)),
@@ -399,7 +412,9 @@ pub enum Outcome {
     InBounds,
     /// Out of bounds under in-force premises; `reachable` when the source
     /// consumer validated that the access is reached.
-    Violation { reachable: bool },
+    Violation {
+        reachable: bool,
+    },
     /// Discharged only by a held declaration (named).
     Held(Vec<String>),
     /// Anything else unresolved (named).
@@ -451,7 +466,10 @@ pub const AWAITING_REVIEW: &str = "awaiting-human-review";
 ///   putting them in force as written leaves no other obstacle;
 /// * `Unknown` otherwise, with every reason retained (a hypothetical
 ///   violation is a standing reason, not an accusation).
-pub fn bounds_verdict(judgements: &[Judgement], function_reasons: &[String]) -> (BoundsVerdict, Vec<String>) {
+pub fn bounds_verdict(
+    judgements: &[Judgement],
+    function_reasons: &[String],
+) -> (BoundsVerdict, Vec<String>) {
     let mut reasons: Vec<String> = function_reasons.to_vec();
     if judgements
         .iter()
@@ -509,7 +527,11 @@ pub struct Request {
 
 /// The combined verdict of a request: the join of every requested row; a
 /// requested row that is absent is `Unknown`, never omitted.
-pub fn compose(request: Request, custody: Option<BoundsVerdict>, bounds: Option<BoundsVerdict>) -> BoundsVerdict {
+pub fn compose(
+    request: Request,
+    custody: Option<BoundsVerdict>,
+    bounds: Option<BoundsVerdict>,
+) -> BoundsVerdict {
     let row = |requested: bool, value: Option<BoundsVerdict>| {
         if requested {
             value.unwrap_or(BoundsVerdict::Unknown)

@@ -63,7 +63,10 @@ fn a_review_marker_holds_the_declaration_and_names_the_clause() {
         "requires bounds_contract_v1;",
         "requires bounds_contract_v1;\n    requires bounds_review_pending(\"unchecked\", rewrite_before_acceptance);",
     );
-    let fill = load_bounds_contract_sources(&one(&whole)).unwrap().functions["fill"].clone();
+    let fill = load_bounds_contract_sources(&one(&whole))
+        .unwrap()
+        .functions["fill"]
+        .clone();
     assert!(fill.held());
     assert!(fill.holds()[0].contains("must-be-rewritten-before-acceptance"));
     // Resolution is the edit: the same text without the marker is in force,
@@ -139,7 +142,12 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let files = tracked_files::tracked_files(&root)
         .into_iter()
-        .filter(|path| matches!(path.extension().and_then(|e| e.to_str()), Some("qv" | "qcore")))
+        .filter(|path| {
+            matches!(
+                path.extension().and_then(|e| e.to_str()),
+                Some("qv" | "qcore")
+            )
+        })
         .collect::<Vec<_>>();
     assert!(!files.is_empty(), "no tracked contract modules");
     for file in files {
@@ -148,7 +156,11 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
             if spelling == "rewrite_before_acceptance" {
                 continue; // C06.1's own word, reused with its meaning.
             }
-            assert!(!text.contains(spelling), "{} uses `{spelling}`", file.display());
+            assert!(
+                !text.contains(spelling),
+                "{} uses `{spelling}`",
+                file.display()
+            );
         }
     }
 }

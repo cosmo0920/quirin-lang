@@ -167,13 +167,30 @@ impl AuditReport {
             lines.push('\n');
             for key in ["custody", "combined"] {
                 let value = row[key].as_str().unwrap_or("absent").to_owned();
-                *tally.entry(key.into()).or_default().entry(value).or_default() += 1;
+                *tally
+                    .entry(key.into())
+                    .or_default()
+                    .entry(value)
+                    .or_default() += 1;
             }
-            let bounds = row["bounds"]["verdict"].as_str().unwrap_or("absent").to_owned();
-            *tally.entry("bounds".into()).or_default().entry(bounds).or_default() += 1;
+            let bounds = row["bounds"]["verdict"]
+                .as_str()
+                .unwrap_or("absent")
+                .to_owned();
+            *tally
+                .entry("bounds".into())
+                .or_default()
+                .entry(bounds)
+                .or_default() += 1;
             let mut codes = std::collections::BTreeSet::new();
             for reason in row["bounds"]["reasons"].as_array().into_iter().flatten() {
-                let code = reason.as_str().unwrap_or("").split(':').next().unwrap_or("").to_owned();
+                let code = reason
+                    .as_str()
+                    .unwrap_or("")
+                    .split(':')
+                    .next()
+                    .unwrap_or("")
+                    .to_owned();
                 codes.insert(code);
             }
             for code in codes {
