@@ -21,6 +21,9 @@ case "$step" in
     cargo clean --manifest-path providers/Cargo.toml > "$logs/p2-clean.log" 2>&1
     ;;
   gate)
+    # After a rebase: the whole workspace compiles before the gate runs.
+    cargo check --workspace --all-targets > "$logs/00-check.log" 2>&1
+    echo $? > "$logs/00-check.exit"
     sh "$here/gate.sh" "$logs_rel"
     cargo clean --profile dev > "$logs/clean.log" 2>&1
     ;;
