@@ -49,7 +49,7 @@ AMEND = {
         "(`decode_interface->decode_error`, `rk_conf.connect_cb`), every one an open set under rule 11p (a member "
         "read through a pointer), so they stay refused. The `rd_kafka_log0` class round 8 named is the lexical "
         "indirect-access gate (`&rk->rk_conf`, a place: CG10 / CG05-CALL-ROOTED-PLACES), not an indirect call; "
-        "unchanged by CG22 (LOG0_SIZE)."
+        "unchanged by CG22: 1,100 `rd_kafka_log0` value-connective statements (de-duplicated per unit) refuse on an edge an older route refuses at BEFORE and at AFTER."
     ),
     "CG03-RETURN-OPERAND-RESIDUALS": (
         " RE-MEASURED by CG22-INDIRECT-CALLS-AND-CALLBACKS (main b6a3dc42): the condition desugar's "
@@ -93,8 +93,8 @@ REGISTER = [
             "teardown, an invocation the registration in force and the context live, the context's release a prior "
             "unregistration; a trace ending registered is Unknown), but resource v1 states no capture and no "
             "unregistration, so route G sees no registry: a registration call stays the call it is. Census at main "
-            "b6a3dc42 (a call passing a function designator): corpus 676 distinct, 2 to a declared registrar "
-            "kind that captures (`msgpack_packer_init` in `flb_input_chunk_create` and `flb_input_chunk_map`: the "
+            "b6a3dc42 (a call passing a function designator): corpus 676 distinct, 5 to a declared registrar: 2 to one that captures "
+            "(`msgpack_packer_init` in `flb_input_chunk_create` and `flb_input_chunk_map`: the "
             "packer keeps `data` behind a `Borrowed` formal, the contract's word), 3 to "
             "`rd_kafka_topic_partition_list_sort` (synchronous comparator); the relation finds a named context "
             "released later in the same body in 5 corpus, 1 system and 1 slice registrations "
