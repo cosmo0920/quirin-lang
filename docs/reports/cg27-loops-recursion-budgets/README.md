@@ -235,7 +235,20 @@ the function's fold at least `Unknown`; non-vacuity).
   `W43-COLLECTION-LOOP-SHAPES` (unchanged; the collection pass's loop reading
   is not this card's), `JOINED-PROVENANCE-CYCLE-SITES` (unchanged; CG04's
   generations supply the per-iteration identity half of its DISCHARGE, the
-  pre-pass is not changed here), `C03-NFR-REACH` (re-read, §4).
+  pre-pass is not changed here), `C03-NFR-REACH` (re-read below).
+- **C03-NFR-REACH, re-read.** C03-REACH's census (`scripts/c03_census.sh`,
+  release build; the debug build timed out at 7,200 s on the loaded host) at
+  the card's tip: **86** recursive components (63 self-recursive, 155 members)
+  over 185 units, against C03-REACH's 46 / 96 at `695f0e1`; **3** admitted by
+  the neutral route, 1 kept by a declared contract, **82** refused, **0**
+  published by the signed threshold rank. The first refusing blockers are still
+  the containment gate's retained instructions (indirect memory access 718,
+  branch-condition access 472, uncontracted call 393 occurrences), so the
+  entry's conclusion stands: further reach needs model capability, not a rank.
+  Because the signed route is consulted last and published nothing, the
+  derivation, and hence this census, is the base's.
+  [`artifacts/c03-census-after.json.gz`](artifacts/c03-census-after.json.gz)
+  (uncompressed SHA-256 `2a8c1722…`).
 - **Registered:** `CG27-LOOP-RECURSION-RESIDUALS` (stated loop invariants,
   route-T back-edges, counting loops, recursion without a literal signed rank
   including `cio_os_mkpath`, budget improvements by shared DAGs).

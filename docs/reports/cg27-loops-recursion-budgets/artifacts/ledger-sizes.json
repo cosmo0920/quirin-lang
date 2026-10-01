@@ -1,0 +1,6 @@
+{
+ "__CORPUS__": "66910c10, system and tail-pause slice byte-identical at the card tip (629 / 10 / 4,195 3d53a5d0; 44 / 2 / 188; 29 / 1 / 239 / 1 Pending): no function carries the counted-user loop refusal on any route, no budget is exhausted, and every recursive component refuses before the rank is read",
+ "__C03__": "86 recursive components (63 self-recursive, 155 members) over 185 units at base b6a3dc42 (46 / 96 at C03-REACH's base 695f0e1): 3 admitted by the neutral route, 1 kept by a declared contract, 82 refused, the first refusing blockers still the containment gate's (indirect memory access 718, branch-condition access 472, uncontracted call 393 occurrences)",
+ "__C03_RANKED__": "0",
+ "__SIZES__": "(1) and (2) 0 corpus functions (route T imports none, as CG09-CONTROL-SHAPE-RESIDUALS measured); (3) 0 functions on corpus, system and slice; (4) 22 corpus functions name a recursive partner as uncontracted (1 blocked by nothing else, cio_os_mkpath), system 2 (1 alone); (5) 0 functions exhaust a budget on any route"
+}

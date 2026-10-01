@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """CG27-LOOPS-RECURSION-BUDGETS: the ledger edits, applied once.
 
-usage: update_ledger.py MATRIX_JSON
+usage: update_ledger.py MATRIX_JSON SIZES_JSON   (artifacts/ledger-sizes.json)
 
 Retires W45-COUNTED-USERS-LOOPS (its DISCHARGE holds: a bounded loop rule, a
 body whose loop touches no tracked count or opaque call is skipped, with Lean
@@ -86,7 +86,8 @@ REGISTER = [
 
 def main():
     path = sys.argv[1]
-    sizes = json.loads(sys.argv[2])
+    with open(sys.argv[2], encoding="utf-8") as handle:
+        sizes = json.load(handle)
     with open(path, encoding="utf-8") as handle:
         matrix = json.load(handle)
     followups = matrix["named_followups"]

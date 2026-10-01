@@ -127,6 +127,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg26-variadics](cg26-variadics/README.md) | CG26-VARIADICS: the `va_list` protocol and trailing actuals per position |
 
+| [cg27-loops-recursion-budgets](cg27-loops-recursion-budgets/README.md) | CG27-LOOPS-RECURSION-BUDGETS: checked loop summaries, a signed threshold rank, and budgets as coverage |
+
 | [cg28-weak-memory-events](cg28-weak-memory-events/README.md) | CG28-WEAK-MEMORY-EVENTS |
 
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
