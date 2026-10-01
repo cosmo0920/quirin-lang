@@ -1,0 +1,18 @@
+# /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a83f873a3f7c93277/private/cg20/numeric/random_uniform.json: Lp64 x86_64-pc-linux-gnu
+random_uniform: Unknown refused=[] outside=0
+  line 96: conversion unsigned long -> int [int] SignedConversion=Open
+  line 97: conversion long -> int [int] SignedConversion=Open
+  line 101: binary - [int] SignedOverflow=Open
+  line 101: binary + [int] SignedOverflow=Open
+  line 102: binary / [int] DivisionByZero=Open, QuotientOverflow=Discharged
+  line 103: binary * [int] SignedOverflow=Open
+  line 104: unary - [int] SignedOverflow=Discharged
+  line 110: binary / [int] DivisionByZero=Open, QuotientOverflow=Open
+  line 110: binary + [int] SignedOverflow=Open
+  event line 99: wrapped-conversion int -> unsigned int
+# /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a83f873a3f7c93277/private/cg20/numeric/backoff_full_jitter.json: Lp64 x86_64-pc-linux-gnu
+backoff_full_jitter: Unknown refused=['floating arithmetic `*` (N09/N10)'] outside=0
+  line 263: cast IntegralToFloating int -> double [double] InexactIntegerToFloating=Discharged
+  line 263: cast IntegralToFloating int -> double [double] InexactIntegerToFloating=Discharged
+  line 263: cast IntegralToFloating int -> double [double] InexactIntegerToFloating=Discharged
+  line 263: cast FloatingToIntegral double -> int [int] FloatingToInteger=Open

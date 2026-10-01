@@ -3482,7 +3482,7 @@ own anchor here.
     obligation as `Unsafe`; or let a custody verdict depend on this property.
     Premises stated, not proved: Clang's predefined macros are its target
     widths and its JSON AST is read faithfully (trust boundary 28); two's
-    complement representation (C23; every Clang target). Measured: MEASURED.
+    complement representation (C23; every Clang target). Measured: corpus `66910c10`, system and tail-pause slice at base `b6a3dc42`: **byte-identical** BEFORE → AFTER on all three (corpus 629 / 10 / 4,195 `3d53a5d0…`; system 44 / 2 / 188, slice 29 / 1 / 239 / 1 Pending, digests `e363acc8…` and `acc73cd9…` in this checkout), the corpus parity stream identical as a multiset (466,022 rows); no custody function moves, as predicted. The property itself has no corpus census yet (`CG20-NUMERIC-CORPUS-CENSUS`).
     `QCore.CNumeric` (37 audited theorems: `long_plus_uint_lp64`,
     `long_plus_uint_llp64`, `kernel_ok_iff_unreached`,
     `unsigned_arithmetic_defined`, `wrap_in_range`, the `*_discharge_sound`

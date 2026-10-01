@@ -135,7 +135,30 @@ the core halves N03–N06). Each reproduces.
 
 ## 4. Prediction against outcome
 
-MEASUREMENT_TABLE
+| Route | BEFORE (binary `b199989e…`, base `b6a3dc42`) | AFTER (binary `46c19503…`, tip) |
+|---|---|---|
+| corpus `66910c10` (`--jobs 4`) | 629 / 10 / 4,195, `3d53a5d0…` | 629 / 10 / 4,195, `3d53a5d0…` (byte-identical) |
+| system | 44 / 2 / 188, `e363acc8…` | identical, `e363acc8…` |
+| tail-pause slice | 29 / 1 / 239 / 1 Pending, `acc73cd9…` | identical, `acc73cd9…` |
+
+All six runs exit 0 (`scripts/measure.sh before|after`, logs under
+`private/cg20/`). The BEFORE reproduces the baseline's totals on all three
+routes and the corpus digest exactly. The system and slice digests differ from
+the baseline's `79404fed…` and `93cc660c…` only because those reports embed the
+checkout's path (the profile directory and the `resource_contract_sources`
+digest over contract paths): a normalised diff against CG05's `after3` slice
+report shows only those fields (`scripts/normalized_digest.py`). BEFORE and
+AFTER were taken in this one checkout and are byte-identical. The corpus
+typed-path parity streams are identical as multisets once Clang node ids
+(per-run addresses) are normalised (466,022 rows each,
+`scripts/parity_identity.py`); `audit.log` differs only in its output path.
+
+Every prediction holds: custody byte-identical on all three routes (no function
+moves, no correction); the named controls as predicted (§5); W45 re-registered
+with exactly the predicted open obligations (§6); `CG01-CYCLE18-EVALUATOR-WIDTH`
+closed with the cycle-18 tests unchanged (22 passed). The reevaluation probes
+exit 0; their output was not diffed against the base, so "unchanged output" is
+not claimed.
 
 ## 5. The property on the named controls (`tests/c_numeric_domain.rs`)
 
