@@ -4,14 +4,15 @@ Follow-ups `CG05-ELABORATOR-CALL-FOOTPRINTS` and
 `CG05-FOOTPRINT-ADDRESS-CONSERVATISM` of the
 [Clang gap card queue](../../plans/clang-gap-cards/README.md) (wave 48, round 8,
 the composition batch). Base `d4df096f` (local `main`, round 7 complete), rebased
-onto main `0a22a998` (the MSVC C ABI reader) before the final measurement.
+onto main `0a22a998` (the MSVC C ABI reader) and then onto `cfb5d8e1` (CG06's
+sibling-effect part, rule 11m), and re-measured on each.
 
 - **Rule:** [gateway 11n](../../agents/gateway.md#constraint-11n), amending rule
   10s's call refusal; rules 10y and 11k unchanged.
 - **Lean:** `QCore.ElaboratorCallFootprints`, `proof/AuditElaboratorCallFootprints.lean`
   (15 theorems), over `QCore.NestedCallEffects`.
-- **Prediction:** frozen in [PREDICTION.md](PREDICTION.md) (commit `b9a1c8e1`
-  after the rebase, `d5a52c96` before it), before the implementation commit and
+- **Prediction:** frozen in [PREDICTION.md](PREDICTION.md) (commit `7b1b7ffd`
+  after the rebases, `d5a52c96` before them), before the implementation commit and
   before any test or AFTER run.
 
 ## 1. What changed
@@ -84,10 +85,16 @@ plain context.
 |---|---|---|---|---|
 | BEFORE, base `d4df096f` (`private/cg05ef/before`) | `8bed2ee9…` | 628 / 10 / 4,196 `3b09309a…` | 44 / 2 / 188 `3e88dd81…` | 29 / 1 / 239 / 1 P `8fbf8ffe…` |
 | BEFORE, main `0a22a998` (`before2`) | `3d88c503…` | **byte-identical** | byte-identical | byte-identical |
-| AFTER, rebased tip (`after2`) | `ead22004…` | **629 / 10 / 4,195** `36941e4c…` | 44 / 2 / 188 `79404fed…` | 29 / 1 / 239 / 1 P `93cc660c…` |
+| AFTER, tip on `0a22a998` (`after2`) | `ead22004…` | 629 / 10 / 4,195 `36941e4c…` | 44 / 2 / 188 `79404fed…` | 29 / 1 / 239 / 1 P `93cc660c…` |
+| BEFORE, main `cfb5d8e1` (`before3`) | `783dec5e…` | 628 / 10 / 4,196 `f9b3420e…` | `3e88dd81…` (same) | `8fbf8ffe…` (same) |
+| **AFTER, tip on `cfb5d8e1` (`after3`)** | `8acb3541…` | **629 / 10 / 4,195** `3d53a5d0…` | 44 / 2 / 188 `79404fed…` | 29 / 1 / 239 / 1 P `93cc660c…` |
 
-The AFTER at the pre-rebase tip `2c8de046` (`after1`) gave the same corpus file
-byte for byte. All exits 0. Sidecars (`*.contracts.json`,
+The published figures are the last pair. The AFTER at the pre-rebase tip
+`2c8de046` (`after1`) gave `after2`'s corpus file byte for byte; CG06's
+landing changes the corpus file (`3b09309a…` → `f9b3420e…`) but nothing this
+card decides: the changed functions, leaf deltas, admitted rows and
+populations are identical on all three mains. The artifacts are from
+`before3`/`after3`. All exits 0. Sidecars (`*.contracts.json`,
 `*.chunk-contracts.json`, `*.source-effects.json`, `monkey-source.json`)
 byte-identical.
 
@@ -115,7 +122,7 @@ statement is now the first refused, or the application point declines an owned
 `flb_tail_fs_stat_add` (slice) lose an indirect-access leaf at `x->m =
 time(NULL)`.
 
-**Populations after** ([census-after2.json](artifacts/census-after2.json)):
+**Populations after** ([census-after3.json](artifacts/census-after3.json)):
 603 rows over 400 functions keep `call … unsequenced with another event`, each
 a call with no footprint by construction; 515 have the callee's own `call to
 uncontracted function` leaf at their line. No corpus elaborator row is refused

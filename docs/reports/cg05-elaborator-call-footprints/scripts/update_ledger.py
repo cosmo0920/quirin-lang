@@ -14,7 +14,8 @@ and keeps `dimensions.named_followups` equal to the list length. Writes the
 matrix back in its own form (indent=1, ensure_ascii=False, trailing newline).
 
 Sizes: the AFTER corpus arbiter at the card's tip on main `0a22a998`
-(private/cg05ef/after2), `scripts/census.py` and `scripts/predict.py`.
+(private/cg05ef/after2), identical on `cfb5d8e1` (after3; the entry's text was
+then pointed at `cfb5d8e1`), `scripts/census.py` and `scripts/predict.py`.
 """
 
 import json

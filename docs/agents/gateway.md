@@ -3394,9 +3394,9 @@ own anchor here.
     matching (trust boundary 28), and that a call's effect on the abstract
     state is its contract's (constraint 4), as for a call standing alone; no
     new premise. Measured (corpus `66910c10`, system, tail-pause slice, base
-    `d4df096f` rebased on main `0a22a998`, whose BEFORE is the base's byte for
-    byte): corpus 628 / 10 / 4,196 → **629 / 10 / 4,195** (`3b09309a…` →
-    `36941e4c…`), one Unknown → Safe move
+    `d4df096f` rebased on main `cfb5d8e1`): corpus 628 / 10 / 4,196 →
+    **629 / 10 / 4,195** (`f9b3420e…` → `3d53a5d0…`; the same attribution on
+    the base and on `0a22a998`), one Unknown → Safe move
     (`rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic`, `(tbuf)->size +=
     (strlen(topic_name) + 1 …)`: a read/read pair), 18 elaborator statements
     admitted over 9 functions, 9 more refused by the application point (an

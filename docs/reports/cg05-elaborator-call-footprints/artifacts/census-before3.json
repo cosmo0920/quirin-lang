@@ -1,8 +1,8 @@
 {
- "elaboration_rows": 36113,
+ "elaboration_rows": 37089,
  "elaboration_by_outcome": {
   "unlisted form: no value form of this card": 24594,
-  "unlisted form: no unique Clang node for the statement": 2463,
+  "unlisted form: no unique Clang node for the statement": 3439,
   "unlisted form: address-of": 1616,
   "admitted (holds a call)": 1325,
   "place: the typed access-path reader refused it (CG10)": 1279,
@@ -32,8 +32,8 @@
   "pointer `src` converted to an integer may carry a tracked identity (CG08)": 3,
   "unlisted form: a sequenced piece outside this card's forms": 2,
   "declaration: may shadow a formal": 2,
-  "pointer `source` converted to an integer may carry a tracked identity (CG08)": 2,
   "call `append_attribute_to_data_point` whose actuals carry effects (CG03)": 2,
+  "pointer `source` converted to an integer may carry a tracked identity (CG08)": 2,
   "unlisted form `ExprWithCleanups`": 2,
   "call `rd_list_set_int32` whose actuals carry effects (CG03)": 1,
   "unsequenced access of `rkb->rkb_corrid` and `rkbuf->rkbuf_corrid`, not proved disjoint (CG10)": 1,
@@ -47,7 +47,7 @@
   "unlisted form: a returned value that is not a scalar": 1
  },
  "elaboration_by_position": {
-  "elaboration-statement": 33558,
+  "elaboration-statement": 34534,
   "elaboration-condition": 2246,
   "elaboration-return": 309
  },
