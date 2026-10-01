@@ -289,4 +289,17 @@ route's unread target words (constraint 11). Registered, out of scope:
 whose JSON nests beyond 128: `rdhttp.c`, 21 definitions, every typed route of
 G declines there; this card only reads its own check per definition).
 
-GATE_PLACEHOLDER
+## 9. Gate
+
+At tip `81878e18` on main `f0bbc0eb`, under the shared heavy-step lock
+(`scripts/gate.sh`, logs `private/cg30dft/gate/`, exits in [gate/](gate/),
+record [gate.json](gate.json)): `cargo check --workspace --all-targets` 0;
+submodule 0; `run_test_binaries.py --jobs 4` **419 units, 432 summaries, 7,280
+passed, 0 failed, 11 ignored**, exit 0
+(`private/test-binaries/20261001T200354Z-863263`); fmt 0; clippy `--locked
+--all-targets -D warnings` 0; both reevaluation probes 0;
+`check_lean_audits.py` **268** passed (267 on main + this card's); Python 365
+with the one expected failure (the derived `lean_audits` 267 → 268), then 0
+after `build_matrix.py . --gate gate.json` (`scripts/after_gate.sh`); docs
+index 0, `--check` 0. `providers/` is unchanged, so the provider gate was not
+due (129 carried). Clang 21.1.8.
