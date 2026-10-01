@@ -1,0 +1,25 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 239,
+   "Safe": 29,
+   "Pending": 1,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 239,
+   "Safe": 29,
+   "Pending": 1,
+   "Unsafe": 1
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 4,
+ "leaf_delta": {
+  "unsupported: call to uncontracted function `__builtin_va_end`": -12,
+  "unsupported: call to uncontracted function `__builtin_va_start`": -4,
+  "unsupported: call to uncontracted function `__builtin_va_arg`": -4,
+  "unsupported: va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local": 4
+ }
+}

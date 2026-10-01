@@ -1,0 +1,708 @@
+{
+ "before": {
+  "statuses": {
+   "Unknown": 4195,
+   "Safe": 629,
+   "Unsafe": 10
+  },
+  "leaves": {
+   "tail": 209,
+   "va-builtin": 124
+  },
+  "functions": {
+   "tail": 127,
+   "va-builtin": 50
+  },
+  "va_builtin_leaves": {
+   "__builtin_va_end": 55,
+   "__builtin_va_start": 50,
+   "__builtin_va_arg": 17,
+   "__builtin_va_copy": 2
+  },
+  "tail_callees": {
+   "fprintf": {
+    "leaves": 129,
+    "functions": 81
+   },
+   "snprintf": {
+    "leaves": 57,
+    "functions": 34
+   },
+   "mk_print": {
+    "leaves": 17,
+    "functions": 9
+   },
+   "printf": {
+    "leaves": 5,
+    "functions": 4
+   },
+   "fcntl": {
+    "leaves": 1,
+    "functions": 1
+   }
+  },
+  "protocol_refusals": {},
+  "sole": {
+   "va-builtin": [
+    "librdkafka/rdkafka.c/rd_kafka_set_thread_name"
+   ],
+   "tail": [
+    "librdkafka/rdkafka_offset.c/rd_kafka_open_cb_generic",
+    "monkey-libevent/mk_server/mk_http_parser.c/cb_debug_chunk_complete"
+   ]
+  },
+  "sole_counts": {
+   "va-builtin": 1,
+   "tail": 2
+  },
+  "va_builtin_or_tail_only": [
+   "librdkafka/rdkafka.c/rd_kafka_set_thread_name",
+   "librdkafka/rdkafka_offset.c/rd_kafka_open_cb_generic",
+   "monkey-libevent/mk_server/mk_http_parser.c/cb_debug_chunk_complete"
+  ]
+ },
+ "after": {
+  "statuses": {
+   "Unknown": 4193,
+   "Safe": 631,
+   "Unsafe": 10
+  },
+  "leaves": {
+   "tail": 201,
+   "va-builtin": 7,
+   "va-protocol": 19
+  },
+  "functions": {
+   "tail": 121,
+   "va-builtin": 4,
+   "va-protocol": 8
+  },
+  "va_builtin_leaves": {
+   "__builtin_va_arg": 3,
+   "__builtin_va_end": 2,
+   "__builtin_va_start": 1,
+   "__builtin_va_copy": 1
+  },
+  "tail_callees": {
+   "fprintf": {
+    "leaves": 126,
+    "functions": 78
+   },
+   "snprintf": {
+    "leaves": 55,
+    "functions": 33
+   },
+   "mk_print": {
+    "leaves": 17,
+    "functions": 9
+   },
+   "printf": {
+    "leaves": 3,
+    "functions": 3
+   }
+  },
+  "protocol_refusals": {
+   "va_list protocol refused: a `va_list` operation under a conditional operator or an unevaluated operand": 6,
+   "va_list protocol refused: `ap` may be read after `va_end`, after being passed to a callee, or before `va_start`": 4,
+   "va_list protocol refused: `va` may reach a function exit without `va_end`": 4,
+   "va_list protocol refused: `ap2` is not a plain local of the function's outermost block": 2,
+   "va_list operation refused: the `va_arg` value stored into `topic_name` is not an arithmetic value into a scalar local": 1,
+   "va_list operation refused: the `va_arg` value stored into `topic` is not an arithmetic value into a scalar local": 1,
+   "va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local": 1
+  },
+  "sole": {
+   "tail": [
+    "monkey-libevent/mk_server/mk_http_parser.c/cb_debug_chunk_complete"
+   ]
+  },
+  "sole_counts": {
+   "tail": 1
+  },
+  "va_builtin_or_tail_only": [
+   "monkey-libevent/mk_server/mk_http_parser.c/cb_debug_chunk_complete"
+  ]
+ },
+ "moves": {
+  "transitions": {
+   "Unknown -> Unknown": 49,
+   "Unknown -> Safe": 2
+  },
+  "rows": [
+   {
+    "function": "cmetrics/cmt_histogram.c/cmt_histogram_buckets_create",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "unmodeled increment or decrement expression": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "cmetrics/cmt_log.c/cmt_log_print",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "unresolved resource identity `buf`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "ctraces/ctr_log.c/ctr_log_print",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "unresolved resource identity `buf`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdhttp.c/rd_http_error_new",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "unmodeled call, aggregate or indirect access in branch condition": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka.c/rd_kafka_log0",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 2,
+     "C operator `sizeof` requires type/operand analysis": 2,
+     "unrecognized assignment destination": 1,
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka.c/rd_kafka_set_fatal_error0",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka.c/rd_kafka_set_thread_name",
+    "before": "Unknown",
+    "after": "Safe",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka.c/rd_kafka_set_thread_sysname",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_admin.c/rd_kafka_admin_result_fail",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_admin.c/rd_kafka_admin_result_set_err",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_assignor.c/ut_init_member",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_assignor.c/ut_init_member_with_rackv",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_assignor.c/verifyAssignment0",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_arg`": 1,
+     "unmodeled increment or decrement expression": 3,
+     "indirect memory access is outside the resource projection": 1,
+     "call to uncontracted function `__builtin_va_end`": 1,
+     "unresolved resource identity `fails`": 2,
+     "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+    },
+    "added": {
+     "unresolved resource identity `rkgm`": 1
+    }
+   },
+   {
+    "function": "librdkafka/rdkafka_assignor.c/verifyMultipleAssignment0",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "unmodeled increment or decrement expression": 4,
+     "indirect memory access is outside the resource projection": 1,
+     "call to uncontracted function `__builtin_va_arg`": 1,
+     "unresolved resource identity `local_fails`": 1,
+     "unrecognized assignment destination": 1,
+     "call to uncontracted function `__builtin_va_end`": 1,
+     "unresolved resource identity `fails`": 1,
+     "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+    },
+    "added": {
+     "unresolved resource identity `rkgm`": 1
+    }
+   },
+   {
+    "function": "librdkafka/rdkafka_broker.c/rd_kafka_broker_fail",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_assignment_clear_lost",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_assignment_set_lost",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_consumer_rejoin",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1,
+     "unresolved resource identity `rkcg`": 5
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_rejoin",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {
+     "va_list protocol refused: `ap` may be read after `va_end`, after being passed to a callee, or before `va_start`": 2
+    }
+   },
+   {
+    "function": "librdkafka/rdkafka_error.c/rd_kafka_error_new",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_error.c/rd_kafka_error_new_fatal",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_error.c/rd_kafka_error_new_retriable",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_error.c/rd_kafka_error_new_txn_requires_abort",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_error.c/rd_kafka_error_new_v",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_copy`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {
+     "va_list protocol refused: `ap2` is not a plain local of the function's outermost block": 2
+    }
+   },
+   {
+    "function": "librdkafka/rdkafka_idempotence.c/rd_kafka_idemp_drain_epoch_bump0",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "indirect memory access is outside the resource projection": 1,
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_metadata.c/rd_kafka_metadata_new_topic_mockv",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_metadata.c/rd_kafka_metadata_new_topic_with_partition_replicas_mockv",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_mock.c/rd_kafka_mock_broker_push_request_error_rtts",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "unmodeled call, aggregate or indirect access in loop condition": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_mock.c/rd_kafka_mock_partition_push_request_errors",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "unmodeled increment or decrement expression": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_mock.c/rd_kafka_mock_push_request_errors",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "unmodeled increment or decrement expression": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_mock.c/ut_topic_partitions",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_arg`": 2,
+     "unmodeled increment or decrement expression": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {
+     "va_list operation refused: the `va_arg` value stored into `topic_name` is not an arithmetic value into a scalar local": 1
+    }
+   },
+   {
+    "function": "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_PushTelemetry_decode_error",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {
+     "va_list protocol refused: `ap` may be read after `va_end`, after being passed to a callee, or before `va_start`": 2
+    }
+   },
+   {
+    "function": "librdkafka/rdkafka_msg.c/rd_kafka_producev",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_arg`": 4,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {
+     "va_list protocol refused: a `va_list` operation under a conditional operator or an unevaluated operand": 6
+    }
+   },
+   {
+    "function": "librdkafka/rdkafka_offset.c/rd_kafka_offset_reset",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_offset.c/rd_kafka_offset_validate",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_offset.c/rd_kafka_open_cb_generic",
+    "before": "Unknown",
+    "after": "Safe",
+    "removed": {
+     "arguments beyond the declared parameters of `fcntl` are outside the resource projection": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_op.c/rd_kafka_consumer_err",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_op.c/rd_kafka_q_op_err",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_op.c/rd_kafka_share_msgset_err_ops",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1,
+     "unresolved resource identity `start_offset`": 1,
+     "unmodeled increment or decrement expression": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_request.c/rd_kafka_err_action",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_arg`": 1,
+     "unrecognized assignment destination": 12,
+     "call to uncontracted function `__builtin_va_end`": 1,
+     "unresolved resource identity `actions`": 2
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_sticky_assignor.c/ut_create_topic_partition_lists",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "unmodeled increment or decrement expression": 1,
+     "call to uncontracted function `__builtin_va_arg`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_sticky_assignor.c/ut_populate_member_owned_partitions_generation",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "unmodeled increment or decrement expression": 1,
+     "call to uncontracted function `__builtin_va_arg`": 2,
+     "call to uncontracted function `__builtin_va_end`": 1,
+     "unresolved resource identity `rkgm`": 1
+    },
+    "added": {
+     "va_list operation refused: the `va_arg` value stored into `topic` is not an arithmetic value into a scalar local": 1
+    }
+   },
+   {
+    "function": "librdkafka/rdkafka_telemetry_decode.c/unit_test_telemetry_decode_error",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1,
+     "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_coord_set",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1,
+     "unresolved resource identity `rk`": 3
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_set_abortable_error0",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "librdkafka/rdkafka_txnmgr.c/rd_kafka_txn_set_fatal_error",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "chunkio/cio_log.c/cio_log_print",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "unresolved resource identity `buf`": 1,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "monkey-libevent/mk_core/mk_string.c/mk_string_build",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "unresolved resource identity `_mem_alloc`": 1,
+     "call to uncontracted function `__builtin_va_start`": 2,
+     "call to uncontracted function `__builtin_va_end`": 2,
+     "store through `*len` without an out-parameter contract": 1
+    },
+    "added": {}
+   },
+   {
+    "function": "monkey-libevent/mk_core/mk_utils.c/mk_print",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "indirect memory access is outside the resource projection": 1,
+     "arguments beyond the declared parameters of `printf` are outside the resource projection": 2,
+     "call to uncontracted function `__builtin_va_end`": 1
+    },
+    "added": {
+     "unresolved resource identity `current`": 1
+    }
+   },
+   {
+    "function": "monkey-libevent/mk_server/mk_lib.c/mk_config_set",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_arg`": 1,
+     "call to uncontracted function `__builtin_va_end`": 3
+    },
+    "added": {
+     "va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local": 1
+    }
+   },
+   {
+    "function": "monkey-libevent/mk_server/mk_lib.c/mk_vhost_set",
+    "before": "Unknown",
+    "after": "Unknown",
+    "removed": {
+     "call to uncontracted function `__builtin_va_start`": 1,
+     "call to uncontracted function `__builtin_va_arg`": 1,
+     "call to uncontracted function `__builtin_va_end`": 2
+    },
+    "added": {
+     "va_list protocol refused: `va` may reach a function exit without `va_end`": 4
+    }
+   }
+  ]
+ }
+}

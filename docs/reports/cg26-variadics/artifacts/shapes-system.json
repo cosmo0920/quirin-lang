@@ -1,0 +1,88 @@
+{
+ "va_statements": {},
+ "va_functions": {},
+ "va_refusals": {},
+ "tail_statements": {
+  "flb_log_print promoted=True admitted=False": 10,
+  "snprintf promoted=True admitted=False": 1
+ },
+ "tail_rows": [
+  {
+   "function": "flb_coro_destroy",
+   "callee": "flb_log_print",
+   "texts": "flb_log_print ( 5 , __qcore_literal__ , 97 , __qcore_literal__ , coro , ( ( ( char * ) coro ) + sizeof ( struct flb_coro ) ) )",
+   "promoted": true,
+   "admitted": false
+  },
+  {
+   "function": "flb_output_init_all",
+   "callee": "flb_log_print",
+   "texts": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , name )",
+   "promoted": true,
+   "admitted": false
+  },
+  {
+   "function": "flb_output_init_all",
+   "callee": "flb_log_print",
+   "texts": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , name )",
+   "promoted": true,
+   "admitted": false
+  },
+  {
+   "function": "flb_task_retry_destroy",
+   "callee": "flb_log_print",
+   "texts": "flb_log_print ( 4 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , retry )",
+   "promoted": true,
+   "admitted": false
+  },
+  {
+   "function": "flb_engine_reschedule_retries",
+   "callee": "flb_log_print",
+   "texts": "flb_log_print ( 4 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , retry , task - > id )",
+   "promoted": true,
+   "admitted": false
+  },
+  {
+   "function": "task_alloc",
+   "callee": "flb_log_print",
+   "texts": "flb_log_print ( 5 , __qcore_literal__ , 461 , __qcore_literal__ , task , task_id )",
+   "promoted": true,
+   "admitted": false
+  },
+  {
+   "function": "flb_task_running_print",
+   "callee": "flb_log_print",
+   "texts": "flb_log_print ( 3 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , task - > id , routes )",
+   "promoted": true,
+   "admitted": false
+  },
+  {
+   "function": "get_or_create_rejected_stream",
+   "callee": "flb_log_print",
+   "texts": "flb_log_print ( 2 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , name )",
+   "promoted": true,
+   "admitted": false
+  },
+  {
+   "function": "flb_storage_quarantine_chunk",
+   "callee": "snprintf",
+   "texts": "snprintf ( name , sizeof ( name ) , __qcore_literal__ , safe_tag , status_code , safe_out , ( void * ) src )",
+   "promoted": true,
+   "admitted": false
+  },
+  {
+   "function": "flb_coro_destroy",
+   "callee": "flb_log_print",
+   "texts": "flb_log_print ( 5 , __qcore_literal__ , 97 , __qcore_literal__ , coro , ( ( ( char * ) coro ) + sizeof ( struct flb_coro ) ) )",
+   "promoted": true,
+   "admitted": false
+  },
+  {
+   "function": "flb_sched_timer_cb_create",
+   "callee": "flb_log_print",
+   "texts": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , type )",
+   "promoted": true,
+   "admitted": false
+  }
+ ]
+}
