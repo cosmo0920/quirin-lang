@@ -5,9 +5,10 @@ Card `CG30-DIALECTS-FLAGS-TYPES` of the
 entries I01 I02 I03 I05 N12 N13 N14, routes G and T and the compile-database
 reader. Base: local `main` `b6a3dc42`; BEFORE measured there. Rebased onto
 main `8e8ed41f` (CG17), `06ad81cb` (CG20) and `b934c560` (CG25), where the
-published AFTER was measured (§3), then onto `f0bbc0eb` (CG26-VARIADICS),
+published AFTER was measured (§3), then onto `f0bbc0eb` (CG26-VARIADICS)
+and `f6336c9d` (CG28-WEAK-MEMORY-EVENTS),
 where the tip was compiled, tested and gated but **not re-measured** (the
-arbiter is serialised under the shared lock; CG26's changes are its own).
+arbiter is serialised under the shared lock; CG26 and CG28 measured their own changes; the full gate ran on `f0bbc0eb`, the re-check on `f6336c9d`, §9).
 Commit names below are those at measurement time.
 
 - **Rule:** [gateway 11y](../../agents/gateway.md#constraint-11y).
