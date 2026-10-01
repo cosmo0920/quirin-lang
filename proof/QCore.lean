@@ -317,5 +317,6 @@ import QCore.StorageDuration
 import QCore.AtomicSourceRoute
 import QCore.VoidViewReadback
 import QCore.LayoutExtents
+import QCore.ResourceKinds
 
 /-! The executable formal core of QCore-C revision 0.1. -/

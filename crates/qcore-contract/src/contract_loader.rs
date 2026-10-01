@@ -266,6 +266,8 @@ use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 // Card W45-FB-RETRY-LIFETIME: counted-user and container clauses.
 #[path = "contract_counted_users.rs"]
 mod counted_users;
+#[path = "contract_in_place.rs"]
+mod in_place;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
@@ -1630,7 +1632,11 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         {
             return Err("custody mode requires a pointer parameter".into());
         }
+        // Card CG25-RESOURCE-KINDS: an in-place kind's out position names the
+        // object it initialises (`regex_t *`), not a slot a pointer is written
+        // to; `check_kinds` already required `ptr<mut, u8>` there.
         if matches!(mode, ResourceParameterMode::Out { .. })
+            && !kinds.parameter_kind(i).is_in_place()
             && ty != token_kinds("ptr<mut, ptr<mut, u8>>")?
         {
             return Err("out mode requires a pointer-to-pointer parameter".into());
@@ -2594,6 +2600,16 @@ fn check_kinds(
     };
     for (index, mode) in positions.parameters.iter().enumerate() {
         let kind = positions.parameter_kinds[index].unwrap_or(ResourceKind::Heap);
+        if kind.is_in_place() {
+            in_place::check_parameter(
+                kind,
+                *mode,
+                positions.parameter_words[index],
+                &positions.parameter_types[index],
+            )?;
+            declared.parameter_kinds.insert(index, kind);
+            continue;
+        }
         if !kind.is_heap() {
             match mode {
                 ResourceParameterMode::Owned { .. }
@@ -2623,7 +2639,14 @@ fn check_kinds(
             &positions.parameter_types[index],
         )?;
     }
+    in_place::check_declaration(&declared, positions.parameters, result, return_type)?;
     let kind = result_kind.unwrap_or(ResourceKind::Heap);
+    if kind.is_in_place() {
+        return Err(format!(
+            "a {} object is initialised in caller storage, never returned",
+            kind.spelling()
+        ));
+    }
     if !kind.is_heap() {
         if !matches!(result, ResourceReturnMode::Owned { .. }) {
             return Err("a result kind requires an owned result".into());

@@ -52,12 +52,16 @@ one are the trusted contract premises of the libc crate. Every violation is a
 
 namespace QCore.KindedCustody
 
-/-- The resource kinds of contract spec §C04.6. -/
+/-- The resource kinds of contract spec §C04.6. Card CG25-RESOURCE-KINDS adds
+the pointer-carried `dynamicLibrary` and the in-place `regex`
+(`QCore.ResourceKinds`); every theorem below is stated for every kind. -/
 inductive Kind where
   | heap
   | descriptor
   | stream
   | directory
+  | dynamicLibrary
+  | regex
   deriving DecidableEq, Repr
 
 /-- The kinds carried by an integer rather than a pointer. -/

@@ -46,11 +46,13 @@ use std::collections::BTreeMap;
 const MAX_EXAMPLES: usize = 12;
 const MAX_ARGUMENT_VALUES: usize = 16;
 
-/// The observed kind a declared resource kind binds to. Heap has none.
+/// The observed kind a declared resource kind binds to. Heap has none, and
+/// neither has a kind the native descriptor harness does not record (card
+/// CG25-RESOURCE-KINDS: `dynamic_library`, `regex`); binding one is an error.
 #[must_use]
 pub fn observed_kind(kind: ResourceKind) -> Option<Kind> {
     match kind {
-        ResourceKind::Heap => None,
+        ResourceKind::Heap | ResourceKind::DynamicLibrary | ResourceKind::Regex => None,
         ResourceKind::Descriptor => Some(Kind::Fd),
         ResourceKind::Stream => Some(Kind::File),
         ResourceKind::Directory => Some(Kind::Dir),
@@ -228,8 +230,9 @@ impl<'a> Binder<'a> {
                         .unwrap_or_default();
                     let observed = observed_kind(kind).ok_or_else(|| {
                         format!(
-                            "{}: a heap release cannot be bound to descriptor records",
-                            row.call
+                            "{}: a {} release cannot be bound to descriptor records",
+                            row.call,
+                            kind.spelling()
                         )
                     })?;
                     released.push((observed, *nullable));
@@ -250,8 +253,9 @@ impl<'a> Binder<'a> {
             ResourceReturnMode::Owned { nullable } => {
                 let observed = observed_kind(contract.result_kind).ok_or_else(|| {
                     format!(
-                        "{}: a heap owned result cannot be bound to descriptor records",
-                        row.call
+                        "{}: a {} owned result cannot be bound to descriptor records",
+                        row.call,
+                        contract.result_kind.spelling()
                     )
                 })?;
                 Some((observed, nullable))

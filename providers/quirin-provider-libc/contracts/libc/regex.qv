@@ -43,7 +43,9 @@ module contract;
 //   `regcomp` allocates storage inside the caller's `regex_t`, released by
 //   `regfree`: an in-place object lifecycle v1 cannot state
 //   (`W43-LIBC-IN-PLACE-LIFECYCLE`). A neutral `regcomp` would erase the
-//   obligation to call `regfree`.
+//   obligation to call `regfree`. (Card CG25-RESOURCE-KINDS states it with the
+//   in-place `regex` kind and declares both at the end of this module; it also
+//   kinds `__preg` of `regexec` and `regerror` below as uses of that object.)
 //
 // ## What no declaration here says
 //
@@ -57,6 +59,7 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     ensures normal resource_borrowed(preg);
+    ensures normal resource_kind(preg, regex);
     ensures normal resource_borrowed(string);
     ensures normal resource_borrowed(nmatch);
     ensures normal resource_borrowed(pmatch);
@@ -70,7 +73,57 @@ contract {
     requires resource_revision(flexible);
     ensures normal resource_borrowed(errcode);
     ensures normal resource_borrowed(preg);
+    ensures normal resource_kind(preg, regex);
     ensures normal resource_borrowed(errbuf);
     ensures normal resource_borrowed(errbuf_size);
+    ensures normal resource_return_none();
+};
+
+// ## Card CG25-RESOURCE-KINDS: `regcomp` and `regfree`, in-place kind `regex`
+//
+//   extern int regcomp (regex_t *_Restrict_ __preg,
+//                       const char *_Restrict_ __pattern, int __cflags);
+//   extern void regfree (regex_t *__preg);
+//
+// (`/usr/include/regex.h:679` and `:693` on the audited host.)
+//
+// `regcomp` compiles the pattern INTO the caller's `regex_t`: the compiled
+// form owns storage `regfree` frees, and the caller owes that `regfree`. The
+// obligation lives in the object `__preg` designates, not in a returned
+// pointer, which is what an in-place kind states (contract spec C04.6.1): the
+// initialiser `resource_out(preg, nullable)` + `resource_kind(preg, regex)`
+// on the object pointer, and the result is the STATUS, `0` on success and a
+// nonzero `REG_*` code on failure, after which nothing is owed (glibc frees
+// what it allocated before returning the error). `regfree` finalises the
+// object: `resource_released(preg, nonnull)` + the kind. `regexec` and
+// `regerror` above use it (`resource_borrowed` + the kind): a use after
+// `regfree` is a `use_after_release` candidate. `regerror`'s `__preg` may name
+// the object a failed `regcomp` left (POSIX lets the caller pass it for the
+// message), which owes nothing and is no use of an obligation.
+//
+// The kind is no other kind: `free(&re)`, `regfree(p)` on a heap pointer and a
+// second `regfree(&re)` are each refused or accused. A consumer binds the
+// obligation to an automatic object passed as `&re`; any other actual refuses.
+//
+// NOT stated: whether `regexec` is called only after a successful `regcomp`
+// (initialisation before use), the pattern semantics, or `REG_NOSUB`.
+
+extern fn regcomp(preg: ptr<mut, u8>, pattern: ptr<const, u8>, cflags: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_out(preg, nullable);
+    ensures normal resource_kind(preg, regex);
+    ensures normal resource_borrowed(pattern);
+    ensures normal resource_borrowed(cflags);
+    ensures normal resource_return_none();
+};
+
+extern fn regfree(preg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_released(preg, nonnull);
+    ensures normal resource_kind(preg, regex);
     ensures normal resource_return_none();
 };

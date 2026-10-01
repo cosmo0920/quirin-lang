@@ -641,6 +641,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // `libc/regex.qv`. Deliberate; see
     // `docs/reports/w43-libc-restrict-prototypes/README.md`.
     ("libc/dlfcn.qv", "dlsym", 5),
+    // Card CG25-RESOURCE-KINDS: `dlopen` (the marker, the flexible revision,
+    // two borrowed clauses, the owned result and its `dynamic_library` kind:
+    // 6) and `dlclose` (marker, revision, the release, its kind, `none`: 5),
+    // appended to `libc/dlfcn.qv`. Deliberate; see
+    // `docs/reports/cg25-resource-kinds/README.md`.
+    ("libc/dlfcn.qv", "dlopen", 6),
+    ("libc/dlfcn.qv", "dlclose", 5),
     // Card CONSTRUCTOR-RESIDUALS, continued. Two clauses: the marker and the
     // result mode. It takes no parameter, so it has no parameter clause — the
     // same shape as `fluent_bit/time.qv`'s `flb_time_now`.
@@ -674,8 +681,15 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/pthread_sync.qv", "pthread_cond_timedwait", 7),
     ("libc/pthread_sync.qv", "pthread_join", 7),
     // Card W43-LIBC-RESTRICT-PROTOTYPES, continued: `libc/regex.qv`: neutral (2 + 1 per parameter).
-    ("libc/regex.qv", "regexec", 8),
-    ("libc/regex.qv", "regerror", 7),
+    // Card CG25-RESOURCE-KINDS adds one clause to each, `resource_kind(preg,
+    // regex)`: the compiled object is a use of the in-place `regex` kind
+    // (8 -> 9, 7 -> 8), and appends `regcomp` (marker, revision, the in-place
+    // initialiser, its kind, two borrowed clauses, `none`: 7) and `regfree`
+    // (marker, revision, the finaliser, its kind, `none`: 5).
+    ("libc/regex.qv", "regexec", 9),
+    ("libc/regex.qv", "regerror", 8),
+    ("libc/regex.qv", "regcomp", 7),
+    ("libc/regex.qv", "regfree", 5),
     ("libc/socket.qv", "setsockopt", 8),
     ("libc/socket.qv", "send", 7),
     ("libc/socket.qv", "recv", 7),

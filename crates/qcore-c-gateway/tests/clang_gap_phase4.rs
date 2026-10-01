@@ -341,19 +341,25 @@ fn k06_derived_results_have_no_offset_or_length() {
     parameters(ResourceParameterMode::Borrowed);
 }
 
+/// CG00's BEFORE control for K07 held at `b6a3dc42` (four kinds). Card
+/// CG25-RESOURCE-KINDS (rule 11v) adds the `dynamic_library` and in-place
+/// `regex` kinds, each with a declared use; an undeclared spelling such as a
+/// generic `handle` stays outside resource v1.
 #[test]
-fn k07_resource_kinds_are_exactly_four() {
+fn k07_resource_kinds_are_exactly_six() {
     assert_eq!(
         ResourceKind::ALL,
         [
             ResourceKind::Heap,
             ResourceKind::Descriptor,
             ResourceKind::Stream,
-            ResourceKind::Directory
+            ResourceKind::Directory,
+            ResourceKind::DynamicLibrary,
+            ResourceKind::Regex,
         ]
     );
     let error = load("    ensures normal resource_borrowed(p);\n    ensures normal resource_borrowed(n);\n    ensures normal resource_return_owned(nonnull);\n    ensures normal resource_return_kind(handle);\n")
-        .expect_err("a fifth kind is outside resource v1");
+        .expect_err("an undeclared kind is outside resource v1");
     assert!(!error.is_empty());
 }
 

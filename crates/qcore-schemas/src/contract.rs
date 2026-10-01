@@ -124,15 +124,66 @@ pub enum ResourceKind {
     Stream,
     /// A `DIR *` directory stream (`opendir`; `closedir`).
     Directory,
+    /// Card **CG25-RESOURCE-KINDS**: a dynamic-library handle (`dlopen`;
+    /// `dlclose`). Pointer-carried, failure value NULL. Not a heap pointer:
+    /// `free` does not unload a library and `dlclose` does not free memory.
+    DynamicLibrary,
+    /// Card **CG25-RESOURCE-KINDS**: a compiled POSIX regular expression
+    /// (`regcomp`; `regfree`). **In place**: the obligation lives in the
+    /// caller's `regex_t` storage, which the call initialises, not in a
+    /// returned pointer. Its failure value is a nonzero status from the
+    /// initialising call. See [`ResourceKind::is_in_place`].
+    Regex,
+}
+
+/// Card **CG25-RESOURCE-KINDS**: what carries a kind's identity.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ResourceCarrier {
+    /// A pointer value; the failure value is NULL.
+    Pointer,
+    /// An `int`; the failure value is the sentinel `-1`.
+    Integer,
+    /// Caller storage the call initialises in place; the failure value is a
+    /// nonzero status returned by the initialising call.
+    Storage,
 }
 
 impl ResourceKind {
     /// Every kind, in declaration order.
-    pub const ALL: [Self; 4] = [Self::Heap, Self::Descriptor, Self::Stream, Self::Directory];
+    pub const ALL: [Self; 6] = [
+        Self::Heap,
+        Self::Descriptor,
+        Self::Stream,
+        Self::Directory,
+        Self::DynamicLibrary,
+        Self::Regex,
+    ];
 
     #[must_use]
     pub const fn is_heap(&self) -> bool {
         matches!(self, Self::Heap)
+    }
+
+    /// Card **CG25-RESOURCE-KINDS**: what carries this kind's identity.
+    #[must_use]
+    pub const fn carrier(self) -> ResourceCarrier {
+        match self {
+            Self::Descriptor => ResourceCarrier::Integer,
+            Self::Regex => ResourceCarrier::Storage,
+            Self::Heap | Self::Stream | Self::Directory | Self::DynamicLibrary => {
+                ResourceCarrier::Pointer
+            }
+        }
+    }
+
+    /// Card **CG25-RESOURCE-KINDS**: whether this kind is initialised into
+    /// caller storage. Its obligation is bound to the storage a `&NAME`
+    /// actual designates, its initialisation can fail only by a nonzero
+    /// status, and the storage is custody, never data, while it is tracked.
+    #[must_use]
+    pub const fn is_in_place(self) -> bool {
+        matches!(self.carrier(), ResourceCarrier::Storage)
     }
 
     /// Whether this kind's identity is carried by an integer rather than a
@@ -141,7 +192,7 @@ impl ResourceKind {
     /// `nullable`/`nonnull`, and a null test of it (`if (fd)`) refines nothing.
     #[must_use]
     pub const fn is_integer(self) -> bool {
-        matches!(self, Self::Descriptor)
+        matches!(self.carrier(), ResourceCarrier::Integer)
     }
 
     /// The contract-module spelling. `heap` is never written: it is spelled by
@@ -153,6 +204,8 @@ impl ResourceKind {
             Self::Descriptor => "descriptor",
             Self::Stream => "stream",
             Self::Directory => "directory",
+            Self::DynamicLibrary => "dynamic_library",
+            Self::Regex => "regex",
         }
     }
 

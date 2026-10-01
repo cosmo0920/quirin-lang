@@ -27,6 +27,8 @@ module contract;
 //
 //   `dlopen`/`dlclose` open and close a handle: a v1 owned/released pair would
 //   put the handle in the one kind-less pointer class `malloc`/`free` use.
+//   (Card CG25-RESOURCE-KINDS declares both at the end of this module, with
+//   the `dynamic_library` kind.)
 //   (`dlsym` spells `T *__restrict p`, which this card's reader withdrew;
 //   card W43-LIBC-RESTRICT-PROTOTYPES declares it at the end of this module,
 //   with the reading of its result.)
@@ -72,6 +74,17 @@ contract {
 // undeclared (`W43-LIBC-DESCRIPTOR-LIFECYCLE`), so any function that closes a
 // handle keeps an uncontracted call. A handle-lifecycle card that declares
 // `dlclose` must revisit this result.
+//
+// Revisited by card CG25-RESOURCE-KINDS, which declares `dlclose`: the result
+// stays `resource_return_none()`. `resource_return_interior(handle, …)` would
+// say the symbol points into an object the handle points to, which the reading
+// above refutes (the handle is opaque; `RTLD_DEFAULT` points to nothing), and
+// the `fileno` precedent (libc/stdio.qv) keeps a value whose validity ends
+// with its stream's release untracked rather than misdescribed. What a
+// `dynamic_library` declaration does check is the HANDLE: `dlsym(h, …)` after
+// `dlclose(h)` on a path is a `use_after_release` candidate. A symbol used or
+// returned after its handle's `dlclose` is a lifetime relation this
+// vocabulary cannot state (`CG25-DLSYM-SYMBOL-LIFETIME`).
 
 extern fn dlsym(handle: ptr<mut, u8>, name: ptr<const, u8>) -> ptr<mut, u8>
 contract {
@@ -79,5 +92,49 @@ contract {
     requires resource_revision(flexible);
     ensures normal resource_borrowed(handle);
     ensures normal resource_borrowed(name);
+    ensures normal resource_return_none();
+};
+
+// ## Card CG25-RESOURCE-KINDS: `dlopen` and `dlclose`, kind `dynamic_library`
+//
+//   extern void *dlopen (const char *__file, int __mode) __THROWNL;
+//   extern int dlclose (void *__handle) __THROWNL __nonnull ((1));
+//
+// (`/usr/include/dlfcn.h:56` and `:60` on the audited host.)
+//
+// `dlopen` loads (or finds) a shared object and returns a handle the caller
+// must close with `dlclose`, or NULL on failure: an owned, nullable result of
+// kind `dynamic_library` (contract spec C04.6). The path and the mode are
+// read and retained by nothing the caller owns. `dlclose` decrements the
+// object's reference count and closes the handle: the handle is released and
+// cannot be used again (the header's own words); its `int` result is a status.
+// A failing `dlclose` is read as a release, the `close` reading.
+//
+// The kind is not the heap: `free(h)` on a `dlopen` handle and `dlclose(p)` on
+// a `malloc` pointer each discharge nothing and are `invalid_release`
+// candidates, and the handle at a `Borrowed` position after its `dlclose`
+// (`dlsym(h, …)`) is a `use_after_release` candidate.
+//
+// NOT stated: anything about `RTLD_NOLOAD`, `RTLD_NODELETE` or the loader's
+// reference counting across two `dlopen`s of one object (each handle is its
+// own obligation here, which is what the API requires of the caller), the
+// constructors a load runs, or the symbol lifetime discussed above.
+
+extern fn dlopen(file: ptr<const, u8>, mode: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(mode);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(dynamic_library);
+};
+
+extern fn dlclose(handle: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_released(handle, nonnull);
+    ensures normal resource_kind(handle, dynamic_library);
     ensures normal resource_return_none();
 };

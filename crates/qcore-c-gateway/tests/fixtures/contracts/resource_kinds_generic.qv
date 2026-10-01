@@ -1,0 +1,78 @@
+module contract;
+
+// Card CG25-RESOURCE-KINDS: a generic `k_*` surface for the two new kinds,
+// deliberately unrelated to libc. `Safe` over these synthetic declarations
+// promotes nothing.
+
+extern fn k_dlopen(path: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(path);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(dynamic_library);
+};
+
+extern fn k_dlclose(handle: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(handle, nonnull);
+    ensures normal resource_kind(handle, dynamic_library);
+    ensures normal resource_return_none();
+};
+
+extern fn k_dlsym(handle: ptr<mut, u8>, name: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(handle);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_return_none();
+};
+
+extern fn k_alloc(size: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(size);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn k_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn k_regcomp(preg: ptr<mut, u8>, pattern: ptr<const, u8>, flags: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_out(preg, nullable);
+    ensures normal resource_kind(preg, regex);
+    ensures normal resource_borrowed(pattern);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_none();
+};
+
+extern fn k_regexec(preg: ptr<const, u8>, text: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(preg);
+    ensures normal resource_kind(preg, regex);
+    ensures normal resource_borrowed(text);
+    ensures normal resource_return_none();
+};
+
+extern fn k_regfree(preg: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(preg, nonnull);
+    ensures normal resource_kind(preg, regex);
+    ensures normal resource_return_none();
+};
+
+extern fn k_wipe(p: ptr<mut, u8>, n: usize) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_none();
+};

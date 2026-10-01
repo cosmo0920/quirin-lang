@@ -98,6 +98,12 @@ pub(crate) mod parenthesised_callee;
 #[path = "legacy_descriptor_custody.rs"]
 pub(crate) mod descriptor_custody;
 
+// Card CG25-RESOURCE-KINDS (rule 11v): in-place resource kinds — the storage
+// a `&NAME` actual designates carries the obligation, the initialiser's status
+// is its sentinel. Hooks below naming the card are thin.
+#[path = "legacy_in_place_custody.rs"]
+pub(crate) mod in_place_custody;
+
 // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: typed indirect reads in the actuals
 // of a contracted call. Everything the card adds lives there; this file only
 // carries the hooks marked with the card's name.
@@ -3178,7 +3184,18 @@ fn build_function_cfg_with(
             descriptor_custody::DescriptorNames::read(&body, contracts, own_contract, &parameters)
         },
     );
-    let declared_callees = if descriptor_names.is_empty() {
+    // Card CG25-RESOURCE-KINDS (rule 11v).
+    let in_place_names = matching(tokens, body_start, "{", "}").map_or_else(
+        in_place_custody::InPlaceNames::default,
+        |body_end| {
+            let body = tokens[body_start + 1..body_end]
+                .iter()
+                .map(|token| token.text.as_str())
+                .collect::<Vec<_>>();
+            in_place_custody::InPlaceNames::read(&body, contracts)
+        },
+    );
+    let declared_callees = if descriptor_names.is_empty() && in_place_names.is_empty() {
         BTreeSet::new()
     } else {
         descriptor_custody::declared_callees(contracts)
@@ -3254,6 +3271,7 @@ fn build_function_cfg_with(
         element_lowerings: 0,
         descriptor_names,
         declared_callees,
+        in_place_names,
         #[cfg(feature = "indirect-census")]
         census_function: function.to_owned(),
         #[cfg(feature = "indirect-census")]
@@ -3294,6 +3312,9 @@ fn build_function_cfg_with(
                 line: failure_line.max(line),
             })?;
     let mut cfg = CfgBuilder::build(function, &statements, publications);
+    // Card CG25-RESOURCE-KINDS (rule 11v): no in-place effect is dropped by a
+    // route that lowered its call without the object's place.
+    in_place_custody::verify_cfg(&mut cfg);
     // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): `volatile` objects
     // carry no value-derived fact; a custody decision on a volatile read
     // refuses. Asked only where the unit spells `volatile` before the body's
@@ -4709,6 +4730,10 @@ struct Parser<'a> {
     /// Card **W43-DESCRIPTOR-RESOURCE-TRACKING**: the callees a retained
     /// trusted text declares, as opposed to ones only a W4 summary covers.
     declared_callees: BTreeSet<String>,
+    /// Card **CG25-RESOURCE-KINDS** (rule 11v): the names of this body passed
+    /// as `&NAME` to a declared in-place initialiser. Empty in every
+    /// environment that declares no in-place kind.
+    in_place_names: in_place_custody::InPlaceNames,
     /// Card **C-GATEWAY-INDIRECT-CENSUS-2**: this function's name, carried only
     /// so the instrumented census can label its records. Compiled out with the
     /// feature off, and read by nothing else.
@@ -6903,6 +6928,9 @@ impl Parser<'_> {
         let saved = (self.next_site, self.element_lowerings);
         let instruction = self.classify_simple_descriptors(tokens);
         let instruction = self.refuse_opaque_call(tokens, instruction, saved);
+        // Card CG25-RESOURCE-KINDS (rule 11v): a tracked in-place object is
+        // custody, never data.
+        let instruction = self.in_place_guard(tokens, instruction, saved);
         // Card W45-FB-BACKLOG-CUSTODY, rule 4: an admission that hands an
         // iteration's protected node or element to a position that may unlink
         // or release it is replaced by the refusal; a refusal stays itself.
@@ -8356,6 +8384,11 @@ impl Parser<'_> {
                                 // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: an
                                 // admitted read keeps its base's obligation.
                                 && !self.argument_admitted(function, index, argument)
+                                // Card CG25-RESOURCE-KINDS (rule 11v): `&NAME`
+                                // of a tracked object at an in-place position
+                                // is that position's place, decided by
+                                // `in_place_actuals` below.
+                                && !self.in_place_address(&contract, index, argument)
                                 && (((!matches!(mode, ResourceParameterMode::Out { .. })
                                     && argument.contains(&"&"))
                                     || (matches!(mode, ResourceParameterMode::Borrowed)
@@ -8393,6 +8426,19 @@ impl Parser<'_> {
                             .and_then(|argument| contract_argument_place(argument, *mode))
                     })
                     .collect::<Vec<_>>();
+                // Card CG25-RESOURCE-KINDS (rule 11v): an in-place position's
+                // place is the automatic object its `&NAME` actual designates.
+                if let Err(description) = self.in_place_actuals(
+                    &contract,
+                    raw_arguments.as_ref(),
+                    destination.as_deref(),
+                    &mut arguments,
+                ) {
+                    return LegacyInstruction::Unknown {
+                        description,
+                        writes: self.refused_writes(&texts),
+                    };
+                }
                 // Card W43-LIBC-RESULT-ALIAS: a derived result names its base,
                 // and the base must be something this projection can look up.
                 // `derived_base` reads a place, a place plus or minus one
@@ -10147,6 +10193,11 @@ struct AbstractState {
     /// Empty in every function that calls no declared publication, which keeps
     /// the join, and with it the work-list schedule, as it was (constraint 6).
     published: BTreeSet<usize>,
+    /// Card **CG25-RESOURCE-KINDS** (rule 11v): `status name -> (site,
+    /// storage)` for an in-place initialiser whose status the name still
+    /// holds. Joined by intersection; empty in every function that calls no
+    /// declared in-place initialiser, which keeps the join as it was.
+    status_witnesses: BTreeMap<String, (usize, String)>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -10266,6 +10317,7 @@ impl AbstractState {
         }
         self.join_field_links(incoming);
         container_publication::join(&mut self.published, &incoming.published);
+        in_place_custody::join_witnesses(&mut self.status_witnesses, &incoming.status_witnesses);
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         self.join_collections(&before, incoming);
@@ -12360,7 +12412,33 @@ fn reject_unsanctioned_store(
 /// effects every other instruction has on collections. In a function with no
 /// element operation the state carries no collection, and this is exactly
 /// [`transfer_base`].
+/// Card **CG25-RESOURCE-KINDS** (rule 11v): every transfer, then the status
+/// witnesses: a name the instruction writes witnesses nothing any more, and an
+/// in-place initialiser's status destination starts witnessing its site.
 fn transfer(
+    function: &str,
+    node: &LegacyCfgNode,
+    state: AbstractState,
+    acquisition_lines: &BTreeMap<usize, usize>,
+    context: &TransferContext<'_>,
+    alias: &NodeAliasFacts,
+    diagnostics: &mut BTreeSet<LegacyDiagnostic>,
+) -> AbstractState {
+    let mut output = transfer_dispatch(
+        function,
+        node,
+        state,
+        acquisition_lines,
+        context,
+        alias,
+        diagnostics,
+    );
+    in_place_custody::forget_witnesses(&node.instruction, &mut output, writes_scalar);
+    in_place_custody::record_witness(&node.instruction, &mut output);
+    output
+}
+
+fn transfer_dispatch(
     function: &str,
     node: &LegacyCfgNode,
     state: AbstractState,
@@ -14887,14 +14965,20 @@ fn refine_edge<'a>(
             source,
             true_is_null,
         } => {
-            if carries_integer_identity(state, source, kinds) {
-                return None;
-            }
             let assume_null = if edge == 0 {
                 *true_is_null
             } else {
                 !*true_is_null
             };
+            // Card CG25-RESOURCE-KINDS (rule 11v): a null test of an in-place
+            // initialiser's status witness decides its storage: zero is
+            // success (the obligation is certain), nonzero is failure (none).
+            if let Some(storage) = in_place_custody::witnessed_storage(state, source) {
+                return Some((source, refine_pointer_null(state, &storage, !assume_null)));
+            }
+            if carries_integer_identity(state, source, kinds) {
+                return None;
+            }
             Some((source, refine_pointer_null(state, source, assume_null)))
         }
         LegacyInstruction::BranchOnValidity {
