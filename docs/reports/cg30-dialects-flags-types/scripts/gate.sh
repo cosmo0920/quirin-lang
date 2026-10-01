@@ -15,11 +15,11 @@ step() {
 step 01-submodule git submodule update --init --recursive
 CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0 step 03-tests python3 scripts/run_test_binaries.py --jobs 4
 step 02-fmt cargo fmt --all -- --check
-step 05-clippy cargo clippy --all-targets -- -D warnings
+step 05-clippy cargo clippy --locked --all-targets -- -D warnings
 step 06-probe cargo run -p qcore-compiler --example reevaluation_probe
 step 07-followup cargo run -p qcore-compiler --example reevaluation_followup
 step 08-lean python3 scripts/check_lean_audits.py
 clang --version > "$logs/clang-version.txt" 2>&1
 echo $? > "$logs/clang-version.exit"
 step 09-python python3 -m unittest discover -s scripts/tests
-step 10-index python3 scripts/build_docs_index.py
+step 10-index python3 scripts/build_docs_index.py --check
