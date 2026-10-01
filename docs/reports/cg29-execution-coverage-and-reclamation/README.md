@@ -14,8 +14,9 @@ Lean:
 - `QCore.WeakMemory` (a spawn event, additive);
 - `QCore.AtomicSourceRoute` (the publication verdict).
 
-Base `f6336c9d` (= `main` at launch), rebased onto `main` `a6adb483` (CG27,
-CG21 and CG30 landed) before the AFTER and the gate.
+Base `f6336c9d` (= `main` at launch). The card was rebased onto `main`
+`a6adb483` (CG27, CG21 and CG30 landed), then onto `6cab1ad9` (CG16), before
+the AFTER and the gate.
 
 **Published guarantees (phase 4).** Both are reported apart from custody
 coverage. Projection coverage is not safety coverage.
@@ -197,13 +198,13 @@ except for one additive function (`private/cg29/t1-clang-gap-core.log`,
 `t2-clang-gap-core.log`).
 
 **Prediction.** [PREDICTION.md](PREDICTION.md) was frozen and committed
-(`ef82bea9`, before any implementation code) on the base.
+(`ef82bea9` on the base, rebased as `4d694e71`), before any implementation code.
 
 | Prediction | Outcome |
 |---|---|
 | Corpus BEFORE on `f6336c9d`: 633 / 10 / 4,191 | **633 / 10 / 4,191** (`9319bb9e…`) |
-| Corpus AFTER identical to the BEFORE | AFTER_CORPUS |
-| System and slice identical | AFTER_SYSTEM_SLICE |
+| Corpus AFTER identical to the BEFORE | **Held**: on the rebased tip the AFTER is byte-identical (`ceefb6c4…`, 645 / 10 / 4,179) to the integrator's measurement of `main` `6cab1ad9` without this card; the 12 moves from the BEFORE are CG21's (§4) |
+| System and slice identical | **Held**: same totals, no move; the few changed leaves are other cards' landings (§4); 0 atomic rows in either |
 | No Safe → non-Safe move, no added leak or violation | none |
 | Publication fixtures keep their statuses; the enumerator answers `RaceFree` for every admitted shape | Kept: `Safe` stays `Safe` and every `Unknown` control stays `Unknown`. All four admitted order pairs are `RaceFree`, with 4 to 8 candidates. |
 | MP release/acquire `RaceFree`; MP relaxed `Race`; SB relaxed `Race` with both loads reading initial values; SB with seq_cst fences or seq_cst accesses `RaceFree`; bounds and loops `Unknown` | As predicted. Also: release/acquire SB races, as C11 allows. |
@@ -217,7 +218,38 @@ The release `quirin-audit` ran with `QCORE_TYPED_PATH_PARITY` on, through
 tail-pause slice (`attempt-1`, run `cg29-NAME`). Heavy steps ran under the
 coordinator's shared lock (`scripts/after.sh`). Every exit was 0.
 
-MEASUREMENT_TABLE
+| Run | Tree | Binary | Corpus | System | Tail-pause slice |
+|---|---|---|---|---|---|
+| BEFORE | base `f6336c9d` | `3fafc8fc…` | **633 / 10 / 4,191** `9319bb9e…` | 44 / 2 / 188 `c917a7a2…` | 29 / 1 / 239 / 1 P `aac9543f…` |
+| AFTER | tip on `main` `6cab1ad9` | `f9dfbb1a…` | **645 / 10 / 4,179** `ceefb6c4…` | 44 / 2 / 188 `8dd9ba20…` | 29 / 1 / 239 / 1 P `1acc0f9d…` |
+
+System and slice totals are deduplicated (`scripts/compare.py`). Their raw
+digests carry path-dependent compile-identity fields, as CG28 and CG17
+reported.
+
+**Attribution** ([`scripts/comparisons.sh`](scripts/comparisons.sh),
+[corpus](artifacts/corpus-comparison.json),
+[system](artifacts/system-comparison.json),
+[slice](artifacts/slice-comparison.json)).
+- *Corpus.* The AFTER digest equals the integrator's measurement of `main`
+  `6cab1ad9` (`ceefb6c4…`), the tree this card was rebased onto. This card
+  therefore moves nothing in the corpus. The 12 Unknown → Safe moves from
+  the BEFORE are CG21-CALL-EXITS-AND-BOUNDARIES' no-return calls
+  (`__assert_fail`, `exit`, `abort`), the 12 moves the integrator
+  attributed. The other leaf changes belong to CG21 (inline assembly,
+  `__builtin_offsetof`), CG30 (C extension types) and CG27/CG16. There is no
+  Safe → non-Safe move, so no correction.
+- *System and slice.* No status move. The changed leaves are 5 functions
+  (system) and 3 (slice): `__builtin_offsetof` and `exit` (CG21), inline
+  assembly (CG21), and a vector type (CG30). None names an atomic, a fence,
+  a fragment or a reclamation helper.
+- *Parity streams.* 12 `atomic-route` rows in both corpus streams, and 0 in
+  the system and slice streams. These are unchanged: route G is untouched.
+
+**Published properties, measured separately.** No corpus, system or slice
+route reaches the enumerator or the reclamation checker. Their results are
+the tests' and the Lean vectors' (§5, §6), and the atomic-publication
+fixtures'.
 
 ## 5. Tests
 
@@ -363,7 +395,7 @@ MEASUREMENT_TABLE
   - `CG29-RECLAMATION-SOURCE-ROUTE`.
 - **Amended:** `CG19-PUBLICATION-ONE-FLAG-ONE-PAYLOAD`. Its one shape is
   now checked over every execution.
-- **Ledger:** 674 → 676 on `main` `a6adb483`
+- **Ledger:** 678 → 680 on `main` `6cab1ad9`
   ([`scripts/update_ledger.py`](scripts/update_ledger.py), applied once).
 
 ## 9. Gate
