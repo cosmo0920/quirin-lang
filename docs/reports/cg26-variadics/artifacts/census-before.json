@@ -1,0 +1,64 @@
+{
+ "report": {
+  "statuses": {
+   "Unknown": 4195,
+   "Safe": 629,
+   "Unsafe": 10
+  },
+  "leaves": {
+   "tail": 209,
+   "va-builtin": 124
+  },
+  "functions": {
+   "tail": 127,
+   "va-builtin": 50
+  },
+  "va_builtin_leaves": {
+   "__builtin_va_end": 55,
+   "__builtin_va_start": 50,
+   "__builtin_va_arg": 17,
+   "__builtin_va_copy": 2
+  },
+  "tail_callees": {
+   "fprintf": {
+    "leaves": 129,
+    "functions": 81
+   },
+   "snprintf": {
+    "leaves": 57,
+    "functions": 34
+   },
+   "mk_print": {
+    "leaves": 17,
+    "functions": 9
+   },
+   "printf": {
+    "leaves": 5,
+    "functions": 4
+   },
+   "fcntl": {
+    "leaves": 1,
+    "functions": 1
+   }
+  },
+  "protocol_refusals": {},
+  "sole": {
+   "va-builtin": [
+    "librdkafka/rdkafka.c/rd_kafka_set_thread_name"
+   ],
+   "tail": [
+    "librdkafka/rdkafka_offset.c/rd_kafka_open_cb_generic",
+    "monkey-libevent/mk_server/mk_http_parser.c/cb_debug_chunk_complete"
+   ]
+  },
+  "sole_counts": {
+   "va-builtin": 1,
+   "tail": 2
+  },
+  "va_builtin_or_tail_only": [
+   "librdkafka/rdkafka.c/rd_kafka_set_thread_name",
+   "librdkafka/rdkafka_offset.c/rd_kafka_open_cb_generic",
+   "monkey-libevent/mk_server/mk_http_parser.c/cb_debug_chunk_complete"
+  ]
+ }
+}
