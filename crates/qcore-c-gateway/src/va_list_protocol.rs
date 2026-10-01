@@ -66,7 +66,8 @@ pub(crate) enum ListState {
 }
 
 impl ListState {
-    pub(crate) const ALL: [Self; 4] = [Self::Uninitialised, Self::Active, Self::Passed, Self::Ended];
+    pub(crate) const ALL: [Self; 4] =
+        [Self::Uninitialised, Self::Active, Self::Passed, Self::Ended];
 
     const fn bit(self) -> u8 {
         match self {
@@ -176,8 +177,7 @@ pub(crate) fn step(
 /// Whether a list may be in `states` at a function exit: a local list must be
 /// uninitialised or ended (7.16.1.3p2); a parameter list owes nothing here.
 pub(crate) fn exit_ok(origin: Origin, states: States) -> bool {
-    origin == Origin::Parameter
-        || states.within(&[ListState::Uninitialised, ListState::Ended])
+    origin == Origin::Parameter || states.within(&[ListState::Uninitialised, ListState::Ended])
 }
 
 /// The initial state of a list at function entry.
@@ -274,7 +274,9 @@ impl Refusal {
                 Violation::ParameterOwnedByCaller => {
                     format!("`va_start`, `va_copy` into or `va_end` on the parameter list `{list}`")
                 }
-                Violation::Unclosed => format!("the states of `{list}` did not reach a fixed point"),
+                Violation::Unclosed => {
+                    format!("the states of `{list}` did not reach a fixed point")
+                }
             },
             Self::MissingEnd { list } => {
                 format!("`{list}` may reach a function exit without `va_end`")
@@ -472,8 +474,11 @@ impl Reader<'_> {
                 out.push(vec![(list, Operation::Arg)]);
                 Ok(())
             }
-            "ConditionalOperator" | "BinaryConditionalOperator" | "StmtExpr"
-            | "UnaryExprOrTypeTraitExpr" | "GenericSelectionExpr" => self.inert(node),
+            "ConditionalOperator"
+            | "BinaryConditionalOperator"
+            | "StmtExpr"
+            | "UnaryExprOrTypeTraitExpr"
+            | "GenericSelectionExpr" => self.inert(node),
             "BinaryOperator" if matches!(node["opcode"].as_str(), Some("&&" | "||")) => {
                 self.inert(node)
             }
@@ -618,7 +623,11 @@ impl Graph<'_, '_> {
         }
     }
 
-    fn expression_node(&mut self, predecessors: &[usize], expression: &Value) -> Result<Vec<usize>, Refusal> {
+    fn expression_node(
+        &mut self,
+        predecessors: &[usize],
+        expression: &Value,
+    ) -> Result<Vec<usize>, Refusal> {
         let event = self.reader.full_expression(expression)?;
         if event.is_none() && predecessors.len() == 1 {
             return Ok(predecessors.to_vec());
@@ -628,7 +637,11 @@ impl Graph<'_, '_> {
 
     /// Lower `statement` reached from `predecessors`; the result is the set of
     /// nodes control falls through from.
-    fn statement(&mut self, statement: &Value, predecessors: Vec<usize>) -> Result<Vec<usize>, Refusal> {
+    fn statement(
+        &mut self,
+        statement: &Value,
+        predecessors: Vec<usize>,
+    ) -> Result<Vec<usize>, Refusal> {
         match kind(statement) {
             "" | "NullStmt" => Ok(predecessors),
             "CompoundStmt" => {
@@ -860,7 +873,11 @@ impl Graph<'_, '_> {
                 }
                 Ok(predecessors)
             }
-            other if other.ends_with("Expr") || other.ends_with("Operator") || other.ends_with("Literal") => {
+            other
+                if other.ends_with("Expr")
+                    || other.ends_with("Operator")
+                    || other.ends_with("Literal") =>
+            {
                 self.expression_node(&predecessors, statement)
             }
             other => Err(Refusal::Form(other.to_owned())),
@@ -992,16 +1009,21 @@ pub(crate) fn check(function: &Value) -> Result<Protocol, Refusal> {
         .iter()
         .map(|list| list.origin)
         .collect::<Vec<_>>();
-    let initial_states = origins.iter().map(|origin| initial(*origin)).collect::<Vec<_>>();
-    decide(&graph.nodes, entry, &origins, &initial_states).map_err(|(list, refusal)| match refusal {
-        Some(violation) => Refusal::Violation {
-            list: reader.names[list].name.clone(),
-            violation,
+    let initial_states = origins
+        .iter()
+        .map(|origin| initial(*origin))
+        .collect::<Vec<_>>();
+    decide(&graph.nodes, entry, &origins, &initial_states).map_err(
+        |(list, refusal)| match refusal {
+            Some(violation) => Refusal::Violation {
+                list: reader.names[list].name.clone(),
+                violation,
+            },
+            None => Refusal::MissingEnd {
+                list: reader.names[list].name.clone(),
+            },
         },
-        None => Refusal::MissingEnd {
-            list: reader.names[list].name.clone(),
-        },
-    })?;
+    )?;
     Ok(Protocol {
         lists: reader.names,
     })
@@ -1026,8 +1048,7 @@ fn decide(
             for &(list, operation) in event {
                 // A failed step is reported by the check below; the fixed
                 // point continues from the state it would have reached.
-                after[list] = step(origins[list], after[list], operation)
-                    .unwrap_or(States::EMPTY);
+                after[list] = step(origins[list], after[list], operation).unwrap_or(States::EMPTY);
             }
         }
         for &successor in &nodes[index].successors {

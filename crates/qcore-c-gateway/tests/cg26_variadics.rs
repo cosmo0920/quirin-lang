@@ -121,9 +121,8 @@ fn a_return_between_start_and_end_is_a_missing_end() {
     if !clang_available() {
         return;
     }
-    let run = va(
-        "void subject(int n, ...) { va_list ap; va_start(ap, n); if (n) return; va_end(ap); }",
-    );
+    let run =
+        va("void subject(int n, ...) { va_list ap; va_start(ap, n); if (n) return; va_end(ap); }");
     assert!(run.unknown(), "{run:?}");
     assert!(
         run.refused(&protocol("`ap` may reach a function exit without `va_end`")),
@@ -234,7 +233,8 @@ fn a_parameter_list_owes_no_end_and_takes_none() {
     if !clang_available() {
         return;
     }
-    let read = va("int subject(const char *fmt, va_list ap) { int x; x = va_arg(ap, int); return x; }");
+    let read =
+        va("int subject(const char *fmt, va_list ap) { int x; x = va_arg(ap, int); return x; }");
     assert!(read.safe(), "{read:?}");
     let ended = va("void subject(const char *fmt, va_list ap) { va_end(ap); }");
     assert!(
@@ -253,12 +253,13 @@ fn a_pointer_va_arg_keeps_a_named_refusal() {
     if !clang_available() {
         return;
     }
-    let run = va(
-        "void subject(int n, ...) { va_list ap; va_start(ap, n); \
-         void *p = va_arg(ap, void *); va_end(ap); q_free(p); }",
-    );
+    let run = va("void subject(int n, ...) { va_list ap; va_start(ap, n); \
+         void *p = va_arg(ap, void *); va_end(ap); q_free(p); }");
     assert!(!run.safe(), "{run:?}");
-    assert!(run.refused_prefix("va_list operation refused: the `va_arg` value stored into `p`"), "{run:?}");
+    assert!(
+        run.refused_prefix("va_list operation refused: the `va_arg` value stored into `p`"),
+        "{run:?}"
+    );
 }
 
 /// A list event under a conditional operator, and the address of a list
@@ -295,9 +296,7 @@ fn va_start_names_the_last_parameter() {
     if !clang_available() {
         return;
     }
-    let run = va(
-        "void subject(int a, int b, ...) { va_list ap; va_start(ap, a); va_end(ap); }",
-    );
+    let run = va("void subject(int a, int b, ...) { va_list ap; va_start(ap, a); va_end(ap); }");
     assert!(
         run.refused(&protocol(
             "`va_start` does not name the last parameter of a variadic function"
@@ -329,7 +328,12 @@ fn a_live_identity_in_a_borrowed_tail_is_borrowed() {
         &contracts,
         "void subject(void) { void *p = q_alloc(); cg_blog(\"%p\", p); }",
     );
-    assert_ne!(leaking.status, AnalysisStatus::Safe, "{:?}", leaking.diagnostics);
+    assert_ne!(
+        leaking.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        leaking.diagnostics
+    );
     assert!(
         leaking
             .diagnostics
@@ -361,7 +365,12 @@ fn the_borrowed_tail_keeps_its_obligations_and_refusals() {
         "void subject(void) { void *p = q_alloc(); cg_blog(\"%p\", &p); q_free(p); }",
     ] {
         let run = g_with(&contracts, body);
-        assert_ne!(run.status, AnalysisStatus::Safe, "{body}: {:?}", run.diagnostics);
+        assert_ne!(
+            run.status,
+            AnalysisStatus::Safe,
+            "{body}: {:?}",
+            run.diagnostics
+        );
     }
 }
 
@@ -423,7 +432,12 @@ fn fcntl_at_f_setfd_with_its_contract_is_safe() {
         "void k(const char *path) { int fd; fd = open(path, 0); if (fd == -1) { return; } \
          fcntl(fd, F_SETFD, FD_CLOEXEC); close(fd); }",
     );
-    assert_eq!(summary.status, AnalysisStatus::Safe, "{:?}", summary.diagnostics);
+    assert_eq!(
+        summary.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        summary.diagnostics
+    );
 }
 
 /// W46-FCNTL-SETFD-ADDRESS-TAIL: `rd_kafka_open_cb_generic`'s extra `&on`.
@@ -436,13 +450,23 @@ fn fcntl_with_the_address_of_a_scalar_local_in_its_tail_is_admitted() {
         "void k(const char *path) { int fd; int on = 1; fd = open(path, 0); \
          if (fd == -1) { return; } fcntl(fd, F_SETFD, FD_CLOEXEC, &on); close(fd); }",
     );
-    assert_eq!(summary.status, AnalysisStatus::Safe, "{:?}", summary.diagnostics);
+    assert_eq!(
+        summary.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        summary.diagnostics
+    );
     // The descriptor's own obligation is unchanged: dropping `close` leaks.
     let leaking = fcntl_run(
         "void k(const char *path) { int fd; int on = 1; fd = open(path, 0); \
          if (fd == -1) { return; } fcntl(fd, F_SETFD, FD_CLOEXEC, &on); }",
     );
-    assert_ne!(leaking.status, AnalysisStatus::Safe, "{:?}", leaking.diagnostics);
+    assert_ne!(
+        leaking.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        leaking.diagnostics
+    );
 }
 
 /// The address of a tracked descriptor, or of a pointer, keeps the refusal.
@@ -455,12 +479,22 @@ fn the_address_of_a_descriptor_or_a_pointer_keeps_the_refusal() {
         "void k(const char *path) { int fd; fd = open(path, 0); if (fd == -1) { return; } \
          fcntl(fd, F_SETFD, FD_CLOEXEC, &fd); close(fd); }",
     );
-    assert_ne!(descriptor.status, AnalysisStatus::Safe, "{:?}", descriptor.diagnostics);
+    assert_ne!(
+        descriptor.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        descriptor.diagnostics
+    );
     let pointer = fcntl_run(
         "void k(const char *path, char *q) { int fd; fd = open(path, 0); if (fd == -1) { return; } \
          fcntl(fd, F_SETFD, FD_CLOEXEC, &q); close(fd); }",
     );
-    assert_ne!(pointer.status, AnalysisStatus::Safe, "{:?}", pointer.diagnostics);
+    assert_ne!(
+        pointer.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        pointer.diagnostics
+    );
     assert!(
         unsupported(&pointer)
             .iter()
@@ -484,8 +518,17 @@ fn a_scalar_lent_to_the_tail_is_forgotten() {
     );
     // With `on`'s zero kept, the `return` arm would be pruned and the body
     // Safe; forgotten, that arm leaks the descriptor, and nothing is refused.
-    assert_ne!(summary.status, AnalysisStatus::Safe, "{:?}", summary.diagnostics);
-    assert!(unsupported(&summary).is_empty(), "{:?}", summary.diagnostics);
+    assert_ne!(
+        summary.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        summary.diagnostics
+    );
+    assert!(
+        unsupported(&summary).is_empty(),
+        "{:?}",
+        summary.diagnostics
+    );
     assert!(
         summary
             .diagnostics
@@ -524,7 +567,9 @@ fn g_with(contracts: &ResourceContracts, source: &str) -> LegacyFunctionSummary 
         check_legacy_safety_certificate(certificate).expect("a Safe result rechecks");
     }
     match &result {
-        UnrestrictedLegacyResult::Safe(certificate) => certificate.summary.functions["subject"].clone(),
+        UnrestrictedLegacyResult::Safe(certificate) => {
+            certificate.summary.functions["subject"].clone()
+        }
         UnrestrictedLegacyResult::Unsafe(summary) => summary.functions["subject"].clone(),
         UnrestrictedLegacyResult::Unknown {
             partial: Some(summary),
@@ -533,7 +578,6 @@ fn g_with(contracts: &ResourceContracts, source: &str) -> LegacyFunctionSummary 
         other => panic!("no summary: {other:?}"),
     }
 }
-
 
 /// The borrowed tail is the data tail strengthened: it is rederived from the
 /// retained texts, it implies the data tail, and the two never stand together.
@@ -545,16 +589,17 @@ fn the_borrowed_tail_clause_loads_as_a_strengthened_data_tail() {
         variadic_borrowed_tails(&sources).expect("loads"),
         ["cg_blog".to_owned()].into_iter().collect()
     );
-    assert!(variadic_data_tails(&sources).expect("loads").contains("cg_blog"));
+    assert!(
+        variadic_data_tails(&sources)
+            .expect("loads")
+            .contains("cg_blog")
+    );
     assert!(VLOG.contains("ensures normal resource_variadic_borrowed_tail();\n"));
     let both = VLOG.replace(
         "ensures normal resource_variadic_borrowed_tail();\n",
         "ensures normal resource_variadic_borrowed_tail();\nensures normal resource_variadic_data_tail();\n",
     );
-    let error = load_resource_contract_sources(&BTreeMap::from([(
-        "both.qcore".to_owned(),
-        both,
-    )]))
-    .expect_err("the data and borrowed tails never stand together");
+    let error = load_resource_contract_sources(&BTreeMap::from([("both.qcore".to_owned(), both)]))
+        .expect_err("the data and borrowed tails never stand together");
     assert!(error.contains("duplicate variadic data tail"), "{error}");
 }

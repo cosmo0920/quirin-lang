@@ -18,7 +18,9 @@ fn mask(states: &[ListState]) -> States {
 fn cg26_step_vectors_are_the_table() {
     for (origin, incoming, operation, outgoing) in STEP_VECTORS {
         assert_eq!(
-            step(*origin, States(*incoming), *operation).ok().map(|s| s.0),
+            step(*origin, States(*incoming), *operation)
+                .ok()
+                .map(|s| s.0),
             *outgoing,
             "{origin:?} {incoming} {operation:?}"
         );
@@ -91,7 +93,10 @@ fn run(nodes: &[Node]) -> Result<(), (usize, Option<Violation>)> {
 fn cg26_a_straight_start_end_is_established() {
     let nodes = graph(
         &[(1, 2), (2, 3), (3, 0)],
-        &[(2, vec![(0, Operation::Start)]), (3, vec![(0, Operation::End)])],
+        &[
+            (2, vec![(0, Operation::Start)]),
+            (3, vec![(0, Operation::End)]),
+        ],
         4,
     );
     assert_eq!(run(&nodes), Ok(()));
@@ -102,7 +107,10 @@ fn cg26_a_straight_start_end_is_established() {
 fn cg26_a_branch_skipping_end_is_a_missing_end() {
     let nodes = graph(
         &[(1, 2), (2, 3), (2, 4), (3, 4), (4, 0)],
-        &[(2, vec![(0, Operation::Start)]), (3, vec![(0, Operation::End)])],
+        &[
+            (2, vec![(0, Operation::Start)]),
+            (3, vec![(0, Operation::End)]),
+        ],
         5,
     );
     assert_eq!(run(&nodes), Err((0, None)));
@@ -153,10 +161,7 @@ fn cg26_a_copy_owes_its_own_end() {
         5,
     );
     let initial_states = [initial(Origin::Local), initial(Origin::Local)];
-    assert_eq!(
-        decide(&nodes, 1, &origins, &initial_states),
-        Err((1, None))
-    );
+    assert_eq!(decide(&nodes, 1, &origins, &initial_states), Err((1, None)));
 }
 
 /// An unreachable node's event is not checked; a reachable one is.

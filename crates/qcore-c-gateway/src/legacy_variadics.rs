@@ -190,25 +190,28 @@ impl Parser<'_> {
         nested: &[crate::variadic_nested::NestedCallActual],
     ) -> bool {
         let view = self.tail_view(function, arguments);
-        view.iter().enumerate().skip(named).all(|(index, argument)| {
-            nested.iter().any(|nested| nested.argument == index)
-                || crate::variadic_nested::tail_arguments_are_data_with_nested(
-                    &[argument],
-                    0,
-                    &[],
-                    &self.typed_model,
-                    &self.typed_types,
-                    &self.typed_bases,
-                )
-                || crate::variadic_tail::widened_actual(
-                    argument,
-                    &self.typed_types,
-                    &|name| self.descriptor_names.contains(name),
-                    &self.protected_formals,
-                    self.variadic_borrowed_tails.contains(function),
-                )
-                .is_some()
-        })
+        view.iter()
+            .enumerate()
+            .skip(named)
+            .all(|(index, argument)| {
+                nested.iter().any(|nested| nested.argument == index)
+                    || crate::variadic_nested::tail_arguments_are_data_with_nested(
+                        &[argument],
+                        0,
+                        &[],
+                        &self.typed_model,
+                        &self.typed_types,
+                        &self.typed_bases,
+                    )
+                    || crate::variadic_tail::widened_actual(
+                        argument,
+                        &self.typed_types,
+                        &|name| self.descriptor_names.contains(name),
+                        &self.protected_formals,
+                        self.variadic_borrowed_tails.contains(function),
+                    )
+                    .is_some()
+            })
     }
 
     /// Hook: a call statement the classifier refused only for its trailing
@@ -240,9 +243,10 @@ impl Parser<'_> {
             matches!(kind(node), "CallExpr" | "DeclStmt" | "BinaryOperator")
         })?;
         let call = statement_call(node, &callee)?;
-        let promoted = children(call)
-            .get(1 + named..)
-            .is_some_and(|tail| tail.iter().all(crate::variadic_tail::promoted_scalar_or_pointer));
+        let promoted = children(call).get(1 + named..).is_some_and(|tail| {
+            tail.iter()
+                .all(crate::variadic_tail::promoted_scalar_or_pointer)
+        });
         let widened = if promoted {
             self.variadic_tail_widening.set(true);
             let widened = self.classify_simple(tokens);
@@ -253,15 +257,15 @@ impl Parser<'_> {
         };
         let admitted = matches!(widened, Some(LegacyInstruction::ContractCall { .. }));
         // The T7 scalars, read from the statement's own tokens.
-        let addresses = if admitted {
-            super::find_call(&wanted)
-                .and_then(|(call_index, _)| super::call_argument_spans(&wanted, call_index))
-                .map(|spans| {
-                    spans
-                        .iter()
-                        .skip(named)
-                        .filter_map(|&(start, end)| {
-                            match crate::variadic_tail::widened_actual(
+        let addresses =
+            if admitted {
+                super::find_call(&wanted)
+                    .and_then(|(call_index, _)| super::call_argument_spans(&wanted, call_index))
+                    .map(|spans| {
+                        spans
+                            .iter()
+                            .skip(named)
+                            .filter_map(|&(start, end)| match crate::variadic_tail::widened_actual(
                                 &wanted[start..end],
                                 &self.typed_types,
                                 &|name| self.descriptor_names.contains(name),
@@ -272,13 +276,12 @@ impl Parser<'_> {
                                     Some(name)
                                 }
                                 _ => None,
-                            }
-                        })
-                        .collect::<Vec<_>>()
-                })
-        } else {
-            None
-        };
+                            })
+                            .collect::<Vec<_>>()
+                    })
+            } else {
+                None
+            };
         record_row(json!({
             "function": self.typed_path_function,
             "line": line,

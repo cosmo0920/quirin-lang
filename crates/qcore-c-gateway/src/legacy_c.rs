@@ -3389,15 +3389,11 @@ fn build_function_cfg_with(
 fn declared_variadic_tails(contracts: &ResourceContracts) -> BTreeSet<String> {
     // A source that does not contain the clause's spelling cannot declare it,
     // so the common case costs a scan rather than a parse.
-    if !contracts
-        .source_assumptions()
-        .values()
-        .any(|source| {
-            source.contains("resource_variadic_data_tail")
+    if !contracts.source_assumptions().values().any(|source| {
+        source.contains("resource_variadic_data_tail")
                 // Card CG26-VARIADICS: the borrowed tail implies the data tail.
                 || source.contains("resource_variadic_borrowed_tail")
-        })
-    {
+    }) {
         return BTreeSet::new();
     }
     qcore_contract::contract_loader::declared_variadic_data_tails(contracts).unwrap_or_default()
@@ -8396,7 +8392,12 @@ impl Parser<'_> {
                     // declared `Borrowed` one (T7, T8).
                     if variadic_tail
                         && self.variadic_tail_widening.get()
-                        && self.tail_widened(function, arguments, contract.parameters.len(), &nested)
+                        && self.tail_widened(
+                            function,
+                            arguments,
+                            contract.parameters.len(),
+                            &nested,
+                        )
                     {
                         widened_tail = Some(arguments.len() - contract.parameters.len());
                     } else {

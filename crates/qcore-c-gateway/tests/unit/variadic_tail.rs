@@ -12,13 +12,18 @@ fn cg26_the_ellipsis_declares_no_object() {
         &["int", "n"]
     );
     assert_eq!(
-        named_parameters(&["const", "char", "*", "f", ",", "int", "x", ",", ".", ".", "."]),
+        named_parameters(&[
+            "const", "char", "*", "f", ",", "int", "x", ",", ".", ".", "."
+        ]),
         &["const", "char", "*", "f", ",", "int", "x"]
     );
     // A lone ellipsis, a non-trailing one, and an ordinary list are unchanged
     // (the reader refuses the first two on their `.` tokens).
     assert_eq!(named_parameters(&[".", ".", "."]), &[".", ".", "."]);
-    assert_eq!(named_parameters(&[",", ".", ".", "."]), &[",", ".", ".", "."]);
+    assert_eq!(
+        named_parameters(&[",", ".", ".", "."]),
+        &[",", ".", ".", "."]
+    );
     assert_eq!(named_parameters(&["int", "a"]), &["int", "a"]);
 }
 
@@ -67,7 +72,10 @@ fn cg26_promoted_types_are_scalars_or_pointers() {
 #[test]
 fn cg26_the_borrowed_tail_contract_only_grows_the_parameters() {
     let declared = ResourceFunctionContract::new(
-        [ResourceParameterMode::Borrowed, ResourceParameterMode::Borrowed],
+        [
+            ResourceParameterMode::Borrowed,
+            ResourceParameterMode::Borrowed,
+        ],
         ResourceReturnMode::None,
     );
     let extended = borrowed_tail_contract(&declared, 3);
