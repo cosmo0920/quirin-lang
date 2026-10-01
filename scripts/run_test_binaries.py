@@ -67,8 +67,13 @@ DEFAULT_WEIGHTS = Path(__file__).resolve().with_name("test_binary_weights.json")
 #
 # The rule for membership is conservative: constraint 16's load-sensitive rows,
 # plus every other binary that launches a process provider under a declared
-# wall-clock timeout, because such a timeout is a wall-clock budget.
+# wall-clock timeout and CLI checkpoint progress guards, because these are
+# wall-clock budgets.
 EXCLUSIVE: dict[str, str] = {
+    "qcore-audit::test::checkpoint_cli": (
+        "the interrupt/resume control requires the first unit checkpoint "
+        "within an unchanged 30 s wall-clock budget"
+    ),
     "qcore-compiler::test::cycle20_verifier_plugins": (
         "constraint 16: vp04_vp07_vp08_process_lifecycle_and_payload_budgets "
         "asserts a wall-clock budget"
