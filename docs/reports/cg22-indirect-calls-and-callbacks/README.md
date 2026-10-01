@@ -15,9 +15,10 @@ complete); main did not move during the card.
 - **Rule:** [gateway 11p](../../agents/gateway.md#constraint-11p).
 - **Lean:** `QCore.IndirectCalls`, `proof/AuditIndirectCalls.lean` (21
   theorems), over `QCore.TypedefProjection`.
-- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb`)
+- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `ee3bf02e` after them)
   from the census runs before the AFTER binary was measured; the
   implementation existed, no AFTER run did.
+- **Base:** BEFORE main `b6a3dc42`; AFTER of record on main `06ad81cb`; final tip rebased onto main `f0bbc0eb` (CG17, CG20, CG25, CG26 landed meanwhile; `cargo check --workspace --all-targets` 0 on each rebased tree; no re-measure on `b934c560`/`f0bbc0eb`, owed to the integration).
 - **Absorbed:** LOADER-ABI-INLINE-FNPTR-DECLARATOR (closed); EXTERN-CALL-F
   (function-pointer part) and W47-LOOP-OWNER-FIELD-KEYED-V-AND-F amended.
 
@@ -149,7 +150,6 @@ BEFORE's, so the pair compares only this card.
 | BEFORE, main `b6a3dc42` (`private/cg22/before`) | `1d06a383…` | 629 / 10 / 4,195 `3d53a5d0…` | 44 / 2 / 188 `d7aa010b…` | 29 / 1 / 239 / 1 P `0cdbef8b…` |
 | census build (`ADMIT = false`) | `73ef3965…` | byte-identical | byte-identical | byte-identical |
 | **AFTER, tip on `06ad81cb`** (`after6`) | `c58df810…` | **631 / 10 / 4,193** `eb1b0919…` | **byte-identical** | **byte-identical** |
-| AFTER, tip on `b934c560` (`after7`) | AFTER7_BINARY | AFTER7_CORPUS | AFTER7_SYSTEM | AFTER7_SLICE |
 
 System and slice reports embed the worktree path (8 strings), so their digests
 are this worktree's; the totals equal CG05's `after3` row and the BEFORE/AFTER
@@ -203,7 +203,7 @@ pass; no per-unit timing was taken.
 
 ## 5. Follow-ups
 
-Ledger 670 → 672 (`scripts/update_ledger.py`, applied to main's matrix):
+Ledger 671 → 673 (`scripts/update_ledger.py`, applied to main's matrix):
 
 - **Retired:** `CG22-INDIRECT-CALLS-AND-CALLBACKS` (every DISCHARGE clause
   holds: BEFORE reproduced, corrections recorded, PREDICTION frozen, AFTER
