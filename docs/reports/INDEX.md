@@ -135,6 +135,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg28-weak-memory-events](cg28-weak-memory-events/README.md) | CG28-WEAK-MEMORY-EVENTS |
 
+| [cg29-execution-coverage-and-reclamation](cg29-execution-coverage-and-reclamation/README.md) | CG29-EXECUTION-COVERAGE-AND-RECLAMATION |
+
 | [cg30-dialects-flags-types](cg30-dialects-flags-types/README.md) | CG30-DIALECTS-FLAGS-TYPES: dialect, target and type identities, and refused extensions |
 
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |

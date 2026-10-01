@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG16-INDEX-AND-OFFSET-EXTENTS card gate at tip 02ccd5be on main b934c560 (base b6a3dc42, rebased onto 8e8ed41f, 06ad81cb, b934c560), script docs/reports/cg16-index-and-offset-extents/scripts/gate-locked.sh (gate.sh under the shared heavy-step lock), logs private/cg16ix/gate of this worktree: cargo check --workspace --all-targets 0; submodule 0; run_test_binaries.py 419 units, 432 summaries, 7,257 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T191135Z-4005844); fmt 0; clippy --locked 0; both reevaluation probes exit 0; check_lean_audits.py 267 audits passed (266 on b934c560 + AuditIndexExtent.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits, test_build_matrix_sections), then run again after build_matrix.py --gate this file (09a, 09b); docs index 0. Main then moved to f0bbc0eb (CG26) and f6336c9d (CG28), both disjoint; rebased onto each and checked by scripts/rebased-check.sh: workspace check 0, the card's test files 10 + 5 + 20 + 15 passed, Lean 268 on f0bbc0eb (r1-r4) 269 on f6336c9d (recheck/) 270 on db1ea764 (CG27, recheck2/) and 271 on f1a4c648 (CG21, recheck3/); lean_audits here is the final tree's 271. Two earlier gate attempts on the base hit a full disk and are discarded (private/cg16ix/gate-discarded-disk-full*); a third passed every step but the tests (disk again) and is kept as gate-base-b6a3dc42-partial. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit) on b6a3dc42: custody byte-identical on corpus (3d53a5d0, 629/10/4,195), system and tail-pause slice; bounds selected on the corpus 162 Safe / 0 Pending / 0 Unsafe / 4,759 Unknown over 4,921 definitions, combined 111 Safe. Exits in docs/reports/cg16-index-and-offset-extents/gate/. INTEGRATION (measured, full): main moved to a6adb483f (CG28, CG27, CG21, CG30 after the card's last full gate); the card was rebased onto it (records-only conflicts) and the integrator ran the FULL standing gate on the combined tree (private/int-cg16): cargo check --workspace --all-targets --locked 0; submodule 0; fmt 0; run_test_binaries.py --jobs 4 425 units, 438 summaries, 7,367 passed, 0 failed, 11 ignored, exit 0; clippy 0; both reevaluation probes 0; Lean 272 audits passed; providers cargo check --locked 0; the custody corpus arbiter on the same tree reproduced main's resource-diagnostics byte for byte (sha256 ceefb6c4..., 645/10/4,179).",
-  "workspace_tests": 7367,
+  "note": "CG29-EXECUTION-COVERAGE-AND-RECLAMATION card gate. Full standing gate (scripts/heavy.sh: after.sh then gate.sh, under the shared heavy lock) at tip 90c3f071 on main 6cab1ad9 (base f6336c9d, rebased onto a6adb483 and then 6cab1ad9), logs private/cg29/gate of this worktree: submodule 0; cargo check --workspace --all-targets 0 (private/cg29/after-check.log); run_test_binaries.py 425 units, 438 summaries, 7,378 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T232524Z-2724640); fmt 0; clippy --locked --all-targets -D warnings 0; both reevaluation probes exit 0; check_lean_audits.py 274 audits passed (272 on 6cab1ad9 + AuditExecutionCoverage.lean + AuditReclamation.lean); python tests 365 with 1 expected failure (the derived lean_audits, test_build_matrix_sections), cleared by build_matrix.py . --gate this file and rerun (09b); docs index --check after the records (10). The card's own targets (scripts/targeted.sh, t2): 65 passed, 0 failed. providers/ is unchanged, so the provider gate is not due: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE on base f6336c9d 9319bb9e 633/10/4,191; AFTER on the tip ceefb6c4 645/10/4,179, byte-identical to the integrator's measurement of main 6cab1ad9 (no move by this card; the 12 moves from the BEFORE are CG21's); system 44/2/188 and tail-pause slice 29/1/239/1 Pending, no move. Exits in docs/reports/cg29-execution-coverage-and-reclamation/gate/.",
+  "workspace_tests": 7378,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 272,
+  "lean_audits": 274,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6856,6 +6856,7 @@
    "AuditErrorPayload.lean",
    "AuditEventCompositionContext.lean",
    "AuditEventPayloadBoundary.lean",
+   "AuditExecutionCoverage.lean",
    "AuditExternCall.lean",
    "AuditFfiStructImport.lean",
    "AuditFieldLinkJoin.lean",
@@ -6937,6 +6938,7 @@
    "AuditReadShare.lean",
    "AuditReasonCarrier.lean",
    "AuditReasonCategory.lean",
+   "AuditReclamation.lean",
    "AuditRefusedCallHandOn.lean",
    "AuditRefusedHandOnCustody.lean",
    "AuditRefusedWrites.lean",
@@ -7038,7 +7040,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg16-index-and-offset-extents/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a18fd94de22179a7a/docs/reports/cg29-execution-coverage-and-reclamation/scripts/../gate.json)"
  },
  "named_followups": [
   {

@@ -1,0 +1,13 @@
+{
+  "note": "CG29-EXECUTION-COVERAGE-AND-RECLAMATION card gate. Full standing gate (scripts/heavy.sh: after.sh then gate.sh, under the shared heavy lock) at tip 90c3f071 on main 6cab1ad9 (base f6336c9d, rebased onto a6adb483 and then 6cab1ad9), logs private/cg29/gate of this worktree: submodule 0; cargo check --workspace --all-targets 0 (private/cg29/after-check.log); run_test_binaries.py 425 units, 438 summaries, 7,378 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T232524Z-2724640); fmt 0; clippy --locked --all-targets -D warnings 0; both reevaluation probes exit 0; check_lean_audits.py 274 audits passed (272 on 6cab1ad9 + AuditExecutionCoverage.lean + AuditReclamation.lean); python tests 365 with 1 expected failure (the derived lean_audits, test_build_matrix_sections), cleared by build_matrix.py . --gate this file and rerun (09b); docs index --check after the records (10). The card's own targets (scripts/targeted.sh, t2): 65 passed, 0 failed. providers/ is unchanged, so the provider gate is not due: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE on base f6336c9d 9319bb9e 633/10/4,191; AFTER on the tip ceefb6c4 645/10/4,179, byte-identical to the integrator's measurement of main 6cab1ad9 (no move by this card; the 12 moves from the BEFORE are CG21's); system 44/2/188 and tail-pause slice 29/1/239/1 Pending, no move. Exits in docs/reports/cg29-execution-coverage-and-reclamation/gate/.",
+  "workspace_tests": 7378,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 274,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

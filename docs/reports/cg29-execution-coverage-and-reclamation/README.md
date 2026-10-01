@@ -400,4 +400,39 @@ fixtures'.
 
 ## 9. Gate
 
-GATE_SECTION
+Scripts:
+- [`scripts/heavy.sh`](scripts/heavy.sh): [`after.sh`](scripts/after.sh),
+  then [`gate.sh`](scripts/gate.sh), then `cargo clean --profile dev`,
+  under the coordinator's shared lock;
+- [`scripts/finish.sh`](scripts/finish.sh): the records.
+
+Record [`gate.json`](gate.json), exits in [`gate/`](gate/), logs in
+`private/cg29/gate` of this worktree. The **full standing gate** ran at tip
+`90c3f071` on `main` `6cab1ad9`.
+
+| Step | Command | Exit | Count |
+|---|---|---:|---|
+| 00 | `git submodule update --init --recursive`; `cargo check --workspace --all-targets` | 0; 0 | |
+| 01 | `git submodule update --init --recursive` | 0 | |
+| 02 | `cargo fmt --all -- --check` | 0 | |
+| 03 | `python3 scripts/run_test_binaries.py` | 0 | 425 units, 438 summaries, **7,378 passed, 0 failed**, 11 ignored (`private/test-binaries/20261001T232524Z-2724640`) |
+| 05 | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| 06 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| 07 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| 08 | `python3 scripts/check_lean_audits.py` | 0 | **274** audits (272 on `6cab1ad9`, plus `AuditExecutionCoverage.lean` and `AuditReclamation.lean`) |
+| 09 | `python3 -m unittest discover -s scripts/tests` | 1 | 365; the expected failure is the derived Lean audit count |
+| 09a | `docs/reports/remaining-d02/build_matrix.py . --gate gate.json` | 0 | |
+| 09b | `python3 -m unittest discover -s scripts/tests` | 0 | 365 |
+| 10 | `python3 scripts/build_docs_index.py --check` | 0 | after regenerating the index |
+| 11 | `python3 scripts/ct_stage_summary.py . --check` | 0 | mapped 50 / unmapped 0 |
+
+**Also run.**
+- *The card's own targets* ([`scripts/targeted.sh`](scripts/targeted.sh),
+  run `t2` on the tip): 65 passed, 0 failed, every exit 0.
+- *Corpus, system and slice*: §4.
+
+**Not due:** the provider gate, because `providers/` is unchanged.
+
+**Axioms and placeholders.** `AuditAll.lean` passes, so there are no
+placeholders and no project axioms. The new modules use only `propext`,
+`Classical.choice` and `Quot.sound`. Clang 21.1.8.
