@@ -278,9 +278,11 @@ fn a_loop_that_breaks_the_count_invariant_is_refused_never_assumed() {
             "while (n > 0) { if (u_enqueue(q, t)) return -1; n--; }",
         ),
         ("a jump out", "while (n > 0) { goto out; } out:"),
+        // An open callee expression (a cast): rule 11p reads no candidate
+        // set, so the older refusal stands.
         (
             "a call through an expression",
-            "while (n > 0) { (n ? u_log : u_log)(n); n--; }",
+            "while (n > 0) { ((void (*)(int)) u_log)(n); n--; }",
         ),
     ] {
         let source = format!(
@@ -306,6 +308,29 @@ fn a_loop_that_breaks_the_count_invariant_is_refused_never_assumed() {
             );
         }
     }
+}
+
+/// Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p): a conditional of one
+/// designator with an effect-free condition is a closed candidate set, so
+/// where Clang reads the unit the call is exactly its direct spelling and the
+/// loop is summarized as that loop is.
+#[test]
+fn a_closed_callee_expression_in_a_loop_is_its_direct_call() {
+    let run = |body: &str| {
+        let source = format!(
+            "int l_forget(struct u_queue *q, struct u_task *t, int n)\n{{\n    u_ref(t);\n    {body}\n    u_unref(t, 0);\n    u_release(t);\n    return -1;\n}}\n"
+        );
+        let summary = counted(&source, "l_forget");
+        let forget = function(&summary, "l_forget");
+        (forget.status, verdicts(forget), diagnostics(forget))
+    };
+    let closed = run("while (n > 0) { (n ? u_log : u_log)(n); n--; }");
+    if !clang_available() {
+        assert_ne!(closed.0, AnalysisStatus::Safe);
+        return;
+    }
+    let direct = run("while (n > 0) { u_log(n); n--; }");
+    assert_eq!(closed, direct);
 }
 
 #[test]

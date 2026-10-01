@@ -15,10 +15,10 @@ complete); main did not move during the card.
 - **Rule:** [gateway 11p](../../agents/gateway.md#constraint-11p).
 - **Lean:** `QCore.IndirectCalls`, `proof/AuditIndirectCalls.lean` (21
   theorems), over `QCore.TypedefProjection`.
-- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `ade6bdae` after them)
+- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `f710db0f` after them)
   from the census runs before the AFTER binary was measured; the
   implementation existed, no AFTER run did.
-- **Base:** BEFORE main `b6a3dc42`; AFTER of record on main `06ad81cb`; final tip rebased onto main `f6336c9d` (CG17, CG20, CG25, CG26, CG28 landed meanwhile; `cargo check --workspace --all-targets` 0 on each rebased tree; no re-measure on `b934c560`, `f0bbc0eb` or `f6336c9d`, owed to the integration).
+- **Base:** BEFORE main `b6a3dc42`; AFTER of record on main `06ad81cb`; standing gate on main `f6336c9d`; final tip rebased onto main `db1ea764` (CG17, CG20, CG25, CG26, CG28, CG27 landed meanwhile; `cargo check --workspace --all-targets` 0 on each rebased tree; no re-measure on `b934c560`, `f0bbc0eb`, `f6336c9d` or `db1ea764`, owed to the integration).
 - **Absorbed:** LOADER-ABI-INLINE-FNPTR-DECLARATOR (closed); EXTERN-CALL-F
   (function-pointer part) and W47-LOOP-OWNER-FIELD-KEYED-V-AND-F amended.
 
