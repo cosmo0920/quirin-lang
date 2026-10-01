@@ -3580,3 +3580,48 @@ own anchor here.
     `container_vectors` by `tests/unit/layout_extents.rs` and to route G and
     the report by `tests/layout_extents.rs`;
     [report](../reports/cg17-layout-derived-extents/README.md).
+
+<a id="constraint-11v"></a>
+
+11v. **A resource kind beyond the four has its own carrier, sentinel and
+    release protocol; an in-place kind binds its obligation to one automatic
+    object, and its initialiser's status is its sentinel.** Card
+    CG25-RESOURCE-KINDS (`crates/qcore-c-gateway/src/legacy_in_place_custody.rs`,
+    `crates/qcore-contract/src/contract_in_place.rs`, additive items
+    `ResourceKind::{DynamicLibrary, Regex, carrier, is_in_place}` and
+    `ResourceCarrier` in `qcore-schemas`, `AbstractState::status_witnesses`,
+    thin hooks in `legacy_c.rs`: the actual places, the formal-address gate,
+    the statement guard, the transfer wrapper, the null-test refinement and
+    the CFG check; contract specification §C04.6, §C04.6.1). (1) **Kinds.**
+    `dynamic_library` is pointer-carried with failure value NULL and is no
+    other kind (`free(h)`, `dlclose(p)` discharge nothing; `dlsym(h, …)`
+    after `dlclose(h)` is `use_after_release`). `regex` is **in place**: its
+    initialiser (`resource_out(p, nullable)` + kind) creates an obligation in
+    the object `p` designates, its finaliser (`resource_released(p,
+    nonnull)` + kind) discharges it, and a kinded `resource_borrowed` position
+    uses it. (2) **Storage.** An in-place actual is `&NAME` for one automatic,
+    non-pointer, non-array object Clang declares once in the function; its
+    place is `NAME`. Any other initialiser or finaliser actual refuses; a use
+    naming no tracked object keeps the plain borrowed reading. (3) **The
+    status is the sentinel.** The initialiser's status must be held by a
+    plain, not address-taken name, which witnesses the object until it is
+    written (`writes_scalar`); a null test of the witness refines the
+    object's binding (zero certifies, nonzero removes); witnesses join by
+    intersection. A discarded status, or one consumed by the expression that
+    tests it, refuses. (4) **Custody, never data.** A statement mentioning a
+    tracked object is admitted only as a contracted call of a declared callee
+    whose every mention is a whole `&NAME` actual at an in-place position of
+    the object's kind, or as the object's declaration; the formal-address gate
+    already refuses `&NAME` at any other position. A call node with an
+    in-place initialiser or finaliser lacking its place is refused after the
+    CFG is built, so no route drops the effect. **Do not** equate a new kind
+    with an existing one, bind an in-place obligation to a member, a global,
+    a static or storage reached through a pointer, refine on a status that is
+    not the witness, or admit tracked storage on a data route. Premises
+    stated, not proved: the libc contracts (`regcomp` returns zero exactly
+    when it initialised the object; `dlclose` releases its handle) and
+    faithful Clang extraction (trust boundary 28). MEASURED_PLACEHOLDER
+    `QCore.ResourceKinds` (28 theorems, `AuditResourceKinds.lean`; the kind
+    table and the protocols bound to Rust and to the libc declarations by
+    `kindVectors` and `protocolVectors`); `QCore.KindedCustody.Kind` gains the
+    two constructors; [report](../reports/cg25-resource-kinds/README.md).

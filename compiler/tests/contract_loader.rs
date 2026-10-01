@@ -341,9 +341,9 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         // parameter is read or written through into caller storage, and every
         // result is a scalar or (`dlsym`) a symbol address the caller acquires
         // no obligation for.
+        // (`regexec` and `regerror` are listed below since card
+        // CG25-RESOURCE-KINDS kinds their `__preg`.)
         ("dlsym", 2),
-        ("regexec", 5),
-        ("regerror", 4),
         ("getsockopt", 5),
         ("getpeername", 3),
         ("stat", 2),
@@ -620,6 +620,41 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         "fileno",
         ResourceFunctionContract::new([P::Borrowed], R::None),
     );
+    // Card CG25-RESOURCE-KINDS: `dlopen`/`dlclose` with the `dynamic_library`
+    // kind, `regcomp`/`regfree` with the in-place `regex` kind (an initialiser
+    // whose status is its result, and a finaliser), and `regexec`/`regerror`,
+    // still neutral, with their `__preg` kinded as a use of the object.
+    old.insert_contract(
+        "dlopen",
+        ResourceFunctionContract::new(vec![P::Borrowed; 2], R::Owned { nullable: true })
+            .with_result_kind(ResourceKind::DynamicLibrary),
+    );
+    old.insert_contract(
+        "dlclose",
+        ResourceFunctionContract::new([P::Released { nullable: false }], R::None)
+            .with_parameter_kind(0, ResourceKind::DynamicLibrary),
+    );
+    old.insert_contract(
+        "regcomp",
+        ResourceFunctionContract::new(
+            [P::Out { nullable: true }, P::Borrowed, P::Borrowed],
+            R::None,
+        )
+        .with_parameter_kind(0, ResourceKind::Regex),
+    );
+    old.insert_contract(
+        "regfree",
+        ResourceFunctionContract::new([P::Released { nullable: false }], R::None)
+            .with_parameter_kind(0, ResourceKind::Regex),
+    );
+    for (name, arity) in [("regexec", 5), ("regerror", 4)] {
+        let position = usize::from(name == "regerror");
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new(vec![P::Borrowed; arity], R::None)
+                .with_parameter_kind(position, ResourceKind::Regex),
+        );
+    }
     // Card W45-FB-BACKLOG-CUSTODY: the twelve checked specifications of
     // `fluent_bit/storage_backlog.qv`; ten borrow every argument and return
     // no custody (the canonical form below drops their trailing `Borrowed`s).
@@ -1461,9 +1496,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 253 -> 255 by card W48-CALLEE-CLOSURE-R3: `lstat` appended to
     // `libc/sys_stat.qv` and `clock_gettime` to `libc/time.qv`, both already
     // selected, both neutral and flexible. Selection and rejected unchanged.
+    // 255 -> 259 by card CG25-RESOURCE-KINDS: `dlopen`/`dlclose` appended to
+    // `libc/dlfcn.qv` and `regcomp`/`regfree` to `libc/regex.qv`, both already
+    // selected. Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (58, 255, 216)
+        (58, 259, 216)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
