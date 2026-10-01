@@ -1705,6 +1705,11 @@ fn read_parameters(
     elements: &mut BTreeMap<String, Option<ScalarElement>>,
     census: &mut DeclCensus,
 ) -> bool {
+    // Card CG26-VARIADICS (rule 11w): a variadic definition's trailing
+    // `, ...` declares no object, so the named parameters before it are the
+    // whole declared set. The tokenizer delivers the ellipsis as three `.`
+    // tokens; any other `.` still refuses below.
+    let parameters = crate::variadic_tail::named_parameters(parameters);
     if let Some(offending) = parameters
         .iter()
         .find(|text| matches!(**text, "(" | ")" | "{" | "}" | "." | ";" | "="))

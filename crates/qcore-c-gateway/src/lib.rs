@@ -153,6 +153,11 @@ pub mod typed_source_match;
 // closure and the per-consumer admission that gates it.
 pub mod typed_source_nodes;
 mod variadic_nested;
+// Card CG26-VARIADICS (rule 11w): the `va_list` protocol; the G hook is
+// `legacy_variadics.rs`.
+mod va_list_protocol;
+// Card CG26-VARIADICS (rule 11w): trailing actuals read per position.
+mod variadic_tail;
 
 use qcore_contract::contract_loader;
 

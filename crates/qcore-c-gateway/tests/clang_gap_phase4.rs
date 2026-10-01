@@ -381,6 +381,10 @@ fn k11_an_exit_specific_disposition_has_no_summary() {
 // CG26 — variadics (K08 K09 K10)
 // ---------------------------------------------------------------------------
 
+/// **Flipped by CG26-VARIADICS (rule 11w)** for route G: a statement's
+/// trailing actual under the declared data tail is read as a declared
+/// `Borrowed` one (T8), so a live identity there is a borrow and the call is
+/// admitted. Route T still refuses a variadic signature.
 #[test]
 fn k08_variadic_tails_are_data_only() {
     if !clang_available() {
@@ -392,7 +396,8 @@ fn k08_variadic_tails_are_data_only() {
     );
     assert!(gs("void subject(void) { void *p = q_alloc(); cg_log(\"%d\", 5); q_free(p); }").safe());
     let run = gs("void subject(void) { void *p = q_alloc(); cg_log(\"%p\", p); q_free(p); }");
-    assert!(run.refused("arguments beyond the declared parameters of `cg_log` are outside the resource projection"), "{run:?}");
+    assert!(!run.refused("arguments beyond the declared parameters of `cg_log` are outside the resource projection"), "{run:?}");
+    assert!(run.safe(), "{run:?}");
 }
 
 #[test]
@@ -410,9 +415,17 @@ fn k09_va_list_operations_are_not_modelled() {
         "#include <stdarg.h>\nvoid subject(int n, ...) { va_list ap; va_start(ap, n); \
                   void *p = va_arg(ap, void *); va_end(ap); q_free(p); }",
     );
+    // **Flipped by CG26-VARIADICS (rule 11w)** for route G: the protocol is
+    // established, so `va_start`/`va_end` are custody-neutral; a pointer
+    // `va_arg` keeps a named refusal and `q_free(p)` stays unresolved.
     for builtin in ["__builtin_va_start", "__builtin_va_arg", "__builtin_va_end"] {
-        assert!(run.refused(&uncontracted(builtin)), "{builtin}: {run:?}");
+        assert!(!run.refused(&uncontracted(builtin)), "{builtin}: {run:?}");
     }
+    assert!(
+        run.refused_prefix("va_list operation refused: the `va_arg` value stored into `p`"),
+        "{run:?}"
+    );
+    assert!(!run.safe(), "{run:?}");
 }
 
 #[test]

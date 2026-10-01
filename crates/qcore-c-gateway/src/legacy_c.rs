@@ -146,6 +146,11 @@ mod typed_roots;
 #[path = "legacy_atomic_route.rs"]
 mod atomic_route;
 
+// Card CG26-VARIADICS (gateway rule 11w): the `va_list` builtins' dedicated
+// recognised form, a fallback after every existing route of a statement.
+#[path = "legacy_variadics.rs"]
+mod variadics_route;
+
 #[path = "legacy_elaboration.rs"]
 mod elaboration_route;
 
@@ -3291,6 +3296,7 @@ fn build_function_cfg_with(
         typed_path_function: function.to_owned(),
         typed_position_uses: std::cell::Cell::new(0),
         condition_widening: std::cell::Cell::new(0),
+        variadic_tail_widening: std::cell::Cell::new(false),
         condition_cycles: condition_acquisition_route::CycleRanges::read(tokens, body_start),
         typed_place_origin: std::cell::Cell::new(None),
         typed_root_declarations: std::cell::OnceCell::new(),
@@ -4669,6 +4675,9 @@ struct Parser<'a> {
     /// Card CG04-CONDITION-ACQUISITION: the widenings of rule 10x a plan
     /// being built took (`condition_acquisition_route::WIDENED_*`).
     condition_widening: std::cell::Cell<u8>,
+    /// Card CG26-VARIADICS (rule 11w): set only around the statement
+    /// fallback's re-classification, which reads trailing actuals per position.
+    variadic_tail_widening: std::cell::Cell<bool>,
     /// Card CG04-CONDITION-ACQUISITION: the body's token ranges that may lie
     /// on a CFG cycle (a split acquisition there is refused).
     condition_cycles: condition_acquisition_route::CycleRanges,
@@ -6648,6 +6657,18 @@ impl Parser<'_> {
             self.element_origins.clear();
             return enclosing;
         }
+        // Card CG26-VARIADICS (rule 11w): asked last, only for an uncontracted
+        // `va_*` builtin's refusal.
+        if let Some(lowered) = self.va_list_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return lowered;
+        }
+        // Card CG26-VARIADICS (rule 11w): asked last, only for the declared
+        // tail's refusal of a call statement.
+        if let Some(lowered) = self.variadic_tail_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return lowered;
+        }
         if let LegacyInstruction::ContractCall { destination, .. } = &instruction {
             let use_ = if destination.is_some() {
                 crate::call_instantiation::ResultUse::Stored
@@ -8339,6 +8360,7 @@ impl Parser<'_> {
                 // variadic data tail, and only when this call site's own tail
                 // actuals are data. Under-supply is unchanged: a missing
                 // custody-bearing actual already reports on its own.
+                let mut widened_tail = None;
                 if let Some(arguments) = &raw_arguments
                     && arguments.len() > contract.parameters.len()
                     && !(variadic_tail
@@ -8353,13 +8375,27 @@ impl Parser<'_> {
                             &self.typed_bases,
                         ))
                 {
-                    return LegacyInstruction::Unknown {
-                        description: format!(
-                            "arguments beyond the declared parameters of `{function}` are outside the resource projection"
-                        ),
-                        writes: self.refused_writes(&texts),
-                    };
+                    // Card CG26-VARIADICS (rule 11w): only under the statement
+                    // fallback's widening, each trailing actual read as a
+                    // declared `Borrowed` one (T7, T8).
+                    if variadic_tail
+                        && self.variadic_tail_widening.get()
+                        && self.tail_widened(function, arguments, contract.parameters.len(), &nested)
+                    {
+                        widened_tail = Some(arguments.len() - contract.parameters.len());
+                    } else {
+                        return LegacyInstruction::Unknown {
+                            description: format!(
+                                "arguments beyond the declared parameters of `{function}` are outside the resource projection"
+                            ),
+                            writes: self.refused_writes(&texts),
+                        };
+                    }
                 }
+                let contract = match widened_tail {
+                    Some(tail) => crate::variadic_tail::borrowed_tail_contract(&contract, tail),
+                    None => contract,
+                };
                 // O04-B09B10: an argument this statement's member-address rule
                 // admitted is not "an unmodeled formal address". Its premises —
                 // a complete `struct` base, a member declared with no `*`, a

@@ -53,9 +53,11 @@ pub const ASSIGNMENT: &str = "unsupported assignment expression";
 pub const DESTINATION: &str = "unrecognized assignment destination";
 pub const INCREMENT: &str = "unmodeled increment or decrement expression";
 
-pub fn contracts() -> ResourceContracts {
+/// The fixture contract sources [`contracts`] loads (card CG26-VARIADICS
+/// extends them with its own synthetic borrower).
+pub fn contract_sources() -> BTreeMap<String, String> {
     let file = |name: &str, text: &str| (name.to_owned(), text.to_owned());
-    load_resource_contract_sources(&BTreeMap::from([
+    BTreeMap::from([
         file(
             "q_base.qcore",
             include_str!("../fixtures/contracts/q_base.qv"),
@@ -88,8 +90,11 @@ pub fn contracts() -> ResourceContracts {
             "clang_gap.qcore",
             include_str!("../fixtures/contracts/clang_gap.qv"),
         ),
-    ]))
-    .expect("the CG00 fixture contracts load")
+    ])
+}
+
+pub fn contracts() -> ResourceContracts {
+    load_resource_contract_sources(&contract_sources()).expect("the CG00 fixture contracts load")
 }
 
 pub fn clang_available() -> bool {
