@@ -3559,8 +3559,9 @@ own anchor here.
     graph's premises. Every weak-memory result is of **one supplied candidate
     execution** (`SINGLE_GRAPH_ASSUMPTION`; execution coverage is CG29's).
     Measured (corpus `66910c10`, base `b6a3dc42`, re-measured on main
-    `06ad81cb`): corpus 629 / 10 / 4,195 → **630 / 10 / 4,194**
-    (`3d53a5d0…` → `d7be9d8c…`), one Unknown → Safe move
+    `b934c560`): corpus 629 / 10 / 4,195 → **630 / 10 / 4,194** on the base
+    (`3d53a5d0…` → `d7be9d8c…`) and 630 / 10 / 4,194 → **631 / 10 / 4,193**
+    on main (`5ade5aab…` → `TIPDIGEST…`), one Unknown → Safe move
     (`cmt_atomic_compare_exchange`, the generic compare-exchange of
     `cmt_atomic_clang.c`, its only leaf), no correction, no leak or
     violation added; atomic leaves 1 → 0; system and slice byte-identical,

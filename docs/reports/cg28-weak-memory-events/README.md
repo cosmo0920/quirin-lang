@@ -171,7 +171,8 @@ slice (`attempt-1`, run `cg28-NAME`) were run as CG05 ran them. Every exit was
 |---|---|---|---|---|---|
 | BEFORE | base `b6a3dc42` | `068fda9d…` | **629 / 10 / 4,195** `3d53a5d0…` | 44 / 2 / 188 `9f786381…` | 29 / 1 / 239 / 1 P `3565659a…` |
 | AFTER (on the base) | `4dded2f1` | `82bb3d82…` | **630 / 10 / 4,194** `d7be9d8c…` | 44 / 2 / 188 `9f786381…` | 29 / 1 / 239 / 1 P `3565659a…` |
-| AFTER (rebased tip, on `main` `06ad81cb`) | TIP-HEAD | TIP-BINARY | TIP-CORPUS | TIP-SYSTEM | TIP-SLICE |
+| BEFORE (main) | `main` `b934c560` | CG25's | 630 / 10 / 4,194 `5ade5aab…` (CG25-RESOURCE-KINDS' figure) | 44 / 2 / 188 | 29 / 1 / 239 / 1 P |
+| AFTER (rebased tip, on `main` `b934c560`) | TIP-HEAD | TIP-BINARY | TIP-CORPUS | TIP-SYSTEM | TIP-SLICE |
 
 **BEFORE.** The corpus equals the brief's baseline exactly. System and slice
 are the deduplicated totals (`scripts/compare.py`); they equal the
@@ -390,7 +391,7 @@ use; faithful Clang extraction (trust boundary 28).
 - **Decided, not registered:** consume stays out of scope (§1). Reopening it
   needs a dependency-ordering relation in the model and a source extraction
   of dependencies; it is a phase-4 choice, not open work.
-- **Ledger:** 670 → 671 on `main` `06ad81cb` (666 → 667 on the base).
+- **Ledger:** 670 → 671 on `main` `b934c560` (666 → 667 on the base).
   `scripts/update_ledger.py` was applied once, to `main`'s matrix.
 
 ## 9. Gate
