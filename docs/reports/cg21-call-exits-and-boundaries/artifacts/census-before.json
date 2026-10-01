@@ -1,0 +1,147 @@
+{
+ "classes": {
+  "assembly:__asm__": {
+   "leaves": 6,
+   "functions": 2,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_alloca": {
+   "leaves": 55,
+   "functions": 41,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_ctz": {
+   "leaves": 1,
+   "functions": 1,
+   "unknown_sole": 1
+  },
+  "builtin-call:__builtin_ctzll": {
+   "leaves": 1,
+   "functions": 1,
+   "unknown_sole": 1
+  },
+  "builtin-call:__builtin_memcpy": {
+   "leaves": 27,
+   "functions": 8,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_memmove": {
+   "leaves": 7,
+   "functions": 3,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_nanf": {
+   "leaves": 1,
+   "functions": 1,
+   "unknown_sole": 1
+  },
+  "builtin-call:__builtin_prefetch": {
+   "leaves": 1,
+   "functions": 1,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_va_copy": {
+   "leaves": 2,
+   "functions": 2,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_va_end": {
+   "leaves": 55,
+   "functions": 50,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_va_start": {
+   "leaves": 50,
+   "functions": 49,
+   "unknown_sole": 0
+  },
+  "extension-node:__builtin_offsetof": {
+   "leaves": 39,
+   "functions": 23,
+   "unknown_sole": 0
+  },
+  "extension-node:__builtin_va_arg": {
+   "leaves": 17,
+   "functions": 12,
+   "unknown_sole": 0
+  },
+  "noreturn-declared:__assert_fail": {
+   "leaves": 1232,
+   "functions": 533,
+   "unknown_sole": 11
+  },
+  "noreturn-declared:abort": {
+   "leaves": 11,
+   "functions": 10,
+   "unknown_sole": 1
+  },
+  "noreturn-declared:exit": {
+   "leaves": 22,
+   "functions": 13,
+   "unknown_sole": 1
+  }
+ },
+ "family_sole": {
+  "builtin-call": [
+   "cJSON.c::cJSON_GetNumberValue",
+   "rdkafka.c::rd_kafka_set_thread_name",
+   "snappy.c::find_lsb_set_non_zero",
+   "snappy.c::find_lsb_set_non_zero64"
+  ],
+  "noreturn-declared": [
+   "mk_server/mk_header.c::mk_header_set_http_status",
+   "mk_server/mk_socket.c::mk_socket_reset",
+   "rdkafka_assignor.c::isFullyBalanced0",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_clear_wait_resp",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_set_wait_resp",
+   "rdkafka_conf.c::rd_kafka_confval_get_int",
+   "rdlist.c::rd_list_set_cnt",
+   "snappy.c::get_hash_table",
+   "snappy.c::get_u32_at_offset",
+   "tinycthread_extra.c::rwlock_rdlock",
+   "tinycthread_extra.c::rwlock_rdunlock",
+   "tinycthread_extra.c::rwlock_wrlock",
+   "tinycthread_extra.c::rwlock_wrunlock"
+  ]
+ },
+ "sole": {
+  "assembly:__asm__": [],
+  "builtin-call:__builtin_alloca": [],
+  "builtin-call:__builtin_ctz": [
+   "snappy.c::find_lsb_set_non_zero"
+  ],
+  "builtin-call:__builtin_ctzll": [
+   "snappy.c::find_lsb_set_non_zero64"
+  ],
+  "builtin-call:__builtin_memcpy": [],
+  "builtin-call:__builtin_memmove": [],
+  "builtin-call:__builtin_nanf": [
+   "cJSON.c::cJSON_GetNumberValue"
+  ],
+  "builtin-call:__builtin_prefetch": [],
+  "builtin-call:__builtin_va_copy": [],
+  "builtin-call:__builtin_va_end": [],
+  "builtin-call:__builtin_va_start": [],
+  "extension-node:__builtin_offsetof": [],
+  "extension-node:__builtin_va_arg": [],
+  "noreturn-declared:__assert_fail": [
+   "rdkafka_assignor.c::isFullyBalanced0",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_clear_wait_resp",
+   "rdkafka_cgrp.c::rd_kafka_cgrp_set_wait_resp",
+   "rdkafka_conf.c::rd_kafka_confval_get_int",
+   "rdlist.c::rd_list_set_cnt",
+   "snappy.c::get_hash_table",
+   "snappy.c::get_u32_at_offset",
+   "tinycthread_extra.c::rwlock_rdlock",
+   "tinycthread_extra.c::rwlock_rdunlock",
+   "tinycthread_extra.c::rwlock_wrlock",
+   "tinycthread_extra.c::rwlock_wrunlock"
+  ],
+  "noreturn-declared:abort": [
+   "mk_server/mk_header.c::mk_header_set_http_status"
+  ],
+  "noreturn-declared:exit": [
+   "mk_server/mk_socket.c::mk_socket_reset"
+  ]
+ }
+}
