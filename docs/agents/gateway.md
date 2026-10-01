@@ -3580,6 +3580,100 @@ own anchor here.
     `conversionVectors` (and to Clang by `clang_records_the_lean_usual_conversions`);
     [report](../reports/cg20-numeric-domain/README.md).
 
+<a id="constraint-11s"></a>
+
+11s. **Bounds is a separately selected property: every access is
+    inventoried and judged against a source extent or a reviewed declaration,
+    a declaration never overrides the source, a held one discharges and
+    accuses nothing, and custody is never changed by it.** Card
+    CG16-INDEX-AND-OFFSET-EXTENTS (`crates/qcore-c-gateway/src/index_extent.rs`;
+    the decisions are `qcore_core::index_extent`, the vocabulary
+    `qcore_contract::bounds_contract` (grammar G05b), the audit selection
+    `QCORE_BOUNDS_PROPERTY` in `crates/qcore-audit/src/projection.rs`; no hook
+    in `legacy_c.rs` or `typed_source.rs`, and no custody reader calls any of
+    it). Contract specification C09.1. (1) **Selection.** The property
+    `c.bounds.index-extent.v1` runs only when asked for (the gateway API, or
+    the audit variable, which writes its rows and tally beside an untouched
+    custody report). A request naming custody and bounds joins the two rows
+    (`compose`); a requested row that is missing is `Unknown`. (2)
+    **Inventory.** From Clang's typed AST of the translation unit (read
+    streaming, keeping only the selected bodies), every subscript,
+    dereference, `->`, pointer formation (`p ± k`, `&a[i]`, `p++`, `p += k`),
+    pointer subtraction and ordering, and every pointer actual of a call, in
+    every position (conditions, returns, actuals, loop bodies), each recorded
+    with its position and line; an unread expression or statement form is a
+    named function reason (`bounds-unsupported-form`), never skipped; the
+    operands of `sizeof`/`offsetof` are unevaluated, a variable-length type is
+    refused (CG17). (3) **Extents.** A fixed array's count is Clang's type
+    (locals, globals, members through `.` or `->`, string and compound
+    literals, each dimension of a nested array); a declared extent enters
+    only from a bounds contract: the function's own `bounds_extent`,
+    `bounds_index`, `bounds_global_extent` (a conditional scope, named on the
+    row) and a callee's `bounds_return_extent`, used only when every
+    precondition of that call is established. A declaration that differs
+    from a source extent is a reported contradiction
+    (`bounds-declaration-contradicted`, Unknown) and the source extent
+    decides. (4) **Values.** Only literals, enumeration constants, `+ - *`
+    of two constants in their C type (signed overflow refuses, unsigned
+    wraps), value-preserving or unsigned conversions (an out-of-range signed
+    conversion refuses), a tracked local's or parameter's fact, guard facts
+    from comparisons with a constant or a stable parameter, and the canonical
+    `for (i = c0; i < E; i++)` with `i` unwritten in the body; everything
+    else is `bounds-unsupported-range` (CG20 owns C's numeric semantics).
+    (5) **Invalidation.** Facts live on locals and parameters that are not
+    `static`, `volatile` or address-taken; a write withdraws the variable's
+    facts and every fact naming it, a call withdraws every fact on an object
+    the source did not establish unless the callee states
+    `bounds_preserves_extents()`, a loop withdraws what it writes, a label
+    keeps nothing, a join keeps what both edges share. (6) **Verdict.**
+    Each obligation is judged with only source and resolved premises in force
+    and again with the held ones in force as written; `Unsafe` only for an
+    out-of-bounds decision on an exact index **definitely reached** (the
+    straight-line prefix of the body, no call, loop, branch, label or
+    unresolved obligation before it, not under `&&`, `||` or `?:`, and no
+    other call in its full expression), `Pending` only when held
+    declarations are the sole obstacle and in force leave none, a
+    hypothetical violation is the standing reason
+    `bounds-held-premise-violation`, an access after `return`/`break`/
+    `continue`/`goto` with no label, or in a constant-false arm, is
+    excluded by that check and stays in the inventory. (7) **Refutation and
+    admission.** A body that returns a source object smaller than its own
+    declared `bounds_return_extent` refutes it: the row keeps
+    `bounds-contract-refuted-by-body` and the unit's callers see an
+    uncontracted callee (the API takes a cross-unit table). Recorded evidence
+    is admitted only when a re-derivation from the same source, target
+    (Clang's `__SIZEOF_*__`, `__CHAR_UNSIGNED__`, `__PTRDIFF_MAX__`) and
+    bounds contracts has the same identity, accesses and verdict. **Do not**
+    let a custody result, a custody profile's no-undefined-behaviour premise
+    or a loaded declaration discharge a bounds obligation, let a declaration
+    enlarge or replace a source extent, publish `Unsafe` for a violation not
+    definitely reached or resting on a held declaration, drop an access from
+    the inventory, or read the bounds rows from a custody route. Premises
+    stated, not proved: faithful Clang extraction (trust boundary 28) and
+    that a resolved declaration describes its external object or body
+    (C06's `Declared`). Measured (corpus `66910c10`, system, tail-pause
+    slice, base `b6a3dc42`): every custody report **byte-identical**
+    (corpus 629 / 10 / 4,195 `3d53a5d0…`); with the property selected on the
+    corpus and no bounds declaration, bounds **162 Safe / 0 Pending / 0
+    Unsafe / 4,759 Unknown** over 4,921 definitions (87 of them the
+    pinned-build exclusions, `bounds-import-failure`), combined custody and
+    bounds **111 Safe / 4,800 Unknown / 10 Unsafe**; the largest obstacle is
+    `bounds-missing-extent` (4,650 functions, 4,133 with a pointer passed to
+    an uncontracted call). `QCore.IndexExtent` (`element_access_sound`,
+    `formation_sound`, `out_of_bounds_sound`, `one_past_formed_never_accessed`,
+    `empty_extent_admits_no_access`, `byte_access_sound`, `scale_sound`,
+    `declared_never_overrides_source`, `write_withdraws_every_mention`,
+    `unsafe_only_for_a_reachable_violation`,
+    `safe_only_when_every_obligation_discharges`, `held_never_safe`,
+    `held_never_accuses`, `pending_only_as_the_sole_obstacle`,
+    `another_obstacle_keeps_unknown`, `a_missing_requested_row_is_unknown`,
+    `combined_safe_needs_both`, `admitted_evidence_matches`), bound to
+    `qcore_core::index_extent` by `elementVectors`, `byteVectors`,
+    `resolveVectors` and `verdictVectors`
+    (`crates/qcore-core/tests/index_extent.rs`) and to route G by
+    `tests/cg16_index_extents.rs`;
+    [report](../reports/cg16-index-and-offset-extents/README.md).
+
 <a id="constraint-11t"></a>
 
 11t. **A read-modify-write, compare-exchange or fence reaches the weak-memory

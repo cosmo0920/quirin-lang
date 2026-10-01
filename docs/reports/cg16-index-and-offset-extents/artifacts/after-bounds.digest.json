@@ -1,0 +1,60 @@
+{
+ "functions": 4921,
+ "tally": {
+  "bounds": {
+   "Safe": 162,
+   "Unknown": 4759
+  },
+  "custody": {
+   "Safe": 629,
+   "Unknown": 4195,
+   "Unsafe": 10,
+   "absent": 87
+  },
+  "combined": {
+   "Safe": 111,
+   "Unknown": 4800,
+   "Unsafe": 10
+  }
+ },
+ "custody_x_bounds": {
+  "Safe x Safe": 111,
+  "Safe x Unknown": 518,
+  "Unknown x Safe": 51,
+  "Unknown x Unknown": 4144,
+  "Unsafe x Unknown": 10,
+  "absent x Unknown": 87
+ },
+ "functions_by_reason_code": {
+  "bounds-missing-extent": 4650,
+  "bounds-unsupported-form": 817,
+  "bounds-unsupported-range": 214,
+  "bounds-import-failure": 87,
+  "bounds-range-not-contained": 8
+ },
+ "obligations_by_kind_and_outcome": {
+  "call-precondition / bounds-missing-extent": 91680,
+  "call-precondition / excluded": 100,
+  "dereference / bounds-missing-extent": 2903,
+  "dereference / in-bounds": 555,
+  "element-access / bounds-missing-extent": 1958,
+  "element-access / bounds-range-not-contained": 7,
+  "element-access / bounds-unsupported-range": 606,
+  "element-access / excluded": 19,
+  "element-access / in-bounds": 1796,
+  "formation / bounds-missing-extent": 1673,
+  "formation / bounds-range-not-contained": 4,
+  "formation / bounds-unsupported-range": 129,
+  "formation / excluded": 3,
+  "formation / in-bounds": 355,
+  "member-access / bounds-missing-extent": 87469,
+  "member-access / bounds-range-not-contained": 44,
+  "member-access / bounds-unsupported-range": 10,
+  "member-access / excluded": 26,
+  "member-access / in-bounds": 2930,
+  "same-object / bounds-missing-extent": 372
+ },
+ "unsafe": [],
+ "custody_rows_matched": 4834,
+ "custody_mismatches": []
+}

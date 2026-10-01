@@ -59,8 +59,7 @@ def main():
         published = {}
         for unit in report["units"]:
             for function in unit.get("functions", []):
-                if isinstance(function, dict) and "name" in function:
-                    published[(unit.get("library"), unit.get("file"), function["name"])] = function.get("status")
+                published[(unit.get("library"), unit.get("file"), function["function"])] = function.get("status")
         mismatched = [
             r["function"] for r in rows
             if (r["library"], r["file"], r["function"]) in published

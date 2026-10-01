@@ -379,6 +379,16 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     obligations. One-past formation is separated from dereference range.
   - *Absorbs:* W43-INDEX-TRAVERSAL-STEP-COMPUTED,
     W43-INDEX-TRAVERSAL-COMPUTED-POINTER-ACCESS and W46-ROUTING-QUERY-EXTENTS.
+  - *Status (wave 48, round 9).* A bounded sub-increment landed on route G
+    with the bounds consumer selected explicitly (gateway rule 11s): core
+    decisions with Lean `QCore.IndexExtent`, bounds contract v1 (G05b), the
+    source consumer, the audit selection `QCORE_BOUNDS_PROPERTY`. Custody
+    byte-identical on every route; corpus bounds 162 Safe / 0 Pending / 0
+    Unsafe / 4,759 Unknown, combined 111 Safe. The entry is amended, not
+    retired; the absorbed entries are amended with bounds-side sizes;
+    residuals `CG16-BOUNDS-CONTRACT-TRANSPORT`, `CG16-BOUNDS-POINTER-EXTENTS`,
+    `CG16-BOUNDS-UNSUPPORTED-FORMS`, `CG16-BOUNDS-SYMBOLIC-RANGES` (the last
+    reconciled with CG20). [Report](../../reports/cg16-index-and-offset-extents/README.md).
 - **CG17: layout-derived extents.**
   - *Layout facts.* VLA bound evaluation and scope-exit lifetime, and
     flexible-array remaining extent (allocation-size contract + `offsetof` +

@@ -1,0 +1,30 @@
+{
+  "functions": 4921,
+  "functions_by_reason_code": {
+    "bounds-import-failure": 87,
+    "bounds-missing-extent": 4650,
+    "bounds-range-not-contained": 8,
+    "bounds-unsupported-form": 817,
+    "bounds-unsupported-range": 214
+  },
+  "property": "c.bounds.index-extent.v1",
+  "schema_version": 1,
+  "scope": "the bounds property of every projected function, reported separately from custody; `combined` joins the custody and bounds rows of a request naming both, a missing row counting Unknown; Unknown and Pending stay in every denominator",
+  "tally": {
+    "bounds": {
+      "Safe": 162,
+      "Unknown": 4759
+    },
+    "combined": {
+      "Safe": 111,
+      "Unknown": 4800,
+      "Unsafe": 10
+    },
+    "custody": {
+      "Safe": 629,
+      "Unknown": 4195,
+      "Unsafe": 10,
+      "absent": 87
+    }
+  }
+}

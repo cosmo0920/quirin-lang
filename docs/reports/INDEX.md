@@ -115,6 +115,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg15-storage-duration-and-volatile](cg15-storage-duration-and-volatile/README.md) | CG15-STORAGE-DURATION-AND-VOLATILE |
 
+| [cg16-index-and-offset-extents](cg16-index-and-offset-extents/README.md) | CG16-INDEX-AND-OFFSET-EXTENTS |
+
 | [cg17-layout-derived-extents](cg17-layout-derived-extents/README.md) | CG17-LAYOUT-DERIVED-EXTENTS: VLA, flexible-array, alignment and container_of facts from Clang's layout |
 
 | [cg18-footprint-connection](cg18-footprint-connection/README.md) | CG18-FOOTPRINT-CONNECTION |

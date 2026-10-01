@@ -26,14 +26,16 @@ authority; history belongs in [increment records](development/increments/README.
 
 ## Coverage
 
-**Planned, not implemented (2026-10-01):**
+**Partly implemented (CG16-INDEX-AND-OFFSET-EXTENTS, 2026-10-02):**
 [reviewed index/extent contracts](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned)
-specify a separate existing-C bounds property. User-authored external premises
-require human review, source-derived fixed bounds do not, and every covered
-use still needs checking. The existing [CG16 implementation card](plans/clang-gap-cards/cg16-reviewed-index-contracts.md)
-is expanded in place; no new tracker, runtime admission, verdict movement or
-coverage increase is claimed. Existing custody-Safe results are not bounds
-certificates.
+specify a separate existing-C bounds property, `c.bounds.index-extent.v1`.
+The route-G consumer, bounds contract v1 (G05b) and the audit selection
+`QCORE_BOUNDS_PROPERTY` landed (gateway rule 11s); pins, transport and the
+audit's bounds-module selection did not (C09.1's status paragraph). User-authored
+external premises require human review, source-derived fixed bounds do not, and
+every covered use is checked. Custody-Safe results are still not bounds
+certificates: the bounds row is separate, and the combined row is Safe only
+where both are (measurement in the table below).
 
 | Measure | Recorded value | Source |
 |---|---|---|

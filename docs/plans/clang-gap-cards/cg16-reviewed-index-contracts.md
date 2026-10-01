@@ -1,6 +1,9 @@
 # CG16-INDEX-AND-OFFSET-EXTENTS: reviewed index and extent contracts
 
-Status: **candidate implementation card, not dispatched or implemented**.
+Status: **partly implemented** (wave 48 round 9; the
+[report](../../reports/cg16-index-and-offset-extents/README.md) lists what
+landed and the registered residuals). Originally a candidate card, not
+dispatched.
 Expanded on 2026-10-01 from the user's decision to express existing-C access
 bounds through user-authored, human-reviewed contracts. This is the detailed
 brief for the existing CG16 tracker, not a second card or a completed feature.
