@@ -48,6 +48,9 @@ pub(crate) mod literal_premise;
 
 #[path = "legacy_declared_abi.rs"]
 pub mod declared_abi;
+// Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): route G's dialect and extension hooks.
+#[path = "legacy_dialect_hook.rs"]
+mod dialect_hook;
 
 pub use declared_abi::{AbiAgreementRow, AbiOutcome, AbiRefusal, declared_abi_census};
 
@@ -1428,6 +1431,14 @@ pub enum CFrontendFlag {
     /// `-O0` … `-Og`: transported because the level is visible to the
     /// preprocessor (see [`COptimizationLevel`]).
     Optimization(COptimizationLevel),
+    // --- Target identity (card CG30-DIALECTS-FLAGS-TYPES, rule 11y) --------
+    /// A structured `--target=` triple from the closed vocabulary, admitted
+    /// only under the readers' LP64 premise. Serialised into the request
+    /// digest and the compile-task identity, so a changed target is a
+    /// different evidence identity.
+    Target(crate::c_frontend_identity::CTargetTriple),
+    /// A `-mabi=` name from the closed table, under the same admission.
+    Abi(crate::c_frontend_identity::CAbiName),
 }
 
 impl CFrontendFlag {
@@ -1460,6 +1471,8 @@ impl CFrontendFlag {
             Self::DataSections => command.arg("-fdata-sections"),
             Self::AddressUndefinedSanitizers => command.arg("-fsanitize=address,undefined"),
             Self::Optimization(level) => command.arg(level.spelling()),
+            Self::Target(triple) => command.arg(format!("--target={}", triple.spelled())),
+            Self::Abi(abi) => command.arg(format!("-mabi={}", abi.name())),
         };
     }
 }
@@ -1626,6 +1639,13 @@ pub enum CCompilerDialect {
     Gnu99,
     Gnu11,
     Gnu17,
+    /// Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): explicit C17, C23 and C2y.
+    /// Each carries its registered AST differences
+    /// (`c_frontend_identity::dialect_differences`) into the evidence
+    /// identity; none is adopted, so each is refused by name.
+    C17,
+    C23,
+    C2y,
 }
 
 impl CCompilerDialect {
@@ -1635,6 +1655,9 @@ impl CCompilerDialect {
             Self::Gnu99 => "-std=gnu99",
             Self::Gnu11 => "-std=gnu11",
             Self::Gnu17 => "-std=gnu17",
+            Self::C17 => "-std=c17",
+            Self::C23 => "-std=c23",
+            Self::C2y => "-std=c2y",
         }
     }
 }
@@ -1819,12 +1842,12 @@ fn certificate_input_identity(
         &request.input,
     ))
     .expect("certificate request fields are serializable");
-    request_bytes.push(match dialect {
-        CCompilerDialect::C11 => 0,
-        CCompilerDialect::Gnu99 => 1,
-        CCompilerDialect::Gnu11 => 2,
-        CCompilerDialect::Gnu17 => 3,
-    });
+    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): the four baseline dialects
+    // keep their one historical byte; C17, C23 and C2y add theirs and, with
+    // registered differences, the registry.
+    request_bytes.extend(crate::c_frontend_identity::dialect_identity_bytes(
+        dialect,
+    ));
     request_bytes.push(match function_scope {
         LegacyFunctionScope::PreprocessedTranslationUnit => 0,
         LegacyFunctionScope::MainSourceDefinitions => 1,
@@ -2833,6 +2856,11 @@ fn analyze_translation_unit_under_holds(
     // a rewrite below reserves is escaped first, so every marked name any
     // reader sees was minted from the environment (`reserved_spelling`).
     let tokens = reserved_spelling::escape_owned(tokens);
+    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): a registered, unadopted
+    // difference of the dialect withdraws its function's body before any
+    // reader, the derivation or replay reads it; a digit separator, which this
+    // token reader cannot lex, refuses the unit.
+    let (tokens, dialect_refusals) = dialect_hook::refuse(dialect, source, tokens, &conditionals)?;
     // Card W45-CONTRACT-DEFERRED-REVIEW: a declaration awaiting human review
     // is already absent from the environment (the loader withholds it); its
     // call sites are rewritten here, before the ABI gate and everything else
@@ -2918,9 +2946,20 @@ fn analyze_translation_unit_under_holds(
     let derivation = gate.derivation;
     let mut functions = BTreeMap::new();
     let mut projection_failures = Vec::new();
+    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): extension types are refused
+    // by name, read from each definition's typed AST where the unit spells one.
+    let extensions = dialect_hook::Extensions::of(&tokens);
     for name in names {
         match analyze_defined_function(&tokens, &name, &derivation) {
             Ok(mut summary) => {
+                // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y).
+                dialect_hook::name_refusals(
+                    &mut summary,
+                    &tokens,
+                    &name,
+                    &dialect_refusals,
+                    &extensions,
+                );
                 // Card W45-FB-BACKLOG-CUSTODY: a withdrawn specification keeps
                 // its defining function out of `Safe`.
                 if let Some(description) =

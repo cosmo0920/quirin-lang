@@ -529,20 +529,30 @@ fn c08_budgets_are_reported_never_safe() {
 // CG30 — dialects, flags and types (I01 I02 I03 I05 N12 N13 N14)
 // ---------------------------------------------------------------------------
 
+/// Card CG30-DIALECTS-FLAGS-TYPES (rule 11y) added the explicit C17, C23 and
+/// C2y identities. C23 spellings are still not C in an older dialect (Clang
+/// refuses the unit); under C23 they are registered differences refused by
+/// name (`tests/cg30_dialects_flags_types.rs`).
 #[test]
-fn i01_the_dialect_set_is_c11_and_three_gnu_modes() {
+fn i01_the_dialect_set_is_seven_explicit_identities() {
     let dialects = |dialect: CCompilerDialect| match dialect {
         CCompilerDialect::C11
         | CCompilerDialect::Gnu99
         | CCompilerDialect::Gnu11
-        | CCompilerDialect::Gnu17 => (),
+        | CCompilerDialect::Gnu17
+        | CCompilerDialect::C17
+        | CCompilerDialect::C23
+        | CCompilerDialect::C2y => (),
     };
     dialects(CCompilerDialect::default());
     if !clang_available() {
         return;
     }
-    // C23 spellings are not C in any admitted dialect: Clang refuses the unit.
-    for dialect in [CCompilerDialect::C11, CCompilerDialect::Gnu17] {
+    for dialect in [
+        CCompilerDialect::C11,
+        CCompilerDialect::Gnu17,
+        CCompilerDialect::C17,
+    ] {
         let source = "int subject(void *p) { return p == nullptr; }";
         let outcome = analyze_unrestricted_c11(
             &C11TranslationUnit {
@@ -585,11 +595,15 @@ fn n12_complex_values_are_refused() {
     if !clang_available() {
         return;
     }
+    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): T refuses by name first; G
+    // keeps its statement refusal and adds the named one.
     assert_eq!(
         t_refusal("int subject(void) { double _Complex z = 0; return 0; }"),
-        "local outside scalar/pointer callback profile"
+        "C extension type `_Complex double` (complex) is not adopted (CG30)"
     );
-    assert!(gs("void subject(void) { double _Complex z = 1.0; }").refused(ASSIGNMENT));
+    let run = gs("void subject(void) { double _Complex z = 1.0; }");
+    assert!(run.refused(ASSIGNMENT));
+    assert!(run.refused("C extension type `_Complex double` (complex) is not adopted (CG30)"));
 }
 
 #[test]
@@ -632,9 +646,13 @@ fn n14_bit_precise_integers_are_refused() {
     if !clang_available() {
         return;
     }
+    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): refused by name on both
+    // routes; G keeps its IND refusal beside the named one.
     assert_eq!(
         t_refusal("int subject(void) { _BitInt(7) x = 0; return 0; }"),
-        "local outside scalar/pointer callback profile"
+        "C extension type `_BitInt(7)` (bit-precise integer) is not adopted (CG30)"
     );
-    assert!(gs("void subject(void) { _BitInt(7) x = 3; }").refused(IND));
+    let run = gs("void subject(void) { _BitInt(7) x = 3; }");
+    assert!(run.refused(IND));
+    assert!(run.refused("C extension type `_BitInt(7)` (bit-precise integer) is not adopted (CG30)"));
 }

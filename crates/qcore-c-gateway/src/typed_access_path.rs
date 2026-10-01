@@ -1520,6 +1520,12 @@ pub(crate) fn qual(node: &Value) -> Option<&str> {
         .or_else(|| node["type"]["qualType"].as_str())
 }
 
+/// Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): route G's canonical type
+/// identity of a node, read from the same spelling [`qual`] reads.
+pub(crate) fn type_id(node: &Value) -> Option<crate::c_frontend_identity::CTypeId> {
+    qual(node).and_then(crate::c_frontend_identity::CTypeId::from_canonical_spelling)
+}
+
 pub(crate) fn is_scalar(node: &Value) -> bool {
     // A missing/opaque desugared spelling is not evidence of a scalar. In
     // particular Clang may leave a typedef to an anonymous struct/union as

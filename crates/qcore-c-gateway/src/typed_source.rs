@@ -454,6 +454,13 @@ pub fn import_source_functions_admitting_control(
         .iter()
         .map(|function| {
             let result = function_ast(&source, unit, function).and_then(|mut ast| {
+                // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): an extension type or
+                // a registered dialect difference is refused by name first.
+                if let Some(refusal) =
+                    crate::c_frontend_identity::typed_source_refusal(unit.dialect, &ast)
+                {
+                    return Err(refusal);
+                }
                 normalize_result_type(&mut ast, &source, unit)?;
                 let constants = enum_constants(&ast, &source, unit)?;
                 let arrays = array_types(&ast, &source, unit)?;
@@ -638,6 +645,13 @@ fn enum_constants(
         );
     }
     Ok(constants)
+}
+
+/// Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): route T's canonical type
+/// identity of a node, read from the spelling [`c_type`] reads (before its
+/// qualifier refusals, which stay [`c_type`]'s).
+pub fn canonical_type_id(node: &Value) -> Option<crate::c_frontend_identity::CTypeId> {
+    crate::c_frontend_identity::CTypeId::from_clang_type(node)
 }
 
 fn c_type(node: &Value) -> Result<String, String> {

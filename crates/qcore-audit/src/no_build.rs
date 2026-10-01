@@ -306,15 +306,12 @@ pub struct AssumedConfiguration {
 }
 
 fn parse_dialect(name: &str) -> Result<CCompilerDialect, String> {
-    match name {
-        "c11" => Ok(CCompilerDialect::C11),
-        "gnu99" => Ok(CCompilerDialect::Gnu99),
-        "gnu11" => Ok(CCompilerDialect::Gnu11),
-        "gnu17" => Ok(CCompilerDialect::Gnu17),
-        other => Err(format!(
-            "unsupported dialect `{other}`: the gateway accepts c11, gnu99, gnu11 and gnu17"
-        )),
-    }
+    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): the seven dialect identities.
+    CCompilerDialect::from_std_name(name).ok_or_else(|| {
+        format!(
+            "unsupported dialect `{name}`: the gateway accepts c11, gnu99, gnu11, gnu17, c17, c23 and c2y"
+        )
+    })
 }
 
 impl AssumedConfiguration {

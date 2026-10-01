@@ -322,5 +322,6 @@ import QCore.VoidViewReadback
 import QCore.LayoutExtents
 import QCore.ResourceKinds
 import QCore.Variadics
+import QCore.DialectTargetIdentity
 
 /-! The executable formal core of QCore-C revision 0.1. -/

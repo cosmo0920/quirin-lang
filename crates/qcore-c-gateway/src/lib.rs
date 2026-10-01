@@ -142,6 +142,8 @@ mod statement_expression;
 // explicit boundaries; the G hooks are in `legacy_call_exits.rs`.
 mod call_exits;
 // Card W47-TYPED-ROOT-DECLARATION-READER (rule 10l).
+// CG30-DIALECTS-FLAGS-TYPES (rule 11y): dialect, target and type identities.
+pub mod c_frontend_identity;
 pub mod typed_c_ast;
 // Card W47-LOOP-OWNER-TYPED-DISPATCH (rule 10p amendment): the record type
 // of each field dispatch and store, for the thread-entry census.

@@ -340,6 +340,17 @@ const REASON_RULES: &[(&str, ReasonCategory)] = &[
         ReasonCategory::EnvironmentUnavailable,
     ),
     ("-arch argument", ReasonCategory::EnvironmentUnavailable),
+    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): a target, ABI or `-target`
+    // selection the reader cannot admit under the readers' LP64 premise.
+    (
+        "unsupported compilation target",
+        ReasonCategory::EnvironmentUnavailable,
+    ),
+    (
+        "unsupported compilation ABI",
+        ReasonCategory::EnvironmentUnavailable,
+    ),
+    ("-target argument", ReasonCategory::EnvironmentUnavailable),
     (
         "compile output argument",
         ReasonCategory::EnvironmentUnavailable,

@@ -346,6 +346,21 @@ fn reason_corpus() -> Vec<(&'static str, ReasonCategory)> {
         ("invalid -Wundef-prefix argument", Env),
         ("missing -arch argument", Env),
         ("invalid -arch argument", Env),
+        // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y).
+        (
+            "unsupported compilation target `x86_64`: a target is two to four plain components",
+            Env,
+        ),
+        (
+            "unsupported compilation target: data model ILP32 is not the readers' LP64 premise; \
+             integer widths per target are card CG20's (rule 11q)",
+            Env,
+        ),
+        (
+            "unsupported compilation ABI `lp128`: no recorded data-model consequence",
+            Env,
+        ),
+        ("missing -target argument", Env),
         ("missing compile output argument", Env),
         ("invalid compile output argument", Env),
         (

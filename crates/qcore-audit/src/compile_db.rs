@@ -97,6 +97,11 @@ pub struct CompileTaskIdentity {
     preprocessed_source_sha256: Option<String>,
     preprocessing_error: Option<String>,
     dependencies: BTreeMap<String, String>,
+    /// Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): the digest of the dialect's
+    /// registered AST differences, for a dialect that registers any (C23,
+    /// C2y). Absent otherwise, so no earlier identity's digest moves.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    dialect_differences_sha256: Option<String>,
 }
 
 /// The effective preprocessing input, or the rejection that replaced it.
@@ -108,12 +113,7 @@ pub enum EffectiveInput<'a> {
 }
 
 fn dialect_name(dialect: CCompilerDialect) -> &'static str {
-    match dialect {
-        CCompilerDialect::C11 => "c11",
-        CCompilerDialect::Gnu99 => "gnu99",
-        CCompilerDialect::Gnu11 => "gnu11",
-        CCompilerDialect::Gnu17 => "gnu17",
-    }
+    dialect.std_name()
 }
 
 fn scope_name(scope: LegacyFunctionScope) -> &'static str {
@@ -162,6 +162,9 @@ pub fn compile_task_identity(
         preprocessed_source_sha256,
         preprocessing_error,
         dependencies,
+        dialect_differences_sha256: qcore_c_gateway::c_frontend_identity::dialect_differences_sha256(
+            unit.dialect,
+        ),
     })
 }
 
@@ -689,6 +692,60 @@ pub fn select_object_prefix(
     Ok(kept)
 }
 
+/// Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): the explicit target selections
+/// of one command, each at most once, admitted together.
+#[derive(Default)]
+struct TargetSelection {
+    identity: qcore_c_gateway::c_frontend_identity::CTargetIdentity,
+}
+
+impl TargetSelection {
+    fn select_triple(&mut self, triple: &str) -> Result<(), String> {
+        if self.identity.triple.is_some() {
+            return Err("unsupported compilation target: the command selects a target twice".into());
+        }
+        self.identity.triple =
+            Some(qcore_c_gateway::c_frontend_identity::CTargetTriple::parse(triple)?);
+        Ok(())
+    }
+
+    fn select_abi(&mut self, abi: &str) -> Result<(), String> {
+        if self.identity.abi.is_some() {
+            return Err("unsupported compilation ABI: the command selects an ABI twice".into());
+        }
+        self.identity.abi = Some(qcore_c_gateway::c_frontend_identity::CAbiName::parse(abi)?);
+        Ok(())
+    }
+
+    fn select_architecture(&mut self, architecture: &str) -> Result<(), String> {
+        // Several `-arch` words keep their existing treatment; each must be
+        // an LP64 architecture.
+        let mut single = qcore_c_gateway::c_frontend_identity::CTargetIdentity {
+            architecture: Some(architecture.to_owned()),
+            ..Default::default()
+        };
+        single.admit()?;
+        if self.identity.architecture.is_none() {
+            self.identity.architecture = single.architecture.take();
+        }
+        Ok(())
+    }
+
+    /// Admit the selections; the `--target` and `-mabi` flags to transport
+    /// (`-arch` is transported where it is read, as before).
+    fn admit(self) -> Result<Vec<CFrontendFlag>, String> {
+        self.identity.admit()?;
+        let mut flags = Vec::new();
+        if let Some(triple) = self.identity.triple {
+            flags.push(CFrontendFlag::Target(triple));
+        }
+        if let Some(abi) = self.identity.abi {
+            flags.push(CFrontendFlag::Abi(abi));
+        }
+        Ok(flags)
+    }
+}
+
 /// The configurable driver accepts only options whose preprocessing effects
 /// this gateway can preserve. Existing pinned adapters retain their explicitly
 /// bounded historical projection via `compiler_options_compatibility`.
@@ -722,6 +779,7 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
     let mut dependency_outputs = 0;
     let mut explicit_dialect = false;
     let mut frontend_flags = false;
+    let mut target = TargetSelection::default();
     while cursor < words.len() {
         let word = &words[cursor];
         let split = ["-isystem", "-iquote", "-I", "-D", "-U"]
@@ -784,6 +842,7 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
                 return Err("invalid -arch argument".into());
             }
             frontend_flags = true;
+            target.select_architecture(architecture)?;
             options
                 .preprocessor_options
                 .push(CPreprocessorOption::FrontendFlag(
@@ -791,13 +850,19 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
                 ));
         } else if let Some(standard) = word.strip_prefix("-std=") {
             explicit_dialect = true;
-            options.dialect = match standard {
-                "c11" => CCompilerDialect::C11,
-                "gnu99" => CCompilerDialect::Gnu99,
-                "gnu11" => CCompilerDialect::Gnu11,
-                "gnu17" => CCompilerDialect::Gnu17,
-                other => return Err(format!("unsupported compilation dialect `{other}`")),
-            };
+            // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): the exact names of
+            // the seven dialect identities; aliases stay refused.
+            options.dialect = CCompilerDialect::from_std_name(standard)
+                .ok_or_else(|| format!("unsupported compilation dialect `{standard}`"))?;
+        } else if let Some(triple) = word.strip_prefix("--target=") {
+            // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): a structured target.
+            target.select_triple(triple)?;
+        } else if word == "-target" {
+            cursor += 1;
+            let triple = words.get(cursor).ok_or("missing -target argument")?;
+            target.select_triple(triple)?;
+        } else if let Some(abi) = word.strip_prefix("-mabi=") {
+            target.select_abi(abi)?;
         } else if word == "-MMD" {
             // Dependency-file emission is an output action, like -o. Keep it
             // in the compile-task identity but do not overwrite build outputs
@@ -848,6 +913,17 @@ pub fn compiler_options(entry: &CompileEntry) -> Result<CompilerOptions, String>
         spelled: spelled_input.ok_or("compile command has no recorded source input")?,
         directory: entry.directory.clone(),
     };
+    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): the explicit selections are
+    // admitted together, under the readers' LP64 premise, and transported.
+    let target_flags = target.admit()?;
+    if !target_flags.is_empty() {
+        frontend_flags = true;
+        options.preprocessor_options.extend(
+            target_flags
+                .into_iter()
+                .map(CPreprocessorOption::FrontendFlag),
+        );
+    }
     if frontend_flags {
         if !explicit_dialect {
             return Err("frontend build flags require an explicit supported -std= dialect".into());

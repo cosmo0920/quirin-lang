@@ -1683,3 +1683,58 @@ fn matching_open(texts: &[&str], close: usize) -> Option<usize> {
     }
     None
 }
+
+/// Card **CG30-DIALECTS-FLAGS-TYPES** (gateway rule 11y): the canonical type
+/// identity ([`crate::c_frontend_identity::CTypeId`]) of a declaration's
+/// specifier words under `stars` pointer levels, resolved through the unit's
+/// typedefs exactly as this reader resolves them. Additive: the agreement
+/// above does not consult it. `None` for a `volatile` type, an unresolved
+/// typedef, an aggregate or function-pointer typedef and every specifier set
+/// outside the identity's arithmetic and tagged vocabulary.
+pub fn declared_type_id(
+    texts: &[&str],
+    specifiers: &[&str],
+    stars: usize,
+) -> Option<crate::c_frontend_identity::CTypeId> {
+    resolved_type_id(specifiers, stars, &read_typedefs(texts), 0)
+}
+
+fn resolved_type_id(
+    specifiers: &[&str],
+    stars: usize,
+    typedefs: &BTreeMap<String, TypedefTarget>,
+    depth: usize,
+) -> Option<crate::c_frontend_identity::CTypeId> {
+    if specifiers.contains(&"volatile") || depth >= TYPEDEF_DEPTH_LIMIT {
+        return None;
+    }
+    let core = specifiers
+        .iter()
+        .copied()
+        .filter(|word| {
+            *word == "const" || (!QUALIFIERS.contains(word) && !DISCARDED_SPECIFIERS.contains(word))
+        })
+        .collect::<Vec<_>>();
+    let unqualified = core
+        .iter()
+        .copied()
+        .filter(|word| *word != "const")
+        .collect::<Vec<_>>();
+    if let [name] = unqualified.as_slice()
+        && !ARITHMETIC_WORDS.contains(name)
+    {
+        let TypedefTarget::Declarator {
+            specifiers: resolved,
+            stars: levels,
+        } = resolve_typedef(name, typedefs, 0)?
+        else {
+            return None;
+        };
+        let mut words = resolved.iter().map(String::as_str).collect::<Vec<_>>();
+        if core.contains(&"const") && stars == 0 && levels == 0 {
+            words.push("const");
+        }
+        return resolved_type_id(&words, levels + stars, typedefs, depth + 1);
+    }
+    crate::c_frontend_identity::CTypeId::from_specifiers(&core, stars)
+}
