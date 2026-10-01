@@ -839,6 +839,36 @@ phase on the audit routes (the API takes the table), symbolic ranges beyond a
 stable parameter relation (CG20), variable-length and flexible extents (CG17),
 multi-base and derived relations (CG24), and bounds summaries of callee bodies.
 
+**Frames and derived relations (card CG24-ALIAS-EXTENT-FRAME-VOCABULARY,
+2026-10-02; gateway rule [11e](agents/gateway.md#constraint-11e)).** Landed in
+the same consumer and grammar: a **closed frame**, one of
+`bounds_frame_reads(P)`, `bounds_frame_writes(P)` or `bounds_frame_moves(P)`
+for every pointer parameter and every *slot* parameter (`ptr<mut, ptr<mut,
+u8>>`, a C `T **`). Frames are not custody modes: a custody-borrowed argument
+may still be written or reallocated. A read position keeps every bounds fact;
+a write position withdraws the facts of the local whose address it receives
+and keeps extent facts on objects it only writes; a move position (an in-place
+reallocation, keeping or moving the base, such as `cfl_sds_cat_safe`'s slot)
+also withdraws every fact on an object the source did not establish. A local
+whose address appears only as a direct actual of resolved closed frames may
+carry facts; a held frame tracks no local and keeps its other facts only as
+held premises. A closed frame, and that the callee retains nothing derived
+from a parameter beyond the call or its stated relation, is the
+declaration's `Declared` premise. A **derived relation**
+`bounds_return_derived(P, OFF, LEN, UNIT)`, on one base or several (the result
+is one of them), states that the result is `P + OFF` with `LEN` units: when the
+base's extent decides containment the result is inside that base, a base too
+small contradicts the declaration (reported, no fact), and otherwise only the
+declared view is used, after the call's preconditions are established. An
+analysed body refutes its frame when it writes through a parameter declared
+read or hands a parameter to a stronger frame position, and its relation when
+it returns a source object or another base or offset; refuted declarations are
+withdrawn from the unit's callers. Not landed: callback-spanning relations
+(CG22's callees), a slot extent after reallocation, return-conditioned and
+relation clauses for custody (W45-FB-BACKLOG-REFERENCE-VOCABULARY), and the
+custody half of the in-place reallocation (W46-SDS-CAT-SAFE-IN-PLACE-REALLOC):
+resource v1 is unchanged.
+
 **Meaning and units.** A user MAY supply a contract describing an external
 object's accessible extent or an external operation's index/extent relation.
 The consumer MUST distinguish an element count from a byte extent and bind

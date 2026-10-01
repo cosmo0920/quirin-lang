@@ -23,9 +23,28 @@
 //! requires bounds_global_extent(G, N, UNIT);   // C object G has N UNIT (external storage)
 //! ensures normal bounds_return_extent(COUNT, UNIT);  // the result points to COUNT UNIT
 //! ensures normal bounds_preserves_extents();   // the call resizes, releases nothing
+//! ensures normal bounds_frame_reads(P);        // CG24: reads only through P
+//! ensures normal bounds_frame_writes(P);       // CG24: may write what P reaches
+//! ensures normal bounds_frame_moves(P);        // CG24: may resize, move, release it
+//! ensures normal bounds_return_derived(P, OFF, LEN, UNIT); // CG24: result is P + OFF, LEN UNIT
 //! COUNT = a scalar parameter of the declaration | a canonical decimal literal
 //! UNIT  = elements | bytes
 //! ```
+//!
+//! # Frames and derived relations (card CG24-ALIAS-EXTENT-FRAME-VOCABULARY)
+//!
+//! A frame is **closed**: a declaration that states one states a mode for every
+//! pointer parameter and every *slot* parameter (`ptr<mut, ptr<mut, u8>>`, a C
+//! `T **`, admitted only in a frame), and the callee touches nothing else and
+//! keeps nothing derived from a parameter beyond the call (its `Declared`
+//! premise). Frames are not custody modes: `resource_borrowed` says nothing
+//! about writes or reallocation, and these clauses say nothing about custody.
+//! For a slot, `bounds_frame_moves` is the in-place reallocation of the object
+//! the slot designates (the slot is rewritten; the base kept or moved).
+//! `bounds_return_derived` states the result's relation to one base, or to
+//! several (multi-base: the result is one of them); it excludes
+//! `bounds_return_extent` and a base the call may move. The decisions are
+//! [`qcore_core::index_extent_frames`].
 //!
 //! `elements` counts objects of the C pointee type of the parameter (or the
 //! result, or the object's element type) as the audited C declaration states
@@ -56,6 +75,7 @@
 
 use std::collections::BTreeMap;
 
+use qcore_core::index_extent_frames::FrameMode;
 use qcore_frontend::frontend::{
     DeclarationKind, SourceContractClauseKind, SourceContractExitSelector, SourceDeclaration,
     SourceModuleMode, parse_source_program,
@@ -74,7 +94,7 @@ pub const REWRITE_BEFORE_ACCEPTANCE: &str = "rewrite_before_acceptance";
 
 /// Every identifier this vocabulary reserves (the source-spelling census
 /// checks them against the contract roots).
-pub const RESERVED_SPELLINGS: [&str; 8] = [
+pub const RESERVED_SPELLINGS: [&str; 12] = [
     BOUNDS_CONTRACT_MARKER,
     BOUNDS_REVIEW_MARKER,
     "bounds_extent",
@@ -83,12 +103,18 @@ pub const RESERVED_SPELLINGS: [&str; 8] = [
     "bounds_return_extent",
     "bounds_preserves_extents",
     REWRITE_BEFORE_ACCEPTANCE,
+    "bounds_frame_reads",
+    "bounds_frame_writes",
+    "bounds_frame_moves",
+    "bounds_return_derived",
 ];
 
 const SCALAR_TYPES: [&str; 11] = [
     "bool", "i8", "i16", "i32", "i64", "isize", "u8", "u16", "u32", "u64", "usize",
 ];
 const POINTER_TYPES: [&str; 2] = ["ptr<mut, u8>", "ptr<const, u8>"];
+/// Card CG24: a pointer to a pointer (a C `T **`), admitted only in a frame.
+const SLOT_TYPES: [&str; 1] = ["ptr<mut, ptr<mut, u8>>"];
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum BoundsUnit {
@@ -100,6 +126,15 @@ pub enum BoundsUnit {
 pub enum ParameterKind {
     Scalar,
     Pointer,
+    /// Card CG24: a pointer to a pointer, named only by a frame clause.
+    Slot,
+}
+
+impl ParameterKind {
+    /// A C pointer at the call (a pointer or a slot).
+    pub fn is_pointer(self) -> bool {
+        matches!(self, Self::Pointer | Self::Slot)
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -136,6 +171,18 @@ pub enum BoundsClause {
         unit: BoundsUnit,
     },
     PreservesExtents,
+    /// Card CG24: the callee's frame at one pointer or slot parameter.
+    Frame {
+        parameter: String,
+        mode: FrameMode,
+    },
+    /// Card CG24: the result is `parameter + offset`, with `length` units.
+    ReturnDerived {
+        parameter: String,
+        offset: BoundsCount,
+        length: BoundsCount,
+        unit: BoundsUnit,
+    },
 }
 
 impl BoundsClause {
@@ -227,6 +274,33 @@ impl BoundsFunctionContract {
             .enumerate()
             .find(|(_, parameter)| parameter.name == name)
     }
+
+    /// Card CG24: the closed frame, one mode per parameter (`None` for a
+    /// scalar), or `None` when the declaration states no frame.
+    pub fn frame(&self) -> Option<Vec<Option<FrameMode>>> {
+        let mut modes = vec![None; self.parameters.len()];
+        let mut any = false;
+        for entry in &self.clauses {
+            if let BoundsClause::Frame { parameter, mode } = &entry.clause
+                && let Some((index, _)) = self.parameter(parameter)
+            {
+                modes[index] = Some(*mode);
+                any = true;
+            }
+        }
+        any.then_some(modes)
+    }
+
+    /// Card CG24: the parameters a `bounds_return_derived` names, in order.
+    pub fn derived_bases(&self) -> Vec<&str> {
+        self.clauses
+            .iter()
+            .filter_map(|entry| match &entry.clause {
+                BoundsClause::ReturnDerived { parameter, .. } => Some(parameter.as_str()),
+                _ => None,
+            })
+            .collect()
+    }
 }
 
 /// A loaded bounds environment.
@@ -294,6 +368,8 @@ fn type_kind(source: &str) -> Result<ParameterKind, String> {
         Ok(ParameterKind::Scalar)
     } else if POINTER_TYPES.iter().any(|ty| same(ty)) {
         Ok(ParameterKind::Pointer)
+    } else if SLOT_TYPES.iter().any(|ty| same(ty)) {
+        Ok(ParameterKind::Slot)
     } else {
         Err(format!("unsupported bounds parameter type `{source}`"))
     }
@@ -465,6 +541,7 @@ impl Reader<'_> {
                 match kind {
                     ParameterKind::Scalar => "scalar",
                     ParameterKind::Pointer => "pointer",
+                    ParameterKind::Slot => "slot",
                 }
             )),
         }
@@ -500,6 +577,34 @@ impl Reader<'_> {
                 })
             }
             (false, "bounds_preserves_extents", []) => Ok(BoundsClause::PreservesExtents),
+            (false, "bounds_frame_reads" | "bounds_frame_writes" | "bounds_frame_moves", [p]) => {
+                let parameter = single_word(p)
+                    .filter(|name| {
+                        self.parameters
+                            .iter()
+                            .any(|q| q.name == *name && q.kind.is_pointer())
+                    })
+                    .ok_or("a frame clause names a pointer or slot parameter")?;
+                Ok(BoundsClause::Frame {
+                    parameter: parameter.to_owned(),
+                    mode: match name {
+                        "bounds_frame_reads" => FrameMode::Reads,
+                        "bounds_frame_writes" => FrameMode::Writes,
+                        _ => FrameMode::Moves,
+                    },
+                })
+            }
+            (false, "bounds_return_derived", [p, off, len, u]) => {
+                if self.result != Some(ParameterKind::Pointer) {
+                    return Err("a derived result needs a pointer result".into());
+                }
+                Ok(BoundsClause::ReturnDerived {
+                    parameter: self.parameter(p, ParameterKind::Pointer)?,
+                    offset: self.count(off)?,
+                    length: self.count(len)?,
+                    unit: unit(u)?,
+                })
+            }
             _ => Err(format!(
                 "unsupported bounds clause `{}` under `{}`",
                 render(tokens),
@@ -636,11 +741,14 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             BoundsClause::GlobalExtent { object, .. } => format!("global {object}"),
             BoundsClause::ReturnExtent { .. } => "return".into(),
             BoundsClause::PreservesExtents => "preserves".into(),
+            BoundsClause::Frame { parameter, .. } => format!("frame {parameter}"),
+            BoundsClause::ReturnDerived { parameter, .. } => format!("derived {parameter}"),
         };
         if !seen.insert(key.clone()) {
             return Err(format!("duplicate bounds clause for {key}"));
         }
     }
+    frame_conditions(&parameters, &clauses)?;
     Ok(BoundsFunctionContract {
         name: decl.name.clone(),
         module: path.to_owned(),
@@ -650,6 +758,65 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         contract_review,
         text_sha256: sha256_hex(normalised.join(";\n").as_bytes()),
     })
+}
+
+/// Card CG24's static conditions: a closed frame names every pointer and slot
+/// parameter; a slot appears only in a frame; preservation excludes a move;
+/// a derived result excludes a return extent and a moved base.
+fn frame_conditions(
+    parameters: &[BoundsParameter],
+    clauses: &[BoundsClauseEntry],
+) -> Result<(), String> {
+    let framed = clauses
+        .iter()
+        .filter_map(|entry| match &entry.clause {
+            BoundsClause::Frame { parameter, mode } => Some((parameter.as_str(), *mode)),
+            _ => None,
+        })
+        .collect::<BTreeMap<_, _>>();
+    let has_slot = parameters.iter().any(|p| p.kind == ParameterKind::Slot);
+    if !framed.is_empty() || has_slot {
+        for parameter in parameters.iter().filter(|p| p.kind.is_pointer()) {
+            if !framed.contains_key(parameter.name.as_str()) {
+                return Err(format!(
+                    "a frame is closed: pointer parameter `{}` states no frame",
+                    parameter.name
+                ));
+            }
+        }
+    }
+    let moves = framed.values().any(|mode| *mode == FrameMode::Moves);
+    if moves
+        && clauses
+            .iter()
+            .any(|entry| entry.clause == BoundsClause::PreservesExtents)
+    {
+        return Err("bounds_preserves_extents() contradicts a bounds_frame_moves".into());
+    }
+    let derived = clauses
+        .iter()
+        .filter_map(|entry| match &entry.clause {
+            BoundsClause::ReturnDerived { parameter, .. } => Some(parameter.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    if !derived.is_empty() {
+        if clauses
+            .iter()
+            .any(|entry| matches!(entry.clause, BoundsClause::ReturnExtent { .. }))
+        {
+            return Err("a derived result excludes a bounds_return_extent".into());
+        }
+        if let Some(base) = derived
+            .iter()
+            .find(|base| framed.get(**base) == Some(&FrameMode::Moves))
+        {
+            return Err(format!(
+                "a derived result cannot alias `{base}`, which the call may move"
+            ));
+        }
+    }
+    Ok(())
 }
 
 /// Load every selected module, total-or-reject.

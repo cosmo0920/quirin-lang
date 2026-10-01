@@ -35,6 +35,7 @@ pub mod ffi_c_emit;
 pub mod footprint_mutex;
 pub mod index;
 pub mod index_extent;
+pub mod index_extent_frames;
 pub mod inference;
 pub mod io_emit;
 pub mod library_custody;

@@ -157,6 +157,7 @@ import QCore.IndirectScalarAccess
 import QCore.IndexTraversal
 import QCore.IndexedCollection
 import QCore.IndexExtent
+import QCore.IndexExtentFrames
 import QCore.CallArgumentAccess
 import QCore.MemberRelease
 import QCore.MemoKey

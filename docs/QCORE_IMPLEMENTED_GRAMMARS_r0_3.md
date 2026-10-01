@@ -3681,10 +3681,30 @@ bounds_pre    = "bounds_extent", "(", IDENT, ",", count, ",", unit, ")"
               | "bounds_index", "(", IDENT, ",", count, ")"
               | "bounds_global_extent", "(", IDENT, ",", DIGITS, ",", unit, ")" ;
 bounds_post   = "bounds_return_extent", "(", count, ",", unit, ")"
-              | "bounds_preserves_extents", "(", ")" ;
+              | "bounds_preserves_extents", "(", ")"
+              | "bounds_frame_reads", "(", IDENT, ")"
+              | "bounds_frame_writes", "(", IDENT, ")"
+              | "bounds_frame_moves", "(", IDENT, ")"
+              | "bounds_return_derived", "(", IDENT, ",", count, ",", count, ",", unit, ")" ;
 count         = IDENT | DIGITS ;
 unit          = "elements" | "bytes" ;
 ```
+
+Card CG24-ALIAS-EXTENT-FRAME-VOCABULARY (gateway rule
+[11e](agents/gateway.md#constraint-11e)) added the four `bounds_frame_*` and
+`bounds_return_derived` postconditions and the *slot* parameter type
+`ptr<mut, ptr<mut, u8>>` (a C `T **`), under the same selector; every text
+CG16 accepted keeps its meaning. Their static conditions, each rejecting the
+whole module: a frame clause names a pointer or slot parameter; a declaration
+that states any frame states exactly one for **every** pointer and slot
+parameter (a closed frame), and a slot parameter appears only in a frame
+clause (never in `bounds_extent` or a relation), so a declaration with a slot
+states a frame; `bounds_preserves_extents()` and a `bounds_frame_moves` exclude
+each other; `bounds_return_derived` names a pointer parameter as its base, its
+offset and length are `count`s, it needs a pointer result, it excludes
+`bounds_return_extent`, its base is not declared `bounds_frame_moves`, and
+there is at most one relation per base (several bases make a multi-base
+relation).
 
 `parameter`, `result_abi` and `review_note` are G05's. Static conditions,
 each rejecting the whole module: exactly one `bounds_contract_v1` per

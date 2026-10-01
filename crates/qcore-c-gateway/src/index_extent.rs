@@ -53,6 +53,20 @@
 //! writes, a label starts from no facts, and two incoming edges keep only the
 //! facts they share.
 //!
+//! # Frames and derived relations (card CG24-ALIAS-EXTENT-FRAME-VOCABULARY)
+//!
+//! A callee whose bounds contract states a **closed frame** (gateway rule
+//! 11e) is applied position by position ([`qcore_core::index_extent_frames`]):
+//! a read position keeps every fact, a write position withdraws the facts of
+//! the local whose address it receives, a move position also withdraws every
+//! fact on an object the source did not establish. A local whose address
+//! appears only as a direct actual of resolved closed frames (never a derived
+//! base) is tracked. A `bounds_return_derived` result is inside its base when
+//! the base decides containment, a contradiction is reported, otherwise the
+//! declared view is used. A body that exceeds its declared frame or returns
+//! something other than its declared base refutes its declaration, which the
+//! unit's callers then do not see.
+//!
 //! # Reachability
 //!
 //! A violation is published `Unsafe` only when the access is **definitely
@@ -74,6 +88,9 @@ use qcore_contract::bounds_contract::{
 use qcore_core::index_extent::{
     self as core, BOUNDS_MODEL_VERSION, Count, Decision, EvidenceIdentity, Facts, IndexFact,
     Judgement, Outcome, PointerFact, Refusal, SameObject, ScalarFact, Standing,
+};
+use qcore_core::index_extent_frames::{
+    self as frames, BodyEffect, CallFrame, FrameMode, FrameTouch,
 };
 use serde_json::Value;
 
@@ -662,32 +679,245 @@ fn writes(node: &Value, out: &mut BTreeSet<String>) {
 /// Variables whose address the function takes (or that an array decay or a
 /// member/element address roots).
 fn address_taken(node: &Value, out: &mut BTreeSet<String>) {
-    if kind(node) == "UnaryOperator" && node["opcode"] == "&" {
-        let mut operand = kids(node).next();
-        while let Some(inner) = operand {
-            let inner = strip(inner);
-            match kind(inner) {
-                "DeclRefExpr" => {
-                    if let Some((id, _, _)) = decl_ref(inner) {
-                        out.insert(id.to_owned());
-                    }
-                    break;
-                }
-                "MemberExpr" if inner["isArrow"] != true => operand = kids(inner).next(),
-                "ArraySubscriptExpr" => {
-                    operand = kids(inner).find(|c| {
-                        let c = strip(c);
-                        kind(c) == "ImplicitCastExpr" && c["castKind"] == "ArrayToPointerDecay"
-                    });
-                    operand = operand.and_then(|c| kids(c).next());
-                }
-                _ => break,
-            }
-        }
+    if let Some(id) = address_root(node) {
+        out.insert(id.to_owned());
     }
     for child in kids(node) {
         address_taken(child, out);
     }
+}
+
+/// The variable one `&` expression roots: its own address, or the address of
+/// a `.` member or an element of it.
+fn address_root(node: &Value) -> Option<&str> {
+    if kind(node) != "UnaryOperator" || node["opcode"] != "&" {
+        return None;
+    }
+    let mut operand = kids(node).next();
+    while let Some(inner) = operand {
+        let inner = strip(inner);
+        match kind(inner) {
+            "DeclRefExpr" => return decl_ref(inner).map(|(id, _, _)| id),
+            "MemberExpr" if inner["isArrow"] != true => operand = kids(inner).next(),
+            "ArraySubscriptExpr" => {
+                operand = kids(inner).find(|c| {
+                    let c = strip(c);
+                    kind(c) == "ImplicitCastExpr" && c["castKind"] == "ArrayToPointerDecay"
+                });
+                operand = operand.and_then(|c| kids(c).next());
+            }
+            _ => return None,
+        }
+    }
+    None
+}
+
+/// Card CG24: how many times each variable's address is taken (the forms
+/// [`address_taken`] reads).
+fn address_counts(node: &Value, out: &mut BTreeMap<String, usize>) {
+    if let Some(id) = address_root(node) {
+        *out.entry(id.to_owned()).or_default() += 1;
+    }
+    for child in kids(node) {
+        address_counts(child, out);
+    }
+}
+
+/// The named callee of a direct call.
+fn callee_name(call: &Value) -> Option<String> {
+    let callee = strip(kids(call).next()?);
+    (kind(callee) == "ImplicitCastExpr" && callee["castKind"] == "FunctionToPointerDecay")
+        .then(|| kids(callee).next().and_then(decl_ref))
+        .flatten()
+        .filter(|d| d.1 == "FunctionDecl")
+        .map(|d| d.2.to_owned())
+}
+
+/// The variable `&x` names, when the actual is exactly that address (through
+/// parentheses and value-preserving pointer conversions).
+fn address_actual(node: &Value) -> Option<&str> {
+    let mut node = strip(node);
+    while matches!(kind(node), "ImplicitCastExpr" | "CStyleCastExpr")
+        && matches!(node["castKind"].as_str(), Some("NoOp" | "BitCast"))
+    {
+        node = strip(kids(node).next()?);
+    }
+    if kind(node) == "UnaryOperator" && node["opcode"] == "&" {
+        let (id, decl_kind, _) = decl_ref(kids(node).next()?)?;
+        if matches!(decl_kind, "VarDecl" | "ParmVarDecl") {
+            return Some(id);
+        }
+    }
+    None
+}
+
+/// A declared parameter kind against the C type of its actual (or formal).
+fn kind_matches(kind: ParameterKind, ty: &str) -> bool {
+    match kind {
+        ParameterKind::Scalar => !is_pointer(ty),
+        ParameterKind::Pointer => is_pointer(ty),
+        ParameterKind::Slot => is_pointer(ty) && pointee(ty).is_some_and(|t| is_pointer(&t)),
+    }
+}
+
+fn call_abi_matches(contract: &BoundsFunctionContract, arguments: &[&Value]) -> bool {
+    contract.parameters.len() == arguments.len()
+        && contract
+            .parameters
+            .iter()
+            .zip(arguments)
+            .all(|(p, a)| kind_matches(p.kind, &qual(a)))
+}
+
+fn collect_calls<'v>(node: &'v Value, out: &mut Vec<&'v Value>) {
+    if kind(node) == "UnaryExprOrTypeTraitExpr" {
+        return;
+    }
+    if kind(node) == "CallExpr" {
+        out.push(node);
+    }
+    for child in kids(node) {
+        collect_calls(child, out);
+    }
+}
+
+/// Card CG24: the locals whose every address is a direct actual at a closed,
+/// resolved frame position that is not a derived base. The frame then
+/// decides what each call does to them, so they may carry facts.
+fn frame_tracked(body: &Value, contracts: &BoundsContracts) -> BTreeSet<String> {
+    let mut all = BTreeMap::new();
+    address_counts(body, &mut all);
+    let mut framed: BTreeMap<String, usize> = BTreeMap::new();
+    let mut calls = Vec::new();
+    collect_calls(body, &mut calls);
+    for call in calls {
+        let arguments = kids(call).skip(1).collect::<Vec<_>>();
+        let Some(contract) = callee_name(call)
+            .and_then(|name| contracts.contract(&name))
+            .filter(|c| !c.held() && call_abi_matches(c, &arguments))
+        else {
+            continue;
+        };
+        let Some(modes) = contract.frame() else {
+            continue;
+        };
+        let bases = contract.derived_bases();
+        for ((mode, parameter), argument) in modes.iter().zip(&contract.parameters).zip(&arguments)
+        {
+            if mode.is_some()
+                && !bases.contains(&parameter.name.as_str())
+                && let Some(id) = address_actual(argument)
+            {
+                *framed.entry(id.to_owned()).or_default() += 1;
+            }
+        }
+    }
+    all.into_iter()
+        .filter(|(id, n)| framed.get(id) == Some(n))
+        .map(|(id, _)| id)
+        .collect()
+}
+
+/// Card CG24: the parameter a pointer expression is derived from (a read of
+/// it, through conversions, pointer arithmetic and array decay of a member).
+fn pointer_root(node: &Value) -> Option<String> {
+    let node = strip(node);
+    match kind(node) {
+        "ImplicitCastExpr" | "CStyleCastExpr" => match node["castKind"].as_str() {
+            Some("LValueToRValue") => read_of(node).map(str::to_owned),
+            Some("NoOp" | "BitCast") => pointer_root(kids(node).next()?),
+            Some("ArrayToPointerDecay") => written_through(kids(node).next()?),
+            _ => None,
+        },
+        "BinaryOperator" if matches!(node["opcode"].as_str(), Some("+" | "-")) => {
+            let mut operands = kids(node);
+            let (left, right) = (operands.next()?, operands.next()?);
+            if is_pointer(&qual(left)) {
+                pointer_root(left)
+            } else {
+                pointer_root(right)
+            }
+        }
+        _ => None,
+    }
+}
+
+/// Card CG24: the parameter an lvalue is reached through (`*p`, `p[i]`,
+/// `p->f`, and their members), if any.
+fn written_through(node: &Value) -> Option<String> {
+    let node = strip(node);
+    match kind(node) {
+        "UnaryOperator" if node["opcode"] == "*" => pointer_root(kids(node).next()?),
+        "ArraySubscriptExpr" => {
+            let mut operands = kids(node);
+            let (first, second) = (operands.next()?, operands.next()?);
+            pointer_root(if is_pointer(&qual(first)) {
+                first
+            } else {
+                second
+            })
+        }
+        "MemberExpr" if node["isArrow"] == true => pointer_root(kids(node).next()?),
+        "MemberExpr" => written_through(kids(node).next()?),
+        _ => None,
+    }
+}
+
+/// Card CG24: what a body does through its parameters: every write through
+/// one, and every hand-off at a write or move position of a closed frame.
+fn body_effects(node: &Value, contracts: &BoundsContracts, out: &mut Vec<(String, BodyEffect)>) {
+    match kind(node) {
+        "UnaryExprOrTypeTraitExpr" => return,
+        "BinaryOperator" if node["opcode"] == "=" => {
+            if let Some(id) = kids(node).next().and_then(written_through) {
+                out.push((id, BodyEffect::Written));
+            }
+        }
+        "CompoundAssignOperator" => {
+            if let Some(id) = kids(node).next().and_then(written_through) {
+                out.push((id, BodyEffect::Written));
+            }
+        }
+        "UnaryOperator" if matches!(node["opcode"].as_str(), Some("++" | "--")) => {
+            if let Some(id) = kids(node).next().and_then(written_through) {
+                out.push((id, BodyEffect::Written));
+            }
+        }
+        "CallExpr" => {
+            let arguments = kids(node).skip(1).collect::<Vec<_>>();
+            if let Some(modes) = callee_name(node)
+                .and_then(|name| contracts.contract(&name))
+                .filter(|c| call_abi_matches(c, &arguments))
+                .and_then(|c| c.frame())
+            {
+                for (mode, argument) in modes.iter().zip(&arguments) {
+                    let effect = match mode {
+                        Some(FrameMode::Writes) => BodyEffect::Written,
+                        Some(FrameMode::Moves) => BodyEffect::Moved,
+                        _ => continue,
+                    };
+                    if let Some(id) = pointer_root(argument) {
+                        out.push((id, effect));
+                    }
+                }
+            }
+        }
+        _ => {}
+    }
+    for child in kids(node) {
+        body_effects(child, contracts, out);
+    }
+}
+
+fn declares_checked_relation(contract: &BoundsFunctionContract) -> bool {
+    contract.clauses.iter().any(|e| {
+        matches!(
+            e.clause,
+            BoundsClause::ReturnExtent { .. }
+                | BoundsClause::Frame { .. }
+                | BoundsClause::ReturnDerived { .. }
+        )
+    })
 }
 
 const READ_EXPRESSIONS: [&str; 22] = [
@@ -1741,13 +1971,7 @@ impl<'a> Analysis<'a> {
     ) -> bool {
         let holds = self.callee_holds(contract);
         let mut clear = true;
-        if contract.parameters.len() != arguments.len()
-            || contract
-                .parameters
-                .iter()
-                .zip(arguments)
-                .any(|(p, a)| (p.kind == ParameterKind::Pointer) != is_pointer(&qual(a)))
-        {
+        if !call_abi_matches(contract, arguments) {
             self.record(
                 node,
                 "call-precondition",
@@ -1893,8 +2117,8 @@ impl<'a> Analysis<'a> {
     // -- statements -----------------------------------------------------------
 
     fn full_expression(&mut self, node: &Value, state: &mut State, position: &str) {
-        let mut written = BTreeSet::new();
-        writes(node, &mut written);
+        self.check_own_frame(node, state);
+        let written = self.written(node);
         // A whole-statement step `v++`, `v += k` reads the old value of `v`
         // and writes it last: its own fact stays readable for the step.
         let step_of = {
@@ -1927,10 +2151,7 @@ impl<'a> Analysis<'a> {
             state.write(id);
         }
         if calls {
-            let preserves = self.calls_preserve(node);
-            if !preserves {
-                state.call();
-            }
+            self.apply_calls(node, state);
         }
         for (id, update) in updates {
             self.apply(state, &id, update);
@@ -1940,30 +2161,134 @@ impl<'a> Analysis<'a> {
         }
     }
 
-    fn calls_preserve(&self, node: &Value) -> bool {
-        let mut all = true;
-        fn visit(analysis: &Analysis<'_>, node: &Value, all: &mut bool) {
-            if kind(node) == "CallExpr" {
-                let name = kids(node).next().and_then(|c| {
-                    let c = strip(c);
-                    kids(c).next().and_then(decl_ref).map(|d| d.2.to_owned())
-                });
-                let preserves = name
-                    .and_then(|n| analysis.contracts.contract(&n))
-                    .is_some_and(|c| {
-                        !c.held()
-                            && c.clauses
-                                .iter()
-                                .any(|e| e.clause == BoundsClause::PreservesExtents)
-                    });
-                *all &= preserves;
+    /// Card CG24: the frame a call applies, and the holds of a held one.
+    fn frame_of(&self, call: &Value) -> (CallFrame, BTreeSet<String>) {
+        let arguments = kids(call).skip(1).collect::<Vec<_>>();
+        let Some(contract) = callee_name(call)
+            .and_then(|name| self.contracts.contract(&name))
+            .filter(|c| call_abi_matches(c, &arguments))
+        else {
+            return (CallFrame::Unstated, BTreeSet::new());
+        };
+        match contract.frame() {
+            Some(modes) => {
+                let touches = modes
+                    .iter()
+                    .zip(&arguments)
+                    .filter_map(|(mode, argument)| {
+                        mode.map(|mode| FrameTouch {
+                            mode,
+                            addr: address_actual(argument)
+                                .filter(|id| self.tracked.contains(*id))
+                                .map(str::to_owned),
+                        })
+                    })
+                    .collect();
+                (
+                    CallFrame::Closed {
+                        touches,
+                        held: contract.held(),
+                    },
+                    self.callee_holds(contract),
+                )
             }
-            for child in kids(node) {
-                visit(analysis, child, all);
+            None if !contract.held()
+                && contract
+                    .clauses
+                    .iter()
+                    .any(|e| e.clause == BoundsClause::PreservesExtents) =>
+            {
+                (CallFrame::PreservesExtents, BTreeSet::new())
+            }
+            None => (CallFrame::Unstated, BTreeSet::new()),
+        }
+    }
+
+    /// Every call of a full expression, in order: its frame withdraws (or
+    /// keeps, on a held premise) the facts it may touch.
+    fn apply_calls(&self, node: &Value, state: &mut State) {
+        let mut calls = Vec::new();
+        collect_calls(node, &mut calls);
+        for call in calls {
+            let (frame, holds) = self.frame_of(call);
+            if let CallFrame::Closed { touches, .. } = &frame {
+                for touch in touches {
+                    if touch.mode != FrameMode::Reads
+                        && let Some(id) = &touch.addr
+                    {
+                        state.write(id);
+                    }
+                }
+            }
+            for name in state.facts.call_frame(&frame) {
+                state
+                    .held
+                    .entry(name)
+                    .or_default()
+                    .extend(holds.iter().cloned());
+            }
+            state.sync();
+        }
+    }
+
+    /// The variables a node writes: assignments and steps (CG16), and the
+    /// locals whose address a write or move frame position receives (CG24).
+    fn written(&self, node: &Value) -> BTreeSet<String> {
+        let mut out = BTreeSet::new();
+        writes(node, &mut out);
+        let mut calls = Vec::new();
+        collect_calls(node, &mut calls);
+        for call in calls {
+            if let (CallFrame::Closed { touches, .. }, _) = self.frame_of(call) {
+                out.extend(
+                    touches
+                        .into_iter()
+                        .filter(|t| t.mode != FrameMode::Reads)
+                        .filter_map(|t| t.addr),
+                );
             }
         }
-        visit(self, node, &mut all);
-        all
+        out
+    }
+
+    /// Card CG24: a body that exceeds the frame its own contract declares
+    /// (a write through a parameter declared read, a hand-off of a parameter
+    /// to a stronger frame position) refutes the declaration.
+    fn check_own_frame(&mut self, node: &Value, state: &State) {
+        let Some(own) = self.own else {
+            return;
+        };
+        let Some(modes) = own.frame() else {
+            return;
+        };
+        if !state.live {
+            return;
+        }
+        let mut effects = Vec::new();
+        body_effects(node, self.contracts, &mut effects);
+        for (id, effect) in effects {
+            if !state.stable.contains(&id) {
+                continue;
+            }
+            let Some(name) = self.params.get(&id) else {
+                continue;
+            };
+            let Some(mode) = own.parameter(name).and_then(|(index, _)| modes[index]) else {
+                continue;
+            };
+            if frames::refutes(mode, effect) {
+                self.refuted = true;
+                self.reason(format!(
+                    "bounds-contract-refuted-by-body: `{}` {} `{name}`, declared bounds_frame_{}",
+                    own.name,
+                    match effect {
+                        BodyEffect::Moved => "hands to a moving frame position",
+                        _ => "writes through",
+                    },
+                    mode.spelling()
+                ));
+            }
+        }
     }
 
     fn assignment_updates(
@@ -1983,8 +2308,7 @@ impl<'a> Analysis<'a> {
                 let Some((id, _, _)) = decl_ref(left) else {
                     return;
                 };
-                let mut inner = BTreeSet::new();
-                writes(right, &mut inner);
+                let inner = self.written(right);
                 if !inner.is_empty() || !self.tracked.contains(id) {
                     return;
                 }
@@ -2098,7 +2422,10 @@ impl<'a> Analysis<'a> {
                         held,
                     )
                 }
-                Target::Missing(_) => self.return_extent(right, reading).unwrap_or(Update::None),
+                Target::Missing(_) => self
+                    .return_extent(right, reading)
+                    .or_else(|| self.return_derived(right, reading))
+                    .unwrap_or(Update::None),
             }
         } else {
             let value = self.eval(right, reading);
@@ -2133,40 +2460,7 @@ impl<'a> Analysis<'a> {
         })?;
         // Preconditions first: re-decide them silently.
         let mut held = self.callee_holds(contract);
-        for entry in &contract.clauses {
-            let established = match &entry.clause {
-                BoundsClause::Extent {
-                    parameter,
-                    count,
-                    unit,
-                } => {
-                    let (index, _) = contract.parameter(parameter)?;
-                    let target = self.target(arguments.get(index)?, reading);
-                    if let Target::Known { held: h, .. } = &target {
-                        held.extend(h.iter().cloned());
-                    }
-                    let required = self.actual_value(contract, &arguments, count, reading)?;
-                    held.extend(required.held.iter().cloned());
-                    self.covers(&target, &required, *unit) == Decision::InBounds
-                }
-                BoundsClause::Index { parameter, count } => {
-                    let (index, _) = contract.parameter(parameter)?;
-                    let value = self.eval(arguments.get(index)?, reading);
-                    let bound = self.actual_value(contract, &arguments, count, reading)?;
-                    held.extend(value.held.iter().cloned());
-                    let count = match (&bound.fact, &bound.symbol) {
-                        (IndexFact::Const(n), _) if *n >= 0 => Count::Const(*n as u128),
-                        (_, Some(symbol)) => Count::Symbol(symbol.clone()),
-                        _ => return None,
-                    };
-                    core::element_access(Some(&count), &value.fact) == Decision::InBounds
-                }
-                _ => true,
-            };
-            if !established {
-                return None;
-            }
-        }
+        self.preconditions_established(contract, &arguments, reading, &mut held)?;
         let value = self.actual_value(contract, &arguments, &count, reading)?;
         held.extend(value.held.iter().cloned());
         let count = match (&value.fact, &value.symbol) {
@@ -2208,6 +2502,228 @@ impl<'a> Analysis<'a> {
             element,
             held,
         ))
+    }
+
+    /// The callee's preconditions at this call, re-decided silently: `None`
+    /// unless every one is established (held premises carried in `held`).
+    fn preconditions_established(
+        &mut self,
+        contract: &BoundsFunctionContract,
+        arguments: &[&Value],
+        reading: &State,
+        held: &mut BTreeSet<String>,
+    ) -> Option<()> {
+        for entry in &contract.clauses {
+            let established = match &entry.clause {
+                BoundsClause::Extent {
+                    parameter,
+                    count,
+                    unit,
+                } => {
+                    let (index, _) = contract.parameter(parameter)?;
+                    let target = self.target(arguments.get(index)?, reading);
+                    if let Target::Known { held: h, .. } = &target {
+                        held.extend(h.iter().cloned());
+                    }
+                    let required = self.actual_value(contract, arguments, count, reading)?;
+                    held.extend(required.held.iter().cloned());
+                    self.covers(&target, &required, *unit) == Decision::InBounds
+                }
+                BoundsClause::Index { parameter, count } => {
+                    let (index, _) = contract.parameter(parameter)?;
+                    let value = self.eval(arguments.get(index)?, reading);
+                    let bound = self.actual_value(contract, arguments, count, reading)?;
+                    held.extend(value.held.iter().cloned());
+                    let count = match (&bound.fact, &bound.symbol) {
+                        (IndexFact::Const(n), _) if *n >= 0 => Count::Const(*n as u128),
+                        (_, Some(symbol)) => Count::Symbol(symbol.clone()),
+                        _ => return None,
+                    };
+                    core::element_access(Some(&count), &value.fact) == Decision::InBounds
+                }
+                _ => true,
+            };
+            if !established {
+                return None;
+            }
+        }
+        Some(())
+    }
+
+    /// Card CG24: `p = f(...)` with `f`'s `bounds_return_derived` relations,
+    /// used only when every precondition of the call is established. One
+    /// base whose extent decides containment: the result is inside it (unless
+    /// the call may move it). A base too small: a reported contradiction and
+    /// no fact. Otherwise the declared view, when every relation states the
+    /// same one.
+    fn return_derived(&mut self, right: &Value, reading: &State) -> Option<Update> {
+        let call = strip(right);
+        let call = if kind(call) == "ImplicitCastExpr" && call["castKind"] == "NoOp" {
+            kids(call).next().map(strip)?
+        } else {
+            call
+        };
+        if kind(call) != "CallExpr" {
+            return None;
+        }
+        let name = callee_name(call)?;
+        let arguments = kids(call).skip(1).collect::<Vec<_>>();
+        let contract = self.contracts.contract(&name)?;
+        if !call_abi_matches(contract, &arguments) {
+            return None;
+        }
+        let relations = contract
+            .clauses
+            .iter()
+            .filter_map(|e| match &e.clause {
+                BoundsClause::ReturnDerived {
+                    parameter,
+                    offset,
+                    length,
+                    unit,
+                } => Some((
+                    parameter.clone(),
+                    offset.clone(),
+                    length.clone(),
+                    *unit,
+                    e.text.clone(),
+                )),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        if relations.is_empty() {
+            return None;
+        }
+        let mut held = self.callee_holds(contract);
+        self.preconditions_established(contract, &arguments, reading, &mut held)?;
+        let element = pointee(&qual(call))
+            .map(|t| strip_qualifiers(&t))
+            .unwrap_or_default();
+        let may_move = match self.frame_of(call).0 {
+            CallFrame::Unstated => true,
+            CallFrame::PreservesExtents => false,
+            CallFrame::Closed { touches, .. } => touches.iter().any(|t| t.mode == FrameMode::Moves),
+        };
+        let mut decisions = Vec::new();
+        let mut views = BTreeSet::new();
+        let mut inside = None;
+        for (parameter, offset, length, unit, text) in &relations {
+            let (index, _) = contract.parameter(parameter)?;
+            let base = self.target(arguments.get(index)?, reading);
+            let off = self.actual_value(contract, &arguments, offset, reading)?;
+            let len = self.actual_value(contract, &arguments, length, reading)?;
+            held.extend(off.held.iter().cloned());
+            held.extend(len.held.iter().cloned());
+            let length = match (&len.fact, &len.symbol) {
+                (IndexFact::Const(n), _) if *n >= 0 => Count::Const(*n as u128),
+                (_, Some(symbol)) => Count::Symbol(symbol.clone()),
+                _ => return None,
+            };
+            let want = match unit {
+                BoundsUnit::Elements => Unit2::Elements,
+                BoundsUnit::Bytes => Unit2::Bytes,
+            };
+            views.insert((length.clone(), want));
+            let decision = match &base {
+                Target::Known {
+                    count,
+                    unit: have,
+                    offset: base_offset,
+                    ..
+                } if *have == want => {
+                    let start = add_offsets(base_offset, &off.fact);
+                    let decision = frames::derived_within(count, &start, &length);
+                    if decision == Decision::InBounds && relations.len() == 1 {
+                        inside = Some((base.clone(), start));
+                    }
+                    decision
+                }
+                Target::Known { .. } => Decision::Undecided(Refusal::UnsupportedRange),
+                Target::Missing(_) => Decision::Undecided(Refusal::MissingExtent),
+            };
+            if decision == Decision::OutOfBounds {
+                self.reason(format!(
+                    "bounds-declaration-contradicted: `{name}`'s derived result {text} exceeds the extent of its base"
+                ));
+            }
+            decisions.push(decision);
+        }
+        if !frames::multi_base_view(&decisions) {
+            return None;
+        }
+        if let Some((
+            Target::Known {
+                object,
+                count,
+                unit,
+                element: base_element,
+                held: base_held,
+                source_object,
+                ..
+            },
+            start,
+        )) = inside
+            && (source_object || !may_move)
+            && base_element == element
+        {
+            held.extend(base_held);
+            self.relation_assumptions(contract, &held);
+            return Some(Update::Pointer(
+                PointerFact {
+                    object,
+                    count,
+                    unit,
+                    offset: start,
+                    standing: if held.is_empty() {
+                        Standing::Resolved
+                    } else {
+                        Standing::Held
+                    },
+                    source_object,
+                },
+                element,
+                held,
+            ));
+        }
+        if views.len() != 1 {
+            return None;
+        }
+        let (count, unit) = views.into_iter().next()?;
+        self.relation_assumptions(contract, &held);
+        Some(Update::Pointer(
+            PointerFact {
+                object: format!(
+                    "derived result of `{name}`#{}",
+                    call["id"].as_str().unwrap_or("?")
+                ),
+                count,
+                unit,
+                offset: IndexFact::Const(0),
+                standing: if held.is_empty() {
+                    Standing::Resolved
+                } else {
+                    Standing::Held
+                },
+                source_object: false,
+            },
+            element,
+            held,
+        ))
+    }
+
+    fn relation_assumptions(&mut self, contract: &BoundsFunctionContract, held: &BTreeSet<String>) {
+        for clause in contract
+            .clauses
+            .iter()
+            .filter(|e| matches!(e.clause, BoundsClause::ReturnDerived { .. }))
+        {
+            self.assumptions.insert(format!(
+                "{}: `{}` {}",
+                if held.is_empty() { "declared" } else { "held" },
+                contract.name,
+                clause.text
+            ));
+        }
     }
 
     fn apply(&self, state: &mut State, id: &str, update: Update) {
@@ -2278,6 +2794,7 @@ impl<'a> Analysis<'a> {
                     let before = state.clone();
                     self.full_expression(value, state, "return");
                     self.check_return_extent(value, &before);
+                    self.check_return_derived(value, &before);
                 }
                 *state = state.dead();
             }
@@ -2373,6 +2890,113 @@ impl<'a> Analysis<'a> {
         }
     }
 
+    /// Card CG24: a function's own `bounds_return_derived` against what each
+    /// `return` returns. A source object, a parameter that is no declared
+    /// base, or a declared base at a constant element offset no relation on
+    /// it states **refutes** the declaration (withdrawn from the unit's
+    /// callers). Anything the body does not establish stays a `Declared`
+    /// assumption.
+    fn check_return_derived(&mut self, value: &Value, state: &State) {
+        let Some(own) = self.own else {
+            return;
+        };
+        let relations = own
+            .clauses
+            .iter()
+            .filter_map(|e| match &e.clause {
+                BoundsClause::ReturnDerived {
+                    parameter,
+                    offset,
+                    unit,
+                    ..
+                } => Some((parameter.clone(), offset.clone(), *unit)),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        if relations.is_empty() || !state.live || !is_pointer(&qual(value)) {
+            return;
+        }
+        let returned = match self.returned_base(value, state) {
+            Some((id, offset)) => {
+                let name = self.params.get(&id).cloned().unwrap_or_default();
+                let on_base = relations
+                    .iter()
+                    .filter(|(parameter, ..)| *parameter == name)
+                    .collect::<Vec<_>>();
+                if on_base.is_empty() {
+                    Some(format!("`{name}`, which is no declared base"))
+                } else if let Some(offset) = offset
+                    && on_base.iter().all(|(_, declared, unit)| {
+                        *unit == BoundsUnit::Elements
+                            && matches!(declared, BoundsCount::Const(c) if i128::try_from(*c).ok() != Some(offset))
+                    })
+                {
+                    Some(format!("`{name}` + {offset}, at no declared offset"))
+                } else {
+                    None
+                }
+            }
+            None => matches!(
+                self.target(value, state),
+                Target::Known { source_object: true, held, .. } if held.is_empty()
+            )
+            .then(|| "a source object".to_owned()),
+        };
+        if let Some(what) = returned {
+            self.refuted = true;
+            self.reason(format!(
+                "bounds-contract-refuted-by-body: `{}` returns {what}, contradicting its bounds_return_derived",
+                own.name
+            ));
+        }
+    }
+
+    /// The stable parameter a returned pointer is, and its constant element
+    /// offset when known.
+    fn returned_base(&self, value: &Value, state: &State) -> Option<(String, Option<i128>)> {
+        let node = strip(value);
+        match kind(node) {
+            "ImplicitCastExpr" | "CStyleCastExpr" => match node["castKind"].as_str() {
+                Some("LValueToRValue") => {
+                    let id = read_of(node)?;
+                    (self.params.contains_key(id) && state.stable.contains(id))
+                        .then(|| (id.to_owned(), Some(0)))
+                }
+                Some("NoOp" | "BitCast") => self.returned_base(kids(node).next()?, state),
+                _ => None,
+            },
+            "BinaryOperator" if matches!(node["opcode"].as_str(), Some("+" | "-")) => {
+                let mut operands = kids(node);
+                let (left, right) = (operands.next()?, operands.next()?);
+                let (pointer, integer, negative) = if is_pointer(&qual(left)) {
+                    (left, right, node["opcode"] == "-")
+                } else {
+                    (right, left, false)
+                };
+                let (id, base) = self.returned_base(pointer, state)?;
+                let step = match self.eval(integer, state).fact {
+                    IndexFact::Const(c) => Some(if negative { -c } else { c }),
+                    _ => None,
+                };
+                Some((id, base.zip(step).and_then(|(a, b)| a.checked_add(b))))
+            }
+            "UnaryOperator" if node["opcode"] == "&" => {
+                let inner = strip(kids(node).next()?);
+                if kind(inner) != "ArraySubscriptExpr" {
+                    return None;
+                }
+                let (base, index) = self.subscript_parts(inner);
+                let (id, at) = self.returned_base(base?, state)?;
+                let step = match self.eval(index?, state).fact {
+                    IndexFact::Const(c) => Some(c),
+                    _ => None,
+                };
+                Some((id, at.zip(step).and_then(|(a, b)| a.checked_add(b))))
+            }
+            _ => None,
+        }
+    }
+
     /// Walk a proved-unreachable statement with a dead state: every
     /// obligation records `Excluded`; an unsupported form keeps its reason.
     fn excluded(&mut self, node: &Value, state: &State) {
@@ -2420,30 +3044,24 @@ impl<'a> Analysis<'a> {
             // A static initializer runs once, before any call: no fact.
             return;
         }
+        self.check_own_frame(init, state);
         let calls = has_call(init);
         let reach = state.definite && state.live && !calls;
         self.call_reach = state.definite && state.live && call_count(init) == 1;
         let clear = self.expr(init, state, "declaration", reach);
         self.call_reach = false;
-        let update = if self.tracked.contains(&id) {
-            let mut inner = BTreeSet::new();
-            writes(init, &mut inner);
-            if inner.is_empty() {
-                self.value_update(decl, init, state)
-            } else {
-                Update::None
-            }
+        let inner = self.written(init);
+        let update = if self.tracked.contains(&id) && inner.is_empty() {
+            self.value_update(decl, init, state)
         } else {
             Update::None
         };
-        let mut inner = BTreeSet::new();
-        writes(init, &mut inner);
         for written in &inner {
             state.write(written);
         }
         state.write(&id);
-        if calls && !self.calls_preserve(init) {
-            state.call();
+        if calls {
+            self.apply_calls(init, state);
         }
         self.apply(state, &id, update);
         if calls || !clear {
@@ -2660,10 +3278,7 @@ impl<'a> Analysis<'a> {
             let jumps = body.is_some_and(loop_jumps);
             if jumps {
                 let mut after = state.clone();
-                let mut written = BTreeSet::new();
-                if let Some(body) = body {
-                    writes(body, &mut written);
-                }
+                let written = body.map(|body| self.written(body)).unwrap_or_default();
                 for id in &written {
                     after.write(id);
                 }
@@ -2688,7 +3303,7 @@ impl<'a> Analysis<'a> {
         }
         let mut written = BTreeSet::new();
         for part in [condition, increment, body].into_iter().flatten() {
-            writes(part, &mut written);
+            written.extend(self.written(part));
         }
         let mut entry = state.clone();
         for id in &written {
@@ -2804,8 +3419,7 @@ impl<'a> Analysis<'a> {
         if !steps || kids(increment).next().and_then(decl_ref).map(|d| d.0) != Some(id.as_str()) {
             return None;
         }
-        let mut written = BTreeSet::new();
-        writes(body, &mut written);
+        let written = self.written(body);
         if written.contains(&id) {
             return None;
         }
@@ -2824,8 +3438,7 @@ impl<'a> Analysis<'a> {
             return;
         };
         self.full_expression(selector, state, "condition");
-        let mut written = BTreeSet::new();
-        writes(body, &mut written);
+        let written = self.written(body);
         let mut entry = state.clone();
         for id in &written {
             entry.write(id);
@@ -2893,6 +3506,10 @@ fn analyze_function(
     let mut tracked = BTreeSet::new();
     if let Some(body) = body {
         address_taken(body, &mut taken);
+        // Card CG24: an address handed only to closed frames does not escape.
+        for id in frame_tracked(body, contracts) {
+            taken.remove(&id);
+        }
     }
     let collect = |decl: &Value, tracked: &mut BTreeSet<String>| {
         let Some(id) = decl["id"].as_str() else {
@@ -2972,7 +3589,7 @@ fn analyze_function(
             && parameters
                 .iter()
                 .zip(&contract.parameters)
-                .all(|(c, p)| (p.kind == ParameterKind::Pointer) == is_pointer(&qual(c)));
+                .all(|(c, p)| kind_matches(p.kind, &qual(c)));
         if !abi_matches {
             analysis.reason(format!(
                 "bounds-declaration-withdrawn: `{name}`'s bounds contract does not match its C declaration"
@@ -3224,11 +3841,7 @@ fn analyze_on_stack(
     let target = target_facts(unit)?;
     let mut wanted = functions.iter().cloned().collect::<BTreeSet<_>>();
     for (name, contract) in &contracts.functions {
-        if contract
-            .clauses
-            .iter()
-            .any(|e| matches!(e.clause, BoundsClause::ReturnExtent { .. }))
-        {
+        if declares_checked_relation(contract) {
             wanted.insert(name.clone());
         }
     }
@@ -3250,11 +3863,7 @@ fn analyze_on_stack(
     // units passes the union through `BoundsContracts::refuted`).
     let mut refuted = contracts.refuted.clone();
     for (name, contract) in &contracts.functions {
-        let declares_return = contract
-            .clauses
-            .iter()
-            .any(|e| matches!(e.clause, BoundsClause::ReturnExtent { .. }));
-        if declares_return
+        if declares_checked_relation(contract)
             && index.functions.contains_key(name)
             && analyze_function(&index, &target, contracts, preprocessed, name).refutes_own_contract
         {
