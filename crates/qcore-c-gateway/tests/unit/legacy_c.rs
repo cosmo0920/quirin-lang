@@ -695,7 +695,10 @@ fn malformed_and_missing_functions_are_parse_errors() {
 
 #[test]
 fn unrestricted_projection_retains_successful_siblings() {
-    let source = "void bad(void *target) { goto *target; }\nvoid subject(void) { return; }";
+    // A `do` without its `while` fails the statement parse. (Before card
+    // CG21-CALL-EXITS-AND-BOUNDARIES this test used a computed `goto *`,
+    // which rule 11o now refuses by name inside its own function.)
+    let source = "void bad(void) { do { } }\nvoid subject(void) { return; }";
     let analysis = analyze_legacy_c_translation_unit_selected_partial(
         source,
         "subject",
