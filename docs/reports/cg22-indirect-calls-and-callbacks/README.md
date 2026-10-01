@@ -15,10 +15,10 @@ complete); main did not move during the card.
 - **Rule:** [gateway 11p](../../agents/gateway.md#constraint-11p).
 - **Lean:** `QCore.IndirectCalls`, `proof/AuditIndirectCalls.lean` (21
   theorems), over `QCore.TypedefProjection`.
-- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `ee3bf02e` after them)
+- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `ade6bdae` after them)
   from the census runs before the AFTER binary was measured; the
   implementation existed, no AFTER run did.
-- **Base:** BEFORE main `b6a3dc42`; AFTER of record on main `06ad81cb`; final tip rebased onto main `f0bbc0eb` (CG17, CG20, CG25, CG26 landed meanwhile; `cargo check --workspace --all-targets` 0 on each rebased tree; no re-measure on `b934c560`/`f0bbc0eb`, owed to the integration).
+- **Base:** BEFORE main `b6a3dc42`; AFTER of record on main `06ad81cb`; final tip rebased onto main `f6336c9d` (CG17, CG20, CG25, CG26, CG28 landed meanwhile; `cargo check --workspace --all-targets` 0 on each rebased tree; no re-measure on `b934c560`, `f0bbc0eb` or `f6336c9d`, owed to the integration).
 - **Absorbed:** LOADER-ABI-INLINE-FNPTR-DECLARATOR (closed); EXTERN-CALL-F
   (function-pointer part) and W47-LOOP-OWNER-FIELD-KEYED-V-AND-F amended.
 
@@ -188,6 +188,17 @@ same sites as the census):
 upper bound); the other five stayed Unknown; system and slice byte-identical.
 The prediction did not foresee the leaf exchange inside the four
 `rdkafka_assignment.c` functions (+2 / −2 unresolved-identity leaves).
+Nor did it name the two fixture rows the first gate found
+(`private/cg22/gate-final`, 2 failures in `tests/parenthesised_callee.rs`):
+W45-PARENTHESISED-CALLEE pinned `(c ? q_free : zz)(p);` and `(&q_free)(p);`
+as refused callee expressions, and under rule 11p both are closed sets (an
+effect-free conditional of designators; `&designator`), so with Clang they
+are rewritten and the following `q_free(p)` is the double release their
+explicit spellings already report (Unsafe). The rows moved to
+`a_closed_callee_expression_is_its_candidate_calls`, which asserts equality
+with `if (c) q_free(p); else zz(p);` and `q_free(p);` (status, double
+releases, unsupported leaves) and, without Clang, the older refusal; the
+cast, comma and call-result rows still refuse.
 
 **Discarded attempts** (retained in `private/cg22/`, not evidence): `after`
 (corpus killed by `No space left on device` in the parity sink when the shared
@@ -203,7 +214,7 @@ pass; no per-unit timing was taken.
 
 ## 5. Follow-ups
 
-Ledger 671 → 673 (`scripts/update_ledger.py`, applied to main's matrix):
+Ledger 672 → 674 (`scripts/update_ledger.py`, applied to main's matrix):
 
 - **Retired:** `CG22-INDIRECT-CALLS-AND-CALLBACKS` (every DISCHARGE clause
   holds: BEFORE reproduced, corrections recorded, PREDICTION frozen, AFTER
