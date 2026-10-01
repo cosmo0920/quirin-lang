@@ -20,7 +20,14 @@ if [ "${SKIP_BUILD:-0}" != 1 ]; then
   echo $? > "$out/build-$name.exit"
 fi
 binary="${BINARY:-$repo/target/release/quirin-audit}"
-sha256sum "$binary" > "$out/$name.binary.sha256"
+# scripts/run_pinned_audit.py always runs target/release/quirin-audit, so a
+# binary built elsewhere (build-after.sh) is installed there first (CG17: a
+# first AFTER attempt ran the corpus with the BEFORE binary and was discarded).
+if [ "$binary" != "$repo/target/release/quirin-audit" ]; then
+  cp "$binary" "$repo/target/release/quirin-audit" || exit 2
+  touch "$repo/target/release/quirin-audit"
+fi
+sha256sum "$binary" "$repo/target/release/quirin-audit" > "$out/$name.binary.sha256"
 QCORE_TYPED_PATH_PARITY="$out/$name-parity.jsonl" python3 scripts/run_pinned_audit.py \
   "$out/$name" 66910c10 --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 \
   --jobs 4 > "$out/$name.log" 2>&1
