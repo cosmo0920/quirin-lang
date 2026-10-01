@@ -151,7 +151,8 @@ paths, so their digests are compared after removing it (`normalised`).
 |---|---|---|---|---|
 | BEFORE, base `b6a3dc42` (`before2`, `before-system`, `cg30dft-before`) | `2ce2a9f0…` | 629 / 10 / 4,195 `3d53a5d0…` (= baseline) | 44 / 2 / 188 (normalised `048f4b6c…`) | 29 / 1 / 239 / 1 P (normalised `0221a527…`; function-for-function identical to CG05's `after3`) |
 | AFTER, `85b3efdc` (`after1`, superseded) | `d7b61fde…` | 626 / 10 / 4,198 `204bf259…` | not completed | not completed |
-| **AFTER, tip `91b46c9d` = rebased `defff675` (`after3`)** | `85dfce8e…` | AFTER3_CORPUS | AFTER3_SYSTEM | AFTER3_SLICE |
+| AFTER, `91b46c9d` on `b6a3dc42` (`after3-system`, `cg30dft-after3s`) | `85dfce8e…` | lost (disk exhausted, then stopped for the lock) | 44 / 2 / 188, no function row changed | 29 / 1 / 239 / 1 P, +1 leaf (below) |
+| **AFTER, tip `01b19037` on main `b934c560` (`final`, `final-system`, `cg30dft-final`)** | `13bb0797…` | **630 / 10 / 4,194** `638947d5…` | **44 / 2 / 188**, no function row changed (`1ccaab6a…`) | **29 / 1 / 239 / 1 P**, +1 leaf (`48b12d16…`) |
 
 **Attempts kept, not evidence.** The first BEFORE corpus run (`before`) failed
 the libevent pin check (`Pin(GitUnavailable)`: the exported tree's submodule
@@ -159,7 +160,11 @@ had no readable gitdir); its system and slice runs completed and are the
 BEFORE above. `before2` re-ran the corpus with the submodule's gitdir named
 absolutely. One AFTER build (`build-after2-enospc.log`) failed with `No space
 left on device` while the host's disk was exhausted by other work; it was
-rebuilt as `after3` once the disk recovered above the floor.
+rebuilt as `after3` once the disk recovered above the floor, and `after3`'s
+corpus was lost to the disk again (`after3-enospc`: a parity sink write failed)
+and its re-run stopped when the coordinator serialised heavy steps under a
+shared lock. The published AFTER (`final`) was measured on the last rebase, in
+one acquisition of that lock.
 
 **The superseded AFTER (`after1`) and the fix it forced.** The first AFTER
 moved three corpus functions Safe → Unknown (`rdhttp.c`:
@@ -176,11 +181,47 @@ only when that fails too (`a_unit_too_deep_to_index_is_read_per_definition`).
 Prediction item 4 ("0 unavailable") was wrong on `after1` for exactly this
 reason; it is recorded, not amended.
 
-AFTER3_ATTRIBUTION
+**The published AFTER and its attribution.** Main moved under the card three
+times (CG17 `8e8ed41f`, CG20 `06ad81cb`, CG25 `b934c560`). CG17 and CG20 each
+measured their routes byte-identical to their base; CG25 published its
+corpus changes ([its corpus-changed.json](../cg25-resource-kinds/artifacts/corpus-changed.json):
+5 functions, `rd_regex_match` Unknown → Safe) and no system or slice row
+change. `final` against this card's BEFORE on `b6a3dc42`
+([artifacts/corpus-compare.json](artifacts/corpus-compare.json)) is exactly
+CG25's five rows plus this card's own:
+
+- **Corpus:** no status move of this card's; **+4 leaves** `C extension types
+  could not be excluded: the definition's typed AST is unavailable (CG30)` in
+  four already-Unknown `rdhttp.c` definitions (`rd_http_get`,
+  `rd_http_post_expect_json`, `rd_http_req_init`, `rd_http_ssl_configure`),
+  whose own filtered AST also nests beyond the 128 limit. Totals 630 / 10 /
+  4,194, equal to main's.
+- **System** ([artifacts/system-compare.json](artifacts/system-compare.json)):
+  no function row changed; the only differing fields are the per-unit
+  `resource_contract_sources` and `inventory_sha256` provenance digests (the
+  contract sources' absolute paths, and CG25's libc contract edits).
+- **Slice** ([artifacts/slice-compare.json](artifacts/slice-compare.json)): no
+  status move; **+1 leaf** in `flb_skip_leading_zeros_simd` (Unknown before
+  and after): ``C extension type `__attribute__((__vector_size__(2 *
+  sizeof(long long)))) long long` (vector) is not adopted (CG30)``, plus the
+  same provenance digests.
+
+**No correction:** no Safe → non-Safe move, no Unknown → Safe, no leak or
+violation added. The extension and dialect paths add refusals only; no
+measured unit uses a C17/C23/C2y dialect or a target word, so those paths are
+exercised by the tests alone. The wall time of the corpus arbiter did not
+change measurably (79 and 81 minutes for `before2`/`after1` at load ~80;
+`final` took 9 minutes at load ~5).
 
 ## 4. Prediction against outcome
 
-AFTER3_PREDICTION
+| Prediction | Outcome |
+|---|---|
+| 1. Dialects and targets move nothing | held: no measured unit asks for either |
+| 2. The extension prefilter fires almost everywhere | held (glibc's `_Complex` typedefs) |
+| 3. Vector policy by measured demand: none of the five SIMD definitions Safe ⇒ refuse, leaves only | held: none is in the corpus or system selections; the slice's one (`flb_skip_leading_zeros_simd`) is Unknown and gains the one leaf; vectors refused |
+| 4. Complex/`_BitInt`/fixed point move nothing; **0** unavailable-AST refusals | **missed**: `after1` refused all 21 `rdhttp.c` definitions (3 Safe → Unknown) for an unreadable unit AST; after the per-definition fallback, 4 remain (all Unknown, leaves only) |
+| 5. Totals stay; no Safe → non-Safe | held on the published AFTER (the main's totals, which moved only by CG25) |
 
 ## 5. Tests
 

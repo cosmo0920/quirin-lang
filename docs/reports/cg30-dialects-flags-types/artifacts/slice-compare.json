@@ -1,0 +1,38 @@
+{
+ "before": {
+  "sha256": "d0ca93f567c7c49bf91b1873fd731205f4613ef12888691d6a4169ff6ae23783",
+  "normalised_sha256": "0221a5275b6e71fcc9c136049e43edfee292d6190e0757536d55929fb826b7e1",
+  "totals": {
+   "Unknown": 239,
+   "Safe": 29,
+   "Pending": 1,
+   "Unsafe": 1
+  }
+ },
+ "after": {
+  "sha256": "48b12d165e6a603028d386adaa07ab2d6496119aa44b6c8b613ba59f1381df63",
+  "normalised_sha256": "48b12d165e6a603028d386adaa07ab2d6496119aa44b6c8b613ba59f1381df63",
+  "totals": {
+   "Unknown": 239,
+   "Safe": 29,
+   "Pending": 1,
+   "Unsafe": 1
+  }
+ },
+ "only_before": [],
+ "only_after": [],
+ "moved": [],
+ "leaves": [
+  {
+   "function": "plugins/in_tail/tail_file.c::flb_skip_leading_zeros_simd",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension type `__attribute__((__vector_size__(2 * sizeof(long long)))) long long` (vector) is not adopted (CG30)"
+   ],
+   "removed": []
+  }
+ ]
+}

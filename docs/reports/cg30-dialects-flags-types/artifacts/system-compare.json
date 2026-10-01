@@ -1,0 +1,24 @@
+{
+ "before": {
+  "sha256": "7692d17567ef6ca77e05cc39f90bf28bd4bff996bae68f3ee744302548ac2d53",
+  "normalised_sha256": "048f4b6ca0f1d4f82f2ec35934b7376fa30719d7a3539af598d0778cb4b582c4",
+  "totals": {
+   "Unknown": 188,
+   "Safe": 44,
+   "Unsafe": 2
+  }
+ },
+ "after": {
+  "sha256": "1ccaab6abe8468f5ded79f163e50f23d4c5ea652f30630f8395755f049c90a6a",
+  "normalised_sha256": "1ccaab6abe8468f5ded79f163e50f23d4c5ea652f30630f8395755f049c90a6a",
+  "totals": {
+   "Unknown": 188,
+   "Safe": 44,
+   "Unsafe": 2
+  }
+ },
+ "only_before": [],
+ "only_after": [],
+ "moved": [],
+ "leaves": []
+}

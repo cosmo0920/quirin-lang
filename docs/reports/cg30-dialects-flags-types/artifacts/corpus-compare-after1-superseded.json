@@ -1,0 +1,272 @@
+{
+ "before": {
+  "sha256": "3d53a5d0b6728d4986a910bd81318a040995076bbded1970f9963022fcc3fcf2",
+  "normalised_sha256": "3d53a5d0b6728d4986a910bd81318a040995076bbded1970f9963022fcc3fcf2",
+  "totals": {
+   "Unknown": 4195,
+   "Safe": 629,
+   "Unsafe": 10
+  }
+ },
+ "after": {
+  "sha256": "204bf2591c6cb49d001241e23bbb5baa9a7c09b8d287e8fa6d989ae92be22fed",
+  "normalised_sha256": "204bf2591c6cb49d001241e23bbb5baa9a7c09b8d287e8fa6d989ae92be22fed",
+  "totals": {
+   "Unknown": 4198,
+   "Safe": 626,
+   "Unsafe": 10
+  }
+ },
+ "only_before": [],
+ "only_after": [],
+ "moved": [
+  {
+   "function": "rdhttp.c::rd_http_error_destroy",
+   "before": "Safe",
+   "after": "Unknown"
+  },
+  {
+   "function": "rdhttp.c::rd_http_is_failure_temporary",
+   "before": "Safe",
+   "after": "Unknown"
+  },
+  {
+   "function": "rdhttp.c::rd_http_req_get_code",
+   "before": "Safe",
+   "after": "Unknown"
+  }
+ ],
+ "leaves": [
+  {
+   "function": "rdhttp.c::rd_http_error_destroy",
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_error_new",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_error_new_from_buf",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_get",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_get_json",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_get_params_append",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_global_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_is_failure_temporary",
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_parse_json",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_post_expect_json",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_req_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_req_get_code",
+   "status": [
+    "Safe",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_req_get_content_type",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_req_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_req_perform_sync",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_req_write_cb",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_ssl_configure",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_ssl_ctx_function",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::unittest_http",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::unittest_http_get",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::unittest_http_get_params_append",
+   "status": [
+    "Unsafe",
+    "Unsafe"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  }
+ ]
+}

@@ -1,0 +1,143 @@
+{
+ "before": {
+  "sha256": "3d53a5d0b6728d4986a910bd81318a040995076bbded1970f9963022fcc3fcf2",
+  "normalised_sha256": "3d53a5d0b6728d4986a910bd81318a040995076bbded1970f9963022fcc3fcf2",
+  "totals": {
+   "Unknown": 4195,
+   "Safe": 629,
+   "Unsafe": 10
+  }
+ },
+ "after": {
+  "sha256": "638947d5b854910e2a99a1b4479f86d70e453bc2eae207ace96abe8425b5cd3c",
+  "normalised_sha256": "638947d5b854910e2a99a1b4479f86d70e453bc2eae207ace96abe8425b5cd3c",
+  "totals": {
+   "Unknown": 4194,
+   "Safe": 630,
+   "Unsafe": 10
+  }
+ },
+ "only_before": [],
+ "only_after": [],
+ "moved": [
+  {
+   "function": "rdregex.c::rd_regex_match",
+   "before": "Unknown",
+   "after": "Safe"
+  }
+ ],
+ "leaves": [
+  {
+   "function": "mk_server/mk_plugin.c::mk_plugin_load",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unknown_alias: unresolved resource identity `handler`",
+    "unknown_alias: unresolved resource identity `handler`"
+   ],
+   "removed": [
+    "unsupported: call to uncontracted function `dlclose`",
+    "unsupported: call to uncontracted function `dlclose`"
+   ]
+  },
+  {
+   "function": "mk_server/mk_plugin.c::mk_plugin_load_dynamic",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unknown_alias: unresolved resource identity `handle`",
+    "unsupported: nullable resource `handle` used by a non-null contract"
+   ],
+   "removed": [
+    "unsupported: call to uncontracted function `dlopen`"
+   ]
+  },
+  {
+   "function": "rddl.c::rd_dl_close",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: arguments do not match resource contract for `dlclose`"
+   ],
+   "removed": [
+    "unsupported: call to uncontracted function `dlclose`"
+   ]
+  },
+  {
+   "function": "rddl.c::rd_dl_open0",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unknown_alias: unresolved resource identity `handle`",
+    "unsupported: nullable resource `handle` used by a non-null contract"
+   ],
+   "removed": [
+    "unsupported: call to uncontracted function `dlopen`"
+   ]
+  },
+  {
+   "function": "rdhttp.c::rd_http_get",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_post_expect_json",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_req_init",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdhttp.c::rd_http_ssl_configure",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "added": [
+    "unsupported: C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"
+   ],
+   "removed": []
+  },
+  {
+   "function": "rdregex.c::rd_regex_match",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "added": [],
+   "removed": [
+    "unsupported: call to uncontracted function `regcomp`",
+    "unsupported: call to uncontracted function `regfree`"
+   ]
+  }
+ ]
+}

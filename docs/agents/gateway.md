@@ -4029,7 +4029,14 @@ own anchor here.
     token reader read a registered difference, or drop an extension refusal
     without adopting the family in every reader. Premises stated, not proved:
     faithful Clang extraction (trust boundary 28) and SHA-256 collision
-    freedom for the digests. MEASURED_PLACEHOLDER
+    freedom for the digests. Measured (corpus `66910c10`, system, tail-pause
+    slice; BEFORE base `b6a3dc42`, AFTER tip on main `b934c560`): no status
+    move on any route and no correction; 4 Unknown `rdhttp.c` definitions gain
+    the unreadable-AST refusal (their own AST nests beyond `serde_json`'s
+    128), the slice's `flb_skip_leading_zeros_simd` the vector refusal; no
+    measured unit uses a new dialect or a target word. The census found
+    vectors in 5 Fluent Bit definitions (none Safe), `_Complex` only in glibc
+    typedefs, `_BitInt` and fixed point nowhere.
     `QCore.DialectTargetIdentity` (`dialectByte_injective`,
     `distinct_dialect_distinct_bytes`, `baseline_bytes_unchanged`,
     `c2y_extends_c23`, `lookup_minted_under_key`, `no_reuse_across_dialects`,
