@@ -516,6 +516,18 @@ CG22.
   - *Absorbs:* LOADER-ABI-INLINE-FNPTR-DECLARATOR. The EXTERN-CALL-F
     function-pointer part and the specialised W47-LOOP-OWNER-FIELD-KEYED-V-AND-F
     are generalised here.
+  - *Status (wave 48, round 9).* Landed (gateway rule 11p): route G resolves a
+    call through a function pointer only to a candidate set the unit's Clang
+    AST closes (a designator, an address-never-taken local's definitions, a
+    `const` table) and rewrites it, before every hold, to the calls C may make
+    (a branch arm per candidate, so the flow joins them); every open set keeps
+    its refusal. The callback relation is decided in the core and the parity
+    census; no capture vocabulary exists. The inline `fnptr` parameter
+    declarator is read (LOADER-ABI-INLINE-FNPTR-DECLARATOR closed). No
+    corpus, system or slice site has a closed set: CORPUS_MOVE. Residuals
+    `CG22-OPEN-INDIRECT-CALLS`, `CG22-CALLBACK-REGISTRY-CONTRACT`,
+    `CG22-INLINE-FNPTR-LOCAL-DECLARATION`, `CG22-DESIGNATOR-ACTUAL-ELABORATION`.
+    [Report](../../reports/cg22-indirect-calls-and-callbacks/README.md).
 - **CG23: relational postconditions.**
   - *Change.* Return-code × multi-resource postconditions, and exit-specific
     summary dispositions.
