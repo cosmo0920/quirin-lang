@@ -1,0 +1,34 @@
+{
+ "consultations": 2485,
+ "admitted": 255,
+ "functions_with_an_admission": 180,
+ "functions_with_a_refusal": 514,
+ "by_reason": {
+  "an operand unsequenced with the region carries an effect": 1133,
+  "an arm's expression an older route refuses": 411,
+  "a deciding operand no condition route decides": 311,
+  "no unique Clang node": 284,
+  "admitted": 255,
+  "a value connective or conditional under `BinaryOperator ,`": 67,
+  "a value connective or conditional under `indirect callee`": 14,
+  "a deciding operand with an effect beside an operand it could reach": 4,
+  "64 leaves exceed 8": 2,
+  "16 leaves exceed 8": 2,
+  "a value connective or conditional under `BinaryOperator =`": 1,
+  "a value connective or conditional under `DeclStmt`": 1
+ },
+ "order_premise_rows_still_refused": {
+  "sibling": 1133,
+  "decision": 4
+ },
+ "composition_classes": {
+  "decision unclassified": 4,
+  "sibling unclassified": 1133
+ },
+ "composition_class_functions": {
+  "decision unclassified": 3,
+  "sibling unclassified": 197
+ },
+ "detail": {},
+ "admitted_by_composition": []
+}
