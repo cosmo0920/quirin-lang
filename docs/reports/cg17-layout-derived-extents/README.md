@@ -174,4 +174,22 @@ and `char *` cursors. Per-route records: `artifacts/census-*.json`.
 
 ## 6. Gate
 
-⟨gate⟩
+Standing gate on base `b6a3dc42` (Rust and Lean at `b66124d4`; later commits
+change scripts and records only). Logs in `private/cg17le/gate/`, exits in
+[`gate/`](gate/), summary [`gate.json`](gate.json). The provider gate is not
+due (`providers/` unchanged).
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| Submodules | `git submodule update --init --recursive` | 0 | |
+| Tests | `python3 scripts/run_test_binaries.py` | 0 | 411 units, 424 summaries; **7,185 passed**, 0 failed, 11 ignored (`private/test-binaries/20261001T171727Z-2623486`) |
+| Format | `cargo fmt --all -- --check` | 0 | |
+| Clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| Probes | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **264** audits (263 + `AuditLayoutExtents.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** | 365; the one failure was the matrix's derived `lean_audits` (263 → 264), cleared by `build_matrix.py . --gate gate.json` (exit 0) |
+| Docs index | `python3 scripts/build_docs_index.py --check` | 0 | |
+
+Two earlier test-runner attempts failed while the shared host's disk was full
+(`No space left on device`, then a linker bus error); they measured disk and
+were discarded. `cargo clean --profile dev` followed the passing run.
