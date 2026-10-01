@@ -524,7 +524,10 @@ CG22.
     its refusal. The callback relation is decided in the core and the parity
     census; no capture vocabulary exists. The inline `fnptr` parameter
     declarator is read (LOADER-ABI-INLINE-FNPTR-DECLARATOR closed). No
-    corpus, system or slice site has a closed set: CORPUS_MOVE. Residuals
+    corpus, system or slice site has a closed set, so the rewrite moves nothing; the declarator moves
+    corpus 629 / 10 / 4,195 → **631 / 10 / 4,193** (the two
+    `rd_kafka_topic_partition_list_sort_by_*` wrappers), system and slice
+    byte-identical. Residuals
     `CG22-OPEN-INDIRECT-CALLS`, `CG22-CALLBACK-REGISTRY-CONTRACT`,
     `CG22-INLINE-FNPTR-LOCAL-DECLARATION`, `CG22-DESIGNATOR-ACTUAL-ELABORATION`.
     [Report](../../reports/cg22-indirect-calls-and-callbacks/README.md).

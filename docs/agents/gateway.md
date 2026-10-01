@@ -3650,6 +3650,15 @@ own anchor here.
     (a jump past the initializer) or an out-of-bounds table index is
     undefined, so the set need not cover it
     (`P-CG22-DEFINED-POINTER-VALUE`, `P-CG22-TABLE-INDEX-IN-BOUNDS`).
+    Measured (corpus `66910c10`, system, tail-pause slice; BEFORE main
+    `b6a3dc42`, AFTER rebased on `06ad81cb`): **no site has a closed set**
+    (corpus 572 distinct indirect sites, 235 in reported functions; system
+    432; slice 585; plus 4,996 / 2,460 / 2,524 builtin calls, which are not
+    indirect), so the rewrite changes no token; the declarator moves corpus
+    629 / 10 / 4,195 → **631 / 10 / 4,193**
+    (`rd_kafka_topic_partition_list_sort_by_topic`, `…_by_topic_id`), no
+    Safe → non-Safe move, no leak or violation added; system and slice
+    byte-identical.
     `QCore.IndirectCalls` (`join_over_covers_sound`,
     `an_open_set_can_miss_a_violation`, `a_local_holds_one_of_its_definitions`,
     `invocation_after_release_is_never_safe`,

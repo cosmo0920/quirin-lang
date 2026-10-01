@@ -138,11 +138,90 @@ system and 1 slice registrations, `flb_input_chunk_map`'s
 
 ## 4. Before and after
 
-AFTER_TABLE
+The arbiter's own command (`scripts/measure.sh`; corpus `66910c10`, `--jobs
+4`), BEFORE on main `b6a3dc42`. Main then moved three times (CG17, CG20: both
+byte-identical on all three routes by their own reports; CG25); the AFTER of
+record is the tip rebased on main `06ad81cb`, whose base reports equal
+BEFORE's, so the pair compares only this card.
+
+| run | binary | corpus | system | slice |
+|---|---|---|---|---|
+| BEFORE, main `b6a3dc42` (`private/cg22/before`) | `1d06a383…` | 629 / 10 / 4,195 `3d53a5d0…` | 44 / 2 / 188 `d7aa010b…` | 29 / 1 / 239 / 1 P `0cdbef8b…` |
+| census build (`ADMIT = false`) | `73ef3965…` | byte-identical | byte-identical | byte-identical |
+| **AFTER, tip on `06ad81cb`** (`after6`) | `c58df810…` | **631 / 10 / 4,193** `eb1b0919…` | **byte-identical** | **byte-identical** |
+| AFTER, tip on `b934c560` (`after7`) | AFTER7_BINARY | AFTER7_CORPUS | AFTER7_SYSTEM | AFTER7_SLICE |
+
+System and slice reports embed the worktree path (8 strings), so their digests
+are this worktree's; the totals equal CG05's `after3` row and the BEFORE/AFTER
+pair is byte-identical within this worktree. Counts are compare.py's,
+de-duplicated by (unit, function).
+
+**Every move** (`artifacts/corpus-comparison.json`, `artifacts/corpus-changed.txt`),
+all from the inline declarator; the candidate-set rewrite changed no token on
+any route (572 corpus sites, every rewrite decision `none: open set`, the
+same sites as the census):
+
+- **Unknown → Safe** (2): `rd_kafka_topic_partition_list_sort_by_topic` and
+  `rd_kafka_topic_partition_list_sort_by_topic_id` (rdkafka_partition.c),
+  each losing its only leaf, the withdrawal of
+  `rd_kafka_topic_partition_list_sort`. Predicted exactly.
+- **Same status, leaves changed** (6): the 11 withdrawal leaves leave
+  `rd_kafka_assignment_add` (−2), `_subtract` (−1),
+  `rd_kafka_share_assignment_add` (−2), `_subtract` (−1) and `sortPartitions`
+  (−3); `rd_kafka_topic_partition_list_has_duplicates` loses `call to
+  uncontracted function rd_kafka_topic_partition_list_sort_by_topic` (the
+  wrapper's validated summary) and one unresolved-identity leaf. Read: two
+  unresolved-identity leaves appear (`rd_kafka_assignment_add`,
+  `rd_kafka_share_assignment_add`: a later read of `partitions` the
+  withdrawn call's refusal had poisoned first) and two leave
+  (`rd_kafka_share_assignment_subtract`); all four functions stay Unknown on
+  other leaves.
+- No Safe → non-Safe move, no correction, no leak or violation added.
+- Re-sized classes: the `rd_kafka_log0` value-connective statements are
+  1,512 at BEFORE and AFTER (1,100 on an edge an older route refuses, 276 no
+  unique Clang node, 109 a sibling composition, 20 an undecided operand, 2
+  over the leaf cap; `scripts/log0.py`): unchanged, an indirect *access*
+  class, not an indirect call.
+
+**Prediction against outcome.** Every item held: no rewrite on any route; the
+11 withdrawal leaves left; the two wrappers moved to Safe (the prediction's
+upper bound); the other five stayed Unknown; system and slice byte-identical.
+The prediction did not foresee the leaf exchange inside the four
+`rdkafka_assignment.c` functions (+2 / −2 unresolved-identity leaves).
+
+**Discarded attempts** (retained in `private/cg22/`, not evidence): `after`
+(corpus killed by `No space left on device` in the parity sink when the shared
+host disk filled; its system run completed byte-identical before the fill),
+`after2`–`after5` (stopped at the disk floor or superseded by a rebase before
+they ran).
+
+**Cost.** The pass reads Clang's AST for every unit whose bodies call
+something other than a file-scope name; the census build (no pre-filter)
+took 92 minutes against BEFORE's 75 under a shared host; the AFTER corpus
+took 9 minutes on an idle host. Wall time here measures the host, not the
+pass; no per-unit timing was taken.
 
 ## 5. Follow-ups
 
-FOLLOWUPS
+Ledger 670 → 672 (`scripts/update_ledger.py`, applied to main's matrix):
+
+- **Retired:** `CG22-INDIRECT-CALLS-AND-CALLBACKS` (every DISCHARGE clause
+  holds: BEFORE reproduced, corrections recorded, PREDICTION frozen, AFTER
+  attributed, absorbed entries closed or amended, Rust controls and audited
+  Lean) and `LOADER-ABI-INLINE-FNPTR-DECLARATOR` (its discharge condition).
+- **Amended:** `EXTERN-CALL-F` (the C gateway's function-pointer part is rule
+  11p; the extern-call route's stays carried), `W47-LOOP-OWNER-FIELD-KEYED-V-AND-F`
+  (its vtable dispatch is exactly the open member-through-pointer class: 220 /
+  362 / 513 sites; instance sensitivity still needs configuration flow),
+  `CG06-VALUE-CONNECTIVE-RESIDUALS` (the "indirect callee" class: 8 builtins,
+  7 open; the `rd_kafka_log0` class is indirect access, unchanged),
+  `CG03-RETURN-OPERAND-RESIDUALS` and `W43-RETURN-COMPOUND-CALL` (the
+  desugar's `IndirectCallee`: 19 casts, 21 open).
+- **Registered:** `CG22-OPEN-INDIRECT-CALLS` (572 / 432 / 585 open sites),
+  `CG22-CALLBACK-REGISTRY-CONTRACT` (676 / 131 / 157 registrations; no capture
+  vocabulary), `CG22-INLINE-FNPTR-LOCAL-DECLARATION` (1 corpus leaf),
+  `CG22-DESIGNATOR-ACTUAL-ELABORATION` (the elaborator's 212-row label: 162
+  builtins, 47 designator actuals, 3 genuine).
 
 ## 6. Gate
 
