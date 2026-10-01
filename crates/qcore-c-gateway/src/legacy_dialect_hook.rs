@@ -97,12 +97,22 @@ pub(super) fn name_refusals(
     summary.status = classify_diagnostics(&summary.diagnostics);
 }
 
-/// The definition's extension use, from its typed AST. A definition whose AST
-/// cannot be read in a unit that spells an extension is refused as well: the
-/// use cannot be excluded.
+/// The definition's extension use, from its typed AST: the unit's index, or,
+/// where the unit's AST cannot be indexed, the definition's own filtered AST.
+/// A definition whose AST cannot be read either way, in a unit that spells an
+/// extension, is refused as well: the use cannot be excluded.
 fn extension_refusal(name: &str) -> Option<String> {
-    match crate::typed_access_path::StatementIndex::read(name) {
-        Some(index) => identity::extension_in_ast(&index.function, &crate::typed_access_path::type_id)
+    let index = crate::typed_access_path::StatementIndex::read(name);
+    let fallback;
+    let ast = match &index {
+        Some(index) => Some(index.function.as_ref()),
+        None => {
+            fallback = crate::typed_access_path::definition_ast(name);
+            fallback.as_ref()
+        }
+    };
+    match ast {
+        Some(ast) => identity::extension_in_ast(ast, &crate::typed_access_path::type_id)
             .map(|(family, spelling)| identity::extension_refusal(family, &spelling)),
         None => Some(
             "C extension types could not be excluded: the definition's typed AST is unavailable (CG30)"

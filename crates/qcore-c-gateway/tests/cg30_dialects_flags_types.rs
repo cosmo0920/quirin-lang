@@ -295,3 +295,30 @@ fn a_target_changes_the_evidence_identity() {
     assert!(check_legacy_safety_certificate_for(&arm, &expected(&x86)).is_err());
     assert!(check_legacy_safety_certificate_for(&default, &expected(&x86)).is_err());
 }
+
+/// A unit whose translation-unit JSON nests beyond `serde_json`'s recursion
+/// limit (librdkafka's `rdhttp.c` nests 223 deep) has no unit index; each
+/// definition is then read from its own filtered AST, so a definition with no
+/// extension keeps its verdict and one with an extension is refused by name.
+#[test]
+fn a_unit_too_deep_to_index_is_read_per_definition() {
+    if !clang_available() {
+        return;
+    }
+    let deep = format!("int deep_global = {}1{};\n", "(".repeat(150), ")".repeat(150));
+    assert_eq!(
+        row(&run(&format!("{deep}{PAIR}"), CCompilerDialect::C11, Vec::new())),
+        Ok((AnalysisStatus::Safe, vec![]))
+    );
+    let (status, unsupported) = row(&run(
+        &format!("{deep}void subject(void) {{ _BitInt(7) x = 3; (void)x; }}"),
+        CCompilerDialect::C11,
+        Vec::new(),
+    ))
+    .expect("projected");
+    assert_eq!(status, AnalysisStatus::Unknown);
+    assert!(
+        unsupported.contains(&extension_refusal(CExtensionFamily::BitPrecise, "_BitInt(7)")),
+        "{unsupported:?}"
+    );
+}

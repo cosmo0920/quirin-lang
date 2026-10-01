@@ -3,9 +3,13 @@
 
 usage: compare.py BEFORE.json AFTER.json [OUT.json]
 
-Prints status totals and SHA-256 of both, every function whose status moved,
-and every function whose diagnostic multiset changed (added/removed leaves,
-by description). Read-only.
+Prints status totals (keyed by file and function, as the earlier cards count
+them) and SHA-256 of both, every function whose status moved, and every
+function whose diagnostic multiset changed (added/removed leaves, by
+description). `normalised_sha256` hashes the bytes with the BEFORE tree's
+path (`private/cg30dft/base-tree/`, embedded in provider paths) removed, so a
+BEFORE from the exported base tree and an AFTER from the worktree compare
+byte for byte. Read-only.
 """
 
 import collections
@@ -19,14 +23,18 @@ def rows(path):
     report = json.loads(pathlib.Path(path).read_text())
     table = {}
     for unit in report["units"]:
-        unit_name = f"{unit.get('library')}/{unit.get('file')}"
         for function in unit.get("functions", []):
-            key = f"{unit_name}::{function['function']}"
+            key = f"{unit.get('file')}::{function['function']}"
             leaves = collections.Counter(
                 f"{d.get('category')}: {d.get('description')}" for d in function.get("diagnostics", [])
             )
             table[key] = (function["status"], leaves)
     return table
+
+
+def normalised(path):
+    data = pathlib.Path(path).read_bytes().replace(b"private/cg30dft/base-tree/", b"")
+    return hashlib.sha256(data).hexdigest()
 
 
 def totals(table):
@@ -39,10 +47,12 @@ def main():
     result = {
         "before": {
             "sha256": hashlib.sha256(pathlib.Path(before_path).read_bytes()).hexdigest(),
+            "normalised_sha256": normalised(before_path),
             "totals": totals(before),
         },
         "after": {
             "sha256": hashlib.sha256(pathlib.Path(after_path).read_bytes()).hexdigest(),
+            "normalised_sha256": normalised(after_path),
             "totals": totals(after),
         },
         "only_before": sorted(set(before) - set(after)),

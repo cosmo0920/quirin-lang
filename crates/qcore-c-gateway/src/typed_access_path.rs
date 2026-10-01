@@ -623,6 +623,38 @@ impl Drop for SourceScope {
     }
 }
 
+/// Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): one definition's Clang AST by
+/// Clang's own name filter, for a unit whose whole-unit index is unavailable
+/// (the measured instance: librdkafka's `rdhttp.c`, whose translation-unit
+/// JSON nests 223 deep, beyond `serde_json`'s recursion limit of 128). `None`
+/// outside an analysed source, on any Clang or JSON failure, and unless
+/// exactly one definition with a body has this exact name.
+pub(crate) fn definition_ast(function: &str) -> Option<Value> {
+    ANALYSED_SOURCE.with(|cell| {
+        let borrow = cell.borrow();
+        let context = borrow.as_ref()?;
+        let unit = C11TranslationUnit {
+            source: &context.source,
+            include_paths: context.request.include_paths.clone(),
+            definitions: context.request.definitions.clone(),
+            preprocessor_options: context.request.preprocessor_options.clone(),
+            dialect: context.dialect,
+            ..C11TranslationUnit::default()
+        };
+        let declarations =
+            crate::typed_c_ast::ast_declarations(&context.source, &unit, function).ok()?;
+        let mut definitions = declarations.into_iter().filter(|node| {
+            kind(node) == "FunctionDecl"
+                && node["name"].as_str() == Some(function)
+                && children(node)
+                    .iter()
+                    .any(|child| kind(child) == "CompoundStmt")
+        });
+        let definition = definitions.next()?;
+        definitions.next().is_none().then_some(definition)
+    })
+}
+
 /// Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): Clang's record layout
 /// dump of the analysed translation unit, with the frontend request the AST
 /// was read with. `None` outside an analysed source or on any Clang failure.

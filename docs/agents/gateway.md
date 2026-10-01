@@ -3961,3 +3961,74 @@ own anchor here.
     `an_exhausted_budget_is_never_safe`), bound to `sign_guard` and
     `step_actual` by `guardVectors` and `stepVectors`;
     [report](../reports/cg27-loops-recursion-budgets/README.md).
+<a id="constraint-11y"></a>
+
+11y. **A dialect, a target and a type each have one identity, carried into
+    the evidence; a registered dialect difference or an unadopted extension
+    is refused by name, and a target is admitted only under the readers' LP64
+    premise.** Card CG30-DIALECTS-FLAGS-TYPES (entries I01 I02 I03 I05 N12
+    N13 N14; `crates/qcore-c-gateway/src/c_frontend_identity.rs`, thin hooks
+    in `legacy_dialect_hook.rs` (route G, from `legacy_c.rs`) and
+    `typed_source.rs` (route T); shared items named for other cards:
+    `CTargetIdentity` (card CG20 keys integer widths on it, rule 11q),
+    `CTypeId`, `CExtensionFamily`, `DialectDifference`). (1) **Dialects.**
+    `CCompilerDialect` gains `C17`, `C23` and `C2y`, named exactly
+    (`from_std_name`; `c18`, `c2x`, `gnu23` and every alias stay refused).
+    Each dialect's AST differences from the C11/GNU baseline are registered
+    together (`dialect_differences`: none for the baseline and C17; 17 for
+    C23; 6 more for C2y) and join the request digest
+    (`dialect_identity_bytes`; the four baseline dialects keep their one
+    historical byte, so no earlier digest moves) and the compile-task identity
+    (`dialect_differences_sha256`, absent for a dialect with none). No
+    difference is adopted. Route G withdraws the body of a definition whose
+    declaration or body spells one to a single call of the reserved marker
+    `qcore_dialect_refused__KEY` (escaped in source by `reserved_spelling`)
+    before any reader, W4 or replay reads the stream, so the row is `Unknown`
+    with no summary and can never publish an `Unsafe` the token reader's
+    misreading would cause (a `nullptr` null test is the measured instance);
+    the refusal names the construct, key and dialect. A digit separator,
+    which the token reader would lex as a character literal, refuses the
+    unit. Route T refuses a registered node, flag, trait or type spelling by
+    name. `nullptr` is never excluded for its `CXX` node name. (2) **Targets.**
+    `--target=`/`-target` and `-mabi=` are parsed into closed vocabularies
+    (`CTargetTriple`, `CAbiName`), transported verbatim to every Clang
+    invocation as `CFrontendFlag::Target`/`Abi`, and serialised into the
+    request digest and the compile-task identity, so a changed target is a
+    different evidence identity and a certificate minted for one is refused as
+    another's. A selection is admitted only when its data model is LP64 (the
+    premise the ABI reader's projection states) or no explicit selection
+    fixes one; ILP32, LLP64, an unrecorded component and a doubled selection
+    are refused by name (`unsupported compilation target`/`ABI`,
+    environment category). The existing `-arch` is checked the same way.
+    There is no flag passthrough. The pinned Cycle 19 route
+    (`compiler_options_compatibility`) is unchanged and still reads no target
+    word (constraint 11). (3) **Types.** `CTypeId` is Clang's canonical
+    spelling (whitespace collapsed, `bool` read as `_Bool`, an arithmetic
+    multiset in Clang's order); routes G (`typed_access_path::type_id`) and T
+    (`typed_source::canonical_type_id`) read it from the same AST spelling,
+    and the ABI reader (`declared_abi::declared_type_id`) from a specifier
+    multiset through its own typedef resolution. Compatibility stays Clang's;
+    the identity is a key, and no reader's admission changes. (4)
+    **Extensions.** `_Complex`/`_Imaginary` (and `__real__`/`__imag__`,
+    imaginary literals), vector/matrix/sizeless types and their operations,
+    `_BitInt` and fixed point are refused by name in every dialect: route G
+    adds `C extension type `…` (FAMILY) is not adopted (CG30)` to a selected
+    definition whose typed AST holds one (read only where the unit spells an
+    extension; an unreadable AST there is refused too), keeping every other
+    leaf (an existing validated `Unsafe` stays); route T refuses first. None
+    is adopted. **Do not** reuse a verdict across dialects or targets, fold a
+    `-std=` alias onto an identity, pass a compiler flag through, admit a
+    non-LP64 target before card CG20 keys widths on `CTargetIdentity`, let a
+    token reader read a registered difference, or drop an extension refusal
+    without adopting the family in every reader. Premises stated, not proved:
+    faithful Clang extraction (trust boundary 28) and SHA-256 collision
+    freedom for the digests. MEASURED_PLACEHOLDER
+    `QCore.DialectTargetIdentity` (`dialectByte_injective`,
+    `distinct_dialect_distinct_bytes`, `baseline_bytes_unchanged`,
+    `c2y_extends_c23`, `lookup_minted_under_key`, `no_reuse_across_dialects`,
+    `no_reuse_across_targets`, `admit_iff`, `ilp32_abi_refused`,
+    `llp64_target_refused`, `withdrawn_is_unknown`, `refusal_never_safe`,
+    `refusal_keeps_unsafe`, `refusal_is_monotone`, `perm_same_typeId`,
+    `bool_is_Bool`, `long_unsigned_int_vector`, `distinct_counts_distinct`),
+    bound to the Rust tables by `tests/unit/c_frontend_identity.rs`;
+    [report](../reports/cg30-dialects-flags-types/README.md).
