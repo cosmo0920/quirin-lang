@@ -3,7 +3,8 @@
 Card `CG26-VARIADICS` of the [Clang gap card queue](../../plans/clang-gap-cards/README.md)
 (wave 48, round 10), gap entries K08, K09 and K10, route G. It absorbs
 `W44-VA-START-END-BUILTINS` and `W46-FCNTL-SETFD-ADDRESS-TAIL`. Base: local
-`main` `b6a3dc42` (unchanged during the card).
+`main` `b6a3dc42`, rebased onto `8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS) after the
+AFTER measurement.
 
 - **Rule:** [gateway 11w](../../agents/gateway.md#constraint-11w), amending E20's
   uncontracted-builtin refusal for the four `va_*` builtins only and O04-TRACE's
@@ -105,7 +106,82 @@ are unchanged.
 
 ## 3. Measurements
 
-AFTER_TABLE
+Release `quirin-audit`, corpus arbiter `66910c10` `--jobs 4`, system route and
+tail-pause slice (`scripts/measure.sh`; the corpus AFTER by `scripts/corpus-noparity.sh`).
+
+| Run | binary | corpus | system | tail-pause slice |
+|---|---|---|---|---|
+| BEFORE, main `b6a3dc42` (`private/cg26va/before*`) | `fa2ac484…` | **629 / 10 / 4,195** `3d53a5d0…` | 44 / 2 / 188 `17b19316…` | 29 / 1 / 239 / 1 P `a2d9cf47…` |
+| AFTER, tip on `b6a3dc42` (`after4`, `after-system`, `cg26va-after`) | `37a7be19…` | **631 / 10 / 4,193** `42c7df13…` | 44 / 2 / 188 `17b19316…` (byte-identical) | 29 / 1 / 239 / 1 P `3fe72160…` |
+
+The corpus BEFORE reproduces the brief's baseline digest. The system and slice
+totals reproduce; their digests differ from CG05's (`79404fed…`, `93cc660c…`)
+because those reports embed the measuring worktree's path (8 occurrences in the
+system report), not because of a verdict change.
+
+**Three AFTER corpus attempts were discarded.** The first ran the BEFORE
+binary (`scripts/run_pinned_audit.py` always runs `target/release/quirin-audit`
+and ignores `measure.sh`'s `BINARY`; stopped, PID captured from its path). The
+second and third died with `No space left on device` at the parity flush when
+the shared disk filled (another card's builds); they measure the disk, not the
+program. The fourth ran without the parity stream (the arbiter's result does
+not depend on it) and is the measurement. The system and slice AFTER ran the
+AFTER binary through `BINARY` and completed. Main moved to `8e8ed41f`
+(CG17-LAYOUT-DERIVED-EXTENTS) after the AFTER; CG17 moved no function and left
+the corpus byte-identical at `3d53a5d0…` by its own report, and its hooks
+(VLA declarations, `container_of` values) and this card's (uncontracted `va_*`
+builtins, the tail refusal) take disjoint refusals, so the AFTER was not
+repeated on the rebased tip.
+
+**Corpus movement** ([comparison](artifacts/compare-corpus.json),
+[census](artifacts/census-corpus.json)): **+2 Unknown → Safe**, exactly the
+prediction, no Safe → non-Safe move, no leak, violation or Unsafe added, 49
+Unknown functions change leaves.
+
+| Function | Move | Attribution |
+|---|---|---|
+| `rd_kafka_set_thread_name` | Unknown → Safe | protocol: its `va_start`/`va_end` were its only leaves |
+| `rd_kafka_open_cb_generic` | Unknown → Safe | T7: `fcntl(fd, F_SETFD, FD_CLOEXEC, &on)` (W46) |
+
+Leaf deltas: `__builtin_va_end` −53, `va_start` −49, `va_arg` −14, `va_copy` −1
+(124 → 7 leaves, 50 → 4 functions); the variadic parameter reader removes
+`unresolved resource identity` −17, `unmodeled increment or decrement` −14,
+`unrecognized assignment destination` −14, `indirect memory access` −4, tail
+refusals −7 (`fprintf` −3, `printf` −2, `snprintf` −2; their actuals pass T4
+once the declarations are read), `sizeof` −2 and four others −1; the `fcntl`
+tail −1. Added: 19 named refusals in 8 functions, every one classified by
+reading:
+
+| Function | Named refusal | Reading |
+|---|---|---|
+| `mk_vhost_set` (monkey `mk_lib.c:523`) | `va` may reach a function exit without `va_end` (4) | **correct**: `if (!value) { return -1; }` inside the `va_arg` loop returns without `va_end` (an upstream candidate, not a validated defect) |
+| `rd_kafka_cgrp_rejoin` (`rdkafka_cgrp.c:1590`) | `ap` may be read … before `va_start` (2) | **correct**: `rd_kafka_cgrp_consumer_rejoin(rkcg, fmt, ap)` passes `ap` before `va_start(ap, fmt)` (an upstream candidate, not a validated defect) |
+| `rd_kafka_mock_handle_PushTelemetry_decode_error` | `ap` may be read after … being passed (2) | precision: `rd_rkb_log`'s `do { … } while (0)` back edge is drawn, so the one pass is read as two (`CG26-VA-PROTOCOL-PRECISION`) |
+| `rd_kafka_error_new_v` | `ap2` is not a plain local of the outermost block (2) | precision: an inner-block list (`CG26-VA-PROTOCOL-PRECISION`) |
+| `rd_kafka_producev` | an operation under a conditional operator (6) | precision (`CG26-VA-PROTOCOL-PRECISION`) |
+| `ut_topic_partitions`, `ut_populate_member_owned_partitions_generation`, `mk_config_set` | the `va_arg` value stored into a pointer (3) | by design: K09's pointer half (`CG26-POINTER-VA-ARG`) |
+
+Still uncontracted: `rd_http_error_new`'s four (its `va_list ap2` is an
+inner-block list) and three `va_arg` inside other expressions
+(`cmt_histogram_buckets_create`, `rd_kafka_mock_push_request_errors`,
+`rd_kafka_mock_partition_push_request_errors`), all in
+`CG26-VA-PROTOCOL-PRECISION`. Tail refusals left: 201 leaves in 121 functions
+(`fprintf` 126/78, `snprintf` 55/33, `mk_print` 17/9, `printf` 3/3), none
+admissible under a data tail; `cb_debug_chunk_complete` is blocked by
+`printf("…%s…", in_len, buf)` alone (`CG26-BORROWED-TAIL-DECLARATIONS`).
+
+**System route:** byte-identical; its 11 tail statements (`flb_log_print` 10,
+`snprintf` 1) carry live identities (`flb_debug("… %p", task)`,
+[shapes](artifacts/shapes-system.json)) and wait on a borrowed-tail
+declaration. **Tail-pause slice:** no status move; 4 functions lose 20 `va_*`
+leaves (`va_end` −12, `va_start` −4, `va_arg` −4) and gain 4 pointer-`va_arg`
+refusals (the loop-owner property setters' `value = va_arg(va, char *)`)
+([comparison](artifacts/compare-slice.txt)).
+
+**Prediction against outcome.** Predicted 631 / 10 / 4,193 with the two named
+moves, ≥ 90 of 124 `va_*` leaves removed, no T8 movement, no system or slice
+status move: all hold (117 of the 124 uncontracted `va_*` leaves gone, 19 named refusals in their place or beside them). The allowance of up to +3 further moves
+was not used.
 
 ## 4. Tests and Lean
 

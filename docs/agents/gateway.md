@@ -3701,6 +3701,14 @@ own anchor here.
     refuses a variadic signature and `VAArgExpr` (K08/K09's T half).
     Premises stated, not proved: faithful Clang extraction and node matching
     (trust boundary 28), and a declared tail clause (a trusted assumption).
+    Measured (corpus `66910c10`, main `b6a3dc42`): 629 / 10 / 4,195 →
+    **631 / 10 / 4,193** (`3d53a5d0…` → `42c7df13…`), +2 Unknown → Safe
+    (`rd_kafka_set_thread_name`: protocol; `rd_kafka_open_cb_generic`: T7),
+    no correction, no leak or violation added; 117 of 124 uncontracted `va_*`
+    leaves gone, 19 named refusals in 8 functions (`mk_vhost_set`'s
+    missing `va_end` and `rd_kafka_cgrp_rejoin`'s pass before `va_start`
+    read as correct; the rest precision or pointer `va_arg`); system
+    byte-identical, tail-pause slice no status move.
     `QCore.Variadics` (`step_sound`, `step_refuses`, `certified_invariant`,
     `certified_no_violation`, `certified_exit`,
     `the_skipping_protocol_is_never_certified`,

@@ -529,6 +529,19 @@ CG22.
     boundaries.
   - *Format safety.* A separate checker, only if format safety is claimed.
   - *Absorbs:* W44-VA-START-END-BUILTINS and W46-FCNTL-SETFD-ADDRESS-TAIL.
+  - *Status (wave 48, round 10).* Landed on route G (gateway rule 11w,
+    `va_list_protocol.rs`, `variadic_tail.rs`): a `va_list`'s C11 7.16
+    protocol is certified on every path from Clang's AST before
+    `va_start`/`va_end`/`va_copy` are custody-neutral and a scalar `va_arg` a
+    scalar write; a variadic definition's named parameters are read; a
+    refused tail call is re-read per position (T7 `&scalar` under any tail,
+    T8 a borrowed name only under the new `resource_variadic_borrowed_tail()`).
+    Corpus 629 / 10 / 4,195 → **631 / 10 / 4,193** (`rd_kafka_set_thread_name`,
+    `rd_kafka_open_cb_generic`), no correction; system and slice no status
+    move. K10 (format agreement) not claimed. Residuals
+    `CG26-VA-PROTOCOL-PRECISION`, `CG26-POINTER-VA-ARG`,
+    `CG26-BORROWED-TAIL-DECLARATIONS`, `CG26-ROUTE-T-VARIADICS`.
+    [Report](../../reports/cg26-variadics/README.md).
 - **CG27: loops, recursion and budgets.**
   - *Invariants.* Loop-invariant contracts, widening and loop summaries.
   - *Recursion.* Inductive summaries and ranking for general and multi-rank

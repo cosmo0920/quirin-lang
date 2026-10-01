@@ -125,6 +125,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg25-resource-kinds](cg25-resource-kinds/README.md) | CG25-RESOURCE-KINDS: a library-handle kind and an in-place kind |
 
+| [cg26-variadics](cg26-variadics/README.md) | CG26-VARIADICS: the `va_list` protocol and trailing actuals per position |
+
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
