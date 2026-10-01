@@ -4,10 +4,12 @@ Card `CG27-LOOPS-RECURSION-BUDGETS` of the
 [Clang gap card queue](../../plans/clang-gap-cards/README.md) (wave 48, round 10;
 entries C06, C07, C08; route G). Base `b6a3dc42` (local `main` = `origin/main`),
 rebased onto main `8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS, rule 11u, itself
-byte-identical on every route). The BEFORE/AFTER measurements were taken on
-`b6a3dc42`; the two cards touch disjoint code (CG17: `layout_extents.rs` and
-its hooks; this card: the counted-user pass and the ranked recursion route), so
-they were not repeated on the rebased tree, and the gate (§8) was.
+byte-identical on every route) and then `06ad81cb` (CG20-NUMERIC-DOMAIN, rule
+11q, a separate numeric property beside custody). The BEFORE/AFTER
+measurements were taken on `b6a3dc42`; those cards touch disjoint code (CG17:
+`layout_extents.rs` and its hooks; CG20: `c_numeric*.rs` and a declared-ABI
+hook; this card: the counted-user pass and the ranked recursion route), so
+the arbiter was not repeated on the rebased tree, and the gate (§8) was.
 The user's instruction to launch every remaining CG card is the Phase 4 choice
 of guarantee; the property this card publishes is stated in §1.
 
@@ -16,7 +18,7 @@ of guarantee; the property this card publishes is stated in §1.
 - **Lean:** `QCore.LoopInvariants`, `proof/AuditLoopInvariants.lean` (32
   theorems), over `QCore.UnsignedCountdown`, `QCore.CountedUsers` and
   `QCore.VerdictSemigroup`.
-- **Prediction:** [PREDICTION.md](PREDICTION.md), commit `b7c498a4` after the rebase onto `8e8ed41f` (`745be99f` before it), before any
+- **Prediction:** [PREDICTION.md](PREDICTION.md), commit `d293e674` after the rebases onto `06ad81cb` (`745be99f` before them), before any
   AFTER run. The implementation had been drafted in the working tree first; the
   file says so.
 
