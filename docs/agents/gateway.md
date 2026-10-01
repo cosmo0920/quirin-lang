@@ -2972,6 +2972,9 @@ own anchor here.
     `memory_order_consume`), an invalid or unevaluated order, a generic
     by-pointer form, a pointer or aggregate value and every unlisted builtin
     of the families refuse by name, CG28 owning the unrepresented events.
+    **Amended by [rule 11t](#constraint-11t)** (CG28-WEAK-MEMORY-EVENTS):
+    read-modify-writes, compare-exchanges and fences are now routed events;
+    the consume, order, by-pointer, value and unlisted refusals stand.
     (2) **Route G.** Asked last, only where the classifier refused: an
     uncontracted atomic builtin's statement or `return`, and an `_Atomic`
     store or read-modify-write statement. A routed plain access is its
@@ -3490,6 +3493,83 @@ own anchor here.
     `promotionVectors`, `usualVectors`, `kernelVectors` and
     `conversionVectors` (and to Clang by `clang_records_the_lean_usual_conversions`);
     [report](../reports/cg20-numeric-domain/README.md).
+
+<a id="constraint-11t"></a>
+
+11t. **A read-modify-write, compare-exchange or fence reaches the weak-memory
+    model as its own event under C11 as published (N1570), never as a neutral
+    call; consume stays out of scope and is refused, never read as
+    acquire.** Card CG28-WEAK-MEMORY-EVENTS (`crates/qcore-core/src/weak_memory.rs`,
+    additive; `atomic_source_route.rs`, `legacy_atomic_route.rs`, the
+    atomic-publication extractor's refusal mapping). It amends rule 11i's
+    refusal of read-modify-writes, compare-exchange and fences; 11i's
+    consume, order, by-pointer, value and unlisted refusals, route T's arm
+    and the publication verdict stand. (1) **The model.** `MemoryEventKind`
+    gains `AtomicReadModifyWrite` (read and written value, any order),
+    `AtomicCompareExchange` (expected, observed, desired, success and failure
+    orders, strength, outcome: a success is a read-modify-write with the
+    success order, a failure a load with the failure order; a strong exchange
+    fails only on a differing value, a weak one may fail spuriously) and
+    `AtomicFence` (thread or signal scope). RMW atomicity (N1570 7.17.3): the
+    write an RMW reads is its immediate modification-order predecessor
+    (`AtomicityViolation`). Release sequences follow **one** standard, N1570
+    5.1.2.4p10: the head, then every modification by the head's thread or
+    that is an atomic RMW (not C++20's P0982 weakening, not RC11).
+    Synchronises-with is 5.1.2.4p11 plus 7.17.4p2–p4 (fence–fence,
+    fence–operation, operation–fence, through the hypothetical release
+    sequence); a seq_cst thread fence joins S with 7.17.3's three fence
+    observation rules (not C++14's added modification-order rule). A signal
+    fence orders only against a handler of its own thread, which the model
+    has none of: it synchronises nothing and joins no S. A compare-exchange's
+    failure order is neither release nor acq_rel and no stronger than its
+    success order (7.17.7.4p2, `compare_exchange_failure_admitted`). (2)
+    **Consume** (decision). The model has no consume order and no
+    dependency-ordered-before. Reading consume as acquire would add
+    happens-before edges the program lacks, so race freedom could be claimed
+    for a racy program: a consume load, read-modify-write or compare-exchange
+    order (success or failure) is refused by name. A consume *fence* is an
+    acquire fence by 7.17.4.1p2's own text and is routed as one. (3) **The
+    route.** The table's read-modify-write rows (`__atomic_exchange` is
+    reclassified a by-pointer form), compare-exchange rows (strength by name
+    for `__c11_*`, by the evaluated weak flag for the GNU forms; the generic
+    form's desired value by pointer), thread- and signal-fence rows, and the
+    `_Atomic` compound assignment and increment are routed
+    (`RoutedAtomic::event`); the legacy `__sync` builtins (GCC full
+    barriers, no C11 order) are refused by name, their sized spellings as
+    unlisted. (4) **Route G.** A fence is no custody effect; a
+    read-modify-write is its object's dereference with a write; a
+    compare-exchange its object's dereference with a write, its `expected`
+    operand's write (`*e` through the typed reader, or `&x` forgetting the
+    scalar local) and its desired value's read; a produced value (an RMW's old
+    value, a compare-exchange's outcome) may go to a scalar destination or a
+    scalar `return`; an `_Atomic` compound assignment or increment through a
+    pointer is the RMW's effect. Operand values must be a literal, an
+    enumerator or a non-pointer named object. G's verdict is custody only and
+    carries no ordering claim. (5) **Publication.** A routed RMW,
+    compare-exchange or fence of the flag is refused by name as not a
+    publication shape (CG19-PUBLICATION-ONE-FLAG-ONE-PAYLOAD). **Do not**
+    read consume as acquire, mix release-sequence definitions, let a signal
+    fence synchronise threads, admit a failure order stronger than the
+    success order, route a `__sync` builtin as a C11 order, or read a routed
+    event's order as an ordering or race-freedom claim of route G. Premises
+    stated, not proved: faithful Clang extraction of the builtin, operands,
+    orders and weak flag (trust boundary 28); the Rust-to-Lean correspondence
+    of the checker by review, bound on 20 litmus graphs; an RMW's arithmetic
+    and a failed compare-exchange's write to `expected` are the supplied
+    graph's premises. Every weak-memory result is of **one supplied candidate
+    execution** (`SINGLE_GRAPH_ASSUMPTION`; execution coverage is CG29's).
+    Measured (corpus `66910c10`, base `b6a3dc42`): MEASURED.
+    `QCore.WeakMemory` (new; `release_sequence_definition`,
+    `rmw_continues_release_sequence`, `foreign_store_ends_release_sequence`,
+    the four synchronisation theorems, `accepted_rmw_is_atomic`,
+    `cas_failure_no_stronger`, `weak_failure_may_be_spurious`,
+    `litmus_vectors_hold`, bound to `check_c11_execution` by
+    `crates/qcore-core/tests/unit/weak_memory_cg28.rs`, which parses the
+    litmus graphs from the Lean file) and `QCore.AtomicSourceRoute`
+    (`read_modify_write_routed`, `fence_routed`, `consume_fence_is_acquire`,
+    `consume_order_refused`, `routed_failure_admitted_by_model`,
+    `cas_vectors_hold`); [report](../reports/cg28-weak-memory-events/README.md).
+
 <a id="constraint-11u"></a>
 
 11u. **A layout fact is Clang's: a VLA is admitted only with every use inside
