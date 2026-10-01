@@ -433,6 +433,13 @@ Record [`gate.json`](gate.json), exits in [`gate/`](gate/), logs in
 
 **Not due:** the provider gate, because `providers/` is unchanged.
 
+**Final rebase.** `main` then moved to `31a72343`, which changes only
+`docs/STATUS.md`. The card was rebased onto it, and only the STATUS headline
+row conflicted (resolved by keeping `main`'s row and re-applying this card's
+clause). No code changed, so under the landing-race policy the gate above
+stands. The conflict-marker grep is empty, and the docs index `--check`
+exits 0.
+
 **Axioms and placeholders.** `AuditAll.lean` passes, so there are no
 placeholders and no project axioms. The new modules use only `propext`,
 `Classical.choice` and `Quot.sound`. Clang 21.1.8.
