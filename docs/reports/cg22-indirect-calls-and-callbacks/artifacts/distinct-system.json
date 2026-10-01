@@ -1,0 +1,37 @@
+{
+ "distinct_sites": 2892,
+ "builtin": 2460,
+ "indirect_distinct": 432,
+ "by_shape_open": {
+  "member-through-pointer: member read through a pointer": 362,
+  "formal: formal": 70
+ },
+ "by_rewrite": {
+  "none: open set": 432
+ },
+ "indirect_in_reported_functions": 12,
+ "reported_by_shape_open": {
+  "member-through-pointer: member read through a pointer": 12
+ },
+ "reported_functions": 7,
+ "reported_function_status": {
+  "Unknown": 14
+ },
+ "leaves_on_site_lines": {
+  "unsupported: indirect memory access is outside the resource projection": 24
+ },
+ "single_name_callees": [],
+ "registrations_distinct": 131,
+ "registrations_reported": 10,
+ "registration_relation_reported": {
+  "Unknown": 5,
+  "Unsafe": 1
+ },
+ "registration_unsafe_rows": [
+  [
+   "flb_input_chunk_map",
+   18787,
+   "msgpack_packer_init"
+  ]
+ ]
+}

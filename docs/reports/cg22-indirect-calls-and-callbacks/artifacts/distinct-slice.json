@@ -1,0 +1,43 @@
+{
+ "distinct_sites": 3109,
+ "builtin": 2524,
+ "indirect_distinct": 585,
+ "by_shape_open": {
+  "member-through-pointer: member read through a pointer": 513,
+  "formal: formal": 72
+ },
+ "by_rewrite": {
+  "none: open set": 585
+ },
+ "indirect_in_reported_functions": 20,
+ "reported_by_shape_open": {
+  "member-through-pointer: member read through a pointer": 18,
+  "formal: formal": 2
+ },
+ "reported_functions": 12,
+ "reported_function_status": {
+  "Unknown": 23
+ },
+ "leaves_on_site_lines": {
+  "unsupported: indirect memory access is outside the resource projection": 34,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": 3,
+  "unsupported: call to uncontracted function `mod`": 1
+ },
+ "single_name_callees": [
+  "cond",
+  "mod"
+ ],
+ "registrations_distinct": 157,
+ "registrations_reported": 22,
+ "registration_relation_reported": {
+  "Unknown": 33,
+  "Unsafe": 2
+ },
+ "registration_unsafe_rows": [
+  [
+   "flb_tail_file_append",
+   20815,
+   "flb_ml_stream_create"
+  ]
+ ]
+}
