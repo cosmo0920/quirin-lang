@@ -144,7 +144,7 @@ the base, from a `git archive` of `b6a3dc42` with its own target directory
 ## 3. Prediction and outcome
 
 [PREDICTION.md](PREDICTION.md) was frozen and committed (`c7c19cbb`, rebased
-as `1e811436`) before any AFTER measurement. It discloses that the code
+as `08068863`) before any AFTER measurement. It discloses that the code
 preceded it, as CG19's did.
 
 | Prediction | Outcome |
