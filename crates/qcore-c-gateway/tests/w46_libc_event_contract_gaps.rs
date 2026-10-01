@@ -55,10 +55,17 @@ fn libc_scalar_contracts_match_the_host_declared_abi() {
         "int test(const void *a, const void *b, size_t n) { return memcmp(a,b,n); }",
         "int test(const char *a, const char *b, size_t n) { return strncmp(a,b,n); }",
         "size_t test(const char *a, size_t n) { return strnlen(a,n); }",
+        #[cfg(unix)]
         "int test(const char *a, const char *b) { return strcasecmp(a,b); }",
     ] {
-        let source =
-            format!("#define _GNU_SOURCE 1\n#include <string.h>\n#include <strings.h>\n{body}\n");
+        // MSVC declares the common queries in string.h; strings.h and
+        // strcasecmp belong to the POSIX host-declaration control.
+        let posix_header = if cfg!(unix) {
+            "#include <strings.h>\n"
+        } else {
+            ""
+        };
+        let source = format!("#define _GNU_SOURCE 1\n#include <string.h>\n{posix_header}{body}\n");
         let result = analyze_unrestricted_c11(
             &C11TranslationUnit {
                 source: &source,
@@ -68,15 +75,45 @@ fn libc_scalar_contracts_match_the_host_declared_abi() {
             &contracts,
         )
         .expect("host declaration parses");
-        let status = match result {
-            UnrestrictedLegacyResult::Safe(_) => AnalysisStatus::Safe,
-            UnrestrictedLegacyResult::Unsafe(s) => s.functions["test"].status,
-            UnrestrictedLegacyResult::Unknown {
-                partial: Some(s), ..
-            } => s.functions["test"].status,
-            other => panic!("no analyzable summary: {other:?}"),
-        };
-        assert_eq!(status, AnalysisStatus::Safe, "{body}");
+        // The lexical ABI reader has no target and models LP64 declarations.
+        // MSVC's __cdecl / unsigned __int64 declarations must remain a
+        // withdrawal until that dialect has an audited reader (gateway rule 8).
+        #[cfg(windows)]
+        {
+            let UnrestrictedLegacyResult::Unknown {
+                preprocessed_source,
+                partial: Some(summary),
+                ..
+            } = result
+            else {
+                panic!("MSVC declarations must retain their ABI refusal: {result:?}");
+            };
+            assert!(preprocessed_source.contains("__cdecl"));
+            #[cfg(target_pointer_width = "64")]
+            assert!(preprocessed_source.contains("typedef unsigned __int64 size_t;"));
+            let function = &summary.functions["test"];
+            assert_eq!(function.status, AnalysisStatus::Unknown, "{body}");
+            assert!(
+                function.diagnostics.iter().any(|diagnostic| {
+                    matches!(&diagnostic.kind, LegacyDiagnosticKind::Unsupported { description }
+                    if description.contains("abi-unreadable-declaration"))
+                }),
+                "{body}: {:?}",
+                function.diagnostics
+            );
+        }
+        #[cfg(not(windows))]
+        {
+            let status = match result {
+                UnrestrictedLegacyResult::Safe(_) => AnalysisStatus::Safe,
+                UnrestrictedLegacyResult::Unsafe(s) => s.functions["test"].status,
+                UnrestrictedLegacyResult::Unknown {
+                    partial: Some(s), ..
+                } => s.functions["test"].status,
+                other => panic!("no analyzable summary: {other:?}"),
+            };
+            assert_eq!(status, AnalysisStatus::Safe, "{body}");
+        }
     }
 }
 
