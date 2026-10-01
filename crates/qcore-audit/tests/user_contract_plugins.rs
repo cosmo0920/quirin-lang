@@ -13,6 +13,9 @@
 //! small test double of a trusted-core witness checker, because the command
 //! line has none.
 
+// The checker fixtures execute /bin/sh scripts and require Unix permissions.
+#![cfg(unix)]
+
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::os::unix::fs::PermissionsExt;
