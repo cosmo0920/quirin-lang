@@ -1,0 +1,13 @@
+{
+  "note": "CG20-NUMERIC-DOMAIN. The card's own gate stopped twice at the host disk floor (private/cg20/gate2, gate3; discarded as measuring disk). The integrator re-ran the card's gate.sh at tip 2192a296 on base b6a3dc42 into private/cg20/gate4 under the shared heavy-step lock: submodule 0; run_test_binaries.py 412 units, 425 summaries, 7,189 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T171917Z-2663579); fmt 0; clippy --locked --all-targets -D warnings 0; both reevaluation probes 0; check_lean_audits.py 0; python 1 (the expected derived lean_audits failure before matrix regeneration); docs index 0. main then moved to 8e8ed41f (CG17-LAYOUT-DERIVED-EXTENTS, disjoint gated code: new modules plus hooks); the card was rebased onto it (records-only conflicts) and a targeted check ran on the combined tree into private/int-cg20: cargo check --workspace --all-targets --locked 0; fmt 0; clippy 0; cargo test -p qcore-c-gateway 0 and -p qcore-verification 0 (2,716 passed, 0 failed); qcore-core clang_gap_core 0; Lean 265 audits passed; providers cargo check --locked 0. workspace_tests is DERIVED for the combined tree as 7,189 (CG20 on b6a3dc42) + 14 (CG17's added tests, 7,185 - 7,171) = 7,203, not one measured run. providers/ is unchanged: provider_tests 129 carried. Clang 21.1.8. Custody corpus 629/10/4,195 (3d53a5d0) is byte-identical for both cards; no arbiter re-run on the combined tree (neither card moves a verdict). Exits in docs/reports/cg20-numeric-domain/gate/.",
+  "workspace_tests": 7203,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 265,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

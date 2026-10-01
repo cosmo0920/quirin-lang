@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG17-LAYOUT-DERIVED-EXTENTS card gate on base b6a3dc42 (main unchanged during the card). Rust and Lean at b66124d4; the later commits change only scripts and records. Logs in private/cg17le/gate of this worktree: submodule 0; run_test_binaries.py 411 units, 424 summaries, 7,185 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T171727Z-2623486); two earlier attempts failed on a full disk (no space left; a linker bus error) while the host was at its floor and were discarded as measuring disk; fmt 0; clippy --locked --all-targets -D warnings 0; both reevaluation probes exit 0; check_lean_audits.py 264 audits passed (263 on main + AuditLayoutExtents.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 263 -> 264, test_build_matrix_sections), then run again after build_matrix.py . --gate this file (09a, 09b); docs index --check 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE e2f76113 and AFTER 7b62706f both 629/10/4,195, resource-diagnostics 3d53a5d0 byte-identical; system 44/2/188 (9d3309b7) and tail-pause slice 29/1/239/1 Pending (c9e3ee81) byte-identical. Exits in docs/reports/cg17-layout-derived-extents/gate/.",
-  "workspace_tests": 7185,
+  "note": "CG20-NUMERIC-DOMAIN. The card's own gate stopped twice at the host disk floor (private/cg20/gate2, gate3; discarded as measuring disk). The integrator re-ran the card's gate.sh at tip 2192a296 on base b6a3dc42 into private/cg20/gate4 under the shared heavy-step lock: submodule 0; run_test_binaries.py 412 units, 425 summaries, 7,189 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T171917Z-2663579); fmt 0; clippy --locked --all-targets -D warnings 0; both reevaluation probes 0; check_lean_audits.py 0; python 1 (the expected derived lean_audits failure before matrix regeneration); docs index 0. main then moved to 8e8ed41f (CG17-LAYOUT-DERIVED-EXTENTS, disjoint gated code: new modules plus hooks); the card was rebased onto it (records-only conflicts) and a targeted check ran on the combined tree into private/int-cg20: cargo check --workspace --all-targets --locked 0; fmt 0; clippy 0; cargo test -p qcore-c-gateway 0 and -p qcore-verification 0 (2,716 passed, 0 failed); qcore-core clang_gap_core 0; Lean 265 audits passed; providers cargo check --locked 0. workspace_tests is DERIVED for the combined tree as 7,189 (CG20 on b6a3dc42) + 14 (CG17's added tests, 7,185 - 7,171) = 7,203, not one measured run. providers/ is unchanged: provider_tests 129 carried. Clang 21.1.8. Custody corpus 629/10/4,195 (3d53a5d0) is byte-identical for both cards; no arbiter re-run on the combined tree (neither card moves a verdict). Exits in docs/reports/cg20-numeric-domain/gate/.",
+  "workspace_tests": 7203,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 264,
+  "lean_audits": 265,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6776,6 +6776,7 @@
    "AuditBranchJoin.lean",
    "AuditBucketTally.lean",
    "AuditCGatewayRefinements.lean",
+   "AuditCNumeric.lean",
    "AuditCProgram.lean",
    "AuditCallArgumentAccess.lean",
    "AuditCallInstantiation.lean",
@@ -7030,7 +7031,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg17-layout-derived-extents/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg20-numeric-domain/gate.json)"
  },
  "named_followups": [
   {

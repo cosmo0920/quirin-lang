@@ -263,6 +263,21 @@ signednesses, nine ranges), not proved in Lean
 
 ## 10. Gate
 
+**Integration (completed by the integrator).** The workspace runner owed below
+was re-run with the card's own `scripts/gate.sh` at `2192a296` (base
+`b6a3dc42`) into `private/cg20/gate4` under the shared heavy-step lock: 412
+units, 7,189 passed, 0 failed, 11 ignored, every other step 0 except the
+expected Python failure before the matrix regeneration. `main` had moved to
+`8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS, disjoint code); the card was rebased
+onto it (records-only conflicts) and a targeted check ran on the combined tree
+(`private/int-cg20`): `cargo check --workspace --all-targets --locked`, fmt,
+clippy, `qcore-c-gateway` and `qcore-verification` tests (2,716 passed, 0
+failed), `clang_gap_core`, 265 Lean audits, providers `cargo check --locked`,
+all exit 0; the matrix was regenerated with [gate.json](gate.json) (its
+workspace figure 7,203 is derived, 7,189 + CG17's 14), then the Python suite
+(365, OK) and the index check passed. Exits are in `gate/`. The record of the
+card's own attempts follows unchanged.
+
 **The standing gate is incomplete.** Two full runs of `scripts/gate.sh`
 (`private/cg20/gate2`, `private/cg20/gate3`) failed in the test runner's build
 with `No space left on device`: this card's own dev build of the workspace's
