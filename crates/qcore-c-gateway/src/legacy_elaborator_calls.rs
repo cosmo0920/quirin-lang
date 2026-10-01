@@ -136,8 +136,8 @@ impl Parser<'_> {
         }
         let saved = (self.next_site, self.element_lowerings);
         let mut instructions = Vec::new();
-        for id in 0..events.len() {
-            let step = match &events[id] {
+        for (id, event) in events.iter().enumerate() {
+            let step = match event {
                 Event::Call { callee } => self.footprint_call(elaborated, index, id, callee, line),
                 _ => self
                     .lower_event(elaborated, id)

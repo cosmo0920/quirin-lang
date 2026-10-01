@@ -166,9 +166,11 @@ fn an_empty_map_is_check_with() {
     let unaliased = |decl: &str| decl == "0";
     for a in &events {
         for b in &events {
-            let mut graph = EvalGraph::default();
-            graph.events = vec![a.clone(), b.clone()];
-            graph.unsequenced.push(vec![vec![0], vec![1]]);
+            let graph = EvalGraph {
+                events: vec![a.clone(), b.clone()],
+                unsequenced: vec![vec![vec![0], vec![1]]],
+                ..EvalGraph::default()
+            };
             assert_eq!(
                 graph.check_with_footprints(&unaliased, &|_, _| false, &BTreeMap::new()),
                 graph.check_with(&unaliased, &|_, _| false),
