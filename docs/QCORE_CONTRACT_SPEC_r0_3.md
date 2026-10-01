@@ -740,6 +740,109 @@ Credit may be returned or discarded only according to its axis policy. Live obli
 
 A postcondition about normal return says nothing about an unmodeled exceptional, cancellation or divergence exit. The proposed complete source language must reject or weaken claims when a promised exit family is not covered. Current strict consumers reject the exits they cannot express; generic structural parsing alone does not discharge them.
 
+### C09.1. Reviewed index and extent contracts (planned)
+
+**Design decision, 2026-10-01; implementation pending under
+[CG16-INDEX-AND-OFFSET-EXTENTS](plans/clang-gap-cards/cg16-reviewed-index-contracts.md).**
+This section specifies a separate index/access-bounds property for existing C.
+It does not add accepted syntax to resource-contract v1, extend `index.closed`,
+or claim that a current custody certificate proves bounds. The requirements
+below govern the new consumer when implemented; current consumers retain C02's
+total-or-reject and property-scoping rules.
+
+**Meaning and units.** A user MAY supply a contract describing an external
+object's accessible extent or an external operation's index/extent relation.
+The consumer MUST distinguish an element count from a byte extent and bind
+each extent to an object or subobject, its base/offset, element type and width,
+and the program state in which it is valid. An index-in-range fact means
+`0 <= i < N` for that extent. Conceptual notation such as `Idx<N>` denotes this
+relation only; it is not new Quirin syntax or the `Idx + Ordered` dimension
+capability of language §L06. That capability alone proves neither an object's
+extent nor a runtime index's range. Runtime values MUST NOT enter the closed
+index evaluator by being named in a user contract.
+
+For a byte access of width `w` at offset `o` into an extent of `B` bytes, the
+consumer MUST establish `0 <= o`, `0 < w` and `o + w <= B`, with checked offset
+and width arithmetic. Forming a one-past pointer and dereferencing it are
+different obligations: `i == N` can satisfy an admitted formation rule but
+never the element-access rule. An empty extent admits no element access.
+The bounds consumer MUST NOT assume the absence of out-of-bounds undefined
+behavior to establish the very bounds property being checked; a custody
+profile's broader no-undefined-behavior premise is not a bounds proof.
+Signedness, conversions, element-size multiplication and target-width overflow
+MUST be interpreted under the recorded C target/profile, never by silently
+substituting the closed natural-number evaluator for C semantics.
+
+**Source facts and user assumptions.** Fixed-array extents and supported type
+layout facts SHOULD be derived from the bound source/build evidence. A fact
+derived and checked by the tool needs no human review merely because it is an
+extent. Facts a user supplies about external storage or an external body's
+behavior MUST enter this new consumer as review-held declarations until a
+person resolves their review. Loading, naming, inference by an assistant, or a
+plugin's unverified claim MUST NOT discharge that review. A reviewed
+declaration is still a `Declared` assumption, not a proof of its C body.
+
+Review state follows C06.1's distinction between review-held, declared,
+inferred/validated and proposed facts. The new consumer MUST record the exact
+clause, reason, optional reviewer/owner, disposition, retained text digest and
+affected obligations. Resolution is an explicit edit of the held declaration
+after human review, including rewriting a clause marked as requiring rewrite;
+it is not a tool-minted approval or an authenticated sign-off. Reuse MUST bind
+the exact contract, source/revision policy, build/target and evidence version;
+a stale pin or changed clause cannot reuse the old admission. The resource-v1
+review marker does not implicitly select or implement this new consumer.
+
+A user declaration MUST NOT enlarge a source-established object or subobject,
+erase a known offset, or override a checked contradiction. For example, a
+contract claiming eight elements for an object established as `int arr[4]`
+cannot make `arr[7]` in bounds. Conflicting premises MUST be reported and
+withheld rather than making every obligation vacuously true. If a source body
+is checked and refutes its index/extent declaration, dependent uses MUST
+withdraw that declaration; merely re-approving it cannot discharge the
+contradiction. A source-established violation independent of the declaration
+retains its own evidence and verdict.
+
+**Checking uses.** A precondition such as an index-in-range relation is an
+obligation at every covered call site, not a fact made true by writing the
+contract. A body may be checked relative to that precondition, but callers MUST
+establish it and the result MUST retain that conditional scope. An external
+postcondition may be used only as an in-force, reviewed assumption for the
+specified exit after its call's preconditions are established. Every claimed
+access MUST be checked against the actual base, index and extent at that
+access; checking a declaration alone is insufficient. Writes, intervening
+calls, aliases, resizing, release or reallocation that may invalidate those
+relations MUST invalidate the affected facts unless their preservation is
+established. A range fact confers no ownership, liveness, alignment,
+initialization, effective-type or synchronization guarantee by itself.
+
+**Verdicts and reporting.** The property uses the four-value composition of
+language §L21.2 and the complete claim identity of C13:
+
+| Situation for the requested bounds property | Result |
+|---|---|
+| All selected accesses and call-site obligations are discharged under recorded, in-force premises with complete scope coverage | `Safe` for bounds only |
+| A named human act is the sole obstacle, and putting the held declarations in force as written leaves no other obstacle | `Pending`, naming the held clauses and the required act |
+| An extent, identity, range, preservation step, relevant source form or analysis bound remains unresolved; or a declaration is contradicted | `Unknown`, retaining the specific reasons |
+| A reachable out-of-bounds access is independently validated under the selected profile and in-force premises | `Unsafe` for that bounds violation |
+
+A held declaration discharges nothing and accuses nothing. A hypothetical
+violation obtained only by putting it in force is an `Unknown` standing reason,
+not `Unsafe`. An independently validated violation elsewhere still joins as
+`Unsafe`. Review alone MUST NOT turn a remaining unsupported or unproven access
+into `Safe`. For a reachable `arr[7]` on a source-established `int arr[4]`, the
+new property MUST detect the violation without requiring a user-written extent
+contract; if reachability cannot be established, it MUST NOT publish a
+validated violation. A proved-unreachable access is excluded only through
+explicit checked reachability, not by dropping it from the inventory.
+
+Custody and bounds results MUST remain individually visible. A request for
+both joins both results and their reasons; custody-`Safe` plus bounds-`Unknown`
+is not combined `Safe`. A custody-only result MUST state its narrower property
+and MUST NOT advertise a bounds guarantee. Missing bounds support for a request
+that includes bounds is `Unknown`, never an omitted row or an empty successful
+scope. Diagnostic reasons, assumptions and certificates MUST preserve the
+object/extent relation and every selected access or named import failure.
+
 ## C10. Cleanup and OS endpoint contracts
 
 Cleanup must distinguish invocation, attempted release, observed return, actual release and residual custody. An OS endpoint is identified by its kind, acquisition generation and lifetime, not by a numeric descriptor or virtual address alone. Numeric reuse after an earlier epoch has ended is permitted and must not merge the epochs.

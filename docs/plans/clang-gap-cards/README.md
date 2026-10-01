@@ -348,6 +348,17 @@ High for anything that could publish a wrong Safe, Medium for measurement.
 | CG19-ATOMIC-SOURCE-ROUTE | W01 W09 | High | CG10 |
 
 - **CG16: index and offset extents.**
+  - *Detailed implementation brief (2026-10-01):*
+    [reviewed index and extent contracts](cg16-reviewed-index-contracts.md),
+    following [contract specification C09.1](../../QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned).
+    This expands the existing candidate; it is not implemented or dispatched.
+    CG16 owns the minimal single-base contract vocabulary and human-review
+    lifecycle; CG24 retains richer multi-base/derived/frame relations.
+    Source-established fixed extents need no user approval, and a user contract
+    cannot enlarge them. Review-held external facts are Pending only when no
+    other obstacle remains; every access and call precondition is still checked.
+    Custody and bounds are separately reported properties, joined only when
+    both are requested. `Idx<N>` is conceptual notation, not current syntax.
   - *Bounds.* `0 <= i < count` against extent contracts. The intervals in
     `indexed_collection.rs` track release obligations, not bounds (Q25).
   - *Offsets.* Byte offset = element size × index.
@@ -454,6 +465,9 @@ CG22.
     W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED, W43-DESCRIPTOR-REFUSED-SHAPES
     and CJSON-DELETE-SIBLING-CHAIN.
 - **CG24: alias, extent and frame vocabulary.**
+  - *Boundary with CG16.* The minimal reviewed single-base index/extent
+    vocabulary is specified in C09.1 and assigned to CG16; this card extends
+    those relations rather than making CG16 depend on its own successor.
   - *Frame effects.* Read/write frame effects distinct from custody modes.
     Borrowed is not purity.
   - *Derived relations.* Multi-base, offset/length and callback-spanning

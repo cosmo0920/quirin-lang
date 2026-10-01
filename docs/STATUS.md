@@ -18,6 +18,15 @@ authority; history belongs in [increment records](development/increments/README.
 
 ## Coverage
 
+**Planned, not implemented (2026-10-01):**
+[reviewed index/extent contracts](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned)
+specify a separate existing-C bounds property. User-authored external premises
+require human review, source-derived fixed bounds do not, and every covered
+use still needs checking. The existing [CG16 implementation card](plans/clang-gap-cards/cg16-reviewed-index-contracts.md)
+is expanded in place; no new tracker, runtime admission, verdict movement or
+coverage increase is claimed. Existing custody-Safe results are not bounds
+certificates.
+
 | Measure | Recorded value | Source |
 |---|---|---|
 | Full language conformance | **false** | [Acceptance](reviews/r0_3/acceptance.json) |
