@@ -149,8 +149,7 @@ fn expect(label: &str, body: &str, status: &str, vector: &[&str]) {
 const GUARD: &str = "unsupported:tracked in-place object `re` used outside a declared in-place position is outside the resource projection (rule 11v)";
 const FORMAL_ADDRESS: &str =
     "unsupported:call has an unmodeled formal address or borrowed expression";
-const WITNESS: &str =
-    "unsupported:in-place initialiser status not held by a plain, not address-taken name (rule 11v)";
+const WITNESS: &str = "unsupported:in-place initialiser status not held by a plain, not address-taken name (rule 11v)";
 const ACTUAL: &str = "unsupported:in-place resource object is not the address of one automatic object of this function (rule 11v)";
 
 // -- The loader ---------------------------------------------------------------
@@ -169,7 +168,10 @@ fn the_two_kinds_load_onto_their_positions() {
     );
     for name in ["k_regcomp", "k_regexec", "k_regfree"] {
         assert_eq!(
-            contracts.contract(name).expect("declared").parameter_kind(0),
+            contracts
+                .contract(name)
+                .expect("declared")
+                .parameter_kind(0),
             ResourceKind::Regex,
             "{name}"
         );
@@ -297,9 +299,8 @@ fn an_untested_status_decides_nothing() {
         return;
     }
     // Finalised without knowing the compile succeeded.
-    let (status, _) = outcome(
-        "void w(const char *p) { regex_t re; k_regcomp(&re, p, 0); k_regfree(&re); }",
-    );
+    let (status, _) =
+        outcome("void w(const char *p) { regex_t re; k_regcomp(&re, p, 0); k_regfree(&re); }");
     assert_ne!(status, "Safe");
     // The status overwritten before the test witnesses nothing.
     let (status, _) = outcome(

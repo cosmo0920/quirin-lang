@@ -127,7 +127,11 @@ impl InPlaceNames {
 
     /// The one kind `name` is initialised as, when there is exactly one.
     pub(crate) fn kind(&self, name: &str) -> Option<ResourceKind> {
-        match self.kinds.get(name).map(|kinds| kinds.iter().collect::<Vec<_>>()) {
+        match self
+            .kinds
+            .get(name)
+            .map(|kinds| kinds.iter().collect::<Vec<_>>())
+        {
             Some(kinds) if kinds.len() == 1 => Some(*kinds[0]),
             _ => None,
         }
@@ -136,7 +140,10 @@ impl InPlaceNames {
 
 /// Whether a contract has any in-place-kinded position.
 pub(crate) fn has_in_place_position(contract: &ResourceFunctionContract) -> bool {
-    contract.parameter_kinds.values().any(|kind| kind.is_in_place())
+    contract
+        .parameter_kinds
+        .values()
+        .any(|kind| kind.is_in_place())
 }
 
 /// `NAME` when `argument` is `& NAME`, possibly parenthesised.
@@ -189,10 +196,14 @@ impl Parser<'_> {
         if !has_in_place_position(contract) {
             return Ok(());
         }
-        let initialiser = contract.parameters.iter().enumerate().any(|(position, mode)| {
-            matches!(mode, ResourceParameterMode::Out { .. })
-                && contract.parameter_kind(position).is_in_place()
-        });
+        let initialiser = contract
+            .parameters
+            .iter()
+            .enumerate()
+            .any(|(position, mode)| {
+                matches!(mode, ResourceParameterMode::Out { .. })
+                    && contract.parameter_kind(position).is_in_place()
+            });
         // The status is the kind's sentinel: an initialiser whose status no
         // plain name holds (discarded, or consumed by an enclosing expression
         // or condition) leaves the obligation undecidable on every path, and
@@ -265,7 +276,8 @@ impl Parser<'_> {
         instruction: LegacyInstruction,
         saved: (usize, usize),
     ) -> LegacyInstruction {
-        if self.in_place_names.is_empty() || matches!(instruction, LegacyInstruction::Unknown { .. })
+        if self.in_place_names.is_empty()
+            || matches!(instruction, LegacyInstruction::Unknown { .. })
         {
             return instruction;
         }
@@ -304,9 +316,7 @@ impl Parser<'_> {
         else {
             return false;
         };
-        if !nested.is_empty()
-            || !self.declared_callees.contains(function)
-        {
+        if !nested.is_empty() || !self.declared_callees.contains(function) {
             return false;
         }
         mentioned.iter().all(|name| {
@@ -315,7 +325,8 @@ impl Parser<'_> {
                 .enumerate()
                 .filter(|(position, argument)| {
                     argument.as_deref() == Some(*name)
-                        && Some(contract.parameter_kind(*position)) == self.in_place_names.kind(name)
+                        && Some(contract.parameter_kind(*position))
+                            == self.in_place_names.kind(name)
                 })
                 .count();
             positions > 0 && positions == occurrences(texts, name)

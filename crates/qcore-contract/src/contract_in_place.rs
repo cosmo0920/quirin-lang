@@ -87,7 +87,9 @@ pub(super) fn check_declaration(
         return Err("one status witnesses at most one in-place initialisation".into());
     }
     if result != ResourceReturnMode::None || return_type != "i32" {
-        return Err("an in-place initialiser returns its `i32` status with `resource_return_none()`".into());
+        return Err(
+            "an in-place initialiser returns its `i32` status with `resource_return_none()`".into(),
+        );
     }
     if parameters.iter().enumerate().any(|(index, mode)| {
         !matches!(mode, ResourceParameterMode::Borrowed)

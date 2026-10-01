@@ -38,8 +38,14 @@ fn every_kind_has_one_spelling_and_one_carrier() {
     );
     for kind in ResourceKind::ALL {
         assert_eq!(ResourceKind::from_spelling(kind.spelling()), Some(kind));
-        assert_eq!(kind.is_in_place(), kind.carrier() == ResourceCarrier::Storage);
-        assert_eq!(kind.is_integer(), kind.carrier() == ResourceCarrier::Integer);
+        assert_eq!(
+            kind.is_in_place(),
+            kind.carrier() == ResourceCarrier::Storage
+        );
+        assert_eq!(
+            kind.is_integer(),
+            kind.carrier() == ResourceCarrier::Integer
+        );
     }
 }
 
@@ -53,7 +59,10 @@ fn the_library_kind_loads_on_an_owned_result_and_a_release() {
     ))
     .expect("an owned library handle loads");
     let contract = open.contract("k").expect("declared");
-    assert_eq!(contract.result, ResourceReturnMode::Owned { nullable: true });
+    assert_eq!(
+        contract.result,
+        ResourceReturnMode::Owned { nullable: true }
+    );
     assert_eq!(contract.result_kind, ResourceKind::DynamicLibrary);
     let close = load(&module(
         "(h: ptr<mut, u8>) -> i32",
