@@ -3,7 +3,7 @@
 Wave 48, round 9, of the [Clang gap queue](../../plans/clang-gap-cards/README.md#phase-4-vocabulary-numeric-and-weak-memory-extensions-v-by-guarantee)
 (entries C09–C13, E20, I06; absorbs `W43-LIBC-NORETURN`). Route G. Gateway
 rule [11o](../../agents/gateway.md#constraint-11o); Lean `QCore.CallExits`
-([`AuditCallExits.lean`](../../../proof/AuditCallExits.lean)). Measured on base `b6a3dc42`; rebased onto main `8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS, whose corpus, system and slice reports are byte-identical to `b6a3dc42`'s, so the attribution below carries; the AFTER was not re-run on `8e8ed41f`).
+([`AuditCallExits.lean`](../../../proof/AuditCallExits.lean)). Measured on base `b6a3dc42`; rebased onto main `06ad81cb` (CG17-LAYOUT-DERIVED-EXTENTS and CG20-NUMERIC-DOMAIN, whose corpus, system and slice custody reports are byte-identical to `b6a3dc42`'s, so the attribution below carries; the AFTER was not re-run on `06ad81cb`).
 
 **Published property and scope** (Phase 4 opens a V card only for a chosen
 guarantee): resource custody on route G, with a call statement's
@@ -19,7 +19,7 @@ by name.
 violation added. Every one of the 1,265 `__assert_fail` / `abort` / `exit`
 leaves is gone (1,340 statement path ends, every one resolved `noreturn`; no
 declaration was refused at a call). System route and tail-pause slice: no
-status move, the predicted renames only. Ledger 668 → 670 (on main `8e8ed41f`):
+status move, the predicted renames only. Ledger 670 → 672 (on main `06ad81cb`):
 `CG21-CALL-EXITS-AND-BOUNDARIES` and `W43-LIBC-NORETURN` retired, four
 residuals registered.
 
@@ -287,8 +287,8 @@ floor. Logs under this worktree's `private/cg21/`; exits copied to
 | clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
 | probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
 | follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
-| Lean | `python3 scripts/check_lean_audits.py` | 0 | **265 audits** (264 on main `8e8ed41f` + `AuditCallExits.lean`) |
-| Python | `python3 -m unittest discover -s scripts/tests` | 1, then PYTHON_FINAL | 365; the one failure was the matrix's derived `lean_audits` (264 → 265), cleared by `build_matrix.py . --gate gate.json` |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **266 audits** (265 on main `06ad81cb` + `AuditCallExits.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then PYTHON_FINAL | 365; the one failure was the matrix's derived `lean_audits` (265 → 266), cleared by `build_matrix.py . --gate gate.json` |
 | docs index | `python3 scripts/build_docs_index.py --check` | 0 | |
 | provider check | `cargo check --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | |
 | libc provider tests | `cargo test --manifest-path providers/Cargo.toml -p quirin-provider-libc --locked --offline` | 0 | 2 passed |
