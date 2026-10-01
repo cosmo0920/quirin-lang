@@ -57,6 +57,9 @@ struct GContext<'a> {
     /// Declaration ids of the function's automatic locals and formals, and
     /// those whose address a `&` takes somewhere in it; read on first use.
     aliasing: std::cell::OnceCell<(BTreeSet<String>, BTreeSet<String>)>,
+    /// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the contracts call
+    /// footprints are read from, where the statement route lowers calls.
+    calls: Option<super::elaborator_calls_route::CallContracts<'a>>,
 }
 
 impl Context for GContext<'_> {
@@ -123,11 +126,52 @@ impl Context for GContext<'_> {
         let (automatic, _) = self.aliasing.get_or_init(|| aliasing(&self.index.function));
         automatic.contains(id) && (self.never_bound)(name)
     }
+
+    /// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the call's contract
+    /// footprint, read as rule 10y reads a call of its tree.
+    fn call_footprint(&self, call: &Value) -> Option<elaboration::Footprint> {
+        let calls = self.calls?;
+        let (automatic, taken) = self.aliasing.get_or_init(|| aliasing(&self.index.function));
+        let facts = super::elaborator_calls_route::ElaboratorFacts {
+            contracts: calls.contracts,
+            tails: calls.tails,
+            fields: &self.index.fields,
+            automatic,
+            taken,
+        };
+        crate::nested_call_effects::call_footprint(call, &facts).ok()
+    }
 }
 
 /// Walk a function's AST once for its automatic objects and taken addresses.
 /// Card CG05-NESTED-CALL-EFFECTS (rule 10y) reads the same facts.
+///
+/// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n) corrects what takes an
+/// address: besides `&x`, the address of a member or element of an object
+/// (`&s.m`, `&a[i]`) and an array's decay to a pointer (`p = a`, `f(a)`) take
+/// the address of the object the place is rooted at, through `.` members,
+/// array subscripts and parentheses. A decay that is only indexed (`a[i]`)
+/// takes none. Only an aggregate's set changes: a scalar or pointer object's
+/// address is taken by `&x` alone, as before.
 pub(super) fn aliasing(function: &Value) -> (BTreeSet<String>, BTreeSet<String>) {
+    /// The object a place is rooted at in its own storage.
+    fn root(node: &Value) -> Option<&str> {
+        let node = strip_parens(node);
+        match kind(node) {
+            "DeclRefExpr" => node["referencedDecl"]["id"].as_str(),
+            "MemberExpr" if node["isArrow"].as_bool() != Some(true) => {
+                root(children(node).first()?)
+            }
+            "ArraySubscriptExpr" => {
+                let base = strip_parens(children(node).first()?);
+                (kind(base) == "ImplicitCastExpr"
+                    && base["castKind"].as_str() == Some("ArrayToPointerDecay"))
+                .then(|| root(children(base).first()?))
+                .flatten()
+            }
+            _ => None,
+        }
+    }
     fn walk(node: &Value, automatic: &mut BTreeSet<String>, taken: &mut BTreeSet<String>) {
         match kind(node) {
             "ParmVarDecl" | "VarDecl" if node["storageClass"].as_str().is_none() => {
@@ -136,14 +180,35 @@ pub(super) fn aliasing(function: &Value) -> (BTreeSet<String>, BTreeSet<String>)
                 }
             }
             "UnaryOperator" if node["opcode"].as_str() == Some("&") => {
-                if let Some(operand) = children(node).first() {
-                    let operand = strip_parens(operand);
-                    if kind(operand) == "DeclRefExpr"
-                        && let Some(id) = operand["referencedDecl"]["id"].as_str()
+                if let Some(id) = children(node).first().and_then(root) {
+                    taken.insert(id.to_owned());
+                }
+            }
+            "ImplicitCastExpr" if node["castKind"].as_str() == Some("ArrayToPointerDecay") => {
+                if let Some(id) = children(node).first().and_then(root) {
+                    taken.insert(id.to_owned());
+                }
+            }
+            "ArraySubscriptExpr" => {
+                // The base's decay is only indexed: its own operand is walked,
+                // the decay itself takes no address.
+                let mut parts = children(node).iter();
+                if let Some(base) = parts.next() {
+                    let bare = strip_parens(base);
+                    if kind(bare) == "ImplicitCastExpr"
+                        && bare["castKind"].as_str() == Some("ArrayToPointerDecay")
                     {
-                        taken.insert(id.to_owned());
+                        for child in children(bare) {
+                            walk(child, automatic, taken);
+                        }
+                    } else {
+                        walk(base, automatic, taken);
                     }
                 }
+                for child in parts {
+                    walk(child, automatic, taken);
+                }
+                return;
             }
             _ => {}
         }
@@ -256,12 +321,17 @@ impl Parser<'_> {
         wanted: &[&str],
         accept: &dyn Fn(&Value) -> bool,
     ) -> Option<&'i Value> {
+        #[allow(
+            clippy::too_many_arguments,
+            reason = "a recursive walk's fixed context"
+        )]
         fn walk<'i>(
             index: &StatementIndex,
             node: &'i Value,
             line: usize,
             wanted: &[&str],
             accept: &dyn Fn(&Value) -> bool,
+            stripped: bool,
             out: &mut Vec<&'i Value>,
         ) {
             // A subtree whose known range lies wholly before or after the
@@ -274,18 +344,50 @@ impl Parser<'_> {
             if accept(node)
                 && index.node_line(node) == Some(line)
                 && index.node_tokens(node).is_some_and(|found| {
-                    found.iter().map(String::as_str).eq(wanted.iter().copied())
+                    if stripped {
+                        let texts = found.iter().map(String::as_str).collect::<Vec<_>>();
+                        super::parenthesised_callee::strip_callee_parentheses(&texts)
+                            .iter()
+                            .map(String::as_str)
+                            .eq(wanted.iter().copied())
+                    } else {
+                        found.iter().map(String::as_str).eq(wanted.iter().copied())
+                    }
                 })
             {
                 out.push(node);
                 return;
             }
             for child in children(node) {
-                walk(index, child, line, wanted, accept, out);
+                walk(index, child, line, wanted, accept, stripped, out);
             }
         }
         let mut found = Vec::new();
-        walk(index, &index.function, line, wanted, accept, &mut found);
+        walk(
+            index,
+            &index.function,
+            line,
+            wanted,
+            accept,
+            false,
+            &mut found,
+        );
+        // Card CG05-ELABORATOR-CALL-FOOTPRINTS: the token stream spells a
+        // parenthesised callee `(f)(x)` as `f(x)` (W45-PARENTHESISED-CALLEE's
+        // rule 1), Clang's node keeps the parentheses; with no exact match,
+        // the node is matched with its callee parentheses stripped the same
+        // way, so both spellings are decided alike.
+        if found.is_empty() {
+            walk(
+                index,
+                &index.function,
+                line,
+                wanted,
+                accept,
+                true,
+                &mut found,
+            );
+        }
         match found.as_slice() {
             [node] => Some(node),
             _ => None,
@@ -300,6 +402,20 @@ impl Parser<'_> {
             index,
             never_bound,
             aliasing: std::cell::OnceCell::new(),
+            calls: None,
+        }
+    }
+
+    /// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the G context with
+    /// the call footprints in force (the statement route only).
+    fn elaboration_context_with_calls<'i>(
+        &'i self,
+        index: &'i StatementIndex,
+        never_bound: &'i dyn Fn(&str) -> bool,
+    ) -> GContext<'i> {
+        GContext {
+            calls: Some(self.call_contracts()),
+            ..Self::elaboration_context(index, never_bound)
         }
     }
 
@@ -391,7 +507,7 @@ impl Parser<'_> {
         // lowered.
         {
             let never_bound = |name: &str| self.joined_never_bound(name);
-            let context = Self::elaboration_context(index, &never_bound);
+            let context = self.elaboration_context_with_calls(index, &never_bound);
             elaboration::elaborate(node, &context)?;
         }
         let steps = self.steps(node)?;
@@ -575,7 +691,7 @@ impl Parser<'_> {
         if let Step::Piece(node) = step {
             let elaborated = {
                 let never_bound = |name: &str| self.joined_never_bound(name);
-                let context = Self::elaboration_context(index, &never_bound);
+                let context = self.elaboration_context_with_calls(index, &never_bound);
                 elaboration::elaborate(node, &context)?
             };
             if let Ok(Some(instructions)) =
@@ -586,6 +702,20 @@ impl Parser<'_> {
                     .map(|instruction| Statement::Instruction(instruction, line))
                     .collect());
             }
+        }
+        // Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): a piece holding
+        // calls, each with its contract footprint, through the one
+        // application point.
+        let elaborated = {
+            let never_bound = |name: &str| self.joined_never_bound(name);
+            let context = self.elaboration_context_with_calls(index, &never_bound);
+            elaboration::elaborate(&synthetic, &context)?
+        };
+        if let Some(instructions) = self.footprint_call_events(&elaborated, index, line)? {
+            return Ok(instructions
+                .into_iter()
+                .map(|instruction| Statement::Instruction(instruction, line))
+                .collect());
         }
         let instructions = self.event_instructions(index, &synthetic, Site::Statement)?;
         Ok(instructions

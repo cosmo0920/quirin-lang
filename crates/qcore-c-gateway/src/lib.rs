@@ -67,6 +67,11 @@ mod field_link_join;
 // core footprint model; the elaborator hook is in `legacy_elaboration.rs`.
 mod footprint_connection;
 mod nested_call_effects; // CG05-NESTED-CALL-EFFECTS (rule 10y); G hook in legacy_nested_call.rs
+// CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the event footprints live in
+// `elaboration.rs`, the G lowering in legacy_elaborator_calls.rs.
+#[cfg(test)]
+#[path = "../tests/unit/elaborator_call_footprints.rs"]
+mod elaborator_call_footprints_tests;
 // Card W47-LEXICAL-CLOSURE-NESTED-ASSIGNMENT (rule 10o).
 mod legacy_summary;
 mod lexical_nested_assignment;

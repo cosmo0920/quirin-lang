@@ -376,6 +376,70 @@ impl EvalGraph {
         Ok(())
     }
 
+    /// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): [`Self::check_with`],
+    /// where an unordered pair [`commutes`] leaves as a call pair
+    /// ([`Commutation::Call`]) commutes exactly when both events carry a
+    /// footprint in `footprints` and the footprints commute
+    /// ([`footprints_commute`]), as in [`Self::check_footprints`]. A call with
+    /// no footprint keeps [`Refusal::UnorderedCall`]; a commuting footprint
+    /// pair is never asked of `commutes` again; every other pair is decided
+    /// exactly as by [`Self::check_with`], in the same pair order. With an
+    /// empty map this is [`Self::check_with`]
+    /// (`QCore.ElaboratorCallFootprints.empty_map_is_check_with`).
+    pub(crate) fn check_with_footprints(
+        &self,
+        unaliased: &dyn Fn(&str) -> bool,
+        paths_disjoint: &dyn Fn(&str, &str) -> bool,
+        footprints: &BTreeMap<EventId, Footprint>,
+    ) -> Result<(), Refusal> {
+        debug_assert!(self.before.iter().all(|(a, b)| a < b));
+        let path = |event: &Event| {
+            matches!(
+                event,
+                Event::Read(Place::Path { .. })
+                    | Event::Write {
+                        place: Place::Path { .. },
+                        ..
+                    }
+            )
+        };
+        let spell = |id: EventId| match &self.events[id] {
+            Event::Call { callee } => format!("call `{callee}`"),
+            Event::Read(place) => format!("read of `{}`", place.spelling()),
+            Event::Write { place, .. } => format!("write of `{}`", place.spelling()),
+            _ => "event".to_owned(),
+        };
+        for a in 0..self.events.len() {
+            for b in a + 1..self.events.len() {
+                if self.sequenced(a, b) || self.excluded(a, b) {
+                    continue;
+                }
+                match commutes(&self.events[a], &self.events[b], unaliased) {
+                    Commutation::Commutes => {}
+                    Commutation::Conflict(place) => {
+                        return Err(Refusal::UnsequencedConflict(place));
+                    }
+                    Commutation::Overlap(one, other)
+                        if path(&self.events[a])
+                            && path(&self.events[b])
+                            && paths_disjoint(&one, &other) => {}
+                    Commutation::Overlap(one, other) => {
+                        return Err(Refusal::NotDisjoint(one, other));
+                    }
+                    Commutation::Call(callee) => match (footprints.get(&a), footprints.get(&b)) {
+                        (Some(one), Some(other)) if footprints_commute(one, other, unaliased) => {}
+                        (Some(_), Some(_)) => {
+                            return Err(Refusal::CallFootprintConflict(spell(a), spell(b)));
+                        }
+                        _ => return Err(Refusal::UnorderedCall(callee)),
+                    },
+                    Commutation::Unlisted => return Err(Refusal::Unlisted("unordered event")),
+                }
+            }
+        }
+        Ok(())
+    }
+
     /// Card CG05-NESTED-CALL-EFFECTS (rule 10y): [`Self::check`], where an
     /// unordered pair involving a call commutes exactly when both events carry
     /// a footprint and the footprints commute ([`footprints_commute`]). A call
@@ -497,6 +561,11 @@ pub(crate) struct Elaboration<F> {
     /// Card CG06 (rule 10z): every branch region, innermost first.
     #[allow(dead_code, reason = "read by the tests")]
     pub(crate) branches: Vec<BranchRegion>,
+    /// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the contract
+    /// footprint the route read for each call event (none where it declined),
+    /// and that call's Clang node, which the route's lowering instantiates.
+    pub(crate) call_footprints: BTreeMap<EventId, Footprint>,
+    pub(crate) call_nodes: BTreeMap<EventId, Value>,
 }
 
 /// Card CG06 (rule 10z): one elaborated value `&&`, `||`, `?:` or `X ?: B`.
@@ -537,6 +606,9 @@ pub(crate) enum Refusal {
     /// Card CG05-NESTED-CALL-EFFECTS (rule 10y): two unordered events, at
     /// least one a call, whose contract footprints do not commute.
     CallFootprintConflict(String, String),
+    /// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): a call event the
+    /// one application point did not instantiate as its footprint was read.
+    CallLowering(String),
     /// A cast kind outside the scalar set (card CG08).
     Cast(String),
     /// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): a pointer converted to an
@@ -585,6 +657,7 @@ impl Refusal {
             Refusal::CallFootprintConflict(one, other) => format!(
                 "unsequenced {one} and {other} whose contract footprints do not commute (CG05)"
             ),
+            Refusal::CallLowering(reason) => format!("elaborated {reason} (CG05)"),
             Refusal::Cast(cast) => format!("cast `{cast}` (CG08)"),
             Refusal::PointerEscape(pointer) => format!(
                 "pointer `{pointer}` converted to an integer may carry a tracked identity (CG08)"
@@ -736,6 +809,65 @@ pub(crate) trait Context {
     fn untracked_pointer(&self, _node: &Value) -> bool {
         false
     }
+    /// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the contract footprint
+    /// of the direct call `call` in rule 10y's cells, when the route has a
+    /// contract in force for its callee and reads every actual
+    /// (`nested_call_effects::call_footprint`). A [`Cell::Fresh`] in it names
+    /// the call's own owned result; the elaborator keys it to the call's
+    /// event. The default declines: the call has no footprint, and an
+    /// unordered pair holding it keeps [`Refusal::UnorderedCall`].
+    fn call_footprint(&self, _call: &Value) -> Option<Footprint> {
+        None
+    }
+}
+
+/// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the footprint of one
+/// elaborated event other than a call, in rule 10y's cells
+/// (`QCore.ElaboratorCallFootprints.eventFootprint`). A named object's read
+/// or write touches its storage; a pointer value read or stored also touches
+/// the identity it denotes; a path touches its root object's storage and, when
+/// it leaves that object through a pointer or its value is a pointer, an
+/// identity (every identity cell overlaps every other, so its name is only a
+/// label). `scalar` says a read's value is a scalar. A lifetime event writes
+/// its object; a control event touches nothing. A call has no footprint here:
+/// the route reads it from the contract ([`Context::call_footprint`]).
+pub(crate) fn event_footprint(event: &Event, scalar: bool) -> Option<Footprint> {
+    let place_cells = |place: &Place, value_identity: bool| match place {
+        Place::Object { decl, name } => {
+            let mut cells = vec![Cell::Object(decl.clone())];
+            if value_identity {
+                cells.push(Cell::Identity(name.clone()));
+            }
+            cells
+        }
+        Place::Path {
+            spelling,
+            root,
+            indirect,
+        } => {
+            let mut cells = vec![Cell::Object(root.clone())];
+            if *indirect || value_identity {
+                cells.push(Cell::Identity(spelling.clone()));
+            }
+            cells
+        }
+    };
+    match event {
+        Event::Read(place) => Some(Footprint {
+            reads: place_cells(place, !scalar),
+            writes: Vec::new(),
+        }),
+        Event::Write { place, pointer } => Some(Footprint {
+            reads: Vec::new(),
+            writes: place_cells(place, *pointer),
+        }),
+        Event::LifetimeStart(place) | Event::LifetimeEnd(place) => Some(Footprint {
+            reads: Vec::new(),
+            writes: place_cells(place, false),
+        }),
+        Event::Branch | Event::Merge => Some(Footprint::default()),
+        Event::Call { .. } => None,
+    }
 }
 
 /// Elaborate one full expression or one-declarator declaration.
@@ -752,17 +884,33 @@ pub(crate) fn elaborate<C: Context>(
         actuals: BTreeMap::new(),
         address_reads: std::collections::BTreeSet::new(),
         branches: Vec::new(),
+        call_footprints: BTreeMap::new(),
+        call_nodes: BTreeMap::new(),
+        scalar_reads: std::collections::BTreeSet::new(),
     };
     let part = if kind(node) == "DeclStmt" {
         elaborator.declaration(node)?
     } else {
         elaborator.expression(node)?
     };
+    // Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): with a call footprint
+    // from the route, every other event carries its own; with none, the map
+    // is empty and the check is CG18's `check_with`.
+    let mut footprints = elaborator.call_footprints.clone();
+    if !footprints.is_empty() {
+        for (id, event) in elaborator.graph.events.iter().enumerate() {
+            if let Some(footprint) = event_footprint(event, elaborator.scalar_reads.contains(&id)) {
+                footprints.insert(id, footprint);
+            }
+        }
+    }
     elaborator
         .graph
-        .check_with(&|decl| context.unaliased(decl), &|one, other| {
-            context.disjoint_places(node, one, other)
-        })
+        .check_with_footprints(
+            &|decl| context.unaliased(decl),
+            &|one, other| context.disjoint_places(node, one, other),
+            &footprints,
+        )
         .map_err(|refusal| match refusal {
             // Card CG13 (rule 10w): name a bit-field pair of one unit.
             Refusal::NotDisjoint(one, other) => {
@@ -787,6 +935,8 @@ pub(crate) fn elaborate<C: Context>(
             Vec::new()
         },
         branches: elaborator.branches,
+        call_footprints: elaborator.call_footprints,
+        call_nodes: elaborator.call_nodes,
     })
 }
 
@@ -831,6 +981,13 @@ struct Elaborator<'a, C: Context> {
     address_reads: std::collections::BTreeSet<EventId>,
     /// Card CG06 (rule 10z).
     branches: Vec<BranchRegion>,
+    /// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): each call event's
+    /// contract footprint the route read.
+    call_footprints: BTreeMap<EventId, Footprint>,
+    call_nodes: BTreeMap<EventId, Value>,
+    /// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the read events whose
+    /// value is a scalar (every other read is taken as a pointer read).
+    scalar_reads: std::collections::BTreeSet<EventId>,
 }
 
 fn qualified(node: &Value) -> Option<&'static str> {
@@ -1176,6 +1333,9 @@ impl<C: Context> Elaborator<'_, C> {
                 let pointer = self.value(node)?;
                 let (place, mut events, facts) = self.lvalue(inner, false)?;
                 let read = self.graph.push(Event::Read(place));
+                if !pointer {
+                    self.scalar_reads.insert(read);
+                }
                 self.record(read, &facts);
                 self.graph.order(&events, read);
                 events.push(read);
@@ -1366,6 +1526,7 @@ impl<C: Context> Elaborator<'_, C> {
                     return Err(refused("pointer arithmetic"));
                 }
                 let read = self.graph.push(Event::Read(place.clone()));
+                self.scalar_reads.insert(read);
                 self.record(read, &facts);
                 self.graph.order(&events, read);
                 let write = self.graph.push(Event::Write {
@@ -1493,6 +1654,7 @@ impl<C: Context> Elaborator<'_, C> {
         // The place is evaluated once: one read of it, then (after the right
         // operand's value) one write back.
         let read = self.graph.push(Event::Read(place.clone()));
+        self.scalar_reads.insert(read);
         self.record(read, &facts);
         self.graph.order(&events, read);
         let value = self.expression(right)?;
@@ -1691,6 +1853,21 @@ impl<C: Context> Elaborator<'_, C> {
         let call = self.graph.push(Event::Call {
             callee: name.to_owned(),
         });
+        // Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the call's contract
+        // footprint, its fresh result keyed to this event.
+        if let Some(mut footprint) = self.context.call_footprint(node) {
+            for cell in footprint
+                .reads
+                .iter_mut()
+                .chain(footprint.writes.iter_mut())
+            {
+                if let Cell::Fresh(_) = cell {
+                    *cell = Cell::Fresh(call);
+                }
+            }
+            self.call_footprints.insert(call, footprint);
+            self.call_nodes.insert(call, node.clone());
+        }
         self.graph.order(&all, call);
         self.actuals.insert(call, all.clone());
         self.obligations.push(Obligation::Contract(name.to_owned()));

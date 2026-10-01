@@ -365,13 +365,26 @@ fn a_pointer_member_store_stays_refused() {
     );
 }
 
+/// Flipped by CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the statement holds a
+/// cast, so CG02's elaborator is asked after the refusal; the call's contract
+/// footprint (`x_len` borrows `s`) commutes with the unordered read of `p`,
+/// and the call is applied through the one application point. The store is
+/// sequenced after the call, so even a call borrowing the destination's own
+/// base is ordered with it (the refusal controls are in
+/// `cg05_elaborator_call_footprints.rs`).
 #[test]
-fn a_call_in_the_statement_stays_refused() {
+fn a_call_in_the_statement_is_applied_through_its_footprint() {
     expect(
         "the value is a call's result",
         "void w(char *p, const char *s) { p[0] = (char) x_len(s); }",
-        "Unknown",
-        &[INDIRECT],
+        "Safe",
+        &[],
+    );
+    expect(
+        "the store follows the call that borrows its base",
+        "void w(char *p) { p[0] = (char) x_len(p); }",
+        "Safe",
+        &[],
     );
 }
 

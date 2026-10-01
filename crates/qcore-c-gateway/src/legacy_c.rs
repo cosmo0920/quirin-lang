@@ -154,6 +154,11 @@ mod call_instantiation_route;
 // non-identity effects, through the one application point.
 #[path = "legacy_nested_call.rs"]
 mod nested_call_route;
+// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the elaborator's own call
+// events with their contract footprints, lowered through the one application
+// point inside CG02's statement route.
+#[path = "legacy_elaborator_calls.rs"]
+mod elaborator_calls_route;
 
 // Card CG04-CONDITION-ACQUISITION (rule 10x): ownership-producing calls in
 // controlling expressions and complex condition leaves, decided inside the

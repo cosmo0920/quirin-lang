@@ -734,6 +734,35 @@ pub(crate) fn normalise_tokens(tokens: &[Token]) -> Option<Vec<Token>> {
     normalise_unit(tokens, &[]).map(|(tokens, _, _)| tokens)
 }
 
+/// Card CG05-ELABORATOR-CALL-FOOTPRINTS: rule 1's rewrite over one Clang
+/// node's own tokens, so that the elaborator can match a node against a
+/// statement the token stream already normalised. Only the node's own tokens
+/// are read, so no type name is trusted and a `(T)(x)` cast may be stripped
+/// too; the caller uses the result only to match against an already
+/// normalised statement (where such a cast kept its parentheses), so a wrong
+/// strip can only fail to match.
+pub(crate) fn strip_callee_parentheses(texts: &[&str]) -> Vec<String> {
+    // A leading `;` gives every group a token before it.
+    let mut padded = Vec::with_capacity(texts.len() + 1);
+    padded.push(";");
+    padded.extend_from_slice(texts);
+    let types = TypeNames::default();
+    let mut removed = vec![false; padded.len()];
+    for (at, depth) in callee_sites(&padded, 1..padded.len(), &types) {
+        for offset in 1..=depth {
+            removed[at - offset] = true;
+            removed[at + offset] = true;
+        }
+    }
+    padded
+        .iter()
+        .zip(&removed)
+        .skip(1)
+        .filter(|(_, removed)| !**removed)
+        .map(|(text, _)| (*text).to_owned())
+        .collect()
+}
+
 /// The parenthesised name callees in `texts[range]`: each name's index and
 /// how many parentheses enclose it.
 fn callee_sites(

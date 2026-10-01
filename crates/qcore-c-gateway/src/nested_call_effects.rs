@@ -456,6 +456,43 @@ impl<'f> Operands<'f> {
     }
 }
 
+/// Card CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the contract footprint of
+/// one direct call none of whose actuals holds a call, read exactly as [`read`]
+/// reads a call of the tree (its contract in force, each actual's cell, `&x`
+/// and array decays, a stored or removed resource's owner, an owned result's
+/// fresh identity). Its fresh cell, if any, is `Cell::Fresh(0)`: the
+/// elaborator keys it to its own call event. Every refusal of the reading (no
+/// contract, a container effect, a reallocated result, an arity mismatch, an
+/// indirect callee, a nested call) answers no footprint.
+pub(crate) fn call_footprint(node: &Value, facts: &dyn Facts) -> Result<Footprint, Refusal> {
+    let call = strip_parens(node);
+    if kind(call) != "CallExpr" {
+        return Err(Refusal::Form("not a call", "CG03"));
+    }
+    if children(call).iter().skip(1).any(holds_call) {
+        return Err(Refusal::Form("nested call", "CG05"));
+    }
+    let mut reader = Reader {
+        facts,
+        graph: EvalGraph::default(),
+        footprints: BTreeMap::new(),
+        bound: 0,
+        places: BTreeMap::new(),
+    };
+    let (read, _) = reader.call(call)?;
+    let mut footprint = reader.footprints.remove(&read.event).unwrap_or_default();
+    for cell in footprint
+        .reads
+        .iter_mut()
+        .chain(footprint.writes.iter_mut())
+    {
+        if let Cell::Fresh(_) = cell {
+            *cell = Cell::Fresh(0);
+        }
+    }
+    Ok(footprint)
+}
+
 /// The bound place name of the `index`-th bound call of a statement.
 pub(crate) fn bound_place(index: usize) -> String {
     format!("{NESTED_VALUE_PREFIX}{index}")

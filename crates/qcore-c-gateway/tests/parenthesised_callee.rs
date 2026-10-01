@@ -210,10 +210,16 @@ fn nested_parentheses_and_a_cast_to_void_are_normalised() {
             &format!("{prefix}{plain} }}"),
         );
         if parenthesised.starts_with("(void)") {
-            // The plain spelling's own refusal, kept exactly.
+            // Flipped by CG05-ELABORATOR-CALL-FOOTPRINTS (rule 11n): the
+            // plain spelling's refusal (`resource call with a formal embedded
+            // in an unmodeled expression`) is answered by the elaborator,
+            // whose call event is applied through the one application point,
+            // and both spellings are decided alike: the release is applied.
+            assert!(unsupported(subject(&run)).is_empty(), "{parenthesised}");
             assert_eq!(
-                unsupported(subject(&run)),
-                ["resource call with a formal embedded in an unmodeled expression"]
+                subject(&run).status,
+                AnalysisStatus::Safe,
+                "{parenthesised}"
             );
         } else {
             assert_eq!(
