@@ -302,16 +302,16 @@ ensures normal resource_kind(p, KIND);
 ensures normal resource_return_kind(KIND);
 ```
 
-`KIND` is exactly one of `descriptor`, `stream` and `directory`, each the kind of a pair this card declares; no kind is added without a declared use (an `FTS *` kind waits on a readable `fts_open`, and a library-handle kind on the return route modelling `return (T *)handle;`, card W43-DESCRIPTOR-RESOURCE-TRACKING §3). The **heap** kind is what a position with no kind clause means, and it is spelled only by that absence: writing `heap` rejects the module, so every meaning has one spelling. Every declaration written before this card therefore loads to exactly the contract it loaded to before, with every position heap. Kinds load onto `ResourceFunctionContract` as `parameter_kinds` (non-heap entries only) and `result_kind`, both omitted from the serialized form and from the diagnostic text when heap, so a contract without a kind is byte-identical in every artifact.
+`KIND` is exactly one of `descriptor`, `stream`, `directory`, `dynamic_library` and `regex`, each the kind of a pair a card declares; no kind is added without a declared use (an `FTS *` kind waits on a readable `fts_open`). Card CG25-RESOURCE-KINDS added `dynamic_library` (`dlopen`/`dlclose`, pointer-carried, failure value NULL), once the return route modelled `return (T *)handle;` (card W44-LEAK-PIN-AUDIT), and the in-place kind `regex` (`regcomp`/`regfree`, §C04.6.1). The **heap** kind is what a position with no kind clause means, and it is spelled only by that absence: writing `heap` rejects the module, so every meaning has one spelling. Every declaration written before this card therefore loads to exactly the contract it loaded to before, with every position heap. Kinds load onto `ResourceFunctionContract` as `parameter_kinds` (non-heap entries only) and `result_kind`, both omitted from the serialized form and from the diagnostic text when heap, so a contract without a kind is byte-identical in every artifact.
 
 **Placement.** A kind clause names a custody-bearing position:
 
 | Position | Admitted kinds |
 |---|---|
-| `resource_owned`, `resource_consumed`, `resource_released` parameter | every kind |
-| `resource_out` parameter | every pointer-carried kind (a descriptor has no out slot in this vocabulary) |
-| `resource_return_owned` result | every kind |
-| `resource_borrowed` parameter | none — a borrowed position touches no obligation |
+| `resource_owned`, `resource_consumed`, `resource_released` parameter | every kind (an in-place kind: `resource_released` only, §C04.6.1) |
+| `resource_out` parameter | every pointer-carried kind, and an in-place kind as its initialiser (§C04.6.1); a descriptor has no out slot in this vocabulary |
+| `resource_return_owned` result | every kind except an in-place one |
+| `resource_borrowed` parameter | none — a borrowed position touches no obligation — except an in-place kind's use (§C04.6.1) |
 | `resource_stored`, `resource_removed` parameter; `resource_return_reallocated`, a derived or a `none` result | none — the owner cascade and the replacement relation were specified for heap allocations |
 
 **Integer-carried identities and sentinel validity.** `descriptor` is carried by an integer: its position MUST be typed `i32`, and its failure value is the sentinel `-1`. Its validity is spelled `sentinel` (the position may carry `-1`) or `valid` (it never does), the counterpart of `nullable`/`nonnull`, which a descriptor position MUST NOT use; conversely `sentinel`/`valid` on a heap or pointer-kind position rejects the module. Every other kind is carried by an admitted pointer and keeps `nullable`/`nonnull`. This is the one relaxation of C04.1's pointer-only custody rule: a scalar carries custody exactly when its position declares the `descriptor` kind.
@@ -350,7 +350,30 @@ contract {
 
 **Versioning.** This is an addition to resource vocabulary version 1, exactly as the variadic data tail, the literal premise and the derived results were: the marker is unchanged, every module that loaded before loads to the same functions, and a loader that predates the clauses rejects a module using them as an unsupported predicate (`resource_kind`, `resource_return_kind`) or nullability (`sentinel`, `valid`) rather than misreading it. No new evidence version is minted: every verdict carries the exact module texts in `source_assumptions`, which name the declarations — and so the vocabulary — it rests on. The Lean model is `QCore.KindedCustody`.
 
-**Not in the vocabulary, deliberately.** A kinded stored/removed relation; a descriptor out slot (`pipe`, `socketpair` write an `int[2]`); a status-conditioned out slot (`getaddrinfo`'s list is valid on a zero return, which needs a status witness bound to the list); a command-dependent creator (`fcntl` creates a descriptor only for `F_DUPFD`/`F_DUPFD_CLOEXEC`, and one declaration carries one literal premise per parameter); a transfer that happens on success only (`fdopen` moves the descriptor into the stream only when it returns non-NULL); a pointer sentinel (`mmap`'s `MAP_FAILED`); a process stream released by `pclose`, not `fclose` (no audited unit calls `popen`). A library-handle kind (`dlopen`/`dlclose`) is also absent: its one corpus effect was a leak candidate refuted by reading, because the return route does not model `return (T *)handle;` as an escape (a pre-existing shape that reports the same false leak for a heap pointer), so the pair is withheld until that route is repaired.
+**Not in the vocabulary, deliberately.** A kinded stored/removed relation; a descriptor out slot (`pipe`, `socketpair` write an `int[2]`); a status-conditioned out slot (`getaddrinfo`'s list is valid on a zero return, which needs a status witness bound to the list); a command-dependent creator (`fcntl` creates a descriptor only for `F_DUPFD`/`F_DUPFD_CLOEXEC`, and one declaration carries one literal premise per parameter); a transfer that happens on success only (`fdopen` moves the descriptor into the stream only when it returns non-NULL); a pointer sentinel (`mmap`'s `MAP_FAILED`); a process stream released by `pclose`, not `fclose` (no audited unit calls `popen`). (The library-handle kind withheld here until the return route modelled `return (T *)handle;` was added by card CG25-RESOURCE-KINDS once card W44-LEAK-PIN-AUDIT repaired that route.)
+
+#### C04.6.1. In-place kinds
+
+Card CG25-RESOURCE-KINDS (gateway rule 11v). An **in-place** kind is initialised into storage the caller owns: the obligation lives in the object a pointer parameter designates, not in a returned pointer, and the initialising call reports failure only by its **status**. `regex` is the one in-place kind (`regcomp` compiles into the caller's `regex_t`, `regfree` frees what it allocated there). A kind's carrier is therefore one of three: a pointer (failure value NULL), an integer (`descriptor`, failure value `-1`) or caller storage (failure value a nonzero status).
+
+**Positions.** An in-place kind stands on exactly three positions, each on a `ptr<mut, u8>` (or, for a use, `ptr<const, u8>`) that names the object:
+
+| Clause pair | Meaning |
+|---|---|
+| `resource_out(p, nullable)` + `resource_kind(p, KIND)` | **initialise**: on a zero status the object is initialised and owes a finaliser; on a nonzero status nothing is owed |
+| `resource_released(p, nonnull)` + `resource_kind(p, KIND)` | **finalise**: the obligation is discharged |
+| `resource_borrowed(p)` + `resource_kind(p, KIND)` | **use**: the object is read or updated and its obligation is unchanged — the one kinded borrowed position |
+
+An initialiser's result MUST be `i32` with `resource_return_none()` (the status), it moves no other custody, and a declaration has at most one initialiser. `nonnull` on an initialiser (an infallible one), `nullable` on a finaliser, an owned, consumed, stored or removed in-place position, and an in-place result each reject the whole module. A kinded borrowed position of a non-in-place kind still rejects.
+
+**Semantics.** A consumer MUST apply all of the following:
+
+1. **The obligation is bound to one automatic object.** An in-place actual is `&NAME` for `NAME` one automatic, non-pointer, non-array object of the function; any other actual of an initialiser or finaliser is a refusal. A use whose actual names no tracked object keeps the plain borrowed reading.
+2. **The status is the sentinel.** The initialiser's status MUST be held by a plain, not address-taken name; it then witnesses the object until the name is written. A null test of the witness decides the object: the zero edge certifies the obligation, the nonzero edge removes it. An initialiser whose status no name holds (discarded, or consumed by the expression that tests it) is a refusal, and a finaliser before the status is decided is a refusal.
+3. **Tracked storage is custody, never data.** A statement that mentions a tracked object other than as a whole `&NAME` actual at an in-place position of its kind of a declared callee — a struct copy, `memset(&obj, …)` at an unkinded borrowed position, a member read — is a refusal.
+4. **Candidates** are those of §C04.6: a finaliser of another kind discharges nothing (`invalid_release` when it resolves), a second finaliser is `double_release`, a use after finalisation is `use_after_release`, and a certified object unfinalised at an exit is a `leak`.
+
+The Lean model is `QCore.ResourceKinds`.
 
 ### C04.7. Counted users
 
