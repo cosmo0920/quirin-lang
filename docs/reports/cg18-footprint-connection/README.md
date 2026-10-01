@@ -5,7 +5,7 @@ M26, W08), route G and the core model; gateway rule
 [11k](../../agents/gateway.md#constraint-11k). Lean: the CG18 section of
 `QCore.DisjointFootprint` ([`proof/QCore/DisjointFootprint.lean`](../../../proof/QCore/DisjointFootprint.lean),
 audited in `proof/AuditDisjointFootprint.lean`). Base `b59aaae2` (main with
-CG07). Absorbs `W43-INDIRECT-BYTE-STORE-REPRESENTATION-PREMISE`.
+CG07); the final main `436e0ee7` merged and re-measured (§3.1). Absorbs `W43-INDIRECT-BYTE-STORE-REPRESENTATION-PREMISE`.
 
 CG00 found that this card frees no corpus function; it is judged by what it
 proves and by making no `Safe` claim it cannot back. It frees none.
@@ -122,6 +122,38 @@ the members' own declarations, and the AFTER above is its build. The first
 BEFORE attempt was likewise stopped (main moved to `b59aaae2` during it) and
 kept as `private/cg18fc/discarded-before-killed-attempt`.
 
+### 3.1 Re-measured on main `436e0ee7` (the final tip)
+
+Main moved four times during the card (W48-CALLEE-CLOSURE-R3, CG14, CG15,
+CG19, CG09). The card merged `e93dbe4e` and measured it (0 moves, the same two
+functions, system and slice byte-identical, gate green: 7,108 passed;
+[identity](artifacts/identity-e93dbe4e.json), [gate exits](gate-e93dbe4e/)),
+then merged the final tip `436e0ee7` (`107fa2aa`), took a BEFORE on
+`436e0ee7` itself (binary `6bc9348f…`) and an AFTER on the merge (binary
+`94d7075d…`). A BEFORE taken on `fe9c5b48` (`d1288b20…`, 616 / 10 / 4,208)
+and its unfinished AFTER were stopped when main moved again and are not used.
+
+| Route | BEFORE `436e0ee7` | AFTER merge `107fa2aa` | Movement |
+|---|---|---|---|
+| Corpus | 625 / 10 / 4,199, `ac2d4e19…` (= main's figure) | 625 / 10 / 4,199, `8391ba75…` | **0 moves**; leaves change in the same 2 functions (unsupported −4, unknown_alias +4) |
+| System | 42 / 2 / 190, `63396983…` | byte-identical | 0 |
+| Tail-pause slice | 29 / 1 / 239 / 1 Pending, `4c4d5653…` | byte-identical | 0 |
+
+The member-pair consultations are the same ten (pair, decision) rows as on
+the base ([member-pairs-main.json](artifacts/member-pairs-main.json)): 5
+admitted, 5 cross-object refused. The movement relative to main is exactly
+the card's own; no landed card changed it ([identity](artifacts/identity-main.json),
+[comparison](artifacts/after-main-corpus.compare.json)).
+
+**Composition notes for the integrator.** The card constructs no
+`LegacyInstruction::IndirectScalarAccess` and matches none exhaustively, so
+CG12's `readback` field needs no edit here. The W08 composition
+(`qcore_core::footprint_mutex`) is separate from CG19's atomic route and its
+`event_order_represented`; neither reads the other. CG15's
+asynchronous-modification premise (rule 11h) is not restated: rule 11k names
+only the effective-type, `restrict`, byte-representation and allocator
+premises.
+
 ## 4. Axes (queue §4)
 
 | Axis | Covered | Refused |
@@ -208,28 +240,31 @@ no corpus population).
 
 ## 8. Records and gate
 
-Standing gate by [`scripts/gate.sh`](scripts/gate.sh) at `c4e5942b`, logs
-`private/cg18fc/gate` (worktree-private), exits in [`gate/`](gate/),
-summary in [`gate.json`](gate.json). Clang 21.1.8.
+The standing gate by [`scripts/gate.sh`](scripts/gate.sh), at the final-main
+merge `107fa2aa`; logs `private/cg18fc/gate-final` (worktree-private), exits
+in [`gate/`](gate/), summary in [`gate.json`](gate.json). Clang 21.1.8.
 
 | Step | Exit | Count |
 |---|---|---|
 | submodule update (`--init --recursive`) | 0 | — |
-| `python3 scripts/run_test_binaries.py` | 101, then **0** on the full re-run at `1d2ded8c` (`03c`) | 7,071 passed / 3 failed, then **7,074 passed / 0 failed** / 11 ignored (403 units, 416 summaries; `private/test-binaries/20260930T210140Z-3481004`) |
+| `python3 scripts/run_test_binaries.py` | 0 | **7,136 passed / 0 failed** / 11 ignored (407 units, 420 summaries; `private/test-binaries/20261001T003144Z-949205`) |
 | `cargo fmt --all -- --check` | 0 | — |
-| `cargo clippy --all-targets -- -D warnings` | 0, and 0 after the flip (`05b`) | — |
+| `cargo clippy --all-targets -- -D warnings` | 0 | — |
 | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | — |
-| `python3 scripts/check_lean_audits.py` | 0 | 256 audits |
+| `python3 scripts/check_lean_audits.py` | 0 | 260 audits |
 | `python3 -m unittest discover -s scripts/tests` | 0, and 0 after `build_matrix.py . --gate gate.json` (`09a` 0, `09b`) | 365 |
 | `python3 scripts/build_docs_index.py` | 0 | — |
 
-The first runner's three failures: CG13's two-unit control, which rule 11k
-admits (the deliberate flip of §5, made at `1d2ded8c`), and two
-timing-sensitive rows in crates the card does not touch
+Two earlier gates are kept. At `c4e5942b` (base `b59aaae2`) the first
+runner had 3 failures: CG13's two-unit control, which rule 11k admits (the
+deliberate flip of §5, made at `1d2ded8c`), and two timing-sensitive rows in
+crates the card does not touch
 (`checkpoint_cli::interrupted_run_preserves_completed_units_for_resume`,
 `cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets`,
-constraint 16), both green in the full re-run. `providers/` is unchanged, so
-the provider gate was not due.
+constraint 16); the full re-run passed 7,074 / 0 ([exits](gate-b59aaae2/), `03c`).
+At the `e93dbe4e` merge every exit was 0, 7,108 passed
+([exits](gate-e93dbe4e/)). `providers/` is unchanged, so the provider gate
+was not due.
 
 ## 9. Follow-ups
 
@@ -238,6 +273,6 @@ the provider gate was not due.
 - **Registered:** `CG18-CROSS-OBJECT-PATH-PAIRS` (5 corpus functions, 0 system,
   0 slice) and `CG18-FOOTPRINT-CONSUMERS` (CG12's type view, a byte-safety
   property, C mutex evidence, the flow's generations).
-- Scripts: [`scripts/`](scripts/) (`measure.sh`, `corpus.sh`, `compare.py`,
+- Scripts: [`scripts/`](scripts/) (`measure.sh`, `corpus.sh`, `compare.py`, `member_pairs.py`,
   `identity.py`, `update_ledger.py`, `gate.sh`); artifacts in
   [`artifacts/`](artifacts/).

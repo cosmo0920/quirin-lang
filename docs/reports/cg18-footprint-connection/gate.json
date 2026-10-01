@@ -1,6 +1,6 @@
 {
-  "note": "CG18-FOOTPRINT-CONNECTION card gate at tip c4e5942b (base b59aaae2), script docs/reports/cg18-footprint-connection/scripts/gate.sh, logs private/cg18fc/gate of this worktree: submodule 0; run_test_binaries.py 403 units, 416 summaries, 7,071 passed, 3 failed, 11 ignored, exit 101 (03-tests): union_bitfield_places::unsequenced_stores_to_two_bitfields_are_refused was CG13's control pinning a two-unit bit-field pair refused, which rule 11k admits, a deliberate flip made at 1d2ded8c; qcore-audit checkpoint_cli::interrupted_run_preserves_completed_units_for_resume and qcore-compiler cycle20_verifier_plugins::vp04_vp07_vp08_process_lifecycle_and_payload_budgets are timing-sensitive rows (constraint 16) in crates this card does not touch; the full runner re-run at 1d2ded8c passed 7,074, 0 failed, 11 ignored (03c, exit 0, private/test-binaries/20260930T210140Z-3481004); fmt 0; clippy 0 (05b re-run after the flip, 0); both reevaluation probes exit 0; check_lean_audits.py 256 audits passed (AuditDisjointFootprint.lean extended by 21 theorems, no new audit file); python tests 365, exit 0; docs index 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE b59aaae2 8b9e4047 608/10/4,216; AFTER a03ef0d4 41c7cefd 608/10/4,216 (no move; leaves change in 2 functions); system 41/2/191 and tail-pause slice 28/1/240/1 Pending byte-identical. Exits in docs/reports/cg18-footprint-connection/gate/.",
-  "workspace_tests": 7074,
+  "note": "CG18-FOOTPRINT-CONNECTION card gate at the final-main merge 107fa2aa (base b59aaae2, main 436e0ee7 merged), script docs/reports/cg18-footprint-connection/scripts/gate.sh, logs private/cg18fc/gate-final of this worktree: submodule 0; run_test_binaries.py 407 units, 420 summaries, 7,136 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T003144Z-949205); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 260 audits passed (AuditDisjointFootprint.lean extended by 21 theorems, no new audit file); python tests 365, exit 0, and exit 0 again after build_matrix.py --gate this file (09b); docs index 0. Earlier gates, kept: at c4e5942b (base b59aaae2) 7,071 passed / 3 failed then 7,074 / 0 on the full re-run after the deliberate flip of CG13's two-unit control (gate-b59aaae2/03c), and at the e93dbe4e merge 6d79386f 7,108 / 0 with every exit 0 (gate-e93dbe4e/). providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): on the base BEFORE b59aaae2 8b9e4047 608/10/4,216, AFTER a03ef0d4 41c7cefd (no move); on the final main BEFORE 436e0ee7 ac2d4e19 625/10/4,199, AFTER 107fa2aa 8391ba75 625/10/4,199 (no move; leaves change in 2 functions); system 42/2/190 and tail-pause slice 29/1/239/1 Pending byte-identical. Exits in docs/reports/cg18-footprint-connection/gate/.",
+  "workspace_tests": 7136,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "reevaluation_probe_exit": 0,
@@ -8,6 +8,6 @@
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
   "standing_gate": "complete",
-  "lean_audits": 256,
+  "lean_audits": 260,
   "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
 }

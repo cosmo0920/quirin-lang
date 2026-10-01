@@ -3080,6 +3080,9 @@ own anchor here.
     `rd_kafka_mock_partition_pidstate_get`, whose statements now reach the
     flow as `unknown_alias` leaves), 5 cross-object pairs refused
     (`CG18-CROSS-OBJECT-PATH-PAIRS`); no new premise in a published verdict.
+    Re-measured on main `436e0ee7` (625 / 10 / 4,199, `ac2d4e19…` →
+    `8391ba75…`; system 42 / 2 / 190 and slice 29 / 1 / 239 / 1 Pending
+    byte-identical): the same pairs, functions and leaves.
     `QCore.DisjointFootprint`'s CG18
     section (`without_the_premise_nothing_changes`,
     `cross_allocation_disjointness_needs_the_premise`,
