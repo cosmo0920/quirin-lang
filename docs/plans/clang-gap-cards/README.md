@@ -549,6 +549,18 @@ CG22.
   - *Budgets.* Budget exhaustion is reported as coverage. It is never Safe.
   - *Absorbs:* W45-COUNTED-USERS-LOOPS, W43-COLLECTION-LOOP-SHAPES and
     JOINED-PROVENANCE-CYCLE-SITES. It re-reads C03-NFR-REACH.
+  - *Status (wave 48, round 10).* Landed on route G (gateway rule 11x): the
+    counted-user pass summarizes a loop none of whose tokens performs a
+    counted-user operation (W45-COUNTED-USERS-LOOPS retired); a recursive
+    component no other route publishes may carry a signed threshold rank
+    (`n <= c` / `n > c`, actuals `n - k`, several ranks, mutual); every
+    budget's exhaustion is tested non-`Safe`. **0** corpus moves (byte
+    identical), as predicted: no corpus, system or slice function carries the
+    counted-user loop refusal, and the recursive components refuse at the
+    containment gate first. W43-COLLECTION-LOOP-SHAPES and
+    JOINED-PROVENANCE-CYCLE-SITES amended, unchanged. Residual:
+    `CG27-LOOP-RECURSION-RESIDUALS`.
+    [Report](../../reports/cg27-loops-recursion-budgets/README.md).
 - **CG28: weak-memory events.**
   - *Events.* RMW, exchange and fetch_*; compare-exchange success and failure
     (including weak spurious failure); thread and signal fences.

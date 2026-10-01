@@ -127,7 +127,26 @@ every leaf in that family):
   heap measure; `flush_next`'s only non-`Safe` leaf is that call (a residual).
 - **Budgets:** no function in any run exhausts a budget.
 
-__OUTCOME__
+**Outcome against the prediction: met exactly.** AFTER (binary `95c13b1f…`,
+built at `2d6306a1`, measured with `SKIP_BUILD=1 BINARY=…`):
+
+| route | BEFORE | AFTER | moves |
+|---|---|---|---|
+| corpus `66910c10` | 629 / 10 / 4,195, `3d53a5d0…` | **byte-identical** (`3d53a5d0…`; the contracts, chunk-contracts, source-effects and Monkey-source artifacts too) | 0 |
+| system | 44 / 2 / 188, `4e145193…` | **byte-identical** | 0 |
+| tail-pause slice | 29 / 1 / 239 / 1 P, `1bdf3a9c…` | **byte-identical** | 0 |
+
+No function moved and no same-status function changed a leaf, so there is no
+correction, no added leak and no added violation to classify. The corpus
+typed-path parity streams (466,022 rows each) are identical as multisets once
+Clang's AST node addresses, which differ between any two runs, are normalised
+(`scripts/parity_diff.py`). Why nothing moved, by the census above: no function
+in any route carries the counted-user loop refusal, and every recursive
+component that reaches the derivation refuses at an earlier gate than the rank
+(§7, C03-NFR-REACH). The card's reach is its tests: what it admits is a
+capability for code the corpus does not contain in an otherwise admissible
+form. Artifacts: [`artifacts/`](artifacts/) (`digests.txt`, the three
+`*-comparison.json`, the censuses, `corpus-parity-diff.txt`).
 
 ## 5. Tests and Lean
 

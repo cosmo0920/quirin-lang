@@ -1,0 +1,31 @@
+{
+ "functions": {
+  "loop": 12
+ },
+ "functions_blocked_only_by_family": {},
+ "leaves": {
+  "loop": 16
+ },
+ "descriptions": {
+  "loop: unmodeled call, aggregate or indirect access in loop condition": 9,
+  "loop: loop re-acquisition: an earlier generation that may be live is still held": 4,
+  "loop: unmodeled call, aggregate or indirect access in for-loop condition": 3
+ },
+ "blocked_only_by_family": {},
+ "members": {
+  "loop": [
+   "plugins/in_tail/tail_dockermode.c::modify_json_cond (Unknown)",
+   "plugins/in_tail/tail_file.c::flb_tail_file_reclaim (Unknown)",
+   "plugins/in_tail/tail_file.c::flb_tail_repack_map (Unknown)",
+   "plugins/in_tail/tail_file.c::process_content (Unknown)",
+   "plugins/in_tail/tail_file.c::record_append_custom_keys (Unknown)",
+   "plugins/in_tail/tail_multiline.c::flb_tail_mult_pack_line_body (Unknown)",
+   "src/flb_input.c::flb_input_new (Unknown)",
+   "src/flb_input.c::flb_input_plugin_property_check (Unknown)",
+   "src/flb_lib.c::flb_filter_set (Unknown)",
+   "src/flb_lib.c::flb_input_set (Unknown)",
+   "src/flb_lib.c::flb_output_set (Unknown)",
+   "src/flb_lib.c::flb_service_set (Unknown)"
+  ]
+ }
+}

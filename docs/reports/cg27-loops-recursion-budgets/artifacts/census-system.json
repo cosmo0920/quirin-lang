@@ -1,0 +1,43 @@
+{
+ "functions": {
+  "loop": 6,
+  "recursion": 2
+ },
+ "functions_blocked_only_by_family": {
+  "recursion": 1
+ },
+ "leaves": {
+  "loop": 8,
+  "recursion": 2
+ },
+ "descriptions": {
+  "loop: loop re-acquisition: an earlier generation that may be live is still held": 6,
+  "loop: unmodeled call, aggregate or indirect access in loop condition": 2,
+  "recursion: call to uncontracted function `…`": 2
+ },
+ "blocked_only_by_family": {
+  "recursion": [
+   {
+    "function": "src/flb_output.c::flb_output_task_singleplex_flush_next",
+    "status": "Unknown",
+    "leaves": [
+     "call to uncontracted function `flb_output_task_queue_flush_one`"
+    ]
+   }
+  ]
+ },
+ "members": {
+  "loop": [
+   "plugins/in_storage_backlog/sb.c::cb_queue_chunks (Unknown)",
+   "plugins/in_storage_backlog/sb.c::sb_allocate_backlogs (Unknown)",
+   "plugins/in_storage_backlog/sb.c::sb_destroy_backlogs (Unknown)",
+   "src/flb_input_chunk.c::flb_input_chunk_ring_buffer_cleanup (Unknown)",
+   "src/flb_output.c::flb_output_plugin_property_check (Unknown)",
+   "src/flb_task.c::flb_task_create (Unknown)"
+  ],
+  "recursion": [
+   "src/flb_output.c::flb_output_task_queue_flush_one (Unknown)",
+   "src/flb_output.c::flb_output_task_singleplex_flush_next (Unknown)"
+  ]
+ }
+}

@@ -3855,7 +3855,14 @@ own anchor here.
     28); the counted-user pass's existing premises (UC-FRAME; values change
     only by a syntactic write, now forgotten for every name a loop spells).
     Measured (corpus `66910c10`, system, tail-pause slice, base
-    `b6a3dc42`): __MEASURED__ `QCore.LoopInvariants` (`Induction`:
+    `b6a3dc42`): all three **byte-identical** (629 / 10 / 4,195
+    `3d53a5d0…`; 44 / 2 / 188; 29 / 1 / 239 / 1 Pending), as predicted:
+    no function on any route carries the counted-user loop refusal (the
+    retry functions are blocked earlier by unattributed operations), and
+    the recursive components refuse at the containment gate before any
+    rank is read; no budget is exhausted on any route. Four neutral-route
+    pins of an effectful `if (n > 0)` recursion were re-pinned to the
+    unranked `if (n)`. `QCore.LoopInvariants` (`Induction`:
     `invariant_holds_after_every_iteration`, `a_broken_transition_is_refused`,
     `postfixpoint_bounds_every_iterate`; `CountedLoop`:
     `an_admitted_loop_preserves_delta`, `an_admitted_loop_preserves_pending`,
