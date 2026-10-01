@@ -269,7 +269,26 @@ the function's fold at least `Unknown`; non-vacuity).
 
 ## 8. Gate
 
-__GATE__
+Standing gate at tip `26d105af` (on main `f0bbc0eb`), `scripts/gate.sh` under
+the shared heavy-step lock; exits in [`gate/`](gate/), record in
+[`gate.json`](gate.json), logs in this worktree's `private/cg27lrb-gate/`:
+
+| step | exit | count |
+|---|---|---|
+| `git submodule update --init --recursive` | 0 | |
+| `cargo check --workspace --all-targets` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `scripts/run_test_binaries.py --jobs 4` | 0 | 418 units, 431 summaries, **7,280 passed**, 0 failed, 11 ignored (`private/test-binaries/20261001T193910Z-255152`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `scripts/check_lean_audits.py` | 0 | **268** audits (267 on main + `AuditLoopInvariants.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then 0 | 365; the one expected failure (derived `lean_audits` 267 → 268) cleared by `build_matrix.py . --gate gate.json` |
+| `scripts/build_docs_index.py --check` | 0 | |
+
+`providers/` is unchanged, so the provider gate is not due. Three earlier
+test-runner attempts on base `b6a3dc42` are discarded as evidence: two met
+`ENOSPC` on the shared disk (rustc and `ld` I/O failures), the third ran on test
+binaries the disk exhaustion had damaged (many units exited 101 with no output).
 
 ## 9. Reproduction
 

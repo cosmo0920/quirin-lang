@@ -1,0 +1,13 @@
+{
+  "note": "CG27-LOOPS-RECURSION-BUDGETS card gate at tip 26d105af (base b6a3dc42 rebased onto main 8e8ed41f, 06ad81cb, b934c560, then f0bbc0eb), script docs/reports/cg27-loops-recursion-budgets/scripts/gate.sh under the shared flock, logs private/cg27lrb-gate of this worktree: submodule 0; cargo check --workspace --all-targets 0; fmt 0; clippy --locked 0; run_test_binaries.py 418 units, 431 summaries, 7,280 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T193910Z-255152); both reevaluation probes exit 0; check_lean_audits.py 268 audits passed (267 on main + AuditLoopInvariants.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 267 -> 268, test_build_matrix_sections), then run again after build_matrix.py . --gate this file (09a, 09b); docs index 0. Three earlier test-runner attempts on base b6a3dc42 are discarded: two hit ENOSPC on the shared disk, the third ran on binaries damaged by it. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit) on main b6a3dc42: BEFORE 3d53a5d0 629/10/4,195, AFTER byte-identical; system 44/2/188 and tail-pause slice 29/1/239/1 Pending byte-identical. Not re-measured on the rebased tree (CG25 moved main's corpus to 630/10/4,194; CG26 to its own figures). Exits in docs/reports/cg27-loops-recursion-budgets/gate/.",
+  "workspace_tests": 7280,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 268,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
