@@ -127,6 +127,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg21-call-exits-and-boundaries](cg21-call-exits-and-boundaries/README.md) | CG21-CALL-EXITS-AND-BOUNDARIES |
 
+| [cg23-relational-postconditions](cg23-relational-postconditions/README.md) | CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions and exit-specific summaries |
+
 | [cg25-resource-kinds](cg25-resource-kinds/README.md) | CG25-RESOURCE-KINDS: a library-handle kind and an in-place kind |
 
 | [cg26-variadics](cg26-variadics/README.md) | CG26-VARIADICS: the `va_list` protocol and trailing actuals per position |

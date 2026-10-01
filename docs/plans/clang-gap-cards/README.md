@@ -524,6 +524,15 @@ CG22.
     W47-SUMMARY-ARGUMENT-CONDITIONAL-NULL,
     W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED, W43-DESCRIPTOR-REFUSED-SHAPES
     and CJSON-DELETE-SIBLING-CHAIN.
+  - *Status (wave 48, round 9).* Landed (gateway rule 11r, contract spec
+    §C04.13): return-code dispositions, instantiated by an `if` test of the
+    call's value (or of the value stored right before), untested calls
+    refused; exit-specific summaries for literal-returning `int` helpers; a
+    declaration its body contradicts withdrawn. Corpus, system and slice
+    byte-identical (no corpus declaration; the 105 candidate helpers are
+    Unknown themselves). Absorbed entries amended, none discharged; residuals
+    `CG23-EXIT-SPECIFIC-BLOCKED-HELPERS` and `CG23-DISPOSITION-TEST-POSITIONS`.
+    [Report](../../reports/cg23-relational-postconditions/README.md).
 - **CG24: alias, extent and frame vocabulary.**
   - *Boundary with CG16.* The minimal reviewed single-base index/extent
     vocabulary is specified in C09.1 and assigned to CG16; this card extends
