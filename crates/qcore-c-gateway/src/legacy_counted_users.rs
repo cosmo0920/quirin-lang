@@ -35,9 +35,12 @@
 //!
 //! Every path of a body is enumerated (branches whose condition this pass
 //! decides are pruned: a comparison of a stored call result or of a formal a
-//! literal premise fixes). A loop, `switch`, `goto` or label leaves every clause
-//! of the function undecided. At each exit the net count of every tracked
-//! formal is compared with the clauses:
+//! literal premise fixes). A `switch`, `goto` or label leaves every clause of
+//! the function undecided. A loop does too, unless card CG27's loop summary
+//! ([`loops`], gateway rule 11x) checks that no token of it performs a
+//! counted-user operation, in which case it leaves every count as it found
+//! it. At each exit the net count of every tracked formal is compared with the
+//! clauses:
 //!
 //! * a known count that contradicts a clause on an exit that definitely
 //!   returns the clause's value **refutes** it: a provisional `Unsafe`
@@ -64,6 +67,11 @@ use super::{
     LegacyDiagnostic, LegacyDiagnosticKind, LegacyFunctionSummary, Token, find_function_body,
     function_parameters, is_identifier, literal_premise, matching,
 };
+
+/// Card **CG27-LOOPS-RECURSION-BUDGETS** (gateway rule 11x): the loop
+/// summary whose invariant is that every count stays as the loop found it.
+#[path = "legacy_counted_loops.rs"]
+mod loops;
 
 /// The per-clause result the audit report publishes.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -217,6 +225,10 @@ enum Stmt {
         line: usize,
     },
     Expression((usize, usize)),
+    /// Card CG27: a `while`, `for` or `do` (other than `do … while (0)`)
+    /// whose extent was read. The walker summarizes it only when [`loops`]
+    /// checks its invariant; otherwise it is refused as before.
+    Loop((usize, usize)),
     Unsupported(String),
 }
 
@@ -980,10 +992,10 @@ fn parse_statement(texts: &[&str], start: usize, end: usize) -> (Stmt, usize) {
             if texts.get(next..next + 5) == Some(&["while", "(", "0", ")", ";"][..]) {
                 (body, next + 5)
             } else {
-                (Stmt::Unsupported("a loop".into()), end)
+                loop_statement(texts, start, end)
             }
         }
-        "while" | "for" => (Stmt::Unsupported("a loop".into()), end),
+        "while" | "for" => loop_statement(texts, start, end),
         "switch" => (Stmt::Unsupported("a `switch`".into()), end),
         "goto" | "case" | "default" => (Stmt::Unsupported("a jump or label".into()), end),
         "break" | "continue" => (Stmt::Unsupported("a jump or label".into()), end),
@@ -994,6 +1006,15 @@ fn parse_statement(texts: &[&str], start: usize, end: usize) -> (Stmt, usize) {
             let stop = statement_end(texts, start, end);
             (Stmt::Expression((start, stop)), stop)
         }
+    }
+}
+
+/// Card CG27: a loop statement whose extent is read, or the pre-existing
+/// refusal when it is not.
+fn loop_statement(texts: &[&str], start: usize, end: usize) -> (Stmt, usize) {
+    match loops::statement_extent(texts, start, end) {
+        Some(stop) => (Stmt::Loop((start, stop)), stop),
+        None => (Stmt::Unsupported("a loop".into()), end),
     }
 }
 
@@ -1066,6 +1087,26 @@ impl Walker<'_> {
                 ));
                 Vec::new()
             }
+            // Card CG27 (rule 11x): a loop whose every token keeps the counts
+            // as it found them is summarized by the identity on the counts,
+            // forgetting the values of the names it spells; any other loop is
+            // refused with the pre-existing wording, never assumed.
+            Stmt::Loop(range) => match loops::neutral_loop(self.unit, self.texts, *range) {
+                Ok(names) => states
+                    .into_iter()
+                    .map(|mut state| {
+                        for name in &names {
+                            state.values.remove(name);
+                        }
+                        state
+                    })
+                    .collect(),
+                Err(_) => {
+                    *abandoned =
+                        Some("the body contains a loop, which this pass does not model".into());
+                    Vec::new()
+                }
+            },
             Stmt::Expression(range) => states
                 .into_iter()
                 .flat_map(|state| {
@@ -1823,10 +1864,15 @@ mod tests {
                 ..
             }
         ));
+        // Card CG27: a loop whose extent is read is a `Loop` for the walker
+        // to summarize or refuse; an unreadable one keeps the refusal.
         let texts = words("do { f ( t ) ; } while ( 0 ) ; for ( ; ; ) ;");
         let statements = parse_block(&texts, 0, texts.len());
         assert!(matches!(statements[0], Stmt::Block(_)));
-        assert!(matches!(statements[1], Stmt::Unsupported(_)));
+        assert!(matches!(statements[1], Stmt::Loop((13, 19))));
+        let texts = words("while ( x ) { f ( t ) ;");
+        let statements = parse_block(&texts, 0, texts.len());
+        assert!(matches!(statements[0], Stmt::Unsupported(_)));
     }
 
     #[test]

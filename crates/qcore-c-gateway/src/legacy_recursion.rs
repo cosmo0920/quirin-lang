@@ -2,6 +2,12 @@
 //! abstracted; source certificates and all resource effects remain unchanged.
 use super::*;
 
+/// Card **CG27-LOOPS-RECURSION-BUDGETS** (gateway rule 11x): the signed
+/// threshold rank, consulted only for a component this module's own
+/// [`prepare`] refuses.
+#[path = "legacy_signed_rank.rs"]
+pub(crate) mod signed_rank;
+
 pub(crate) struct ContextFunction {
     pub(crate) parameters: Vec<Option<String>>,
     pub(crate) control_index: usize,
@@ -9,7 +15,23 @@ pub(crate) struct ContextFunction {
     unsigned: bool,
     allowed_control: BTreeSet<usize>,
     countdowns: BTreeSet<usize>,
+    /// Card CG27 (rule 11x): the token range `start -> (length, true in the
+    /// base context)` of each checked sign guard on the control. Empty on the
+    /// zero/nonzero route, whose guards the CFG already reads as null tests.
+    guards: BTreeMap<usize, (usize, bool)>,
     pub(crate) dependencies: BTreeSet<String>,
+}
+
+/// The checked signature of one component member: its formals, their type
+/// words, the single integer control and the body's braces. Shared by the
+/// zero/nonzero route and the signed threshold route (card CG27).
+pub(crate) struct MemberHeader {
+    pub(crate) parameters: Vec<Option<String>>,
+    pub(crate) types: Vec<Vec<String>>,
+    pub(crate) control_index: usize,
+    pub(crate) control: String,
+    pub(crate) body: usize,
+    pub(crate) end: usize,
 }
 
 // Deliberately small ABI grammar: explicit built-in integer controls and flat
@@ -85,109 +107,134 @@ fn parameter_types(tokens: &[Token]) -> Option<Vec<Vec<String>>> {
         .collect()
 }
 
+/// The signature checks every ranked route shares: one built-in integer
+/// control, every other formal a flat pointer, and every visible top-level
+/// prototype agreeing with the definition. Loop and jump keywords anywhere in
+/// the body refuse.
+pub(crate) fn member_header(tokens: &[Token], function: &str) -> Option<MemberHeader> {
+    let (body, _) = find_function_body(tokens, function)?;
+    let end = matching(tokens, body, "{", "}")?;
+    let name_index = (0..body).rev().find(|&i| {
+        tokens[i].text == *function && tokens.get(i + 1).is_some_and(|t| t.text == "(")
+    })?;
+    let close = matching(tokens, name_index + 1, "(", ")")?;
+    let types = parameter_types(&tokens[name_index + 2..close])?;
+    let parameters = function_parameters(tokens, function)?;
+    let controls = types
+        .iter()
+        .enumerate()
+        .filter(|(_, words)| builtin_integer(words))
+        .map(|(i, _)| i)
+        .collect::<Vec<_>>();
+    if controls.len() != 1
+        || types
+            .iter()
+            .enumerate()
+            .any(|(i, words)| i != controls[0] && !words.contains(&"*".to_owned()))
+    {
+        return None;
+    }
+    let control_index = controls[0];
+    let control = parameters[control_index].clone()?;
+    // All visible top-level prototypes must agree with the definition. C11
+    // checks this too; the reduced token entry point needs its own guard.
+    let mut depth = 0usize;
+    let mut declaration_start = 0usize;
+    let mut signature = None;
+    for i in 0..tokens.len() {
+        if depth == 0 && tokens[i].text == *function {
+            if tokens.get(i + 1)?.text != "(" {
+                return None;
+            }
+            let last = matching(tokens, i + 1, "(", ")")?;
+            if !matches!(tokens.get(last + 1)?.text.as_str(), ";" | "{")
+                || parameter_types(&tokens[i + 2..last])? != types
+            {
+                return None;
+            }
+            let returns = tokens[declaration_start..i]
+                .iter()
+                .filter(|t| !matches!(t.text.as_str(), "extern" | "static" | "inline"))
+                .map(|t| t.text.clone())
+                .collect::<Vec<_>>();
+            if returns.is_empty()
+                || returns.iter().any(|t| {
+                    !matches!(
+                        t.as_str(),
+                        "void"
+                            | "*"
+                            | "int"
+                            | "char"
+                            | "long"
+                            | "short"
+                            | "unsigned"
+                            | "signed"
+                            | "const"
+                    )
+                })
+            {
+                return None;
+            }
+            if signature.as_ref().is_some_and(|s| *s != returns) {
+                return None;
+            }
+            signature = Some(returns);
+        }
+        match tokens[i].text.as_str() {
+            "{" => depth += 1,
+            "}" => {
+                depth = depth.checked_sub(1)?;
+                if depth == 0 {
+                    declaration_start = i + 1;
+                }
+            }
+            ";" if depth == 0 => declaration_start = i + 1,
+            _ => {}
+        }
+    }
+    if (body + 1..end).any(|i| {
+        matches!(
+            tokens[i].text.as_str(),
+            "while"
+                | "for"
+                | "do"
+                | "switch"
+                | "goto"
+                | "case"
+                | "default"
+                | "break"
+                | "continue"
+                | ":"
+        )
+    }) {
+        return None;
+    }
+    Some(MemberHeader {
+        parameters,
+        types,
+        control_index,
+        control,
+        body,
+        end,
+    })
+}
+
 pub(crate) fn prepare(
     tokens: &[Token],
     component: &[String],
 ) -> Option<BTreeMap<String, ContextFunction>> {
     let mut result = BTreeMap::new();
     for function in component {
-        let (body, _) = find_function_body(tokens, function)?;
-        let end = matching(tokens, body, "{", "}")?;
-        let name_index = (0..body).rev().find(|&i| {
-            tokens[i].text == *function && tokens.get(i + 1).is_some_and(|t| t.text == "(")
-        })?;
-        let close = matching(tokens, name_index + 1, "(", ")")?;
-        let types = parameter_types(&tokens[name_index + 2..close])?;
-        let parameters = function_parameters(tokens, function)?;
-        let controls = types
-            .iter()
-            .enumerate()
-            .filter(|(_, words)| builtin_integer(words))
-            .map(|(i, _)| i)
-            .collect::<Vec<_>>();
-        if controls.len() != 1
-            || types
-                .iter()
-                .enumerate()
-                .any(|(i, words)| i != controls[0] && !words.contains(&"*".to_owned()))
-        {
-            return None;
-        }
-        let control_index = controls[0];
-        let control = parameters[control_index].clone()?;
-        // All visible top-level prototypes must agree with the definition. C11
-        // checks this too; the reduced token entry point needs its own guard.
-        let mut depth = 0usize;
-        let mut declaration_start = 0usize;
-        let mut signature = None;
-        for i in 0..tokens.len() {
-            if depth == 0 && tokens[i].text == *function {
-                if tokens.get(i + 1)?.text != "(" {
-                    return None;
-                }
-                let last = matching(tokens, i + 1, "(", ")")?;
-                if !matches!(tokens.get(last + 1)?.text.as_str(), ";" | "{")
-                    || parameter_types(&tokens[i + 2..last])? != types
-                {
-                    return None;
-                }
-                let returns = tokens[declaration_start..i]
-                    .iter()
-                    .filter(|t| !matches!(t.text.as_str(), "extern" | "static" | "inline"))
-                    .map(|t| t.text.clone())
-                    .collect::<Vec<_>>();
-                if returns.is_empty()
-                    || returns.iter().any(|t| {
-                        !matches!(
-                            t.as_str(),
-                            "void"
-                                | "*"
-                                | "int"
-                                | "char"
-                                | "long"
-                                | "short"
-                                | "unsigned"
-                                | "signed"
-                                | "const"
-                        )
-                    })
-                {
-                    return None;
-                }
-                if signature.as_ref().is_some_and(|s| *s != returns) {
-                    return None;
-                }
-                signature = Some(returns);
-            }
-            match tokens[i].text.as_str() {
-                "{" => depth += 1,
-                "}" => {
-                    depth = depth.checked_sub(1)?;
-                    if depth == 0 {
-                        declaration_start = i + 1;
-                    }
-                }
-                ";" if depth == 0 => declaration_start = i + 1,
-                _ => {}
-            }
-        }
+        let MemberHeader {
+            parameters,
+            types,
+            control_index,
+            control,
+            body,
+            end,
+        } = member_header(tokens, function)?;
         let mut allowed = BTreeSet::new();
         for i in body + 1..end {
-            if matches!(
-                tokens[i].text.as_str(),
-                "while"
-                    | "for"
-                    | "do"
-                    | "switch"
-                    | "goto"
-                    | "case"
-                    | "default"
-                    | "break"
-                    | "continue"
-                    | ":"
-            ) {
-                return None;
-            }
             if tokens[i].text == "if" {
                 if tokens.get(i + 1)?.text != "(" {
                     return None;
@@ -219,6 +266,7 @@ pub(crate) fn prepare(
                 unsigned: types[control_index].iter().any(|word| word == "unsigned"),
                 allowed_control: allowed,
                 countdowns: BTreeSet::new(),
+                guards: BTreeMap::new(),
                 dependencies: BTreeSet::new(),
             },
         );
@@ -327,7 +375,23 @@ pub(crate) fn contextual_cfg_under(
     let mut abstracted = Vec::with_capacity(tokens.len());
     let mut index = 0;
     while index < tokens.len() {
-        if descriptor.countdowns.contains(&index) {
+        // Card CG27 (rule 11x): a checked sign guard is respelled as the null
+        // test whose truth agrees with it in each context (`CONTROL == 0` is
+        // true exactly in the base context), so the selection below decides
+        // it. The original guard stays in the certificate source.
+        if let Some(&(length, true_in_base)) = descriptor.guards.get(&index) {
+            let line = tokens[index].line;
+            let spelled: [&str; 4] = if true_in_base {
+                [descriptor.control.as_str(), "=", "=", "0"]
+            } else {
+                [descriptor.control.as_str(), "!", "=", "0"]
+            };
+            abstracted.extend(spelled.iter().map(|text| Token {
+                text: (*text).to_owned(),
+                line,
+            }));
+            index += length;
+        } else if descriptor.countdowns.contains(&index) {
             abstracted.push(Token {
                 text: "0".to_owned(),
                 line: tokens[index].line,

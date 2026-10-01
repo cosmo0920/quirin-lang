@@ -214,13 +214,17 @@ fn depth_neutral() -> String {
 /// here, is the same shape with an effect in it: the neutral candidate is
 /// refused, no candidate above it is ever seeded, and the component and its
 /// callers stay `Unknown`.
+///
+/// Card CG27-LOOPS-RECURSION-BUDGETS (gateway rule 11x) re-pinned the guard:
+/// `if (n > 0)` now carries a signed threshold rank and its component is
+/// published by that route. The unranked `if (n)` keeps the probe's shape.
 #[test]
 fn undeclared_neutral_recursion_leaves_the_component_and_its_callers_unknown() {
     if !clang_available() {
         return;
     }
     let effectful =
-        "void depth(void *p, int n) { if (n > 0) { depth(p, n - 1); return; } q_transfer(p); }";
+        "void depth(void *p, int n) { if (n) { depth(p, n - 1); return; } q_transfer(p); }";
     let probe = run(&format!("{effectful}\n{CALLER}"), None);
     assert_eq!(probe.entry, AnalysisStatus::Unknown);
     assert_eq!(probe.status("depth"), AnalysisStatus::Unknown);

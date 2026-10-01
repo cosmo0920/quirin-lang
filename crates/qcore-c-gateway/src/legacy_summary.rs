@@ -98,7 +98,14 @@
 //! over concrete natural counter values (including unsigned width conversion).
 //! Only those proved scalar actuals are abstracted in the resource CFG. Equal contracts
 //! for both contexts are rechecked over a disjoint combined CFG before they
-//! become caller contracts. Declared SCCs, unsupported control syntax, zero
+//! become caller contracts. Card CG27-LOOPS-RECURSION-BUDGETS (gateway rule
+//! 11x) adds the signed threshold rank, consulted *last*, only for a component
+//! every route above and the neutral route below published nothing for: one
+//! `int`-or-wider signed control, sign guards `n <= c` / `n > c` at one literal
+//! threshold, and recursive actuals `n - k` (literal `1 <= k <= 1024`, several
+//! ranks at once) or `0`, validated by the same base/step discipline over the
+//! rank `max(n - c, 0)` ([`crate::legacy_c::recursion::signed_rank`]).
+//! Declared SCCs, unsupported control syntax, zero
 //! cycles and general recursion remain outside this contextual route. This is
 //! well-founded ranked validation, not a coinductive assumed contract or a general
 //! termination proof. Unreachable recursive edges may already validate on the
@@ -301,9 +308,12 @@ pub(crate) fn derive_custody_summaries(
             && !pending.is_empty()
             && component.iter().all(|n| contracts.contract(n).is_none())
         {
-            if let Some(contexts) =
-                infer_contextual_component(tokens, &component, &derivation.environment)
-            {
+            if let Some(contexts) = infer_contextual_component(
+                tokens,
+                &component,
+                &derivation.environment,
+                RankedRoute::ZeroNonzero,
+            ) {
                 let mut ranked = Vec::new();
                 for (name, (contract, cfg)) in contexts {
                     if derivation.inferred.contains_key(&name) {
@@ -336,8 +346,34 @@ pub(crate) fn derive_custody_summaries(
                             .insert_contract(name.clone(), contract.clone());
                         derivation.inferred.insert(name, contract);
                     }
+                    outcome = Some(decision.outcome);
+                } else if let Some(contexts) = infer_contextual_component(
+                    tokens,
+                    &component,
+                    &derivation.environment,
+                    RankedRoute::SignedThreshold,
+                ) {
+                    // Card CG27-LOOPS-RECURSION-BUDGETS (gateway rule 11x): a
+                    // component every earlier route left unpublished may carry
+                    // a signed threshold rank. Consulted last, so it replaces no
+                    // contract and moves no component another route decided;
+                    // the neutral route's refusal is what an effectful body
+                    // without a rank receives, and the rank is what it lacked.
+                    let mut ranked = Vec::new();
+                    for (name, (contract, cfg)) in contexts {
+                        derivation
+                            .environment
+                            .insert_contract(name.clone(), contract.clone());
+                        derivation.inferred.insert(name.clone(), contract);
+                        derivation.contextual.insert(name.clone(), cfg);
+                        ranked.push(name);
+                    }
+                    outcome = Some(NeutralComponentOutcome::PublishedByRankedRecursion {
+                        members: ranked,
+                    });
+                } else {
+                    outcome = Some(decision.outcome);
                 }
-                outcome = Some(decision.outcome);
             } else {
                 outcome = Some(NeutralComponentOutcome::PartiallyPublished {
                     published: component
@@ -367,6 +403,18 @@ pub(crate) fn derive_custody_summaries(
     derivation
 }
 
+/// Which rank partition [`infer_contextual_component`] reads. Both share the
+/// base/step validation below; they differ only in the descriptors.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum RankedRoute {
+    /// `control == 0` / `control != 0`, with unsigned `control - 1` steps.
+    ZeroNonzero,
+    /// Card CG27-LOOPS-RECURSION-BUDGETS (gateway rule 11x): `control <= c` /
+    /// `control > c` over one signed `int`-or-wider control type, with
+    /// `control - k` steps ([`crate::legacy_c::recursion::signed_rank`]).
+    SignedThreshold,
+}
+
 /// Zero is checked with every SCC contract absent. Nonzero admits literal-zero
 /// calls to validated bases, or exact unsigned countdowns to strictly smaller
 /// natural ranks. The latter uses mutual strong induction, not a finite
@@ -377,9 +425,13 @@ fn infer_contextual_component(
     tokens: &[Token],
     component: &[String],
     environment: &ResourceContracts,
+    route: RankedRoute,
 ) -> Option<BTreeMap<String, (ResourceFunctionContract, LegacyCfg)>> {
     use crate::legacy_c::recursion;
-    let descriptors = recursion::prepare(tokens, component)?;
+    let descriptors = match route {
+        RankedRoute::ZeroNonzero => recursion::prepare(tokens, component)?,
+        RankedRoute::SignedThreshold => recursion::signed_rank::prepare(tokens, component)?,
+    };
     let mut lower = ResourceContracts::default();
     lower.set_source_assumptions(environment.source_assumptions().clone());
     for (name, contract) in environment.functions() {

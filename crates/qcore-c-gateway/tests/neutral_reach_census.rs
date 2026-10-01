@@ -114,8 +114,11 @@ void subject(void) { void *r = q_alloc(); walk(3); q_free(r); }
 /// `Unknown`, exactly as C03-NFR's refusal matrix requires.
 #[test]
 fn an_effectful_member_refuses_at_v5_and_names_its_blocking_instruction() {
+    // Card CG27-LOOPS-RECURSION-BUDGETS (gateway rule 11x): `if (n > 0)` would
+    // now carry a signed threshold rank, published after this refusal; the
+    // unranked `if (n)` keeps the census arm under test.
     const PROGRAM: &str = r"
-static void walk(void *p, int n) { if (n > 0) { walk(p, n - 1); return; } q_free(p); }
+static void walk(void *p, int n) { if (n) { walk(p, n - 1); return; } q_free(p); }
 void subject(void) { void *r = q_alloc(); walk(r, 3); }
 ";
     let components = census(PROGRAM, None);

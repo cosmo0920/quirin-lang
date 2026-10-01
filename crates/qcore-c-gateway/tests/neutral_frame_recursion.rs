@@ -298,6 +298,12 @@ fn neutral_components_publish_the_bottom_element_and_unblock_their_callers() {
 /// U1, negative direction. The neutral assumption certifies the *absence* of a
 /// custody effect and can never certify one, so every body that carries one
 /// refuses the candidate and leaves the whole component uncontracted.
+///
+/// Card CG27-LOOPS-RECURSION-BUDGETS (gateway rule 11x) re-pinned the guard
+/// here, deliberately: with `if (n > 0)` the first two bodies now carry a
+/// signed threshold rank, which the route consulted after this one publishes
+/// (`loops_recursion_budgets.rs`). `if (n)` on a signed control is no rank, so
+/// this test keeps exercising what it is about: the neutral refusal.
 #[test]
 fn a_body_that_carries_an_effect_refuses_the_whole_component() {
     if !clang_available() {
@@ -307,21 +313,21 @@ fn a_body_that_carries_an_effect_refuses_the_whole_component() {
     for (label, body) in [
         (
             "releases a formal",
-            "void depth(void *p, int n) { if (n > 0) { depth(p, n - 1); return; } q_free(p); }",
+            "void depth(void *p, int n) { if (n) { depth(p, n - 1); return; } q_free(p); }",
         ),
         (
             "consumes a formal",
-            "void depth(void *p, int n) { if (n > 0) { depth(p, n - 1); return; } q_transfer(p); }",
+            "void depth(void *p, int n) { if (n) { depth(p, n - 1); return; } q_transfer(p); }",
         ),
         (
             "stores a formal into a global",
             "static void *g_slot;\n\
-             void depth(void *p, int n) { if (n > 0) { depth(p, n - 1); return; } g_slot = p; }",
+             void depth(void *p, int n) { if (n) { depth(p, n - 1); return; } g_slot = p; }",
         ),
         (
             "calls a callee the environment does not contract",
             "void q_other(void *p);\n\
-             void depth(void *p, int n) { if (n > 0) { depth(p, n - 1); return; } q_other(p); }",
+             void depth(void *p, int n) { if (n) { depth(p, n - 1); return; } q_other(p); }",
         ),
     ] {
         let outcome = run(&format!("{body}\n{caller}"), None);
@@ -357,8 +363,10 @@ fn a_body_that_carries_an_effect_refuses_the_whole_component() {
     assert!(outcome.records.is_empty());
 
     // An acquiring return is refused by V6/V7 rather than downgraded to a
-    // weaker mode: there is no fallback from the neutral candidate.
-    let acquires = "void *make(void *p, int n) { if (n > 0) { void *r = make(p, n - 1); return r; } void *f = q_alloc(); return f; }\n\
+    // weaker mode: there is no fallback from the neutral candidate. (Card
+    // CG27: `if (n > 0)` would carry a signed threshold rank and an `Owned`
+    // result; the unranked `if (n)` keeps the refusal under test.)
+    let acquires = "void *make(void *p, int n) { if (n) { void *r = make(p, n - 1); return r; } void *f = q_alloc(); return f; }\n\
         void subject(void) { void *p = q_alloc(); void *q = make(p, 2); q_free(p); q_free(q); }";
     let outcome = run(acquires, None);
     assert_eq!(outcome.status("make"), AnalysisStatus::Unknown);
