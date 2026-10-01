@@ -414,4 +414,41 @@ use; faithful Clang extraction (trust boundary 28).
 
 ## 9. Gate
 
-MEASURED-GATE
+Script [`scripts/gate.sh`](scripts/gate.sh), record [`gate.json`](gate.json),
+exits in [`gate/`](gate/). Heavy steps ran under the coordinator's shared
+lock.
+
+The **full standing gate** ran at tip `ae3a85b1` on `main` `b934c560`, with
+logs in `private/cg28/gate-final`:
+
+| Step | Command | Exit | Count |
+|---|---|---:|---|
+| 01 | `git submodule update --init --recursive` | 0 | |
+| 02 | `cargo fmt --all -- --check` | 0 | |
+| 03 | `python3 scripts/run_test_binaries.py` | 0 | 417 units, 430 summaries, **7,236 passed, 0 failed**, 11 ignored (`private/test-binaries/20261001T191934Z-24798`) |
+| 05 | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| 06 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| 07 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| 08 | `python3 scripts/check_lean_audits.py` | 0 | 267 audits (266 + `AuditWeakMemory.lean`) |
+| 09 | `python3 -m unittest discover -s scripts/tests` | 1 | 365; the expected failure is the derived Lean audit count |
+| 09a | `build_matrix.py . --gate gate.json` (on `f0bbc0eb`) | 0 | |
+| 09b | `python3 -m unittest discover -s scripts/tests` | 0 | 365 |
+| 10 | `python3 scripts/build_docs_index.py --check` | 0 | rerun after the records (10b) |
+
+**Re-check on `main` `f0bbc0eb`.** `main` then moved to `f0bbc0eb`
+(CG26-VARIADICS). The card was rebased; only records conflicted. It was
+re-checked at `dca8e7bc`, with logs in `private/cg28/targeted`:
+- `cargo check --workspace --all-targets`: 0.
+- The card's own test targets: 114 passed, 0 failed.
+- fmt: 0; clippy `--locked` on the two touched crates: 0.
+- `check_lean_audits.py`: **268** audits (267 on `f0bbc0eb` +
+  `AuditWeakMemory.lean`), the figure in `gate.json`.
+
+**Not re-run.** The full workspace suite was not re-run on `f0bbc0eb`. The
+landing-race policy applies, because CG26 touched no file of this card's code.
+
+**Other checks.**
+- *CT stage summary*: `scripts/ct_stage_summary.py . --check` exits 0,
+  mapped 50 / unmapped 0.
+- *Provider gate*: not due, because `providers/` is unchanged.
+- *Clang*: 21.1.8.
