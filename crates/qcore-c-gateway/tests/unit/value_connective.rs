@@ -31,6 +31,72 @@ fn cg06_admission_table() {
     );
 }
 
+/// Card CG06-VALUE-CONNECTIVE-RESIDUALS (rule 11m): `admit_composed` on its
+/// vectors, and the mechanical binding `composedVectors` = `COMPOSED_VECTORS`.
+#[test]
+fn cg06_composed_admission_table_and_lean_vectors() {
+    use crate::connective_footprints::Composed;
+    for (siblings, decision, inert, middle, composed, admitted) in COMPOSED_VECTORS {
+        let compose = move || {
+            if composed == Some(true) {
+                Ok(())
+            } else {
+                Err(Composed::NonCallSibling)
+            }
+        };
+        let outcome = admit_composed(
+            siblings,
+            decision,
+            inert,
+            middle,
+            composed.is_some().then_some(&compose as &dyn Fn() -> _),
+        );
+        assert_eq!(
+            outcome.is_ok(),
+            admitted,
+            "{siblings} {decision} {inert} {middle:?} {composed:?}: {outcome:?}"
+        );
+    }
+    // A refusal the composition did not discharge names both.
+    assert_eq!(
+        admit_composed(false, true, true, None, Some(&|| Err(Composed::NonCallSibling))),
+        Err(Refusal::Composition(
+            Box::new(Refusal::SiblingEffect),
+            Composed::NonCallSibling
+        ))
+    );
+    let option = |text: &str| match text.trim() {
+        "none" => None,
+        "some true" => Some(true),
+        "some false" => Some(false),
+        other => panic!("unknown Lean option {other}"),
+    };
+    let rows = block(
+        "def composedVectors : List (Bool × Bool × Bool × Option Bool × Option Bool × Bool) := [",
+    )
+    .lines()
+    .map(str::trim)
+    .filter(|line| line.starts_with('('))
+    .map(|line| {
+        let fields = line
+            .trim_end_matches(',')
+            .trim_start_matches('(')
+            .trim_end_matches(')')
+            .split(", ")
+            .collect::<Vec<_>>();
+        (
+            fields[0] == "true",
+            fields[1] == "true",
+            fields[2] == "true",
+            option(fields[3]),
+            option(fields[4]),
+            fields[5] == "true",
+        )
+    })
+    .collect::<Vec<_>>();
+    assert_eq!(rows, COMPOSED_VECTORS.to_vec());
+}
+
 /// The mechanical binding: `admissionVectors` = `ADMISSION_VECTORS` and
 /// `transparent` = `TRANSPARENT`.
 #[test]

@@ -46,6 +46,12 @@
 //! older route that lowers it decides. No left-to-right order C does not
 //! guarantee is chosen.
 //!
+//! Card CG06-VALUE-CONNECTIVE-RESIDUALS (rule 11m) asks those two refusals
+//! of [`Reading::compose`] instead ([`admit_composed`]): the region and its
+//! siblings composed by CG05's contract footprints
+//! ([`crate::connective_footprints`]), admitted only when every unordered pair
+//! commutes on both arms; every other refusal of [`admit`] stands.
+//!
 //! # Positions
 //!
 //! `R` is found through the positions [`TRANSPARENT`] lists (parentheses,
@@ -149,7 +155,7 @@ pub(crate) enum Refusal {
     /// Card CG06-VALUE-CONNECTIVE-RESIDUALS (rule 11m): rule 10z's premise
     /// refusal (`SiblingEffect` or `UnorderedDecision`) that the composition
     /// with CG05's footprints did not discharge, and why.
-    Composition(Box<Refusal>, Option<Composed>),
+    Composition(Box<Refusal>, Composed),
 }
 
 impl Refusal {
@@ -173,9 +179,7 @@ impl Refusal {
             Refusal::Composition(premise, composed) => format!(
                 "{}; composed with CG05's footprints: {}",
                 premise.reason(),
-                composed
-                    .as_ref()
-                    .map_or_else(|| "commutes on both arms".to_owned(), Composed::reason)
+                composed.reason()
             ),
         }
     }
@@ -296,6 +300,32 @@ pub(crate) fn edge_node(actual: &Value) -> Option<&Value> {
 }
 
 thread_local! {
+    /// Card CG06-VALUE-CONNECTIVE-RESIDUALS (rule 11m): the full expression
+    /// of the edge an older route is lowering, every region replaced by its
+    /// choice ([`substitute`]).
+    static EDGE_ROOT: std::cell::RefCell<Option<Value>> =
+        const { std::cell::RefCell::new(None) };
+}
+
+/// Run `body` with `root` (an edge's substituted full expression) as the
+/// current edge's root.
+pub(crate) fn with_edge_root<T>(root: Value, body: impl FnOnce() -> T) -> T {
+    let previous = EDGE_ROOT.with(|cell| cell.replace(Some(root)));
+    let result = body();
+    EDGE_ROOT.with(|cell| *cell.borrow_mut() = previous);
+    result
+}
+
+/// Rule 11m: the full expression C evaluates on the edge being lowered, when
+/// one is. Rule 10y's consumers ask it where no Clang node carries the edge's
+/// tokens (an edge's statement is spelled nowhere in the source): the edge's
+/// node is the source node with each region replaced by the arm C evaluates
+/// there, the node rule 10z's own `leaf_events` lowering reads.
+pub(crate) fn edge_root() -> Option<Value> {
+    EDGE_ROOT.with(|cell| cell.borrow().clone())
+}
+
+thread_local! {
     /// The deciding operand whose `if` condition routes are running.
     static DECIDING: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
 }
@@ -400,7 +430,7 @@ pub(crate) fn admit_composed(
     ) {
         Err(premise @ (Refusal::SiblingEffect | Refusal::UnorderedDecision)) => match compose {
             Some(compose) => {
-                compose().map_err(|composed| Refusal::Composition(Box::new(premise), Some(composed)))
+                compose().map_err(|composed| Refusal::Composition(Box::new(premise), composed))
             }
             None => Err(premise),
         },
@@ -640,24 +670,20 @@ fn region<'a>(
         _ => children(node).first().ok_or(Refusal::Span)?,
     };
     let omitted = (kind(node) == "BinaryConditionalOperator").then(|| effect_free(decision));
-    let premises = (
+    // Rule 11m: where rule 10z's order premise refuses, the region is
+    // composed with its siblings by CG05's footprints.
+    let compose = reading
+        .compose
+        .map(|compose| move || compose(node, siblings));
+    admit_composed(
         siblings.iter().all(|sibling| effect_free(sibling)),
         effect_free(decision),
         siblings
             .iter()
             .all(|sibling| inert(sibling, reading.unaliased)),
         omitted,
-    );
-    // CENSUS (rule 11m, before its admission): the composition is computed
-    // and recorded in the refusal; nothing is admitted by it yet.
-    if let Err(premise) = admit(premises.0, premises.1, premises.2, premises.3) {
-        return Err(match (&premise, reading.compose) {
-            (Refusal::SiblingEffect | Refusal::UnorderedDecision, Some(compose)) => {
-                Refusal::Composition(Box::new(premise), compose(node, siblings).err())
-            }
-            _ => premise,
-        });
-    }
+        compose.as_ref().map(|compose| compose as &dyn Fn() -> _),
+    )?;
     // Nested regions of an arm keep the region's siblings; the arm's own
     // siblings are added as the walk descends into it.
     let arm = |arm: &'a Value| -> Result<Arm<'a>, Refusal> {

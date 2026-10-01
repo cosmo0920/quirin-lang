@@ -440,10 +440,19 @@ impl Parser<'_> {
         tokens: &[Token],
         line: usize,
     ) -> Result<Lowered, String> {
-        let node = statement_node(index, tokens, &|node| {
-            matches!(kind(node), "CallExpr" | "BinaryOperator" | "DeclStmt")
-        })
-        .ok_or_else(|| "no unique Clang node for the statement".to_owned())?;
+        let accept =
+            |node: &Value| matches!(kind(node), "CallExpr" | "BinaryOperator" | "DeclStmt");
+        let edge;
+        let node = match statement_node(index, tokens, &accept) {
+            Some(node) => node,
+            // Rule 11m: on a value-connective edge, the edge's own node.
+            None => {
+                edge = crate::value_connective::edge_root()
+                    .filter(|root| accept(root))
+                    .ok_or_else(|| "no unique Clang node for the statement".to_owned())?;
+                &edge
+            }
+        };
         let facts = self.nested_facts(index);
         match shape(node).ok_or_else(|| "not a call or a scalar value holding calls".to_owned())? {
             Shape::Call {
@@ -770,7 +779,7 @@ impl Parser<'_> {
         if expression.is_empty() {
             return Err("an empty return".to_owned());
         }
-        let node = statement_node(index, expression, &|node| {
+        let accept = |node: &Value| {
             !matches!(
                 kind(node),
                 "ReturnStmt"
@@ -784,8 +793,18 @@ impl Parser<'_> {
                     | "DefaultStmt"
                     | "LabelStmt"
             )
-        })
-        .ok_or_else(|| "no unique Clang node for the return value".to_owned())?;
+        };
+        let edge;
+        let node = match statement_node(index, expression, &accept) {
+            Some(node) => node,
+            // Rule 11m: on a value-connective edge, the edge's own node.
+            None => {
+                edge = crate::value_connective::edge_root()
+                    .filter(|root| accept(root))
+                    .ok_or_else(|| "no unique Clang node for the return value".to_owned())?;
+                &edge
+            }
+        };
         let facts = self.nested_facts(index);
         if let Some(call) = through(node) {
             let reading = nested_call_effects::read(call, &facts, ResultUse::Returned)

@@ -111,29 +111,29 @@ fn each_refusal_names_its_class() {
     };
     assert!(matches!(
         composed("cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, r_release_code(p));"),
-        Some(Composed::Conflict(_))
+        Composed::Conflict(_)
     ));
     assert_eq!(
         composed("cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, opaque());"),
-        Some(Composed::UncontractedSibling("opaque".into()))
+        Composed::UncontractedSibling("opaque".into())
     );
     assert_eq!(
         composed("int n = 0; cg_log(\"%d %d\", p ? 1 : 0, n++);"),
-        Some(Composed::NonCallSibling)
+        Composed::NonCallSibling
     );
     assert_eq!(
         composed("int n = 0; cg_log(\"%d %d\", n ? 1 : 0, cg_count(&n));"),
-        Some(Composed::AddressedDecision("n".into()))
+        Composed::AddressedDecision("n".into())
     );
     // An arm CG05's reading refuses (an uncontracted callee in the region).
     assert!(matches!(
         composed("cg_log(\"%d %d\", p ? opaque() : 0, r_borrow_code(p));"),
-        Some(Composed::UnreadRegion(_))
+        Composed::UnreadRegion(_)
     ));
     // An effect that is not a call inside the region.
     assert_eq!(
         composed("int n = 0; cg_log(\"%d %d\", p ? n++ : 0, r_borrow_code(p));"),
-        Some(Composed::NonCallRegion)
+        Composed::NonCallRegion
     );
 }
 

@@ -417,13 +417,32 @@ impl Parser<'_> {
         run: Vec<Token>,
         choices: &[(&'a Value, Choice<'a>)],
     ) -> Result<Statement, Decline> {
-        let line = lowering.line;
         let edge = choices
             .iter()
             .map(|(region, choice)| (*region, value_connective::chosen_child(region, *choice)))
             .collect::<Vec<_>>();
         LOWERING.set(true);
-        let lowered = value_connective::on_edge(&edge, || match lowering.site {
+        // The edge's own full expression, for rule 10y's consumers to read
+        // where no source node carries the edge's tokens (rule 11m).
+        let node = value_connective::substitute(lowering.root, choices);
+        let root = node.clone();
+        let lowered = value_connective::on_edge(&edge, || {
+            value_connective::with_edge_root(root, || self.edge(lowering, &run, &node))
+        });
+        LOWERING.set(false);
+        lowered.ok_or(Decline::Leaf)
+    }
+
+    /// One edge's statement or `return`, by the position's older routes.
+    fn edge(
+        &mut self,
+        lowering: &Lowering<'_, '_>,
+        run: &[Token],
+        node: &Value,
+    ) -> Option<Statement> {
+        let line = lowering.line;
+        let run = run.to_vec();
+        match lowering.site {
             Site::Statement => {
                 let saved = (self.next_site, self.element_lowerings);
                 let statement = self.expression_statement(&run, line, None);
@@ -431,8 +450,7 @@ impl Parser<'_> {
                     Some(statement)
                 } else {
                     (self.next_site, self.element_lowerings) = saved;
-                    let node = value_connective::substitute(lowering.root, choices);
-                    self.leaf_events(lowering.index, &node)
+                    self.leaf_events(lowering.index, node)
                         .ok()
                         .map(|instructions| {
                             Statement::Block(
@@ -468,9 +486,7 @@ impl Parser<'_> {
                 // kept as its own `Unknown` step) declines too.
                 lowered.filter(|statement| !refuses(statement))
             }
-        });
-        LOWERING.set(false);
-        lowered.ok_or(Decline::Leaf)
+        }
     }
 }
 
