@@ -59,7 +59,13 @@ fn cg06_composed_admission_table_and_lean_vectors() {
     }
     // A refusal the composition did not discharge names both.
     assert_eq!(
-        admit_composed(false, true, true, None, Some(&|| Err(Composed::NonCallSibling))),
+        admit_composed(
+            false,
+            true,
+            true,
+            None,
+            Some(&|| Err(Composed::NonCallSibling))
+        ),
         Err(Refusal::Composition(
             Box::new(Refusal::SiblingEffect),
             Composed::NonCallSibling

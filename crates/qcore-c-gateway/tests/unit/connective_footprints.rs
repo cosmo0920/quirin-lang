@@ -144,7 +144,10 @@ fn an_effect_free_sibling_is_never_composed() {
     if crate::clang_command().is_err() {
         return;
     }
-    assert_eq!(read("cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, 1);"), Ok(1));
+    assert_eq!(
+        read("cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, 1);"),
+        Ok(1)
+    );
     // A deciding call beside an inert sibling is rule 10z's.
     assert_eq!(read("int n = 0; n = r_borrow_code(p) ? 1 : 2;"), Ok(1));
 }
@@ -195,7 +198,11 @@ fn the_arms_are_composed_apart() {
     }
     let sibling = operands.operand(siblings[2]).expect("read");
     let graph = operands.graph();
-    assert!(evaluated.iter().all(|&event| graph.sequenced(branch, event)));
+    assert!(
+        evaluated
+            .iter()
+            .all(|&event| graph.sequenced(branch, event))
+    );
     assert!(
         sibling
             .iter()

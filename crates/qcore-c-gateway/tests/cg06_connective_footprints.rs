@@ -22,7 +22,8 @@ fn a_sibling_releasing_a_disjoint_identity_is_composed() {
     );
     assert!(run.safe(), "{run:?}");
     // A sibling that only borrows.
-    let run = g("void subject(void *p) { cg_log(\"%s %d\", p ? \"a\" : \"b\", r_borrow_code(p)); }");
+    let run =
+        g("void subject(void *p) { cg_log(\"%s %d\", p ? \"a\" : \"b\", r_borrow_code(p)); }");
     assert!(run.safe(), "{run:?}");
     // The composed release still happens on both edges: the fresh identity
     // is released whichever edge runs, and an owned `p` beside it is still
@@ -53,7 +54,10 @@ fn an_overlapping_or_uncontracted_sibling_keeps_the_refusal() {
     ] {
         let run = g(source);
         assert!(!run.safe(), "{source}: {run:?}");
-        assert!(!run.unsafe_(), "a refusal, never a verdict: {source}: {run:?}");
+        assert!(
+            !run.unsafe_(),
+            "a refusal, never a verdict: {source}: {run:?}"
+        );
     }
 }
 

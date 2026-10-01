@@ -303,7 +303,10 @@ pub(crate) const FOOTPRINT_VECTORS: &[(&str, bool)] = &[
         true,
     ),
     // An uncontracted sibling call.
-    ("cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, opaque());", false),
+    (
+        "cg_log(\"%d %d\", p ? r_borrow_code(p) : 0, opaque());",
+        false,
+    ),
     // A sibling store (an effect that is not a call).
     ("int n = 0; cg_log(\"%d %d\", p ? 1 : 0, n++);", false),
     // A releasing arm beside a sibling reading the released identity.
