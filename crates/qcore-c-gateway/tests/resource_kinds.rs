@@ -430,6 +430,43 @@ fn a_kind_mismatch_on_the_in_place_kind_is_not_safe() {
     );
 }
 
+/// The `mk_plugin_load_dynamic` shape: a possibly-NULL handle returned under
+/// a contract-free exit refuses, because inferred summaries stay heap
+/// (contract spec §C04.6, rule 7), whereas the same body over the heap
+/// validates a nullable owned result. A guard that returns on NULL decides it.
+#[test]
+fn a_possibly_null_handle_returned_without_a_contract_refuses() {
+    if !clang_available() {
+        return;
+    }
+    expect(
+        "heap control",
+        "void *w(void) { void *p = k_alloc(8); if (!p) k_wipe(0, 0); return p; }",
+        "Safe",
+        &[],
+    );
+    for body in [
+        "void *w(void) { void *h = k_dlopen(\"x\"); if (!h) k_wipe(0, 0); return h; }",
+        "void *w(void) { void *h = k_dlopen(\"x\"); return h; }",
+    ] {
+        expect(
+            "a nullable library handle returned",
+            body,
+            "Unknown",
+            &[
+                "unknown_alias:h",
+                "unsupported:nullable resource `h` used by a non-null contract",
+            ],
+        );
+    }
+    expect(
+        "returned only when non-null",
+        "void *w(void) { void *h = k_dlopen(\"x\"); if (!h) return 0; return h; }",
+        "Safe",
+        &[],
+    );
+}
+
 #[test]
 fn a_heap_only_body_is_unchanged() {
     if !clang_available() {

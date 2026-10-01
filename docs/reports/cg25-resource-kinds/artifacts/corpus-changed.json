@@ -1,0 +1,54 @@
+[
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_load",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: call to uncontracted function `dlclose`": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_load_dynamic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: nullable resource `handle` used by a non-null contract": 1,
+   "unsupported: call to uncontracted function `dlopen`": -1
+  }
+ },
+ {
+  "unit": "rddl.c",
+  "function": "rd_dl_close",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: arguments do not match resource contract for `dlclose`": 1,
+   "unsupported: call to uncontracted function `dlclose`": -1
+  }
+ },
+ {
+  "unit": "rddl.c",
+  "function": "rd_dl_open0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: nullable resource `handle` used by a non-null contract": 1,
+   "unsupported: call to uncontracted function `dlopen`": -1
+  }
+ },
+ {
+  "unit": "rdregex.c",
+  "function": "rd_regex_match",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `regcomp`": -1,
+   "unsupported: call to uncontracted function `regfree`": -1
+  }
+ }
+]

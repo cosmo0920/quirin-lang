@@ -1,0 +1,29 @@
+{
+ "card": "CG25-RESOURCE-KINDS",
+ "base": "b6a3dc42",
+ "before_binary": {"sha256": "90895b8b3105c25d4d9832243ed9ad9498cdb5d667d4a31b947be484e354b66b", "built_at": "b6a3dc42"},
+ "after_binary": {"sha256": "7cbd8bfdbd60d7b515cc3c74ee9f1e3c5c5d905e589ebb0e917416b7aad5b761", "built_at": "61203c5d", "note": "later commits change formatting, tests and records only"},
+ "corpus": {
+  "command": "QCORE_TYPED_PATH_PARITY=... python3 scripts/run_pinned_audit.py OUT 66910c10 --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 --jobs 4",
+  "before": {"run": "private/cg25rk/before", "totals": "629 / 10 / 4,195", "sha256": "3d53a5d0b6728d4986a910bd81318a040995076bbded1970f9963022fcc3fcf2"},
+  "after": {"run": "private/cg25rk/after1", "totals": "630 / 10 / 4,194", "sha256": "5ade5aabc3e4cf0cd6f69ce65d02e780baeed80fed499d87918579c1142e53ca"},
+  "changed_functions": 5,
+  "moves": {"Unknown -> Safe": 1}
+ },
+ "system": {
+  "before": {"run": "private/cg25rk/before3-system", "tree": "git archive b6a3dc42 (contract, providers, cycle19-resource-contracts.json)", "totals": "44 / 2 / 188", "sha256": "e334d19380ac9b139fcf03656ec2d0ec2aa98633e7cfd1b508ffea76a3dc5758"},
+  "after": {"run": "private/cg25rk/after1-system", "totals": "44 / 2 / 188", "sha256": "827821ab61aff62f1598572a06ee281208a6d20f18e0b0819b90077dfddb05e0"},
+  "changed_functions": 0,
+  "alias_diff_lines": 0
+ },
+ "slice": {
+  "before": {"run": "private/w47-tail/attempt-1/cg25rk-before3", "totals": "29 / 1 / 239 / 1 Pending", "sha256": "34c67339e517a08916bcbe2a72e800645693e6689a81f78b2b98e4eb86d606c0", "alias_diff_lines_against_cg05ef_after3": 0},
+  "after": {"run": "private/w47-tail/attempt-1/cg25rk-after1", "totals": "29 / 1 / 239 / 1 Pending", "sha256": "6982af387388432e39f24179ec44f56980d84ed71b42aeb48ab5af8e9bb8fca9"},
+  "changed_functions": 0,
+  "alias_diff_lines": 0
+ },
+ "discarded": [
+  {"runs": ["private/cg25rk/before-system", "private/w47-tail/attempt-1/cg25rk-before"], "exit": 1, "reason": "measure.sh read this worktree's contract tree while libc/dlfcn.qv was being edited: `unsupported resource kind dynamic_library`"},
+  {"runs": ["private/cg25rk/before2-system (removed)", "private/w47-tail/attempt-1/cg25rk-before2 (removed)"], "exit": 1, "reason": "the extracted tree lacked cycle19-resource-contracts.json: `No such file or directory`"}
+ ]
+}

@@ -1,0 +1,296 @@
+{
+ "source": "private/cg25rk/after1/resource-diagnostics.json",
+ "callees_present": 12,
+ "leaves": 25,
+ "functions": 15,
+ "sole_blocked": 4,
+ "families": {
+  "addrinfo": {
+   "leaves": 10,
+   "functions": 4,
+   "sole_blocked": 0
+  },
+  "pthread key": {
+   "leaves": 4,
+   "functions": 2,
+   "sole_blocked": 1
+  },
+  "C11 threads (in place)": {
+   "leaves": 3,
+   "functions": 3,
+   "sole_blocked": 1
+  },
+  "pthread rwlock (in place)": {
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 2
+  },
+  "pthread attr (in place)": {
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0
+  },
+  "glob (in place)": {
+   "leaves": 2,
+   "functions": 1,
+   "sole_blocked": 0
+  },
+  "fts": {
+   "leaves": 2,
+   "functions": 1,
+   "sole_blocked": 0
+  }
+ },
+ "absent": [
+  "dlopen",
+  "dlmopen",
+  "dlclose",
+  "regcomp",
+  "regfree",
+  "pthread_mutex_init",
+  "pthread_mutex_destroy",
+  "pthread_cond_init",
+  "pthread_cond_destroy",
+  "pthread_attr_destroy",
+  "pthread_mutexattr_init",
+  "pthread_mutexattr_destroy",
+  "pthread_condattr_init",
+  "pthread_condattr_destroy",
+  "pthread_spin_init",
+  "pthread_spin_destroy",
+  "pthread_barrier_init",
+  "pthread_barrier_destroy",
+  "pthread_key_delete",
+  "cnd_init",
+  "cnd_destroy",
+  "tss_create",
+  "tss_delete",
+  "sem_init",
+  "sem_destroy",
+  "sem_open",
+  "sem_close",
+  "iconv_open",
+  "iconv_close",
+  "getifaddrs",
+  "freeifaddrs",
+  "if_nameindex",
+  "if_freenameindex",
+  "timer_create",
+  "timer_delete",
+  "mq_open",
+  "mq_close",
+  "popen",
+  "pclose",
+  "setmntent",
+  "endmntent",
+  "mmap",
+  "munmap",
+  "shmat",
+  "shmdt",
+  "newlocale",
+  "freelocale",
+  "duplocale",
+  "posix_spawnattr_init",
+  "posix_spawnattr_destroy",
+  "posix_spawn_file_actions_init",
+  "posix_spawn_file_actions_destroy",
+  "pthread_create",
+  "pthread_join",
+  "pthread_detach",
+  "thrd_create",
+  "thrd_join",
+  "thrd_detach"
+ ],
+ "rows": [
+  {
+   "family": "pthread rwlock (in place)",
+   "callee": "pthread_rwlock_init",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "sole_blocked_functions": [
+    "tinycthread_extra.c:rwlock_init"
+   ],
+   "function_status": {
+    "Unknown": 1
+   },
+   "function_list": [
+    "tinycthread_extra.c:rwlock_init"
+   ]
+  },
+  {
+   "family": "pthread rwlock (in place)",
+   "callee": "pthread_rwlock_destroy",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "sole_blocked_functions": [
+    "tinycthread_extra.c:rwlock_destroy"
+   ],
+   "function_status": {
+    "Unknown": 1
+   },
+   "function_list": [
+    "tinycthread_extra.c:rwlock_destroy"
+   ]
+  },
+  {
+   "family": "pthread attr (in place)",
+   "callee": "pthread_attr_init",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "sole_blocked_functions": [],
+   "function_status": {
+    "Unknown": 2
+   },
+   "function_list": [
+    "mk_core/mk_utils.c:mk_utils_worker_spawn",
+    "mk_server/mk_scheduler.c:mk_sched_launch_thread"
+   ]
+  },
+  {
+   "family": "pthread key",
+   "callee": "pthread_key_create",
+   "leaves": 4,
+   "functions": 2,
+   "sole_blocked": 1,
+   "sole_blocked_functions": [
+    "mk_server/mk_http_thread.c:mk_http_thread_initialize_tls_once"
+   ],
+   "function_status": {
+    "Unknown": 2
+   },
+   "function_list": [
+    "mk_server/mk_http_thread.c:mk_http_thread_initialize_tls_once",
+    "mk_server/monkey.c:mk_set_up_tls_keys"
+   ]
+  },
+  {
+   "family": "C11 threads (in place)",
+   "callee": "mtx_init",
+   "leaves": 2,
+   "functions": 2,
+   "sole_blocked": 0,
+   "sole_blocked_functions": [],
+   "function_status": {
+    "Unknown": 2
+   },
+   "function_list": [
+    "rdkafka.c:rd_kafka_global_init0",
+    "rdkafka_sasl_cyrus.c:rd_kafka_sasl_cyrus_global_init"
+   ]
+  },
+  {
+   "family": "C11 threads (in place)",
+   "callee": "mtx_destroy",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 1,
+   "sole_blocked_functions": [
+    "rdkafka_sasl_cyrus.c:rd_kafka_sasl_cyrus_global_term"
+   ],
+   "function_status": {
+    "Unknown": 1
+   },
+   "function_list": [
+    "rdkafka_sasl_cyrus.c:rd_kafka_sasl_cyrus_global_term"
+   ]
+  },
+  {
+   "family": "glob (in place)",
+   "callee": "glob",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "sole_blocked_functions": [],
+   "function_status": {
+    "Unknown": 1
+   },
+   "function_list": [
+    "mk_core/mk_rconf.c:mk_rconf_read_glob"
+   ]
+  },
+  {
+   "family": "glob (in place)",
+   "callee": "globfree",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "sole_blocked_functions": [],
+   "function_status": {
+    "Unknown": 1
+   },
+   "function_list": [
+    "mk_core/mk_rconf.c:mk_rconf_read_glob"
+   ]
+  },
+  {
+   "family": "addrinfo",
+   "callee": "getaddrinfo",
+   "leaves": 4,
+   "functions": 4,
+   "sole_blocked": 0,
+   "sole_blocked_functions": [],
+   "function_status": {
+    "Unknown": 4
+   },
+   "function_list": [
+    "mk_server/mk_net.c:mk_net_fd_connect",
+    "mk_server/mk_socket.c:mk_socket_connect",
+    "mk_server/mk_socket.c:mk_socket_server",
+    "rdaddr.c:rd_getaddrinfo"
+   ]
+  },
+  {
+   "family": "addrinfo",
+   "callee": "freeaddrinfo",
+   "leaves": 6,
+   "functions": 4,
+   "sole_blocked": 0,
+   "sole_blocked_functions": [],
+   "function_status": {
+    "Unknown": 4
+   },
+   "function_list": [
+    "mk_server/mk_net.c:mk_net_fd_connect",
+    "mk_server/mk_socket.c:mk_socket_connect",
+    "mk_server/mk_socket.c:mk_socket_server",
+    "rdaddr.c:rd_getaddrinfo"
+   ]
+  },
+  {
+   "family": "fts",
+   "callee": "fts_open",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "sole_blocked_functions": [],
+   "function_status": {
+    "Unknown": 1
+   },
+   "function_list": [
+    "cio_utils.c:cio_utils_recursive_delete"
+   ]
+  },
+  {
+   "family": "fts",
+   "callee": "fts_close",
+   "leaves": 1,
+   "functions": 1,
+   "sole_blocked": 0,
+   "sole_blocked_functions": [],
+   "function_status": {
+    "Unknown": 1
+   },
+   "function_list": [
+    "cio_utils.c:cio_utils_recursive_delete"
+   ]
+  }
+ ],
+ "other_descriptions": {
+  "call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 3,
+  "arguments do not match resource contract for `dlclose`": 1,
+  "call to `pthread_cond_init` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 1
+ }
+}

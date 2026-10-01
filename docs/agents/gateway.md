@@ -3620,7 +3620,16 @@ own anchor here.
     not the witness, or admit tracked storage on a data route. Premises
     stated, not proved: the libc contracts (`regcomp` returns zero exactly
     when it initialised the object; `dlclose` releases its handle) and
-    faithful Clang extraction (trust boundary 28). MEASURED_PLACEHOLDER
+    faithful Clang extraction (trust boundary 28). Measured (corpus
+    `66910c10`, system, tail-pause slice, base `b6a3dc42`): corpus 629 / 10 /
+    4,195 → **630 / 10 / 4,194** (`3d53a5d0…` → `5ade5aab…`), one Unknown →
+    Safe move (`rd_regex_match`: `r = regcomp(&re, …); if (r) return 0; …
+    regfree(&re);`), 5 functions changed, every leaf attributed, no
+    correction, leak or violation; a possibly-NULL kinded handle returned
+    without a contract keeps refusing (`mk_plugin_load_dynamic`,
+    `rd_dl_open0`: inferred summaries stay heap, C04.6 rule 7); system and
+    slice change no function. Residuals `CG25-IN-PLACE-RESIDUAL-PAIRS`,
+    `CG25-KINDED-WRAPPER-RESULTS`, `CG25-DLSYM-SYMBOL-LIFETIME`.
     `QCore.ResourceKinds` (28 theorems, `AuditResourceKinds.lean`; the kind
     table and the protocols bound to Rust and to the libc declarations by
     `kindVectors` and `protocolVectors`); `QCore.KindedCustody.Kind` gains the

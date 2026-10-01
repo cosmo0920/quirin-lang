@@ -10,7 +10,7 @@ parity, measured by an arbiter that attributes every moved leaf) and
 W43-LIBC-IN-PLACE-LIFECYCLE (an in-place lifecycle mode the gateway checks,
 with Lean parity; `regcomp`/`regfree` declared). The in-place pairs still
 undeclared are re-registered with sizes re-measured on this card's BEFORE, and
-the `dlsym` symbol lifetime is registered. Keeps `dimensions.named_followups`
+the kinded wrapper results and the `dlsym` symbol lifetime are registered. Keeps `dimensions.named_followups`
 equal to the list length; writes the matrix in its own form (indent=1,
 ensure_ascii=False, trailing newline).
 """
@@ -46,6 +46,22 @@ REGISTER = [
             "and the tail-pause slice have none. DISCHARGE: per pair, an in-place kind of its own whose storage shape "
             "a consumer admits (an obligation delivered to the caller through a formal, or held by a static owner), "
             "or a sentinel the implementation fixes, with Lean parity and an arbiter measurement."
+        ),
+    },
+    {
+        "id": "CG25-KINDED-WRAPPER-RESULTS",
+        "title": "A wrapper returning a possibly-NULL kinded handle stays Unknown without a declared contract (2 corpus functions)",
+        "why": (
+            "Registered by CG25-RESOURCE-KINDS. With dlopen declared (kind dynamic_library), "
+            "mk_server/mk_plugin.c:mk_plugin_load_dynamic and rddl.c:rd_dl_open0 return the handle after an "
+            "`if (!handle)` arm that does not return, so the result may be NULL; inferred summaries stay heap "
+            "(contract spec C04.6 rule 7), so the function's own exit has no nullable kinded result and refuses with "
+            "`nullable resource handle used by a non-null contract` + `unknown_alias handle` (mk_plugin_load_dynamic "
+            "has no other leaf; rd_dl_open0 also keeps rd_dl_error and snprintf refusals). The heap control of the "
+            "same body is Safe (crates/qcore-c-gateway/tests/resource_kinds.rs). The caller mk_plugin_load "
+            "keeps `unknown_alias handler` at its two dlclose calls. DISCHARGE: a declared kinded contract for "
+            "the wrapper, checked against its body (C04.6 rule 7's declared case), in its library's provider crate, "
+            "measured; or a reviewed rule inferring a nullable kinded result with Lean parity."
         ),
     },
     {

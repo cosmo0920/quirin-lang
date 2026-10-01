@@ -445,7 +445,7 @@ CG22.
 | CG22-INDIRECT-CALLS-AND-CALLBACKS | K01 K02 | High | CG03 |
 | CG23-RELATIONAL-POSTCONDITIONS | K05 K11 | High | CG03 |
 | CG24-ALIAS-EXTENT-FRAME-VOCABULARY | K04 K06 | High | CG03, CG16 |
-| CG25-RESOURCE-KINDS | K07 | High | none |
+| CG25-RESOURCE-KINDS | K07 | High | none (landed, wave 48 round 10) |
 | CG26-VARIADICS | K08 K09 K10 | High | CG03 |
 | CG27-LOOPS-RECURSION-BUDGETS | C06 C07 C08 | High | CG09 |
 | CG28-WEAK-MEMORY-EVENTS | W02–W06 | High | CG19 |
@@ -518,6 +518,10 @@ CG22.
     existing kind.
   - *Absorbs:* W44-DLOPEN-DECLARATION-REMEASURE (library handle) and
     W43-LIBC-IN-PLACE-LIFECYCLE.
+  - *Landed* ([report](../../reports/cg25-resource-kinds/README.md), rule
+    11v): `dynamic_library` and the in-place `regex` kind; residuals
+    `CG25-IN-PLACE-RESIDUAL-PAIRS`, `CG25-KINDED-WRAPPER-RESULTS`,
+    `CG25-DLSYM-SYMBOL-LIFETIME`.
 - **CG26: variadics.**
   - *Custody.* General vararg custody and promotions.
   - *va_list.* A `va_list` state machine
