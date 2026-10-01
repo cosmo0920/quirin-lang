@@ -229,8 +229,9 @@ int consume(void) { int seen = atomic_load_explicit(&done, memory_order_acquire)
         }
     }
 
-    /// The production route: `Safe` with the derived stages, and a refused
-    /// control `Unknown`, each report carrying the single-graph assumption.
+    /// The production route: `Safe` with the derived stages and (card CG29,
+    /// rule 11z) the all-executions assumption, and a refused control
+    /// `Unknown` with the single-graph assumption.
     #[test]
     fn cg19_atomic_publication_route_reports_safe_and_unknown() {
         if !clang_available() {
@@ -239,6 +240,7 @@ int consume(void) { int seen = atomic_load_explicit(&done, memory_order_acquire)
         let root =
             std::env::temp_dir().join(format!("cg19-atomic-publication-{}", std::process::id()));
         let single_graph = qcore_c_gateway::atomic_source_route::SINGLE_GRAPH_ASSUMPTION;
+        let all_executions = qcore_c_gateway::atomic_source_route::ALL_EXECUTIONS_ASSUMPTION;
         let (safe, report) = run(SOURCE, &root.join("safe"));
         assert_eq!(safe, Ok(true));
         assert_eq!(report["result"], "Safe");
@@ -248,13 +250,9 @@ int consume(void) { int seen = atomic_load_explicit(&done, memory_order_acquire)
                 .unwrap()
                 .contains("Release")
         );
-        assert!(
-            report["assumptions"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .any(|a| a == single_graph)
-        );
+        let assumptions = report["assumptions"].as_array().unwrap();
+        assert!(assumptions.iter().any(|a| a == all_executions));
+        assert!(!assumptions.iter().any(|a| a == single_graph));
         let relaxed = SOURCE.replace("memory_order_release", "memory_order_relaxed");
         let (unknown, report) = run(&relaxed, &root.join("relaxed"));
         assert_eq!(unknown, Ok(false));

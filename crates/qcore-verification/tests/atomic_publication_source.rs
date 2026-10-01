@@ -100,10 +100,14 @@ fn misleading_enum_names_cannot_publish_an_ordering_certificate() {
     )));
 }
 
-/// Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): the production gate is
-/// `Safe` only when both halves accept (`QCore.AtomicSourceRoute.
-/// safe_publication_only_when_checked`), and every verdict carries the
-/// single-graph assumption (`publication_verdict_carries_single_graph`).
+/// Card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i), amended by card
+/// CG29-EXECUTION-COVERAGE-AND-RECLAMATION (rule 11z): the production gate is
+/// `Safe` only when both halves accept and the extracted shape is race-free
+/// over every candidate execution (`QCore.AtomicSourceRoute.
+/// safe_publication_only_when_checked`). `Safe` carries the all-executions
+/// assumption and never the single-graph one
+/// (`safe_publication_covers_every_execution`); `Unknown` carries the
+/// single-graph one (`unknown_publication_carries_single_graph`).
 #[test]
 fn cg19_publication_verdict_gates_on_the_composed_check() {
     use qcore_verification::atomic_publication_source::{
@@ -124,11 +128,13 @@ fn cg19_publication_verdict_gates_on_the_composed_check() {
         )
     };
     let single_graph = qcore_c_gateway::atomic_source_route::SINGLE_GRAPH_ASSUMPTION;
+    let all_executions = qcore_c_gateway::atomic_source_route::ALL_EXECUTIONS_ASSUMPTION;
     let safe = verdict(SOURCE);
     assert_eq!(safe.status(), "Safe");
-    assert!(safe.assumptions().contains(&single_graph));
-    // A model refusal and a source refusal are both Unknown, with the same
-    // assumptions.
+    assert!(safe.assumptions().contains(&all_executions));
+    assert!(!safe.assumptions().contains(&single_graph));
+    // A model refusal and a source refusal are both Unknown, with the
+    // single-graph assumption.
     for control in [
         SOURCE.replace("memory_order_release", "memory_order_relaxed"),
         SOURCE.replace("static _Atomic int done", "static volatile int done"),
@@ -140,6 +146,53 @@ fn cg19_publication_verdict_gates_on_the_composed_check() {
             "{control}"
         );
         assert_eq!(unknown.status(), "Unknown");
-        assert_eq!(unknown.assumptions(), safe.assumptions());
+        assert!(unknown.assumptions().contains(&single_graph));
+        assert!(!unknown.assumptions().contains(&all_executions));
+    }
+}
+
+/// Card CG29 (rule 11z): the extracted shape's fragment and its coverage
+/// within the stated bounds, for every order pair the extractor admits. The
+/// same fragment with relaxed orders (which the core model refuses first)
+/// races at the program level.
+#[test]
+fn cg29_extracted_shape_is_race_free_over_every_execution() {
+    use qcore_core::execution_coverage::{Instruction, ProgramVerdict, check_program_executions};
+    use qcore_verification::atomic_publication_source::{
+        PUBLICATION_COVERAGE_BOUNDS, publication_fragment,
+    };
+    for (store, load) in [
+        ("memory_order_release", "memory_order_acquire"),
+        ("memory_order_seq_cst", "memory_order_acquire"),
+        ("memory_order_release", "memory_order_seq_cst"),
+        ("memory_order_seq_cst", "memory_order_seq_cst"),
+    ] {
+        let source = SOURCE
+            .replace("memory_order_release", store)
+            .replace("memory_order_acquire", load);
+        let certificate =
+            check(&source).unwrap_or_else(|refusal| panic!("{store} {load}: {refusal:?}"));
+        let evidence = &certificate.execution_coverage;
+        assert_eq!(evidence.bounds, PUBLICATION_COVERAGE_BOUNDS);
+        assert_eq!(evidence.threads, 2);
+        assert_eq!(evidence.event_bound, 7);
+        assert!(evidence.candidates <= 16, "{store} {load}: {evidence:?}");
+        assert!(
+            certificate
+                .assumptions
+                .contains(&qcore_c_gateway::atomic_source_route::ALL_EXECUTIONS_ASSUMPTION)
+        );
+        let mut relaxed = publication_fragment(&certificate.source);
+        for instruction in relaxed.threads.iter_mut().flatten() {
+            if let Instruction::Store { order, .. } | Instruction::Load { order, .. } =
+                &mut instruction.instruction
+            {
+                *order = qcore_core::MemoryOrder::Relaxed;
+            }
+        }
+        assert!(matches!(
+            check_program_executions(&relaxed, PUBLICATION_COVERAGE_BOUNDS),
+            ProgramVerdict::Race { .. }
+        ));
     }
 }

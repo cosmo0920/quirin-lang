@@ -28,8 +28,11 @@ What is proved here:
 * the routed store and load orders agree with the bounded publication model
   `QCore.AtomicPublication` on Clang's numbering, so the publication checker
   receives exactly the order the source spelled;
-* a publication verdict carries the single-graph assumption, and a failed or
-  undecided check is `Unknown`.
+* a failed or undecided check is `Unknown` and carries the single-graph
+  assumption; a `Safe` publication verdict needs, since card
+  CG29-EXECUTION-COVERAGE-AND-RECLAMATION, the extracted shape race-free over
+  every candidate execution too, and carries the all-executions assumption
+  instead (`safe_publication_covers_every_execution`).
 
 Faithful Clang extraction of the builtin name and order operand, and the
 Rust-to-Lean correspondence, are stated review premises (trust boundary 28).
@@ -462,6 +465,10 @@ deriving DecidableEq, Repr
 
 inductive Assumption where
   | singleGraph | callerDeclaredBounds | faithfulClangAst | reviewedCorrespondence
+  /-- Card CG29-EXECUTION-COVERAGE-AND-RECLAMATION: the extracted shape was
+  checked over every candidate execution within its bounds
+  (`QCore.ExecutionCoverage.verdict_race_free_sound`). -/
+  | allExecutions
 deriving DecidableEq, Repr
 
 structure Verdict where
@@ -470,25 +477,54 @@ structure Verdict where
 deriving DecidableEq, Repr
 
 /-- The gateway's production gate: the composed check's outcome
-(`some true`: checked; `some false`: refused; `none`: undecided). -/
-def publicationVerdict (checked : Option Bool) : Verdict where
-  status := if checked = some true then .safe else .unknown
-  assumptions := [.singleGraph, .callerDeclaredBounds, .faithfulClangAst, .reviewedCorrespondence]
+(`some true`: checked; `some false`: refused; `none`: undecided) and, card
+CG29, whether the extracted shape is race-free over every candidate
+execution (`covered`). `Safe` needs both and carries the all-executions
+assumption; `Unknown` carries the single-graph one. -/
+def publicationVerdict (checked : Option Bool) (covered : Bool) : Verdict where
+  status := if checked = some true ∧ covered = true then .safe else .unknown
+  assumptions :=
+    (if checked = some true ∧ covered = true then .allExecutions else .singleGraph) ::
+      [.callerDeclaredBounds, .faithfulClangAst, .reviewedCorrespondence]
 
-theorem publication_verdict_carries_single_graph (checked : Option Bool) :
-    Assumption.singleGraph ∈ (publicationVerdict checked).assumptions := by
+/-- An `Unknown` publication verdict carries the single-graph assumption. -/
+theorem unknown_publication_carries_single_graph (checked : Option Bool) (covered : Bool)
+    (h : (publicationVerdict checked covered).status = .unknown) :
+    Assumption.singleGraph ∈ (publicationVerdict checked covered).assumptions := by
+  unfold publicationVerdict at h ⊢
+  by_cases hc : checked = some true ∧ covered = true
+  · simp [hc] at h
+  · simp [hc]
+
+/-- A `Safe` publication verdict claims all executions, never one graph. -/
+theorem safe_publication_covers_every_execution (checked : Option Bool) (covered : Bool)
+    (h : (publicationVerdict checked covered).status = .safe) :
+    Assumption.allExecutions ∈ (publicationVerdict checked covered).assumptions ∧
+      Assumption.singleGraph ∉ (publicationVerdict checked covered).assumptions := by
+  unfold publicationVerdict at h ⊢
+  by_cases hc : checked = some true ∧ covered = true
+  · simp [hc]
+  · simp [hc] at h
+
+theorem failed_publication_is_unknown (covered : Bool) :
+    (publicationVerdict (some false) covered).status = .unknown := by
   simp [publicationVerdict]
 
-theorem failed_publication_is_unknown :
-    (publicationVerdict (some false)).status = .unknown := rfl
+theorem undecided_publication_is_unknown (covered : Bool) :
+    (publicationVerdict none covered).status = .unknown := by
+  simp [publicationVerdict]
 
-theorem undecided_publication_is_unknown :
-    (publicationVerdict none).status = .unknown := rfl
+/-- Card CG29: a checked single graph whose program is not race-free over
+every execution (a racing candidate, or an exceeded bound) is `Unknown`. -/
+theorem uncovered_publication_is_unknown (checked : Option Bool) :
+    (publicationVerdict checked false).status = .unknown := by
+  simp [publicationVerdict]
 
-theorem safe_publication_only_when_checked (checked : Option Bool)
-    (h : (publicationVerdict checked).status = .safe) : checked = some true := by
+theorem safe_publication_only_when_checked (checked : Option Bool) (covered : Bool)
+    (h : (publicationVerdict checked covered).status = .safe) :
+    checked = some true ∧ covered = true := by
   unfold publicationVerdict at h
-  by_cases hc : checked = some true
+  by_cases hc : checked = some true ∧ covered = true
   · exact hc
   · simp [hc] at h
 

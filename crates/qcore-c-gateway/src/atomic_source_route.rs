@@ -47,8 +47,10 @@
 //!
 //! A routed access is one event of one candidate execution. The model checks
 //! **one supplied graph** ([`SINGLE_GRAPH_ASSUMPTION`]): nothing here is race
-//! freedom over every execution (W07, card CG29), and nothing is liveness or
-//! eventual observation (W11). Route G admits a routed plain access only for
+//! freedom over every execution (W07), and nothing is liveness or eventual
+//! observation (W11). Only the atomic-publication verdict, which also runs
+//! card CG29's enumerator over its extracted shape, claims race freedom over
+//! every execution, within bounds ([`ALL_EXECUTIONS_ASSUMPTION`]). Route G admits a routed plain access only for
 //! its custody, which is order-insensitive; it publishes no ordering claim.
 //!
 //! The Lean model is `QCore.AtomicSourceRoute`, bound to [`ATOMIC_FORM_TABLE`],
@@ -64,8 +66,17 @@ use qcore_core::{
 
 use crate::typed_c_ast::{children, kind};
 
-/// The assumption every verdict built on a routed access carries.
+/// The assumption every verdict built on a routed access carries, unless
+/// its program was also checked over every execution
+/// ([`ALL_EXECUTIONS_ASSUMPTION`]).
 pub const SINGLE_GRAPH_ASSUMPTION: &str = "the weak-memory model checked one supplied candidate execution graph; this is not race freedom over every execution of the program (W07, CG29) and claims no liveness or eventual observation (W11)";
+
+/// Card CG29-EXECUTION-COVERAGE-AND-RECLAMATION (gateway rule 11z): the
+/// assumption a `Safe` atomic-publication verdict carries in place of
+/// [`SINGLE_GRAPH_ASSUMPTION`]. The extracted shape (one initialised flag,
+/// one publisher, one guarded consumer) was checked over every candidate
+/// execution by `qcore_core::execution_coverage` within the stated bounds.
+pub const ALL_EXECUTIONS_ASSUMPTION: &str = "every candidate execution of the extracted publication fragment (one flag initialisation, one publisher, one consumer guarded by its load; threads <= 2, events <= 7, values <= 2 per location, candidates <= 16) was checked by qcore_core::execution_coverage (W07, CG29): race freedom over all its executions within these bounds; the invocation bounds stay caller-declared, and no liveness or eventual observation is claimed (W11)";
 
 /// What one listed atomic form does.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

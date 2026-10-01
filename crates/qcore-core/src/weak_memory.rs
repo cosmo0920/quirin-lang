@@ -3,7 +3,10 @@
 //! Candidate executions explicitly supply reads-from, modification order,
 //! synchronizes-with, and the sequentially-consistent order.  Program order is
 //! derived per thread and is never inferred from inter-thread list position.
-//! Acceptance checks one supplied graph, not program exploration.
+//! Acceptance checks one supplied graph, not program exploration; card
+//! CG29-EXECUTION-COVERAGE-AND-RECLAMATION's [`crate::execution_coverage`]
+//! enumerates every candidate execution of a bounded fragment and checks each
+//! one here.
 //!
 //! # The standard followed
 //!
@@ -335,6 +338,22 @@ pub fn compare_exchange_failure_admitted(success: MemoryOrder, failure: MemoryOr
         MemoryOrder::SequentiallyConsistent => 2,
     };
     failure_rank <= success_rank
+}
+
+/// Card CG29-EXECUTION-COVERAGE-AND-RECLAMATION (additive): the
+/// synchronises-with edges an execution's reads, modification order and
+/// fences determine, exactly the set `check_c11_execution` requires the
+/// supplied relation to equal (mutex edges excluded: the enumerator's
+/// fragments have no mutex). `QCore.WeakMemory.Execution.swEdge`.
+pub(crate) fn derived_synchronizes_with(execution: &C11Execution) -> Vec<RelationEdge> {
+    let by_id = execution
+        .events
+        .iter()
+        .map(|event| (event.id, event))
+        .collect::<BTreeMap<_, _>>();
+    expected_synchronizes_with(execution, &by_id)
+        .into_iter()
+        .collect()
 }
 
 fn invalid_order(kind: &MemoryEventKind) -> bool {

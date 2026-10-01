@@ -5,8 +5,9 @@ The Rust side is `crates/qcore-core/src/weak_memory.rs` (`check_c11_execution`).
 This module is the Lean model of its atomic fragment: plain loads and stores,
 read-modify-writes, compare-exchange, thread and signal fences, release
 sequences, the seq_cst order S and non-atomic races. Mutex histories and
-thread spawn/join (Cycle 17, constraint 27) are outside this module; the
-shared vectors use none.
+thread joins (Cycle 17, constraint 27) are outside this module; a spawn
+(card CG29-EXECUTION-COVERAGE-AND-RECLAMATION, additive) happens before the
+first event of its child thread. The shared litmus vectors use neither.
 
 **One standard.** C11 as published (N1570), not C++20's weakened release
 sequences, not RC11, and not C++14's added seq_cst-fence/modification-order
@@ -84,6 +85,11 @@ inductive Kind where
   | fence (o : Order) (signal : Bool)
   | naRead (loc : Nat)
   | naWrite (loc : Nat)
+  /-- Card CG29-EXECUTION-COVERAGE-AND-RECLAMATION (additive): the Rust
+  `MemoryEventKind::Spawn`. It happens before the first event of its child
+  thread, so the initialisations of a thread-0 prelude happen before every
+  thread, as in `spawn_join_edges`. -/
+  | spawn (child : Nat)
 deriving DecidableEq, Repr
 
 structure Event where
@@ -193,8 +199,19 @@ def Execution.closure (x : Execution) (base : List (Nat × Nat)) : List (Nat × 
 
 def Execution.moPlus (x : Execution) : List (Nat × Nat) := x.closure x.mo
 
+/-- Spawn edges (`spawn_join_edges`, card CG29): a spawn happens before the
+first event, in list order, of its child thread. -/
+def Execution.spawnEdges (x : Execution) : List (Nat × Nat) :=
+  x.events.flatMap fun e =>
+    match e.kind with
+    | .spawn c =>
+      match x.events.find? (·.thread == c) with
+      | some f => [(e.id, f.id)]
+      | none => []
+    | _ => []
+
 def Execution.hb (x : Execution) : List (Nat × Nat) :=
-  x.closure (x.pairs.filter (fun p => x.sb p.1 p.2) ++ x.sw)
+  x.closure (x.pairs.filter (fun p => x.sb p.1 p.2) ++ x.sw ++ x.spawnEdges)
 
 /-! ## Release sequences (N1570 5.1.2.4p10) -/
 

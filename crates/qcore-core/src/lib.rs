@@ -26,6 +26,8 @@ pub mod diagnostic_log_c_emit;
 pub mod disjoint_footprint;
 pub mod error_region;
 pub mod executable_model;
+// Card CG29-EXECUTION-COVERAGE-AND-RECLAMATION (gateway rule 11z).
+pub mod execution_coverage;
 pub mod extern_c_emit;
 pub mod extern_call;
 pub mod ffi;
@@ -46,6 +48,8 @@ pub mod obs_reordering;
 pub mod os_endpoint;
 pub mod ownership;
 pub mod prelude;
+// Card CG29-EXECUTION-COVERAGE-AND-RECLAMATION (gateway rule 11z).
+pub mod reclamation;
 pub mod research_closure;
 pub mod resource_calls;
 pub mod resource_calls_c_emit;

@@ -27,7 +27,9 @@ by CG28-WEAK-MEMORY-EVENTS (rule 11t). -/
 #print axioms QCore.AtomicSourceRoute.routed_load_matches_publication
 #print axioms QCore.AtomicSourceRoute.releases_iff
 #print axioms QCore.AtomicSourceRoute.acquires_iff
-#print axioms QCore.AtomicSourceRoute.publication_verdict_carries_single_graph
+#print axioms QCore.AtomicSourceRoute.unknown_publication_carries_single_graph
+#print axioms QCore.AtomicSourceRoute.safe_publication_covers_every_execution
+#print axioms QCore.AtomicSourceRoute.uncovered_publication_is_unknown
 #print axioms QCore.AtomicSourceRoute.failed_publication_is_unknown
 #print axioms QCore.AtomicSourceRoute.undecided_publication_is_unknown
 #print axioms QCore.AtomicSourceRoute.safe_publication_only_when_checked

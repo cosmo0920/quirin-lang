@@ -52,7 +52,10 @@ fn refused_construct(construct: UnsupportedFootprint) -> Vec<FootprintDiagnostic
 fn core_footprint_refuses_every_listed_construct() {
     // M06 union, M13 flexible array, M12 VLA, M14 computed index, M15 pointer
     // arithmetic, M22 type punning, M26 overlapping copy, W10 reclamation,
-    // M21 an alias proof across allocations.
+    // M21 an alias proof across allocations. W10 stays refused here by card
+    // CG29-EXECUTION-COVERAGE-AND-RECLAMATION: the footprint prototype still
+    // decides no reclamation; the hazard-pointer and epoch protocols are
+    // checked by `qcore_core::reclamation`, which no source route reaches.
     for construct in [
         UnsupportedFootprint::UnionMember,
         UnsupportedFootprint::FlexibleArrayMember,
@@ -293,7 +296,10 @@ fn event(id: u32, thread: u32, kind: MemoryEventKind) -> MemoryEvent {
 /// W07: acceptance is of one supplied graph. The same relaxed flag program
 /// has an accepted graph (the flag read sees the initial value, so the data
 /// read does not run) and a racy one; accepting the first says nothing about
-/// the second.
+/// the second. Unchanged by card CG29-EXECUTION-COVERAGE-AND-RECLAMATION: the
+/// one-graph checker still decides one graph. The program-level verdict is
+/// `qcore_core::execution_coverage`'s, which reports this program's race
+/// (`w07_the_program_level_verdict_is_not_the_one_graph`).
 #[test]
 fn w07_core_accepts_one_graph_not_the_program() {
     const FLAG: u32 = 1;

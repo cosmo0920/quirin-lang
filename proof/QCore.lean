@@ -319,6 +319,8 @@ import QCore.CallExits
 import QCore.StorageDuration
 import QCore.AtomicSourceRoute
 import QCore.WeakMemory
+import QCore.ExecutionCoverage
+import QCore.Reclamation
 import QCore.VoidViewReadback
 import QCore.LayoutExtents
 import QCore.ResourceKinds
