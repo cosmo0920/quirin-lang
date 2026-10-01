@@ -24,6 +24,7 @@ def main():
     parser.add_argument("rows", type=pathlib.Path)
     parser.add_argument("--json", type=pathlib.Path)
     parser.add_argument("--show", action="store_true", help="print the freed functions' rows")
+    parser.add_argument("--residual", action="store_true", help="print the rows that are not uncontracted")
     args = parser.parse_args()
     lines = collections.defaultdict(set)
     family = collections.defaultdict(set)
@@ -73,6 +74,7 @@ def main():
                     if leaf.get("line") in lines[name]:
                         leaves_at[(name, leaf["line"])].append(leaf["description"])
     row_classes = collections.Counter()
+    residual = []
     for row in population:
         reason = row.get("new_refusal") or ""
         if row["new_admitted"] or not ("unsequenced with another event (CG05)" in reason
@@ -82,10 +84,12 @@ def main():
         found = leaves_at.get((row["function"], row["line"]), [])
         if any(f"uncontracted function `{callee}`" in leaf for leaf in found):
             row_classes["callee uncontracted (stays refused)"] += 1
+            continue
         elif not found:
             row_classes["no leaf on the line"] += 1
         else:
             row_classes["other leaf on the line"] += 1
+        residual.append((row, found))
     record = {
         "population_rows_by_leaf": dict(row_classes.most_common()),
         "touched_functions": len(touched),
@@ -98,6 +102,9 @@ def main():
     if args.json:
         args.json.write_text(text + "\n")
     print(json.dumps({k: record[k] for k in ("population_rows_by_leaf", "touched_functions", "touched_by_family", "freed_alone", "freed_alone_strict")}, indent=1))
+    if args.residual:
+        for row, found in residual:
+            print(row["function"], " ".join(row["texts"])[:110], "--", found[:2])
     if args.show:
         freed = {key.split("::", 1)[1] for key in record["freed_alone"]}
         for row in population:
