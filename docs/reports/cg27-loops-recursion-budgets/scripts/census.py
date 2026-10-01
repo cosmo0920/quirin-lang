@@ -89,6 +89,8 @@ def main() -> int:
     leaves = collections.Counter()
     descriptions = collections.Counter()
     members = collections.defaultdict(list)
+    only = collections.defaultdict(list)
+    seen = set()
     for unit in data["units"]:
         # The uncontracted callees each function of this unit names.
         callees = collections.defaultdict(set)
@@ -99,6 +101,11 @@ def main() -> int:
                     callees[match.group(1)].add(function["function"])
         for function in unit["functions"]:
             name = function["function"]
+            # De-duplicated by (unit, function), as compare.py's totals are:
+            # a system or slice report lists one file once per configuration.
+            if (unit["file"], name) in seen:
+                continue
+            seen.add((unit["file"], name))
             if function["status"] == "Safe":
                 continue
             families = collections.Counter()
@@ -116,11 +123,20 @@ def main() -> int:
                 members[kind].append(f"{unit['file']}::{name} ({function['status']})")
                 if set(families) == {kind}:
                     alone[kind] += 1
+                    only[kind].append({
+                        "function": f"{unit['file']}::{name}",
+                        "status": function["status"],
+                        "leaves": sorted(
+                            d.get("description") or d.get("category") or ""
+                            for d in function.get("diagnostics", [])
+                        ),
+                    })
     record = {
         "functions": dict(counts),
         "functions_blocked_only_by_family": dict(alone),
         "leaves": dict(leaves),
         "descriptions": {f"{k}: {d}": n for (k, d), n in descriptions.most_common()},
+        "blocked_only_by_family": dict(only),
         "members": {kind: sorted(names) for kind, names in members.items()},
     }
     printable = {key: value for key, value in record.items() if key != "members"}
