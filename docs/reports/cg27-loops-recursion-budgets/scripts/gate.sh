@@ -13,6 +13,8 @@ export CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0
 for step in "$@"; do
   case "$step" in
     submodule) git submodule update --init --recursive ;;
+    check) cargo check --workspace --all-targets ;;
+    clean) cargo clean --profile dev ;;
     tests) python3 scripts/run_test_binaries.py --jobs 4 ;;
     fmt) cargo fmt --all -- --check ;;
     clippy) cargo clippy --locked --all-targets -- -D warnings ;;
