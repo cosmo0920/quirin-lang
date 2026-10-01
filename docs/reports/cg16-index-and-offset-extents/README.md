@@ -69,9 +69,9 @@ formatting, clippy and records only). Clang 21.1.8. Comparison:
 [`artifacts/identity.json`](artifacts/identity.json) by
 [`scripts/identity.py`](scripts/identity.py).
 
-The card was rebased six times after the measurement (onto main
+The card was rebased seven times after the measurement (onto main
 `8e8ed41f` CG17, `06ad81cb` CG20, `b934c560` CG25, `f0bbc0eb` CG26, `f6336c9d` CG28,
-`db1ea764` CG27). None of them reads the
+`db1ea764` CG27, `f1a4c648` CG21). None of them reads the
 bounds selection and this card changes no custody code, so the comparison is
 not repeated; the bounds and combined figures below are those of the base
 `b6a3dc42` (CG25's +1 custody Safe after it is not in the combined column).
@@ -256,12 +256,13 @@ lock and cleans the dev profile after it; exits in [`gate/`](gate/), logs in
 
 The matrix was then regenerated with [`gate.json`](gate.json) and the Python
 suite and the index check run again (`09a`, `09b`, `10b` in [`gate/`](gate/)).
-Main then moved three times more (`f0bbc0eb`, CG26: contract loader and
+Main then moved four times more (`f0bbc0eb`, CG26: contract loader and
 variadics; `f6336c9d`, CG28: weak-memory events; `db1ea764`, CG27: loops and
-recursion budgets; all disjoint from this card's code); the card was rebased onto each and checked by
+recursion budgets; `f1a4c648`, CG21: call exits and boundaries; all disjoint
+from this card's code); the card was rebased onto each and checked by
 [`scripts/rebased-check.sh`](scripts/rebased-check.sh): the workspace check,
 the card's test files and the Lean audits (`r1`–`r4` in [`gate/`](gate/) on
-`f0bbc0eb`, 268 audits; `gate/recheck/` on `f6336c9d`, 269 audits; `gate/recheck2/` on `db1ea764`, 270 audits), then the
+`f0bbc0eb`, 268 audits; `gate/recheck/` on `f6336c9d`, 269 audits; `gate/recheck2/` on `db1ea764`, 270 audits; `gate/recheck3/` on `f1a4c648`, 271 audits), then the
 matrix regenerated again and the Python suite and index check run on the final
 tree (`09c`, `09d`, `10c`). `providers/` is unchanged, so the provider gate is
 not due and was not run. Clang 21.1.8.
