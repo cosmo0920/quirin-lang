@@ -61,7 +61,18 @@ first AFTER run; nothing below was read off an AFTER artifact.
 
 ## Prediction (system route and tail-pause slice)
 
-Read from their BEFORE runs (private/cg21/before3-system, cg21-before3):
-see the README's table; the prediction there is the same rule as above —
-only functions whose every unsupported leaf is one of the three callees can
-move to Safe, no Safe → non-Safe.
+Added before either route's AFTER run, from their BEFORE runs over an
+extraction of the base tree (`scripts/measure-routes.sh`; the `current` route
+reads contract modules from the tree it runs in, so the BEFORE binary cannot
+read this card's tree). Totals reproduce the brief's: system **44 / 2 / 188**,
+slice **29 / 1 / 239 / 1 Pending**. Their digests (`6e65757c…`,
+`499081be…`) differ from the brief's `79404fed…` / `93cc660c…` because the
+report embeds the profile path (8 occurrences of the extraction's path in
+review-hold descriptions); `scripts/identity.py` digests the reports with
+that path normalised.
+
+- System: one `exit` leaf (1 function) and 3 `__builtin_offsetof` leaves; no
+  function is blocked by the three callees alone. Predicted: the `exit` leaf
+  goes, the 3 offsetof leaves are renamed, **no status move**.
+- Slice: 2 `__builtin_offsetof` and 4 `__builtin_va_arg` leaves (renamed),
+  no exit leaf. Predicted: **no status move**, only the renames.

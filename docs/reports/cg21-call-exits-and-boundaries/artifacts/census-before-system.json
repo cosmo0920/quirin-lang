@@ -1,0 +1,19 @@
+{
+ "classes": {
+  "extension-node:__builtin_offsetof": {
+   "leaves": 3,
+   "functions": 3,
+   "unknown_sole": 0
+  },
+  "noreturn-declared:exit": {
+   "leaves": 1,
+   "functions": 1,
+   "unknown_sole": 0
+  }
+ },
+ "family_sole": {},
+ "sole": {
+  "extension-node:__builtin_offsetof": [],
+  "noreturn-declared:exit": []
+ }
+}

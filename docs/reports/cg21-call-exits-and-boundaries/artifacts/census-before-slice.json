@@ -1,0 +1,31 @@
+{
+ "classes": {
+  "builtin-call:__builtin_va_end": {
+   "leaves": 12,
+   "functions": 4,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_va_start": {
+   "leaves": 4,
+   "functions": 4,
+   "unknown_sole": 0
+  },
+  "extension-node:__builtin_offsetof": {
+   "leaves": 2,
+   "functions": 2,
+   "unknown_sole": 0
+  },
+  "extension-node:__builtin_va_arg": {
+   "leaves": 4,
+   "functions": 4,
+   "unknown_sole": 0
+  }
+ },
+ "family_sole": {},
+ "sole": {
+  "builtin-call:__builtin_va_end": [],
+  "builtin-call:__builtin_va_start": [],
+  "extension-node:__builtin_offsetof": [],
+  "extension-node:__builtin_va_arg": []
+ }
+}
