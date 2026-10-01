@@ -105,6 +105,8 @@ fn malformed_declarations_reject_the_whole_module() {
         FILL.replace("requires bounds_index(i, n);", "ensures normal resource_borrowed(p);"),
         // An error-exit clause.
         FILL.replace("ensures normal", "ensures any"),
+        // Inclusion and inheritance (G05a) are not part of this vocabulary.
+        FILL.replace("module contract;", "module contract;\n#include \"other.qv\";"),
     ];
     for case in cases {
         assert!(load_bounds_contract_sources(&one(&case)).is_err(), "{case}");

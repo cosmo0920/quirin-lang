@@ -396,7 +396,9 @@ Scalar `quant<e ...>` shorthand selects the sole credit axis in the environment.
 Arithmetic is checked in `u128`. `monus(a,b)` requires `b <= a` and returns `a-b`; it does not silently truncate a negative result to zero. Nonlinear multiplication is rejected, even when a human could evaluate both names to constants. Runtime-to-index reflection, general symbolic constraints, dependent function substitution, pointer extents, and access-quant types are outside this implemented resolver.
 
 User-authored index/extent contracts for existing-C access bounds are specified
-as a **planned separate consumer** in [contract §C09.1](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned).
+as a **separate consumer** in [contract §C09.1](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned)
+(partly implemented by card CG16-INDEX-AND-OFFSET-EXTENTS; its status
+paragraph names what landed).
 Its conceptual `Idx<N>` relation is not this dimension capability or currently
 accepted type syntax. Human review admits external premises; the consumer must
 still check each covered use, and custody safety alone proves no access bound.

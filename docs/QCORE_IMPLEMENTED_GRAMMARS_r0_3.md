@@ -3648,6 +3648,50 @@ inherit `libc::malloc`, `libc::calloc`, `libc::free`) and
 `fluent_bit/resource_string.qv` (`flb_strdup`, `flb_strndup` inherit
 `libc::strdup`, `libc::strndup`).
 
+## G05b. Bounds contract v1
+
+Card CG16-INDEX-AND-OFFSET-EXTENTS, contract specification
+[C09.1](QCORE_CONTRACT_SPEC_r0_3.md#c091-reviewed-index-and-extent-contracts-planned).
+A separate consumer (`crates/qcore-contract/src/bounds_contract.rs`) over the
+G01 envelope, selected by its own marker, loaded total-or-reject:
+
+```ebnf
+bounds_module = "module", "contract", ";", bounds_fn, {bounds_fn} ;
+bounds_fn     = "extern", "fn", IDENT, "(", [parameter, {",", parameter}], ")",
+                "->", result_abi, "contract", "{", bounds_clause,
+                {bounds_clause}, "}", ";" ;
+bounds_clause = "requires", "bounds_contract_v1", ";"
+              | "requires", bounds_pre, ";"
+              | "requires", "bounds_review_pending", "(", review_note, ")", ";"
+              | "requires", "bounds_review_pending", "(", bounds_pre, ",", review_note, ")", ";"
+              | "ensures", "normal", bounds_post, ";"
+              | "ensures", "normal", "bounds_review_pending", "(", bounds_post, ",", review_note, ")", ";" ;
+bounds_pre    = "bounds_extent", "(", IDENT, ",", count, ",", unit, ")"
+              | "bounds_index", "(", IDENT, ",", count, ")"
+              | "bounds_global_extent", "(", IDENT, ",", DIGITS, ",", unit, ")" ;
+bounds_post   = "bounds_return_extent", "(", count, ",", unit, ")"
+              | "bounds_preserves_extents", "(", ")" ;
+count         = IDENT | DIGITS ;
+unit          = "elements" | "bytes" ;
+```
+
+`parameter`, `result_abi` and `review_note` are G05's. Static conditions,
+each rejecting the whole module: exactly one `bounds_contract_v1` per
+declaration; `bounds_extent` names a pointer parameter and `bounds_index` a
+scalar one; a `count` IDENT names a scalar parameter of the same declaration,
+and `DIGITS` is canonical (no sign, suffix, base or leading zero);
+`bounds_global_extent` names a C object, not a parameter;
+`bounds_return_extent` needs a pointer result; at most one clause per
+parameter, object, return and `bounds_preserves_extents`; one contract-level
+marker, or clause-level markers, never both, never a marker around a marker
+or around the selector; only `requires` and `ensures normal`. No inclusion or
+inheritance (G05a) exists for this vocabulary. The meanings are C09.1's;
+`elements` counts the C pointee type the audited declaration states.
+`resource_*` and `bounds_*` predicates are disjoint, so each loader rejects the
+other's modules. The reserved words were absent from every tracked contract
+module when they were introduced (the census test
+`the_reserved_spellings_are_unused_by_tracked_contracts`).
+
 ## G06. Observation predicate grammar
 
 ```ebnf

@@ -783,6 +783,30 @@ or claim that a current custody certificate proves bounds. The requirements
 below govern the new consumer when implemented; current consumers retain C02's
 total-or-reject and property-scoping rules.
 
+**Implementation status (card CG16-INDEX-AND-OFFSET-EXTENTS, 2026-10-01;
+gateway rule [11s](agents/gateway.md#constraint-11s)).** Landed: the bounds
+contract v1 consumer ([G05b](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05b-bounds-contract-v1),
+`bounds_contract_v1` with `bounds_extent`, `bounds_index`,
+`bounds_global_extent`, `bounds_return_extent`, `bounds_preserves_extents` and
+its own `bounds_review_pending` marker, every declaration's text digested); the
+route-G source consumer (`qcore_c_gateway::index_extent`) for the property
+`c.bounds.index-extent.v1`, which derives fixed-array extents from Clang's
+types, inventories every subscript, dereference, `->`, pointer formation,
+pointer subtraction and ordering, and pointer-passing call, checks each
+against `qcore_core::index_extent` (Lean `QCore.IndexExtent`), applies the
+review-hold standing rule, validates reachability before `Unsafe`, withdraws a
+return extent its analysed body refutes from the unit's callers, and re-derives
+recorded evidence before admitting it; and the audit's explicit selection
+(`QCORE_BOUNDS_PROPERTY`), which publishes bounds and combined rows beside an
+unchanged custody report. Not landed, each a named residual of the CG16
+ledger entry: C06.2 pins for bounds declarations (they bind by name and
+signature; no pin hold is produced), inclusion, inheritance, packaging and
+checkpoint transport of bounds modules, a bounds-module selection on the audit
+routes (they run with an empty bounds environment), the cross-unit refutation
+phase on the audit routes (the API takes the table), symbolic ranges beyond a
+stable parameter relation (CG20), variable-length and flexible extents (CG17),
+multi-base and derived relations (CG24), and bounds summaries of callee bodies.
+
 **Meaning and units.** A user MAY supply a contract describing an external
 object's accessible extent or an external operation's index/extent relation.
 The consumer MUST distinguish an element count from a byte extent and bind
