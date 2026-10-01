@@ -1,0 +1,70 @@
+{
+ "corpus (base AFTER -> tip)": {
+  "totals": {
+   "before": {
+    "Unknown": 4194,
+    "Safe": 630,
+    "Unsafe": 10
+   },
+   "after": {
+    "Unknown": 4193,
+    "Safe": 631,
+    "Unsafe": 10
+   }
+  },
+  "move_counts": {
+   "Unknown -> Safe": 1
+  },
+  "moves": [
+   "rdregex.c::rd_regex_match Unknown -> Safe"
+  ],
+  "same_status_functions_with_changed_diagnostics": 4,
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `dlclose`": -3,
+   "unsupported: call to uncontracted function `dlopen`": -2,
+   "unsupported: call to uncontracted function `regcomp`": -1,
+   "unsupported: call to uncontracted function `regfree`": -1,
+   "unsupported: arguments do not match resource contract for `dlclose`": 1,
+   "unsupported: nullable resource `handle` used by a non-null contract": 2,
+   "unknown_alias: unresolved resource identity": 4
+  }
+ },
+ "system (base BEFORE -> tip)": {
+  "totals": {
+   "before": {
+    "Unknown": 188,
+    "Safe": 44,
+    "Unsafe": 2
+   },
+   "after": {
+    "Unknown": 188,
+    "Safe": 44,
+    "Unsafe": 2
+   }
+  },
+  "move_counts": {},
+  "moves": [],
+  "same_status_functions_with_changed_diagnostics": 0,
+  "leaf_delta": {}
+ },
+ "slice (base BEFORE -> tip)": {
+  "totals": {
+   "before": {
+    "Unknown": 239,
+    "Safe": 29,
+    "Pending": 1,
+    "Unsafe": 1
+   },
+   "after": {
+    "Unknown": 239,
+    "Safe": 29,
+    "Pending": 1,
+    "Unsafe": 1
+   }
+  },
+  "move_counts": {},
+  "moves": [],
+  "same_status_functions_with_changed_diagnostics": 0,
+  "leaf_delta": {}
+ }
+}

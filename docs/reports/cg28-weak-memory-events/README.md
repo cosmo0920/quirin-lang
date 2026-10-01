@@ -144,7 +144,7 @@ the base, from a `git archive` of `b6a3dc42` with its own target directory
 ## 3. Prediction and outcome
 
 [PREDICTION.md](PREDICTION.md) was frozen and committed (`c7c19cbb`, rebased
-as `08068863`) before any AFTER measurement. It discloses that the code
+as `25b739e2` on `main` `b934c560`) before any AFTER measurement. It discloses that the code
 preceded it, as CG19's did.
 
 | Prediction | Outcome |
@@ -172,7 +172,7 @@ slice (`attempt-1`, run `cg28-NAME`) were run as CG05 ran them. Every exit was
 | BEFORE | base `b6a3dc42` | `068fda9d…` | **629 / 10 / 4,195** `3d53a5d0…` | 44 / 2 / 188 `9f786381…` | 29 / 1 / 239 / 1 P `3565659a…` |
 | AFTER (on the base) | `4dded2f1` | `82bb3d82…` | **630 / 10 / 4,194** `d7be9d8c…` | 44 / 2 / 188 `9f786381…` | 29 / 1 / 239 / 1 P `3565659a…` |
 | BEFORE (main) | `main` `b934c560` | CG25's | 630 / 10 / 4,194 `5ade5aab…` (CG25-RESOURCE-KINDS' figure) | 44 / 2 / 188 | 29 / 1 / 239 / 1 P |
-| AFTER (rebased tip, on `main` `b934c560`) | TIP-HEAD | TIP-BINARY | TIP-CORPUS | TIP-SYSTEM | TIP-SLICE |
+| AFTER (rebased tip, on `main` `b934c560`) | `ae3a85b1` | `7faa7794…` | **631 / 10 / 4,193** `c2a96c6f…` | 44 / 2 / 188 `d6a9473d…` | 29 / 1 / 239 / 1 P `e4d851bc…` |
 
 **BEFORE.** The corpus equals the brief's baseline exactly. System and slice
 are the deduplicated totals (`scripts/compare.py`); they equal the
@@ -185,6 +185,23 @@ Structurally, CG05's `after3` slice report and this BEFORE differ in exactly
 `compile_configuration`, and in nothing else (`scripts/normalized.py`).
 CG17-LAYOUT-DERIVED-EXTENTS reports the same effect. This is not a status
 difference, so the run was not stopped.
+
+**On the rebased tip** ([`artifacts/after-base-to-tip.json`](artifacts/after-base-to-tip.json),
+`scripts/tip_summary.py`). Measured against the card's own base AFTER, the
+corpus differs by exactly CG25-RESOURCE-KINDS' recorded change and nothing
+else:
+- `rdregex.c::rd_regex_match` moves Unknown → Safe;
+- four same-status functions change leaves: `dlopen`, `dlclose`, `regcomp`
+  and `regfree` stop being uncontracted, with +4 `unknown_alias`, +2
+  nullable-handle and +1 `dlclose` argument leaves.
+
+So the tip is `main` `b934c560`'s 630 / 10 / 4,194 (`5ade5aab…`, CG25's
+figure) plus this card's one move, with `cmt_atomic_compare_exchange` Safe
+and 0 atomic leaves ([tip census](artifacts/tip-census.json)). System and
+slice totals and functions are unchanged from the base BEFORE (no move, no
+changed function). Their raw digests changed with CG25's contract sources,
+through the compile-identity fields described above. No separate BEFORE was
+run on `b934c560`: the attribution above isolates CG25's change.
 
 **Attribution** (corpus BEFORE → AFTER on the base;
 [`artifacts/corpus-comparison.json`](artifacts/corpus-comparison.json)).

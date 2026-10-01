@@ -3561,7 +3561,7 @@ own anchor here.
     Measured (corpus `66910c10`, base `b6a3dc42`, re-measured on main
     `b934c560`): corpus 629 / 10 / 4,195 → **630 / 10 / 4,194** on the base
     (`3d53a5d0…` → `d7be9d8c…`) and 630 / 10 / 4,194 → **631 / 10 / 4,193**
-    on main (`5ade5aab…` → `TIPDIGEST…`), one Unknown → Safe move
+    on main (`5ade5aab…` → `c2a96c6f…`), one Unknown → Safe move
     (`cmt_atomic_compare_exchange`, the generic compare-exchange of
     `cmt_atomic_clang.c`, its only leaf), no correction, no leak or
     violation added; atomic leaves 1 → 0; system and slice byte-identical,
