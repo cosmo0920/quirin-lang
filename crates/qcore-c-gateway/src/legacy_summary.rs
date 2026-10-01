@@ -322,22 +322,14 @@ pub(crate) fn derive_custody_summaries(
                             &derivation.environment,
                             infer_validated_summary,
                         ) {
-                            Some(summary) => {
-                                match summary.join() {
-                                    // One contract on every exit: an ordinary
-                                    // summary.
-                                    Some(contract) => {
-                                        derivation
-                                            .environment
-                                            .insert_contract(name.clone(), contract.clone());
-                                        derivation.inferred.insert(name, contract.clone());
-                                    }
-                                    None => {
-                                        derivation.environment.insert_relational(name, summary);
-                                    }
-                                }
+                            // Classes that all agree are no exit-specific
+                            // relation, and the ordinary route refused that
+                            // contract: nothing is published.
+                            Some(summary) if summary.join().is_none() => {
+                                derivation.environment.insert_relational(name, summary);
                                 installed = true;
                             }
+                            Some(_) => still_pending.push(name),
                             None => still_pending.push(name),
                         }
                     }
@@ -369,7 +361,11 @@ pub(crate) fn derive_custody_summaries(
             ) {
                 let mut ranked = Vec::new();
                 for (name, (contract, cfg)) in contexts {
-                    if derivation.inferred.contains_key(&name) {
+                    // Card CG23-RELATIONAL-POSTCONDITIONS: an exit-specific
+                    // summary already published stays the one reading.
+                    if derivation.inferred.contains_key(&name)
+                        || derivation.environment.relational_contract(&name).is_some()
+                    {
                         continue;
                     }
                     derivation

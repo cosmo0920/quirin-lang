@@ -3519,6 +3519,7 @@ resource_clause = "requires", "resource_contract_v1", ";"
                 | "requires", contract_review_marker, ";"
                 | "requires", "resource_body_checked", ";"
                 | "ensures", "normal", resource_predicate, ";"
+                | "ensures", "normal", return_code_disposition, ";"
                 | "ensures", "normal", clause_review_marker, ";"
                 | "requires", contract_revision_marker, ";"
                 | "ensures", "normal", clause_revision_marker, ";" ;
@@ -3560,7 +3561,17 @@ counted_user_predicate =
 container_predicate =
     "resource_published", "(", IDENT, ",", IDENT, ")"   (* entry, container *)
   | "resource_unpublished", "(", IDENT, ")" ;
+(* card CG23-RELATIONAL-POSTCONDITIONS, contract specification C04.13 *)
+return_code_disposition =
+    "resource_on_return", "(", relation_op, ",", integer_literal, ",",
+    disposition_predicate, ")" ;
+relation_op = "eq" | "ne" | "lt" | "le" | "gt" | "ge" ;
+disposition_predicate = "resource_borrowed", "(", IDENT, ")"
+  | ("resource_owned" | "resource_consumed" | "resource_released" | "resource_out"),
+    "(", IDENT, ",", nullability, ")" ;
 ```
+
+The return-code dispositions (card CG23-RELATIONAL-POSTCONDITIONS, contract specification C04.13) carry static conditions of their own: the distinct `(relation_op, integer_literal)` pairs are pairwise disjoint and cover every integer; the literal is canonical and fits a C `int`; a parameter carries either one ordinary mode or exactly one disposition per class; the entry requirement of a conditional parameter agrees across classes; the result is `resource_return_none()` over a signed integer type; classes that all state the same contract, and a disposition beside a review marker, the checked-specification marker, a literal premise, a variadic tail or a counted-user, container, loop-owner, thread-synchronization or lifecycle clause, reject the module. Every violation rejects the whole module.
 
 The counted-user and container predicates (card W45-FB-RETRY-LIFETIME) carry static conditions of their own: every parameter they name is a `resource_borrowed` pointer parameter; a publication's container is a distinct parameter with no container predicate of its own; a parameter carries at most one counted-user operation and at most one container predicate; `resource_user_neutral()` appears at most once and never beside another counted-user predicate; an exit clause requires an integer result type, its `integer_literal` follows the canonical-literal rule above, one parameter and returned value carry at most one clause, and a parameter carries either an operation or exit clauses, never both. Every violation rejects the whole module.
 
@@ -3578,7 +3589,7 @@ The revision markers (card W45-CONTRACT-REVISION-MODE, contract specification C0
 
 The checked-specification marker `requires resource_body_checked;` (card W45-FB-BACKLOG-CUSTODY, contract specification C06.3) takes no argument, occurs at most once and only as a contract-level requirement; a second one, an argument, and an `ensures` spelling each reject the whole module. It changes no mode: the loaded contract is the one the same declaration without it loads, and which declarations carry it is rederived from the retained texts (`declared_checked_specifications`), as the variadic tail and the literal premise are. Inheritance (G05a) copies it with the other clauses, and the inherited-declaration agreement check compares it. It composes with the revision and review markers: it is read after they are peeled, neither may wrap it, and a declaration a review marker withholds, or an unpinned declaration out of force, is never a specification.
 
-The grammar describes tokens, not required whitespace. Apart from the one `clause_review_marker` and `clause_revision_marker` wrappings, it provides no general predicate-call nesting. It also does not turn an admitted trusted declaration into proof that a C function obeys it.
+The grammar describes tokens, not required whitespace. Apart from the one `clause_review_marker`, `clause_revision_marker` and `return_code_disposition` wrappings, it provides no general predicate-call nesting. It also does not turn an admitted trusted declaration into proof that a C function obeys it.
 
 ## G05a. Contract inclusion and inheritance
 

@@ -1,0 +1,129 @@
+{
+ "private/cg23rp/before": {
+  "CONDITIONAL-RELEASE-BY-LITERAL": {
+   "rd_kafka_topic_partition_destroy0": {
+    "leaves": 2,
+    "functions": 2,
+    "sole_blocked": 2
+   }
+  },
+  "W45-FB-BACKLOG-MAP-ARMS": {
+   "flb_input_chunk_map": {
+    "leaves": 0,
+    "functions": 0,
+    "sole_blocked": 0
+   }
+  },
+  "W43-RESULT-ALIAS-CONDITIONAL-AND-RETAINED": {
+   "realpath": {
+    "leaves": 1,
+    "functions": 1,
+    "sole_blocked": 0
+   },
+   "pthread_getspecific": {
+    "leaves": 24,
+    "functions": 16,
+    "sole_blocked": 1
+   },
+   "flb_output_thread_instance_get": {
+    "leaves": 0,
+    "functions": 0,
+    "sole_blocked": 0
+   }
+  },
+  "W43-DESCRIPTOR-REFUSED-SHAPES": {
+   "getaddrinfo": {
+    "leaves": 4,
+    "functions": 4,
+    "sole_blocked": 0
+   },
+   "freeaddrinfo": {
+    "leaves": 6,
+    "functions": 4,
+    "sole_blocked": 0
+   },
+   "fcntl": {
+    "leaves": 1,
+    "functions": 1,
+    "sole_blocked": 1
+   },
+   "accept4": {
+    "leaves": 1,
+    "functions": 1,
+    "sole_blocked": 1
+   },
+   "fts_open": {
+    "leaves": 1,
+    "functions": 1,
+    "sole_blocked": 0
+   },
+   "fts_close": {
+    "leaves": 1,
+    "functions": 1,
+    "sole_blocked": 0
+   },
+   "glob": {
+    "leaves": 1,
+    "functions": 1,
+    "sole_blocked": 0
+   },
+   "globfree": {
+    "leaves": 1,
+    "functions": 1,
+    "sole_blocked": 0
+   },
+   "pipe": {
+    "leaves": 0,
+    "functions": 0,
+    "sole_blocked": 0
+   },
+   "fdopen": {
+    "leaves": 0,
+    "functions": 0,
+    "sole_blocked": 0
+   },
+   "mmap": {
+    "leaves": 0,
+    "functions": 0,
+    "sole_blocked": 0
+   },
+   "munmap": {
+    "leaves": 0,
+    "functions": 0,
+    "sole_blocked": 0
+   }
+  },
+  "CJSON-DELETE-SIBLING-CHAIN": {
+   "cJSON_Delete": {
+    "leaves": 0,
+    "functions": 0,
+    "sole_blocked": 0
+   }
+  },
+  "rows": {
+   "W47-SUMMARY-ARGUMENT-CONDITIONAL-NULL": {
+    "rd_kafka_oidc_assertion_read_from_file": {
+     "status": "Safe",
+     "leaves": {}
+    },
+    "ut_sasl_oauthbearer_oidc_assertion_parse_from_file": {
+     "status": "Unsafe",
+     "leaves": {
+      "unknown_alias": 2,
+      "unsupported": 7,
+      "leak": 2
+     }
+    }
+   },
+   "W45-FB-BACKLOG-MAP-ARMS": {
+    "flb_input_chunk_map": {
+     "status": "Unknown",
+     "leaves": {
+      "unsupported": 50,
+      "unknown_alias": 41
+     }
+    }
+   }
+  }
+ }
+}

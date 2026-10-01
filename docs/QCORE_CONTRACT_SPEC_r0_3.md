@@ -255,7 +255,7 @@ Card CG21-CALL-EXITS-AND-BOUNDARIES added `ensures normal resource_no_return();`
 
 Only normal C returns are represented by v1 postconditions, apart from the no-return exit of C04.3.3. A C routine returning null or a negative integer has still returned normally; it has not taken a QCore typed-error exit. Error-specific ownership behavior can be modeled only where a supported mode explicitly represents it, such as nullable acquisition or the specified reallocation relation.
 
-General success-dependent parameter modes, exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses other than the counted-user clauses of C04.7, effects, access permissions and synchronization are not in v1; the loop-owner obligation of C04.9 and the thread-synchronization obligation of C04.10 are call-site preconditions, not synchronization clauses. Non-null pointer error sentinels such as `MAP_FAILED` are not representable. The scalar failure sentinel `-1` of a descriptor is, through the `descriptor` kind and its `sentinel`/`valid` validity words (§C04.6); no other scalar sentinel is, and nullability is never reinterpreted as one.
+General success-dependent parameter modes (beyond the return-code dispositions of C04.13), exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses other than the counted-user clauses of C04.7, effects, access permissions and synchronization are not in v1; the loop-owner obligation of C04.9 and the thread-synchronization obligation of C04.10 are call-site preconditions, not synchronization clauses. Non-null pointer error sentinels such as `MAP_FAILED` are not representable. The scalar failure sentinel `-1` of a descriptor is, through the `descriptor` kind and its `sentinel`/`valid` validity words (§C04.6); no other scalar sentinel is, and nullability is never reinterpreted as one.
 
 **Value-dependent parameter modes are not in v1.** A parameter mode is fixed per declaration; no clause conditions a *mode* on an argument's value, and C04.5's premise does not add one — it restricts where the whole declaration applies, leaving every mode exactly as written.
 
@@ -510,6 +510,37 @@ A marked declaration is read by its own, closed vocabulary, total or reject like
 A marked declaration is **withheld** from the environment's function map (the C06.1 precedent): every consumer that knows nothing of the marker sees an uncontracted callee, and `source.ffi.v1` alone rederives the marked declarations from the retained texts (`contract_loader::ffi_declarations`). A `.qr` call that takes or returns an imported struct is admitted only through a marked declaration; through an unmarked one it is refused (`Q033`). Every certificate of a file that calls one lists it, and the file's results hold under the unsafe-FFI assumption (language specification §L14.6, §L20).
 
 **Linkage (card W48-QRLIB-LINKAGE, user decision 5).** A contract says what a function does; which code it is comes from a **generated** `.qrlib` (implemented grammars §G02d.2.1). The generator binds **every** declaration of each contract module it is given — marked or unmarked — as one `contract fn NAME(C_TYPES) -> C_TYPE from MODULE export …;` entry, projecting the declaration's types to C: a §G02t scalar to its stdint spelling (`float`/`double` for `f32`/`f64`), `c"struct TAG"` to `struct TAG`, `ptr<const, c"struct TAG">` to `const struct TAG *`. The FFI route admits a call only when the file's `extern library NAME;` resolves the callee to such an entry naming the same contract module (the selection key, compared exactly) and the same C signature (§L14.8). The contract's clauses are unchanged and still a declared assumption: a manifest proves which code is linked, never that the code behaves as the contract states.
+
+### C04.13. Return-code dispositions
+
+Card CG23-RELATIONAL-POSTCONDITIONS (gateway rule 11r). Many C entry points decide custody by the code they return: a `take(p)` that transfers `p` when it returns `0` and leaves it with the caller otherwise, a `getaddrinfo` whose out list exists exactly when it returns `0`. One clause states that relation:
+
+```qcore
+extern fn take(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_on_return(eq, 0, resource_consumed(p, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_owned(p, nonnull));
+    ensures normal resource_return_none();
+};
+```
+
+`resource_on_return(OP, VALUE, PREDICATE)` declares that `PREDICATE` holds on every normal return whose value `v` satisfies `v OP VALUE`. `OP` is one of `eq ne lt le gt ge`; `VALUE` follows C04.5's canonical spelling and must fit a C `int`; `PREDICATE` is one parameter predicate, `resource_borrowed(p)` or `resource_{owned,consumed,released,out}(p, NULLABILITY)`. The distinct `(OP, VALUE)` pairs are the declaration's **exit classes**. Total-or-reject applies:
+
+* The classes are pairwise disjoint and together cover every integer (decided exactly on the breakpoints `VALUE - 1`, `VALUE`, `VALUE + 1` of every class).
+* A parameter is either unconditional (one ordinary clause) or conditional (exactly one disposition per class); every class leaves no parameter without a mode.
+* A conditional parameter's entry requirement agrees across classes: every class asks for live custody with the same nullability (`owned`, `consumed`, `released`), or none asks for custody (`borrowed`, `out`).
+* The result is an unconditional `resource_return_none()` over a signed integer (`i8` … `i64`, `isize`).
+* Each class, with the unconditional clauses, loads through every check of a plain declaration (kinds included). Classes that all load to the same contract are rejected: that declaration is written plainly.
+* A disposition stands only beside plain parameter and result predicates, kinds and revision markers: a review marker, the checked-specification marker, a literal premise, a variadic tail, and a counted-user, container, loop-owner, thread-synchronization or lifecycle clause each reject the module beside it.
+
+**Out slots.** `resource_borrowed(out)` in one class and `resource_out(out, …)` in another states that the class leaves the slot **unwritten**: the call passes no custody through it there. A consumer passes the actual as data on that class and afterwards treats the slot's variable as holding a value it does not track; it refuses any actual other than `&NAME`.
+
+**Meaning.** The declaration loads to a `RelationalContract` (`crates/qcore-schemas/src/relational_post.rs`), **never** an entry of the environment's function map (the C06.1 precedent), so a consumer that knows nothing of it sees an uncontracted callee. A consumer that honours it MUST apply a class only where the caller **decides** the returned value's class: the gateway does so for an `if` condition that tests the call where it stands against an integer constant, or a value stored by the statement immediately before such a test (rule 11r). Each edge of that test takes the one disposition every class it can reach agrees on; a test whose edge reaches classes that disagree, or none, refuses. A call whose value is not so tested keeps the **join** of the dispositions: since the classes of an admitted declaration disagree somewhere, that is a refusal (`relational-untested`). The retained texts reload to the same dispositions (`check_source_assumptions`).
+
+**Checked against bodies.** Where the unit defines the declared function, its body's own summary decides the declaration: an ordinary summary must equal every class's contract, and an exit-specific summary (rule 11r) must equal, for each returned literal, the contract of every class containing it. A contradiction **withdraws** the declaration: every call site refuses (`relational-withdrawn`). A body that yields no summary leaves the declaration a declared assumption, as C06's rule for an ordinary declaration does. The Lean model is `QCore.RelationalPost`.
+
+**Not in this clause.** A disposition conditioned on an *argument's* value (C04.4, C04.5), a pointer result's nullness as a class (the nullable result modes cover the one existing case), a retained-storage result, and a release of a set reachable from a parameter are not stated by it.
 
 ## C05. Manifests and immutable assumptions
 

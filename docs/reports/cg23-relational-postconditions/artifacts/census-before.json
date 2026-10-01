@@ -1,0 +1,1153 @@
+{
+ "candidate_helpers": [
+  "chunkio.c::qsort_stream ['-1', '0']",
+  "cio_file.c::cio_file_down ['-1', '0']",
+  "cio_file.c::format_acl_error_message ['CIO_ERROR', 'CIO_OK'] (macro)",
+  "cio_file.c::mmap_file ['CIO_CORRUPTED', 'CIO_ERROR', 'CIO_OK'] (macro)",
+  "cio_scan.c::cio_scan_stream_files ['-1', '0']",
+  "cmt_cat.c::append_context ['-1', '0']",
+  "cmt_cat.c::cat_histogram_values ['-1', '0']",
+  "cmt_cat.c::cat_summary_values ['-1', '0']",
+  "cmt_cat.c::cmt_cat_counter ['-1', '0']",
+  "cmt_cat.c::cmt_cat_exp_histogram ['-1', '0']",
+  "cmt_cat.c::cmt_cat_gauge ['-1', '0']",
+  "cmt_cat.c::cmt_cat_histogram ['-1', '0']",
+  "cmt_cat.c::cmt_cat_summary ['-1', '0']",
+  "cmt_cat.c::cmt_cat_untyped ['-1', '0']",
+  "cmt_decode_msgpack.c::append_unpacked_counter_to_metrics_context ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::append_unpacked_exp_histogram_to_metrics_context ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::append_unpacked_gauge_to_metrics_context ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::append_unpacked_histogram_to_metrics_context ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::append_unpacked_summary_to_metrics_context ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::append_unpacked_untyped_to_metrics_context ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::create_counter_instance ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::create_exp_histogram_instance ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::create_gauge_instance ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::create_histogram_instance ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::create_summary_instance ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_msgpack.c::create_untyped_instance ['CMT_DECODE_MSGPACK_ALLOCATION_ERROR', 'CMT_DECODE_MSGPACK_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_MSGPACK_SUCCESS'] (macro)",
+  "cmt_decode_opentelemetry.c::append_new_metric_label_value ['CMT_DECODE_OPENTELEMETRY_ALLOCATION_ERROR', 'CMT_DECODE_OPENTELEMETRY_SUCCESS'] (macro)",
+  "cmt_decode_opentelemetry.c::decode_metric_unit ['CMT_DECODE_OPENTELEMETRY_ALLOCATION_ERROR', 'CMT_DECODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR', 'CMT_DECODE_OPENTELEMETRY_SUCCESS'] (macro)",
+  "cmt_decode_prometheus_remote_write.c::append_new_metric_label_value ['CMT_DECODE_PROMETHEUS_REMOTE_WRITE_ALLOCATION_ERROR', 'CMT_DECODE_PROMETHEUS_REMOTE_WRITE_SUCCESS'] (macro)",
+  "cmt_decode_statsd.c::append_new_map_label_key ['CMT_DECODE_STATSD_ALLOCATION_ERROR', 'CMT_DECODE_STATSD_SUCCESS'] (macro)",
+  "cmt_decode_statsd.c::append_new_metric_label_value ['CMT_DECODE_STATSD_ALLOCATION_ERROR', 'CMT_DECODE_STATSD_SUCCESS'] (macro)",
+  "cmt_encode_cloudwatch_emf.c::pack_emf_payload ['0', 'CMT_ENCODE_CLOUDWATCH_EMF_CREATION_FAILED'] (macro)",
+  "cmt_encode_msgpack.c::pack_context ['-1', '-2', '0']",
+  "cmt_encode_msgpack.c::pack_context_header ['-1', '-2', '0']",
+  "cmt_encode_msgpack.c::pack_metric ['-1', '0']",
+  "cmt_encode_opentelemetry.c::append_attribute_to_exponential_histogram_data_point ['CMT_ENCODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR', 'CMT_ENCODE_OPENTELEMETRY_SUCCESS'] (macro)",
+  "cmt_encode_opentelemetry.c::append_attribute_to_histogram_data_point ['CMT_ENCODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR', 'CMT_ENCODE_OPENTELEMETRY_SUCCESS'] (macro)",
+  "cmt_encode_opentelemetry.c::append_attribute_to_numerical_data_point ['CMT_ENCODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR', 'CMT_ENCODE_OPENTELEMETRY_SUCCESS'] (macro)",
+  "cmt_encode_opentelemetry.c::append_attribute_to_summary_data_point ['CMT_ENCODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR', 'CMT_ENCODE_OPENTELEMETRY_SUCCESS'] (macro)",
+  "cmt_encode_opentelemetry.c::append_data_point_to_metric ['CMT_ENCODE_OPENTELEMETRY_INVALID_ARGUMENT_ERROR', 'CMT_ENCODE_OPENTELEMETRY_SUCCESS'] (macro)",
+  "cmt_encode_opentelemetry.c::initialize_exemplars_from_metadata ['-1', '0']",
+  "cmt_encode_opentelemetry.c::kvlist_fetch_bool ['-1', '0']",
+  "cmt_encode_opentelemetry.c::kvlist_fetch_double ['-1', '0']",
+  "cmt_encode_opentelemetry.c::kvlist_fetch_string ['-1', '0']",
+  "cmt_encode_opentelemetry.c::kvlist_fetch_uint64 ['-1', '0']",
+  "cmt_encode_opentelemetry_batch.c::batch_add_resource ['CMT_ENCODE_OPENTELEMETRY_ALLOCATION_ERROR', 'CMT_ENCODE_OPENTELEMETRY_SUCCESS'] (macro)",
+  "cmt_encode_opentelemetry_batch.c::batch_add_scope ['CMT_ENCODE_OPENTELEMETRY_ALLOCATION_ERROR', 'CMT_ENCODE_OPENTELEMETRY_SUCCESS'] (macro)",
+  "cmt_encode_opentelemetry_batch.c::batches_append ['CMT_ENCODE_OPENTELEMETRY_ALLOCATION_ERROR', 'CMT_ENCODE_OPENTELEMETRY_SUCCESS'] (macro)",
+  "cmt_encode_prometheus_remote_write.c::append_metric_to_timeseries ['CMT_ENCODE_PROMETHEUS_REMOTE_WRITE_ALLOCATION_ERROR', 'CMT_ENCODE_PROMETHEUS_REMOTE_WRITE_SUCCESS'] (macro)",
+  "cmt_encode_prometheus_remote_write.c::pack_metric_metadata ['0', 'CMT_ENCODE_PROMETHEUS_REMOTE_WRITE_ALLOCATION_ERROR', 'CMT_ENCODE_PROMETHEUS_REMOTE_WRITE_UNEXPECTED_METRIC_TYPE'] (macro)",
+  "cmt_filter.c::filter_context_fqname ['-1', 'CMT_FILTER_SUCCESS'] (macro)",
+  "cmt_filter.c::filter_context_label_key ['-1', 'CMT_FILTER_SUCCESS'] (macro)",
+  "cmt_filter.c::filter_context_label_key_value ['-1', 'CMT_FILTER_SUCCESS'] (macro)",
+  "cmt_filter.c::metrics_check_label_value_existence ['CMT_FALSE', 'CMT_TRUE'] (macro)",
+  "cmt_metric.c::metric_exchange ['0', '1']",
+  "cmt_metric.c::metric_hist_exchange ['0', '1']",
+  "cmt_metric_histogram.c::metric_hist_count_exchange ['0', '1']",
+  "cmt_metric_histogram.c::metric_hist_exchange ['0', '1']",
+  "cmt_metric_histogram.c::metric_sum_exchange ['0', '1']",
+  "cmt_mpack_utils.c::cmt_mpack_consume_string_tag ['CMT_MPACK_ALLOCATION_ERROR', 'CMT_MPACK_CORRUPT_INPUT_DATA_ERROR', 'CMT_MPACK_ENGINE_ERROR', 'CMT_MPACK_INVALID_ARGUMENT_ERROR', 'CMT_MPACK_SUCCESS', 'CMT_MPACK_UNEXPECTED_DATA_TYPE_ERROR'] (macro)",
+  "cmt_summary.c::summary_count_exchange ['0', '1']",
+  "cmt_summary.c::summary_quantile_exchange ['0', '1']",
+  "cmt_summary.c::summary_sum_exchange ['0', '1']",
+  "ctr_id.c::ctr_id_set ['-1', '0']",
+  "ctr_mpack_utils.c::ctr_mpack_consume_binary_tag ['CTR_MPACK_ALLOCATION_ERROR', 'CTR_MPACK_ENGINE_ERROR', 'CTR_MPACK_INVALID_ARGUMENT_ERROR', 'CTR_MPACK_SUCCESS', 'CTR_MPACK_UNEXPECTED_DATA_TYPE_ERROR'] (macro)",
+  "ctr_mpack_utils.c::ctr_mpack_consume_int_tag ['CTR_MPACK_ENGINE_ERROR', 'CTR_MPACK_INVALID_ARGUMENT_ERROR', 'CTR_MPACK_SUCCESS', 'CTR_MPACK_UNEXPECTED_DATA_TYPE_ERROR'] (macro)",
+  "ctr_mpack_utils.c::ctr_mpack_consume_nil_tag ['CTR_MPACK_ENGINE_ERROR', 'CTR_MPACK_INVALID_ARGUMENT_ERROR', 'CTR_MPACK_SUCCESS', 'CTR_MPACK_UNEXPECTED_DATA_TYPE_ERROR'] (macro)",
+  "ctr_mpack_utils.c::ctr_mpack_consume_string_tag ['CTR_MPACK_ALLOCATION_ERROR', 'CTR_MPACK_CORRUPT_INPUT_DATA_ERROR', 'CTR_MPACK_ENGINE_ERROR', 'CTR_MPACK_INVALID_ARGUMENT_ERROR', 'CTR_MPACK_SUCCESS', 'CTR_MPACK_UNEXPECTED_DATA_TYPE_ERROR'] (macro)",
+  "ctr_mpack_utils.c::ctr_mpack_consume_uint_tag ['CTR_MPACK_ENGINE_ERROR', 'CTR_MPACK_INVALID_ARGUMENT_ERROR', 'CTR_MPACK_SUCCESS', 'CTR_MPACK_UNEXPECTED_DATA_TYPE_ERROR'] (macro)",
+  "ctr_span.c::ctr_span_set_parent_span_id ['-1', '0']",
+  "ctr_span.c::ctr_span_set_span_id ['-1', '0']",
+  "ctr_span.c::ctr_span_set_trace_id ['-1', '0']",
+  "flb_input_chunk.c::append_to_ring_buffer ['-1', '0']",
+  "flb_input_chunk.c::flb_input_chunk_get_direct_routes ['-1', '-2', '0']",
+  "flb_input_chunk.c::flb_input_chunk_get_tag ['-1', '0']",
+  "flb_input_chunk.c::flb_input_chunk_protect ['FLB_FALSE', 'FLB_TRUE'] (macro)",
+  "flb_input_chunk.c::input_chunk_append_raw ['-1', '0']",
+  "flb_input_chunk.c::input_chunk_metadata_view ['-1', '0', '1']",
+  "flb_input_chunk.c::memrb_input_chunk_release_space ['-1', '0']",
+  "rdbuf.c::rd_buf_write_seek ['-1', '0']",
+  "rdbuf.c::rd_slice_narrow ['0', '1']",
+  "rdbuf.c::rd_slice_narrow_copy ['0', '1']",
+  "rdbuf.c::rd_slice_seek ['-1', '0']",
+  "rdkafka_broker.c::rd_kafka_broker_buf_enq2 ['-1', '0']",
+  "rdkafka_broker.c::rd_kafka_broker_connect ['-1', '0', '1']",
+  "rdkafka_broker.c::rd_kafka_req_response ['-1', '0']",
+  "rdkafka_cgrp.c::rd_kafka_cgrp_set_state ['0', '1']",
+  "rdkafka_cgrp.c::rd_kafka_group_MemberMetadata_consumer_read ['-1', '0']",
+  "rdkafka_fetcher.c::rd_kafkap_Fetch_reply_tags_parse ['-1', '0', '1']",
+  "rdkafka_fetcher.c::rd_kafkap_Fetch_reply_tags_partition_parse ['-1', '0', '1']",
+  "rdkafka_mock.c::rd_kafka_mock_broker_start_listener ['-1', '0']",
+  "rdkafka_mock.c::rd_kafka_mock_connection_read_request ['-1', '0', '1']",
+  "rdkafka_msg.c::rd_kafka_msg_new ['-1', '0']",
+  "rdkafka_msg.c::unittest_msgq_order ['0', '1']",
+  "rdkafka_partition.c::rd_kafka_topic_partition_list_del_by_idx ['0', '1']",
+  "rdkafka_request.c::rd_kafka_handle_Produce_error ['0', '1']",
+  "rdkafka_request.c::rd_kafkap_Produce_reply_tags_parse ['-1', '0', '1']",
+  "rdkafka_sasl.c::rd_kafka_sasl_send_legacy ['-1', '0']",
+  "rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_kinit_refresh ['-1', '0']",
+  "rdkafka_sasl_oauthbearer.c::parse_ujws_config_value_for_prefix ['-1', '0']",
+  "rdkafka_sasl_scram.c::rd_kafka_sasl_scram_handle_server_final_message ['-1', '0']",
+  "rdkafka_ssl.c::rd_kafka_ssl_probe_and_set_default_ca_location ['-1', '0']",
+  "rdkafka_telemetry_decode.c::rd_kafka_snappy_decompress ['-1', '0']",
+  "rdkafka_timer.c::rd_kafka_timer_stop ['0', '1']",
+  "rdkafka_topic.c::rd_kafka_topic_partition_cnt_update ['0', '1']"
+ ],
+ "freed_alone_upper_bound": [
+  "cmt_cat.c::append_context",
+  "ctr_mpack_utils.c::ctr_mpack_consume_int32_tag",
+  "ctr_mpack_utils.c::ctr_mpack_consume_uint32_tag"
+ ],
+ "leaves": {
+  "tested": 54,
+  "untested": 124
+ },
+ "touched": {
+  "chunkio.c::cio_qsort": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "qsort_stream"
+   ],
+   "other_leaves": 4,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cio_file.c::cio_file_open": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "format_acl_error_message"
+   ],
+   "other_leaves": 27,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "cio_file.c::cio_file_read_prepare": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "mmap_file"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cio_file.c::cio_file_scan_dump": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "cio_file_down"
+   ],
+   "other_leaves": 7,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cio_scan.c::cio_scan_streams": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "cio_scan_stream_files"
+   ],
+   "other_leaves": 5,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_cat.c::append_context": {
+   "freed_alone_upper_bound": true,
+   "helpers": [
+    "cmt_cat_counter",
+    "cmt_cat_exp_histogram",
+    "cmt_cat_gauge",
+    "cmt_cat_histogram",
+    "cmt_cat_summary",
+    "cmt_cat_untyped"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 6,
+   "untested_sites": 0
+  },
+  "cmt_cat.c::cmt_cat": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_context"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_cat.c::cmt_cat_copy_map": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "cat_histogram_values",
+    "cat_summary_values"
+   ],
+   "other_leaves": 11,
+   "status": "Unknown",
+   "tested_sites": 4,
+   "untested_sites": 0
+  },
+  "cmt_decode_msgpack.c::create_metric_instance": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "create_counter_instance",
+    "create_exp_histogram_instance",
+    "create_gauge_instance",
+    "create_histogram_instance",
+    "create_summary_instance",
+    "create_untyped_instance"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 6
+  },
+  "cmt_decode_msgpack.c::unpack_basic_type_entry": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_unpacked_counter_to_metrics_context",
+    "append_unpacked_exp_histogram_to_metrics_context",
+    "append_unpacked_gauge_to_metrics_context",
+    "append_unpacked_histogram_to_metrics_context",
+    "append_unpacked_summary_to_metrics_context",
+    "append_unpacked_untyped_to_metrics_context"
+   ],
+   "other_leaves": 2,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 6
+  },
+  "cmt_decode_opentelemetry.c::decode_data_point_labels": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_new_metric_label_value"
+   ],
+   "other_leaves": 21,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 8
+  },
+  "cmt_decode_opentelemetry.c::decode_metrics_entry": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "decode_metric_unit"
+   ],
+   "other_leaves": 55,
+   "status": "Unknown",
+   "tested_sites": 5,
+   "untested_sites": 0
+  },
+  "cmt_decode_prometheus_remote_write.c::decode_labels": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_new_metric_label_value"
+   ],
+   "other_leaves": 8,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_decode_statsd.c::decode_labels": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_new_map_label_key",
+    "append_new_metric_label_value"
+   ],
+   "other_leaves": 37,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 3
+  },
+  "cmt_encode_cloudwatch_emf.c::cmt_encode_cloudwatch_emf_create": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "pack_emf_payload"
+   ],
+   "other_leaves": 3,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_encode_msgpack.c::cmt_encode_msgpack_create": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "pack_context"
+   ],
+   "other_leaves": 3,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_encode_msgpack.c::pack_basic_type": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "pack_metric"
+   ],
+   "other_leaves": 5,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_encode_msgpack.c::pack_context": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "pack_context_header"
+   ],
+   "other_leaves": 2,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "cmt_encode_opentelemetry.c::append_attribute_to_data_point": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_attribute_to_exponential_histogram_data_point",
+    "append_attribute_to_histogram_data_point",
+    "append_attribute_to_numerical_data_point",
+    "append_attribute_to_summary_data_point"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 4
+  },
+  "cmt_encode_opentelemetry.c::append_sample_to_metric": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_data_point_to_metric"
+   ],
+   "other_leaves": 58,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "cmt_encode_opentelemetry.c::apply_data_point_metadata_from_otlp_context": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "initialize_exemplars_from_metadata",
+    "kvlist_fetch_bool",
+    "kvlist_fetch_double",
+    "kvlist_fetch_string",
+    "kvlist_fetch_uint64"
+   ],
+   "other_leaves": 43,
+   "status": "Unknown",
+   "tested_sites": 18,
+   "untested_sites": 0
+  },
+  "cmt_encode_opentelemetry.c::create_exemplar_from_kvlist": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "kvlist_fetch_uint64"
+   ],
+   "other_leaves": 48,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "cmt_encode_opentelemetry.c::resolve_data_point_start_timestamp": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "kvlist_fetch_uint64"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_encode_opentelemetry.c::resolve_target_scope_index": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "kvlist_fetch_uint64"
+   ],
+   "other_leaves": 3,
+   "status": "Unknown",
+   "tested_sites": 3,
+   "untested_sites": 0
+  },
+  "cmt_encode_opentelemetry_batch.c::append_original_payload": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "batches_append"
+   ],
+   "other_leaves": 3,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "cmt_encode_opentelemetry_batch.c::batch_ensure_resource": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "batch_add_resource"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_encode_opentelemetry_batch.c::batch_ensure_scope": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "batch_add_scope"
+   ],
+   "other_leaves": 2,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_encode_prometheus_remote_write.c::pack_basic_metric_sample": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_metric_to_timeseries",
+    "pack_metric_metadata"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 1
+  },
+  "cmt_encode_prometheus_remote_write.c::pack_complex_metric_sample": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_metric_to_timeseries",
+    "pack_metric_metadata"
+   ],
+   "other_leaves": 64,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 12
+  },
+  "cmt_filter.c::cmt_filter": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "filter_context_fqname",
+    "filter_context_label_key"
+   ],
+   "other_leaves": 3,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 2
+  },
+  "cmt_filter.c::cmt_filter_with_label_pair": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "filter_context_label_key_value"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_filter.c::metrics_map_drop_label_value_pairs": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "metrics_check_label_value_existence"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_metric.c::add": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "metric_exchange"
+   ],
+   "other_leaves": 4,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_metric.c::cmt_metric_hist_bucket_inc": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "metric_hist_exchange"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_metric_histogram.c::cmt_metric_hist_count_inc": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "metric_hist_count_exchange"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_metric_histogram.c::cmt_metric_hist_count_set": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "metric_hist_count_exchange"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_metric_histogram.c::cmt_metric_hist_inc": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "metric_hist_exchange"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_metric_histogram.c::cmt_metric_hist_set": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "metric_hist_exchange"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_metric_histogram.c::cmt_metric_hist_sum_add": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "metric_sum_exchange"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_metric_histogram.c::cmt_metric_hist_sum_set": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "metric_sum_exchange"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_mpack_utils.c::cmt_mpack_unpack_map": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "cmt_mpack_consume_string_tag"
+   ],
+   "other_leaves": 13,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "cmt_summary.c::cmt_summary_count_set": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "summary_count_exchange"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_summary.c::cmt_summary_quantile_set": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "summary_quantile_exchange"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "cmt_summary.c::cmt_summary_sum_set": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "summary_sum_exchange"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "ctr_id.c::ctr_id_create": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "ctr_id_set"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "ctr_mpack_utils.c::ctr_mpack_consume_binary_or_nil_tag": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "ctr_mpack_consume_binary_tag",
+    "ctr_mpack_consume_nil_tag"
+   ],
+   "other_leaves": 3,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 2
+  },
+  "ctr_mpack_utils.c::ctr_mpack_consume_int32_tag": {
+   "freed_alone_upper_bound": true,
+   "helpers": [
+    "ctr_mpack_consume_int_tag"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "ctr_mpack_utils.c::ctr_mpack_consume_int64_tag": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "ctr_mpack_consume_int_tag"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "ctr_mpack_utils.c::ctr_mpack_consume_string_or_nil_tag": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "ctr_mpack_consume_nil_tag",
+    "ctr_mpack_consume_string_tag"
+   ],
+   "other_leaves": 3,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 2
+  },
+  "ctr_mpack_utils.c::ctr_mpack_consume_uint32_tag": {
+   "freed_alone_upper_bound": true,
+   "helpers": [
+    "ctr_mpack_consume_uint_tag"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "ctr_mpack_utils.c::ctr_mpack_consume_uint64_tag": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "ctr_mpack_consume_uint_tag"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "ctr_mpack_utils.c::ctr_mpack_unpack_map": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "ctr_mpack_consume_string_tag"
+   ],
+   "other_leaves": 13,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "ctr_span.c::ctr_span_set_parent_span_id_with_cid": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "ctr_span_set_parent_span_id"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "ctr_span.c::ctr_span_set_span_id_with_cid": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "ctr_span_set_span_id"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "ctr_span.c::ctr_span_set_trace_id_with_cid": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "ctr_span_set_trace_id"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "flb_input_chunk.c::flb_input_chunk_append_raw": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_to_ring_buffer",
+    "input_chunk_append_raw"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 2
+  },
+  "flb_input_chunk.c::flb_input_chunk_append_raw_local": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "input_chunk_append_raw"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "flb_input_chunk.c::flb_input_chunk_destroy": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "flb_input_chunk_get_tag"
+   ],
+   "other_leaves": 18,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "flb_input_chunk.c::flb_input_chunk_get_direct_routes": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "input_chunk_metadata_view"
+   ],
+   "other_leaves": 23,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "flb_input_chunk.c::flb_input_chunk_get_tag": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "input_chunk_metadata_view"
+   ],
+   "other_leaves": 2,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "flb_input_chunk.c::flb_input_chunk_has_direct_routes": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "input_chunk_metadata_view"
+   ],
+   "other_leaves": 2,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "flb_input_chunk.c::flb_input_chunk_map": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "flb_input_chunk_get_direct_routes",
+    "flb_input_chunk_get_tag"
+   ],
+   "other_leaves": 89,
+   "status": "Unknown",
+   "tested_sites": 2,
+   "untested_sites": 0
+  },
+  "flb_input_chunk.c::flb_input_chunk_ring_buffer_enqueue": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_to_ring_buffer"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "flb_input_chunk.c::flb_input_chunk_ring_buffer_enqueue_log_routing": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "append_to_ring_buffer"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "flb_input_chunk.c::input_chunk_append_raw": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "flb_input_chunk_protect",
+    "memrb_input_chunk_release_space"
+   ],
+   "other_leaves": 39,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 2
+  },
+  "rdbuf.c::do_unittest_read_verify0": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_slice_seek"
+   ],
+   "other_leaves": 26,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdbuf.c::do_unittest_write_split_seek": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_buf_write_seek"
+   ],
+   "other_leaves": 44,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 2
+  },
+  "rdbuf.c::rd_slice_narrow_copy_relative": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_slice_narrow_copy"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdbuf.c::rd_slice_narrow_relative": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_slice_narrow"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_broker.c::rd_kafka_broker_buf_enq_replyq": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_broker_buf_enq2"
+   ],
+   "other_leaves": 10,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_broker.c::rd_kafka_broker_thread_main": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_broker_connect"
+   ],
+   "other_leaves": 77,
+   "status": "Unknown",
+   "tested_sites": 1,
+   "untested_sites": 0
+  },
+  "rdkafka_broker.c::rd_kafka_recv": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_req_response"
+   ],
+   "other_leaves": 40,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_cgrp.c::rd_kafka_cgrp_coord_dead": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_cgrp_set_state"
+   ],
+   "other_leaves": 3,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_cgrp.c::rd_kafka_cgrp_coord_query": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_cgrp_set_state"
+   ],
+   "other_leaves": 15,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_cgrp.c::rd_kafka_cgrp_coord_set_broker": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_cgrp_set_state"
+   ],
+   "other_leaves": 12,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_cgrp.c::rd_kafka_cgrp_coord_update": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_cgrp_set_state"
+   ],
+   "other_leaves": 15,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 3
+  },
+  "rdkafka_cgrp.c::rd_kafka_cgrp_handle_FindCoordinator": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_cgrp_set_state"
+   ],
+   "other_leaves": 48,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_cgrp.c::rd_kafka_cgrp_serve": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_cgrp_set_state"
+   ],
+   "other_leaves": 32,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 3
+  },
+  "rdkafka_cgrp.c::rd_kafka_cgrp_try_terminate": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_cgrp_set_state"
+   ],
+   "other_leaves": 9,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_cgrp.c::unittest_member_metadata_serdes": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_group_MemberMetadata_consumer_read"
+   ],
+   "other_leaves": 23,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_fetcher.c::rd_kafka_fetch_reply_handle": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafkap_Fetch_reply_tags_parse"
+   ],
+   "other_leaves": 94,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_fetcher.c::rd_kafka_fetch_reply_handle_partition": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafkap_Fetch_reply_tags_partition_parse"
+   ],
+   "other_leaves": 183,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_mock.c::rd_kafka_mock_broker_cmd": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_mock_broker_start_listener"
+   ],
+   "other_leaves": 18,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_mock.c::rd_kafka_mock_connection_io": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_mock_connection_read_request"
+   ],
+   "other_leaves": 10,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_msg.c::rd_kafka_produce": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_msg_new"
+   ],
+   "other_leaves": 0,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_msg.c::unittest_msg": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "unittest_msgq_order"
+   ],
+   "other_leaves": 6,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_partition.c::rd_kafka_topic_partition_list_del": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_topic_partition_list_del_by_idx"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_request.c::rd_kafka_handle_Produce_parse": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafkap_Produce_reply_tags_parse"
+   ],
+   "other_leaves": 136,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_request.c::rd_kafka_msgbatch_handle_Produce_result": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_handle_Produce_error"
+   ],
+   "other_leaves": 24,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_sasl.c::rd_kafka_sasl_send": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_sasl_send_legacy"
+   ],
+   "other_leaves": 4,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_kinit_refresh_tmr_cb": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_sasl_cyrus_kinit_refresh"
+   ],
+   "other_leaves": 1,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_sasl_oauthbearer.c::parse_ujws_config": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "parse_ujws_config_value_for_prefix"
+   ],
+   "other_leaves": 33,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 3
+  },
+  "rdkafka_sasl_scram.c::rd_kafka_sasl_scram_fsm": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_sasl_scram_handle_server_final_message"
+   ],
+   "other_leaves": 15,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_ssl.c::rd_kafka_ssl_set_certs": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_ssl_probe_and_set_default_ca_location"
+   ],
+   "other_leaves": 126,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_telemetry_decode.c::rd_kafka_telemetry_uncompress_metrics_payload": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_snappy_decompress"
+   ],
+   "other_leaves": 5,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_timer.c::rd_kafka_timer_start0": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_timer_stop"
+   ],
+   "other_leaves": 5,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_timer.c::rd_kafka_timers_destroy": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_timer_stop"
+   ],
+   "other_leaves": 6,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_topic.c::rd_kafka_topic_partitions_remove": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_topic_partition_cnt_update"
+   ],
+   "other_leaves": 31,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_topic.c::rd_kafka_topic_set_error": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_topic_partition_cnt_update"
+   ],
+   "other_leaves": 8,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  },
+  "rdkafka_topic.c::rd_kafka_topic_set_notexists": {
+   "freed_alone_upper_bound": false,
+   "helpers": [
+    "rd_kafka_topic_partition_cnt_update"
+   ],
+   "other_leaves": 10,
+   "status": "Unknown",
+   "tested_sites": 0,
+   "untested_sites": 1
+  }
+ },
+ "touched_functions": 100
+}

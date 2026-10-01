@@ -17,10 +17,10 @@
 //! of the body (no `return`) belongs to every per-value body, so every class
 //! is validated on it too.
 //!
-//! When every class's contract is the same, that contract holds on every exit
-//! and is published as an ordinary summary; otherwise the classes are
-//! published as an inferred [`RelationalContract`], whose returned values are
-//! exactly the literals (the body returns no other).
+//! The classes are published as an inferred [`RelationalContract`], whose
+//! returned values are exactly the literals (the body returns no other). When
+//! every class states the same contract nothing is published: that is no
+//! exit-specific relation, and the ordinary route already refused it.
 //!
 //! # The body check
 //!
