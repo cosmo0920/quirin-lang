@@ -69,6 +69,12 @@ formatting, clippy and records only). Clang 21.1.8. Comparison:
 [`artifacts/identity.json`](artifacts/identity.json) by
 [`scripts/identity.py`](scripts/identity.py).
 
+The card was rebased three times after the measurement (onto main
+`8e8ed41f` CG17, `06ad81cb` CG20, `b934c560` CG25). None of them reads the
+bounds selection and this card changes no custody code, so the comparison is
+not repeated; the bounds and combined figures below are those of the base
+`b6a3dc42` (CG25's +1 custody Safe after it is not in the combined column).
+
 **Custody (unchanged, as predicted).**
 
 | Route | BEFORE | AFTER (bounds selected on the corpus) | Movement |
