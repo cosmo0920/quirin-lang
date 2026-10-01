@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG28-WEAK-MEMORY-EVENTS card gate. Full standing gate (scripts/gate.sh, under the shared heavy lock) at tip ae3a85b1 on main b934c560, logs private/cg28/gate-final of this worktree: submodule 0; run_test_binaries.py 417 units, 430 summaries, 7,236 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T191934Z-24798); fmt 0; clippy --locked --all-targets -D warnings 0; both reevaluation probes exit 0; check_lean_audits.py 267 audits passed (266 on b934c560 + AuditWeakMemory.lean); python tests 365 with 1 expected failure (the derived lean_audits, test_build_matrix_sections), cleared by build_matrix.py . --gate this file and rerun (09b); docs index --check 0. Main then moved to f0bbc0eb (CG26-VARIADICS); the card was rebased (records only conflicted) and re-checked there at dca8e7bc, logs private/cg28/targeted: cargo check --workspace --all-targets 0; the card's own tests (qcore-core weak_memory unit and clang_gap_core, qcore-c-gateway atomic_source_route unit, atomic_source_route, atomic_weak_memory_events, atomic_publication_source, clang_gap_phase3, clang_gap_phase4, qcore-verification atomic_publication_source) 114 passed, 0 failed; fmt 0; clippy --locked on qcore-core and qcore-c-gateway 0; check_lean_audits.py 268 audits passed (267 on f0bbc0eb + AuditWeakMemory.lean), the figure recorded below. providers/ is unchanged, so the provider gate is not due: provider_tests 129 is carried. Clang 21.1.8. CT stage summary --check exit 0 (mapped 50 / unmapped 0). Corpus arbiter (--jobs 4, release quirin-audit): base b6a3dc42 BEFORE 3d53a5d0 629/10/4,195 -> AFTER d7be9d8c 630/10/4,194 (cmt_atomic_compare_exchange Unknown -> Safe); on b934c560 631/10/4,193 c2a96c6f (CG25's 5ade5aab plus the same move); system 44/2/188 and tail-pause slice 29/1/239/1 Pending unchanged. Exits in docs/reports/cg28-weak-memory-events/gate/.",
-  "workspace_tests": 7236,
+  "note": "CG27-LOOPS-RECURSION-BUDGETS card gate at tip 26d105af (base b6a3dc42 rebased onto main 8e8ed41f, 06ad81cb, b934c560, then f0bbc0eb), script docs/reports/cg27-loops-recursion-budgets/scripts/gate.sh under the shared flock, logs private/cg27lrb-gate of this worktree: submodule 0; cargo check --workspace --all-targets 0; fmt 0; clippy --locked 0; run_test_binaries.py 418 units, 431 summaries, 7,280 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T193910Z-255152); both reevaluation probes exit 0; check_lean_audits.py 268 audits passed (267 on main + AuditLoopInvariants.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 267 -> 268, test_build_matrix_sections), then run again after build_matrix.py . --gate this file (09a, 09b); docs index 0. Three earlier test-runner attempts on base b6a3dc42 are discarded: two hit ENOSPC on the shared disk, the third ran on binaries damaged by it. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit) on main b6a3dc42: BEFORE 3d53a5d0 629/10/4,195, AFTER byte-identical; system 44/2/188 and tail-pause slice 29/1/239/1 Pending byte-identical. Not re-measured on the rebased tree (CG25 moved main's corpus to 630/10/4,194; CG26 to its own figures). Exits in docs/reports/cg27-loops-recursion-budgets/gate/. INTEGRATION: main moved to f6336c9d (CG28-WEAK-MEMORY-EVENTS, disjoint code in qcore-core weak_memory and the atomic route); the card was rebased onto it (records-only conflicts: STATUS, increment, matrix, INDEX) and the integrator ran a targeted check on the combined tree (private/int-cg27): cargo check --workspace --all-targets --locked 0; fmt 0; clippy 0; cargo test -p qcore-c-gateway, -p qcore-verification, -p qcore-core 0 (3,960 passed, 0 failed); Lean 269 audits passed; providers cargo check --locked 0. workspace_tests is DERIVED for the combined tree as 7,280 (this card on f0bbc0eb) + 14 (CG28's added tests, 7,236 - 7,222) = 7,294, not one measured run.",
+  "workspace_tests": 7294,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 268,
+  "lean_audits": 269,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6881,6 +6881,7 @@
    "AuditLiteralArgumentPremise.lean",
    "AuditLiteralTailActual.lean",
    "AuditLoopBudget.lean",
+   "AuditLoopInvariants.lean",
    "AuditLoopOwner.lean",
    "AuditLoopSiteGenerations.lean",
    "AuditLoopSwitchCallEvaluation.lean",
@@ -7034,7 +7035,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg28-weak-memory-events/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg27-loops-recursion-budgets/gate.json)"
  },
  "named_followups": [
   {
