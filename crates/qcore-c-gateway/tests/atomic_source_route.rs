@@ -18,10 +18,7 @@ fn ta(source: &str) -> String {
     t_refusal(&format!("{STDATOMIC}{source}"))
 }
 
-const RMW: &str = "atomic read-modify-write `__c11_atomic_fetch_add` is not represented by the weak-memory model (CG28)";
-const CAS: &str = "atomic compare-exchange `__c11_atomic_compare_exchange_strong` is not represented by the weak-memory model (CG28)";
-const FENCE: &str =
-    "atomic fence `__c11_atomic_thread_fence` is not represented by the weak-memory model (CG28)";
+const FENCE: &str = "memory order of atomic `__c11_atomic_thread_fence` is not an integer constant the atomic route evaluates (CG19)";
 const CONSUME: &str = "memory_order_consume load `__c11_atomic_load` is not represented by the weak-memory model (CG28)";
 
 /// The corpus shapes of `cmt_atomic_clang.c` (lib/cmetrics), whose only
@@ -39,15 +36,12 @@ fn g_routes_the_cmetrics_plain_load_and_store() {
         "void subject(uint64_t *storage, uint64_t new_value) { __atomic_store_n(storage, new_value, __ATOMIC_SEQ_CST); }",
     );
     assert!(store.safe(), "{store:?}");
-    // The compare-exchange beside them stays refused, now by name.
+    // The compare-exchange beside them: refused by name here (CG19), routed
+    // since card CG28-WEAK-MEMORY-EVENTS (rule 11t) and custody-`Safe`.
     let cas = ga(
         "int subject(uint64_t *storage, uint64_t old_value, uint64_t new_value) { return __atomic_compare_exchange(storage, &old_value, &new_value, 0, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST); }",
     );
-    assert!(cas.unknown(), "{cas:?}");
-    assert!(
-        cas.refused("atomic compare-exchange `__atomic_compare_exchange` is not represented by the weak-memory model (CG28)"),
-        "{cas:?}"
-    );
+    assert!(cas.safe(), "{cas:?}");
 }
 
 /// `<stdatomic.h>`'s generic functions, lowered by Clang to the `__c11_`
@@ -81,29 +75,25 @@ fn g_routes_stdatomic_plain_forms() {
 
 /// The refusal controls the card names: `atomic_fetch_add`,
 /// `atomic_compare_exchange_strong`, `atomic_thread_fence` and a consume
-/// load are refused by name, never read as neutral calls.
+/// load are refused by name, never read as neutral calls. Flipped by card
+/// CG28-WEAK-MEMORY-EVENTS (rule 11t): the read-modify-write and the
+/// compare-exchange are routed and custody-`Safe`
+/// (`tests/atomic_weak_memory_events.rs`); the fence with an enumerator order
+/// is now refused for its unevaluated order; the consume load stays refused.
 #[test]
 fn g_refuses_rmw_cas_fence_and_consume_by_name() {
     if !clang_available() {
         return;
     }
-    let rmw = ga("void subject(atomic_int *a) { atomic_fetch_add(a, 1); }");
-    assert!(rmw.unknown() && rmw.refused(RMW), "{rmw:?}");
-    let rmw_value =
-        ga("int subject(atomic_int *a) { int old = atomic_fetch_add(a, 1); return old; }");
-    assert!(
-        rmw_value.unknown() && rmw_value.refused(RMW),
-        "{rmw_value:?}"
-    );
-    let rmw_return = ga("int subject(atomic_int *a) { return atomic_fetch_add(a, 1); }");
-    assert!(
-        rmw_return.unknown() && rmw_return.refused(RMW),
-        "{rmw_return:?}"
-    );
-    let cas = ga(
+    for source in [
+        "void subject(atomic_int *a) { atomic_fetch_add(a, 1); }",
+        "int subject(atomic_int *a) { int old = atomic_fetch_add(a, 1); return old; }",
+        "int subject(atomic_int *a) { return atomic_fetch_add(a, 1); }",
         "int subject(atomic_int *a) { int e = 0; return atomic_compare_exchange_strong(a, &e, 1); }",
-    );
-    assert!(cas.unknown() && cas.refused(CAS), "{cas:?}");
+    ] {
+        let run = ga(source);
+        assert!(run.safe(), "{source}: {run:?}");
+    }
     let fence = ga("void subject(void) { atomic_thread_fence(memory_order_seq_cst); }");
     assert!(fence.unknown() && fence.refused(FENCE), "{fence:?}");
     let consume =
@@ -168,9 +158,10 @@ fn t_discriminates_atomic_from_volatile() {
         t_refusal("int subject(int *p) { return __atomic_load_n(p, 5); }"),
         "atomic `__atomic_load_n` is routed to the weak-memory model, which no typed-source consumer decides (CG19)"
     );
+    // Card CG28 (rule 11t): a read-modify-write is now routed, and named so.
     assert_eq!(
         ta("int subject(int *p) { return __atomic_fetch_add(p, 1, 5); }"),
-        "atomic read-modify-write `__atomic_fetch_add` is not represented by the weak-memory model (CG28)"
+        "atomic `__atomic_fetch_add` is routed to the weak-memory model, which no typed-source consumer decides (CG19)"
     );
 }
 
@@ -193,14 +184,21 @@ fn g_routes_qualified_stores_and_names_qualified_rmw() {
         run.unknown() && run.refused("store through `*a` without an out-parameter contract"),
         "{run:?}"
     );
-    let increment = "atomic read-modify-write `_Atomic increment or decrement` is not represented by the weak-memory model (CG28)";
-    let compound = "atomic read-modify-write `_Atomic compound assignment` is not represented by the weak-memory model (CG28)";
+    // Card CG28 (rule 11t): the compound assignment and increment through a
+    // pointer are routed read-modify-writes (custody-`Safe`); of a named
+    // `_Atomic` object, the operand shape is not read.
     let run = g("void subject(_Atomic int *a) { (*a)++; }");
-    assert!(run.unknown() && run.refused(increment), "{run:?}");
+    assert!(run.safe(), "{run:?}");
     let run = g("void subject(_Atomic int *a) { *a += 2; }");
-    assert!(run.unknown() && run.refused(compound), "{run:?}");
+    assert!(run.safe(), "{run:?}");
     let run = g("_Atomic int counter; void subject(void) { counter++; }");
-    assert!(run.unknown() && run.refused(increment), "{run:?}");
+    assert!(
+        run.unknown()
+            && run.refused(
+                "atomic `_Atomic increment or decrement` has an operand shape the atomic route does not read (CG19)"
+            ),
+        "{run:?}"
+    );
     // A store of a value the route does not read as data stays refused.
     let run = g("void subject(_Atomic int *a) { *a = opaque(); }");
     assert!(run.unknown(), "{run:?}");

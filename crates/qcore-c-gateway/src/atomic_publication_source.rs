@@ -345,17 +345,30 @@ fn route_flag_access<'a>(
     } else {
         classify_qualified(node).ok_or_else(|| shape.clone())?
     };
-    answer.map_err(|refusal| match refusal {
-        R::UnevaluatedOrder(_) | R::InvalidOrder(_) => {
+    let routed = answer.map_err(|refusal| match refusal {
+        R::UnevaluatedOrder(_) | R::InvalidOrder(_) | R::UnevaluatedStrength(_) => {
             AtomicPublicationSourceRefusal::UnsupportedMemoryOrder
         }
-        R::ConsumeLoad(_) | R::ReadModifyWrite(_) | R::CompareExchange(_) | R::Fence(_) => {
+        R::ConsumeLoad(_) | R::ConsumeOrder(_) | R::LegacySync(_) => {
             AtomicPublicationSourceRefusal::NamedAtomicRefusal(refusal.reason())
         }
         R::ByPointer(_) | R::NonScalarValue(_) | R::UnsupportedShape(_) | R::Unlisted(_) => {
             shape.clone()
         }
-    })
+    })?;
+    // Card CG28 (rule 11t): a read-modify-write, compare-exchange or fence is
+    // now routed to the weak-memory model, but it is not the one-flag
+    // publication shape this extractor decides; it stays refused by name.
+    use crate::atomic_source_route::Operation as O;
+    match routed.operation {
+        O::Load | O::Store | O::Init => Ok(routed),
+        O::ReadModifyWrite | O::CompareExchange | O::ThreadFence | O::SignalFence => {
+            Err(AtomicPublicationSourceRefusal::NamedAtomicRefusal(format!(
+                "atomic `{}` is routed to the weak-memory model but is not a publication shape this route decides (CG19-PUBLICATION-ONE-FLAG-ONE-PAYLOAD)",
+                routed.form
+            )))
+        }
+    }
 }
 
 fn publication_order(order: Option<qcore_core::MemoryOrder>) -> Option<AtomicPublicationOrder> {

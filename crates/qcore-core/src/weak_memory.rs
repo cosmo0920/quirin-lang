@@ -3,9 +3,45 @@
 //! Candidate executions explicitly supply reads-from, modification order,
 //! synchronizes-with, and the sequentially-consistent order.  Program order is
 //! derived per thread and is never inferred from inter-thread list position.
-//! The atomic subset follows C11 N1570 (not C++20/RC11): plain loads/stores
-//! and same-thread store release sequences. RMWs, fences, and consume are not
-//! represented. Acceptance checks one supplied graph, not program exploration.
+//! Acceptance checks one supplied graph, not program exploration.
+//!
+//! # The standard followed
+//!
+//! The atomic subset follows **C11 as published (N1570)**, one standard and
+//! no mix: not C++20's weakened release sequences (P0982), not RC11, and not
+//! C++14's added seq_cst-fence/modification-order rule (LWG 2130). Card
+//! CG28-WEAK-MEMORY-EVENTS (wave 48) added, additively:
+//!
+//! * **Read-modify-writes** ([`MemoryEventKind::AtomicReadModifyWrite`]:
+//!   exchange, fetch-and-op, op-and-fetch) with N1570 7.17.3's atomicity:
+//!   the write an RMW reads from is its immediate predecessor in the
+//!   modification order ([`WeakMemoryError::AtomicityViolation`]).
+//! * **Compare-exchange** ([`MemoryEventKind::AtomicCompareExchange`]): a
+//!   success is a read-modify-write with the success order; a failure is a
+//!   load with the failure order, which (7.17.7.4p2) is neither release nor
+//!   acq_rel and no stronger than the success order
+//!   ([`compare_exchange_failure_admitted`]). A strong exchange fails only
+//!   when the observed value differs from the expected one; a weak one may
+//!   also fail spuriously, on an equal value.
+//! * **Fences** ([`MemoryEventKind::AtomicFence`]): thread fences
+//!   synchronise per 7.17.4p2–p4 (fence–fence, fence–operation,
+//!   operation–fence, through the hypothetical release sequence); a seq_cst
+//!   thread fence joins the total order S with 7.17.3's three fence
+//!   observation rules. A signal fence orders only against a signal handler
+//!   of its own thread (7.17.4.2), which the model has none of, so it creates
+//!   no synchronisation and joins no S.
+//! * **Release sequences** (5.1.2.4p10, N1570 wording): the head, then
+//!   every modification in the modification order that is performed by the
+//!   head's thread or is an atomic read-modify-write.
+//!
+//! `memory_order_consume` stays **out of scope**: the model has no consume
+//! order and no dependency-ordered-before relation. Reading consume as
+//! acquire would add happens-before edges the program does not have, which is
+//! unsound for race freedom, so the source route refuses a consume load,
+//! read-modify-write or compare-exchange order. A consume *fence* is an
+//! acquire fence by the standard's own definition (7.17.4.1p2), not a
+//! strengthening. The arithmetic of an RMW (the written value as a function
+//! of the read one) is the supplied graph's premise and is not checked.
 
 use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::fmt;
@@ -73,6 +109,49 @@ pub enum MemoryEventKind {
     Join {
         child: MemoryThreadId,
     },
+    /// CG28: an atomic read-modify-write (exchange, fetch-and-op,
+    /// op-and-fetch): it reads `read_value` and writes `written_value` in one
+    /// indivisible step.
+    AtomicReadModifyWrite {
+        location: MemoryLocation,
+        read_value: i64,
+        written_value: i64,
+        order: MemoryOrder,
+    },
+    /// CG28: a compare-exchange. `succeeded` names the outcome this graph
+    /// chose: a success reads `observed` (equal to `expected`) and writes
+    /// `desired` with the `success` order; a failure is a load of `observed`
+    /// with the `failure` order.
+    AtomicCompareExchange {
+        location: MemoryLocation,
+        expected: i64,
+        observed: i64,
+        desired: i64,
+        success: MemoryOrder,
+        failure: MemoryOrder,
+        strength: CompareExchangeStrength,
+        succeeded: bool,
+    },
+    /// CG28: `atomic_thread_fence` or `atomic_signal_fence`.
+    AtomicFence {
+        order: MemoryOrder,
+        scope: FenceScope,
+    },
+}
+
+/// CG28: whether a compare-exchange may fail spuriously (C11 7.17.7.4p4).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum CompareExchangeStrength {
+    Strong,
+    Weak,
+}
+
+/// CG28: a thread fence, or a signal fence (ordering only against a signal
+/// handler of the same thread, C11 7.17.4.2).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum FenceScope {
+    Thread,
+    Signal,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -140,6 +219,13 @@ pub enum WeakMemoryError {
         second: MemoryEventId,
     },
     ObservationMismatch,
+    /// CG28: a read-modify-write does not read the immediate predecessor of
+    /// its own write in the modification order.
+    AtomicityViolation(MemoryEventId),
+    /// CG28: a compare-exchange's outcome contradicts its values (a success
+    /// that observed another value, a strong failure that observed the
+    /// expected one).
+    InvalidCompareExchange(MemoryEventId),
 }
 
 impl fmt::Display for WeakMemoryError {
@@ -170,6 +256,8 @@ pub fn check_c11_execution(
     validate_edges(&execution.synchronizes_with, &by_id, &mut errors);
     validate_reads_from(execution, &by_id, &mut errors);
     validate_modification_order(execution, &by_id, &mut errors);
+    validate_compare_exchanges(&execution.events, &mut errors);
+    validate_atomicity(execution, &by_id, &mut errors);
 
     let mutex_sw = validate_mutex_histories(execution, &by_id, &mut errors);
     let mut expected_sw = expected_synchronizes_with(execution, &by_id);
@@ -228,6 +316,27 @@ pub fn event_order_represented(kind: &MemoryEventKind) -> bool {
     !invalid_order(kind)
 }
 
+/// Card CG28-WEAK-MEMORY-EVENTS: C11 7.17.7.4p2 — a compare-exchange's
+/// failure order is neither release nor acq_rel, and is no stronger than its
+/// success order: its acquire strength (relaxed < acquire < seq_cst) is at
+/// most that of the success order's load part (release reads as relaxed,
+/// acq_rel as acquire). `QCore.WeakMemory.casOrdersValid`.
+#[must_use]
+pub fn compare_exchange_failure_admitted(success: MemoryOrder, failure: MemoryOrder) -> bool {
+    let failure_rank = match failure {
+        MemoryOrder::Relaxed => 0,
+        MemoryOrder::Acquire => 1,
+        MemoryOrder::SequentiallyConsistent => 2,
+        MemoryOrder::Release | MemoryOrder::AcquireRelease => return false,
+    };
+    let success_rank = match success {
+        MemoryOrder::Relaxed | MemoryOrder::Release => 0,
+        MemoryOrder::Acquire | MemoryOrder::AcquireRelease => 1,
+        MemoryOrder::SequentiallyConsistent => 2,
+    };
+    failure_rank <= success_rank
+}
+
 fn invalid_order(kind: &MemoryEventKind) -> bool {
     match kind {
         MemoryEventKind::AtomicStore { order, .. } => !matches!(
@@ -238,7 +347,101 @@ fn invalid_order(kind: &MemoryEventKind) -> bool {
             order,
             MemoryOrder::Relaxed | MemoryOrder::Acquire | MemoryOrder::SequentiallyConsistent
         ),
+        // CG28: an RMW and a fence take every order the model has (a relaxed
+        // fence has no effect, 7.17.4.1p2).
+        MemoryEventKind::AtomicCompareExchange {
+            success, failure, ..
+        } => !compare_exchange_failure_admitted(*success, *failure),
         _ => false,
+    }
+}
+
+/// The order an atomic operation performs with: a compare-exchange's
+/// success order when it succeeded, its failure order otherwise.
+fn operation_order(kind: &MemoryEventKind) -> Option<MemoryOrder> {
+    match kind {
+        MemoryEventKind::AtomicStore { order, .. }
+        | MemoryEventKind::AtomicLoad { order, .. }
+        | MemoryEventKind::AtomicReadModifyWrite { order, .. } => Some(*order),
+        MemoryEventKind::AtomicCompareExchange {
+            success,
+            failure,
+            succeeded,
+            ..
+        } => Some(if *succeeded { *success } else { *failure }),
+        _ => None,
+    }
+}
+
+/// CG28: an atomic read-modify-write, a compare-exchange's success included.
+fn is_read_modify_write(kind: &MemoryEventKind) -> bool {
+    matches!(
+        kind,
+        MemoryEventKind::AtomicReadModifyWrite { .. }
+            | MemoryEventKind::AtomicCompareExchange {
+                succeeded: true,
+                ..
+            }
+    )
+}
+
+/// A thread fence's order; `None` for anything else, a signal fence included.
+fn thread_fence(kind: &MemoryEventKind) -> Option<MemoryOrder> {
+    match kind {
+        MemoryEventKind::AtomicFence {
+            order,
+            scope: FenceScope::Thread,
+        } => Some(*order),
+        _ => None,
+    }
+}
+
+/// CG28: a compare-exchange's outcome agrees with its values.
+fn validate_compare_exchanges(events: &[MemoryEvent], errors: &mut BTreeSet<WeakMemoryError>) {
+    for event in events {
+        if let MemoryEventKind::AtomicCompareExchange {
+            expected,
+            observed,
+            strength,
+            succeeded,
+            ..
+        } = event.kind
+        {
+            let consistent = if succeeded {
+                observed == expected
+            } else {
+                strength == CompareExchangeStrength::Weak || observed != expected
+            };
+            if !consistent {
+                errors.insert(WeakMemoryError::InvalidCompareExchange(event.id));
+            }
+        }
+    }
+}
+
+/// CG28, N1570 7.17.3 (read-modify-write atomicity): the write an RMW reads
+/// from immediately precedes the RMW's own write in the modification order.
+fn validate_atomicity(
+    execution: &C11Execution,
+    by_id: &BTreeMap<MemoryEventId, &MemoryEvent>,
+    errors: &mut BTreeSet<WeakMemoryError>,
+) {
+    let mo = transitive_closure(&execution.modification_order);
+    for edge in &execution.reads_from {
+        if !by_id
+            .get(&edge.to)
+            .is_some_and(|event| is_read_modify_write(&event.kind))
+        {
+            continue;
+        }
+        let adjacent = mo.contains(edge)
+            && !execution.events.iter().any(|between| {
+                mo.contains(&RelationEdge::new(edge.from, between.id))
+                    && mo.contains(&RelationEdge::new(between.id, edge.to))
+            });
+        if !adjacent {
+            errors.insert(WeakMemoryError::AtomicityViolation(edge.to));
+        }
     }
 }
 
@@ -274,6 +477,20 @@ fn atomic_write(kind: &MemoryEventKind) -> Option<(MemoryLocation, i64, Option<M
             value,
             order,
         } => Some((*location, *value, Some(*order))),
+        // CG28: an RMW's write, and a successful compare-exchange's.
+        MemoryEventKind::AtomicReadModifyWrite {
+            location,
+            written_value,
+            order,
+            ..
+        } => Some((*location, *written_value, Some(*order))),
+        MemoryEventKind::AtomicCompareExchange {
+            location,
+            desired,
+            success,
+            succeeded: true,
+            ..
+        } => Some((*location, *desired, Some(*success))),
         _ => None,
     }
 }
@@ -285,6 +502,17 @@ fn atomic_load(kind: &MemoryEventKind) -> Option<(MemoryLocation, i64, MemoryOrd
             value,
             order,
         } => Some((*location, *value, *order)),
+        // CG28: an RMW's read, and every compare-exchange's (with the order
+        // of the outcome it took).
+        MemoryEventKind::AtomicReadModifyWrite {
+            location,
+            read_value,
+            order,
+            ..
+        } => Some((*location, *read_value, *order)),
+        MemoryEventKind::AtomicCompareExchange {
+            location, observed, ..
+        } => Some((*location, *observed, operation_order(kind)?)),
         _ => None,
     }
 }
@@ -372,43 +600,145 @@ fn validate_modification_order(
     }
 }
 
+/// Each event's thread and its index in that thread's program order.
+fn sequence_positions(events: &[MemoryEvent]) -> BTreeMap<MemoryEventId, (MemoryThreadId, usize)> {
+    let mut next = BTreeMap::<MemoryThreadId, usize>::new();
+    let mut positions = BTreeMap::new();
+    for event in events {
+        let index = next.entry(event.thread).or_default();
+        positions.entry(event.id).or_insert((event.thread, *index));
+        *index += 1;
+    }
+    positions
+}
+
+/// Sequenced-before: the same thread, earlier in its program order.
+fn sequenced_before(
+    positions: &BTreeMap<MemoryEventId, (MemoryThreadId, usize)>,
+    first: MemoryEventId,
+    second: MemoryEventId,
+) -> bool {
+    positions
+        .get(&first)
+        .zip(positions.get(&second))
+        .is_some_and(|((left_thread, left), (right_thread, right))| {
+            left_thread == right_thread && left < right
+        })
+}
+
+/// An atomic operation's write (not the non-atomic `AtomicInit`): the
+/// modifications a release sequence, real or hypothetical, is made of.
+fn atomic_operation_write(kind: &MemoryEventKind) -> Option<MemoryLocation> {
+    match kind {
+        MemoryEventKind::AtomicInit { .. } => None,
+        _ => atomic_write(kind).map(|(location, _, _)| location),
+    }
+}
+
+/// N1570 5.1.2.4p10, C11's own wording (not C++20's): `write` is in the
+/// release sequence headed by `head` (real, or hypothetical as 7.17.4 uses
+/// it) when it is the head, or follows it in the modification order and it
+/// and every modification between them is performed by the head's thread or
+/// is an atomic read-modify-write. `QCore.WeakMemory.inReleaseSequence`.
+fn in_release_sequence(
+    events: &[MemoryEvent],
+    mo: &BTreeSet<RelationEdge>,
+    head: &MemoryEvent,
+    write: MemoryEventId,
+) -> bool {
+    write == head.id
+        || (mo.contains(&RelationEdge::new(head.id, write))
+            && events
+                .iter()
+                .filter(|candidate| {
+                    candidate.id == write
+                        || (mo.contains(&RelationEdge::new(head.id, candidate.id))
+                            && mo.contains(&RelationEdge::new(candidate.id, write)))
+                })
+                .all(|candidate| {
+                    is_read_modify_write(&candidate.kind)
+                        || (candidate.thread == head.thread
+                            && atomic_operation_write(&candidate.kind).is_some())
+                }))
+}
+
+/// The synchronizes-with edges a graph's reads determine (N1570 5.1.2.4p11
+/// and, card CG28, the fence rules of 7.17.4p2–p4). For each read `r` of `w`
+/// at `M`, and each atomic modification `X` of `M` whose (hypothetical)
+/// release sequence holds `w`:
+///
+/// * `X` release, `r` acquire: `X` sw `r` (5.1.2.4p11);
+/// * `X` release, `r` sequenced before an acquire fence `B`: `X` sw `B` (p4);
+/// * a release fence `F` sequenced before `X`, `r` acquire: `F` sw `r` (p3);
+/// * a release fence `F` sequenced before `X`, `r` sequenced before an
+///   acquire fence `B`: `F` sw `B` (p2).
+///
+/// Signal fences take part in none. `QCore.WeakMemory.expectedSw`.
 fn expected_synchronizes_with(
     execution: &C11Execution,
     by_id: &BTreeMap<MemoryEventId, &MemoryEvent>,
 ) -> BTreeSet<RelationEdge> {
     let mut result = BTreeSet::new();
     let mo = transitive_closure(&execution.modification_order);
+    let positions = sequence_positions(&execution.events);
+    let fences = |acquire: bool| {
+        execution
+            .events
+            .iter()
+            .filter(move |event| {
+                thread_fence(&event.kind).is_some_and(|order| {
+                    if acquire {
+                        order.has_acquire()
+                    } else {
+                        order.has_release()
+                    }
+                })
+            })
+            .collect::<Vec<_>>()
+    };
+    let acquire_fences = fences(true);
+    let release_fences = fences(false);
     for edge in &execution.reads_from {
-        let Some((location, _, order)) = by_id
+        let Some((location, _, read_order)) = by_id
             .get(&edge.to)
             .and_then(|event| atomic_load(&event.kind))
         else {
             continue;
         };
-        if !order.has_acquire() {
-            continue;
-        }
-        // N1570 5.1.2.4p10-11: every intervening modification must
-        // continue the sequence. A foreign plain store terminates it;
-        // a later store by the head's thread cannot restart that sequence.
+        let reader_fences = acquire_fences
+            .iter()
+            .filter(|fence| sequenced_before(&positions, edge.to, fence.id))
+            .collect::<Vec<_>>();
+        // A foreign plain store terminates a release sequence; a later store
+        // by the head's thread cannot restart it.
         for head in &execution.events {
-            if !atomic_write(&head.kind).is_some_and(|(loc, _, order)| {
-                loc == location && order.is_some_and(MemoryOrder::has_release)
-            }) {
+            if atomic_operation_write(&head.kind) != Some(location)
+                || !in_release_sequence(&execution.events, &mo, head, edge.from)
+            {
                 continue;
             }
-            if edge.from == head.id || (mo.contains(&RelationEdge::new(head.id, edge.from))
-                && execution.events.iter().filter(|candidate| {
-                    candidate.id == edge.from || (mo.contains(&RelationEdge::new(head.id, candidate.id))
-                        && mo.contains(&RelationEdge::new(candidate.id, edge.from)))
-                }).all(|candidate| {
-                    candidate.thread == head.thread
-                        && matches!(candidate.kind, MemoryEventKind::AtomicStore { location: loc, .. } if loc == location)
-                })) {
-                result.insert(RelationEdge::new(head.id, edge.to));
+            if operation_order(&head.kind).is_some_and(MemoryOrder::has_release) {
+                if read_order.has_acquire() {
+                    result.insert(RelationEdge::new(head.id, edge.to));
+                }
+                for fence in &reader_fences {
+                    result.insert(RelationEdge::new(head.id, fence.id));
+                }
+            }
+            for release in release_fences
+                .iter()
+                .filter(|fence| sequenced_before(&positions, fence.id, head.id))
+            {
+                if read_order.has_acquire() {
+                    result.insert(RelationEdge::new(release.id, edge.to));
+                }
+                for fence in &reader_fences {
+                    result.insert(RelationEdge::new(release.id, fence.id));
+                }
             }
         }
     }
+    result.retain(|edge| edge.from != edge.to);
     result
 }
 
@@ -585,16 +915,11 @@ fn validate_sc(
         .events
         .iter()
         .filter(|event| {
-            matches!(
-                event.kind,
-                MemoryEventKind::AtomicStore {
-                    order: MemoryOrder::SequentiallyConsistent,
-                    ..
-                } | MemoryEventKind::AtomicLoad {
-                    order: MemoryOrder::SequentiallyConsistent,
-                    ..
-                }
-            )
+            // CG28: every seq_cst operation (an RMW, a compare-exchange by
+            // the order of its outcome) and every seq_cst thread fence.
+            operation_order(&event.kind)
+                .or_else(|| thread_fence(&event.kind))
+                .is_some_and(|order| order == MemoryOrder::SequentiallyConsistent)
         })
         .map(|event| event.id)
         .collect::<BTreeSet<_>>();
@@ -653,6 +978,86 @@ fn validate_sc(
         } else {
             last.is_none_or(|last| !happens_before.contains(&RelationEdge::new(read.from, *last)))
         };
+        if !valid {
+            errors.insert(WeakMemoryError::InvalidSequentiallyConsistentOrder);
+        }
+    }
+    validate_sc_fences(execution, by_id, &position, &modification_order, errors);
+}
+
+/// Card CG28: N1570 7.17.3's three seq_cst fence rules (C11's, without
+/// C++14's modification-order rule). For a read `B` of `W` at `M`:
+///
+/// 1. for a seq_cst fence `X` sequenced before `B`, with `L` the last seq_cst
+///    modification of `M` before `X` in S, `W` is `L` or follows it in the
+///    modification order;
+/// 2. for a seq_cst fence `X` and an atomic modification `A` of `M`
+///    sequenced before it, with `B` after `X` in S, `W` is `A` or follows it;
+/// 3. for seq_cst fences `X` before `Y` in S, `A` sequenced before `X` and
+///    `Y` before `B`, `W` is `A` or follows it.
+///
+/// `QCore.WeakMemory.scFenceRulesHold`.
+fn validate_sc_fences(
+    execution: &C11Execution,
+    by_id: &BTreeMap<MemoryEventId, &MemoryEvent>,
+    position: &BTreeMap<MemoryEventId, usize>,
+    modification_order: &BTreeSet<RelationEdge>,
+    errors: &mut BTreeSet<WeakMemoryError>,
+) {
+    let sequence = sequence_positions(&execution.events);
+    let fences = execution
+        .events
+        .iter()
+        .filter(|event| thread_fence(&event.kind) == Some(MemoryOrder::SequentiallyConsistent))
+        .filter_map(|event| position.get(&event.id).map(|at| (event, *at)))
+        .collect::<Vec<_>>();
+    let at_or_after = |source: MemoryEventId, bound: MemoryEventId| {
+        source == bound || modification_order.contains(&RelationEdge::new(bound, source))
+    };
+    for read in &execution.reads_from {
+        let Some((location, _, _)) = by_id
+            .get(&read.to)
+            .and_then(|event| atomic_load(&event.kind))
+        else {
+            continue;
+        };
+        let modifications = execution
+            .events
+            .iter()
+            .filter(|event| atomic_operation_write(&event.kind) == Some(location))
+            .collect::<Vec<_>>();
+        let mut valid = true;
+        for &(fence, fence_at) in &fences {
+            // Rule 1.
+            if sequenced_before(&sequence, fence.id, read.to)
+                && let Some(last) = execution.sequentially_consistent[..fence_at]
+                    .iter()
+                    .rev()
+                    .find(|id| {
+                        by_id
+                            .get(id)
+                            .and_then(|event| atomic_write(&event.kind))
+                            .is_some_and(|(loc, _, _)| loc == location)
+                    })
+            {
+                valid &= at_or_after(read.from, *last);
+            }
+            for modification in &modifications {
+                if !sequenced_before(&sequence, modification.id, fence.id) {
+                    continue;
+                }
+                // Rule 2.
+                if position.get(&read.to).is_some_and(|at| *at > fence_at) {
+                    valid &= at_or_after(read.from, modification.id);
+                }
+                // Rule 3.
+                for &(later, later_at) in &fences {
+                    if later_at > fence_at && sequenced_before(&sequence, later.id, read.to) {
+                        valid &= at_or_after(read.from, modification.id);
+                    }
+                }
+            }
+        }
         if !valid {
             errors.insert(WeakMemoryError::InvalidSequentiallyConsistentOrder);
         }
@@ -727,3 +1132,7 @@ fn transitive_closure(edges: &[RelationEdge]) -> BTreeSet<RelationEdge> {
 #[cfg(test)]
 #[path = "../tests/unit/weak_memory.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../tests/unit/weak_memory_cg28.rs"]
+mod cg28_tests;

@@ -16,20 +16,30 @@
 //! `NonAtomicToAtomic`) a sequentially consistent store (C11 6.5.16.1p2 with
 //! 7.17.7), and a compound assignment or increment a read-modify-write.
 //!
-//! Only **plain** operations are routed ([`RoutedAtomic`]): a load, a store
-//! and the non-atomic initialisation `__c11_atomic_init`, each mapped to the
-//! model's own vocabulary ([`RoutedAtomic::event_kind`]:
-//! `AtomicLoad`/`AtomicStore`/`AtomicInit`) with an order the model
-//! represents for that operation ([`qcore_core::event_order_represented`]).
+//! A routed access ([`RoutedAtomic`]) is mapped to the model's own
+//! vocabulary ([`RoutedAtomic::event`]) with an order the model represents
+//! for that operation ([`qcore_core::event_order_represented`]): a load, a
+//! store and the non-atomic initialisation `__c11_atomic_init`
+//! (`AtomicLoad`/`AtomicStore`/`AtomicInit`, card CG19), and, since card
+//! **CG28-WEAK-MEMORY-EVENTS** (gateway rule 11t), a read-modify-write
+//! (exchange, fetch-and-op, op-and-fetch, test-and-set, and the `_Atomic`
+//! compound assignment and increment: `AtomicReadModifyWrite`), a
+//! compare-exchange with its success and failure orders and its strength
+//! (`AtomicCompareExchange`), and a thread or signal fence (`AtomicFence`).
 //!
 //! # What is refused, by name
 //!
-//! The model does not represent read-modify-writes, compare-exchange, fences
-//! or `memory_order_consume` (its module header; card CG28 owns them), so
-//! each is refused by name ([`AtomicRouteRefusal`]), never read as a neutral
-//! call. An order C11 7.17.7 does not allow for the operation (a release
-//! load, an acquire store) is refused; so is an order the route cannot
-//! evaluate, a generic by-pointer form (`__atomic_load(p, &out, o)`), a
+//! `memory_order_consume` stays out of the model's scope (CG28's decision:
+//! the model has no dependency ordering, and reading consume as acquire would
+//! add happens-before edges the program lacks, unsound for race freedom), so
+//! a consume load, read-modify-write or compare-exchange order is refused by
+//! name ([`AtomicRouteRefusal`]); a consume *fence* is an acquire fence by
+//! C11 7.17.4.1p2's own definition. The legacy `__sync` builtins are GCC full
+//! barriers with no C11 order and are refused. An order C11 7.17.7 does not
+//! allow for the operation (a release load, an acquire store, a failure order
+//! that is release, acq_rel or stronger than the success order) is refused;
+//! so is an order or a weak flag the route cannot evaluate, a generic
+//! by-pointer load, store or exchange (`__atomic_load(p, &out, o)`), a
 //! pointer- or aggregate-valued atomic, and every builtin the table does not
 //! list.
 //!
@@ -47,7 +57,10 @@
 
 use serde_json::Value;
 
-use qcore_core::{MemoryEventKind, MemoryLocation, MemoryOrder, event_order_represented};
+use qcore_core::{
+    CompareExchangeStrength, FenceScope, MemoryEventKind, MemoryLocation, MemoryOrder,
+    compare_exchange_failure_admitted, event_order_represented,
+};
 
 use crate::typed_c_ast::{children, kind};
 
@@ -63,16 +76,21 @@ pub enum FormClass {
     Store,
     /// The non-atomic initialisation of an atomic object: `AtomicInit`.
     Init,
-    /// A generic by-pointer load or store: the value travels through a second
-    /// pointer this route does not read. Refused.
+    /// A generic by-pointer load, store or exchange: the value travels
+    /// through a second pointer this route does not read. Refused.
     ByPointer,
-    /// Exchange, fetch-and-op, op-and-fetch, test-and-set and the legacy
-    /// `__sync` read-modify-writes. Refused (CG28).
+    /// Exchange, fetch-and-op, op-and-fetch and test-and-set:
+    /// `AtomicReadModifyWrite` (CG28).
     ReadModifyWrite,
-    /// Compare-exchange, strong or weak. Refused (CG28).
+    /// Compare-exchange, strong or weak: `AtomicCompareExchange` (CG28).
     CompareExchange,
-    /// Thread and signal fences, `__sync_synchronize`. Refused (CG28).
+    /// A thread fence: `AtomicFence` of thread scope (CG28).
     Fence,
+    /// A signal fence: `AtomicFence` of signal scope (CG28).
+    SignalFence,
+    /// The legacy `__sync` builtins: GCC full barriers, not C11 memory
+    /// orders. Refused (CG28).
+    LegacySync,
 }
 
 /// Every atomic builtin this route names (`QCore.AtomicSourceRoute.formTable`).
@@ -87,7 +105,7 @@ pub const ATOMIC_FORM_TABLE: [(&str, FormClass); 51] = [
     ("__atomic_store", FormClass::ByPointer),
     ("__c11_atomic_exchange", FormClass::ReadModifyWrite),
     ("__atomic_exchange_n", FormClass::ReadModifyWrite),
-    ("__atomic_exchange", FormClass::ReadModifyWrite),
+    ("__atomic_exchange", FormClass::ByPointer),
     ("__c11_atomic_fetch_add", FormClass::ReadModifyWrite),
     ("__c11_atomic_fetch_sub", FormClass::ReadModifyWrite),
     ("__c11_atomic_fetch_and", FormClass::ReadModifyWrite),
@@ -113,11 +131,11 @@ pub const ATOMIC_FORM_TABLE: [(&str, FormClass); 51] = [
     ("__atomic_max_fetch", FormClass::ReadModifyWrite),
     ("__atomic_min_fetch", FormClass::ReadModifyWrite),
     ("__atomic_test_and_set", FormClass::ReadModifyWrite),
-    ("__sync_fetch_and_add", FormClass::ReadModifyWrite),
-    ("__sync_fetch_and_sub", FormClass::ReadModifyWrite),
-    ("__sync_add_and_fetch", FormClass::ReadModifyWrite),
-    ("__sync_sub_and_fetch", FormClass::ReadModifyWrite),
-    ("__sync_lock_test_and_set", FormClass::ReadModifyWrite),
+    ("__sync_fetch_and_add", FormClass::LegacySync),
+    ("__sync_fetch_and_sub", FormClass::LegacySync),
+    ("__sync_add_and_fetch", FormClass::LegacySync),
+    ("__sync_sub_and_fetch", FormClass::LegacySync),
+    ("__sync_lock_test_and_set", FormClass::LegacySync),
     (
         "__c11_atomic_compare_exchange_strong",
         FormClass::CompareExchange,
@@ -128,13 +146,13 @@ pub const ATOMIC_FORM_TABLE: [(&str, FormClass); 51] = [
     ),
     ("__atomic_compare_exchange_n", FormClass::CompareExchange),
     ("__atomic_compare_exchange", FormClass::CompareExchange),
-    ("__sync_bool_compare_and_swap", FormClass::CompareExchange),
-    ("__sync_val_compare_and_swap", FormClass::CompareExchange),
+    ("__sync_bool_compare_and_swap", FormClass::LegacySync),
+    ("__sync_val_compare_and_swap", FormClass::LegacySync),
     ("__c11_atomic_thread_fence", FormClass::Fence),
-    ("__c11_atomic_signal_fence", FormClass::Fence),
+    ("__c11_atomic_signal_fence", FormClass::SignalFence),
     ("__atomic_thread_fence", FormClass::Fence),
-    ("__atomic_signal_fence", FormClass::Fence),
-    ("__sync_synchronize", FormClass::Fence),
+    ("__atomic_signal_fence", FormClass::SignalFence),
+    ("__sync_synchronize", FormClass::LegacySync),
 ];
 
 /// The class of a listed builtin, `None` for an unlisted name.
@@ -187,73 +205,228 @@ pub fn decode_order(value: i64) -> Option<SourceOrder> {
     }
 }
 
-/// The plain operation a routed access performs.
+/// The operation a routed access performs.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Operation {
     Load,
     Store,
     Init,
+    /// CG28: exchange, fetch-and-op, op-and-fetch, test-and-set, and the
+    /// `_Atomic` compound assignment and increment.
+    ReadModifyWrite,
+    /// CG28: a compare-exchange.
+    CompareExchange,
+    /// CG28: `atomic_thread_fence`.
+    ThreadFence,
+    /// CG28: `atomic_signal_fence`.
+    SignalFence,
 }
 
-/// The model order of a plain operation, or its refusal
+/// The model order of an operation's (success) order, or its refusal
 /// (`QCore.AtomicSourceRoute.routeOrder`). C11 7.17.7.1p2: a store's order is
 /// not consume, acquire or acq_rel; 7.17.7.2p2: a load's is not release or
-/// acq_rel; an initialisation is not an atomic operation and takes no order.
-/// A consume load is refused explicitly: the model does not
-/// represent consume (CG28), and reading it as acquire would be a strengthening
-/// the program did not ask for.
+/// acq_rel; an initialisation is not an atomic operation and takes no order;
+/// a read-modify-write, a compare-exchange's success and a fence take any
+/// order (card CG28). Consume is out of the model's scope (CG28's decision):
+/// a consume load, read-modify-write or compare-exchange is refused by name,
+/// because reading it as acquire would be a strengthening the program did not
+/// ask for and unsound for race freedom; a consume fence is an acquire fence
+/// by C11 7.17.4.1p2's own definition.
 pub fn route_order(
     name: &str,
     operation: Operation,
     order: SourceOrder,
 ) -> Result<MemoryOrder, AtomicRouteRefusal> {
+    use Operation as O;
     use SourceOrder as S;
+    let general = matches!(
+        operation,
+        O::ReadModifyWrite | O::CompareExchange | O::ThreadFence | O::SignalFence
+    );
     match (operation, order) {
-        (Operation::Init, _) => Err(AtomicRouteRefusal::InvalidOrder(name.to_owned())),
-        (Operation::Load, S::Consume) => Err(AtomicRouteRefusal::ConsumeLoad(name.to_owned())),
-        (_, S::Relaxed) => Ok(MemoryOrder::Relaxed),
-        (Operation::Load, S::Acquire) => Ok(MemoryOrder::Acquire),
-        (Operation::Store, S::Release) => Ok(MemoryOrder::Release),
-        (Operation::Load | Operation::Store, S::SequentiallyConsistent) => {
-            Ok(MemoryOrder::SequentiallyConsistent)
+        (O::Init, _) => Err(AtomicRouteRefusal::InvalidOrder(name.to_owned())),
+        (O::Load, S::Consume) => Err(AtomicRouteRefusal::ConsumeLoad(name.to_owned())),
+        (O::ReadModifyWrite | O::CompareExchange, S::Consume) => {
+            Err(AtomicRouteRefusal::ConsumeOrder(name.to_owned()))
         }
+        (O::ThreadFence | O::SignalFence, S::Consume) => Ok(MemoryOrder::Acquire),
+        (_, S::Relaxed) => Ok(MemoryOrder::Relaxed),
+        (O::Load, S::Acquire) => Ok(MemoryOrder::Acquire),
+        (O::Store, S::Release) => Ok(MemoryOrder::Release),
+        (O::Load | O::Store, S::SequentiallyConsistent) => Ok(MemoryOrder::SequentiallyConsistent),
+        (_, S::Acquire) if general => Ok(MemoryOrder::Acquire),
+        (_, S::Release) if general => Ok(MemoryOrder::Release),
+        (_, S::AcquireRelease) if general => Ok(MemoryOrder::AcquireRelease),
+        (_, S::SequentiallyConsistent) if general => Ok(MemoryOrder::SequentiallyConsistent),
         _ => Err(AtomicRouteRefusal::InvalidOrder(name.to_owned())),
     }
 }
 
-/// One routed plain atomic access.
+/// Card CG28: a compare-exchange's failure order, given its routed success
+/// order (`QCore.AtomicSourceRoute.routeFailureOrder`). C11 7.17.7.4p2: not
+/// release or acq_rel, and no stronger than the success order
+/// ([`qcore_core::compare_exchange_failure_admitted`]); consume is refused by
+/// name, as for every non-fence operation.
+pub fn route_failure_order(
+    name: &str,
+    success: MemoryOrder,
+    failure: SourceOrder,
+) -> Result<MemoryOrder, AtomicRouteRefusal> {
+    let failure = match failure {
+        SourceOrder::Consume => return Err(AtomicRouteRefusal::ConsumeOrder(name.to_owned())),
+        SourceOrder::Relaxed => MemoryOrder::Relaxed,
+        SourceOrder::Acquire => MemoryOrder::Acquire,
+        SourceOrder::SequentiallyConsistent => MemoryOrder::SequentiallyConsistent,
+        SourceOrder::Release | SourceOrder::AcquireRelease => {
+            return Err(AtomicRouteRefusal::InvalidOrder(name.to_owned()));
+        }
+    };
+    if compare_exchange_failure_admitted(success, failure) {
+        Ok(failure)
+    } else {
+        Err(AtomicRouteRefusal::InvalidOrder(name.to_owned()))
+    }
+}
+
+/// One routed atomic access.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct RoutedAtomic<'a> {
     /// The builtin's name, or the qualified form's row name.
     pub form: String,
     pub operation: Operation,
-    /// `None` for [`Operation::Init`], which is not an atomic operation.
+    /// `None` for [`Operation::Init`], which is not an atomic operation; a
+    /// compare-exchange's success order.
     pub order: Option<MemoryOrder>,
-    /// The pointer operand (the `_Atomic` lvalue for a qualified form).
+    /// The pointer operand (the `_Atomic` lvalue for a qualified form; the
+    /// fence call itself for a fence, which has no object).
     pub object: &'a Value,
-    /// The stored or initial value operand; `None` for a load.
+    /// The stored, operand or desired value; `None` for a load, a fence, a
+    /// test-and-set and an increment (whose operand is implicit).
     pub value: Option<&'a Value>,
-    /// The C type of the value loaded or stored, as Clang spells it.
+    /// The C type of the value loaded or stored, as Clang spells it (empty
+    /// for a fence).
     pub value_type: String,
+    /// CG28: a compare-exchange's failure order.
+    pub failure_order: Option<MemoryOrder>,
+    /// CG28: a compare-exchange's strength.
+    pub strength: Option<CompareExchangeStrength>,
+    /// CG28: a compare-exchange's `expected` pointer operand.
+    pub expected: Option<&'a Value>,
+    /// CG28: `value` points at the desired value (the generic
+    /// `__atomic_compare_exchange`) instead of being it.
+    pub value_by_pointer: bool,
+}
+
+/// CG28: the values one candidate execution gives a routed access's event.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum EventValues {
+    /// A load's or store's value, an initialisation's initial value.
+    Plain(i64),
+    ReadModifyWrite {
+        read: i64,
+        written: i64,
+    },
+    CompareExchange {
+        expected: i64,
+        observed: i64,
+        desired: i64,
+        succeeded: bool,
+    },
+    Fence,
 }
 
 impl RoutedAtomic<'_> {
-    /// The model event this access is, at `location` with `value`
-    /// (`QCore.AtomicSourceRoute.eventOf`).
+    /// The model event this access is, at `location` with `values`
+    /// (`QCore.AtomicSourceRoute.eventOf`); `None` when the values are not
+    /// those of the access's operation.
     #[must_use]
-    pub fn event_kind(&self, location: MemoryLocation, value: i64) -> MemoryEventKind {
-        match (self.operation, self.order) {
-            (Operation::Load, Some(order)) => MemoryEventKind::AtomicLoad {
+    pub fn event(&self, location: MemoryLocation, values: EventValues) -> Option<MemoryEventKind> {
+        Some(match (self.operation, self.order, values) {
+            (Operation::Load, Some(order), EventValues::Plain(value)) => {
+                MemoryEventKind::AtomicLoad {
+                    location,
+                    value,
+                    order,
+                }
+            }
+            (Operation::Store, Some(order), EventValues::Plain(value)) => {
+                MemoryEventKind::AtomicStore {
+                    location,
+                    value,
+                    order,
+                }
+            }
+            (Operation::Init, None, EventValues::Plain(value)) => {
+                MemoryEventKind::AtomicInit { location, value }
+            }
+            (
+                Operation::ReadModifyWrite,
+                Some(order),
+                EventValues::ReadModifyWrite { read, written },
+            ) => MemoryEventKind::AtomicReadModifyWrite {
                 location,
-                value,
+                read_value: read,
+                written_value: written,
                 order,
             },
-            (Operation::Store, Some(order)) => MemoryEventKind::AtomicStore {
+            (
+                Operation::CompareExchange,
+                Some(success),
+                EventValues::CompareExchange {
+                    expected,
+                    observed,
+                    desired,
+                    succeeded,
+                },
+            ) => MemoryEventKind::AtomicCompareExchange {
                 location,
-                value,
-                order,
+                expected,
+                observed,
+                desired,
+                success,
+                failure: self.failure_order?,
+                strength: self.strength?,
+                succeeded,
             },
-            _ => MemoryEventKind::AtomicInit { location, value },
+            (Operation::ThreadFence, Some(order), EventValues::Fence) => {
+                MemoryEventKind::AtomicFence {
+                    order,
+                    scope: FenceScope::Thread,
+                }
+            }
+            (Operation::SignalFence, Some(order), EventValues::Fence) => {
+                MemoryEventKind::AtomicFence {
+                    order,
+                    scope: FenceScope::Signal,
+                }
+            }
+            _ => return None,
+        })
+    }
+
+    /// The event of a plain access (CG19's `eventOf`); `None` for any other
+    /// operation, whose event takes [`EventValues`] through [`Self::event`].
+    #[must_use]
+    pub fn event_kind(&self, location: MemoryLocation, value: i64) -> Option<MemoryEventKind> {
+        self.event(location, EventValues::Plain(value))
+    }
+
+    /// Placeholder values of this access's own shape.
+    #[must_use]
+    pub fn shape_values(&self) -> EventValues {
+        match self.operation {
+            Operation::Load | Operation::Store | Operation::Init => EventValues::Plain(0),
+            Operation::ReadModifyWrite => EventValues::ReadModifyWrite {
+                read: 0,
+                written: 0,
+            },
+            Operation::CompareExchange => EventValues::CompareExchange {
+                expected: 0,
+                observed: 0,
+                desired: 0,
+                succeeded: true,
+            },
+            Operation::ThreadFence | Operation::SignalFence => EventValues::Fence,
         }
     }
 }
@@ -261,12 +434,16 @@ impl RoutedAtomic<'_> {
 /// A named refusal of the route.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum AtomicRouteRefusal {
-    ReadModifyWrite(String),
-    CompareExchange(String),
-    Fence(String),
     ConsumeLoad(String),
+    /// CG28: `memory_order_consume` on a read-modify-write or a
+    /// compare-exchange (success or failure).
+    ConsumeOrder(String),
+    /// CG28: a legacy `__sync` builtin.
+    LegacySync(String),
     InvalidOrder(String),
     UnevaluatedOrder(String),
+    /// CG28: a GNU compare-exchange whose weak flag is not an integer constant.
+    UnevaluatedStrength(String),
     ByPointer(String),
     NonScalarValue(String),
     UnsupportedShape(String),
@@ -278,17 +455,14 @@ impl AtomicRouteRefusal {
     #[must_use]
     pub fn reason(&self) -> String {
         match self {
-            Self::ReadModifyWrite(name) => format!(
-                "atomic read-modify-write `{name}` is not represented by the weak-memory model (CG28)"
-            ),
-            Self::CompareExchange(name) => format!(
-                "atomic compare-exchange `{name}` is not represented by the weak-memory model (CG28)"
-            ),
-            Self::Fence(name) => {
-                format!("atomic fence `{name}` is not represented by the weak-memory model (CG28)")
-            }
             Self::ConsumeLoad(name) => format!(
                 "memory_order_consume load `{name}` is not represented by the weak-memory model (CG28)"
+            ),
+            Self::ConsumeOrder(name) => format!(
+                "memory_order_consume on `{name}` is outside the weak-memory model: dependency ordering is not modelled and acquire would be a strengthening (CG28)"
+            ),
+            Self::LegacySync(name) => format!(
+                "legacy `{name}` is a GCC full barrier with no C11 memory order and is not routed to the weak-memory model (CG28)"
             ),
             Self::InvalidOrder(name) => {
                 format!(
@@ -297,6 +471,9 @@ impl AtomicRouteRefusal {
             }
             Self::UnevaluatedOrder(name) => format!(
                 "memory order of atomic `{name}` is not an integer constant the atomic route evaluates (CG19)"
+            ),
+            Self::UnevaluatedStrength(name) => format!(
+                "weak flag of compare-exchange `{name}` is not an integer constant the atomic route evaluates (CG28)"
             ),
             Self::ByPointer(name) => format!(
                 "generic by-pointer atomic `{name}` is not routed to the weak-memory model (CG19)"
@@ -416,39 +593,134 @@ pub fn classify_builtin<'a>(
         FormClass::Load => Operation::Load,
         FormClass::Store => Operation::Store,
         FormClass::Init => Operation::Init,
+        FormClass::ReadModifyWrite => Operation::ReadModifyWrite,
+        FormClass::CompareExchange => Operation::CompareExchange,
+        FormClass::Fence => Operation::ThreadFence,
+        FormClass::SignalFence => Operation::SignalFence,
         FormClass::ByPointer => return Err(AtomicRouteRefusal::ByPointer(name)),
-        FormClass::ReadModifyWrite => return Err(AtomicRouteRefusal::ReadModifyWrite(name)),
-        FormClass::CompareExchange => return Err(AtomicRouteRefusal::CompareExchange(name)),
-        FormClass::Fence => return Err(AtomicRouteRefusal::Fence(name)),
+        FormClass::LegacySync => return Err(AtomicRouteRefusal::LegacySync(name)),
     };
-    if kind(node) != "AtomicExpr" {
-        return Err(AtomicRouteRefusal::UnsupportedShape(name));
+    let evaluate = |order: &Value| {
+        let value = order_value(order, enum_value)
+            .ok_or_else(|| AtomicRouteRefusal::UnevaluatedOrder(name.clone()))?;
+        decode_order(value).ok_or_else(|| AtomicRouteRefusal::InvalidOrder(name.clone()))
+    };
+    let shape = || AtomicRouteRefusal::UnsupportedShape(name.clone());
+    if matches!(operation, Operation::ThreadFence | Operation::SignalFence) {
+        // Card CG28: a fence is a builtin call `NAME(order)`, not an
+        // `AtomicExpr`; it has no object and no value.
+        let [_, order] = children(node) else {
+            return Err(shape());
+        };
+        if kind(node) != "CallExpr" {
+            return Err(shape());
+        }
+        let order = route_order(&name, operation, evaluate(order)?)?;
+        return Ok(RoutedAtomic {
+            form: name,
+            operation,
+            order: Some(order),
+            object: node,
+            value: None,
+            value_type: String::new(),
+            failure_order: None,
+            strength: None,
+            expected: None,
+            value_by_pointer: false,
+        });
     }
-    // Clang's `AtomicExpr` children: the pointer, the order, then the value.
-    // `__c11_atomic_init` has no order: the pointer, then the value.
-    let (object, order, value) = match (operation, children(node)) {
-        (Operation::Load, [object, order]) => (object, Some(order), None),
-        (Operation::Store, [object, order, value]) => (object, Some(order), Some(value)),
-        (Operation::Init, [object, value]) => (object, None, Some(value)),
-        _ => return Err(AtomicRouteRefusal::UnsupportedShape(name)),
+    if kind(node) != "AtomicExpr" {
+        return Err(shape());
+    }
+    // Clang's `AtomicExpr` children, in its storage order: the pointer, the
+    // order, the first value, the failure order, the second value, the weak
+    // flag, as many as the builtin takes. `__c11_atomic_init` has no order:
+    // the pointer, then the value. A compare-exchange's first value is the
+    // `expected` pointer and its second the desired value.
+    let (object, order, value, expected, failure, weak) = match (operation, children(node)) {
+        (Operation::Load, [object, order]) => (object, Some(order), None, None, None, None),
+        (Operation::Store | Operation::ReadModifyWrite, [object, order, value]) => {
+            (object, Some(order), Some(value), None, None, None)
+        }
+        // `__atomic_test_and_set`: its written value is implicit.
+        (Operation::ReadModifyWrite, [object, order]) => {
+            (object, Some(order), None, None, None, None)
+        }
+        (Operation::Init, [object, value]) => (object, None, Some(value), None, None, None),
+        (Operation::CompareExchange, [object, success, expected, failure, desired]) => (
+            object,
+            Some(success),
+            Some(desired),
+            Some(expected),
+            Some(failure),
+            None,
+        ),
+        (Operation::CompareExchange, [object, success, expected, failure, desired, weak]) => (
+            object,
+            Some(success),
+            Some(desired),
+            Some(expected),
+            Some(failure),
+            Some(weak),
+        ),
+        _ => return Err(shape()),
     };
     let order = match order {
         None => None,
-        Some(order) => {
-            let decoded = order_value(order, enum_value)
-                .ok_or_else(|| AtomicRouteRefusal::UnevaluatedOrder(name.clone()))?;
-            let decoded = decode_order(decoded)
-                .ok_or_else(|| AtomicRouteRefusal::InvalidOrder(name.clone()))?;
-            Some(route_order(&name, operation, decoded)?)
-        }
+        Some(order) => Some(route_order(&name, operation, evaluate(order)?)?),
     };
+    let failure_order = match (failure, order) {
+        (Some(failure), Some(success)) => {
+            Some(route_failure_order(&name, success, evaluate(failure)?)?)
+        }
+        _ => None,
+    };
+    let strength = match (operation, name.as_str()) {
+        (Operation::CompareExchange, "__c11_atomic_compare_exchange_strong") => {
+            Some(CompareExchangeStrength::Strong)
+        }
+        (Operation::CompareExchange, "__c11_atomic_compare_exchange_weak") => {
+            Some(CompareExchangeStrength::Weak)
+        }
+        (Operation::CompareExchange, _) => {
+            let flag = weak
+                .and_then(|weak| order_value(weak, &|_| None))
+                .ok_or_else(|| AtomicRouteRefusal::UnevaluatedStrength(name.clone()))?;
+            Some(if flag == 0 {
+                CompareExchangeStrength::Strong
+            } else {
+                CompareExchangeStrength::Weak
+            })
+        }
+        _ => None,
+    };
+    // The generic `__atomic_compare_exchange` passes the desired value by
+    // pointer; its value type is the pointee's: the named object's own
+    // (desugared) type for `&x`, else the pointer type's pointee spelling.
+    let value_by_pointer = name == "__atomic_compare_exchange";
     let value_type = match value {
-        None => type_of(node),
-        Some(value) => type_of(value),
-    }
-    .unwrap_or_default()
-    .to_owned();
+        None => type_of(node).unwrap_or_default().to_owned(),
+        Some(value) if value_by_pointer => {
+            let named = (kind(value) == "UnaryOperator" && value["opcode"].as_str() == Some("&"))
+                .then(|| children(value).first())
+                .flatten()
+                .map(strip_value)
+                .and_then(type_of);
+            named
+                .or_else(|| pointee(type_of(value).unwrap_or_default()))
+                .ok_or_else(|| AtomicRouteRefusal::NonScalarValue(name.clone()))?
+                .to_owned()
+        }
+        Some(value) => type_of(value).unwrap_or_default().to_owned(),
+    };
     if !scalar_value_type(&value_type) {
+        return Err(AtomicRouteRefusal::NonScalarValue(name));
+    }
+    // The expected value is read and, on failure, written through a pointer
+    // to the same scalar type.
+    if let Some(expected) = expected
+        && !pointee(type_of(expected).unwrap_or_default()).is_some_and(scalar_value_type)
+    {
         return Err(AtomicRouteRefusal::NonScalarValue(name));
     }
     let routed = RoutedAtomic {
@@ -458,9 +730,22 @@ pub fn classify_builtin<'a>(
         object,
         value,
         value_type,
+        failure_order,
+        strength,
+        expected,
+        value_by_pointer,
     };
-    debug_assert!(event_order_represented(&routed.event_kind(0, 0)));
+    debug_assert!(
+        routed
+            .event(0, routed.shape_values())
+            .is_some_and(|event| event_order_represented(&event))
+    );
     Ok(routed)
+}
+
+/// The pointee of a pointer type spelling, `None` for a non-pointer.
+fn pointee(text: &str) -> Option<&str> {
+    Some(text.trim_end().strip_suffix('*')?.trim_end())
 }
 
 /// The `_Atomic` operator form a node is, when it is one
@@ -482,22 +767,44 @@ fn atomic_type(node: &Value) -> bool {
     type_of(node).is_some_and(|text| text.starts_with("_Atomic(") || text.contains(" _Atomic("))
 }
 
+/// The value type `T` of an `_Atomic(T)` lvalue.
+fn atomic_value_type(node: &Value) -> Option<&str> {
+    type_of(node)?
+        .trim()
+        .strip_prefix("_Atomic(")?
+        .strip_suffix(')')
+}
+
 /// Route one `_Atomic` operator form, `None` for a node that is none. The
 /// qualified forms are sequentially consistent (C11 6.5.2.4p2, 6.5.16.2p3,
-/// 7.17.7): the plain two route with that order; the rest are
-/// read-modify-writes, refused by name.
+/// 7.17.7): the lvalue conversion is a load, the simple assignment a store,
+/// and (card CG28) the compound assignment and the increment or decrement
+/// read-modify-writes.
 #[must_use]
 pub fn classify_qualified(node: &Value) -> Option<Result<RoutedAtomic<'_>, AtomicRouteRefusal>> {
-    let refuse = |form: &str| Some(Err(AtomicRouteRefusal::ReadModifyWrite(form.to_owned())));
+    let routed = |form: &str, operation, object, value, value_type: String| {
+        if !scalar_value_type(&value_type) {
+            return Some(Err(AtomicRouteRefusal::NonScalarValue(form.to_owned())));
+        }
+        Some(Ok(RoutedAtomic {
+            form: form.to_owned(),
+            operation,
+            order: Some(MemoryOrder::SequentiallyConsistent),
+            object,
+            value,
+            value_type,
+            failure_order: None,
+            strength: None,
+            expected: None,
+            value_by_pointer: false,
+        }))
+    };
     match (kind(node), node["opcode"].as_str(), children(node)) {
         ("ImplicitCastExpr", _, [read])
             if node["castKind"].as_str() == Some("AtomicToNonAtomic") =>
         {
             let form = QUALIFIED_FORMS[0].0;
             let value_type = type_of(node).unwrap_or_default().to_owned();
-            if !scalar_value_type(&value_type) {
-                return Some(Err(AtomicRouteRefusal::NonScalarValue(form.to_owned())));
-            }
             // The read under the conversion is Clang's `LValueToRValue` of
             // the `_Atomic` lvalue.
             let object = if kind(read) == "ImplicitCastExpr"
@@ -505,16 +812,12 @@ pub fn classify_qualified(node: &Value) -> Option<Result<RoutedAtomic<'_>, Atomi
             {
                 children(read).first()?
             } else {
+                if !scalar_value_type(&value_type) {
+                    return Some(Err(AtomicRouteRefusal::NonScalarValue(form.to_owned())));
+                }
                 return Some(Err(AtomicRouteRefusal::UnsupportedShape(form.to_owned())));
             };
-            Some(Ok(RoutedAtomic {
-                form: form.to_owned(),
-                operation: Operation::Load,
-                order: Some(MemoryOrder::SequentiallyConsistent),
-                object,
-                value: None,
-                value_type,
-            }))
+            routed(form, Operation::Load, object, None, value_type)
         }
         ("BinaryOperator", Some("="), [left, right]) if atomic_type(left) => {
             let form = QUALIFIED_FORMS[1].0;
@@ -526,23 +829,23 @@ pub fn classify_qualified(node: &Value) -> Option<Result<RoutedAtomic<'_>, Atomi
                 return Some(Err(AtomicRouteRefusal::UnsupportedShape(form.to_owned())));
             };
             let value_type = type_of(value).unwrap_or_default().to_owned();
-            if !scalar_value_type(&value_type) {
-                return Some(Err(AtomicRouteRefusal::NonScalarValue(form.to_owned())));
-            }
-            Some(Ok(RoutedAtomic {
-                form: form.to_owned(),
-                operation: Operation::Store,
-                order: Some(MemoryOrder::SequentiallyConsistent),
-                object: left,
-                value: Some(value),
-                value_type,
-            }))
+            routed(form, Operation::Store, left, Some(value), value_type)
         }
-        ("CompoundAssignOperator", _, [left, _]) if atomic_type(left) => {
-            refuse(QUALIFIED_FORMS[2].0)
+        ("CompoundAssignOperator", _, [left, right]) if atomic_type(left) => {
+            let form = QUALIFIED_FORMS[2].0;
+            let value_type = atomic_value_type(left).unwrap_or_default().to_owned();
+            routed(
+                form,
+                Operation::ReadModifyWrite,
+                left,
+                Some(right),
+                value_type,
+            )
         }
         ("UnaryOperator", Some("++" | "--"), [operand]) if atomic_type(operand) => {
-            refuse(QUALIFIED_FORMS[3].0)
+            let form = QUALIFIED_FORMS[3].0;
+            let value_type = atomic_value_type(operand).unwrap_or_default().to_owned();
+            routed(form, Operation::ReadModifyWrite, operand, None, value_type)
         }
         _ => None,
     }

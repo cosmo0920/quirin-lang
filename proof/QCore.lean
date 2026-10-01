@@ -315,6 +315,7 @@ import QCore.FieldLinkJoin
 import QCore.StatementExpressions
 import QCore.StorageDuration
 import QCore.AtomicSourceRoute
+import QCore.WeakMemory
 import QCore.VoidViewReadback
 import QCore.LayoutExtents
 import QCore.ResourceKinds

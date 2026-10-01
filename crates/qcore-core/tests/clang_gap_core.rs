@@ -244,7 +244,9 @@ fn n06_core_has_no_shift_operation() {
 // weak_memory (W02 W03 W04 W05 W06 W07)
 // ---------------------------------------------------------------------------
 
-/// W02 RMW/fetch_*, W03 compare-exchange and W04 fences have no event kind.
+/// W02 RMW/fetch_*, W03 compare-exchange and W04 fences. Flipped by card
+/// CG28-WEAK-MEMORY-EVENTS: the core now has an event kind for each, and the
+/// match below lists them (BEFORE: the first nine alone were exhaustive).
 #[test]
 fn w02_w03_w04_core_has_no_rmw_cas_or_fence_event() {
     let kinds = |kind: &MemoryEventKind| match kind {
@@ -256,12 +258,22 @@ fn w02_w03_w04_core_has_no_rmw_cas_or_fence_event() {
         | MemoryEventKind::MutexUnlock { .. }
         | MemoryEventKind::MutexLock { .. }
         | MemoryEventKind::Spawn { .. }
-        | MemoryEventKind::Join { .. } => (),
+        | MemoryEventKind::Join { .. } => false,
+        MemoryEventKind::AtomicReadModifyWrite { .. }
+        | MemoryEventKind::AtomicCompareExchange { .. }
+        | MemoryEventKind::AtomicFence { .. } => true,
     };
-    kinds(&MemoryEventKind::Spawn { child: 1 });
+    assert!(!kinds(&MemoryEventKind::Spawn { child: 1 }));
+    assert!(kinds(&MemoryEventKind::AtomicFence {
+        order: MemoryOrder::SequentiallyConsistent,
+        scope: qcore_core::FenceScope::Thread,
+    }));
 }
 
 /// W05: no `consume` order; W06: the orders are C11's five without it.
+/// Unchanged by card CG28-WEAK-MEMORY-EVENTS, by decision: consume stays out
+/// of the model's scope (dependency ordering is not modelled; the source
+/// route refuses a consume order rather than strengthen it to acquire).
 #[test]
 fn w05_w06_core_has_no_consume_order() {
     let orders = |order: MemoryOrder| match order {

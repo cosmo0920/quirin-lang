@@ -1,6 +1,7 @@
 //! Card **CG19-ATOMIC-SOURCE-ROUTE** (gateway rule 11i): the atomic source
 //! route of [`crate::atomic_source_route`] connected to the custody gateway
-//! (route G).
+//! (route G). Extended by card **CG28-WEAK-MEMORY-EVENTS** (rule 11t) to the
+//! read-modify-write, compare-exchange and fence events.
 //!
 //! Every hook here is a **fallback**: it is consulted only where every
 //! existing route of its position refused, so no answer an older route gives
@@ -11,28 +12,35 @@
 //! * **Statements.** A statement the classifier refused as a call to an
 //!   uncontracted function whose name is an atomic builtin
 //!   ([`atomic_source_route::names_atomic_builtin`]) is matched to its Clang
-//!   node by line and tokens. A routed plain load or store (the builtin alone,
-//!   `T x = LOAD;` or `x = LOAD;`) is lowered to its custody effect, which is
-//!   the plain access's: the dereference of the pointer operand is the typed
-//!   access-path reader's [`LegacyInstruction::IndirectScalarAccess`] (its
-//!   base obligations checked by `transfer` exactly as for `*p`), a store
-//!   through it carries the refused-write frame of `*p = v`, and a loaded
-//!   value's scalar destination forgets its old fact. Every other answer
-//!   replaces the uncontracted-call refusal by the route's **named** refusal
-//!   (read-modify-write, compare-exchange, fence, consume, an invalid or
-//!   unevaluated order, an unread operand shape) with the same writes: still
-//!   `Unknown`, never a neutral call.
+//!   node by line and tokens. A routed access (the builtin alone, `T x = A;`
+//!   or `x = A;`, the destination only for a value-producing load,
+//!   read-modify-write or compare-exchange) is lowered to its custody effect:
+//!   the dereference of a pointer operand is the typed access-path reader's
+//!   [`LegacyInstruction::IndirectScalarAccess`] (its base obligations
+//!   checked by `transfer` exactly as for `*p`), a write through it (a
+//!   store, a read-modify-write, a compare-exchange's object and `expected`
+//!   operand) carries the refused-write frame of `*p = v`, `&x` reads nothing
+//!   and a write to it forgets the scalar local `x`, a fence touches no
+//!   object, and a produced value's scalar destination forgets its old fact.
+//!   A stored, operand or desired value must be a literal, an enumerator or a
+//!   non-pointer named object (`&x` for the generic compare-exchange's
+//!   desired value). Every other answer replaces the uncontracted-call
+//!   refusal by the route's **named** refusal (consume, a legacy `__sync`
+//!   builtin, an invalid or unevaluated order or weak flag, an unread operand
+//!   shape) with the same writes: still `Unknown`, never a neutral call.
 //! * **`_Atomic` statements.** A statement any route refused whose Clang node
 //!   is an `_Atomic` operator form at the top
 //!   ([`atomic_source_route::classify_qualified`]): a simple assignment
-//!   `*p = v` through a pointer object is the plain store's custody effect
-//!   (the typed reader's dereference and refused-write frame, read with the
-//!   value type); every other such store, and every compound assignment or
-//!   increment (a read-modify-write), is the route's named refusal.
+//!   `*p = v`, and (CG28) a compound assignment `*p op= v` or increment
+//!   `(*p)++` through a pointer object, is the plain store's or
+//!   read-modify-write's custody effect (the typed reader's dereference and
+//!   refused-write frame, read with the value type); every other such form is
+//!   the route's named refusal.
 //! * **Returns.** A refused `return` whose value is one atomic builtin is
 //!   lowered the same way when the function's result is a scalar: a routed
-//!   load is its access then an exit that escapes nothing; any other atomic
-//!   is the route's named refusal, then that exit.
+//!   load, read-modify-write or compare-exchange is its access then an exit
+//!   that escapes nothing; any other atomic is the route's named refusal, then
+//!   that exit.
 //!
 //! The custody projection is order-insensitive, so a routed access's order
 //! is carried only into the parity row: route G publishes no ordering,
@@ -109,6 +117,26 @@ fn atomic_object_pointer(node: &Value) -> bool {
         && !inner.contains("struct ")
         && !inner.contains("volatile")
         && !inner.contains("_Atomic")
+}
+
+/// `&x` for a named object `x` (a local or a formal): its name.
+fn address_of_named(node: &Value) -> Option<&str> {
+    if kind(node) != "UnaryOperator" || node["opcode"].as_str() != Some("&") {
+        return None;
+    }
+    let [target] = children(node) else {
+        return None;
+    };
+    let target = strip(target)?;
+    if kind(target) != "DeclRefExpr"
+        || !matches!(
+            target["referencedDecl"]["kind"].as_str(),
+            Some("VarDecl" | "ParmVarDecl")
+        )
+    {
+        return None;
+    }
+    target["referencedDecl"]["name"].as_str()
 }
 
 /// Whether a stored value is custody-neutral data: a literal, or a read of a
@@ -224,21 +252,21 @@ impl Parser<'_> {
             )
     }
 
-    /// The custody effect of one routed plain access.
-    fn lower_routed(
+    /// The custody effect of one pointer operand of a routed access: the
+    /// object (or, card CG28, a compare-exchange's `expected` pointer) read
+    /// and, for `write`, written through. `*p` for a pointer object `p` is the
+    /// typed reader's dereference; `&x` reads nothing and a write forgets the
+    /// scalar local `x`.
+    fn lower_pointer_operand(
         &self,
         index: &StatementIndex,
-        routed: &RoutedAtomic<'_>,
+        operand: &Value,
+        value_type: &str,
+        write: bool,
         never_bound: &dyn Fn(&str) -> bool,
-    ) -> Result<Vec<LegacyInstruction>, AtomicRouteRefusal> {
-        let shape = || AtomicRouteRefusal::UnsupportedShape(routed.form.clone());
-        if routed.value.is_some_and(|value| !neutral_value(value)) {
-            return Err(shape());
-        }
-        let write = routed.operation != Operation::Load;
-        let object = strip(routed.object).ok_or_else(shape)?;
+    ) -> Option<Vec<LegacyInstruction>> {
+        let object = strip(operand)?;
         match kind(object) {
-            // `*p` for a pointer object `p`: the typed reader's dereference.
             "DeclRefExpr"
                 if matches!(
                     object["referencedDecl"]["kind"].as_str(),
@@ -248,48 +276,77 @@ impl Parser<'_> {
                 let dereference = json!({
                     "kind": "UnaryOperator",
                     "opcode": "*",
-                    "type": {"qualType": routed.value_type},
-                    "inner": [routed.object.clone()],
+                    "type": {"qualType": value_type},
+                    "inner": [operand.clone()],
                 });
                 let mut reader = index.reader(never_bound);
-                reader.path(&dereference, write, false).ok_or_else(shape)?;
-                Ok(vec![self.atomic_path_instruction(&reader.plan, write)])
+                reader.path(&dereference, write, false)?;
+                Some(vec![self.atomic_path_instruction(&reader.plan, write)])
             }
-            // `&x`: the named object itself.
             "UnaryOperator" if object["opcode"].as_str() == Some("&") => {
-                let [target] = children(object) else {
-                    return Err(shape());
-                };
-                let target = strip(target).ok_or_else(shape)?;
-                if kind(target) != "DeclRefExpr"
-                    || !matches!(
-                        target["referencedDecl"]["kind"].as_str(),
-                        Some("VarDecl" | "ParmVarDecl")
-                    )
-                {
-                    return Err(shape());
-                }
-                let name = target["referencedDecl"]["name"]
-                    .as_str()
-                    .ok_or_else(shape)?;
+                let name = address_of_named(object)?;
                 if !write {
-                    return Ok(Vec::new());
+                    return Some(Vec::new());
                 }
                 if !self.atomic_scalar_destination(name) {
-                    return Err(shape());
+                    return None;
                 }
-                Ok(vec![LegacyInstruction::ForgetScalar {
+                Some(vec![LegacyInstruction::ForgetScalar {
                     destination: name.to_owned(),
                 }])
             }
-            _ => Err(shape()),
+            _ => None,
         }
     }
 
-    /// The custody effect of one routed `_Atomic` simple assignment: the
-    /// plain store `*p = v` or `x = v` it is, read by the typed reader through
-    /// the lvalue with its value type (the reader refuses every `_Atomic`
-    /// type spelling, which is this route's own case).
+    /// The custody effect of one routed access. Card CG28 (rule 11t): a fence
+    /// touches no object; a read-modify-write reads and writes its object; a
+    /// compare-exchange reads and may write its object and its `expected`
+    /// object, and reads its desired value (by pointer for the generic form).
+    fn lower_routed(
+        &self,
+        index: &StatementIndex,
+        routed: &RoutedAtomic<'_>,
+        never_bound: &dyn Fn(&str) -> bool,
+    ) -> Result<Vec<LegacyInstruction>, AtomicRouteRefusal> {
+        let shape = || AtomicRouteRefusal::UnsupportedShape(routed.form.clone());
+        if matches!(
+            routed.operation,
+            Operation::ThreadFence | Operation::SignalFence
+        ) {
+            return Ok(Vec::new());
+        }
+        let neutral = |value: &Value| {
+            if routed.value_by_pointer {
+                strip(value)
+                    .filter(|value| kind(value) == "UnaryOperator")
+                    .and_then(address_of_named)
+                    .is_some()
+            } else {
+                neutral_value(value)
+            }
+        };
+        if routed.value.is_some_and(|value| !neutral(value)) {
+            return Err(shape());
+        }
+        let write = routed.operation != Operation::Load;
+        let mut instructions = self
+            .lower_pointer_operand(index, routed.object, &routed.value_type, write, never_bound)
+            .ok_or_else(shape)?;
+        if let Some(expected) = routed.expected {
+            instructions.extend(
+                self.lower_pointer_operand(index, expected, &routed.value_type, true, never_bound)
+                    .ok_or_else(shape)?,
+            );
+        }
+        Ok(instructions)
+    }
+
+    /// The custody effect of one routed `_Atomic` simple assignment, and
+    /// (card CG28) compound assignment or increment: the plain store or
+    /// read-modify-write `*p` it is, read by the typed reader through the
+    /// lvalue with its value type (the reader refuses every `_Atomic` type
+    /// spelling, which is this route's own case).
     fn lower_qualified_store(
         &self,
         index: &StatementIndex,
@@ -297,8 +354,11 @@ impl Parser<'_> {
         never_bound: &dyn Fn(&str) -> bool,
     ) -> Result<Vec<LegacyInstruction>, AtomicRouteRefusal> {
         let shape = || AtomicRouteRefusal::UnsupportedShape(routed.form.clone());
-        if routed.operation != Operation::Store
-            || routed.value.is_none_or(|value| !neutral_value(value))
+        if !matches!(
+            routed.operation,
+            Operation::Store | Operation::ReadModifyWrite
+        ) || (routed.operation == Operation::Store && routed.value.is_none())
+            || routed.value.is_some_and(|value| !neutral_value(value))
         {
             return Err(shape());
         }
@@ -338,8 +398,12 @@ impl Parser<'_> {
         let routed = classify_builtin(site.atomic, &atomic_source_route::consume_only)?;
         let mut instructions = self.lower_routed(index, &routed, never_bound)?;
         if let Some(destination) = &site.destination {
-            if routed.operation != Operation::Load
-                || self.formal_parameters.contains(destination.as_str())
+            // Card CG28: a read-modify-write's old value and a
+            // compare-exchange's outcome are scalar results too.
+            if !matches!(
+                routed.operation,
+                Operation::Load | Operation::ReadModifyWrite | Operation::CompareExchange
+            ) || self.formal_parameters.contains(destination.as_str())
                 || !self.atomic_scalar_destination(destination)
             {
                 return Err(AtomicRouteRefusal::UnsupportedShape(routed.form.clone()));
@@ -483,7 +547,10 @@ impl Parser<'_> {
         let outcome =
             self.lower_site(&index, &site, &never_bound)
                 .and_then(|(routed, instructions)| {
-                    if routed.operation == Operation::Load {
+                    if matches!(
+                        routed.operation,
+                        Operation::Load | Operation::ReadModifyWrite | Operation::CompareExchange
+                    ) {
                         Ok((routed, instructions))
                     } else {
                         Err(AtomicRouteRefusal::UnsupportedShape(routed.form.clone()))

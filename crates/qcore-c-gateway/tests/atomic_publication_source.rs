@@ -498,7 +498,9 @@ int consume(void) { int seen = __atomic_load_n(&done, __ATOMIC_ACQUIRE); if (see
     assert_eq!(
         check(&exchange),
         Err(AtomicPublicationSourceRefusal::NamedAtomicRefusal(
-            "atomic read-modify-write `__c11_atomic_exchange` is not represented by the weak-memory model (CG28)".into()
+            // Card CG28 (rule 11t): the exchange is now routed to the
+            // weak-memory model, and still not a publication shape.
+            "atomic `__c11_atomic_exchange` is routed to the weak-memory model but is not a publication shape this route decides (CG19-PUBLICATION-ONE-FLAG-ONE-PAYLOAD)".into()
         ))
     );
     // A test that reads the payload on the branch that did NOT observe the

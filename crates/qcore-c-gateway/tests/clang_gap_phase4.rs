@@ -581,30 +581,23 @@ fn n13_vector_values_are_refused() {
 // CG28 — weak-memory events (W02 W03 W04; the core halves are in qcore-core)
 // ---------------------------------------------------------------------------
 
-/// Renamed by card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): still
-/// refused (`Unknown`), now by the atomic route's name rather than as an
-/// uncontracted call. CG28 owns representing them.
+/// Renamed by card CG19-ATOMIC-SOURCE-ROUTE (gateway rule 11i): refused by
+/// the atomic route's name rather than as an uncontracted call. Flipped by
+/// card CG28-WEAK-MEMORY-EVENTS (rule 11t): each is now a routed event of the
+/// weak-memory model, lowered to its custody effect, and route G answers
+/// custody-`Safe` (no ordering claim).
 #[test]
 fn w02_w03_w04_atomic_rmw_cas_and_fences_are_uncontracted_calls() {
     if !clang_available() {
         return;
     }
-    for (source, refusal) in [
-        (
-            "int subject(_Atomic int *a) { return __c11_atomic_fetch_add(a, 1, 5); }",
-            "atomic read-modify-write `__c11_atomic_fetch_add` is not represented by the weak-memory model (CG28)",
-        ),
-        (
-            "int subject(_Atomic int *a, int *e) { return __c11_atomic_compare_exchange_strong(a, e, 1, 5, 5); }",
-            "atomic compare-exchange `__c11_atomic_compare_exchange_strong` is not represented by the weak-memory model (CG28)",
-        ),
-        (
-            "void subject(void) { __c11_atomic_thread_fence(5); }",
-            "atomic fence `__c11_atomic_thread_fence` is not represented by the weak-memory model (CG28)",
-        ),
+    for source in [
+        "int subject(_Atomic int *a) { return __c11_atomic_fetch_add(a, 1, 5); }",
+        "int subject(_Atomic int *a, int *e) { return __c11_atomic_compare_exchange_strong(a, e, 1, 5, 5); }",
+        "void subject(void) { __c11_atomic_thread_fence(5); }",
     ] {
         let run = gs(source);
-        assert!(run.unknown() && run.refused(refusal), "{source}: {run:?}");
+        assert!(run.safe(), "{source}: {run:?}");
     }
 }
 
