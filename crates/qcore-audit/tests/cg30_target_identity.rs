@@ -28,8 +28,20 @@ fn driver() -> Option<String> {
     }
 }
 
+/// One fresh directory per entry: the tests run in parallel, and a unit file
+/// another test is rewriting would not hold its declared bytes.
 fn entry(driver: &str, extra: &str) -> CompileEntry {
-    let directory = std::env::temp_dir().join(format!("qcore-cg30-{}", std::process::id()));
+    static NEXT: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+    let tag = NEXT
+        .fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+        .to_string();
+    entry_in(driver, extra, &tag)
+}
+
+/// An entry in the directory named by `tag` (the identity binds the
+/// directory, so a repeated digest must reuse it).
+fn entry_in(driver: &str, extra: &str, tag: &str) -> CompileEntry {
+    let directory = std::env::temp_dir().join(format!("qcore-cg30-{}-{tag}", std::process::id()));
     std::fs::create_dir_all(&directory).unwrap();
     let file = directory.join("unit.c");
     std::fs::write(&file, "int subject(int a) { return a; }\n").unwrap();
@@ -137,7 +149,7 @@ fn the_task_identity_separates_targets_and_dialects() {
     let Some(driver) = driver() else { return };
     let compiler = ClangIdentity::recorded("clang", "21.1.8", "x86_64-pc-linux-gnu").unwrap();
     let digest = |extra: &str| {
-        let entry = entry(&driver, extra);
+        let entry = entry_in(&driver, extra, "identity");
         let options = compiler_options(&entry).expect(extra);
         let unit = C11TranslationUnit {
             source: "int subject(int a) { return a; }\n",

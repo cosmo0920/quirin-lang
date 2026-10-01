@@ -303,3 +303,16 @@ with the one expected failure (the derived `lean_audits` 267 → 268), then 0
 after `build_matrix.py . --gate gate.json` (`scripts/after_gate.sh`); docs
 index 0, `--check` 0. `providers/` is unchanged, so the provider gate was not
 due (129 carried). Clang 21.1.8.
+
+**After the last rebase** (onto main `f6336c9d`, CG28-WEAK-MEMORY-EVENTS):
+`cargo check --workspace --all-targets` 0; the card's targeted suites pass
+(`cg30_dialects_flags_types` 10, `clang_gap_phase4` 33, `clang_gap_flags` 4,
+`cg30_target_identity` 3); clippy `--locked` on `qcore-audit` 0, fmt 0;
+`check_lean_audits.py` **269** passed; the matrix was regenerated
+(`lean_audits` 269) and Python reran 365, 0 failures; index `--check` 0. The
+workspace runner was **not** repeated there. One test of this card's own
+(`cg30_target_identity`) failed on that tip under parallel threads: its tests
+shared one temporary unit file, which a sibling test was rewriting. Each entry
+now gets its own directory (the identity test reuses one named directory, since
+the directory is bound in the identity); three consecutive runs pass. The gate
+run at `81878e18` had passed it by timing.
