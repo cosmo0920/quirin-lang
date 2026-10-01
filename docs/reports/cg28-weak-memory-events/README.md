@@ -8,7 +8,8 @@ gateway rule because the route changes; the core change is described there
 too). Lean: `QCore.WeakMemory` (new,
 [`proof/QCore/WeakMemory.lean`](../../../proof/QCore/WeakMemory.lean), audited
 in `proof/AuditWeakMemory.lean`) and `QCore.AtomicSourceRoute` (extended).
-Base `b6a3dc42` (= `main` = `origin/main` at launch).
+Base `b6a3dc42` (= `main` = `origin/main` at launch); rebased onto `main` `8e8ed41f` (CG17), `06ad81cb`
+(CG20), `b934c560` (CG25, where the tip was re-measured) and finally `f0bbc0eb` (CG26).
 
 **Published guarantee (phase 4).** The property this card publishes is the
 core checker's: **C11 (N1570) validity and data-race freedom of one supplied
@@ -408,7 +409,7 @@ use; faithful Clang extraction (trust boundary 28).
 - **Decided, not registered:** consume stays out of scope (§1). Reopening it
   needs a dependency-ordering relation in the model and a source extraction
   of dependencies; it is a phase-4 choice, not open work.
-- **Ledger:** 670 → 671 on `main` `b934c560` (666 → 667 on the base).
+- **Ledger:** 671 → 672 on `main` `f0bbc0eb` (666 → 667 on the base).
   `scripts/update_ledger.py` was applied once, to `main`'s matrix.
 
 ## 9. Gate
