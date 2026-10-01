@@ -14,6 +14,96 @@ use qcore_c_gateway::legacy_c::{
 use qcore_schemas::contract::ResourceContracts;
 use qcore_schemas::verdict::Verdict;
 
+/// Card CG16-INDEX-AND-OFFSET-EXTENTS (gateway rule 11s): the environment
+/// variable that selects the bounds property and names its JSON-lines output.
+/// Unset, no bounds analysis runs and every artifact is byte-identical.
+pub const BOUNDS_SELECTION: &str = "QCORE_BOUNDS_PROPERTY";
+
+/// The custody status as the four values the composition joins.
+fn custody_value(status: AnalysisStatus) -> qcore_c_gateway::index_extent::BoundsVerdict {
+    use qcore_c_gateway::index_extent::BoundsVerdict;
+    match status {
+        AnalysisStatus::Safe => BoundsVerdict::Safe,
+        AnalysisStatus::Pending => BoundsVerdict::Pending,
+        AnalysisStatus::Unknown => BoundsVerdict::Unknown,
+        AnalysisStatus::Unsafe => BoundsVerdict::Unsafe,
+    }
+}
+
+/// Card CG16-INDEX-AND-OFFSET-EXTENTS: when the bounds property is selected,
+/// record each function's bounds row beside its custody status and the
+/// combined verdict of a request naming both. Reads the custody result; never
+/// changes it. With no bounds declaration selected, the environment is empty.
+fn record_bounds(
+    library: &str,
+    file: &str,
+    unit: &C11TranslationUnit<'_>,
+    preprocessed: Option<&str>,
+    functions: &[String],
+    result: &Result<UnrestrictedLegacyResult, LegacyCError>,
+    report: &mut AuditReport,
+) {
+    use qcore_c_gateway::index_extent::{analyze_bounds_c11, analyze_bounds_preprocessed, row_verdict};
+    use qcore_c_gateway::index_extent::{BoundsVerdict, Request, compose};
+    if std::env::var_os(BOUNDS_SELECTION).is_none() {
+        return;
+    }
+    let contracts = qcore_contract::bounds_contract::BoundsContracts::default();
+    let analysed = match preprocessed {
+        Some(text) => analyze_bounds_preprocessed(text, unit, functions, &contracts),
+        None => analyze_bounds_c11(unit, functions, &contracts),
+    };
+    let custody = summary_of(result);
+    for name in functions {
+        let custody = custody
+            .and_then(|summary| summary.functions.get(name))
+            .map(|function| custody_value(function.status));
+        let (row, identity, bounds) = match &analysed {
+            Ok(report) => match report.row(name) {
+                Some(row) => (
+                    serde_json::to_value(row).unwrap_or(serde_json::Value::Null),
+                    serde_json::json!({
+                        "model_version": report.model_version,
+                        "contract_version": report.contract_version,
+                        "source_sha256": report.source_sha256,
+                        "target": report.target,
+                        "contracts_sha256": report.contracts_sha256,
+                    }),
+                    Some(row_verdict(row)),
+                ),
+                None => (serde_json::Value::Null, serde_json::Value::Null, None),
+            },
+            Err(error) => (
+                serde_json::json!({
+                    "function": name,
+                    "verdict": "Unknown",
+                    "reasons": [format!("bounds-import-failure: {error}")],
+                    "accesses": [],
+                }),
+                serde_json::Value::Null,
+                Some(BoundsVerdict::Unknown),
+            ),
+        };
+        let combined = compose(
+            Request {
+                custody: true,
+                bounds: true,
+            },
+            custody,
+            bounds,
+        );
+        report.record_bounds(serde_json::json!({
+            "library": library,
+            "file": file,
+            "function": name,
+            "custody": custody.map(BoundsVerdict::as_str),
+            "bounds": row,
+            "identity": identity,
+            "combined": combined.as_str(),
+        }));
+    }
+}
+
 /// One line of a unit's console account, written to that unit's buffer. A
 /// `String` sink cannot fail.
 macro_rules! say {
@@ -232,6 +322,15 @@ pub fn project_unit_into(
     // describe the text it was built against. This publishes no verdict and is
     // never read by the analysis: `result` above is already settled.
     let locations = origin_coordinates(unit, &result);
+    let preprocessed = match &result {
+        Ok(UnrestrictedLegacyResult::Safe(certificate)) => Some(certificate.preprocessed_source.as_str()),
+        Ok(UnrestrictedLegacyResult::Unknown {
+            preprocessed_source,
+            ..
+        }) => Some(preprocessed_source.as_str()),
+        _ => None,
+    };
+    record_bounds(library, file, unit, preprocessed, source_functions, &result, report);
     record_projection(
         ProjectionContext {
             library,
@@ -361,6 +460,25 @@ pub fn project_prepared_unit_into(
         }
         other => other,
     };
+    if std::env::var_os(BOUNDS_SELECTION).is_some() {
+        let view = C11TranslationUnit {
+            source: prepared.raw_source(),
+            include_paths: prepared.include_paths().to_vec(),
+            definitions: prepared.definitions().to_vec(),
+            preprocessor_options: prepared.preprocessor_options().to_vec(),
+            dialect: prepared.dialect(),
+            ..Default::default()
+        };
+        record_bounds(
+            library,
+            file,
+            &view,
+            prepared.preprocessed_source().ok(),
+            source_functions,
+            &result,
+            report,
+        );
+    }
     record_projection(
         ProjectionContext {
             library,

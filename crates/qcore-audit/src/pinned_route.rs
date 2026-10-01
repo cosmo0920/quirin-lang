@@ -439,6 +439,7 @@ pub fn run(
     }
     if let Some(path) = diagnostic_report {
         report.write_with_revision_key(path, "fluent_bit_revision")?;
+        report.write_bounds_selection()?;
         let (provider_results, native_results): (Vec<_>, Vec<_>) = native_results
             .into_iter()
             .partition(|record| record["kind"] == "provider_source_effect");

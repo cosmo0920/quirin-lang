@@ -72,11 +72,15 @@ use qcore_contract::bounds_contract::{
     BoundsUnit, ParameterKind,
 };
 use qcore_core::index_extent::{
-    self as core, BOUNDS_MODEL_VERSION, BOUNDS_PROPERTY, BoundsVerdict, Count, Decision,
+    self as core, BOUNDS_MODEL_VERSION, Count, Decision,
     EvidenceIdentity, Facts, IndexFact, Judgement, Outcome, PointerFact, Refusal, SameObject,
     ScalarFact, Standing,
 };
 use serde_json::Value;
+
+/// The property, its verdict values and the composition, for consumers that
+/// reach the core through this gateway (the audit routes).
+pub use qcore_core::index_extent::{BOUNDS_PROPERTY, BoundsVerdict, Request, compose};
 
 use crate::legacy_c::C11TranslationUnit;
 use crate::typed_c_ast::kind;
@@ -2808,8 +2812,129 @@ pub fn analyze_bounds_preprocessed(
     functions: &[String],
     contracts: &BoundsContracts,
 ) -> Result<BoundsUnitReport, String> {
+    // A deep `else if` chain nests the AST deeper than serde's default limit
+    // and than a worker's default stack: read and walk it on a stack sized
+    // for it, as the typed dispatch reader does.
+    std::thread::scope(|scope| {
+        std::thread::Builder::new()
+            .stack_size(ANALYSIS_STACK)
+            .spawn_scoped(scope, || analyze_on_stack(preprocessed, unit, functions, contracts))
+            .map_err(|error| format!("cannot start the bounds reader: {error}"))?
+            .join()
+            .map_err(|_| "the bounds reader panicked".to_owned())?
+    })
+}
+
+const ANALYSIS_STACK: usize = 256 << 20;
+
+/// Keep only what the consumer reads of each top-level declaration: the
+/// selected (and return-extent-declaring) definitions whole, every other
+/// function's parameter types, every global's name and type, and the
+/// enumerations. Everything else is dropped as it is read, so a unit's memory
+/// is its selected bodies, not its whole AST.
+struct TopSeed<'a> {
+    wanted: &'a BTreeSet<String>,
+    kept: &'a mut Vec<Value>,
+}
+
+impl<'de> serde::de::DeserializeSeed<'de> for TopSeed<'_> {
+    type Value = ();
+    fn deserialize<D: serde::Deserializer<'de>>(self, deserializer: D) -> Result<(), D::Error> {
+        deserializer.deserialize_map(self)
+    }
+}
+
+impl<'de> serde::de::Visitor<'de> for TopSeed<'_> {
+    type Value = ();
+    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str("a Clang translation-unit AST")
+    }
+    fn visit_map<A: serde::de::MapAccess<'de>>(self, mut map: A) -> Result<(), A::Error> {
+        while let Some(key) = map.next_key::<String>()? {
+            if key == "inner" {
+                map.next_value_seed(InnerSeed {
+                    wanted: self.wanted,
+                    kept: &mut *self.kept,
+                })?;
+            } else {
+                map.next_value::<serde::de::IgnoredAny>()?;
+            }
+        }
+        Ok(())
+    }
+}
+
+struct InnerSeed<'a> {
+    wanted: &'a BTreeSet<String>,
+    kept: &'a mut Vec<Value>,
+}
+
+impl<'de> serde::de::DeserializeSeed<'de> for InnerSeed<'_> {
+    type Value = ();
+    fn deserialize<D: serde::Deserializer<'de>>(self, deserializer: D) -> Result<(), D::Error> {
+        deserializer.deserialize_seq(self)
+    }
+}
+
+impl<'de> serde::de::Visitor<'de> for InnerSeed<'_> {
+    type Value = ();
+    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str("the translation unit's declarations")
+    }
+    fn visit_seq<A: serde::de::SeqAccess<'de>>(self, mut seq: A) -> Result<(), A::Error> {
+        while let Some(decl) = seq.next_element::<Value>()? {
+            let name = decl["name"].as_str().unwrap_or("");
+            match kind(&decl) {
+                "FunctionDecl" if self.wanted.contains(name) => self.kept.push(decl),
+                "FunctionDecl" => {
+                    let parameters = kids(&decl)
+                        .filter(|c| kind(c) == "ParmVarDecl")
+                        .map(|c| serde_json::json!({"kind": "ParmVarDecl", "type": c["type"].clone()}))
+                        .collect::<Vec<_>>();
+                    self.kept.push(serde_json::json!({
+                        "kind": "FunctionDecl", "name": name, "inner": parameters,
+                    }));
+                }
+                "VarDecl" => self.kept.push(serde_json::json!({
+                    "kind": "VarDecl", "id": decl["id"].clone(), "name": name, "type": decl["type"].clone(),
+                })),
+                "EnumDecl" => self.kept.push(decl),
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+}
+
+fn analyze_on_stack(
+    preprocessed: &str,
+    unit: &C11TranslationUnit<'_>,
+    functions: &[String],
+    contracts: &BoundsContracts,
+) -> Result<BoundsUnitReport, String> {
+    use serde::de::DeserializeSeed;
     let target = target_facts(unit)?;
-    let ast = crate::typed_c_ast::translation_unit_ast(preprocessed, unit)?;
+    let mut wanted = functions.iter().cloned().collect::<BTreeSet<_>>();
+    for (name, contract) in &contracts.functions {
+        if contract
+            .clauses
+            .iter()
+            .any(|e| matches!(e.clause, BoundsClause::ReturnExtent { .. }))
+        {
+            wanted.insert(name.clone());
+        }
+    }
+    let mut kept = Vec::new();
+    crate::typed_c_ast::translation_unit_ast_with(preprocessed, unit, |bytes| {
+        let mut deserializer = serde_json::Deserializer::from_slice(bytes);
+        deserializer.disable_recursion_limit();
+        TopSeed {
+            wanted: &wanted,
+            kept: &mut kept,
+        }
+        .deserialize(&mut deserializer)
+    })?;
+    let ast = serde_json::json!({ "kind": "TranslationUnitDecl", "inner": kept });
     let index = index_unit(&ast);
     // Phase one: every body in the unit that declares a return extent is
     // checked against it; a refuted declaration is withdrawn from every

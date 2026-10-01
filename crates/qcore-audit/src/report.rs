@@ -127,6 +127,10 @@ pub struct AuditReport {
     /// folds (`crate::user_plugins::fold_unit`). Absent without a binding,
     /// so every other report keeps its shape.
     plugin_links: Option<std::sync::Arc<crate::user_plugins::PluginLinks>>,
+    /// Card CG16-INDEX-AND-OFFSET-EXTENTS: the bounds rows of a run that
+    /// selected the bounds property (`QCORE_BOUNDS_PROPERTY`), in unit order.
+    /// Never part of the custody document: [`Self::document`] does not read it.
+    bounds: Vec<Value>,
 }
 
 impl AuditReport {
@@ -138,7 +142,58 @@ impl AuditReport {
             source_contracts: None,
             evidence: None,
             plugin_links: None,
+            bounds: Vec::new(),
         }
+    }
+
+    /// Card CG16-INDEX-AND-OFFSET-EXTENTS: one function's bounds row.
+    pub(crate) fn record_bounds(&mut self, row: Value) {
+        self.bounds.push(row);
+    }
+
+    /// Card CG16-INDEX-AND-OFFSET-EXTENTS: write the bounds selection's rows
+    /// (JSON lines) and their tally beside them, when the run selected the
+    /// property. The custody report is written elsewhere and never reads these.
+    pub fn write_bounds_selection(&self) -> Result<(), String> {
+        let Some(path) = std::env::var_os(crate::projection::BOUNDS_SELECTION) else {
+            return Ok(());
+        };
+        let path = std::path::PathBuf::from(path);
+        let mut lines = String::new();
+        let mut tally: BTreeMap<String, BTreeMap<String, usize>> = BTreeMap::new();
+        let mut reasons: BTreeMap<String, usize> = BTreeMap::new();
+        for row in &self.bounds {
+            lines.push_str(&serde_json::to_string(row).map_err(|e| e.to_string())?);
+            lines.push('\n');
+            for key in ["custody", "combined"] {
+                let value = row[key].as_str().unwrap_or("absent").to_owned();
+                *tally.entry(key.into()).or_default().entry(value).or_default() += 1;
+            }
+            let bounds = row["bounds"]["verdict"].as_str().unwrap_or("absent").to_owned();
+            *tally.entry("bounds".into()).or_default().entry(bounds).or_default() += 1;
+            let mut codes = std::collections::BTreeSet::new();
+            for reason in row["bounds"]["reasons"].as_array().into_iter().flatten() {
+                let code = reason.as_str().unwrap_or("").split(':').next().unwrap_or("").to_owned();
+                codes.insert(code);
+            }
+            for code in codes {
+                *reasons.entry(code).or_default() += 1;
+            }
+        }
+        fs::write(&path, lines).map_err(|e| format!("could not write {}: {e}", path.display()))?;
+        let summary = json!({
+            "schema_version": 1,
+            "property": qcore_c_gateway::index_extent::BOUNDS_PROPERTY,
+            "scope": "the bounds property of every projected function, reported separately from custody; `combined` joins the custody and bounds rows of a request naming both, a missing row counting Unknown; Unknown and Pending stay in every denominator",
+            "functions": self.bounds.len(),
+            "tally": tally,
+            "functions_by_reason_code": reasons,
+        });
+        let mut bytes = serde_json::to_vec_pretty(&summary).map_err(|e| e.to_string())?;
+        bytes.push(b'\n');
+        let summary_path = path.with_extension("summary.json");
+        fs::write(&summary_path, bytes)
+            .map_err(|e| format!("could not write {}: {e}", summary_path.display()))
     }
 
     /// An empty report over the same revision, into which one unit's rows are
@@ -176,6 +231,7 @@ impl AuditReport {
             source_contracts,
             evidence,
             plugin_links: _,
+            bounds,
         } = fragment;
         if revision != self.revision {
             return Err(format!(
@@ -190,6 +246,7 @@ impl AuditReport {
             return Err("a per-unit report fragment carries no evidence-mode record".into());
         }
         self.units.extend(units);
+        self.bounds.extend(bounds);
         for (category, count) in diagnostic_counts {
             *self.diagnostic_counts.entry(category).or_default() += count;
         }
@@ -542,6 +599,7 @@ impl AuditReport {
             source_contracts: None,
             evidence,
             plugin_links: None,
+            bounds: Vec::new(),
         }
     }
 
