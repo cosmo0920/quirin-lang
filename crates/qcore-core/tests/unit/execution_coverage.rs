@@ -378,10 +378,12 @@ fn mp_release_acquire_is_race_free_over_all_executions() {
     else {
         panic!("mpRelaxed");
     };
-    assert!(witness.events.iter().any(|event| matches!(
-        event.kind,
-        MemoryEventKind::AtomicLoad { value: 1, .. }
-    )));
+    assert!(
+        witness
+            .events
+            .iter()
+            .any(|event| matches!(event.kind, MemoryEventKind::AtomicLoad { value: 1, .. }))
+    );
 }
 
 /// The brief's SB control: with relaxed accesses the handshake races in an
@@ -408,7 +410,11 @@ fn sb_relaxed_reports_the_race_in_some_execution() {
             _ => None,
         })
         .collect::<Vec<_>>();
-    assert_eq!(loads, vec![(1, 1), (2, 0)], "both loads read the initial values");
+    assert_eq!(
+        loads,
+        vec![(1, 1), (2, 0)],
+        "both loads read the initial values"
+    );
     let errors = check_c11_execution(&witness).expect_err("the witness races");
     assert_eq!(
         errors,
@@ -549,10 +555,7 @@ fn w07_the_program_level_verdict_is_not_the_one_graph() {
         ..C11Execution::default()
     };
     check_c11_execution(&quiet).expect("one graph of the program is accepted");
-    assert_eq!(
-        check_program_executions(&relaxed, wide()).status(),
-        "Race"
-    );
+    assert_eq!(check_program_executions(&relaxed, wide()).status(), "Race");
 }
 
 /// A weak compare-exchange's spurious failure is enumerated: the strong and

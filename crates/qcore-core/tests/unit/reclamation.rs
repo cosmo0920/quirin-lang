@@ -214,7 +214,10 @@ fn protected_read() -> Vec<ProtocolCall> {
 fn hazard_pointer_contract_is_checked_not_trusted() {
     let certificate =
         check_reclamation(&hazard_contract(FENCED), &protected_read()).expect("protected read");
-    assert_eq!(certificate.steps, 8, "hp_protect is a protect and a validate");
+    assert_eq!(
+        certificate.steps, 8,
+        "hp_protect is a protect and a validate"
+    );
     let HandshakeBasis::ExecutionCoverage(coverage) = &certificate.handshake else {
         panic!("{:?}", certificate.handshake);
     };
@@ -229,11 +232,9 @@ fn hazard_pointer_contract_is_checked_not_trusted() {
         "hp_scan_free",
     ] {
         assert!(
-            certificate
-                .assumptions
-                .iter()
-                .any(|assumption| assumption.starts_with("Declared boundary: helper `")
-                    && assumption.contains(&format!("`{helper}`"))),
+            certificate.assumptions.iter().any(|assumption| assumption
+                .starts_with("Declared boundary: helper `")
+                && assumption.contains(&format!("`{helper}`"))),
             "{helper}"
         );
     }
@@ -278,7 +279,9 @@ fn hazard_pointer_contract_is_checked_not_trusted() {
         .push(operation("node_read", ProtocolRole::Retire));
     assert_eq!(
         check_reclamation(&duplicate, &protected_read()),
-        Err(ReclamationRefusal::DuplicateOperation("node_read".to_owned()))
+        Err(ReclamationRefusal::DuplicateOperation(
+            "node_read".to_owned()
+        ))
     );
     let mut calls = protected_read();
     calls.push(call(0, "free", Some(1), None));

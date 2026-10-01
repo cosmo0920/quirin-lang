@@ -68,13 +68,12 @@ pub fn check_atomic_publication_source(
         load_order: core_order(source.load_order),
     })
     .map_err(AtomicPublicationRefusal::Model)?;
-    let execution_coverage = match check_program_executions(
-        &publication_fragment(&source),
-        PUBLICATION_COVERAGE_BOUNDS,
-    ) {
-        ProgramVerdict::RaceFree(evidence) => evidence,
-        other => return Err(AtomicPublicationRefusal::ExecutionCoverage(Box::new(other))),
-    };
+    let execution_coverage =
+        match check_program_executions(&publication_fragment(&source), PUBLICATION_COVERAGE_BOUNDS)
+        {
+            ProgramVerdict::RaceFree(evidence) => evidence,
+            other => return Err(AtomicPublicationRefusal::ExecutionCoverage(Box::new(other))),
+        };
     Ok(AtomicPublicationCertificate {
         property: "successful release/acquire publication orders one payload write before one payload read",
         semantic_profile: "c11-bounded-atomic-publication-v1",

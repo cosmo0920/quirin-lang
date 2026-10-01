@@ -209,7 +209,9 @@ fn hazard_step(
             {
                 return Err(V::ValidationFailed);
             }
-            state.slots.insert((thread, slot), HazardSlot::Valid(object));
+            state
+                .slots
+                .insert((thread, slot), HazardSlot::Valid(object));
         }
         E::Clear { thread, slot } => {
             if thread >= threads || slot >= slots {
@@ -331,7 +333,11 @@ fn epoch_step(
             state.retired_at.insert(object, state.epoch);
         }
         E::Advance { .. } => {
-            if state.announced.values().any(|entered| *entered != state.epoch) {
+            if state
+                .announced
+                .values()
+                .any(|entered| *entered != state.epoch)
+            {
                 return Err(V::EpochNotQuiescent);
             }
             state.epoch += 1;
@@ -446,9 +452,15 @@ pub struct ProtocolCall {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ReclamationRefusal {
     DuplicateOperation(String),
-    RoleOfOtherProtocol { operation: String, role: ProtocolRole },
+    RoleOfOtherProtocol {
+        operation: String,
+        role: ProtocolRole,
+    },
     UncontractedOperation(String),
-    MissingOperand { index: usize, operation: String },
+    MissingOperand {
+        index: usize,
+        operation: String,
+    },
     /// The handshake with the contract's ordering races in some execution:
     /// a reader can validate while the reclaimer misses its announcement.
     HandshakeRaces,
@@ -505,12 +517,12 @@ pub fn check_reclamation(
             ));
         }
     }
-    let fragment = announce_validate_handshake(
-        contract.handshake.access_order,
-        contract.handshake.fences,
-    );
+    let fragment =
+        announce_validate_handshake(contract.handshake.access_order, contract.handshake.fences);
     let handshake = match check_program_executions(&fragment, HANDSHAKE_BOUNDS) {
-        ProgramVerdict::RaceFree(evidence) => HandshakeBasis::ExecutionCoverage(evidence.assumption()),
+        ProgramVerdict::RaceFree(evidence) => {
+            HandshakeBasis::ExecutionCoverage(evidence.assumption())
+        }
         ProgramVerdict::Race { .. } => return Err(ReclamationRefusal::HandshakeRaces),
         ProgramVerdict::Unknown(_) => HandshakeBasis::Declared,
     };

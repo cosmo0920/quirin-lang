@@ -69,8 +69,8 @@
 use std::collections::BTreeSet;
 
 use crate::weak_memory::{
-    C11Execution, CompareExchangeStrength, FenceScope, MemoryEvent, MemoryEventId,
-    MemoryEventKind, MemoryLocation, MemoryOrder, MemoryThreadId, RelationEdge, WeakMemoryError,
+    C11Execution, CompareExchangeStrength, FenceScope, MemoryEvent, MemoryEventId, MemoryEventKind,
+    MemoryLocation, MemoryOrder, MemoryThreadId, RelationEdge, WeakMemoryError,
     check_c11_execution, derived_synchronizes_with,
 };
 
@@ -326,8 +326,8 @@ fn step(
             strength,
             register,
         } => {
-            let succeeded = value == expected
-                && !(strength == CompareExchangeStrength::Weak && spurious);
+            let succeeded =
+                value == expected && !(strength == CompareExchangeStrength::Weak && spurious);
             (
                 MemoryEventKind::AtomicCompareExchange {
                     location,
@@ -342,7 +342,9 @@ fn step(
                 vec![(register, i64::from(succeeded))],
             )
         }
-        Instruction::Fence { order, scope } => (MemoryEventKind::AtomicFence { order, scope }, vec![]),
+        Instruction::Fence { order, scope } => {
+            (MemoryEventKind::AtomicFence { order, scope }, vec![])
+        }
         Instruction::NonAtomicRead { location } => {
             (MemoryEventKind::NonAtomicRead { location }, vec![])
         }
@@ -599,7 +601,8 @@ impl Space {
                 events
                     .iter()
                     .filter(|write| {
-                        write_of(&write.kind).is_some() && write_of(&write.kind) == read_of(&read.kind)
+                        write_of(&write.kind).is_some()
+                            && write_of(&write.kind) == read_of(&read.kind)
                     })
                     .map(|write| write.id)
                     .collect()
@@ -690,7 +693,11 @@ fn encode(
             .collect(),
         modification_order: orders
             .iter()
-            .flat_map(|order| order.windows(2).map(|pair| RelationEdge::new(pair[0], pair[1])))
+            .flat_map(|order| {
+                order
+                    .windows(2)
+                    .map(|pair| RelationEdge::new(pair[0], pair[1]))
+            })
             .collect(),
         sequentially_consistent: sequential.to_vec(),
         ..C11Execution::default()
