@@ -34,10 +34,7 @@ void cg_abort_named(void);
 fn sources(with_exits: bool) -> BTreeMap<String, String> {
     let file = |name: &str, text: &str| (name.to_owned(), text.to_owned());
     let mut sources = BTreeMap::from([
-        file(
-            "q_base.qcore",
-            include_str!("fixtures/contracts/q_base.qv"),
-        ),
+        file("q_base.qcore", include_str!("fixtures/contracts/q_base.qv")),
         file(
             "q_rich_modes.qcore",
             include_str!("fixtures/contracts/q_rich_modes.qv"),
@@ -182,8 +179,7 @@ fn a_terminating_exit_ends_its_path() {
     let live = run("#include <stdlib.h>\n\
                     void subject(int c) { void *p = q_alloc(); if (c) exit(1); q_free(p); }");
     assert!(live.safe(), "{live:?}");
-    let leaking =
-        run("#include <stdlib.h>\n\
+    let leaking = run("#include <stdlib.h>\n\
              void subject(int c) { void *p = q_alloc(); if (c) abort(); if (c) return; q_free(p); }");
     assert!(
         leaking.status == AnalysisStatus::Unsafe
@@ -191,7 +187,9 @@ fn a_terminating_exit_ends_its_path() {
         "{leaking:?}"
     );
     // Every path ends: no exit state, nothing to leak.
-    assert!(run("#include <stdlib.h>\nvoid subject(void) { void *p = q_alloc(); abort(); }").safe());
+    assert!(
+        run("#include <stdlib.h>\nvoid subject(void) { void *p = q_alloc(); abort(); }").safe()
+    );
 }
 
 /// Nothing after a path end is checked: the second release is unreachable.
@@ -206,7 +204,10 @@ fn obligations_after_a_path_end_are_unreachable() {
     let control =
         run("void subject(void) { void *p = q_alloc(); q_free(p); cg_sink(0); q_free(p); }");
     assert!(
-        control.diagnostics.iter().any(|d| d.contains("DoubleRelease")),
+        control
+            .diagnostics
+            .iter()
+            .any(|d| d.contains("DoubleRelease")),
         "{control:?}"
     );
 }
@@ -278,15 +279,18 @@ fn longjmp_across_a_live_resource_is_refused() {
         returns_twice.refused_prefix("`_setjmp` is a returns-twice call"),
         "{returns_twice:?}"
     );
-    for name in ["longjmp", "_setjmp", "pthread_exit", "__builtin_choose_expr"] {
+    for name in [
+        "longjmp",
+        "_setjmp",
+        "pthread_exit",
+        "__builtin_choose_expr",
+    ] {
         let module = format!(
             "module contract;\n\nextern fn {name}() -> unit\ncontract {{\n    requires resource_contract_v1;\n    ensures normal resource_return_none();\n}};\n"
         );
-        let error = load_resource_contract_sources(&BTreeMap::from([(
-            "probe.qcore".to_owned(),
-            module,
-        )]))
-        .expect_err(name);
+        let error =
+            load_resource_contract_sources(&BTreeMap::from([("probe.qcore".to_owned(), module)]))
+                .expect_err(name);
         assert!(format!("{error:?}").contains("which no resource v1 declaration states"));
     }
 }
@@ -300,14 +304,13 @@ fn cleanup_attributes_are_a_named_boundary() {
         return;
     }
     const CLEANUP: &str = "a `cleanup` attribute's call at every exit of its scope is not modelled";
-    let releasing = run(
-        "static void q_free_ref(void **p) { q_free(*p); }\n\
+    let releasing = run("static void q_free_ref(void **p) { q_free(*p); }\n\
          void subject(int c) { __attribute__((cleanup(q_free_ref))) void *p = q_alloc(); \
-         if (c) return; q_observe(p); }",
-    );
+         if (c) return; q_observe(p); }");
     assert!(releasing.refused(CLEANUP), "{releasing:?}");
     assert!(!releasing.safe());
-    let scalar = run("void g(int *); void subject(void) { __attribute__((cleanup(g))) int x = 0; }");
+    let scalar =
+        run("void g(int *); void subject(void) { __attribute__((cleanup(g))) int x = 0; }");
     assert!(scalar.refused(CLEANUP), "{scalar:?}");
 }
 
@@ -318,7 +321,9 @@ fn assembly_and_extension_nodes_are_named() {
     if !clang_available() {
         return;
     }
-    let assembly = run("void subject(void) { void *p = q_alloc(); __asm__ volatile(\"\" ::: \"memory\"); q_free(p); }");
+    let assembly = run(
+        "void subject(void) { void *p = q_alloc(); __asm__ volatile(\"\" ::: \"memory\"); q_free(p); }",
+    );
     assert!(
         assembly.refused(
             "inline assembly is an opaque boundary: its clobbers and memory effects are not \
@@ -326,7 +331,9 @@ fn assembly_and_extension_nodes_are_named() {
         ),
         "{assembly:?}"
     );
-    let goto = run("void subject(void) { void *p = q_alloc(); __asm__ goto(\"\" :::: out); out: q_free(p); }");
+    let goto = run(
+        "void subject(void) { void *p = q_alloc(); __asm__ goto(\"\" :::: out); out: q_free(p); }",
+    );
     assert!(
         goto.refused_prefix("`asm goto` is an opaque boundary"),
         "{goto:?}"
@@ -348,9 +355,7 @@ fn an_operand_position_keeps_its_continuation() {
     if !clang_available() {
         return;
     }
-    let arm = run(
-        "#include <stdlib.h>\n\
-         void subject(int a) { void *p = q_alloc(); int x = a ? (exit(1), 0) : 1; q_free(p); }",
-    );
+    let arm = run("#include <stdlib.h>\n\
+         void subject(int a) { void *p = q_alloc(); int x = a ? (exit(1), 0) : 1; q_free(p); }");
     assert!(!arm.refused_prefix("no-return contract"), "{arm:?}");
 }

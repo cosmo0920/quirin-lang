@@ -1,0 +1,252 @@
+{
+ "functions": 594,
+ "signatures": [
+  {
+   "move": "Unknown -> Safe",
+   "families": [
+    "path-end"
+   ],
+   "functions": 11
+  },
+  {
+   "move": "Unknown -> Safe",
+   "families": [
+    "path-end",
+    "refinement"
+   ],
+   "functions": 1
+  },
+  {
+   "move": "Unknown -> Unknown",
+   "families": [
+    "cascade"
+   ],
+   "functions": 4
+  },
+  {
+   "move": "Unknown -> Unknown",
+   "families": [
+    "cascade",
+    "other",
+    "path-end"
+   ],
+   "functions": 1
+  },
+  {
+   "move": "Unknown -> Unknown",
+   "families": [
+    "cascade",
+    "path-end"
+   ],
+   "functions": 1
+  },
+  {
+   "move": "Unknown -> Unknown",
+   "families": [
+    "other",
+    "path-end"
+   ],
+   "functions": 2
+  },
+  {
+   "move": "Unknown -> Unknown",
+   "families": [
+    "other",
+    "path-end",
+    "refinement"
+   ],
+   "functions": 2
+  },
+  {
+   "move": "Unknown -> Unknown",
+   "families": [
+    "other",
+    "rename"
+   ],
+   "functions": 1
+  },
+  {
+   "move": "Unknown -> Unknown",
+   "families": [
+    "path-end"
+   ],
+   "functions": 494
+  },
+  {
+   "move": "Unknown -> Unknown",
+   "families": [
+    "path-end",
+    "refinement"
+   ],
+   "functions": 36
+  },
+  {
+   "move": "Unknown -> Unknown",
+   "families": [
+    "path-end",
+    "rename"
+   ],
+   "functions": 4
+  },
+  {
+   "move": "Unknown -> Unknown",
+   "families": [
+    "rename"
+   ],
+   "functions": 33
+  },
+  {
+   "move": "Unsafe -> Unsafe",
+   "families": [
+    "path-end"
+   ],
+   "functions": 4
+  }
+ ],
+ "leaf_totals": [
+  {
+   "family": "cascade",
+   "leaf": "unsupported: call to uncontracted function `mk_socket_reset`",
+   "delta": -1
+  },
+  {
+   "family": "cascade",
+   "leaf": "unsupported: call to uncontracted function `rd_kafka_cgrp_clear_wait_resp`",
+   "delta": -3
+  },
+  {
+   "family": "cascade",
+   "leaf": "unsupported: call to uncontracted function `rd_kafka_cgrp_set_wait_resp`",
+   "delta": -3
+  },
+  {
+   "family": "cascade",
+   "leaf": "unsupported: nested call `get_u32_at_offset` inside a modeled call is outside the resource projection",
+   "delta": -3
+  },
+  {
+   "family": "other",
+   "leaf": "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection",
+   "delta": -2
+  },
+  {
+   "family": "other",
+   "leaf": "unsupported: braced initializer, expression, or declaration is not modeled",
+   "delta": -1
+  },
+  {
+   "family": "other",
+   "leaf": "unsupported: indirect memory access is outside the resource projection",
+   "delta": -1
+  },
+  {
+   "family": "other",
+   "leaf": "unsupported: nullable resource `dir` used by a non-null contract",
+   "delta": -1
+  },
+  {
+   "family": "other",
+   "leaf": "unsupported: unmodeled call, aggregate or indirect access in do-while condition",
+   "delta": -1
+  },
+  {
+   "family": "other",
+   "leaf": "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+   "delta": -1
+  },
+  {
+   "family": "path-end",
+   "leaf": "unsupported: call to uncontracted function `__assert_fail`",
+   "delta": -1232
+  },
+  {
+   "family": "path-end",
+   "leaf": "unsupported: call to uncontracted function `abort`",
+   "delta": -11
+  },
+  {
+   "family": "path-end",
+   "leaf": "unsupported: call to uncontracted function `exit`",
+   "delta": -22
+  },
+  {
+   "family": "refinement",
+   "leaf": "unknown_alias: unresolved resource identity",
+   "delta": -63
+  },
+  {
+   "family": "rename",
+   "leaf": "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+   "delta": 39
+  },
+  {
+   "family": "rename",
+   "leaf": "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models",
+   "delta": 17
+  },
+  {
+   "family": "rename",
+   "leaf": "unsupported: call to uncontracted function `__asm__`",
+   "delta": -6
+  },
+  {
+   "family": "rename",
+   "leaf": "unsupported: call to uncontracted function `__builtin_offsetof`",
+   "delta": -39
+  },
+  {
+   "family": "rename",
+   "leaf": "unsupported: call to uncontracted function `__builtin_va_arg`",
+   "delta": -17
+  },
+  {
+   "family": "rename",
+   "leaf": "unsupported: inline assembly is an opaque boundary: its clobbers and memory effects are not modelled",
+   "delta": 7
+  }
+ ],
+ "other": [
+  {
+   "unit": "crc32c.c",
+   "function": "unittest_rd_crc32c",
+   "move": "Unknown -> Unknown",
+   "leaf": "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection",
+   "n": -2
+  },
+  {
+   "unit": "mk_server/mk_http_thread.c",
+   "function": "mk_http_thread_create",
+   "move": "Unknown -> Unknown",
+   "leaf": "unsupported: braced initializer, expression, or declaration is not modeled",
+   "n": -1
+  },
+  {
+   "unit": "mk_server/mk_vhost.c",
+   "function": "mk_vhost_init",
+   "move": "Unknown -> Unknown",
+   "leaf": "unsupported: nullable resource `dir` used by a non-null contract",
+   "n": -1
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_elect_leader",
+   "move": "Unknown -> Unknown",
+   "leaf": "unsupported: indirect memory access is outside the resource projection",
+   "n": -1
+  },
+  {
+   "unit": "rdkafka_ssl.c",
+   "function": "unittest_ssl",
+   "move": "Unknown -> Unknown",
+   "leaf": "unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+   "n": -1
+  },
+  {
+   "unit": "snappy.c",
+   "function": "compress_fragment",
+   "move": "Unknown -> Unknown",
+   "leaf": "unsupported: unmodeled call, aggregate or indirect access in do-while condition",
+   "n": -1
+  }
+ ]
+}

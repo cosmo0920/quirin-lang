@@ -1,0 +1,25 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 239,
+   "Safe": 29,
+   "Pending": 1,
+   "Unsafe": 1
+  },
+  "after": {
+   "Unknown": 239,
+   "Safe": 29,
+   "Pending": 1,
+   "Unsafe": 1
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 6,
+ "leaf_delta": {
+  "unsupported: call to uncontracted function `__builtin_va_arg`": -4,
+  "unsupported: call to uncontracted function `__builtin_offsetof`": -2,
+  "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 2,
+  "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 4
+ }
+}

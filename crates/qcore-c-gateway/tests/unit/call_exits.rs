@@ -139,7 +139,10 @@ fn cg21_statement_boundaries() {
     assert_eq!(read("x = 1"), None);
     // The token stream spells `&&` as two tokens.
     assert_eq!(read("void * t = & & l"), Some(Boundary::LabelAddress));
-    assert_eq!(read("t = c ? & & l1 : & & l2"), Some(Boundary::LabelAddress));
+    assert_eq!(
+        read("t = c ? & & l1 : & & l2"),
+        Some(Boundary::LabelAddress)
+    );
     // A logical `&&` follows an operand.
     assert_eq!(read("x = a & & b"), None);
     assert_eq!(read("ok = ( a ) & & b"), None);
@@ -154,7 +157,11 @@ fn cg21_undeclarable_calls_are_named() {
         undeclarable_call("longjmp").as_deref(),
         Some("`longjmp` is a non-local exit, which no resource contract or route models")
     );
-    assert!(undeclarable_call("_setjmp").unwrap().contains("returns-twice"));
+    assert!(
+        undeclarable_call("_setjmp")
+            .unwrap()
+            .contains("returns-twice")
+    );
     assert!(
         undeclarable_call("__builtin_choose_expr")
             .unwrap()

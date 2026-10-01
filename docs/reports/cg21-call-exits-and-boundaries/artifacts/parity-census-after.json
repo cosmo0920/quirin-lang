@@ -1,0 +1,44 @@
+{
+ "statement": [
+  {
+   "callee": "__assert_fail",
+   "resolution": "NoReturn",
+   "decision": "PathEnd",
+   "rows": 1479,
+   "functions": 751
+  },
+  {
+   "callee": "abort",
+   "resolution": "NoReturn",
+   "decision": "PathEnd",
+   "rows": 18,
+   "functions": 14
+  },
+  {
+   "callee": "exit",
+   "resolution": "NoReturn",
+   "decision": "PathEnd",
+   "rows": 22,
+   "functions": 13
+  }
+ ],
+ "census_no_return": [
+  {
+   "callee": "rd_kafka_crash",
+   "rows": 92,
+   "functions": 78
+  }
+ ],
+ "census_by_resolution": {
+  "NoReturn": 92,
+  "Returns": 5458,
+  "Unresolved": 37
+ },
+ "boundary": [
+  {
+   "boundary": "InlineAssembly",
+   "rows": 57,
+   "functions": 53
+  }
+ ]
+}

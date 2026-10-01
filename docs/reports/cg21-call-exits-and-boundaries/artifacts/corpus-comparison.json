@@ -1,0 +1,151 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4195,
+   "Safe": 629,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4183,
+   "Safe": 641,
+   "Unsafe": 10
+  }
+ },
+ "moves": [
+  {
+   "unit": "mk_server/mk_header.c",
+   "function": "mk_header_set_http_status",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `abort`": -1,
+    "unknown_alias: unresolved resource identity": -1
+   }
+  },
+  {
+   "unit": "mk_server/mk_socket.c",
+   "function": "mk_socket_reset",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `exit`": -1
+   }
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "isFullyBalanced0",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__assert_fail`": -1
+   }
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_clear_wait_resp",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__assert_fail`": -1
+   }
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_set_wait_resp",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__assert_fail`": -1
+   }
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_confval_get_int",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__assert_fail`": -1
+   }
+  },
+  {
+   "unit": "rdlist.c",
+   "function": "rd_list_set_cnt",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__assert_fail`": -2
+   }
+  },
+  {
+   "unit": "snappy.c",
+   "function": "get_u32_at_offset",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__assert_fail`": -2
+   }
+  },
+  {
+   "unit": "tinycthread_extra.c",
+   "function": "rwlock_rdlock",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__assert_fail`": -1
+   }
+  },
+  {
+   "unit": "tinycthread_extra.c",
+   "function": "rwlock_rdunlock",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__assert_fail`": -1
+   }
+  },
+  {
+   "unit": "tinycthread_extra.c",
+   "function": "rwlock_wrlock",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__assert_fail`": -1
+   }
+  },
+  {
+   "unit": "tinycthread_extra.c",
+   "function": "rwlock_wrunlock",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: call to uncontracted function `__assert_fail`": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 12
+ },
+ "same_status_functions_with_changed_diagnostics": 582,
+ "leaf_delta": {
+  "unsupported: call to uncontracted function `__assert_fail`": -1232,
+  "unknown_alias: unresolved resource identity": -63,
+  "unsupported: call to uncontracted function `__builtin_offsetof`": -39,
+  "unsupported: call to uncontracted function `exit`": -22,
+  "unsupported: call to uncontracted function `__builtin_va_arg`": -17,
+  "unsupported: call to uncontracted function `abort`": -11,
+  "unsupported: call to uncontracted function `__asm__`": -6,
+  "unsupported: call to uncontracted function `rd_kafka_cgrp_set_wait_resp`": -3,
+  "unsupported: call to uncontracted function `rd_kafka_cgrp_clear_wait_resp`": -3,
+  "unsupported: nested call `get_u32_at_offset` inside a modeled call is outside the resource projection": -3,
+  "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": -2,
+  "unsupported: braced initializer, expression, or declaration is not modeled": -1,
+  "unsupported: call to uncontracted function `mk_socket_reset`": -1,
+  "unsupported: nullable resource `dir` used by a non-null contract": -1,
+  "unsupported: indirect memory access is outside the resource projection": -1,
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1,
+  "unsupported: unmodeled call, aggregate or indirect access in do-while condition": -1,
+  "unsupported: inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 7,
+  "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 17,
+  "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 39
+ }
+}

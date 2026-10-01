@@ -1,0 +1,19 @@
+CG21-CALL-EXITS-AND-BOUNDARIES measurement identities (raw sha256; route
+reports also tree-normalised by scripts/identity.py).
+
+binaries
+  BEFORE  51839dc8b96f1e43ac3099f6309c698717070b599cb3e56d50cd3dafd37a5f14  built at b6a3dc42
+  AFTER   cc8d27bb2fbad9a6159b6c6e8c9d55dc9a03c44c8d089afb2d96c636fedfe1a1  built at 83ad877c
+
+corpus arbiter (66910c10, --jobs 4)
+  BEFORE  3d53a5d0b6728d4986a910bd81318a040995076bbded1970f9963022fcc3fcf2  629 / 10 / 4,195  (2026-10-01T13:14Z..14:31Z, exit 0)
+  AFTER   c9cdfb1c2bd03f5978d65cd9b5ddd1c737532e37e38fe6fcec1f6deb33231dd3  641 / 10 / 4,183  (2026-10-01T14:45Z..16:13Z, exit 0)
+
+system route (raw / normalised)
+  BEFORE  6e65757c662d711db9b28ef2ffd6be4ded0cfe61744b32fc3a49447da8bc9893 / ea20ac065c0c39b95fdf018a2c73a4782d6fb34055e7de0fd69de0ea0f1ac424  44 / 2 / 188  (base-tree extraction)
+  AFTER   e2408f8b3222daedf7b04509b124c56ab0033dfdd5d1124de62a78fa3c5fa544 / 29111224285a29d010d4801ec5109663838cd33c9a424d7e90a1e7d0cce0c071  44 / 2 / 188
+
+tail-pause slice (raw / normalised)
+  CG05 after3 93cc660c4b5ace506af7b7666ed8fd11263e9bda2ac2e94d345da8a78a9462c1 / c2c3b06786b195cc9992c7b60e0df1f1fdb8a9c04e920b55d135ee501d9ce803
+  BEFORE  499081be559fb1ceb37e03d4d14107ada5bf033c46802e5cb662d1c433b84079 / c2c3b06786b195cc9992c7b60e0df1f1fdb8a9c04e920b55d135ee501d9ce803  29 / 1 / 239 / 1 P  (base-tree extraction)
+  AFTER   61a89016d1e8620d422194931135bd76b58931471cc81c510a78438b00a3f6c7 / 69057b8e35c84a503510f0d70019bd60b4a9cf2f3f3b9041c1dc0c062200e9b6  29 / 1 / 239 / 1 P

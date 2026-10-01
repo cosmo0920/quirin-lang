@@ -486,6 +486,18 @@ CG22.
     common opaque boundary. An ordinary function contract is never
     auto-applied to a non-call node.
   - *Absorbs:* W43-LIBC-NORETURN.
+  - *Status (wave 48, round 9).* Landed on route G (gateway rule 11o): a
+    call statement ends its path only where its contract declares the new
+    `resource_no_return()` (a terminating exit; `abort`, `exit`,
+    `__assert_fail` in `quirin-provider-libc`) and its Clang declaration is
+    `noreturn`; non-local exits, returns-twice calls and extension nodes are
+    undeclarable and refused by name; assembly, SEH, `cleanup`, computed
+    `goto` and label addresses are named boundaries. Corpus 629 / 10 / 4,195
+    → **641 / 10 / 4,183** (12 Unknown → Safe), system and slice no move.
+    Residuals `CG21-UNDECLARED-NORETURN-CALLEES`,
+    `CG21-NORETURN-OPERAND-POSITIONS`, `CG21-CLEANUP-SCOPE-EXITS`,
+    `CG21-OPAQUE-BOUNDARIES`.
+    [Report](../../reports/cg21-call-exits-and-boundaries/README.md).
 - **CG22: indirect calls and callbacks.**
   - *Callees.* Candidate callee sets with common signature and contract
     resolution.

@@ -1,0 +1,51 @@
+[
+ {
+  "unit": "src/flb_engine.c",
+  "function": "flb_engine_start",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -1
+  }
+ },
+ {
+  "unit": "src/flb_output.c",
+  "function": "flb_output_init_all",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "src/flb_scheduler.c",
+  "function": "flb_sched_timer_coro_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: braced initializer, expression, or declaration is not modeled": -1,
+   "unsupported: inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 1
+  }
+ },
+ {
+  "unit": "src/flb_scheduler.c",
+  "function": "schedule_request_promote",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "src/flb_task.c",
+  "function": "flb_task_retry_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ }
+]

@@ -1,0 +1,13 @@
+{
+ "before_declared_sites": 1265,
+ "path_end_sites": 1340,
+ "before_sites_not_path_ends": 0,
+ "before_sites_not_path_ends_list": [],
+ "undeclared_no_return": {
+  "rd_kafka_crash": {
+   "leaves": 50,
+   "functions": 40,
+   "unknown_sole": []
+  }
+ }
+}

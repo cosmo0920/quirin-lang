@@ -289,10 +289,8 @@ pub(crate) fn statement_boundary(texts: &[&str]) -> Option<Boundary> {
     }
     attribute_lists(texts)
         .any(|list| {
-            list.windows(2).any(|pair| {
-                matches!(pair[0], "cleanup" | "__cleanup__")
-                    && pair[1] == "("
-            })
+            list.windows(2)
+                .any(|pair| matches!(pair[0], "cleanup" | "__cleanup__") && pair[1] == "(")
         })
         .then_some(Boundary::CleanupAttribute)
 }

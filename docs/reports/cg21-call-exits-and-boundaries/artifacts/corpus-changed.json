@@ -1,0 +1,5437 @@
+[
+ {
+  "unit": "chunkio.c",
+  "function": "cio_qsort",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "chunkio.c",
+  "function": "qsort_stream",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "cmt_cat.c",
+  "function": "summary_label_keys_match",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 2,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -2
+  }
+ },
+ {
+  "unit": "cmt_encode_cloudwatch_emf.c",
+  "function": "pack_basic_header",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_cloudwatch_emf.c",
+  "function": "pack_metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_influx.c",
+  "function": "format_metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_msgpack.c",
+  "function": "pack_static_labels",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry.c",
+  "function": "append_sample_to_metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_prometheus.c",
+  "function": "add_static_labels",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_prometheus_remote_write.c",
+  "function": "set_up_time_series_for_label_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 4,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -4
+  }
+ },
+ {
+  "unit": "cmt_encode_splunk_hec.c",
+  "function": "format_metric_labels",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "cmt_encode_text.c",
+  "function": "format_metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "cmt_filter.c",
+  "function": "compare_label_keys",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "cmt_filter.c",
+  "function": "filter_context_fqname",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 6,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -6
+  }
+ },
+ {
+  "unit": "cmt_filter.c",
+  "function": "filter_context_label_key",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 6,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -6
+  }
+ },
+ {
+  "unit": "cmt_histogram.c",
+  "function": "cmt_histogram_buckets_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "cmt_map.c",
+  "function": "metric_hash_lookup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "crc32c.c",
+  "function": "crc32c_hw",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__asm__`": -5,
+   "unsupported: inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 5
+  }
+ },
+ {
+  "unit": "crc32c.c",
+  "function": "rd_crc32c_global_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__asm__`": -1,
+   "unsupported: inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 1
+  }
+ },
+ {
+  "unit": "crc32c.c",
+  "function": "unittest_rd_crc32c",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": -2,
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "mk_core/mk_event.c",
+  "function": "mk_event_channel_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `abort`": -1
+  }
+ },
+ {
+  "unit": "mk_core/mk_event.c",
+  "function": "mk_event_channel_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `abort`": -1
+  }
+ },
+ {
+  "unit": "mk_core/mk_string.c",
+  "function": "mk_string_build",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `abort`": -1
+  }
+ },
+ {
+  "unit": "mk_core/mk_utils.c",
+  "function": "mk_utils_register_pid",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -1
+  }
+ },
+ {
+  "unit": "mk_core/mk_utils.c",
+  "function": "mk_utils_set_daemon",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_config.c",
+  "function": "mk_config_listener_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1,
+   "unsupported: call to uncontracted function `exit`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_config.c",
+  "function": "mk_config_print_error_msg",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "function": "mk_fifo_queue_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 2,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_header.c",
+  "function": "mk_header_prepare",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `abort`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_header.c",
+  "function": "mk_header_set_http_status",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `abort`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_http.c",
+  "function": "mk_http_index_lookup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_http_thread.c",
+  "function": "mk_http_thread_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: braced initializer, expression, or declaration is not modeled": -1,
+   "unsupported: inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 1
+  }
+ },
+ {
+  "unit": "mk_server/mk_lib.c",
+  "function": "mk_config_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_lib.c",
+  "function": "mk_vhost_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_mimetype.c",
+  "function": "mk_mimetype_lookup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_header_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `abort`": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_load",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1,
+   "unsupported: call to uncontracted function `abort`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "function": "mk_plugin_load_all",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_launch_worker_loop",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -3
+  }
+ },
+ {
+  "unit": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_worker_free",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `abort`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_server.c",
+  "function": "mk_server_listen_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_server.c",
+  "function": "mk_server_loop_balancer",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_socket.c",
+  "function": "mk_socket_connect",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `exit`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_socket.c",
+  "function": "mk_socket_reset",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_socket.c",
+  "function": "mk_socket_server",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `mk_socket_reset`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_utils.c",
+  "function": "mk_utils_utime2gmt",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `abort`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `exit`": -1,
+   "unsupported: nullable resource `dir` used by a non-null contract": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_read",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -5
+  }
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_set_single",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `exit`": -2
+  }
+ },
+ {
+  "unit": "mk_server/monkey.c",
+  "function": "mk_server_info",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 2,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -2
+  }
+ },
+ {
+  "unit": "nanopb/pb_decode.c",
+  "function": "pb_dec_bytes",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "rdbase64.c",
+  "function": "rd_base64_encode",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "do_unittest_erase",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -7
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "do_unittest_iov_verify0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -7
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "do_unittest_read_verify0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -14
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "do_unittest_write_iov",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "do_unittest_write_read",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -12
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "do_unittest_write_read_payload_correctness",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -6
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "do_unittest_write_split_seek",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -19
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_alloc_segment0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_destroy_segment",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_dump",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_erase",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_write",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_write_seek",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_buf_write_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_segment_dump",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_segment_split",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -2,
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_segment_write_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_slice_init_full",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_slice_init_seg",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_slice_narrow",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_slice_narrow_copy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_slice_reader0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdbuf.c",
+  "function": "rd_slice_seek",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdfnv1a.c",
+  "function": "unittest_fnv1a",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_high_sigfig",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_max",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_mean",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_min",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_minmax_trackable",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_nan",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_quantile",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_reset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_sigfigs",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_stddev",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_subbucketmask_overflow",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_totalcount",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdhdrhistogram.c",
+  "function": "ut_unitmagnitude_overflow",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_Uuid_random",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_crash",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `abort`": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_destroy_internal",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_log_syslog",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_poll_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_seek_partitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_set_logger",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_share_enqueue_fetch_op",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AclBindingFilter_copy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AclBinding_copy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AdminOptions_copy_to",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AdminOptions_set_match_consumer_group_states",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AdminOptions_set_match_consumer_group_types",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AlterConfigs",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AlterConsumerGroupOffsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AlterConsumerGroupOffsetsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AlterConsumerGroupOffsets_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_AlterUserScramCredentialsRequest_salted_password",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_CreatePartitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_CreateTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteConsumerGroupOffsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteConsumerGroupOffsets_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteGroups",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteGroups_response_merge",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteRecords",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteRecords_leaders_queried_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteRecords_response_merge",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteRecords_result_offsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DeleteTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeCluster_result_description",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeConfigs",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeConsumerGroups",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeConsumerGroups_response_merge",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeConsumerGroups_result_groups",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_DescribeTopics_result_topics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ElectLeaders",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_IncrementalAlterConfigs",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroupOffsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroupOffsetsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroupOffsets_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroups_response_merge",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroups_result_errors",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListConsumerGroups_result_valid",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListOffsets_leaders_queried_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_ListOffsets_response_merge",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_NewTopic_copy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_coord_response_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_fanout_op_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_fanout_worker",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_handle_response",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_request_op_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_response_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_result_ret_acl_bindings",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_result_ret_acl_results",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_result_ret_delete_acl_result_responses",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_result_ret_groups",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_result_ret_resources",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_result_ret_topics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "rd_kafka_admin_worker",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_admin.c",
+  "function": "ut_verify_ListConsumerGroups_result",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_assignment.c",
+  "function": "rd_kafka_assignment_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_assignment.c",
+  "function": "rd_kafka_assignment_partition_stopped",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -5,
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_assignment.c",
+  "function": "rd_kafka_assignment_serve_pending",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_assignment.c",
+  "function": "rd_kafka_assignment_serve_removals",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_assignment.c",
+  "function": "rd_kafka_assignment_subtract",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_assignment.c",
+  "function": "rd_kafka_share_assignment_subtract",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "isFullyBalanced0",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "ut_assignors",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "ut_populate_internal_broker_metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "ut_populate_internal_topic_metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "verifyAssignment0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "verifyMultipleAssignment0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "verifyNumPartitionsWithRackMismatch0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "verifyValidityAndBalance0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_background.c",
+  "function": "rd_kafka_call_background_event_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_add_logical",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_buf_enq_replyq",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_bufq_purge_by_toppar",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_destroy_final",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -13
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_monitor_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_op_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_persistent_connection_del",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_set_nodename",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_thread_main",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_buf_finalize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_recv",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_req_response",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_send",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_ut_ApiVersion_at_least",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -8
+  }
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_ut_reconnect_backoff",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -6
+  }
+ },
+ {
+  "unit": "rdkafka_buf.c",
+  "function": "rd_kafka_buf_handle_op",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_buf.c",
+  "function": "rd_kafka_buf_retry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_buf.c",
+  "function": "rd_kafka_buf_set_maker",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cert.c",
+  "function": "rd_kafka_cert_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_cert.c",
+  "function": "rd_kafka_conf_cert_copy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cert.c",
+  "function": "rd_kafka_conf_cert_dtor",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_apply_next_subscribe",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -5,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_assignor_run",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_kafka_cgrp_set_wait_resp`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_clear_wait_resp",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_consumer_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_coord_clear_broker",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_coord_set_broker",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -2,
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_group_assignment_modify",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -6
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat_leave",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_JoinGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_kafka_cgrp_clear_wait_resp`": -1,
+   "unsupported: call to uncontracted function `rd_kafka_cgrp_set_wait_resp`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_LeaveGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_SyncGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `rd_kafka_cgrp_clear_wait_resp`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_SyncGroup_memberstate",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_handle_assign_op",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_join",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1,
+   "unsupported: call to uncontracted function `rd_kafka_cgrp_set_wait_resp`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_modify_subscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_op_handle_OffsetCommit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_partition_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_partition_del",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_set_wait_resp",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_consumer_group_metadata_write",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_propagate_consumer_topic_errors",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_rebalance_op",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "unittest_consumer_group_metadata_iteration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "unittest_list_to_map",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "unittest_map_to_list",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "unittest_member_metadata_serdes",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -6
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "unittest_set_intersect",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "unittest_set_subtract",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_anyconf_prop_desensitize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_anyconf_set_modified",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_anyconf_set_prop0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_enable_sasl_queue",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_finalize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_is_modified",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_properties_show",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_background_event_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_closesocket_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_connect_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_consume_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_default_topic_conf",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_dr_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_dr_msg_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_engine_callback_data",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_error_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_events",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_log_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_offset_commit_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_opaque",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_open_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_rebalance_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_resolve_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_socket_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_ssl_cert_verify_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_stats_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_conf_set_throttle_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_confval_get_int",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_confval_get_ptr",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_confval_get_str",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_confval_set_type",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_topic_conf_is_modified",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_topic_conf_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_topic_conf_set_msg_order_cmp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_topic_conf_set_opaque",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "rd_kafka_topic_conf_set_partitioner_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_conf.c",
+  "function": "unittest_conf",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -26
+  }
+ },
+ {
+  "unit": "rdkafka_coord.c",
+  "function": "rd_kafka_coord_cache_entry_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_coord.c",
+  "function": "rd_kafka_coord_req_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_feature.c",
+  "function": "rd_ut_features_check_assert_features",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_idempotence.c",
+  "function": "rd_kafka_idemp_inflight_toppar_sub",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_idempotence.c",
+  "function": "rd_kafka_idemp_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_idempotence.c",
+  "function": "rd_kafka_idemp_pid_fsm",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_idempotence.c",
+  "function": "rd_kafka_idemp_request_pid_failed",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_idempotence.c",
+  "function": "rd_kafka_idemp_term",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_conf_interceptor_copy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_conf_interceptor_ctor",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_conf_interceptor_dtor",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptor_add_on_acknowledgement",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptor_add_on_broker_state_change",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptor_add_on_commit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptor_add_on_consume",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptor_add_on_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptor_add_on_request_sent",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptor_add_on_response_received",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptor_add_on_send",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptor_add_on_thread_exit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_interceptor.c",
+  "function": "rd_kafka_interceptor_add_on_thread_start",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_lz4.c",
+  "function": "rd_kafka_lz4_compress",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_new_topic_mock",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_refresh_all",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_refresh_consumer_topics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_refresh_topic_ids",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata_refresh_topics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_broker_cmd",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_broker_listen_io",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_broker_new_listener",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_broker_start_listener",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_cmd",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_destroy0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_get_coord",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_io_clear_events",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_io_del",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_io_set_event",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_io_set_events",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_cluster_op_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_msgset_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_msgset_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -12,
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_partition_push_request_errors",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_push_request_errors",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_topic_auto_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_assert_topic_partitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_cgrp_consumer_member_next_assignment",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_cgrp_consumer_member_next_assignment0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_mock_txn_aborted_range_recorded",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_mock_txn_control_batch_written",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_mock_txn_get_creates_and_reuses",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -6
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_mock_txn_lso_calculation",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_mock_txn_offset_is_aborted",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_mock_txn_partition_add_and_clear",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "ut_topic_partitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 2,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_classic_elect_leader",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -2,
+   "unsupported: call to uncontracted function `__assert_fail`": -4,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_classic_member_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_classic_member_assignment_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_classic_member_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_classic_member_sync_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_classic_sync_done",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_consumer_member_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_consumer_member_topic_id_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_consumer_target_assignment_new0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "validate_subscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ApiVersion",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_FindCoordinator",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_JoinGroup",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_PushTelemetry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_PushTelemetry_decode_error",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_mock_sharegrp.c",
+  "function": "rd_kafka_mock_sharegroup_member_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_message_get",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_message_set_headers",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_msgbatch_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_msgbatch_set_first_msg",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_msgq_dump",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_msgq_split",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_msgq_verify_order0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_producev",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 4,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_produceva",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "unittest_msg_seq_wrap",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "unittest_msgq_insert_all_sort",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "unittest_msgq_insert_each_sort",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "unittest_msgq_order",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "ut_rd_kafka_msg_new",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "ut_verify_msgq_order",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_reader.c",
+  "function": "rd_kafka_msgset_reader_decompress",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_reader.c",
+  "function": "rd_kafka_msgset_reader_v2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_reader.c",
+  "function": "unittest_aborted_txns",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -12
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_alloc_buf",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_calc_crc_v2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_compress",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_finalize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_select_MsgVersion",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_write_msg",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_write_msgq",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_op.c",
+  "function": "rd_kafka_op2str",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_op.c",
+  "function": "rd_kafka_op_call",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_op.c",
+  "function": "rd_kafka_op_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -7
+  }
+ },
+ {
+  "unit": "rdkafka_op.c",
+  "function": "rd_kafka_op_new0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_msgq_insert_msgq",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_msgq_insert_msgq_before",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_list_query_leaders_async",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_list_query_leaders_async_worker",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_toppar_broker_migrate",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_toppar_pid_change",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_toppar_purge_queues",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_plugin.c",
+  "function": "rd_kafka_plugins_conf_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_queue.c",
+  "function": "rd_kafka_q_destroy_final",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_assign_co_partitioned",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_assign_partition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_range_assignor_assign_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_range_assignor_unittest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_topic_assignment_state_cmp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "setupRackAwareAssignment0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testMultipleConsumersMixedTopicSubscriptions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testOneConsumerMultipleTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testOneConsumerNoTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testOneConsumerNonexistentTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testOneConsumerOneTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testTwoConsumersOneTopicOnePartition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testTwoConsumersOneTopicTwoPartitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "ut_testTwoConsumersTwoTopicsSixPartitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_MetadataRequest0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_OffsetDeleteRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_buf_read_topic_partitions_nullable",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_buf_write_topic_partitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_err_action",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_group_MemberState_consumer_write",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_idempotent_Produce_error",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_msgbatch_handle_Produce_result",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_op_handle_OffsetFetch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_parse_ListOffsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "unittest_handle_GetTelemetrySubscriptions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -6
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "unittest_idempotent_producer",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -18
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_all_explicit_values",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_defaults",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_empty_should_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_empty_value_should_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_explicit_scope_and_life",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_extensions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_no_principal_should_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_unrecognized_should_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_config_value_with_quote_should_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_illegal_extension_keys_should_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "do_unittest_odd_extension_size_should_fail",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "rd_kafka_sasl_oauthbearer_build_client_first_message",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "rd_kafka_oidc_assertion_get_algo_label",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "rd_kafka_oidc_client_credentials_build_auth_header",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_assertion_create",
+  "before": "Unsafe",
+  "after": "Unsafe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -6
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_assertion_parse_from_file",
+  "before": "Unsafe",
+  "after": "Unsafe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+  "before": "Unsafe",
+  "after": "Unsafe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -16
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_jwt_bearer_base64url_encode",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_jwt_bearer_build_request_body",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_post_fields",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_post_fields_with_empty_scope",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_sub_claim_name",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "ut_sasl_oauthbearer_oidc_with_empty_key",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_scram.c",
+  "function": "rd_kafka_sasl_safe_string",
+  "before": "Unsafe",
+  "after": "Unsafe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_scram.c",
+  "function": "rd_kafka_sasl_scram_build_client_final_message",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_scram.c",
+  "function": "unittest_scram_nonce",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_sasl_scram.c",
+  "function": "unittest_scram_safe",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_ssl.c",
+  "function": "rd_kafka_ssl_error0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_ssl.c",
+  "function": "rd_kafka_ssl_read_cert_chain_from_BIO",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_ssl.c",
+  "function": "rd_kafka_ssl_set_certs",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_ssl.c",
+  "function": "rd_kafka_transport_ssl_cert_verify_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_ssl.c",
+  "function": "rd_kafka_transport_ssl_send",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_ssl.c",
+  "function": "unittest_ssl",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2,
+   "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "PartitionMovements_getTheActualPartitionToBeMoved",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "PartitionMovements_movePartition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "PartitionMovements_removeMovementRecordOfPartition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "performReassignments",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "populatePotentialMaps",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "rd_kafka_sticky_assignor_get_metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "rd_kafka_sticky_assignor_state_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "rd_kafka_sticky_assignor_unittest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "reassignPartition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "setupRackAwareAssignment0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_create_topic_partition_lists",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_populate_member_owned_partitions_generation",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 2,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testAddRemoveConsumerOneTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testAddRemoveTopicTwoConsumers",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testAllConsumersReachExpectedQuotaAndAreConsideredFilled",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testAssignmentUpdatedForDeletedTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testEnsurePartitionsAssignedToHighestGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testLargeAssignmentWithMultipleConsumersLeaving",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testMoveExistingAssignments",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testMoveExistingAssignments_j",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testMultipleConsumersMixedTopicSubscriptions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testNewSubscription",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testNoExceptionThrownWhenOnlySubscribedTopicDeleted",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testNoReassignmentOnCurrentMembers",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOneConsumerMultipleTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOneConsumerNoTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOneConsumerNonexistentTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOneConsumerOneTopic",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithMultipleGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithNoGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithStaleGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testPoorRoundRobinAssignmentScenario",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testReassignmentAfterOneConsumerAdded",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testReassignmentAfterOneConsumerLeaves",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testSameSubscriptions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testStickiness",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testStickiness2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testStickiness_j",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testTwoConsumersOneTopicOnePartition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testTwoConsumersOneTopicTwoPartitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "ut_testTwoConsumersTwoTopicsSixPartitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry.c",
+  "function": "rd_kafka_telemetry_fsm",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry.c",
+  "function": "unit_test_telemetry_match_requested_metrics_no_duplicates",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_decode.c",
+  "function": "unit_test_telemetry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -21
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_decode.c",
+  "function": "unit_test_telemetry_decode_error",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_telemetry_encode.c",
+  "function": "serialize_Metric",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_lwtopic_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_topic_destroy_app",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_topic_new0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_topic_partition_available",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_topic_set_error",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_topic.c",
+  "function": "rd_kafka_topic_set_notexists",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_transport.c",
+  "function": "rd_kafka_transport_io_event",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_transport.c",
+  "function": "rd_kafka_transport_socket_send0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_transport.c",
+  "function": "rd_kafka_transport_socket_sendmsg",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_coord_monitor_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_coord_query",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -2,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_coord_timer_start",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_curr_api_begin",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_curr_api_return0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_handle_AddPartitionsToTxn",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_op_begin_transaction",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_op_req0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_partition_registered",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_set_state",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_state_transition_is_valid",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_copy_preallocated0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_copy_to",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_find_duplicate",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_get_int32",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_grow",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -2,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_prealloc_elems",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_remove_elem",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_set_cnt",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdlist.c",
+  "function": "rd_list_set_int32",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdmap.c",
+  "function": "rd_map_alloc_buckets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdmap.c",
+  "function": "rd_map_elem_destroy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdmap.c",
+  "function": "unittest_typed_map",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdmap.c",
+  "function": "unittest_typed_map2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdmap.c",
+  "function": "unittest_untyped_map",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdmurmur2.c",
+  "function": "unittest_murmur2",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdstring.c",
+  "function": "rd_string_render",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdstring.c",
+  "function": "rd_string_split",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdstring.c",
+  "function": "ut_strcasestr",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdstring.c",
+  "function": "ut_string_split",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdunittest.c",
+  "function": "unittest_sysqueue",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdunittest.c",
+  "function": "ut_tq_test",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "unittest_share_acknowledge",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_acknowledge_accept",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_acknowledge_multiple_partitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -8
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_acknowledge_type_reject",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_acknowledge_type_release",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_bsearch_boundary_offsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -14
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_bsearch_empty_entries",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_bsearch_first_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_bsearch_last_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_bsearch_middle_entries",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_bsearch_not_found_after",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_bsearch_not_found_before",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_bsearch_not_found_gap",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_error_gap_record",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_error_invalid_type",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_error_null_parameters",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_reacknowledge_delivered",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -6
+  }
+ },
+ {
+  "unit": "rdunittest_acknowledge.c",
+  "function": "ut_case_unacked_count",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -13
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_details_all_accept",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -8
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_details_all_acquired",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_details_alternating",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_details_empty_map",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_details_gap_acquired",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -5
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_details_interleaved",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -12
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_details_metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_details_mixed_collation",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -13
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_details_multi_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -9
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_details_multi_partition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_mapping_cumulative",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_mapping_empty",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_mapping_gaps",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_mapping_multi_entry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_mapping_multi_partition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_ack_mapping_single_partition",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_filter_all_acquired",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_filter_disjoint_ranges",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_filter_empty_queue",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_filter_no_ranges",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_filter_partial_range",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_filter_range_beyond_messages",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdunittest_fetcher.c",
+  "function": "unittest_filter_sparse_offsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_all_error_types_with_valid",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -27
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_all_errors",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -12
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_all_success",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -6
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_crc_error_share_consumer",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -9
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_decompression_error_share_consumer",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -8
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_mixed_crc_success_decomp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -14
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_mixed_magic_success_crc_success",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -17
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_mixed_success_crc_success",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -14
+  }
+ },
+ {
+  "unit": "rdunittest_msgset_errors.c",
+  "function": "unittest_msgset_unsupported_magic_share_consumer",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -8
+  }
+ },
+ {
+  "unit": "rdvarint.c",
+  "function": "do_test_rd_uvarint_enc_i64",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -10
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH32_finalize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "rdxxhash.c",
+  "function": "XXH64_finalize",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "append",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "compress_fragment",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -9,
+   "unsupported: nested call `get_u32_at_offset` inside a modeled call is outside the resource projection": -3,
+   "unsupported: unmodeled call, aggregate or indirect access in do-while condition": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "decompress_all_tags",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "emit_copy_less_than64",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -4
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "emit_literal",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "find_match_length",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "get_hash_table",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "get_u32_at_offset",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -2
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "incremental_copy",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "read_uncompressed_length",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "refill_tag",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -3
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "skip",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "sn_compress",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "writer_append",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "snappy.c",
+  "function": "writer_append_from_self",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "tinycthread_extra.c",
+  "function": "rwlock_rdlock",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "tinycthread_extra.c",
+  "function": "rwlock_rdunlock",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "tinycthread_extra.c",
+  "function": "rwlock_wrlock",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ },
+ {
+  "unit": "tinycthread_extra.c",
+  "function": "rwlock_wrunlock",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `__assert_fail`": -1
+  }
+ }
+]

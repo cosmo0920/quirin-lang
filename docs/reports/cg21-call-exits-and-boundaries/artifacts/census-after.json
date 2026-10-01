@@ -1,0 +1,92 @@
+{
+ "classes": {
+  "assembly:named": {
+   "leaves": 7,
+   "functions": 3,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_alloca": {
+   "leaves": 55,
+   "functions": 41,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_ctz": {
+   "leaves": 1,
+   "functions": 1,
+   "unknown_sole": 1
+  },
+  "builtin-call:__builtin_ctzll": {
+   "leaves": 1,
+   "functions": 1,
+   "unknown_sole": 1
+  },
+  "builtin-call:__builtin_memcpy": {
+   "leaves": 27,
+   "functions": 8,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_memmove": {
+   "leaves": 7,
+   "functions": 3,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_nanf": {
+   "leaves": 1,
+   "functions": 1,
+   "unknown_sole": 1
+  },
+  "builtin-call:__builtin_prefetch": {
+   "leaves": 1,
+   "functions": 1,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_va_copy": {
+   "leaves": 2,
+   "functions": 2,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_va_end": {
+   "leaves": 55,
+   "functions": 50,
+   "unknown_sole": 0
+  },
+  "builtin-call:__builtin_va_start": {
+   "leaves": 50,
+   "functions": 49,
+   "unknown_sole": 0
+  },
+  "extension-node:named": {
+   "leaves": 56,
+   "functions": 35,
+   "unknown_sole": 0
+  }
+ },
+ "family_sole": {
+  "builtin-call": [
+   "cJSON.c::cJSON_GetNumberValue",
+   "rdkafka.c::rd_kafka_set_thread_name",
+   "snappy.c::find_lsb_set_non_zero",
+   "snappy.c::find_lsb_set_non_zero64"
+  ]
+ },
+ "sole": {
+  "assembly:named": [],
+  "builtin-call:__builtin_alloca": [],
+  "builtin-call:__builtin_ctz": [
+   "snappy.c::find_lsb_set_non_zero"
+  ],
+  "builtin-call:__builtin_ctzll": [
+   "snappy.c::find_lsb_set_non_zero64"
+  ],
+  "builtin-call:__builtin_memcpy": [],
+  "builtin-call:__builtin_memmove": [],
+  "builtin-call:__builtin_nanf": [
+   "cJSON.c::cJSON_GetNumberValue"
+  ],
+  "builtin-call:__builtin_prefetch": [],
+  "builtin-call:__builtin_va_copy": [],
+  "builtin-call:__builtin_va_end": [],
+  "builtin-call:__builtin_va_start": [],
+  "extension-node:named": []
+ }
+}

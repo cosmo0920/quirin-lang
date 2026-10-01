@@ -1,0 +1,62 @@
+[
+ {
+  "unit": "plugins/in_tail/tail_config.c",
+  "function": "multiline_load_parsers",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "src/flb_input.c",
+  "function": "flb_input_instance_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_offsetof`": -1
+  }
+ },
+ {
+  "unit": "src/flb_lib.c",
+  "function": "flb_filter_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "src/flb_lib.c",
+  "function": "flb_input_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "src/flb_lib.c",
+  "function": "flb_output_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ },
+ {
+  "unit": "src/flb_lib.c",
+  "function": "flb_service_set",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: `__builtin_va_arg` is the Clang extension node VAArgExpr, which no resource contract or route models": 1,
+   "unsupported: call to uncontracted function `__builtin_va_arg`": -1
+  }
+ }
+]

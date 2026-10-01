@@ -1319,14 +1319,35 @@ fn token_kinds(source: &str) -> Result<Vec<TokenKind>, String> {
 /// ordinary call and hide the edge or the abandoned frame. The C gateway
 /// names its refusal of an undeclared call with the same reason.
 pub const UNDECLARABLE_C_NAMES: &[(&str, &str)] = &[
-    ("__builtin_choose_expr", "the Clang extension node ChooseExpr"),
-    ("__builtin_bit_cast", "the Clang extension node BuiltinBitCastExpr"),
-    ("__builtin_offsetof", "the Clang extension node OffsetOfExpr"),
-    ("__builtin_types_compatible_p", "the Clang extension node TypeTraitExpr"),
-    ("__builtin_convertvector", "the Clang extension node ConvertVectorExpr"),
-    ("__builtin_shufflevector", "the Clang extension node ShuffleVectorExpr"),
+    (
+        "__builtin_choose_expr",
+        "the Clang extension node ChooseExpr",
+    ),
+    (
+        "__builtin_bit_cast",
+        "the Clang extension node BuiltinBitCastExpr",
+    ),
+    (
+        "__builtin_offsetof",
+        "the Clang extension node OffsetOfExpr",
+    ),
+    (
+        "__builtin_types_compatible_p",
+        "the Clang extension node TypeTraitExpr",
+    ),
+    (
+        "__builtin_convertvector",
+        "the Clang extension node ConvertVectorExpr",
+    ),
+    (
+        "__builtin_shufflevector",
+        "the Clang extension node ShuffleVectorExpr",
+    ),
     ("__builtin_FILE", "the Clang extension node SourceLocExpr"),
-    ("__builtin_FUNCTION", "the Clang extension node SourceLocExpr"),
+    (
+        "__builtin_FUNCTION",
+        "the Clang extension node SourceLocExpr",
+    ),
     ("__builtin_LINE", "the Clang extension node SourceLocExpr"),
     ("__builtin_COLUMN", "the Clang extension node SourceLocExpr"),
     ("setjmp", "a returns-twice call"),

@@ -123,6 +123,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg20-numeric-domain](cg20-numeric-domain/README.md) | CG20-NUMERIC-DOMAIN: the C integer domain per target identity |
 
+| [cg21-call-exits-and-boundaries](cg21-call-exits-and-boundaries/README.md) | CG21-CALL-EXITS-AND-BOUNDARIES |
+
 | [cg25-resource-kinds](cg25-resource-kinds/README.md) | CG25-RESOURCE-KINDS: a library-handle kind and an in-place kind |
 
 | [cg26-variadics](cg26-variadics/README.md) | CG26-VARIADICS: the `va_list` protocol and trailing actuals per position |

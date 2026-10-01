@@ -1,0 +1,24 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 188,
+   "Safe": 44,
+   "Unsafe": 2
+  },
+  "after": {
+   "Unknown": 188,
+   "Safe": 44,
+   "Unsafe": 2
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 5,
+ "leaf_delta": {
+  "unsupported: call to uncontracted function `__builtin_offsetof`": -3,
+  "unsupported: call to uncontracted function `exit`": -1,
+  "unsupported: braced initializer, expression, or declaration is not modeled": -1,
+  "unsupported: inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 1,
+  "unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 3
+ }
+}
