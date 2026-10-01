@@ -675,6 +675,12 @@ pub struct ResourceContracts {
     /// serializes byte for byte as it did before the card.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     refuted_by_body: crate::contract_refutation::RefutationTable,
+    /// Card CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions, keyed
+    /// by function name and disjoint from `functions`, so a consumer that
+    /// knows nothing of them sees an uncontracted callee. Omitted when empty,
+    /// so every environment without one serializes byte for byte as before.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    relational: BTreeMap<String, crate::relational_post::RelationalContract>,
 }
 
 impl ResourceContracts {
@@ -691,6 +697,7 @@ impl ResourceContracts {
             revision: BTreeMap::new(),
             pin_mismatch: BTreeMap::new(),
             refuted_by_body: BTreeMap::new(),
+            relational: BTreeMap::new(),
         }
     }
 
@@ -874,5 +881,41 @@ impl ResourceContracts {
     #[must_use]
     pub fn functions(&self) -> &BTreeMap<String, ResourceFunctionContract> {
         &self.functions
+    }
+
+    /// Card CG23-RELATIONAL-POSTCONDITIONS: the return-code dispositions in
+    /// force, keyed by function name. None of them is in [`Self::functions`].
+    #[must_use]
+    pub fn relational(&self) -> &BTreeMap<String, crate::relational_post::RelationalContract> {
+        &self.relational
+    }
+
+    /// The return-code disposition of `name`, if it has one.
+    #[must_use]
+    pub fn relational_contract(
+        &self,
+        name: &str,
+    ) -> Option<&crate::relational_post::RelationalContract> {
+        self.relational.get(name)
+    }
+
+    /// Install a return-code disposition for `name`. The name leaves the
+    /// function map: one name has one reading.
+    pub fn insert_relational(
+        &mut self,
+        name: impl Into<String>,
+        contract: crate::relational_post::RelationalContract,
+    ) {
+        let name = name.into();
+        self.functions.remove(&name);
+        self.relational.insert(name, contract);
+    }
+
+    /// Mark the disposition of `name` withdrawn for `reason` (its own body
+    /// contradicts it). Every call site then refuses.
+    pub fn withdraw_relational(&mut self, name: &str, reason: String) {
+        if let Some(contract) = self.relational.get_mut(name) {
+            contract.withdrawn = Some(reason);
+        }
     }
 }

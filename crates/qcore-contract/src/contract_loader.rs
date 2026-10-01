@@ -308,6 +308,9 @@ use qcore_frontend::lexer::{Symbol, TokenKind, lex};
 mod counted_users;
 #[path = "contract_in_place.rs"]
 mod in_place;
+// Card CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions (§C04.13).
+#[path = "contract_relational.rs"]
+mod relational;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
@@ -620,6 +623,10 @@ struct LoadedDeclaration {
     /// Card W48-QR-C-STRUCT-IMPORT: the declaration carries
     /// `[| quant #c_ffi |]`. It is withheld from the function map.
     ffi: Option<DeclaredFfiFunction>,
+    /// Card CG23-RELATIONAL-POSTCONDITIONS: the declaration's return-code
+    /// dispositions (§C04.13). When set, `contract` is its first class and the
+    /// declaration is installed only as a relational contract.
+    relational: Option<qcore_schemas::relational_post::RelationalContract>,
 }
 
 /// The parameter vocabulary: every scalar, every pointer, `fnptr` and
@@ -805,7 +812,10 @@ pub fn load_resource_contract_sources(
         for declaration in parsed.declarations {
             let decl = &declaration.value;
             let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            if contracts.contract(&decl.name).is_some() || pending.contains_key(&decl.name) {
+            if contracts.contract(&decl.name).is_some()
+                || pending.contains_key(&decl.name)
+                || contracts.relational_contract(&decl.name).is_some()
+            {
                 return Err(format!("{context}: duplicate function contract"));
             }
             let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
@@ -822,6 +832,11 @@ pub fn load_resource_contract_sources(
                 // it is never an entry of the function map, so every consumer
                 // but `source.ffi.v1` (which rederives it through
                 // `ffi_declarations`) sees an uncontracted callee.
+            } else if let Some(relational) = loaded.relational {
+                // Card CG23-RELATIONAL-POSTCONDITIONS: never an entry of the
+                // function map; a consumer that knows nothing of return-code
+                // dispositions sees an uncontracted callee.
+                contracts.insert_relational(&decl.name, relational);
             } else if loaded.review.is_empty() {
                 contracts.insert_contract(&decl.name, loaded.contract);
             } else {
@@ -1125,6 +1140,7 @@ pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), Str
         if loaded.functions() != &crate::contract_revision::in_force_before_pins(contracts)?
             || loaded.pending_review() != contracts.pending_review()
             || loaded.declared_revisions() != contracts.declared_revisions()
+            || loaded.relational() != &declared_relational(contracts)
         {
             return Err("resource contracts differ from their declared source assumptions".into());
         }
@@ -1142,6 +1158,27 @@ pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), Str
         inherited_declarations_agree(&elaborated)?;
     }
     Ok(())
+}
+
+/// Card CG23-RELATIONAL-POSTCONDITIONS: the declared return-code
+/// dispositions of an environment as their texts load them — an inferred one
+/// is not a declaration, and a withdrawal is the audit's finding about a body,
+/// not part of the text.
+fn declared_relational(
+    contracts: &ResourceContracts,
+) -> BTreeMap<String, qcore_schemas::relational_post::RelationalContract> {
+    contracts
+        .relational()
+        .iter()
+        .filter(|(_, contract)| {
+            contract.origin == qcore_schemas::relational_post::RelationalOrigin::Declared
+        })
+        .map(|(name, contract)| {
+            let mut contract = contract.clone();
+            contract.withdrawn = None;
+            (name.clone(), contract)
+        })
+        .collect()
 }
 
 /// The published provenance of an environment's inherited contracts (card
@@ -1289,6 +1326,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
             || child_loaded.abi != parent_loaded.abi
             || !review_inherited(&child_loaded.review, &parent_loaded.review)
             || child_loaded.body_checked != parent_loaded.body_checked
+            || child_loaded.relational != parent_loaded.relational
         {
             return Err(refuse(format!(
                 "`{child_name}` would not mean what its parent `{}` means under the resource-v1 \
@@ -1491,6 +1529,9 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     let mut review: Vec<ReviewDeferral> = Vec::new();
     let mut revision: Vec<qcore_schemas::contract_revision::RevisionMarker> = Vec::new();
     let mut collected = counted_users::Collected::default();
+    // Card CG23-RELATIONAL-POSTCONDITIONS: every `resource_on_return` clause,
+    // in clause order.
+    let mut conditional: Vec<(qcore_schemas::relational_post::ReturnRelation, String)> = Vec::new();
     for clause in clauses {
         let requires = clause.value.kind == SourceContractClauseKind::Requires;
         // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
@@ -1639,6 +1680,12 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             literal_arguments.push(DeclaredLiteralArgument { parameter, literal });
             continue;
         }
+        // Card CG23-RELATIONAL-POSTCONDITIONS: a return-code disposition
+        // (§C04.13), read before the identifier-only predicate reader.
+        if let Some(disposition) = relational::clause(expression)? {
+            conditional.push(disposition);
+            continue;
+        }
         // Card W45-FB-RETRY-LIFETIME: the counted-user and container clauses
         // (§C04.7, §C04.8). The exit clause carries a value, so it is read
         // before the identifier-only predicate reader.
@@ -1753,18 +1800,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             continue;
         }
         let (parameter, mode, word) = match words.as_slice() {
-            ["resource_borrowed", p] => (*p, ResourceParameterMode::Borrowed, None),
-            [name, p, null] => {
-                let (nullable, word) = validity(null)?;
-                let mode = match *name {
-                    "resource_owned" => ResourceParameterMode::Owned { nullable },
-                    "resource_consumed" => ResourceParameterMode::Consumed { nullable },
-                    "resource_released" => ResourceParameterMode::Released { nullable },
-                    "resource_out" => ResourceParameterMode::Out { nullable },
-                    _ => return Err(format!("unsupported predicate `{expression}`")),
-                };
-                (*p, mode, Some(word))
-            }
+            ["resource_borrowed", _] | [_, _, _] => plain_parameter_predicate(&words, expression)?,
             [
                 name @ ("resource_stored" | "resource_removed"),
                 p,
@@ -1800,120 +1836,257 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     if !marker {
         return Err("missing resource_contract_v1 requirement".into());
     }
-    let parameters = parameters
-        .into_iter()
-        .collect::<Option<Vec<_>>>()
-        .ok_or("missing parameter mode")?;
-    let mut result = result.ok_or("missing result mode")?;
-    // Card W43-DESCRIPTOR-RESOURCE-TRACKING: where a kind may stand, and which
-    // validity words and ABI types it takes. Checked before the pointer-only
-    // rules below, to which an integer-carried kind is the one exception.
-    let kinds = check_kinds(
-        &KindPositions {
-            parameters: &parameters,
-            parameter_types: &parameter_types,
-            parameter_words: &parameter_words,
-            parameter_kinds: &parameter_kinds,
-        },
-        result,
-        return_type,
-        result_word,
-        result_kind,
-    )?;
-    let integer_parameter = |i: usize| kinds.parameter_kind(i).is_integer();
-    if result != ResourceReturnMode::None
-        && !return_type.starts_with("ptr<")
-        && !kinds.result_kind.is_integer()
-    {
-        return Err("owned result requires a pointer return type".into());
-    }
-    // Card W43-LIBC-RESULT-ALIAS. A derived result names a borrowed base of
-    // depth one and is itself a pointer of depth one: the base passes no
-    // custody through the call, so the relation is the only thing the result
-    // carries, and a pointer-to-pointer or function pointer has no object for
-    // it to point into.
-    if let ResourceReturnMode::Derived {
-        parameter,
-        ref mut const_dropped,
-        ..
-    } = result
-    {
-        const DEPTH_ONE: [&str; 2] = ["ptr<mut, u8>", "ptr<const, u8>"];
-        if parameters[parameter] != ResourceParameterMode::Borrowed {
-            return Err("a derived result requires a borrowed base parameter".into());
-        }
-        if !DEPTH_ONE.contains(&parameter_types[parameter].as_str())
-            || !DEPTH_ONE.contains(&return_type)
-        {
-            return Err("a derived result requires a depth-one pointer base and result".into());
-        }
-        *const_dropped =
-            parameter_types[parameter] == "ptr<const, u8>" && return_type == "ptr<mut, u8>";
-    }
-    for (i, mode) in parameters.iter().enumerate() {
-        let ty = token_kinds(&decl.parameters[i].type_source)?;
-        if *mode != ResourceParameterMode::Borrowed
-            && !matches!(ty.first(), Some(TokenKind::Word(word)) if word == "ptr")
-            && !integer_parameter(i)
-        {
-            return Err("custody mode requires a pointer parameter".into());
-        }
-        // Card CG25-RESOURCE-KINDS: an in-place kind's out position names the
-        // object it initialises (`regex_t *`), not a slot a pointer is written
-        // to; `check_kinds` already required `ptr<mut, u8>` there.
-        if matches!(mode, ResourceParameterMode::Out { .. })
-            && !kinds.parameter_kind(i).is_in_place()
-            && ty != token_kinds("ptr<mut, ptr<mut, u8>>")?
-        {
-            return Err("out mode requires a pointer-to-pointer parameter".into());
-        }
-        if let ResourceParameterMode::Stored {
-            owner_parameter, ..
-        }
-        | ResourceParameterMode::Removed {
-            owner_parameter, ..
-        } = mode
-            && (*owner_parameter == i
-                || !matches!(
-                    parameters[*owner_parameter],
-                    ResourceParameterMode::Owned { .. }
-                ))
-        {
-            return Err("aggregate owner must be a distinct owned parameter".into());
-        }
-    }
-    if let ResourceReturnMode::Reallocated { parameter, .. } = result
-        && !matches!(parameters[parameter], ResourceParameterMode::Owned { .. })
-    {
-        return Err("reallocation requires an owned input parameter".into());
-    }
-    counted_users::validate(&collected, &parameters, &parameter_types, return_type)?;
-    // Card CG21-CALL-EXITS-AND-BOUNDARIES: a no-return declaration states
-    // preconditions only. It returns nothing and takes no custody, so no
-    // mode it carries could describe an effect a caller ever observes.
-    if no_return
-        && (return_type != "unit"
-            || result != ResourceReturnMode::None
-            || parameters
-                .iter()
-                .any(|mode| *mode != ResourceParameterMode::Borrowed)
-            || !collected.container_effects.is_empty()
-            || !collected.users.is_empty()
+    let result = result.ok_or("missing result mode")?;
+    // Card CG23-RELATIONAL-POSTCONDITIONS: one parameter vector per exit
+    // class, each finished by the same checks as a plain declaration.
+    let relational_classes = if conditional.is_empty() {
+        None
+    } else {
+        if !review.is_empty()
+            || body_checked
+            || variadic_data_tail
+            || !literal_arguments.is_empty()
             || loop_owner.is_some()
             || thread_sync.is_some()
-            || lifecycle.is_some())
-    {
-        return Err(
-            "a no-return declaration returns `unit` with `resource_return_none()` and borrows every parameter"
-                .into(),
-        );
+            || lifecycle.is_some()
+            || !collected.users.is_empty()
+            || !collected.container_effects.is_empty()
+        {
+            return Err(
+                "a return-code disposition stands only beside plain parameter and result \
+                 predicates and kinds"
+                    .into(),
+            );
+        }
+        // Card CG25-RESOURCE-KINDS composes: an in-place initialiser's status
+        // is already its kind's own witness (rule 11v), so a disposition never
+        // stands beside an in-place kind, which would read one status twice.
+        if parameter_kinds
+            .iter()
+            .flatten()
+            .any(|kind| kind.is_in_place())
+        {
+            return Err(
+                "a return-code disposition does not stand beside an in-place kind, whose \
+                 initialiser status is its own witness (rule 11v)"
+                    .into(),
+            );
+        }
+        if result != ResourceReturnMode::None || !relational::SIGNED_RESULTS.contains(&return_type)
+        {
+            return Err(
+                "a return-code disposition requires `resource_return_none()` over a signed \
+                 integer result"
+                    .into(),
+            );
+        }
+        let mut relations: Vec<qcore_schemas::relational_post::ReturnRelation> = Vec::new();
+        for (relation, _) in &conditional {
+            if !relations.contains(relation) {
+                relations.push(*relation);
+            }
+        }
+        let mut classes = Vec::with_capacity(relations.len());
+        for relation in &relations {
+            let mut modes = parameters.clone();
+            let mut words = parameter_words.clone();
+            for (_, inner) in conditional.iter().filter(|(r, _)| r == relation) {
+                let predicate = predicate_call(inner)?;
+                let predicate = predicate.iter().map(String::as_str).collect::<Vec<_>>();
+                let (parameter, mode, word) = plain_parameter_predicate(&predicate, inner)?;
+                let position = index(parameter)?;
+                if parameters[position].is_some() {
+                    return Err(format!(
+                        "{parameter} has an unconditional mode and a return-code disposition"
+                    ));
+                }
+                if modes[position].replace(mode).is_some() {
+                    return Err(format!(
+                        "duplicate mode for {parameter} in one return-code class"
+                    ));
+                }
+                words[position] = word;
+            }
+            let modes = modes
+                .into_iter()
+                .collect::<Option<Vec<_>>>()
+                .ok_or("a return-code class leaves a parameter without a mode")?;
+            classes.push((*relation, modes, words));
+        }
+        for position in (0..parameters.len()).filter(|position| parameters[*position].is_none()) {
+            let requirements = classes
+                .iter()
+                .map(|(_, modes, _)| relational::entry_requirement(modes[position]))
+                .collect::<Vec<_>>();
+            if requirements.iter().any(Option::is_none)
+                || requirements.windows(2).any(|pair| pair[0] != pair[1])
+            {
+                return Err(format!(
+                    "the return-code classes disagree on what {} requires at entry",
+                    decl.parameters[position].name.value
+                ));
+            }
+        }
+        Some(classes)
+    };
+    let classes = match relational_classes {
+        Some(classes) => classes,
+        None => vec![(
+            qcore_schemas::relational_post::ReturnRelation::new(
+                qcore_schemas::relational_post::RelationOp::Ne,
+                0,
+            ),
+            parameters
+                .into_iter()
+                .collect::<Option<Vec<_>>>()
+                .ok_or("missing parameter mode")?,
+            parameter_words.clone(),
+        )],
+    };
+    let is_relational = !conditional.is_empty();
+    let mut finished = Vec::with_capacity(classes.len());
+    for (relation, parameters, parameter_words) in classes {
+        let mut result = result;
+        // Card W43-DESCRIPTOR-RESOURCE-TRACKING: where a kind may stand, and which
+        // validity words and ABI types it takes. Checked before the pointer-only
+        // rules below, to which an integer-carried kind is the one exception.
+        let kinds = check_kinds(
+            &KindPositions {
+                parameters: &parameters,
+                parameter_types: &parameter_types,
+                parameter_words: &parameter_words,
+                parameter_kinds: &parameter_kinds,
+            },
+            result,
+            return_type,
+            result_word,
+            result_kind,
+        )?;
+        let integer_parameter = |i: usize| kinds.parameter_kind(i).is_integer();
+        if result != ResourceReturnMode::None
+            && !return_type.starts_with("ptr<")
+            && !kinds.result_kind.is_integer()
+        {
+            return Err("owned result requires a pointer return type".into());
+        }
+        // Card W43-LIBC-RESULT-ALIAS. A derived result names a borrowed base of
+        // depth one and is itself a pointer of depth one: the base passes no
+        // custody through the call, so the relation is the only thing the result
+        // carries, and a pointer-to-pointer or function pointer has no object for
+        // it to point into.
+        if let ResourceReturnMode::Derived {
+            parameter,
+            ref mut const_dropped,
+            ..
+        } = result
+        {
+            const DEPTH_ONE: [&str; 2] = ["ptr<mut, u8>", "ptr<const, u8>"];
+            if parameters[parameter] != ResourceParameterMode::Borrowed {
+                return Err("a derived result requires a borrowed base parameter".into());
+            }
+            if !DEPTH_ONE.contains(&parameter_types[parameter].as_str())
+                || !DEPTH_ONE.contains(&return_type)
+            {
+                return Err("a derived result requires a depth-one pointer base and result".into());
+            }
+            *const_dropped =
+                parameter_types[parameter] == "ptr<const, u8>" && return_type == "ptr<mut, u8>";
+        }
+        for (i, mode) in parameters.iter().enumerate() {
+            let ty = token_kinds(&decl.parameters[i].type_source)?;
+            if *mode != ResourceParameterMode::Borrowed
+                && !matches!(ty.first(), Some(TokenKind::Word(word)) if word == "ptr")
+                && !integer_parameter(i)
+            {
+                return Err("custody mode requires a pointer parameter".into());
+            }
+            // Card CG25-RESOURCE-KINDS: an in-place kind's out position names the
+            // object it initialises (`regex_t *`), not a slot a pointer is written
+            // to; `check_kinds` already required `ptr<mut, u8>` there.
+            if matches!(mode, ResourceParameterMode::Out { .. })
+                && !kinds.parameter_kind(i).is_in_place()
+                && ty != token_kinds("ptr<mut, ptr<mut, u8>>")?
+            {
+                return Err("out mode requires a pointer-to-pointer parameter".into());
+            }
+            if let ResourceParameterMode::Stored {
+                owner_parameter, ..
+            }
+            | ResourceParameterMode::Removed {
+                owner_parameter, ..
+            } = mode
+                && (*owner_parameter == i
+                    || !matches!(
+                        parameters[*owner_parameter],
+                        ResourceParameterMode::Owned { .. }
+                    ))
+            {
+                return Err("aggregate owner must be a distinct owned parameter".into());
+            }
+        }
+        if let ResourceReturnMode::Reallocated { parameter, .. } = result
+            && !matches!(parameters[parameter], ResourceParameterMode::Owned { .. })
+        {
+            return Err("reallocation requires an owned input parameter".into());
+        }
+        counted_users::validate(&collected, &parameters, &parameter_types, return_type)?;
+        // Card CG21-CALL-EXITS-AND-BOUNDARIES: a no-return declaration states
+        // preconditions only. It returns nothing and takes no custody, so no
+        // mode it carries could describe an effect a caller ever observes.
+        if no_return
+            && (return_type != "unit"
+                || result != ResourceReturnMode::None
+                || parameters
+                    .iter()
+                    .any(|mode| *mode != ResourceParameterMode::Borrowed)
+                || !collected.container_effects.is_empty()
+                || !collected.users.is_empty()
+                || loop_owner.is_some()
+                || thread_sync.is_some()
+                || lifecycle.is_some())
+        {
+            return Err(
+                "a no-return declaration returns `unit` with `resource_return_none()` and borrows every parameter"
+                    .into(),
+            );
+        }
+        let mut contract = ResourceFunctionContract::new(parameters, result);
+        contract.parameter_kinds = kinds.parameter_kinds;
+        contract.result_kind = kinds.result_kind;
+        contract.container_effects = collected.container_effects.clone();
+        contract.counted_users = collected.users.clone();
+        finished.push(qcore_schemas::relational_post::ExitClass { relation, contract });
     }
-    let mut contract = ResourceFunctionContract::new(parameters, result);
-    contract.parameter_kinds = kinds.parameter_kinds;
-    contract.result_kind = kinds.result_kind;
-    contract.container_effects = collected.container_effects;
-    contract.counted_users = collected.users;
+    let relational = if is_relational {
+        let relational = qcore_schemas::relational_post::RelationalContract {
+            origin: qcore_schemas::relational_post::RelationalOrigin::Declared,
+            classes: finished.clone(),
+            withdrawn: None,
+        };
+        if !relational.disjoint() {
+            return Err("the return-code classes overlap".into());
+        }
+        if !relational.total() {
+            return Err("the return-code classes do not cover every returned value".into());
+        }
+        if relational.join().is_some() {
+            return Err(
+                "every return-code class states the same contract: write it as a plain \
+                 declaration"
+                    .into(),
+            );
+        }
+        Some(relational)
+    } else {
+        None
+    };
+    let contract = finished
+        .into_iter()
+        .next()
+        .map(|class| class.contract)
+        .ok_or("missing parameter mode")?;
     Ok(LoadedDeclaration {
+        relational,
         contract,
         variadic_data_tail,
         variadic_borrowed_tail,
@@ -2122,6 +2295,7 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
         ResourceReturnMode::None,
     );
     Ok(LoadedDeclaration {
+        relational: None,
         contract,
         variadic_data_tail: false,
         variadic_borrowed_tail: false,
@@ -2905,6 +3079,30 @@ fn check_kinds(
     }
     kind_agrees(kind, result_word, return_type)?;
     Ok(declared)
+}
+
+/// One plain parameter predicate: `resource_borrowed(p)` or
+/// `resource_{owned,consumed,released,out}(p, nullable|nonnull)` (and their
+/// integer-carried validity words), as `words` from [`predicate_call`].
+fn plain_parameter_predicate<'w>(
+    words: &[&'w str],
+    expression: &str,
+) -> Result<(&'w str, ResourceParameterMode, Option<ValidityWord>), String> {
+    match words {
+        ["resource_borrowed", p] => Ok((*p, ResourceParameterMode::Borrowed, None)),
+        [name, p, null] => {
+            let (nullable, word) = validity(null)?;
+            let mode = match *name {
+                "resource_owned" => ResourceParameterMode::Owned { nullable },
+                "resource_consumed" => ResourceParameterMode::Consumed { nullable },
+                "resource_released" => ResourceParameterMode::Released { nullable },
+                "resource_out" => ResourceParameterMode::Out { nullable },
+                _ => return Err(format!("unsupported predicate `{expression}`")),
+            };
+            Ok((*p, mode, Some(word)))
+        }
+        _ => Err(format!("unsupported predicate `{expression}`")),
+    }
 }
 
 fn predicate_call(source: &str) -> Result<Vec<String>, String> {

@@ -1,0 +1,51 @@
+module contract;
+
+// Card CG23-RELATIONAL-POSTCONDITIONS (gateway rule 11r, contract spec
+// §C04.13): synthetic `rp_*` callees whose custody depends on the returned
+// code. Trusted test assumptions, not facts about any library.
+
+// Transfers `p` when it returns 0; otherwise the caller keeps it.
+extern fn rp_take(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_on_return(eq, 0, resource_consumed(p, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_owned(p, nonnull));
+    ensures normal resource_return_none();
+};
+
+// Delivers a list through `out` exactly when it returns 0 (the
+// `getaddrinfo` shape: a status witness bound to the out slot).
+extern fn rp_open_list(name: ptr<const, u8>, out: ptr<mut, ptr<mut, u8>>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(name);
+    ensures normal resource_on_return(eq, 0, resource_out(out, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_borrowed(out));
+    ensures normal resource_return_none();
+};
+
+extern fn rp_free_list(list: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(list, nonnull);
+    ensures normal resource_return_none();
+};
+
+// Releases `p` on a negative return and keeps it otherwise.
+extern fn rp_release_on_error(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_on_return(lt, 0, resource_released(p, nonnull));
+    ensures normal resource_on_return(ge, 0, resource_owned(p, nonnull));
+    ensures normal resource_return_none();
+};
+
+// Declared to transfer `p` on 0; the test unit's body releases it on every
+// exit, which contradicts the declaration.
+extern fn rp_contradicted(p: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_on_return(eq, 0, resource_consumed(p, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_owned(p, nonnull));
+    ensures normal resource_return_none();
+};

@@ -250,6 +250,11 @@ pub(crate) fn derive_custody_summaries(
         .map(|name| (name.clone(), direct_calls(tokens, name, &candidates)))
         .collect::<BTreeMap<_, _>>();
 
+    // Card CG23-RELATIONAL-POSTCONDITIONS: a declared return-code
+    // disposition is a declaration of its component like any other.
+    let declared = |name: &String| {
+        contracts.contract(name).is_some() || contracts.relational_contract(name).is_some()
+    };
     for component in strongly_connected_components(&graph) {
         // Seeded at "no summary" and iterated until nothing more installs.
         // A member is retried only while some other member of the same
@@ -260,6 +265,29 @@ pub(crate) fn derive_custody_summaries(
             let mut installed = false;
             let mut still_pending = Vec::new();
             for name in pending {
+                // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a declared
+                // return-code disposition is checked against the body and
+                // never replaced by an inference.
+                if let Some(declared) = contracts.relational_contract(&name) {
+                    let body = infer_validated_summary(tokens, &name, &derivation.environment)
+                        .map(relational::BodySummary::Ordinary)
+                        .or_else(|| {
+                            relational::infer_exit_specific(
+                                tokens,
+                                &name,
+                                &derivation.environment,
+                                infer_validated_summary,
+                            )
+                            .map(relational::BodySummary::ExitSpecific)
+                        });
+                    if let Some(reason) = body
+                        .as_ref()
+                        .and_then(|body| relational::contradiction(declared, body))
+                    {
+                        derivation.environment.withdraw_relational(&name, reason);
+                    }
+                    continue;
+                }
                 match infer_validated_summary(tokens, &name, &derivation.environment) {
                     Some(contract) => {
                         match contracts.contract(&name) {
@@ -285,6 +313,34 @@ pub(crate) fn derive_custody_summaries(
                         }
                         derivation.inferred.insert(name, contract);
                     }
+                    // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): the
+                    // exit-specific route, after every ordinary one.
+                    None if contracts.contract(&name).is_none() => {
+                        match relational::infer_exit_specific(
+                            tokens,
+                            &name,
+                            &derivation.environment,
+                            infer_validated_summary,
+                        ) {
+                            Some(summary) => {
+                                match summary.join() {
+                                    // One contract on every exit: an ordinary
+                                    // summary.
+                                    Some(contract) => {
+                                        derivation
+                                            .environment
+                                            .insert_contract(name.clone(), contract.clone());
+                                        derivation.inferred.insert(name, contract.clone());
+                                    }
+                                    None => {
+                                        derivation.environment.insert_relational(name, summary);
+                                    }
+                                }
+                                installed = true;
+                            }
+                            None => still_pending.push(name),
+                        }
+                    }
                     None => still_pending.push(name),
                 }
             }
@@ -298,16 +354,13 @@ pub(crate) fn derive_custody_summaries(
         // recursive call site reads, so an inferred record for any member of it
         // repeats that declaration instead of corroborating it. Record the
         // dependence; the declaration keeps governing call sites either way.
-        if recursive && component.iter().any(|n| contracts.contract(n).is_some()) {
+        if recursive && component.iter().any(|n| declared(n)) {
             derivation.self_dependent.extend(component.iter().cloned());
         }
         // Census only (C03-REACH): how this recursive component was disposed
         // of. Assigned on every arm below, read by no analysis.
         let mut outcome = None;
-        if recursive
-            && !pending.is_empty()
-            && component.iter().all(|n| contracts.contract(n).is_none())
-        {
+        if recursive && !pending.is_empty() && component.iter().all(|n| !declared(n)) {
             if let Some(contexts) = infer_contextual_component(
                 tokens,
                 &component,
@@ -386,7 +439,7 @@ pub(crate) fn derive_custody_summaries(
         }
         if recursive {
             let outcome = outcome.unwrap_or_else(|| {
-                if component.iter().any(|n| contracts.contract(n).is_some()) {
+                if component.iter().any(|n| declared(n)) {
                     NeutralComponentOutcome::DeclaredContract
                 } else {
                     NeutralComponentOutcome::PublishedByOrdinaryInference
@@ -1481,6 +1534,11 @@ mod derived;
 
 #[path = "legacy_summary_premises.rs"]
 mod premises;
+
+// Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): exit-specific summaries and
+// the body check of a declared return-code disposition.
+#[path = "legacy_relational_summary.rs"]
+mod relational;
 
 #[cfg(test)]
 #[path = "../tests/unit/legacy_summary.rs"]

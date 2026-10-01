@@ -267,6 +267,11 @@ mod void_view_route;
 // `container_of` values, asked last, and the layout census.
 #[path = "legacy_layout_extents.rs"]
 mod layout_extents_route;
+// Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): return-code dispositions
+// at call sites (the class environment, the stored-return rewrite, the `if`
+// plan and the untested refusal).
+#[path = "legacy_relational_post.rs"]
+mod relational_route;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
@@ -3188,6 +3193,15 @@ fn build_function_cfg_with(
     let premises = literal_premise::LiteralPremises::read(contracts);
     let restricted = literal_premise::restrict_to_declared_literals(tokens, contracts, &premises);
     let tokens = restricted.as_deref().unwrap_or(tokens);
+    // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a stored return value
+    // tested by the next statement is the same C as the test of the
+    // assignment, and the parser reads every class of a return-code
+    // disposition under its minted name. Both are the identity on an
+    // environment with no disposition.
+    let stored_returns = relational_route::tested_stored_returns(tokens, contracts);
+    let tokens = stored_returns.as_deref().unwrap_or(tokens);
+    let class_environment = relational_route::class_environment(tokens, contracts);
+    let contracts = class_environment.as_ref().unwrap_or(contracts);
     let normalized = out_alias::normalize(tokens, function, contracts);
     let tokens = normalized.as_deref().unwrap_or(tokens);
     let (body_start, line) = find_function_body(tokens, function)
@@ -6046,13 +6060,20 @@ impl Parser<'_> {
                 let condition = self.take_parenthesized()?;
                 let condition_supported =
                     self.supported_expression(&condition, ExpressionRole::Decides);
-                let condition_call = (!condition_supported)
+                // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a test of a
+                // call's returned value against a constant, for a callee with
+                // a return-code disposition, asked before every other route.
+                let relational_plan = (!condition_supported)
+                    .then(|| self.relational_condition_plan(&condition))
+                    .flatten();
+                let condition_call = (!condition_supported && relational_plan.is_none())
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
                     .map(Box::new);
-                let condition_access = (!condition_supported && condition_call.is_none())
-                    .then(|| self.condition_access(&condition))
-                    .flatten();
+                let condition_access =
+                    (!condition_supported && condition_call.is_none() && relational_plan.is_none())
+                        .then(|| self.condition_access(&condition))
+                        .flatten();
                 #[cfg(feature = "indirect-census")]
                 self.census_traversal_condition(
                     line,
@@ -6063,6 +6084,7 @@ impl Parser<'_> {
                         && self.null_condition(&condition).is_none(),
                 );
                 let element_condition = (!condition_supported
+                    && relational_plan.is_none()
                     && condition_call.is_none()
                     && condition_access.is_none()
                     && self.null_condition(&condition).is_none())
@@ -6075,17 +6097,20 @@ impl Parser<'_> {
                 }
                 // Card W44-BRANCH-CONDITION-CALLS: asked only where every
                 // route above refused the condition.
-                let condition_plan = self.planned_condition(
-                    line,
-                    &condition,
-                    condition_desugar::Position::Branch,
-                    !condition_supported
-                        && condition_call.is_none()
-                        && condition_access.is_none()
-                        && element_condition.is_none()
-                        && self.null_condition(&condition).is_none()
-                        && self.distinct_condition(&condition).is_none(),
-                );
+                let condition_plan = match relational_plan {
+                    Some(plan) => Some(plan),
+                    None => self.planned_condition(
+                        line,
+                        &condition,
+                        condition_desugar::Position::Branch,
+                        !condition_supported
+                            && condition_call.is_none()
+                            && condition_access.is_none()
+                            && element_condition.is_none()
+                            && self.null_condition(&condition).is_none()
+                            && self.distinct_condition(&condition).is_none(),
+                    ),
+                };
                 let then_body = self.parse_statement_body()?;
                 let else_body = if self.text() == Some("else") {
                     self.cursor += 1;
@@ -8746,6 +8771,14 @@ impl Parser<'_> {
             // node, a returns-twice call or a non-local exit is named; only the
             // wording changes.
             if let Some(description) = crate::call_exits::undeclarable_call(function) {
+                return LegacyInstruction::Unknown {
+                    description,
+                    writes: self.refused_writes(&texts),
+                };
+            }
+            // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a callee whose
+            // return-code disposition this use selects no class of.
+            if let Some(description) = relational_route::untested(self.contracts, function) {
                 return LegacyInstruction::Unknown {
                     description,
                     writes: self.refused_writes(&texts),

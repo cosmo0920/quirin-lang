@@ -37,10 +37,12 @@ use super::Token;
 pub(crate) const ESCAPE_PREFIX: &str = "qcore_source_spelled__";
 
 /// Every prefix a rewrite reserves, and the escape prefix itself.
-fn reserved_prefixes() -> [&'static str; 8] {
+fn reserved_prefixes() -> [&'static str; 9] {
     [
         // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): the dialect-refusal marker.
         crate::c_frontend_identity::DIALECT_REFUSED_PREFIX,
+        // Card CG23-RELATIONAL-POSTCONDITIONS: a disposition class's name.
+        crate::relational_post::CLASS_PREFIX,
         super::review_hold::HELD_PREFIX,
         super::pin_hold::HELD_PREFIX,
         super::refuted_contract::HELD_PREFIX,

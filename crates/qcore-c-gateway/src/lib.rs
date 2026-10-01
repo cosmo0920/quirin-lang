@@ -48,6 +48,9 @@ mod cast_representation;
 // Card CG04-CONDITION-ACQUISITION (rule 10x): acquisitions in conditions and
 // complex condition leaves; the G hooks are in `legacy_condition_acquisition.rs`.
 mod condition_acquisition;
+// Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): return-code dispositions;
+// the G hooks are in `legacy_relational_post.rs` and `legacy_summary.rs`.
+mod relational_post;
 // Card CG02-ELABORATION-CORE (rule 10s): the common expression elaborator and
 // its order model; the G hooks are in `legacy_elaboration.rs`.
 mod elaboration;
