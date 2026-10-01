@@ -421,7 +421,9 @@ pub fn dialect_refusal_in_ast(dialect: CCompilerDialect, function: &Value) -> Op
             kind == ast
                 || (ast == "constexpr" && node["constexpr"] == true)
                 || (kind == "UnaryExprOrTypeTraitExpr" && trait_name == ast)
-                || types.iter().any(|spelling| type_words(spelling).any(|word| word == ast))
+                || types
+                    .iter()
+                    .any(|spelling| type_words(spelling).any(|word| word == ast))
         });
     });
     found.map(|difference| dialect_refusal(dialect, difference))
@@ -512,7 +514,9 @@ pub fn digit_separator_refusal(dialect: CCompilerDialect, source: &str) -> Optio
         if byte == b'"' || byte == b'\'' {
             cursor = skip_quoted(bytes, cursor);
         } else if byte == b'_' || byte.is_ascii_alphabetic() {
-            while cursor < bytes.len() && (bytes[cursor] == b'_' || bytes[cursor].is_ascii_alphanumeric()) {
+            while cursor < bytes.len()
+                && (bytes[cursor] == b'_' || bytes[cursor].is_ascii_alphanumeric())
+            {
                 cursor += 1;
             }
         } else if byte.is_ascii_digit()
@@ -531,11 +535,14 @@ pub fn digit_separator_refusal(dialect: CCompilerDialect, source: &str) -> Optio
                          that is not adopted (CG30)",
                         dialect.std_name()
                     ));
-                } else if matches!(current, b'+' | b'-')
-                    && matches!(bytes[cursor - 1], b'e' | b'E' | b'p' | b'P')
+                }
+                let exponent_sign = matches!(current, b'+' | b'-')
+                    && matches!(bytes[cursor - 1], b'e' | b'E' | b'p' | b'P');
+                if exponent_sign
+                    || current == b'_'
+                    || current == b'.'
+                    || current.is_ascii_alphanumeric()
                 {
-                    cursor += 1;
-                } else if current == b'_' || current == b'.' || current.is_ascii_alphanumeric() {
                     cursor += 1;
                 } else {
                     break;
@@ -696,7 +703,9 @@ impl CTargetTriple {
             let os = OPERATING_SYSTEMS.iter().find(|os| {
                 component.strip_prefix(**os).is_some_and(|version| {
                     version.is_empty()
-                        || version.bytes().all(|byte| byte.is_ascii_digit() || byte == b'.')
+                        || version
+                            .bytes()
+                            .all(|byte| byte.is_ascii_digit() || byte == b'.')
                 })
             });
             if let Some(os) = os
@@ -1006,12 +1015,15 @@ impl CTypeId {
             .filter(|word| !matches!(**word, "const"))
             .copied()
             .collect::<Vec<_>>();
-        let base = canonical_arithmetic(&core).map(str::to_owned).or_else(|| match core.as_slice() {
-            [tag @ ("struct" | "union" | "enum"), name] if is_identifier(name) => {
-                Some(format!("{tag} {name}"))
-            }
-            _ => None,
-        })?;
+        let base =
+            canonical_arithmetic(&core)
+                .map(str::to_owned)
+                .or_else(|| match core.as_slice() {
+                    [tag @ ("struct" | "union" | "enum"), name] if is_identifier(name) => {
+                        Some(format!("{tag} {name}"))
+                    }
+                    _ => None,
+                })?;
         let mut spelling = if const_qualified {
             format!("const {base}")
         } else {
@@ -1087,9 +1099,16 @@ fn extension_of_word(word: &str) -> Option<CExtensionFamily> {
         | "__imag" | "__builtin_complex" => Some(CExtensionFamily::Complex),
         "_BitInt" | "_ExtInt" => Some(CExtensionFamily::BitPrecise),
         "_Fract" | "_Accum" | "_Sat" => Some(CExtensionFamily::FixedPoint),
-        "vector_size" | "__vector_size__" | "ext_vector_type" | "__ext_vector_type__"
-        | "neon_vector_type" | "neon_polyvector_type" | "matrix_type" | "__matrix_type__"
-        | "__builtin_shufflevector" | "__builtin_convertvector" => Some(CExtensionFamily::Vector),
+        "vector_size"
+        | "__vector_size__"
+        | "ext_vector_type"
+        | "__ext_vector_type__"
+        | "neon_vector_type"
+        | "neon_polyvector_type"
+        | "matrix_type"
+        | "__matrix_type__"
+        | "__builtin_shufflevector"
+        | "__builtin_convertvector" => Some(CExtensionFamily::Vector),
         _ if word.starts_with("__rvv_") || (word.starts_with("__SV") && word.ends_with("_t")) => {
             Some(CExtensionFamily::Vector)
         }
@@ -1105,7 +1124,10 @@ fn imaginary_literal(text: &str) -> bool {
     let bytes = text.as_bytes();
     let starts_number = bytes.first().is_some_and(u8::is_ascii_digit)
         || (bytes.first() == Some(&b'.') && bytes.get(1).is_some_and(u8::is_ascii_digit));
-    starts_number && bytes.iter().any(|byte| matches!(byte, b'i' | b'I' | b'j' | b'J'))
+    starts_number
+        && bytes
+            .iter()
+            .any(|byte| matches!(byte, b'i' | b'I' | b'j' | b'J'))
 }
 
 /// Whether any token of the unit spells an extension. A unit without one

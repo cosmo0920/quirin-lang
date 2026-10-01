@@ -89,18 +89,36 @@ fn selections_are_refused_by_name() {
     let Some(driver) = driver() else { return };
     for (extra, fragment) in [
         ("-std=gnu17 --target=i686-pc-linux-gnu", "data model ILP32"),
-        ("-std=gnu17 --target=x86_64-pc-windows-msvc", "data model LLP64"),
-        ("-std=gnu17 --target=x86_64-pc-linux-gnux32", "data model ILP32"),
+        (
+            "-std=gnu17 --target=x86_64-pc-windows-msvc",
+            "data model LLP64",
+        ),
+        (
+            "-std=gnu17 --target=x86_64-pc-linux-gnux32",
+            "data model ILP32",
+        ),
         ("-std=gnu17 -mabi=ilp32", "data model ILP32"),
-        ("-std=gnu17 -mabi=lp128", "unsupported compilation ABI `lp128`"),
-        ("-std=gnu17 --target=sparc-sun-solaris", "architecture `sparc`"),
+        (
+            "-std=gnu17 -mabi=lp128",
+            "unsupported compilation ABI `lp128`",
+        ),
+        (
+            "-std=gnu17 --target=sparc-sun-solaris",
+            "architecture `sparc`",
+        ),
         (
             "-std=gnu17 --target=x86_64-pc-linux-gnu -target aarch64-unknown-linux-gnu",
             "selects a target twice",
         ),
         ("-std=gnu17 -arch i386", "data model ILP32"),
-        ("-std=gnu17 -arch arm64 --target=aarch64-apple-darwin", "select a target twice"),
-        ("--target=x86_64-pc-linux-gnu", "explicit supported -std= dialect"),
+        (
+            "-std=gnu17 -arch arm64 --target=aarch64-apple-darwin",
+            "select a target twice",
+        ),
+        (
+            "--target=x86_64-pc-linux-gnu",
+            "explicit supported -std= dialect",
+        ),
         ("-std=gnu23", "unsupported compilation dialect `gnu23`"),
     ] {
         let error = compiler_options(&entry(&driver, extra))

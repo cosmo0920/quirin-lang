@@ -3,14 +3,13 @@
 //! Fixture contracts are the CG00 harness's synthetic `q_*` assumptions.
 
 use qcore_c_gateway::c_frontend_identity::{
-    CExtensionFamily, CTargetTriple, C23_DIFFERENCES, C2Y_DIFFERENCES, dialect_refusal,
+    C2Y_DIFFERENCES, C23_DIFFERENCES, CExtensionFamily, CTargetTriple, dialect_refusal,
     extension_refusal,
 };
 use qcore_c_gateway::legacy_c::{
     AnalysisStatus, C11TranslationUnit, CCompilerDialect, CFrontendFlag, CPreprocessorOption,
     LegacyCertificateExpectedContext, LegacyDiagnosticKind, UnrestrictedLegacyResult,
-    analyze_unrestricted_c11, check_legacy_safety_certificate,
-    check_legacy_safety_certificate_for,
+    analyze_unrestricted_c11, check_legacy_safety_certificate, check_legacy_safety_certificate_for,
 };
 
 #[path = "support/clang_gap.rs"]
@@ -82,11 +81,20 @@ fn a_unit_without_differences_reads_alike_under_every_dialect() {
         CCompilerDialect::C2y,
     ] {
         let outcome = run(PAIR, dialect, Vec::new());
-        assert_eq!(row(&outcome), Ok((AnalysisStatus::Safe, vec![])), "{dialect:?}");
+        assert_eq!(
+            row(&outcome),
+            Ok((AnalysisStatus::Safe, vec![])),
+            "{dialect:?}"
+        );
         let UnrestrictedLegacyResult::Safe(certificate) = outcome else {
             unreachable!()
         };
-        identities.push(certificate.target_scope.input_identity.analysis_request_sha256);
+        identities.push(
+            certificate
+                .target_scope
+                .input_identity
+                .analysis_request_sha256,
+        );
     }
     // The verdict is the same; the evidence identity is not: a certificate
     // minted under one dialect never stands for another.
@@ -105,7 +113,10 @@ fn c23_nullptr_is_refused_by_name_and_never_misread() {
         return;
     }
     let source = "void subject(void) { void *p = q_alloc(); if (p == nullptr) return; q_free(p); }";
-    let nullptr = C23_DIFFERENCES.iter().find(|d| d.key == "c23-nullptr").unwrap();
+    let nullptr = C23_DIFFERENCES
+        .iter()
+        .find(|d| d.key == "c23-nullptr")
+        .unwrap();
     for dialect in [CCompilerDialect::C23, CCompilerDialect::C2y] {
         let (status, unsupported) = row(&run(source, dialect, Vec::new())).expect("projected");
         assert_eq!(status, AnalysisStatus::Unknown, "{dialect:?}");
@@ -130,9 +141,18 @@ fn c23_keywords_and_attributes_are_refused_by_name() {
     for (source, key) in [
         ("int subject(void) { return true; }", "c23-true"),
         ("int subject(void) { bool b = 0; return b; }", "c23-bool"),
-        ("int subject(void) { constexpr int k = 1; return k; }", "c23-constexpr"),
-        ("[[nodiscard]] int subject(void) { return 0; }", "c23-attribute"),
-        ("int subject(void) { typeof(1) k = 1; return k; }", "c23-typeof"),
+        (
+            "int subject(void) { constexpr int k = 1; return k; }",
+            "c23-constexpr",
+        ),
+        (
+            "[[nodiscard]] int subject(void) { return 0; }",
+            "c23-attribute",
+        ),
+        (
+            "int subject(void) { typeof(1) k = 1; return k; }",
+            "c23-typeof",
+        ),
     ] {
         let difference = C23_DIFFERENCES.iter().find(|d| d.key == key).unwrap();
         let (status, unsupported) =
@@ -150,7 +170,10 @@ fn c2y_countof_is_refused_by_name() {
     if !clang_available() {
         return;
     }
-    let difference = C2Y_DIFFERENCES.iter().find(|d| d.key == "c2y-countof").unwrap();
+    let difference = C2Y_DIFFERENCES
+        .iter()
+        .find(|d| d.key == "c2y-countof")
+        .unwrap();
     let (status, unsupported) = row(&run(
         "unsigned long subject(void) { int a[3]; return _Countof(a); }",
         CCompilerDialect::C2y,
@@ -241,14 +264,11 @@ fn a_target_changes_the_evidence_identity() {
     if !clang_available() {
         return;
     }
-    let certificate = |options: Vec<CPreprocessorOption>| match run(
-        PAIR,
-        CCompilerDialect::Gnu17,
-        options,
-    ) {
-        UnrestrictedLegacyResult::Safe(certificate) => certificate,
-        other => panic!("{other:?}"),
-    };
+    let certificate =
+        |options: Vec<CPreprocessorOption>| match run(PAIR, CCompilerDialect::Gnu17, options) {
+            UnrestrictedLegacyResult::Safe(certificate) => certificate,
+            other => panic!("{other:?}"),
+        };
     let target = |triple: &str| {
         vec![CPreprocessorOption::FrontendFlag(CFrontendFlag::Target(
             CTargetTriple::parse(triple).unwrap(),
@@ -257,17 +277,20 @@ fn a_target_changes_the_evidence_identity() {
     let default = certificate(Vec::new());
     let x86 = certificate(target("x86_64-pc-linux-gnu"));
     let arm = certificate(target("aarch64-unknown-linux-gnu"));
-    let digests = [&default, &x86, &arm]
-        .map(|c| c.target_scope.input_identity.analysis_request_sha256.clone());
+    let digests = [&default, &x86, &arm].map(|c| {
+        c.target_scope
+            .input_identity
+            .analysis_request_sha256
+            .clone()
+    });
     assert_ne!(digests[0], digests[1]);
     assert_ne!(digests[1], digests[2]);
     assert_ne!(digests[0], digests[2]);
-    let expected = |c: &qcore_c_gateway::legacy_c::LegacySafetyCertificate| {
-        LegacyCertificateExpectedContext {
+    let expected =
+        |c: &qcore_c_gateway::legacy_c::LegacySafetyCertificate| LegacyCertificateExpectedContext {
             inventory_sha256: c.target_scope.inventory_sha256.clone(),
             input_identity: c.target_scope.input_identity.clone(),
-        }
-    };
+        };
     check_legacy_safety_certificate_for(&x86, &expected(&x86)).expect("own context");
     assert!(check_legacy_safety_certificate_for(&arm, &expected(&x86)).is_err());
     assert!(check_legacy_safety_certificate_for(&default, &expected(&x86)).is_err());

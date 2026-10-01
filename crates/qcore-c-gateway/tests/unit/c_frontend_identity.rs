@@ -64,7 +64,10 @@ fn the_registry_is_refused_and_c2y_extends_c23() {
         c2y.iter()
             .all(|difference| difference.standing == DifferenceStanding::Refused)
     );
-    let mut keys = c2y.iter().map(|difference| difference.key).collect::<Vec<_>>();
+    let mut keys = c2y
+        .iter()
+        .map(|difference| difference.key)
+        .collect::<Vec<_>>();
     keys.sort_unstable();
     keys.dedup();
     assert_eq!(keys.len(), c2y.len(), "keys are unique");
@@ -72,38 +75,83 @@ fn the_registry_is_refused_and_c2y_extends_c23() {
 
 fn first(dialect: CCompilerDialect, source: &str) -> Option<&'static str> {
     let texts = crate::legacy_c::tokenize(source);
-    let texts = texts.iter().map(|token| token.text.as_str()).collect::<Vec<_>>();
+    let texts = texts
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
     dialect_difference_in_tokens(dialect, &texts).map(|difference| difference.key)
 }
 
 #[test]
 fn token_patterns_find_each_registered_difference() {
     use CCompilerDialect::{C2y, C23, Gnu17};
-    assert_eq!(first(C23, "int f(void *p) { return p == nullptr; }"), Some("c23-nullptr"));
-    assert_eq!(first(Gnu17, "int f(void *p) { return p == nullptr; }"), None);
+    assert_eq!(
+        first(C23, "int f(void *p) { return p == nullptr; }"),
+        Some("c23-nullptr")
+    );
+    assert_eq!(
+        first(Gnu17, "int f(void *p) { return p == nullptr; }"),
+        None
+    );
     assert_eq!(first(C23, "int f(void) { return true; }"), Some("c23-true"));
-    assert_eq!(first(C23, "[[nodiscard]] int f(void) { return 0; }"), Some("c23-attribute"));
+    assert_eq!(
+        first(C23, "[[nodiscard]] int f(void) { return 0; }"),
+        Some("c23-attribute")
+    );
     assert_eq!(first(C23, "int f(int *a) { return a[a[0]]; }"), None);
-    assert_eq!(first(C23, "int f(void) { constexpr int k = 1; return k; }"), Some("c23-constexpr"));
-    assert_eq!(first(C23, "int f(void) { auto k = 1; return k; }"), Some("c23-auto"));
-    assert_eq!(first(C23, "int f(void) { int _Countof = 1; return _Countof; }"), None);
-    assert_eq!(first(C2y, "int f(void) { return _Countof(int[2]); }"), Some("c2y-countof"));
-    assert_eq!(first(C2y, "int f(void) { return 0o17; }"), Some("c2y-octal-prefix"));
+    assert_eq!(
+        first(C23, "int f(void) { constexpr int k = 1; return k; }"),
+        Some("c23-constexpr")
+    );
+    assert_eq!(
+        first(C23, "int f(void) { auto k = 1; return k; }"),
+        Some("c23-auto")
+    );
+    assert_eq!(
+        first(C23, "int f(void) { int _Countof = 1; return _Countof; }"),
+        None
+    );
+    assert_eq!(
+        first(C2y, "int f(void) { return _Countof(int[2]); }"),
+        Some("c2y-countof")
+    );
+    assert_eq!(
+        first(C2y, "int f(void) { return 0o17; }"),
+        Some("c2y-octal-prefix")
+    );
     assert_eq!(first(C2y, "int f(void) { return 017; }"), None);
     assert_eq!(
-        first(C2y, "int f(void) { o: for (;;) { for (;;) { break o; } } return 0; }"),
+        first(
+            C2y,
+            "int f(void) { o: for (;;) { for (;;) { break o; } } return 0; }"
+        ),
         Some("c2y-named-jump")
     );
-    assert_eq!(first(C2y, "int f(void) { for (;;) { break; } return 0; }"), None);
     assert_eq!(
-        first(C2y, "int f(int n) { if (int x = n; x) return x; return 0; }"),
+        first(C2y, "int f(void) { for (;;) { break; } return 0; }"),
+        None
+    );
+    assert_eq!(
+        first(
+            C2y,
+            "int f(int n) { if (int x = n; x) return x; return 0; }"
+        ),
         Some("c2y-condition-declaration")
     );
     assert_eq!(
-        first(C2y, "int f(int n) { if (n) { for (;;) { break; } } return 0; }"),
+        first(
+            C2y,
+            "int f(int n) { if (n) { for (;;) { break; } } return 0; }"
+        ),
         None
     );
-    assert_eq!(first(C2y, "int f(int n) { for (int i = 0; i < n; i++) {} return 0; }"), None);
+    assert_eq!(
+        first(
+            C2y,
+            "int f(int n) { for (int i = 0; i < n; i++) {} return 0; }"
+        ),
+        None
+    );
 }
 
 #[test]
@@ -131,14 +179,23 @@ fn targets_are_admitted_only_under_the_lp64_premise() {
     let model = |triple: &str| CTargetTriple::parse(triple).map(|t| t.data_model());
     assert_eq!(model("x86_64-pc-linux-gnu"), Ok(Some(CDataModel::Lp64)));
     assert_eq!(model("x86_64-linux-gnu"), Ok(Some(CDataModel::Lp64)));
-    assert_eq!(model("aarch64-unknown-linux-gnu"), Ok(Some(CDataModel::Lp64)));
+    assert_eq!(
+        model("aarch64-unknown-linux-gnu"),
+        Ok(Some(CDataModel::Lp64))
+    );
     assert_eq!(model("arm64-apple-macosx14.0"), Ok(Some(CDataModel::Lp64)));
-    assert_eq!(model("riscv64-unknown-linux-gnu"), Ok(Some(CDataModel::Lp64)));
+    assert_eq!(
+        model("riscv64-unknown-linux-gnu"),
+        Ok(Some(CDataModel::Lp64))
+    );
     assert_eq!(model("x86_64-pc-windows-msvc"), Ok(Some(CDataModel::Llp64)));
     assert_eq!(model("x86_64-w64-windows-gnu"), Ok(Some(CDataModel::Llp64)));
     assert_eq!(model("i686-pc-linux-gnu"), Ok(Some(CDataModel::Ilp32)));
     assert_eq!(model("x86_64-pc-linux-gnux32"), Ok(Some(CDataModel::Ilp32)));
-    assert_eq!(model("aarch64-linux-gnu_ilp32"), Ok(Some(CDataModel::Ilp32)));
+    assert_eq!(
+        model("aarch64-linux-gnu_ilp32"),
+        Ok(Some(CDataModel::Ilp32))
+    );
     assert_eq!(model("x86_64-unknown-unknown"), Err(
         "unsupported compilation target `x86_64-unknown-unknown`: component `unknown` is not recorded".into()
     ));
@@ -159,11 +216,27 @@ fn targets_are_admitted_only_under_the_lp64_premise() {
     };
     assert!(identity(None, None).admit().is_ok());
     assert!(identity(Some("x86_64-pc-linux-gnu"), None).admit().is_ok());
-    assert!(identity(Some("x86_64-pc-linux-gnu"), Some("sysv")).admit().is_ok());
-    assert!(identity(Some("riscv64-unknown-linux-gnu"), Some("lp64d")).admit().is_ok());
-    assert!(identity(Some("x86_64-pc-windows-msvc"), None).admit().is_err());
+    assert!(
+        identity(Some("x86_64-pc-linux-gnu"), Some("sysv"))
+            .admit()
+            .is_ok()
+    );
+    assert!(
+        identity(Some("riscv64-unknown-linux-gnu"), Some("lp64d"))
+            .admit()
+            .is_ok()
+    );
+    assert!(
+        identity(Some("x86_64-pc-windows-msvc"), None)
+            .admit()
+            .is_err()
+    );
     assert!(identity(Some("i686-pc-linux-gnu"), None).admit().is_err());
-    assert!(identity(Some("riscv64-unknown-linux-gnu"), Some("ilp32d")).admit().is_err());
+    assert!(
+        identity(Some("riscv64-unknown-linux-gnu"), Some("ilp32d"))
+            .admit()
+            .is_err()
+    );
     assert!(identity(None, Some("ilp32")).admit().is_err());
     assert!(identity(None, Some("ms")).admit().is_ok());
     assert!(CAbiName::parse("lp64x").is_err());
@@ -217,7 +290,10 @@ fn the_abi_reader_meets_the_same_identity() {
     let source = "typedef long unsigned int size_t; typedef size_t my_size; \
                   typedef struct cio_chunk *handle; typedef volatile int vint;";
     let tokens = crate::legacy_c::tokenize(source);
-    let texts = tokens.iter().map(|token| token.text.as_str()).collect::<Vec<_>>();
+    let texts = tokens
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
     let reader = |words: &[&str], stars| {
         crate::legacy_c::declared_abi::declared_type_id(&texts, words, stars)
     };
@@ -242,8 +318,7 @@ fn routes_g_and_t_read_the_identity_clang_prints() {
         source,
         ..Default::default()
     };
-    let declarations =
-        crate::typed_c_ast::ast_declarations(source, &unit, "subject").expect("AST");
+    let declarations = crate::typed_c_ast::ast_declarations(source, &unit, "subject").expect("AST");
     let function = declarations
         .iter()
         .find(|node| node["kind"] == "FunctionDecl" && node["name"] == "subject")
@@ -264,14 +339,14 @@ fn routes_g_and_t_read_the_identity_clang_prints() {
         .collect::<Vec<_>>();
     assert_eq!(g, t);
     let tokens = crate::legacy_c::tokenize(source);
-    let texts = tokens.iter().map(|token| token.text.as_str()).collect::<Vec<_>>();
+    let texts = tokens
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
     let abi = crate::legacy_c::declared_abi::declared_type_id(&texts, &["my_size"], 0);
     assert_eq!(g[0], abi);
     assert_eq!(g[0], g[1]);
-    assert_eq!(
-        g[2],
-        CTypeId::from_specifiers(&["const", "char"], 1)
-    );
+    assert_eq!(g[2], CTypeId::from_specifiers(&["const", "char"], 1));
 }
 
 /// Clang 21.1.8's spellings of each extension family (probe recorded in the
@@ -289,14 +364,24 @@ fn extension_spellings_are_classified() {
         Some(CExtensionFamily::Vector)
     );
     assert_eq!(family("_BitInt(7)"), Some(CExtensionFamily::BitPrecise));
-    assert_eq!(family("unsigned _BitInt(9)"), Some(CExtensionFamily::BitPrecise));
+    assert_eq!(
+        family("unsigned _BitInt(9)"),
+        Some(CExtensionFamily::BitPrecise)
+    );
     assert_eq!(family("short _Fract"), Some(CExtensionFamily::FixedPoint));
     assert_eq!(family("_Sat _Accum"), Some(CExtensionFamily::FixedPoint));
     assert_eq!(family("__SVInt8_t"), Some(CExtensionFamily::Vector));
-    for plain in ["unsigned long", "struct complex_number *", "my_vector_size_t", "__int128"] {
+    for plain in [
+        "unsigned long",
+        "struct complex_number *",
+        "my_vector_size_t",
+        "__int128",
+    ] {
         assert_eq!(family(plain), None, "{plain}");
     }
     assert!(unit_spells_extension(&["x", "=", "2.0i"]));
     assert!(unit_spells_extension(&["_BitInt"]));
-    assert!(!unit_spells_extension(&["x", "=", "0x1f", "+", "1e3", "+", "10UL"]));
+    assert!(!unit_spells_extension(&[
+        "x", "=", "0x1f", "+", "1e3", "+", "10UL"
+    ]));
 }

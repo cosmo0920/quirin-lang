@@ -162,9 +162,8 @@ pub fn compile_task_identity(
         preprocessed_source_sha256,
         preprocessing_error,
         dependencies,
-        dialect_differences_sha256: qcore_c_gateway::c_frontend_identity::dialect_differences_sha256(
-            unit.dialect,
-        ),
+        dialect_differences_sha256:
+            qcore_c_gateway::c_frontend_identity::dialect_differences_sha256(unit.dialect),
     })
 }
 
@@ -702,10 +701,13 @@ struct TargetSelection {
 impl TargetSelection {
     fn select_triple(&mut self, triple: &str) -> Result<(), String> {
         if self.identity.triple.is_some() {
-            return Err("unsupported compilation target: the command selects a target twice".into());
+            return Err(
+                "unsupported compilation target: the command selects a target twice".into(),
+            );
         }
-        self.identity.triple =
-            Some(qcore_c_gateway::c_frontend_identity::CTargetTriple::parse(triple)?);
+        self.identity.triple = Some(qcore_c_gateway::c_frontend_identity::CTargetTriple::parse(
+            triple,
+        )?);
         Ok(())
     }
 

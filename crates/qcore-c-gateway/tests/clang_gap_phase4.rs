@@ -654,5 +654,7 @@ fn n14_bit_precise_integers_are_refused() {
     );
     let run = gs("void subject(void) { _BitInt(7) x = 3; }");
     assert!(run.refused(IND));
-    assert!(run.refused("C extension type `_BitInt(7)` (bit-precise integer) is not adopted (CG30)"));
+    assert!(
+        run.refused("C extension type `_BitInt(7)` (bit-precise integer) is not adopted (CG30)")
+    );
 }

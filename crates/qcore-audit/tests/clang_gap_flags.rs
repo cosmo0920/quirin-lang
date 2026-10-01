@@ -51,7 +51,13 @@ fn i01_dialects_outside_the_seven_are_refused() {
     for flag in ["-std=c17", "-std=c23", "-std=c2y"] {
         options(&driver, flag).unwrap_or_else(|error| panic!("{flag}: {error}"));
     }
-    for flag in ["-std=gnu23", "-std=c18", "-std=c2x", "-std=gnu2y", "-std=c99"] {
+    for flag in [
+        "-std=gnu23",
+        "-std=c18",
+        "-std=c2x",
+        "-std=gnu2y",
+        "-std=c99",
+    ] {
         let error = options(&driver, flag).expect_err(flag);
         assert!(
             !error.contains("configured Clang executable"),

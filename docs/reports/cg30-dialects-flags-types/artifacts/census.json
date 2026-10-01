@@ -1,0 +1,240 @@
+{
+ "corpus-fluent-bit": {
+  "flags": {
+   "std": {
+    "c99": 40,
+    "gnu17": 2607,
+    "gnu90": 91,
+    "gnu99": 184
+   }
+  },
+  "preprocessing_errors": 33,
+  "spellings": {
+   "preprocessed": {
+    "bit_int": 0,
+    "c23_attributes": 10,
+    "c23_bool_literals": 817,
+    "c23_keywords": 0,
+    "c2y_countof": 0,
+    "complex": 1289,
+    "fixed_point": 0,
+    "imaginary_literal": 28,
+    "vector": 34360
+   },
+   "raw_source": {
+    "bit_int": 0,
+    "c23_attributes": 206,
+    "c23_bool_literals": 5197,
+    "c23_keywords": 14,
+    "c2y_countof": 0,
+    "complex": 2,
+    "fixed_point": 0,
+    "imaginary_literal": 49,
+    "vector": 3
+   }
+  },
+  "units": 1396,
+  "units_with_spelling": {
+   "preprocessed": {
+    "bit_int": 0,
+    "c23_attributes": 9,
+    "c23_bool_literals": 171,
+    "c23_keywords": 0,
+    "c2y_countof": 0,
+    "complex": 1287,
+    "fixed_point": 0,
+    "imaginary_literal": 8,
+    "vector": 839
+   },
+   "raw_source": {
+    "bit_int": 0,
+    "c23_attributes": 15,
+    "c23_bool_literals": 325,
+    "c23_keywords": 5,
+    "c2y_countof": 0,
+    "complex": 1,
+    "fixed_point": 0,
+    "imaginary_literal": 12,
+    "vector": 3
+   }
+  }
+ },
+ "corpus-monkey": {
+  "flags": {
+   "std": {
+    "gnu17": 284,
+    "gnu99": 142
+   }
+  },
+  "preprocessing_errors": 0,
+  "spellings": {
+   "preprocessed": {
+    "bit_int": 0,
+    "c23_attributes": 0,
+    "c23_bool_literals": 0,
+    "c23_keywords": 0,
+    "c2y_countof": 0,
+    "complex": 134,
+    "fixed_point": 0,
+    "imaginary_literal": 6,
+    "vector": 0
+   },
+   "raw_source": {
+    "bit_int": 0,
+    "c23_attributes": 0,
+    "c23_bool_literals": 110,
+    "c23_keywords": 0,
+    "c2y_countof": 0,
+    "complex": 0,
+    "fixed_point": 0,
+    "imaginary_literal": 7,
+    "vector": 0
+   }
+  },
+  "units": 142,
+  "units_with_spelling": {
+   "preprocessed": {
+    "bit_int": 0,
+    "c23_attributes": 0,
+    "c23_bool_literals": 0,
+    "c23_keywords": 0,
+    "c2y_countof": 0,
+    "complex": 134,
+    "fixed_point": 0,
+    "imaginary_literal": 2,
+    "vector": 0
+   },
+   "raw_source": {
+    "bit_int": 0,
+    "c23_attributes": 0,
+    "c23_bool_literals": 30,
+    "c23_keywords": 0,
+    "c2y_countof": 0,
+    "complex": 0,
+    "fixed_point": 0,
+    "imaginary_literal": 2,
+    "vector": 0
+   }
+  }
+ },
+ "system": {
+  "flags": {
+   "std": {
+    "c99": 40,
+    "gnu17": 2615,
+    "gnu90": 91,
+    "gnu99": 184
+   }
+  },
+  "preprocessing_errors": 33,
+  "spellings": {
+   "preprocessed": {
+    "bit_int": 0,
+    "c23_attributes": 10,
+    "c23_bool_literals": 856,
+    "c23_keywords": 0,
+    "c2y_countof": 0,
+    "complex": 1292,
+    "fixed_point": 0,
+    "imaginary_literal": 28,
+    "vector": 34483
+   },
+   "raw_source": {
+    "bit_int": 0,
+    "c23_attributes": 207,
+    "c23_bool_literals": 5219,
+    "c23_keywords": 14,
+    "c2y_countof": 0,
+    "complex": 2,
+    "fixed_point": 0,
+    "imaginary_literal": 49,
+    "vector": 3
+   }
+  },
+  "units": 1400,
+  "units_with_spelling": {
+   "preprocessed": {
+    "bit_int": 0,
+    "c23_attributes": 9,
+    "c23_bool_literals": 172,
+    "c23_keywords": 0,
+    "c2y_countof": 0,
+    "complex": 1290,
+    "fixed_point": 0,
+    "imaginary_literal": 8,
+    "vector": 842
+   },
+   "raw_source": {
+    "bit_int": 0,
+    "c23_attributes": 15,
+    "c23_bool_literals": 326,
+    "c23_keywords": 5,
+    "c2y_countof": 0,
+    "complex": 1,
+    "fixed_point": 0,
+    "imaginary_literal": 12,
+    "vector": 3
+   }
+  }
+ },
+ "tail-pause-slice": {
+  "flags": {
+   "std": {
+    "c99": 40,
+    "gnu17": 2619,
+    "gnu90": 91,
+    "gnu99": 184
+   }
+  },
+  "preprocessing_errors": 33,
+  "spellings": {
+   "preprocessed": {
+    "bit_int": 0,
+    "c23_attributes": 10,
+    "c23_bool_literals": 856,
+    "c23_keywords": 0,
+    "c2y_countof": 0,
+    "complex": 1294,
+    "fixed_point": 0,
+    "imaginary_literal": 28,
+    "vector": 34565
+   },
+   "raw_source": {
+    "bit_int": 0,
+    "c23_attributes": 207,
+    "c23_bool_literals": 5219,
+    "c23_keywords": 14,
+    "c2y_countof": 0,
+    "complex": 2,
+    "fixed_point": 0,
+    "imaginary_literal": 49,
+    "vector": 3
+   }
+  },
+  "units": 1402,
+  "units_with_spelling": {
+   "preprocessed": {
+    "bit_int": 0,
+    "c23_attributes": 9,
+    "c23_bool_literals": 172,
+    "c23_keywords": 0,
+    "c2y_countof": 0,
+    "complex": 1292,
+    "fixed_point": 0,
+    "imaginary_literal": 8,
+    "vector": 844
+   },
+   "raw_source": {
+    "bit_int": 0,
+    "c23_attributes": 15,
+    "c23_bool_literals": 326,
+    "c23_keywords": 5,
+    "c2y_countof": 0,
+    "complex": 1,
+    "fixed_point": 0,
+    "imaginary_literal": 12,
+    "vector": 3
+   }
+  }
+ }
+}

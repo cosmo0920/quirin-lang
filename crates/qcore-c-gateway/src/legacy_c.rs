@@ -1845,9 +1845,7 @@ fn certificate_input_identity(
     // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): the four baseline dialects
     // keep their one historical byte; C17, C23 and C2y add theirs and, with
     // registered differences, the registry.
-    request_bytes.extend(crate::c_frontend_identity::dialect_identity_bytes(
-        dialect,
-    ));
+    request_bytes.extend(crate::c_frontend_identity::dialect_identity_bytes(dialect));
     request_bytes.push(match function_scope {
         LegacyFunctionScope::PreprocessedTranslationUnit => 0,
         LegacyFunctionScope::MainSourceDefinitions => 1,
