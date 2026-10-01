@@ -235,6 +235,9 @@ pub struct BoundsContracts {
     pub functions: BTreeMap<String, BoundsFunctionContract>,
     /// SHA-256 of each selected module's text, by path.
     pub sources: BTreeMap<String, String>,
+    /// Declarations an analysed body refutes: withdrawn from every dependent
+    /// use ([`Self::contract`]); the defining body still reads its own.
+    pub refuted: std::collections::BTreeSet<String>,
 }
 
 impl BoundsContracts {
@@ -247,10 +250,23 @@ impl BoundsContracts {
             text.push(' ');
             text.push_str(sha);
         }
+        for name in &self.refuted {
+            text.push_str("\nrefuted ");
+            text.push_str(name);
+        }
         sha256_hex(text.as_bytes())
     }
 
+    /// The declaration a caller may rely on: none for a refuted name.
     pub fn contract(&self, name: &str) -> Option<&BoundsFunctionContract> {
+        if self.refuted.contains(name) {
+            return None;
+        }
+        self.functions.get(name)
+    }
+
+    /// The declaration of a body the consumer analyses, refuted or not.
+    pub fn own(&self, name: &str) -> Option<&BoundsFunctionContract> {
         self.functions.get(name)
     }
 }

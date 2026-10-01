@@ -51,6 +51,9 @@ mod condition_acquisition;
 // Card CG02-ELABORATION-CORE (rule 10s): the common expression elaborator and
 // its order model; the G hooks are in `legacy_elaboration.rs`.
 mod elaboration;
+// Card CG16-INDEX-AND-OFFSET-EXTENTS (rule 11s): the separately selected
+// bounds property; no custody route reads it.
+pub mod index_extent;
 mod index_traversal;
 // Card CG04-LOOP-SITE-GENERATIONS: generation-indexed acquisition sites; the G
 // hooks are in `legacy_loop_generations.rs`.
