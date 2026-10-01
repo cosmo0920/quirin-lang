@@ -1668,3 +1668,488 @@ fn a_declared_premise_appears_only_when_its_declaration_is_used() {
     );
     assert_eq!(unused.validated_layout_contracts, vec![RECORD]);
 }
+
+// ---------------------------------------------------------------------------
+// Card CG18-FOOTPRINT-CONNECTION — named premises, views, byte transfers.
+// ---------------------------------------------------------------------------
+
+fn two_allocations(fresh: &[AllocationId]) -> Vec<FootprintEvent> {
+    let mut events = vec![
+        allocate_bytes(1, 1, 16),
+        allocate_bytes(2, 1, 16),
+        slice(10, 1, 1, 0, 8),
+        slice(11, 2, 1, 0, 8),
+    ];
+    events.extend(
+        fresh
+            .iter()
+            .map(|alloc| FootprintEvent::DeclareFreshAllocation { alloc: *alloc }),
+    );
+    events
+}
+
+#[test]
+fn cg18_two_allocations_are_disjoint_only_under_the_named_premise() {
+    // Neither, or only one, declared fresh: the Q662 refusal stands.
+    for fresh in [&[][..], &[1][..], &[2][..]] {
+        let mut events = two_allocations(fresh);
+        events.push(assert_disjoint(10, 11));
+        assert_eq!(
+            refuse(&program(events)),
+            vec![
+                FootprintDiagnostic::CrossAllocationDisjointnessUnsupported {
+                    event: 4 + fresh.len(),
+                    left: 1,
+                    right: 2,
+                }
+            ],
+            "{fresh:?}"
+        );
+    }
+    let mut events = two_allocations(&[1, 2]);
+    events.push(assert_disjoint(10, 11));
+    let checked = accept(&program(events.clone()));
+    assert_eq!(
+        checked.admitted_disjointness,
+        vec![DisjointnessJudgement::DistinctAllocations {
+            event: 6,
+            left: 10,
+            right: 11,
+            left_alloc: 1,
+            right_alloc: 2,
+        }]
+    );
+    assert!(
+        checked
+            .assumptions
+            .contains(&FootprintAssumption::DistinctAllocationsDisjoint)
+    );
+    assert!(
+        checked
+            .assumption_names()
+            .contains("P-DISTINCT-ALLOCATIONS-DISJOINT")
+    );
+    assert_eq!(checked.fresh_allocations, vec![(1, 1), (2, 1)]);
+    recheck_disjoint_footprint_certificate(&program(events), &checked).expect("recheck");
+}
+
+#[test]
+fn cg18_the_premise_is_not_stamped_when_unused() {
+    let mut events = two_allocations(&[1, 2]);
+    events.push(slice(12, 1, 1, 8, 8));
+    events.push(assert_disjoint(10, 12));
+    let checked = accept(&program(events));
+    assert!(
+        !checked
+            .assumptions
+            .contains(&FootprintAssumption::DistinctAllocationsDisjoint)
+    );
+}
+
+#[test]
+fn cg18_a_reallocated_generation_is_not_fresh() {
+    let mut events = two_allocations(&[1, 2]);
+    events.push(FootprintEvent::Reallocate {
+        alloc: 1,
+        generation: 2,
+        count: 16,
+    });
+    events.push(slice(12, 1, 2, 0, 8));
+    events.push(assert_disjoint(12, 11));
+    assert_eq!(
+        refuse(&program(events)),
+        vec![
+            FootprintDiagnostic::CrossAllocationDisjointnessUnsupported {
+                event: 8,
+                left: 1,
+                right: 2,
+            }
+        ]
+    );
+}
+
+#[test]
+fn cg18_freshness_needs_a_live_allocation() {
+    assert_eq!(
+        refuse(&program(vec![FootprintEvent::DeclareFreshAllocation {
+            alloc: 3
+        }])),
+        vec![FootprintDiagnostic::UnknownAllocation { event: 0, alloc: 3 }]
+    );
+    assert_eq!(
+        refuse(&program(vec![
+            allocate_bytes(1, 1, 4),
+            FootprintEvent::Destroy { alloc: 1 },
+            FootprintEvent::DeclareFreshAllocation { alloc: 1 },
+        ])),
+        vec![FootprintDiagnostic::DestroyedAllocation { event: 2, alloc: 1 }]
+    );
+}
+
+#[test]
+fn cg18_views_carry_their_premise_or_are_refused() {
+    let base = vec![allocate_bytes(1, 1, 16), slice(10, 1, 1, 0, 8)];
+    let view = |kind| FootprintEvent::DeriveView {
+        handle: 20,
+        base: 10,
+        view: kind,
+    };
+    let mut events = base.clone();
+    events.push(view(ViewKind::Character));
+    let checked = accept(&program(events));
+    assert_eq!(checked.derived_views, vec![(20, 10, ViewKind::Character)]);
+    assert_eq!(
+        checked.derived_footprints[&20],
+        checked.derived_footprints[&10]
+    );
+    assert!(
+        !checked
+            .assumptions
+            .contains(&FootprintAssumption::EffectiveTypeDeclared)
+    );
+    let mut events = base.clone();
+    events.push(view(ViewKind::EffectiveType));
+    assert!(
+        accept(&program(events))
+            .assumptions
+            .contains(&FootprintAssumption::EffectiveTypeDeclared)
+    );
+    // A punned read: refused as the excluded construct.
+    let mut events = base.clone();
+    events.push(view(ViewKind::Punned));
+    assert_eq!(
+        refuse(&program(events)),
+        vec![FootprintDiagnostic::UnsupportedFootprintConstruct {
+            event: 2,
+            construct: UnsupportedFootprint::TypePunnedAlias,
+        }]
+    );
+    // A view is never a field base, and a stale base yields no view.
+    let mut events = base.clone();
+    events.push(FootprintEvent::Reallocate {
+        alloc: 1,
+        generation: 2,
+        count: 16,
+    });
+    events.push(view(ViewKind::Character));
+    assert!(matches!(
+        refuse(&program(events)).as_slice(),
+        [FootprintDiagnostic::StaleGeneration { event: 3, .. }]
+    ));
+}
+
+#[test]
+fn cg18_a_bitfield_unit_has_no_view_and_no_byte_transfer() {
+    let events = vec![
+        FootprintEvent::Allocate {
+            alloc: 1,
+            generation: 1,
+            shape: ElementShape::Record { record: RECORD },
+            count: 1,
+        },
+        slice(10, 1, 1, 0, 1),
+        FootprintEvent::DeriveField {
+            handle: 20,
+            base: 10,
+            field: 2,
+        },
+    ];
+    let with = |event| FootprintProgram {
+        layout_contracts: vec![two_scalars_and_one_bitfield_unit()],
+        events: {
+            let mut all = events.clone();
+            all.push(event);
+            all
+        },
+    };
+    assert_eq!(
+        refuse(&with(FootprintEvent::DeriveView {
+            handle: 21,
+            base: 20,
+            view: ViewKind::Character,
+        })),
+        vec![FootprintDiagnostic::ElementShapeMismatch {
+            event: 3,
+            handle: 20
+        }]
+    );
+    assert_eq!(
+        refuse(&with(FootprintEvent::ByteFill {
+            destination: 20,
+            bytes: 1
+        })),
+        vec![FootprintDiagnostic::ElementShapeMismatch {
+            event: 3,
+            handle: 20
+        }]
+    );
+}
+
+fn copy(destination: HandleId, source: HandleId, bytes: u32, may_overlap: bool) -> FootprintEvent {
+    FootprintEvent::ByteCopy {
+        destination,
+        source,
+        bytes,
+        may_overlap,
+    }
+}
+
+#[test]
+fn cg18_memcpy_needs_disjoint_ranges_and_memmove_does_not() {
+    // `memcpy(p, p + 1, 4)` over one 16-byte allocation: overlapping.
+    let base = vec![
+        allocate_bytes(1, 1, 16),
+        slice(10, 1, 1, 0, 8),
+        slice(11, 1, 1, 1, 8),
+        slice(12, 1, 1, 8, 8),
+    ];
+    let with = |event| {
+        let mut events = base.clone();
+        events.push(event);
+        program(events)
+    };
+    assert_eq!(
+        refuse(&with(copy(10, 11, 4, false))),
+        vec![FootprintDiagnostic::UnsupportedFootprintConstruct {
+            event: 4,
+            construct: UnsupportedFootprint::OverlappingCopy,
+        }]
+    );
+    // Only the copied bytes count: the first byte of each does not overlap.
+    let checked = accept(&with(copy(10, 11, 1, false)));
+    assert_eq!(
+        checked.byte_transfers,
+        vec![ByteTransferJudgement::Copy {
+            event: 4,
+            destination: 10,
+            source: 11,
+            bytes: 1,
+            may_overlap: false,
+        }]
+    );
+    assert!(
+        checked
+            .assumptions
+            .contains(&FootprintAssumption::ByteRepresentation)
+    );
+    accept(&with(copy(10, 12, 8, false)));
+    // memmove: overlap is its licence.
+    accept(&with(copy(10, 11, 4, true)));
+    // Past either handle.
+    assert_eq!(
+        refuse(&with(copy(10, 12, 9, false))),
+        vec![FootprintDiagnostic::SliceOutOfBounds {
+            event: 4,
+            alloc: 1,
+            elem_end: 9,
+            count: 8,
+        }]
+    );
+    assert_eq!(
+        refuse(&with(copy(10, 12, 0, true))),
+        vec![FootprintDiagnostic::InvalidExtent { event: 4, alloc: 1 }]
+    );
+}
+
+#[test]
+fn cg18_a_copy_across_allocations_needs_the_premise() {
+    let mut events = two_allocations(&[]);
+    events.push(copy(10, 11, 8, false));
+    assert_eq!(
+        refuse(&program(events)),
+        vec![
+            FootprintDiagnostic::CrossAllocationDisjointnessUnsupported {
+                event: 4,
+                left: 1,
+                right: 2,
+            }
+        ]
+    );
+    let mut events = two_allocations(&[1, 2]);
+    events.push(copy(10, 11, 8, false));
+    let checked = accept(&program(events));
+    assert!(
+        checked
+            .assumptions
+            .contains(&FootprintAssumption::DistinctAllocationsDisjoint)
+    );
+    // memmove across allocations needs no disjointness.
+    let mut events = two_allocations(&[]);
+    events.push(copy(10, 11, 8, true));
+    accept(&program(events));
+}
+
+#[test]
+fn cg18_memset_is_bounded_by_its_handle() {
+    let base = vec![allocate_bytes(1, 1, 16), slice(10, 1, 1, 4, 4)];
+    let mut events = base.clone();
+    events.push(FootprintEvent::ByteFill {
+        destination: 10,
+        bytes: 4,
+    });
+    accept(&program(events));
+    let mut events = base;
+    events.push(FootprintEvent::ByteFill {
+        destination: 10,
+        bytes: 5,
+    });
+    assert_eq!(
+        refuse(&program(events)),
+        vec![FootprintDiagnostic::SliceOutOfBounds {
+            event: 2,
+            alloc: 1,
+            elem_end: 5,
+            count: 4,
+        }]
+    );
+}
+
+#[test]
+fn cg18_recheck_compares_the_new_fields() {
+    let mut events = two_allocations(&[1, 2]);
+    events.push(copy(10, 11, 8, false));
+    let program = program(events);
+    let mut forged = accept(&program);
+    forged.byte_transfers.clear();
+    assert_eq!(
+        recheck_disjoint_footprint_certificate(&program, &forged),
+        Err(FootprintRecheckError::FieldMismatch {
+            field: "byte_transfers"
+        })
+    );
+    let mut forged = accept(&program);
+    forged.fresh_allocations.pop();
+    assert_eq!(
+        recheck_disjoint_footprint_certificate(&program, &forged),
+        Err(FootprintRecheckError::FieldMismatch {
+            field: "fresh_allocations"
+        })
+    );
+}
+
+/// The rows of one shared-vector table of `proof/QCore/DisjointFootprint.lean`
+/// (card CG18), each split into its comma-separated fields.
+fn lean_rows(table: &str) -> Vec<Vec<String>> {
+    let lean = include_str!("../../../../proof/QCore/DisjointFootprint.lean");
+    let body = lean
+        .split(&format!("def {table}"))
+        .nth(1)
+        .expect("table")
+        .split(":= [")
+        .nth(1)
+        .expect("table body");
+    let body = &body[..body.find("\n]").expect("end of table")];
+    body.lines()
+        .map(str::trim)
+        .filter(|line| line.starts_with('('))
+        .map(|line| {
+            let inner = line.trim_end_matches(',');
+            inner[1..inner.len() - 1]
+                .split(',')
+                .map(|field| field.trim().trim_start_matches('.').to_owned())
+                .collect()
+        })
+        .collect()
+}
+
+/// Allocations of 16 one-byte elements (`fresh` declared when asked) and one
+/// slice `[start, stop)` on each side.
+fn two_slices(
+    fresh: bool,
+    (left_alloc, left_start, left_stop): (u32, u32, u32),
+    (right_alloc, right_start, right_stop): (u32, u32, u32),
+) -> Vec<FootprintEvent> {
+    let mut events = vec![allocate_bytes(left_alloc, 1, 16)];
+    if right_alloc != left_alloc {
+        events.push(allocate_bytes(right_alloc, 1, 16));
+    }
+    if fresh {
+        events.push(FootprintEvent::DeclareFreshAllocation { alloc: left_alloc });
+        if right_alloc != left_alloc {
+            events.push(FootprintEvent::DeclareFreshAllocation { alloc: right_alloc });
+        }
+    }
+    events.push(slice(10, left_alloc, 1, left_start, left_stop - left_start));
+    events.push(slice(
+        11,
+        right_alloc,
+        1,
+        right_start,
+        right_stop - right_start,
+    ));
+    events
+}
+
+/// The mechanical binding of `pairVectors`: the Rust checker decides every
+/// row as `QCore.DisjointFootprint.pairOutcome` does.
+#[test]
+fn cg18_lean_pair_vectors_match_the_checker() {
+    let rows = lean_rows("pairVectors");
+    assert_eq!(rows.len(), 7);
+    for row in rows {
+        let number = |index: usize| row[index].parse::<u32>().expect("number");
+        let mut events = two_slices(
+            row[0] == "true",
+            (number(1), number(2), number(3)),
+            (number(4), number(5), number(6)),
+        );
+        events.push(assert_disjoint(10, 11));
+        let outcome = match check_disjoint_footprint_program(&program(events)) {
+            Ok(checked) => match checked.admitted_disjointness.as_slice() {
+                [DisjointnessJudgement::DistinctAllocations { .. }] => "disjointUnderPremise",
+                [DisjointnessJudgement::Memory { .. }] => "disjoint",
+                other => panic!("{other:?}"),
+            },
+            Err(diagnostics) => match diagnostics.as_slice() {
+                [FootprintDiagnostic::OverlappingFootprints { .. }] => "overlapping",
+                [FootprintDiagnostic::CrossAllocationDisjointnessUnsupported { .. }] => {
+                    "refusedCross"
+                }
+                _ => "refusedOther",
+            },
+        };
+        assert_eq!(outcome, row[7], "{row:?}");
+    }
+}
+
+/// The mechanical binding of `copyVectors`: the Rust checker decides every
+/// byte copy as `QCore.DisjointFootprint.decideCopy` does.
+#[test]
+fn cg18_lean_copy_vectors_match_the_checker() {
+    let rows = lean_rows("copyVectors");
+    assert_eq!(rows.len(), 9);
+    for row in rows {
+        let number = |index: usize| row[index].parse::<u32>().expect("number");
+        let mut events = two_slices(
+            row[1] == "true",
+            (number(2), number(3), number(4)),
+            (number(5), number(6), number(7)),
+        );
+        events.push(copy(10, 11, number(8), row[0] == "true"));
+        let outcome = match check_disjoint_footprint_program(&program(events)) {
+            Ok(checked)
+                if checked
+                    .assumptions
+                    .contains(&FootprintAssumption::DistinctAllocationsDisjoint) =>
+            {
+                "admittedUnderPremise"
+            }
+            Ok(_) => "admitted",
+            Err(diagnostics) => match diagnostics.as_slice() {
+                [
+                    FootprintDiagnostic::UnsupportedFootprintConstruct {
+                        construct: UnsupportedFootprint::OverlappingCopy,
+                        ..
+                    },
+                ] => "refusedOverlap",
+                [FootprintDiagnostic::SliceOutOfBounds { .. }] => "refusedBounds",
+                [FootprintDiagnostic::CrossAllocationDisjointnessUnsupported { .. }] => {
+                    "refusedCross"
+                }
+                [FootprintDiagnostic::InvalidExtent { .. }] => "refusedExtent",
+                other => panic!("{other:?}"),
+            },
+        };
+        assert_eq!(outcome, row[9], "{row:?}");
+    }
+}

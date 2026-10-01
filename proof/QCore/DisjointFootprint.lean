@@ -524,4 +524,384 @@ example : decideDisjoint (.memory 1 1 ⟨0, 16⟩ none) (.descriptor 3 1)
 example : decideDisjoint (.descriptor 3 1) (.memory 1 1 ⟨0, 16⟩ none)
     = .refused .incomparableKinds := by decide
 
+-- ---------------------------------------------------------------------------
+-- Card CG18-FOOTPRINT-CONNECTION: named premises, views, byte transfers, the
+-- mutex-invariant composition and rule 11a's generations.
+-- ---------------------------------------------------------------------------
+
+/-- Card CG18 (M21). The memory rule with the named premise
+`P-DISTINCT-ALLOCATIONS-DISJOINT`: `fresh` means both live allocation
+generations were declared fresh by an allocator contract. Only a pair of
+distinct allocation identities reads it; every other pair is `decideMemory`. -/
+def decideMemoryWith (fresh : Bool) (allocL genL : Nat) (bytesL : Interval)
+    (unitL : Option Nat) (allocR genR : Nat) (bytesR : Interval) (unitR : Option Nat) :
+    Decision :=
+  if allocL ≠ allocR then (if fresh then .disjoint else .refused .crossAllocation)
+  else decideMemory allocL genL bytesL unitL allocR genR bytesR unitR
+
+def decideDisjointWith (fresh : Bool) : Footprint → Footprint → Decision
+  | .memory allocL genL bytesL unitL, .memory allocR genR bytesR unitR =>
+      decideMemoryWith fresh allocL genL bytesL unitL allocR genR bytesR unitR
+  | left, right => decideDisjoint left right
+
+/-- Without the premise the checker is exactly the pre-card algebra. -/
+theorem without_the_premise_nothing_changes (left right : Footprint) :
+    decideDisjointWith false left right = decideDisjoint left right := by
+  cases left with
+  | memory allocL genL bytesL unitL =>
+      cases right with
+      | memory allocR genR bytesR unitR =>
+          by_cases same : allocL = allocR
+          · simp [decideDisjointWith, decideMemoryWith, decideDisjoint, same]
+          · simp [decideDisjointWith, decideMemoryWith, decideDisjoint, decideMemory, same]
+      | descriptor _ _ => rfl
+  | descriptor _ _ => cases right <;> rfl
+
+/-- The premise decides only a pair of distinct allocation identities: on one
+allocation it changes nothing, whatever it says. -/
+theorem the_premise_reads_only_distinct_allocations (fresh : Bool) {alloc genL genR : Nat}
+    {bytesL bytesR : Interval} {unitL unitR : Option Nat} :
+    decideDisjointWith fresh (.memory alloc genL bytesL unitL) (.memory alloc genR bytesR unitR)
+      = decideDisjoint (.memory alloc genL bytesL unitL) (.memory alloc genR bytesR unitR) := by
+  simp [decideDisjointWith, decideMemoryWith, decideDisjoint]
+
+/-- Disjointness across two allocations is admitted only under the premise. -/
+theorem cross_allocation_disjointness_needs_the_premise {fresh : Bool}
+    {allocL allocR genL genR : Nat} {bytesL bytesR : Interval} {unitL unitR : Option Nat}
+    (distinct : allocL ≠ allocR)
+    (admitted : decideDisjointWith fresh (.memory allocL genL bytesL unitL)
+        (.memory allocR genR bytesR unitR) = .disjoint) :
+    fresh = true := by
+  cases fresh <;> simp_all [decideDisjointWith, decideMemoryWith]
+
+/-- Every admitted judgement is the pre-card algebra's, or a cross-allocation
+pair decided under the premise, which the certificate then names. -/
+theorem an_admitted_judgement_is_grounded_or_premised {fresh : Bool} {left right : Footprint}
+    (admitted : decideDisjointWith fresh left right = .disjoint) :
+    decideDisjoint left right = .disjoint ∨
+      (fresh = true ∧ ∃ allocL genL bytesL unitL allocR genR bytesR unitR,
+        left = .memory allocL genL bytesL unitL ∧ right = .memory allocR genR bytesR unitR ∧
+          allocL ≠ allocR) := by
+  cases left with
+  | memory allocL genL bytesL unitL =>
+      cases right with
+      | memory allocR genR bytesR unitR =>
+          by_cases same : allocL = allocR
+          · subst same
+            left
+            simpa [decideDisjointWith, decideMemoryWith, decideDisjoint] using admitted
+          · right
+            refine ⟨cross_allocation_disjointness_needs_the_premise same admitted, ?_⟩
+            exact ⟨allocL, genL, bytesL, unitL, allocR, genR, bytesR, unitR, rfl, rfl, same⟩
+      | descriptor _ _ => left; simpa [decideDisjointWith] using admitted
+  | descriptor _ _ => left; simpa [decideDisjointWith] using admitted
+
+/-- The premise never reaches a stale, shared-unit, descriptor or mixed
+question: two footprints of one allocation keep every refusal. -/
+theorem the_premise_never_admits_a_shared_unit (fresh : Bool) {alloc gen unit : Nat}
+    {bytesL bytesR : Interval} :
+    decideDisjointWith fresh (.memory alloc gen bytesL (some unit))
+        (.memory alloc gen bytesR (some unit)) = .refused .sharedBitfieldUnit := by
+  simp [decideDisjointWith, decideMemoryWith, decideMemory, sharedUnit]
+
+/-- The outcome of one pair, as the shared vectors name it. -/
+inductive PairOutcome where
+  | disjoint
+  | disjointUnderPremise
+  | overlapping
+  | refusedCross
+  | refusedOther
+  deriving DecidableEq, Repr
+
+def pairOutcome (fresh : Bool) (allocL startL stopL allocR startR stopR : Nat) : PairOutcome :=
+  match decideDisjointWith fresh (.memory allocL 1 ⟨startL, stopL⟩ none)
+      (.memory allocR 1 ⟨startR, stopR⟩ none) with
+  | .disjoint => if allocL = allocR then .disjoint else .disjointUnderPremise
+  | .overlapping => .overlapping
+  | .refused .crossAllocation => .refusedCross
+  | .refused _ => .refusedOther
+
+/-- The shared vectors: `PAIR_VECTORS` in `tests/unit/disjoint_footprint.rs`,
+row by row: fresh, left allocation and bytes, right allocation and bytes. -/
+def pairVectors : List (Bool × Nat × Nat × Nat × Nat × Nat × Nat × PairOutcome) := [
+  (false, 1, 0, 8, 1, 8, 16, .disjoint),
+  (true, 1, 0, 8, 1, 8, 16, .disjoint),
+  (false, 1, 0, 8, 1, 4, 12, .overlapping),
+  (true, 1, 0, 8, 1, 4, 12, .overlapping),
+  (false, 1, 0, 8, 2, 0, 8, .refusedCross),
+  (true, 1, 0, 8, 2, 0, 8, .disjointUnderPremise),
+  (true, 1, 0, 8, 2, 8, 16, .disjointUnderPremise)
+]
+
+theorem pair_vectors_hold :
+    pairVectors.all (fun (f, aL, sL, eL, aR, sR, eR, o) => pairOutcome f aL sL eL aR sR eR == o)
+      = true := by
+  decide
+
+/-- Card CG18 (M22): how a view reads its base's bytes. -/
+inductive ViewKind where
+  | character
+  | effectiveType
+  | punned
+  deriving DecidableEq, Repr
+
+inductive ViewOutcome where
+  /-- Admitted with no premise (a character view). -/
+  | admitted
+  /-- Admitted, carrying `P-EFFECTIVE-TYPE`. -/
+  | admittedUnderPremise
+  | refusedPunned
+  | refusedNotAddressable
+  deriving DecidableEq, Repr
+
+/-- The view rule, in the Rust checker's order: the base must be memory that is
+not a bit-field unit, then the kind decides. -/
+def decideView : Footprint → ViewKind → ViewOutcome
+  | .memory _ _ _ none, .character => .admitted
+  | .memory _ _ _ none, .effectiveType => .admittedUnderPremise
+  | .memory _ _ _ none, .punned => .refusedPunned
+  | _, _ => .refusedNotAddressable
+
+/-- A type-punned view is never admitted, with or without a premise. -/
+theorem a_punned_view_is_refused (base : Footprint) :
+    decideView base .punned ≠ .admitted ∧ decideView base .punned ≠ .admittedUnderPremise := by
+  cases base with
+  | memory _ _ _ unit => cases unit <;> simp [decideView]
+  | descriptor _ _ => simp [decideView]
+
+/-- An admitted view carries a premise exactly when it is an effective-type
+view: a character view needs none (C11 6.5p7), any other needs
+`P-EFFECTIVE-TYPE`. -/
+theorem an_admitted_view_names_its_premise {base : Footprint} {view : ViewKind}
+    (admitted : decideView base view = .admittedUnderPremise) : view = .effectiveType := by
+  cases base with
+  | memory _ _ _ unit => cases unit <;> cases view <;> simp_all [decideView]
+  | descriptor _ _ => simp [decideView] at admitted
+
+/-- A bit-field unit and a descriptor have no bytes to view. -/
+theorem a_unit_or_descriptor_has_no_view (view : ViewKind) (alloc gen unit : Nat)
+    (bytes : Interval) (descriptor cell : Nat) :
+    decideView (.memory alloc gen bytes (some unit)) view = .refusedNotAddressable ∧
+      decideView (.descriptor descriptor cell) view = .refusedNotAddressable := by
+  constructor <;> simp [decideView]
+
+/-- Card CG18 (M26): the first `bytes` bytes of a handle's interval. -/
+def prefixBytes (handle : Interval) (bytes : Nat) : Interval := ⟨handle.start, handle.start + bytes⟩
+
+inductive CopyOutcome where
+  | admitted
+  /-- Admitted across two allocations under `P-DISTINCT-ALLOCATIONS-DISJOINT`. -/
+  | admittedUnderPremise
+  /-- `memcpy` over two ranges sharing a byte: the excluded `OverlappingCopy`. -/
+  | refusedOverlap
+  | refusedBounds
+  | refusedCross
+  | refusedExtent
+  deriving DecidableEq, Repr
+
+/-- The byte-copy rule, in the Rust checker's order: the byte count, then each
+range inside its handle, then (for `memcpy` only) disjointness of the two
+ranges by `decideDisjointWith`. -/
+def decideCopy (mayOverlap fresh : Bool) (allocD : Nat) (dst : Interval) (allocS : Nat)
+    (src : Interval) (bytes : Nat) : CopyOutcome :=
+  if bytes = 0 then .refusedExtent
+  else if dst.start + bytes > dst.stop ∨ src.start + bytes > src.stop then .refusedBounds
+  else if mayOverlap then .admitted
+  else
+    match decideDisjointWith fresh (.memory allocD 1 (prefixBytes dst bytes) none)
+        (.memory allocS 1 (prefixBytes src bytes) none) with
+    | .disjoint => if allocD = allocS then .admitted else .admittedUnderPremise
+    | .overlapping => .refusedOverlap
+    | .refused _ => .refusedCross
+
+/-- An admitted transfer never leaves either handle. -/
+theorem an_admitted_transfer_stays_inside_its_handles {mayOverlap fresh : Bool}
+    {allocD allocS bytes : Nat} {dst src : Interval}
+    (admitted : decideCopy mayOverlap fresh allocD dst allocS src bytes = .admitted ∨
+      decideCopy mayOverlap fresh allocD dst allocS src bytes = .admittedUnderPremise) :
+    (prefixBytes dst bytes).stop ≤ dst.stop ∧ (prefixBytes src bytes).stop ≤ src.stop := by
+  unfold decideCopy at admitted
+  split at admitted
+  · simp at admitted
+  · split at admitted
+    · simp at admitted
+    · rename_i inside
+      simp only [prefixBytes]
+      omega
+
+/-- An admitted `memcpy` within one allocation copies between two ranges that
+share no byte: the overlapping copy stays excluded. -/
+theorem an_admitted_memcpy_shares_no_byte {fresh : Bool} {alloc bytes : Nat}
+    {dst src : Interval} (admitted : decideCopy false fresh alloc dst alloc src bytes = .admitted)
+    (byte : Nat) :
+    ¬((prefixBytes dst bytes).mem byte ∧ (prefixBytes src bytes).mem byte) := by
+  unfold decideCopy at admitted
+  split at admitted
+  · simp at admitted
+  · split at admitted
+    · simp at admitted
+    · simp only [Bool.false_eq_true, ↓reduceIte] at admitted
+      split at admitted
+      · rename_i decided
+        rw [the_premise_reads_only_distinct_allocations] at decided
+        exact admitted_memory_disjointness_shares_no_byte decided byte
+      · simp at admitted
+      · simp at admitted
+
+/-- A `memcpy` across two allocations is admitted only under the premise. -/
+theorem a_cross_allocation_memcpy_needs_the_premise {fresh : Bool} {allocD allocS bytes : Nat}
+    {dst src : Interval} (distinct : allocD ≠ allocS)
+    (admitted : decideCopy false fresh allocD dst allocS src bytes = .admittedUnderPremise) :
+    fresh = true := by
+  unfold decideCopy at admitted
+  split at admitted
+  · simp at admitted
+  · split at admitted
+    · simp at admitted
+    · simp only [Bool.false_eq_true, ↓reduceIte] at admitted
+      split at admitted
+      · rename_i decided
+        exact cross_allocation_disjointness_needs_the_premise distinct decided
+      · simp at admitted
+      · simp at admitted
+
+/-- The shared vectors: `COPY_VECTORS` in `tests/unit/disjoint_footprint.rs`:
+memmove?, fresh, destination allocation and bytes, source allocation and
+bytes, the byte count. -/
+def copyVectors :
+    List (Bool × Bool × Nat × Nat × Nat × Nat × Nat × Nat × Nat × CopyOutcome) := [
+  (false, false, 1, 0, 8, 1, 1, 9, 4, .refusedOverlap),
+  (false, false, 1, 0, 8, 1, 1, 9, 1, .admitted),
+  (false, false, 1, 0, 8, 1, 8, 16, 8, .admitted),
+  (true, false, 1, 0, 8, 1, 1, 9, 4, .admitted),
+  (false, false, 1, 0, 8, 1, 8, 16, 9, .refusedBounds),
+  (true, false, 1, 0, 8, 1, 8, 16, 0, .refusedExtent),
+  (false, false, 1, 0, 8, 2, 0, 8, 8, .refusedCross),
+  (false, true, 1, 0, 8, 2, 0, 8, 8, .admittedUnderPremise),
+  (true, false, 1, 0, 8, 2, 0, 8, 8, .admitted)
+]
+
+theorem copy_vectors_hold :
+    copyVectors.all (fun (m, f, aD, sD, eD, aS, sS, eS, n, o) =>
+      decideCopy m f aD ⟨sD, eD⟩ aS ⟨sS, eS⟩ n == o) = true := by
+  decide
+
+/-- Card CG18 (W08): one interval a mutex-invariant trace names. -/
+structure MutexFootprint where
+  resource : Nat
+  bytes : Interval
+  deriving DecidableEq, Repr
+
+/-- `AccessFootprint.overlaps`: the mutex profile's own overlap test, which
+calls two resources never overlapping. -/
+def mutexOverlaps (f g : MutexFootprint) : Bool :=
+  decide (f.resource = g.resource ∧ f.bytes.start < g.bytes.stop ∧ g.bytes.start < f.bytes.stop)
+
+/-- The composition's admission: every named interval is a live derived export
+(`exports`), and every pair on two resources has both declared fresh. -/
+def composes (exports : List MutexFootprint) (fresh : Nat → Bool)
+    (named : List MutexFootprint) : Bool :=
+  named.all (fun f => exports.contains f) &&
+    named.all (fun f => named.all (fun g =>
+      decide (f.resource = g.resource) || (fresh f.resource && fresh g.resource)))
+
+/-- Every interval an admitted composition names is derived. -/
+theorem composition_binds_every_footprint {exports named : List MutexFootprint}
+    {fresh : Nat → Bool} (admitted : composes exports fresh named = true)
+    {f : MutexFootprint} (named_f : f ∈ named) : f ∈ exports := by
+  simp only [composes, Bool.and_eq_true, List.all_eq_true] at admitted
+  simpa using admitted.1 f named_f
+
+/-- Soundness of the composition: wherever the mutex profile calls two named
+footprints non-overlapping, the footprint model decides their derived
+footprints disjoint — on one resource by interval arithmetic, across two only
+under `P-DISTINCT-ALLOCATIONS-DISJOINT`, which the composition then carries. -/
+theorem composition_backs_every_mutex_disjointness {exports named : List MutexFootprint}
+    {fresh : Nat → Bool} (admitted : composes exports fresh named = true)
+    {f g : MutexFootprint} (named_f : f ∈ named) (named_g : g ∈ named)
+    (apart : mutexOverlaps f g = false) (gen : Nat → Nat) :
+    decideDisjointWith (fresh f.resource && fresh g.resource)
+        (.memory f.resource (gen f.resource) f.bytes none)
+        (.memory g.resource (gen g.resource) g.bytes none) = .disjoint := by
+  simp only [composes, Bool.and_eq_true, List.all_eq_true] at admitted
+  have pair := admitted.2 f named_f g named_g
+  by_cases same : f.resource = g.resource
+  · have bytes : f.bytes.disjoint g.bytes = true := by
+      simp only [mutexOverlaps, same, true_and, decide_eq_false_iff_not, not_and,
+        Nat.not_lt] at apart
+      simp only [Interval.disjoint, decide_eq_true_eq]
+      by_cases h : f.bytes.start < g.bytes.stop
+      · exact Or.inl (apart h)
+      · exact Or.inr (Nat.le_of_not_lt h)
+    simp [decideDisjointWith, decideMemoryWith, decideMemory, same, sharedUnit, bytes]
+  · simp only [same, decide_false, Bool.false_or, Bool.and_eq_true] at pair
+    simp [decideDisjointWith, decideMemoryWith, same, pair.1, pair.2]
+
+/-- Its refusal control: two resources without the premise do not compose,
+although the mutex profile alone calls them non-overlapping. -/
+theorem two_resources_without_the_premise_do_not_compose :
+    composes [⟨7, ⟨0, 8⟩⟩, ⟨8, ⟨0, 8⟩⟩] (fun _ => false) [⟨7, ⟨0, 8⟩⟩, ⟨8, ⟨0, 8⟩⟩] = false ∧
+      mutexOverlaps ⟨7, ⟨0, 8⟩⟩ ⟨8, ⟨0, 8⟩⟩ = false := by
+  decide
+
+/-- And an interval no handle derived does not compose. -/
+theorem an_underived_interval_does_not_compose :
+    composes [⟨7, ⟨0, 8⟩⟩] (fun _ => false) [⟨7, ⟨0, 8⟩⟩, ⟨7, ⟨0, 4⟩⟩] = false := by
+  decide
+
+/-- Card CG18 (M20): rule 11a's three generations of an acquisition site. -/
+inductive SiteGeneration where
+  | current
+  | previous
+  | older
+  deriving DecidableEq, Repr
+
+/-- The core identity of a rule-11a generation, given the core allocations the
+site's current and previous objects are: the older summary has none. -/
+def coreIdentity (current previous : Option Nat) : SiteGeneration → Option Nat
+  | .current => current
+  | .previous => previous
+  | .older => none
+
+/-- Re-acquisition: a fresh allocation becomes current and the old current is
+previous, the same object (rule 11a keeps it precise). -/
+def reacquire (fresh : Nat) (current _previous : Option Nat) : Option Nat × Option Nat :=
+  (some fresh, current)
+
+/-- After a re-acquisition the previous generation names exactly the object the
+current one named, so every handle derived of it still resolves. -/
+theorem the_previous_generation_is_the_former_current (fresh : Nat) (current previous : Option Nat) :
+    coreIdentity (reacquire fresh current previous).1 (reacquire fresh current previous).2
+        .previous = current := by
+  rfl
+
+/-- The summary has no core identity, so no footprint is derived from it. -/
+theorem the_summary_has_no_footprint (current previous : Option Nat) :
+    coreIdentity current previous .older = none := by
+  rfl
+
+/-- Two generations of one site are two allocation identities, so they are
+never assumed disjoint: without the premise the core refuses. -/
+theorem two_generations_of_a_site_are_not_assumed_disjoint {fresh old : Nat}
+    (distinct : fresh ≠ old) {genL genR : Nat} {bytesL bytesR : Interval}
+    {unitL unitR : Option Nat} :
+    decideDisjointWith false (.memory fresh genL bytesL unitL) (.memory old genR bytesR unitR)
+      = .refused .crossAllocation := by
+  simp [decideDisjointWith, decideMemoryWith, distinct]
+
+/-- The shared vectors: `GENERATION_VECTORS` in the gateway's
+`footprint_connection.rs`: after two acquisitions of one site, whether each
+generation has a core identity. -/
+def generationVectors : List (SiteGeneration × Bool) := [
+  (.current, true),
+  (.previous, true),
+  (.older, false)
+]
+
+theorem generation_vectors_hold :
+    generationVectors.all (fun (g, has) =>
+      (coreIdentity (reacquire 2 (some 1) none).1 (reacquire 2 (some 1) none).2 g).isSome == has)
+      = true := by
+  decide
+
 end QCore.DisjointFootprint

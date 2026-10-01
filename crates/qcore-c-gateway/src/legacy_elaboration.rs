@@ -95,6 +95,18 @@ impl Context for GContext<'_> {
         )
     }
 
+    /// Card CG18-FOOTPRINT-CONNECTION (rule 11k): two members of one struct
+    /// object, decided by the core footprint model from Clang's layout.
+    fn disjoint_places(&self, node: &Value, one: &str, other: &str) -> bool {
+        crate::footprint_connection::members_disjoint(
+            node,
+            &self.index.records,
+            one,
+            other,
+            &crate::typed_access_path::record_layout_dump,
+        )
+    }
+
     /// Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): a pointer read of one
     /// automatic local or formal the custody closure proves never bound to a
     /// resource identity. Every other pointer value (a path, a call, a

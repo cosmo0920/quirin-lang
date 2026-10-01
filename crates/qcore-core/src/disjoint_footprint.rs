@@ -32,7 +32,8 @@
 //! * disjointness across two allocation identities — that needs an allocator
 //!   model this profile does not have, so it is a refusal
 //!   ([`FootprintDiagnostic::CrossAllocationDisjointnessUnsupported`]), not a
-//!   free "distinct objects do not alias";
+//!   free "distinct objects do not alias", unless both were declared fresh
+//!   (card `CG18-FOOTPRINT-CONNECTION`, below), which the certificate names;
 //! * unions, flexible array members, variable-length arrays, computed indices,
 //!   pointer arithmetic outside a declared extent, nested anonymous aggregates,
 //!   type-punned aliases, overlapping copies and atomic reclamation.
@@ -51,13 +52,40 @@
 //! [`recheck_disjoint_footprint_certificate`] refuses any certificate carrying
 //! it.
 //!
-//! This is a model-level module. No production audit route calls it and no
-//! other checker composes with it; the one source route that reaches it is
+//! This is a model-level module. The source routes that reach it are
 //! `source.socket.v1`'s `disjoint NAME NAME;` question, through
 //! [`crate::socket_footprint`] (card `CT42-CELL-ROUTE`), which hands this
 //! checker a derived-alias projection and reports its `SharedProtocolCell`
-//! (`Q664`) unedited. Composing it with `CheckedMutexInvariantV1` is the
-//! follow-on unit recorded in `docs/design/DISJOINT_FOOTPRINT_PROFILE.md`.
+//! (`Q664`) unedited, `source.bitfield-concurrency.v1`, and the custody
+//! gateway's unordered field pairs (cards `CG13-UNION-AND-BITFIELD-PLACES` and
+//! `CG18-FOOTPRINT-CONNECTION`, gateway rules 10w and 11k).
+//!
+//! # Card `CG18-FOOTPRINT-CONNECTION`
+//!
+//! Four additions, each a new event that no older trace contains, so every
+//! older certificate is unchanged:
+//!
+//! * **Stated cross-allocation disjointness** (M21).
+//!   [`FootprintEvent::DeclareFreshAllocation`] records that an allocator
+//!   contract declares a generation fresh; two allocation identities are
+//!   decided disjoint only when both live generations were, and the
+//!   certificate then carries
+//!   [`FootprintAssumption::DistinctAllocationsDisjoint`]. Every other pair
+//!   keeps `Q662`.
+//! * **Views** (M22). [`FootprintEvent::DeriveView`]: a character view needs
+//!   no premise, an effective-type view carries
+//!   [`FootprintAssumption::EffectiveTypeDeclared`], and a punned view is the
+//!   excluded [`UnsupportedFootprint::TypePunnedAlias`].
+//! * **Byte transfers** (M26). [`FootprintEvent::ByteCopy`] and
+//!   [`FootprintEvent::ByteFill`] check the byte ranges of `memcpy`,
+//!   `memmove` and `memset`; an overlapping `memcpy` stays the excluded
+//!   [`UnsupportedFootprint::OverlappingCopy`], and every admitted transfer
+//!   carries [`FootprintAssumption::ByteRepresentation`].
+//! * **Mutex invariants** (W08) compose with derived footprints in
+//!   [`crate::footprint_mutex`].
+//!
+//! No new diagnostic code: each refusal is a condition of an existing one
+//! (`Q650`, `Q652`, `Q653`, `Q655`, `Q659`, `Q662`, `Q667`).
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
@@ -144,6 +172,46 @@ pub enum UnsupportedFootprint {
     AtomicReclamation,
 }
 
+/// How a view reads the bytes of the handle it is derived from (card
+/// `CG18-FOOTPRINT-CONNECTION`, gap entry M22). A view never changes the
+/// bytes: it names the type through which they are read, and so the premise
+/// the read rests on.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ViewKind {
+    /// A character-typed lvalue. C11 6.5p7's last bullet permits it over an
+    /// object of any effective type, so it carries no premise.
+    Character,
+    /// An lvalue whose type the caller states is compatible with the
+    /// object's effective type (C11 6.5p6-7). Stamps
+    /// [`FootprintAssumption::EffectiveTypeDeclared`].
+    EffectiveType,
+    /// Any other lvalue type: a type-punned alias. Refused as
+    /// [`UnsupportedFootprint::TypePunnedAlias`] (`Q667`), never admitted.
+    Punned,
+}
+
+/// One admitted `memcpy`/`memmove`/`memset` byte range (card
+/// `CG18-FOOTPRINT-CONNECTION`, gap entry M26), recorded on the certificate.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ByteTransferJudgement {
+    /// A copy of `bytes` bytes from the start of `source` to the start of
+    /// `destination`. `may_overlap` is `memmove`'s licence; without it the
+    /// two ranges were decided disjoint.
+    Copy {
+        event: usize,
+        destination: HandleId,
+        source: HandleId,
+        bytes: u32,
+        may_overlap: bool,
+    },
+    /// A fill of the first `bytes` bytes of `destination`.
+    Fill {
+        event: usize,
+        destination: HandleId,
+        bytes: u32,
+    },
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum FootprintEvent {
     /// Introduce generation `generation` of `alloc` with `count` elements.
@@ -226,6 +294,47 @@ pub enum FootprintEvent {
     },
     Unsupported {
         construct: UnsupportedFootprint,
+    },
+    /// Card `CG18-FOOTPRINT-CONNECTION` (M21): the live generation of `alloc`
+    /// is an object an allocator contract declares fresh — C11 7.22.3p1's
+    /// "a pointer to an object disjoint from any other object". Two
+    /// allocations whose live generations are both declared fresh are
+    /// decided disjoint under the named premise
+    /// [`FootprintAssumption::DistinctAllocationsDisjoint`], stamped only when
+    /// a judgement uses it; every other pair of allocation identities keeps
+    /// the `Q662` refusal. A reallocation's new generation is not fresh until
+    /// declared again.
+    DeclareFreshAllocation {
+        alloc: AllocationId,
+    },
+    /// Card `CG18-FOOTPRINT-CONNECTION` (M22): a view of `base`'s bytes
+    /// through an lvalue of the given kind. The view has `base`'s footprint;
+    /// no field is derived through it. A punned view is refused (`Q667`), and
+    /// a base that is a bit-field unit or a descriptor is refused (`Q659`).
+    DeriveView {
+        handle: HandleId,
+        base: HandleId,
+        view: ViewKind,
+    },
+    /// Card `CG18-FOOTPRINT-CONNECTION` (M26): `memcpy` (`may_overlap`
+    /// false) or `memmove` (true) of `bytes` bytes from the start of `source`
+    /// to the start of `destination`. Both ranges must lie inside their
+    /// handles (`Q653`); a `memcpy` whose ranges share a byte is the excluded
+    /// [`UnsupportedFootprint::OverlappingCopy`] (`Q667`), and one across two
+    /// allocations needs [`FootprintAssumption::DistinctAllocationsDisjoint`]
+    /// (else `Q662`). Only a property that claims byte-level safety asks
+    /// this; custody contracts for these calls are unchanged.
+    ByteCopy {
+        destination: HandleId,
+        source: HandleId,
+        bytes: u32,
+        may_overlap: bool,
+    },
+    /// Card `CG18-FOOTPRINT-CONNECTION` (M26): `memset` of the first `bytes`
+    /// bytes of `destination` (`Q653` when they leave it).
+    ByteFill {
+        destination: HandleId,
+        bytes: u32,
     },
 }
 
@@ -313,6 +422,17 @@ pub enum DisjointnessJudgement {
         left_cell: ProtocolCellId,
         right_cell: ProtocolCellId,
     },
+    /// Card `CG18-FOOTPRINT-CONNECTION` (M21): two distinct allocations whose
+    /// live generations were both declared fresh. Decided only under
+    /// [`FootprintAssumption::DistinctAllocationsDisjoint`], which the
+    /// certificate then carries.
+    DistinctAllocations {
+        event: usize,
+        left: HandleId,
+        right: HandleId,
+        left_alloc: AllocationId,
+        right_alloc: AllocationId,
+    },
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -331,6 +451,35 @@ pub enum FootprintAssumption {
     /// The premise this profile discharges. The checker never emits it and
     /// recheck refuses a certificate that carries it.
     DeclaredDisjointness,
+    /// `P-DISTINCT-ALLOCATIONS-DISJOINT` (card `CG18-FOOTPRINT-CONNECTION`,
+    /// M21): two allocations an allocator contract declared fresh are
+    /// distinct objects while both are live (C11 7.22.3p1). Stamped only when
+    /// an admitted judgement crossed two allocation identities.
+    DistinctAllocationsDisjoint,
+    /// `P-EFFECTIVE-TYPE` (M22): a view's type is compatible with the
+    /// effective type of the bytes it reads (C11 6.5p6-7).
+    EffectiveTypeDeclared,
+    /// `P-BYTE-REPRESENTATION` (M26): the bytes a `memcpy`/`memmove`/`memset`
+    /// writes are read back only through an lvalue for which they are a
+    /// valid representation (C11 6.2.6.1p5, 6.5p6). The same premise the
+    /// Borrowed `memset`/`memcpy` declarations and a character-typed store
+    /// rest on (`W43-INDIRECT-BYTE-STORE-REPRESENTATION-PREMISE`).
+    ByteRepresentation,
+}
+
+impl FootprintAssumption {
+    /// The premise's published name.
+    pub const fn premise_name(self) -> &'static str {
+        match self {
+            Self::AllocationExtentDeclared => "AllocationExtentDeclared",
+            Self::DeclaredRecordLayout => "DeclaredRecordLayout",
+            Self::DeclaredProtocolCellIdentity => "DeclaredProtocolCellIdentity",
+            Self::DeclaredDisjointness => "DeclaredDisjointness",
+            Self::DistinctAllocationsDisjoint => "P-DISTINCT-ALLOCATIONS-DISJOINT",
+            Self::EffectiveTypeDeclared => "P-EFFECTIVE-TYPE",
+            Self::ByteRepresentation => "P-BYTE-REPRESENTATION",
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -502,6 +651,13 @@ pub struct FootprintCertificate {
     pub live_allocations: Vec<(AllocationId, Generation)>,
     pub validated_layout_contracts: Vec<RecordId>,
     pub protocol_cells: BTreeMap<DescriptorId, ProtocolCellId>,
+    /// Card `CG18-FOOTPRINT-CONNECTION`: every allocation generation declared
+    /// fresh, in declaration order.
+    pub fresh_allocations: Vec<(AllocationId, Generation)>,
+    /// Every admitted view: `(view, base, kind)`.
+    pub derived_views: Vec<(HandleId, HandleId, ViewKind)>,
+    /// Every admitted byte transfer.
+    pub byte_transfers: Vec<ByteTransferJudgement>,
 }
 
 impl FootprintCertificate {
@@ -510,12 +666,7 @@ impl FootprintCertificate {
     pub fn assumption_names(&self) -> BTreeSet<&'static str> {
         self.assumptions
             .iter()
-            .map(|assumption| match assumption {
-                FootprintAssumption::AllocationExtentDeclared => "AllocationExtentDeclared",
-                FootprintAssumption::DeclaredRecordLayout => "DeclaredRecordLayout",
-                FootprintAssumption::DeclaredProtocolCellIdentity => "DeclaredProtocolCellIdentity",
-                FootprintAssumption::DeclaredDisjointness => "DeclaredDisjointness",
-            })
+            .map(|assumption| assumption.premise_name())
             .collect()
     }
 }
@@ -671,13 +822,18 @@ struct HandleState {
 /// This is the whole algebra, kept in one function so the Lean model has one
 /// counterpart. `Ok(true)` means the checker proved them disjoint; `Ok(false)`
 /// means it proved them overlapping; `Err` means the question is outside the
-/// profile and is refused.
+/// profile and is refused. `fresh` is card `CG18-FOOTPRINT-CONNECTION`'s
+/// premise input: both footprints' live allocation generations were declared
+/// fresh. It is read only for two distinct allocation identities, and a
+/// judgement it admits is [`DisjointnessJudgement::DistinctAllocations`]
+/// (`QCore.DisjointFootprint.decideMemoryWith`).
 fn decide_disjoint(
     event: usize,
     left: HandleId,
     right: HandleId,
     left_footprint: DerivedFootprint,
     right_footprint: DerivedFootprint,
+    fresh: bool,
 ) -> Result<(bool, DisjointnessJudgement), FootprintDiagnostic> {
     match (left_footprint, right_footprint) {
         (
@@ -698,6 +854,18 @@ fn decide_disjoint(
                 ..
             },
         ) => {
+            if left_alloc != right_alloc && fresh {
+                return Ok((
+                    true,
+                    DisjointnessJudgement::DistinctAllocations {
+                        event,
+                        left,
+                        right,
+                        left_alloc,
+                        right_alloc,
+                    },
+                ));
+            }
             if left_alloc != right_alloc {
                 return Err(
                     FootprintDiagnostic::CrossAllocationDisjointnessUnsupported {
@@ -815,6 +983,10 @@ pub fn check_disjoint_footprint_program(
     let mut judgements = Vec::<DisjointnessJudgement>::new();
     let mut protocol_cells = BTreeMap::<DescriptorId, ProtocolCellId>::new();
     let mut assumptions = BTreeSet::<FootprintAssumption>::new();
+    // Card CG18-FOOTPRINT-CONNECTION.
+    let mut fresh = Vec::<(AllocationId, Generation)>::new();
+    let mut views = Vec::<(HandleId, HandleId, ViewKind)>::new();
+    let mut transfers = Vec::<ByteTransferJudgement>::new();
 
     for (index, event) in program.events.iter().enumerate() {
         match event {
@@ -1230,7 +1402,8 @@ pub fn check_disjoint_footprint_program(
                 if failed {
                     continue;
                 }
-                match decide_disjoint(index, *left, *right, resolved[0], resolved[1]) {
+                let both_fresh = is_fresh(&fresh, resolved[0]) && is_fresh(&fresh, resolved[1]);
+                match decide_disjoint(index, *left, *right, resolved[0], resolved[1], both_fresh) {
                     Err(diagnostic) => diagnostics.push(diagnostic),
                     Ok((false, _)) => {
                         diagnostics.push(FootprintDiagnostic::OverlappingFootprints {
@@ -1239,7 +1412,12 @@ pub fn check_disjoint_footprint_program(
                             right: *right,
                         });
                     }
-                    Ok((true, judgement)) => judgements.push(judgement),
+                    Ok((true, judgement)) => {
+                        if matches!(judgement, DisjointnessJudgement::DistinctAllocations { .. }) {
+                            assumptions.insert(FootprintAssumption::DistinctAllocationsDisjoint);
+                        }
+                        judgements.push(judgement);
+                    }
                 }
             }
 
@@ -1247,6 +1425,164 @@ pub fn check_disjoint_footprint_program(
                 diagnostics.push(FootprintDiagnostic::UnsupportedFootprintConstruct {
                     event: index,
                     construct: *construct,
+                });
+            }
+
+            // ---- card CG18-FOOTPRINT-CONNECTION ----
+            FootprintEvent::DeclareFreshAllocation { alloc } => {
+                let Some(state) = allocations.get(alloc) else {
+                    diagnostics.push(FootprintDiagnostic::UnknownAllocation {
+                        event: index,
+                        alloc: *alloc,
+                    });
+                    continue;
+                };
+                if !state.live {
+                    diagnostics.push(FootprintDiagnostic::DestroyedAllocation {
+                        event: index,
+                        alloc: *alloc,
+                    });
+                    continue;
+                }
+                let key = (*alloc, state.generation);
+                if !fresh.contains(&key) {
+                    fresh.push(key);
+                }
+            }
+
+            FootprintEvent::DeriveView { handle, base, view } => {
+                if !minted_handles.insert(*handle) {
+                    diagnostics.push(FootprintDiagnostic::IdentityNotFresh {
+                        event: index,
+                        handle: *handle,
+                    });
+                    continue;
+                }
+                let Some(footprint) =
+                    resolve_live(index, *base, &handles, &allocations, &mut diagnostics)
+                else {
+                    continue;
+                };
+                if !byte_addressable(footprint) {
+                    diagnostics.push(FootprintDiagnostic::ElementShapeMismatch {
+                        event: index,
+                        handle: *base,
+                    });
+                    continue;
+                }
+                match view {
+                    ViewKind::Punned => {
+                        diagnostics.push(FootprintDiagnostic::UnsupportedFootprintConstruct {
+                            event: index,
+                            construct: UnsupportedFootprint::TypePunnedAlias,
+                        });
+                        continue;
+                    }
+                    ViewKind::EffectiveType => {
+                        assumptions.insert(FootprintAssumption::EffectiveTypeDeclared);
+                    }
+                    ViewKind::Character => {}
+                }
+                // A view is never a field base: `single_element` stays false.
+                handles.insert(
+                    *handle,
+                    HandleState {
+                        footprint,
+                        single_element: false,
+                        retired: false,
+                    },
+                );
+                derived.insert(*handle, footprint);
+                views.push((*handle, *base, *view));
+            }
+
+            FootprintEvent::ByteCopy {
+                destination,
+                source,
+                bytes,
+                may_overlap,
+            } => {
+                let target = resolve_live(
+                    index,
+                    *destination,
+                    &handles,
+                    &allocations,
+                    &mut diagnostics,
+                );
+                let origin = resolve_live(index, *source, &handles, &allocations, &mut diagnostics);
+                let (Some(target), Some(origin)) = (target, origin) else {
+                    continue;
+                };
+                let Some(target_range) =
+                    byte_range(index, *destination, target, *bytes, &mut diagnostics)
+                else {
+                    continue;
+                };
+                let Some(origin_range) =
+                    byte_range(index, *source, origin, *bytes, &mut diagnostics)
+                else {
+                    continue;
+                };
+                if !*may_overlap {
+                    let both_fresh = is_fresh(&fresh, target) && is_fresh(&fresh, origin);
+                    match decide_disjoint(
+                        index,
+                        *destination,
+                        *source,
+                        target_range,
+                        origin_range,
+                        both_fresh,
+                    ) {
+                        Err(diagnostic) => {
+                            diagnostics.push(diagnostic);
+                            continue;
+                        }
+                        Ok((false, _)) => {
+                            diagnostics.push(FootprintDiagnostic::UnsupportedFootprintConstruct {
+                                event: index,
+                                construct: UnsupportedFootprint::OverlappingCopy,
+                            });
+                            continue;
+                        }
+                        Ok((true, judgement)) => {
+                            if matches!(
+                                judgement,
+                                DisjointnessJudgement::DistinctAllocations { .. }
+                            ) {
+                                assumptions
+                                    .insert(FootprintAssumption::DistinctAllocationsDisjoint);
+                            }
+                        }
+                    }
+                }
+                assumptions.insert(FootprintAssumption::ByteRepresentation);
+                transfers.push(ByteTransferJudgement::Copy {
+                    event: index,
+                    destination: *destination,
+                    source: *source,
+                    bytes: *bytes,
+                    may_overlap: *may_overlap,
+                });
+            }
+
+            FootprintEvent::ByteFill { destination, bytes } => {
+                let Some(target) = resolve_live(
+                    index,
+                    *destination,
+                    &handles,
+                    &allocations,
+                    &mut diagnostics,
+                ) else {
+                    continue;
+                };
+                if byte_range(index, *destination, target, *bytes, &mut diagnostics).is_none() {
+                    continue;
+                }
+                assumptions.insert(FootprintAssumption::ByteRepresentation);
+                transfers.push(ByteTransferJudgement::Fill {
+                    event: index,
+                    destination: *destination,
+                    bytes: *bytes,
                 });
             }
         }
@@ -1272,6 +1608,106 @@ pub fn check_disjoint_footprint_program(
         live_allocations,
         validated_layout_contracts: validated,
         protocol_cells,
+        fresh_allocations: fresh,
+        derived_views: views,
+        byte_transfers: transfers,
+    })
+}
+
+/// Card CG18: whether a memory footprint's allocation generation was declared
+/// fresh. A descriptor is never fresh.
+fn is_fresh(fresh: &[(AllocationId, Generation)], footprint: DerivedFootprint) -> bool {
+    match footprint {
+        DerivedFootprint::Memory {
+            alloc, generation, ..
+        } => fresh.contains(&(alloc, generation)),
+        DerivedFootprint::Descriptor { .. } => false,
+    }
+}
+
+/// Card CG18: a footprint whose bytes a view or a byte transfer may name:
+/// memory that is not a bit-field storage unit.
+const fn byte_addressable(footprint: DerivedFootprint) -> bool {
+    matches!(footprint, DerivedFootprint::Memory { unit: None, .. })
+}
+
+/// Card CG18: resolve a handle a view or a byte transfer names, refusing an
+/// unknown or retired one exactly as [`FootprintEvent::AssertDisjoint`] does.
+fn resolve_live(
+    event: usize,
+    handle: HandleId,
+    handles: &BTreeMap<HandleId, HandleState>,
+    allocations: &BTreeMap<AllocationId, AllocationState>,
+    diagnostics: &mut Vec<FootprintDiagnostic>,
+) -> Option<DerivedFootprint> {
+    match handles.get(&handle) {
+        None => {
+            diagnostics.push(FootprintDiagnostic::UnknownHandle { event, handle });
+            None
+        }
+        Some(state) if state.retired => {
+            let (alloc, named) = match state.footprint {
+                DerivedFootprint::Memory {
+                    alloc, generation, ..
+                } => (alloc, generation),
+                DerivedFootprint::Descriptor { descriptor, .. } => (descriptor, 0),
+            };
+            diagnostics.push(FootprintDiagnostic::StaleGeneration {
+                event,
+                alloc,
+                named,
+                live: allocations.get(&alloc).map(|state| state.generation),
+            });
+            None
+        }
+        Some(state) => Some(state.footprint),
+    }
+}
+
+/// Card CG18 (M26): the first `bytes` bytes of `footprint`, or a refusal: a
+/// bit-field unit or a descriptor (`Q659`), zero bytes (`Q650`), or a range
+/// past the handle (`Q653`, `elem_end` the requested bytes and `count` the
+/// handle's).
+fn byte_range(
+    event: usize,
+    handle: HandleId,
+    footprint: DerivedFootprint,
+    bytes: u32,
+    diagnostics: &mut Vec<FootprintDiagnostic>,
+) -> Option<DerivedFootprint> {
+    let DerivedFootprint::Memory {
+        alloc,
+        generation,
+        byte_start,
+        byte_end,
+        unit: None,
+        ..
+    } = footprint
+    else {
+        diagnostics.push(FootprintDiagnostic::ElementShapeMismatch { event, handle });
+        return None;
+    };
+    if bytes == 0 {
+        diagnostics.push(FootprintDiagnostic::InvalidExtent { event, alloc });
+        return None;
+    }
+    let length = byte_end - byte_start;
+    if bytes > length {
+        diagnostics.push(FootprintDiagnostic::SliceOutOfBounds {
+            event,
+            alloc,
+            elem_end: u64::from(bytes),
+            count: length,
+        });
+        return None;
+    }
+    Some(DerivedFootprint::Memory {
+        alloc,
+        generation,
+        byte_start,
+        byte_end: byte_start + bytes,
+        unit: None,
+        bits: None,
     })
 }
 
@@ -1312,7 +1748,7 @@ pub fn recheck_disjoint_footprint_certificate(
     }
     let rederived = check_disjoint_footprint_program(program)
         .map_err(FootprintRecheckError::ProgramRejected)?;
-    let checks: [(&'static str, bool); 9] = [
+    let checks: [(&'static str, bool); 12] = [
         ("profile", certificate.profile == rederived.profile),
         (
             "assumptions",
@@ -1345,6 +1781,18 @@ pub fn recheck_disjoint_footprint_certificate(
         (
             "protocol_cells",
             certificate.protocol_cells == rederived.protocol_cells,
+        ),
+        (
+            "fresh_allocations",
+            certificate.fresh_allocations == rederived.fresh_allocations,
+        ),
+        (
+            "derived_views",
+            certificate.derived_views == rederived.derived_views,
+        ),
+        (
+            "byte_transfers",
+            certificate.byte_transfers == rederived.byte_transfers,
         ),
     ];
     for (field, matches) in checks {

@@ -1929,6 +1929,21 @@ retained but cannot establish disjointness. All bounded source-shape,
 worker-body, capture, join and successful-window grammar refusals remain
 `Q600` under the `Concurrency` pass.
 
+Card `CG18-FOOTPRINT-CONNECTION` (wave 48) widens eight conditions of the
+`Q650`–`Q667` band and allocates nothing (the `Q-NAMESPACE-DECISION` icebox).
+Each is a new route to a condition the band already owns: `Q650` a byte
+transfer of zero bytes; `Q652` and `Q655` a view or a byte transfer naming a
+retired or unknown handle; `Q653` a `memcpy`/`memmove`/`memset` byte count
+past its handle; `Q659` a view or a byte transfer over a bit-field storage
+unit or a descriptor; `Q662` a `memcpy` across two allocations, and a
+mutex-invariant composition spanning two resources, whose live generations
+were not both declared fresh (`P-DISTINCT-ALLOCATIONS-DISJOINT`); `Q665` an
+interval a composed mutex-invariant trace names that no live derived handle
+exports; and `Q667` a type-punned view (`TypePunnedAlias`) and a `memcpy`
+whose two ranges share a byte (`OverlappingCopy`), both constructs the band
+already refused. No decision of the band moved for a trace without the new
+events (`QCore.DisjointFootprint.without_the_premise_nothing_changes`).
+
 `SOURCE-SCALAR-CALLS-V1` extends the existing OrdinaryTypes pass's Q020
 conditions to scalar-call type/arity errors, unsupported bounded-profile forms,
 cycles, syntax/execution bounds, and checked arithmetic failure on the closed

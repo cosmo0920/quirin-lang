@@ -111,6 +111,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg15-storage-duration-and-volatile](cg15-storage-duration-and-volatile/README.md) | CG15-STORAGE-DURATION-AND-VOLATILE |
 
+| [cg18-footprint-connection](cg18-footprint-connection/README.md) | CG18-FOOTPRINT-CONNECTION |
+
 | [cg19-atomic-source-route](cg19-atomic-source-route/README.md) | CG19-ATOMIC-SOURCE-ROUTE |
 
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |

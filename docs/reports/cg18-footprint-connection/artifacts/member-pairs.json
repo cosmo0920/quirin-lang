@@ -1,0 +1,84 @@
+{
+ "pairs": [
+  {
+   "stream": "after-parity.jsonl",
+   "source": "1b07cf5bfdc8",
+   "one": "server->worker_id",
+   "other": "worker->idx",
+   "decision": "no-common-object",
+   "consultations": 3
+  },
+  {
+   "stream": "after-parity.jsonl",
+   "source": "4c1f99b77ec8",
+   "one": "pidstate->hi",
+   "other": "pidstate->lo",
+   "decision": "disjoint",
+   "consultations": 12
+  },
+  {
+   "stream": "after-parity.jsonl",
+   "source": "4c1f99b77ec8",
+   "one": "pidstate->window",
+   "other": "pidstate->hi",
+   "decision": "disjoint",
+   "consultations": 12
+  },
+  {
+   "stream": "after-parity.jsonl",
+   "source": "4c1f99b77ec8",
+   "one": "pidstate->window",
+   "other": "pidstate->lo",
+   "decision": "disjoint",
+   "consultations": 12
+  },
+  {
+   "stream": "after-parity.jsonl",
+   "source": "79a98887feb8",
+   "one": "p->header_max",
+   "other": "p->header_min",
+   "decision": "disjoint",
+   "consultations": 18
+  },
+  {
+   "stream": "after-parity.jsonl",
+   "source": "79a98887feb8",
+   "one": "p->header_val",
+   "other": "p->start",
+   "decision": "disjoint",
+   "consultations": 9
+  },
+  {
+   "stream": "after-parity.jsonl",
+   "source": "8c632eb7a015",
+   "one": "rkb->rkb_corrid",
+   "other": "rkbuf->rkbuf_corrid",
+   "decision": "no-common-object",
+   "consultations": 3
+  },
+  {
+   "stream": "after-parity.jsonl",
+   "source": "b16424e06a2a",
+   "one": "size*",
+   "other": "field->array_size",
+   "decision": "no-common-object",
+   "consultations": 10
+  },
+  {
+   "stream": "after-parity.jsonl",
+   "source": "b24efbad0917",
+   "one": "rktp->rktp_msgid",
+   "other": "rkm->rkm_u.producer.msgid",
+   "decision": "no-common-object",
+   "consultations": 3
+  },
+  {
+   "stream": "after-parity.jsonl",
+   "source": "d6785fbb2b7e",
+   "one": "mshgrp->group_epoch",
+   "other": "member->member_epoch",
+   "decision": "no-common-object",
+   "consultations": 3
+  }
+ ]
+}

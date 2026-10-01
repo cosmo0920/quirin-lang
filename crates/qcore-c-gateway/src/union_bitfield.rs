@@ -269,6 +269,10 @@ pub(crate) struct RecordFacts {
     /// A bit-field's or union member's `FieldDecl` id → its name (empty for
     /// an unnamed one).
     pub(crate) field_names: BTreeMap<String, String>,
+    /// Card CG18-FOOTPRINT-CONNECTION (rule 11k): every member of a complete
+    /// `struct`, `FieldDecl` id → (the struct's `RecordDecl` id, the member's
+    /// name, empty for an unnamed one).
+    pub(crate) struct_members: BTreeMap<String, (String, String)>,
 }
 
 impl RecordFacts {
@@ -291,6 +295,22 @@ impl RecordFacts {
             && let Some(name) = record["name"].as_str().filter(|name| !name.is_empty())
         {
             self.names.insert(id.to_owned(), name.to_owned());
+        }
+        if tag == Some("struct") {
+            for field in children(record)
+                .iter()
+                .filter(|child| kind(child) == "FieldDecl")
+            {
+                if let Some(field_id) = field["id"].as_str() {
+                    self.struct_members.insert(
+                        field_id.to_owned(),
+                        (
+                            id.to_owned(),
+                            field["name"].as_str().unwrap_or("").to_owned(),
+                        ),
+                    );
+                }
+            }
         }
         if tag == Some("union") {
             for field in children(record)

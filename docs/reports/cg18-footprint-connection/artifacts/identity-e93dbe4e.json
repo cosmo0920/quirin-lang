@@ -1,0 +1,64 @@
+{
+ "corpus": {
+  "before": {
+   "digest": "d42a99e5e677a44584e883b984085a8e246190fe39bb7987fc4e67b508ba2f33",
+   "totals": {
+    "Unknown": 4201,
+    "Safe": 623,
+    "Unsafe": 10
+   }
+  },
+  "after": {
+   "digest": "691d6fda01fed97871befd7769976c69bcab53338ab473ed9a9717e7b2c61df9",
+   "totals": {
+    "Unknown": 4201,
+    "Safe": 623,
+    "Unsafe": 10
+   }
+  },
+  "move_counts": {},
+  "same_status_functions_with_changed_diagnostics": 2
+ },
+ "system": {
+  "before": {
+   "digest": "6339698303e4b585b93700d4e59789d496cc11d7eaf3868db14527a2c029206f",
+   "totals": {
+    "Unknown": 190,
+    "Safe": 42,
+    "Unsafe": 2
+   }
+  },
+  "after": {
+   "digest": "6339698303e4b585b93700d4e59789d496cc11d7eaf3868db14527a2c029206f",
+   "totals": {
+    "Unknown": 190,
+    "Safe": 42,
+    "Unsafe": 2
+   }
+  },
+  "move_counts": {},
+  "same_status_functions_with_changed_diagnostics": 0
+ },
+ "slice": {
+  "before": {
+   "digest": "4c4d5653552bf2f2c728831336c694daa7169f0d2d4320fa6969415289349c04",
+   "totals": {
+    "Unknown": 239,
+    "Safe": 29,
+    "Pending": 1,
+    "Unsafe": 1
+   }
+  },
+  "after": {
+   "digest": "4c4d5653552bf2f2c728831336c694daa7169f0d2d4320fa6969415289349c04",
+   "totals": {
+    "Unknown": 239,
+    "Safe": 29,
+    "Pending": 1,
+    "Unsafe": 1
+   }
+  },
+  "move_counts": {},
+  "same_status_functions_with_changed_diagnostics": 0
+ }
+}

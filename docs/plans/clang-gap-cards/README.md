@@ -374,6 +374,17 @@ High for anything that could publish a wrong Safe, Medium for measurement.
   - *Locks.* Access footprints compose with mutex invariants beyond
     `source.socket.v1`.
   - *Absorbs:* W43-INDIRECT-BYTE-STORE-REPRESENTATION-PREMISE.
+  - *Status (wave 48, round 7).* Landed (gateway rule 11k): route G admits an
+    unsequenced pair of two members of one struct object when the core model
+    decides them disjoint from Clang's layout, and nothing across two objects;
+    the core gains stated cross-allocation disjointness
+    (`P-DISTINCT-ALLOCATIONS-DISJOINT`), views (`P-EFFECTIVE-TYPE`, punned
+    refused), byte transfers (`P-BYTE-REPRESENTATION`, overlapping `memcpy`
+    refused) and the mutex-invariant composition, reached from
+    `source.mutex.guard.v1`. No corpus, system or slice function moved (5
+    member pairs admitted in 2 corpus functions, leaves only). Residuals
+    `CG18-CROSS-OBJECT-PATH-PAIRS` and `CG18-FOOTPRINT-CONSUMERS`.
+    [Report](../../reports/cg18-footprint-connection/README.md).
 - **CG19: atomic source route.**
   - *Change.* C `AtomicExpr`, atomic casts and `_Atomic` accesses route to the
     core atomic model.
