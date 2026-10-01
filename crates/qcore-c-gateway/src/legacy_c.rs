@@ -98,6 +98,12 @@ pub mod verdict;
 #[path = "legacy_parenthesised_callee.rs"]
 pub(crate) mod parenthesised_callee;
 
+// Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p): a call through a
+// function pointer whose candidate set the unit closes is rewritten to the
+// calls C may make, right after rule 10c's normalisation.
+#[path = "legacy_indirect_calls.rs"]
+mod indirect_call_route;
+
 #[path = "legacy_descriptor_custody.rs"]
 pub(crate) mod descriptor_custody;
 
@@ -2115,6 +2121,9 @@ fn analyze_legacy_c_tokens_under_holds(
     // the hold included, reads a call.
     let normalised = parenthesised_callee::normalise_tokens(tokens);
     let tokens = normalised.as_deref().unwrap_or(tokens);
+    // Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p).
+    let rewritten = indirect_call_route::rewrite_tokens(tokens, contracts);
+    let tokens = rewritten.as_deref().unwrap_or(tokens);
     // Card W45-SR5-SOUNDNESS: a reserved prefix the source spells is escaped
     // before any rewrite mints one.
     let escaped = reserved_spelling::escape(tokens);
@@ -2855,6 +2864,10 @@ fn analyze_translation_unit_under_holds(
     // `f(x)` first, so the hold, both withdrawals, W4 and every classifier
     // position below read the call C evaluates.
     let (tokens, conditionals) = parenthesised_callee::normalise_owned(tokens, conditionals);
+    // Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p): a closed candidate
+    // set is the calls C may make, before any hold or withdrawal reads one.
+    let (tokens, conditionals) =
+        indirect_call_route::rewrite_owned(tokens, conditionals, contracts);
     // Card W45-SR5-SOUNDNESS: every identifier the source spells with a prefix
     // a rewrite below reserves is escaped first, so every marked name any
     // reader sees was minted from the environment (`reserved_spelling`).

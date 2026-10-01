@@ -139,6 +139,9 @@ mod value_connective;
 // Card CG06-VALUE-CONNECTIVE-RESIDUALS, sibling-effect part (rule 11m): a
 // region composed with its siblings by CG05's footprints.
 mod connective_footprints;
+// Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p): candidate callee sets
+// and the callback relation; the G pass is `legacy_indirect_calls.rs`.
+mod indirect_calls;
 // Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): Clang's selected
 // `_Generic` association and GNU statement expressions; the G hooks are in
 // `legacy_statement_expression.rs` and `legacy_generic_selection.rs`.

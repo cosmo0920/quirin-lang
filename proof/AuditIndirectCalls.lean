@@ -1,0 +1,21 @@
+import QCore.IndirectCalls
+
+/-! Audited companion to CG22-INDIRECT-CALLS-AND-CALLBACKS (gateway rule 11p). -/
+
+#print axioms QCore.IndirectCalls.an_open_set_is_unknown
+#print axioms QCore.IndirectCalls.an_empty_set_is_unknown
+#print axioms QCore.IndirectCalls.join_over_ge_each
+#print axioms QCore.IndirectCalls.safe_needs_a_cover
+#print axioms QCore.IndirectCalls.safe_means_every_candidate_safe
+#print axioms QCore.IndirectCalls.join_over_covers_sound
+#print axioms QCore.IndirectCalls.a_covering_safe_decision_is_safe
+#print axioms QCore.IndirectCalls.an_open_set_can_miss_a_violation
+#print axioms QCore.IndirectCalls.a_local_holds_one_of_its_definitions
+#print axioms QCore.IndirectCalls.invocation_after_release_is_never_safe
+#print axioms QCore.IndirectCalls.registration_after_teardown_is_never_safe
+#print axioms QCore.IndirectCalls.an_escaped_registration_is_unknown
+#print axioms QCore.IndirectCalls.the_protocol_is_safe
+#print axioms QCore.IndirectCalls.join_vectors_hold
+#print axioms QCore.IndirectCalls.join_vectors_count
+#print axioms QCore.IndirectCalls.callback_vectors_hold
+#print axioms QCore.IndirectCalls.callback_vectors_count

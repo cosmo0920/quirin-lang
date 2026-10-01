@@ -397,6 +397,8 @@ struct AstIndex {
     aggregates: Arc<crate::aggregate_value::AggregateFacts>,
     /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o).
     no_return_declarations: Arc<BTreeSet<String>>,
+    /// Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p): constant tables.
+    indirect_tables: Arc<crate::indirect_calls::TableFacts>,
     line_starts: Arc<Vec<usize>>,
     line_tokens: Arc<OnceCell<BTreeMap<usize, Vec<String>>>>,
 }
@@ -415,6 +417,8 @@ struct RetainedDeclarations {
     aggregates: crate::aggregate_value::AggregateFacts,
     /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o).
     no_return_declarations: BTreeSet<String>,
+    /// Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p).
+    indirect_tables: crate::indirect_calls::TableFacts,
 }
 
 impl RetainedDeclarations {
@@ -430,6 +434,8 @@ impl RetainedDeclarations {
         crate::union_bitfield::RecordFacts::collect(&node, &mut self.records);
         // Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f).
         crate::aggregate_value::AggregateFacts::collect(&node, &mut self.aggregates);
+        // Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p).
+        crate::indirect_calls::TableFacts::collect(&node, &mut self.indirect_tables);
         if kind(&node) == "FunctionDecl"
             && children(&node)
                 .iter()
@@ -556,6 +562,7 @@ impl AstIndex {
             records: Arc::new(retained.records),
             aggregates: Arc::new(retained.aggregates),
             no_return_declarations: Arc::new(retained.no_return_declarations),
+            indirect_tables: Arc::new(retained.indirect_tables),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         })
@@ -578,6 +585,7 @@ impl AstIndex {
             records: Arc::new(retained.records),
             aggregates: Arc::new(retained.aggregates),
             no_return_declarations: Arc::new(retained.no_return_declarations),
+            indirect_tables: Arc::new(retained.indirect_tables),
             line_starts: Arc::new(line_starts(source)),
             line_tokens: Arc::default(),
         }
@@ -698,28 +706,82 @@ pub(crate) fn analysed_unit_constants(
     })
 }
 
+/// The analysed unit's AST index, read from Clang once per source context.
+fn unit_ast(context: &SourceContext) -> Option<&AstIndex> {
+    context
+        .ast
+        .get_or_init(|| {
+            let unit = C11TranslationUnit {
+                source: &context.source,
+                include_paths: context.request.include_paths.clone(),
+                definitions: context.request.definitions.clone(),
+                preprocessor_options: context.request.preprocessor_options.clone(),
+                dialect: context.dialect,
+                ..C11TranslationUnit::default()
+            };
+            translation_unit_ast_with(&context.source, &unit, |bytes| {
+                AstIndex::from_json(bytes, &context.source)
+            })
+            .ok()
+        })
+        .as_ref()
+}
+
+/// Card **CG22-INDIRECT-CALLS-AND-CALLBACKS** (rule 11p): the analysed
+/// unit's function bodies and constant tables, for the indirect-call pass.
+pub(crate) struct IndirectCallUnit<'a> {
+    ast: &'a AstIndex,
+    source: &'a str,
+}
+
+impl IndirectCallUnit<'_> {
+    /// The unique body Clang read for `name`.
+    pub(crate) fn function(&self, name: &str) -> Option<&Value> {
+        match self.ast.functions.get(name)?.as_slice() {
+            [entry] => Some(&entry.ast),
+            _ => None,
+        }
+    }
+
+    pub(crate) fn tables(&self) -> &crate::indirect_calls::TableFacts {
+        &self.ast.indirect_tables
+    }
+
+    /// A node's tokens, exactly as the gateway tokenizes the analysed source.
+    pub(crate) fn node_tokens(&self, node: &Value) -> Option<Vec<String>> {
+        let start = offset(&node["range"]["begin"])?;
+        let end = offset(&node["range"]["end"])?
+            .checked_add(node["range"]["end"]["tokLen"].as_u64()? as usize)?;
+        let text = self.source.get(start..end)?;
+        Some(tokenize(text).into_iter().map(|token| token.text).collect())
+    }
+
+    /// The line a node begins on.
+    pub(crate) fn node_line(&self, node: &Value) -> Option<usize> {
+        node_line(node, self.source.len(), &self.ast.line_starts)
+    }
+}
+
+/// Run `f` over the analysed unit's AST, when a source context is entered
+/// and Clang read it.
+pub(crate) fn with_indirect_call_unit<T>(f: impl FnOnce(&IndirectCallUnit<'_>) -> T) -> Option<T> {
+    ANALYSED_SOURCE.with(|cell| {
+        let borrow = cell.borrow();
+        let context = borrow.as_ref()?;
+        let ast = unit_ast(context)?;
+        Some(f(&IndirectCallUnit {
+            ast,
+            source: &context.source,
+        }))
+    })
+}
+
 impl StatementIndex {
     pub(crate) fn read(function: &str) -> Option<Self> {
         ANALYSED_SOURCE.with(|cell| {
             let borrow = cell.borrow();
             let context = borrow.as_ref()?;
-            let ast = context
-                .ast
-                .get_or_init(|| {
-                    let unit = C11TranslationUnit {
-                        source: &context.source,
-                        include_paths: context.request.include_paths.clone(),
-                        definitions: context.request.definitions.clone(),
-                        preprocessor_options: context.request.preprocessor_options.clone(),
-                        dialect: context.dialect,
-                        ..C11TranslationUnit::default()
-                    };
-                    translation_unit_ast_with(&context.source, &unit, |bytes| {
-                        AstIndex::from_json(bytes, &context.source)
-                    })
-                    .ok()
-                })
-                .as_ref()?;
+            let ast = unit_ast(context)?;
             let [function] = ast.functions.get(function)?.as_slice() else {
                 return None;
             };
