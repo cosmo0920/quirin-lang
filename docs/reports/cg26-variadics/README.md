@@ -3,8 +3,8 @@
 Card `CG26-VARIADICS` of the [Clang gap card queue](../../plans/clang-gap-cards/README.md)
 (wave 48, round 10), gap entries K08, K09 and K10, route G. It absorbs
 `W44-VA-START-END-BUILTINS` and `W46-FCNTL-SETFD-ADDRESS-TAIL`. Base: local
-`main` `b6a3dc42`, rebased onto `8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS) after the
-AFTER measurement.
+`main` `b6a3dc42`, rebased onto `8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS) and then
+`06ad81cb` (CG20-NUMERIC-DOMAIN) after the AFTER measurement.
 
 - **Rule:** [gateway 11w](../../agents/gateway.md#constraint-11w), amending E20's
   uncontracted-builtin refusal for the four `va_*` builtins only and O04-TRACE's
@@ -127,11 +127,13 @@ the shared disk filled (another card's builds); they measure the disk, not the
 program. The fourth ran without the parity stream (the arbiter's result does
 not depend on it) and is the measurement. The system and slice AFTER ran the
 AFTER binary through `BINARY` and completed. Main moved to `8e8ed41f`
-(CG17-LAYOUT-DERIVED-EXTENTS) after the AFTER; CG17 moved no function and left
-the corpus byte-identical at `3d53a5d0…` by its own report, and its hooks
-(VLA declarations, `container_of` values) and this card's (uncontracted `va_*`
-builtins, the tail refusal) take disjoint refusals, so the AFTER was not
-repeated on the rebased tip.
+(CG17-LAYOUT-DERIVED-EXTENTS) and `06ad81cb` (CG20-NUMERIC-DOMAIN) after the
+AFTER; each moved no function and left the corpus byte-identical at
+`3d53a5d0…` by its own report. CG17's hooks (VLA declarations, `container_of`
+values) and this card's (uncontracted `va_*` builtins, the tail refusal) take
+disjoint refusals, and CG20 changes no custody decision (its `long` reading in
+the declared-ABI reader is LP64-unchanged on this host), so the AFTER was not
+repeated on the rebased tip; the integrator's merged measurement is the check.
 
 **Corpus movement** ([comparison](artifacts/compare-corpus.json),
 [census](artifacts/census-corpus.json)): **+2 Unknown → Safe**, exactly the
