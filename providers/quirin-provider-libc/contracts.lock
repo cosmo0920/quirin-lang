@@ -57,9 +57,19 @@
       "contract_sha256": "45cbcf47880c9b0b5c7c6b0444f93bea623624579627a9decd618dcb6595e8ab"
     },
     {
+      "function": "dlclose",
+      "module": "libc/dlfcn.qv",
+      "contract_sha256": "38daef320eae6c018273ebc47842cc789f30988e86d36194866b26670b831adb"
+    },
+    {
       "function": "dlerror",
       "module": "libc/dlfcn.qv",
       "contract_sha256": "9b40cc67a31f09ff15d03af531eaf65c51f111564e1b10c1a1642eac4ce190b1"
+    },
+    {
+      "function": "dlopen",
+      "module": "libc/dlfcn.qv",
+      "contract_sha256": "5bf175e30b4bf12330ad016a668d82dedfd9d171e03e6b365fd74cc6f59a7d2e"
     },
     {
       "function": "dlsym",
@@ -362,14 +372,24 @@
       "contract_sha256": "d5b2f4b329eb5c226bfa3be67fa56ac5ea8ea160f157b11bcebcba8816d67220"
     },
     {
+      "function": "regcomp",
+      "module": "libc/regex.qv",
+      "contract_sha256": "5b497930ca65984d7a152b0686d07639020a1160e1e0b1903acf13d8422e2f99"
+    },
+    {
       "function": "regerror",
       "module": "libc/regex.qv",
-      "contract_sha256": "7597699f8daed9d4437640eb02e345b891f6600329cda6b33ee5dd9b476a6bab"
+      "contract_sha256": "2e144f76ae89cef736e25766aa251336d3d2d4bef7e7f10fef6e7778b3f8ecc8"
     },
     {
       "function": "regexec",
       "module": "libc/regex.qv",
-      "contract_sha256": "c25d522b158ab52d1efcdb4fa2b7d629c339dfc6d2e037aabaaad135f6f56aac"
+      "contract_sha256": "0b8b6b9605efd1e5cde08d0352846f89832c24c7d8b92a518d8f2903e198d39c"
+    },
+    {
+      "function": "regfree",
+      "module": "libc/regex.qv",
+      "contract_sha256": "5c865afd050e34319902856d791e09799bbbba3b5a3b5bf5217c9494f6af38b7"
     },
     {
       "function": "remove",
