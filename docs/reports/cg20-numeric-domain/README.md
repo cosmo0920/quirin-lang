@@ -263,4 +263,37 @@ signednesses, nine ranges), not proved in Lean
 
 ## 10. Gate
 
-GATE_TABLE
+**The standing gate is incomplete.** Two full runs of `scripts/gate.sh`
+(`private/cg20/gate2`, `private/cg20/gate3`) failed in the test runner's build
+with `No space left on device`: this card's own dev build of the workspace's
+test binaries is about 38 GiB (`cargo clean --profile dev` removed 37.7 GiB),
+and with six cards building at once the host's free space fell from 59 GB to
+0 during each attempt and kept swinging between 10 and 83 GB afterwards. Both
+attempts measure disk, not the program; they are retained and discarded as
+evidence, and the runs were stopped at the 40 GB floor.
+
+| Step | Command | Exit / result | Log (`private/cg20/`) |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | `gate3/01-submodule.log` |
+| fmt | `cargo fmt --all -- --check` | 0 | `gate/fmt.log` |
+| clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | `gate/clippy.log` |
+| probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | `gate/probe.log` |
+| follow-up | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | `gate/followup.log` |
+| Lean | `python3 scripts/check_lean_audits.py` | 0, **264** audits (263 + `AuditCNumeric.lean`) | `gate/lean.log` |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1: 365 tests, the one expected failure the matrix's derived `lean_audits` 263 → 264, cleared only by `build_matrix.py --gate` after the workspace count | `gate/python.log` |
+| index | `python3 scripts/build_docs_index.py --check` | 0 | `gate/index-check.log` |
+| **workspace tests** | `python3 scripts/run_test_binaries.py` | **owed** (both attempts disk-exhausted, exit 101 at build) | `gate2/03-tests.log`, `gate3/03-tests.log` |
+
+Targeted runs at the tip's code (`dd0fd7ea`; later commits change records
+only): `qcore-c-gateway --lib c_numeric` 10 passed; `--test c_numeric_domain`
+7 passed; `--test c_numeric_abi_llp64` 1 passed; `--test loader_abi`,
+`loader_abi_modes`, `clang_gap_phase4`, `w46_libc_event_contract_gaps` 33 +
+16 + 20 + 4 passed (`t-abi.log`); `qcore-verification --lib cycle18` 22 passed
+(`t-cycle18.log`); `qcore-core --test clang_gap_core` 11 passed (`t-core.log`).
+Every exit is 0 and recorded beside its log.
+
+**Owed:** the workspace runner, then `gate.json` and the matrix regeneration
+(`docs/reports/remaining-d02/build_matrix.py . --gate gate.json`) and the
+Python suite again; and a Windows run of the MSVC fixtures (§2). `providers/`
+is unchanged, so the provider gate is not due. Clang 21.1.8
+(`Ubuntu clang version 21.1.8 (6ubuntu1)`).
