@@ -225,4 +225,24 @@ Retired: `CG26-VARIADICS`, `W44-VA-START-END-BUILTINS`,
 `CG26-POINTER-VA-ARG`, `CG26-BORROWED-TAIL-DECLARATIONS`,
 `CG26-ROUTE-T-VARIADICS`.
 
-GATE_SECTION
+## 6. Gate
+
+At tip `b10808b6` (rebased onto main `b934c560`), `scripts/heavy.sh` under the
+shared lock, logs in `private/cg26va/gate` of this worktree, exits in
+[gate/](gate/), record [gate.json](gate.json).
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| Rebased compile | `cargo check --workspace --all-targets` | 0 | |
+| Submodule | `git submodule update --init --recursive` | 0 | |
+| Rust | `python3 scripts/run_test_binaries.py` | 0 | 417 units, 430 summaries; **7,257 passed, 0 failed, 11 ignored** (`private/test-binaries/20261001T190234Z-3801339`) |
+| Format | `cargo fmt --all -- --check` | 0 | |
+| Clippy | `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Probes | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **267** audits (266 on main + `AuditVariadics.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** | 365; the one failure was the matrix's derived `lean_audits` (266 → 267), cleared by `build_matrix.py . --gate gate.json` (exit 0) |
+| Index | `python3 scripts/build_docs_index.py` (and `--check`) | 0 (0) | |
+
+`providers/` is unchanged (the `fcntl` declaration already existed; the new
+clause is declared only in test fixtures), so the provider gate was not due.
+Clang 21.1.8.
