@@ -46,7 +46,8 @@ class PackageContractIncludes(unittest.TestCase):
         package = Path(root) / "qcore.example"
         asset = package / "contracts/example/memory.qcore"
         asset.parent.mkdir(parents=True)
-        asset.write_text(child)
+        # Install exactly the UTF-8 bytes hashed by the inventory on every OS.
+        asset.write_bytes(child.encode("utf-8"))
         inventory = {
             "schema_version": 1,
             "plugin_id": "qcore.example",
@@ -63,7 +64,7 @@ class PackageContractIncludes(unittest.TestCase):
             }
             included = package / "includes" / LIBC / "libc/heap.qcore"
             included.parent.mkdir(parents=True)
-            included.write_text(parent)
+            included.write_bytes(parent.encode("utf-8"))
         payload = (json.dumps(inventory, indent=2) + "\n").encode()
         (package / "contracts.json").write_bytes(payload)
         executable = (b"prefix" + package_module.CONTRACTS_BEGIN + payload

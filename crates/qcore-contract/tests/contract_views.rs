@@ -25,9 +25,40 @@ fn modules() -> BTreeMap<String, String> {
 fn mutate(module: &str, from: &str, to: &str) -> BTreeMap<String, String> {
     let mut modules = modules();
     let text = modules.get_mut(module).expect("module exists");
-    assert!(text.contains(from), "{module} does not contain {from:?}");
-    *text = text.replacen(from, to, 1);
+    mutate_text(module, text, from, to);
     modules
+}
+
+fn mutate_text(module: &str, text: &mut String, from: &str, to: &str) {
+    // Mutation snippets use LF, while a Windows checkout may contain CRLF.
+    // Adapt the snippets, preserving the module's bytes outside the mutation.
+    let (from, to) = if text.contains(from) {
+        (from.to_owned(), to.to_owned())
+    } else {
+        (from.replace('\n', "\r\n"), to.replace('\n', "\r\n"))
+    };
+    assert!(text.contains(&from), "{module} does not contain {from:?}");
+    *text = text.replacen(&from, &to, 1);
+}
+
+#[test]
+fn multiline_mutations_preserve_lf_and_crlf_and_replace_only_the_first_match() {
+    for ending in ["\n", "\r\n"] {
+        let mut text =
+            "before\nrequires old;\nensures kept;\nrequires old;\nensures kept;\nafter\n"
+                .replace('\n', ending);
+        mutate_text(
+            "fixture",
+            &mut text,
+            "requires old;\nensures kept;",
+            "requires new;\nensures kept;",
+        );
+        assert_eq!(
+            text,
+            "before\nrequires new;\nensures kept;\nrequires old;\nensures kept;\nafter\n"
+                .replace('\n', ending)
+        );
+    }
 }
 
 fn refused(modules: &BTreeMap<String, String>, expected: &str) {
