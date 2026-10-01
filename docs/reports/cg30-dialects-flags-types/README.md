@@ -3,11 +3,12 @@
 Card `CG30-DIALECTS-FLAGS-TYPES` of the
 [Clang gap card queue](../../plans/clang-gap-cards/README.md) (wave 48, round 10),
 entries I01 I02 I03 I05 N12 N13 N14, routes G and T and the compile-database
-reader. Base: local `main` `b6a3dc42`; BEFORE measured there; rebased onto
-main `8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS) and then `06ad81cb`
-(CG20-NUMERIC-DOMAIN), each of whose own measurements is byte-identical to its
-base on every route. Commit names below are the pre-rebase ones, with
-the rebased name where it matters.
+reader. Base: local `main` `b6a3dc42`; BEFORE measured there. Rebased onto
+main `8e8ed41f` (CG17), `06ad81cb` (CG20) and `b934c560` (CG25), where the
+published AFTER was measured (§3), then onto `f0bbc0eb` (CG26-VARIADICS),
+where the tip was compiled, tested and gated but **not re-measured** (the
+arbiter is serialised under the shared lock; CG26's changes are its own).
+Commit names below are those at measurement time.
 
 - **Rule:** [gateway 11y](../../agents/gateway.md#constraint-11y).
 - **Lean:** `QCore.DialectTargetIdentity`, `proof/AuditDialectTargetIdentity.lean`
