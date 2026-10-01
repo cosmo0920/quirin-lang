@@ -459,7 +459,7 @@ CG22.
 | CG26-VARIADICS | K08 K09 K10 | High | CG03 |
 | CG27-LOOPS-RECURSION-BUDGETS | C06 C07 C08 | High | CG09 |
 | CG28-WEAK-MEMORY-EVENTS | W02–W06 | High | CG19 |
-| CG29-EXECUTION-COVERAGE-AND-RECLAMATION | W07 W10 | High (candidate) | CG28 |
+| CG29-EXECUTION-COVERAGE-AND-RECLAMATION | W07 W10 | High | CG28 (landed, wave 48 round 11) |
 | CG30-DIALECTS-FLAGS-TYPES | I01 I02 I03 I05 N12 N13 N14 | High | none (landed, wave 48 round 10; entry amended) |
 
 - **CG20: numeric domain.**
@@ -604,6 +604,24 @@ CG22.
     justified bounds. One accepted graph is not race freedom (Q34).
   - *Reclamation.* Hazard-pointer and epoch reclamation protocols as
     contracts plus a checker.
+  - *Status (wave 48, round 11).* Landed (gateway rule 11z), core consumers
+    plus the atomic-publication verdict.
+    - `qcore_core::execution_coverage` enumerates every candidate execution
+      of a bounded, loop-free fragment (literal value domains; bounds in the
+      evidence identity). Each candidate is checked by the unchanged
+      `check_c11_execution`, giving `RaceFree`, `Race` with a witness, or
+      `Unknown` named.
+    - The publication verdict's `Safe` now needs its shape race-free over
+      every execution and carries the all-executions assumption.
+    - `qcore_core::reclamation` checks hazard-pointer and epoch traces under
+      checked contracts, with `Declared` helpers and the handshake decided
+      by coverage.
+    - Corpus, system and slice: no move. There is no corpus consumer and no
+      reclamation protocol in the tree.
+    - Lean: `QCore.ExecutionCoverage` and `QCore.Reclamation` (new).
+    - Residuals: `CG29-ARITHMETIC-RMW-VALUE-DOMAIN`,
+      `CG29-SOURCE-FRAGMENT-EXTRACTION`, `CG29-RECLAMATION-SOURCE-ROUTE`.
+    - [Report](../../reports/cg29-execution-coverage-and-reclamation/README.md).
 - **CG30: dialects, flags and types.**
   - *Dialects.* Explicit C17, C23 and C2y dialects (frontend identity and AST
     differences together). Structured `--target`/`-mabi` flags join evidence

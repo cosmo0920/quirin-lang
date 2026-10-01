@@ -3002,7 +3002,11 @@ own anchor here.
     `atomic_publication_verdict` is `Safe` exactly when extraction and the
     core model accept; any refusal is `Unknown`; both carry
     `SINGLE_GRAPH_ASSUMPTION` (one candidate execution, not race freedom over
-    every execution, W07/CG29; no liveness, W11). `quirin-audit
+    every execution, W07/CG29; no liveness, W11). **Amended by [rule
+    11z](#constraint-11z)** (CG29-EXECUTION-COVERAGE-AND-RECLAMATION): `Safe`
+    also needs the extracted shape race-free over every candidate execution
+    within stated bounds, and then carries `ALL_EXECUTIONS_ASSUMPTION`
+    instead; `Unknown` keeps the single-graph assumption. `quirin-audit
     atomic-publication CONFIG.json` is its production caller, writing the
     verdict contract's fields and exiting non-zero on `Unknown`. **Do not**
     read a routed access's order as an ordering or race-freedom claim of
@@ -4140,3 +4144,77 @@ own anchor here.
     `bool_is_Bool`, `long_unsigned_int_vector`, `distinct_counts_distinct`),
     bound to the Rust tables by `tests/unit/c_frontend_identity.rs`;
     [report](../reports/cg30-dialects-flags-types/README.md).
+
+<a id="constraint-11z"></a>
+
+11z. **Race freedom over every execution is claimed only from an exhaustive
+    enumeration of a bounded, loop-free fragment, with its bounds in the
+    evidence identity; one accepted graph is never race freedom; reclamation
+    is safe only by a checked protocol whose helpers are `Declared`.** Card
+    CG29-EXECUTION-COVERAGE-AND-RECLAMATION (`crates/qcore-core/src/execution_coverage.rs`
+    and `reclamation.rs`, new; additive `weak_memory::derived_synchronizes_with`;
+    the atomic-publication verdict in
+    `qcore_verification::atomic_publication_source`). It amends rule 11i's
+    publication verdict only. (1) **Execution coverage** (gap entry W07). A
+    fragment declares atomic locations with initial values and per thread
+    guarded atomic loads, stores, exchanges, compare-exchanges, fences and
+    non-atomic reads and writes. `check_program_executions` enumerates every
+    candidate execution: a path per thread for every read value in the
+    location's domain and every outcome of a weak compare-exchange on its
+    expected value, every reads-from source of equal location and value,
+    every modification order (a permutation of the location's writes), every
+    S order; synchronises-with is derived; thread 0 initialises and spawns,
+    so initialisation happens before every thread. Each candidate is checked
+    by the unchanged `check_c11_execution`; one reporting at most data races
+    is consistent. `RaceFree` only when every candidate was checked and no
+    consistent one races; `Race` carries a consistent racing witness;
+    `Unknown` names a loop, a malformed fragment (a location declared twice,
+    an undeclared atomic location, a location both atomic and non-atomic), an
+    exceeded bound (threads, static events, values per location, candidates)
+    or no consistent candidate. A location's domain is its initial value and
+    every literal written to it, justified without control flow, so an
+    out-of-thin-air cycle cannot escape it; arithmetic read-modify-writes are
+    not in the fragment (`CG29-ARITHMETIC-RMW-VALUE-DOMAIN`). (2) **The
+    publication verdict.** `Safe` now also needs the extracted shape (flag
+    initialised, publisher, consumer guarded by its load) `RaceFree` within
+    `PUBLICATION_COVERAGE_BOUNDS` (threads 2, events 7, values 2, candidates
+    16); it then carries `ALL_EXECUTIONS_ASSUMPTION` in place of
+    `SINGLE_GRAPH_ASSUMPTION`. `Unknown` keeps the single-graph assumption.
+    Every shape the extractor admits is `RaceFree`, so no verdict moved.
+    (3) **Reclamation** (gap entry W10). Hazard-pointer and epoch-based
+    reclamation are checkers over a trace of protocol steps:
+    * hazard pointers: protect, validate only while linked, access only
+      through a validated hazard, retire only once unlinked, reclaim only when
+      retired and no slot holds the object;
+    * epochs: access inside a critical section to a linked object or one
+      unlinked during it, advance only when every active thread is in the
+      current epoch, reclaim two epochs after the retire.
+    Neither checks "not reclaimed" at an access; that no accepted trace
+    accesses a reclaimed object is proved from the rules. A
+    `ReclamationContract` maps helpers to roles and is checked: a duplicate
+    or a role of the other protocol refuses, each used helper is a `Declared`
+    boundary on the certificate, and the announce/validate handshake with
+    the contract's declared ordering is decided by execution coverage
+    (`RaceFree`: discharged within bounds; `Race`: the contract refuses;
+    `Unknown`: `Declared`). A refused trace is `Unknown`, never `Unsafe`: the
+    trace is supplied, not derived from source
+    (`CG29-RECLAMATION-SOURCE-ROUTE`). **Do not** claim race freedom from one
+    graph, enumerate a fragment with a loop, leave a bound out of the
+    evidence identity, race-check a location accessed both atomically and
+    non-atomically, test reclamation by the object's status at the access
+    instead of by the protocol's rules, or present a refused trace as a
+    defect. Premises stated, not proved: the Rust-to-Lean correspondence of
+    the enumerator and the protocol checkers by review, bound on shared
+    vectors parsed from the Lean files; the checker's own premises (rule
+    11t); no liveness or eventual observation (W11). Measured (corpus
+    `66910c10`): no corpus, system or slice route reaches either module; the
+    corpus, system and slice are unchanged (see the report). Lean
+    `QCore.ExecutionCoverage` (`encode_mem_candidates`,
+    `read_values_are_literals`, `verdict_race_free_sound`,
+    `verdict_race_witnessed`, `candidate_is_execution`,
+    `race_free_needs_bounds`, `coverage_vectors_hold`), `QCore.Reclamation`
+    (`hp_accepted_safe`, `ebr_accepted_safe`, their invariants, the trace
+    vectors), `QCore.WeakMemory` (a spawn event, additive) and
+    `QCore.AtomicSourceRoute` (`safe_publication_covers_every_execution`,
+    `unknown_publication_carries_single_graph`);
+    [report](../reports/cg29-execution-coverage-and-reclamation/README.md).
