@@ -1,0 +1,96 @@
+[
+ {
+  "unit": "cmt_encode_opentelemetry.c",
+  "function": "apply_data_point_metadata_from_otlp_context",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "cmt_encode_opentelemetry.c",
+  "function": "initialize_numerical_data_point",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: indirect memory access is outside the resource projection": -2
+  }
+ },
+ {
+  "unit": "cmt_exp_histogram.c",
+  "function": "cmt_exp_histogram_to_explicit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: resource call with a formal embedded in an unmodeled expression": -2
+  }
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "function": "mk_rconf_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "function": "mk_rconf_open",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_clock.c",
+  "function": "mk_clock_sequential_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_parse_Metadata0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 6
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_Produce_metadata_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic",
+  "before": "Unknown",
+  "after": "Safe",
+  "leaf_delta": {
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafkap_share_leader_changes_apply",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ }
+]

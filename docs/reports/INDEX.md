@@ -87,6 +87,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg04-loop-site-generations](cg04-loop-site-generations/README.md) | CG04-LOOP-SITE-GENERATIONS: generation-indexed acquisition sites |
 
+| [cg05-elaborator-call-footprints](cg05-elaborator-call-footprints/README.md) | CG05-ELABORATOR-CALL-FOOTPRINTS: the elaborator's call events with their contract footprints |
+
 | [cg05-nested-call-effects](cg05-nested-call-effects/README.md) | CG05-NESTED-CALL-EFFECTS: nested and sibling call effects |
 
 | [cg06-connective-footprints](cg06-connective-footprints/README.md) | CG06-VALUE-CONNECTIVE-RESIDUALS, sibling-effect part: value regions composed with CG05's footprints |

@@ -1,0 +1,23 @@
+newly admitted 18 functions 9
+lost admissions 0
+refusal text changed 20
+[('call `rd_kafka_mock_partition_find` unsequenced with another', 5), ('elaborated call `rd_malloc`: Unapplied("discarded owned resu', 4), ('elaborated call `rd_calloc`: Unapplied("discarded owned resu', 3), ('call `append_attribute_to_data_point` unsequenced with anoth', 2), ('elaborated call `calloc`: Unapplied("discarded owned result ', 2), ('call `rd_kafka_topic_partition_list_new` unsequenced with an', 1), ('call `rd_kafka_consumer_protocol_member_metadata_new` unsequ', 1), ('call `rd_list_set_int32` unsequenced with another event (CG0', 1), ('unlisted form: write to an object the gateway does not read ', 1)]
+[('call `cmt_metric_get_uint64_value` unsequence', 4), ('call `__bswap_32` unsequenced with another ev', 4), ('call `time` unsequenced with another event (C', 3), ('call `__bswap_16` unsequenced with another ev', 2), ('call `memcpy` unsequenced with another event ', 2)]
+   apply_data_point_metadata_from_otlp_context number_data_point - > as_int = ( int64_t ) cmt_metric_get_uint64_value ( sample )
+   apply_data_point_metadata_from_otlp_context number_data_point - > as_double = ( double ) cmt_metric_get_uint64_value ( sample )
+   cmt_exp_histogram_set_default memcpy ( new_positive_buckets , positive_bucket_counts , sizeof ( uint64_t ) * positive_bucket_count )
+   cmt_exp_histogram_set_default memcpy ( new_negative_buckets , negative_bucket_counts , sizeof ( uint64_t ) * negative_bucket_count )
+   cmt_exp_histogram_to_explicit local_upper_bounds [ target_index ] = - pow ( base , ( double ) bucket_index )
+   cmt_exp_histogram_to_explicit local_upper_bounds [ target_index ] = pow ( base , ( double ) bucket_index )
+   initialize_numerical_data_point data_point - > as_int = ( int64_t ) cmt_metric_get_uint64_value ( sample )
+   initialize_numerical_data_point data_point - > as_double = ( double ) cmt_metric_get_uint64_value ( sample )
+   mk_clock_sequential_init server - > clock_context - > monkey_init_time = time ( ( ( void * ) 0 ) )
+   mk_rconf_create conf - > created = time ( ( ( void * ) 0 ) )
+   mk_rconf_open conf - > created = time ( ( ( void * ) 0 ) )
+   rd_kafka_parse_Metadata0 md - > brokers [ i ] . id = ( int32_t ) __bswap_32 ( _v )
+   rd_kafka_parse_Metadata0 md - > brokers [ i ] . port = ( int32_t ) __bswap_32 ( _v )
+   rd_kafka_parse_Metadata0 md - > topics [ i ] . err = ( int16_t ) __bswap_16 ( _v )
+   rd_kafka_parse_Metadata0 md - > topics [ i ] . partitions [ j ] . err = ( int16_t ) __bswap_16 ( _v )
+   rd_kafka_parse_Metadata0 md - > topics [ i ] . partitions [ j ] . id = ( int32_t ) __bswap_32 ( _v )
+   rd_kafka_parse_Metadata0 md - > topics [ i ] . partitions [ j ] . leader = ( int32_t ) __bswap_32 ( _v )
+   rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic ( tbuf ) - > size + = ( ( ( strlen ( topic_name ) + 1 ) + ( ( 8 ) - 1 ) ) & ~ ( 8 - 1 ) ) * 1

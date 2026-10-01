@@ -1,0 +1,45 @@
+{
+ "call": {
+  "rows": 1494,
+  "functions": 651,
+  "by_outcome": {
+   "admitted": 1324,
+   "call unsequenced/unlowered": 170
+  }
+ },
+ "compound": {
+  "rows": 118,
+  "functions": 39,
+  "by_outcome": {
+   "call unsequenced/unlowered": 118
+  }
+ },
+ "declaration": {
+  "rows": 52,
+  "functions": 51,
+  "by_outcome": {
+   "call unsequenced/unlowered": 52
+  }
+ },
+ "increment": {
+  "rows": 1,
+  "functions": 1,
+  "by_outcome": {
+   "admitted": 1
+  }
+ },
+ "other": {
+  "rows": 5,
+  "functions": 4,
+  "by_outcome": {
+   "call unsequenced/unlowered": 5
+  }
+ },
+ "store": {
+  "rows": 276,
+  "functions": 211,
+  "by_outcome": {
+   "call unsequenced/unlowered": 276
+  }
+ }
+}

@@ -3330,3 +3330,91 @@ own anchor here.
     `FOOTPRINT_VECTORS` by shared-vector tests and to route G by
     `tests/cg06_connective_footprints.rs`;
     [report](../reports/cg06-connective-footprints/README.md).
+
+<a id="constraint-11n"></a>
+
+11n. **An elaborated call event carries its contract footprint, an unordered
+    pair holding a call commutes only by footprints, and the call is applied
+    once through the one application point; an address-taken automatic stays
+    reachable by every identity.** Card CG05-ELABORATOR-CALL-FOOTPRINTS
+    (`crates/qcore-c-gateway/src/legacy_elaborator_calls.rs`, additive items
+    in `elaboration.rs` (`Context::call_footprint`, default declining;
+    `event_footprint`; `EvalGraph::check_with_footprints`;
+    `Refusal::CallLowering`; `Elaboration::{call_footprints, call_nodes}`),
+    `nested_call_effects::call_footprint`,
+    `parenthesised_callee::strip_callee_parentheses`, thin hooks in
+    `legacy_elaboration.rs` and `legacy_c.rs`). It amends rule 10s's "a call
+    unordered with any event refuses" and "do not lower a call inside a
+    piece's events"; every other refusal of 10s, 10y and 11k stands.
+    (1) **Footprints.** In route G's statement route only (the whole-statement
+    check, a sequenced piece, CG03's effectful piece), each call event's
+    footprint is read exactly as rule 10y reads a call of its tree: the
+    contract in force, an identity at a `Borrowed` formal read and at any other
+    formal written, `&x` and an array decay a write of the object, an owned
+    result a written fresh identity keyed to the call's event. A callee with
+    no contract in force, an indirect callee, a container effect, a
+    reallocated result or an arity mismatch has none. Every other event's
+    footprint is `event_footprint`'s: a named object touches its storage, a
+    pointer value read or stored also an identity, a path its root object and,
+    through a pointer or for a pointer value, an identity; a lifetime event
+    writes its object; a control event touches nothing. (2) **Order.**
+    `elaborate` asks `check_with_footprints`: a pair `commutes` leaves as a
+    call pair commutes only when both events carry a footprint and the
+    footprints commute (`footprints_commute`); every other pair is decided
+    exactly as CG18's `check_with`, in the same pair order, and with no call
+    footprint the map is empty and the check is `check_with`. A scalar local
+    whose address is never taken is disjoint from every identity, so `x +=
+    f(p)` is admitted with `f` releasing `p`; `*q += f(q)` and a call with no
+    footprint stay refused. (3) **Lowering.** A refused piece whose graph
+    holds calls is lowered in the graph's event order: each read or write as
+    rule 10s lowers it, each call by `Parser::instantiate_call` with use
+    `Tested` (it must own nothing), its scalar actuals at `Borrowed` formals
+    data (their reads lowered as events) and its pointer actuals the
+    classifier's substitution; the contract applied must be the one the
+    footprint was read from, and a call whose actuals carry effects stays
+    CG03's. (4) **Aliasing.** `aliasing` counts as taking an object's address
+    `&x`, the address of its member or element (`&s.m`, `&a[i]`) and an
+    array's decay other than a subscript base, rooted through `.` members and
+    array subscripts. (5) **The address boundary** (CG05-FOOTPRINT-ADDRESS-
+    CONSERVATISM, option (c)). An identity read by one operand
+    (`fprintf(stderr, …)`) is never proved distinct from an automatic whose
+    address another operand passes (`rd_kafka_msgq_len(&q)`): a `Borrowed`
+    formal is not a lifetime-checked borrow (contract spec §C04.2), so the
+    callee may retain the address, and no route has an escape analysis for
+    it. No premise is taken; the 25 consultations over 14 functions stay
+    refused as a measured boundary. (6) **Matching.** A statement whose
+    callee the token stream normalised (`(f)(x)` to `f(x)`, rule 10c) is
+    matched to its Clang node with the callee parentheses stripped the same
+    way when no exact match exists. **Do not** read a footprint for a callee
+    with no contract in force, treat two names as distinct identities, take an
+    automatic's address as unreachable because it is passed only at
+    `Borrowed` formals, lower a call outside the application point, or
+    consult the hook before an older route of the position (hard invariant
+    3). Premises stated, not proved: faithful Clang extraction and node
+    matching (trust boundary 28), and that a call's effect on the abstract
+    state is its contract's (constraint 4), as for a call standing alone; no
+    new premise. Measured (corpus `66910c10`, system, tail-pause slice, base
+    `d4df096f` rebased on main `0a22a998`, whose BEFORE is the base's byte for
+    byte): corpus 628 / 10 / 4,196 → **629 / 10 / 4,195** (`3b09309a…` →
+    `36941e4c…`), one Unknown → Safe move
+    (`rd_kafkap_leader_discovery_tmpabuf_add_alloc_topic`, `(tbuf)->size +=
+    (strlen(topic_name) + 1 …)`: a read/read pair), 18 elaborator statements
+    admitted over 9 functions, 9 more refused by the application point (an
+    owned result in a consumed value); no leak, violation or Safe → non-Safe
+    move. The CG05-ELABORATOR-CALL-FOOTPRINTS population is 621 rows over 411
+    functions at this base (the ledger's 98 / 33 is its compound family, now
+    118 / 39), 603 at the tip, every one a call with no footprint (515 with
+    the callee's own `call to uncontracted function` leaf). System and slice
+    move no status: 2 functions on each lose an `indirect memory access` leaf
+    at `x->m = time(NULL)` (system both +1 `unknown_alias`; slice
+    `flb_tail_file_rotated` +1, `flb_tail_fs_stat_add` −2). `QCore.ElaboratorCallFootprints`
+    (`a_footprintless_call_is_refused`, `empty_map_is_check_with`,
+    `a_scalar_destination_read_commutes_with_a_call`,
+    `a_disjoint_read_observes_alike`, `the_compound_assignment_runs_alike`,
+    `a_read_through_the_written_identity_is_refused`,
+    `an_address_taken_destination_is_refused`,
+    `two_identity_writes_are_refused`, `the_address_boundary_is_necessary`
+    with `aliased_den_meets_the_premises`), bound to
+    `check_with_footprints` and `event_footprint` by `footprintVectors`;
+    `QCore.NestedCallEffects.footprint_commute_sound` carries the pair to
+    the state; [report](../reports/cg05-elaborator-call-footprints/README.md).

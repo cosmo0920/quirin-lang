@@ -168,6 +168,13 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     `CG05-FOOTPRINT-ADDRESS-CONSERVATISM`, `CG05-CALL-ROOTED-PLACES` and
     `CG05-ELABORATOR-CALL-FOOTPRINTS`.
     [Report](../../reports/cg05-nested-call-effects/README.md).
+  - *Status (wave 48, round 8).* `CG05-ELABORATOR-CALL-FOOTPRINTS` landed
+    (gateway rule 11n): the elaborator's call events carry their contract
+    footprint and are applied through `instantiate_call`; +1 corpus Safe, no
+    correction. `CG05-FOOTPRINT-ADDRESS-CONSERVATISM` accepted as a measured
+    boundary (25 / 14), no premise. Both retired; residual
+    `CG05-ELABORATOR-FOOTPRINTLESS-CALLS`.
+    [Report](../../reports/cg05-elaborator-call-footprints/README.md).
 - **CG06: value-producing connectives and `?:`.**
   - *Positions.* `&&`, `||` and `?:` in assignments, actuals, returns and
     operands. The unevaluated side produces no effects.
