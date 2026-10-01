@@ -670,6 +670,11 @@ fn cg19_qualified_forms_and_single_graph_assumption() {
         "inner": [{"kind": "DeclRefExpr", "type": {"qualType": "volatile int"},
             "referencedDecl": {"kind": "VarDecl", "name": "v"}}]});
     assert!(classify_qualified(&volatile).is_none());
-    assert!(LEAN.contains("assumptions := [.singleGraph,"));
+    // Card CG29 (rule 11z): `Unknown` carries the single-graph assumption,
+    // `Safe` the all-executions one.
+    assert!(
+        LEAN.contains("(if checked = some true ∧ covered = true then .allExecutions else .singleGraph) ::")
+    );
     assert!(SINGLE_GRAPH_ASSUMPTION.contains("one supplied candidate execution graph"));
+    assert!(ALL_EXECUTIONS_ASSUMPTION.contains("every candidate execution"));
 }
