@@ -1,3 +1,5 @@
+import QCore.TypedefProjection
+
 /-!
 # Indirect calls and callbacks (card CG22-INDIRECT-CALLS-AND-CALLBACKS)
 
@@ -310,6 +312,58 @@ theorem an_escaped_registration_is_unknown :
 /-- The full protocol is `safe`. -/
 theorem the_protocol_is_safe :
     callbackTrace [.register, .invoke, .invoke, .unregister, .release] = .safe := rfl
+
+/-! ## The inline function-pointer parameter declarator
+
+Absorbed LOADER-ABI-INLINE-FNPTR-DECLARATOR: the declared-ABI reader reads a
+parameter `RET (*NAME)(PARAMETERS)` (`inline_function_pointer_parameter` of
+`legacy_declared_abi.rs`) as exactly the target a function-pointer typedef
+reads (`QCore.TypedefProjection`), so it projects to `fnptr` and nothing
+else; a deeper or qualified inline declarator stays unread. -/
+
+/-- An inline parameter declarator: `stars` pointer levels inside the
+parentheses, `qualified` when a qualifier stands there too. -/
+inductive InlineDeclarator where
+  | fnptr (stars : Nat) (qualified : Bool)
+  | other
+  deriving DecidableEq, Repr
+
+/-- The target the reader commits to: one unqualified level only. -/
+def readInline : InlineDeclarator → Option QCore.TypedefProjection.Target
+  | .fnptr 1 false => some .functionPointer
+  | _ => none
+
+/-- The parameter's projection. -/
+def projectInline (d : InlineDeclarator) : QCore.DeclaredAbiAgreement.Projection :=
+  match readInline d with
+  | some t => QCore.TypedefProjection.project t 0 false
+  | none => none
+
+theorem an_inline_declarator_reads_as_the_typedef :
+    projectInline (.fnptr 1 false) =
+      QCore.TypedefProjection.project .functionPointer 0 false := rfl
+
+theorem an_inline_declarator_projects_only_fnptr (d : InlineDeclarator)
+    (x : List QCore.DeclaredAbiAgreement.AbiType) (h : projectInline d = some x) :
+    x = [.fnptr] := by
+  cases d with
+  | other => simp [projectInline, readInline] at h
+  | fnptr k q =>
+    match k, q with
+    | 1, false =>
+      simp [projectInline, readInline, QCore.TypedefProjection.project] at h
+      exact h.symm
+    | 0, _ => simp [projectInline, readInline] at h
+    | n + 2, _ => simp [projectInline, readInline] at h
+    | 1, true => simp [projectInline, readInline] at h
+
+theorem a_deeper_inline_declarator_stays_unread (k : Nat) (q : Bool) :
+    projectInline (.fnptr (k + 2) q) = none := by
+  simp [projectInline, readInline]
+
+theorem a_qualified_inline_declarator_stays_unread (k : Nat) :
+    projectInline (.fnptr k true) = none := by
+  cases k <;> simp [projectInline, readInline]
 
 /-! ## Shared vectors -/
 

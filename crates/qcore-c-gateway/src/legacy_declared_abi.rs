@@ -137,8 +137,10 @@
 //!   untested.
 //!
 //! An *inline* function-pointer parameter — `int (*cb)(void *)` written out at
-//! the parameter position rather than behind a typedef — also still refuses, as
-//! every nested declarator does.
+//! the parameter position rather than behind a typedef — is read since card
+//! CG22-INDIRECT-CALLS-AND-CALLBACKS (absorbing
+//! LOADER-ABI-INLINE-FNPTR-DECLARATOR) as the same `fnptr`, in exactly the
+//! typedef reader's shape; every other nested declarator still refuses.
 //!
 //! # What card W43-LIBC-RESULT-ALIAS widened
 //!
@@ -1109,13 +1111,54 @@ const RESERVED_NON_SPECIFIERS: &[&str] = &[
     "__typeof__",
 ];
 
+/// `RET (*NAME)(PARAMETERS)` or the abstract `RET (*)(PARAMETERS)` at a
+/// parameter position, exactly the declarator shape
+/// [`read_function_pointer_typedef`] commits to: one pointer level, a return
+/// type with no declarator punctuation of its own. Anything else (`(**f)`,
+/// `(*const f)`, `(*f[2])`, a function returning a function pointer) is left
+/// to the caller's refusal (`ABI-FNPTR-DEPTH1` and the nested-declarator
+/// boundary stay).
+fn inline_function_pointer_parameter(group: &[&str]) -> Option<BTreeSet<&'static str>> {
+    if group.last() != Some(&")") {
+        return None;
+    }
+    let parameters_open = matching_open(group, group.len() - 1)?;
+    let declarator_close = parameters_open.checked_sub(1)?;
+    if group[declarator_close] != ")" {
+        return None;
+    }
+    let declarator_open = matching_open(group, declarator_close)?;
+    match &group[declarator_open + 1..declarator_close] {
+        ["*"] => {}
+        ["*", name] if is_c_identifier(name) => {}
+        _ => return None,
+    }
+    let head = &group[..declarator_open];
+    if head.is_empty()
+        || head
+            .iter()
+            .any(|text| matches!(*text, "(" | ")" | "[" | "]" | "," | "{" | "}"))
+    {
+        return None;
+    }
+    Some(BTreeSet::from([FUNCTION_POINTER_ABI_TYPE]))
+}
+
 /// Project one parameter declaration group.
 fn project_parameter(
     group: &[&str],
     typedefs: &BTreeMap<String, TypedefTarget>,
 ) -> Option<BTreeSet<&'static str>> {
-    // A nested declarator (a function pointer, a parenthesised declarator) is
-    // not read.
+    // Card CG22-INDIRECT-CALLS-AND-CALLBACKS (absorbing
+    // LOADER-ABI-INLINE-FNPTR-DECLARATOR): an inline function-pointer
+    // parameter `RET (*NAME)(PARAMETERS)` is the same type as the typedef
+    // CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF reads, so it projects to the same
+    // opaque `fnptr`, on which no custody mode can be written.
+    if let Some(projection) = inline_function_pointer_parameter(group) {
+        return Some(projection);
+    }
+    // Any other nested declarator (a pointer to a function pointer, a
+    // parenthesised declarator) is not read.
     if group.iter().any(|text| *text == "(" || *text == ")") {
         return None;
     }

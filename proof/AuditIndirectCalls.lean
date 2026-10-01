@@ -19,3 +19,7 @@ import QCore.IndirectCalls
 #print axioms QCore.IndirectCalls.join_vectors_count
 #print axioms QCore.IndirectCalls.callback_vectors_hold
 #print axioms QCore.IndirectCalls.callback_vectors_count
+#print axioms QCore.IndirectCalls.an_inline_declarator_reads_as_the_typedef
+#print axioms QCore.IndirectCalls.an_inline_declarator_projects_only_fnptr
+#print axioms QCore.IndirectCalls.a_deeper_inline_declarator_stays_unread
+#print axioms QCore.IndirectCalls.a_qualified_inline_declarator_stays_unread

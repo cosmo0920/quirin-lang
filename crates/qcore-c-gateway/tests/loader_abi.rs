@@ -605,10 +605,49 @@ const ROWS: &[Row] = &[
         c: "void k_use(void *p, long double n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
+    // -- an inline function-pointer parameter (card CG22, absorbing
+    //    LOADER-ABI-INLINE-FNPTR-DECLARATOR) --------------------------------
     Row {
-        label: "an *inline* function-pointer parameter is a nested declarator, still not read",
+        label: "an *inline* function-pointer parameter is read as `fnptr`, so an object-pointer \
+                spelling of it disagrees",
         declared: "p: ptr<mut, u8>, n: i32",
         c: "void k_use(void (*p)(int), int n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "and `fnptr` agrees with it, as with the typedef'd spelling",
+        declared: "p: fnptr, n: i32",
+        c: "void k_use(void (*p)(int), int n);",
+        outcome: None,
+    },
+    Row {
+        label: "the measured librdkafka shape: commas inside the declarator's own parameters",
+        declared: "p: ptr<mut, u8>, n: fnptr",
+        c: "void k_use(void *p, int (*n)(const void *a, const void *b, void *o));",
+        outcome: None,
+    },
+    Row {
+        label: "an abstract inline declarator reads the same way",
+        declared: "p: fnptr, n: i32",
+        c: "void k_use(int (*)(void *), int n);",
+        outcome: None,
+    },
+    Row {
+        label: "`ABI-FNPTR-DEPTH1`: an inline pointer *to* a function pointer stays refused",
+        declared: "p: fnptr, n: i32",
+        c: "void k_use(void (**p)(int), int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "a qualified inline declarator is not committed to",
+        declared: "p: fnptr, n: i32",
+        c: "void k_use(void (*const p)(int), int n);",
+        outcome: Some(AbiRefusal::UnreadableDeclaration),
+    },
+    Row {
+        label: "nor is a function returning a function pointer",
+        declared: "p: fnptr, n: i32",
+        c: "void k_use(void (*(*p)(int))(void), int n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
     // -- a qualifier after the last `*` (card W43-LIBC-RESULT-ALIAS) -------
