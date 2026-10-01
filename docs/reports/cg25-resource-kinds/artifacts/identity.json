@@ -2,7 +2,7 @@
  "card": "CG25-RESOURCE-KINDS",
  "base": "b6a3dc42",
  "before_binary": {"sha256": "90895b8b3105c25d4d9832243ed9ad9498cdb5d667d4a31b947be484e354b66b", "built_at": "b6a3dc42"},
- "after_binary": {"sha256": "7cbd8bfdbd60d7b515cc3c74ee9f1e3c5c5d905e589ebb0e917416b7aad5b761", "built_at": "61203c5d (4d8b0475 after the rebase onto main 8e8ed41f)", "note": "later commits change formatting, tests and records only; measured on base b6a3dc42"},
+ "after_binary": {"sha256": "7cbd8bfdbd60d7b515cc3c74ee9f1e3c5c5d905e589ebb0e917416b7aad5b761", "built_at": "61203c5d (rebased since onto main 06ad81cb; CG17 and CG20 leave the corpus byte-identical by their own reports)", "note": "later commits change formatting, tests and records only; measured on base b6a3dc42"},
  "corpus": {
   "command": "QCORE_TYPED_PATH_PARITY=... python3 scripts/run_pinned_audit.py OUT 66910c10 --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 --jobs 4",
   "before": {"run": "private/cg25rk/before", "totals": "629 / 10 / 4,195", "sha256": "3d53a5d0b6728d4986a910bd81318a040995076bbded1970f9963022fcc3fcf2"},

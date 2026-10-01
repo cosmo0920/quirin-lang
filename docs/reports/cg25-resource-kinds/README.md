@@ -129,7 +129,7 @@ The symbol's lifetime is registered as `CG25-DLSYM-SYMBOL-LIFETIME`.
 
 ## 4. Prediction against outcome
 
-[PREDICTION.md](PREDICTION.md) was committed (`41c726cc`, `66be56f4` after the rebase onto main `8e8ed41f`) before any AFTER
+[PREDICTION.md](PREDICTION.md) was committed (`41c726cc`; `ca7b83cc` after the rebase onto main `06ad81cb`) before any AFTER
 measurement, but **after** the vocabulary, gateway module and unit tests were
 drafted against synthetic fixtures: a deviation from the brief's
 freeze-before-implementing, recorded in the file itself.
