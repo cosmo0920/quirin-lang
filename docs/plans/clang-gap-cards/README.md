@@ -184,6 +184,12 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     Route T unchanged. Residuals by owner in
     `CG06-VALUE-CONNECTIVE-RESIDUALS`.
     [Report](../../reports/cg06-value-connectives-and-conditional/README.md).
+  - *Status (wave 48, round 8, the sibling-effect residual).* Gateway rule
+    11m composes a region beside call-bearing siblings with CG05's
+    footprints, one graph per arm: 987 of the 1,137 order refusals compose,
+    2 statements are lowered, the rest refuse on their own edges; no
+    function moves. `CG06-VALUE-CONNECTIVE-RESIDUALS` amended.
+    [Report](../../reports/cg06-connective-footprints/README.md).
 - **CG07: `_Generic` and statement expressions.**
   - *`_Generic`.* Use Clang's selected `GenericSelectionExpr` association where
     the associations differ, never evaluating the controlling or unselected

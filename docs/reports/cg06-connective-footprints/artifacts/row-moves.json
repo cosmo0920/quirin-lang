@@ -1,0 +1,45 @@
+{
+ "moves": {
+  "an operand unsequenced with the region carries an effect -> an arm's expression an older route refuses": 976,
+  "an operand unsequenced with the region carries an effect -> 16 leaves exceed 8": 3,
+  "a deciding operand with an effect beside an operand it could reach -> a deciding operand no condition route decides": 2,
+  "an operand unsequenced with the region carries an effect -> admitted": 2,
+  "an operand unsequenced with the region carries an effect -> a deciding operand no condition route decides": 2,
+  "an operand unsequenced with the region carries an effect -> 12 leaves exceed 8": 1,
+  "an operand unsequenced with the region carries an effect -> 32 leaves exceed 8": 1
+ },
+ "examples": {
+  "an operand unsequenced with the region carries an effect -> an arm's expression an older route refuses": [
+   "rd_kafka_parse_ListOffsets:20799: rd_kafka_log0 ( & ( rkbuf - > rkbuf_rkb ) - > rkb_rk - > rk_conf , ( rkbuf - > rkbuf_rkb ) - > rkb_rk , _logname , log_decode_errors , 0x0 , __qcore_literal__ ,",
+   "rd_kafka_mock_handle_ShareAcknowledge:25256: rd_kafka_log0 ( & ( rkbuf - > rkbuf_rkb ) - > rkb_rk - > rk_conf , ( rkbuf - > rkbuf_rkb ) - > rkb_rk , _logname , log_decode_errors , 0x0 , __qcore_literal__ ,",
+   "rd_kafka_DescribeConfigsResponse_parse:22315: rd_kafka_log0 ( & ( reply - > rkbuf_rkb ) - > rkb_rk - > rk_conf , ( reply - > rkbuf_rkb ) - > rkb_rk , _logname , log_decode_errors , 0x0 , __qcore_literal__ ,",
+   "rd_kafka_mock_handle_Metadata:22916: rd_kafka_log0 ( & ( rkbuf - > rkbuf_rkb ) - > rkb_rk - > rk_conf , ( rkbuf - > rkbuf_rkb ) - > rkb_rk , _logname , log_decode_errors , 0x0 , __qcore_literal__ ,",
+   "rd_kafka_msgset_reader_v2:20203: rd_kafka_log0 ( & ( rkbuf - > rkbuf_rkb ) - > rkb_rk - > rk_conf , ( rkbuf - > rkbuf_rkb ) - > rkb_rk , _logname , log_decode_errors , 0x0 , __qcore_literal__ ,"
+  ],
+  "a deciding operand with an effect beside an operand it could reach -> a deciding operand no condition route decides": [
+   "rd_kafka_broker_op_serve:22735: rd_kafka_dr_msgq0 ( rktp - > rktp_rkt , & rktp - > rktp_msgq , ( rd_atomic32_get ( & ( rkb - > rkb_rk ) - > rk_terminate ) & 0x1 ) ? RD_KAFKA_RESP_ERR__DESTROY ",
+   "rd_kafka_broker_op_serve:22634: rd_kafka_log0 ( & ( rkb ) - > rkb_rk - > rk_conf , ( rkb ) - > rkb_rk , _logname , 7 , ( 0x2 | 0x4 ) , __qcore_literal__ , __qcore_literal__ __qcore_literal__ _"
+  ],
+  "an operand unsequenced with the region carries an effect -> admitted": [
+   "get_data_point_otlp_metadata_context:6870: snprintf ( key , sizeof ( key ) - 1 , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , sample ! = (",
+   "get_data_point_metadata_context:5731: snprintf ( key , sizeof ( key ) - 1 , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , metric ! = ("
+  ],
+  "an operand unsequenced with the region carries an effect -> 16 leaves exceed 8": [
+   "rd_kafka_AclBinding_request_size:23649: 1 + 2 + ( acl - > name ? strlen ( acl - > name ) : 0 ) + 2 + ( acl - > principal ? strlen ( acl - > principal ) : 0 ) + 2 + ( acl - > host ? strlen ( acl - > ho",
+   "rd_kafka_JoinGroupRequest:21623: rkbuf = rd_kafka_buf_new_request0 ( rkb , 11 , 1 , ( 2 + ( ( ( group_id ) - > len ) = = - 1 ? 0 : ( ( group_id ) - > len ) ) ) + 4 + 4 + ( 2 + ( ( ( member_id )",
+   "rd_kafka_cgrp_revoke_all_rejoin:23349: rd_kafka_log0 ( & rkcg - > rkcg_rk - > rk_conf , rkcg - > rkcg_rk , ( ( void * ) 0 ) , 7 , ( 0x2000 | 0x100 ) , __qcore_literal__ , __qcore_literal__ __qcore_li"
+  ],
+  "an operand unsequenced with the region carries an effect -> 12 leaves exceed 8": [
+   "rd_kafka_cgrp_join:21802: rd_kafka_log0 ( & ( rkcg - > rkcg_curr_coord ) - > rkb_rk - > rk_conf , ( rkcg - > rkcg_curr_coord ) - > rkb_rk , _logname , 7 , ( 0x2000 | 0x100 ) , __qcore_li"
+  ],
+  "an operand unsequenced with the region carries an effect -> a deciding operand no condition route decides": [
+   "rd_kafka_assignor_run:20399: rd_kafka_log0 ( & rkcg - > rkcg_rk - > rk_conf , rkcg - > rkcg_rk , ( ( void * ) 0 ) , 7 , ( 0x100 | 0x20000 ) , __qcore_literal__ , __qcore_literal__ __qcore_l",
+   "rd_kafka_assignor_run:20418: rd_kafka_log0 ( & rkcg - > rkcg_rk - > rk_conf , rkcg - > rkcg_rk , ( ( void * ) 0 ) , 7 , ( 0x100 | 0x20000 ) , __qcore_literal__ , __qcore_literal__ __qcore_l"
+  ],
+  "an operand unsequenced with the region carries an effect -> 32 leaves exceed 8": [
+   "rd_kafka_cgrp_revoke_all_rejoin_maybe:23335: rd_kafka_log0 ( & rkcg - > rkcg_rk - > rk_conf , rkcg - > rkcg_rk , ( ( void * ) 0 ) , 7 , ( 0x2000 | 0x100 ) , __qcore_literal__ , __qcore_literal__ __qcore_li"
+  ]
+ },
+ "only_before": [],
+ "only_after": []
+}

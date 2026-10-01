@@ -1,0 +1,20 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4196,
+   "Safe": 628,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4196,
+   "Safe": 628,
+   "Unsafe": 10
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 2,
+ "leaf_delta": {
+  "unsupported: indirect memory access is outside the resource projection": -2
+ }
+}

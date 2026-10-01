@@ -1,0 +1,18 @@
+{
+ "edge_refused_statements": 808,
+ "outer_callee": {
+  "rd_kafka_log0": 799,
+  "snprintf": 3,
+  "fprintf": 2,
+  "(other)": 2,
+  "rd_kafka_txn_set_abortable_error0": 1,
+  "rd_kafka_txn_set_fatal_error": 1
+ },
+ "first_unsupported_leaf": {
+  "indirect memory access is outside the resource projection": 757,
+  "C operator `sizeof` requires type/operand analysis": 48,
+  "call to uncontracted function `rd_kafkap_Fetch_reply_tags_parse`": 1,
+  "call to uncontracted function `rd_kafkap_Fetch_reply_tags_partition_parse`": 1,
+  "call to uncontracted function `rd_kafkap_Produce_reply_tags_parse`": 1
+ }
+}

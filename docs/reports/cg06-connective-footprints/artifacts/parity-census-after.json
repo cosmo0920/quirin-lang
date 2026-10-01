@@ -1,0 +1,93 @@
+{
+ "consultations": 2485,
+ "admitted": 257,
+ "functions_with_an_admission": 182,
+ "functions_with_a_refusal": 512,
+ "by_reason": {
+  "an arm's expression an older route refuses": 1387,
+  "a deciding operand no condition route decides": 315,
+  "no unique Clang node": 284,
+  "admitted": 257,
+  "an operand unsequenced with the region carries an effect": 148,
+  "a value connective or conditional under `BinaryOperator ,`": 67,
+  "a value connective or conditional under `indirect callee`": 14,
+  "16 leaves exceed 8": 5,
+  "64 leaves exceed 8": 2,
+  "a deciding operand with an effect beside an operand it could reach": 2,
+  "12 leaves exceed 8": 1,
+  "32 leaves exceed 8": 1,
+  "a value connective or conditional under `BinaryOperator =`": 1,
+  "a value connective or conditional under `DeclStmt`": 1
+ },
+ "order_premise_rows_still_refused": {
+  "sibling": 148,
+  "decision": 2
+ },
+ "composition_classes": {
+  "decision g": 2,
+  "sibling a admitted": 2,
+  "sibling b": 3,
+  "sibling c": 143,
+  "sibling d": 1,
+  "sibling f": 1
+ },
+ "composition_class_functions": {
+  "decision g": 2,
+  "sibling a admitted": 2,
+  "sibling b": 2,
+  "sibling c": 99,
+  "sibling d": 1,
+  "sibling f": 1
+ },
+ "detail": {
+  "decision g": {
+   "nested call `rd_kafka_fatal_error_code` has no contract in force": 1,
+   "nested call `rd_kafka_op_version_outdated` has no contract in force": 1
+  },
+  "sibling b": {
+   "footprints do not commute: unsequenced read of `mconn` and call `rd_list_cnt` whose contract footprints do not commute (CG05)": 3
+  },
+  "sibling c": {
+   "rd_kafka_err2str": 46,
+   "rd_kafka_err2name": 23,
+   "rd_kafka_fetch_pos2str": 15,
+   "rd_kafka_broker_name": 13,
+   "rd_kafka_offset2str": 7,
+   "rd_kafka_broker_id": 6,
+   "rd_kafka_error_string": 4,
+   "rd_kafka_q_len": 4,
+   "rd_kafka_op2str": 3,
+   "rd_clock": 3,
+   "rd_kafka_features2str": 3,
+   "rd_kafka_replyq_make": 2,
+   "rd_map_cnt": 2,
+   "rd_kafka_Uuid_base64str": 2,
+   "rd_kafka_outq_len": 2,
+   "rd_kafka_assignment_in_progress": 1,
+   "rd_kafka_error_new": 1,
+   "rd_kafka_msgq_first": 1,
+   "rd_map_str_hash": 1,
+   "flb_input_name": 1,
+   "ERR_lib_error_string": 1,
+   "rd_kafka_topic_name": 1,
+   "LZ4F_getErrorName": 1
+  },
+  "sibling f": {
+   "indirect call (CG22)": 1
+  }
+ },
+ "admitted_by_composition": [
+  {
+   "function": "get_data_point_otlp_metadata_context",
+   "line": 6870,
+   "position": "value-connective-statement",
+   "text": "snprintf ( key , sizeof ( key ) - 1 , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , sample ! = ( ( void * ) 0 ) ? sample - > hash : 0 , sample ! = ( ( void * ) 0 ) ? cmt_metric"
+  },
+  {
+   "function": "get_data_point_metadata_context",
+   "line": 5731,
+   "position": "value-connective-statement",
+   "text": "snprintf ( key , sizeof ( key ) - 1 , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , metric ! = ( ( void * ) 0 ) ? metric - > hash : 0 , metric ! = ( ( void * ) 0 ) ? cmt_metric"
+  }
+ ]
+}
