@@ -4,7 +4,8 @@ Card `CG26-VARIADICS` of the [Clang gap card queue](../../plans/clang-gap-cards/
 (wave 48, round 10), gap entries K08, K09 and K10, route G. It absorbs
 `W44-VA-START-END-BUILTINS` and `W46-FCNTL-SETFD-ADDRESS-TAIL`. Base: local
 `main` `b6a3dc42`, rebased onto `8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS) and then
-`06ad81cb` (CG20-NUMERIC-DOMAIN) after the AFTER measurement.
+`06ad81cb` (CG20-NUMERIC-DOMAIN) and `b934c560` (CG25-RESOURCE-KINDS) after the
+AFTER measurement.
 
 - **Rule:** [gateway 11w](../../agents/gateway.md#constraint-11w), amending E20's
   uncontracted-builtin refusal for the four `va_*` builtins only and O04-TRACE's
@@ -126,14 +127,17 @@ second and third died with `No space left on device` at the parity flush when
 the shared disk filled (another card's builds); they measure the disk, not the
 program. The fourth ran without the parity stream (the arbiter's result does
 not depend on it) and is the measurement. The system and slice AFTER ran the
-AFTER binary through `BINARY` and completed. Main moved to `8e8ed41f`
-(CG17-LAYOUT-DERIVED-EXTENTS) and `06ad81cb` (CG20-NUMERIC-DOMAIN) after the
-AFTER; each moved no function and left the corpus byte-identical at
-`3d53a5d0…` by its own report. CG17's hooks (VLA declarations, `container_of`
-values) and this card's (uncontracted `va_*` builtins, the tail refusal) take
-disjoint refusals, and CG20 changes no custody decision (its `long` reading in
-the declared-ABI reader is LP64-unchanged on this host), so the AFTER was not
-repeated on the rebased tip; the integrator's merged measurement is the check.
+AFTER binary through `BINARY` and completed. Main then moved three times
+after the AFTER: `8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS) and `06ad81cb`
+(CG20-NUMERIC-DOMAIN) left the corpus byte-identical at `3d53a5d0…` by their
+own reports; `b934c560` (CG25-RESOURCE-KINDS) moved it to 630 / 10 / 4,194
+(`5ade5aab…`). The AFTER was **not repeated on the combined tree** (the shared
+lock serialises arbiter runs; each takes over an hour on this host). CG17's
+hooks (VLA declarations, `container_of` values), CG20's (numeric, no custody
+decision) and CG25's (kinded and in-place custody) take refusals this card's
+two hooks do not (uncontracted `va_*` builtins, the tail refusal), so the
+combined corpus is expected at 632 / 10 / 4,192; that is a prediction, and the
+integrator's merged measurement is the check.
 
 **Corpus movement** ([comparison](artifacts/compare-corpus.json),
 [census](artifacts/census-corpus.json)): **+2 Unknown → Safe**, exactly the

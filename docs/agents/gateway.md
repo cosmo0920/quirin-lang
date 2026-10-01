@@ -3634,6 +3634,7 @@ own anchor here.
     table and the protocols bound to Rust and to the libc declarations by
     `kindVectors` and `protocolVectors`); `QCore.KindedCustody.Kind` gains the
     two constructors; [report](../reports/cg25-resource-kinds/README.md).
+
 <a id="constraint-11w"></a>
 
 11w. **A `va_list` is read only as C11 7.16's protocol, established on every
