@@ -627,6 +627,30 @@ pub(crate) fn record_layout_dump() -> Option<String> {
     })
 }
 
+/// Card CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): Clang's evaluation of each
+/// integer constant expression over the analysed translation unit, in one
+/// probe (`layout_extents::clang_constants`). Empty outside an analysed
+/// source or on any Clang failure.
+pub(crate) fn analysed_unit_constants(
+    expressions: &[String],
+) -> std::collections::BTreeMap<String, i128> {
+    ANALYSED_SOURCE.with(|cell| {
+        let borrow = cell.borrow();
+        let Some(context) = borrow.as_ref() else {
+            return Default::default();
+        };
+        let unit = C11TranslationUnit {
+            source: &context.source,
+            include_paths: context.request.include_paths.clone(),
+            definitions: context.request.definitions.clone(),
+            preprocessor_options: context.request.preprocessor_options.clone(),
+            dialect: context.dialect,
+            ..C11TranslationUnit::default()
+        };
+        crate::layout_extents::clang_constants(&context.source, &unit, expressions)
+    })
+}
+
 impl StatementIndex {
     pub(crate) fn read(function: &str) -> Option<Self> {
         ANALYSED_SOURCE.with(|cell| {

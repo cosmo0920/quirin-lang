@@ -87,21 +87,29 @@ fn m12_variable_length_arrays_are_refused() {
         t_refusal("int subject(int n) { int a[n]; return 0; }"),
         "local outside scalar/pointer callback profile"
     );
+    // Flipped by CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): a VLA of scalar
+    // elements whose bound only reads and whose address never leaves its
+    // block is no custody event; its numeric obligations are CG20's.
     for body in ["int a[n];", "int a[n]; a[0] = 1;"] {
         let run = gs(&format!("void subject(int n) {{ {body} }}"));
-        assert!(
-            run.refused("local declaration may shadow a formal resource identity"),
-            "{body}: {run:?}"
-        );
+        assert!(run.safe(), "{body}: {run:?}");
     }
+    // A VLA whose address may leave its block keeps the refusal.
+    let escaping = gs("int *subject(int n) { int a[n]; return a; }");
+    assert!(
+        escaping.refused("local declaration may shadow a formal resource identity"),
+        "{escaping:?}"
+    );
     // Flipped by CG08-CASTS-AND-TYPE-QUERIES (rule 11b, E16): an evaluated
-    // VLA type-query operand is read once (its size expression `n`); the
-    // declaration refusal above is CG17's and stands.
+    // VLA type-query operand is read once (its size expression `n`).
     assert!(
         gs("unsigned long subject(int n) { unsigned long z = sizeof(int[n]); return z; }").safe()
     );
 }
 
+/// Still custody-Safe after CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): the
+/// flexible-array extent is a separate fact (`layout_report`, size not
+/// established without CG16's vocabulary), never a custody obligation.
 #[test]
 fn m13_flexible_array_members_carry_no_extent() {
     if !clang_available() {
@@ -110,6 +118,9 @@ fn m13_flexible_array_members_carry_no_extent() {
     assert!(gs("struct F { int n; int data[]; }; int subject(struct F *f, int i) { return f->data[i]; }").safe());
 }
 
+/// Still custody-Safe after CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): the
+/// alignment obligation is the separate `layout.alignment.v1` property
+/// (`layout_report`: undecided here, so that property is Unknown).
 #[test]
 fn m19_derived_addresses_carry_no_alignment_obligation() {
     if !clang_available() {
@@ -133,6 +144,9 @@ fn e18_offsetof_and_container_of_are_refused() {
         .refused("call to uncontracted function `__builtin_offsetof`"));
     assert!(gs("struct S *subject(int *m) { return (struct S *)((char *)m - __builtin_offsetof(struct S, b)); }")
         .refused(RETURN));
+    // CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): only a pointer established as
+    // the member's address is the enclosing object; this one is unrelated
+    // and stays refused (tests/layout_extents.rs has the admitted form).
 }
 
 // ---------------------------------------------------------------------------

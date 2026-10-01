@@ -119,6 +119,10 @@ mod union_bitfield;
 // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): storage duration and
 // `volatile`; the G hooks are in `legacy_storage_duration.rs`.
 mod storage_duration;
+// Card CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): VLA, flexible-array,
+// alignment and `container_of` layout facts from Clang; the G hooks are in
+// `legacy_layout_extents.rs`, the published report is `layout_report`.
+pub mod layout_extents;
 // Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): value regions and
 // their order premise; the G hooks are in `legacy_value_connective.rs`.
 mod value_connective;

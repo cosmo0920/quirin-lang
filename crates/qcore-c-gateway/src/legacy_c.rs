@@ -242,6 +242,10 @@ mod aggregate_value_route;
 // member, its static premises on the parser and its flow decision.
 #[path = "legacy_void_view.rs"]
 mod void_view_route;
+// Card CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): VLA declarations and
+// `container_of` values, asked last, and the layout census.
+#[path = "legacy_layout_extents.rs"]
+mod layout_extents_route;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
@@ -3278,6 +3282,8 @@ fn build_function_cfg_with(
     // Card CG08-CASTS-AND-TYPE-QUERIES (`W45-CALLEE-CAST-LEXICAL-PREMISE`):
     // parity runs only.
     parser.record_callee_cast_census(body_start);
+    // Card CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): parity runs only.
+    parser.record_layout_census();
     #[cfg(feature = "indirect-census")]
     crate::traversal_census::record_function(function, &parser.typed_types);
     let statements =
@@ -6364,6 +6370,13 @@ impl Parser<'_> {
                 {
                     return Ok(routed);
                 }
+                // Card CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): asked last,
+                // only for a refused return.
+                if return_refused(&statement)
+                    && let Some(enclosing) = self.container_of_return(&expression, line)
+                {
+                    return Ok(enclosing);
+                }
                 Ok(statement)
             }
             Some("{") => Ok(Statement::Block(self.parse_block()?)),
@@ -6599,6 +6612,16 @@ impl Parser<'_> {
         if let Some(routed) = self.atomic_routed_statement(tokens, line, &instruction) {
             self.element_origins.clear();
             return routed;
+        }
+        // Card CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): asked last, only for
+        // a refusal: a VLA declaration, and a `container_of` value.
+        if let Some(declared) = self.vla_declaration_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return declared;
+        }
+        if let Some(enclosing) = self.container_of_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return enclosing;
         }
         if let LegacyInstruction::ContractCall { destination, .. } = &instruction {
             let use_ = if destination.is_some() {
