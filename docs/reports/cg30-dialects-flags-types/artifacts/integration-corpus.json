@@ -1,0 +1,98 @@
+{
+ "note": "Integrator's corpus arbiter runs (66910c10, --jobs 4, release quirin-audit). BEFORE: main f0bbc0eb (CG17, CG20, CG25, CG26 landed), 632/10/4,192, resource-diagnostics sha256 79fda534123306692a7d369350558ee69666c65ac67b49b6e5d3a4e6ce1b1ed2. AFTER: CG30 rebased onto main f1a4c648 (adds CG28, CG27, CG21) at e50c34e7b, 645/10/4,179, sha256 ceefb6c430e4a7a50c7f4779c6e1268b67d30556a6fe3de22ecdc206c6fe077d. Status moves only (leaves not compared): 1 is CG28's (cmt_atomic_compare_exchange), 12 are CG21's (its measured list on b6a3dc42); CG27 and CG30 move none; no Safe -> non-Safe move.",
+ "before": {
+  "rev": "f0bbc0eb",
+  "totals": [
+   632,
+   10,
+   4192
+  ]
+ },
+ "after": {
+  "totals": [
+   645,
+   10,
+   4179
+  ]
+ },
+ "moves": [
+  {
+   "file": "cmt_atomic_clang.c",
+   "function": "cmt_atomic_compare_exchange",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "mk_server/mk_header.c",
+   "function": "mk_header_set_http_status",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "mk_server/mk_socket.c",
+   "function": "mk_socket_reset",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "rdkafka_assignor.c",
+   "function": "isFullyBalanced0",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_clear_wait_resp",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_set_wait_resp",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "rdkafka_conf.c",
+   "function": "rd_kafka_confval_get_int",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "rdlist.c",
+   "function": "rd_list_set_cnt",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "snappy.c",
+   "function": "get_u32_at_offset",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "tinycthread_extra.c",
+   "function": "rwlock_rdlock",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "tinycthread_extra.c",
+   "function": "rwlock_rdunlock",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "tinycthread_extra.c",
+   "function": "rwlock_wrlock",
+   "from": "Unknown",
+   "to": "Safe"
+  },
+  {
+   "file": "tinycthread_extra.c",
+   "function": "rwlock_wrunlock",
+   "from": "Unknown",
+   "to": "Safe"
+  }
+ ]
+}
