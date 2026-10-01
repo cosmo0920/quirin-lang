@@ -230,11 +230,18 @@ impl Parser<'_> {
         let unaliased = |decl: &str| aliasing.0.contains(decl) && !aliasing.1.contains(decl);
         let begin = offset(&root["range"]["begin"]).ok_or(Decline::Node)?;
         let locate = |node: &Value| locate(index, &texts, begin, node);
+        // Rule 11m: a sibling's or the deciding operand's call is composed
+        // by CG05's reading and footprints over this unit's contracts.
+        let facts = self.nested_facts(index);
+        let compose = |region: &Value, siblings: &[&Value]| {
+            crate::connective_footprints::compose(region, siblings, &facts)
+        };
         let regions = value_connective::regions(
             root,
             &Reading {
                 locate: &locate,
                 unaliased: &unaliased,
+                compose: Some(&compose),
             },
         )
         .map_err(Decline::Reading)?;

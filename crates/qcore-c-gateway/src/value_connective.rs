@@ -63,6 +63,7 @@
 
 use serde_json::Value;
 
+use crate::connective_footprints::Composed;
 use crate::typed_c_ast::{children, kind};
 
 /// A half-open token span of the full expression's token run.
@@ -145,6 +146,10 @@ pub(crate) enum Refusal {
     Span,
     /// More leaves than [`MAX_LEAVES`].
     Leaves(usize),
+    /// Card CG06-VALUE-CONNECTIVE-RESIDUALS (rule 11m): rule 10z's premise
+    /// refusal (`SiblingEffect` or `UnorderedDecision`) that the composition
+    /// with CG05's footprints did not discharge, and why.
+    Composition(Box<Refusal>, Option<Composed>),
 }
 
 impl Refusal {
@@ -165,6 +170,13 @@ impl Refusal {
             }
             Refusal::Span => "a region's tokens are not a run of the expression".to_owned(),
             Refusal::Leaves(count) => format!("{count} leaves exceed {MAX_LEAVES}"),
+            Refusal::Composition(premise, composed) => format!(
+                "{}; composed with CG05's footprints: {}",
+                premise.reason(),
+                composed
+                    .as_ref()
+                    .map_or_else(|| "commutes on both arms".to_owned(), Composed::reason)
+            ),
         }
     }
 }
@@ -367,6 +379,52 @@ pub(crate) fn admit(
     Ok(())
 }
 
+/// Card CG06-VALUE-CONNECTIVE-RESIDUALS (rule 11m): [`admit`], where its two
+/// order refusals (`SiblingEffect`, `UnorderedDecision`) are asked of the
+/// composition with CG05's footprints instead (`compose`, `None` when the
+/// route supplies none: the refusal stays). An omitted-middle operand with an
+/// effect is never composed: C evaluates it once and the lowering re-reads
+/// it. `QCore.ValueConnectives.admitComposed`.
+pub(crate) fn admit_composed(
+    siblings_effect_free: bool,
+    decision_effect_free: bool,
+    siblings_inert: bool,
+    omitted_middle_reads_only: Option<bool>,
+    compose: Option<&dyn Fn() -> Result<(), Composed>>,
+) -> Result<(), Refusal> {
+    match admit(
+        siblings_effect_free,
+        decision_effect_free,
+        siblings_inert,
+        omitted_middle_reads_only,
+    ) {
+        Err(premise @ (Refusal::SiblingEffect | Refusal::UnorderedDecision)) => match compose {
+            Some(compose) => {
+                compose().map_err(|composed| Refusal::Composition(Box::new(premise), Some(composed)))
+            }
+            None => Err(premise),
+        },
+        other => other,
+    }
+}
+
+/// `(siblings effect-free, decision effect-free, siblings inert, omitted
+/// middle reads only, composition (`None`: none asked), admitted)`, the
+/// shared vectors of `QCore.ValueConnectives.composedVectors`.
+#[cfg(test)]
+pub(crate) const COMPOSED_VECTORS: [(bool, bool, bool, Option<bool>, Option<bool>, bool); 10] = [
+    (true, true, true, None, Some(false), true),
+    (false, true, true, None, None, false),
+    (false, true, true, None, Some(true), true),
+    (false, true, true, None, Some(false), false),
+    (true, false, false, None, Some(true), true),
+    (true, false, false, None, Some(false), false),
+    (false, false, false, None, Some(true), true),
+    (true, true, true, Some(false), Some(true), false),
+    (false, true, true, Some(false), Some(true), false),
+    (false, true, true, Some(true), Some(true), true),
+];
+
 /// `(siblings effect-free, decision effect-free, siblings inert, omitted
 /// middle reads only, admitted)`, the shared vectors of
 /// `QCore.ValueConnectives.admissionVectors`.
@@ -472,6 +530,12 @@ pub(crate) struct Reading<'a> {
     /// tokens are not that run's.
     pub(crate) locate: &'a dyn Fn(&Value) -> Option<Span>,
     pub(crate) unaliased: &'a dyn Fn(&str) -> bool,
+    /// Card CG06-VALUE-CONNECTIVE-RESIDUALS (rule 11m): the composition of a
+    /// region (its node) with its siblings by CG05's footprints, asked only
+    /// where [`admit`] refuses a sibling's effect or a deciding operand's
+    /// effect beside a sibling that is not inert. `None` keeps rule 10z's
+    /// refusal.
+    pub(crate) compose: Option<&'a dyn Fn(&Value, &[&Value]) -> Result<(), Composed>>,
 }
 
 /// The value regions of a full expression's root: a `DeclStmt`'s one
@@ -576,14 +640,24 @@ fn region<'a>(
         _ => children(node).first().ok_or(Refusal::Span)?,
     };
     let omitted = (kind(node) == "BinaryConditionalOperator").then(|| effect_free(decision));
-    admit(
+    let premises = (
         siblings.iter().all(|sibling| effect_free(sibling)),
         effect_free(decision),
         siblings
             .iter()
             .all(|sibling| inert(sibling, reading.unaliased)),
         omitted,
-    )?;
+    );
+    // CENSUS (rule 11m, before its admission): the composition is computed
+    // and recorded in the refusal; nothing is admitted by it yet.
+    if let Err(premise) = admit(premises.0, premises.1, premises.2, premises.3) {
+        return Err(match (&premise, reading.compose) {
+            (Refusal::SiblingEffect | Refusal::UnorderedDecision, Some(compose)) => {
+                Refusal::Composition(Box::new(premise), compose(node, siblings).err())
+            }
+            _ => premise,
+        });
+    }
     // Nested regions of an arm keep the region's siblings; the arm's own
     // siblings are added as the walk descends into it.
     let arm = |arm: &'a Value| -> Result<Arm<'a>, Refusal> {

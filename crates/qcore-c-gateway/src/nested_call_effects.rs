@@ -384,6 +384,78 @@ pub(crate) fn read_data<'a>(
     })
 }
 
+/// Card **CG06-VALUE-CONNECTIVE-RESIDUALS** (gateway rule 11m): this card's
+/// reading of whole **operands** into one footprinted [`EvalGraph`], for a
+/// consumer that composes several operands (a value region and its siblings)
+/// under [`EvalGraph::check_footprints`].
+///
+/// Every evaluated call of an operand, at any depth, is read by
+/// [`Reader::call`] exactly as a nested call is (same refusals, same
+/// footprints, each call sequenced after its actuals' events), and the
+/// operand's non-call part contributes its named reads ([`Reader::reads`]).
+/// An address the non-call part takes is a value, not an effect, and adds no
+/// cell. Nothing about the order between operands is decided here: the
+/// consumer adds only the sequenced-before edges C guarantees, and
+/// [`Operands::check`] is `check_footprints` unchanged.
+pub(crate) struct Operands<'f> {
+    reader: Reader<'f>,
+}
+
+impl<'f> Operands<'f> {
+    pub(crate) fn new(facts: &'f dyn Facts) -> Self {
+        Self {
+            reader: Reader {
+                facts,
+                graph: EvalGraph::default(),
+                footprints: BTreeMap::new(),
+                bound: 0,
+                places: BTreeMap::new(),
+            },
+        }
+    }
+
+    /// Read one evaluated operand; answer its events.
+    pub(crate) fn operand(&mut self, node: &Value) -> Result<Vec<EventId>, Refusal> {
+        let mut calls = Vec::new();
+        evaluated_calls(node, &mut calls);
+        let mut events = Vec::new();
+        for call in calls {
+            let (_, inner) = self.reader.call(call)?;
+            events.extend(inner);
+        }
+        let mut addressed = Vec::new();
+        events.extend(self.reader.reads(&calls_as_literals(node), &mut addressed));
+        Ok(events)
+    }
+
+    /// A control event (`Branch`, `Merge`): it touches no cell, so its
+    /// footprint is empty.
+    pub(crate) fn control(&mut self, event: Event) -> EventId {
+        self.reader.push(event, Footprint::default())
+    }
+
+    /// `before` are each sequenced before `after` (an edge C guarantees).
+    pub(crate) fn sequence(&mut self, before: &[EventId], after: EventId) {
+        for &event in before {
+            self.reader.graph.before.push((event, after));
+        }
+    }
+
+    /// The graph, for inspection by the tests.
+    #[cfg(test)]
+    pub(crate) fn graph(&self) -> &EvalGraph {
+        &self.reader.graph
+    }
+
+    /// [`EvalGraph::check_footprints`] over every event read.
+    pub(crate) fn check(&self) -> Result<(), OrderRefusal> {
+        let facts = self.reader.facts;
+        self.reader
+            .graph
+            .check_footprints(&self.reader.footprints, &|decl| facts.unaliased(decl))
+    }
+}
+
 /// The bound place name of the `index`-th bound call of a statement.
 pub(crate) fn bound_place(index: usize) -> String {
     format!("{NESTED_VALUE_PREFIX}{index}")

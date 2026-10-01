@@ -68,7 +68,7 @@ pub(super) fn is_nested_refusal(description: &str) -> bool {
     description.starts_with(NESTED_REFUSAL_HEAD) && description.ends_with(NESTED_REFUSAL_TAIL)
 }
 
-struct GFacts<'a> {
+pub(super) struct GFacts<'a> {
     contracts: &'a qcore_schemas::contract::ResourceContracts,
     tails: &'a std::collections::BTreeSet<String>,
     index: &'a StatementIndex,
@@ -361,7 +361,7 @@ impl Parser<'_> {
                 .any(|token| token.text.starts_with(NESTED_VALUE_PREFIX))
     }
 
-    fn nested_facts<'i>(&'i self, index: &'i StatementIndex) -> GFacts<'i> {
+    pub(super) fn nested_facts<'i>(&'i self, index: &'i StatementIndex) -> GFacts<'i> {
         let (automatic, taken) = super::elaboration_route::aliasing(&index.function);
         GFacts {
             contracts: self.contracts,
