@@ -367,7 +367,23 @@ pub(crate) struct Resolution {
 /// Whether a call's callee is a direct function designator (no resolution
 /// needed): through parentheses and the decay only, as `elaboration` reads it.
 pub(crate) fn is_direct(callee: &Value) -> bool {
-    crate::elaboration::direct_callee(callee).is_some()
+    crate::elaboration::direct_callee(callee).is_some() || is_builtin(callee)
+}
+
+/// A builtin's call (`__builtin_expect(…)`, Clang's `BuiltinFnToFnPtr`
+/// decay): a direct call of a builtin, not an indirect one (card CG21's
+/// builtin boundary owns it).
+fn is_builtin(callee: &Value) -> bool {
+    let node = strip_parens(callee);
+    kind(node) == "ImplicitCastExpr"
+        && node["castKind"].as_str() == Some("BuiltinFnToFnPtr")
+        && children(node)
+            .first()
+            .map(strip_parens)
+            .is_some_and(|inner| {
+                kind(inner) == "DeclRefExpr"
+                    && inner["referencedDecl"]["kind"].as_str() == Some("FunctionDecl")
+            })
 }
 
 /// Resolve a call's callee expression to its candidate set.
@@ -456,6 +472,31 @@ fn declared_names(function: &Value) -> BTreeSet<String> {
     out
 }
 
+/// Whether a member or element place is read through a pointer anywhere on
+/// its base chain (`p->a.f`, `(*p).f`, `p[i].f`): any object of the type may
+/// be the one read, so its value is open.
+fn through_pointer(place: &Value) -> bool {
+    let place = strip_parens(place);
+    match kind(place) {
+        "MemberExpr" => {
+            place["isArrow"].as_bool() == Some(true)
+                || children(place).first().is_some_and(through_pointer)
+        }
+        "ArraySubscriptExpr" => match children(place).first().map(strip_parens) {
+            Some(base)
+                if kind(base) == "ImplicitCastExpr"
+                    && base["castKind"].as_str() == Some("ArrayToPointerDecay") =>
+            {
+                children(base).first().is_some_and(through_pointer)
+            }
+            _ => true,
+        },
+        "UnaryOperator" => place["opcode"].as_str() == Some("*"),
+        "ImplicitCastExpr" => children(place).first().is_some_and(through_pointer),
+        _ => false,
+    }
+}
+
 fn find_decl<'a>(node: &'a Value, id: &str) -> Option<&'a Value> {
     if matches!(kind(node), "VarDecl" | "ParmVarDecl") && node["id"].as_str() == Some(id) {
         return Some(node);
@@ -539,7 +580,7 @@ impl Reader<'_> {
                         }
                         _ => Shape::Other,
                     },
-                    "MemberExpr" if place["isArrow"].as_bool() == Some(true) => {
+                    "MemberExpr" | "ArraySubscriptExpr" if through_pointer(place) => {
                         Shape::MemberThroughPointer
                     }
                     "MemberExpr" => Shape::Member,
@@ -658,7 +699,7 @@ impl Reader<'_> {
                 let object = self.tables.objects.get(id).ok_or(Open::MutableStatic)?;
                 self.value(&object.init, depth + 1, visited)
             }
-            "MemberExpr" if place["isArrow"].as_bool() == Some(true) => {
+            "MemberExpr" | "ArraySubscriptExpr" if through_pointer(place) => {
                 Err(Open::MemberThroughPointer)
             }
             "MemberExpr" | "ArraySubscriptExpr" => {
