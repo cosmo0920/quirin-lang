@@ -151,6 +151,9 @@ pub(super) fn rewrite_unit(
     contracts: &ResourceContracts,
 ) -> Option<(Vec<Token>, Vec<ConditionalMark>)> {
     let definitions = super::function_names(tokens, conditionals).definitions;
+    if !may_call_indirectly(tokens, &definitions) {
+        return None;
+    }
     let defined = definitions.iter().cloned().collect::<BTreeSet<_>>();
     let choice_spelled = tokens
         .iter()
@@ -191,6 +194,55 @@ pub(super) fn rewrite_unit(
         return None;
     }
     apply(tokens, conditionals, edits)
+}
+
+/// A cost pre-filter, never an admission: whether some body may call
+/// through something other than a name the unit declares at file scope (a
+/// `NAME (` there), so Clang's AST is worth reading. A body whose every call
+/// is `NAME (` of such a name, a keyword or a builtin has no site this pass
+/// could rewrite; skipping it leaves the stream unchanged, every older
+/// refusal standing.
+fn may_call_indirectly(tokens: &[Token], definitions: &[String]) -> bool {
+    let mut declared = BTreeSet::new();
+    let mut depth = 0usize;
+    for (at, token) in tokens.iter().enumerate() {
+        match token.text.as_str() {
+            "{" => depth += 1,
+            "}" => depth = depth.saturating_sub(1),
+            text if depth == 0
+                && tokens.get(at + 1).is_some_and(|next| next.text == "(")
+                && super::parenthesised_callee::is_name(text) =>
+            {
+                declared.insert(text);
+            }
+            _ => {}
+        }
+    }
+    definitions.iter().any(|function| {
+        let Some((body_start, _)) = super::find_function_body(tokens, function) else {
+            return false;
+        };
+        let Some(body_end) = super::matching(tokens, body_start, "{", "}") else {
+            return false;
+        };
+        (body_start + 1..body_end).any(|at| {
+            if tokens[at + 1].text != "(" {
+                return false;
+            }
+            let text = tokens[at].text.as_str();
+            match text {
+                ")" | "]" => true,
+                _ if !super::parenthesised_callee::is_name(text) => false,
+                _ if at > 0 && matches!(tokens[at - 1].text.as_str(), "." | "->") => true,
+                _ => {
+                    !declared.contains(text)
+                        && !super::parenthesised_callee::is_keyword(text)
+                        && !super::TYPE_OPERATORS.contains(&text)
+                        && !text.starts_with("__builtin")
+                }
+            }
+        })
+    })
 }
 
 #[allow(clippy::too_many_arguments)]

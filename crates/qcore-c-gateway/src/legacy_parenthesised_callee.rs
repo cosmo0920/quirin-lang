@@ -157,7 +157,7 @@ const OTHER_KEYWORDS: &[&str] = &[
     "bool",
 ];
 
-fn is_name(text: &str) -> bool {
+pub(super) fn is_name(text: &str) -> bool {
     let mut bytes = text.bytes();
     bytes
         .next()
@@ -165,7 +165,7 @@ fn is_name(text: &str) -> bool {
         && bytes.all(|byte| byte.is_ascii_alphanumeric() || byte == b'_')
 }
 
-fn is_keyword(text: &str) -> bool {
+pub(super) fn is_keyword(text: &str) -> bool {
     [
         TYPE_SPECIFIERS,
         QUALIFIERS,

@@ -1,0 +1,107 @@
+{
+ "distinct_sites": 5568,
+ "builtin": 4996,
+ "indirect_distinct": 572,
+ "by_shape_open": {
+  "member-through-pointer: member read through a pointer": 220,
+  "local: explicit cast": 172,
+  "formal: formal": 102,
+  "member: static object that is not a constant table": 66,
+  "element: static object that is not a constant table": 4,
+  "member: unread table member or element": 4,
+  "static: static object that is not a constant table": 2,
+  "local: local without an initializer": 2
+ },
+ "by_rewrite": {
+  "none: open set": 572
+ },
+ "indirect_in_reported_functions": 235,
+ "reported_by_shape_open": {
+  "member-through-pointer: member read through a pointer": 115,
+  "member: static object that is not a constant table": 66,
+  "formal: formal": 42,
+  "element: static object that is not a constant table": 4,
+  "member: unread table member or element": 4,
+  "static: static object that is not a constant table": 2,
+  "local: local without an initializer": 2
+ },
+ "reported_functions": 185,
+ "reported_function_status": {
+  "Unknown": 184,
+  "Unsafe": 1
+ },
+ "leaves_on_site_lines": {
+  "unsupported: indirect memory access is outside the resource projection": 164,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": 30,
+  "unsupported: unmodeled call, aggregate or indirect access in return expression": 12,
+  "unsupported: call to uncontracted function `callback`": 5,
+  "unsupported: call to uncontracted function `resolve_cb`": 3,
+  "unsupported: call to uncontracted function `entry_processor_callback`": 2,
+  "unsupported: call to uncontracted function `weight_cb`": 1,
+  "unsupported: call to uncontracted function `cb`": 1,
+  "unknown_alias: unresolved resource identity `_tmp`": 1,
+  "unsupported: unrecognized assignment destination": 1,
+  "unsupported: call to uncontracted function `compress`": 1,
+  "unsupported: call to uncontracted function `set_metric_value`": 1,
+  "unsupported: call to uncontracted function `cb_chunk_complete`": 1,
+  "unsupported: call to uncontracted function `rd_list_cmp_curr`": 1,
+  "unsupported: call to uncontracted function `copy_cb`": 1
+ },
+ "single_name_callees": [
+  "callback",
+  "cb",
+  "cb_chunk_complete",
+  "cmp",
+  "compare",
+  "compress",
+  "conf_init",
+  "copy_cb",
+  "entry_processor_callback",
+  "filter",
+  "free_cb",
+  "key_copy",
+  "match",
+  "may_assign",
+  "metric_value_calculator",
+  "order_cmp",
+  "rd_list_cmp_curr",
+  "rd_qsort_r_cmp",
+  "resolve_cb",
+  "set_metric_value",
+  "value_copy",
+  "weight_cb"
+ ],
+ "registrations_distinct": 676,
+ "registrations_reported": 584,
+ "registration_relation_reported": {
+  "Unknown": 317,
+  "Unsafe": 5
+ },
+ "registration_unsafe_rows": [
+  [
+   "flb_input_chunk_map",
+   18755,
+   "msgpack_packer_init"
+  ],
+  [
+   "rd_kafka_ListGroups_resp_cb",
+   24938,
+   "rd_kafka_DescribeGroupsRequest"
+  ],
+  [
+   "rd_kafka_broker_add",
+   23663,
+   "thrd_create"
+  ],
+  [
+   "rd_kafka_send_push_telemetry",
+   20896,
+   "rd_kafka_PushTelemetryRequest"
+  ],
+  [
+   "unpack_static_label",
+   7346,
+   "cmt_mpack_unpack_array"
+  ]
+ ]
+}

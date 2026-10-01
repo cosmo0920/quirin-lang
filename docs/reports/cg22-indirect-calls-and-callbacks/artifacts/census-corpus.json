@@ -1,0 +1,112 @@
+{
+ "sites": 21955,
+ "site_functions": 15694,
+ "by_shape": {
+  "other": 20080,
+  "local": 1022,
+  "formal": 492,
+  "member-through-pointer": 285,
+  "member": 70,
+  "element": 4,
+  "static": 2
+ },
+ "by_form": {
+  "nested": 12504,
+  "statement": 5612,
+  "return": 3264,
+  "assignment": 299,
+  "declaration": 276
+ },
+ "closed": 0,
+ "by_open_reason": {
+  "unread form implicit BuiltinFnToFnPtr": 20080,
+  "explicit cast": 1020,
+  "formal": 492,
+  "member read through a pointer": 285,
+  "static object that is not a constant table": 72,
+  "unread table member or element": 4,
+  "local without an initializer": 2
+ },
+ "by_rewrite": {
+  "none: open set": 21955
+ },
+ "shape_x_closed": {
+  "other:open": 20080,
+  "local:open": 1022,
+  "formal:open": 492,
+  "member-through-pointer:open": 285,
+  "member:open": 70,
+  "element:open": 4,
+  "static:open": 2
+ },
+ "closed_candidate_standing": {},
+ "closed_set_sizes": {},
+ "closed_rows": [],
+ "site_function_status": {
+  "Unknown": 938,
+  "Safe": 8,
+  "Unsafe": 2
+ },
+ "closed_function_status": {},
+ "registrations": 1222,
+ "registration_functions": 1007,
+ "registration_callee": {
+  "uncontracted": 1215,
+  "declared": 5,
+  "indirect": 2
+ },
+ "registration_with_context": 1176,
+ "registration_declared_with_context": [
+  [
+   "flb_input_chunk_create",
+   19628,
+   "msgpack_packer_init",
+   "flb_input_chunk_write"
+  ],
+  [
+   "flb_input_chunk_map",
+   18755,
+   "msgpack_packer_init",
+   "flb_input_chunk_write"
+  ],
+  [
+   "rd_kafka_topic_partition_list_sort_by_topic",
+   22157,
+   "rd_kafka_topic_partition_list_sort",
+   "rd_kafka_topic_partition_cmp_opaque"
+  ],
+  [
+   "rd_kafka_topic_partition_list_sort_by_topic_id",
+   22162,
+   "rd_kafka_topic_partition_list_sort",
+   "rd_kafka_topic_partition_by_id_cmp_opaque"
+  ],
+  [
+   "sortPartitions",
+   22125,
+   "rd_kafka_topic_partition_list_sort",
+   "toppar_sort_by_list_cnt"
+  ]
+ ],
+ "registration_relation": {
+  "Unknown": 1087,
+  "Unsafe": 5
+ },
+ "registration_top_callees": {
+  "XXH3_128bits_internal": 135,
+  "XXH3_64bits_internal": 135,
+  "rd_list_init": 122,
+  "XXH3_hashLong_128b_internal": 90,
+  "XXH3_hashLong_64b_internal": 90,
+  "XXH3_consumeStripes": 45,
+  "XXH3_hashLong_128b_withSeed_internal": 45,
+  "XXH3_hashLong_64b_withSeed_internal": 45,
+  "XXH3_update": 45,
+  "rd_kafka_timer_start0": 40,
+  "unit_test_telemetry": 39,
+  "rd_list_new": 33,
+  "rd_list_sort": 25,
+  "rd_kafka_op_new_cb": 22,
+  "rd_list_find": 21
+ }
+}
