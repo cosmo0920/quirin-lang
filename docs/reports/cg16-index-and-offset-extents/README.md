@@ -69,8 +69,8 @@ formatting, clippy and records only). Clang 21.1.8. Comparison:
 [`artifacts/identity.json`](artifacts/identity.json) by
 [`scripts/identity.py`](scripts/identity.py).
 
-The card was rebased three times after the measurement (onto main
-`8e8ed41f` CG17, `06ad81cb` CG20, `b934c560` CG25). None of them reads the
+The card was rebased four times after the measurement (onto main
+`8e8ed41f` CG17, `06ad81cb` CG20, `b934c560` CG25, `f0bbc0eb` CG26). None of them reads the
 bounds selection and this card changes no custody code, so the comparison is
 not repeated; the bounds and combined figures below are those of the base
 `b6a3dc42` (CG25's +1 custody Safe after it is not in the combined column).
@@ -235,4 +235,37 @@ script took the AFTER binary through `BINARY` and are valid.
 
 ## 7. Gate
 
-GATE_SECTION
+The full standing gate ran at the card's tip `02ccd5be` on main `b934c560`
+([`scripts/gate-locked.sh`](scripts/gate-locked.sh), which wraps
+[`scripts/gate.sh`](scripts/gate.sh) in the integrator's shared heavy-step
+lock and cleans the dev profile after it; exits in [`gate/`](gate/), logs in
+`private/cg16ix/gate`):
+
+| Step | Exit | Count |
+|---|---|---|
+| `cargo check --workspace --all-targets` (after the rebase) | 0 | — |
+| `git submodule update --init --recursive` | 0 | — |
+| `scripts/run_test_binaries.py` | 0 | 419 units, 432 summaries; **7,257 passed**, 0 failed, 11 ignored (`private/test-binaries/20261001T191135Z-4005844/`) |
+| `cargo fmt --all -- --check` | 0 | — |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | — |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | — |
+| `scripts/check_lean_audits.py` | 0 | 267 audits (266 on that main + `AuditIndexExtent.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1 | 365 run, 1 expected failure before the matrix regeneration (the derived `lean_audits` 266 → 267, `test_build_matrix_sections`) |
+| `build_docs_index.py --check` | 0 | — |
+
+The matrix was then regenerated with [`gate.json`](gate.json) and the Python
+suite and the index check run again (`09a`, `09b`, `10b` in [`gate/`](gate/)).
+Main moved once more (`f0bbc0eb`, CG26, disjoint: contract loader and
+variadics); the card was rebased onto it and checked by
+[`scripts/rebased-check.sh`](scripts/rebased-check.sh) (`r1`–`r4` in
+[`gate/`](gate/)): the workspace check, the card's test files and the Lean
+audits on the rebased tree. `providers/` is unchanged, so the provider gate is
+not due and was not run. Clang 21.1.8.
+
+**Discarded attempts.** Two earlier gate runs on the base hit a full disk
+(other cards' builds; `No space left on device`, linker bus errors) and are
+kept, not used: `private/cg16ix/gate-discarded-disk-full`,
+`gate-discarded-disk-full-2`; a third on the base
+(`gate-base-b6a3dc42-partial`) passed fmt, clippy, both probes, Lean (264)
+and the index, its tests again hit the full disk, and their locked re-run was
+cancelled when main moved. The heavy steps then ran under the shared lock.
