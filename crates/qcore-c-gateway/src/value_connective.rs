@@ -75,6 +75,13 @@ use crate::typed_c_ast::{children, kind};
 /// A half-open token span of the full expression's token run.
 pub(crate) type Span = (usize, usize);
 
+/// Rule 11m: the composition of a region (its node) with its siblings.
+pub(crate) type Composer<'a> = dyn Fn(&Value, &[&Value]) -> Result<(), Composed> + 'a;
+
+/// One row of [`COMPOSED_VECTORS`].
+#[cfg(test)]
+pub(crate) type ComposedVector = (bool, bool, bool, Option<bool>, Option<bool>, bool);
+
 /// One value region.
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Region<'a> {
@@ -442,7 +449,7 @@ pub(crate) fn admit_composed(
 /// middle reads only, composition (`None`: none asked), admitted)`, the
 /// shared vectors of `QCore.ValueConnectives.composedVectors`.
 #[cfg(test)]
-pub(crate) const COMPOSED_VECTORS: [(bool, bool, bool, Option<bool>, Option<bool>, bool); 10] = [
+pub(crate) const COMPOSED_VECTORS: [ComposedVector; 10] = [
     (true, true, true, None, Some(false), true),
     (false, true, true, None, None, false),
     (false, true, true, None, Some(true), true),
@@ -565,7 +572,7 @@ pub(crate) struct Reading<'a> {
     /// where [`admit`] refuses a sibling's effect or a deciding operand's
     /// effect beside a sibling that is not inert. `None` keeps rule 10z's
     /// refusal.
-    pub(crate) compose: Option<&'a dyn Fn(&Value, &[&Value]) -> Result<(), Composed>>,
+    pub(crate) compose: Option<&'a Composer<'a>>,
 }
 
 /// The value regions of a full expression's root: a `DeclStmt`'s one
