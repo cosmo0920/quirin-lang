@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "TARGETED CHECK (user policy 2026-09-30: main moved with non-overlapping, already-gated commits) on integrate/w48-cg18 1b4b05c5: main ced25209 (CG12) merged with CG18-FOOTPRINT-CONNECTION's tip ec69431f (gated on its merge of 436e0ee7); shared records resolved by hand; the merged workspace compiled (cargo check --workspace --all-targets) before the check. Logs private/int-cg18/targeted of the quirin-spec-cards-compass worktree: submodule 0; fmt 0; workspace clippy --locked 0; qcore-c-gateway tests 2,249 passed, 0 failed; qcore-core tests 1,157 passed, 0 failed; qcore-frontend tests 291 passed, 0 failed; ct_stage_summary --check 0; 261 Lean audits; providers cargo check --locked 0; release quirin-audit build 0; corpus arbiter (--jobs 4) 0: 628 / 10 / 4,196, no status move, and only the two functions the card attributed change leaves (mk_http_parser, rd_kafka_mock_partition_pidstate_get). The full run_test_binaries.py was NOT re-run on this merge: the card's final gate ran it (7,136 passed, 0 failed).",
-  "workspace_tests": 7136,
+  "note": "CG06-VALUE-CONNECTIVE-RESIDUALS (sibling-effect part, gateway rule 11m) card gate at tip code 8f3a6a18 (base d4df096f rebased onto main 0a22a998), script docs/reports/cg06-connective-footprints/scripts/gate.sh, logs private/cg06r/gate-8f3a6a18 of this worktree: submodule 0; run_test_binaries.py 409 units, 422 summaries, 7,163 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T113425Z-623584); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 262 audits passed (AuditValueConnectives.lean extended by 17 theorems, no new audit file); python tests run after build_matrix.py --gate this file (08a, 08b); docs index (09). cargo check --workspace --all-targets on the rebased tree exit 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main 0a22a998 3b09309a 628/10/4,196, AFTER 8f3a6a18 f9b3420e 628/10/4,196 (no move; 2 functions lose one indirect-access leaf each); system 44/2/188 and tail-pause slice 29/1/239/1 Pending byte-identical. Exits in docs/reports/cg06-connective-footprints/gate/.",
+  "workspace_tests": 7163,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 262,
@@ -7028,7 +7028,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg18-footprint-connection/integration/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg06-connective-footprints/gate.json)"
  },
  "named_followups": [
   {

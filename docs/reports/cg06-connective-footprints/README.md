@@ -18,7 +18,7 @@ region with an effect" (1,133) and "a deciding call beside a non-inert sibling"
   commit and before any AFTER run, from a census build that computed the
   composition without admitting it.
 - **Lean:** `QCore.ValueConnectives`' new composition section, 17 theorems
-  registered in `proof/AuditValueConnectives.lean` (261 audits, none with a
+  registered in `proof/AuditValueConnectives.lean` (262 audits, none with a
   placeholder or project axiom).
 
 ## 1. What changed
@@ -231,10 +231,24 @@ extra address premise refuses only and has no Lean counterpart beyond
 
 ## 6. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (script [gate.sh](scripts/gate.sh),
-logs `private/cg06r/gate-8f3a6a18`). `providers/` is untouched, so the provider
-gate is not due. `cargo check --workspace --all-targets` on the rebased tree:
-exit 0, no warning.
+At tip code `8f3a6a18` (rebased onto main `0a22a998`), script
+[gate.sh](scripts/gate.sh), logs `private/cg06r/gate-8f3a6a18`, exits in
+[gate/](gate/), [gate.json](gate.json):
+
+| Step | Exit | Counts |
+|---|---:|---|
+| `cargo check --workspace --all-targets` (rebased tree) | 0 | no warning |
+| `git submodule update --init --recursive` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 409 units, 422 summaries, **7,163 passed, 0 failed**, 11 ignored (`private/test-binaries/20261001T113425Z-623584`) |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --all-targets -- -D warnings` | 0 | |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 262 audits |
+| `build_matrix.py . --gate gate.json` (`docs/reports/remaining-d02/`) | 0 | |
+| `python3 -m unittest discover -s scripts/tests` (after the matrix) | 0 | 365 |
+| `python3 scripts/build_docs_index.py` | 0 | |
+
+`providers/` is untouched, so the provider gate is not due. Clang 21.1.8.
 
 ## 7. Ledger
 

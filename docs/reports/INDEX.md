@@ -89,6 +89,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg05-nested-call-effects](cg05-nested-call-effects/README.md) | CG05-NESTED-CALL-EFFECTS: nested and sibling call effects |
 
+| [cg06-connective-footprints](cg06-connective-footprints/README.md) | CG06-VALUE-CONNECTIVE-RESIDUALS, sibling-effect part: value regions composed with CG05's footprints |
+
 | [cg06-value-connectives-and-conditional](cg06-value-connectives-and-conditional/README.md) | CG06-VALUE-CONNECTIVES-AND-CONDITIONAL: value `&&`, `&#124;&#124;` and `?:` by branching |
 
 | [cg07-generic-and-statement-expressions](cg07-generic-and-statement-expressions/README.md) | CG07-GENERIC-AND-STATEMENT-EXPRESSIONS: Clang's selected `_Generic` association and GNU statement expressions |
@@ -430,6 +432,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | [macos-cycle19-compiler-options](macos-cycle19-compiler-options/README.md) | macOS Cycle19 compiler-option transport — 2026-09-08 |
 
 | [main-guard-removal](main-guard-removal/README.md) | MAIN-GUARD-REMOVAL |
+
+| [msvc-abi-reader](msvc-abi-reader/README.md) | MSVC default-C ABI declarations |
 
 | [mutex-share-cross](mutex-share-cross/README.md) | MUTEX-SHARE-CROSS — a payload crosses because a verified mutex protects it (wave 32) |
 
