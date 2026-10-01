@@ -123,4 +123,114 @@ refused). The analysis's suggestion to add `--target`/`-mabi` "as needed" has
 no measured demand in these inputs; they are admitted for the identity
 property, not for coverage.
 
-MEASUREMENTS_PLACEHOLDER
+## 3. Measurements
+
+`scripts/measure.sh` (corpus `66910c10` `--jobs 4`, system, tail-pause slice),
+`scripts/compare.py` (status per `(file, function)`, as the earlier cards
+count, and leaf deltas); [artifacts/](artifacts/). The BEFORE binary was built
+from an exported tree of the base (an archive of `b6a3dc42` under
+`private/cg30dft/base-tree/`), because this worktree's sources were already
+changing; the system and slice reports embed that tree's path in provider
+paths, so their digests are compared after removing it (`normalised`).
+
+| Run | Binary | Corpus | System | Slice |
+|---|---|---|---|---|
+| BEFORE, base `b6a3dc42` (`before2`, `before-system`, `cg30dft-before`) | `2ce2a9f0…` | 629 / 10 / 4,195 `3d53a5d0…` (= baseline) | 44 / 2 / 188 (normalised `048f4b6c…`) | 29 / 1 / 239 / 1 P (normalised `0221a527…`; function-for-function identical to CG05's `after3`) |
+| AFTER, `85b3efdc` (`after1`, superseded) | `d7b61fde…` | 626 / 10 / 4,198 `204bf259…` | not completed | not completed |
+| **AFTER, tip `91b46c9d` (`after3`)** | `85dfce8e…` | AFTER3_CORPUS | AFTER3_SYSTEM | AFTER3_SLICE |
+
+**Attempts kept, not evidence.** The first BEFORE corpus run (`before`) failed
+the libevent pin check (`Pin(GitUnavailable)`: the exported tree's submodule
+had no readable gitdir); its system and slice runs completed and are the
+BEFORE above. `before2` re-ran the corpus with the submodule's gitdir named
+absolutely. One AFTER build (`build-after2-enospc.log`) failed with `No space
+left on device` while the host's disk was exhausted by other work; it was
+rebuilt as `after3` once the disk recovered above the floor.
+
+**The superseded AFTER (`after1`) and the fix it forced.** The first AFTER
+moved three corpus functions Safe → Unknown (`rdhttp.c`:
+`rd_http_error_destroy`, `rd_http_is_failure_temporary`,
+`rd_http_req_get_code`) and added `C extension types could not be excluded:
+the definition's typed AST is unavailable (CG30)` to all 21 of that unit's
+definitions. None of the three uses an extension; the cause is that
+`rdhttp.c`'s translation-unit JSON nests 223 levels deep, beyond
+`serde_json`'s recursion limit of 128, so the unit has no AST index at all
+(every typed route of G declines there too). That was an over-refusal, not a
+correction, so the hook now reads such a definition's own filtered AST
+(`typed_access_path::definition_ast`, Clang's `-ast-dump-filter`), and refuses
+only when that fails too (`a_unit_too_deep_to_index_is_read_per_definition`).
+Prediction item 4 ("0 unavailable") was wrong on `after1` for exactly this
+reason; it is recorded, not amended.
+
+AFTER3_ATTRIBUTION
+
+## 4. Prediction against outcome
+
+AFTER3_PREDICTION
+
+## 5. Tests
+
+- `crates/qcore-c-gateway/tests/cg30_dialects_flags_types.rs` (9, Clang):
+  a unit reads alike under C11/GNU17/C17/C23/C2y with five distinct request
+  digests; C23 `nullptr` refused by name and never a misread `Unsafe`; C23
+  keywords and attributes; C2y `_Countof`; a digit separator refuses the unit;
+  `_BitInt`, `_Complex` and a vector refused by name on G and T; a sibling's
+  extension leaves a definition alone; a too-deep unit read per definition; a
+  target changes the request digest and a certificate for one target fails
+  another's expected context.
+- `crates/qcore-c-gateway/tests/unit/c_frontend_identity.rs` (10): dialect
+  bytes and registry, token patterns, digit separators, target and ABI
+  admission, `CTypeId` across spellings, the ABI reader's typedef resolution,
+  G/T/ABI agreement on Clang's spellings, extension classification.
+- `crates/qcore-audit/tests/cg30_target_identity.rs` (3, Clang): structured
+  selections transported and preprocessed; every refusal by name and
+  classified by `ReasonCategory`; seven commands, seven compile-task digests.
+- Flipped CG00 controls (BEFORE → AFTER): `i01_the_dialect_set_is_seven_explicit_identities`,
+  `i01_dialects_outside_the_seven_are_refused`, `i02_target_and_abi_flags_are_structured`;
+  `n12_complex_values_are_refused` and `n14_bit_precise_integers_are_refused`
+  now also assert the named refusal (T's text changed; G keeps its old leaf
+  beside the new one). `reserved_spelling`'s every-prefix control covers the new
+  marker; `reason_codes` covers the new reason strings.
+
+## 6. Axes (the analysis's §8)
+
+Covered: dialect ∈ {C11, GNU99, GNU11, GNU17, C17, C23, C2y} (named; the three
+new ones refuse every registered difference); target ∈ {default, LP64 triple,
+LP64 `-mabi`, LP64 `-arch`} admitted, {ILP32, LLP64, unrecorded} refused;
+type identity over arithmetic multisets, qualifiers, pointers, tagged types and
+typedef chains on G, T and the ABI reader; extension ∈ {complex, vector,
+bit-precise, fixed point} refused on G and T. Still refused: every C23/C2y
+difference, every extension, every non-LP64 target, `-m32`/`-m64`, GNU23 and
+the C99/GNU90 commands of the measured databases.
+
+## 7. Lean
+
+`QCore.DialectTargetIdentity` (`proof/QCore/DialectTargetIdentity.lean`,
+registered in `proof/QCore.lean`; `proof/AuditDialectTargetIdentity.lean`, 18
+theorems): `dialectByte_injective`, `distinct_dialect_distinct_bytes`,
+`baseline_bytes_unchanged`, `c2y_extends_c23`; `lookup_minted_under_key`,
+`no_reuse_across_dialects`, `no_reuse_across_targets` (a cache keyed by the
+evidence identity answers only with a verdict minted under that key);
+`admit_iff`, `ilp32_abi_refused`, `llp64_target_refused`;
+`withdrawn_is_unknown`; `refusal_never_safe`, `refusal_keeps_unsafe`,
+`refusal_is_monotone`; `perm_same_typeId`, `bool_is_Bool`,
+`long_unsigned_int_vector`, `distinct_counts_distinct`. No placeholder, no
+project axiom (all 264 audits pass). Premises stated, not proved: SHA-256
+collision freedom for the Rust digests and faithful Clang extraction (trust
+boundary 28); the Lean names are cited by the Rust unit tests that pin the same
+tables.
+
+## 8. Follow-ups
+
+`CG30-DIALECTS-FLAGS-TYPES` is amended (not retired) with the
+residual adoptions and their sizes (`scripts/update_ledger.py`): C23/C2y
+differences (0 units ask for those dialects), extension families (vectors in 5
+Fluent Bit definitions, none Safe; `_Complex` only in glibc typedefs;
+`_BitInt`/fixed point 0), non-LP64 targets (wait for CG20; 0 target words),
+reader decisions by `CTypeId` (T's typedef refusal stands) and the pinned
+route's unread target words (constraint 11). Registered, out of scope:
+`G-TYPED-AST-INDEX-DEPTH-LIMIT` (route G has no typed AST index for a unit
+whose JSON nests beyond 128: `rdhttp.c`, 21 definitions, every typed route of
+G declines there; this card only reads its own check per definition).
+
+GATE_PLACEHOLDER

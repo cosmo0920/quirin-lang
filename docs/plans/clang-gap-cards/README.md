@@ -450,7 +450,7 @@ CG22.
 | CG27-LOOPS-RECURSION-BUDGETS | C06 C07 C08 | High | CG09 |
 | CG28-WEAK-MEMORY-EVENTS | W02–W06 | High | CG19 |
 | CG29-EXECUTION-COVERAGE-AND-RECLAMATION | W07 W10 | High (candidate) | CG28 |
-| CG30-DIALECTS-FLAGS-TYPES | I01 I02 I03 I05 N12 N13 N14 | High | none |
+| CG30-DIALECTS-FLAGS-TYPES | I01 I02 I03 I05 N12 N13 N14 | High | none (landed, wave 48 round 10; entry amended) |
 
 - **CG20: numeric domain.**
   - *Types.* Clang's canonical widths and signedness per target identity
@@ -601,6 +601,15 @@ CG22.
   - *Types.* Canonical type IDs across readers.
   - *Extensions.* `_Complex`, vectors, `_BitInt` and fixed point, only for
     extensions adopted.
+  - *Status (wave 48, round 10).* Landed as gateway rule 11y
+    ([report](../../reports/cg30-dialects-flags-types/README.md)): C17, C23
+    and C2y identities with registered AST differences in the evidence
+    identity (each refused by name; route G withdraws the definition before
+    any reader), structured `--target`/`-mabi` digested and admitted only
+    under the LP64 premise (`CTargetIdentity`, which CG20 keys widths on),
+    `CTypeId` shared by G, T and the ABI reader, and the four extension
+    families refused by name. Nothing adopted; the entry is amended with the
+    residual adoptions and their census sizes, not retired.
 
 ## 3. Entries that are not cards
 
