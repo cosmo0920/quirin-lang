@@ -3,9 +3,10 @@
 Card `CG30-DIALECTS-FLAGS-TYPES` of the
 [Clang gap card queue](../../plans/clang-gap-cards/README.md) (wave 48, round 10),
 entries I01 I02 I03 I05 N12 N13 N14, routes G and T and the compile-database
-reader. Base: local `main` `b6a3dc42`; measured there; rebased onto main
-`8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS, whose own measurement is byte-identical
-to `b6a3dc42` on every route). Commit names below are the pre-rebase ones, with
+reader. Base: local `main` `b6a3dc42`; BEFORE measured there; rebased onto
+main `8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS) and then `06ad81cb`
+(CG20-NUMERIC-DOMAIN), each of whose own measurements is byte-identical to its
+base on every route. Commit names below are the pre-rebase ones, with
 the rebased name where it matters.
 
 - **Rule:** [gateway 11y](../../agents/gateway.md#constraint-11y).
@@ -77,8 +78,18 @@ standing premise) is admitted, because the readers take LP64 as a premise
 `-mabi=ilp32`), LLP64 (`*-windows-*`), an unrecorded component and a doubled
 selection are refused as `unsupported compilation target`/`ABI`
 (environment category, `REASON_RULES`). The existing `-arch` is checked the same
-way (`arm64`, `x86_64` admitted; `i386`, `armv7*`, `arm64_32` refused). There
-is no passthrough. `compiler_options_compatibility` (the pinned Cycle 19 route)
+way (`arm64`, `x86_64` admitted; `i386`, `armv7*`, `arm64_32` refused). Route
+G (in its first hook, before any reader) and route T admit a unit's own
+frontend flags again (`CTargetIdentity::admit_flags`), so a caller building a
+`C11TranslationUnit` directly is held to the same premise
+(`a_unit_selecting_a_non_lp64_target_is_refused_by_the_gateway`). After the
+rebase onto CG20 (`c_numeric`, rule 11q): CG20's numeric route already queries
+Clang with the unit's frontend flags, so it keys on the transported target;
+its one default-target consumer, the ABI reader's `plain_long_is_lp64`, is
+never asked about a unit whose own selection fixes another data model, which
+discharges `CG20-ABI-READER-ARCH-FLAG` (retired here; an `-arch i386` unit is
+refused, by Clang on a Linux host and by the gateway's admission elsewhere).
+There is no passthrough. `compiler_options_compatibility` (the pinned Cycle 19 route)
 is unchanged.
 
 **Types (I03).** `CTypeId` is Clang's canonical spelling, whitespace collapsed,

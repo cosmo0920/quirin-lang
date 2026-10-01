@@ -3999,8 +3999,15 @@ own anchor here.
     premise the ABI reader's projection states) or no explicit selection
     fixes one; ILP32, LLP64, an unrecorded component and a doubled selection
     are refused by name (`unsupported compilation target`/`ABI`,
-    environment category). The existing `-arch` is checked the same way.
-    There is no flag passthrough. The pinned Cycle 19 route
+    environment category). The existing `-arch` is checked the same way,
+    and route G (before any reader) and route T admit a unit's own frontend
+    flags again (`CTargetIdentity::admit_flags`), so a caller that bypasses
+    the compile-database reader is held to the same premise; every admitted
+    unit is therefore LP64 by its own selection, and card CG20's
+    default-target `long` question in the ABI reader (`plain_long_is_lp64`)
+    is never answered for another data model (its numeric route already
+    queries Clang with the unit's flags, so it keys on the transported
+    target). There is no flag passthrough. The pinned Cycle 19 route
     (`compiler_options_compatibility`) is unchanged and still reads no target
     word (constraint 11). (3) **Types.** `CTypeId` is Clang's canonical
     spelling (whitespace collapsed, `bool` read as `_Bool`, an arithmetic

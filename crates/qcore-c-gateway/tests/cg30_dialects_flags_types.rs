@@ -3,8 +3,8 @@
 //! Fixture contracts are the CG00 harness's synthetic `q_*` assumptions.
 
 use qcore_c_gateway::c_frontend_identity::{
-    C2Y_DIFFERENCES, C23_DIFFERENCES, CExtensionFamily, CTargetTriple, dialect_refusal,
-    extension_refusal,
+    C2Y_DIFFERENCES, C23_DIFFERENCES, CExtensionFamily, CTargetIdentity, CTargetTriple,
+    dialect_refusal, extension_refusal,
 };
 use qcore_c_gateway::legacy_c::{
     AnalysisStatus, C11TranslationUnit, CCompilerDialect, CFrontendFlag, CPreprocessorOption,
@@ -305,9 +305,17 @@ fn a_unit_too_deep_to_index_is_read_per_definition() {
     if !clang_available() {
         return;
     }
-    let deep = format!("int deep_global = {}1{};\n", "(".repeat(150), ")".repeat(150));
+    let deep = format!(
+        "int deep_global = {}1{};\n",
+        "(".repeat(150),
+        ")".repeat(150)
+    );
     assert_eq!(
-        row(&run(&format!("{deep}{PAIR}"), CCompilerDialect::C11, Vec::new())),
+        row(&run(
+            &format!("{deep}{PAIR}"),
+            CCompilerDialect::C11,
+            Vec::new()
+        )),
         Ok((AnalysisStatus::Safe, vec![]))
     );
     let (status, unsupported) = row(&run(
@@ -318,7 +326,65 @@ fn a_unit_too_deep_to_index_is_read_per_definition() {
     .expect("projected");
     assert_eq!(status, AnalysisStatus::Unknown);
     assert!(
-        unsupported.contains(&extension_refusal(CExtensionFamily::BitPrecise, "_BitInt(7)")),
+        unsupported.contains(&extension_refusal(
+            CExtensionFamily::BitPrecise,
+            "_BitInt(7)"
+        )),
         "{unsupported:?}"
     );
+}
+
+/// CG20-ABI-READER-ARCH-FLAG: a unit whose own selections fix a non-LP64
+/// data model is refused by the gateway itself, whoever built it, so the
+/// lexical ABI reader's default-target `long` question is never asked for
+/// another data model. An LP64 `-arch` is read as before.
+#[test]
+fn a_unit_selecting_a_non_lp64_target_is_refused_by_the_gateway() {
+    if !clang_available() {
+        return;
+    }
+    let flag = |flag: CFrontendFlag| vec![CPreprocessorOption::FrontendFlag(flag)];
+    let text = format!("{DECLARATIONS}\n{PAIR}\n");
+    for options in [
+        flag(CFrontendFlag::Architecture("i386".into())),
+        flag(CFrontendFlag::Target(
+            CTargetTriple::parse("i686-pc-linux-gnu").unwrap(),
+        )),
+        flag(CFrontendFlag::Target(
+            CTargetTriple::parse("x86_64-pc-windows-msvc").unwrap(),
+        )),
+    ] {
+        let error = analyze_unrestricted_c11(
+            &C11TranslationUnit {
+                source: &text,
+                dialect: CCompilerDialect::Gnu17,
+                preprocessor_options: options.clone(),
+                ..Default::default()
+            },
+            "subject",
+            &contracts(),
+        );
+        let reason = match error {
+            Ok(UnrestrictedLegacyResult::Unknown { reason, .. }) => reason,
+            Err(error) => format!("{error:?}"),
+            Ok(other) => panic!("{options:?} was decided: {other:?}"),
+        };
+        // A Linux Clang refuses `-arch` itself before any reader; every other
+        // selection reaches the gateway's own admission.
+        assert!(
+            reason.contains("not the readers' LP64 premise")
+                || reason.contains("unsupported option '-arch'"),
+            "{reason}"
+        );
+    }
+    let arch =
+        |name: &str| CTargetIdentity::admit_flags([&CFrontendFlag::Architecture(name.into())]);
+    assert!(arch("i386").is_err());
+    assert!(arch("arm64_32").is_err());
+    assert!(arch("arm64").is_ok());
+    let mixed = [
+        CFrontendFlag::Architecture("arm64".into()),
+        CFrontendFlag::Architecture("i386".into()),
+    ];
+    assert!(CTargetIdentity::admit_flags(mixed.iter()).is_err());
 }

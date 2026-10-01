@@ -2858,7 +2858,8 @@ fn analyze_translation_unit_under_holds(
     // difference of the dialect withdraws its function's body before any
     // reader, the derivation or replay reads it; a digit separator, which this
     // token reader cannot lex, refuses the unit.
-    let (tokens, dialect_refusals) = dialect_hook::refuse(dialect, source, tokens, &conditionals)?;
+    let (tokens, dialect_refusals) =
+        dialect_hook::refuse(dialect, request, source, tokens, &conditionals)?;
     // Card W45-CONTRACT-DEFERRED-REVIEW: a declaration awaiting human review
     // is already absent from the environment (the loader withholds it); its
     // call sites are rewritten here, before the ABI gate and everything else

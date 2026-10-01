@@ -871,6 +871,53 @@ impl CTargetIdentity {
             )),
         }
     }
+
+    /// Admit the explicit selections a unit's own frontend flags carry,
+    /// whoever built the unit: every `-arch` word separately, then the triple
+    /// and ABI together (and with the first `-arch`). The gateway asks this
+    /// before any reader, so a caller that bypasses the compile-database
+    /// reader cannot have LP64 readers read an ILP32 or LLP64 unit. With every
+    /// admitted unit LP64 by its own selection, the lexical ABI reader's
+    /// default-target `long` question (`c_numeric::plain_long_is_lp64`) is
+    /// never answered for a different data model than the unit's
+    /// (CG20-ABI-READER-ARCH-FLAG).
+    pub fn admit_flags<'a>(
+        flags: impl IntoIterator<Item = &'a crate::legacy_c::CFrontendFlag>,
+    ) -> Result<(), String> {
+        use crate::legacy_c::CFrontendFlag;
+        let mut identity = Self::default();
+        for flag in flags {
+            match flag {
+                CFrontendFlag::Target(triple) => {
+                    if identity.triple.replace(triple.clone()).is_some() {
+                        return Err(
+                            "unsupported compilation target: the unit selects a target twice"
+                                .into(),
+                        );
+                    }
+                }
+                CFrontendFlag::Abi(abi) => {
+                    if identity.abi.replace(abi.clone()).is_some() {
+                        return Err(
+                            "unsupported compilation ABI: the unit selects an ABI twice".into()
+                        );
+                    }
+                }
+                CFrontendFlag::Architecture(architecture) => {
+                    Self {
+                        architecture: Some(architecture.clone()),
+                        ..Self::default()
+                    }
+                    .admit()?;
+                    identity
+                        .architecture
+                        .get_or_insert_with(|| architecture.clone());
+                }
+                _ => {}
+            }
+        }
+        identity.admit()
+    }
 }
 
 // ---------------------------------------------------------------------------

@@ -420,6 +420,16 @@ pub fn import_source_functions_admitting_control(
 ) -> Result<Vec<SourceResult>, String> {
     admission.validate()?;
     control.validate()?;
+    // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): the unit's own target
+    // selections, under the readers' LP64 premise.
+    crate::c_frontend_identity::CTargetIdentity::admit_flags(
+        unit.preprocessor_options
+            .iter()
+            .filter_map(|option| match option {
+                crate::legacy_c::CPreprocessorOption::FrontendFlag(flag) => Some(flag),
+                _ => None,
+            }),
+    )?;
     let source = validate_unrestricted_c11(unit).map_err(|error| error.to_string())?;
     // Field IDs from independent Clang invocations are not stable. Validate the
     // selected complete records by name/type, then bind each MemberExpr to its

@@ -7,7 +7,8 @@ Amends (does not retire) CG30-DIALECTS-FLAGS-TYPES, as the card's brief asks:
 the identities, the target admission and the named refusals landed (gateway
 rule 11y, Lean `QCore.DialectTargetIdentity`), and the entry keeps the
 residuals with their re-measured sizes; registers G-TYPED-AST-INDEX-DEPTH-LIMIT
-(found out of scope). `dimensions.named_followups` is set to the list length. Writes the matrix
+(found out of scope); retires CG20-ABI-READER-ARCH-FLAG (discharged by the
+unit-level target admission). `dimensions.named_followups` is set to the list length. Writes the matrix
 back in its own form (indent=1, ensure_ascii=False, trailing newline).
 """
 
@@ -47,6 +48,8 @@ WHY = (
     "Lean; the queue's section 4 acceptance applies."
 )
 
+RETIRE = "CG20-ABI-READER-ARCH-FLAG"
+
 REGISTER = {
     "id": "G-TYPED-AST-INDEX-DEPTH-LIMIT",
     "title": "Route G has no typed AST index for a unit whose Clang JSON nests beyond serde_json's recursion limit (corpus: rdhttp.c, 21 definitions)",
@@ -84,6 +87,10 @@ def main() -> int:
     entry["source"] = "docs/reports/cg30-dialects-flags-types/README.md"
     if not any(other.get("id") == REGISTER["id"] for other in entries):
         entries.append(REGISTER)
+    # CG20-ABI-READER-ARCH-FLAG: discharged by the unit-level admission (every
+    # admitted unit is LP64 by its own selection; an `-arch i386` unit is
+    # refused), with the gateway test named in the report.
+    entries[:] = [other for other in entries if other.get("id") != RETIRE]
     matrix["dimensions"]["named_followups"] = len(entries)
     with open(path, "w", encoding="utf-8") as handle:
         json.dump(matrix, handle, indent=1, ensure_ascii=False)

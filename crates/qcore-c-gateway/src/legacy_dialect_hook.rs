@@ -2,7 +2,9 @@
 //! hooks into `analyze_translation_unit_under_holds`. Everything they decide
 //! lives in `crate::c_frontend_identity`.
 //!
-//! 1. [`refuse`], before any reader: under a dialect with registered
+//! 1. [`refuse`], before any reader: the unit's own target selections are
+//!    admitted under the LP64 premise (a refusal refuses the unit); under a
+//!    dialect with registered
 //!    differences (C23, C2y), a digit separator refuses the unit, and each
 //!    definition spelling a registered difference has its body withdrawn to
 //!    one call of a reserved marker no environment contracts. The four baseline
@@ -14,8 +16,9 @@
 use std::collections::BTreeMap;
 
 use super::{
-    CCompilerDialect, ConditionalMark, LegacyCError, LegacyDiagnostic, LegacyDiagnosticKind,
-    LegacyFunctionSummary, Token, classify_diagnostics, find_function_body, function_names,
+    CCompilerDialect, CPreprocessorOption, ConditionalMark, LegacyCError, LegacyCertificateRequest,
+    LegacyDiagnostic, LegacyDiagnosticKind, LegacyFunctionSummary, Token, classify_diagnostics,
+    find_function_body, function_names,
 };
 use crate::c_frontend_identity as identity;
 
@@ -23,10 +26,22 @@ use crate::c_frontend_identity as identity;
 /// definition's refusal.
 pub(super) fn refuse(
     dialect: CCompilerDialect,
+    request: Option<&LegacyCertificateRequest>,
     source: &str,
     tokens: Vec<Token>,
     conditionals: &[ConditionalMark],
 ) -> Result<(Vec<Token>, BTreeMap<String, String>), LegacyCError> {
+    // The unit's own target selections, admitted under the readers' LP64
+    // premise whoever built the unit (not only through the compile database).
+    if let Some(request) = request {
+        identity::CTargetIdentity::admit_flags(request.preprocessor_options.iter().filter_map(
+            |option| match option {
+                CPreprocessorOption::FrontendFlag(flag) => Some(flag),
+                _ => None,
+            },
+        ))
+        .map_err(LegacyCError::ProductionParserRejected)?;
+    }
     if identity::dialect_differences(dialect).is_empty() {
         return Ok((tokens, BTreeMap::new()));
     }
