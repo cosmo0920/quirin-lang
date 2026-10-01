@@ -6,7 +6,8 @@
 //!
 //! * **A VLA declaration** whose decision is `admitted` (a builtin scalar
 //!   element, a bound that only reads, every use an element access or a
-//!   `sizeof` operand) is lowered to no custody event: its bound's reads are
+//!   `sizeof` operand) is lowered to no custody event (a `ForgetScalar` of
+//!   its name, a new object each time it runs): its bound's reads are
 //!   scalar reads of named objects, its elements hold no identity, and no
 //!   address of it leaves the block, so its lifetime's end at the block's exit
 //!   ends nothing the flow tracks. Its three numeric obligations are recorded
@@ -121,7 +122,16 @@ impl Parser<'_> {
                     .collect::<Vec<_>>(),
             }),
         );
-        (fact.decision == VlaDecision::Admitted).then(|| Statement::Block(Vec::new()))
+        // A new object each time the declaration runs: any fact the flow kept
+        // under its name is forgotten, as a scalar write's is.
+        (fact.decision == VlaDecision::Admitted).then(|| {
+            Statement::Instruction(
+                LegacyInstruction::ForgetScalar {
+                    destination: fact.name.clone(),
+                },
+                line,
+            )
+        })
     }
 
     /// The respelling of a `container_of` value as its enclosing object, or
