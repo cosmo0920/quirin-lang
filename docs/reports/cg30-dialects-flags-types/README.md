@@ -3,13 +3,16 @@
 Card `CG30-DIALECTS-FLAGS-TYPES` of the
 [Clang gap card queue](../../plans/clang-gap-cards/README.md) (wave 48, round 10),
 entries I01 I02 I03 I05 N12 N13 N14, routes G and T and the compile-database
-reader. Base: local `main` `b6a3dc42`.
+reader. Base: local `main` `b6a3dc42`; measured there; rebased onto main
+`8e8ed41f` (CG17-LAYOUT-DERIVED-EXTENTS, whose own measurement is byte-identical
+to `b6a3dc42` on every route). Commit names below are the pre-rebase ones, with
+the rebased name where it matters.
 
 - **Rule:** [gateway 11y](../../agents/gateway.md#constraint-11y).
 - **Lean:** `QCore.DialectTargetIdentity`, `proof/AuditDialectTargetIdentity.lean`
   (18 theorems).
-- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen in `85b3efdc` before any
-  AFTER run (the code was written while the BEFORE build and census ran; the
+- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen in `85b3efdc` (`526cabc1`
+  after the rebase) before any AFTER run (the code was written while the BEFORE build and census ran; the
   file says so).
 - **Published guarantee (Phase 4 choice).** The property this card publishes is
   *evidence-identity separation*: a verdict, certificate or cached result is
@@ -137,7 +140,7 @@ paths, so their digests are compared after removing it (`normalised`).
 |---|---|---|---|---|
 | BEFORE, base `b6a3dc42` (`before2`, `before-system`, `cg30dft-before`) | `2ce2a9f0…` | 629 / 10 / 4,195 `3d53a5d0…` (= baseline) | 44 / 2 / 188 (normalised `048f4b6c…`) | 29 / 1 / 239 / 1 P (normalised `0221a527…`; function-for-function identical to CG05's `after3`) |
 | AFTER, `85b3efdc` (`after1`, superseded) | `d7b61fde…` | 626 / 10 / 4,198 `204bf259…` | not completed | not completed |
-| **AFTER, tip `91b46c9d` (`after3`)** | `85dfce8e…` | AFTER3_CORPUS | AFTER3_SYSTEM | AFTER3_SLICE |
+| **AFTER, tip `91b46c9d` = rebased `defff675` (`after3`)** | `85dfce8e…` | AFTER3_CORPUS | AFTER3_SYSTEM | AFTER3_SLICE |
 
 **Attempts kept, not evidence.** The first BEFORE corpus run (`before`) failed
 the libevent pin check (`Pin(GitUnavailable)`: the exported tree's submodule
