@@ -3,7 +3,7 @@
 Wave 48, round 9, of the [Clang gap queue](../../plans/clang-gap-cards/README.md#phase-4-vocabulary-numeric-and-weak-memory-extensions-v-by-guarantee)
 (entries C09–C13, E20, I06; absorbs `W43-LIBC-NORETURN`). Route G. Gateway
 rule [11o](../../agents/gateway.md#constraint-11o); Lean `QCore.CallExits`
-([`AuditCallExits.lean`](../../../proof/AuditCallExits.lean)). Measured on base `b6a3dc42`; rebased onto main `b934c560` without a re-measurement. CG17-LAYOUT-DERIVED-EXTENTS and CG20-NUMERIC-DOMAIN left the corpus, system and slice custody reports byte-identical to `b6a3dc42`'s; CG25-RESOURCE-KINDS moved the corpus to 630 / 10 / 4,194 (`5ade5aab…`), so the combined figure on `b934c560` is the integrator's arbiter run to take, and this card's attribution is against `b6a3dc42`.
+([`AuditCallExits.lean`](../../../proof/AuditCallExits.lean)). Measured on base `b6a3dc42`; rebased onto main `f0bbc0eb` without a re-measurement. CG17-LAYOUT-DERIVED-EXTENTS and CG20-NUMERIC-DOMAIN left the corpus, system and slice custody reports byte-identical to `b6a3dc42`'s; CG25-RESOURCE-KINDS moved the corpus to 630 / 10 / 4,194 and CG26-VARIADICS models the `__builtin_va_*` builtins, so the combined figure on `f0bbc0eb` is the integrator's arbiter run to take, and this card's attribution is against `b6a3dc42`. On the rebase `__builtin_va_arg` left `UNDECLARABLE_C_NAMES` (CG26's `va_list` route reads it; its uncontracted wording is CG26's), so the 17 corpus and 4 slice `__builtin_va_arg` renames measured below no longer occur on this tip.
 
 **Published property and scope** (Phase 4 opens a V card only for a chosen
 guarantee): resource custody on route G, with a call statement's
@@ -19,7 +19,7 @@ by name.
 violation added. Every one of the 1,265 `__assert_fail` / `abort` / `exit`
 leaves is gone (1,340 statement path ends, every one resolved `noreturn`; no
 declaration was refused at a call). System route and tail-pause slice: no
-status move, the predicted renames only. Ledger 670 → 672 (on main `b934c560`):
+status move, the predicted renames only. Ledger 671 → 673 (on main `f0bbc0eb`):
 `CG21-CALL-EXITS-AND-BOUNDARIES` and `W43-LIBC-NORETURN` retired, four
 residuals registered.
 
@@ -87,7 +87,7 @@ path end is `CG21-NORETURN-OPERAND-POSITIONS`.
 **Undeclarable names** (`contract_loader::UNDECLARABLE_C_NAMES`): the Clang
 extension nodes spelled like calls (`__builtin_choose_expr` → ChooseExpr,
 `__builtin_bit_cast`, `__builtin_offsetof`, `__builtin_types_compatible_p`,
-`__builtin_va_arg`, `__builtin_convertvector`, `__builtin_shufflevector`,
+`__builtin_convertvector`, `__builtin_shufflevector`,
 `__builtin_FILE`/`FUNCTION`/`LINE`/`COLUMN`), the returns-twice calls
 (`setjmp`, `_setjmp`, `__setjmp`, `sigsetjmp`, `__sigsetjmp`, `savectx`,
 `vfork`, `getcontext`) and the non-local exits (`longjmp`, `_longjmp`,
@@ -287,12 +287,12 @@ floor. Logs under this worktree's `private/cg21/`; exits copied to
 | clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
 | probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
 | follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
-| Lean | `python3 scripts/check_lean_audits.py` | 0 | **267 audits** (266 on main `b934c560` + `AuditCallExits.lean`) |
-| Python | `python3 -m unittest discover -s scripts/tests` | 1, then PYTHON_FINAL | 365; the one failure was the matrix's derived `lean_audits` (266 → 267), cleared by `build_matrix.py . --gate gate.json` |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **268 audits** (267 on main `f0bbc0eb` + `AuditCallExits.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then PYTHON_FINAL | 365; the one failure was the matrix's derived `lean_audits` (267 → 268), cleared by `build_matrix.py . --gate gate.json` |
 | docs index | `python3 scripts/build_docs_index.py --check` | 0 | |
 | provider check | `cargo check --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | |
 | libc provider tests | `cargo test --manifest-path providers/Cargo.toml -p quirin-provider-libc --locked --offline` | 0 | 2 passed |
-| contract pins | `cargo test -p qcore-compiler --test contract_loader --test qcore_contract_corpus` | 0 | 10 + 4 passed (v1 declarations 259 → 262 on `b934c560`, 255 → 258 at the base) |
+| contract pins | `cargo test -p qcore-compiler --test contract_loader --test qcore_contract_corpus` | 0 | 10 + 4 passed (v1 declarations 259 → 262 on `f0bbc0eb`, 255 → 258 at the base) |
 | lock | `scripts/pin.sh` (`quirin-audit pin` at `66910c10` and `046accf6`, then `pin --check` at both) | 0, 0, 0, 0 | three flexible libc rows; every crate 0 not in force, 0 stale |
 
 Not run: `providers/package.py build` / `verify` (constraint 18) and the full

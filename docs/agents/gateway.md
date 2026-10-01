@@ -3468,7 +3468,7 @@ own anchor here.
     loader rejects a declaration of any of them, and of the Clang extension
     nodes spelled like calls (`__builtin_choose_expr`, `__builtin_bit_cast`,
     `__builtin_offsetof`, `__builtin_types_compatible_p`,
-    `__builtin_va_arg`, `__builtin_convertvector`,
+    `__builtin_convertvector`,
     `__builtin_shufflevector`, `__builtin_FILE`/`FUNCTION`/`LINE`/`COLUMN`),
     so no ordinary contract is applied to a non-call node; an uncontracted
     call to one is refused with its reason and the writes the uncontracted
