@@ -38,7 +38,7 @@ objects only. No other property is added.
   leak or violation candidate added. The prediction's second move
   (`mk_plugin_load_dynamic`) did not happen (§4). System and tail-pause slice:
   44 / 2 / 188 and 29 / 1 / 239 / 1 Pending, **no function changes** on
-  either (no corpus-only callee of the four is called there).
+  either (none of the four declared callees is called there).
 
 ## 1. BEFORE and the cited claims
 
