@@ -143,11 +143,85 @@ the base, from a `git archive` of `b6a3dc42` with its own target directory
 
 ## 3. Prediction and outcome
 
-MEASURED-PREDICTION
+[PREDICTION.md](PREDICTION.md) was frozen and committed (`c7c19cbb`, rebased
+as `1e811436`) before any AFTER measurement. It discloses that the code
+preceded it, as CG19's did.
+
+| Prediction | Outcome |
+|---|---|
+| `cmt_atomic_compare_exchange` Unknown → Safe, its only leaf removed | **Unknown → Safe**. Its one leaf, ``atomic compare-exchange `__atomic_compare_exchange` is not represented by the weak-memory model (CG28)``, is gone. |
+| Nothing else moves: 630 / 10 / 4,194 | **630 / 10 / 4,194**. One move, no same-status function with a changed leaf, and no other leaf delta. |
+| No Safe → non-Safe move, no added leak or violation | None. |
+| System and slice byte-identical | **Byte-identical**, with no `atomic-route` row in either parity stream. |
+
+The prediction held exactly. There is no correction: no function moved
+Safe → non-Safe. The prediction named the unit `cmt_atomic_gcc.c`; the
+measured unit is `cmt_atomic_clang.c`, with the same function text (§2).
 
 ## 4. Measurement
 
-MEASURED-MEASUREMENT
+The release `quirin-audit` was run with `QCORE_TYPED_PATH_PARITY` on. The
+corpus arbiter (`scripts/run_pinned_audit.py … 66910c10 --jobs 4`) ran
+through [`scripts/measure.sh`](scripts/measure.sh) and
+[`scripts/corpus.sh`](scripts/corpus.sh). The system route and the tail-pause
+slice (`attempt-1`, run `cg28-NAME`) were run as CG05 ran them. Every exit was
+0 except the records named below.
+
+| Run | Tree | Binary | Corpus | System | Tail-pause slice |
+|---|---|---|---|---|---|
+| BEFORE | base `b6a3dc42` | `068fda9d…` | **629 / 10 / 4,195** `3d53a5d0…` | 44 / 2 / 188 `9f786381…` | 29 / 1 / 239 / 1 P `3565659a…` |
+| AFTER (on the base) | `4dded2f1` | `82bb3d82…` | **630 / 10 / 4,194** `d7be9d8c…` | 44 / 2 / 188 `9f786381…` | 29 / 1 / 239 / 1 P `3565659a…` |
+| AFTER (rebased tip, on `main` `06ad81cb`) | TIP-HEAD | TIP-BINARY | TIP-CORPUS | TIP-SYSTEM | TIP-SLICE |
+
+**BEFORE.** The corpus equals the brief's baseline exactly. System and slice
+are the deduplicated totals (`scripts/compare.py`); they equal the
+baseline's. The raw digests differ from the brief's (`79404fed…`,
+`93cc660c…`) only in path-dependent fields. The configured route hashes the
+contract sources of `contract/profiles/fluent-bit` into
+`compile_configuration`, and that path names the measuring worktree.
+Structurally, CG05's `after3` slice report and this BEFORE differ in exactly
+48 fields, all `resource_contract_sources` or `inventory_sha256` under
+`compile_configuration`, and in nothing else (`scripts/normalized.py`).
+CG17-LAYOUT-DERIVED-EXTENTS reports the same effect. This is not a status
+difference, so the run was not stopped.
+
+**Attribution** (corpus BEFORE → AFTER on the base;
+[`artifacts/corpus-comparison.json`](artifacts/corpus-comparison.json)).
+There is one move, `cmt_atomic_clang.c::cmt_atomic_compare_exchange`
+Unknown → Safe, by removing its only leaf. The leaf delta is otherwise empty,
+and no same-status function changed.
+
+**Census** of atomic leaves
+([before](artifacts/before-census.json), [after](artifacts/after-census.json),
+`scripts/census.py`, which matches every `__atomic_*`, `__c11_atomic_*`,
+`__sync_*` and `_Atomic …` name):
+
+- *BEFORE*: 1 leaf on 1 function. This was the only atomic refusal the brief
+  asked about (RMW, exchange, `fetch_*`, compare-exchange, fences, consume);
+  everything else is 0.
+- *AFTER*: 0.
+- *System and slice*: 0 before and after.
+
+The AFTER parity stream holds 12 `atomic-route-*` rows on 3 functions, each
+admitted with `SequentiallyConsistent`: the compare-exchange (a `return`),
+CG19's load and store. The repeats are the rebuilds of the W4 re-check. The
+BEFORE stream holds 7.
+
+**Run records** (kept under `private/cg28/`).
+- `before-repeat` re-ran the BEFORE binary by mistake:
+  `run_pinned_audit.py` always runs `target/release/quirin-audit`, and
+  `measure.sh`'s `BINARY` override reaches only the system and slice. Its
+  result is byte-identical to the BEFORE (`3d53a5d0…`), which is a
+  determinism check. `scripts/corpus.sh` now installs the binary first.
+- `after-diskfull` (exit 101, `No space left on device` in the parity sink)
+  and `after-diskfull2` (stopped by this card at 2.9 GB free) are host-disk
+  failures. The host is shared by eleven cards; the coordinator then
+  serialised heavy steps under a lock.
+- The reported AFTER is the third corpus run of the AFTER binary.
+
+**Published property, measured separately.** The weak-memory checker's
+results are those of its tests and the Lean vectors (§5, §6). The corpus
+arbiter reports custody only.
 
 ## 5. Tests
 
@@ -289,7 +363,35 @@ use; faithful Clang extraction (trust boundary 28).
 
 ## 8. Follow-ups
 
-MEASURED-FOLLOWUPS
+- **Retired: `CG28-WEAK-MEMORY-EVENTS`.** Every DISCHARGE clause holds:
+  - the BEFORE reproduces the cited refusals (§2), with the one correction
+    stated, about the missing Lean module;
+  - `PREDICTION.md` was frozen;
+  - the AFTER attributes every move;
+  - no follow-up was absorbed;
+  - there are Rust refusal controls, and audited Lean with no placeholders or
+    project axioms;
+  - the §4 acceptance holds: axes in §7, route G and the core consumer named,
+    no order introduced.
+- **Registered:**
+  - `CG28-LEGACY-SYNC-BUILTINS`: `__sync_*` refused by name or as unlisted;
+    0 corpus leaves.
+  - `CG28-UNREAD-ATOMIC-OPERAND-SHAPES`: a named `_Atomic` object's RMW,
+    `__atomic_test_and_set`, by-pointer forms, operands with effects and
+    pointer values; 0 corpus leaves.
+- **Amended:**
+  - `CG29-EXECUTION-COVERAGE-AND-RECLAMATION`: the prerequisite landed, with
+    the events available to it.
+  - `CG19-PUBLICATION-ONE-FLAG-ONE-PAYLOAD`: an RMW, compare-exchange or
+    fence of the flag is routed but not a publication shape (new text); no
+    production route builds a graph holding the new events.
+  - `CG19-ENUMERATOR-ORDER-UNEVALUATED-IN-G-AND-T`: it now also covers the
+    new events; 0 corpus leaves.
+- **Decided, not registered:** consume stays out of scope (§1). Reopening it
+  needs a dependency-ordering relation in the model and a source extraction
+  of dependencies; it is a phase-4 choice, not open work.
+- **Ledger:** 670 → 671 on `main` `06ad81cb` (666 → 667 on the base).
+  `scripts/update_ledger.py` was applied once, to `main`'s matrix.
 
 ## 9. Gate
 

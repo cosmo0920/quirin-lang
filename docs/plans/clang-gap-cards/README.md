@@ -557,6 +557,14 @@ CG22.
   - *consume.* Decide: model dependencies, or keep consume explicitly out of
     scope.
   - *Lean.* Lean parity in the WeakMemory module.
+  - *Status (wave 48, round 9).* Landed (gateway rule 11t): RMW, compare-exchange
+    and fence events in `weak_memory` under C11 as published (N1570), release
+    sequences continued by RMWs, consume out of scope (refused, never acquire),
+    routed from source and lowered in route G to their custody effect. Corpus
+    +1 Unknown → Safe (`cmt_atomic_compare_exchange`); system and slice
+    unchanged. Lean `QCore.WeakMemory` (new). Residuals
+    `CG28-LEGACY-SYNC-BUILTINS` and `CG28-UNREAD-ATOMIC-OPERAND-SHAPES`; CG29 may
+    launch.
 - **CG29: execution coverage and reclamation (candidate).**
   - *Execution coverage.* Candidate-execution generation or abstraction with
     justified bounds. One accepted graph is not race freedom (Q34).

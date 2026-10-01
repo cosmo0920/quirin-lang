@@ -6,13 +6,27 @@
    "Unsafe": 10
   },
   "after": {
-   "Unknown": 4195,
-   "Safe": 629,
+   "Unknown": 4194,
+   "Safe": 630,
    "Unsafe": 10
   }
  },
- "moves": [],
- "move_counts": {},
+ "moves": [
+  {
+   "unit": "cmt_atomic_clang.c",
+   "function": "cmt_atomic_compare_exchange",
+   "before": "Unknown",
+   "after": "Safe",
+   "leaf_delta": {
+    "unsupported: atomic compare-exchange `__atomic_compare_exchange` is not represented by the weak-memory model (CG28)": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Safe": 1
+ },
  "same_status_functions_with_changed_diagnostics": 0,
- "leaf_delta": {}
+ "leaf_delta": {
+  "unsupported: atomic compare-exchange `__atomic_compare_exchange` is not represented by the weak-memory model (CG28)": -1
+ }
 }
