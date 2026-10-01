@@ -63,6 +63,20 @@ fn unit(source: &str) -> LegacyProgramSummary {
     .expect("the fixture tokenizes")
 }
 
+fn clang_available() -> bool {
+    match qcore_c_gateway::clang_command() {
+        Ok(_) => true,
+        Err(reason) => {
+            assert!(
+                std::env::var_os("QCORE_CLANG").is_none(),
+                "explicit QCORE_CLANG configuration is invalid: {reason}"
+            );
+            eprintln!("skipping Clang-dependent CG22 row: {reason}");
+            false
+        }
+    }
+}
+
 fn subject(summary: &LegacyProgramSummary) -> &LegacyFunctionSummary {
     &summary.functions["subject"]
 }
@@ -397,13 +411,12 @@ fn a_withdrawn_declaration_is_withdrawn_at_a_parenthesised_call() {
 
 #[test]
 fn every_other_callee_expression_refuses() {
+    // A conditional of designators and `&designator` are closed candidate
+    // sets under rule 11p (CG22) when Clang reads the unit: see
+    // `a_closed_callee_expression_is_its_candidate_calls`.
     for statement in [
-        // A conditional callee.
-        "(c ? q_free : zz)(p);",
         // A cast callee.
         "((rel_t) q_free)(p);",
-        // An address-of callee.
-        "(&q_free)(p);",
         // A comma callee.
         "(c, q_free)(p);",
         // A call through a call's result, after a modeled call.
@@ -424,15 +437,65 @@ fn every_other_callee_expression_refuses() {
 
 #[test]
 fn a_callee_expression_refuses_with_its_own_reason_where_nothing_else_did() {
+    let closed = clang_available();
     for statement in [
         "(c ? q_free : zz)(p);",
         "((rel_t) q_free)(p);",
         "(&q_free)(p);",
     ] {
+        if closed && !statement.contains("rel_t") {
+            continue;
+        }
         let run = body(&format!(
             "void *p = q_alloc(); if (p == 0) return; {statement} q_free(p);"
         ));
         assert_eq!(unsupported(subject(&run)), [REFUSAL], "{statement}");
+    }
+}
+
+/// Card CG22-INDIRECT-CALLS-AND-CALLBACKS (rule 11p) flipped two rows of
+/// this card's class: where Clang reads the unit, a conditional of
+/// designators with an effect-free condition and `&designator` close their
+/// candidate set, and the call is rewritten to the calls C may make (a
+/// branch arm per candidate; a singleton to its direct call). Each is
+/// exactly its explicit spelling, so the double release on the `q_free`
+/// path is found; without Clang the set is unread and the older refusal
+/// stands.
+#[test]
+fn a_closed_callee_expression_is_its_candidate_calls() {
+    for (statement, explicit) in [
+        ("(c ? q_free : zz)(p);", "if (c) q_free(p); else zz(p);"),
+        ("(&q_free)(p);", "q_free(p);"),
+    ] {
+        let run = body(&format!(
+            "void *p = q_alloc(); if (p == 0) return; {statement} q_free(p);"
+        ));
+        let result = subject(&run);
+        if !clang_available() {
+            assert_eq!(result.status, AnalysisStatus::Unknown, "{statement}");
+            assert_eq!(unsupported(result), [REFUSAL], "{statement}");
+            continue;
+        }
+        let spelled = body(&format!(
+            "void *p = q_alloc(); if (p == 0) return; {explicit} q_free(p);"
+        ));
+        let spelled = subject(&spelled);
+        assert_eq!(
+            result.status,
+            AnalysisStatus::Unsafe,
+            "{statement}: {result:#?}"
+        );
+        assert_eq!(result.status, spelled.status, "{statement}");
+        assert_eq!(
+            double_releases(result),
+            double_releases(spelled),
+            "{statement}"
+        );
+        assert_eq!(unsupported(result), unsupported(spelled), "{statement}");
+        assert!(
+            !unsupported(result).iter().any(|r| r == REFUSAL),
+            "{statement}"
+        );
     }
 }
 
