@@ -3,7 +3,7 @@
 Card `CG23-RELATIONAL-POSTCONDITIONS` of the
 [Clang gap card queue](../../plans/clang-gap-cards/README.md) (wave 48, round 9,
 phase 4), entries K05 and K11. Base: local `main` `b6a3dc42` (measured there),
-rebased onto main `f6336c9d` (CG17 11u, CG20 11q, CG25 11v, CG26 11w, CG28 11t) before the
+rebased onto main `db1ea764` (CG17 11u, CG20 11q, CG25 11v, CG26 11w, CG28 11t, CG27 11x) before the
 gate; composes with CG25's in-place status witness (a disposition never stands
 beside an in-place kind). Route G.
 
@@ -225,7 +225,7 @@ re-measured on `b6a3dc42` (corpus; system where stated):
   refuse. The corpus population is 0 while no corpus callee carries a
   disposition; the lexical bound is 124.
 
-The ledger moves from 672 to 673 on main `f6336c9d` (666 to 667 on the base): CG23 is retired, 2 entries are registered
+The ledger moves from 672 to 673 on main `db1ea764` (666 to 667 on the base): CG23 is retired, 2 entries are registered
 and 6 are amended (`scripts/update_ledger.py`).
 
 ## 6. Axes (§8)
