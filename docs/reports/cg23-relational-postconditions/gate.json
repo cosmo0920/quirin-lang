@@ -1,0 +1,13 @@
+{
+  "note": "CG23-RELATIONAL-POSTCONDITIONS card gate at tip 3b2ecc93 (base b6a3dc42 rebased onto main 8e8ed41f, 06ad81cb, b934c560 and f0bbc0eb), script docs/reports/cg23-relational-postconditions/scripts/gate.sh under the shared heavy-work flock, logs private/cg23rp/gate-run6 of this worktree: submodule 0; run_test_binaries.py 418 units, 431 summaries, 7,287 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261001T195432Z-653398); fmt 0; clippy --locked 0; both reevaluation probes exit 0; check_lean_audits.py 268 audits passed (267 on main + AuditRelationalPost.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 267 -> 268, test_build_matrix_sections), then run again after build_matrix.py --gate this file (09a, 09b); docs index 0. Earlier attempts: private/cg23rp/gate-run1 at the base (its test build died of a full disk, ENOSPC; discarded as evidence; fmt, clippy, probes and Lean were 0) and gate-run3 on main 8e8ed41f (7,215 passed, 0 failed, 265 Lean audits). cargo check --workspace --all-targets on each rebased tree exit 0. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit, measured on the base b6a3dc42): BEFORE and AFTER 3d53a5d0 629/10/4,195, byte-identical; system 44/2/188 (725aab4d) and tail-pause slice 29/1/239/1 Pending (8c17467d), byte-identical; no move. Exits in docs/reports/cg23-relational-postconditions/gate/.",
+  "workspace_tests": 7287,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 268,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
