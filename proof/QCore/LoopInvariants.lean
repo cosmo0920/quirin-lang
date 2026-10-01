@@ -422,6 +422,104 @@ theorem publish_by_threshold_induction (threshold : Int) (valid : Nat → Int �
   intro value function
   exact byRank (rank threshold value) function value rfl
 
+/-- A sign guard `n OP literal`, normalised so the control is on the left (the
+Rust reader mirrors `literal OP n` first). -/
+inductive Comparison where
+  | le
+  | lt
+  | gt
+  | ge
+  deriving DecidableEq, Repr
+
+/-- The guard's truth at a control value. -/
+def holds (comparison : Comparison) (literal : Nat) (value : Int) : Bool :=
+  match comparison with
+  | .le => decide (value ≤ literal)
+  | .lt => decide (value < literal)
+  | .gt => decide (value > literal)
+  | .ge => decide (value ≥ literal)
+
+/-- The reading `legacy_signed_rank::sign_guard` makes: the threshold and
+whether the guard is true in the base context, or a refusal (a negative
+threshold, or one above `MAX_THRESHOLD = 1024`). -/
+def readGuard (comparison : Comparison) (literal : Nat) : Option (Nat × Bool) :=
+  let reading : Option (Nat × Bool) := match comparison with
+    | .le => some (literal, true)
+    | .lt => if literal = 0 then none else some (literal - 1, true)
+    | .gt => some (literal, false)
+    | .ge => if literal = 0 then none else some (literal - 1, false)
+  match reading with
+  | some (threshold, base) => if threshold ≤ 1024 then some (threshold, base) else none
+  | none => none
+
+/-- The respelling is sound: a read guard is true exactly in the base context
+(`n <= c`) when it is a base guard, and exactly in the step context otherwise,
+at every control value. So deciding it by the context is deciding it. -/
+theorem a_read_guard_is_decided_by_its_context (comparison : Comparison) (literal : Nat)
+    (threshold : Nat) (base : Bool) (read : readGuard comparison literal = some (threshold, base))
+    (value : Int) :
+    holds comparison literal value = (decide (value ≤ threshold) == base) := by
+  cases comparison <;> simp only [readGuard] at read
+  · by_cases h : literal ≤ 1024
+    · simp only [h, ↓reduceIte, Option.some.injEq, Prod.mk.injEq] at read
+      obtain ⟨rfl, rfl⟩ := read
+      simp [holds]
+    · simp [h] at read
+  · by_cases zero : literal = 0
+    · simp [zero] at read
+    · by_cases h : literal - 1 ≤ 1024
+      · simp only [zero, h, ↓reduceIte, Option.some.injEq, Prod.mk.injEq] at read
+        obtain ⟨rfl, rfl⟩ := read
+        simp only [holds]
+        by_cases v : value < (literal : Int)
+        · have : value ≤ ((literal - 1 : Nat) : Int) := by omega
+          simp [v, this]
+        · have : ¬ value ≤ ((literal - 1 : Nat) : Int) := by omega
+          simp [v, this]
+      · simp [zero, h] at read
+  · by_cases h : literal ≤ 1024
+    · simp only [h, ↓reduceIte, Option.some.injEq, Prod.mk.injEq] at read
+      obtain ⟨rfl, rfl⟩ := read
+      simp only [holds]
+      by_cases v : value > (literal : Int)
+      · have : ¬ value ≤ (literal : Int) := by omega
+        simp [v, this]
+      · have : value ≤ (literal : Int) := by omega
+        simp [v, this]
+    · simp [h] at read
+  · by_cases zero : literal = 0
+    · simp [zero] at read
+    · by_cases h : literal - 1 ≤ 1024
+      · simp only [zero, h, ↓reduceIte, Option.some.injEq, Prod.mk.injEq] at read
+        obtain ⟨rfl, rfl⟩ := read
+        simp only [holds]
+        by_cases v : value ≥ (literal : Int)
+        · have : ¬ value ≤ ((literal - 1 : Nat) : Int) := by omega
+          simp [v, this]
+        · have : value ≤ ((literal - 1 : Nat) : Int) := by omega
+          simp [v, this]
+      · simp [zero, h] at read
+
+/-- Shared vectors, read by `crates/qcore-c-gateway/src/legacy_signed_rank.rs`'s
+test `lean_vectors_match_the_rust_reader`: `(comparison, literal, reading)`. -/
+def guardVectors : List (Comparison × Nat × Option (Nat × Bool)) :=
+  [ (.le, 0, some (0, true)), (.le, 1, some (1, true)), (.lt, 1, some (0, true)),
+    (.lt, 0, none), (.gt, 0, some (0, false)), (.ge, 1, some (0, false)),
+    (.ge, 0, none), (.ge, 2, some (1, false)), (.le, 1024, some (1024, true)),
+    (.le, 1025, none), (.gt, 1025, none), (.lt, 1025, some (1024, true)) ]
+
+theorem guard_vectors_hold :
+    guardVectors.all (fun vector => readGuard vector.1 vector.2.1 == vector.2.2) = true := by
+  decide
+
+/-- Shared vectors for the step actual `n - k`: `(k, admitted)`. -/
+def stepVectors : List (Nat × Bool) :=
+  [(0, false), (1, true), (2, true), (1024, true), (1025, false)]
+
+theorem step_vectors_hold :
+    stepVectors.all (fun vector => (Actual.decrement vector.1).admitted == vector.2) = true := by
+  decide
+
 /-- Representability on a 32-bit `int`: from the step context with a threshold
 in `[0, 1024]` and a step in `[1, 1024]`, the actual stays above `INT_MIN`. -/
 theorem the_actual_is_representable (threshold control : Int) (step : Nat)

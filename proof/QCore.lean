@@ -296,6 +296,7 @@ import QCore.PointerStore
 import QCore.UnionBitfieldPlace
 import QCore.ConditionAcquisition
 import QCore.LoopSiteGenerations
+import QCore.LoopInvariants
 import QCore.NestedCallEffects
 import QCore.ElaboratorCallFootprints
 import QCore.FfiStructImport

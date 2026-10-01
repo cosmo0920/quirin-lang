@@ -116,7 +116,9 @@ pub(super) fn neutral_loop(
                 && (!contract.counted_users.effects.is_empty()
                     || !contract.counted_users.exits.is_empty())
             {
-                return Err(format!("performs a counted-user operation through `{text}`"));
+                return Err(format!(
+                    "performs a counted-user operation through `{text}`"
+                ));
             }
             if let CallEffect::Opaque(reason) = unit.call_effect(text, &mut BTreeSet::new()) {
                 return Err(format!("calls `{text}`: {reason}"));

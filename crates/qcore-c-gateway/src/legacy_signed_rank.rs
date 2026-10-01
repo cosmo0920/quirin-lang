@@ -374,6 +374,100 @@ mod tests {
         }
     }
 
+    /// The bracketed tuples `(…)` of the Lean definition `name`, read up to the
+    /// theorem that follows it.
+    fn lean_tuples(lean: &str, name: &str) -> Vec<String> {
+        let body = lean
+            .split(&format!("def {name}"))
+            .nth(1)
+            .and_then(|rest| rest.split("theorem").next())
+            .unwrap_or_else(|| panic!("`{name}` is in the Lean model"));
+        let body = &body[body.find('[').expect("a list")..];
+        let mut tuples = Vec::new();
+        let mut depth = 0usize;
+        let mut start = 0;
+        for (index, character) in body.char_indices() {
+            match character {
+                '(' => {
+                    if depth == 0 {
+                        start = index + 1;
+                    }
+                    depth += 1;
+                }
+                ')' => {
+                    depth -= 1;
+                    if depth == 0 {
+                        tuples.push(body[start..index].to_owned());
+                    }
+                }
+                ']' if depth == 0 => break,
+                _ => {}
+            }
+        }
+        tuples
+    }
+
+    /// Card CG27's binding: `QCore.LoopInvariants.SignedThreshold.guardVectors`
+    /// and `stepVectors` (proved by `guard_vectors_hold` and
+    /// `step_vectors_hold` against `readGuard` and `Actual.admitted`) are the
+    /// readings this module makes.
+    #[test]
+    fn lean_vectors_match_the_rust_reader() {
+        let lean = include_str!("../../../proof/QCore/LoopInvariants.lean");
+        let guards = lean_tuples(lean, "guardVectors");
+        assert_eq!(guards.len(), 12);
+        for tuple in guards {
+            let (comparison, rest) = tuple.split_once(',').expect("a comparison");
+            let (literal, reading) = rest.split_once(',').expect("a literal");
+            let operator = match comparison.trim() {
+                ".le" => "<=",
+                ".lt" => "<",
+                ".gt" => ">",
+                ".ge" => ">=",
+                other => panic!("unknown comparison {other}"),
+            };
+            let literal = literal.trim();
+            let expected = match reading.trim() {
+                "none" => None,
+                some => {
+                    let inner = some
+                        .trim_start_matches("some")
+                        .trim()
+                        .trim_start_matches('(')
+                        .trim_end_matches(')');
+                    let (threshold, base) = inner.split_once(',').expect("a pair");
+                    Some(SignGuard {
+                        threshold: threshold.trim().parse().expect("a threshold"),
+                        true_in_base: base.trim() == "true",
+                    })
+                }
+            };
+            assert_eq!(
+                sign_guard(&["n", operator, literal], "n"),
+                expected,
+                "{tuple}"
+            );
+            // The split spelling the token stream may carry reads the same.
+            if operator.len() == 2 {
+                assert_eq!(
+                    sign_guard(&["n", &operator[..1], "=", literal], "n"),
+                    expected,
+                    "{tuple}"
+                );
+            }
+        }
+        let steps = lean_tuples(lean, "stepVectors");
+        assert_eq!(steps.len(), 5);
+        for tuple in steps {
+            let (step, admitted) = tuple.split_once(',').expect("a pair");
+            assert_eq!(
+                step_actual(&["n", "-", step.trim()], "n").is_some(),
+                admitted.trim() == "true",
+                "{tuple}"
+            );
+        }
+    }
+
     #[test]
     fn only_int_or_wider_signed_controls_are_read() {
         let words = |text: &str| {

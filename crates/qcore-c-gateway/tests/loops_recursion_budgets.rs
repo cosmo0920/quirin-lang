@@ -31,9 +31,8 @@ use std::collections::BTreeMap;
 use clang_gap::*;
 use qcore_c_gateway::legacy_c::{
     AnalysisStatus, C11TranslationUnit, ContractTrust, LegacyFunctionSummary, LegacyProgramSummary,
-    ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode,
-    UnrestrictedLegacyResult, analyze_legacy_c_translation_unit, analyze_unrestricted_c11,
-    check_legacy_safety_certificate,
+    ResourceFunctionContract, ResourceParameterMode, ResourceReturnMode, UnrestrictedLegacyResult,
+    analyze_legacy_c_translation_unit, analyze_unrestricted_c11, check_legacy_safety_certificate,
     counted_users::{ClauseRecord, ClauseVerdict},
 };
 use qcore_contract::contract_loader::load_resource_contract_sources;
@@ -274,9 +273,15 @@ fn a_loop_that_breaks_the_count_invariant_is_refused_never_assumed() {
         ("a release check", "while (n > 0) { u_release(t); n--; }"),
         ("a counter write", "while (n > 0) { t->refs++; n--; }"),
         ("an opaque call", "while (n > 0) { u_unknown(); n--; }"),
-        ("a return", "while (n > 0) { if (u_enqueue(q, t)) return -1; n--; }"),
+        (
+            "a return",
+            "while (n > 0) { if (u_enqueue(q, t)) return -1; n--; }",
+        ),
         ("a jump out", "while (n > 0) { goto out; } out:"),
-        ("a call through an expression", "while (n > 0) { (n ? u_log : u_log)(n); n--; }"),
+        (
+            "a call through an expression",
+            "while (n > 0) { (n ? u_log : u_log)(n); n--; }",
+        ),
     ] {
         let source = format!(
             "int l_forget(struct u_queue *q, struct u_task *t, int n)\n{{\n    u_ref(t);\n    {body}\n    u_unref(t, 0);\n    u_release(t);\n    return -1;\n}}\n"
@@ -502,7 +507,10 @@ fn multi_rank_recursion_has_a_ranked_summary() {
                   void *q = q_alloc(); release(q, n - 2); release(p, n - 1); } "
         .to_owned()
         + CALLER;
-    assert_eq!(certified_summary(&source, "release"), released_then_borrowed());
+    assert_eq!(
+        certified_summary(&source, "release"),
+        released_then_borrowed()
+    );
     // An owned result at several ranks.
     let make = "void *make(int n) { if (n <= 1) { void *p = q_alloc(); return p; } \
                 void *a = make(n - 1); void *b = make(n - 2); q_free(b); return a; } \
@@ -565,26 +573,106 @@ fn non_ranked_signed_recursion_never_publishes() {
     }
     for (case, signature, body) in [
         // C07's BEFORE shape: a signed zero/nonzero partition is not a rank.
-        ("zero partition", "int n", "if (n == 0) { q_free(p); return; } release(p, n - 1);"),
-        ("negated zero partition", "int n", "if (!n) { q_free(p); return; } release(p, n - 1);"),
-        ("not decreasing", "int n", "if (n <= 0) { q_free(p); return; } release(p, n);"),
-        ("increasing", "int n", "if (n <= 0) { q_free(p); return; } release(p, n + 1);"),
-        ("reversed", "int n", "if (n <= 0) { q_free(p); return; } release(p, 1 - n);"),
-        ("nonzero literal", "int n", "if (n <= 0) { q_free(p); return; } release(p, 5);"),
-        ("negative threshold", "int n", "if (n < 0) { q_free(p); return; } release(p, n - 1);"),
-        ("two thresholds", "int n", "if (n <= 0) { q_free(p); return; } if (n > 3) { release(p, n - 1); return; } release(p, n - 1);"),
-        ("recursion in the base", "int n", "if (n <= 0) { release(p, n - 1); return; } q_free(p);"),
-        ("control assigned", "int n", "n = n - 1; if (n <= 0) { q_free(p); return; } release(p, n - 1);"),
-        ("control addressed", "int n", "int *a = &n; if (n <= 0) { q_free(p); return; } release(p, n - 1);"),
-        ("control shadowed", "int n", "if (n <= 0) { q_free(p); return; } { int n = 7; release(p, n - 1); }"),
-        ("compound guard", "int n", "if (n <= 0 || !p) { q_free(p); return; } release(p, n - 1);"),
-        ("char control", "signed char n", "if (n <= 0) { q_free(p); return; } release(p, n - 1);"),
-        ("short control", "short n", "if (n <= 0) { q_free(p); return; } release(p, n - 1);"),
-        ("step too large", "int n", "if (n <= 0) { q_free(p); return; } release(p, n - 4096);"),
-        ("double release", "int n", "if (n <= 0) { q_free(p); return; } release(p, n - 1); q_free(p);"),
-        ("inconsistent contexts", "int n", "if (n <= 0) { return; } release(p, n - 1);"),
-        ("released twice by two ranks", "int n", "if (n <= 1) { q_free(p); return; } release(p, n - 1); release(p, n - 2);"),
-        ("loop in the body", "int n", "while (n > 9) { q_free(p); return; } if (n <= 0) { q_free(p); return; } release(p, n - 1);"),
+        (
+            "zero partition",
+            "int n",
+            "if (n == 0) { q_free(p); return; } release(p, n - 1);",
+        ),
+        (
+            "negated zero partition",
+            "int n",
+            "if (!n) { q_free(p); return; } release(p, n - 1);",
+        ),
+        (
+            "not decreasing",
+            "int n",
+            "if (n <= 0) { q_free(p); return; } release(p, n);",
+        ),
+        (
+            "increasing",
+            "int n",
+            "if (n <= 0) { q_free(p); return; } release(p, n + 1);",
+        ),
+        (
+            "reversed",
+            "int n",
+            "if (n <= 0) { q_free(p); return; } release(p, 1 - n);",
+        ),
+        (
+            "nonzero literal",
+            "int n",
+            "if (n <= 0) { q_free(p); return; } release(p, 5);",
+        ),
+        (
+            "negative threshold",
+            "int n",
+            "if (n < 0) { q_free(p); return; } release(p, n - 1);",
+        ),
+        (
+            "two thresholds",
+            "int n",
+            "if (n <= 0) { q_free(p); return; } if (n > 3) { release(p, n - 1); return; } release(p, n - 1);",
+        ),
+        (
+            "recursion in the base",
+            "int n",
+            "if (n <= 0) { release(p, n - 1); return; } q_free(p);",
+        ),
+        (
+            "control assigned",
+            "int n",
+            "n = n - 1; if (n <= 0) { q_free(p); return; } release(p, n - 1);",
+        ),
+        (
+            "control addressed",
+            "int n",
+            "int *a = &n; if (n <= 0) { q_free(p); return; } release(p, n - 1);",
+        ),
+        (
+            "control shadowed",
+            "int n",
+            "if (n <= 0) { q_free(p); return; } { int n = 7; release(p, n - 1); }",
+        ),
+        (
+            "compound guard",
+            "int n",
+            "if (n <= 0 || !p) { q_free(p); return; } release(p, n - 1);",
+        ),
+        (
+            "char control",
+            "signed char n",
+            "if (n <= 0) { q_free(p); return; } release(p, n - 1);",
+        ),
+        (
+            "short control",
+            "short n",
+            "if (n <= 0) { q_free(p); return; } release(p, n - 1);",
+        ),
+        (
+            "step too large",
+            "int n",
+            "if (n <= 0) { q_free(p); return; } release(p, n - 4096);",
+        ),
+        (
+            "double release",
+            "int n",
+            "if (n <= 0) { q_free(p); return; } release(p, n - 1); q_free(p);",
+        ),
+        (
+            "inconsistent contexts",
+            "int n",
+            "if (n <= 0) { return; } release(p, n - 1);",
+        ),
+        (
+            "released twice by two ranks",
+            "int n",
+            "if (n <= 1) { q_free(p); return; } release(p, n - 1); release(p, n - 2);",
+        ),
+        (
+            "loop in the body",
+            "int n",
+            "while (n > 9) { q_free(p); return; } if (n <= 0) { q_free(p); return; } release(p, n - 1);",
+        ),
     ] {
         let source = format!("void release(void *p, {signature}) {{ {body} }} {CALLER}");
         let result = unrestricted(&source);
@@ -660,11 +748,17 @@ fn the_zero_nonzero_route_is_unchanged_for_its_own_shapes() {
     let unsigned = format!(
         "void release(void *p, unsigned n) {{ if (n) {{ release(p, n - 1); return; }} q_free(p); }} {CALLER}"
     );
-    assert_eq!(certified_summary(&unsigned, "release"), released_then_borrowed());
+    assert_eq!(
+        certified_summary(&unsigned, "release"),
+        released_then_borrowed()
+    );
     let literal = format!(
         "void release(void *p, int flag) {{ if (flag) {{ release(p, 0); return; }} q_free(p); }} {CALLER}"
     );
-    assert_eq!(certified_summary(&literal, "release"), released_then_borrowed());
+    assert_eq!(
+        certified_summary(&literal, "release"),
+        released_then_borrowed()
+    );
     // Unsigned multi-rank stays refused: `n - 2` from 1 wraps.
     let wrap = format!(
         "void release(void *p, unsigned n) {{ if (n) {{ release(p, n - 2); return; }} q_free(p); }} {CALLER}"
@@ -695,7 +789,9 @@ fn the_custody_alias_widening_is_reported_never_safe() {
         let choices = (0..count)
             .map(|i| format!("if (c{i}) x = p{i};"))
             .collect::<String>();
-        let releases = (0..count).map(|i| format!("q_free(p{i});")).collect::<String>();
+        let releases = (0..count)
+            .map(|i| format!("q_free(p{i});"))
+            .collect::<String>();
         (formals, allocations, choices, releases)
     };
     let source = |count: usize| {
@@ -729,9 +825,15 @@ fn route_t_budgets_are_reported_never_safe() {
             .map(|i| format!("if (a) f({i}); "))
             .collect::<String>()
     };
-    let within = format!("int f(int); int subject(int a) {{ {}return 0; }}", branches(6));
+    let within = format!(
+        "int f(int); int subject(int a) {{ {}return 0; }}",
+        branches(6)
+    );
     assert!(t(&within).is_ok(), "{within}");
-    let exhausted = format!("int f(int); int subject(int a) {{ {}return 0; }}", branches(7));
+    let exhausted = format!(
+        "int f(int); int subject(int a) {{ {}return 0; }}",
+        branches(7)
+    );
     assert_eq!(t_refusal(&exhausted), "callback path limit exceeded");
 }
 
@@ -749,7 +851,8 @@ fn the_effectful_neutral_pins_now_carry_a_rank() {
     if !clang_available() {
         return;
     }
-    let walk = "static void walk(void *p, int n) { if (n > 0) { walk(p, n - 1); return; } q_free(p); }";
+    let walk =
+        "static void walk(void *p, int n) { if (n > 0) { walk(p, n - 1); return; } q_free(p); }";
     let census = qcore_c_gateway::legacy_census::neutral_reach_census(
         &C11TranslationUnit {
             source: &format!(
@@ -780,9 +883,12 @@ fn the_effectful_neutral_pins_now_carry_a_rank() {
         released_then_borrowed()
     );
     for (effect, released) in [("q_free(p)", true), ("q_transfer(p)", false)] {
-        let depth =
-            format!("void depth(void *p, int n) {{ if (n > 0) {{ depth(p, n - 1); return; }} {effect}; }}");
-        let after = format!("{depth} void subject(void) {{ void *p = q_alloc(); depth(p, 3); q_free(p); }}");
+        let depth = format!(
+            "void depth(void *p, int n) {{ if (n > 0) {{ depth(p, n - 1); return; }} {effect}; }}"
+        );
+        let after = format!(
+            "{depth} void subject(void) {{ void *p = q_alloc(); depth(p, 3); q_free(p); }}"
+        );
         assert!(
             !matches!(unrestricted(&after), UnrestrictedLegacyResult::Safe(_)),
             "{effect}"
