@@ -206,7 +206,7 @@ impl BoundsFunctionContract {
                 self.name,
                 note.reason,
                 note.category(),
-                &self.text_sha256
+                self.text_sha256
             )
         };
         let mut out = Vec::new();

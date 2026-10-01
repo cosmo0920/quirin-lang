@@ -355,10 +355,10 @@ fn shape(ty: &str) -> Shape {
 fn pointee(ty: &str) -> Option<String> {
     let ty = strip_qualifiers(ty);
     let ty = ty.trim();
-    if let Some(inner) = ty.strip_suffix('*') {
-        if !inner.contains('(') {
-            return Some(strip_qualifiers(inner.trim()));
-        }
+    if let Some(inner) = ty.strip_suffix('*')
+        && !inner.contains('(')
+    {
+        return Some(strip_qualifiers(inner.trim()));
     }
     None
 }
@@ -424,10 +424,10 @@ fn index_unit(ast: &Value) -> TuIndex<'_> {
                             continue;
                         }
                     };
-                    if let Some(id) = constant["id"].as_str() {
-                        if next != i128::MIN || explicit.is_some() {
-                            unit.enums.insert(id.to_owned(), value);
-                        }
+                    if let Some(id) = constant["id"].as_str()
+                        && (next != i128::MIN || explicit.is_some())
+                    {
+                        unit.enums.insert(id.to_owned(), value);
                     }
                     next = value.saturating_add(1);
                 }
@@ -821,6 +821,7 @@ impl<'a> Analysis<'a> {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn record(
         &mut self,
         node: &Value,
@@ -1371,6 +1372,7 @@ impl<'a> Analysis<'a> {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn access(
         &mut self,
         node: &Value,
@@ -1669,10 +1671,10 @@ impl<'a> Analysis<'a> {
                 .filter(|d| d.1 == "FunctionDecl")
                 .map(|d| d.2.to_owned())
         });
-        if name.is_none() {
-            if let Some(callee) = callee {
-                clear &= self.expr(callee, state, position, reach);
-            }
+        if name.is_none()
+            && let Some(callee) = callee
+        {
+            clear &= self.expr(callee, state, position, reach);
         }
         for argument in &arguments {
             clear &= self.expr(argument, state, "actual", reach);
@@ -1848,10 +1850,10 @@ impl<'a> Analysis<'a> {
         // A stable symbol at offset zero against the same symbol.
         if let (Some(symbol), Count::Symbol(have_symbol), IndexFact::Const(0)) =
             (&required.symbol, count, offset)
+            && symbol == have_symbol
+            && *have == want
         {
-            if symbol == have_symbol && *have == want {
-                return Decision::InBounds;
-            }
+            return Decision::InBounds;
         }
         let IndexFact::Const(r) = required.fact else {
             return Decision::Undecided(Refusal::UnsupportedRange);
@@ -2655,7 +2657,7 @@ impl<'a> Analysis<'a> {
             if let Some(body) = body {
                 self.stmt(body, &mut once);
             }
-            let jumps = body.is_some_and(|b| loop_jumps(b));
+            let jumps = body.is_some_and(loop_jumps);
             if jumps {
                 let mut after = state.clone();
                 let mut written = BTreeSet::new();
@@ -2807,10 +2809,10 @@ impl<'a> Analysis<'a> {
         if written.contains(&id) {
             return None;
         }
-        if let Count::Symbol(symbol) = &hi {
-            if written.contains(symbol) {
-                return None;
-            }
+        if let Count::Symbol(symbol) = &hi
+            && written.contains(symbol)
+        {
+            return None;
         }
         Some((id, IndexFact::Range { lo: start, hi }))
     }
