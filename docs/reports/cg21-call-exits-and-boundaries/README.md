@@ -276,19 +276,19 @@ half of it. Registered as `CG21-CLEANUP-SCOPE-EXITS`.
 ## 8. Gate
 
 Shared host: six, then eleven, cards at load 50–110, the disk at its 40 GB
-floor. Logs under this worktree's `private/cg21/`; exits copied to
+floor. Final gate at `94bd56fb` on main `f0bbc0eb`, run under the shared heavy lock (`scripts/gate-locked.sh`; the submodule step first, by hand); logs in this worktree's `private/cg21/gate7`; exits copied to
 [`gate/`](gate/); summary in [`gate.json`](gate.json).
 
 | Step | Command | Exit | Count / note |
 |---|---|---|---|
 | submodule | `git submodule update --init --recursive` | 0 | |
 | fmt | `cargo fmt --all -- --check` | 0 | |
-| tests | `python3 scripts/run_test_binaries.py` | TESTS_FINAL |
+| tests | `python3 scripts/run_test_binaries.py` | **0** | 418 units, 431 summaries, **7,272 passed**, 0 failed, 11 ignored (`private/test-binaries/20261001T201309Z-1065311`) |
 | clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
 | probe | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
 | follow-up probe | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
 | Lean | `python3 scripts/check_lean_audits.py` | 0 | **268 audits** (267 on main `f0bbc0eb` + `AuditCallExits.lean`) |
-| Python | `python3 -m unittest discover -s scripts/tests` | 1, then PYTHON_FINAL | 365; the one failure was the matrix's derived `lean_audits` (267 → 268), cleared by `build_matrix.py . --gate gate.json` |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** | 365; the one failure was the matrix's derived `lean_audits` (267 → 268), cleared by `build_matrix.py . --gate gate.json` |
 | docs index | `python3 scripts/build_docs_index.py --check` | 0 | |
 | provider check | `cargo check --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | |
 | libc provider tests | `cargo test --manifest-path providers/Cargo.toml -p quirin-provider-libc --locked --offline` | 0 | 2 passed |
