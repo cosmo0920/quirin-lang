@@ -9,7 +9,6 @@ here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 out="$repo/private/cg30dft"
 cd "$repo" || exit 2
-git rev-parse HEAD > "$out/$name.rev"
 CARGO_BUILD_JOBS=4 CARGO_INCREMENTAL=0 cargo build --release -p qcore-audit --bin quirin-audit \
   > "$out/build-$name.log" 2>&1
 echo $? > "$out/build-$name.exit"
