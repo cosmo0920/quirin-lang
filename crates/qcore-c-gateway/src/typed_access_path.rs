@@ -349,16 +349,23 @@ impl EnumFacts {
     /// declared tag, or exactly one typedef name whose declaration is an
     /// `EnumType`. `const` is the only qualifier admitted.
     pub(crate) fn is_enum(&self, node: &Value) -> bool {
-        let Some(text) = qual(node) else { return false };
-        let words = text
-            .split_whitespace()
-            .filter(|word| *word != "const")
-            .collect::<Vec<_>>();
-        match words.as_slice() {
-            ["enum", tag] => self.tags.contains(*tag),
-            [name] => self.typedefs.get(*name) == Some(&true),
-            _ => false,
-        }
+        // Clang may desugar an anonymous enum typedef to `enum ALIAS`, even
+        // though the EnumDecl itself has no tag. Read the spelled alias against
+        // its positive EnumType declaration before consulting desugared tags.
+        [qual(node), node["type"]["qualType"].as_str()]
+            .into_iter()
+            .flatten()
+            .any(|text| {
+                let words = text
+                    .split_whitespace()
+                    .filter(|word| *word != "const")
+                    .collect::<Vec<_>>();
+                match words.as_slice() {
+                    ["enum", tag] => self.tags.contains(*tag),
+                    [name] => self.typedefs.get(*name) == Some(&true),
+                    _ => false,
+                }
+            })
     }
 }
 

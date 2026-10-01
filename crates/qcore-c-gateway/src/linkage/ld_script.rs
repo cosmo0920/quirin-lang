@@ -155,7 +155,9 @@ pub fn read(data: &[u8]) -> Result<Vec<ScriptInput>, ReadError> {
                                 ),
                             ));
                         }
-                        path if !path.starts_with('/') => {
+                        path if !path.starts_with('/')
+                            && !std::path::Path::new(path).is_absolute() =>
+                        {
                             return Err(ReadError::new(
                                 "ld script",
                                 format!(

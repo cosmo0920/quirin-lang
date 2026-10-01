@@ -49,7 +49,7 @@ const RDKAFKA_MEMORY: &str =
 const RDKAFKA_SECTION: &str = "// ## Card W46-EXTERNAL-CALLEE-CONTRACTS: `rd_atomic32_get`";
 
 const DECLARATIONS: &str = "\
-typedef unsigned long size_t; \
+typedef __SIZE_TYPE__ size_t; \
 typedef unsigned int uint32_t; \
 typedef int int32_t; \
 typedef char *cfl_sds_t; \

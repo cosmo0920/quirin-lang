@@ -34,7 +34,7 @@ const INPUT_HEADER: &str = r#"
 #define FLB_INPUT_NET  4
 #define FLB_INPUT_CORO 128
 #include <stdarg.h>
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 #define offsetof(type, member) __builtin_offsetof(type, member)
 int strncasecmp(const char *a, const char *b, size_t n);
 size_t strnlen(const char *s, size_t n);

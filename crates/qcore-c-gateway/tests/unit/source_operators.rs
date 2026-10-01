@@ -473,7 +473,8 @@ fn cg01_checked_binary_matches_c_integer_faults() {
 #[test]
 fn cg01_lean_vectors_match_the_rust_tables() {
     use crate::typed_source_nodes::{LEGACY_BINARY, LEGACY_UNARY};
-    let lean = include_str!("../../../../proof/QCore/TypedSourceOperators.lean");
+    let lean =
+        include_str!("../../../../proof/QCore/TypedSourceOperators.lean").replace("\r\n", "\n");
     let section = |start: &str| {
         let body = lean.split(start).nth(1).expect(start);
         body[..body.find("]\n").unwrap() + 1].to_owned()

@@ -253,7 +253,10 @@ pub fn read_struct_layout(
         .to_str()
         .ok_or_else(|| refuse("the header path is not UTF-8"))?
         .to_owned();
-    if path_text.contains(['"', '\\', '\n']) {
+    // Header names do not interpret C string escapes. Windows Clang accepts
+    // native backslashes, including the resolved verbatim path prefix. Keep
+    // that spelling so the probe and retained identity refer to the same path.
+    if path_text.contains(['"', '\r', '\n']) || (!cfg!(windows) && path_text.contains('\\')) {
         return Err(refuse("the header path cannot be spelled in an `#include`"));
     }
     let identity = crate::clang::ClangIdentity::capture()

@@ -3,8 +3,6 @@
 //! flags) and I06 (extension flags). The compile-database reader admits an
 //! allowlist and refuses the rest of the command; these pin the refusals.
 
-use std::path::PathBuf;
-
 use qcore_audit::compile_db::{CompileEntry, compiler_options};
 
 /// The configured Clang driver, so a refusal is the flag's and never the
@@ -24,10 +22,17 @@ fn driver() -> Option<String> {
 }
 
 fn options(driver: &str, extra: &str) -> Result<(), String> {
+    let directory = std::env::temp_dir();
+    let file = directory.join("unit.c");
+    let output = directory.join("unit.o");
     compiler_options(&CompileEntry {
-        directory: PathBuf::from("/tmp"),
-        command: format!("{driver} {extra} -c /tmp/unit.c -o /tmp/unit.o"),
-        file: PathBuf::from("/tmp/unit.c"),
+        directory,
+        command: format!(
+            "\"{driver}\" {extra} -c '{}' -o '{}'",
+            file.display(),
+            output.display()
+        ),
+        file,
     })
     .map(|_| ())
 }

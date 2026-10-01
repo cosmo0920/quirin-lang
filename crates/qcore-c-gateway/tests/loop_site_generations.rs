@@ -17,7 +17,7 @@ use qcore_c_gateway::legacy_c::{
 use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const DECLARATIONS: &str = "\
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 void *q_alloc(void); void q_free(void *p); void q_observe(void *p);
 void *q_realloc(void *p, size_t n); void q_make(void **d);
 void *q_maybe_alloc(void); void q_nullable_free(void *p);

@@ -129,9 +129,17 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(results["fail"].returncode, 101)
         self.assertIn("test a::broken ... FAILED", results["fail"].tests)
         self.assertFalse(results["crash"].ok, "a clean summary before a crash is not success")
-        self.assertEqual(results["crash"].signal, "SIGSEGV")
+        if os.name == "nt":
+            self.assertIsNone(results["crash"].signal)
+            self.assertNotEqual(results["crash"].returncode, 0)
+        else:
+            self.assertEqual(results["crash"].signal, "SIGSEGV")
         self.assertFalse(results["abort"].ok)
-        self.assertEqual(results["abort"].signal, "SIGABRT")
+        if os.name == "nt":
+            self.assertIsNone(results["abort"].signal)
+            self.assertNotEqual(results["abort"].returncode, 0)
+        else:
+            self.assertEqual(results["abort"].signal, "SIGABRT")
         self.assertFalse(results["missing"].ok)
         self.assertIsNone(results["missing"].returncode)
         self.assertIn("FileNotFoundError", results["missing"].error)

@@ -123,6 +123,7 @@ fn run(c: &str, label: &str) -> Vec<(String, String, Option<i32>)> {
 }
 
 /// The two streams of a route's labelled reference observation.
+#[cfg(unix)]
 fn streams(observation: &[String]) -> (String, String) {
     let project = |stream: &str| {
         observation

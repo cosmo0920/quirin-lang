@@ -182,7 +182,7 @@ contract {
 "#;
 
 const PRELUDE: &str = r#"
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 struct p_list { struct p_list *prev, *next; };
 struct p_queue { struct p_list pending; };
 struct p_node { int value; struct p_list _head; };

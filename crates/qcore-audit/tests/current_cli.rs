@@ -461,15 +461,19 @@ fn the_sidecar_reproduces_the_provider_selection() {
     // The CLI resolves relative arguments against current_dir(), which resolves
     // temp-directory symlinks (e.g. /var -> /private/var on macOS). Preserve the
     // declared manifest suffix: only the working-directory root is canonical.
+    let root = fixture.0.canonicalize().unwrap();
+    // GetCurrentDirectoryW returns a regular drive path, while canonicalize()
+    // returns a verbatim path whose join() collapses the declared `../..` suffix.
+    #[cfg(windows)]
+    let root = PathBuf::from(
+        root.to_str()
+            .unwrap()
+            .strip_prefix(r"\\?\")
+            .unwrap_or(root.to_str().unwrap()),
+    );
     assert_eq!(
         selection["profile_contract_manifest"]["path"],
-        json!(
-            fixture
-                .0
-                .canonicalize()
-                .unwrap()
-                .join("profiles/sample/../../contracts.json")
-        )
+        json!(root.join("profiles/sample").join("../../contracts.json"))
     );
     // Names, versions, roles and the closure.
     let crates = selection["crates"].as_array().unwrap();
@@ -780,7 +784,9 @@ fn the_quirin_providers_only_guard_refuses_a_qcore_provider_closure() {
 #[test]
 fn a_substituted_compiler_refuses_with_the_replacement_instructions() {
     let Some(_) = clang() else { return };
-    let fixture = Fixture::new(Path::new("/usr/bin/cc"), true);
+    // An existing non-Clang executable reaches driver validation on every OS.
+    let other = std::env::current_exe().unwrap();
+    let fixture = Fixture::new(&other, true);
     let output = fixture.run(&fixture.base_args("out"));
     refused(&output, "audit requires the configured Clang executable");
     refused(&output, "quirin-audit current");

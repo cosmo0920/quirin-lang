@@ -71,6 +71,7 @@ fn kebab(name: &str) -> String {
 
 /// The rows of one Lean list literal `def NAME … :=` up to its closing `]`.
 fn lean_rows(lean: &str, name: &str) -> Vec<String> {
+    let lean = lean.replace("\r\n", "\n");
     let block = lean
         .split(&format!("def {name} "))
         .nth(1)

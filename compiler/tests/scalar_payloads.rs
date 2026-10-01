@@ -175,6 +175,7 @@ fn main() -> i32 effects {{ {ENTRY} }} {{
 /// A payload of `ty` holding `value` split between two disjoint leases
 /// (one for a one-byte payload) whose workers write one byte each — or, for
 /// `bool`, read it — then read back byte by byte and whole by the owner.
+#[cfg(unix)]
 fn leased(ty: ScalarType, value: i128) -> String {
     let n = size(ty);
     let half = (n / 2).max(1);
@@ -239,6 +240,7 @@ fn leased(ty: ScalarType, value: i128) -> String {
 /// The whole value after the lease workers' byte writes, reconstructed
 /// independently: the little-endian two's-complement bytes of `value`, byte 0
 /// set to 171 and byte `half` to 205, read back at the type.
+#[cfg(unix)]
 fn after_leases(ty: ScalarType, value: i128) -> i128 {
     if ty == ScalarType::Bool {
         return value;
@@ -289,7 +291,7 @@ fn lean_payload_sizes_match_the_rust_extent() {
             other => panic!("{other}"),
         };
         let expected = fields[2]
-            .trim_end_matches([')', ']', '\n', ' '])
+            .trim_end_matches([')', ']', '\r', '\n', ' '])
             .strip_prefix("some ")
             .map(|n| n.trim().parse::<u64>().unwrap());
         assert_eq!(ty.size_bytes(target.as_ref()).ok(), expected, "{row}");

@@ -53,9 +53,11 @@
 use std::collections::BTreeMap;
 use std::ffi::OsString;
 use std::fs;
+#[cfg(unix)]
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+#[cfg(unix)]
 use std::time::{Duration, Instant};
 
 use qcore_schemas::reason::ReasonCategory;
@@ -722,6 +724,10 @@ pub fn join(
 
 /// Why a supervised run stopped short.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[cfg_attr(
+    not(unix),
+    expect(dead_code, reason = "process supervision is Unix-only")
+)]
 enum Breach {
     Timeout,
     Stdout,

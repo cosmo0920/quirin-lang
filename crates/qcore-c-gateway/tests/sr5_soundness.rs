@@ -389,7 +389,7 @@ extern fn p_list_add(entry: ptr<mut, u8>, head: ptr<mut, u8>) -> unit
 contract { requires resource_contract_v1; ensures normal resource_borrowed(entry); ensures normal resource_borrowed(head); ensures normal resource_published(entry, head); ensures normal resource_return_none(); };
 "#;
 
-const LIST_PRELUDE: &str = "typedef unsigned long size_t;\n\
+const LIST_PRELUDE: &str = "typedef __SIZE_TYPE__ size_t;\n\
      struct p_list { struct p_list *prev, *next; };\n\
      struct p_queue { struct p_list pending; };\n\
      struct p_node { int value; struct p_list _head; };\n\

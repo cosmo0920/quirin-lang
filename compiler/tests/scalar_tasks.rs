@@ -927,7 +927,7 @@ fn native_end_to_end_programs_match_the_reference() {
 fn the_published_example_matches_its_page() {
     let module = admitted(include_str!("../../examples/scalar/typed_workers.qr"));
     let (out, err) = reference(&module, &TaskExecutionScript::default());
-    let page = include_str!("../../examples/scalar/README.md");
+    let page = include_str!("../../examples/scalar/README.md").replace("\r\n", "\n");
     let block = |marker: &str| {
         let start = page.find(marker).unwrap_or_else(|| panic!("{marker}")) + marker.len();
         let body = &page[start..];

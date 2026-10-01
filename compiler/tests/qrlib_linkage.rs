@@ -116,6 +116,7 @@ fn compile(
     )
 }
 
+#[cfg(unix)]
 fn refused(result: Result<CompiledModule, Vec<FileDiagnostic>>, code: &str, needle: &str) {
     match result {
         Ok(_) => panic!("expected {code} mentioning `{needle}`, admitted"),
@@ -1099,7 +1100,25 @@ mod windows {
     /// The first directory of `LIB` (set by the Visual Studio environment)
     /// holding `name`.
     pub fn sdk_library(name: &str) -> PathBuf {
-        let lib = std::env::var("LIB").expect("the MSVC environment sets LIB");
+        // Cargo can find MSVC without a Developer Command Prompt. Use the same
+        // discovered compiler environment as the native C test harness.
+        let target = msvc_target();
+        let compiler = cc::Build::new()
+            .host(&target.triple)
+            .target(&target.triple)
+            .out_dir(std::env::temp_dir())
+            .opt_level(1)
+            .cargo_metadata(false)
+            .get_compiler();
+        let lib = std::env::var_os("LIB")
+            .or_else(|| {
+                compiler
+                    .env()
+                    .iter()
+                    .find(|(key, _)| key == "LIB")
+                    .map(|(_, value)| value.clone())
+            })
+            .expect("the discovered MSVC environment sets LIB");
         std::env::split_paths(&lib)
             .map(|directory| directory.join(name))
             .find(|path| path.is_file())

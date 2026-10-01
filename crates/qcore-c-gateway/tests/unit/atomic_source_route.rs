@@ -11,7 +11,8 @@ const LEAN: &str = include_str!("../../../../proof/QCore/AtomicSourceRoute.lean"
 
 /// The body of the Lean list `start … \n]`.
 fn block(start: &str) -> String {
-    let body = LEAN.split(start).nth(1).expect(start);
+    let lean = LEAN.replace("\r\n", "\n");
+    let body = lean.split(start).nth(1).expect(start);
     body[..body.find("\n]").expect("list end")].to_owned()
 }
 
@@ -189,7 +190,8 @@ fn cg19_lean_order_vectors_match_route_order() {
 /// every order the route gives is one of them, for every operation and value.
 #[test]
 fn cg19_routed_orders_are_the_models_own() {
-    let body = LEAN
+    let lean = LEAN.replace("\r\n", "\n");
+    let body = lean
         .split("def modelRepresents : Operation → ModelOrder → Bool")
         .nth(1)
         .unwrap();

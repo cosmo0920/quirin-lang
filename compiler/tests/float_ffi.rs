@@ -8,7 +8,9 @@
 //!
 //! No test here writes output of its own.
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
+#[cfg(unix)]
+use std::path::Path;
+use std::path::PathBuf;
 
 use qcore_compiler::scalar_floats as sf;
 use qcore_compiler::scalar_types::{PointerWidth, RecordedTarget, ScalarType};
@@ -95,10 +97,12 @@ impl Scratch {
     }
 
     /// The pinned archive, verified: the only library the build links.
+    #[cfg(unix)]
     fn archive(&self) -> PathBuf {
         self.1.link_plan().input
     }
 
+    #[cfg(unix)]
     fn path(&self) -> &Path {
         &self.0
     }

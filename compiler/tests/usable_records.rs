@@ -146,6 +146,7 @@ fn projections(module: &CompiledModule) -> (String, String) {
 
 /// The fenced block after `<!-- MARKER -->` in a page.
 fn documented(page: &str, marker: &str) -> String {
+    let page = page.replace("\r\n", "\n");
     let start = page
         .find(&format!("<!-- {marker} -->"))
         .unwrap_or_else(|| panic!("the page has no `{marker}` block"));
@@ -810,6 +811,7 @@ mod native {
 
 /// One native case: the program, its module, its reference stdout and
 /// stderr, and the header directory and C library it links, when it has one.
+#[cfg(unix)]
 type NativeCase<'a> = (
     &'a str,
     &'a CompiledModule,

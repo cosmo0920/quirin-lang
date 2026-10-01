@@ -117,7 +117,7 @@ contract {
 "#;
 
 const PRELUDE: &str = r#"
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 struct w_task { int refs; };
 struct w_obj { int value; };
 void *w_malloc(size_t size);

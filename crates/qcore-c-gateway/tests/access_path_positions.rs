@@ -42,7 +42,7 @@ struct c_leaf { int weight; char *name; c_mode mode; }; \
 struct c_item { int count; struct c_leaf *leaf; struct c_leaf cells[4]; }; \
 struct c_box { int flag; struct c_item *item; struct c_item *items; c_u *hidden; c_mode mode; }; \
 struct c_box *c_make(int n); \
-void c_drop(struct c_box *b); \
+void c_drop(void *b); \
 void c_use(int v); \
 void c_look(struct c_item *p); \
 void c_peek(struct c_leaf *l); \

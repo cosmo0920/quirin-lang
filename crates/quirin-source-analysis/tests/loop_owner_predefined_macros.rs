@@ -399,7 +399,19 @@ fn the_recorded_compiler_decides_per_command_and_a_minus_u_undefines() {
     // A predefined macro the command undefines, and one it keeps.
     assert_eq!(view.decide("a.c", "__clang__"), Some(false));
     assert_eq!(view.decide("b.c", "__clang__"), Some(true));
-    assert_eq!(view.decide("a.c", "__STDC__"), Some(true));
+    // MS-compatible Clang need not define __STDC__. Independently observe the
+    // configured driver instead of assuming its native platform's macros.
+    let predefined = std::process::Command::new(&compiler)
+        .args(["--driver-mode=gcc", "-dM", "-E", "-x", "c", "-"])
+        .stdin(std::process::Stdio::null())
+        .output()
+        .expect("the configured compiler's predefined macros");
+    assert!(predefined.status.success());
+    let stdc = String::from_utf8(predefined.stdout)
+        .unwrap()
+        .lines()
+        .any(|line| line.split_whitespace().nth(1) == Some("__STDC__"));
+    assert_eq!(view.decide("a.c", "__STDC__"), Some(stdc));
     // A header `#define`s it: undecided even though no command defines it.
     assert_eq!(view.decide("a.c", "__QCORE_HEADER__"), None);
     // The common header: one command defines `__QCORE_ONE__`, none

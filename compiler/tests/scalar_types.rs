@@ -333,7 +333,7 @@ fn lines_logs_flushes_and_pipes_render_through_std_io() {
         ]
     );
     // The page publishes the same lines, per stream.
-    let page = include_str!("../../examples/scalar/README.md");
+    let page = include_str!("../../examples/scalar/README.md").replace("\r\n", "\n");
     for (stream, marker) in [("out", "fixed_width stdout"), ("err", "fixed_width stderr")] {
         let block = page
             .split(&format!("<!-- transcript: {marker} -->"))

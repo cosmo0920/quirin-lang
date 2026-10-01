@@ -535,7 +535,9 @@ fn lean_ieee_vectors_are_the_kernels() {
         if write {
             std::fs::write(&file, &table.text).unwrap();
         }
-        let checked_in = std::fs::read_to_string(&file).unwrap();
+        let checked_in = std::fs::read_to_string(&file)
+            .unwrap()
+            .replace("\r\n", "\n");
         assert!(
             checked_in == table.text,
             "{} is not the kernel's current table; regenerate it",

@@ -130,7 +130,7 @@ impl Tree {
 
     fn replace(&self, old: &str, new: &str) {
         let path = self.src().join("queue.c");
-        let text = fs::read_to_string(&path).unwrap();
+        let text = fs::read_to_string(&path).unwrap().replace("\r\n", "\n");
         assert_eq!(text.matches(old).count(), 1, "{old}");
         fs::write(path, text.replacen(old, new, 1)).unwrap();
     }

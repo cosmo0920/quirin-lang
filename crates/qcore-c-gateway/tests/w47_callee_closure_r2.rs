@@ -43,7 +43,7 @@ const CFL_SECTION: &str = "// ## Card W47-CALLEE-CLOSURE-R2: `cfl_arena_calloc`"
 const RDKAFKA_SECTION: &str = "// ## Card W47-CALLEE-CLOSURE-R2: `rd_file_read`";
 
 const DECLARATIONS: &str = "\
-typedef unsigned long size_t; \
+typedef __SIZE_TYPE__ size_t; \
 struct cfl_arena; \
 typedef struct kv kv; \
 typedef struct quantile quantile; \

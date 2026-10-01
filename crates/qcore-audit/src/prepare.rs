@@ -1384,9 +1384,10 @@ mod tests {
             pure_posix("/a//b/./mk_core/mk_event.c"),
             "/a/b/mk_core/mk_event.c"
         );
+        let missing = std::env::temp_dir().join("no-such-qcore-dir");
         assert_eq!(
-            resolve(Path::new("/no-such-qcore-dir/x/../y")).unwrap(),
-            PathBuf::from("/no-such-qcore-dir/y")
+            resolve(&missing.join("x/../y")).unwrap(),
+            resolve(&missing).unwrap().join("y")
         );
         assert_eq!(which("/no-such-qcore-dir/clang"), None);
         assert_eq!(which("no-such-qcore-program-name"), None);

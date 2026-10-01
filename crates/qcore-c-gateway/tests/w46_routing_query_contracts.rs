@@ -44,7 +44,7 @@ fn contracts(with_card: bool) -> ResourceContracts {
 
 fn summary(body: &str, with_card: bool) -> LegacyFunctionSummary {
     let source = format!(
-        "typedef unsigned long size_t; struct flb_input_instance; struct flb_router; \
+        "typedef __SIZE_TYPE__ size_t; struct flb_input_instance; struct flb_router; \
          int input_chunk_has_magic_bytes(char *, int); \
          int flb_input_chunk_is_mem_overlimit(struct flb_input_instance *); \
          int flb_input_chunk_is_storage_overlimit(struct flb_input_instance *); \

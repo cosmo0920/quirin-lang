@@ -694,7 +694,7 @@ fn the_float_buffer_example_prints_its_transcript() {
         m.execution_profile,
         SourceExecutionProfile::StandardBufferV1
     );
-    let page = include_str!("../../examples/scalar/README.md");
+    let page = include_str!("../../examples/scalar/README.md").replace("\r\n", "\n");
     for (stream, marker) in [
         ("out", "float_buffer stdout"),
         ("err", "float_buffer stderr"),
@@ -1197,6 +1197,7 @@ fn instrumented(module: &CompiledModule) -> String {
 /// is x86-64's default NaN, sign set, and Clang at `-O2` folds the same
 /// division to the sign-clear quiet NaN; §L14.7 states that a byte view of a
 /// NaN payload has unspecified sign and payload bits.
+#[cfg(unix)]
 fn same_trace_but_nan_sign(native: &str, reference: &str, top_byte_of_a_nan: Option<u64>) -> bool {
     let (native, reference): (Vec<&str>, Vec<&str>) =
         (native.lines().collect(), reference.lines().collect());

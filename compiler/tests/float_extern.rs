@@ -50,6 +50,7 @@ fn host_target() -> RecordedTarget {
     }
 }
 
+#[cfg(unix)]
 const FLOATS: [ScalarType; 2] = [ScalarType::F32, ScalarType::F64];
 
 /// Per float type: `q_seq_T()` returns the next bit pattern of `QSEQ`,
@@ -385,6 +386,7 @@ fn known_program_links_real_float_callees_under_three_builds() {
 }
 
 /// The boundary table of each float type, as bit patterns.
+#[cfg(unix)]
 fn boundary(ty: ScalarType) -> Vec<u64> {
     let (sign, positives): (u64, Vec<u64>) = if ty == ScalarType::F32 {
         (

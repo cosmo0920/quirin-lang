@@ -499,7 +499,7 @@ fn admitted_value_statements_run_natively_as_the_reference() {
 #[test]
 fn the_typed_loops_example_publishes_its_transcript() {
     let m = buffer_admitted(include_str!("../../examples/scalar/typed_loops.qr"));
-    let page = include_str!("../../examples/scalar/README.md");
+    let page = include_str!("../../examples/scalar/README.md").replace("\r\n", "\n");
     let mut expected = Vec::new();
     for (stream, marker) in [("out", "typed_loops stdout"), ("err", "typed_loops stderr")] {
         let block = page

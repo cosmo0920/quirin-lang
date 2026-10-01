@@ -19,7 +19,9 @@
 //! the task trace is the maintained diagnostic sink.
 
 use qcore_compiler::scalar_floats as sf;
-use qcore_compiler::scalar_types::{self as st, Cmp, Op, PointerWidth, RecordedTarget, ScalarType};
+#[cfg(unix)]
+use qcore_compiler::scalar_types::{self as st, Cmp, Op};
+use qcore_compiler::scalar_types::{PointerWidth, RecordedTarget, ScalarType};
 use qcore_compiler::{
     CompileOptions, CompiledModule, FileDiagnostic, SourceExecutionProfile, SourceFile,
     compile_files_for_target,

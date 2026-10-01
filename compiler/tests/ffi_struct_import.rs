@@ -835,7 +835,9 @@ fn a_marked_declaration_outside_the_ffi_table_does_not_load() {
 /// The family page prints the transcript the program produces.
 #[test]
 fn the_ffi_page_publishes_the_transcript_its_program_prints() {
-    let page = std::fs::read_to_string(examples().join("README.md")).unwrap();
+    let page = std::fs::read_to_string(examples().join("README.md"))
+        .unwrap()
+        .replace("\r\n", "\n");
     let block = page
         .split("```text\n")
         .nth(1)

@@ -449,6 +449,10 @@ fn facts(fixture: &Fixture) -> TypedFacts {
             directory: fixture.root.clone(),
             arguments: vec![
                 "-std=gnu17".to_owned(),
+                // This fixture deliberately leaves both platform arms untyped;
+                // separate supplied macro facts exercise their decision gate.
+                "-U_WIN32".to_owned(),
+                "-U__linux__".to_owned(),
                 format!("-I{}", fixture.root.join("include").display()),
                 "-c".to_owned(),
                 fixture.root.join(&file.path).display().to_string(),

@@ -25,6 +25,7 @@ use qcore_compiler::{
     CompileOptions, CompiledModule, FileDiagnostic, SourceExecutionProfile, SourceFile,
     compile_files_for_target,
 };
+#[cfg(unix)]
 use qcore_core::prelude::concurrency::task_execution::{
     TaskExecutionScript, execute_task_module, render_task_observation,
 };
@@ -128,6 +129,7 @@ fn main() -> i32 effects {{ alloc, throws<AllocError>, throws<SpawnError>, throw
     )
 }
 
+#[cfg(unix)]
 fn reference(module: &CompiledModule, script: &TaskExecutionScript) -> String {
     let composed = module
         .checked

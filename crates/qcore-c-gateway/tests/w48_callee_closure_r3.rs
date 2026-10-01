@@ -41,7 +41,7 @@ const TIME_SECTION: &str = "// ## Card W48-CALLEE-CLOSURE-R3: `clock_gettime`";
 const STAT_SECTION: &str = "// ## Card W48-CALLEE-CLOSURE-R3: `lstat`";
 
 const DECLARATIONS: &str = "\
-typedef unsigned long size_t; \
+typedef __SIZE_TYPE__ size_t; \
 typedef int clockid_t; \
 typedef long long rd_ts_t; \
 struct timespec { long tv_sec; long tv_nsec; }; \

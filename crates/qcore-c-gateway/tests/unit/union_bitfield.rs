@@ -110,7 +110,7 @@ fn cg13_lean_vectors_match_the_rust_tables() {
 }
 
 const RECORDS: &str = "struct B { unsigned a : 3; unsigned b : 5; int x; unsigned c : 4; \
-unsigned : 0; unsigned d : 2; unsigned long e : 40; unsigned f : 1; }; \
+unsigned : 0; unsigned d : 2; unsigned long long e : 40; unsigned f : 1; }; \
 union N { int i; long l; unsigned char bytes[8]; struct { short s; enum E { E0 } e; } in; }; \
 union P { int i; void *p; }; union Q { int i; struct { int a; char *s; } in; }; \
 typedef union { long n; double d; } TU; \

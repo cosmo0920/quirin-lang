@@ -103,7 +103,7 @@ fn clang_available() -> bool {
 
 fn summary(body: &str, with_observation: bool) -> LegacyFunctionSummary {
     let source = format!(
-        "typedef unsigned long size_t; typedef unsigned int uint32_t; \
+        "typedef __SIZE_TYPE__ size_t; typedef unsigned int uint32_t; \
          struct mk_event {{ int mask; int status; }}; struct event_base; \
          void *malloc(size_t); void free(void *); \
          int _mk_string_search(const char *, const char *, int, int); \

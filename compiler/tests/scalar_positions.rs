@@ -564,7 +564,7 @@ fn lean_field_vectors_match_the_checker() {
 #[test]
 fn the_record_fields_example_publishes_its_transcript() {
     let m = buffer_admitted(include_str!("../../examples/scalar/record_fields.qr"));
-    let page = include_str!("../../examples/scalar/README.md");
+    let page = include_str!("../../examples/scalar/README.md").replace("\r\n", "\n");
     let mut published = PublishedStreams::default();
     for (stream, marker) in [
         ("out", "record_fields stdout"),

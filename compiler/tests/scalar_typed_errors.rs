@@ -736,7 +736,7 @@ fn the_example_publishes_its_transcript() {
     let m = admitted(include_str!("../../examples/scalar/typed_errors.qr"));
     assert_eq!(lines(&m), ["out: 60", "err: [WARN] 255", "err: [WARN] 0"]);
     assert_eq!(outcome(&m), Ok(0));
-    let page = include_str!("../../examples/scalar/README.md");
+    let page = include_str!("../../examples/scalar/README.md").replace("\r\n", "\n");
     for (stream, marker) in [
         ("out", "typed_errors stdout"),
         ("err", "typed_errors stderr"),

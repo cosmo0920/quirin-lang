@@ -1251,6 +1251,15 @@ impl<'o> Reader<'o> {
         if qual.ends_with(']') {
             return None;
         }
+        // An anonymous record typedef may desugar to `struct ALIAS` on
+        // Windows without declaring that tag. Its declaration still identifies
+        // the record; resolve that positive alias before looking up a tag.
+        let alias = qual
+            .trim_start_matches("const ")
+            .trim_start_matches("volatile ");
+        if let Some(record) = self.typedefs.get(alias).and_then(|id| self.records.get(id)) {
+            return Some(Ok(record));
+        }
         let text = node.desugared.as_deref().unwrap_or(qual);
         let text = text
             .trim_start_matches("const ")
@@ -1266,12 +1275,6 @@ impl<'o> Reader<'o> {
             && !text.contains('*')
         {
             return Some(named(text));
-        }
-        let alias = qual
-            .trim_start_matches("const ")
-            .trim_start_matches("volatile ");
-        if let Some(record) = self.typedefs.get(alias).and_then(|id| self.records.get(id)) {
-            return Some(Ok(record));
         }
         if text.starts_with("struct ") || text.starts_with("union ") {
             return Some(Err(format!("the record type `{text}` is not matched")));

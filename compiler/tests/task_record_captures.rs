@@ -863,7 +863,9 @@ fn record_fields_render_natively_in_a_worker_and_the_parent() {
 /// page and compared with the reference.
 #[test]
 fn the_threads_page_publishes_the_record_transcripts() {
-    let page = std::fs::read_to_string(root().join("examples/threads/README.md")).unwrap();
+    let page = std::fs::read_to_string(root().join("examples/threads/README.md"))
+        .unwrap()
+        .replace("\r\n", "\n");
     for (name, source) in EXAMPLES {
         let module = example(name, source);
         let (stdout, _) = reference(&module, Vec::new());

@@ -51,7 +51,7 @@ pub const DELETE_ATTEMPT_CONTRACT: &str = include_str!(
 
 /// The two native cleanup bodies the in-process `file_outcomes` route reads.
 pub const OUTCOMES_SOURCE: &str = r#"
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 struct cio_file { int fd; char *map; size_t alloc_size; int map_truncated_warned; int unrelated; };
 int close(int); int munmap(void *,size_t); int *__errno_location(void);
 int cio_errno_print(int,const char *,int);

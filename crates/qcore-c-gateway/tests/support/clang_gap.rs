@@ -29,7 +29,7 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 /// C declarations of every fixture contract [`contracts`] loads.
 pub const DECLARATIONS: &str = "\
-typedef unsigned long size_t;
+typedef __SIZE_TYPE__ size_t;
 void *q_alloc(void); void q_free(void *p); void q_transfer(void *p);
 void q_observe(void *p); void q_mutate(void *p); void q_consume(void *p); void q_make(void **d);
 void *q_realloc(void *p, size_t n);
