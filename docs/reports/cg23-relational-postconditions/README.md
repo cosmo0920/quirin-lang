@@ -3,7 +3,9 @@
 Card `CG23-RELATIONAL-POSTCONDITIONS` of the
 [Clang gap card queue](../../plans/clang-gap-cards/README.md) (wave 48, round 9,
 phase 4), entries K05 and K11. Base: local `main` `b6a3dc42` (measured there),
-rebased onto main `06ad81cb` (CG17-LAYOUT-DERIVED-EXTENTS, rule 11u; CG20-NUMERIC-DOMAIN, rule 11q) before the gate. Route G.
+rebased onto main `b934c560` (CG17 rule 11u, CG20 rule 11q, CG25 rule 11v) before the
+gate; composes with CG25's in-place status witness (a disposition never stands
+beside an in-place kind). Route G.
 
 - **Published property.** The round-9 instruction chose the guarantee. This
   card publishes **custody under return-code-conditioned postconditions**: a
@@ -40,7 +42,8 @@ total-or-reject:
 - The result must be `resource_return_none()` over a signed integer.
 - Each class loads through every check a plain declaration gets.
 - A declaration whose classes all agree is refused, and so is a disposition
-  placed beside the incompatible markers and clauses.
+  placed beside the incompatible markers and clauses or beside an in-place kind
+  (CG25's status witness, rule 11v).
 
 The result is a `RelationalContract` in the new
 `ResourceContracts::relational` map. It is never an entry of the function map,
@@ -222,7 +225,7 @@ re-measured on `b6a3dc42` (corpus; system where stated):
   refuse. The corpus population is 0 while no corpus callee carries a
   disposition; the lexical bound is 124.
 
-The ledger moves from 670 to 671 on main `06ad81cb` (666 to 667 on the base): CG23 is retired, 2 entries are registered
+The ledger moves from 670 to 671 on main `b934c560` (666 to 667 on the base): CG23 is retired, 2 entries are registered
 and 6 are amended (`scripts/update_ledger.py`).
 
 ## 6. Axes (§8)

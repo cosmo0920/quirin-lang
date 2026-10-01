@@ -367,4 +367,9 @@ fn the_loader_refuses_malformed_dispositions() {
         "i32",
     );
     assert!(load(&marked).is_err());
+    // Beside an in-place kind (rule 11v), whose initialiser status is already
+    // its own witness: one status is never read twice.
+    let in_place = "extern fn init(preg: ptr<mut, u8>, p: ptr<mut, u8>) -> i32\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_out(preg, nullable);\n    ensures normal resource_kind(preg, regex);\n    ensures normal resource_on_return(eq, 0, resource_consumed(p, nonnull));\n    ensures normal resource_on_return(ne, 0, resource_owned(p, nonnull));\n    ensures normal resource_return_none();\n};";
+    let error = load(in_place).expect_err("refused beside an in-place kind");
+    assert!(error.contains("in-place kind"), "{error}");
 }

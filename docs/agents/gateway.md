@@ -3605,7 +3605,9 @@ own anchor here.
     `legacy_summary.rs` (`derive_custody_summaries`) and
     `legacy_reserved_spelling.rs` (the class prefix)). It amends rule 10x's
     "an out-parameter acquisition gets no split" for callees with a
-    disposition; every other premise of 10x and 5h stands.
+    disposition; every other premise of 10x and 5h stands. It composes with
+    rule 11v: an in-place kind's initialiser status stays 11v's witness, and
+    the loader refuses a disposition beside an in-place kind.
     (1) **Never in the function map.** A disposition lives in
     `ResourceContracts::relational`, so every route that knows nothing of it
     sees an uncontracted callee. `build_function_cfg_with` hands the parser an

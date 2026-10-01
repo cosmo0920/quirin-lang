@@ -532,6 +532,7 @@ contract {
 * A conditional parameter's entry requirement agrees across classes: every class asks for live custody with the same nullability (`owned`, `consumed`, `released`), or none asks for custody (`borrowed`, `out`).
 * The result is an unconditional `resource_return_none()` over a signed integer (`i8` … `i64`, `isize`).
 * Each class, with the unconditional clauses, loads through every check of a plain declaration (kinds included). Classes that all load to the same contract are rejected: that declaration is written plainly.
+* A disposition never stands beside an in-place kind (C04.6.1, gateway rule 11v): that kind's initialiser status is already its own witness, and one status is not read twice.
 * A disposition stands only beside plain parameter and result predicates, kinds and revision markers: a review marker, the checked-specification marker, a literal premise, a variadic tail, and a counted-user, container, loop-owner, thread-synchronization or lifecycle clause each reject the module beside it.
 
 **Out slots.** `resource_borrowed(out)` in one class and `resource_out(out, …)` in another states that the class leaves the slot **unwritten**: the call passes no custody through it there. A consumer passes the actual as data on that class and afterwards treats the slot's variable as holding a value it does not track; it refuses any actual other than `&NAME`.
