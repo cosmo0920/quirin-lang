@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CONTRACT-PIN-TIP-MODE card gate at tip af4650e86 (base main 73beab5d8), script docs/reports/contract-pin-tip-mode/scripts/gate.sh final2 under the shared heavy lock, logs private/contract-pin-tip-mode/gate-final2 of this worktree: submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 431 units, 444 summaries, 7,450 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T050714Z-10278); both reevaluation probes exit 0; check_lean_audits.py 278 audits passed (277 on main + AuditContractTipMode.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 277 -> 278), then run again after build_matrix.py . --gate this file (gate/08b-python.exit, gate/09b-index.exit); docs index 0; clang --version 0. Provider gate (providers/ changed): cargo check --locked 0, fmt 0, clippy 0, cargo test 129 passed 0 failed, contracts.py check 0, package.py build 0 and verify 0 for each of the five packages. The earlier gate private/contract-pin-tip-mode/gate-final (a99891798) failed 5 tests on stale selected-module pins (58 -> 59) and 1 Python corpus pin (122 -> 123, 73 -> 74), all fixed in af4650e86; its package verify also ran on the .tar.gz files by a glob error in the script (fixed). Clang 21.1.8, recorded by this gate in gate/clang-version.txt. Corpus arbiter (--jobs 4): BEFORE base 73beab5d8 647 / 10 / 4,177 (ed384eb0), AFTER on 8981780cc 647 / 10 / 4,177 (ed384eb0), custody byte-identical.",
-  "workspace_tests": 7450,
+  "note": "VA-LOOP-AND-POINTER-ARG card gate on base main 958e76593 (tree of tip 4bdb47388), script docs/reports/va-loop-and-pointer-arg/scripts/heavy.sh under the shared flock (cargo check --workspace --all-targets 0, then scripts/gate.sh), logs private/valoop/gate2 of this worktree: submodule 0; run_test_binaries.py 432 units, 445 summaries, 7,462 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T070641Z-310784); fmt 0; clippy 0; both reevaluation probes exit 0; check_lean_audits.py 279 audits passed (278 on main + AuditVariadicConditions.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 278 -> 279, test_build_matrix_sections), then run again after build_matrix.py . --gate this file (09a, 09b); docs index 0. An earlier attempt (private/valoop/gate1) failed cargo check on compiler/examples/alias_aggregate_probe.rs's exhaustive match (the new VaArgPointer variant), fixed, and was stopped. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit) on main 958e76593: BEFORE ed384eb0 647/10/4,177, AFTER 7f7d8328 647/10/4,177 (no status move; 10 Unknown functions change leaves); system 44/2/188 byte-identical; tail-pause slice 29/1/239/1 Pending -> 29/1/238/2 Pending (flb_service_set Unknown -> Pending). Exits in docs/reports/va-loop-and-pointer-arg/gate/.",
+  "workspace_tests": 7462,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 278,
+  "lean_audits": 279,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -7027,6 +7027,7 @@
    "AuditUnionBitfieldPlace.lean",
    "AuditUsableRecords.lean",
    "AuditValueConnectives.lean",
+   "AuditVariadicConditions.lean",
    "AuditVariadicNested.lean",
    "AuditVariadics.lean",
    "AuditVerdictSemigroup.lean",
@@ -7044,7 +7045,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/contract-pin-tip-mode/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a00967d6f3371d592/docs/reports/va-loop-and-pointer-arg/scripts/../gate.json)"
  },
  "named_followups": [
   {
