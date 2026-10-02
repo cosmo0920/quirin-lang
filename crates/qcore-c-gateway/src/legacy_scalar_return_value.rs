@@ -43,40 +43,98 @@ use serde_json::json;
 
 use super::{LegacyInstruction, Parser, Statement, Token, contains_braces, descriptor_custody};
 
+/// The hook's answer (`QCore.ScalarReturnValue.Decision`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Decision {
+    Admit,
+    Decline,
+}
+
+impl Decision {
+    #[cfg(test)]
+    pub(crate) fn code(self) -> &'static str {
+        match self {
+            Self::Admit => "admit",
+            Self::Decline => "decline",
+        }
+    }
+}
+
+/// `QCore.ScalarReturnValue.decideReturn`: `refused`, every existing route
+/// refused the return; `scalar_result`, the function's declared result is a
+/// scalar value; `hidden`, the value names a tracked descriptor, an opaque
+/// callee spelling or braces; `walker`, the W43 value walker admits it.
+pub(crate) fn decide(refused: bool, scalar_result: bool, hidden: bool, walker: bool) -> Decision {
+    if refused && scalar_result && !hidden && walker {
+        Decision::Admit
+    } else {
+        Decision::Decline
+    }
+}
+
+/// `QCore.ScalarReturnValue.decisionVectors`, row for row.
+#[cfg(test)]
+pub(crate) const DECISION_VECTORS: &[((bool, bool, bool, bool), &str)] = &[
+    ((false, false, false, false), "decline"),
+    ((false, false, false, true), "decline"),
+    ((false, false, true, false), "decline"),
+    ((false, false, true, true), "decline"),
+    ((false, true, false, false), "decline"),
+    ((false, true, false, true), "decline"),
+    ((false, true, true, false), "decline"),
+    ((false, true, true, true), "decline"),
+    ((true, false, false, false), "decline"),
+    ((true, false, false, true), "decline"),
+    ((true, false, true, false), "decline"),
+    ((true, false, true, true), "decline"),
+    ((true, true, false, false), "decline"),
+    ((true, true, false, true), "admit"),
+    ((true, true, true, false), "decline"),
+    ((true, true, true, true), "decline"),
+];
+
 impl Parser<'_> {
-    /// Hook: the last route of a refused `return`. `None` keeps the refusal.
+    /// Hook: the last route of a refused `return` (the caller asks it only
+    /// for one). `None` keeps the refusal.
     pub(super) fn scalar_return_value(
         &mut self,
         expression: &[Token],
         line: usize,
     ) -> Option<Statement> {
-        if expression.is_empty()
-            || !self.return_facts.scalar_result
-            || contains_braces(expression)
-            || self.opaque_callee(expression)
-        {
+        let scalar_result = self.return_facts.scalar_result;
+        if expression.is_empty() || !scalar_result {
             return None;
         }
         let texts = expression
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
-        if descriptor_custody::value_carries_descriptor(&texts, &self.descriptor_names).is_some() {
-            return None;
-        }
-        let plan = crate::typed_field_access::typed_scalar_value(
-            &texts,
-            &self.typed_model,
-            &self.typed_types,
-        );
+        let hidden = contains_braces(expression)
+            || self.opaque_callee(expression)
+            || descriptor_custody::value_carries_descriptor(&texts, &self.descriptor_names)
+                .is_some();
+        let plan = if hidden {
+            None
+        } else {
+            crate::typed_field_access::typed_scalar_value(
+                &texts,
+                &self.typed_model,
+                &self.typed_types,
+            )
+        };
+        let decision = decide(true, scalar_result, hidden, plan.is_some());
         crate::typed_access_path::record_row(json!({
             "function": self.typed_path_function,
             "line": line,
             "texts": texts,
             "position": "scalar-return-value",
-            "admitted": plan.is_some(),
+            "admitted": decision == Decision::Admit,
+            "hidden": hidden,
             "bases": plan.as_ref().map(|plan| plan.bases.clone()),
         }));
+        if decision != Decision::Admit {
+            return None;
+        }
         let plan = plan?;
         let read = LegacyInstruction::IndirectScalarAccess {
             alias_reads: plan
@@ -104,3 +162,7 @@ impl Parser<'_> {
         })
     }
 }
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_scalar_return_value.rs"]
+mod tests;
