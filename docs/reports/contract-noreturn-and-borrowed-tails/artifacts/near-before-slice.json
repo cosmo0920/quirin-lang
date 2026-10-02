@@ -1,0 +1,111 @@
+{
+ "functions": 4,
+ "remaining": {
+  "6": 4
+ },
+ "other_families": {
+  "unknown_alias: unresolved resource identity `X`": 24,
+  "unsupported: indirect memory access is outside the resource projection": 14,
+  "unsupported: call to uncontracted function `X`": 12,
+  "unsupported: call to `X` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 4,
+  "unsupported: unmodeled increment or decrement expression": 2,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": 2
+ },
+ "one_other": [],
+ "rows": [
+  {
+   "function": "src/flb_lib.c::do_start",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "18999: unsupported: call to uncontracted function `pthread_once`",
+    "19001: unknown_alias: unresolved resource identity `ctx`",
+    "19002: unsupported: call to uncontracted function `flb_fips_init`",
+    "19006: unsupported: call to uncontracted function `mk_utils_worker_spawn`",
+    "19010: unknown_alias: unresolved resource identity `config`",
+    "19011: unsupported: indirect memory access is outside the resource projection",
+    "19012: unknown_alias: unresolved resource identity `__ctx`",
+    "19012: unknown_alias: unresolved resource identity `config`",
+    "19012: unsupported: unmodeled increment or decrement expression",
+    "19013: unknown_alias: unresolved resource identity `event`",
+    "19016: unsupported: call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+    "19017: unknown_alias: unresolved resource identity `ctx`",
+    "19022: unknown_alias: unresolved resource identity `ctx`",
+    "19027: unsupported: call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+    "19028: unknown_alias: unresolved resource identity `ctx`"
+   ]
+  },
+  {
+   "function": "src/flb_lib.c::flb_lib_config_file",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "other": [
+    "18805: unsupported: indirect memory access is outside the resource projection",
+    "18811: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18821: unknown_alias: unresolved resource identity `path`",
+    "18825: unknown_alias: unresolved resource identity `path`",
+    "18832: unsupported: call to uncontracted function `flb_cf_create_from_file`",
+    "18837: unknown_alias: unresolved resource identity `cfg`",
+    "18838: unsupported: call to uncontracted function `realpath`",
+    "18845: unsupported: indirect memory access is outside the resource projection",
+    "18847: unsupported: indirect memory access is outside the resource projection",
+    "18849: unknown_alias: unresolved resource identity `real_path`",
+    "18852: unsupported: indirect memory access is outside the resource projection",
+    "18854: unsupported: call to uncontracted function `flb_cf_destroy`",
+    "18859: unsupported: indirect memory access is outside the resource projection",
+    "18861: unsupported: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": "src/flb_lib.c::do_start",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "18999: unsupported: call to uncontracted function `pthread_once`",
+    "19001: unknown_alias: unresolved resource identity `ctx`",
+    "19002: unsupported: call to uncontracted function `flb_fips_init`",
+    "19006: unsupported: call to uncontracted function `mk_utils_worker_spawn`",
+    "19010: unknown_alias: unresolved resource identity `config`",
+    "19011: unsupported: indirect memory access is outside the resource projection",
+    "19012: unknown_alias: unresolved resource identity `__ctx`",
+    "19012: unknown_alias: unresolved resource identity `config`",
+    "19012: unsupported: unmodeled increment or decrement expression",
+    "19013: unknown_alias: unresolved resource identity `event`",
+    "19016: unsupported: call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+    "19017: unknown_alias: unresolved resource identity `ctx`",
+    "19022: unknown_alias: unresolved resource identity `ctx`",
+    "19027: unsupported: call to `pthread_join` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)",
+    "19028: unknown_alias: unresolved resource identity `ctx`"
+   ]
+  },
+  {
+   "function": "src/flb_lib.c::flb_lib_config_file",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "other": [
+    "18805: unsupported: indirect memory access is outside the resource projection",
+    "18811: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18821: unknown_alias: unresolved resource identity `path`",
+    "18825: unknown_alias: unresolved resource identity `path`",
+    "18832: unsupported: call to uncontracted function `flb_cf_create_from_file`",
+    "18837: unknown_alias: unresolved resource identity `cfg`",
+    "18838: unsupported: call to uncontracted function `realpath`",
+    "18845: unsupported: indirect memory access is outside the resource projection",
+    "18847: unsupported: indirect memory access is outside the resource projection",
+    "18849: unknown_alias: unresolved resource identity `real_path`",
+    "18852: unsupported: indirect memory access is outside the resource projection",
+    "18854: unsupported: call to uncontracted function `flb_cf_destroy`",
+    "18859: unsupported: indirect memory access is outside the resource projection",
+    "18861: unsupported: indirect memory access is outside the resource projection"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,54 @@
+{
+ "route": "corpus",
+ "statuses": {
+  "Unknown": 4177,
+  "Safe": 648,
+  "Unsafe": 9
+ },
+ "noreturn_census_rows": {
+  "rd_kafka_crash": 92
+ },
+ "tail_statement_shapes": {
+  "snprintf": {
+   "statements": 55,
+   "classes": {
+    "t8-shaped": 41,
+    "unparsed": 9,
+    "other": 4,
+    "chain-shaped": 1
+   }
+  },
+  "fprintf": {
+   "statements": 120,
+   "classes": {
+    "t8-shaped": 110,
+    "other": 8,
+    "chain-shaped": 2
+   }
+  },
+  "fcntl": {
+   "statements": 1,
+   "classes": {
+    "admitted": 1
+   }
+  },
+  "printf": {
+   "statements": 4,
+   "classes": {
+    "t8-shaped": 4
+   }
+  },
+  "mk_print": {
+   "statements": 20,
+   "classes": {
+    "t8-shaped": 20
+   }
+  }
+ }
+}
+noreturn:rd_kafka_crash leaves 50 functions 40 alone 0 {'Unknown': 40}
+tail:fprintf leaves 124 functions 77 alone 0 {'Unknown': 75, 'Unsafe': 2}
+tail:mk_print leaves 15 functions 8 alone 0 {'Unknown': 8}
+tail:printf leaves 3 functions 3 alone 1 {'Unknown': 3}
+tail:snprintf leaves 55 functions 33 alone 0 {'Unknown': 32, 'Unsafe': 1}
+round 1 1

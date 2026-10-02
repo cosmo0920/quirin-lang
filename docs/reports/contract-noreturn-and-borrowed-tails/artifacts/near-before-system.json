@@ -1,0 +1,465 @@
+{
+ "functions": 16,
+ "remaining": {
+  "3": 2,
+  "4": 2,
+  "5": 2,
+  "6": 10
+ },
+ "other_families": {
+  "unsupported: indirect memory access is outside the resource projection": 88,
+  "unknown_alias: unresolved resource identity `X`": 66,
+  "unsupported: call to uncontracted function `X`": 56,
+  "unsupported: braced initializer, expression, or declaration is not modeled": 44,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": 28,
+  "unsupported: nested call `X` inside a modeled call is outside the resource projection": 4,
+  "unsupported: unlink by `X` of `X`, which this function has not published": 2,
+  "unsupported: counted-user operation `X` on `X`, which is not a formal this function never rebinds": 2,
+  "unsupported: nullable resource `X` used by a non-null contract": 2,
+  "unsupported: store through `X` without an out-parameter contract": 2,
+  "unsupported: `X` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 2
+ },
+ "one_other": [],
+ "rows": [
+  {
+   "function": "src/flb_storage.c::flb_storage_quarantine_chunk",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "18977: unsupported: call to uncontracted function `get_or_create_rejected_stream`",
+    "18982: unsupported: indirect memory access is outside the resource projection",
+    "19000: unsupported: call to uncontracted function `sanitize_name_component`",
+    "19001: unsupported: call to uncontracted function `sanitize_name_component`",
+    "19005: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19009: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19011: unknown_alias: unresolved resource identity `buf`",
+    "19023: unknown_alias: unresolved resource identity `buf`",
+    "19026: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19030: unknown_alias: unresolved resource identity `buf`",
+    "19031: unknown_alias: unresolved resource identity `src/dst`",
+    "19034: unknown_alias: unresolved resource identity `buf`",
+    "19036: unknown_alias: unresolved resource identity `src/dst`"
+   ]
+  },
+  {
+   "function": "src/flb_storage.c::get_or_create_rejected_stream",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "18911: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18914: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18920: unknown_alias: unresolved resource identity `__qcore_literal__`",
+    "18921: unsupported: indirect memory access is outside the resource projection",
+    "18923: unsupported: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": "src/flb_storage.c::flb_storage_quarantine_chunk",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "18977: unsupported: call to uncontracted function `get_or_create_rejected_stream`",
+    "18982: unsupported: indirect memory access is outside the resource projection",
+    "19000: unsupported: call to uncontracted function `sanitize_name_component`",
+    "19001: unsupported: call to uncontracted function `sanitize_name_component`",
+    "19005: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19009: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19011: unknown_alias: unresolved resource identity `buf`",
+    "19023: unknown_alias: unresolved resource identity `buf`",
+    "19026: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19030: unknown_alias: unresolved resource identity `buf`",
+    "19031: unknown_alias: unresolved resource identity `src/dst`",
+    "19034: unknown_alias: unresolved resource identity `buf`",
+    "19036: unknown_alias: unresolved resource identity `src/dst`"
+   ]
+  },
+  {
+   "function": "src/flb_storage.c::get_or_create_rejected_stream",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "18911: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18914: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18920: unknown_alias: unresolved resource identity `__qcore_literal__`",
+    "18921: unsupported: indirect memory access is outside the resource projection",
+    "18923: unsupported: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": "src/flb_task.c::flb_task_retry_destroy",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "17466: unsupported: indirect memory access is outside the resource projection",
+    "17470: unsupported: indirect memory access is outside the resource projection",
+    "17471: unsupported: unlink by `mk_list_del` of `retry`, which this function has not published",
+    "17472: unknown_alias: unresolved resource identity `retry`"
+   ]
+  },
+  {
+   "function": "src/flb_task.c::flb_task_running_print",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "17624: unsupported: call to uncontracted function `flb_sds_create_size`",
+    "17631: unsupported: indirect memory access is outside the resource projection",
+    "17632: unsupported: indirect memory access is outside the resource projection",
+    "17637: unsupported: indirect memory access is outside the resource projection",
+    "17641: unknown_alias: unresolved resource identity `routes`",
+    "17645: unknown_alias: unresolved resource identity `tmp`",
+    "17648: unsupported: call to uncontracted function `flb_sds_len_set`",
+    "17651: unknown_alias: unresolved resource identity `routes`"
+   ]
+  },
+  {
+   "function": "src/flb_task.c::task_alloc",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "17579: unsupported: call to uncontracted function `map_get_task_id`",
+    "17581: unknown_alias: unresolved resource identity `task`",
+    "17584: unsupported: call to uncontracted function `map_set_task_id`",
+    "17586: unknown_alias: unresolved resource identity `task`",
+    "17587: unknown_alias: unresolved resource identity `task`",
+    "17588: unknown_alias: unresolved resource identity `task`",
+    "17589: unknown_alias: unresolved resource identity `task`",
+    "17589: unsupported: counted-user operation `task -> users =` on `task`, which is not a formal this function never rebinds",
+    "17590: unsupported: indirect memory access is outside the resource projection",
+    "17591: unsupported: indirect memory access is outside the resource projection",
+    "17592: unsupported: indirect memory access is outside the resource projection",
+    "17593: unknown_alias: unresolved resource identity `task`",
+    "17593: unsupported: nullable resource `task` used by a non-null contract"
+   ]
+  },
+  {
+   "function": "src/flb_task.c::flb_task_retry_destroy",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "17466: unsupported: indirect memory access is outside the resource projection",
+    "17470: unsupported: indirect memory access is outside the resource projection",
+    "17471: unsupported: unlink by `mk_list_del` of `retry`, which this function has not published",
+    "17472: unknown_alias: unresolved resource identity `retry`"
+   ]
+  },
+  {
+   "function": "src/flb_task.c::flb_task_running_print",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "17624: unsupported: call to uncontracted function `flb_sds_create_size`",
+    "17631: unsupported: indirect memory access is outside the resource projection",
+    "17632: unsupported: indirect memory access is outside the resource projection",
+    "17637: unsupported: indirect memory access is outside the resource projection",
+    "17641: unknown_alias: unresolved resource identity `routes`",
+    "17645: unknown_alias: unresolved resource identity `tmp`",
+    "17648: unsupported: call to uncontracted function `flb_sds_len_set`",
+    "17651: unknown_alias: unresolved resource identity `routes`"
+   ]
+  },
+  {
+   "function": "src/flb_task.c::task_alloc",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "17579: unsupported: call to uncontracted function `map_get_task_id`",
+    "17581: unknown_alias: unresolved resource identity `task`",
+    "17584: unsupported: call to uncontracted function `map_set_task_id`",
+    "17586: unknown_alias: unresolved resource identity `task`",
+    "17587: unknown_alias: unresolved resource identity `task`",
+    "17588: unknown_alias: unresolved resource identity `task`",
+    "17589: unknown_alias: unresolved resource identity `task`",
+    "17589: unsupported: counted-user operation `task -> users =` on `task`, which is not a formal this function never rebinds",
+    "17590: unsupported: indirect memory access is outside the resource projection",
+    "17591: unsupported: indirect memory access is outside the resource projection",
+    "17592: unsupported: indirect memory access is outside the resource projection",
+    "17593: unknown_alias: unresolved resource identity `task`",
+    "17593: unsupported: nullable resource `task` used by a non-null contract"
+   ]
+  },
+  {
+   "function": "src/flb_engine.c::flb_engine_reschedule_retries",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "19051: unsupported: call to uncontracted function `flb_sched_request_invalidate`",
+    "19052: unsupported: call to uncontracted function `flb_sched_retry_now`",
+    "19054: unsupported: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": "src/flb_engine.c::flb_engine_reschedule_retries",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "19051: unsupported: call to uncontracted function `flb_sched_request_invalidate`",
+    "19052: unsupported: call to uncontracted function `flb_sched_retry_now`",
+    "19054: unsupported: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": "src/flb_scheduler.c::flb_sched_timer_cb_create",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "18057: unsupported: call to uncontracted function `flb_sched_timer_create`",
+    "18061: unknown_alias: unresolved resource identity `timer`",
+    "18062: unsupported: indirect memory access is outside the resource projection",
+    "18063: unsupported: indirect memory access is outside the resource projection",
+    "18064: unsupported: indirect memory access is outside the resource projection",
+    "18065: unknown_alias: unresolved resource identity `event`",
+    "18066: unknown_alias: unresolved resource identity `event`",
+    "18069: unsupported: indirect memory access is outside the resource projection",
+    "18070: unknown_alias: unresolved resource identity `event`",
+    "18073: unsupported: call to uncontracted function `flb_sched_timer_destroy`",
+    "18076: unknown_alias: unresolved resource identity `event`",
+    "18077: unknown_alias: unresolved resource identity `timer`",
+    "18079: unsupported: store through `*out_timer` without an out-parameter contract"
+   ]
+  },
+  {
+   "function": "src/flb_scheduler.c::flb_sched_timer_cb_create",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "18057: unsupported: call to uncontracted function `flb_sched_timer_create`",
+    "18061: unknown_alias: unresolved resource identity `timer`",
+    "18062: unsupported: indirect memory access is outside the resource projection",
+    "18063: unsupported: indirect memory access is outside the resource projection",
+    "18064: unsupported: indirect memory access is outside the resource projection",
+    "18065: unknown_alias: unresolved resource identity `event`",
+    "18066: unknown_alias: unresolved resource identity `event`",
+    "18069: unsupported: indirect memory access is outside the resource projection",
+    "18070: unknown_alias: unresolved resource identity `event`",
+    "18073: unsupported: call to uncontracted function `flb_sched_timer_destroy`",
+    "18076: unknown_alias: unresolved resource identity `event`",
+    "18077: unknown_alias: unresolved resource identity `timer`",
+    "18079: unsupported: store through `*out_timer` without an out-parameter contract"
+   ]
+  },
+  {
+   "function": "src/flb_output.c::flb_output_init_all",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 2
+   },
+   "other": [
+    "18711: unknown_alias: unresolved resource identity `config`",
+    "18713: unknown_alias: unresolved resource identity `ins`",
+    "18714: unsupported: indirect memory access is outside the resource projection",
+    "18719: unsupported: nested call `flb_output_name` inside a modeled call is outside the resource projection",
+    "18720: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18723: unsupported: indirect memory access is outside the resource projection",
+    "18724: unknown_alias: unresolved resource identity `ins`",
+    "18725: unsupported: call to uncontracted function `flb_output_name`",
+    "18727: unsupported: indirect memory access is outside the resource projection",
+    "18732: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18736: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18737: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18741: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18742: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18746: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18747: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18751: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18752: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18758: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18759: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18763: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18764: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18768: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18769: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18775: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18779: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18785: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18789: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18795: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18799: unsupported: call to uncontracted function `cmt_histogram_buckets_create_size`",
+    "18805: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18812: unsupported: call to uncontracted function `cmt_histogram_buckets_create_size`",
+    "18816: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18819: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18826: unsupported: indirect memory access is outside the resource projection",
+    "18828: unsupported: indirect memory access is outside the resource projection",
+    "18830: unsupported: indirect memory access is outside the resource projection",
+    "18832: unsupported: indirect memory access is outside the resource projection",
+    "18834: unsupported: indirect memory access is outside the resource projection",
+    "18836: unsupported: indirect memory access is outside the resource projection",
+    "18838: unsupported: indirect memory access is outside the resource projection",
+    "18840: unsupported: indirect memory access is outside the resource projection",
+    "18844: unsupported: indirect memory access is outside the resource projection",
+    "18854: unsupported: indirect memory access is outside the resource projection",
+    "18855: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18859: unsupported: indirect memory access is outside the resource projection",
+    "18861: unsupported: indirect memory access is outside the resource projection",
+    "18865: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18866: unsupported: indirect memory access is outside the resource projection",
+    "18868: unsupported: indirect memory access is outside the resource projection",
+    "18869: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18874: unsupported: indirect memory access is outside the resource projection",
+    "18876: unsupported: indirect memory access is outside the resource projection",
+    "18877: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18882: unsupported: indirect memory access is outside the resource projection",
+    "18884: unsupported: indirect memory access is outside the resource projection",
+    "18885: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18890: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18891: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18894: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18895: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18899: unsupported: indirect memory access is outside the resource projection",
+    "18901: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18904: unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+    "18904: unsupported: indirect memory access is outside the resource projection",
+    "18905: unknown_alias: unresolved resource identity `p`",
+    "18906: unknown_alias: unresolved resource identity `m`",
+    "18909: unknown_alias: unresolved resource identity `m`",
+    "18911: unsupported: indirect memory access is outside the resource projection",
+    "18912: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18913: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18916: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18917: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18918: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18922: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18924: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18925: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18929: unsupported: indirect memory access is outside the resource projection",
+    "18931: unknown_alias: unresolved resource identity `p`",
+    "18932: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18935: unknown_alias: unresolved resource identity `config`",
+    "18935: unknown_alias: unresolved resource identity `ins`",
+    "18936: unsupported: call to uncontracted function `flb_output_enable_multi_threading`",
+    "18938: unsupported: nested call `flb_output_name` inside a modeled call is outside the resource projection",
+    "18942: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18943: unsupported: indirect memory access is outside the resource projection",
+    "18946: unknown_alias: unresolved resource identity `ins`",
+    "18947: unsupported: indirect memory access is outside the resource projection",
+    "18949: unsupported: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": "src/flb_output.c::flb_output_init_all",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 2
+   },
+   "other": [
+    "18711: unknown_alias: unresolved resource identity `config`",
+    "18713: unknown_alias: unresolved resource identity `ins`",
+    "18714: unsupported: indirect memory access is outside the resource projection",
+    "18719: unsupported: nested call `flb_output_name` inside a modeled call is outside the resource projection",
+    "18720: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18723: unsupported: indirect memory access is outside the resource projection",
+    "18724: unknown_alias: unresolved resource identity `ins`",
+    "18725: unsupported: call to uncontracted function `flb_output_name`",
+    "18727: unsupported: indirect memory access is outside the resource projection",
+    "18732: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18736: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18737: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18741: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18742: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18746: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18747: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18751: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18752: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18758: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18759: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18763: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18764: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18768: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18769: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18775: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18779: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18785: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18789: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18795: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18799: unsupported: call to uncontracted function `cmt_histogram_buckets_create_size`",
+    "18805: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18812: unsupported: call to uncontracted function `cmt_histogram_buckets_create_size`",
+    "18816: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18819: unsupported: braced initializer, expression, or declaration is not modeled",
+    "18826: unsupported: indirect memory access is outside the resource projection",
+    "18828: unsupported: indirect memory access is outside the resource projection",
+    "18830: unsupported: indirect memory access is outside the resource projection",
+    "18832: unsupported: indirect memory access is outside the resource projection",
+    "18834: unsupported: indirect memory access is outside the resource projection",
+    "18836: unsupported: indirect memory access is outside the resource projection",
+    "18838: unsupported: indirect memory access is outside the resource projection",
+    "18840: unsupported: indirect memory access is outside the resource projection",
+    "18844: unsupported: indirect memory access is outside the resource projection",
+    "18854: unsupported: indirect memory access is outside the resource projection",
+    "18855: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18859: unsupported: indirect memory access is outside the resource projection",
+    "18861: unsupported: indirect memory access is outside the resource projection",
+    "18865: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18866: unsupported: indirect memory access is outside the resource projection",
+    "18868: unsupported: indirect memory access is outside the resource projection",
+    "18869: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18874: unsupported: indirect memory access is outside the resource projection",
+    "18876: unsupported: indirect memory access is outside the resource projection",
+    "18877: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18882: unsupported: indirect memory access is outside the resource projection",
+    "18884: unsupported: indirect memory access is outside the resource projection",
+    "18885: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18890: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18891: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18894: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18895: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18899: unsupported: indirect memory access is outside the resource projection",
+    "18901: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18904: unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+    "18904: unsupported: indirect memory access is outside the resource projection",
+    "18905: unknown_alias: unresolved resource identity `p`",
+    "18906: unknown_alias: unresolved resource identity `m`",
+    "18909: unknown_alias: unresolved resource identity `m`",
+    "18911: unsupported: indirect memory access is outside the resource projection",
+    "18912: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18913: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18916: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18917: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18918: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18922: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18924: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18925: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18929: unsupported: indirect memory access is outside the resource projection",
+    "18931: unknown_alias: unresolved resource identity `p`",
+    "18932: unsupported: call to uncontracted function `flb_output_instance_destroy`",
+    "18935: unknown_alias: unresolved resource identity `config`",
+    "18935: unknown_alias: unresolved resource identity `ins`",
+    "18936: unsupported: call to uncontracted function `flb_output_enable_multi_threading`",
+    "18938: unsupported: nested call `flb_output_name` inside a modeled call is outside the resource projection",
+    "18942: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "18943: unsupported: indirect memory access is outside the resource projection",
+    "18946: unknown_alias: unresolved resource identity `ins`",
+    "18947: unsupported: indirect memory access is outside the resource projection",
+    "18949: unsupported: indirect memory access is outside the resource projection"
+   ]
+  }
+ ]
+}

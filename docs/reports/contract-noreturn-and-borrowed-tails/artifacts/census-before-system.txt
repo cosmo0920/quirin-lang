@@ -1,0 +1,27 @@
+{
+ "route": "system",
+ "statuses": {
+  "Unknown": 188,
+  "Safe": 44,
+  "Unsafe": 2
+ },
+ "noreturn_census_rows": {},
+ "tail_statement_shapes": {
+  "flb_log_print": {
+   "statements": 10,
+   "classes": {
+    "other": 2,
+    "t8-shaped": 6,
+    "chain-shaped": 2
+   }
+  },
+  "snprintf": {
+   "statements": 1,
+   "classes": {
+    "other": 1
+   }
+  }
+ }
+}
+tail:flb_log_print leaves 16 functions 7 alone 0 {'Unknown': 7}
+tail:snprintf leaves 2 functions 1 alone 0 {'Unknown': 1}

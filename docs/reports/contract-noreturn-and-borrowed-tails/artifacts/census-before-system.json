@@ -1,0 +1,170 @@
+{
+ "route": "system",
+ "statuses": {
+  "Unknown": 188,
+  "Safe": 44,
+  "Unsafe": 2
+ },
+ "noreturn_census_rows": {},
+ "families": {
+  "tail:flb_log_print": {
+   "leaves": 16,
+   "functions": 7,
+   "alone": [],
+   "statuses": {
+    "Unknown": 7
+   },
+   "alone_count": 0
+  },
+  "tail:snprintf": {
+   "leaves": 2,
+   "functions": 1,
+   "alone": [],
+   "statuses": {
+    "Unknown": 1
+   },
+   "alone_count": 0
+  }
+ },
+ "joint_rounds": [],
+ "tail_statement_shapes": {
+  "flb_log_print": {
+   "statements": 10,
+   "classes": {
+    "other": 2,
+    "t8-shaped": 6,
+    "chain-shaped": 2
+   }
+  },
+  "snprintf": {
+   "statements": 1,
+   "classes": {
+    "other": 1
+   }
+  }
+ },
+ "tail_statements": {
+  "flb_log_print": [
+   {
+    "function": "flb_coro_destroy",
+    "line": 8106,
+    "texts": "flb_log_print ( 5 , __qcore_literal__ , 97 , __qcore_literal__ , coro , ( ( ( char * ) coro ) + sizeof ( struct flb_coro ) ) )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "other"
+    ]
+   },
+   {
+    "function": "flb_output_init_all",
+    "line": 18802,
+    "texts": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , name )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "flb_output_init_all",
+    "line": 18815,
+    "texts": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , name )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "flb_engine_reschedule_retries",
+    "line": 19056,
+    "texts": "flb_log_print ( 4 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , retry , task - > id )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "chain"
+    ]
+   },
+   {
+    "function": "flb_task_retry_destroy",
+    "line": 17468,
+    "texts": "flb_log_print ( 4 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , retry )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "task_alloc",
+    "line": 17585,
+    "texts": "flb_log_print ( 5 , __qcore_literal__ , 461 , __qcore_literal__ , task , task_id )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "flb_task_running_print",
+    "line": 17647,
+    "texts": "flb_log_print ( 3 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , task - > id , routes )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "chain",
+     "name"
+    ]
+   },
+   {
+    "function": "get_or_create_rejected_stream",
+    "line": 18926,
+    "texts": "flb_log_print ( 2 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , name )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "flb_coro_destroy",
+    "line": 8693,
+    "texts": "flb_log_print ( 5 , __qcore_literal__ , 97 , __qcore_literal__ , coro , ( ( ( char * ) coro ) + sizeof ( struct flb_coro ) ) )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "other"
+    ]
+   },
+   {
+    "function": "flb_sched_timer_cb_create",
+    "line": 18054,
+    "texts": "flb_log_print ( 1 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , type )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   }
+  ],
+  "snprintf": [
+   {
+    "function": "flb_storage_quarantine_chunk",
+    "line": 19002,
+    "texts": "snprintf ( name , sizeof ( name ) , __qcore_literal__ , safe_tag , status_code , safe_out , ( void * ) src )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name",
+     "other"
+    ]
+   }
+  ]
+ }
+}
