@@ -199,7 +199,27 @@ after every command.
 
 ## Gate
 
-See [gate.json](gate.json) and [gate/](gate/).
+At tip `af4650e86` on base `73beab5d8` ([gate.json](gate.json), exits in
+[gate/](gate/), logs `private/contract-pin-tip-mode/gate-final2/`):
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| Rust suite | `python3 scripts/run_test_binaries.py` | 0 | 431 units, 444 summaries, 7,450 passed, 0 failed, 11 ignored (`private/test-binaries/20261002T050714Z-10278`) |
+| probes | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | 278 audits |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** | 365; the one failure was the matrix's derived `lean_audits` (277 → 278), cleared by `build_matrix.py . --gate gate.json` (exit 0) |
+| docs index | `python3 scripts/build_docs_index.py --check` | 0 | |
+| provider check / fmt / clippy | `cargo check --locked`, `fmt --check`, `clippy --locked --offline` in `providers/` | 0 / 0 / 0 | |
+| provider tests | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | 129 passed |
+| contracts | `python3 providers/contracts.py check` | 0 | |
+| packages | `providers/package.py build`, `verify` × 5 | 0, 0 × 5 | |
+
+An earlier gate (`gate-final`, `a99891798`) failed five Rust rows and one
+Python row on stale selected-module and corpus pins (58 → 59, 122 → 123,
+73 → 74 provider-owned), all fixed in `af4650e86`. Clang 21.1.8.
 
 ## Follow-ups
 

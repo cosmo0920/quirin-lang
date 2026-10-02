@@ -1,0 +1,13 @@
+{
+  "note": "CONTRACT-PIN-TIP-MODE card gate at tip af4650e86 (base main 73beab5d8), script docs/reports/contract-pin-tip-mode/scripts/gate.sh final2 under the shared heavy lock, logs private/contract-pin-tip-mode/gate-final2 of this worktree: submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 431 units, 444 summaries, 7,450 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T050714Z-10278); both reevaluation probes exit 0; check_lean_audits.py 278 audits passed (277 on main + AuditContractTipMode.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 277 -> 278), then run again after build_matrix.py . --gate this file (gate/08b-python.exit, gate/09b-index.exit); docs index 0; clang --version 0. Provider gate (providers/ changed): cargo check --locked 0, fmt 0, clippy 0, cargo test 129 passed 0 failed, contracts.py check 0, package.py build 0 and verify 0 for each of the five packages. The earlier gate private/contract-pin-tip-mode/gate-final (a99891798) failed 5 tests on stale selected-module pins (58 -> 59) and 1 Python corpus pin (122 -> 123, 73 -> 74), all fixed in af4650e86; its package verify also ran on the .tar.gz files by a glob error in the script (fixed). Clang 21.1.8, recorded by this gate in gate/clang-version.txt. Corpus arbiter (--jobs 4): BEFORE base 73beab5d8 647 / 10 / 4,177 (ed384eb0), AFTER on 8981780cc 647 / 10 / 4,177 (ed384eb0), custody byte-identical.",
+  "workspace_tests": 7450,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 278,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
