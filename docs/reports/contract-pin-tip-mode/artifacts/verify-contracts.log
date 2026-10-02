@@ -1,0 +1,11 @@
+pin: qcore-provider-chunkio: lock lists every declaration (6 pinned, 0 flexible)
+pin: qcore-provider-cmetrics: lock lists every declaration (23 pinned, 0 flexible)
+pin: qcore-provider-ctraces: lock lists every declaration (7 pinned, 0 flexible)
+pin: qcore-provider-libevent: lock lists every declaration (15 pinned, 1 of them tracking the tip of an unreleased branch, 0 flexible)
+  notice [info]: the contract for `mk_vhost_set` targets a future, unreleased release (a release candidate), not a released version: it tracks the tip of `refs/heads/cosmo0920-missing-va_end-on-null` in repository `monkey` (https://github.com/cosmo0920/monkey) (release: Monkey release after the va_end fix (release candidate)), resolved to commit 21a2c1908b42596317717436e5ce0420805bd523; in force only where the audited source's sites equal the tip's
+pin: qcore-provider-librdkafka: lock lists every declaration (12 pinned, 0 flexible)
+pin: quirin-provider-cfl: lock lists every declaration (4 pinned, 0 flexible)
+pin: quirin-provider-fluent-bit: lock lists every declaration (66 pinned, 0 flexible)
+pin: quirin-provider-libc: lock lists every declaration (0 pinned, 120 flexible)
+pin: quirin-provider-mpack: lock lists every declaration (9 pinned, 0 flexible)
+pin: quirin-provider-msgpack: lock lists every declaration (1 pinned, 0 flexible)

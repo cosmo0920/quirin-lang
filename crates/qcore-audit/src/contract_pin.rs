@@ -533,7 +533,11 @@ fn track(
     for name in functions {
         match declared.get(name) {
             Some((_, _, RevisionMode::Pinned)) => {}
-            Some(_) => return Err(format!("`{name}` is flexible: only a pinned contract tracks a tip")),
+            Some(_) => {
+                return Err(format!(
+                    "`{name}` is flexible: only a pinned contract tracks a tip"
+                ));
+            }
             None => {
                 return Err(format!(
                     "`{name}` is declared by no contract of {}",
@@ -546,7 +550,10 @@ fn track(
         .canonicalize()
         .map_err(|error| format!("{}: {error}", root.display()))?;
     if !is_repository(&root) {
-        return Err(format!("{} is not the top of a Git repository", root.display()));
+        return Err(format!(
+            "{} is not the top of a Git repository",
+            root.display()
+        ));
     }
     let full = if reference.starts_with("refs/") {
         reference.to_owned()
@@ -555,7 +562,12 @@ fn track(
     };
     let commit = match git_output(
         &root,
-        &["rev-parse", "--verify", "--quiet", &format!("{full}^{{commit}}")],
+        &[
+            "rev-parse",
+            "--verify",
+            "--quiet",
+            &format!("{full}^{{commit}}"),
+        ],
     )? {
         (0, commit) if !commit.is_empty() => commit,
         _ => return Err(format!("`{full}` names no commit in {}", root.display())),
@@ -600,7 +612,9 @@ fn track(
                 dropped.identities.len()
             ));
         } else if lock.tip.iter().any(|e| &e.function == function) {
-            lines.push(format!("~ {function}: tip `{full}` of `{name}` recorded again at {commit}"));
+            lines.push(format!(
+                "~ {function}: tip `{full}` of `{name}` recorded again at {commit}"
+            ));
         } else {
             lines.push(format!("+ {function}: tracks the tip `{full}` of `{name}`"));
         }
@@ -893,7 +907,10 @@ fn run(arguments: Arguments) -> Result<bool, String> {
                 let tip_clause = if tip.is_empty() {
                     String::new()
                 } else {
-                    format!(", {} of them tracking the tip of an unreleased branch", tip.len())
+                    format!(
+                        ", {} of them tracking the tip of an unreleased branch",
+                        tip.len()
+                    )
                 };
                 println!(
                     "pin: {}: lock lists every declaration ({} pinned{tip_clause}, {} flexible)",

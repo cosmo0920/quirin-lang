@@ -556,7 +556,9 @@ pub fn notice(function: &str, tip: &TipResolution, standing: NoticeStanding<'_>)
         NoticeStanding::NoSource => {
             message.push_str(&format!(
                 "; NOT in force anywhere on this host: {}",
-                tip.failure_detail.as_deref().unwrap_or("the tip cannot be resolved")
+                tip.failure_detail
+                    .as_deref()
+                    .unwrap_or("the tip cannot be resolved")
             ));
             NoticeSeverity::Warning
         }
@@ -651,7 +653,11 @@ mod tests {
             &"b".repeat(40),
             "was not reviewed",
         ] {
-            assert!(in_force.message.contains(part), "{part}: {}", in_force.message);
+            assert!(
+                in_force.message.contains(part),
+                "{part}: {}",
+                in_force.message
+            );
         }
         let held = notice(
             "f",
@@ -659,7 +665,10 @@ mod tests {
             NoticeStanding::NotInForce("its sites differ"),
         );
         assert_eq!(held.severity, NoticeSeverity::Warning);
-        assert!(held.message.contains("NOT in force for the audited source: its sites differ"));
+        assert!(
+            held.message
+                .contains("NOT in force for the audited source: its sites differ")
+        );
         assert!(!held.message.contains("was not reviewed"));
         let nowhere = notice("f", &resolution(false, false), NoticeStanding::NoSource);
         assert_eq!(nowhere.severity, NoticeSeverity::Warning);

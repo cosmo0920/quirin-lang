@@ -254,7 +254,10 @@ fn tracked_tree() -> (Tree, String, String) {
         "queue next release",
     ]);
     let stdout = succeeded(&tracked);
-    assert!(stdout.contains("~ box_drop: now tracks the tip `refs/heads/fix`"), "{stdout}");
+    assert!(
+        stdout.contains("~ box_drop: now tracks the tip `refs/heads/fix`"),
+        "{stdout}"
+    );
     assert_eq!(notice_lines(&stdout, "info"), 1, "{stdout}");
     assert!(stdout.contains("queue next release"), "{stdout}");
     (tree, a, reviewed)
@@ -268,7 +271,13 @@ fn a_tip_entry_is_in_force_at_its_tip_and_held_elsewhere() {
     let (tree, a, reviewed) = tracked_tree();
     let lock = tree.lock();
     assert_eq!(lock["lock_version"], 3);
-    assert!(lock["pinned"].as_array().unwrap().iter().all(|e| e["function"] != "box_drop"));
+    assert!(
+        lock["pinned"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|e| e["function"] != "box_drop")
+    );
     let entry = &lock["tip"][0];
     assert_eq!(entry["function"], "box_drop");
     assert_eq!(entry["ref"], "refs/heads/fix");
@@ -293,12 +302,17 @@ fn a_tip_entry_is_in_force_at_its_tip_and_held_elsewhere() {
         "tip-tracked:box_drop"
     );
     assert_eq!(section["contracts"]["box_drop"]["status"], "tip-in-force");
-    assert_eq!(section["contracts"]["item_free"]["status"], "pinned-in-force");
+    assert_eq!(
+        section["contracts"]["item_free"]["status"],
+        "pinned-in-force"
+    );
     assert_eq!(
         record(&section, "pinned_in_force", "item_free")["matched_reviewed_at"][0]["revision"],
         a.as_str()
     );
-    assert!(stdout.contains("1 tracking the tip of an unreleased branch (1 in force, 0 not in force)"));
+    assert!(
+        stdout.contains("1 tracking the tip of an unreleased branch (1 in force, 0 not in force)")
+    );
     assert_eq!(notice_lines(&stdout, "info"), 1, "{stdout}");
     assert_eq!(tree.status("at-tip/r.json", "user_drop").0, "Safe");
     let check = tree.pin(&["--check"]);
@@ -333,7 +347,10 @@ fn a_tip_entry_is_in_force_at_its_tip_and_held_elsewhere() {
             .unwrap()
             .contains("was not reviewed")
     );
-    assert_eq!(section["assumptions"]["tip_tracked"][0]["moved_since_review"], true);
+    assert_eq!(
+        section["assumptions"]["tip_tracked"][0]["moved_since_review"],
+        true
+    );
 
     // The audited source is A, the tip B: held under `source-changed`, a
     // warning on every surface, the caller held, the reviewed pin in force.
@@ -351,13 +368,24 @@ fn a_tip_entry_is_in_force_at_its_tip_and_held_elsewhere() {
             .contains("NOT in force for the audited source")
     );
     assert_eq!(section["tip_notices"][0]["severity"], "warning");
-    assert!(section["assumptions"]["tip_tracked"].as_array().unwrap().is_empty());
+    assert!(
+        section["assumptions"]["tip_tracked"]
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
     assert_eq!(section["contracts"]["box_drop"]["status"], "not-in-force");
-    assert_eq!(section["contracts"]["item_free"]["status"], "pinned-in-force");
+    assert_eq!(
+        section["contracts"]["item_free"]["status"],
+        "pinned-in-force"
+    );
     assert_eq!(notice_lines(&stdout, "warning"), 1, "{stdout}");
     let (status, reasons) = tree.status("at-a/r.json", "user_drop");
     assert_ne!(status, "Safe");
-    assert!(reasons.contains(&"contract-pin-mismatch".to_owned()), "{reasons:?}");
+    assert!(
+        reasons.contains(&"contract-pin-mismatch".to_owned()),
+        "{reasons:?}"
+    );
     let check = tree.pin(&["--check"]);
     assert_eq!(check.status.code(), Some(1));
     let check_out = String::from_utf8_lossy(&check.stdout);
@@ -394,9 +422,16 @@ fn a_tip_entry_is_in_force_at_its_tip_and_held_elsewhere() {
     without["tip"] = serde_json::json!([]);
     without["lock_version"] = serde_json::json!(2);
     let tip_lock = fs::read(tree.lock_path()).unwrap();
-    fs::write(tree.lock_path(), serde_json::to_string_pretty(&without).unwrap()).unwrap();
+    fs::write(
+        tree.lock_path(),
+        serde_json::to_string_pretty(&without).unwrap(),
+    )
+    .unwrap();
     let (section, _) = tree.audit("no-entry/r.json");
-    assert_eq!(record(&section, "pin_mismatches", "box_drop")["reason"], "not-in-lock");
+    assert_eq!(
+        record(&section, "pin_mismatches", "box_drop")["reason"],
+        "not-in-lock"
+    );
     assert_eq!(tree.units("no-entry/r.json"), tree.units("no-ref/r.json"));
     fs::write(tree.lock_path(), &tip_lock).unwrap();
     tree.vcs(&["branch", "-m", "fix-renamed", "fix"]);
@@ -420,7 +455,10 @@ fn a_tip_entry_is_in_force_at_its_tip_and_held_elsewhere() {
     assert_eq!(held["tip"]["located_by"], "environment");
     // And through the variable to the real repository, in force again at B.
     tree.vcs(&["checkout", "-q", "fix"]);
-    let here = format!("src={}", tree.0.join("src").canonicalize().unwrap().display());
+    let here = format!(
+        "src={}",
+        tree.0.join("src").canonicalize().unwrap().display()
+    );
     let (section, _) = tree.audit_with("located/r.json", Some(&here));
     assert_eq!(
         record(&section, "pinned_in_force", "box_drop")["tip"]["located_by"],

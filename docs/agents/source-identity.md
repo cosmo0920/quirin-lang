@@ -61,6 +61,31 @@ read. Rule numbers and anchors are stable; backticked paths are repository-relat
 
 <!-- preserved:constraint-12a:end -->
 
+<a id="constraint-12b"></a>
+
+12b. **A contract is in force at a revision no person reviewed only through a
+    tip identity, and that is never silent.** Card CONTRACT-PIN-TIP-MODE
+    (contract specification C06.2, tip identities; user decision 2026-10-02).
+    A lock entry holds reviewed identities or one tip identity (a repository,
+    a full refname, the reviewed commit and its sites), never both. The tip
+    is resolved before any unit is analysed, with read-only Git commands only
+    and never a fetch or a working tree: located by
+    `QUIRIN_TIP_REPOSITORIES` then the recorded path, the ref's current
+    commit must descend from the reviewed commit, and the function's sites
+    are read from that commit's blobs. It is in force exactly when the
+    contract text is the pinned one and those sites equal the audited ones
+    (`tip_decision`, bound to `QCore.ContractTipMode.tipVectors`); anything
+    unresolvable is `tip-unresolved` and held like any pin mismatch. **Do
+    not** let a tip entry keep a reviewed identity beside it, resolve a tip
+    from a working tree, default an unresolvable tip into force, map a
+    vendored path prefix onto the tip's paths, or let the notice (the
+    contract targets a future, unreleased release; `info` in force, `warning`
+    not) or the free-text release label reach a verdict, status or count. An
+    in-force tip entry is the named assumption `tip-tracked:FUNCTION` and its
+    inventory status is `tip-in-force`, never `pinned-in-force`; a run with
+    no tip entry is byte-identical to one before the card.
+    [Report](../reports/contract-pin-tip-mode/README.md).
+
 ## Certificate target scope
 
 A legacy-C Safe certificate carries its complete selected target inventory and

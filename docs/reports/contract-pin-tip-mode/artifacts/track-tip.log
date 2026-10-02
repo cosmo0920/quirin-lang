@@ -1,0 +1,3 @@
+pin: qcore-provider-libevent: 14 pinned, 1 tracking a tip, 0 flexible; wrote /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-abb94a55c5f4a07cd/providers/qcore-provider-libevent/contracts.lock
+  + mk_vhost_set: tracks the tip `refs/heads/cosmo0920-missing-va_end-on-null` of `monkey`
+  notice [info]: the contract for `mk_vhost_set` targets a future, unreleased release (a release candidate), not a released version: it tracks the tip of `refs/heads/cosmo0920-missing-va_end-on-null` in repository `monkey` (https://github.com/cosmo0920/monkey) (release: Monkey release after the va_end fix (release candidate)), resolved to commit 21a2c1908b42596317717436e5ce0420805bd523; in force only where the audited source's sites equal the tip's

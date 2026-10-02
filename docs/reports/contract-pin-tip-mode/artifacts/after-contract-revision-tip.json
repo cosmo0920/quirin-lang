@@ -1,0 +1,92 @@
+{
+ "counts": {
+  "flexible_checked": 0,
+  "flexible_trusted": 0,
+  "held_call_sites": 0,
+  "held_functions": 0,
+  "pinned": 132,
+  "pinned_in_force": 131,
+  "pinned_not_in_force": 1,
+  "standing_libc": 120,
+  "tip_in_force": 0,
+  "tip_not_in_force": 1,
+  "tip_tracked": 1
+ },
+ "tip_meaning": "tip identities (card CONTRACT-PIN-TIP-MODE, contract spec C06.2): a tip entry's contract targets a future, unreleased release (a release candidate), not a released version; it is in force exactly where its contract text is the pinned one and the audited sites equal those read from the blobs of the tracked ref's current commit, which no person may have reviewed when the tip moved since review; every tip entry in force is a named assumption of this run (`assumptions.tip_tracked`); each tip entry carries a notice, info when in force and warning when not; notices are presentation and evidence and decide no verdict",
+ "tip_notices": [
+  {
+   "function": "mk_vhost_set",
+   "message": "the contract for `mk_vhost_set` targets a future, unreleased release (a release candidate), not a released version: it tracks the tip of `refs/heads/cosmo0920-missing-va_end-on-null` in repository `monkey` (https://github.com/cosmo0920/monkey) (release: Monkey release after the va_end fix (release candidate)), resolved to commit 21a2c1908b42596317717436e5ce0420805bd523; NOT in force for the audited source: the audited source's sites differ from those at the tip of `refs/heads/cosmo0920-missing-va_end-on-null` in `monkey` at 21a2c1908b42596317717436e5ce0420805bd523: differs in include/monkey/mk_lib.h, lib/monkey/include/monkey/mk_lib.h, lib/monkey/mk_server/mk_lib.c, mk_server/mk_lib.c",
+   "severity": "warning"
+  }
+ ],
+ "pin_mismatches": [
+  {
+   "contract_sha256": "b7a8016055b665dcced6718ca2d3e2a75bc28f22d990d59c7a5cc10ad64892e1",
+   "detail": "the audited source's sites differ from those at the tip of `refs/heads/cosmo0920-missing-va_end-on-null` in `monkey` at 21a2c1908b42596317717436e5ce0420805bd523: differs in include/monkey/mk_lib.h, lib/monkey/include/monkey/mk_lib.h, lib/monkey/mk_server/mk_lib.c, mk_server/mk_lib.c",
+   "found_sites": [
+    {
+     "declaration_sha256": "a4a0c7389f1011272fccee83e64db27be6e689ca083a7575bbe32093a3a4b84c",
+     "kind": "declaration",
+     "path": "lib/monkey/include/monkey/mk_lib.h"
+    },
+    {
+     "body_sha256": "16a603d8bffa49df8f7bcbb24b02af827ac8887d2433569af7e42c3ee9e96258",
+     "declaration_sha256": "1fa276b97270d7f0328bf2175fea9405674da446c066bf9432e6d248eb4ccd96",
+     "kind": "definition",
+     "path": "lib/monkey/mk_server/mk_lib.c"
+    }
+   ],
+   "function": "mk_vhost_set",
+   "held_call_sites": 0,
+   "held_functions": 0,
+   "identities": [],
+   "lock": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-abb94a55c5f4a07cd/providers/qcore-provider-libevent/contracts.lock",
+   "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-abb94a55c5f4a07cd/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+   "module_sha256": "640187a5674cd86f7782bf9815e6d72b1082aef66e811f45b2def3e9f757fb34",
+   "notice": {
+    "message": "the contract for `mk_vhost_set` targets a future, unreleased release (a release candidate), not a released version: it tracks the tip of `refs/heads/cosmo0920-missing-va_end-on-null` in repository `monkey` (https://github.com/cosmo0920/monkey) (release: Monkey release after the va_end fix (release candidate)), resolved to commit 21a2c1908b42596317717436e5ce0420805bd523; NOT in force for the audited source: the audited source's sites differ from those at the tip of `refs/heads/cosmo0920-missing-va_end-on-null` in `monkey` at 21a2c1908b42596317717436e5ce0420805bd523: differs in include/monkey/mk_lib.h, lib/monkey/include/monkey/mk_lib.h, lib/monkey/mk_server/mk_lib.c, mk_server/mk_lib.c",
+    "severity": "warning"
+   },
+   "owner": "qcore-provider-libevent",
+   "reason": "source-changed",
+   "tip": {
+    "failure": null,
+    "failure_detail": null,
+    "located_at": "/home/cosmo/Documents/GitHub/monkey",
+    "located_by": "lock",
+    "moved_since_review": false,
+    "ref": "refs/heads/cosmo0920-missing-va_end-on-null",
+    "release_label": "Monkey release after the va_end fix (release candidate)",
+    "repository": {
+     "name": "monkey",
+     "path": "/home/cosmo/Documents/GitHub/monkey",
+     "url": "https://github.com/cosmo0920/monkey"
+    },
+    "resolved_commit": "21a2c1908b42596317717436e5ce0420805bd523",
+    "reviewed_commit": "21a2c1908b42596317717436e5ce0420805bd523",
+    "sites_changed_since_review": false,
+    "tip_sites": [
+     {
+      "declaration_sha256": "a4a0c7389f1011272fccee83e64db27be6e689ca083a7575bbe32093a3a4b84c",
+      "kind": "declaration",
+      "path": "include/monkey/mk_lib.h"
+     },
+     {
+      "body_sha256": "42ec7d2f494d1fd7b1deafe27d9e9603680dca5a85db79b730e3659baf44fe6c",
+      "declaration_sha256": "1fa276b97270d7f0328bf2175fea9405674da446c066bf9432e6d248eb4ccd96",
+      "kind": "definition",
+      "path": "mk_server/mk_lib.c"
+     }
+    ]
+   }
+  }
+ ],
+ "inventory_mk_vhost_set": {
+  "contract_sha256": "b7a8016055b665dcced6718ca2d3e2a75bc28f22d990d59c7a5cc10ad64892e1",
+  "mode": "pinned",
+  "module": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-abb94a55c5f4a07cd/compiler/../contract/profiles/fluent-bit/../../../providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
+  "status": "not-in-force"
+ },
+ "assumptions_tip_tracked": []
+}
