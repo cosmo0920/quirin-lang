@@ -673,11 +673,30 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
     // `UnknownAlias in` is gone; `in` keeps its obligation at 237 and 242,
     // after the refused calls. Measured with the premise off in the same
     // tree: 22.
+    // **Deliberate pin update, card CONTRACT-NORETURN-AND-BORROWED-TAILS**:
+    // 21 → 20 under the production text, which now declares
+    // `flb_log_print`'s tail `resource_variadic_borrowed_tail()`. In this
+    // before-state the C6 statement's `tag` is risky (the withdrawn
+    // `input_chunk_write_header` seeds it), so the data tail refused it; the
+    // borrowed tail reads it as a borrowed place (rule 11w, T8) and the tail
+    // refusal is gone, while every withdrawn callee keeps its own refusal. The
+    // 21 is still measured, in the same run, with the data-tail text.
     assert_eq!(
         before.diagnostics.len(),
-        21,
+        20,
         "the before-state diagnostic count moved: {:?}",
         before.diagnostics
+    );
+    let before_data_tail = function(
+        program(&analyze_real(&source, &with_data_tail(&without))),
+        "flb_input_chunk_create",
+    )
+    .clone();
+    assert_eq!(
+        before_data_tail.diagnostics.len(),
+        21,
+        "the data-tail before-state diagnostic count moved: {:?}",
+        before_data_tail.diagnostics
     );
     for callee in [
         "generate_chunk_name",
@@ -694,14 +713,33 @@ fn the_constructor_keeps_exactly_one_refusal_under_production_declarations() {
         );
     }
     // The C6 tail refusal card PROD-CONTRACTS isolated is present before and
-    // absent after.
+    // absent after under the data tail; under the production borrowed tail it
+    // is absent in both (CONTRACT-NORETURN-AND-BORROWED-TAILS).
     let tail = "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection";
     assert!(
-        unsupported(&before).contains(&tail),
+        unsupported(&before_data_tail).contains(&tail),
+        "{:?}",
+        unsupported(&before_data_tail)
+    );
+    assert!(
+        !unsupported(&before).contains(&tail),
         "{:?}",
         unsupported(&before)
     );
     assert!(!unsupported(&summary).contains(&tail));
+}
+
+/// The contract text with every borrowed tail replaced by the data tail it
+/// strengthens: `flb_log_print`'s declaration before card
+/// CONTRACT-NORETURN-AND-BORROWED-TAILS, so the earlier cards' measurements
+/// stay reproducible.
+fn with_data_tail(text: &str) -> String {
+    let old = text.replace(
+        "ensures normal resource_variadic_borrowed_tail();",
+        "ensures normal resource_variadic_data_tail();",
+    );
+    assert_ne!(old, text, "no borrowed tail to replace");
+    old
 }
 
 /// **The residual isolated by substitution.** Replacing the one chained
@@ -771,11 +809,26 @@ fn withdrawing_one_neighbour_still_reproduces_the_refusal() {
         "flb_input_chunk_create",
     )
     .clone();
+    // **Deliberate pin update, card CONTRACT-NORETURN-AND-BORROWED-TAILS.**
+    // Under the production borrowed tail the withdrawn neighbour no longer
+    // makes the C6 statement's tail refuse (T8 reads `tag` as a borrowed
+    // place); the constructor still refuses, at the neighbour itself. Under
+    // the data tail the isolated refusal is reproduced exactly as before.
     let refusals = unsupported(&summary);
+    let tail = "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection";
+    assert!(!refusals.contains(&tail), "{refusals:?}");
     assert!(
-        refusals.contains(
-            &"arguments beyond the declared parameters of `flb_log_print` are outside the resource projection"
-        ),
+        refusals.contains(&"call to uncontracted function `input_chunk_write_header`"),
+        "{refusals:?}"
+    );
+    let data_tail = function(
+        program(&analyze_real(&source, &with_data_tail(&without))),
+        "flb_input_chunk_create",
+    )
+    .clone();
+    let refusals = unsupported(&data_tail);
+    assert!(
+        refusals.contains(&tail),
         "the isolated refusal is reproduced: {refusals:?}"
     );
     // The gate stays decided: the neighbour affects the tail actual, not the

@@ -750,6 +750,33 @@ fn the_remaining_production_blocker_is_one_uncontracted_neighbour() {
         "the o04 path module no longer carries the header-writer declaration"
     );
     let without = contracts.replace(header, "");
+    // **Deliberate pin update, card CONTRACT-NORETURN-AND-BORROWED-TAILS.**
+    // Production now declares `flb_log_print`'s tail
+    // `resource_variadic_borrowed_tail()`, which reads the risky `tag` as a
+    // borrowed place (rule 11w, T8): with the neighbour withdrawn the
+    // constructor refuses at the neighbour itself and no longer at the tail.
+    // The measurement this test pins is taken with the data-tail text the
+    // declaration had when it was written.
+    let borrowed = function(
+        program(&analyze_real(&source, &without)),
+        "flb_input_chunk_create",
+    )
+    .clone();
+    let borrowed_refusals = unsupported(&borrowed);
+    assert!(
+        !borrowed_refusals.contains(
+            &"arguments beyond the declared parameters of `flb_log_print` are outside the resource projection"
+        ),
+        "{borrowed_refusals:?}"
+    );
+    assert!(
+        borrowed_refusals.contains(&"call to uncontracted function `input_chunk_write_header`"),
+        "{borrowed_refusals:?}"
+    );
+    let without = without.replace(
+        "ensures normal resource_variadic_borrowed_tail();",
+        "ensures normal resource_variadic_data_tail();",
+    );
     let result = analyze_real(&source, &without);
     let summary = function(program(&result), "flb_input_chunk_create").clone();
     let refusals = unsupported(&summary);
@@ -801,7 +828,9 @@ fn the_real_caller_is_not_promoted_by_this_card() {
 #[test]
 fn the_modules_under_test_are_the_production_ones() {
     assert!(LOGGING.contains("extern fn flb_log_print("));
-    assert!(LOGGING.contains("ensures normal resource_variadic_data_tail();"));
+    // Card CONTRACT-NORETURN-AND-BORROWED-TAILS replaced `flb_log_print`'s data
+    // tail with the borrowed tail it strengthens (a deliberate pin update).
+    assert!(LOGGING.contains("ensures normal resource_variadic_borrowed_tail();"));
     assert!(CHUNK_NAME.contains("extern fn flb_input_chunk_get_name("));
     assert!(ROUTES_MASK.contains("extern fn flb_routes_mask_set_by_tag("));
     // The measured correction this card rests on: neither macro name is
