@@ -15,10 +15,15 @@ complete); main did not move during the card.
 - **Rule:** [gateway 11p](../../agents/gateway.md#constraint-11p).
 - **Lean:** `QCore.IndirectCalls`, `proof/AuditIndirectCalls.lean` (21
   theorems), over `QCore.TypedefProjection`.
-- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `9d844473` after them)
+- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `4ac5e45c` after them)
   from the census runs before the AFTER binary was measured; the
   implementation existed, no AFTER run did.
-- **Base:** BEFORE main `b6a3dc42`; AFTER of record on main `06ad81cb`; final tip and standing gate on main `f1a4c648` (CG17, CG20, CG25, CG26, CG28, CG27, CG21 landed meanwhile; `cargo check --workspace --all-targets` 0 on each rebased tree; no re-measure on `b934c560`, `f0bbc0eb`, `f6336c9d`, `db1ea764` or `f1a4c648`, owed to the integration).
+- **Base:** first pair BEFORE main `b6a3dc42`, AFTER on main `06ad81cb`;
+  pair of record BEFORE main `a6adb483` (645 / 10 / 4,179, the integrator's
+  `ceefb6c4…`), AFTER on the tip rebased onto main `31a72343` (CG17, CG20,
+  CG25, CG26, CG28, CG27, CG21, CG30 and CG16 landed meanwhile; `cargo check
+  --workspace --all-targets` 0 on each rebased tree); standing gate on the
+  same tip.
 - **Absorbed:** LOADER-ABI-INLINE-FNPTR-DECLARATOR (closed); EXTERN-CALL-F
   (function-pointer part) and W47-LOOP-OWNER-FIELD-KEYED-V-AND-F amended.
 
@@ -140,21 +145,27 @@ system and 1 slice registrations, `flb_input_chunk_map`'s
 ## 4. Before and after
 
 The arbiter's own command (`scripts/measure.sh`; corpus `66910c10`, `--jobs
-4`), BEFORE on main `b6a3dc42`. Main then moved three times (CG17, CG20: both
-byte-identical on all three routes by their own reports; CG25); the AFTER of
-record is the tip rebased on main `06ad81cb`, whose base reports equal
-BEFORE's, so the pair compares only this card.
+4`). The first pair: BEFORE on main `b6a3dc42`, AFTER on the tip rebased on
+main `06ad81cb` (whose base reports equal `b6a3dc42`'s). Main then moved six
+more times (CG25, CG26, CG28, CG27, CG21, CG30, CG16), so the pair **of
+record** was re-taken on the final base: BEFORE on main `a6adb483` (its corpus
+digest is the integrator's `ceefb6c4…`; CG16 and the STATUS commit after it
+are custody byte-identical by CG16's report), AFTER on the tip rebased on main
+`31a72343`. Both pairs show the same eight functions with the same leaf deltas.
 
 | run | binary | corpus | system | slice |
 |---|---|---|---|---|
 | BEFORE, main `b6a3dc42` (`private/cg22/before`) | `1d06a383…` | 629 / 10 / 4,195 `3d53a5d0…` | 44 / 2 / 188 `d7aa010b…` | 29 / 1 / 239 / 1 P `0cdbef8b…` |
 | census build (`ADMIT = false`) | `73ef3965…` | byte-identical | byte-identical | byte-identical |
-| **AFTER, tip on `06ad81cb`** (`after6`) | `c58df810…` | **631 / 10 / 4,193** `eb1b0919…` | **byte-identical** | **byte-identical** |
+| AFTER, tip on `06ad81cb` (`after6`) | `c58df810…` | 631 / 10 / 4,193 `eb1b0919…` | byte-identical | byte-identical |
+| **BEFORE, main `a6adb483`** (`before2`) | `94d342f6…` | **645 / 10 / 4,179** `ceefb6c4…` | 44 / 2 / 188 `ed38d984…` | 29 / 1 / 239 / 1 P `5304399c…` |
+| **AFTER, tip on `31a72343`** (`after8`) | `6d2fe98b…` | **647 / 10 / 4,177** `ed384eb0…` | **byte-identical** | **byte-identical** |
 
 System and slice reports embed the worktree path (8 strings), so their digests
-are this worktree's; the totals equal CG05's `after3` row and the BEFORE/AFTER
-pair is byte-identical within this worktree. Counts are compare.py's,
-de-duplicated by (unit, function).
+are this worktree's; each BEFORE/AFTER pair is byte-identical within this
+worktree. Counts are compare.py's, de-duplicated by (unit, function). The
+indirect-site census below was taken at `b6a3dc42`; at `after8` the corpus
+count is the same 572 sites, every one `none: open set`.
 
 **Every move** (`artifacts/corpus-comparison.json`, `artifacts/corpus-changed.txt`),
 all from the inline declarator; the candidate-set rewrite changed no token on
@@ -216,7 +227,7 @@ they ran).
 **Cost.** The pass reads Clang's AST for every unit whose bodies call
 something other than a file-scope name; the census build (no pre-filter)
 took 92 minutes against BEFORE's 75 under a shared host; the AFTER corpus
-took 9 minutes on an idle host. Wall time here measures the host, not the
+took 9 minutes on an idle host (`after6`). Wall time here measures the host, not the
 pass; no per-unit timing was taken.
 
 ## 5. Follow-ups

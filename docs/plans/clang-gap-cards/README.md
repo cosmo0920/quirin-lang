@@ -525,7 +525,7 @@ CG22.
     census; no capture vocabulary exists. The inline `fnptr` parameter
     declarator is read (LOADER-ABI-INLINE-FNPTR-DECLARATOR closed). No
     corpus, system or slice site has a closed set, so the rewrite moves nothing; the declarator moves
-    corpus 629 / 10 / 4,195 → **631 / 10 / 4,193** (the two
+    corpus 645 / 10 / 4,179 → **647 / 10 / 4,177** on main `a6adb483` (the two
     `rd_kafka_topic_partition_list_sort_by_*` wrappers), system and slice
     byte-identical. Residuals
     `CG22-OPEN-INDIRECT-CALLS`, `CG22-CALLBACK-REGISTRY-CONTRACT`,
