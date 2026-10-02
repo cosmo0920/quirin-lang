@@ -441,13 +441,17 @@ fn k09_va_list_operations_are_not_modelled() {
     // **Flipped by CG26-VARIADICS (rule 11w)** for route G: the protocol is
     // established, so `va_start`/`va_end` are custody-neutral; a pointer
     // `va_arg` keeps a named refusal and `q_free(p)` stays unresolved.
+    // **Flipped again by VA-LOOP-AND-POINTER-ARG (rule 12c)**: the pointer
+    // value is a never-owned opaque binding (no named refusal); `q_free(p)`
+    // is still an unresolved alias, so the function is never `Safe`.
     for builtin in ["__builtin_va_start", "__builtin_va_arg", "__builtin_va_end"] {
         assert!(!run.refused(&uncontracted(builtin)), "{builtin}: {run:?}");
     }
     assert!(
-        run.refused_prefix("va_list operation refused: the `va_arg` value stored into `p`"),
+        !run.refused_prefix("va_list operation refused: the `va_arg` value stored into `p`"),
         "{run:?}"
     );
+    assert!(run.has("UnknownAlias { variable: \"p\" }"), "{run:?}");
     assert!(!run.safe(), "{run:?}");
 }
 

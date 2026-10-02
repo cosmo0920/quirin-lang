@@ -490,7 +490,13 @@ impl Parser<'_> {
         // Card CG02-ELABORATION-CORE (rule 10s): asked last, only where every
         // route above refused.
         if plan.is_none() && refused && !self.opaque_callee(condition) {
-            return self.elaborated_condition(condition, line, position);
+            let elaborated = self.elaborated_condition(condition, line, position);
+            if elaborated.is_some() {
+                return elaborated;
+            }
+            // Card VA-LOOP-AND-POINTER-ARG (rule 12c): asked after the
+            // elaborator, only for an expression holding a `va_arg`.
+            return self.va_arg_condition(condition, line, position);
         }
         plan
     }

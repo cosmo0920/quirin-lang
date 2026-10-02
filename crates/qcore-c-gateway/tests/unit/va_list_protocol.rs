@@ -206,3 +206,82 @@ fn cg26_lean_step_vectors_match_the_rust_table() {
         assert_eq!(row.trim_end_matches(','), expected);
     }
 }
+
+// ---------------------------------------------------------------------------
+// Card VA-LOOP-AND-POINTER-ARG (rule 12c): the Lean loop graphs of
+// `proof/QCore/VariadicConditions.lean`, decided by this module's `decide`.
+// ---------------------------------------------------------------------------
+
+const CONDITIONS_LEAN: &str = include_str!("../../../../proof/QCore/VariadicConditions.lean");
+
+/// The node list of the Lean definition `def NAME : List Node :=`, read
+/// mechanically (`⟨[ops], [successors]⟩` per node).
+fn lean_graph(name: &str) -> Vec<Node> {
+    let lean = CONDITIONS_LEAN.replace("\r\n", "\n");
+    let body = lean
+        .split(&format!("def {name} : List Node :=\n"))
+        .nth(1)
+        .expect("graph definition");
+    let body = &body[..body.find("]\n").expect("end of graph") + 1];
+    body.split('⟨')
+        .skip(1)
+        .map(|node| {
+            let node = &node[..node.find('⟩').expect("node end")];
+            let (ops, successors) = node.split_once("], [").expect("two lists");
+            let event = ops
+                .trim_start_matches('[')
+                .split(',')
+                .map(str::trim)
+                .filter(|op| !op.is_empty())
+                .map(|op| {
+                    let operation = match op {
+                        ".start" => Operation::Start,
+                        ".arg" => Operation::Arg,
+                        ".pass" => Operation::Pass,
+                        ".copyFrom" => Operation::CopyFrom,
+                        ".end_" => Operation::End,
+                        other => panic!("unknown operation {other}"),
+                    };
+                    (0, operation)
+                })
+                .collect::<Vec<_>>();
+            Node {
+                event: (!event.is_empty()).then_some(event),
+                successors: successors
+                    .trim_end_matches(']')
+                    .split(',')
+                    .map(str::trim)
+                    .filter(|successor| !successor.is_empty())
+                    .map(|successor| successor.parse().expect("successor"))
+                    .collect(),
+            }
+        })
+        .collect()
+}
+
+/// `lower g h` as the gateway draws a `va_arg` condition: the head keeps its
+/// event and leads to a fresh test node, which leads where the head led.
+fn lower(mut nodes: Vec<Node>, head: usize) -> Vec<Node> {
+    let test = nodes.len();
+    let successors = std::mem::replace(&mut nodes[head].successors, vec![test]);
+    nodes.push(Node {
+        event: None,
+        successors,
+    });
+    nodes
+}
+
+/// The Lean `whileLoop` is certified (`the_while_protocol_is_certified`) and
+/// so is its lowering; `leakingLoop` is certified by no assignment
+/// (`the_leaking_loop_is_never_certified`), lowered or not.
+#[test]
+fn valoop_lean_loop_graphs_are_decided_alike() {
+    let while_loop = lean_graph("whileLoop");
+    assert_eq!(while_loop.len(), 6);
+    assert_eq!(run(&while_loop), Ok(()));
+    assert_eq!(run(&lower(while_loop, 3)), Ok(()));
+    let leaking = lean_graph("leakingLoop");
+    assert_eq!(leaking.len(), 6);
+    assert_eq!(run(&leaking), Err((0, None)));
+    assert_eq!(run(&lower(leaking, 3)), Err((0, None)));
+}

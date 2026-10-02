@@ -18,9 +18,15 @@
 //!   and ending it acquires, releases, transfers and rebinds nothing;
 //! * `T x = va_arg(L, T);` and `x = va_arg(L, T);` for a scalar local `x` and
 //!   an arithmetic or enumeration `T` are [`LegacyInstruction::ForgetScalar`]:
-//!   the value is caller data the projection does not track. A pointer `T`
-//!   keeps a named refusal (the value is a caller pointer with no identity
-//!   premise here; gap entry K09's pointer half stays open).
+//!   the value is caller data the projection does not track;
+//! * card **VA-LOOP-AND-POINTER-ARG** (rule 12c): `T *x = va_arg(L, T *);` and
+//!   `x = va_arg(L, T *);` for an object pointer type and an automatic,
+//!   non-formal pointer local `x` are [`LegacyInstruction::VaArgPointer`]: a
+//!   caller's pointer, unknown, possibly null and **never owned** (the
+//!   derived binding over no base). Releasing it, storing it into custody or
+//!   returning it keeps the flow's unresolved alias. Every other pointer
+//!   shape (a function pointer, a `volatile` or `static` local, a formal, a
+//!   member or element destination) keeps a named refusal.
 //!
 //! When the protocol is not established, the statement keeps its refusal with
 //! the protocol's **named** reason and the same writes: still `Unknown`, so a
@@ -91,15 +97,110 @@ fn scalar_type(node: &Value) -> bool {
     ) || (text.starts_with("enum ") && !text.contains(['*', '[', '(']))
 }
 
+/// Card VA-LOOP-AND-POINTER-ARG (rule 12c): whether a type is an object
+/// pointer (never a function pointer, an array, or `volatile`-qualified),
+/// read from Clang's own spelling of the canonical type.
+fn object_pointer_type(node: &Value) -> bool {
+    let text = node["type"]["desugaredQualType"]
+        .as_str()
+        .or_else(|| node["type"]["qualType"].as_str())
+        .unwrap_or("")
+        .trim();
+    text.ends_with('*') && !text.contains(['(', '[']) && !text.contains("volatile")
+}
+
+/// What a `va_arg` value stored into a named object is (card
+/// VA-LOOP-AND-POINTER-ARG, rule 12c, beside CG26's scalar class).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) enum StoredClass {
+    /// An arithmetic or enumeration value into a scalar object.
+    Scalar,
+    /// An object pointer value into an automatic object pointer local.
+    Pointer,
+    /// Anything else: keeps the named refusal.
+    Other,
+}
+
+fn stored_class(value: &Value, destination: &Value, automatic: bool) -> StoredClass {
+    if scalar_type(value) && scalar_type(destination) {
+        StoredClass::Scalar
+    } else if automatic && object_pointer_type(value) && object_pointer_type(destination) {
+        StoredClass::Pointer
+    } else {
+        StoredClass::Other
+    }
+}
+
+/// Whether the declaration `id` is an automatic object of `function`'s body:
+/// a `VarDecl` (never a parameter, never file scope) with no storage class,
+/// and the only object of its spelling the function declares (the flow keys
+/// bindings by name, so a shadowed spelling is refused).
+fn automatic_local(function: &Value, id: &str) -> bool {
+    fn find<'v>(node: &'v Value, id: &str) -> Option<&'v Value> {
+        if kind(node) == "VarDecl" && node["id"].as_str() == Some(id) {
+            return Some(node);
+        }
+        children(node).iter().find_map(|child| find(child, id))
+    }
+    fn count(node: &Value, name: &str) -> usize {
+        usize::from(
+            matches!(kind(node), "VarDecl" | "ParmVarDecl") && node["name"].as_str() == Some(name),
+        ) + children(node)
+            .iter()
+            .map(|child| count(child, name))
+            .sum::<usize>()
+    }
+    find(function, id).is_some_and(|declaration| {
+        !declaration["storageClass"].is_string()
+            && declaration["name"]
+                .as_str()
+                .is_some_and(|name| count(function, name) == 1)
+    })
+}
+
 /// What the matched statement is.
 enum Shape {
     /// A whole `va_start`/`va_end`/`va_copy` call, or a discarded `va_arg`.
     Neutral(&'static str),
     /// `va_arg` stored into the named object.
-    Stored { destination: String, scalar: bool },
+    Stored {
+        destination: String,
+        class: StoredClass,
+    },
 }
 
-fn shape(node: &Value) -> Option<Shape> {
+/// Card VA-LOOP-AND-POINTER-ARG (rule 12c): `NAME = va_arg(L, T)` as a Clang
+/// node (through parentheses and implicit conversions): the destination's
+/// name and the value's class. `None` for any other node.
+pub(super) fn stored_assignment(node: &Value, function: &Value) -> Option<(String, StoredClass)> {
+    let bare = strip_value(node);
+    if kind(bare) != "BinaryOperator" || bare["opcode"].as_str() != Some("=") {
+        return None;
+    }
+    let [left, right] = children(bare) else {
+        return None;
+    };
+    let value = strip_value(right);
+    if kind(value) != "VAArgExpr" || kind(left) != "DeclRefExpr" {
+        return None;
+    }
+    if !matches!(
+        left["referencedDecl"]["kind"].as_str(),
+        Some("VarDecl" | "ParmVarDecl")
+    ) {
+        return None;
+    }
+    let automatic = left["referencedDecl"]["kind"].as_str() == Some("VarDecl")
+        && left["referencedDecl"]["id"]
+            .as_str()
+            .is_some_and(|id| automatic_local(function, id));
+    Some((
+        left["referencedDecl"]["name"].as_str()?.to_owned(),
+        stored_class(value, left, automatic),
+    ))
+}
+
+fn shape(node: &Value, function: &Value) -> Option<Shape> {
     let bare = strip_value(node);
     match kind(bare) {
         "CallExpr" => {
@@ -125,27 +226,18 @@ fn shape(node: &Value) -> Option<Shape> {
             let value = strip_value(initializer);
             (kind(value) == "VAArgExpr").then(|| Shape::Stored {
                 destination: declaration["name"].as_str().unwrap_or("").to_owned(),
-                scalar: scalar_type(value) && scalar_type(declaration),
+                class: stored_class(
+                    value,
+                    declaration,
+                    declaration["id"]
+                        .as_str()
+                        .is_some_and(|id| automatic_local(function, id)),
+                ),
             })
         }
         "BinaryOperator" if bare["opcode"].as_str() == Some("=") => {
-            let [left, right] = children(bare) else {
-                return None;
-            };
-            let value = strip_value(right);
-            if kind(value) != "VAArgExpr" || kind(left) != "DeclRefExpr" {
-                return None;
-            }
-            if !matches!(
-                left["referencedDecl"]["kind"].as_str(),
-                Some("VarDecl" | "ParmVarDecl")
-            ) {
-                return None;
-            }
-            Some(Shape::Stored {
-                destination: left["referencedDecl"]["name"].as_str()?.to_owned(),
-                scalar: scalar_type(value) && scalar_type(left),
-            })
+            let (destination, class) = stored_assignment(bare, function)?;
+            Some(Shape::Stored { destination, class })
         }
         _ => None,
     }
@@ -305,6 +397,50 @@ impl Parser<'_> {
         Some(Statement::Block(block))
     }
 
+    /// The lowering of `destination = va_arg(L, T)` under an admitted
+    /// protocol (CG26's scalar class; card VA-LOOP-AND-POINTER-ARG's pointer
+    /// class, rule 12c), or the named refusal. Shared by the statement hook
+    /// below and the controlling-expression hook (`legacy_va_condition.rs`).
+    pub(super) fn stored_va_arg(
+        &self,
+        destination: &str,
+        class: StoredClass,
+    ) -> Result<LegacyInstruction, String> {
+        let ordinary = !self.protected_formals.contains(destination)
+            && !self.formal_parameters.contains(destination)
+            && !self.descriptor_names.contains(destination);
+        match class {
+            StoredClass::Scalar
+                if ordinary
+                    && crate::typed_field_access::is_scalar_initializer(
+                        destination,
+                        &["1"],
+                        &self.typed_model,
+                        &self.typed_types,
+                    ) =>
+            {
+                Ok(LegacyInstruction::ForgetScalar {
+                    destination: destination.to_owned(),
+                })
+            }
+            // A caller's pointer: unknown, possibly null, never owned. No
+            // identity is created and none is named; the flow's own rules
+            // decide every later use (a release or a custody store of an
+            // unknown pointer is refused there).
+            StoredClass::Pointer if ordinary => Ok(LegacyInstruction::VaArgPointer {
+                destination: destination.to_owned(),
+            }),
+            StoredClass::Scalar | StoredClass::Other => Err(format!(
+                "va_list operation refused: the `va_arg` value stored into \
+                 `{destination}` is not an arithmetic value into a scalar local"
+            )),
+            StoredClass::Pointer => Err(format!(
+                "va_list operation refused: the `va_arg` pointer stored into \
+                 `{destination}` is not into an automatic pointer local"
+            )),
+        }
+    }
+
     /// Hook: a statement the classifier refused as a call to an uncontracted
     /// `va_*` builtin. `None` keeps the refusal byte for byte (no unique Clang
     /// node, or a shape this rule does not read).
@@ -339,7 +475,7 @@ impl Parser<'_> {
                     | "LabelStmt"
             )
         })?;
-        let shape = shape(node)?;
+        let shape = shape(node, &index.function)?;
         let form = match &shape {
             Shape::Neutral(builtin) => *builtin,
             Shape::Stored { .. } => ARG,
@@ -348,33 +484,9 @@ impl Parser<'_> {
             .map_err(|refusal| refusal.description())
             .and_then(|protocol| match &shape {
                 Shape::Neutral(_) => Ok((protocol, LegacyInstruction::NoOp)),
-                Shape::Stored {
-                    destination,
-                    scalar,
-                } => {
-                    if *scalar
-                        && !self.protected_formals.contains(destination.as_str())
-                        && !self.formal_parameters.contains(destination.as_str())
-                        && crate::typed_field_access::is_scalar_initializer(
-                            destination,
-                            &["1"],
-                            &self.typed_model,
-                            &self.typed_types,
-                        )
-                    {
-                        Ok((
-                            protocol,
-                            LegacyInstruction::ForgetScalar {
-                                destination: destination.clone(),
-                            },
-                        ))
-                    } else {
-                        Err(format!(
-                            "va_list operation refused: the `va_arg` value stored into \
-                             `{destination}` is not an arithmetic value into a scalar local"
-                        ))
-                    }
-                }
+                Shape::Stored { destination, class } => self
+                    .stored_va_arg(destination, *class)
+                    .map(|instruction| (protocol, instruction)),
             });
         record_row(json!({
             "function": self.typed_path_function,

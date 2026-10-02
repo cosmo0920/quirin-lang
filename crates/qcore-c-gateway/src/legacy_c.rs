@@ -160,6 +160,12 @@ mod atomic_route;
 #[path = "legacy_variadics.rs"]
 mod variadics_route;
 
+// Card VA-LOOP-AND-POINTER-ARG (gateway rule 12c): a `va_arg` in a controlling
+// expression, asked after every older route of the position (the one hook is
+// in `legacy_condition_desugar.rs`'s `planned_condition`).
+#[path = "legacy_va_condition.rs"]
+mod va_condition_route;
+
 #[path = "legacy_elaboration.rs"]
 mod elaboration_route;
 
@@ -480,6 +486,21 @@ pub enum LegacyInstruction {
         /// `None` whenever it relates nothing, which is the pre-existing
         /// answer.
         alias_read: Option<AliasPeers>,
+    },
+    /// Card **VA-LOOP-AND-POINTER-ARG** (gateway rule 12c): bind
+    /// `destination` to a caller's pointer read by `va_arg` — opaque, possibly
+    /// null and **never owned**.
+    ///
+    /// The binding is the one a declared derived result over an unbound base
+    /// gets (`derive_pointer(None, Exact, …)`): no target, unknown, possibly
+    /// null, `Derived`. So, by the derived-pointer rules already in force
+    /// (card W43-LIBC-RESULT-ALIAS), a null test narrows the binding alone, a
+    /// `Borrowed` position reads it, and a release, consumption, store,
+    /// escape or reallocation through it is never applied and refuses
+    /// (`UnknownAlias`, never accused: it has no target). It creates,
+    /// releases and transfers no custody.
+    VaArgPointer {
+        destination: String,
     },
     /// Forget a declared scalar's old branch fact after a modeled write.
     /// An absent binding admits both scalar branches and carries no pointer
@@ -10670,6 +10691,7 @@ fn rebound_names(instruction: &LegacyInstruction) -> Vec<&str> {
         LegacyInstruction::Acquire { destination, .. }
         | LegacyInstruction::Alias { destination, .. }
         | LegacyInstruction::OpaqueValue { destination, .. }
+        | LegacyInstruction::VaArgPointer { destination }
         | LegacyInstruction::ForgetScalar { destination }
         | LegacyInstruction::PointerStep { destination, .. }
         | LegacyInstruction::Clear { destination } => vec![destination.as_str()],
@@ -13131,6 +13153,7 @@ fn transfer_base(
         LegacyInstruction::Acquire { destination, .. }
         | LegacyInstruction::Alias { destination, .. }
         | LegacyInstruction::OpaqueValue { destination, .. }
+        | LegacyInstruction::VaArgPointer { destination }
         | LegacyInstruction::ForgetScalar { destination }
         | LegacyInstruction::PointerStep { destination, .. }
         | LegacyInstruction::Clear { destination } => Some(destination.as_str()),
@@ -13988,6 +14011,14 @@ fn transfer_base(
                     may_be_null: true,
                     derivation: Derivation::Identity,
                 },
+            );
+        }
+        // Card VA-LOOP-AND-POINTER-ARG (rule 12c): a derived binding over no
+        // base: owns nothing, refused at every custody position.
+        LegacyInstruction::VaArgPointer { destination } => {
+            state.pointers.insert(
+                destination.clone(),
+                derive_pointer(None, DerivedExtent::Exact, true, false),
             );
         }
         LegacyInstruction::ForgetScalar { destination } => {

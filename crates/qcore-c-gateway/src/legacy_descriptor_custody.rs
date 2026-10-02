@@ -294,6 +294,8 @@ pub(crate) fn admits_descriptor_read(
         | LegacyInstruction::BranchOnNull { .. }
         | LegacyInstruction::BranchOnDistinct { .. }
         | LegacyInstruction::OpaqueValue { .. }
+        // Card VA-LOOP-AND-POINTER-ARG (rule 12c): a caller's pointer.
+        | LegacyInstruction::VaArgPointer { .. }
         | LegacyInstruction::ScalarMemberStore { .. }
         // Card W43-INDIRECT-ACCESS-GENERAL's typed scalar store or read
         // through `*B`, `B[I]`, `B->F` or `S.F`: its value is custody-neutral

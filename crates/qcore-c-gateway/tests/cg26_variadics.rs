@@ -245,11 +245,12 @@ fn a_parameter_list_owes_no_end_and_takes_none() {
     );
 }
 
-/// A pointer `va_arg` keeps a named refusal: the value is a caller pointer
-/// with no identity premise (CG00's K09 control, its `q_free(p)` still
-/// refused).
+/// A pointer `va_arg` is a caller pointer with no identity premise (CG00's
+/// K09 control). **Flipped by VA-LOOP-AND-POINTER-ARG (rule 12c)**: the
+/// value is a never-owned opaque binding, so its named refusal is gone and
+/// `q_free(p)` stays an unresolved alias: never `Safe`.
 #[test]
-fn a_pointer_va_arg_keeps_a_named_refusal() {
+fn a_pointer_va_arg_is_a_never_owned_binding() {
     if !clang_available() {
         return;
     }
@@ -257,9 +258,10 @@ fn a_pointer_va_arg_keeps_a_named_refusal() {
          void *p = va_arg(ap, void *); va_end(ap); q_free(p); }");
     assert!(!run.safe(), "{run:?}");
     assert!(
-        run.refused_prefix("va_list operation refused: the `va_arg` value stored into `p`"),
+        !run.refused_prefix("va_list operation refused: the `va_arg` value stored into `p`"),
         "{run:?}"
     );
+    assert!(run.has("UnknownAlias { variable: \"p\" }"), "{run:?}");
 }
 
 /// A list event under a conditional operator, and the address of a list

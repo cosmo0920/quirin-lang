@@ -330,5 +330,6 @@ import QCore.Variadics
 import QCore.DialectTargetIdentity
 import QCore.RelationalPost
 import QCore.IndirectCalls
+import QCore.VariadicConditions
 
 /-! The executable formal core of QCore-C revision 0.1. -/

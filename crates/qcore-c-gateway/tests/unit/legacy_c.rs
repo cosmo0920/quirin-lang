@@ -1871,6 +1871,39 @@ fn unknown_identity_null_refinement_never_erases_a_resource() {
     }
 }
 
+/// Card VA-LOOP-AND-POINTER-ARG (rule 12c): the `va_arg` pointer binding is
+/// the Lean `vaArgBinding := ⟨[], true, true⟩` of
+/// `proof/QCore/VariadicConditions.lean` (no target, unknown, derived): never
+/// accused at a release, and a null test narrows the binding alone.
+#[test]
+fn valoop_the_va_arg_pointer_binding_is_the_lean_vector() {
+    let lean = include_str!("../../../../proof/QCore/VariadicConditions.lean");
+    assert!(lean.contains("def vaArgBinding : Binding := ⟨[], true, true⟩"));
+    let binding = derive_pointer(None, DerivedExtent::Exact, true, false);
+    assert!(binding.targets.is_empty() && binding.unknown);
+    assert!(matches!(binding.derivation, Derivation::Derived { .. }));
+    for mode in [
+        ResourceParameterMode::Released { nullable: true },
+        ResourceParameterMode::Released { nullable: false },
+    ] {
+        assert!(!derived_release_is_accusable(mode, &binding));
+    }
+    let mut state = AbstractState::default();
+    state.resources.insert(1, LIVE);
+    state.pointers.insert("p".into(), binding);
+    let before = state.resources.clone();
+    assert!(matches!(
+        refine_pointer_null(&mut state, "p", false),
+        PointerRefinement::Refined
+    ));
+    assert!(matches!(
+        refine_pointer_null(&mut state, "p", true),
+        PointerRefinement::Refined
+    ));
+    assert_eq!(state.resources, before);
+    assert!(state.pointers["p"].targets.is_empty());
+}
+
 #[test]
 fn scalar_mutation_and_conditional_release_are_rederived_through_clang() {
     if !crate::test_support::clang_available() {
