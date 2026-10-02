@@ -1,0 +1,13 @@
+{
+  "note": "W48-BOTTOM-UP-CALLEE-BODIES card gate on base main c85cb8806, code steps at 0362c86e0 and docs steps at b922a265a (records only after the code head), scripts docs/reports/w48-bottom-up-callee-bodies/scripts/gate.sh (each step under the shared flock), provider-gate.sh, isolated.sh and finish-gate.sh, logs private/w48bu/gate-g2 of this worktree (a first attempt, gate-g1, stopped at clippy: type_complexity on the cfg(test) decision table, fixed in 0362c86e0): cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 435 units, 448 summaries, 7,501 passed, 1 failed, 11 ignored, exit 101 (private/test-binaries/20261002T145951Z-1399376): the one failure is qcore-verifier-host's execution_quota the_same_fixture_without_a_declared_quota_installs_none, `Io(\"Broken pipe (os error 32)\")` from its spawned fixture, unrelated to this card; constraint 16 applied, the binary re-run alone passed 13/13, exit 0 (04b-execution-quota), nothing weakened; both reevaluation probes exit 0; check_lean_audits.py 282 audits passed (281 + AuditScalarReturnValue.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 281 -> 282, test_build_matrix_sections), then run again after build_matrix.py . --gate this file (09a, 09b); docs index check 0. providers/ is unchanged; the provider gate was run because build_matrix.py merges only a gate with provider_tests: cargo check --locked 0, fmt 0, clippy 0, cargo test 129 passed (exit 0), contracts.py check 0, package build 0, verify of the five packages 0. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main c85cb8806 dde4837e 647/9/4,178; AFTER at 97c4da505 bcc98d2d 648/9/4,177 (rd_kafka_timer_next Unknown -> Safe); system 660295ac and tail-pause slice 218a6819 byte-identical. The commits after 97c4da505 change no lowering (the decision table, a type alias, a parity field). Exits in docs/reports/w48-bottom-up-callee-bodies/gate/.",
+  "workspace_tests": 7501,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 282,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

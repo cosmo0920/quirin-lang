@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "SUP07-REFUSED-TEST-ACCUSATION card gate on base main f50fa2009 (tree of tip f38dee378), scripts docs/reports/sup07-refused-test-accusation/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/sup07/gate-g1 of this worktree: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 434 units, 447 summaries, 7,494 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T114246Z-1110114); both reevaluation probes exit 0; check_lean_audits.py 281 audits passed (main's 281 with AuditRefusedNullTest.lean removed and AuditRefusedTestAccusation.lean added); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 280 -> 281: main's committed matrix still read 280 after 7493e76a2 added an audit; test_build_matrix_sections), then run again after build_matrix.py . --gate this file (09a, 09b); docs index 0. providers/ is unchanged; the provider gate was run anyway because build_matrix.py merges only a gate with provider_tests (scripts/provider-gate.sh, same log directory): cargo check --locked 0, fmt 0, clippy 0, cargo test 129 passed (exit 0), contracts.py check 0, package build 0, verify of the five packages 0. The first finish-gate attempt (09a) refused this file for missing provider_tests; rerun after the provider gate. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main cffe232d4 a7d68d49 647/11/4,176; AFTER on that base (0a7b99cf2) 25c1820b 647/10/4,177 (mk_http_error_page provisional Unsafe -> Unknown); BEFORE2 main f50fa2009 (interim withhold rule) dde4837e 647/9/4,178; AFTER2 at cf46c1af5 dde4837e 647/9/4,178, byte-identical to main (mk_http_error_page and mk_sched_add_connection provisional Unsafe -> Unknown against cffe232d4, nothing else); system 09423cd7 and tail-pause slice 86810e4d byte-identical at every run. Exits in docs/reports/sup07-refused-test-accusation/gate/.",
-  "workspace_tests": 7494,
+  "note": "W48-BOTTOM-UP-CALLEE-BODIES card gate on base main c85cb8806, code steps at 0362c86e0 and docs steps at b922a265a (records only after the code head), scripts docs/reports/w48-bottom-up-callee-bodies/scripts/gate.sh (each step under the shared flock), provider-gate.sh, isolated.sh and finish-gate.sh, logs private/w48bu/gate-g2 of this worktree (a first attempt, gate-g1, stopped at clippy: type_complexity on the cfg(test) decision table, fixed in 0362c86e0): cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 435 units, 448 summaries, 7,501 passed, 1 failed, 11 ignored, exit 101 (private/test-binaries/20261002T145951Z-1399376): the one failure is qcore-verifier-host's execution_quota the_same_fixture_without_a_declared_quota_installs_none, `Io(\"Broken pipe (os error 32)\")` from its spawned fixture, unrelated to this card; constraint 16 applied, the binary re-run alone passed 13/13, exit 0 (04b-execution-quota), nothing weakened; both reevaluation probes exit 0; check_lean_audits.py 282 audits passed (281 + AuditScalarReturnValue.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 281 -> 282, test_build_matrix_sections), then run again after build_matrix.py . --gate this file (09a, 09b); docs index check 0. providers/ is unchanged; the provider gate was run because build_matrix.py merges only a gate with provider_tests: cargo check --locked 0, fmt 0, clippy 0, cargo test 129 passed (exit 0), contracts.py check 0, package build 0, verify of the five packages 0. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main c85cb8806 dde4837e 647/9/4,178; AFTER at 97c4da505 bcc98d2d 648/9/4,177 (rd_kafka_timer_next Unknown -> Safe); system 660295ac and tail-pause slice 218a6819 byte-identical. The commits after 97c4da505 change no lowering (the decision table, a type alias, a parity field). Exits in docs/reports/w48-bottom-up-callee-bodies/gate/.",
+  "workspace_tests": 7501,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 281,
+  "lean_audits": 282,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6972,6 +6972,7 @@
    "AuditScalarObservationContracts.lean",
    "AuditScalarPayloads.lean",
    "AuditScalarPositions.lean",
+   "AuditScalarReturnValue.lean",
    "AuditScalarRouteExitEdge.lean",
    "AuditScalarTasks.lean",
    "AuditScalarTypedErrors.lean",
@@ -7047,7 +7048,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a32011d7035553ac0/docs/reports/sup07-refused-test-accusation/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ac75edcd6de121559/docs/reports/w48-bottom-up-callee-bodies/gate.json)"
  },
  "named_followups": [
   {

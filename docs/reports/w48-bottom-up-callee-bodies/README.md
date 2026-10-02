@@ -322,9 +322,40 @@ discharge holds:
 
 ## 8. Gate
 
-See [gate.json](gate.json) and [gate/](gate/), written when the gate
-finished. The logs are under `private/w48bu/gate-*`. `providers/` is
-unchanged, so the provider gate is not due.
+[`scripts/gate.sh`](scripts/gate.sh) ran the code steps at `0362c86e0` and
+the docs steps at `b922a265a`. The exits are in [gate/](gate/) and the
+figures in [gate.json](gate.json); the logs are under `private/w48bu/gate-g2`.
+A first attempt (`gate-g1`) stopped at clippy (`type_complexity` on the
+test-only decision table) and was stopped; `0362c86e0` names the row type.
+
+**Standing gate:**
+
+- check, submodule, fmt and clippy `--locked` exit 0;
+- `run_test_binaries.py`: 435 units, 448 summaries, **7,501 passed, 1
+  failed**, 11 ignored, exit 101
+  (`private/test-binaries/20261002T145951Z-1399376`);
+- the failure is `qcore-verifier-host`'s `execution_quota`
+  (`the_same_fixture_without_a_declared_quota_installs_none`,
+  `Io("Broken pipe")` from its spawned fixture), unrelated to this card.
+  Constraint 16 was applied: the binary re-run alone passed 13 of 13
+  (`04b`, exit 0). Nothing was weakened;
+- both reevaluation probes exit 0;
+- **282** Lean audits pass (281 + `AuditScalarReturnValue.lean`);
+- Python: 365, with the expected `lean_audits` 281 → 282 failure before the
+  matrix regeneration (`08`, exit 1), then OK after `build_matrix.py . --gate`
+  (`09a`, `09b`, exit 0);
+- the docs index exits 0 (`09`, `10b`, `10c`).
+
+**Provider gate.** `providers/` is unchanged. The provider gate was run
+anyway, because `build_matrix.py` merges only a gate with `provider_tests`:
+
+- check, fmt, clippy and `contracts.py check` exit 0;
+- `cargo test`: 129 passed, exit 0;
+- the package build and all five verifies exit 0.
+
+The AFTER binary was built at `97c4da505`. The later commits change no
+lowering (the decision table, a type alias, one parity field), and the
+corpus was not re-run at the final head.
 
 ## 9. Reproduction
 
