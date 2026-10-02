@@ -99,7 +99,7 @@ use); summarised by [`scripts/routes.py`](scripts/routes.py) and
 [`scripts/census.py`](scripts/census.py) into
 [`artifacts/routes.json`](artifacts/routes.json). BEFORE binary `86bb8683…`
 (tree `2521eba1` = `6cab1ad9` + this card's prediction), AFTER binary
-AFTER_BINARY (tip `06d76faf`). Clang 21.1.8.
+`cd5cb59d…` (tip `06d76faf` on the same base, before the rebases). Clang 21.1.8.
 
 **Census (BEFORE).**
 
@@ -122,7 +122,32 @@ CG16-BOUNDS-CONTRACT-TRANSPORT first.
 
 **Outcome.**
 
-AFTER_TABLE
+| Route | Measure | Predicted | BEFORE | AFTER |
+|---|---|---|---|---|
+| Corpus | custody `resource-diagnostics.json` | byte-identical | 645 / 10 / 4,179, `ceefb6c4…` | **byte-identical** |
+| Corpus | bounds rows | byte-identical | 162 / 0 / 0 / 4,759, `5671d81d…` | **byte-identical** |
+| System | custody | byte-identical | 44 / 2 / 188, `eba699ee…` | **byte-identical** |
+| System | bounds rows | byte-identical | 24 / 0 / 0 / 430, `addfef27…` | **byte-identical** |
+| Slice | custody | byte-identical | 29 / 1 / 239 / 1 Pending, `5278f146…` | **byte-identical** |
+| Slice | bounds rows | byte-identical | 13 / 0 / 0 / 393, `206587f4…` | **byte-identical** |
+
+Every prediction held: **no function moved on any route, for either
+property**, so there is no Safe → non-Safe move, no added leak or violation to
+classify, and no correction. The system and slice reports embed the measuring
+checkout's paths, so their digests are this worktree's (CG16 §3). The corpus
+custody digest is main's stated `ceefb6c4…`, and the corpus bounds tally equals
+CG16's at `b6a3dc42` (162 / 4,759 over 4,921 rows), now measured on
+`6cab1ad9`. The vocabulary's effect is shown by the executed controls (§4),
+not by the routes, which select no bounds declaration.
+
+The card was rebased onto main `01003bc1` (CG29: execution coverage and
+reclamation) and then `1a6a99c0` (CG23: relational postconditions, a
+resource-v1 clause in the contract loader) after the AFTER; the rebased tree
+was checked (`cargo check --workspace --all-targets` 0) and gated (§7). Both
+report their corpus byte-identical (`ceefb6c4…`), and this card's code reads
+none of their items (the bounds loader and consumer are disjoint from the
+resource loader CG23 extends), so the comparison is not repeated on the
+rebased tree.
 
 ## 4. Controls
 
@@ -172,7 +197,7 @@ the three routes (§3). Trust boundary 28 is a stated premise, and so is C06's
 
 ## 6. Ledger
 
-By [`scripts/update_ledger.py`](scripts/update_ledger.py) (LEDGER_COUNTS):
+By [`scripts/update_ledger.py`](scripts/update_ledger.py) (`named_followups` 681 → 682 on main `1a6a99c0`: one retired, two registered):
 
 * **CG24-ALIAS-EXTENT-FRAME-VOCABULARY: retired.** Every DISCHARGE clause
   holds: the BEFORE reproduced K04 and K06, the prediction was frozen first,

@@ -1,0 +1,294 @@
+{
+ "before": {
+  "corpus": {
+   "custody_sha256": "ceefb6c430e4a7a50c7f4779c6e1268b67d30556a6fe3de22ecdc206c6fe077d",
+   "bounds_sha256": "5671d81d0fcbf184861c3b08fe01ddbb6c198f024f1aacbd4b2fd35e9c67a6f0",
+   "census": {
+    "custody": {
+     "functions": 4834,
+     "tally": {
+      "Safe": 645,
+      "Unknown": 4179,
+      "Unsafe": 10
+     },
+     "families": {
+      "sds": {
+       "leaves": 170,
+       "functions": 36,
+       "sole": 3,
+       "sole_functions": [
+        "cmetrics/cmt_encode_splunk_hec.c/format_metric_type",
+        "cmetrics/cmt_encode_text.c/append_bytes_value",
+        "ctraces/ctr_encode_text.c/sds_cat_safe"
+       ]
+      },
+      "backlog": {
+       "leaves": 1,
+       "functions": 1,
+       "sole": 0,
+       "sole_functions": []
+      },
+      "derived": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      }
+     }
+    },
+    "bounds": {
+     "rows": 4921,
+     "tally": {
+      "Safe": 162,
+      "Unknown": 4759
+     },
+     "pointer_to_uncontracted_callee": 4133,
+     "pointer_to_uncontracted_callee_sole": 660,
+     "rows_with_declared_assumptions": 0
+    }
+   }
+  },
+  "system": {
+   "custody_sha256": "eba699ee9abba1ef9a82798cbc82437d3d2229b3f07e9245668de45f00477bf6",
+   "bounds_sha256": "addfef2723f65d088a9e1ff3103659ac09eee2c751c0c7ff5843d3f9e3b9e671",
+   "census": {
+    "custody": {
+     "functions": 234,
+     "tally": {
+      "Safe": 44,
+      "Unknown": 188,
+      "Unsafe": 2
+     },
+     "families": {
+      "sds": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      },
+      "backlog": {
+       "leaves": 17,
+       "functions": 7,
+       "sole": 0,
+       "sole_functions": []
+      },
+      "derived": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      }
+     }
+    },
+    "bounds": {
+     "rows": 454,
+     "tally": {
+      "Safe": 24,
+      "Unknown": 430
+     },
+     "pointer_to_uncontracted_callee": 371,
+     "pointer_to_uncontracted_callee_sole": 31,
+     "rows_with_declared_assumptions": 0
+    }
+   }
+  },
+  "slice": {
+   "custody_sha256": "5278f146780e9f2d471dfb504ae75de86073eb19e3b0ae85082156838beb1539",
+   "bounds_sha256": "206587f4a5bab0a84b32caa222292d9982d7faf16f43ef61300d151c7dbb1407",
+   "census": {
+    "custody": {
+     "functions": 270,
+     "tally": {
+      "Pending": 1,
+      "Safe": 29,
+      "Unknown": 239,
+      "Unsafe": 1
+     },
+     "families": {
+      "sds": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      },
+      "backlog": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      },
+      "derived": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      }
+     }
+    },
+    "bounds": {
+     "rows": 406,
+     "tally": {
+      "Safe": 13,
+      "Unknown": 393
+     },
+     "pointer_to_uncontracted_callee": 358,
+     "pointer_to_uncontracted_callee_sole": 30,
+     "rows_with_declared_assumptions": 0
+    }
+   }
+  }
+ },
+ "after": {
+  "corpus": {
+   "custody_sha256": "ceefb6c430e4a7a50c7f4779c6e1268b67d30556a6fe3de22ecdc206c6fe077d",
+   "bounds_sha256": "5671d81d0fcbf184861c3b08fe01ddbb6c198f024f1aacbd4b2fd35e9c67a6f0",
+   "census": {
+    "custody": {
+     "functions": 4834,
+     "tally": {
+      "Safe": 645,
+      "Unknown": 4179,
+      "Unsafe": 10
+     },
+     "families": {
+      "sds": {
+       "leaves": 170,
+       "functions": 36,
+       "sole": 3,
+       "sole_functions": [
+        "cmetrics/cmt_encode_splunk_hec.c/format_metric_type",
+        "cmetrics/cmt_encode_text.c/append_bytes_value",
+        "ctraces/ctr_encode_text.c/sds_cat_safe"
+       ]
+      },
+      "backlog": {
+       "leaves": 1,
+       "functions": 1,
+       "sole": 0,
+       "sole_functions": []
+      },
+      "derived": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      }
+     }
+    },
+    "bounds": {
+     "rows": 4921,
+     "tally": {
+      "Safe": 162,
+      "Unknown": 4759
+     },
+     "pointer_to_uncontracted_callee": 4133,
+     "pointer_to_uncontracted_callee_sole": 660,
+     "rows_with_declared_assumptions": 0
+    }
+   }
+  },
+  "system": {
+   "custody_sha256": "eba699ee9abba1ef9a82798cbc82437d3d2229b3f07e9245668de45f00477bf6",
+   "bounds_sha256": "addfef2723f65d088a9e1ff3103659ac09eee2c751c0c7ff5843d3f9e3b9e671",
+   "census": {
+    "custody": {
+     "functions": 234,
+     "tally": {
+      "Safe": 44,
+      "Unknown": 188,
+      "Unsafe": 2
+     },
+     "families": {
+      "sds": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      },
+      "backlog": {
+       "leaves": 17,
+       "functions": 7,
+       "sole": 0,
+       "sole_functions": []
+      },
+      "derived": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      }
+     }
+    },
+    "bounds": {
+     "rows": 454,
+     "tally": {
+      "Safe": 24,
+      "Unknown": 430
+     },
+     "pointer_to_uncontracted_callee": 371,
+     "pointer_to_uncontracted_callee_sole": 31,
+     "rows_with_declared_assumptions": 0
+    }
+   }
+  },
+  "slice": {
+   "custody_sha256": "5278f146780e9f2d471dfb504ae75de86073eb19e3b0ae85082156838beb1539",
+   "bounds_sha256": "206587f4a5bab0a84b32caa222292d9982d7faf16f43ef61300d151c7dbb1407",
+   "census": {
+    "custody": {
+     "functions": 270,
+     "tally": {
+      "Pending": 1,
+      "Safe": 29,
+      "Unknown": 239,
+      "Unsafe": 1
+     },
+     "families": {
+      "sds": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      },
+      "backlog": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      },
+      "derived": {
+       "leaves": 0,
+       "functions": 0,
+       "sole": 0,
+       "sole_functions": []
+      }
+     }
+    },
+    "bounds": {
+     "rows": 406,
+     "tally": {
+      "Safe": 13,
+      "Unknown": 393
+     },
+     "pointer_to_uncontracted_callee": 358,
+     "pointer_to_uncontracted_callee_sole": 30,
+     "rows_with_declared_assumptions": 0
+    }
+   }
+  }
+ },
+ "byte_identical": {
+  "corpus": {
+   "custody": true,
+   "bounds": true
+  },
+  "system": {
+   "custody": true,
+   "bounds": true
+  },
+  "slice": {
+   "custody": true,
+   "bounds": true
+  }
+ }
+}

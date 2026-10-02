@@ -454,7 +454,7 @@ CG22.
 | CG21-CALL-EXITS-AND-BOUNDARIES | C09–C13, E20, I06 | High | CG02 |
 | CG22-INDIRECT-CALLS-AND-CALLBACKS | K01 K02 | High | CG03 |
 | CG23-RELATIONAL-POSTCONDITIONS | K05 K11 | High | CG03 |
-| CG24-ALIAS-EXTENT-FRAME-VOCABULARY | K04 K06 | High | CG03, CG16 |
+| CG24-ALIAS-EXTENT-FRAME-VOCABULARY | K04 K06 | High | CG03, CG16 (landed, wave 48 round 11) |
 | CG25-RESOURCE-KINDS | K07 | High | none (landed, wave 48 round 10) |
 | CG26-VARIADICS | K08 K09 K10 | High | CG03 |
 | CG27-LOOPS-RECURSION-BUDGETS | C06 C07 C08 | High | CG09 |
@@ -543,6 +543,18 @@ CG22.
     `Derived` relations.
   - *Absorbs:* W46-SDS-CAT-SAFE-IN-PLACE-REALLOC and
     W45-FB-BACKLOG-REFERENCE-VOCABULARY.
+  - *Status (wave 48, round 11).* Landed in CG16's bounds vocabulary (gateway
+    rule 11e, C09.1, G05b): closed frames (`bounds_frame_reads`/`writes`/`moves`
+    per pointer and slot parameter; a read keeps, a write withdraws the local
+    it receives, a move withdraws every declared fact), frame-tracked locals,
+    `bounds_return_derived` (offset/length, multi-base) with containment
+    checked against the base, and refutation by the body. Custody and bounds
+    byte-identical on corpus, system and slice (no bounds declaration is
+    selected on the audit routes). The sds slot is stated on the bounds side;
+    W46-SDS-CAT-SAFE-IN-PLACE-REALLOC and W45-FB-BACKLOG-REFERENCE-VOCABULARY
+    amended (custody halves open). Residuals `CG24-CALLBACK-SPANNING-RELATIONS`,
+    `CG24-FRAME-AND-SLOT-PRECISION`.
+    [Report](../../reports/cg24-alias-extent-frame-vocabulary/README.md).
 - **CG25: resource kinds.**
   - *Change.* New kinds beyond Heap/Descriptor/Stream/Directory, each with a
     sentinel and a release protocol. No unjustified equivalence to an

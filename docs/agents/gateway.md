@@ -2754,7 +2754,12 @@ own anchor here.
     across a move, alias a derived result into a base the call may move, or
     let a relation enlarge a base. Premises stated, not proved: faithful
     Clang extraction (trust boundary 28) and C06's `Declared` reading of a
-    resolved frame or relation. MEASURED_TBD
+    resolved frame or relation. Measured (corpus `66910c10`, system,
+    tail-pause slice, base `6cab1ad9`, the bounds property selected on all
+    three with no bounds declaration): custody and bounds artifacts
+    **byte-identical** (corpus `ceefb6c4…` 645 / 10 / 4,179, bounds rows
+    `5671d81d…` 162 Safe / 4,759 Unknown); the vocabulary reaches no function
+    until bounds declarations are transported (CG16-BOUNDS-CONTRACT-TRANSPORT).
     `QCore.IndexExtentFrames` (`write_frame_withdraws_its_local`,
     `read_frame_preserves`, `write_frame_keeps_unrelated_extents`,
     `move_frame_withdraws_declared_facts`, `unstated_is_the_weakest`,
