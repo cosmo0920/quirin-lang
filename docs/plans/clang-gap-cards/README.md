@@ -724,9 +724,69 @@ Unsafe presented as an upstream defect. In addition:
   none in the corpus arbiter. The largest pair is CG10 + CG11 (80 functions).
   2,765 Unknown functions stay blocked by uncontracted calls or other
   unattributed leaves whatever phase 1–3 card lands.
-- **Landed:** CG00 (Medium) and CG01 (High, T only).
+- **Landed:** every card, CG00–CG30 (wave 48, rounds 1–11, last landing main
+  `cf7cce20a`). The final-tree corpus is 647 / 10 / 4,177; see
+  [STATUS](../../STATUS.md) for the measured headline; each card's report owns its
+  figures. Open work is each card's registered residuals and §6.
 - **Critical path:** CG02 → CG03, then CG04, CG05 and CG06 in parallel, each
   consuming CG00's function lists. CG10 can start now, in parallel with
   phase 1, and has the largest measured yield.
 - **Delegated briefs.** A brief must carry the card's entries, the absorbed
   follow-ups with their current sizes, and the evidence IDs.
+
+## 6. Supplemental cards (2026-10-02)
+
+After the queue landed, the user decided (2026-10-02) that the four unmerged
+branches left from earlier waves are deleted and that the questions still open
+become supplemental cards. Each branch was tagged locally before deletion
+(`archive/<branch>`, not pushed), so its content stays recoverable:
+
+| Branch (archive tag) | Tip | What it held | Disposition |
+|---|---|---|---|
+| `card/c03-reach` (`archive/card-c03-reach`) | `326e634ef` | A competing C03-REACH unit 2: `QCore.NeutralFrameCensus`, 17 theorems proving the reach census inert and its labels a refinement of the gate | C03-REACH landed on main another way (`legacy_census.rs`) and judged Lean not applicable ([report §8](../../reports/remaining-c03-reach/README.md#8-lean)). The proof was never ported: **SUP01** |
+| `worktree-agent-a5b3a29c…` (`archive/worktree-agent-a5b3a29c1b3667c11`) | `30f0b1853` | WIP `gateway_reason_census.py` of the stalled C-GATEWAY-INDIRECT-CENSUS | Superseded: [C-GATEWAY-INDIRECT-CENSUS-2](../../reports/c-gateway-indirect-census-2/README.md) landed and fixed the macro-expansion misclassification (constraint 12a) the WIP stalled on. No open question |
+| `worktree-agent-a9c18eb0…` (`archive/worktree-agent-a9c18eb0765edfc46`) | `4a4df39cc` | A first CT41-MAP attempt (seven fixtures, its own stage-evidence file) | Superseded: CT41-MAP was [reduced onto the landed CT41 mapping](../../reports/ct41-map/README.md) and its residuals are registered (`CT41-*`). No open question |
+| `worktree-agent-ae1b55b7…` (`archive/worktree-agent-ae1b55b7a62492169`) | `3fbcfe2cd` | An abandoned HYGIENE-16 edit to `remaining-t00/coverage.json` that reverts later CT-CTWIN buckets | Obsolete: HYGIENE-16 landed in wave 16; the edit would regress the ledger. No open question |
+
+The supplemental cards also carry the questions the queue's last rounds left
+open. Each is registered in `named_followups` (recorded by
+`CLANG-GAP-SUPPLEMENTAL`); the queue's §4 acceptance applies to every one.
+
+| Card | Question | Effort | Prerequisite |
+|---|---|---|---|
+| SUP01-C03-CENSUS-INERTNESS-PROOF | Is the reach census provably inert now that verdict work relies on it? | High | none |
+| SUP02-MSVC-LLP64-WINDOWS-RUN | Do CG20's plain-`long` refusal and CG30's LLP64 refusal hold under a real MSVC-target Clang on Windows? | Medium (Windows host) | none |
+| SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN | What is the bounds property's tally on the integrated main? | Medium | none |
+| SUP04-VARIADIC-UPSTREAM-CANDIDATES | Are CG26's two protocol violations real upstream defects? | Medium | none |
+| SUP05-PREDICTION-BEFORE-CODE | Can the order "prediction frozen before implementation" be checked, not asserted? | Medium | none |
+
+- **SUP01: census inertness proof.** CG27 re-read C03-NFR-REACH with the census
+  (`crates/qcore-c-gateway/src/legacy_census.rs`, `compiler/examples/c03_reach_census.rs`), so a census edit that read its
+  own log could now move a recorded measurement unseen. Port the archived
+  `QCore.NeutralFrameCensus` (inertness: `the_log_does_not_influence_the_assignment`;
+  faithfulness under `Refines`) onto main's census, bound by shared vectors, or
+  record why C03-REACH's "not applicable" still holds. Size: 1 module, 17
+  theorems in the archive; 0 verdicts move by construction.
+- **SUP02: Windows MSVC run.** CG20's `c_numeric_abi_llp64` test runs a wrapper
+  Clang on Linux; CG30 refuses non-LP64 targets by flag. Run both controls and
+  the MSVC ABI reader fixtures on the Windows host against an
+  `x86_64-pc-windows-msvc` default target, record the revision and exits per
+  [platform evidence](../../development/platform-evidence.md), and correct the
+  reader's premise sentence if a control disagrees.
+- **SUP03: bounds tally on the integrated main.** CG16's final AFTER was lost
+  when the integrator removed its worktree mid-run; the published tally (162
+  Safe / 0 Pending / 0 Unsafe / 4,759 Unknown; combined 111 Safe) is from base
+  `b6a3dc42`. Re-measure with `QCORE_BOUNDS_PROPERTY` on the current main,
+  attribute any change (CG24's frames reach no function yet), and update the
+  STATUS bounds row.
+- **SUP04: variadic upstream candidates.** CG26 classified two refusals by
+  reading: `mk_vhost_set` returns without `va_end` on its `!value` path;
+  `rd_kafka_cgrp_rejoin` passes `ap` before `va_start`. Validate each against
+  the pinned sources (and a native trace where the path is reachable) before
+  any upstream report; until then they stay provisional and are never presented
+  as upstream defects.
+- **SUP05: prediction order.** Seven round-9/10 cards (CG21, CG23, CG25, CG26,
+  CG27, CG28, CG30) froze `PREDICTION.md` after drafting code (each disclosed it). Add a check that a card's prediction
+  commit precedes its first implementation commit (a records or validator
+  check, not a gate weakening), apply it to the wave-48 reports as a
+  measurement, and record the seven as disclosed deviations, not corrections.
