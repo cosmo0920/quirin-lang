@@ -129,7 +129,7 @@
     {
       "function": "fprintf",
       "module": "libc/stdio.qv",
-      "contract_sha256": "721652410d062d9b84ba00819b55542941050b62405040f625afb8d8b41c65b3"
+      "contract_sha256": "9d44f6233231b057a3f99433bffc41bdcca554df782463d14032a6a2e9e3f69e"
     },
     {
       "function": "free",
@@ -284,7 +284,7 @@
     {
       "function": "printf",
       "module": "libc/stdio.qv",
-      "contract_sha256": "d0bae961f9fabe8fb40c90d117fca447130f7721c7178000ea267437e18f321e"
+      "contract_sha256": "0a61c887d183dcec2a409a697e14942c9444e888139e60bd6b4bcec2c375fec0"
     },
     {
       "function": "pthread_attr_setdetachstate",
@@ -454,7 +454,7 @@
     {
       "function": "snprintf",
       "module": "libc/stdio.qv",
-      "contract_sha256": "1acdf35a37e8c9af9125a14eddd92b9d5e1324ded76beaef9219dc66b3196b9c"
+      "contract_sha256": "d5c61911c447ef2eafd9412d53ad1816e481d95e812097bc64d09dc0f8fbee0b"
     },
     {
       "function": "socket",

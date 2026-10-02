@@ -897,7 +897,7 @@
     {
       "function": "flb_log_print",
       "module": "fluent_bit/logging.qv",
-      "contract_sha256": "462e9f3c1839cf3b6dfd8129e7c4fd8fff1978a32b37de50b8502601cbfb3c3b",
+      "contract_sha256": "3956a43708a52a21befa8a47e69b400e4ec304bf738b593d77bb14562299b32e",
       "identities": [
         {
           "reviewed_at": [

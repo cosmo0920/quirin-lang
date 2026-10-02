@@ -177,3 +177,100 @@ contract {
     ensures normal resource_borrowed(max_size);
     ensures normal resource_return_owned(nullable);
 };
+
+// ## Card CONTRACT-NORETURN-AND-BORROWED-TAILS: `rd_kafka_crash`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (`rdkafka.c`, `rdkafka_int.h` and `rdposix.h` are
+// identical at `66910c10` and `046accf6`, and at the tail-pause export
+// `90978ac6`; one copy in the tree). It is the target of `rd_kafka_assert`
+// (`lib/librdkafka-2.15.0/src/rdkafka_int.h:61-66`):
+//
+//     #define rd_kafka_assert(rk, cond)                                    \
+//             do {                                                         \
+//                     if (unlikely(!(cond)))                               \
+//                             rd_kafka_crash(__FILE__, __LINE__,           \
+//                                            __FUNCTION__, (rk),           \
+//                                            "assert: " #cond);            \
+//             } while (0)
+//
+// CG21's census resolves it as the only uncontracted callee whose Clang
+// declaration is `noreturn` (`CG21-UNDECLARED-NORETURN-CALLEES`). It lives in
+// this module, beside the module's other librdkafka declarations, so every
+// selection that reads librdkafka's contracts reads it.
+//
+// ## The declaration, read from `rdkafka_int.h:69-73` and `rdposix.h:61`
+//
+//     void RD_NORETURN rd_kafka_crash(const char *file, int line,
+//                                     const char *function, rd_kafka_t *rk,
+//                                     const char *reason);
+//     #define RD_NORETURN __attribute__((noreturn))
+//
+// (`rdwin32.h:80` spells it `__declspec(noreturn)` in the Windows build,
+// which is not audited.) The definition repeats `RD_NORETURN`.
+//
+// ## The body, read from `rdkafka.c:6640-6649`
+//
+//     void RD_NORETURN rd_kafka_crash(const char *file, int line,
+//                                     const char *function, rd_kafka_t *rk,
+//                                     const char *reason) {
+//             fprintf(stderr, "*** %s:%i:%s: %s ***\n", file, line, function,
+//                     reason);
+//             if (rk)
+//                     rd_kafka_dump0(stderr, rk, 0 /*no locks*/);
+//             abort();
+//     }
+//
+// Every path ends at `abort()` (C17 7.22.4.1: it does not return), after a
+// diagnostic on `stderr` and, for a non-NULL `rk`, `rd_kafka_dump0` with
+// `locks` 0 (`rdkafka.c:6201-6282`). That dump only reads: it prints `rk`'s
+// counters, brokers (`rd_kafka_broker_dump`), consumer group, topics and
+// metadata cache (`rd_kafka_metadata_cache_dump`), takes no rd_kafka lock at
+// `locks` 0, and its one lock, `rd_kafka_curr_msgs_get`'s
+// `mtx_lock(&rk->rk_curr_msgs.lock)` / `mtx_unlock` pair, is taken and
+// released inside the call (were the asserting thread already holding that
+// plain mutex, the relock would be undefined behaviour, C11 7.26.4.4, which
+// C04.3.3's exit includes; `rd_kafka_curr_msgs_sub`'s own assertion passes
+// `rk` NULL). No path calls `longjmp`, `setcontext`, `pthread_exit` or
+// `thrd_exit`: the exit is program termination, not a non-local exit, which
+// is what `resource_no_return()` states.
+//
+// ## Custody
+//
+//   * `file`, `function` and `reason` are strings READ by `fprintf`; never
+//     freed, stored or returned: `resource_borrowed`. `line` is a scalar.
+//   * `rk` is only read (by the dump) and may be NULL: `resource_borrowed`.
+//     Nothing is released or retained; the program then ends.
+//   * The result is `void`: `resource_return_none()`.
+//
+// The C gateway ends the path at a call STATEMENT only where the call's own
+// Clang declaration is `noreturn` (gateway rule 11o); neither this
+// declaration alone nor the attribute alone does.
+//
+// ## Where the body lives
+//
+// `rdkafka.c`, an analysed unit. A body with no normal exit publishes no
+// summary (rule 11o), so the body neither validates nor refutes this
+// declaration: it stays an unchecked premise (rule 10g), pinned to the
+// declaration and definition texts.
+//
+// ## ABI (constraint 8)
+//
+// `const char *` is `ptr<const, u8>`, `int` is `i32`, `rd_kafka_t *` one
+// object-pointer level (`ptr<mut, u8>`), and the `void` result `unit`.
+//
+// NOT CLAIMED: the dump's output, its unlocked reads of state other threads
+// may be changing, or anything about the asserted condition.
+
+// --- rd_kafka_assert's failure call: prints, dumps and aborts ---
+extern fn rd_kafka_crash(file: ptr<const, u8>, line: i32, function: ptr<const, u8>, rk: ptr<mut, u8>, reason: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(function);
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(reason);
+    ensures normal resource_return_none();
+    ensures normal resource_no_return();
+};

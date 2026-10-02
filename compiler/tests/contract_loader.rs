@@ -365,6 +365,10 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("abort", 0),
         ("exit", 1),
         ("__assert_fail", 4),
+        // Card CONTRACT-NORETURN-AND-BORROWED-TAILS: librdkafka's
+        // `rd_kafka_crash` (`librdkafka/memory.qv`), the same shape: four read
+        // or scalar arguments and a borrowed, only-read `rk`.
+        ("rd_kafka_crash", 5),
         // Card W43-LIBC-PRINTF-FAMILY: the formatted-output family. Every
         // declared parameter is borrowed (a written-through buffer or stream
         // the caller keeps, a size, a read format), the result is an `int`
@@ -1537,9 +1541,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 59 -> 60 and 263 -> 264 by card MONKEY-VHOST-PROPERTY-CUSTODY:
     // `monkey/string.qv`'s `mk_string_dup` (a borrowed string, an owned
     // nullable result), manifest-selected.
+    // 264 -> 265 by card CONTRACT-NORETURN-AND-BORROWED-TAILS: `rd_kafka_crash`
+    // appended to `librdkafka/memory.qv`, already selected, with
+    // `resource_no_return()`. Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (60, 264, 216)
+        (60, 265, 216)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

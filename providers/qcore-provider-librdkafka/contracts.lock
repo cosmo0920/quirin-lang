@@ -178,6 +178,38 @@
       ]
     },
     {
+      "function": "rd_kafka_crash",
+      "module": "librdkafka/memory.qv",
+      "contract_sha256": "d51674dfca49981978d1c34e8781c552c75e305e81dde82fa32c3413a7354787",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka.c",
+              "kind": "definition",
+              "declaration_sha256": "9185804151f5128aff833f981528e13070c33c66249625fb726fb9a714b960d5",
+              "body_sha256": "1914374a241c917d67225e165cea4a70e24f2e5d2babe9ab3da6ea6e726bdf7e"
+            },
+            {
+              "path": "lib/librdkafka-2.15.0/src/rdkafka_int.h",
+              "kind": "declaration",
+              "declaration_sha256": "9185804151f5128aff833f981528e13070c33c66249625fb726fb9a714b960d5"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "rd_kafka_mem_free",
       "module": "librdkafka/kafka_mem.qv",
       "contract_sha256": "49cc2f1d8dd9f93652f0f8d6af31fea7d7ae5a2347a72e45c16f043f114a5cf0",

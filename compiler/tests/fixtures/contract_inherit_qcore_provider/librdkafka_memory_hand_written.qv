@@ -71,3 +71,18 @@ contract {
     ensures normal resource_borrowed(max_size);
     ensures normal resource_return_owned(nullable);
 };
+
+// Card CONTRACT-NORETURN-AND-BORROWED-TAILS appended `rd_kafka_crash` to the
+// converted module; it inherits nothing either, so its hand-written form is
+// the module's own text and the conversion's parity is unchanged.
+extern fn rd_kafka_crash(file: ptr<const, u8>, line: i32, function: ptr<const, u8>, rk: ptr<mut, u8>, reason: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(file);
+    ensures normal resource_borrowed(line);
+    ensures normal resource_borrowed(function);
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(reason);
+    ensures normal resource_return_none();
+    ensures normal resource_no_return();
+};

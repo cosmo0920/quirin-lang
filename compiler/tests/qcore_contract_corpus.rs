@@ -930,6 +930,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (`src/rd.h:472-521`): marker, three borrowed arguments, and a
     // nullable owned `rd_malloc` buffer.
     ("librdkafka/memory.qv", "rd_file_read", 5),
+    // Card CONTRACT-NORETURN-AND-BORROWED-TAILS: `rd_kafka_assert`'s failure call
+    // (`src/rdkafka.c:6640-6649`): marker, five borrowed arguments, `none`
+    // and the no-return exit.
+    ("librdkafka/memory.qv", "rd_kafka_crash", 8),
     (
         "librdkafka/queue_destructor.qv",
         "rd_kafka_q_destroy_final",

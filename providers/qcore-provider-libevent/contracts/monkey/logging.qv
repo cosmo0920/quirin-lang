@@ -161,13 +161,32 @@ module contract;
 //   * Nothing about thread safety — `printf`/`vprintf` interleaving across
 //     threads is neither modeled nor claimed.
 
+// ## Card CONTRACT-NORETURN-AND-BORROWED-TAILS: the borrowed tail
+//
+// The tail clause is now `resource_variadic_borrowed_tail()` (contract
+// specification C04.2): the data tail's statement, and that every trailing
+// position is `resource_borrowed`. Re-read against the body at both audited
+// revisions (`lib/monkey/mk_core/mk_utils.c:199-261`, the same text at
+// `66910c10` and `046accf6`; the file differs only in `mk_utils_worker_*`
+// below it): the list is opened by `va_start(args, format)`, read only by
+// `vprintf(format, args)`, which renders each trailing argument to `stdout`
+// (C17 7.21.6.10 / 7.21.6.1: a `%s` or `%p` argument is read, a `%n`
+// argument is written through as an `int *`), and closed by `va_end(args)`.
+// No trailing pointer is freed, stored, returned or reachable after the
+// call: each one is borrowed. The gateway reads a trailing plain name as a
+// borrowed place (gateway rule 11w, T8): a live tracked pointer is admitted
+// with its own obligation unchanged, and one released before the call is
+// still refused (C04.2's caller-side rule). The `vprintf` reading through a
+// released pointer that the NOT CLAIMED note above records is exactly that
+// refusal.
+
 // --- the variadic diagnostic entry point every Monkey logging macro calls ---
 extern fn mk_print(level: i32, format: ptr<const, u8>) -> unit
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(level);
     ensures normal resource_borrowed(format);
-    ensures normal resource_variadic_data_tail();
+    ensures normal resource_variadic_borrowed_tail();
     ensures normal resource_return_none();
 };
 

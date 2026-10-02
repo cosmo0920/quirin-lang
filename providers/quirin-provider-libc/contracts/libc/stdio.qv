@@ -118,18 +118,36 @@ contract {
 //   it (`qcore-provider-libevent/contracts/monkey/logging.qcore`). The clause
 //   admits nothing on its own: the gateway still requires, per call site,
 //   that every tail actual is data.
+// * [Card CONTRACT-NORETURN-AND-BORROWED-TAILS] `printf`, `fprintf` and
+//   `snprintf` now declare `resource_variadic_borrowed_tail()` (contract
+//   specification C04.2): the same statement, and that every trailing
+//   position is `resource_borrowed`. C17 7.21.6.1 (with 7.21.6.3 and
+//   7.21.6.5) gives each conversion's effect on its argument: `%s` and `%p`
+//   READ the pointer or the string it points to, `%n` STORES the count of
+//   characters written so far through an `int *` (p8), and every other
+//   conversion reads a value. None frees, stores or returns an argument, and
+//   nothing of an argument outlives the call but the rendered text, so a
+//   pointer handed to the tail is borrowed: the gateway reads a trailing
+//   plain name as a borrowed place (gateway rule 11w, T8) and still refuses a
+//   released one (C04.2's caller-side rule). `%n`'s store is a write through
+//   a borrowed position, exactly as `snprintf`'s `s` is: no custody moves.
+//   It is not a claim that the stored count is unchanged: the gateway forgets
+//   the fact of a scalar lent as `&x` (T7) and holds no fact about `*p` of a
+//   pointer, so no custody decision can rest on the rewritten count
+//   (`a_percent_n_write_through_an_aliased_scalar_is_never_certified`).
+//   `sprintf` keeps the data tail: no analysed call of it has a tail actual
+//   the data tail refuses, so the borrowed tail would decide nothing.
 //
 // ## What no declaration here says
 //
 // Nothing about buffer bounds or truncation (`sprintf` overrunning `s`, or
 // `snprintf` given a `maxlen` larger than `s`), about agreement between the
-// format and the tail, about `%n` (which WRITES through a tail pointer; the
-// tail rule refuses a pointer-valued tail actual whose target this function
-// can bind, and admitting any other pointer is the tail premise, not a claim
-// about `%n`), about `%s` reading through a released pointer (the gateway's
-// own liveness precondition, unchanged), stream errors, `errno`, locale, or
-// interleaving across threads. These are per-call custody statements about the
-// CALLER's obligations, and nothing more.
+// format and the tail (an argument whose type does not match its conversion
+// is undefined behaviour, C17 7.21.6.1p9, which no custody statement covers),
+// about the count `%n` stores, about `%s` reading through a released pointer
+// (the gateway's own liveness precondition, unchanged), stream errors,
+// `errno`, locale, or interleaving across threads. These are per-call custody
+// statements about the CALLER's obligations, and nothing more.
 //
 // ## Refused by name (recorded in the card report)
 //
@@ -146,7 +164,7 @@ contract {
     requires resource_contract_v1;
     requires resource_revision(flexible);
     ensures normal resource_borrowed(format);
-    ensures normal resource_variadic_data_tail();
+    ensures normal resource_variadic_borrowed_tail();
     ensures normal resource_return_none();
 };
 
@@ -156,7 +174,7 @@ contract {
     requires resource_revision(flexible);
     ensures normal resource_borrowed(stream);
     ensures normal resource_borrowed(format);
-    ensures normal resource_variadic_data_tail();
+    ensures normal resource_variadic_borrowed_tail();
     ensures normal resource_return_none();
 };
 
@@ -167,7 +185,7 @@ contract {
     ensures normal resource_borrowed(s);
     ensures normal resource_borrowed(maxlen);
     ensures normal resource_borrowed(format);
-    ensures normal resource_variadic_data_tail();
+    ensures normal resource_variadic_borrowed_tail();
     ensures normal resource_return_none();
 };
 

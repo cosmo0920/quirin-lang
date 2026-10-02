@@ -405,7 +405,7 @@
     {
       "function": "mk_print",
       "module": "monkey/logging.qv",
-      "contract_sha256": "ba408119d8a536af77c0ed47c407e5ea8498d4a2215917d03f2497b10a974b8c",
+      "contract_sha256": "bf96bbef5b4ac3bfcc773cbfb0b54761fe6500133a8a46dd7c5e51c63caff481",
       "identities": [
         {
           "reviewed_at": [

@@ -68,6 +68,25 @@ module contract;
 // precondition (card BORROW-LIVENESS) is what refuses that, on settled
 // denotations, and it is unchanged here.
 //
+// [Card CONTRACT-NORETURN-AND-BORROWED-TAILS] `flb_log_print`'s tail clause is
+// now `resource_variadic_borrowed_tail()` (contract specification C04.2): the
+// data tail's statement, and that every trailing position is
+// `resource_borrowed`. Re-read against the body at both audited revisions
+// (`src/flb_log.c:1179-1300` and `include/fluent-bit/flb_log.h`, identical at
+// `66910c10` and `046accf6`): the list is opened by `va_start(args, fmt)`,
+// passed as `&args` to `flb_log_construct`, whose only use of it is
+// `vsnprintf(body, body_size, fmt, *args)` into the function-local `body`, and
+// closed by `va_end(args)` before anything else runs. `vsnprintf` reads each
+// `%s` / `%p` argument and writes through a `%n` one as an `int *` (C17
+// 7.21.6.12, 7.21.6.1); everything after it (`log_queue_enqueue`,
+// `log_render_message`, `fprintf`) carries the text of `body`. No trailing
+// pointer is freed, stored, returned or reachable after the call: each one is
+// borrowed. The gateway reads a trailing plain name as a borrowed place
+// (gateway rule 11w, T8): a live tracked pointer (`flb_debug("… %p", task)`)
+// is admitted with its own obligation unchanged, and one released before the
+// call is still refused (C04.2's caller-side rule, the liveness precondition
+// the NOT CLAIMED note above names).
+//
 // ## `flb_log_check`, read from the pinned body
 //     (`include/fluent-bit/flb_log.h:162`, a `static inline`)
 //
@@ -170,6 +189,6 @@ contract {
     ensures normal resource_borrowed(file);
     ensures normal resource_borrowed(line);
     ensures normal resource_borrowed(format);
-    ensures normal resource_variadic_data_tail();
+    ensures normal resource_variadic_borrowed_tail();
     ensures normal resource_return_none();
 };
