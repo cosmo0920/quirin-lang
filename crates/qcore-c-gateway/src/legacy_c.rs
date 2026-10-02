@@ -15607,6 +15607,37 @@ fn refine_pointer_null(
         // Nullness is independent of identity. A guard narrows its own
         // binding, never another alias or a resource's existence. Keep the
         // identity refusal and every obligation on both edges.
+        //
+        // Card MONKEY-VHOST-PROPERTY-CUSTODY (rule 12e): but on the null edge
+        // a nullable, possibly-live site the binding may denote owes no
+        // accusation that rests on its non-null-ness there, which this
+        // refused test cannot establish: it is withheld.
+        if assume_null {
+            let withheld = pointer
+                .targets
+                .iter()
+                .copied()
+                .filter(|site| {
+                    crate::refused_null_test::null_edge_step(
+                        true,
+                        state.nullable_sites.contains(site),
+                        state
+                            .resources
+                            .get(site)
+                            .is_some_and(|status| status & LIVE != 0),
+                    ) == crate::refused_null_test::NullEdgeStep::Withhold
+                })
+                .collect::<BTreeSet<_>>();
+            if !withheld.is_empty() {
+                mark_unresolved_effect(
+                    state,
+                    &AbstractPointer {
+                        targets: withheld,
+                        ..Default::default()
+                    },
+                );
+            }
+        }
         let narrowed = state.pointers.get_mut(source).expect("existing binding");
         if assume_null {
             narrowed.targets.clear();

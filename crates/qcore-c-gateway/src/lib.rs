@@ -77,6 +77,9 @@ mod field_link_join;
 // owner's field-linked children; the G hooks are in
 // `legacy_container_publication.rs`.
 mod carried_publication;
+// Card MONKEY-VHOST-PROPERTY-CUSTODY (rule 12e): a refused null test never
+// establishes a leak accusation on its null edge; hook in `legacy_c.rs`.
+mod refused_null_test;
 // Card CG18-FOOTPRINT-CONNECTION (rule 11k): source places connected to the
 // core footprint model; the elaborator hook is in `legacy_elaboration.rs`.
 mod footprint_connection;

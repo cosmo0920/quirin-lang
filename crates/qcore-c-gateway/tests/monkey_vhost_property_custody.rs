@@ -86,6 +86,7 @@ void mk_list_add(struct mk_list *_new, struct mk_list *head);
 void mk_list_del(struct mk_list *entry);
 size_t strlen(const char *s);
 int strcasecmp(const char *s1, const char *s2);
+char *mk_ptr_to_buf(mk_ptr_t p);
 "#
 );
 
@@ -357,4 +358,91 @@ fn the_whole_function_is_decided_except_for_the_document_root_branch() {
         "{lines:?} {kinds:?} (DocumentRoot at {document_root})"
     );
     assert!(!lines.is_empty());
+}
+
+// ---- rule 12e: a refused null test establishes no leak ----
+
+/// Monkey `mk_server/mk_http.c:388-412` (`mk_http_error_page`), its first
+/// half: `temp` joins a refused statement's value (`mk_ptr_to_buf`, which
+/// has no contract here, as the indirect `*message` read is refused in the
+/// corpus) and the nullable copy, and its null test is refused. Before rule
+/// 12e the `return -1` accused the copy of a leak; it is NULL or was never
+/// made there. Never `Unsafe`, never `Safe`.
+#[test]
+fn the_error_page_shape_is_unknown_not_a_leak() {
+    let (status, kinds) = verdict(
+        r#"
+int error_page(mk_ptr_t *message)
+{
+    char *temp;
+
+    if (message) {
+        temp = mk_ptr_to_buf(*message);
+    }
+    else {
+        temp = mk_string_dup("");
+    }
+
+    if (!temp) {
+        return -1;
+    }
+
+    mk_mem_free(temp);
+    return 0;
+}
+"#,
+        "error_page",
+    );
+    assert_eq!(status, AnalysisStatus::Unknown, "{kinds:?}");
+    assert!(!kinds.contains(&"leak".to_owned()), "{kinds:?}");
+}
+
+/// The rule withholds only what the tested binding may denote: a copy the
+/// refused test says nothing about keeps its established leak.
+#[test]
+fn a_refused_test_of_another_binding_keeps_the_leak() {
+    let (status, kinds) = verdict(
+        r#"
+int other(mk_ptr_t *message, const char *v)
+{
+    char *s;
+    char *temp;
+
+    s = mk_string_dup(v);
+    temp = mk_ptr_to_buf(*message);
+    if (!temp) {
+        return -1;
+    }
+    mk_mem_free(temp);
+    mk_mem_free(s);
+    return 0;
+}
+"#,
+        "other",
+    );
+    assert_eq!(status, AnalysisStatus::Unsafe, "{kinds:?}");
+    assert!(kinds.contains(&"leak".to_owned()), "{kinds:?}");
+}
+
+/// A decided null test is unchanged: the copy is refuted on the null edge
+/// and released on the other, `Safe`.
+#[test]
+fn a_decided_null_test_is_unchanged() {
+    let (status, kinds) = verdict(
+        r#"
+int decided(const char *v)
+{
+    char *temp;
+
+    temp = mk_string_dup(v);
+    if (!temp) {
+        return -1;
+    }
+    mk_mem_free(temp);
+    return 0;
+}
+"#,
+        "decided",
+    );
+    assert_eq!(status, AnalysisStatus::Safe, "{kinds:?}");
 }
