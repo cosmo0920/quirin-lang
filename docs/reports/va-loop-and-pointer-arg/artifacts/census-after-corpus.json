@@ -1,0 +1,798 @@
+{
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a00967d6f3371d592/private/valoop/after/resource-diagnostics.json",
+ "statuses": {
+  "Unknown": 4177,
+  "Safe": 647,
+  "Unsafe": 10
+ },
+ "leaves_by_class": {
+  "other-expression": 3,
+  "protocol": 17,
+  "va_arg-line-other": 11
+ },
+ "functions_by_class": {
+  "other-expression": 3,
+  "protocol": 5,
+  "va_arg-line-other": 2
+ },
+ "candidates": [],
+ "functions": [
+  {
+   "function": "cmetrics/cmt_histogram.c/cmt_histogram_buckets_create",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 5499,
+     "origin": "cmt_histogram.c:78",
+     "description": "call to uncontracted function `__builtin_va_arg`",
+     "class": "other-expression",
+     "source": "bucket_array[i] = va_arg(va, double);"
+    },
+    {
+     "line": 5502,
+     "origin": "cmt_histogram.c:82",
+     "description": "call to uncontracted function `cmt_histogram_buckets_create_size`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "librdkafka/rdkafka_cgrp.c/rd_kafka_cgrp_rejoin",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 21114,
+     "origin": "rdkafka_cgrp.c:1590",
+     "description": "call to uncontracted function `rd_kafka_cgrp_consumer_rejoin`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 21117,
+     "origin": "rdkafka_cgrp.c:1594",
+     "description": "va_list protocol refused: `ap` may be read after `va_end`, after being passed to a callee, or before `va_start`",
+     "class": "protocol",
+     "source": "va_start(ap, fmt);"
+    },
+    {
+     "line": 21119,
+     "origin": "rdkafka_cgrp.c:1596",
+     "description": "va_list protocol refused: `ap` may be read after `va_end`, after being passed to a callee, or before `va_start`",
+     "class": "protocol",
+     "source": "va_end(ap);"
+    },
+    {
+     "line": 21120,
+     "origin": "rdkafka_cgrp.c:1598",
+     "description": "unresolved resource identity `rkcg`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 21121,
+     "origin": "rdkafka_cgrp.c:1599",
+     "description": "unresolved resource identity `rkcg`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 21124,
+     "origin": "rdkafka_cgrp.c:1604",
+     "description": "unresolved resource identity `rkcg`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 21125,
+     "origin": "rdkafka_cgrp.c:1605",
+     "description": "unresolved resource identity `rkcg`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 21125,
+     "origin": "rdkafka_cgrp.c:1605",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 21127,
+     "origin": "rdkafka_cgrp.c:1613",
+     "description": "unresolved resource identity `rkcg`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 21127,
+     "origin": "rdkafka_cgrp.c:1613",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 21128,
+     "origin": "rdkafka_cgrp.c:1623",
+     "description": "call to uncontracted function `rd_kafka_cgrp_leave_maybe`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 21130,
+     "origin": "rdkafka_cgrp.c:1626",
+     "description": "call to uncontracted function `rd_kafka_cgrp_set_join_state`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "librdkafka/rdkafka_error.c/rd_kafka_error_new_v",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 19574,
+     "origin": "rdkafka_error.c:57",
+     "description": "va_list protocol refused: `ap2` is not a plain local of the function's outermost block",
+     "class": "protocol",
+     "source": "va_copy(ap2, ap);"
+    },
+    {
+     "line": 19576,
+     "origin": "rdkafka_error.c:59",
+     "description": "va_list protocol refused: `ap2` is not a plain local of the function's outermost block",
+     "class": "protocol",
+     "source": "va_end(ap2);"
+    },
+    {
+     "line": 19579,
+     "origin": "rdkafka_error.c:63",
+     "description": "unresolved resource identity `error`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 19580,
+     "origin": "rdkafka_error.c:64",
+     "description": "unresolved resource identity `error`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 19581,
+     "origin": "rdkafka_error.c:65",
+     "description": "unresolved resource identity `error`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 19582,
+     "origin": "rdkafka_error.c:66",
+     "description": "unresolved resource identity `error`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 19584,
+     "origin": "rdkafka_error.c:69",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 19585,
+     "origin": "rdkafka_error.c:70",
+     "description": "unresolved resource identity `error`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 19587,
+     "origin": "rdkafka_error.c:72",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 19589,
+     "origin": "rdkafka_error.c:75",
+     "description": "unresolved resource identity `error`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 19589,
+     "origin": "rdkafka_error.c:75",
+     "description": "nullable resource `error` used by a non-null contract",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "librdkafka/rdkafka_metadata.c/rd_kafka_metadata_new_topic_mockv_internal",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 21312,
+     "origin": "rdkafka_metadata.c:2101",
+     "description": "call to uncontracted function `__builtin_alloca`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 21314,
+     "origin": "rdkafka_metadata.c:2103",
+     "description": "indirect memory access is outside the resource projection",
+     "class": "va_arg-line-other",
+     "source": "topics[i].topic         = va_arg(args, char *);"
+    },
+    {
+     "line": 21315,
+     "origin": "rdkafka_metadata.c:2104",
+     "description": "indirect memory access is outside the resource projection",
+     "class": "va_arg-line-other",
+     "source": "topics[i].partition_cnt = va_arg(args, int);"
+    },
+    {
+     "line": 21317,
+     "origin": "rdkafka_metadata.c:2107",
+     "description": "call to uncontracted function `rd_kafka_metadata_new_topic_mock`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "librdkafka/rdkafka_mock.c/rd_kafka_mock_partition_push_request_errors",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 22928,
+     "origin": "rdkafka_mock.c:2615",
+     "description": "call to uncontracted function `rd_kafka_op_new0`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 22931,
+     "origin": "rdkafka_mock.c:2619",
+     "description": "unresolved resource identity `rko`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 22932,
+     "origin": "rdkafka_mock.c:2620",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 22933,
+     "origin": "rdkafka_mock.c:2621",
+     "description": "unresolved resource identity `rko`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 22934,
+     "origin": "rdkafka_mock.c:2622",
+     "description": "unresolved resource identity `rko`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 22935,
+     "origin": "rdkafka_mock.c:2623",
+     "description": "unresolved resource identity `rko`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 22936,
+     "origin": "rdkafka_mock.c:2624",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 22939,
+     "origin": "rdkafka_mock.c:2628",
+     "description": "call to uncontracted function `__builtin_va_arg`",
+     "class": "other-expression",
+     "source": "rko->rko_u.mock.errs[i] = va_arg(ap, rd_kafka_resp_err_t);"
+    },
+    {
+     "line": 22941,
+     "origin": "rdkafka_mock.c:2631",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "librdkafka/rdkafka_mock.c/rd_kafka_mock_push_request_errors",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 22758,
+     "origin": "rdkafka_mock.c:2399",
+     "description": "call to uncontracted function `__builtin_alloca`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 22762,
+     "origin": "rdkafka_mock.c:2404",
+     "description": "call to uncontracted function `__builtin_va_arg`",
+     "class": "other-expression",
+     "source": "errors[i] = va_arg(ap, rd_kafka_resp_err_t);"
+    },
+    {
+     "line": 22764,
+     "origin": "rdkafka_mock.c:2407",
+     "description": "call to uncontracted function `rd_kafka_mock_push_request_errors_array`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "librdkafka/rdkafka_mock_handlers.c/rd_kafka_mock_handle_PushTelemetry_decode_error",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 23832,
+     "origin": "rdkafka_mock_handlers.c:2785",
+     "description": "unresolved resource identity `opaque`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 23834,
+     "origin": "rdkafka_mock_handlers.c:2787",
+     "description": "va_list protocol refused: `ap` may be read after `va_end`, after being passed to a callee, or before `va_start`",
+     "class": "protocol",
+     "source": "va_start(ap, error);"
+    },
+    {
+     "line": 23835,
+     "origin": "rdkafka_mock_handlers.c:2788",
+     "description": "unresolved resource identity `rkb`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 23835,
+     "origin": "rdkafka_mock_handlers.c:2788",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 23836,
+     "origin": "rdkafka_mock_handlers.c:2789",
+     "description": "va_list protocol refused: `ap` may be read after `va_end`, after being passed to a callee, or before `va_start`",
+     "class": "protocol",
+     "source": "va_end(ap);"
+    },
+    {
+     "line": 23837,
+     "origin": "rdkafka_mock_handlers.c:2790",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "librdkafka/rdkafka_msg.c/rd_kafka_producev",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 20082,
+     "origin": "rdkafka_msg.c:552",
+     "description": "unsupported assignment expression",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20089,
+     "origin": "rdkafka_msg.c:560",
+     "description": "unmodeled call, aggregate or indirect access in branch condition",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20091,
+     "origin": "rdkafka_msg.c:563",
+     "description": "va_list protocol refused: a `va_list` operation under a conditional operator or an unevaluated operand",
+     "class": "protocol",
+     "source": "va_start(ap, rk);"
+    },
+    {
+     "line": 20092,
+     "origin": "rdkafka_msg.c:564",
+     "description": "va_list operation refused: a `va_arg` in a controlling expression that is not `(NAME = va_arg(L, T))`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20096,
+     "origin": "rdkafka_msg.c:568",
+     "description": "call to uncontracted function `rd_kafka_topic_new0`",
+     "class": "va_arg-line-other",
+     "source": "rkt = rd_kafka_topic_new0(rk, va_arg(ap, const char *),"
+    },
+    {
+     "line": 20098,
+     "origin": "rdkafka_msg.c:570",
+     "description": "unresolved resource identity `existing`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20099,
+     "origin": "rdkafka_msg.c:571",
+     "description": "call to uncontracted function `rd_kafka_metadata_fast_leader_query`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20102,
+     "origin": "rdkafka_msg.c:576",
+     "description": "call to uncontracted function `rd_kafka_topic_proper`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20104,
+     "origin": "rdkafka_msg.c:578",
+     "description": "call to uncontracted function `rd_kafka_topic_keep`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20107,
+     "origin": "rdkafka_msg.c:582",
+     "description": "indirect memory access is outside the resource projection",
+     "class": "va_arg-line-other",
+     "source": "rkm->rkm_partition = va_arg(ap, int32_t);"
+    },
+    {
+     "line": 20110,
+     "origin": "rdkafka_msg.c:586",
+     "description": "indirect memory access is outside the resource projection",
+     "class": "va_arg-line-other",
+     "source": "rkm->rkm_payload = va_arg(ap, void *);"
+    },
+    {
+     "line": 20111,
+     "origin": "rdkafka_msg.c:587",
+     "description": "indirect memory access is outside the resource projection",
+     "class": "va_arg-line-other",
+     "source": "rkm->rkm_len     = va_arg(ap, size_t);"
+    },
+    {
+     "line": 20114,
+     "origin": "rdkafka_msg.c:591",
+     "description": "indirect memory access is outside the resource projection",
+     "class": "va_arg-line-other",
+     "source": "rkm->rkm_key     = va_arg(ap, void *);"
+    },
+    {
+     "line": 20115,
+     "origin": "rdkafka_msg.c:592",
+     "description": "indirect memory access is outside the resource projection",
+     "class": "va_arg-line-other",
+     "source": "rkm->rkm_key_len = va_arg(ap, size_t);"
+    },
+    {
+     "line": 20118,
+     "origin": "rdkafka_msg.c:596",
+     "description": "indirect memory access is outside the resource projection",
+     "class": "va_arg-line-other",
+     "source": "rkm->rkm_opaque = va_arg(ap, void *);"
+    },
+    {
+     "line": 20121,
+     "origin": "rdkafka_msg.c:600",
+     "description": "indirect memory access is outside the resource projection",
+     "class": "va_arg-line-other",
+     "source": "rkm->rkm_flags = va_arg(ap, int);"
+    },
+    {
+     "line": 20124,
+     "origin": "rdkafka_msg.c:604",
+     "description": "indirect memory access is outside the resource projection",
+     "class": "va_arg-line-other",
+     "source": "rkm->rkm_timestamp = va_arg(ap, int64_t);"
+    },
+    {
+     "line": 20130,
+     "origin": "rdkafka_msg.c:612",
+     "description": "unresolved resource identity `app_hdrs`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20131,
+     "origin": "rdkafka_msg.c:613",
+     "description": "unresolved resource identity `RD_KAFKA_RESP_ERR__CONFLICT`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20134,
+     "origin": "rdkafka_msg.c:617",
+     "description": "unresolved resource identity `hdrs`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20135,
+     "origin": "rdkafka_msg.c:618",
+     "description": "call to uncontracted function `rd_kafka_headers_new`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20136,
+     "origin": "rdkafka_msg.c:620",
+     "description": "va_list protocol refused: a `va_list` operation under a conditional operator or an unevaluated operand",
+     "class": "protocol",
+     "source": "name  = va_arg(ap, const char *);"
+    },
+    {
+     "line": 20137,
+     "origin": "rdkafka_msg.c:621",
+     "description": "va_list protocol refused: a `va_list` operation under a conditional operator or an unevaluated operand",
+     "class": "protocol",
+     "source": "value = va_arg(ap, const void *);"
+    },
+    {
+     "line": 20138,
+     "origin": "rdkafka_msg.c:622",
+     "description": "va_list protocol refused: a `va_list` operation under a conditional operator or an unevaluated operand",
+     "class": "protocol",
+     "source": "size  = va_arg(ap, ssize_t);"
+    },
+    {
+     "line": 20139,
+     "origin": "rdkafka_msg.c:624",
+     "description": "call to uncontracted function `rd_kafka_header_add`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20142,
+     "origin": "rdkafka_msg.c:628",
+     "description": "unresolved resource identity `hdrs`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20143,
+     "origin": "rdkafka_msg.c:629",
+     "description": "unresolved resource identity `RD_KAFKA_RESP_ERR__CONFLICT`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20146,
+     "origin": "rdkafka_msg.c:632",
+     "description": "va_list protocol refused: a `va_list` operation under a conditional operator or an unevaluated operand",
+     "class": "protocol",
+     "source": "app_hdrs = va_arg(ap, rd_kafka_headers_t *);"
+    },
+    {
+     "line": 20149,
+     "origin": "rdkafka_msg.c:636",
+     "description": "unresolved resource identity `RD_KAFKA_RESP_ERR__INVALID_ARG`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20153,
+     "origin": "rdkafka_msg.c:641",
+     "description": "va_list protocol refused: a `va_list` operation under a conditional operator or an unevaluated operand",
+     "class": "protocol",
+     "source": "va_end(ap);"
+    },
+    {
+     "line": 20154,
+     "origin": "rdkafka_msg.c:643",
+     "description": "unresolved resource identity `rkt`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20156,
+     "origin": "rdkafka_msg.c:646",
+     "description": "unresolved resource identity `err`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20157,
+     "origin": "rdkafka_msg.c:647",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20162,
+     "origin": "rdkafka_msg.c:653",
+     "description": "unresolved resource identity `err`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20163,
+     "origin": "rdkafka_msg.c:654",
+     "description": "call to uncontracted function `rd_kafka_topic_destroy0`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20164,
+     "origin": "rdkafka_msg.c:655",
+     "description": "unresolved resource identity `hdrs`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20165,
+     "origin": "rdkafka_msg.c:656",
+     "description": "call to uncontracted function `rd_kafka_headers_destroy`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20166,
+     "origin": "rdkafka_msg.c:657",
+     "description": "unresolved resource identity `err`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20168,
+     "origin": "rdkafka_msg.c:661",
+     "description": "call to uncontracted function `rd_kafka_msg_partitioner`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20169,
+     "origin": "rdkafka_msg.c:662",
+     "description": "unresolved resource identity `err`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20170,
+     "origin": "rdkafka_msg.c:668",
+     "description": "unresolved resource identity `rkm`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20171,
+     "origin": "rdkafka_msg.c:669",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20173,
+     "origin": "rdkafka_msg.c:675",
+     "description": "unresolved resource identity `rkm`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20174,
+     "origin": "rdkafka_msg.c:680",
+     "description": "unresolved resource identity `app_hdrs`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20174,
+     "origin": "rdkafka_msg.c:680",
+     "description": "unresolved resource identity `rkm`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20175,
+     "origin": "rdkafka_msg.c:681",
+     "description": "indirect memory access is outside the resource projection",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20176,
+     "origin": "rdkafka_msg.c:683",
+     "description": "call to uncontracted function `rd_kafka_msg_destroy`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20178,
+     "origin": "rdkafka_msg.c:686",
+     "description": "call to uncontracted function `rd_kafka_topic_destroy0`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 20179,
+     "origin": "rdkafka_msg.c:688",
+     "description": "unresolved resource identity `err`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "monkey-libevent/mk_server/mk_lib.c/mk_vhost_set",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 6793,
+     "origin": "mk_server/mk_lib.c:523",
+     "description": "va_list protocol refused: `va` may reach a function exit without `va_end`",
+     "class": "protocol",
+     "source": "va_start(va, vid);"
+    },
+    {
+     "line": 6794,
+     "origin": "mk_server/mk_lib.c:525",
+     "description": "va_list protocol refused: `va` may reach a function exit without `va_end`",
+     "class": "protocol",
+     "source": "while ((key = va_arg(va, char *))) {"
+    },
+    {
+     "line": 6795,
+     "origin": "mk_server/mk_lib.c:526",
+     "description": "va_list protocol refused: `va` may reach a function exit without `va_end`",
+     "class": "protocol",
+     "source": "value = va_arg(va, char *);"
+    },
+    {
+     "line": 6799,
+     "origin": "mk_server/mk_lib.c:532",
+     "description": "call to uncontracted function `mk_vhost_set_property`",
+     "class": null,
+     "source": null
+    },
+    {
+     "line": 6801,
+     "origin": "mk_server/mk_lib.c:534",
+     "description": "va_list protocol refused: `va` may reach a function exit without `va_end`",
+     "class": "protocol",
+     "source": "va_end(va);"
+    },
+    {
+     "line": 6805,
+     "origin": "mk_server/mk_lib.c:539",
+     "description": "va_list protocol refused: `va` may reach a function exit without `va_end`",
+     "class": "protocol",
+     "source": "va_end(va);"
+    }
+   ],
+   "candidate": false
+  }
+ ]
+}

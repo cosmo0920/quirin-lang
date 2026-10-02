@@ -1,0 +1,13 @@
+{
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/valoop-after/resource-diagnostics.json",
+ "statuses": {
+  "Unknown": 354,
+  "Safe": 45,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "leaves_by_class": {},
+ "functions_by_class": {},
+ "candidates": [],
+ "functions": []
+}

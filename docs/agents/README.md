@@ -117,6 +117,7 @@ the index below is navigation only. Backticked code paths throughout these pages
 | 12 | [source-identity](source-identity.md#constraint-12) | A #line directive in analysed source must not be able to move the audited… |
 | 12a | [source-identity](source-identity.md#constraint-12a) | A presented coordinate is derived, and no file spelling is ever read from… |
 | 12b | [source-identity](source-identity.md#constraint-12b) | A contract is in force at a revision no person reviewed only through a tip identity, and that is never silent. |
+| 12c | [gateway](gateway.md#constraint-12c) | A `va_arg` in a controlling expression is one protocol event per evaluation, lowered before the test only as the whole `(NAME = va_arg(L, T))` (every other shape refused by name); a pointer `va_arg` value into an automatic local is a never-owned derived binding: tested and read at `Borrowed` positions, never released, stored, escaped or returned. |
 | 13 | [source-routes](source-routes.md#constraint-13) | Concurrency is opt-in: a file declares #import std.concurrency;, the… |
 | 14 | [source-routes](source-routes.md#constraint-14) | New keywords are a recorded compatibility hazard: every candidate is… |
 | 15 | [source-routes](source-routes.md#constraint-15) | Lock ranks and protection growth are opt-in disciplines: unranked… |

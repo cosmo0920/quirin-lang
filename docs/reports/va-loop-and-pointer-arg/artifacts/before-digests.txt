@@ -1,0 +1,3 @@
+ed384eb0efbf64df53c804907ea24ac9440326c1165d6d021a3f0e84f2d6660f  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a00967d6f3371d592/private/valoop/before/resource-diagnostics.json
+471de81c1cc7b2fd8f90d79d0c0a11aa4186799d40904cc76fc8c81264c87f33  /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a00967d6f3371d592/private/valoop/before-system/resource-diagnostics.json
+0787f2a25b29cd1185a4d8db70e21ceeaadfe9f9e9570d5bb409ad52926d9294  /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/valoop-before/resource-diagnostics.json

@@ -1,0 +1,244 @@
+{
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/valoop-before/resource-diagnostics.json",
+ "statuses": {
+  "Unknown": 356,
+  "Safe": 45,
+  "Pending": 2,
+  "Unsafe": 1
+ },
+ "leaves_by_class": {
+  "condition-assign": 8,
+  "pointer-store": 8
+ },
+ "functions_by_class": {
+  "condition-assign": 4,
+  "pointer-store": 4
+ },
+ "candidates": [],
+ "functions": [
+  {
+   "function": "fluent-bit-tail-pause/src/flb_lib.c/flb_filter_set",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 18764,
+     "origin": "src/flb_lib.c:654",
+     "description": "unmodeled call, aggregate or indirect access in loop condition",
+     "class": "condition-assign",
+     "source": "while ((key = va_arg(va, char *))) {"
+    },
+    {
+     "line": 18765,
+     "origin": "src/flb_lib.c:655",
+     "description": "va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local",
+     "class": "pointer-store",
+     "source": "value = va_arg(va, char *);"
+    },
+    {
+     "line": 18770,
+     "origin": "src/flb_lib.c:662",
+     "description": "call to uncontracted function `flb_filter_set_property`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "fluent-bit-tail-pause/src/flb_lib.c/flb_input_set",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 18510,
+     "origin": "src/flb_lib.c:321",
+     "description": "unmodeled call, aggregate or indirect access in loop condition",
+     "class": "condition-assign",
+     "source": "while ((key = va_arg(va, char *))) {"
+    },
+    {
+     "line": 18511,
+     "origin": "src/flb_lib.c:322",
+     "description": "va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local",
+     "class": "pointer-store",
+     "source": "value = va_arg(va, char *);"
+    },
+    {
+     "line": 18516,
+     "origin": "src/flb_lib.c:328",
+     "description": "call to uncontracted function `flb_input_set_property`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "fluent-bit-tail-pause/src/flb_lib.c/flb_output_set",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 18674,
+     "origin": "src/flb_lib.c:538",
+     "description": "unmodeled call, aggregate or indirect access in loop condition",
+     "class": "condition-assign",
+     "source": "while ((key = va_arg(va, char *))) {"
+    },
+    {
+     "line": 18675,
+     "origin": "src/flb_lib.c:539",
+     "description": "va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local",
+     "class": "pointer-store",
+     "source": "value = va_arg(va, char *);"
+    },
+    {
+     "line": 18680,
+     "origin": "src/flb_lib.c:546",
+     "description": "call to uncontracted function `flb_output_set_property`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "fluent-bit-tail-pause/src/flb_lib.c/flb_service_set",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 18786,
+     "origin": "src/flb_lib.c:683",
+     "description": "unmodeled call, aggregate or indirect access in loop condition",
+     "class": "condition-assign",
+     "source": "while ((key = va_arg(va, char *))) {"
+    },
+    {
+     "line": 18787,
+     "origin": "src/flb_lib.c:684",
+     "description": "va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local",
+     "class": "pointer-store",
+     "source": "value = va_arg(va, char *);"
+    },
+    {
+     "line": 18792,
+     "origin": "src/flb_lib.c:691",
+     "description": "call to `flb_config_set_property` whose declared contract awaits human review (awaiting-human-review)",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "fluent-bit-tail-pause/src/flb_lib.c/flb_filter_set",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 18764,
+     "origin": "src/flb_lib.c:654",
+     "description": "unmodeled call, aggregate or indirect access in loop condition",
+     "class": "condition-assign",
+     "source": "while ((key = va_arg(va, char *))) {"
+    },
+    {
+     "line": 18765,
+     "origin": "src/flb_lib.c:655",
+     "description": "va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local",
+     "class": "pointer-store",
+     "source": "value = va_arg(va, char *);"
+    },
+    {
+     "line": 18770,
+     "origin": "src/flb_lib.c:662",
+     "description": "call to uncontracted function `flb_filter_set_property`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "fluent-bit-tail-pause/src/flb_lib.c/flb_input_set",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 18510,
+     "origin": "src/flb_lib.c:321",
+     "description": "unmodeled call, aggregate or indirect access in loop condition",
+     "class": "condition-assign",
+     "source": "while ((key = va_arg(va, char *))) {"
+    },
+    {
+     "line": 18511,
+     "origin": "src/flb_lib.c:322",
+     "description": "va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local",
+     "class": "pointer-store",
+     "source": "value = va_arg(va, char *);"
+    },
+    {
+     "line": 18516,
+     "origin": "src/flb_lib.c:328",
+     "description": "call to uncontracted function `flb_input_set_property`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "fluent-bit-tail-pause/src/flb_lib.c/flb_output_set",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 18674,
+     "origin": "src/flb_lib.c:538",
+     "description": "unmodeled call, aggregate or indirect access in loop condition",
+     "class": "condition-assign",
+     "source": "while ((key = va_arg(va, char *))) {"
+    },
+    {
+     "line": 18675,
+     "origin": "src/flb_lib.c:539",
+     "description": "va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local",
+     "class": "pointer-store",
+     "source": "value = va_arg(va, char *);"
+    },
+    {
+     "line": 18680,
+     "origin": "src/flb_lib.c:546",
+     "description": "call to uncontracted function `flb_output_set_property`",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  },
+  {
+   "function": "fluent-bit-tail-pause/src/flb_lib.c/flb_service_set",
+   "status": "Unknown",
+   "leaves": [
+    {
+     "line": 18786,
+     "origin": "src/flb_lib.c:683",
+     "description": "unmodeled call, aggregate or indirect access in loop condition",
+     "class": "condition-assign",
+     "source": "while ((key = va_arg(va, char *))) {"
+    },
+    {
+     "line": 18787,
+     "origin": "src/flb_lib.c:684",
+     "description": "va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local",
+     "class": "pointer-store",
+     "source": "value = va_arg(va, char *);"
+    },
+    {
+     "line": 18792,
+     "origin": "src/flb_lib.c:691",
+     "description": "call to `flb_config_set_property` whose declared contract awaits human review (awaiting-human-review)",
+     "class": null,
+     "source": null
+    }
+   ],
+   "candidate": false
+  }
+ ]
+}

@@ -241,6 +241,7 @@ fn instruction(instruction: &LegacyInstruction) -> String {
             "OpaqueValue {destination} alias_read={}",
             alias_read.is_some()
         ),
+        LegacyInstruction::VaArgPointer { destination } => format!("VaArgPointer {destination}"),
         LegacyInstruction::ScalarMemberStore { base, alias_read } => format!(
             "ScalarMemberStore {base} alias_read={}",
             alias_read.is_some()

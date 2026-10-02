@@ -1,0 +1,26 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4177,
+   "Safe": 647,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4177,
+   "Safe": 647,
+   "Unsafe": 10
+  }
+ },
+ "moves": [],
+ "move_counts": {},
+ "same_status_functions_with_changed_diagnostics": 10,
+ "leaf_delta": {
+  "unsupported: unmodeled call, aggregate or indirect access in loop condition": -8,
+  "unknown_alias: unresolved resource identity": -2,
+  "unsupported: va_list operation refused: the `va_arg` value stored into `value` is not an arithmetic value into a scalar local": -1,
+  "unsupported: va_list operation refused: the `va_arg` value stored into `topic_name` is not an arithmetic value into a scalar local": -1,
+  "unsupported: va_list operation refused: the `va_arg` value stored into `topic` is not an arithmetic value into a scalar local": -1,
+  "unsupported: va_list protocol refused: `va` may reach a function exit without `va_end`": 1,
+  "unsupported: va_list operation refused: a `va_arg` in a controlling expression that is not `(NAME = va_arg(L, T))`": 1
+ }
+}
