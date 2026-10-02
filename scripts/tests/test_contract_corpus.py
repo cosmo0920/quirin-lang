@@ -39,8 +39,9 @@ class CanonicalCorpus(unittest.TestCase):
         # 120 -> 121: W47-CONDVAR-JOIN-STOP-PATHS's fluent_bit/lib_engine_thread.qv
         # 121 -> 122: W47-LOOP-OWNER-INSTANCE-FLOW's fluent_bit/input_instance.qv
         # in quirin-provider-fluent-bit.
-        self.assertEqual(len(modules), 122)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 73)
+        # 122 -> 123: CONTRACT-PIN-TIP-MODE's monkey/vhost_set.qv
+        self.assertEqual(len(modules), 123)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 74)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 49)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))

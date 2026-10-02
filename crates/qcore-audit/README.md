@@ -660,6 +660,27 @@ pin mismatches, assumptions, sources and per-function obligations
 W45-USER-CONTRACT-PLUGINS it also classes moves between `Unknown` and `Pending`
 and tallies each run's four verdicts.
 
+**Tip identities** (card CONTRACT-PIN-TIP-MODE, C06.2). A pinned contract
+written for a fix that exists only on a branch can track the branch's tip
+instead of a reviewed revision: its lock entry (format 3) names the
+repository, the ref and the commit reviewed, and an audit keeps it in force
+exactly where the audited sites equal those at the ref's current commit,
+resolved read-only in the local repository (`QUIRIN_TIP_REPOSITORIES=NAME=PATH`,
+else the path the lock records; never fetched). An unresolvable tip is held
+(`tip-unresolved`). Every command that meets one prints a notice that the
+contract targets a future, unreleased release (`info` in force, `warning`
+not); an in-force tip is the run's named assumption `tip-tracked:FUNCTION`.
+
+```sh
+# track the tip of a fix branch for one reviewed function (no source change)
+quirin-audit pin --source-root /path/to/monkey --crate qcore-provider-libevent \
+    --function mk_vhost_set --track-tip cosmo0920-missing-va_end-on-null \
+    --repository-name monkey --release-label "next Monkey release"
+# back to a reviewed pin of this checkout's HEAD
+quirin-audit pin --source-root /path/to/monkey --crate qcore-provider-libevent \
+    --function mk_vhost_set --untrack-tip
+```
+
 ## User contract crates and checker plugins
 
 Card W45-USER-CONTRACT-PLUGINS (contract specification C11.1). Every verdict
