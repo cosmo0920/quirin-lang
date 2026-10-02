@@ -504,7 +504,9 @@ CG22.
     undeclarable and refused by name; assembly, SEH, `cleanup`, computed
     `goto` and label addresses are named boundaries. Corpus 629 / 10 / 4,195
     → **641 / 10 / 4,183** (12 Unknown → Safe), system and slice no move.
-    Residuals `CG21-UNDECLARED-NORETURN-CALLEES`,
+    Residuals `CG21-UNDECLARED-NORETURN-CALLEES` (retired by
+    CONTRACT-NORETURN-AND-BORROWED-TAILS: `rd_kafka_crash` declared;
+    residual `CG21-NORETURN-TYPED-ACTUAL-STATEMENTS`),
     `CG21-NORETURN-OPERAND-POSITIONS`, `CG21-CLEANUP-SCOPE-EXITS`,
     `CG21-OPAQUE-BOUNDARIES`.
     [Report](../../reports/cg21-call-exits-and-boundaries/README.md).
@@ -598,7 +600,9 @@ CG22.
     `rd_kafka_open_cb_generic`), no correction; system and slice no status
     move. K10 (format agreement) not claimed. Residuals
     `CG26-VA-PROTOCOL-PRECISION`, `CG26-POINTER-VA-ARG`,
-    `CG26-BORROWED-TAIL-DECLARATIONS`, `CG26-ROUTE-T-VARIADICS`.
+    `CG26-BORROWED-TAIL-DECLARATIONS` (retired by
+    CONTRACT-NORETURN-AND-BORROWED-TAILS, residual
+    `CG26-TAIL-RESIDUAL-ACTUALS`), `CG26-ROUTE-T-VARIADICS`.
     [Report](../../reports/cg26-variadics/README.md).
 - **CG27: loops, recursion and budgets.**
   - *Invariants.* Loop-invariant contracts, widening and loop summaries.

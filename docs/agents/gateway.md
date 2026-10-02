@@ -3568,7 +3568,9 @@ own anchor here.
     uncontracted whole-call statement's resolution, which changes nothing).
     Premises stated, not proved: each `resource_no_return()` declaration
     (`abort`, `exit`, `__assert_fail` in `quirin-provider-libc`'s
-    `stdlib.qv`; constraint 28) and faithful Clang extraction of the
+    `stdlib.qv`; since CONTRACT-NORETURN-AND-BORROWED-TAILS also
+    librdkafka's `rd_kafka_crash` in `qcore-provider-librdkafka`'s
+    `memory.qv`, pinned; constraint 28) and faithful Clang extraction of the
     attribute (trust boundary 28). Measured (corpus `66910c10`, system,
     tail-pause slice, base `b6a3dc42`): corpus 629 / 10 / 4,195 →
     **641 / 10 / 4,183** (`3d53a5d0…` → `c9cdfb1c…`), **12 Unknown → Safe**
@@ -4205,7 +4207,10 @@ own anchor here.
     format agreement (K10, out of scope). Route T is unchanged: it still
     refuses a variadic signature and `VAArgExpr` (K08/K09's T half).
     Premises stated, not proved: faithful Clang extraction and node matching
-    (trust boundary 28), and a declared tail clause (a trusted assumption).
+    (trust boundary 28), and a declared tail clause (a trusted assumption;
+    the borrowed tail is declared for `mk_vhost_set` (CONTRACT-PIN-TIP-MODE)
+    and, since CONTRACT-NORETURN-AND-BORROWED-TAILS, for `printf`,
+    `fprintf`, `snprintf`, `mk_print` and `flb_log_print`).
     Measured (corpus `66910c10`, main `b6a3dc42`): 629 / 10 / 4,195 →
     **631 / 10 / 4,193** (`3d53a5d0…` → `42c7df13…`), +2 Unknown → Safe
     (`rd_kafka_set_thread_name`: protocol; `rd_kafka_open_cb_generic`: T7),

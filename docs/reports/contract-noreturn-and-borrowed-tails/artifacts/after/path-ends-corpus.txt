@@ -1,0 +1,43 @@
+{
+ "statements": 92,
+ "functions": 45,
+ "decisions": {
+  "PathEnd/NoReturn": 92
+ },
+ "moved_attributed": 66,
+ "holding_but_not_moved": [
+  "rd_kafka_buf_crc_init",
+  "rd_kafka_buf_update",
+  "rd_kafka_curr_msgs_sub",
+  "rd_kafka_msgq_deq",
+  "rd_kafka_q_destroy0"
+ ],
+ "moved_but_not_holding": [
+  "rd_kafka_broker_buf_enq0",
+  "rd_kafka_broker_connect",
+  "rd_kafka_broker_consumer_serve",
+  "rd_kafka_broker_fail",
+  "rd_kafka_broker_fetch_reply",
+  "rd_kafka_broker_producer_serve",
+  "rd_kafka_broker_send",
+  "rd_kafka_broker_share_consumer_serve",
+  "rd_kafka_broker_timeout_scan",
+  "rd_kafka_bufq_connection_reset",
+  "rd_kafka_bufq_purge",
+  "rd_kafka_cgrp_destroy_final",
+  "rd_kafka_cgrp_op_serve",
+  "rd_kafka_gzip_compress",
+  "rd_kafka_msg_partitioner",
+  "rd_kafka_offset_broker_commit",
+  "rd_kafka_req_response",
+  "rd_kafka_timers_destroy",
+  "rd_kafka_topic_destroy_final",
+  "rd_kafka_topic_partitions_remove",
+  "rd_kafka_toppar_destroy_final",
+  "rd_kafka_toppar_fetch_start",
+  "rd_kafka_toppar_fetch_stop",
+  "rd_kafka_toppar_get_avail",
+  "rd_kafka_transport_io_event",
+  "rd_kafka_waitresp_find"
+ ]
+}
