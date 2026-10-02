@@ -760,6 +760,8 @@ open. Each is registered in `named_followups` (recorded by
 | SUP04-VARIADIC-UPSTREAM-CANDIDATES | Are CG26's two protocol violations real upstream defects? | Medium | none |
 | SUP05-PREDICTION-BEFORE-CODE | Can the order "prediction frozen before implementation" be checked, not asserted? | Medium | none |
 | SUP06-CONFIRMED-VERDICT-STATUS | A fifth verdict, `Confirmed`: fixed at the tip (release candidate) but not in master; Safe-equivalent yet handled on its own | High (verdict contract) | user decision on its semantics before dispatch |
+| SUP07-REFUSED-TEST-ACCUSATION | `mk_http_error_page` is a provisional `Unsafe` that its card's own reading calls false: a leak claim resting on a refused null test | High | none (next) |
+| SUP08-MONKEY-OVERWRITE-CANDIDATES | Are the `DocumentRoot` overwrite and `mk_config_listen_parse`'s `port = NULL` real Monkey leaks? | Medium (user validation) | none |
 
 - **SUP01: census inertness proof.** CG27 re-read C03-NFR-REACH with the census
   (`crates/qcore-c-gateway/src/legacy_census.rs`, `compiler/examples/c03_reach_census.rs`), so a census edit that read its
@@ -818,3 +820,27 @@ open. Each is registered in `named_followups` (recorded by
   - **Where it reaches.** §L21.2, AGENTS.md invariant 2, the Lean verdict model
     (`QCore.VerdictSemigroup`), every audit route, the sidecars, `compare`,
     STATUS and the acceptance matrix; an earlier result never changes meaning.
+- **SUP07: an accusation resting on a refused test (user decision 2026-10-02:
+  MONKEY-VHOST-PROPERTY-CUSTODY landed as completed; this concern is handled
+  by a later card).** That card's `mk_string_dup` contract and rule 12d moved
+  `mk_http_error_page` (Monkey `mk_http.c`) Unknown → provisional `Unsafe`, a
+  leak at :399 of the copy made at :395. By the card's reading it is false:
+  the binding joins a refused `mk_ptr_to_buf` (:392) with the nullable copy,
+  the null test at :398 is refused, and rule 10b keeps the copy live on an exit
+  where it is NULL or was never made. Fix the general cause: a leak claim must
+  not rest on a decisive fact reachable only through a refused statement or
+  test (refuse, Unknown, named reason), as narrowly as the evidence allows,
+  without removing any established accusation; Lean parity; a control of the
+  :392/:395/:398/:399 shape; corpus back to 10 provisional `Unsafe` with every
+  other move read and named. Discharges `MONKEY-REFUSED-NULL-TEST-JOINED-LEAK`.
+- **SUP08: Monkey overwrite candidates (by reading, not validated).**
+  MONKEY-VHOST-PROPERTY-CUSTODY found two: `mk_vhost_set_property`'s
+  `DocumentRoot` branch overwrites `vh->documentroot.data` without releasing
+  the earlier copy (a second `DocumentRoot` set loses it; `mk_vhost_destroy`
+  releases only the last), and `mk_config_listen_parse` sets `port = NULL`
+  (`mk_config.c:222`), losing its copy. They keep `mk_vhost_set` non-Safe at
+  the tip. As with `mk_vhost_set`'s `va_end` fix (SUP04), the user validates
+  them in Monkey; a validated fix then gets a tip-mode contract (C06.2) and is
+  re-measured with the shared tip probe. Registered as
+  `MONKEY-DOCUMENTROOT-OVERWRITE-CANDIDATE`; nothing is reported upstream
+  without the user's decision.
