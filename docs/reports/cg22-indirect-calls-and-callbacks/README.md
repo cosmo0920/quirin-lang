@@ -258,8 +258,8 @@ indirect callees; it stays open (no corpus site has a closed set):
 
 ## 6. Gate
 
-At tip `aea0b798` on main `f6336c9d`, `scripts/gate.sh final2` under the
-shared heavy lock; logs `private/cg22/gate-final2/`, exits copied to
+At tip `52ce6a1d` on main `7894b30f`, `scripts/gate.sh final5` under the
+shared heavy lock; logs `private/cg22/gate-final5/`, exits copied to
 `gate/`, record [gate.json](gate.json). providers/ is unchanged, so the
 provider gate is not due (129 carried).
 
@@ -268,24 +268,28 @@ provider gate is not due (129 carried).
 | submodule | `git submodule update --init --recursive` | 0 | |
 | fmt | `cargo fmt --all -- --check` | 0 | |
 | clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
-| tests | `python3 scripts/run_test_binaries.py` | 0 | 419 units, 432 summaries, **7,287 passed**, 0 failed, 11 ignored (`private/test-binaries/20261001T212141Z-1626717`) |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 430 units, 443 summaries, **7,445 passed**, 0 failed, 11 ignored (`private/test-binaries/20261002T010941Z-3709516`) |
 | probes | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
-| Lean | `python3 scripts/check_lean_audits.py` | 0 | **269** (268 on main + `AuditIndirectCalls.lean`) |
-| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** | 365; the one failure was the matrix's derived `lean_audits` (268 → 269), cleared by `build_matrix.py . --gate gate.json` (exit 0) |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **277** (276 on main + `AuditIndirectCalls.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** | 365; the one failure was the matrix's derived `lean_audits` (276 → 277), cleared by `build_matrix.py . --gate gate.json` (exit 0) |
 | index | `python3 scripts/build_docs_index.py --check` | 0 | |
 | Clang | `clang --version` | 0 | Ubuntu clang 21.1.8 (`gate/clang-version.txt`) |
 
-The first gate (`private/cg22/gate-final`, tip `bc5fc9e4` on main
-`f0bbc0eb`) failed 2 tests in `tests/parenthesised_callee.rs` (section 4,
-fixed in `ba430be3`) and the same expected Python row; its other steps
-passed. `cargo check --workspace --all-targets` exited 0 on each rebased
-tree.
+Earlier gates, superseded by rebases (logs under `private/cg22/`):
+`gate-final` (tip `bc5fc9e4` on `f0bbc0eb`) failed 2 tests in
+`tests/parenthesised_callee.rs` (section 4, fixed); `gate-final2` (`aea0b798`
+on `f6336c9d`) passed 7,287; the targeted check `int-cg27` (on `db1ea764`)
+failed CG27's callee-expression loop row (section 4, fixed); `gate-final4`
+(`4015a592` on `01003bc1`) passed 7,395; the targeted check `int-cg23` (on
+`1a6a99c0`) was green. `cargo check --workspace --all-targets` exited 0 on
+each rebased tree.
 
 ## Files
 
 - `scripts/measure.sh` (BEFORE/AFTER, the arbiter's exact command),
   `scripts/census.sh` (the same commands with an explicit binary),
   `scripts/build_census.sh`, `scripts/census.py`, `scripts/distinct.py`,
-  `scripts/keyword_callees.py`, `scripts/compare.py`, `scripts/gate.sh`,
+  `scripts/keyword_callees.py`, `scripts/compare.py`, `scripts/changed.py`,
+  `scripts/log0.py`, `scripts/gate.sh`, `scripts/integration_check.sh`,
   `scripts/update_ledger.py`.
 - `artifacts/`: the census and comparison records.
