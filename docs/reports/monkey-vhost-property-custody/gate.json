@@ -1,0 +1,13 @@
+{
+  "note": "MONKEY-VHOST-PROPERTY-CUSTODY card gate on base main bfbf0d673 (tree of tip 39212b653), scripts docs/reports/monkey-vhost-property-custody/scripts/gate.sh under the shared flock and finish-gate.sh, logs private/mvp/gate-g2 of this worktree: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 433 units, 446 summaries, 7,478 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T083038Z-803871); both reevaluation probes exit 0; check_lean_audits.py 280 audits passed (279 on main + AuditCarriedPublication.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 279 -> 280, test_build_matrix_sections), then run again after build_matrix.py . --gate this file (09a, 09b); docs index 0. Provider gate (providers/ changed): cargo check --locked 0, fmt 0, clippy 0, cargo test 129 passed (exit 0), contracts.py check 0, package build 0, verify of the five packages 0. An earlier attempt (private/mvp/gate-g1, tip 4e5c5c6e3) failed clippy (the step enums' code() used only by tests) and one test (retry_lifetime's owner-publication pin, which rule 12d deliberately changes); both fixed, the gate rerun in full. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit) on main bfbf0d673: BEFORE 7f7d8328 647/10/4,177, AFTER a7d68d49 647/11/4,176 (mk_http_error_page Unknown -> provisional Unsafe, a false accusation by reading; 15 functions change leaves); system rows 83/4/361 unchanged (6dad47cc -> 21b08170, 2 functions change leaves); tail-pause slice custody identical (74aa4732 -> 59171e06, contract digests only). Exits in docs/reports/monkey-vhost-property-custody/gate/.",
+  "workspace_tests": 7478,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 280,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -209,4 +209,13 @@ discharged by a declared contract, 16 → 0 leaves), `SUP04-VARIADIC-UPSTREAM-CA
 
 ## Gate
 
-See [gate.json](gate.json) and [gate/](gate/).
+On base `bfbf0d673`, tree of `39212b653` ([gate.json](gate.json), exits in
+[gate/](gate/), [scripts/gate.sh](scripts/gate.sh) and
+[scripts/finish-gate.sh](scripts/finish-gate.sh), logs `private/mvp/gate-g2`):
+cargo check 0; submodule 0; fmt 0; clippy `--locked` 0; the test runner 433
+units, 7,478 passed, 0 failed, 11 ignored; both reevaluation probes 0; 280
+Lean audits; Python 365 tests, 1 expected failure before the matrix
+regeneration (lean audits 279 → 280), 0 after it; docs index 0. Provider gate:
+check, fmt, clippy 0; 129 tests; `contracts.py check` 0; five packages built
+and verified. The first attempt (`gate-g1`) failed clippy (test-only `code()`)
+and the `retry_lifetime` pin above; both fixed and the gate rerun in full.
