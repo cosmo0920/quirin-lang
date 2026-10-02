@@ -222,4 +222,40 @@ By [`scripts/update_ledger.py`](scripts/update_ledger.py) (`named_followups` 681
 
 ## 7. Gate
 
-GATE_SECTION
+The full standing gate ran at the card's tip `e5cc9af1` on main `1a6a99c0`
+([`scripts/gate-locked.sh`](scripts/gate-locked.sh), which wraps
+[`scripts/gate.sh`](scripts/gate.sh) in the integrator's shared heavy-step lock
+and cleans the dev profile after it; exits in [`gate/`](gate/), logs in
+`private/cg24/gate`; records by [`scripts/finish.sh`](scripts/finish.sh)):
+
+| Step | Exit | Count |
+|---|---|---|
+| `cargo check --workspace --all-targets` (after the rebase) | 0 | — |
+| `git submodule update --init --recursive` | 0 | — |
+| `scripts/run_test_binaries.py` | 0 | 429 units, 442 summaries; **7,428 passed**, 0 failed, 11 ignored (`private/test-binaries/20261002T005201Z-3445611/`) |
+| `cargo fmt --all -- --check` | 0 | — |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | — |
+| `reevaluation_probe`, `reevaluation_followup` | 0, 0 | — |
+| `scripts/check_lean_audits.py` | 0 | 276 audits (275 on main + `AuditIndexExtentFrames.lean`) |
+| `python3 -m unittest discover -s scripts/tests` | 1 | 365 run, 1 expected failure before the matrix regeneration (the derived `lean_audits` 275 → 276, `test_build_matrix_sections`) |
+| `build_docs_index.py --check` | 0 | — |
+
+The matrix was then regenerated with [`gate.json`](gate.json) and the Python
+suite and the index run again (`09a`, `09b`, `10a`, `10b` in [`gate/`](gate/)).
+`providers/` is unchanged, so the provider gate is not due and was not run.
+Clang 21.1.8.
+
+**Measurement hygiene.** The heavy-step lock was held by other cards for long
+stretches; the BEFORE job was queued before any implementation code and the
+source was left untouched until its build had finished
+(`private/cg24/build-before.exit`), so the BEFORE binary is the base's
+(`86bb8683…`, built from `2521eba1` = `6cab1ad9` plus this card's prediction).
+The AFTER binary was built at `06d76faf`, before the rebases.
+
+**Files likely to conflict:** `docs/STATUS.md`, `docs/development/increments/wave-48-part3.md`
+(over 32 KiB before this card's paragraph; a new record is the integrator's
+call), `docs/reviews/r0_3/acceptance_matrix.json`, `docs/reports/INDEX.md`,
+`docs/agents/gateway.md` and `docs/agents/README.md` (rule 11e between 11d
+and 11f), `docs/plans/clang-gap-cards/README.md` (the CG24 rows),
+`proof/QCore.lean` (one import), `crates/qcore-c-gateway/src/index_extent.rs`
+and `crates/qcore-contract/src/bounds_contract.rs` (CG16's files).

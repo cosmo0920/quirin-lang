@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG23-RELATIONAL-POSTCONDITIONS card gate at tip 023e8c4b on main 31a72343 (base b6a3dc42 rebased onto every round-9 landing), script docs/reports/cg23-relational-postconditions/scripts/gate.sh under the shared heavy-work flock (final.sh), logs private/cg23rp/gate-final of this worktree: submodule 0; run_test_binaries.py 426 units, 439 summaries, 7,397 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T000121Z-2963174); fmt 0; clippy --locked 0; both reevaluation probes exit 0; check_lean_audits.py 273 audits passed; python tests 365 with 1 expected failure before the matrix regeneration (test_build_matrix_sections), then run again after build_matrix.py --gate this file (09a, 09b); docs index 0. Then rebased onto main 01003bc1 (CG29, disjoint: weak memory and reclamation, records only conflicted) with a targeted check under the flock (scripts/targeted.sh, private/cg23rp/targeted-final): cargo check --workspace --all-targets 0, fmt 0, clippy --locked 0, qcore-schemas + qcore-contract + qcore-c-gateway tests 2,689 passed 0 failed, check_lean_audits.py 275 audits passed (274 on main + AuditRelationalPost.lean); lean_audits below is that count. Earlier gates: 7,215 (8e8ed41f), 7,287 (f0bbc0eb), 7,301 (f6336c9d), 7,324 (db1ea764), all 0 failed; gate-run1 at the base died of ENOSPC in the test build and is discarded. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): on the base b6a3dc42, BEFORE and AFTER 3d53a5d0 629/10/4,195, byte-identical; system 44/2/188 (725aab4d) and tail-pause slice 29/1/239/1 Pending (8c17467d), byte-identical; on the tip over main 31a72343, corpus ceefb6c4 645/10/4,179, byte-identical to main's integrated measurement; no move. Exits in docs/reports/cg23-relational-postconditions/gate/.",
-  "workspace_tests": 7397,
+  "note": "CG24-ALIAS-EXTENT-FRAME-VOCABULARY card gate at tip e5cc9af1 on main 1a6a99c0 (base 6cab1ad9, rebased onto 01003bc1 (CG29) and 1a6a99c0 (CG23)), script docs/reports/cg24-alias-extent-frame-vocabulary/scripts/gate-locked.sh (gate.sh under the shared heavy-step lock), logs private/cg24/gate of this worktree: cargo check --workspace --all-targets 0; submodule 0; run_test_binaries.py 429 units, 442 summaries, 7,428 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T005201Z-3445611); fmt 0; clippy --locked 0; both reevaluation probes exit 0; check_lean_audits.py 276 audits passed (275 on 1a6a99c0 + AuditIndexExtentFrames.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits, test_build_matrix_sections), then run again after build_matrix.py --gate this file (09a, 09b); docs index 0; dev profile cleaned after. providers/ is unchanged, so the provider gate is not due and was not run: provider_tests 129 is carried. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit, bounds property selected) on 6cab1ad9: custody and bounds artifacts byte-identical on corpus (ceefb6c4, 645/10/4,179; bounds rows 5671d81d, 162 Safe / 4,759 Unknown), system and tail-pause slice. Exits in docs/reports/cg24-alias-extent-frame-vocabulary/gate/.",
+  "workspace_tests": 7428,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 275,
+  "lean_audits": 276,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6870,6 +6870,7 @@
    "AuditHttpComputedLength.lean",
    "AuditIeee754.lean",
    "AuditIndexExtent.lean",
+   "AuditIndexExtentFrames.lean",
    "AuditIndexTraversal.lean",
    "AuditIndexedCollection.lean",
    "AuditIndirectChainAccess.lean",
@@ -7041,7 +7042,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg23-relational-postconditions/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg24-alias-extent-frame-vocabulary/gate.json)"
  },
  "named_followups": [
   {
