@@ -1280,6 +1280,7 @@ fn alias_cfg(nodes: Vec<LegacyCfgNode>) -> LegacyCfg {
         // pre-pass measures exactly what it measured before those cards.
         publications: PublicationFacts::default(),
         conditional_names: BTreeSet::new(),
+        tie_names: BTreeSet::new(),
         traversal: Default::default(),
     }
 }

@@ -12,6 +12,11 @@
 //! before the test, and a copy leaked on the test's non-null edge that joins
 //! the null edge at one exit.
 //!
+//! The second shape is `mk_sched_add_connection` (`mk_server/mk_scheduler.c:
+//! 197-210`): `conn` joins two nullable allocations, one through a cast
+//! copy, and its only `&` uses are member addresses (`&conn->event`), which
+//! rule 12e reads as C does.
+//!
 //! `mk_string_dup` is the production `monkey/string.qv`; the allocator is
 //! restated with the clauses `monkey/memory.qv` elaborates to, as in
 //! `monkey_vhost_property_custody.rs`. `mk_ptr_to_buf`,
@@ -59,6 +64,9 @@ char *mk_string_dup(const char *s);
 char *mk_ptr_to_buf(mk_ptr_t p);
 char *mk_string_html_escape(const char *buf);
 int mk_string_build(char **buffer, unsigned long *len, const char *format, ...);
+struct mk_list { struct mk_list *prev, *next; };
+struct mk_sched_conn { int fd; struct mk_list streams; };
+void mk_list_init(struct mk_list *list);
 "#
 );
 
@@ -337,6 +345,51 @@ int joined(mk_ptr_t *message)
     let copy = line_of(BODY, "temp = mk_string_dup(\"\");");
     assert!(
         leaves.contains(&format!("leak@{exit}<-{copy}")),
+        "{leaves:?}"
+    );
+}
+
+/// `mk_sched_add_connection`'s :197-210: two nullable allocations joined in
+/// `conn`, one through a cast copy of `data`; `if (!conn)` refuses (two
+/// targets). `&conn->streams` takes the address of a member of `*conn`, not
+/// of `conn`, so provenance ties both allocations to `conn` and neither is
+/// accused at the `return -1`. Never `Unsafe`, never `Safe`.
+#[test]
+fn the_scheduler_shape_is_neither_unsafe_nor_safe() {
+    const BODY: &str = r#"
+int add_connection(int extra)
+{
+    struct mk_sched_conn *conn;
+
+    if (extra > 0) {
+        void *data;
+        data = mk_mem_alloc(sizeof(struct mk_sched_conn) + extra);
+        conn = (struct mk_sched_conn *) data;
+    }
+    else {
+        conn = mk_mem_alloc(sizeof(struct mk_sched_conn));
+    }
+
+    if (!conn) {
+        return -1;
+    }
+
+    mk_list_init(&conn->streams);
+    return 0;
+}
+"#;
+    let (status, leaves) = verdict(BODY, "add_connection");
+    assert_eq!(status, AnalysisStatus::Unknown, "{leaves:?}");
+    let exit = line_of(BODY, "return -1;");
+    assert!(
+        !leaves
+            .iter()
+            .any(|leaf| leaf.starts_with(&format!("leak@{exit}<-"))),
+        "{leaves:?}"
+    );
+    let test = line_of(BODY, "if (!conn) {");
+    assert!(
+        leaves.contains(&format!("unknown_alias@{test}:conn")),
         "{leaves:?}"
     );
 }

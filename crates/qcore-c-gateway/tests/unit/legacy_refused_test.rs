@@ -92,3 +92,41 @@ fn only_tied_names_are_read() {
     assert_eq!(tied_sites(&joined, "temp"), BTreeSet::from([1]));
     assert!(tied_sites(&joined, "absent").is_empty());
 }
+
+#[test]
+fn only_a_member_address_through_a_name_is_read_as_one() {
+    let read = |text: &str| {
+        let body = text.split_whitespace().collect::<Vec<_>>();
+        let (read, any) = member_addresses_read(&body);
+        (read.join(" "), any)
+    };
+    assert_eq!(
+        read("e = & conn -> event ;"),
+        ("e = + conn -> event ;".to_owned(), true)
+    );
+    assert_eq!(
+        read("f ( & ( conn ) -> s ) ;"),
+        ("f ( + ( conn ) -> s ) ;".to_owned(), true)
+    );
+    // The tokenizer's spelling of `->`.
+    assert_eq!(
+        read("e = & conn - > event ;"),
+        ("e = + conn - > event ;".to_owned(), true)
+    );
+    assert_eq!(
+        read("f ( & ( conn -> s ) ) ;"),
+        ("f ( + ( conn -> s ) ) ;".to_owned(), true)
+    );
+    // The name's own address, a member of the object itself, an element and
+    // a dereference keep their `&`.
+    for kept in [
+        "f ( & conn ) ;",
+        "f ( & conn . s ) ;",
+        "f ( & conn [ 0 ] ) ;",
+        "f ( & * conn ) ;",
+        "f ( & ( conn ) ) ;",
+        "f ( ( & conn ) -> s ) ;",
+    ] {
+        assert_eq!(read(kept), (kept.to_owned(), false), "{kept}");
+    }
+}

@@ -44,6 +44,19 @@
 //! refusal stays, so the function is never `Safe` by this rule; the other
 //! edge, an untied site and a decided test are left to the older refinement.
 //!
+//! The provenance it reads is joined provenance over the **tie names**
+//! ([`tie_names`], `LegacyCfg::tie_names`): the conditional names, plus each
+//! unique local whose only `&` uses are member addresses through it
+//! (`&conn->event`), which C reads as the address of a member of `*conn`,
+//! never of `conn` (Monkey's `mk_sched_add_connection`). Only this rule reads
+//! them ([`tie_facts`]); rule 10b's conditional release and every frame keep
+//! the conditional names.
+//!
+//! It replaces MONKEY-VHOST-PROPERTY-CUSTODY's interim withhold rule (an
+//! unresolved effect on every nullable, possibly-live site the binding may
+//! denote, in `refine_pointer_null`), which needed no tie and so also
+//! withdrew accusations established on other paths.
+//!
 //! It settles rather than marks an unresolved effect, because the marker is
 //! joined by union: it would also withdraw a leak established on the test's
 //! other edge where the two edges meet. And it needs the tie, because without
@@ -130,8 +143,10 @@ pub(crate) const fn edge_step(refused: bool, absent: bool, tied: bool, targeted:
 
 /// `(refused, absent, tied, targeted)` and the step, shared with
 /// `QCore.RefusedTestAccusation.edgeVectors`.
+#[cfg(test)]
 pub(crate) type EdgeVector = ((bool, bool, bool, bool), &'static str);
 
+#[cfg(test)]
 pub(crate) const EDGE_VECTORS: &[EdgeVector] = &[
     ((false, false, false, false), "keep"),
     ((false, false, false, true), "keep"),
@@ -163,7 +178,7 @@ pub(crate) const EDGE_VECTORS: &[EdgeVector] = &[
 ///
 /// A status witness's test (rule 11v) is not this rule's: its edges decide
 /// another name's storage and are left as they are.
-pub(crate) fn settle_absent_edge(
+pub(super) fn settle_absent_edge(
     instruction: &LegacyInstruction,
     edge: usize,
     before: &AbstractState,
@@ -191,6 +206,95 @@ pub(crate) fn settle_absent_edge(
         remove_null_site(edge_output, site);
     }
     settled
+}
+
+/// The token that stands in for a member address's `&` when the tie names
+/// are read: anything `frame_protected_locals` does not key on.
+const MEMBER_ADDRESS: &str = "+";
+
+/// `body` with the `&` of every member address through a name — `&NAME->F`,
+/// `&(NAME)->F`, `&(NAME->F)` — replaced by [`MEMBER_ADDRESS`], and whether
+/// any was. C reads the operand of that `&` as the postfix expression
+/// `NAME->F` (C11 6.5.2.3, 6.5.3.2: `->` binds tighter than unary `&`), the
+/// member of the object `NAME` points to, so no pointer to `NAME`'s own slot
+/// is formed. Every other `&` (`&NAME`, `&NAME.F`, `&NAME[I]`, `&*NAME`) is
+/// left for `frame_protected_locals` to read as it always did.
+pub(crate) fn member_addresses_read<'a>(body: &[&'a str]) -> (Vec<&'a str>, bool) {
+    let mut read = body.to_vec();
+    let mut any = false;
+    for index in 0..body.len() {
+        if body[index] != "&" {
+            continue;
+        }
+        let mut cursor = index + 1;
+        let mut opened = 0usize;
+        while body.get(cursor) == Some(&"(") {
+            opened += 1;
+            cursor += 1;
+        }
+        if !body.get(cursor).is_some_and(|name| is_identifier(name)) {
+            continue;
+        }
+        cursor += 1;
+        let mut closed = 0usize;
+        while closed < opened && body.get(cursor) == Some(&")") {
+            closed += 1;
+            cursor += 1;
+        }
+        // The tokenizer spells `->` as `-` `>`; accept either spelling.
+        let arrow = body.get(cursor) == Some(&"->")
+            || (body.get(cursor) == Some(&"-") && body.get(cursor + 1) == Some(&">"));
+        if arrow {
+            read[index] = MEMBER_ADDRESS;
+            any = true;
+        }
+    }
+    (read, any)
+}
+
+/// The tie names (`LegacyCfg::tie_names`): the conditional names, plus every
+/// unique local the body takes no address of once a member address through
+/// it is read as C reads it. Exactly the conditional names when the body
+/// spells no member address through a name.
+pub(super) fn tie_names(
+    tokens: &[Token],
+    body: &[&str],
+    formals: &BTreeSet<String>,
+    unique: &BTreeSet<String>,
+    conditional: &BTreeSet<String>,
+) -> BTreeSet<String> {
+    let (read, any) = member_addresses_read(body);
+    if !any {
+        return conditional.clone();
+    }
+    let unit = tokens
+        .iter()
+        .map(|token| token.text.as_str())
+        .collect::<Vec<_>>();
+    let protected = frame_protected_locals(&unit, &read, formals);
+    unique
+        .intersection(&protected)
+        .filter(|name| !formals.contains(*name))
+        .cloned()
+        .chain(conditional.iter().cloned())
+        .collect()
+}
+
+/// Joined provenance over the tie names, for rule 12e only. `None` when they
+/// are the conditional names, whose provenance the work list already holds.
+///
+/// A tie name outside the conditional names is an unshadowed automatic local
+/// whose own slot no `&` reaches, so the premise the call frame and the
+/// indirect-store frame rest on (no other lvalue designates the slot) holds of
+/// it exactly as of a conditional name; a refused statement still forgets it,
+/// because its sparing frame is `frame_protected_locals`' as before.
+pub(super) fn tie_facts(cfg: &LegacyCfg) -> Option<Vec<BTreeMap<usize, BTreeSet<String>>>> {
+    if cfg.tie_names == cfg.conditional_names {
+        return None;
+    }
+    let mut tie = cfg.clone();
+    tie.conditional_names = cfg.tie_names.clone();
+    Some(joined_provenance::derive(&tie))
 }
 
 #[cfg(test)]

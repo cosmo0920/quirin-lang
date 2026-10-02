@@ -465,6 +465,8 @@ pub(crate) fn combine(mut zero: LegacyCfg, mut nonzero: LegacyCfg) -> LegacyCfg 
     // Contextually combined recursive bodies are outside the acyclic local
     // provenance profile, even if a specialized CFG has no syntactic cycle.
     zero.conditional_names.clear();
+    // Card SUP07-REFUSED-TEST-ACCUSATION: nor rule 12e's.
+    zero.tie_names.clear();
     // Keep disjoint allocation identities across the mutually exclusive CFGs.
     let site_offset = zero
         .nodes

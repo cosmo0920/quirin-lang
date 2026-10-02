@@ -1012,6 +1012,13 @@ pub struct LegacyCfg {
     /// Unshadowed automatic local names, never address-taken, eligible for
     /// the bounded conditional-provenance analysis. Derived from source.
     pub conditional_names: BTreeSet<String>,
+    /// Card **SUP07-REFUSED-TEST-ACCUSATION** (rule 12e): `conditional_names`
+    /// with C's reading of `&NAME->F`, the address of a member of the object
+    /// `NAME` points to and never of `NAME` itself. A superset of
+    /// `conditional_names`, read only by rule 12e's provenance
+    /// (`refused_test::tie_facts`); every other reader keeps
+    /// `conditional_names`. Derived from source.
+    pub tie_names: BTreeSet<String>,
     /// Card **W43-INDEX-TRAVERSAL**: the declared scalar and single-level
     /// pointer names the traversal transfer rules key on. Derived from source.
     pub traversal: TraversalNames,
@@ -3467,6 +3474,14 @@ fn build_function_cfg_with(
             .filter(|name| !parser.formal_parameters.contains(*name))
             .cloned()
             .collect();
+        // Card SUP07-REFUSED-TEST-ACCUSATION (rule 12e): the tie names.
+        cfg.tie_names = refused_test::tie_names(
+            tokens,
+            &body,
+            &parser.formal_parameters,
+            &unique,
+            &cfg.conditional_names,
+        );
     }
     // Card W45-CALLEE-SUMMARY-CASCADE: the sub-custody guard before every call
     // to a function this unit defines (`member_release`, rule 3).
@@ -9655,6 +9670,7 @@ impl CfgBuilder {
             nodes: builder.nodes,
             publications,
             conditional_names: BTreeSet::new(),
+            tie_names: BTreeSet::new(),
             traversal: TraversalNames::default(),
         }
     }
@@ -11895,6 +11911,9 @@ pub(crate) fn analyze_cfg_with_entry(
     // read below. See [`alias_facts`].
     let alias = alias_facts(&cfg);
     let joined = joined_provenance::derive(&cfg);
+    // Card SUP07-REFUSED-TEST-ACCUSATION (rule 12e): provenance over the tie
+    // names, derived only where they differ from the conditional names.
+    let tie = refused_test::tie_facts(&cfg);
     let mut incoming = vec![None::<AbstractState>; cfg.nodes.len()];
     incoming[cfg.entry] = Some(entry_custody.state.clone());
     let mut work = VecDeque::from([cfg.entry]);
@@ -12037,7 +12056,7 @@ pub(crate) fn analyze_cfg_with_entry(
                             &node.instruction,
                             edge,
                             &output,
-                            &joined[node_id],
+                            tie.as_ref().map_or(&joined[node_id], |tie| &tie[node_id]),
                             &mut edge_output,
                         );
                     }
@@ -15656,36 +15675,12 @@ fn refine_pointer_null(
         // binding, never another alias or a resource's existence. Keep the
         // identity refusal and every obligation on both edges.
         //
-        // Card MONKEY-VHOST-PROPERTY-CUSTODY (rule 12e): but on the null edge
-        // a nullable, possibly-live site the binding may denote owes no
-        // accusation that rests on its non-null-ness there, which this
-        // refused test cannot establish: it is withheld.
-        if assume_null {
-            let withheld = pointer
-                .targets
-                .iter()
-                .copied()
-                .filter(|site| {
-                    crate::refused_null_test::null_edge_step(
-                        true,
-                        state.nullable_sites.contains(site),
-                        state
-                            .resources
-                            .get(site)
-                            .is_some_and(|status| status & LIVE != 0),
-                    ) == crate::refused_null_test::NullEdgeStep::Withhold
-                })
-                .collect::<BTreeSet<_>>();
-            if !withheld.is_empty() {
-                mark_unresolved_effect(
-                    state,
-                    &AbstractPointer {
-                        targets: withheld,
-                        ..Default::default()
-                    },
-                );
-            }
-        }
+        // Card SUP07-REFUSED-TEST-ACCUSATION: a site the tested name is tied
+        // to is settled on the null edge by rule 12e in the work list
+        // (`refused_test::settle_absent_edge`), never here: this refinement
+        // has no provenance, and withholding every nullable site the binding
+        // may denote (MONKEY-VHOST-PROPERTY-CUSTODY's interim rule, replaced)
+        // also withdrew accusations established on other paths.
         let narrowed = state.pointers.get_mut(source).expect("existing binding");
         if assume_null {
             narrowed.targets.clear();

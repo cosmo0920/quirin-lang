@@ -225,7 +225,11 @@ pub(super) fn record(
     if std::env::var_os(LEAK_WITNESS_PATH_VARIABLE).is_none() {
         return;
     }
-    record_refused_tests(cfg, incoming, acquisition_lines, context, joined);
+    // Card SUP07-REFUSED-TEST-ACCUSATION: rule 12e's provenance, as in the
+    // work list.
+    let tie_owned = refused_test::tie_facts(cfg);
+    let tie = tie_owned.as_deref().unwrap_or(joined);
+    record_refused_tests(cfg, incoming, acquisition_lines, context, tie);
     let reported = diagnostics
         .iter()
         .filter_map(|diagnostic| match diagnostic.kind {
@@ -239,7 +243,15 @@ pub(super) fn record(
         return;
     }
     let invocation = INVOCATION.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    let settled = settle(cfg, incoming, acquisition_lines, context, alias, joined);
+    let settled = settle(
+        cfg,
+        incoming,
+        acquisition_lines,
+        context,
+        alias,
+        joined,
+        tie,
+    );
     let producers = cfg
         .nodes
         .iter()
@@ -361,6 +373,7 @@ fn settle(
     context: &TransferContext<'_>,
     alias: &[NodeAliasFacts],
     joined: &[BTreeMap<usize, BTreeSet<String>>],
+    tie: &[BTreeMap<usize, BTreeSet<String>>],
 ) -> Vec<Settled> {
     cfg.nodes
         .iter()
@@ -443,7 +456,7 @@ fn settle(
                             &node.instruction,
                             edge,
                             &output,
-                            &joined[node_id],
+                            &tie[node_id],
                             &mut edge_output,
                         );
                     }
@@ -457,7 +470,7 @@ fn settle(
                                     .get(source)
                                     .map(|pointer| pointer.targets.clone())
                                     .unwrap_or_default();
-                                let tied = refused_test::tied_sites(&joined[node_id], source)
+                                let tied = refused_test::tied_sites(&tie[node_id], source)
                                     .intersection(&targets)
                                     .copied()
                                     .collect();
