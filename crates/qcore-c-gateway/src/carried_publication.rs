@@ -63,6 +63,7 @@ pub(crate) enum PublishStep {
 }
 
 impl PublishStep {
+    #[cfg(test)]
     pub(crate) const fn code(self) -> &'static str {
         match self {
             Self::Carry => "carry",
@@ -110,6 +111,7 @@ pub(crate) enum UnlinkStep {
 }
 
 impl UnlinkStep {
+    #[cfg(test)]
     pub(crate) const fn code(self) -> &'static str {
         match self {
             Self::Keep => "keep",

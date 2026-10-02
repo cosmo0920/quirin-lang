@@ -496,8 +496,13 @@ void p_wait_only(struct p_config *config)
     assert_eq!(kept.status, AnalysisStatus::Safe, "{:?}", kinds(kept));
 }
 
+/// Card MONKEY-VHOST-PROPERTY-CUSTODY (gateway rule 12d) deliberately changed
+/// this pin: an owner whose field-linked member is exactly live and
+/// unencumbered now carries it into the caller's list (an unlink hands it
+/// back), where rule 10d withdrew it. A member that is not exactly live keeps
+/// the withdrawal, so the refusal control stays here.
 #[test]
-fn a_publication_of_an_object_that_owns_members_is_refused() {
+fn a_publication_of_an_object_that_owns_members_carries_only_live_ones() {
     let summary = analyse(
         r#"
 struct p_owner { char *buffer; struct p_list _head; };
@@ -513,11 +518,33 @@ void p_owner_publish(struct p_queue *queue)
     owner->buffer = p_malloc(16);
     p_list_add(&owner->_head, &queue->pending);
 }
+
+void p_owner_publish_released(struct p_queue *queue)
+{
+    struct p_owner *owner;
+    char *buffer;
+
+    owner = p_malloc(sizeof(struct p_owner));
+    if (!owner) {
+        return;
+    }
+    owner->buffer = p_malloc(16);
+    buffer = owner->buffer;
+    p_free(buffer);
+    p_list_add(&owner->_head, &queue->pending);
+}
 "#,
         "p_owner_publish",
     );
     let owner = function(&summary, "p_owner_publish");
-    assert_ne!(owner.status, AnalysisStatus::Safe, "{:?}", kinds(owner));
+    assert_eq!(owner.status, AnalysisStatus::Safe, "{:?}", kinds(owner));
+    let released = function(&summary, "p_owner_publish_released");
+    assert_ne!(
+        released.status,
+        AnalysisStatus::Safe,
+        "{:?}",
+        kinds(released)
+    );
 }
 
 // ---- counted users ----
