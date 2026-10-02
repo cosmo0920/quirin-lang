@@ -43,6 +43,13 @@ edges where joined provenance also ties the site to the tested name
 - **Other violations** (summary conflicts, counted-user refutations) sit in
   functions with no refused test that denotes a site.
 
+The same census on AFTER2 ([classes](artifacts/census/witness-corpus-after2.json);
+diagnostics `dde4837e…`, equal to the plain AFTER2): 93 witnesses, none
+resting on a refused test (86 independent, 7 without a settled path); tied
+edges 21 → 24, the three new ones being `mk_sched_add_connection`'s one
+`if (!conn)` edge (both allocations tied) over W4 invocations. The tie names
+add no other tied edge in the corpus.
+
 `mk_sched_add_connection` is also false by reading
 (`mk_server/mk_scheduler.c:197-210`): on the null edge of `if (!conn)` the
 allocation `conn` holds is NULL or was never made, `conn` reaching the :201
@@ -191,4 +198,17 @@ every withdrawn leak attributed, Lean parity). Amended:
 
 ## Gate
 
-See [gate.json](gate.json) and [gate/](gate/).
+On base `f50fa2009`, tree of `f38dee378` ([gate.json](gate.json), exits in
+[gate/](gate/), [scripts/gate.sh](scripts/gate.sh),
+[scripts/provider-gate.sh](scripts/provider-gate.sh) and
+[scripts/finish-gate.sh](scripts/finish-gate.sh), logs
+`private/sup07/gate-g1`): cargo check 0; submodule 0; fmt 0; clippy
+`--locked` 0; the test runner 434 units, 447 summaries, 7,494 passed, 0
+failed, 11 ignored; both reevaluation probes 0; 281 Lean audits; Python 365
+tests, 1 expected failure before the matrix regeneration (the derived
+`lean_audits` 280 → 281; `main`'s matrix already lagged its 281 audits), 0
+after it; docs index 0. Provider gate (not due, `providers/` unchanged; run
+because the matrix merges only a gate with provider tests): check, fmt,
+clippy 0; 129 tests; `contracts.py check` 0; five packages built and
+verified. The first finish attempt refused the gate file for that missing
+count and was rerun after the provider gate.

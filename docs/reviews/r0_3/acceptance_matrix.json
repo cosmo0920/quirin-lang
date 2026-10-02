@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "MONKEY-VHOST-PROPERTY-CUSTODY card gate on base main bfbf0d673 (tree of tip 39212b653), scripts docs/reports/monkey-vhost-property-custody/scripts/gate.sh under the shared flock and finish-gate.sh, logs private/mvp/gate-g2 of this worktree: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 433 units, 446 summaries, 7,478 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T083038Z-803871); both reevaluation probes exit 0; check_lean_audits.py 280 audits passed (279 on main + AuditCarriedPublication.lean); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 279 -> 280, test_build_matrix_sections), then run again after build_matrix.py . --gate this file (09a, 09b); docs index 0. Provider gate (providers/ changed): cargo check --locked 0, fmt 0, clippy 0, cargo test 129 passed (exit 0), contracts.py check 0, package build 0, verify of the five packages 0. An earlier attempt (private/mvp/gate-g1, tip 4e5c5c6e3) failed clippy (the step enums' code() used only by tests) and one test (retry_lifetime's owner-publication pin, which rule 12d deliberately changes); both fixed, the gate rerun in full. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit) on main bfbf0d673: BEFORE 7f7d8328 647/10/4,177, AFTER a7d68d49 647/11/4,176 (mk_http_error_page Unknown -> provisional Unsafe, a false accusation by reading; 15 functions change leaves); system rows 83/4/361 unchanged (6dad47cc -> 21b08170, 2 functions change leaves); tail-pause slice custody identical (74aa4732 -> 59171e06, contract digests only). Exits in docs/reports/monkey-vhost-property-custody/gate/.",
-  "workspace_tests": 7478,
+  "note": "SUP07-REFUSED-TEST-ACCUSATION card gate on base main f50fa2009 (tree of tip f38dee378), scripts docs/reports/sup07-refused-test-accusation/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/sup07/gate-g1 of this worktree: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 434 units, 447 summaries, 7,494 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T114246Z-1110114); both reevaluation probes exit 0; check_lean_audits.py 281 audits passed (main's 281 with AuditRefusedNullTest.lean removed and AuditRefusedTestAccusation.lean added); python tests 365 with 1 expected failure before the matrix regeneration (the derived lean_audits 280 -> 281: main's committed matrix still read 280 after 7493e76a2 added an audit; test_build_matrix_sections), then run again after build_matrix.py . --gate this file (09a, 09b); docs index 0. providers/ is unchanged; the provider gate was run anyway because build_matrix.py merges only a gate with provider_tests (scripts/provider-gate.sh, same log directory): cargo check --locked 0, fmt 0, clippy 0, cargo test 129 passed (exit 0), contracts.py check 0, package build 0, verify of the five packages 0. The first finish-gate attempt (09a) refused this file for missing provider_tests; rerun after the provider gate. Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main cffe232d4 a7d68d49 647/11/4,176; AFTER on that base (0a7b99cf2) 25c1820b 647/10/4,177 (mk_http_error_page provisional Unsafe -> Unknown); BEFORE2 main f50fa2009 (interim withhold rule) dde4837e 647/9/4,178; AFTER2 at cf46c1af5 dde4837e 647/9/4,178, byte-identical to main (mk_http_error_page and mk_sched_add_connection provisional Unsafe -> Unknown against cffe232d4, nothing else); system 09423cd7 and tail-pause slice 86810e4d byte-identical at every run. Exits in docs/reports/sup07-refused-test-accusation/gate/.",
+  "workspace_tests": 7494,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 280,
+  "lean_audits": 281,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6945,6 +6945,7 @@
    "AuditReclamation.lean",
    "AuditRefusedCallHandOn.lean",
    "AuditRefusedHandOnCustody.lean",
+   "AuditRefusedTestAccusation.lean",
    "AuditRefusedWrites.lean",
    "AuditRefutedContractWithdrawal.lean",
    "AuditRegionCreditJoins.lean",
@@ -7046,7 +7047,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a60c462e09aaa3d28/docs/reports/monkey-vhost-property-custody/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a32011d7035553ac0/docs/reports/sup07-refused-test-accusation/gate.json)"
  },
  "named_followups": [
   {
