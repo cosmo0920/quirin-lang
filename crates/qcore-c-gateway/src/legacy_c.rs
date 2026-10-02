@@ -307,6 +307,11 @@ pub(crate) mod list_iteration;
 #[path = "legacy_checked_spec.rs"]
 pub(crate) mod checked_spec;
 
+// Card W48-BOTTOM-UP-CALLEE-BODIES (rule 12f): a scalar `return` value read
+// as the value of a statement.
+#[path = "legacy_scalar_return_value.rs"]
+mod scalar_return_value;
+
 #[cfg(feature = "indirect-census")]
 #[path = "legacy_leak_witness.rs"]
 pub(crate) mod leak_witness;
@@ -6563,6 +6568,13 @@ impl Parser<'_> {
                     && let Some(enclosing) = self.container_of_return(&expression, line)
                 {
                     return Ok(enclosing);
+                }
+                // Card W48-BOTTOM-UP-CALLEE-BODIES (rule 12f): asked last,
+                // only for a refused return.
+                if return_refused(&statement)
+                    && let Some(value) = self.scalar_return_value(&expression, line)
+                {
+                    return Ok(value);
                 }
                 Ok(statement)
             }

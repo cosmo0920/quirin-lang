@@ -14,7 +14,9 @@
 //! * **the header body:** librdkafka's `rd_clock` (Linux arm, `src/rdtime.h`)
 //!   reads two members of the `struct timespec` whose address it handed to
 //!   `clock_gettime`; with the declaration in force the call is modelled and
-//!   the body is still refused, at its `return` (report section 3).
+//!   the body was still refused, at its `return` (report section 3). Since
+//!   W48-BOTTOM-UP-CALLEE-BODIES (gateway rule 12f) the body is `Safe`; the
+//!   pin was changed deliberately.
 //!
 //! The candidates in these fixtures are fixture findings, not claims about
 //! any upstream body.
@@ -282,26 +284,19 @@ fn rd_clock_with_the_declaration_in_force() {
         "{:?}",
         with.diagnostics
     );
-    // The call no longer refuses; the `return` does. Its operands read two
-    // scalar members of the local aggregate `ts`, whose address the call
-    // took, and the typed access-path reader refuses that place in a return
-    // (parity `elaboration-return`: "place: the typed access-path reader
-    // refused it (CG10)", residual feature `aggregate-value`).
-    assert_eq!(
-        with.status,
-        AnalysisStatus::Unknown,
-        "{:?}",
-        with.diagnostics
-    );
-    assert_eq!(with.diagnostics.len(), 1, "{:?}", with.diagnostics);
-    assert!(matches!(
-        &with.diagnostics[0].kind,
-        LegacyDiagnosticKind::Unsupported { description }
-            if description == "unmodeled call, aggregate or indirect access in return expression"
-    ));
+    // The call no longer refuses. This card pinned the `return` as the
+    // remaining refusal: its operands read two scalar members of the local
+    // aggregate `ts`, whose address the call took, and the typed access-path
+    // reader refuses that place in a return (W48-RETURN-AGGREGATE-MEMBER-READ).
+    // Changed deliberately by W48-BOTTOM-UP-CALLEE-BODIES (gateway rule 12f):
+    // a refused scalar return value the statement position's W43 value
+    // walker reads is lowered as that statement's value, so the body is Safe
+    // (`tests/w48_bottom_up_callee_bodies.rs` holds the rule's controls).
+    assert_eq!(with.status, AnalysisStatus::Safe, "{:?}", with.diagnostics);
     // The same member read in a statement is admitted, and a plain `return`
-    // of the copied scalar is Safe: the refusal is positional (report
-    // section 3, registered for the aggregate-value card).
+    // of the copied scalar is Safe. The refusal this card found was
+    // positional (report section 3); since rule 12f the direct `return` of
+    // the member is Safe as well.
     let copied = summary(
         "long p(void) { struct timespec ts; long s; clock_gettime(1, &ts); s = ts.tv_sec; return s; }",
         "p",
@@ -318,7 +313,7 @@ fn rd_clock_with_the_declaration_in_force() {
     );
     assert_eq!(
         returned.status,
-        AnalysisStatus::Unknown,
+        AnalysisStatus::Safe,
         "{:?}",
         returned.diagnostics
     );
