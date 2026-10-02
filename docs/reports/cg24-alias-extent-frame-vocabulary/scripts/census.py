@@ -31,7 +31,7 @@ BACKLOG = re.compile(
     r"sb_segregate_chunks|sb_append_chunk_to_segregated_backlogs|cb_queue_chunks|"
     r"sb_remove_chunk_from_segregated_backlogs|sb_release_output_queue_space"
 )
-DERIVED = re.compile(r"derived|interior|result alias|return_interior|return_exact", re.I)
+DERIVED = re.compile(r"derived (result|pointer)|interior|result alias|return_interior|return_exact", re.I)
 NO_CONTRACT = re.compile(r"states no bounds contract")
 
 
