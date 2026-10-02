@@ -376,8 +376,11 @@ class LoadPathManifest(unittest.TestCase):
         # 56 -> 57 (fluent-bit 19 -> 20) by card W47-CONDVAR-JOIN-STOP-PATHS:
         # `fluent_bit/lib_engine_thread.qv`, five declarations awaiting review.
         # 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
+        # 58 -> 60 (libevent) by cards CONTRACT-PIN-TIP-MODE (`monkey/vhost_set.qv`)
+        # and MONKEY-VHOST-PROPERTY-CUSTODY (`monkey/string.qv`); this pin was
+        # left stale by both (PROVIDER-LOAD-PATH-VIEW-PIN-STALE).
         views = {c["name"]: c["resource_view"] for c in manifest["crates"]}
-        self.assertEqual(sum(len(view) for view in views.values()), 58)
+        self.assertEqual(sum(len(view) for view in views.values()), 60)
         self.assertEqual(views["quirin-provider-shared"], [])
         self.assertEqual(len(views["quirin-provider-libc"]), 17)
         # The real inventories: exactly the two crates that inherit carry pins.
