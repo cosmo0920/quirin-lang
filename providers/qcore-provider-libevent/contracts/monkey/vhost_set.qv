@@ -1,0 +1,87 @@
+module contract;
+
+// Monkey `mk_vhost_set` at the release candidate of its va_end fix —
+// resource-projection vocabulary version 1.
+//
+// Supplemental card SUP04-VARIADIC-UPSTREAM-CANDIDATES. ONE TRUSTED
+// ASSUMPTION about one upstream function, PINNED to the fixed body. This
+// module verifies nothing: a declaration is a premise, and any verdict that
+// rests on it is a verdict RELATIVE TO this declaration.
+//
+// ## The defect and its fix
+//
+// CG26-VARIADICS (gateway rule 11w) refused `mk_vhost_set` at the pinned
+// corpus (`mk_server/mk_lib.c:523`): `va` may reach a function exit without
+// `va_end`. The user confirmed the reading in the Monkey repository: the
+// `!value` early return inside the `va_arg` loop returned without `va_end`.
+// The fix is Monkey commit 21a2c1908b42596317717436e5ce0420805bd523 ("server:
+// end variadic arguments on null vhost value"), the tip of branch
+// `cosmo0920-missing-va_end-on-null`, which this contract treats as the
+// release candidate. Its body, `mk_server/mk_lib.c:509-541` there:
+//
+//     int mk_vhost_set(mk_ctx_t *ctx, int vid, ...)
+//     {
+//         ...
+//         vh = mk_vhost_lookup(ctx, vid);
+//         if (!vh) {
+//             return -1;
+//         }
+//
+//         va_start(va, vid);
+//
+//         while ((key = va_arg(va, char *))) {
+//             value = va_arg(va, char *);
+//             if (!value) {
+//                 /* Wrong parameter */
+//                 va_end(va);
+//                 return -1;
+//             }
+//
+//             ret = mk_vhost_set_property(vh, key, value);
+//             if (ret != 0) {
+//                 va_end(va);
+//                 return -1;
+//             }
+//         }
+//
+//         va_end(va);
+//         return 0;
+//     }
+//
+// ## The declaration, clause by clause
+//
+// * `ctx` and `vid` are borrowed: the body looks the virtual host up and
+//   neither releases, stores nor returns `ctx`.
+// * The trailing actuals are the NULL-terminated key/value strings. Each
+//   value reaches `mk_vhost_set_property`, which copies it (`mk_string_dup`)
+//   and reads its length (`strlen`); no trailing pointer is released or
+//   retained, so the tail is `resource_variadic_borrowed_tail()` (contract
+//   specification C04, cards O04-TRACE and CG26-VARIADICS).
+// * The result is a status (0 or -1) that carries no resource.
+//
+// ## Revision mode: pinned to the fix's tip
+//
+// The contract is pinned (C06.2, the default): it is in force only where the
+// audited source's `mk_vhost_set` sites equal those reviewed at the fix's tip,
+// recorded by `quirin-audit pin --source-root <monkey checkout at the tip>
+// --function mk_vhost_set` in this crate's `contracts.lock`. At the pinned
+// Fluent Bit corpus (66910c10) the vendored body still has the defect, so the
+// declaration is NOT in force there (`source-changed`); nothing in that corpus
+// calls `mk_vhost_set`, so no verdict moves. When the release candidate
+// moves, re-pin to the new tip; when Fluent Bit vendors the fixed Monkey,
+// pin that revision too.
+//
+// It is not `resource_body_checked` (C06.3): the body is not yet established
+// on route G (an unmodelled call in the loop condition, and the uncontracted
+// static `mk_vhost_set_property`), so the marker would only withdraw it. The
+// va_list protocol itself is decided on the body by rule 11w, independently
+// of this declaration.
+
+extern fn mk_vhost_set(ctx: ptr<mut, u8>, vid: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ctx);
+    ensures normal resource_borrowed(vid);
+    ensures normal resource_variadic_borrowed_tail();
+    ensures normal resource_return_none();
+};

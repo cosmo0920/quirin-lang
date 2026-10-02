@@ -121,6 +121,7 @@
         "monkey/native_platform_matrix.qv",
         "monkey/scalar_observation.qv",
         "monkey/timeout_teardown.qv",
+        "monkey/vhost_set.qv",
         "monkey/wait_failure_policy.qv",
         "monkey/wait_identity_policy.qv",
         "monkey/wait_source_policy.qv",
@@ -131,7 +132,8 @@
         "monkey/intrusive_list.qv",
         "monkey/logging.qv",
         "monkey/memory.qv",
-        "monkey/scalar_observation.qv"
+        "monkey/scalar_observation.qv",
+        "monkey/vhost_set.qv"
       ]
     },
     {
