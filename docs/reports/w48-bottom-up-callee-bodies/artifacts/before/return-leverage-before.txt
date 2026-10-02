@@ -1,0 +1,9 @@
+  75 {0: 58, 1: 17}  (every return leaf)
+  33 {0: 33}  unlisted form: no value form of this card
+  29 {0: 15, 1: 14}  place: the typed access-path reader refused it (CG10)
+   4 {0: 2, 1: 2}  place: path through CStyleCastExpr (CG10)
+   3 {0: 2, 1: 1}  call `rd_kafka_broker_ApiVersion_supported0` unsequenced with another event (CG05)
+   3 {0: 3}  unlisted form: no unique Clang node for the return
+   1 {0: 1}  indirect call (CG22)
+   1 {0: 1}  pointer `expression` converted to an integer may carry a tracked identity (CG08)
+   1 {0: 1}  unlisted form: address-of

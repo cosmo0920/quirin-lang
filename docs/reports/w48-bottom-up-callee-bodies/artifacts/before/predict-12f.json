@@ -1,0 +1,257 @@
+{
+ "candidate_leaves": [
+  {
+   "function": "LZ4_slideInputBuffer",
+   "line": 1893,
+   "owners": [
+    "lz4.c::LZ4_slideInputBuffer"
+   ],
+   "texts": "( char * ) ( uptrval ) ( ( LZ4_stream_t * ) state ) - > internal_donotuse . dictionary",
+   "features": "aggregate-value,cast,union"
+  },
+  {
+   "function": "cJSON_GetErrorPtr",
+   "line": 1376,
+   "owners": [
+    "cJSON.c::cJSON_GetErrorPtr"
+   ],
+   "texts": "( const char * ) ( global_error . json + global_error . position )",
+   "features": "cast,pointer-arithmetic"
+  },
+  {
+   "function": "cJSON_PrintBuffered",
+   "line": 2315,
+   "owners": [
+    "cJSON.c::cJSON_PrintBuffered"
+   ],
+   "texts": "( char * ) p . buffer",
+   "features": ""
+  },
+  {
+   "function": "rd_base64_encode_str",
+   "line": 9792,
+   "owners": [
+    "rdbase64.c::rd_base64_encode_str"
+   ],
+   "texts": "out . ptr",
+   "features": "aggregate-value"
+  },
+  {
+   "function": "rd_base64_encode_str_urlsafe",
+   "line": 9810,
+   "owners": [
+    "rdbase64.c::rd_base64_encode_str_urlsafe"
+   ],
+   "texts": "out . ptr",
+   "features": "aggregate-value"
+  },
+  {
+   "function": "rd_kafka_AlterUserScramCredentials_result_responses",
+   "line": 24030,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_AlterUserScramCredentials_result_responses"
+   ],
+   "texts": "( const rd_kafka_AlterUserScramCredentials_result_response_t * * ) result - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_DescribeConsumerGroups_result_groups",
+   "line": 25940,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_DescribeConsumerGroups_result_groups"
+   ],
+   "texts": "( const rd_kafka_ConsumerGroupDescription_t * * ) rko - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_DescribeTopics_result_topics",
+   "line": 26122,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_DescribeTopics_result_topics"
+   ],
+   "texts": "( const rd_kafka_TopicDescription_t * * ) rko - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_DescribeUserScramCredentials_result_descriptions",
+   "line": 23720,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_DescribeUserScramCredentials_result_descriptions"
+   ],
+   "texts": "( const rd_kafka_UserScramCredentialsDescription_t * * ) result - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_ElectLeadersResult_partitions",
+   "line": 26463,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_ElectLeadersResult_partitions"
+   ],
+   "texts": "( const rd_kafka_topic_partition_result_t * * ) result - > partitions . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_ListConsumerGroups_result_valid",
+   "line": 25116,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_ListConsumerGroups_result_valid"
+   ],
+   "texts": "( const rd_kafka_ConsumerGroupListing_t * * ) list_result - > valid . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_ListOffsets_result_infos",
+   "line": 22592,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_ListOffsets_result_infos"
+   ],
+   "texts": "( const rd_kafka_ListOffsetsResultInfo_t * * ) result - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_acl_bindings",
+   "line": 20416,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_admin_result_ret_acl_bindings"
+   ],
+   "texts": "( const rd_kafka_AclBinding_t * * ) rko - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_acl_results",
+   "line": 20407,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_admin_result_ret_acl_results"
+   ],
+   "texts": "( const rd_kafka_acl_result_t * * ) rko - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_delete_acl_result_responses",
+   "line": 20435,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_admin_result_ret_delete_acl_result_responses"
+   ],
+   "texts": "( const rd_kafka_DeleteAcls_result_response_t * * ) rko - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_groups",
+   "line": 20425,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_admin_result_ret_groups"
+   ],
+   "texts": "( const rd_kafka_group_result_t * * ) rko - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_resources",
+   "line": 20398,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_admin_result_ret_resources"
+   ],
+   "texts": "( const rd_kafka_ConfigResource_t * * ) rko - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_admin_result_ret_topics",
+   "line": 20389,
+   "owners": [
+    "rdkafka_admin.c::rd_kafka_admin_result_ret_topics"
+   ],
+   "texts": "( const rd_kafka_topic_result_t * * ) rko - > rko_u . admin_result . results . rl_elems",
+   "features": null
+  },
+  {
+   "function": "rd_kafka_broker_ApiVersion_supported0",
+   "line": 21047,
+   "owners": [
+    "rdkafka_broker.c::rd_kafka_broker_ApiVersion_supported0"
+   ],
+   "texts": "ret . MaxVer",
+   "features": "aggregate-value"
+  },
+  {
+   "function": "rd_kafka_list_groups",
+   "line": 25037,
+   "owners": [
+    "rdkafka.c::rd_kafka_list_groups"
+   ],
+   "texts": "state . err",
+   "features": "aggregate-value"
+  },
+  {
+   "function": "rd_kafka_mock_next_request_error",
+   "line": 22709,
+   "owners": [
+    "rdkafka_mock.c::rd_kafka_mock_next_request_error"
+   ],
+   "texts": "err_rtt . err",
+   "features": "aggregate-value"
+  },
+  {
+   "function": "rd_kafka_mock_partition_next_request_error",
+   "line": 22720,
+   "owners": [
+    "rdkafka_mock.c::rd_kafka_mock_partition_next_request_error"
+   ],
+   "texts": "err_rtt . err",
+   "features": "aggregate-value"
+  },
+  {
+   "function": "rd_kafka_offsets_for_times",
+   "line": 24230,
+   "owners": [
+    "rdkafka.c::rd_kafka_offsets_for_times"
+   ],
+   "texts": "state . err",
+   "features": "aggregate-value"
+  },
+  {
+   "function": "rd_kafka_query_watermark_offsets",
+   "line": 24112,
+   "owners": [
+    "rdkafka.c::rd_kafka_query_watermark_offsets"
+   ],
+   "texts": "state . err",
+   "features": "aggregate-value"
+  },
+  {
+   "function": "rd_kafka_toppar_fetch_decide_next_fetch_start_pos",
+   "line": 22236,
+   "owners": [
+    "rdkafka_fetcher.c::rd_kafka_toppar_fetch_decide_next_fetch_start_pos"
+   ],
+   "texts": "rktp - > rktp_offsets . fetch_pos",
+   "features": "aggregate-value"
+  }
+ ],
+ "freed_upper_bound": [
+  "cJSON.c::cJSON_GetErrorPtr@0",
+  "lz4.c::LZ4_slideInputBuffer@0",
+  "rdkafka_admin.c::rd_kafka_AlterConfigs_result_resources@1",
+  "rdkafka_admin.c::rd_kafka_AlterConsumerGroupOffsets_result_groups@1",
+  "rdkafka_admin.c::rd_kafka_AlterUserScramCredentials_result_responses@0",
+  "rdkafka_admin.c::rd_kafka_CreateAcls_result_acls@1",
+  "rdkafka_admin.c::rd_kafka_CreatePartitions_result_topics@1",
+  "rdkafka_admin.c::rd_kafka_CreateTopics_result_topics@1",
+  "rdkafka_admin.c::rd_kafka_DeleteAcls_result_responses@1",
+  "rdkafka_admin.c::rd_kafka_DeleteConsumerGroupOffsets_result_groups@1",
+  "rdkafka_admin.c::rd_kafka_DeleteGroups_result_groups@1",
+  "rdkafka_admin.c::rd_kafka_DeleteTopics_result_topics@1",
+  "rdkafka_admin.c::rd_kafka_DescribeAcls_result_acls@1",
+  "rdkafka_admin.c::rd_kafka_DescribeConfigs_result_resources@1",
+  "rdkafka_admin.c::rd_kafka_DescribeUserScramCredentials_result_descriptions@0",
+  "rdkafka_admin.c::rd_kafka_ElectLeadersResult_partitions@0",
+  "rdkafka_admin.c::rd_kafka_ElectLeaders_result_partitions@1",
+  "rdkafka_admin.c::rd_kafka_IncrementalAlterConfigs_result_resources@1",
+  "rdkafka_admin.c::rd_kafka_ListConsumerGroupOffsets_result_groups@1",
+  "rdkafka_admin.c::rd_kafka_ListOffsets_result_infos@0",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_acl_bindings@0",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_acl_results@0",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_delete_acl_result_responses@0",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_groups@0",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_resources@0",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_topics@0"
+ ]
+}

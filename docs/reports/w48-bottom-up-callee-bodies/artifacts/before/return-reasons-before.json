@@ -1,0 +1,2678 @@
+[
+ {
+  "function": "ConsumerPair_hash",
+  "line": 21289,
+  "owners": [
+   "rdkafka_sticky_assignor.c::ConsumerPair_hash"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "31 * ( a - > src ? rd_map_str_hash ( a - > src ) : 1 ) + ( a - > dst ? rd_map_str_hash ( a - > dst ) : 1 )"
+ },
+ {
+  "function": "LZ4F_calloc",
+  "line": 1052,
+  "owners": [
+   "lz4frame.c::LZ4F_calloc"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "cmem . customCalloc ( cmem . opaqueState , s )"
+ },
+ {
+  "function": "LZ4F_compressFrameBound",
+  "line": 1228,
+  "owners": [
+   "lz4frame.c::LZ4F_compressFrameBound"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "headerSize + LZ4F_compressBound_internal ( srcSize , & prefs , 0 )"
+ },
+ {
+  "function": "LZ4F_malloc",
+  "line": 1064,
+  "owners": [
+   "lz4frame.c::LZ4F_malloc"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "cmem . customAlloc ( cmem . opaqueState , s )"
+ },
+ {
+  "function": "LZ4_NbCommonBytes",
+  "line": 451,
+  "owners": [
+   "lz4.c::LZ4_NbCommonBytes"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "indirect call (CG22)",
+  "features": null,
+  "texts": "( unsigned ) __builtin_ctzll ( ( U64 ) val ) > > 3"
+ },
+ {
+  "function": "LZ4_NbCommonBytes",
+  "line": 453,
+  "owners": [
+   "lz4.c::LZ4_NbCommonBytes"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "indirect call (CG22)",
+  "features": null,
+  "texts": "( unsigned ) __builtin_ctz ( ( U32 ) val ) > > 3"
+ },
+ {
+  "function": "LZ4_NbCommonBytes",
+  "line": 457,
+  "owners": [
+   "lz4.c::LZ4_NbCommonBytes"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "indirect call (CG22)",
+  "features": null,
+  "texts": "( unsigned ) __builtin_clzll ( ( U64 ) val ) > > 3"
+ },
+ {
+  "function": "LZ4_NbCommonBytes",
+  "line": 459,
+  "owners": [
+   "lz4.c::LZ4_NbCommonBytes"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "indirect call (CG22)",
+  "features": null,
+  "texts": "( unsigned ) __builtin_clz ( ( U32 ) val ) > > 3"
+ },
+ {
+  "function": "LZ4_getPositionOnHash",
+  "line": 580,
+  "owners": [
+   "lz4.c::LZ4_getPositionOnHash"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer",
+  "texts": "hashTable [ h ]"
+ },
+ {
+  "function": "LZ4_getPositionOnHash",
+  "line": 581,
+  "owners": [
+   "lz4.c::LZ4_getPositionOnHash"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer,pointer-arithmetic",
+  "texts": "hashTable [ h ] + srcBase"
+ },
+ {
+  "function": "LZ4_getPositionOnHash",
+  "line": 582,
+  "owners": [
+   "lz4.c::LZ4_getPositionOnHash"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer,pointer-arithmetic",
+  "texts": "hashTable [ h ] + srcBase"
+ },
+ {
+  "function": "LZ4_slideInputBuffer",
+  "line": 1893,
+  "owners": [
+   "lz4.c::LZ4_slideInputBuffer"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "pointer `expression` converted to an integer may carry a tracked identity (CG08)",
+  "features": "aggregate-value,cast,union",
+  "texts": "( char * ) ( uptrval ) ( ( LZ4_stream_t * ) state ) - > internal_donotuse . dictionary"
+ },
+ {
+  "function": "PartitionMovements_getTheActualPartitionToBeMoved",
+  "line": 21484,
+  "owners": [
+   "rdkafka_sticky_assignor.c::PartitionMovements_getTheActualPartitionToBeMoved"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value",
+  "texts": "& plist - > elems [ 0 ]"
+ },
+ {
+  "function": "XXH_readLE32_align",
+  "line": 792,
+  "owners": [
+   "rdxxhash.c::XXH_readLE32_align"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: path through CStyleCastExpr (CG10)",
+  "features": null,
+  "texts": "endian = = XXH_littleEndian ? * ( const U32 * ) ptr : XXH_swap32 ( * ( const U32 * ) ptr )"
+ },
+ {
+  "function": "XXH_readLE64_align",
+  "line": 1036,
+  "owners": [
+   "rdxxhash.c::XXH_readLE64_align"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: path through CStyleCastExpr (CG10)",
+  "features": null,
+  "texts": "endian = = XXH_littleEndian ? * ( const U64 * ) ptr : XXH_swap64 ( * ( const U64 * ) ptr )"
+ },
+ {
+  "function": "cJSON_GetErrorPtr",
+  "line": 1376,
+  "owners": [
+   "cJSON.c::cJSON_GetErrorPtr"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "cast,pointer-arithmetic",
+  "texts": "( const char * ) ( global_error . json + global_error . position )"
+ },
+ {
+  "function": "cJSON_GetStringValue",
+  "line": 1384,
+  "owners": [
+   "cJSON.c::cJSON_GetStringValue"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer",
+  "texts": "item - > valuestring"
+ },
+ {
+  "function": "cJSON_HasObjectItem",
+  "line": 2819,
+  "owners": [
+   "cJSON.c::cJSON_HasObjectItem"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "cJSON_GetObjectItem ( object , string ) ? 1 : 0"
+ },
+ {
+  "function": "cJSON_PrintBuffered",
+  "line": 2315,
+  "owners": [
+   "cJSON.c::cJSON_PrintBuffered"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "",
+  "texts": "( char * ) p . buffer"
+ },
+ {
+  "function": "cJSON_SetValuestring",
+  "line": 1634,
+  "owners": [
+   "cJSON.c::cJSON_SetValuestring"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "",
+  "texts": "object - > valuestring"
+ },
+ {
+  "function": "cJSON_malloc",
+  "line": 3791,
+  "owners": [
+   "cJSON.c::cJSON_malloc"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "global_hooks . allocate ( size )"
+ },
+ {
+  "function": "case_insensitive_strcmp",
+  "line": 1417,
+  "owners": [
+   "cJSON.c::case_insensitive_strcmp"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "tolower ( * string1 ) - tolower ( * string2 )"
+ },
+ {
+  "function": "cmt_metric_has_start_timestamp",
+  "line": 5569,
+  "owners": [
+   "cmt_metric.c::cmt_metric_has_start_timestamp"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "cmt_atomic_load ( & metric - > start_timestamp_set ) ! = 0"
+ },
+ {
+  "function": "decode_basic_field",
+  "line": 600,
+  "owners": [
+   "nanopb/pb_decode.c::decode_basic_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_basic_field",
+  "line": 606,
+  "owners": [
+   "nanopb/pb_decode.c::decode_basic_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_basic_field",
+  "line": 610,
+  "owners": [
+   "nanopb/pb_decode.c::decode_basic_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_basic_field",
+  "line": 614,
+  "owners": [
+   "nanopb/pb_decode.c::decode_basic_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_basic_field",
+  "line": 618,
+  "owners": [
+   "nanopb/pb_decode.c::decode_basic_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_basic_field",
+  "line": 622,
+  "owners": [
+   "nanopb/pb_decode.c::decode_basic_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_basic_field",
+  "line": 627,
+  "owners": [
+   "nanopb/pb_decode.c::decode_basic_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_basic_field",
+  "line": 631,
+  "owners": [
+   "nanopb/pb_decode.c::decode_basic_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_basic_field",
+  "line": 634,
+  "owners": [
+   "nanopb/pb_decode.c::decode_basic_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_callback_field",
+  "line": 741,
+  "owners": [
+   "nanopb/pb_decode.c::decode_callback_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "indirect call (CG22)",
+  "features": null,
+  "texts": "field - > descriptor - > field_callback ( & substream , ( ( void * ) 0 ) , field )"
+ },
+ {
+  "function": "decode_field",
+  "line": 755,
+  "owners": [
+   "nanopb/pb_decode.c::decode_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_pointer_field",
+  "line": 708,
+  "owners": [
+   "nanopb/pb_decode.c::decode_pointer_field"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_static_field",
+  "line": 668,
+  "owners": [
+   "nanopb/pb_decode.c::decode_static_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_static_field",
+  "line": 678,
+  "owners": [
+   "nanopb/pb_decode.c::decode_static_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_static_field",
+  "line": 694,
+  "owners": [
+   "nanopb/pb_decode.c::decode_static_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "decode_static_field",
+  "line": 701,
+  "owners": [
+   "nanopb/pb_decode.c::decode_static_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "default_extension_decoder",
+  "line": 763,
+  "owners": [
+   "nanopb/pb_decode.c::default_extension_decoder"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "default_extension_encoder",
+  "line": 667,
+  "owners": [
+   "nanopb/pb_encode.c::default_extension_encoder"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "encode_array",
+  "line": 410,
+  "owners": [
+   "nanopb/pb_encode.c::encode_array"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "encode_array",
+  "line": 430,
+  "owners": [
+   "nanopb/pb_encode.c::encode_array"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "address,aggregate-value,array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( ( ( & sizestream ) - > errmsg ? ( & sizestream ) - > errmsg : __qcore_literal__ ) ) ) , 0"
+ },
+ {
+  "function": "encode_basic_field",
+  "line": 608,
+  "owners": [
+   "nanopb/pb_encode.c::encode_basic_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "encode_callback_field",
+  "line": 616,
+  "owners": [
+   "nanopb/pb_encode.c::encode_callback_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "encode_field",
+  "line": 647,
+  "owners": [
+   "nanopb/pb_encode.c::encode_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "ensure",
+  "line": 1677,
+  "owners": [
+   "cJSON.c::ensure"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer,pointer-arithmetic",
+  "texts": "p - > buffer + p - > offset"
+ },
+ {
+  "function": "ensure",
+  "line": 1723,
+  "owners": [
+   "cJSON.c::ensure"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer,pointer-arithmetic",
+  "texts": "newbuffer + p - > offset"
+ },
+ {
+  "function": "fetch_array_kvlist_entry",
+  "line": 6812,
+  "owners": [
+   "cmt_encode_opentelemetry.c::fetch_array_kvlist_entry"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "function-pointer,union",
+  "texts": "entry_variant - > data . as_kvlist"
+ },
+ {
+  "function": "fetch_metadata_array_key",
+  "line": 6800,
+  "owners": [
+   "cmt_encode_opentelemetry.c::fetch_metadata_array_key"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "function-pointer,union",
+  "texts": "entry_variant - > data . as_array"
+ },
+ {
+  "function": "fetch_metadata_kvlist_key",
+  "line": 5603,
+  "owners": [
+   "cmt_encode_text.c::fetch_metadata_kvlist_key"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "function-pointer,union",
+  "texts": "entry_variant - > data . as_kvlist"
+ },
+ {
+  "function": "get_input_chunk_source_name",
+  "line": 18019,
+  "owners": [
+   "flb_input_chunk.c::get_input_chunk_source_name"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "",
+  "texts": "chunk - > st - > name"
+ },
+ {
+  "function": "get_member_id",
+  "line": 20728,
+  "owners": [
+   "rdkafka_telemetry_encode.c::get_member_id"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no unique Clang node for the return",
+  "features": "cast,conditional,const-pointer,logical",
+  "texts": "( const char * ) rk - > rk_cgrp - > rkcg_member_id - > str"
+ },
+ {
+  "function": "log2_floor",
+  "line": 19675,
+  "owners": [
+   "snappy.c::log2_floor"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no unique Clang node for the return",
+  "features": null,
+  "texts": "31 ^ __builtin_clz ( n )"
+ },
+ {
+  "function": "metric_hash_lookup",
+  "line": 5669,
+  "owners": [
+   "cmt_map.c::metric_hash_lookup"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value",
+  "texts": "& map - > metric"
+ },
+ {
+  "function": "mk_handler_param_get",
+  "line": 6558,
+  "owners": [
+   "mk_server/mk_plugin.c::mk_handler_param_get"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no unique Clang node for the return",
+  "features": null,
+  "texts": "( struct mk_vhost_handler_param * ) ( ( char * ) __mptr - __builtin_offsetof ( struct mk_vhost_handler_param , _head ) )"
+ },
+ {
+  "function": "mk_http_header_get",
+  "line": 7135,
+  "owners": [
+   "mk_server/mk_http.c::mk_http_header_get"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value,array-decay,array-value",
+  "texts": "& parser - > headers [ name ]"
+ },
+ {
+  "function": "mk_net_transport_event_interest",
+  "line": 5946,
+  "owners": [
+   "mk_server/mk_net.c::mk_net_transport_event_interest"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "transport - > event_interest ( transport - > plugin , fd , fallback )"
+ },
+ {
+  "function": "mk_plugin_time_now_human",
+  "line": 6501,
+  "owners": [
+   "mk_server/mk_plugin.c::mk_plugin_time_now_human"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address",
+  "texts": "& server - > clock_context - > log_current_time"
+ },
+ {
+  "function": "mk_sched_next_target",
+  "line": 6513,
+  "owners": [
+   "mk_server/mk_scheduler.c::mk_sched_next_target"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value",
+  "texts": "& ctx - > workers [ t ]"
+ },
+ {
+  "function": "mk_string_build",
+  "line": 2276,
+  "owners": [
+   "mk_core/mk_string.c::mk_string_build"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "",
+  "texts": "* buffer"
+ },
+ {
+  "function": "pb_check_proto3_default_value",
+  "line": 508,
+  "owners": [
+   "nanopb/pb_encode.c::pb_check_proto3_default_value"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "safe_read_bool ( field - > pSize ) = = 0"
+ },
+ {
+  "function": "pb_const_cast",
+  "line": 530,
+  "owners": [
+   "nanopb/pb_common.c::pb_const_cast"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "function-pointer,union",
+  "texts": "t . p1"
+ },
+ {
+  "function": "pb_dec_bytes",
+  "line": 1138,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_bytes"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_bytes",
+  "line": 1141,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_bytes"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_bytes",
+  "line": 1144,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_bytes"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_bytes",
+  "line": 1149,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_bytes"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_fixed_length_bytes",
+  "line": 1222,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_fixed_length_bytes"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_fixed_length_bytes",
+  "line": 1229,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_fixed_length_bytes"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_string",
+  "line": 1163,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_string"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_string",
+  "line": 1166,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_string"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_string",
+  "line": 1169,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_string"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_string",
+  "line": 1174,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_string"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_submessage",
+  "line": 1189,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_submessage"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_varint",
+  "line": 1091,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_varint"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_varint",
+  "line": 1093,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_varint"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_varint",
+  "line": 1124,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_varint"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_dec_varint",
+  "line": 1126,
+  "owners": [
+   "nanopb/pb_decode.c::pb_dec_varint"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_decode_inner",
+  "line": 895,
+  "owners": [
+   "nanopb/pb_decode.c::pb_decode_inner"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_decode_inner",
+  "line": 918,
+  "owners": [
+   "nanopb/pb_decode.c::pb_decode_inner"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_decode_inner",
+  "line": 955,
+  "owners": [
+   "nanopb/pb_decode.c::pb_decode_inner"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_decode_inner",
+  "line": 975,
+  "owners": [
+   "nanopb/pb_decode.c::pb_decode_inner"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_decode_inner",
+  "line": 987,
+  "owners": [
+   "nanopb/pb_decode.c::pb_decode_inner"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_decode_inner",
+  "line": 994,
+  "owners": [
+   "nanopb/pb_decode.c::pb_decode_inner"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_decode_varint",
+  "line": 493,
+  "owners": [
+   "nanopb/pb_decode.c::pb_decode_varint"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_decode_varint32_eof",
+  "line": 458,
+  "owners": [
+   "nanopb/pb_decode.c::pb_decode_varint32_eof"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_decode_varint32_eof",
+  "line": 465,
+  "owners": [
+   "nanopb/pb_decode.c::pb_decode_varint32_eof"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_default_field_callback",
+  "line": 549,
+  "owners": [
+   "nanopb/pb_common.c::pb_default_field_callback"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "pCallback - > funcs . decode ( istream , field , & pCallback - > arg )"
+ },
+ {
+  "function": "pb_default_field_callback",
+  "line": 553,
+  "owners": [
+   "nanopb/pb_common.c::pb_default_field_callback"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "pCallback - > funcs . encode ( ostream , field , & pCallback - > arg )"
+ },
+ {
+  "function": "pb_enc_bytes",
+  "line": 927,
+  "owners": [
+   "nanopb/pb_encode.c::pb_enc_bytes"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_enc_fixed",
+  "line": 913,
+  "owners": [
+   "nanopb/pb_encode.c::pb_enc_fixed"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_enc_string",
+  "line": 943,
+  "owners": [
+   "nanopb/pb_encode.c::pb_enc_string"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_enc_string",
+  "line": 960,
+  "owners": [
+   "nanopb/pb_encode.c::pb_enc_string"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_enc_submessage",
+  "line": 968,
+  "owners": [
+   "nanopb/pb_encode.c::pb_enc_submessage"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_enc_varint",
+  "line": 879,
+  "owners": [
+   "nanopb/pb_encode.c::pb_enc_varint"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_enc_varint",
+  "line": 894,
+  "owners": [
+   "nanopb/pb_encode.c::pb_enc_varint"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_encode_submessage",
+  "line": 845,
+  "owners": [
+   "nanopb/pb_encode.c::pb_encode_submessage"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_encode_submessage",
+  "line": 856,
+  "owners": [
+   "nanopb/pb_encode.c::pb_encode_submessage"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_encode_tag_for_field",
+  "line": 819,
+  "owners": [
+   "nanopb/pb_encode.c::pb_encode_tag_for_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_make_string_substream",
+  "line": 579,
+  "owners": [
+   "nanopb/pb_decode.c::pb_make_string_substream"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_read",
+  "line": 392,
+  "owners": [
+   "nanopb/pb_decode.c::pb_read"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_read",
+  "line": 394,
+  "owners": [
+   "nanopb/pb_decode.c::pb_read"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_readbyte",
+  "line": 404,
+  "owners": [
+   "nanopb/pb_decode.c::pb_readbyte"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_readbyte",
+  "line": 406,
+  "owners": [
+   "nanopb/pb_decode.c::pb_readbyte"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_skip_field",
+  "line": 543,
+  "owners": [
+   "nanopb/pb_decode.c::pb_skip_field"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_skip_string",
+  "line": 517,
+  "owners": [
+   "nanopb/pb_decode.c::pb_skip_string"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_write",
+  "line": 382,
+  "owners": [
+   "nanopb/pb_encode.c::pb_write"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "pb_write",
+  "line": 385,
+  "owners": [
+   "nanopb/pb_encode.c::pb_write"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "person_hash",
+  "line": 3498,
+  "owners": [
+   "rdmap.c::person_hash"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "31 * rd_map_str_hash ( key - > name ) + rd_map_str_hash ( key - > surname )"
+ },
+ {
+  "function": "rd_base64_encode_str",
+  "line": 9792,
+  "owners": [
+   "rdbase64.c::rd_base64_encode_str"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "out . ptr"
+ },
+ {
+  "function": "rd_base64_encode_str_urlsafe",
+  "line": 9810,
+  "owners": [
+   "rdbase64.c::rd_base64_encode_str_urlsafe"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "out . ptr"
+ },
+ {
+  "function": "rd_hdr_getCountAtIndex",
+  "line": 4091,
+  "owners": [
+   "rdhdrhistogram.c::rd_hdr_getCountAtIndex"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "hdr - > counts [ rd_hdr_countsIndex ( hdr , bucketIdx , subBucketIdx ) ]"
+ },
+ {
+  "function": "rd_kafka_AclBinding_request_size",
+  "line": 23649,
+  "owners": [
+   "rdkafka_request.c::rd_kafka_AclBinding_request_size"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "1 + 2 + ( acl - > name ? strlen ( acl - > name ) : 0 ) + 2 + ( acl - > principal ? strlen ( acl - > principal ) : 0 ) + 2 + ( acl - > host ? strlen ( acl - > host ) : 0 ) + 1 + 1 + ( ApiVersion > 0 ? 1 : 0 )"
+ },
+ {
+  "function": "rd_kafka_AdminOptions_set_include_authorized_operations",
+  "line": 20966,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_AdminOptions_set_include_authorized_operations"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "cast `ArrayToPointerDecay` (CG08)",
+  "features": null,
+  "texts": "! err ? ( ( void * ) 0 ) : rd_kafka_error_new ( err , __qcore_literal__ , errstr )"
+ },
+ {
+  "function": "rd_kafka_AdminOptions_set_isolation_level",
+  "line": 20948,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_AdminOptions_set_isolation_level"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "cast `ArrayToPointerDecay` (CG08)",
+  "features": null,
+  "texts": "! err ? ( ( void * ) 0 ) : rd_kafka_error_new ( err , __qcore_literal__ , errstr )"
+ },
+ {
+  "function": "rd_kafka_AdminOptions_set_match_consumer_group_states",
+  "line": 21008,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_AdminOptions_set_match_consumer_group_states"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "cast `ArrayToPointerDecay` (CG08)",
+  "features": null,
+  "texts": "! err ? ( ( void * ) 0 ) : rd_kafka_error_new ( err , __qcore_literal__ , errstr )"
+ },
+ {
+  "function": "rd_kafka_AdminOptions_set_match_consumer_group_types",
+  "line": 21055,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_AdminOptions_set_match_consumer_group_types"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "cast `ArrayToPointerDecay` (CG08)",
+  "features": null,
+  "texts": "! err ? ( ( void * ) 0 ) : rd_kafka_error_new ( err , __qcore_literal__ , errstr )"
+ },
+ {
+  "function": "rd_kafka_AdminOptions_set_require_stable_offsets",
+  "line": 20957,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_AdminOptions_set_require_stable_offsets"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "cast `ArrayToPointerDecay` (CG08)",
+  "features": null,
+  "texts": "! err ? ( ( void * ) 0 ) : rd_kafka_error_new ( err , __qcore_literal__ , errstr )"
+ },
+ {
+  "function": "rd_kafka_AlterUserScramCredentials_result_responses",
+  "line": 24030,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_AlterUserScramCredentials_result_responses"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_AlterUserScramCredentials_result_response_t * * ) result - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_ConfigEntry_name",
+  "line": 21733,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_ConfigEntry_name"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "array-value,const-pointer",
+  "texts": "entry - > kv - > name"
+ },
+ {
+  "function": "rd_kafka_ConfigEntry_synonyms",
+  "line": 21760,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_ConfigEntry_synonyms"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "aggregate-value,const-pointer",
+  "texts": "( const rd_kafka_ConfigEntry_t * * ) entry - > synonyms . rl_elems"
+ },
+ {
+  "function": "rd_kafka_ConfigResource_configs",
+  "line": 21909,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_ConfigResource_configs"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "aggregate-value,const-pointer",
+  "texts": "( const rd_kafka_ConfigEntry_t * * ) config - > config . rl_elems"
+ },
+ {
+  "function": "rd_kafka_DescribeCluster_result_authorized_operations",
+  "line": 26311,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_DescribeCluster_result_authorized_operations"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer",
+  "texts": "clusterdesc - > authorized_operations"
+ },
+ {
+  "function": "rd_kafka_DescribeCluster_result_cluster_id",
+  "line": 26315,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_DescribeCluster_result_cluster_id"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rd_kafka_DescribeCluster_result_description ( result ) - > cluster_id"
+ },
+ {
+  "function": "rd_kafka_DescribeCluster_result_controller",
+  "line": 26319,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_DescribeCluster_result_controller"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rd_kafka_DescribeCluster_result_description ( result ) - > controller"
+ },
+ {
+  "function": "rd_kafka_DescribeCluster_result_nodes",
+  "line": 26302,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_DescribeCluster_result_nodes"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "const-pointer",
+  "texts": "( const rd_kafka_Node_t * * ) clusterdesc - > nodes"
+ },
+ {
+  "function": "rd_kafka_DescribeConsumerGroups_result_groups",
+  "line": 25940,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_DescribeConsumerGroups_result_groups"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_ConsumerGroupDescription_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_DescribeTopics_result_topics",
+  "line": 26122,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_DescribeTopics_result_topics"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_TopicDescription_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_DescribeUserScramCredentials_result_descriptions",
+  "line": 23720,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_DescribeUserScramCredentials_result_descriptions"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_UserScramCredentialsDescription_t * * ) result - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_ElectLeadersResult_partitions",
+  "line": 26463,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_ElectLeadersResult_partitions"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_topic_partition_result_t * * ) result - > partitions . rl_elems"
+ },
+ {
+  "function": "rd_kafka_ListConsumerGroups_result_errors",
+  "line": 25137,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_ListConsumerGroups_result_errors"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "aggregate-value,const-pointer",
+  "texts": "( const rd_kafka_error_t * * ) list_result - > errors . rl_elems"
+ },
+ {
+  "function": "rd_kafka_ListConsumerGroups_result_valid",
+  "line": 25116,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_ListConsumerGroups_result_valid"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_ConsumerGroupListing_t * * ) list_result - > valid . rl_elems"
+ },
+ {
+  "function": "rd_kafka_ListOffsets_result_infos",
+  "line": 22592,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_ListOffsets_result_infos"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_ListOffsetsResultInfo_t * * ) result - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_MemberDescription_assignment",
+  "line": 25255,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_MemberDescription_assignment"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value",
+  "texts": "& member - > assignment"
+ },
+ {
+  "function": "rd_kafka_TopicDescription_topic_id",
+  "line": 26112,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_TopicDescription_topic_id"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value",
+  "texts": "& topicdesc - > topic_id"
+ },
+ {
+  "function": "rd_kafka_UserScramCredentialsDescription_scramcredentialinfo",
+  "line": 23713,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_UserScramCredentialsDescription_scramcredentialinfo"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value,const-pointer",
+  "texts": "& description - > credential_infos [ idx ]"
+ },
+ {
+  "function": "rd_kafka_Uuid_base64str",
+  "line": 25162,
+  "owners": [
+   "rdkafka.c::rd_kafka_Uuid_base64str"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "array-value",
+  "texts": "uuid - > base64str"
+ },
+ {
+  "function": "rd_kafka_Uuid_base64str",
+  "line": 25179,
+  "owners": [
+   "rdkafka.c::rd_kafka_Uuid_base64str"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "array-value",
+  "texts": "uuid - > base64str"
+ },
+ {
+  "function": "rd_kafka_admin_result_ret_acl_bindings",
+  "line": 20416,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_acl_bindings"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_AclBinding_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_admin_result_ret_acl_results",
+  "line": 20407,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_acl_results"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_acl_result_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_admin_result_ret_delete_acl_result_responses",
+  "line": 20435,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_delete_acl_result_responses"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_DeleteAcls_result_response_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_admin_result_ret_groups",
+  "line": 20425,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_groups"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_group_result_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_admin_result_ret_resources",
+  "line": 20398,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_resources"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_ConfigResource_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_admin_result_ret_topics",
+  "line": 20389,
+  "owners": [
+   "rdkafka_admin.c::rd_kafka_admin_result_ret_topics"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "( const rd_kafka_topic_result_t * * ) rko - > rko_u . admin_result . results . rl_elems"
+ },
+ {
+  "function": "rd_kafka_assignment_lost",
+  "line": 19728,
+  "owners": [
+   "rdkafka_subscription.c::rd_kafka_assignment_lost"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rd_kafka_cgrp_assignment_is_lost ( rkcg ) = = 1"
+ },
+ {
+  "function": "rd_kafka_assignment_serve_pending",
+  "line": 20444,
+  "owners": [
+   "rdkafka_assignment.c::rd_kafka_assignment_serve_pending"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value,function-pointer",
+  "texts": "rk - > rk_consumer . assignment . pending - > cnt + rk - > rk_consumer . assignment . queried - > cnt"
+ },
+ {
+  "function": "rd_kafka_assignment_serve_pending",
+  "line": 20464,
+  "owners": [
+   "rdkafka_assignment.c::rd_kafka_assignment_serve_pending"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value,function-pointer",
+  "texts": "rk - > rk_consumer . assignment . pending - > cnt + rk - > rk_consumer . assignment . queried - > cnt"
+ },
+ {
+  "function": "rd_kafka_broker_ApiVersion_at_least",
+  "line": 21064,
+  "owners": [
+   "rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "call `rd_kafka_broker_ApiVersion_supported0` unsequenced with another event (CG05)",
+  "features": null,
+  "texts": "rd_kafka_broker_ApiVersion_supported0 ( rkb , ApiKey , minver , ( 32767 ) , ( ( void * ) 0 ) , 1 ) ! = - 1"
+ },
+ {
+  "function": "rd_kafka_broker_ApiVersion_at_least_no_lock",
+  "line": 21071,
+  "owners": [
+   "rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least_no_lock"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "call `rd_kafka_broker_ApiVersion_supported0` unsequenced with another event (CG05)",
+  "features": null,
+  "texts": "rd_kafka_broker_ApiVersion_supported0 ( rkb , ApiKey , minver , ( 32767 ) , ( ( void * ) 0 ) , 0 ) ! = - 1"
+ },
+ {
+  "function": "rd_kafka_broker_ApiVersion_supported0",
+  "line": 21047,
+  "owners": [
+   "rdkafka_broker.c::rd_kafka_broker_ApiVersion_supported0"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "ret . MaxVer"
+ },
+ {
+  "function": "rd_kafka_broker_destroy_error",
+  "line": 22530,
+  "owners": [
+   "rdkafka_broker.c::rd_kafka_broker_destroy_error"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "( rd_atomic32_get ( & ( rk ) - > rk_terminate ) & 0x1 ) ? RD_KAFKA_RESP_ERR__DESTROY : RD_KAFKA_RESP_ERR__DESTROY_BROKER"
+ },
+ {
+  "function": "rd_kafka_broker_needs_connection",
+  "line": 20965,
+  "owners": [
+   "rdkafka_broker.c::rd_kafka_broker_needs_connection"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rkb - > rkb_state = = RD_KAFKA_BROKER_STATE_INIT & & ! ( rd_kafka_broker_termination_in_progress ( rkb ) | | ( rd_atomic32_get ( & ( ( rkb ) - > rkb_rk ) - > rk_terminate ) & 0x1 ) ) & & ! rd_kafka_fatal_error_code ( rkb - > rkb_rk ) & & ( ! rkb - > rkb_rk - > rk_conf . sparse_connections | | rd_kafka_broker_needs_persistent_connection ( rkb ) )"
+ },
+ {
+  "function": "rd_kafka_cgrp_get_coord",
+  "line": 20761,
+  "owners": [
+   "rdkafka_cgrp.c::rd_kafka_cgrp_get_coord"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "",
+  "texts": "rkcg - > rkcg_coord"
+ },
+ {
+  "function": "rd_kafka_conf",
+  "line": 26231,
+  "owners": [
+   "rdkafka_conf.c::rd_kafka_conf"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value",
+  "texts": "& rk - > rk_conf"
+ },
+ {
+  "function": "rd_kafka_conf_validate_single",
+  "line": 22765,
+  "owners": [
+   "rdkafka_conf.c::rd_kafka_conf_validate_single"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no unique Clang node for the return",
+  "features": null,
+  "texts": "! strchr ( val , __qcore_literal__ ) & & ! strchr ( val , __qcore_literal__ )"
+ },
+ {
+  "function": "rd_kafka_confval_get_ptr",
+  "line": 25577,
+  "owners": [
+   "rdkafka_conf.c::rd_kafka_confval_get_ptr"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer,function-pointer,union",
+  "texts": "confval - > u . PTR"
+ },
+ {
+  "function": "rd_kafka_confval_get_str",
+  "line": 25573,
+  "owners": [
+   "rdkafka_conf.c::rd_kafka_confval_get_str"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer,function-pointer,union",
+  "texts": "confval - > u . STR . v"
+ },
+ {
+  "function": "rd_kafka_coord_cache_get",
+  "line": 20186,
+  "owners": [
+   "rdkafka_coord.c::rd_kafka_coord_cache_get"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "",
+  "texts": "cce - > cce_rkb"
+ },
+ {
+  "function": "rd_kafka_err2name",
+  "line": 21510,
+  "owners": [
+   "rdkafka.c::rd_kafka_err2name"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value,array-decay,array-value,const-pointer",
+  "texts": "rd_kafka_err_descs [ idx ] . name"
+ },
+ {
+  "function": "rd_kafka_err2str",
+  "line": 21501,
+  "owners": [
+   "rdkafka.c::rd_kafka_err2str"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value,array-decay,array-value,const-pointer",
+  "texts": "rd_kafka_err_descs [ idx ] . desc"
+ },
+ {
+  "function": "rd_kafka_errno",
+  "line": 25111,
+  "owners": [
+   "rdkafka.c::rd_kafka_errno"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "( * __errno_location ( ) )"
+ },
+ {
+  "function": "rd_kafka_error_name",
+  "line": 19658,
+  "owners": [
+   "rdkafka_error.c::rd_kafka_error_name"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "error ? rd_kafka_err2name ( error - > code ) : __qcore_literal__"
+ },
+ {
+  "function": "rd_kafka_error_string",
+  "line": 19663,
+  "owners": [
+   "rdkafka_error.c::rd_kafka_error_string"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "error - > errstr ? error - > errstr : rd_kafka_err2str ( error - > code )"
+ },
+ {
+  "function": "rd_kafka_event_error_string",
+  "line": 19778,
+  "owners": [
+   "rdkafka_event.c::rd_kafka_event_error_string"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "function-pointer,union",
+  "texts": "rkev - > rko_u . err . errstr"
+ },
+ {
+  "function": "rd_kafka_event_error_string",
+  "line": 19782,
+  "owners": [
+   "rdkafka_event.c::rd_kafka_event_error_string"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "function-pointer,union",
+  "texts": "rkev - > rko_u . admin_result . errstr"
+ },
+ {
+  "function": "rd_kafka_handle_Produce_parse",
+  "line": 22785,
+  "owners": [
+   "rdkafka_request.c::rd_kafka_handle_Produce_parse"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "function-pointer",
+  "texts": "hdr . ErrorCode"
+ },
+ {
+  "function": "rd_kafka_list_groups",
+  "line": 25037,
+  "owners": [
+   "rdkafka.c::rd_kafka_list_groups"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "state . err"
+ },
+ {
+  "function": "rd_kafka_message_errstr",
+  "line": 19748,
+  "owners": [
+   "rdkafka_msg.c::rd_kafka_message_errstr"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "const-pointer",
+  "texts": "( const char * ) rkmessage - > payload"
+ },
+ {
+  "function": "rd_kafka_message_latency",
+  "line": 20658,
+  "owners": [
+   "rdkafka_msg.c::rd_kafka_message_latency"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rd_clock ( ) - rkm - > rkm_u . producer . ts_enq"
+ },
+ {
+  "function": "rd_kafka_message_produce_errstr",
+  "line": 19756,
+  "owners": [
+   "rdkafka_msg.c::rd_kafka_message_produce_errstr"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "function-pointer,union",
+  "texts": "rkm - > rkm_u . producer . errstr"
+ },
+ {
+  "function": "rd_kafka_metadata_cache_topic_get",
+  "line": 20646,
+  "owners": [
+   "rdkafka_metadata_cache.c::rd_kafka_metadata_cache_topic_get"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value",
+  "texts": "& rkmce - > rkmce_mtopic"
+ },
+ {
+  "function": "rd_kafka_mock_connection_parse_request",
+  "line": 22229,
+  "owners": [
+   "rdkafka_mock.c::rd_kafka_mock_connection_parse_request"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "mcluster - > api_handlers [ rkbuf - > rkbuf_reqhdr . ApiKey ] . cb ( mconn , rkbuf )"
+ },
+ {
+  "function": "rd_kafka_mock_next_request_error",
+  "line": 22709,
+  "owners": [
+   "rdkafka_mock.c::rd_kafka_mock_next_request_error"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "err_rtt . err"
+ },
+ {
+  "function": "rd_kafka_mock_partition_find",
+  "line": 21876,
+  "owners": [
+   "rdkafka_mock.c::rd_kafka_mock_partition_find"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: address-of",
+  "features": "address,aggregate-value,cast,const-pointer",
+  "texts": "( rd_kafka_mock_partition_t * ) & mtopic - > partitions [ partition ]"
+ },
+ {
+  "function": "rd_kafka_mock_partition_get",
+  "line": 21977,
+  "owners": [
+   "rdkafka_mock.c::rd_kafka_mock_partition_get"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value",
+  "texts": "& mtopic - > partitions [ partition ]"
+ },
+ {
+  "function": "rd_kafka_mock_partition_next_leader_response",
+  "line": 21780,
+  "owners": [
+   "rdkafka_mock.c::rd_kafka_mock_partition_next_leader_response"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,function-pointer",
+  "texts": "( ( & mpart - > leader_responses ) - > tqh_first )"
+ },
+ {
+  "function": "rd_kafka_mock_partition_next_request_error",
+  "line": 22720,
+  "owners": [
+   "rdkafka_mock.c::rd_kafka_mock_partition_next_request_error"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "err_rtt . err"
+ },
+ {
+  "function": "rd_kafka_msg_partitioner_consistent",
+  "line": 20412,
+  "owners": [
+   "rdkafka_msg.c::rd_kafka_msg_partitioner_consistent"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rd_crc32 ( key , keylen ) % partition_cnt"
+ },
+ {
+  "function": "rd_kafka_msg_partitioner_fnv1a",
+  "line": 20453,
+  "owners": [
+   "rdkafka_msg.c::rd_kafka_msg_partitioner_fnv1a"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rd_fnv1a ( key , keylen ) % partition_cnt"
+ },
+ {
+  "function": "rd_kafka_msg_partitioner_fnv1a_random",
+  "line": 20465,
+  "owners": [
+   "rdkafka_msg.c::rd_kafka_msg_partitioner_fnv1a_random"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rd_fnv1a ( key , keylen ) % partition_cnt"
+ },
+ {
+  "function": "rd_kafka_msg_partitioner_murmur2",
+  "line": 20433,
+  "owners": [
+   "rdkafka_msg.c::rd_kafka_msg_partitioner_murmur2"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "( rd_murmur2 ( key , keylen ) & 0x7fffffff ) % partition_cnt"
+ },
+ {
+  "function": "rd_kafka_msg_partitioner_murmur2_random",
+  "line": 20445,
+  "owners": [
+   "rdkafka_msg.c::rd_kafka_msg_partitioner_murmur2_random"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "( rd_murmur2 ( key , keylen ) & 0x7fffffff ) % partition_cnt"
+ },
+ {
+  "function": "rd_kafka_name",
+  "line": 24574,
+  "owners": [
+   "rdkafka.c::rd_kafka_name"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "array-value",
+  "texts": "rk - > rk_name"
+ },
+ {
+  "function": "rd_kafka_offsets_for_times",
+  "line": 24230,
+  "owners": [
+   "rdkafka.c::rd_kafka_offsets_for_times"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "state . err"
+ },
+ {
+  "function": "rd_kafka_op2str",
+  "line": 19720,
+  "owners": [
+   "rdkafka_op.c::rd_kafka_op2str"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,array-value,pointer-arithmetic",
+  "texts": "names [ type & ~ ( ( int ) ( 1 < < 29 ) | ( int ) ( 1 < < 30 ) ) ] + skiplen"
+ },
+ {
+  "function": "rd_kafka_outq_len",
+  "line": 24640,
+  "owners": [
+   "rdkafka.c::rd_kafka_outq_len"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rd_kafka_curr_msgs_cnt ( rk ) + rd_kafka_q_len ( rk - > rk_rep ) + ( rk - > rk_background . q ? rd_kafka_q_len ( rk - > rk_background . q ) : 0 )"
+ },
+ {
+  "function": "rd_kafka_partition_internal_find_rack",
+  "line": 21377,
+  "owners": [
+   "rdkafka_sticky_assignor.c::rd_kafka_partition_internal_find_rack"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: path through CStyleCastExpr (CG10)",
+  "features": "cast",
+  "texts": "* ( char * * ) res"
+ },
+ {
+  "function": "rd_kafka_path_is_dir",
+  "line": 25081,
+  "owners": [
+   "rdkafka.c::rd_kafka_path_is_dir"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rd_file_stat ( path , & is_dir ) & & is_dir"
+ },
+ {
+  "function": "rd_kafka_query_watermark_offsets",
+  "line": 24112,
+  "owners": [
+   "rdkafka.c::rd_kafka_query_watermark_offsets"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "state . err"
+ },
+ {
+  "function": "rd_kafka_racks_match",
+  "line": 19738,
+  "owners": [
+   "rdkafka_range_assignor.c::rd_kafka_racks_match"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": null,
+  "texts": "rd_kafka_topic_assignment_state_rack_search ( rktas , partition , consumer_rack - > str ) ! = ( ( void * ) 0 )"
+ },
+ {
+  "function": "rd_kafka_racks_mismatch",
+  "line": 21390,
+  "owners": [
+   "rdkafka_sticky_assignor.c::rd_kafka_racks_mismatch"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "pointer arithmetic (CG16)",
+  "features": null,
+  "texts": "consumer_rack ! = ( ( void * ) 0 ) & & ( mdpi = = ( ( void * ) 0 ) | | ! rd_kafka_partition_internal_find_rack ( mdpi , consumer_rack ) )"
+ },
+ {
+  "function": "rd_kafka_sasl_init",
+  "line": 20885,
+  "owners": [
+   "rdkafka_sasl.c::rd_kafka_sasl_init"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "provider - > init ( rk , errstr , errstr_size )"
+ },
+ {
+  "function": "rd_kafka_sasl_ready",
+  "line": 20899,
+  "owners": [
+   "rdkafka_sasl.c::rd_kafka_sasl_ready"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "provider - > ready ( rk )"
+ },
+ {
+  "function": "rd_kafka_sasl_recv",
+  "line": 20790,
+  "owners": [
+   "rdkafka_sasl.c::rd_kafka_sasl_recv"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rktrans - > rktrans_rkb - > rkb_rk - > rk_conf . sasl . provider - > recv ( rktrans , buf , len , errstr , errstr_size )"
+ },
+ {
+  "function": "rd_kafka_share_partition_offsets_offsets",
+  "line": 20255,
+  "owners": [
+   "rdkafka_share_acknowledgement.c::rd_kafka_share_partition_offsets_offsets"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "array-value",
+  "texts": "partition_offsets - > offsets"
+ },
+ {
+  "function": "rd_kafka_share_set_log_queue",
+  "line": 20353,
+  "owners": [
+   "rdkafka_queue.c::rd_kafka_share_set_log_queue"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "cast `ArrayToPointerDecay` (CG08)",
+  "features": null,
+  "texts": "err ? rd_kafka_error_new ( err , __qcore_literal__ , rd_kafka_err2str ( err ) ) : ( ( void * ) 0 )"
+ },
+ {
+  "function": "rd_kafka_topic_assignment_state_cmp",
+  "line": 19693,
+  "owners": [
+   "rdkafka_range_assignor.c::rd_kafka_topic_assignment_state_cmp"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: address-of",
+  "features": null,
+  "texts": "( int ) ( ( rd_list_cnt ( & a - > topic - > members ) ) < ( rd_list_cnt ( & b - > topic - > members ) ) ? - 1 : ( ( rd_list_cnt ( & a - > topic - > members ) ) > ( rd_list_cnt ( & b - > topic - > members ) ) ) )"
+ },
+ {
+  "function": "rd_kafka_topic_assignment_state_rack_search",
+  "line": 19709,
+  "owners": [
+   "rdkafka_range_assignor.c::rd_kafka_topic_assignment_state_rack_search"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: path through CStyleCastExpr (CG10)",
+  "features": "cast",
+  "texts": "* ( char * * ) res"
+ },
+ {
+  "function": "rd_kafka_topic_name",
+  "line": 20240,
+  "owners": [
+   "rdkafka_topic.c::rd_kafka_topic_name"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: path through CStyleCastExpr (CG10)",
+  "features": "cast,const-pointer",
+  "texts": "( ( const rd_kafka_lwtopic_t * ) app_rkt ) - > lrkt_topic"
+ },
+ {
+  "function": "rd_kafka_topic_name",
+  "line": 20242,
+  "owners": [
+   "rdkafka_topic.c::rd_kafka_topic_name"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer",
+  "texts": "app_rkt - > rkt_topic - > str"
+ },
+ {
+  "function": "rd_kafka_topic_opaque",
+  "line": 20881,
+  "owners": [
+   "rdkafka_topic.c::rd_kafka_topic_opaque"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value,const-pointer",
+  "texts": "app_rkt - > rkt_conf . opaque"
+ },
+ {
+  "function": "rd_kafka_topic_partition_by_id_cmp",
+  "line": 21975,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_by_id_cmp"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: event outside this card's lowering",
+  "features": "conditional,logical",
+  "texts": "are_topic_ids_different | | ( int ) ( ( a - > partition ) < ( b - > partition ) ? - 1 : ( ( a - > partition ) > ( b - > partition ) ) )"
+ },
+ {
+  "function": "rd_kafka_topic_partition_ensure_toppar",
+  "line": 21945,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_ensure_toppar"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "",
+  "texts": "parpriv - > rktp"
+ },
+ {
+  "function": "rd_kafka_topic_partition_ensure_toppar",
+  "line": 21958,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_ensure_toppar"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "",
+  "texts": "parpriv - > rktp"
+ },
+ {
+  "function": "rd_kafka_topic_partition_get_topic_id",
+  "line": 21742,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_get_topic_id"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "(no elaboration row)",
+  "features": null,
+  "texts": null
+ },
+ {
+  "function": "rd_kafka_topic_partition_get_topic_id",
+  "line": 21743,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_get_topic_id"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "parpriv - > topic_id"
+ },
+ {
+  "function": "rd_kafka_topic_partition_hash",
+  "line": 22001,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_hash"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "31 * r + rd_string_hash ( a - > topic , - 1 )"
+ },
+ {
+  "function": "rd_kafka_topic_partition_hash_by_id",
+  "line": 22008,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_hash_by_id"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "31 * r + rd_kafka_Uuid_hash ( & topic_id )"
+ },
+ {
+  "function": "rd_kafka_topic_partition_list_find",
+  "line": 22051,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_find"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value,const-pointer",
+  "texts": "& rktparlist - > elems [ i ]"
+ },
+ {
+  "function": "rd_kafka_topic_partition_list_find_by_id",
+  "line": 22063,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_find_by_id"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value,const-pointer",
+  "texts": "& rktparlist - > elems [ i ]"
+ },
+ {
+  "function": "rd_kafka_topic_partition_list_find_topic_by_id",
+  "line": 22100,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_find_topic_by_id"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value,const-pointer",
+  "texts": "& rktparlist - > elems [ i ]"
+ },
+ {
+  "function": "rd_kafka_topic_partition_list_find_topic_by_name",
+  "line": 22089,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_list_find_topic_by_name"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "address,aggregate-value,const-pointer",
+  "texts": "& rktparlist - > elems [ i ]"
+ },
+ {
+  "function": "rd_kafka_topic_partition_topic",
+  "line": 21579,
+  "owners": [
+   "rdkafka_partition.c::rd_kafka_topic_partition_topic"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer",
+  "texts": "rktp - > rktp_rkt - > rkt_topic - > str"
+ },
+ {
+  "function": "rd_kafka_toppar_fetch_decide_next_fetch_start_pos",
+  "line": 22234,
+  "owners": [
+   "rdkafka_fetcher.c::rd_kafka_toppar_fetch_decide_next_fetch_start_pos"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "rktp - > rktp_next_fetch_start"
+ },
+ {
+  "function": "rd_kafka_toppar_fetch_decide_next_fetch_start_pos",
+  "line": 22236,
+  "owners": [
+   "rdkafka_fetcher.c::rd_kafka_toppar_fetch_decide_next_fetch_start_pos"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "aggregate-value",
+  "texts": "rktp - > rktp_offsets . fetch_pos"
+ },
+ {
+  "function": "rd_list_add",
+  "line": 3028,
+  "owners": [
+   "rdlist.c::rd_list_add"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "increment",
+  "texts": "rl - > rl_elems [ rl - > rl_cnt + + ]"
+ },
+ {
+  "function": "rd_list_elem",
+  "line": 3150,
+  "owners": [
+   "rdlist.c::rd_list_elem"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "cast,const-pointer",
+  "texts": "( void * ) rl - > rl_elems [ idx ]"
+ },
+ {
+  "function": "rd_list_find",
+  "line": 3173,
+  "owners": [
+   "rdlist.c::rd_list_find"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no unique Clang node for the return",
+  "features": "",
+  "texts": "* r"
+ },
+ {
+  "function": "rd_list_find_duplicate",
+  "line": 3197,
+  "owners": [
+   "rdlist.c::rd_list_find_duplicate"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": "const-pointer",
+  "texts": "rl - > rl_elems [ i ]"
+ },
+ {
+  "function": "rd_map_elem_cmp",
+  "line": 2965,
+  "owners": [
+   "rdmap.c::rd_map_elem_cmp"
+  ],
+  "ambiguous": false,
+  "decisive": true,
+  "elaboration": "unlisted form: no value form of this card",
+  "features": null,
+  "texts": "rmap - > rmap_cmp ( a - > key , b - > key )"
+ },
+ {
+  "function": "rd_map_get",
+  "line": 3022,
+  "owners": [
+   "rdmap.c::rd_map_get"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "",
+  "texts": "( void * ) elem - > value"
+ },
+ {
+  "function": "read_raw_value",
+  "line": 557,
+  "owners": [
+   "nanopb/pb_decode.c::read_raw_value"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ },
+ {
+  "function": "read_raw_value",
+  "line": 569,
+  "owners": [
+   "nanopb/pb_decode.c::read_raw_value"
+  ],
+  "ambiguous": false,
+  "decisive": false,
+  "elaboration": "place: the typed access-path reader refused it (CG10)",
+  "features": "array-decay,assignment,comma,conditional,string",
+  "texts": "( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0"
+ }
+]

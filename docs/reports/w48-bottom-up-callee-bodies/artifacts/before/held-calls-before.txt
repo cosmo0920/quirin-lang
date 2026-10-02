@@ -1,0 +1,12 @@
+position leaves 4141: {'with texts': 4106, 'holding a call': 3301, 'no texts': 35}; calibration (refused although every held call is a Safe same-unit body): 12
+closure with held calls served: same-unit 0 {}; cross-unit 10 {0: 9, 1: 1}; cross-unit only 10
+    cio_file.c::cio_file_real_size@0
+    cmetrics.c::cmt_initialize@0
+    cmt_map.c::map_lock@0
+    cmt_metric.c::cmt_metric_exp_hist_lock@0
+    cmt_metric.c::cmt_metric_has_start_timestamp@0
+    lz4frame.c::ctxTypeID_to_size@0
+    lz4hc.c::LZ4_createStreamHC@0
+    rdkafka.c::rd_kafka_Uuid_hash@0
+    rdkafka.c::rd_kafka_Uuid_map_hash@1
+    rdkafka_msg.c::rd_kafka_msg_partitioner_fnv1a@0

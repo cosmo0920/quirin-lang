@@ -1,0 +1,64 @@
+baseline closure (no body lifted): same-unit 0, cross-unit 6; the frees below exclude it
+ceiling (every in-corpus body Safe): 416; bodies waited on per caller: {0: 5, 1: 337, 2: 42, 3: 14, 4: 4, 5: 5, 6: 5, 7: 1, 9: 1, 11: 1, 13: 1}; candidate bodies: 2053
+cross same ceil ceil1  own  score  body
+   12   12    9     9  116  0.103  lz4.c::LZ4_decompress_generic
+   10   10   10    10    1   10.0  cJSON.c::cJSON_New_Item
+    5    0    5     5    8  0.625  cmt_mpack_utils.c::cmt_mpack_unpack_array
+    5    0    5     5    8  0.625  ctr_mpack_utils.c::ctr_mpack_unpack_array
+    5    4    4     4   11  0.455  rdkafka_error.c::rd_kafka_error_new_v
+    5    5    4     3   19  0.263  lz4.c::LZ4_decompress_unsafe_generic
+    4    4    4     4    1    4.0  ctr_encode_text.c::sds_cat_safe
+    4    4    4     4    1    4.0  rdkafka_admin.c::rd_kafka_admin_result_ret_groups
+    4    4    4     4    2    2.0  lz4hc.c::LZ4_compress_HC_extStateHC
+    4    4    4     4    3  1.333  lz4hc.c::LZ4_compress_HC
+    3    3    3     3    1    3.0  rdkafka_admin.c::rd_kafka_admin_result_ret_resources
+    3    3    3     3    1    3.0  rdkafka_admin.c::rd_kafka_admin_result_ret_topics
+    3    3    1     1    2    1.5  lz4.c::LZ4_compress_fast
+    3    2    4     3    3    1.0  lz4hc.c::LZ4_compress_HC_continue
+    3    2    2     2    4   0.75  rdrand.c::rd_seed
+    3    3    3     3    5    0.6  cmt_metric.c::add
+    3    3    3     3    9  0.333  cJSON.c::add_item_to_object
+    3    0    3     3   12   0.25  rdkafka_assignor.c::rd_kafka_assignor_add
+    3    0    3     3   14  0.214  cmt_mpack_utils.c::cmt_mpack_unpack_map
+    3    0    3     3   14  0.214  ctr_mpack_utils.c::ctr_mpack_unpack_map
+    3    3    2     2   23   0.13  cJSON.c::cJSON_ParseWithLengthOpts
+    3    2    4     3   26  0.115  lz4.c::LZ4_compress_fast_continue
+    3    3    2     2  112  0.027  rdkafka_telemetry_decode.c::unit_test_telemetry
+    2    2    2     2    1    2.0  lz4.c::LZ4_compress_default
+    2    2    2     2    2    1.0  cmt_metric_histogram.c::metric_sum_exchange
+    2    2    2     2    2    1.0  mk_server/mk_fifo.c::mk_fifo_queue_destroy
+    2    2    2     2    2    1.0  nanopb/pb_encode.c::pb_encode_varint
+    2    2    2     2    4    0.5  rdkafka_metadata.c::rd_kafka_metadata_new_topic_mockv_internal
+    2    2    2     2    4    0.5  rdkafka_msgset_reader.c::rd_kafka_aborted_txns_next_offset
+    2    2    2     2    5    0.4  cJSON.c::get_object_item
+by score (freed per own leaf):
+  10.0  10/1   cJSON.c::cJSON_New_Item  calls[] 1x indirect memory access is outside the resource projection
+   4.0   4/1   ctr_encode_text.c::sds_cat_safe  calls[cfl_sds_cat_safe] 
+   4.0   4/1   rdkafka_admin.c::rd_kafka_admin_result_ret_groups  calls[] 1x unmodeled call, aggregate or indirect access in return expre
+   3.0   3/1   rdkafka_admin.c::rd_kafka_admin_result_ret_resources  calls[] 1x unmodeled call, aggregate or indirect access in return expre
+   3.0   3/1   rdkafka_admin.c::rd_kafka_admin_result_ret_topics  calls[] 1x unmodeled call, aggregate or indirect access in return expre
+   2.0   4/2   lz4hc.c::LZ4_compress_HC_extStateHC  calls[LZ4_initStreamHC, LZ4_compress_HC_extStateHC_fastReset] 
+   2.0   2/1   lz4.c::LZ4_compress_default  calls[LZ4_compress_fast] 
+   1.5   3/2   lz4.c::LZ4_compress_fast  calls[LZ4_compress_fast_extState] 1x unsupported assignment expression
+ 1.333   4/3   lz4hc.c::LZ4_compress_HC  calls[rd_kafka_mem_malloc, LZ4_compress_HC_extStateHC] 1x unresolved resource identity `X`
+   1.0   3/3   lz4hc.c::LZ4_compress_HC_continue  calls[LZ4_compressHC_continue_generic] 1x unmodeled call, aggregate or indirect access in branch condi
+   1.0   2/2   cmt_metric_histogram.c::metric_sum_exchange  calls[] 2x indirect memory access is outside the resource projection
+   1.0   2/2   mk_server/mk_fifo.c::mk_fifo_queue_destroy  calls[] 1x indirect memory access is outside the resource projection; 1x unresolved resource identity `X`
+   1.0   2/2   nanopb/pb_encode.c::pb_encode_varint  calls[pb_write, pb_encode_varint_32] 
+   1.0   1/1   cJSON.c::cJSON_DetachItemFromArray  calls[cJSON_DetachItemViaPointer] 
+   1.0   1/1   cJSON.c::cJSON_ParseWithOpts  calls[cJSON_ParseWithLengthOpts] 
+   1.0   1/1   lz4.c::LZ4_decompress_fast  calls[LZ4_decompress_unsafe_generic] 
+   1.0   1/1   lz4.c::LZ4_decompress_safe  calls[LZ4_decompress_generic] 
+   1.0   1/1   mk_core/mk_event.c::mk_event_del  calls[_mk_event_del] 
+   1.0   1/1   mk_core/mk_iov.c::mk_iov_send  calls[] 1x indirect memory access is outside the resource projection
+   1.0   1/1   mk_server/mk_http_parser.c::mk_http_parser_read_chunked_content  calls[http_parser_transfer_encoding_chunked] 
+   1.0   1/1   rdkafka.c::rd_kafka_oauthbearer_set_token_failure  calls[rd_kafka_oauthbearer_set_token_failure0] 
+   1.0   1/1   rdkafka_admin.c::rd_kafka_ConsumerGroupDescription_copy  calls[] 1x indirect memory access is outside the resource projection
+   1.0   1/1   rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy  calls[] 1x indirect memory access is outside the resource projection
+   1.0   1/1   rdkafka_admin.c::rd_kafka_ElectLeadersResult_partitions  calls[] 1x unmodeled call, aggregate or indirect access in return expre
+   1.0   1/1   rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy  calls[] 1x indirect memory access is outside the resource projection
+   1.0   1/1   rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy  calls[] 1x indirect memory access is outside the resource projection
+   1.0   1/1   rdkafka_admin.c::rd_kafka_MemberDescription_copy  calls[] 1x indirect memory access is outside the resource projection
+   1.0   1/1   rdkafka_admin.c::rd_kafka_admin_result_ret_acl_bindings  calls[] 1x unmodeled call, aggregate or indirect access in return expre
+   1.0   1/1   rdkafka_admin.c::rd_kafka_admin_result_ret_acl_results  calls[] 1x unmodeled call, aggregate or indirect access in return expre
+   1.0   1/1   rdkafka_admin.c::rd_kafka_admin_result_ret_delete_acl_result_responses  calls[] 1x unmodeled call, aggregate or indirect access in return expre
