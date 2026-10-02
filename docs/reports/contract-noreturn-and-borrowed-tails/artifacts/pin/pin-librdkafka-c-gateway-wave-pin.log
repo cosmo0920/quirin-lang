@@ -1,0 +1,2 @@
+pin: qcore-provider-librdkafka: 13 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-acc140b6252ad542a/providers/qcore-provider-librdkafka/contracts.lock
+  + rd_kafka_crash

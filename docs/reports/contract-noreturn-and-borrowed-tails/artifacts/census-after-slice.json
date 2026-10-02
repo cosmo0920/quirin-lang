@@ -1,0 +1,84 @@
+{
+ "route": "slice",
+ "statuses": {
+  "Unknown": 238,
+  "Safe": 29,
+  "Pending": 2,
+  "Unsafe": 1
+ },
+ "noreturn_census_rows": {},
+ "families": {},
+ "joint_rounds": [],
+ "tail_statement_shapes": {
+  "flb_log_print": {
+   "statements": 2,
+   "classes": {
+    "other": 1,
+    "admitted": 1
+   }
+  },
+  "fprintf": {
+   "statements": 3,
+   "classes": {
+    "admitted": 3
+   }
+  }
+ },
+ "tail_statements": {
+  "flb_log_print": [
+   {
+    "function": "flb_coro_destroy",
+    "line": 8104,
+    "texts": "flb_log_print ( 5 , __qcore_literal__ , 97 , __qcore_literal__ , coro , ( ( ( char * ) coro ) + sizeof ( struct flb_coro ) ) )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "other"
+    ]
+   },
+   {
+    "function": "do_start",
+    "line": 19000,
+    "texts": "flb_log_print ( 4 , ( ( void * ) 0 ) , 0 , __qcore_literal__ , ctx )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   }
+  ],
+  "fprintf": [
+   {
+    "function": "flb_lib_config_file",
+    "line": 18829,
+    "texts": "fprintf ( stderr , __qcore_literal__ , cfg )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "flb_lib_config_file",
+    "line": 18834,
+    "texts": "fprintf ( stderr , __qcore_literal__ , cfg )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "flb_lib_config_file",
+    "line": 18855,
+    "texts": "fprintf ( stderr , __qcore_literal__ , cfg )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   }
+  ]
+ }
+}

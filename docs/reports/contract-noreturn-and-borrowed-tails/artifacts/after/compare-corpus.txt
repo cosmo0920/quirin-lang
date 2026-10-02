@@ -1,0 +1,26 @@
+{
+ "transitions": {
+  "Unknown -> Unknown": 163,
+  "Unknown -> Safe": 1,
+  "Unsafe -> Unsafe": 1
+ },
+ "attribution": {
+  "noreturn": 40,
+  "other": 26,
+  "tail:fprintf": 65,
+  "tail:mk_print": 8,
+  "tail:printf": 1,
+  "tail:snprintf": 26
+ },
+ "removed": {
+  "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 157,
+  "unsupported: call to uncontracted function `X`": 50,
+  "unsupported: indirect memory access is outside the resource projection": 38,
+  "unknown_alias: unresolved resource identity `X`": 7
+ },
+ "added": {
+  "unknown_alias: unresolved resource identity `X`": 21,
+  "leak: live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1589": 1
+ }
+}
+STATUS mk_server/mk_http_parser.c::1::cb_debug_chunk_complete::1 Unknown -> Safe ['tail:printf']

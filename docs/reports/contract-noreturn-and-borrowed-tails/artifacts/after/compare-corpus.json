@@ -1,0 +1,2071 @@
+{
+ "transitions": {
+  "Unknown -> Unknown": 163,
+  "Unknown -> Safe": 1,
+  "Unsafe -> Unsafe": 1
+ },
+ "status_moves": [
+  {
+   "function": "mk_server/mk_http_parser.c::1::cb_debug_chunk_complete::1",
+   "before": "Unknown",
+   "after": "Safe",
+   "families": [
+    "tail:printf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `printf` are outside the resource projection": 1
+   },
+   "added": {}
+  }
+ ],
+ "removed": {
+  "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 157,
+  "unsupported: call to uncontracted function `X`": 50,
+  "unsupported: indirect memory access is outside the resource projection": 38,
+  "unknown_alias: unresolved resource identity `X`": 7
+ },
+ "added": {
+  "unknown_alias: unresolved resource identity `X`": 21,
+  "leak: live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1589": 1
+ },
+ "attribution": {
+  "noreturn": 40,
+  "other": 26,
+  "tail:fprintf": 65,
+  "tail:mk_print": 8,
+  "tail:printf": 1,
+  "tail:snprintf": 26
+ },
+ "moves": [
+  {
+   "function": "cmt_encode_splunk_hec.c::1::append_bucket_metric::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "cmt_encode_splunk_hec.c::1::append_metric_value::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "cmt_encode_splunk_hec.c::1::append_quantiles_metric::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "cmt_encode_splunk_hec.c::1::format_histogram_bucket::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "cmt_encode_splunk_hec.c::1::format_summary_metric::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "ctr_encode_text.c::1::format_span::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 5
+   },
+   "added": {}
+  },
+  {
+   "function": "mk_core/mk_rconf.c::1::mk_rconf_open::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:mk_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `mk_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "mk_core/mk_rconf.c::1::mk_rconf_read::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:mk_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `mk_print` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "mk_core/mk_rconf.c::1::mk_rconf_read_glob::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:mk_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `mk_print` are outside the resource projection": 4
+   },
+   "added": {}
+  },
+  {
+   "function": "mk_server/mk_config.c::1::mk_config_print_error_msg::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:mk_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `mk_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "mk_server/mk_http_parser.c::1::cb_debug_chunk_complete::1",
+   "before": "Unknown",
+   "after": "Safe",
+   "families": [
+    "tail:printf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `printf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "mk_server/mk_plugin.c::1::mk_plugin_load::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:mk_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `mk_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "mk_server/mk_socket.c::1::mk_socket_server::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:mk_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `mk_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "mk_server/mk_vhost.c::1::mk_vhost_init::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:mk_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `mk_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "mk_server/mk_vhost.c::1::mk_vhost_read::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:mk_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `mk_print` are outside the resource projection": 4
+   },
+   "added": {}
+  },
+  {
+   "function": "rdbuf.c::1::do_unittest_write_read_payload_correctness::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "added": {}
+  },
+  {
+   "function": "rdbuf.c::1::do_unittest_write_split_seek::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rddl.c::1::rd_dl_open0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rddl.c::1::rd_dl_sym::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka.c::1::rd_kafka_consume0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka.c::1::rd_kafka_destroy_app::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka.c::1::rd_kafka_destroy_final::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka.c::1::rd_kafka_err2name::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka.c::1::rd_kafka_err2str::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka.c::1::rd_kafka_global_cnt_decr::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka.c::1::rd_kafka_new::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka.c::1::rd_kafka_poll_cb::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_assignor.c::1::rd_kafka_assignors_init::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_broker_active_toppar_del::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_broker_buf_enq0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_broker_connect::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_broker_consumer_serve::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_broker_fail::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_broker_op_serve::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 2
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 2
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_broker_producer_serve::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_broker_send::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_broker_share_consumer_serve::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_broker_timeout_scan::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_req_response::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_send::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::1::rd_kafka_waitresp_find::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_buf.c::1::rd_kafka_buf_callback::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_buf.c::1::rd_kafka_buf_destroy_final::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_buf.c::1::rd_kafka_bufq_connection_reset::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_buf.c::1::rd_kafka_bufq_deq::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_buf.c::1::rd_kafka_bufq_purge::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::1::rd_kafka_cgrp_destroy_final::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 6,
+    "unknown_alias: unresolved resource identity `rkcg`": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_cgrp.c::1::rd_kafka_cgrp_handle_JoinGroup::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_cgrp.c::1::rd_kafka_cgrp_metadata_update_check::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_cgrp.c::1::rd_kafka_cgrp_offsets_commit::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_cgrp.c::1::rd_kafka_cgrp_op_handle_OffsetCommit::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_cgrp.c::1::rd_kafka_cgrp_op_serve::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkcg`": 1
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::1::rd_kafka_cgrp_terminate::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_cgrp.c::1::rd_kafka_cgrp_terminate0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_cgrp.c::1::rd_kafka_cgrp_terminated::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 6
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_conf.c::1::rd_kafka_anyconf_set::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_conf.c::1::rd_kafka_anyconf_set_prop::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_conf.c::1::rd_kafka_anyconf_set_prop0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_conf.c::1::rd_kafka_conf_is_modified::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_conf.c::1::rd_kafka_conf_properties_show::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 5
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_conf.c::1::rd_kafka_topic_conf_is_modified::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_conf.c::1::unittest_conf::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 10
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_feature.c::1::rd_kafka_get_legacy_ApiVersions::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_fetcher.c::1::rd_kafka_broker_fetch_reply::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_fetcher.c::1::rd_kafka_fetch_reply_handle_partition::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_lz4.c::1::rd_kafka_lz4_decompress::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_metadata.c::1::rd_kafka_metadata::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_metadata.c::1::rd_kafka_metadata_copy_internal::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_metadata.c::1::rd_kafka_parse_Metadata0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_metadata_cache.c::1::rd_kafka_metadata_cache_delete::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_mock.c::1::ut_assert_topic_partitions::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_mock_cgrp.c::1::rd_kafka_mock_cgrp_classic_member_add::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_msg.c::1::rd_kafka_message_get::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_msg.c::1::rd_kafka_msg_partitioner::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkt`": 1
+   }
+  },
+  {
+   "function": "rdkafka_msgset_writer.c::1::rd_kafka_gzip_compress::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdkafka_msgset_writer.c::1::rd_kafka_msgset_writer_alloc_buf::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1,
+    "unknown_alias: unresolved resource identity `msetw`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_msgset_writer.c::1::rd_kafka_msgset_writer_compress::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1,
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `msetw`": 1
+   }
+  },
+  {
+   "function": "rdkafka_msgset_writer.c::1::rd_kafka_msgset_writer_finalize_MessageSet_v2_header::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_msgset_writer.c::1::rd_kafka_msgset_writer_write_MessageSet_v2_header::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_msgset_writer.c::1::rd_kafka_msgset_writer_write_msgq::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_offset.c::1::rd_kafka_offset_broker_commit::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 2,
+    "unknown_alias: unresolved resource identity `rktp`": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_partition.c::1::rd_kafka_topic_partition_list_add0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_partition.c::1::rd_kafka_toppar_destroy_final::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rktp`": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::1::rd_kafka_toppar_fetch_start::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_partition.c::1::rd_kafka_toppar_fetch_stop::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_partition.c::1::rd_kafka_toppar_get_avail::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkt`": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::1::rd_kafka_toppar_offset_request::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_partition.c::1::rd_kafka_toppar_op_serve::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_pattern.c::1::rd_kafka_pattern_list_parse::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_plugin.c::1::rd_kafka_plugin_new::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_plugin.c::1::rd_kafka_plugins_conf_set0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_queue.c::1::rd_kafka_q_fix_offsets::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_queue.c::1::rd_kafka_q_serve0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::setupRackAwareAssignment0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::ut_testMultipleConsumersMixedTopicSubscriptions::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::ut_testOneConsumerMultipleTopics::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::ut_testOneConsumerNoTopic::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::ut_testOneConsumerNonexistentTopic::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::ut_testOneConsumerOneTopic::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::ut_testOnlyAssignsPartitionsFromSubscribedTopics::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::ut_testTwoConsumersOneTopicOnePartition::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::ut_testTwoConsumersOneTopicTwoPartitions::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::ut_testTwoConsumersTwoTopicsSixPartitions::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_request.c::1::rd_kafka_OffsetCommitRequest::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_request.c::1::rd_kafka_handle_Metadata::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "noreturn"
+   ],
+   "removed": {
+    "unsupported: call to uncontracted function `rd_kafka_crash`": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_cyrus.c::1::rd_kafka_sasl_cyrus_cb_canon::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_cyrus.c::1::rd_kafka_sasl_cyrus_conf_validate::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer.c::1::do_unittest_config_all_explicit_values::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer.c::1::do_unittest_config_defaults::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer.c::1::do_unittest_config_empty_should_fail::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer.c::1::do_unittest_config_explicit_scope_and_life::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer.c::1::do_unittest_config_extensions::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer.c::1::do_unittest_config_no_principal_should_fail::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer.c::1::do_unittest_config_unrecognized_should_fail::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer.c::1::do_unittest_odd_extension_size_should_fail::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer.c::1::parse_ujws_config::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 9
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer_oidc.c::1::rd_kafka_oidc_assertion_create::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer_oidc.c::1::rd_kafka_oidc_token_try_validate::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 4
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer_oidc.c::1::ut_create_mock_jwt_template_file::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer_oidc.c::1::ut_sasl_oauthbearer_oidc_assertion_parse_from_file::1",
+   "before": "Unsafe",
+   "after": "Unsafe",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 2
+   },
+   "added": {
+    "leak: live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1589": 1
+   }
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer_oidc.c::1::ut_sasl_oauthbearer_oidc_jwt_bearer_build_request_body::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer_oidc.c::1::ut_sasl_oauthbearer_oidc_post_fields::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer_oidc.c::1::ut_sasl_oauthbearer_oidc_post_fields_with_empty_scope::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_oauthbearer_oidc.c::1::ut_sasl_oauthbearer_oidc_should_succeed::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf",
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1,
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sasl_scram.c::1::rd_kafka_sasl_scram_handle_server_final_message::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_ssl.c::1::rd_kafka_ssl_ctx_load_providers::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_ssl.c::1::rd_kafka_ssl_error0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::setupRackAwareAssignment0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testAddRemoveConsumerOneTopic::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testAddRemoveTopicTwoConsumers::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testAllConsumersReachExpectedQuotaAndAreConsideredFilled::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testAssignmentUpdatedForDeletedTopic::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testEnsurePartitionsAssignedToHighestGeneration::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testLargeAssignmentWithMultipleConsumersLeaving::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testMoveExistingAssignments::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testMoveExistingAssignments_j::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testMultipleConsumersMixedTopicSubscriptions::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testNewSubscription::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testNoExceptionThrownWhenOnlySubscribedTopicDeleted::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testNoReassignmentOnCurrentMembers::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testOneConsumerMultipleTopics::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testOneConsumerNoTopic::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testOneConsumerNonexistentTopic::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testOneConsumerOneTopic::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testOnlyAssignsPartitionsFromSubscribedTopics::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testOwnedPartitionsAreInvalidatedForConsumerWithMultipleGeneration::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testOwnedPartitionsAreInvalidatedForConsumerWithNoGeneration::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testOwnedPartitionsAreInvalidatedForConsumerWithStaleGeneration::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration2::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testPoorRoundRobinAssignmentScenario::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testReassignmentAfterOneConsumerAdded::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testReassignmentAfterOneConsumerLeaves::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testSameSubscriptions::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testStickiness::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testStickiness2::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 5
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testStickiness_j::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testTwoConsumersOneTopicOnePartition::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testTwoConsumersOneTopicTwoPartitions::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::ut_testTwoConsumersTwoTopicsSixPartitions::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_timer.c::1::rd_kafka_timers_destroy::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_topic.c::1::rd_kafka_topic_destroy_final::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 2
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkt`": 2
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::1::rd_kafka_topic_partitions_remove::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_transport.c::1::rd_kafka_transport_io_event::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "other"
+   ],
+   "removed": {
+    "unsupported: indirect memory access is outside the resource projection": 1
+   },
+   "added": {
+    "unknown_alias: unresolved resource identity `rkb`": 1
+   }
+  },
+  {
+   "function": "rdmap.c::1::unittest_untyped_map::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  }
+ ]
+}

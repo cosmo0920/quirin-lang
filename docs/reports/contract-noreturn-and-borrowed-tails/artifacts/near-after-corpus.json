@@ -1,0 +1,752 @@
+{
+ "functions": 23,
+ "remaining": {
+  "1": 1,
+  "4": 1,
+  "5": 2,
+  "6": 19
+ },
+ "other_families": {
+  "unsupported: indirect memory access is outside the resource projection": 155,
+  "unknown_alias: unresolved resource identity `X`": 96,
+  "unsupported: call to uncontracted function `X`": 86,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": 67,
+  "unsupported: unmodeled increment or decrement expression": 23,
+  "unsupported: braced initializer, expression, or declaration is not modeled": 12,
+  "unsupported: unrecognized assignment destination": 11,
+  "unsupported: nested call `X` inside a modeled call is outside the resource projection": 10,
+  "unsupported: unmodeled call, aggregate or indirect access in for-loop condition": 9,
+  "leak: live obligation acquired at snappy.c:1705": 7,
+  "unsupported: unsupported assignment expression": 6,
+  "unsupported: store through `X` without an out-parameter contract": 3,
+  "unsupported: nullable resource `X` used by a non-null contract": 3,
+  "unsupported: loop re-acquisition: an earlier generation that may be live is still held": 3,
+  "unsupported: unmodeled call, aggregate or indirect access in loop condition": 2,
+  "unsupported: `X` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 2,
+  "leak: live obligation acquired at rdhttp.c:802": 1,
+  "unsupported: for-loop clause with a call or grouping is not classified from its stripped spelling": 1,
+  "unsupported: call has an unmodeled formal address or borrowed expression": 1,
+  "unsupported: publication of a tracked resource into the static-storage object `X` is outside the resource projection": 1
+ },
+ "one_other": [
+  {
+   "function": "rdkafka.c::rd_kafka_version_str",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "24729: unsupported: unsupported assignment expression"
+   ]
+  }
+ ],
+ "rows": [
+  {
+   "function": "rdbuf.c::do_unittest_erase",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "4277: unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+    "4277: unsupported: unmodeled increment or decrement expression",
+    "4280: unsupported: indirect memory access is outside the resource projection",
+    "4285: unsupported: call to uncontracted function `rd_buf_init`",
+    "4286: unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+    "4286: unsupported: unmodeled increment or decrement expression",
+    "4287: unsupported: indirect memory access is outside the resource projection",
+    "4288: unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+    "4288: unsupported: unmodeled increment or decrement expression",
+    "4289: unsupported: indirect memory access is outside the resource projection",
+    "4291: unsupported: indirect memory access is outside the resource projection",
+    "4291: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "4293: unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+    "4293: unsupported: unmodeled increment or decrement expression",
+    "4294: unsupported: indirect memory access is outside the resource projection",
+    "4296: unsupported: nested call `rd_buf_len` inside a modeled call is outside the resource projection",
+    "4297: unsupported: call to uncontracted function `rd_slice_init`",
+    "4298: unsupported: nested call `rd_buf_len` inside a modeled call is outside the resource projection",
+    "4301: unsupported: indirect memory access is outside the resource projection",
+    "4301: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "4303: unsupported: call to uncontracted function `rd_slice_read`",
+    "4305: unsupported: indirect memory access is outside the resource projection",
+    "4305: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "4307: unsupported: indirect memory access is outside the resource projection",
+    "4307: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "4308: unsupported: call to uncontracted function `rd_buf_destroy`"
+   ]
+  },
+  {
+   "function": "rdbuf.c::do_unittest_write_read_payload_correctness",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "4132: unsupported: call to uncontracted function `rd_crc32_init`",
+    "4133: unsupported: call to uncontracted function `rd_crc32_update`",
+    "4134: unsupported: call to uncontracted function `rd_buf_init`",
+    "4136: unsupported: call to uncontracted function `rd_crc32_update`",
+    "4137: unsupported: call to uncontracted function `rd_buf_write`",
+    "4141: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "4142: unsupported: call to uncontracted function `rd_slice_init_full`",
+    "4143: unsupported: indirect memory access is outside the resource projection",
+    "4144: unsupported: nested call `rd_buf_len` inside a modeled call is outside the resource projection",
+    "4146: unknown_alias: unresolved resource identity `__qcore_literal__`",
+    "4147: unsupported: call to uncontracted function `rd_crc32_init`",
+    "4148: unsupported: call to uncontracted function `rd_crc32_update`",
+    "4151: unsupported: call to uncontracted function `rd_crc32_update`",
+    "4153: unsupported: call to uncontracted function `rd_slice_peek`",
+    "4156: unsupported: call to uncontracted function `rd_slice_read`",
+    "4164: unsupported: indirect memory access is outside the resource projection",
+    "4166: unsupported: call to uncontracted function `rd_buf_destroy`"
+   ]
+  },
+  {
+   "function": "rdhdrhistogram.c::ut_quantile",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "4293: unsupported: call to uncontracted function `rd_hdr_histogram_new`",
+    "4295: unsupported: braced initializer, expression, or declaration is not modeled",
+    "4302: unsupported: unmodeled increment or decrement expression",
+    "4306: unsupported: unmodeled increment or decrement expression",
+    "4307: unsupported: indirect memory access is outside the resource projection",
+    "4308: unsupported: indirect memory access is outside the resource projection",
+    "4308: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "4310: unknown_alias: unresolved resource identity `hdr`"
+   ]
+  },
+  {
+   "function": "rdhttp.c::unittest_http_get",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1,
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "other": [
+    "21747: unsupported: call to uncontracted function `rd_getenv`",
+    "21750: unsupported: indirect memory access is outside the resource projection",
+    "21758: unsupported: nested call `strlen` inside a modeled call is outside the resource projection",
+    "21759: unsupported: call to uncontracted function `__builtin_alloca`",
+    "21762: unsupported: call to uncontracted function `rd_http_get_json`",
+    "21763: unsupported: braced initializer, expression, or declaration is not modeled",
+    "21763: unsupported: indirect memory access is outside the resource projection",
+    "21765: unsupported: indirect memory access is outside the resource projection",
+    "21769: unsupported: braced initializer, expression, or declaration is not modeled",
+    "21771: unknown_alias: unresolved resource identity `json`",
+    "21773: unsupported: call to uncontracted function `rd_http_get_json`",
+    "21774: unsupported: braced initializer, expression, or declaration is not modeled",
+    "21775: unsupported: braced initializer, expression, or declaration is not modeled",
+    "21775: unsupported: indirect memory access is outside the resource projection",
+    "21775: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21776: unsupported: indirect memory access is outside the resource projection",
+    "21777: unknown_alias: unresolved resource identity `json`",
+    "21778: unknown_alias: unresolved resource identity `json`",
+    "21779: unknown_alias: unresolved resource identity `herr`"
+   ]
+  },
+  {
+   "function": "rdhttp.c::unittest_http_get_params_append",
+   "status": "Unsafe",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 2
+   },
+   "other": [
+    "21787: unsupported: braced initializer, expression, or declaration is not modeled",
+    "21812: unsupported: call to uncontracted function `rd_http_get_params_append`",
+    "21813: unsupported: braced initializer, expression, or declaration is not modeled",
+    "21814: unsupported: call to uncontracted function `rd_http_get_params_append`",
+    "21815: unsupported: braced initializer, expression, or declaration is not modeled",
+    "21816: unknown_alias: unresolved resource identity `tests`",
+    "21818: unsupported: unmodeled call, aggregate or indirect access in loop condition",
+    "21819: unsupported: indirect memory access is outside the resource projection",
+    "21820: leak: live obligation acquired at rdhttp.c:802",
+    "21820: unknown_alias: unresolved resource identity `test`",
+    "21820: unsupported: braced initializer, expression, or declaration is not modeled",
+    "21820: unsupported: indirect memory access is outside the resource projection",
+    "21821: unknown_alias: unresolved resource identity `res`",
+    "21822: unsupported: unrecognized assignment destination"
+   ]
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_version_str",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "24729: unsupported: unsupported assignment expression"
+   ]
+  },
+  {
+   "function": "rdkafka_cert.c::rd_kafka_conf_set_ssl_cert",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "20446: unsupported: braced initializer, expression, or declaration is not modeled",
+    "20455: unsupported: call to uncontracted function `rd_kafka_global_init`",
+    "20456: unknown_alias: unresolved resource identity `cert_map`",
+    "20458: unknown_alias: unresolved resource identity `certp`",
+    "20459: unsupported: indirect memory access is outside the resource projection",
+    "20460: unsupported: store through `*certp` without an out-parameter contract",
+    "20464: unsupported: call to uncontracted function `rd_kafka_cert_new`",
+    "20468: unknown_alias: unresolved resource identity `certp`",
+    "20469: unsupported: indirect memory access is outside the resource projection",
+    "20470: unsupported: store through `*certp` without an out-parameter contract"
+   ]
+  },
+  {
+   "function": "rdkafka_conf.c::rd_kafka_anyconf_get0",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "25166: unsupported: indirect memory access is outside the resource projection",
+    "25169: unsupported: indirect memory access is outside the resource projection",
+    "25171: unknown_alias: unresolved resource identity `kstr`",
+    "25172: unsupported: indirect memory access is outside the resource projection",
+    "25176: unsupported: indirect memory access is outside the resource projection",
+    "25177: unknown_alias: unresolved resource identity `val`",
+    "25183: unsupported: indirect memory access is outside the resource projection",
+    "25186: unsupported: indirect memory access is outside the resource projection",
+    "25190: unsupported: indirect memory access is outside the resource projection",
+    "25195: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "25197: unknown_alias: unresolved resource identity `prop`",
+    "25203: unsupported: indirect memory access is outside the resource projection",
+    "25204: unsupported: indirect memory access is outside the resource projection",
+    "25209: unknown_alias: unresolved resource identity `dest`",
+    "25216: unsupported: indirect memory access is outside the resource projection",
+    "25217: unknown_alias: unresolved resource identity `plist`",
+    "25218: unsupported: indirect memory access is outside the resource projection",
+    "25224: unknown_alias: unresolved resource identity `val_len`",
+    "25228: unknown_alias: unresolved resource identity `val`",
+    "25231: unknown_alias: unresolved resource identity `dest`",
+    "25234: unknown_alias: unresolved resource identity `dest`"
+   ]
+  },
+  {
+   "function": "rdkafka_msg.c::unittest_msgq_order",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "21010: unsupported: braced initializer, expression, or declaration is not modeled",
+    "21016: unsupported: unmodeled increment or decrement expression",
+    "21017: unsupported: call to uncontracted function `ut_rd_kafka_msg_new`",
+    "21018: unknown_alias: unresolved resource identity `rkm`",
+    "21019: unsupported: call to uncontracted function `rd_kafka_msgq_enq_sorted0`",
+    "21022: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21025: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21028: unsupported: call to uncontracted function `rd_kafka_msgq_init`",
+    "21030: unsupported: call to uncontracted function `rd_kafka_msgq_enq`",
+    "21032: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21034: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21037: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21039: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21042: unsupported: call to uncontracted function `rd_kafka_retry_msgq`",
+    "21045: unsupported: nested call `rd_kafka_msgq_len` inside a modeled call is outside the resource projection",
+    "21047: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21050: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21053: unsupported: call to uncontracted function `rd_kafka_msgq_init`",
+    "21055: unsupported: call to uncontracted function `rd_kafka_msgq_enq`",
+    "21057: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21060: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21063: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21066: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21069: unsupported: call to uncontracted function `rd_kafka_retry_msgq`",
+    "21073: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21075: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21079: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21081: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21085: unsupported: call to uncontracted function `rd_kafka_retry_msgq`",
+    "21088: unsupported: call to uncontracted function `rd_kafka_msgq_init`",
+    "21089: unsupported: call to uncontracted function `rd_kafka_msgq_init`",
+    "21091: unsupported: call to uncontracted function `rd_kafka_msgq_enq`",
+    "21093: unsupported: call to uncontracted function `rd_kafka_msgq_enq`",
+    "21094: unsupported: call to uncontracted function `ut_rd_kafka_msg_new`",
+    "21095: unknown_alias: unresolved resource identity `rkm`",
+    "21096: unsupported: call to uncontracted function `rd_kafka_msgq_enq_sorted0`",
+    "21097: unsupported: call to uncontracted function `rd_kafka_retry_msgq`",
+    "21100: unsupported: call to uncontracted function `rd_kafka_retry_msgq`",
+    "21103: unsupported: nested call `rd_kafka_msgq_len` inside a modeled call is outside the resource projection",
+    "21104: unsupported: nested call `rd_kafka_msgq_len` inside a modeled call is outside the resource projection",
+    "21106: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21109: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21112: unsupported: indirect memory access is outside the resource projection",
+    "21113: unsupported: call to uncontracted function `ut_rd_kafka_msgq_purge`",
+    "21114: unsupported: call to uncontracted function `ut_rd_kafka_msgq_purge`",
+    "21115: unsupported: call to uncontracted function `ut_rd_kafka_msgq_purge`"
+   ]
+  },
+  {
+   "function": "rdkafka_range_assignor.c::rd_kafka_range_assignor_unittest",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "other": [
+    "20479: unsupported: call to uncontracted function `rd_kafka_conf_new`",
+    "20480: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20484: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20485: unsupported: call to uncontracted function `rd_kafka_conf_set`",
+    "20487: unsupported: call to uncontracted function `rd_kafka_new`",
+    "20489: unsupported: call to uncontracted function `rd_kafka_assignor_find`",
+    "20491: unsupported: unmodeled increment or decrement expression",
+    "20493: unsupported: call to uncontracted function `rd_kafkap_str_new`",
+    "20495: unsupported: unrecognized assignment destination",
+    "20517: unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+    "20517: unsupported: unmodeled increment or decrement expression",
+    "20521: unknown_alias: unresolved resource identity `RD_KAFKA_RANGE_ASSIGNOR_UT_NO_BROKER_RACK`",
+    "20521: unsupported: unmodeled increment or decrement expression",
+    "20524: unsupported: indirect memory access is outside the resource projection",
+    "20526: unsupported: nested call `rd_clock` inside a modeled call is outside the resource projection",
+    "20527: unknown_alias: unresolved resource identity `r`",
+    "20528: unsupported: unrecognized assignment destination",
+    "20530: unsupported: unmodeled increment or decrement expression",
+    "20531: unsupported: indirect memory access is outside the resource projection",
+    "20533: unsupported: call to uncontracted function `rd_kafka_destroy`",
+    "20534: unknown_alias: unresolved resource identity `fails`"
+   ]
+  },
+  {
+   "function": "rdkafka_ssl.c::rd_kafka_ssl_error0",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 2
+   },
+   "other": [
+    "20262: unsupported: unmodeled call, aggregate or indirect access in loop condition",
+    "20268: unknown_alias: unresolved resource identity `rkb`",
+    "20268: unsupported: indirect memory access is outside the resource projection",
+    "20270: unsupported: indirect memory access is outside the resource projection",
+    "20272: unsupported: call to uncontracted function `ERR_error_string_n`",
+    "20273: unknown_alias: unresolved resource identity `data`",
+    "20275: unknown_alias: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "function": "rdkafka_ssl.c::unittest_ssl",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 4
+   },
+   "other": [
+    "21258: unsupported: unmodeled increment or decrement expression",
+    "21260: unsupported: indirect memory access is outside the resource projection",
+    "21261: unsupported: indirect memory access is outside the resource projection",
+    "21262: unsupported: indirect memory access is outside the resource projection",
+    "21271: unknown_alias: unresolved resource identity `fails`"
+   ]
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::rd_kafka_sticky_assignor_unittest",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 4
+   },
+   "other": [
+    "23902: unsupported: call to uncontracted function `rd_kafka_conf_new`",
+    "23903: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "23907: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "23908: unsupported: call to uncontracted function `rd_kafka_conf_set`",
+    "23910: unsupported: call to uncontracted function `rd_kafka_new`",
+    "23912: unsupported: call to uncontracted function `rd_kafka_assignor_find`",
+    "23914: unsupported: unmodeled increment or decrement expression",
+    "23916: unsupported: call to uncontracted function `rd_kafkap_str_new`",
+    "23918: unsupported: unrecognized assignment destination",
+    "23919: unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+    "23919: unsupported: unmodeled increment or decrement expression",
+    "23924: unknown_alias: unresolved resource identity `RD_KAFKA_RANGE_ASSIGNOR_UT_NO_BROKER_RACK`",
+    "23924: unsupported: unmodeled increment or decrement expression",
+    "23927: unsupported: indirect memory access is outside the resource projection",
+    "23929: unsupported: nested call `rd_clock` inside a modeled call is outside the resource projection",
+    "23930: unknown_alias: unresolved resource identity `r`",
+    "23931: unsupported: unrecognized assignment destination",
+    "23933: unsupported: unmodeled increment or decrement expression",
+    "23934: unsupported: indirect memory access is outside the resource projection",
+    "23936: unsupported: call to uncontracted function `rd_kafka_destroy`",
+    "23937: unknown_alias: unresolved resource identity `fails`"
+   ]
+  },
+  {
+   "function": "rdkafka_telemetry_decode.c::unit_test_telemetry",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "21782: unsupported: indirect memory access is outside the resource projection",
+    "21783: unsupported: call to uncontracted function `rd_kafka_conf_new`",
+    "21784: unsupported: indirect memory access is outside the resource projection",
+    "21786: unsupported: call to uncontracted function `rd_kafka_conf_set`",
+    "21787: unsupported: call to uncontracted function `rd_kafka_conf_set`",
+    "21788: unsupported: call to uncontracted function `rd_kafka_conf_set`",
+    "21789: unsupported: call to uncontracted function `rd_kafka_conf_set`",
+    "21791: unsupported: indirect memory access is outside the resource projection",
+    "21792: unknown_alias: unresolved resource identity `conf`",
+    "21793: unknown_alias: unresolved resource identity `rk`",
+    "21794: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21798: unknown_alias: unresolved resource identity `rk`",
+    "21799: unsupported: indirect memory access is outside the resource projection",
+    "21800: unknown_alias: unresolved resource identity `rk`",
+    "21801: unknown_alias: unresolved resource identity `rk`",
+    "21802: unsupported: indirect memory access is outside the resource projection",
+    "21805: unsupported: indirect memory access is outside the resource projection",
+    "21806: unsupported: indirect memory access is outside the resource projection",
+    "21808: unsupported: indirect memory access is outside the resource projection",
+    "21810: unsupported: indirect memory access is outside the resource projection",
+    "21812: unsupported: indirect memory access is outside the resource projection",
+    "21815: unsupported: indirect memory access is outside the resource projection",
+    "21818: unsupported: indirect memory access is outside the resource projection",
+    "21820: unsupported: indirect memory access is outside the resource projection",
+    "21822: unsupported: indirect memory access is outside the resource projection",
+    "21824: unsupported: indirect memory access is outside the resource projection",
+    "21827: unsupported: indirect memory access is outside the resource projection",
+    "21830: unsupported: indirect memory access is outside the resource projection",
+    "21832: unsupported: indirect memory access is outside the resource projection",
+    "21834: unsupported: indirect memory access is outside the resource projection",
+    "21835: unsupported: indirect memory access is outside the resource projection",
+    "21836: unsupported: indirect memory access is outside the resource projection",
+    "21837: unsupported: indirect memory access is outside the resource projection",
+    "21838: unsupported: call to uncontracted function `clear_unit_test_data`",
+    "21839: unsupported: braced initializer, expression, or declaration is not modeled",
+    "21848: unsupported: indirect memory access is outside the resource projection",
+    "21850: unknown_alias: unresolved resource identity `rkb`",
+    "21851: unsupported: indirect memory access is outside the resource projection",
+    "21852: unsupported: indirect memory access is outside the resource projection",
+    "21854: unsupported: indirect memory access is outside the resource projection",
+    "21856: unsupported: indirect memory access is outside the resource projection",
+    "21858: unsupported: indirect memory access is outside the resource projection",
+    "21860: unsupported: indirect memory access is outside the resource projection",
+    "21863: unsupported: indirect memory access is outside the resource projection",
+    "21865: unsupported: indirect memory access is outside the resource projection",
+    "21867: unsupported: indirect memory access is outside the resource projection",
+    "21869: unsupported: indirect memory access is outside the resource projection",
+    "21871: unsupported: indirect memory access is outside the resource projection",
+    "21873: unsupported: indirect memory access is outside the resource projection",
+    "21876: unsupported: indirect memory access is outside the resource projection",
+    "21879: unsupported: indirect memory access is outside the resource projection",
+    "21881: unsupported: indirect memory access is outside the resource projection",
+    "21883: unsupported: call to uncontracted function `set_metric_value`",
+    "21884: unsupported: indirect memory access is outside the resource projection",
+    "21884: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21885: unsupported: call to uncontracted function `rd_kafka_telemetry_encode_metrics`",
+    "21886: unsupported: indirect memory access is outside the resource projection",
+    "21887: unknown_alias: unresolved resource identity `rbuf`",
+    "21890: unsupported: call to uncontracted function `rd_kafka_telemetry_decode_metrics`",
+    "21893: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21894: unsupported: indirect memory access is outside the resource projection",
+    "21894: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21895: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21897: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21899: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21901: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21902: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21904: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21905: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21906: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21907: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21908: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21910: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21911: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21912: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21913: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21914: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21915: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21916: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "21918: unsupported: indirect memory access is outside the resource projection",
+    "21919: unsupported: call to uncontracted function `rd_buf_destroy_free`",
+    "21920: unsupported: indirect memory access is outside the resource projection",
+    "21921: unsupported: indirect memory access is outside the resource projection",
+    "21923: unsupported: indirect memory access is outside the resource projection",
+    "21924: unsupported: indirect memory access is outside the resource projection",
+    "21925: unsupported: indirect memory access is outside the resource projection",
+    "21927: unsupported: indirect memory access is outside the resource projection",
+    "21928: unsupported: indirect memory access is outside the resource projection",
+    "21930: unsupported: indirect memory access is outside the resource projection",
+    "21932: unsupported: indirect memory access is outside the resource projection",
+    "21934: unsupported: indirect memory access is outside the resource projection",
+    "21936: unsupported: indirect memory access is outside the resource projection",
+    "21938: unsupported: indirect memory access is outside the resource projection",
+    "21940: unsupported: indirect memory access is outside the resource projection",
+    "21941: unsupported: indirect memory access is outside the resource projection",
+    "21943: unsupported: indirect memory access is outside the resource projection",
+    "21945: unsupported: indirect memory access is outside the resource projection",
+    "21947: unsupported: indirect memory access is outside the resource projection",
+    "21949: unsupported: indirect memory access is outside the resource projection",
+    "21951: unsupported: indirect memory access is outside the resource projection",
+    "21953: unsupported: indirect memory access is outside the resource projection",
+    "21955: unsupported: indirect memory access is outside the resource projection",
+    "21956: unsupported: indirect memory access is outside the resource projection",
+    "21957: unsupported: indirect memory access is outside the resource projection",
+    "21959: unsupported: indirect memory access is outside the resource projection",
+    "21961: unsupported: indirect memory access is outside the resource projection",
+    "21962: unknown_alias: unresolved resource identity `rkb`",
+    "21963: unsupported: indirect memory access is outside the resource projection",
+    "21964: unsupported: indirect memory access is outside the resource projection",
+    "21965: unsupported: indirect memory access is outside the resource projection",
+    "21966: unknown_alias: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_new0",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "19998: unsupported: call to uncontracted function `rd_kafka_topic_conf_destroy`",
+    "19999: unsupported: call to uncontracted function `rd_kafka_set_last_error`",
+    "20003: unsupported: indirect memory access is outside the resource projection",
+    "20004: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20006: unsupported: indirect memory access is outside the resource projection",
+    "20008: unsupported: call to uncontracted function `rd_kafka_topic_conf_destroy`",
+    "20010: unknown_alias: unresolved resource identity `existing`",
+    "20014: unknown_alias: unresolved resource identity `rk`",
+    "20015: unsupported: indirect memory access is outside the resource projection",
+    "20016: unknown_alias: unresolved resource identity `__qcore_literal__`",
+    "20018: unsupported: call to uncontracted function `rd_kafka_topic_conf_new`",
+    "20019: unknown_alias: unresolved resource identity `__qcore_literal__`",
+    "20022: unknown_alias: unresolved resource identity `__qcore_literal__`",
+    "20024: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20027: unsupported: indirect memory access is outside the resource projection",
+    "20028: unsupported: indirect memory access is outside the resource projection",
+    "20029: unsupported: call to uncontracted function `rd_kafka_topic_conf_destroy`",
+    "20030: unsupported: call to uncontracted function `rd_kafka_set_last_error`",
+    "20034: unsupported: store through `*existing` without an out-parameter contract",
+    "20036: unsupported: indirect memory access is outside the resource projection",
+    "20037: unsupported: indirect memory access is outside the resource projection",
+    "20038: unsupported: indirect memory access is outside the resource projection",
+    "20039: unsupported: indirect memory access is outside the resource projection",
+    "20040: unknown_alias: unresolved resource identity `rkt`",
+    "20041: unsupported: indirect memory access is outside the resource projection",
+    "20042: unknown_alias: unresolved resource identity `conf`",
+    "20043: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20060: unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+    "20060: unsupported: unmodeled increment or decrement expression",
+    "20062: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20064: unsupported: indirect memory access is outside the resource projection",
+    "20068: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20069: unknown_alias: unresolved resource identity `rkt`",
+    "20070: unsupported: indirect memory access is outside the resource projection",
+    "20074: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20078: unknown_alias: unresolved resource identity `rkt`",
+    "20080: unknown_alias: unresolved resource identity `rkt`",
+    "20082: unsupported: indirect memory access is outside the resource projection",
+    "20083: unknown_alias: unresolved resource identity `rkt`",
+    "20084: unsupported: indirect memory access is outside the resource projection",
+    "20086: unsupported: indirect memory access is outside the resource projection",
+    "20087: unknown_alias: unresolved resource identity `rkt`",
+    "20088: unknown_alias: unresolved resource identity `rk`",
+    "20088: unknown_alias: unresolved resource identity `rkt`",
+    "20089: unknown_alias: unresolved resource identity `rkt`",
+    "20091: unknown_alias: unresolved resource identity `rkt`",
+    "20093: unknown_alias: unresolved resource identity `rkt`",
+    "20094: unknown_alias: unresolved resource identity `rkt`",
+    "20096: unknown_alias: unresolved resource identity `rkt`",
+    "20100: unknown_alias: unresolved resource identity `rkt`",
+    "20102: unknown_alias: unresolved resource identity `rkt`",
+    "20103: unknown_alias: unresolved resource identity `rkt`",
+    "20105: unknown_alias: unresolved resource identity `rkt`",
+    "20109: unknown_alias: unresolved resource identity `rkt`",
+    "20111: unknown_alias: unresolved resource identity `rkt`",
+    "20112: unknown_alias: unresolved resource identity `rkt`",
+    "20114: unknown_alias: unresolved resource identity `rkt`",
+    "20119: unknown_alias: unresolved resource identity `rkt`",
+    "20121: unsupported: indirect memory access is outside the resource projection",
+    "20124: unsupported: indirect memory access is outside the resource projection",
+    "20127: unknown_alias: unresolved resource identity `rk`",
+    "20127: unsupported: indirect memory access is outside the resource projection",
+    "20128: unsupported: indirect memory access is outside the resource projection",
+    "20129: unsupported: indirect memory access is outside the resource projection",
+    "20130: unsupported: indirect memory access is outside the resource projection",
+    "20131: unsupported: indirect memory access is outside the resource projection",
+    "20132: unsupported: indirect memory access is outside the resource projection",
+    "20133: unsupported: call to uncontracted function `rd_kafka_topic_keep`",
+    "20134: unsupported: indirect memory access is outside the resource projection",
+    "20135: unsupported: indirect memory access is outside the resource projection",
+    "20136: unsupported: indirect memory access is outside the resource projection",
+    "20136: unsupported: unrecognized assignment destination",
+    "20137: unknown_alias: unresolved resource identity `rk`",
+    "20138: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20141: unknown_alias: unresolved resource identity `existing`",
+    "20142: unsupported: indirect memory access is outside the resource projection",
+    "20148: unsupported: indirect memory access is outside the resource projection",
+    "20149: unknown_alias: unresolved resource identity `rk`",
+    "20152: unsupported: indirect memory access is outside the resource projection",
+    "20154: unknown_alias: unresolved resource identity `rkt`",
+    "20154: unsupported: nullable resource `rkt` used by a non-null contract"
+   ]
+  },
+  {
+   "function": "rdlog.c::rd_msghdr_print",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `printf` are outside the resource projection": 1
+   },
+   "other": [
+    "19653: unsupported: indirect memory access is outside the resource projection",
+    "19654: unsupported: unmodeled increment or decrement expression",
+    "19655: unsupported: indirect memory access is outside the resource projection",
+    "19656: unsupported: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "function": "rdmap.c::unittest_untyped_map",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "other": [
+    "3525: unsupported: unsupported assignment expression",
+    "3531: unsupported: call to uncontracted function `rd_map_init`",
+    "3545: unsupported: call to uncontracted function `rd_map_set`",
+    "3548: unsupported: call to uncontracted function `rd_map_delete`",
+    "3553: unsupported: call to uncontracted function `rd_map_set`",
+    "3556: unsupported: call to uncontracted function `rd_map_get`",
+    "3569: unsupported: for-loop clause with a call or grouping is not classified from its stripped spelling",
+    "3575: unsupported: call to uncontracted function `rd_map_destroy`"
+   ]
+  },
+  {
+   "function": "rdstring.c::rd_string_render",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 3
+   },
+   "other": [
+    "2975: unknown_alias: unresolved resource identity `template`",
+    "2981: unknown_alias: unresolved resource identity `s`",
+    "2983: unsupported: unsupported assignment expression",
+    "2986: unsupported: unsupported assignment expression",
+    "2988: unknown_alias: unresolved resource identity `buf`",
+    "2988: unsupported: call has an unmodeled formal address or borrowed expression",
+    "2988: unsupported: loop re-acquisition: an earlier generation that may be live is still held",
+    "2988: unsupported: unrecognized assignment destination",
+    "2997: unknown_alias: unresolved resource identity `buf`",
+    "3000: unsupported: call to uncontracted function `__builtin_alloca`",
+    "3000: unsupported: unrecognized assignment destination",
+    "3000: unsupported: unsupported assignment expression",
+    "3001: unsupported: call to uncontracted function `callback`",
+    "3004: unknown_alias: unresolved resource identity `buf`",
+    "3007: unknown_alias: unresolved resource identity `buf`",
+    "3007: unsupported: loop re-acquisition: an earlier generation that may be live is still held",
+    "3008: unsupported: call to uncontracted function `callback`",
+    "3011: unknown_alias: unresolved resource identity `buf`",
+    "3015: unsupported: unrecognized assignment destination",
+    "3016: unsupported: unsupported assignment expression",
+    "3018: unknown_alias: unresolved resource identity `tend`",
+    "3021: unknown_alias: unresolved resource identity `buf`",
+    "3022: unknown_alias: unresolved resource identity `buf`",
+    "3022: unsupported: nullable resource `buf` used by a non-null contract"
+   ]
+  },
+  {
+   "function": "rdstring.c::ut_string_split",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "3295: unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+    "3295: unsupported: unmodeled increment or decrement expression",
+    "3299: unsupported: indirect memory access is outside the resource projection",
+    "3302: unsupported: indirect memory access is outside the resource projection",
+    "3302: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "3303: unsupported: unmodeled increment or decrement expression",
+    "3304: unsupported: indirect memory access is outside the resource projection",
+    "3304: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "3305: unknown_alias: unresolved resource identity `ret`"
+   ]
+  },
+  {
+   "function": "rdunittest.c::rd_unittest",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "20529: unsupported: call to uncontracted function `rd_getenv`",
+    "20531: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20533: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20537: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20546: unsupported: call to uncontracted function `rd_kafka_global_init`",
+    "20547: unsupported: unmodeled call, aggregate or indirect access in for-loop condition",
+    "20547: unsupported: unmodeled increment or decrement expression",
+    "20549: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20551: unsupported: indirect memory access is outside the resource projection",
+    "20552: unsupported: indirect memory access is outside the resource projection",
+    "20553: unsupported: unrecognized assignment destination",
+    "20554: unsupported: unmodeled increment or decrement expression",
+    "20558: unknown_alias: unresolved resource identity `fails`"
+   ]
+  },
+  {
+   "function": "rdunittest_fetcher.c::unittest_fetcher_share_filter_forward",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "20328: unsupported: publication of a tracked resource into the static-storage object `ut_mock_rk` is outside the resource projection",
+    "20329: unsupported: unmodeled increment or decrement expression",
+    "20330: unsupported: indirect memory access is outside the resource projection",
+    "20332: unsupported: unrecognized assignment destination",
+    "20334: unknown_alias: unresolved resource identity `ut_mock_rk`"
+   ]
+  },
+  {
+   "function": "snappy.c::rd_kafka_snappy_java_uncompress",
+   "status": "Unsafe",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "20476: leak: live obligation acquired at snappy.c:1705",
+    "20478: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20480: leak: live obligation acquired at snappy.c:1705",
+    "20487: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "20490: leak: live obligation acquired at snappy.c:1705",
+    "20499: leak: live obligation acquired at snappy.c:1705",
+    "20504: leak: live obligation acquired at snappy.c:1705",
+    "20506: unsupported: loop re-acquisition: an earlier generation that may be live is still held",
+    "20508: unsupported: indirect memory access is outside the resource projection",
+    "20509: leak: live obligation acquired at snappy.c:1705",
+    "20515: leak: live obligation acquired at snappy.c:1705",
+    "20515: unknown_alias: unresolved resource identity `outbuf`",
+    "20515: unsupported: nullable resource `outbuf` used by a non-null contract"
+   ]
+  },
+  {
+   "function": "mk_server/monkey.c::mk_server_info",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `printf` are outside the resource projection": 1
+   },
+   "other": [
+    "6010: unsupported: nested call `getpid` inside a modeled call is outside the resource projection",
+    "6011: unknown_alias: unresolved resource identity `head`",
+    "6011: unknown_alias: unresolved resource identity `server`",
+    "6011: unsupported: indirect memory access is outside the resource projection",
+    "6012: unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+    "6012: unsupported: indirect memory access is outside the resource projection",
+    "6013: unknown_alias: unresolved resource identity `l`",
+    "6016: unknown_alias: unresolved resource identity `server`",
+    "6020: unknown_alias: unresolved resource identity `head`",
+    "6020: unknown_alias: unresolved resource identity `server`",
+    "6020: unsupported: indirect memory access is outside the resource projection",
+    "6021: unsupported: `__builtin_offsetof` is the Clang extension node OffsetOfExpr, which no resource contract or route models",
+    "6021: unsupported: indirect memory access is outside the resource projection",
+    "6022: unknown_alias: unresolved resource identity `p`",
+    "6026: unsupported: unmodeled call, aggregate or indirect access in branch condition"
+   ]
+  }
+ ]
+}

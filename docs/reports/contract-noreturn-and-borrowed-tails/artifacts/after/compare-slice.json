@@ -1,0 +1,64 @@
+{
+ "transitions": {
+  "Unknown -> Unknown": 4
+ },
+ "status_moves": [],
+ "removed": {
+  "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 8
+ },
+ "added": {},
+ "attribution": {
+  "tail:flb_log_print": 2,
+  "tail:fprintf": 2
+ },
+ "moves": [
+  {
+   "function": "src/flb_lib.c::1::do_start::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_lib.c::1::flb_lib_config_file::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_lib.c::2::do_start::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_lib.c::2::flb_lib_config_file::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "added": {}
+  }
+ ]
+}

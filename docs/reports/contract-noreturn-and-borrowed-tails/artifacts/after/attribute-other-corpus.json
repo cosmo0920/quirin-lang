@@ -1,0 +1,808 @@
+{
+ "functions": 26,
+ "summary": {
+  "attributed=True callees=rd_kafka_crash": 24,
+  "attributed=False callees=rd_kafka_crash": 2
+ },
+ "moves": {
+  "rd_kafka_broker_buf_enq0": {
+   "file": "rdkafka_broker.c",
+   "removed": [
+    [
+     21491,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     21491,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 21491,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 1168 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_broker_connect": {
+   "file": "rdkafka_broker.c",
+   "removed": [
+    [
+     22091,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 22091,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 2330 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_broker_consumer_serve": {
+   "file": "rdkafka_broker.c",
+   "removed": [
+    [
+     23200,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     23200,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 23200,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 4624 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_broker_fail": {
+   "file": "rdkafka_broker.c",
+   "removed": [
+    [
+     21220,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     21220,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 21220,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 637 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_broker_producer_serve": {
+   "file": "rdkafka_broker.c",
+   "removed": [
+    [
+     23149,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     23149,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 23149,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 4531 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_broker_send": {
+   "file": "rdkafka_broker.c",
+   "removed": [
+    [
+     21437,
+     "unsupported: indirect memory access is outside the resource projection"
+    ],
+    [
+     21438,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ],
+    [
+     21438,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 21437,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 1091 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 21438,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 1092 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_broker_share_consumer_serve": {
+   "file": "rdkafka_broker.c",
+   "removed": [
+    [
+     23174,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     23174,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 23174,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 4575 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_broker_timeout_scan": {
+   "file": "rdkafka_broker.c",
+   "removed": [
+    [
+     21398,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     21398,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 21398,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 1018 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "snprintf",
+     "line": 21424,
+     "texts": "snprintf ( rttinfo , sizeof ( rttinfo ) , __qcore_literal__ , ( float ) ( rkb - > rkb_avg_rtt . ra_v . avg / 1000 . 0f ) )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "snprintf",
+     "line": 21427,
+     "texts": "snprintf ( rttinfo , sizeof ( rttinfo ) , __qcore_literal__ , ( float ) ( rkb - > rkb_telemetry . rd_avg_current . rkb_avg_rtt . ra_v . avg / 1000 . 0f ) )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_req_response": {
+   "file": "rdkafka_broker.c",
+   "removed": [
+    [
+     21923,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     21923,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 21923,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 2000 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_waitresp_find": {
+   "file": "rdkafka_broker.c",
+   "removed": [
+    [
+     21881,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 21881,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 1946 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_bufq_connection_reset": {
+   "file": "rdkafka_buf.c",
+   "removed": [
+    [
+     19770,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     19770,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 19770,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 298 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_bufq_purge": {
+   "file": "rdkafka_buf.c",
+   "removed": [
+    [
+     19760,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     19760,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 19760,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 272 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_cgrp_destroy_final": {
+   "file": "rdkafka_cgrp.c",
+   "removed": [
+    [
+     20493,
+     "unsupported: indirect memory access is outside the resource projection"
+    ],
+    [
+     20494,
+     "unknown_alias: unresolved resource identity `rkcg`"
+    ],
+    [
+     20494,
+     "unsupported: indirect memory access is outside the resource projection"
+    ],
+    [
+     20495,
+     "unknown_alias: unresolved resource identity `rkcg`"
+    ],
+    [
+     20495,
+     "unsupported: indirect memory access is outside the resource projection"
+    ],
+    [
+     20496,
+     "unknown_alias: unresolved resource identity `rkcg`"
+    ],
+    [
+     20496,
+     "unsupported: indirect memory access is outside the resource projection"
+    ],
+    [
+     20510,
+     "unsupported: indirect memory access is outside the resource projection"
+    ],
+    [
+     20511,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     20511,
+     "unknown_alias: unresolved resource identity `rkcg`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20493,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 433 , __FUNCTION__ , ( rkcg - > rkcg_rk ) , __qcore_literal__ __qcore_literal__ )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20494,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 434 , __FUNCTION__ , ( rkcg - > rkcg_rk ) , __qcore_literal__ __qcore_literal__ )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20495,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 435 , __FUNCTION__ , ( rkcg - > rkcg_rk ) , __qcore_literal__ __qcore_literal__ )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20496,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 436 , __FUNCTION__ , ( rkcg - > rkcg_rk ) , __qcore_literal__ __qcore_literal__ )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20510,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 452 , __FUNCTION__ , ( rkcg - > rkcg_rk ) , __qcore_literal__ __qcore_literal__ )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20511,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 453 , __FUNCTION__ , ( rkcg - > rkcg_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_cgrp_op_serve": {
+   "file": "rdkafka_cgrp.c",
+   "removed": [
+    [
+     24465,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     24465,
+     "unknown_alias: unresolved resource identity `rkcg`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 24465,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 7558 , __FUNCTION__ , ( rkcg - > rkcg_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_broker_fetch_reply": {
+   "file": "rdkafka_fetcher.c",
+   "removed": [
+    [
+     21609,
+     "unsupported: indirect memory access is outside the resource projection"
+    ],
+    [
+     21610,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "added": [],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 21609,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 2445 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "snprintf",
+     "line": 21623,
+     "texts": "snprintf ( tmp , sizeof ( tmp ) , __qcore_literal__ , rd_kafka_err2str ( err ) )"
+    },
+    {
+     "position": "nested-call",
+     "callee": "snprintf",
+     "line": 21623,
+     "texts": "snprintf ( tmp , sizeof ( tmp ) , __qcore_literal__ , rd_kafka_err2str ( err ) )"
+    }
+   ],
+   "attributed": false,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_msg_partitioner": {
+   "file": "rdkafka_msg.c",
+   "removed": [
+    [
+     20535,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     20535,
+     "unknown_alias: unresolved resource identity `rkt`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20535,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 1240 , __FUNCTION__ , ( rkt - > rkt_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_gzip_compress": {
+   "file": "rdkafka_msgset_writer.c",
+   "removed": [
+    [
+     20125,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     20125,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20125,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 1010 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_offset_broker_commit": {
+   "file": "rdkafka_offset.c",
+   "removed": [
+    [
+     20451,
+     "unsupported: indirect memory access is outside the resource projection"
+    ],
+    [
+     20452,
+     "unknown_alias: unresolved resource identity `rktp`"
+    ],
+    [
+     20452,
+     "unsupported: indirect memory access is outside the resource projection"
+    ],
+    [
+     20453,
+     "unknown_alias: unresolved resource identity `rktp`"
+    ]
+   ],
+   "added": [],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20451,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 550 , __FUNCTION__ , ( rktp - > rktp_rkt - > rkt_rk ) , __qcore_literal__ __qcore_literal__ )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20452,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 552 , __FUNCTION__ , ( rktp - > rktp_rkt - > rkt_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": false,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_toppar_destroy_final": {
+   "file": "rdkafka_partition.c",
+   "removed": [
+    [
+     20397,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     20397,
+     "unknown_alias: unresolved resource identity `rktp`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20397,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 345 , __FUNCTION__ , ( rktp - > rktp_rkt - > rkt_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_toppar_fetch_start": {
+   "file": "rdkafka_partition.c",
+   "removed": [
+    [
+     21095,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 21095,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 1808 , __FUNCTION__ , ( rktp - > rktp_rkt - > rkt_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_toppar_fetch_stop": {
+   "file": "rdkafka_partition.c",
+   "removed": [
+    [
+     21156,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 21156,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 1922 , __FUNCTION__ , ( rktp - > rktp_rkt - > rkt_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_toppar_get_avail": {
+   "file": "rdkafka_partition.c",
+   "removed": [
+    [
+     20522,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     20522,
+     "unknown_alias: unresolved resource identity `rkt`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20522,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 593 , __FUNCTION__ , ( rkt - > rkt_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_timers_destroy": {
+   "file": "rdkafka_timer.c",
+   "removed": [
+    [
+     19773,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 19773,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 390 , __FUNCTION__ , ( rkts - > rkts_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_topic_destroy_final": {
+   "file": "rdkafka_topic.c",
+   "removed": [
+    [
+     19885,
+     "unsupported: indirect memory access is outside the resource projection"
+    ],
+    [
+     19893,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     19885,
+     "unknown_alias: unresolved resource identity `rkt`"
+    ],
+    [
+     19893,
+     "unknown_alias: unresolved resource identity `rkt`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 19885,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 98 , __FUNCTION__ , ( rkt - > rkt_rk ) , __qcore_literal__ __qcore_literal__ )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 19893,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 110 , __FUNCTION__ , ( rkt - > rkt_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_topic_partitions_remove": {
+   "file": "rdkafka_topic.c",
+   "removed": [
+    [
+     20751,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20751,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 1832 , __FUNCTION__ , ( rkt - > rkt_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  },
+  "rd_kafka_transport_io_event": {
+   "file": "rdkafka_transport.c",
+   "removed": [
+    [
+     20623,
+     "unsupported: indirect memory access is outside the resource projection"
+    ]
+   ],
+   "added": [
+    [
+     20623,
+     "unknown_alias: unresolved resource identity `rkb`"
+    ]
+   ],
+   "rows": [
+    {
+     "position": "elaboration-statement",
+     "callee": "snprintf",
+     "line": 20562,
+     "texts": "snprintf ( errstr , sizeof ( errstr ) , __qcore_literal__ , rd_sockaddr2str ( rkb - > rkb_addr_last , 0x1 | 0x4 ) , strerror ( r ) )"
+    },
+    {
+     "position": "elaboration-statement",
+     "callee": "rd_kafka_crash",
+     "line": 20623,
+     "texts": "rd_kafka_crash ( __qcore_literal__ , 785 , __FUNCTION__ , ( rkb - > rkb_rk ) , __qcore_literal__ __qcore_literal__ )"
+    }
+   ],
+   "attributed": true,
+   "callees": [
+    "rd_kafka_crash"
+   ]
+  }
+ }
+}

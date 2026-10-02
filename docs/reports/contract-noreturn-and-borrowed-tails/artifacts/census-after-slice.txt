@@ -1,0 +1,25 @@
+{
+ "route": "slice",
+ "statuses": {
+  "Unknown": 238,
+  "Safe": 29,
+  "Pending": 2,
+  "Unsafe": 1
+ },
+ "noreturn_census_rows": {},
+ "tail_statement_shapes": {
+  "flb_log_print": {
+   "statements": 2,
+   "classes": {
+    "other": 1,
+    "admitted": 1
+   }
+  },
+  "fprintf": {
+   "statements": 3,
+   "classes": {
+    "admitted": 3
+   }
+  }
+ }
+}

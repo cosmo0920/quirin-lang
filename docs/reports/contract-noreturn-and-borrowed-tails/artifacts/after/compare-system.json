@@ -1,0 +1,159 @@
+{
+ "transitions": {
+  "Unknown -> Unknown": 12
+ },
+ "status_moves": [],
+ "removed": {
+  "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 14
+ },
+ "added": {},
+ "attribution": {
+  "tail:flb_log_print": 12
+ },
+ "moves": [
+  {
+   "function": "src/flb_engine.c::1::flb_engine_reschedule_retries::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_engine.c::2::flb_engine_reschedule_retries::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_output.c::1::flb_output_init_all::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_output.c::2::flb_output_init_all::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 2
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_storage.c::1::get_or_create_rejected_stream::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_storage.c::2::get_or_create_rejected_stream::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_task.c::1::flb_task_retry_destroy::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_task.c::1::flb_task_running_print::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_task.c::1::task_alloc::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_task.c::2::flb_task_retry_destroy::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_task.c::2::flb_task_running_print::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_task.c::2::task_alloc::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  }
+ ]
+}

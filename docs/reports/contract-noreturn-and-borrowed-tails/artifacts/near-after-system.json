@@ -1,0 +1,104 @@
+{
+ "functions": 4,
+ "remaining": {
+  "6": 4
+ },
+ "other_families": {
+  "unknown_alias: unresolved resource identity `X`": 24,
+  "unsupported: call to uncontracted function `X`": 10,
+  "unsupported: indirect memory access is outside the resource projection": 10,
+  "unsupported: unmodeled call, aggregate or indirect access in branch condition": 6,
+  "unsupported: store through `X` without an out-parameter contract": 2
+ },
+ "one_other": [],
+ "rows": [
+  {
+   "function": "src/flb_storage.c::flb_storage_quarantine_chunk",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "18977: unsupported: call to uncontracted function `get_or_create_rejected_stream`",
+    "18982: unsupported: indirect memory access is outside the resource projection",
+    "19000: unsupported: call to uncontracted function `sanitize_name_component`",
+    "19001: unsupported: call to uncontracted function `sanitize_name_component`",
+    "19005: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19009: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19011: unknown_alias: unresolved resource identity `buf`",
+    "19023: unknown_alias: unresolved resource identity `buf`",
+    "19026: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19030: unknown_alias: unresolved resource identity `buf`",
+    "19031: unknown_alias: unresolved resource identity `src/dst`",
+    "19034: unknown_alias: unresolved resource identity `buf`",
+    "19036: unknown_alias: unresolved resource identity `src/dst`"
+   ]
+  },
+  {
+   "function": "src/flb_storage.c::flb_storage_quarantine_chunk",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "other": [
+    "18977: unsupported: call to uncontracted function `get_or_create_rejected_stream`",
+    "18982: unsupported: indirect memory access is outside the resource projection",
+    "19000: unsupported: call to uncontracted function `sanitize_name_component`",
+    "19001: unsupported: call to uncontracted function `sanitize_name_component`",
+    "19005: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19009: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19011: unknown_alias: unresolved resource identity `buf`",
+    "19023: unknown_alias: unresolved resource identity `buf`",
+    "19026: unsupported: unmodeled call, aggregate or indirect access in branch condition",
+    "19030: unknown_alias: unresolved resource identity `buf`",
+    "19031: unknown_alias: unresolved resource identity `src/dst`",
+    "19034: unknown_alias: unresolved resource identity `buf`",
+    "19036: unknown_alias: unresolved resource identity `src/dst`"
+   ]
+  },
+  {
+   "function": "src/flb_scheduler.c::flb_sched_timer_cb_create",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "18057: unsupported: call to uncontracted function `flb_sched_timer_create`",
+    "18061: unknown_alias: unresolved resource identity `timer`",
+    "18062: unsupported: indirect memory access is outside the resource projection",
+    "18063: unsupported: indirect memory access is outside the resource projection",
+    "18064: unsupported: indirect memory access is outside the resource projection",
+    "18065: unknown_alias: unresolved resource identity `event`",
+    "18066: unknown_alias: unresolved resource identity `event`",
+    "18069: unsupported: indirect memory access is outside the resource projection",
+    "18070: unknown_alias: unresolved resource identity `event`",
+    "18073: unsupported: call to uncontracted function `flb_sched_timer_destroy`",
+    "18076: unknown_alias: unresolved resource identity `event`",
+    "18077: unknown_alias: unresolved resource identity `timer`",
+    "18079: unsupported: store through `*out_timer` without an out-parameter contract"
+   ]
+  },
+  {
+   "function": "src/flb_scheduler.c::flb_sched_timer_cb_create",
+   "status": "Unknown",
+   "card": {
+    "arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "other": [
+    "18057: unsupported: call to uncontracted function `flb_sched_timer_create`",
+    "18061: unknown_alias: unresolved resource identity `timer`",
+    "18062: unsupported: indirect memory access is outside the resource projection",
+    "18063: unsupported: indirect memory access is outside the resource projection",
+    "18064: unsupported: indirect memory access is outside the resource projection",
+    "18065: unknown_alias: unresolved resource identity `event`",
+    "18066: unknown_alias: unresolved resource identity `event`",
+    "18069: unsupported: indirect memory access is outside the resource projection",
+    "18070: unknown_alias: unresolved resource identity `event`",
+    "18073: unsupported: call to uncontracted function `flb_sched_timer_destroy`",
+    "18076: unknown_alias: unresolved resource identity `event`",
+    "18077: unknown_alias: unresolved resource identity `timer`",
+    "18079: unsupported: store through `*out_timer` without an out-parameter contract"
+   ]
+  }
+ ]
+}

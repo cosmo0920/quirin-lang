@@ -29,8 +29,7 @@ use qcore_c_gateway::legacy_c::{
     check_legacy_safety_certificate,
 };
 use qcore_contract::contract_loader::{
-    load_resource_contract_sources, no_return_callees, variadic_borrowed_tails,
-    variadic_data_tails,
+    load_resource_contract_sources, no_return_callees, variadic_borrowed_tails, variadic_data_tails,
 };
 
 #[path = "support/clang_gap.rs"]
@@ -194,7 +193,9 @@ fn run_with(contracts: &ResourceContracts, prototypes: &str, body: &str) -> Run 
 }
 
 fn tail(callee: &str) -> String {
-    format!("arguments beyond the declared parameters of `{callee}` are outside the resource projection")
+    format!(
+        "arguments beyond the declared parameters of `{callee}` are outside the resource projection"
+    )
 }
 
 // ---------------------------------------------------------------------------

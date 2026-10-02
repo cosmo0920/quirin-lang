@@ -1,0 +1,52 @@
+{
+ "route": "corpus",
+ "statuses": {
+  "Unknown": 4176,
+  "Safe": 649,
+  "Unsafe": 9
+ },
+ "noreturn_census_rows": {},
+ "tail_statement_shapes": {
+  "snprintf": {
+   "statements": 55,
+   "classes": {
+    "admitted": 37,
+    "unparsed": 9,
+    "other": 4,
+    "t8-shaped": 4,
+    "chain-shaped": 1
+   }
+  },
+  "fprintf": {
+   "statements": 120,
+   "classes": {
+    "admitted": 98,
+    "t8-shaped": 13,
+    "other": 8,
+    "chain-shaped": 1
+   }
+  },
+  "fcntl": {
+   "statements": 1,
+   "classes": {
+    "admitted": 1
+   }
+  },
+  "printf": {
+   "statements": 4,
+   "classes": {
+    "admitted": 2,
+    "t8-shaped": 2
+   }
+  },
+  "mk_print": {
+   "statements": 20,
+   "classes": {
+    "admitted": 20
+   }
+  }
+ }
+}
+tail:fprintf leaves 27 functions 14 alone 0 {'Unknown': 13, 'Unsafe': 1}
+tail:printf leaves 2 functions 2 alone 0 {'Unknown': 2}
+tail:snprintf leaves 11 functions 8 alone 0 {'Unknown': 7, 'Unsafe': 1}

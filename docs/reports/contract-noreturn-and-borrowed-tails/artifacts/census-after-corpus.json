@@ -1,0 +1,2194 @@
+{
+ "route": "corpus",
+ "statuses": {
+  "Unknown": 4176,
+  "Safe": 649,
+  "Unsafe": 9
+ },
+ "noreturn_census_rows": {},
+ "families": {
+  "tail:fprintf": {
+   "leaves": 27,
+   "functions": 14,
+   "alone": [],
+   "statuses": {
+    "Unknown": 13,
+    "Unsafe": 1
+   },
+   "alone_count": 0
+  },
+  "tail:printf": {
+   "leaves": 2,
+   "functions": 2,
+   "alone": [],
+   "statuses": {
+    "Unknown": 2
+   },
+   "alone_count": 0
+  },
+  "tail:snprintf": {
+   "leaves": 11,
+   "functions": 8,
+   "alone": [],
+   "statuses": {
+    "Unknown": 7,
+    "Unsafe": 1
+   },
+   "alone_count": 0
+  }
+ },
+ "joint_rounds": [],
+ "tail_statement_shapes": {
+  "snprintf": {
+   "statements": 55,
+   "classes": {
+    "admitted": 37,
+    "unparsed": 9,
+    "other": 4,
+    "t8-shaped": 4,
+    "chain-shaped": 1
+   }
+  },
+  "fprintf": {
+   "statements": 120,
+   "classes": {
+    "admitted": 98,
+    "t8-shaped": 13,
+    "other": 8,
+    "chain-shaped": 1
+   }
+  },
+  "fcntl": {
+   "statements": 1,
+   "classes": {
+    "admitted": 1
+   }
+  },
+  "printf": {
+   "statements": 4,
+   "classes": {
+    "admitted": 2,
+    "t8-shaped": 2
+   }
+  },
+  "mk_print": {
+   "statements": 20,
+   "classes": {
+    "admitted": 20
+   }
+  }
+ },
+ "tail_statements": {
+  "fcntl": [
+   {
+    "function": "rd_kafka_open_cb_generic",
+    "line": 20231,
+    "texts": "fcntl ( fd , 2 , 1 , & on )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "literal",
+     "other"
+    ]
+   }
+  ],
+  "fprintf": [
+   {
+    "function": "rd_kafka_conf_is_modified",
+    "line": 24313,
+    "texts": "fprintf ( stderr , __qcore_literal__ , name )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_topic_conf_is_modified",
+    "line": 24321,
+    "texts": "fprintf ( stderr , __qcore_literal__ , name )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_conf_properties_show",
+    "line": 25360,
+    "texts": "fprintf ( fp , __qcore_literal__ __qcore_literal__ , __qcore_literal__ , __qcore_literal__ , __qcore_literal__ , __qcore_literal__ , __qcore_literal__ , __qcore_literal__ , 40 , dash80 , 3 , dash80 , 15 , dash80 , 13 , dash80 , 10 , dash80 , 25 , dash80 )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "literal",
+     "literal",
+     "literal",
+     "literal",
+     "literal",
+     "literal",
+     "literal",
+     "name",
+     "literal",
+     "name",
+     "literal",
+     "name",
+     "literal",
+     "name",
+     "literal",
+     "name",
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_conf_properties_show",
+    "line": 25417,
+    "texts": "fprintf ( fp , __qcore_literal__ , tmp )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_conf_properties_show",
+    "line": 25435,
+    "texts": "fprintf ( fp , __qcore_literal__ , tmp )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_conf_properties_show",
+    "line": 25439,
+    "texts": "fprintf ( fp , __qcore_literal__ , tmp )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_conf_properties_show",
+    "line": 25454,
+    "texts": "fprintf ( fp , __qcore_literal__ , importance )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_conf",
+    "line": 26331,
+    "texts": "fprintf ( stderr , __qcore_literal__ , res )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_conf",
+    "line": 26339,
+    "texts": "fprintf ( stderr , __qcore_literal__ , res )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_conf",
+    "line": 26342,
+    "texts": "fprintf ( stderr , __qcore_literal__ , res )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_conf",
+    "line": 26344,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr2 )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_conf",
+    "line": 26348,
+    "texts": "fprintf ( stderr , __qcore_literal__ , res2 )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_conf",
+    "line": 26349,
+    "texts": "fprintf ( stderr , __qcore_literal__ , readval )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_conf",
+    "line": 26350,
+    "texts": "fprintf ( stderr , __qcore_literal__ , readval )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_conf",
+    "line": 26354,
+    "texts": "fprintf ( stderr , __qcore_literal__ , res2 )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_conf",
+    "line": 26355,
+    "texts": "fprintf ( stderr , __qcore_literal__ , readval )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_conf",
+    "line": 26356,
+    "texts": "fprintf ( stderr , __qcore_literal__ , readval )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_sticky_assignor_unittest",
+    "line": 23907,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_sticky_assignor_unittest",
+    "line": 23911,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_sticky_assignor_unittest",
+    "line": 23923,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ , i )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_sticky_assignor_unittest",
+    "line": 23926,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ , i , j )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "setupRackAwareAssignment0",
+    "line": 23660,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testAddRemoveConsumerOneTopic",
+    "line": 22678,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testAddRemoveConsumerOneTopic",
+    "line": 22686,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testAddRemoveConsumerOneTopic",
+    "line": 22693,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testAddRemoveTopicTwoConsumers",
+    "line": 22746,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testAddRemoveTopicTwoConsumers",
+    "line": 22757,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testAddRemoveTopicTwoConsumers",
+    "line": 22768,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testAllConsumersReachExpectedQuotaAndAreConsideredFilled",
+    "line": 23372,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testAssignmentUpdatedForDeletedTopic",
+    "line": 23278,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testConflictingPreviousAssignments",
+    "line": 23342,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testEnsurePartitionsAssignedToHighestGeneration",
+    "line": 23532,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testLargeAssignmentWithMultipleConsumersLeaving",
+    "line": 22957,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testLargeAssignmentWithMultipleConsumersLeaving",
+    "line": 22967,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testMoveExistingAssignments",
+    "line": 23038,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testMoveExistingAssignments",
+    "line": 23051,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testMoveExistingAssignments_j",
+    "line": 23101,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testMultipleConsumersMixedTopicSubscriptions",
+    "line": 22630,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testNewSubscription",
+    "line": 23002,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testNewSubscription",
+    "line": 23011,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testNoExceptionThrownWhenOnlySubscribedTopicDeleted",
+    "line": 23299,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testNoExceptionThrownWhenOnlySubscribedTopicDeleted",
+    "line": 23307,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testNoReassignmentOnCurrentMembers",
+    "line": 23571,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOneConsumerMultipleTopics",
+    "line": 22559,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOneConsumerNoTopic",
+    "line": 22471,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOneConsumerNonexistentTopic",
+    "line": 22495,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOneConsumerOneTopic",
+    "line": 22516,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+    "line": 22538,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithMultipleGeneration",
+    "line": 23602,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithNoGeneration",
+    "line": 23435,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOwnedPartitionsAreInvalidatedForConsumerWithStaleGeneration",
+    "line": 23404,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration",
+    "line": 23465,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testPartitionsTransferringOwnershipIncludeThePartitionClaimedByMultipleConsumersInSameGeneration2",
+    "line": 23496,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testPoorRoundRobinAssignmentScenario",
+    "line": 22718,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testReassignmentAfterOneConsumerAdded",
+    "line": 22857,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testReassignmentAfterOneConsumerAdded",
+    "line": 22862,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testReassignmentAfterOneConsumerLeaves",
+    "line": 22816,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testReassignmentAfterOneConsumerLeaves",
+    "line": 22824,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testSameSubscriptions",
+    "line": 22903,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testSameSubscriptions",
+    "line": 22910,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testStickiness",
+    "line": 23145,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testStickiness2",
+    "line": 23226,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testStickiness2",
+    "line": 23232,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testStickiness2",
+    "line": 23240,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testStickiness2",
+    "line": 23249,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testStickiness2",
+    "line": 23256,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testStickiness_j",
+    "line": 23171,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testStickiness_j",
+    "line": 23184,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testTwoConsumersOneTopicOnePartition",
+    "line": 22581,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testTwoConsumersOneTopicTwoPartitions",
+    "line": 22605,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testTwoConsumersTwoTopicsSixPartitions",
+    "line": 22656,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_assert_topic_partitions",
+    "line": 23592,
+    "texts": "fprintf ( stderr , __qcore_literal__ , expected_str , actual_str )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_msgq_order",
+    "line": 21015,
+    "texts": "fprintf ( stderr , __qcore_literal__ , what , fifo ? __qcore_literal__ : __qcore_literal__ )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "other"
+    ]
+   },
+   {
+    "function": "unittest_ssl",
+    "line": 21266,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ , i + 1 , desc )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "other",
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_ssl",
+    "line": 21267,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ , i + 1 , desc , expected , result )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "other",
+     "name",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_ssl",
+    "line": 21268,
+    "texts": "fprintf ( stderr , __qcore_literal__ , i + 1 , desc )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "other",
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_ssl",
+    "line": 21270,
+    "texts": "fprintf ( stderr , __qcore_literal__ , i )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_range_assignor_unittest",
+    "line": 20484,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_range_assignor_unittest",
+    "line": 20488,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_range_assignor_unittest",
+    "line": 20523,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ , i , j )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "setupRackAwareAssignment0",
+    "line": 20150,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testMultipleConsumersMixedTopicSubscriptions",
+    "line": 20079,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOneConsumerMultipleTopics",
+    "line": 20014,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOneConsumerNoTopic",
+    "line": 19934,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOneConsumerNonexistentTopic",
+    "line": 19956,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOneConsumerOneTopic",
+    "line": 19975,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+    "line": 19995,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testTwoConsumersOneTopicOnePartition",
+    "line": 20034,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testTwoConsumersOneTopicTwoPartitions",
+    "line": 20056,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_testTwoConsumersTwoTopicsSixPartitions",
+    "line": 20103,
+    "texts": "fprintf ( stderr , __qcore_literal__ , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_config_all_explicit_values",
+    "line": 20979,
+    "texts": "fprintf ( stderr , __qcore_literal__ , sasl_oauthbearer_config , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_config_defaults",
+    "line": 20928,
+    "texts": "fprintf ( stderr , __qcore_literal__ , sasl_oauthbearer_config , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_config_empty_should_fail",
+    "line": 21020,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ , expected_msg , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_config_explicit_scope_and_life",
+    "line": 20953,
+    "texts": "fprintf ( stderr , __qcore_literal__ , sasl_oauthbearer_config , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_config_extensions",
+    "line": 21103,
+    "texts": "fprintf ( stderr , __qcore_literal__ , sasl_oauthbearer_config , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_config_no_principal_should_fail",
+    "line": 21002,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ , expected_msg , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_config_unrecognized_should_fail",
+    "line": 21039,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ , expected_msg , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_odd_extension_size_should_fail",
+    "line": 21136,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ , expected_errstr , errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "ut_sasl_oauthbearer_oidc_post_fields",
+    "line": 22048,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ , expected_post_fields , post_fields )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "ut_sasl_oauthbearer_oidc_post_fields_with_empty_scope",
+    "line": 22063,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ , expected_post_fields , post_fields )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+    "line": 22004,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ , expected_jwt_token , token )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "ut_sasl_oauthbearer_oidc_assertion_parse_from_file",
+    "line": 22178,
+    "texts": "fprintf ( tempfile , __qcore_literal__ , test_jwt )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_sasl_oauthbearer_oidc_assertion_parse_from_file",
+    "line": 22182,
+    "texts": "fprintf ( stderr , __qcore_literal__ , test_jwt , result )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "ut_create_mock_jwt_template_file",
+    "line": 22209,
+    "texts": "fprintf ( tempfile , __qcore_literal__ , template_json )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_erase",
+    "line": 4304,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , expsz , r , i )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "ut_sasl_oauthbearer_oidc_jwt_bearer_build_request_body",
+    "line": 22166,
+    "texts": "fprintf ( stderr , __qcore_literal__ , expected , body )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_write_read_payload_correctness",
+    "line": 4141,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , r , max_cnt * sizeof ( crc ) )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "other"
+    ]
+   },
+   {
+    "function": "do_unittest_write_read_payload_correctness",
+    "line": 4158,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , pass_str , i , r , sizeof ( buf_crc ) )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name",
+     "chain"
+    ]
+   },
+   {
+    "function": "do_unittest_write_read_payload_correctness",
+    "line": 4159,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , pass_str , i , crc , buf_crc )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_write_read_payload_correctness",
+    "line": 4162,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , pass_str , read_crc , write_crc )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "do_unittest_write_split_seek",
+    "line": 4110,
+    "texts": "fprintf ( stderr , __qcore_literal__ , newseg , seg )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "unit_test_telemetry",
+    "line": 21888,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ , metrics_payload_size )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_fetcher_share_filter_forward",
+    "line": 20337,
+    "texts": "fprintf ( stderr , __qcore_literal__ , fails )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_quantile",
+    "line": 4304,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , ( int64_t ) i )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "chain"
+    ]
+   },
+   {
+    "function": "ut_string_split",
+    "line": 3301,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ , i )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_unittest",
+    "line": 20557,
+    "texts": "fprintf ( stderr , __qcore_literal__ , match )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_untyped_map",
+    "line": 3558,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ , pass , val2 , key )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_untyped_map",
+    "line": 3560,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ , pass , val , val2 ? val2 : __qcore_literal__ , key )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "other",
+     "name"
+    ]
+   },
+   {
+    "function": "unittest_untyped_map",
+    "line": 3568,
+    "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , get_cnt , ( float ) ts_get / 1000 . 0 , ts_get / get_cnt )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "other",
+     "other"
+    ]
+   },
+   {
+    "function": "unittest_untyped_map",
+    "line": 3577,
+    "texts": "fprintf ( stderr , __qcore_literal__ , cnt , ( float ) ts / 1000 . 0 )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "other"
+    ]
+   }
+  ],
+  "mk_print": [
+   {
+    "function": "mk_utils_libc_error",
+    "line": 1966,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , caller , buf , _err , file , line )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_vhost_read",
+    "line": 6198,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "mk_vhost_read",
+    "line": 6230,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "mk_vhost_read",
+    "line": 6238,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "mk_vhost_read",
+    "line": 6241,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "mk_vhost_init",
+    "line": 6427,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , sites )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "mk_plugin_load",
+    "line": 6118,
+    "texts": "mk_print ( 0x1002 , __qcore_literal__ , path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "mk_utils_libc_error",
+    "line": 1824,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , caller , buf , _err , file , line )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_rconf_read",
+    "line": 1946,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , cfg_file )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "mk_rconf_read",
+    "line": 1951,
+    "texts": "mk_print ( 0x1002 , __qcore_literal__ , cfg_file )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "mk_rconf_read_glob",
+    "line": 2122,
+    "texts": "mk_print ( 0x1002 , __qcore_literal__ , __FUNCTION__ , glb_path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_rconf_read_glob",
+    "line": 2125,
+    "texts": "mk_print ( 0x1002 , __qcore_literal__ , __FUNCTION__ , glb_path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_rconf_read_glob",
+    "line": 2128,
+    "texts": "mk_print ( 0x1002 , __qcore_literal__ , __FUNCTION__ , glb_path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_rconf_read_glob",
+    "line": 2131,
+    "texts": "mk_print ( 0x1002 , __qcore_literal__ , __FUNCTION__ , glb_path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_rconf_open",
+    "line": 2167,
+    "texts": "mk_print ( 0x1002 , __qcore_literal__ , path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "mk_config_print_error_msg",
+    "line": 6024,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , variable , path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_utils_libc_error",
+    "line": 1966,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , caller , buf , _err , file , line )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_utils_libc_error",
+    "line": 1987,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , caller , buf , _err , file , line )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_socket_server",
+    "line": 5970,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , listen_addr , port )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_utils_libc_error",
+    "line": 1966,
+    "texts": "mk_print ( 0X1001 , __qcore_literal__ , caller , buf , _err , file , line )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name",
+     "name",
+     "name"
+    ]
+   }
+  ],
+  "printf": [
+   {
+    "function": "cb_debug_chunk_complete",
+    "line": 5789,
+    "texts": "printf ( __qcore_literal__ , in_len , buf )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "unpack_cfl_kvlist",
+    "line": 7018,
+    "texts": "printf ( __qcore_literal__ , key_name , result )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "mk_server_info",
+    "line": 6027,
+    "texts": "printf ( __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , tmp )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_msghdr_print",
+    "line": 19658,
+    "texts": "printf ( __qcore_literal__ __qcore_literal__ __qcore_literal__ , what , len )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   }
+  ],
+  "snprintf": [
+   {
+    "function": "rd_kafka_err2name",
+    "line": 21507,
+    "texts": "snprintf ( ret , sizeof ( ret ) , __qcore_literal__ , err )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_err2str",
+    "line": 21498,
+    "texts": "snprintf ( ret , sizeof ( ret ) , __qcore_literal__ , err )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_version_str",
+    "line": 24735,
+    "texts": "r = snprintf ( ret + of , sizeof ( ret ) - of , __qcore_literal__ , ( ver > > 24 ) & 0xff , ( ver > > 16 ) & 0xff , ( ver > > 8 ) & 0xff )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": null
+   },
+   {
+    "function": "rd_kafka_new",
+    "line": 22329,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , conf_err )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_anyconf_get0",
+    "line": 25178,
+    "texts": "snprintf ( tmp , sizeof ( tmp ) , __qcore_literal__ , ( void * ) val )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "other"
+    ]
+   },
+   {
+    "function": "rd_kafka_anyconf_set",
+    "line": 24692,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , name )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_topic_new0",
+    "line": 20151,
+    "texts": "snprintf ( desc , sizeof ( desc ) , __qcore_literal__ , topic , used_conf_str )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_ssl_ctx_load_providers",
+    "line": 21110,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , provider )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_ssl_error0",
+    "line": 20276,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , file , line , func , buf , data ? __qcore_literal__ : __qcore_literal__ , data ? data : __qcore_literal__ )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name",
+     "name",
+     "other",
+     "other"
+    ]
+   },
+   {
+    "function": "rd_kafka_ssl_error0",
+    "line": 20278,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , buf , data ? __qcore_literal__ : __qcore_literal__ , data ? data : __qcore_literal__ )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "other",
+     "other"
+    ]
+   },
+   {
+    "function": "rd_kafka_ssl_error0",
+    "line": 20281,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , ctx_identifier )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_assignors_init",
+    "line": 20556,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , s )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_mock_cgrp_classic_member_add",
+    "line": 21055,
+    "texts": "snprintf ( memberid , sizeof ( memberid ) , __qcore_literal__ , member )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "parse_ujws_config",
+    "line": 20423,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , prefix_principal_claim_name )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "parse_ujws_config",
+    "line": 20432,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , prefix_principal )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "parse_ujws_config",
+    "line": 20441,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , prefix_scope_claim_name )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "parse_ujws_config",
+    "line": 20449,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , prefix_scope )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "parse_ujws_config",
+    "line": 20459,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ __qcore_literal__ , prefix_life_seconds )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "parse_ujws_config",
+    "line": 20467,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ __qcore_literal__ , prefix_life_seconds , life_seconds_text )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "parse_ujws_config",
+    "line": 20471,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , prefix_life_seconds , life_seconds_text )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "parse_ujws_config",
+    "line": 20486,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ __qcore_literal__ , prefix_extension )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "parse_ujws_config",
+    "line": 20503,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , loc )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_file_mkstemp",
+    "line": 5029,
+    "texts": "snprintf ( tempfile_path_out , tempfile_path_out_size , __qcore_literal__ , tempfile_path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_oidc_assertion_create",
+    "line": 21523,
+    "texts": "snprintf ( unsigned_token , unsigned_token_len , __qcore_literal__ , encoded_header , encoded_payload )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_oidc_assertion_create",
+    "line": 21584,
+    "texts": "snprintf ( result , jwt_len , __qcore_literal__ , encoded_header , encoded_payload , encoded_signature )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_oidc_token_try_validate",
+    "line": 21656,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , field )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_oidc_token_try_validate",
+    "line": 21667,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , decode_errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_oidc_token_try_validate",
+    "line": 21688,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , sub_claim_name )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_oidc_token_try_validate",
+    "line": 21694,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , sub_claim_name )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "ut_sasl_oauthbearer_oidc_should_succeed",
+    "line": 21996,
+    "texts": "snprintf ( expected_token_value , token_len , __qcore_literal__ , __qcore_literal__ , expected_jwt_token )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_snappy_java_uncompress",
+    "line": 20475,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , clen , ( ssize_t ) inlen - of )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "other"
+    ]
+   },
+   {
+    "function": "rd_kafka_sasl_scram_handle_server_final_message",
+    "line": 20458,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , attr_e )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_sasl_cyrus_cb_canon",
+    "line": 20635,
+    "texts": "* out_len = snprintf ( out , out_max , __qcore_literal__ , inlen , in )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": null
+   },
+   {
+    "function": "rd_kafka_sasl_cyrus_conf_validate",
+    "line": 20764,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , tmperr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "append_bucket_metric",
+    "line": 5844,
+    "texts": "len = snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , metric_val )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": null
+   },
+   {
+    "function": "append_metric_value",
+    "line": 5699,
+    "texts": "len = snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , metric_val )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": null
+   },
+   {
+    "function": "append_quantiles_metric",
+    "line": 5920,
+    "texts": "len = snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , metric_val )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": null
+   },
+   {
+    "function": "format_histogram_bucket",
+    "line": 5887,
+    "texts": "len = snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , metric_str )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": null
+   },
+   {
+    "function": "format_histogram_bucket",
+    "line": 5901,
+    "texts": "len = snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , metric_str )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": null
+   },
+   {
+    "function": "format_summary_metric",
+    "line": 5957,
+    "texts": "len = snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , metric_str )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": null
+   },
+   {
+    "function": "format_summary_metric",
+    "line": 5971,
+    "texts": "len = snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , metric_str )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": null
+   },
+   {
+    "function": "rd_string_render",
+    "line": 2996,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ __qcore_literal__ , 15 , t , tof )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "literal",
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "rd_string_render",
+    "line": 3003,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , tmpkey )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_string_render",
+    "line": 3010,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , tmpkey )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_conf_set_ssl_cert",
+    "line": 20452,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , ( int ) cert_type )",
+    "admitted": false,
+    "promoted": true,
+    "shapes": [
+     "chain"
+    ]
+   },
+   {
+    "function": "format_span",
+    "line": 6902,
+    "texts": "snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , min , __qcore_literal__ , id_hex )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "format_span",
+    "line": 6911,
+    "texts": "snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , min , __qcore_literal__ , id_hex )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "format_span",
+    "line": 6920,
+    "texts": "snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , min , __qcore_literal__ , id_hex )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "format_span",
+    "line": 6990,
+    "texts": "snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , off , __qcore_literal__ , id_hex )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "format_span",
+    "line": 6999,
+    "texts": "snprintf ( tmp , sizeof ( tmp ) - 1 , __qcore_literal__ , off , __qcore_literal__ , id_hex )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "literal",
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_plugin_new",
+    "line": 19600,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_plugins_conf_set0",
+    "line": 19657,
+    "texts": "snprintf ( errstr + elen , errstr_size - elen , __qcore_literal__ , path )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name"
+    ]
+   },
+   {
+    "function": "rd_kafka_pattern_list_parse",
+    "line": 19638,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ , s , re_errstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "rd_dl_open0",
+    "line": 2967,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , loadfunc , dlerrstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   },
+   {
+    "function": "rd_dl_sym",
+    "line": 3004,
+    "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , symbol , dlerrstr )",
+    "admitted": true,
+    "promoted": true,
+    "shapes": [
+     "name",
+     "name"
+    ]
+   }
+  ]
+ }
+}
