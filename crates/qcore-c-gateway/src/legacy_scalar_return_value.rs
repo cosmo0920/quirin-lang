@@ -72,9 +72,14 @@ pub(crate) fn decide(refused: bool, scalar_result: bool, hidden: bool, walker: b
     }
 }
 
+/// One row of the shared table: `(refused, scalar_result, hidden, walker)`
+/// and the decision's code (`QCore.ScalarReturnValue.DecisionVector`).
+#[cfg(test)]
+pub(crate) type DecisionVector = ((bool, bool, bool, bool), &'static str);
+
 /// `QCore.ScalarReturnValue.decisionVectors`, row for row.
 #[cfg(test)]
-pub(crate) const DECISION_VECTORS: &[((bool, bool, bool, bool), &str)] = &[
+pub(crate) const DECISION_VECTORS: &[DecisionVector] = &[
     ((false, false, false, false), "decline"),
     ((false, false, false, true), "decline"),
     ((false, false, true, false), "decline"),
