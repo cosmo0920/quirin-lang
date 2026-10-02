@@ -176,4 +176,23 @@ No follow-up registered or retired; the ledger stays at 693.
 
 ## 6. Gate
 
-See [gate/](gate/) and [gate.json](gate.json).
+On the tree of tip `4bdb47388` (base main `958e76593`), `scripts/heavy.sh` under
+the shared lock, logs in `private/valoop/gate2` of this worktree, exits in
+[gate/](gate/), record [gate.json](gate.json). A first attempt (`gate1`)
+failed `cargo check` on `compiler/examples/alias_aggregate_probe.rs`'s
+exhaustive match over `LegacyInstruction` (the new variant); the arm was added
+and the attempt stopped.
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| Compile | `cargo check --workspace --all-targets` | 0 | |
+| Submodule | `git submodule update --init --recursive` | 0 | |
+| Rust | `python3 scripts/run_test_binaries.py` | 0 | 432 units, 445 summaries; **7,462 passed, 0 failed, 11 ignored** (`private/test-binaries/20261002T070641Z-310784`) |
+| Format | `cargo fmt --all -- --check` | 0 | |
+| Clippy | `cargo clippy --all-targets -- -D warnings` | 0 | |
+| Probes | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **279** audits (278 on main + `AuditVariadicConditions.lean`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** | 365; the one failure was the matrix's derived `lean_audits` (278 → 279), cleared by `remaining-d02/build_matrix.py . --gate gate.json` (exit 0) |
+| Index | `python3 scripts/build_docs_index.py` (and `--check`) | 0 (0) | |
+
+`providers/` is unchanged, so the provider gate was not due. Clang 21.1.8.
