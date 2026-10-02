@@ -1129,6 +1129,8 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "event_get_version_number",
         2,
     ),
+    // MONKEY-VHOST-PROPERTY-CUSTODY: `mk_string_dup`, pinned.
+    ("monkey/string.qv", "mk_string_dup", 3),
     // Card CONTRACT-VIEW-PROJECTION-CHECK removed this module's
     // `source_identity` (4 clauses), a textual duplicate of
     // `monkey/wait_source_policy.qv`'s, which is now its single owner.
@@ -1372,7 +1374,9 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 121 -> 122 by card W47-LOOP-OWNER-INSTANCE-FLOW's `fluent_bit/input_instance.qv`.
     // 122 -> 123 by card CONTRACT-PIN-TIP-MODE's `monkey/vhost_set.qv`
     // (SUP04's `mk_vhost_set`, its lock entry tracking the fix branch's tip).
-    assert_eq!(sources.len(), 123, "unexpected contract corpus size");
+    // 123 -> 124 by card MONKEY-VHOST-PROPERTY-CUSTODY's `monkey/string.qv`
+    // (`mk_string_dup`).
+    assert_eq!(sources.len(), 124, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

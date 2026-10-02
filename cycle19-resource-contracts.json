@@ -31,6 +31,7 @@
     "qcore-provider-libevent:monkey/memory.qv",
     "providers/qcore-provider-libevent/contracts/monkey/logging.qv",
     "providers/qcore-provider-libevent/contracts/monkey/scalar_observation.qv",
+    "providers/qcore-provider-libevent/contracts/monkey/string.qv",
     "providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
     "qcore-provider-librdkafka:librdkafka/memory.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",

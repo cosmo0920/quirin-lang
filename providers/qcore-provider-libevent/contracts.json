@@ -13,6 +13,7 @@
     "contracts/monkey/memory.qv": "d042af2e4a9302d8a207d782e5c3850ae8614daf611d439881a0f7b4cfe93dd6",
     "contracts/monkey/native_platform_matrix.qv": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2",
     "contracts/monkey/scalar_observation.qv": "8f400380f17d656598422a0e8430dcf154d96893bba664e620d4e6a60c5e1def",
+    "contracts/monkey/string.qv": "53f9c3f6baa72f6acf2c7bdb2582b6a6392c67a9c17a1c5785413a1efc943f44",
     "contracts/monkey/timeout_teardown.qv": "dfbc9a41a0066b1a53913703c3c80100f1536fc4cb9fc3a6488b257538808c7b",
     "contracts/monkey/vhost_set.qv": "640187a5674cd86f7782bf9815e6d72b1082aef66e811f45b2def3e9f757fb34",
     "contracts/monkey/wait_failure_policy.qv": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",

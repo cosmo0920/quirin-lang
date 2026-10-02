@@ -248,6 +248,22 @@
               "body_sha256": "912637578b08edf6959c44df8b44f0d7eafd7b6fae2e55f7b1260203b78b47eb"
             }
           ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "21a2c1908b42596317717436e5ce0420805bd523"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/monkey/mk_core/mk_list.h",
+              "kind": "definition",
+              "declaration_sha256": "bd454d937340f911fda7287fa0798bccbc925c92555055796464462b9b7c3d41",
+              "body_sha256": "912637578b08edf6959c44df8b44f0d7eafd7b6fae2e55f7b1260203b78b47eb"
+            }
+          ]
         }
       ]
     },
@@ -303,6 +319,22 @@
           "sites": [
             {
               "path": "lib/monkey/include/monkey/mk_core/mk_memory.h",
+              "kind": "definition",
+              "declaration_sha256": "76b5ef7c05fdf9aeb04fac27b0f006fe6716be4c95b966e649600f3e7919231d",
+              "body_sha256": "39d19b6a2437017fac789004b7dc202d1afe85085ab3dbff61905bc1c55e746f"
+            }
+          ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "21a2c1908b42596317717436e5ce0420805bd523"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/monkey/mk_core/mk_memory.h",
               "kind": "definition",
               "declaration_sha256": "76b5ef7c05fdf9aeb04fac27b0f006fe6716be4c95b966e649600f3e7919231d",
               "body_sha256": "39d19b6a2437017fac789004b7dc202d1afe85085ab3dbff61905bc1c55e746f"
@@ -461,6 +493,59 @@
               "kind": "definition",
               "declaration_sha256": "724089058e0072f7bd2484755d2ea8951e83b7a239c2110640ad0bee1e71c783",
               "body_sha256": "ba0f9c08d1816ca93f465da3c7d18b7b7db9653f166de91942bc5371adfc25b1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "mk_string_dup",
+      "module": "monkey/string.qv",
+      "contract_sha256": "a4bb3f9d3fc75626f1a9a2d1327cce70b3901ed918b8ad92d177fbc4159fb99e",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/monkey/include/monkey/mk_core/mk_string.h",
+              "kind": "declaration",
+              "declaration_sha256": "0278400d5e41a229a72303f56ccd1a31d4375cb4c7a27341fb0717455bcadb37"
+            },
+            {
+              "path": "lib/monkey/mk_core/mk_string.c",
+              "kind": "definition",
+              "declaration_sha256": "0278400d5e41a229a72303f56ccd1a31d4375cb4c7a27341fb0717455bcadb37",
+              "body_sha256": "964d7a768597a0da53cc4b53f98112f008b6d4dcaaf9d4f8546fab7e4aa4c6be"
+            }
+          ]
+        },
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "21a2c1908b42596317717436e5ce0420805bd523"
+            }
+          ],
+          "sites": [
+            {
+              "path": "include/monkey/mk_core/mk_string.h",
+              "kind": "declaration",
+              "declaration_sha256": "0278400d5e41a229a72303f56ccd1a31d4375cb4c7a27341fb0717455bcadb37"
+            },
+            {
+              "path": "mk_core/mk_string.c",
+              "kind": "definition",
+              "declaration_sha256": "0278400d5e41a229a72303f56ccd1a31d4375cb4c7a27341fb0717455bcadb37",
+              "body_sha256": "964d7a768597a0da53cc4b53f98112f008b6d4dcaaf9d4f8546fab7e4aa4c6be"
             }
           ]
         }

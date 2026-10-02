@@ -120,6 +120,7 @@
         "monkey/memory.qv",
         "monkey/native_platform_matrix.qv",
         "monkey/scalar_observation.qv",
+        "monkey/string.qv",
         "monkey/timeout_teardown.qv",
         "monkey/vhost_set.qv",
         "monkey/wait_failure_policy.qv",
@@ -133,6 +134,7 @@
         "monkey/logging.qv",
         "monkey/memory.qv",
         "monkey/scalar_observation.qv",
+        "monkey/string.qv",
         "monkey/vhost_set.qv"
       ]
     },

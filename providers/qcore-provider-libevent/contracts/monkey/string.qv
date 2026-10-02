@@ -1,0 +1,56 @@
+module contract;
+
+// Monkey string duplication — resource-projection vocabulary version 1.
+//
+// Card MONKEY-VHOST-PROPERTY-CUSTODY. ONE TRUSTED ASSUMPTION about one
+// upstream function, pinned in this crate's `contracts.lock` by
+// `quirin-audit pin` at the reviewed sources: a declaration is a premise, and
+// a verdict that rests on it is a verdict RELATIVE TO this declaration. Where
+// the unit defines the body, the declaration in force is checked against it
+// like any other.
+//
+// ## The body
+//
+// `mk_core/mk_string.c:319-337`, identical in the pinned Fluent Bit tree
+// (`lib/monkey/`, 66910c10 and 046accf6) and in Monkey (21a2c190):
+//
+//     char *mk_string_dup(const char *s)
+//     {
+//         size_t len;
+//         char *p;
+//
+//         if (!s) {
+//             return NULL;
+//         }
+//
+//         len = strlen(s);
+//         p = mk_mem_alloc(len + 1);
+//         if (!p) {
+//             return NULL;
+//         }
+//         memcpy(p, s, len);
+//         p[len] = '\0';
+//
+//         return p;
+//     }
+//
+// ## The declaration, clause by clause
+//
+// * `s` is borrowed: the body reads it (a null test, `strlen`, `memcpy`) and
+//   neither releases, stores nor returns it.
+// * The result is a fresh heap block from `mk_mem_alloc` (`malloc`, see
+//   `memory.qv`), or NULL when `s` is NULL or the allocation fails: an owned,
+//   nullable result, an obligation `mk_mem_free` (`free`) discharges.
+//
+// It is written out rather than `inherit libc::strdup`: the custody statement
+// is `strdup`'s exactly, but the body is not `strdup` (`strdup(NULL)` is
+// undefined; this one returns NULL), so naming that parent would claim more
+// than the body is. Nothing about the copied bytes, their termination or the
+// length is stated.
+
+extern fn mk_string_dup(s: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_owned(nullable);
+};

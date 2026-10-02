@@ -1,0 +1,5 @@
+pin: qcore-provider-libevent: 15 pinned, 0 flexible; recorded at git 21a2c1908b42596317717436e5ce0420805bd523; wrote /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a60c462e09aaa3d28/providers/qcore-provider-libevent/contracts.lock
+  ~ mk_list_add: new identity at git 21a2c1908b42596317717436e5ce0420805bd523
+  ~ mk_mem_alloc: new identity at git 21a2c1908b42596317717436e5ce0420805bd523
+  ~ mk_string_dup: new identity at git 21a2c1908b42596317717436e5ce0420805bd523
+  notice [info]: the contract for `mk_vhost_set` targets a future, unreleased release (a release candidate), not a released version: it tracks the tip of `refs/heads/cosmo0920-missing-va_end-on-null` in repository `monkey` (https://github.com/cosmo0920/monkey) (release: Monkey release after the va_end fix (release candidate)), resolved to commit 21a2c1908b42596317717436e5ce0420805bd523; in force for the audited source, whose sites equal the tip's
