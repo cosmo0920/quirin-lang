@@ -35,7 +35,7 @@ Leaves:
 
 System and slice: no status move. 14 and 8 tail leaves go.
 
-Ledger 696 → 696: both follow-ups are retired, and two residuals are
+Ledger 696 → 697: both follow-ups are retired, and three follow-ups are
 registered.
 
 ## 1. What changed
@@ -129,7 +129,17 @@ fresh `046accf6` clone (`scripts/prepare-attempt.sh attempt-1`, exit 0, under
   "rd_kafka_crash", 8)`;
 - the hand-written librdkafka twin
   (`compiler/tests/fixtures/contract_inherit_qcore_provider/librdkafka_memory_hand_written.qv`)
-  gains the declaration.
+  gains the declaration;
+- `crates/qcore-c-gateway/tests/prod_contracts.rs` and `neighbours.rs` pin
+  the production `flb_log_print` text and PROD-CONTRACTS's isolation of the
+  C6 tail refusal. Withdrawing `input_chunk_write_header` makes `tag` risky,
+  and the data tail then refuses it. The first gate failed four of these
+  tests (§6).
+  - Under the borrowed tail, T8 reads `tag` as a borrowed place. The
+    constructor still refuses, at the withdrawn callee itself.
+  - The before-state count in `neighbours.rs` drops from 21 to 20.
+  - Each test now asserts the production behaviour. Each still measures the
+    original refusal, and the 21, with the data-tail text in the same run.
 
 Replacing a tail clause changes no clause count.
 
@@ -292,11 +302,54 @@ assertion control uses the nullable acquisition.
 
 ## 6. Gate
 
-GATE-PENDING
+The final gate ran at `29491161f` on base `ca3576dd4`. Commits after it touch
+only records and gate files. It used [`scripts/gate.sh`](scripts/gate.sh),
+[`scripts/provider-gate.sh`](scripts/provider-gate.sh) and
+[`scripts/finish-gate.sh`](scripts/finish-gate.sh), each step under the
+shared heavy lock. Logs are in this worktree's `private/cnbt/gate-g2`, exits
+in [`gate/`](gate/), and the summary in [`gate.json`](gate.json).
+
+| Step | Command | Exit | Count / note |
+|---|---|---|---|
+| check | `cargo check --workspace --all-targets` | 0 | |
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | **0** | 436 units, 449 summaries, **7,510 passed**, 0 failed, 11 ignored (`private/test-binaries/20261002T170604Z-1897767`) |
+| probes | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | 282 audits (unchanged) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 0, then 0 after `build_matrix.py . --gate gate.json` | 365 |
+| docs index | `python3 scripts/build_docs_index.py --check` | 0 | |
+| provider check / fmt / clippy | `cargo check --locked`, `fmt --check`, `clippy --locked --offline` in `providers/` | 0 / 0 / 0 | |
+| provider tests | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | 129 passed |
+| provider Python | `python3 -m unittest discover -s providers/tests` | **1** | 23 of 24; see below |
+| contracts | `python3 providers/contracts.py check` | 0 | |
+| packages | `providers/package.py build`, `verify` of the five packages | 0, 0 × 5 | |
+| pins | `scripts/pin.sh` (§1) | 0 (pin, per-crate checks) | whole-lock check 1 at both, as at the base |
+
+**Provider Python: a pre-existing failure, not this card's.** The failing
+test is `test_contract_load_path.LoadPathManifest.test_the_real_workspace_manifest_is_current`.
+It pins 58 resource-view modules and measures 60:
+
+- W47-LOOP-OWNER-INSTANCE-FLOW last set the pin to 58.
+- CONTRACT-PIN-TIP-MODE then added `monkey/vhost_set.qv`, and
+  MONKEY-VHOST-PROPERTY-CUSTODY added `monkey/string.qv`. Neither card's
+  provider gate ran `providers/tests`.
+
+This card leaves `providers/contract-load-path.json` byte-identical to
+`ca3576dd4`, and `contracts.py check`, which recomputes every view against
+it, exits 0. The base therefore measures the same 60. The test was not
+weakened. It is registered as `PROVIDER-LOAD-PATH-VIEW-PIN-STALE`.
+
+**The first gate** ran at `0841d52f3` (`private/cnbt/gate-g1`):
+7,506 passed, **4 failed**, exit 101. The failures were the `neighbours.rs` and
+`prod_contracts.rs` pins of `flb_log_print`'s data tail. They were re-pinned
+deliberately in `29491161f` (§1) and pass in the final run. That attempt is
+retained, and it is not evidence of a pass.
 
 ## 7. Follow-ups
 
-**Retired** (`scripts/update_ledger.py`; 696 → 696 with the two
+**Retired** (`scripts/update_ledger.py`; 696 → 697 with the three
 registrations):
 
 - **`CG21-UNDECLARED-NORETURN-CALLEES`.** Its DISCHARGE is a reviewed
@@ -313,6 +366,8 @@ registrations):
 - `CG26-TAIL-RESIDUAL-ACTUALS`, with the sizes in §4.
 - `CG21-NORETURN-TYPED-ACTUAL-STATEMENTS`: the 34 crash statements in 26
   functions that keep their continuation (§3).
+- `PROVIDER-LOAD-PATH-VIEW-PIN-STALE`: the provider gate's
+  `providers/tests` failure, which is pre-existing at the base (§6).
 
 **Not registered:** the dead-uncontracted-call hard error seen while writing
 the controls. It is already recorded as a pre-existing boundary in

@@ -18,6 +18,23 @@ RETIRE = ["CG21-UNDECLARED-NORETURN-CALLEES", "CG26-BORROWED-TAIL-DECLARATIONS"]
 
 REGISTER = [
     {
+        "id": "PROVIDER-LOAD-PATH-VIEW-PIN-STALE",
+        "title": "providers/tests pins 58 resource-view modules; the load path has had 60 since CONTRACT-PIN-TIP-MODE and MONKEY-VHOST-PROPERTY-CUSTODY",
+        "why": (
+            f"Found by {CARD}'s provider gate (`python3 -m unittest discover -s providers/tests`, exit 1, 23 of "
+            "24 passing): test_contract_load_path.LoadPathManifest.test_the_real_workspace_manifest_is_current "
+            "asserts `sum(len(view) for view in views.values()) == 58`, last updated by "
+            "W47-LOOP-OWNER-INSTANCE-FLOW (57 -> 58), and measures 60. The two later modules are "
+            "`monkey/vhost_set.qv` (CONTRACT-PIN-TIP-MODE, contract_loader.rs's 58 -> 59 selected) and "
+            "`monkey/string.qv` (MONKEY-VHOST-PROPERTY-CUSTODY, 59 -> 60); neither card's provider gate ran "
+            "providers/tests. Pre-existing at main ca3576dd4: this card leaves providers/contract-load-path.json "
+            "byte-identical to the base, and contracts.py check (which recomputes every resource view against "
+            "it) exits 0. The assertions after it in the same test (the libc view, the include rows) are not "
+            "reached while it fails. DISCHARGE: the pin moved 58 -> 60 with the two cards named in its comment, "
+            "the rest of the test run, and providers/tests made a standing provider-gate step."
+        ),
+    },
+    {
         "id": "CG21-NORETURN-TYPED-ACTUAL-STATEMENTS",
         "title": "rd_kafka_crash statements admitted through a typed call actual keep their continuation instead of ending their path (34 statements, 26 functions)",
         "why": (

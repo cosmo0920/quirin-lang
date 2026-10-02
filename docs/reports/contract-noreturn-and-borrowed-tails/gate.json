@@ -1,0 +1,13 @@
+{
+  "note": "CONTRACT-NORETURN-AND-BORROWED-TAILS card gate on base main ca3576dd4, code and docs steps at 29491161f (later commits: records, gate files and the ledger/README text only), scripts docs/reports/contract-noreturn-and-borrowed-tails/scripts/gate.sh and provider-gate.sh (each step under the shared flock) and finish-gate.sh, logs private/cnbt/gate-g2 of this worktree. A first gate at 0841d52f3 (private/cnbt/gate-g1) failed 4 tests that pinned flb_log_print's data tail (neighbours 2, prod_contracts 2; 7,506 passed, 4 failed), deliberately re-pinned in 29491161f. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 436 units, 449 summaries, 7,510 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T170604Z-1897767); both reevaluation probes exit 0; check_lean_audits.py 282 audits passed (no Lean change); python tests 365 OK, rerun after build_matrix.py . --gate this file (09a, 09b); docs index check 0. Provider gate (providers/ changed: four contract modules and their locks): cargo check --locked 0, fmt 0, clippy --locked --offline 0, cargo test --workspace --locked --offline 129 passed (exit 0), python3 -m unittest discover -s providers/tests exit 1 (23 of 24; test_the_real_workspace_manifest_is_current pins 58 resource-view modules and measures 60, pre-existing at the base: contract-load-path.json is byte-identical to ca3576dd4 and contracts.py check exits 0; registered PROVIDER-LOAD-PATH-VIEW-PIN-STALE), contracts.py check 0, package build 0, verify of the five packages 0. pin and pin --check at 66910c10 and 046accf6: every pin step 0, per-crate checks 0, whole-lock check 1 at both from the tip-tracked mk_vhost_set only (as at the base). Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main ca3576dd4 bcc98d2d 648/9/4,177; AFTER at a54a8236a 450a9e54 649/9/4,176 (cb_debug_chunk_complete Unknown -> Safe); system 44/2/188 and tail-pause slice 29/1/238/2 Pending, no status move. The commits after a54a8236a change no contract text or code but tests and records.",
+  "workspace_tests": 7510,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 282,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
