@@ -196,6 +196,41 @@ impl SourceTree {
         })
     }
 
+    /// Card **CONTRACT-PIN-TIP-MODE**: the sites of every name in `names` as
+    /// the blobs of `revision` (a commit spelling Git resolves) in the
+    /// repository at `root` give them, one blob at a time, never reading a
+    /// working tree. Every command used only reads. The caller decides that
+    /// `root` is the repository it means.
+    ///
+    /// # Errors
+    ///
+    /// A failing Git command or an unreadable blob refuses.
+    pub fn read_sites_at(
+        root: &Path,
+        revision: &str,
+        names: &BTreeSet<String>,
+    ) -> Result<SiteScan, String> {
+        let mut sites: BTreeMap<String, Vec<SourceSite>> = names
+            .iter()
+            .map(|name| (name.clone(), Vec::new()))
+            .collect();
+        let mut visit = |path: &str, text: String| {
+            for (name, site) in file_sites(path, &text, names) {
+                sites.entry(name).or_default().push(site);
+            }
+            Ok(())
+        };
+        let resolved = visit_git(root, revision, &mut visit)?;
+        for list in sites.values_mut() {
+            list.sort();
+        }
+        Ok(SiteScan {
+            kind: "git",
+            revision: Some(resolved),
+            sites,
+        })
+    }
+
     /// The sorted sites of every name in `names`; a name with no site maps to
     /// an empty list.
     #[must_use]

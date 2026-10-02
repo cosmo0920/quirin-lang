@@ -126,8 +126,14 @@ pub enum PinMismatchReason {
     /// The lock's entry was taken for different contract text.
     ContractChanged,
     /// The audited source's declarations or definitions of the function
-    /// differ from the identity the lock records.
+    /// differ from the identity the lock records (for a tip identity: from
+    /// the sites at the tracked ref's current commit).
     SourceChanged,
+    /// Card CONTRACT-PIN-TIP-MODE: the lock entry tracks the tip of a ref
+    /// that cannot be resolved on this host (repository not located, ref
+    /// missing, tip not descended from the reviewed commit, unreadable blob,
+    /// or no site of the function at the tip).
+    TipUnresolved,
 }
 
 impl PinMismatchReason {
@@ -139,6 +145,7 @@ impl PinMismatchReason {
             Self::NotInLock => "not-in-lock",
             Self::ContractChanged => "contract-changed",
             Self::SourceChanged => "source-changed",
+            Self::TipUnresolved => "tip-unresolved",
         }
     }
 }

@@ -40,6 +40,7 @@ pub mod review_hold_reasons;
 pub mod c_identity;
 pub mod contract_pin;
 pub mod contract_revision;
+pub mod contract_tip;
 pub mod prepare;
 mod prepare_json;
 pub mod projection;
@@ -648,6 +649,11 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
     // Card W45-CONTRACT-REVISION-MODE: revision modes, pin mismatches and
     // flexible assumptions, beside the contract sources they are read from.
     assumptions["contract_revision"] = contract_revision::section(&contracts, &pins, &report);
+    // Card CONTRACT-PIN-TIP-MODE: this route prints no tally, so it prints
+    // each tip entry's notice on its own (nothing when there is none).
+    for line in contract_revision::notice_lines(&assumptions["contract_revision"]) {
+        println!("{line}");
+    }
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table and the
     // calls it held.
     assumptions["refuted_contracts"] = refuted_contracts::section(&refuted_table, &report);

@@ -25,6 +25,15 @@
 //! `--verify-contracts` needs no source: it checks that each lock lists
 //! exactly the current declarations, modes and contract digests, which
 //! `providers/contracts.py check` runs. Nothing here runs during an audit.
+//!
+//! Card **CONTRACT-PIN-TIP-MODE**: `--track-tip REF` (with `--function`)
+//! records a **tip entry** instead, reviewed at REF's current commit of the
+//! repository at `--source-root` and in force wherever the audited sites
+//! equal those at REF's commit when the audit runs
+//! ([`crate::contract_tip`]); `--untrack-tip` turns it back into a reviewed
+//! identity of `HEAD`. Every other run keeps tip entries as written. Every
+//! command that meets a tip entry prints its notice: the contract targets a
+//! future, unreleased release (`info` in force, `warning` not).
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -40,13 +49,19 @@ use crate::contract_revision::{
     ContractLock, FlexibleEntry, LOCK_FILE, LOCK_VERSION, PinStanding, PinnedEntry, ReviewedSource,
     pin_standing,
 };
+use crate::contract_tip::{
+    NoticeStanding, TipEntry, TipRepository, TipResolver, TipReview, git_output, is_repository,
+    notice, valid_name,
+};
 use crate::providers::{ContractInput, SelectionSource, resolve_providers};
 
 /// Usage text of `quirin-audit pin`.
 pub const USAGE: &str = "usage: quirin-audit pin --source-root DIR [--load-path FILE | --modules \
 DIR] [--crate NAME]... [--function NAME]... [--regenerate | --check [--revision REV]] | pin \
 --drop-revision REV [--load-path FILE | --modules DIR] [--crate NAME]... [--function NAME]... | \
-pin --verify-contracts [--load-path FILE] [--crate NAME]...";
+pin --verify-contracts [--load-path FILE] [--crate NAME]... | pin --source-root DIR --function \
+NAME... --track-tip REF [--repository-name NAME] [--repository-url URL] [--release-label TEXT] | \
+pin --source-root DIR --function NAME... --untrack-tip";
 
 /// The lock's generated-by line.
 pub const GENERATED_BY: &str = "quirin-audit pin";
@@ -69,6 +84,13 @@ struct Arguments {
     regenerate: bool,
     drop_revision: Option<String>,
     revision: Option<String>,
+    /// Card CONTRACT-PIN-TIP-MODE: track the tip of this ref.
+    track_tip: Option<String>,
+    /// Card CONTRACT-PIN-TIP-MODE: turn tip entries back into reviewed pins.
+    untrack_tip: bool,
+    repository_name: Option<String>,
+    repository_url: Option<String>,
+    release_label: Option<String>,
 }
 
 fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
@@ -89,7 +111,40 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
             "--check" => parsed.check = true,
             "--regenerate" => parsed.regenerate = true,
             "--verify-contracts" => parsed.verify_contracts = true,
+            "--track-tip" => parsed.track_tip = Some(value("--track-tip")?),
+            "--untrack-tip" => parsed.untrack_tip = true,
+            "--repository-name" => parsed.repository_name = Some(value("--repository-name")?),
+            "--repository-url" => parsed.repository_url = Some(value("--repository-url")?),
+            "--release-label" => parsed.release_label = Some(value("--release-label")?),
             other => return Err(format!("unknown argument `{other}`")),
+        }
+    }
+    let tip_details = parsed.repository_name.is_some()
+        || parsed.repository_url.is_some()
+        || parsed.release_label.is_some();
+    if tip_details && parsed.track_tip.is_none() {
+        return Err(
+            "--repository-name, --repository-url and --release-label go with --track-tip".into(),
+        );
+    }
+    if parsed.track_tip.is_some() || parsed.untrack_tip {
+        if parsed.functions.is_empty() {
+            return Err("--track-tip and --untrack-tip need --function".into());
+        }
+        if parsed.track_tip.is_some() && parsed.untrack_tip {
+            return Err("--track-tip and --untrack-tip exclude each other".into());
+        }
+        if parsed.check
+            || parsed.regenerate
+            || parsed.revision.is_some()
+            || parsed.verify_contracts
+            || parsed.drop_revision.is_some()
+        {
+            return Err(
+                "--track-tip and --untrack-tip take no --check, --regenerate, --revision, \
+                 --verify-contracts or --drop-revision"
+                    .into(),
+            );
         }
     }
     let reads_source = parsed.check || parsed.regenerate || parsed.revision.is_some();
@@ -267,6 +322,7 @@ fn empty_lock(target: &Target) -> ContractLock {
         normalisation: NORMALISATION.into(),
         pinned: Vec::new(),
         flexible: Vec::new(),
+        tip: Vec::new(),
     }
 }
 
@@ -280,6 +336,7 @@ fn update(
     target: &Target,
     tree: &SourceTree,
     functions: &BTreeSet<String>,
+    untrack: bool,
 ) -> Result<(ContractLock, Vec<String>), String> {
     let declared = declarations(target)?;
     let known = declared
@@ -289,6 +346,7 @@ fn update(
                 .iter()
                 .map(|e| &e.function)
                 .chain(lock.flexible.iter().map(|e| &e.function))
+                .chain(lock.tip.iter().map(|e| &e.function))
         }))
         .collect::<BTreeSet<_>>();
     if let Some(unknown) = functions.iter().find(|name| !known.contains(name)) {
@@ -296,6 +354,14 @@ fn update(
             "`{unknown}` is declared by no contract of {}",
             target.owner
         ));
+    }
+    // Card CONTRACT-PIN-TIP-MODE: `--untrack-tip` names tip entries only.
+    if untrack
+        && let Some(name) = functions.iter().find(|name| {
+            !existing.is_some_and(|lock| lock.tip.iter().any(|e| &e.function == *name))
+        })
+    {
+        return Err(format!("`{name}` does not track a tip in {}", target.owner));
     }
     let source = ReviewedSource::of(tree);
     let chosen = |name: &str| functions.is_empty() || functions.contains(name);
@@ -314,6 +380,7 @@ fn update(
     let mut lines = Vec::new();
     let old_pinned = |name: &str| old.pinned.iter().find(|e| e.function == name);
     let old_flexible = |name: &str| old.flexible.iter().find(|e| e.function == name);
+    let old_tip = |name: &str| old.tip.iter().find(|e| e.function == name);
     for (name, (module, digest, mode)) in &declared {
         if !chosen(name) {
             // Untouched: kept exactly as the lock has it.
@@ -323,7 +390,32 @@ fn update(
             if let Some(entry) = old_flexible(name) {
                 lock.flexible.push(entry.clone());
             }
+            if let Some(entry) = old_tip(name) {
+                lock.tip.push(entry.clone());
+            }
             continue;
+        }
+        // Card CONTRACT-PIN-TIP-MODE: a tip entry is written only by
+        // `--track-tip` and left only by `--untrack-tip`; every other run
+        // keeps it as written.
+        if let (RevisionMode::Pinned, Some(entry)) = (mode, old_tip(name)) {
+            if untrack {
+                lines.push(format!(
+                    "~ {name}: no longer tracks the tip `{}` of `{}`; pinned at {}",
+                    entry.reference,
+                    entry.repository.name,
+                    ReviewedSource::of(tree).label()
+                ));
+            } else {
+                if entry.contract_sha256 != *digest {
+                    lines.push(format!(
+                        "! {name}: contract text changed; its tip entry stays out of force until \
+                         `pin --track-tip` records it again after review"
+                    ));
+                }
+                lock.tip.push(entry.clone());
+                continue;
+            }
         }
         match mode {
             RevisionMode::Pinned => {
@@ -410,9 +502,163 @@ fn update(
             }
         }
     }
+    for entry in &old.tip {
+        if !declared.contains_key(&entry.function) {
+            if functions.is_empty() {
+                lines.push(format!("- {}", entry.function));
+            } else {
+                lock.tip.push(entry.clone());
+            }
+        }
+    }
     lock.pinned.sort_by(|a, b| a.function.cmp(&b.function));
     lock.flexible.sort_by(|a, b| a.function.cmp(&b.function));
+    lock.tip.sort_by(|a, b| a.function.cmp(&b.function));
     Ok((lock, lines))
+}
+
+/// Card CONTRACT-PIN-TIP-MODE: `--track-tip REF`: record a tip entry for
+/// each of `functions` (pinned declarations of the target), reviewed at
+/// REF's current commit in the repository at `root`, replacing any reviewed
+/// entry. Returns the lock, one line per change and the entries recorded.
+fn track(
+    existing: Option<&ContractLock>,
+    target: &Target,
+    root: &Path,
+    arguments: &Arguments,
+) -> Result<(ContractLock, Vec<String>, Vec<TipEntry>), String> {
+    let reference = arguments.track_tip.as_deref().expect("parsed");
+    let functions = &arguments.functions;
+    let declared = declarations(target)?;
+    for name in functions {
+        match declared.get(name) {
+            Some((_, _, RevisionMode::Pinned)) => {}
+            Some(_) => return Err(format!("`{name}` is flexible: only a pinned contract tracks a tip")),
+            None => {
+                return Err(format!(
+                    "`{name}` is declared by no contract of {}",
+                    target.owner
+                ));
+            }
+        }
+    }
+    let root = root
+        .canonicalize()
+        .map_err(|error| format!("{}: {error}", root.display()))?;
+    if !is_repository(&root) {
+        return Err(format!("{} is not the top of a Git repository", root.display()));
+    }
+    let full = if reference.starts_with("refs/") {
+        reference.to_owned()
+    } else {
+        format!("refs/heads/{reference}")
+    };
+    let commit = match git_output(
+        &root,
+        &["rev-parse", "--verify", "--quiet", &format!("{full}^{{commit}}")],
+    )? {
+        (0, commit) if !commit.is_empty() => commit,
+        _ => return Err(format!("`{full}` names no commit in {}", root.display())),
+    };
+    let name = match &arguments.repository_name {
+        Some(name) => name.clone(),
+        None => root
+            .file_name()
+            .map(|name| name.to_string_lossy().into_owned())
+            .unwrap_or_default(),
+    };
+    if !valid_name(&name) {
+        return Err(format!(
+            "repository name `{name}` is not letters, digits, `.`, `_` and `-`; pass \
+             --repository-name"
+        ));
+    }
+    let url = match &arguments.repository_url {
+        Some(url) => Some(url.clone()),
+        None => match git_output(&root, &["remote", "get-url", "origin"])? {
+            (0, url) if !url.is_empty() => Some(url),
+            _ => None,
+        },
+    };
+    let scan = SourceTree::read_sites_at(&root, &commit, functions)?;
+    let mut lock = existing.cloned().unwrap_or_else(|| empty_lock(target));
+    let mut lines = Vec::new();
+    let mut recorded = Vec::new();
+    for function in functions {
+        let sites = scan.sites.get(function).cloned().unwrap_or_default();
+        if sites.is_empty() {
+            return Err(format!(
+                "`{full}` at {commit} has no site of `{function}`: nothing to track"
+            ));
+        }
+        let (module, digest, _) = &declared[function];
+        if let Some(position) = lock.pinned.iter().position(|e| &e.function == function) {
+            let dropped = lock.pinned.remove(position);
+            lines.push(format!(
+                "~ {function}: now tracks the tip `{full}` of `{name}` ({} reviewed identit(ies) \
+                 dropped)",
+                dropped.identities.len()
+            ));
+        } else if lock.tip.iter().any(|e| &e.function == function) {
+            lines.push(format!("~ {function}: tip `{full}` of `{name}` recorded again at {commit}"));
+        } else {
+            lines.push(format!("+ {function}: tracks the tip `{full}` of `{name}`"));
+        }
+        lock.tip.retain(|e| &e.function != function);
+        let entry = TipEntry {
+            function: function.clone(),
+            module: module.clone(),
+            contract_sha256: digest.clone(),
+            repository: TipRepository {
+                name: name.clone(),
+                url: url.clone(),
+                path: Some(root.display().to_string()),
+            },
+            reference: full.clone(),
+            release_label: arguments.release_label.clone(),
+            reviewed: TipReview {
+                commit: commit.clone(),
+                sites,
+            },
+        };
+        entry.validate()?;
+        lock.tip.push(entry.clone());
+        recorded.push(entry);
+    }
+    lock.tip.sort_by(|a, b| a.function.cmp(&b.function));
+    Ok((lock, lines, recorded))
+}
+
+/// Card CONTRACT-PIN-TIP-MODE: the notice of every tip entry of `lock` at the
+/// tree's source, as an audit of that source would decide it.
+fn tip_notices(
+    lock: &ContractLock,
+    target: &Target,
+    tree: &SourceTree,
+    tips: &mut TipResolver,
+) -> Result<Vec<String>, String> {
+    if lock.tip.is_empty() {
+        return Ok(Vec::new());
+    }
+    let declared = declarations(target)?;
+    let names = lock
+        .tip
+        .iter()
+        .map(|e| e.function.clone())
+        .collect::<BTreeSet<_>>();
+    let sites = tree.sites(&names);
+    let mut lines = Vec::new();
+    for entry in &lock.tip {
+        let Some((module, digest, _)) = declared.get(&entry.function) else {
+            continue;
+        };
+        let found = sites.get(&entry.function).cloned().unwrap_or_default();
+        let standing = pin_standing(Some(lock), &entry.function, digest, &found, module, tips);
+        if let Some(notice) = standing.notice(&entry.function) {
+            lines.push(notice.line());
+        }
+    }
+    Ok(lines)
 }
 
 /// Remove the named source from every identity (of `functions` only, when
@@ -462,6 +708,13 @@ fn contracts_agree(
             (RevisionMode::Flexible, &entry.contract_sha256),
         );
     }
+    // Card CONTRACT-PIN-TIP-MODE: a tip entry is a pinned declaration.
+    for entry in &lock.tip {
+        locked.insert(
+            entry.function.clone(),
+            (RevisionMode::Pinned, &entry.contract_sha256),
+        );
+    }
     let mut lines = Vec::new();
     for (name, (_, digest, mode)) in declared {
         match locked.get(name) {
@@ -501,7 +754,8 @@ fn check(
         .map(|(name, _)| name.clone())
         .collect::<BTreeSet<_>>();
     let sites = tree.sites(&pinned_names);
-    let (mut recorded, mut via_other, mut out, mut stale) = (0, 0, 0, 0);
+    let mut tips = TipResolver::from_environment()?;
+    let (mut recorded, mut via_other, mut via_tip, mut out, mut stale) = (0, 0, 0, 0, 0);
     let mut lines = Vec::new();
     for (name, (module, digest, mode)) in &declared {
         if !chosen(name) {
@@ -510,7 +764,19 @@ fn check(
         match mode {
             RevisionMode::Pinned => {
                 let found = sites.get(name).cloned().unwrap_or_default();
-                match pin_standing(lock, name, digest, &found, module) {
+                let standing = pin_standing(lock, name, digest, &found, module, &mut tips);
+                let notice = standing.notice(name);
+                match standing {
+                    // Card CONTRACT-PIN-TIP-MODE: in force through the tip.
+                    PinStanding::InForceAtTip { tip } => {
+                        via_tip += 1;
+                        lines.push(format!(
+                            "t {name}: in force through the tip `{}` of `{}` at {}",
+                            tip.reference,
+                            tip.repository.name,
+                            tip.resolved_commit.as_deref().unwrap_or_default()
+                        ));
+                    }
                     PinStanding::InForce { reviewed_at } if reviewed_at.contains(&source) => {
                         recorded += 1;
                     }
@@ -526,13 +792,16 @@ fn check(
                             source.label()
                         ));
                     }
-                    PinStanding::Mismatch { reason, detail } => {
+                    PinStanding::Mismatch { reason, detail, .. } => {
                         out += 1;
                         lines.push(format!(
                             "x {name}: not in force ({}): {detail}",
                             reason.as_str()
                         ));
                     }
+                }
+                if let Some(notice) = notice {
+                    lines.push(notice.line());
                 }
             }
             RevisionMode::Flexible => {
@@ -556,6 +825,7 @@ fn check(
                 .iter()
                 .map(|e| &e.function)
                 .chain(lock.flexible.iter().map(|e| &e.function))
+                .chain(lock.tip.iter().map(|e| &e.function))
         }) {
             if !declared.contains_key(entry) {
                 stale += 1;
@@ -563,9 +833,15 @@ fn check(
             }
         }
     }
+    // Card CONTRACT-PIN-TIP-MODE: the tip count only when a tip entry exists.
+    let tip_clause = if lock.is_some_and(|lock| !lock.tip.is_empty()) {
+        format!("{via_tip} in force through the tip of an unreleased branch, ")
+    } else {
+        String::new()
+    };
     println!(
         "pin: {} at {}: {recorded} recorded, {via_other} in force through another revision, \
-         {out} not in force, {stale} stale ({})",
+         {tip_clause}{out} not in force, {stale} stale ({})",
         target.owner,
         source.label(),
         target.lock.display()
@@ -597,10 +873,12 @@ fn run(arguments: Arguments) -> Result<bool, String> {
     };
     if arguments.verify_contracts {
         let mut clean = true;
+        let mut tips = TipResolver::from_environment()?;
         for target in &targets {
             let declared = declarations(target)?;
-            let problems = match read_existing(target)? {
-                Some(lock) => contracts_agree(&lock, &declared),
+            let existing = read_existing(target)?;
+            let problems = match &existing {
+                Some(lock) => contracts_agree(lock, &declared),
                 None => vec![format!("no {LOCK_FILE}")],
             };
             if problems.is_empty() {
@@ -608,12 +886,28 @@ fn run(arguments: Arguments) -> Result<bool, String> {
                     .values()
                     .filter(|(_, _, mode)| *mode == RevisionMode::Pinned)
                     .count();
+                // Card CONTRACT-PIN-TIP-MODE: tip entries are counted and
+                // noticed (no audited source: info when the tip resolves on
+                // this host, warning when it does not).
+                let tip = existing.as_ref().map_or(&[][..], |lock| &lock.tip[..]);
+                let tip_clause = if tip.is_empty() {
+                    String::new()
+                } else {
+                    format!(", {} of them tracking the tip of an unreleased branch", tip.len())
+                };
                 println!(
-                    "pin: {}: lock lists every declaration ({} pinned, {} flexible)",
+                    "pin: {}: lock lists every declaration ({} pinned{tip_clause}, {} flexible)",
                     target.owner,
                     pinned,
                     declared.len() - pinned
                 );
+                for entry in tip {
+                    let resolution = tips.resolve(entry);
+                    println!(
+                        "  {}",
+                        notice(&entry.function, &resolution, NoticeStanding::NoSource).line()
+                    );
+                }
             } else {
                 clean = false;
                 for problem in problems {
@@ -668,11 +962,53 @@ fn run(arguments: Arguments) -> Result<bool, String> {
         return Ok(true);
     }
     let root = arguments.source_root.as_deref().expect("parsed");
+    if arguments.track_tip.is_some() {
+        // Card CONTRACT-PIN-TIP-MODE: record tip entries for the named
+        // functions, which some selected crate must declare.
+        let mut tips = TipResolver::from_environment()?;
+        let mut tracked = BTreeSet::new();
+        for target in &targets {
+            let declared = declarations(target)?;
+            if !arguments.functions.iter().any(|f| declared.contains_key(f)) {
+                continue;
+            }
+            let existing = read_existing(target)?;
+            let (lock, lines, recorded) = track(existing.as_ref(), target, root, &arguments)?;
+            fs::write(&target.lock, lock.to_text()?)
+                .map_err(|error| format!("{}: {error}", target.lock.display()))?;
+            println!(
+                "pin: {}: {} pinned, {} tracking a tip, {} flexible; wrote {}",
+                target.owner,
+                lock.pinned.len(),
+                lock.tip.len(),
+                lock.flexible.len(),
+                target.lock.display()
+            );
+            for line in &lines {
+                println!("  {line}");
+            }
+            for entry in &recorded {
+                tracked.insert(entry.function.clone());
+                let resolution = tips.resolve(entry);
+                println!(
+                    "  {}",
+                    notice(&entry.function, &resolution, NoticeStanding::NoSource).line()
+                );
+            }
+        }
+        if let Some(missing) = arguments.functions.iter().find(|f| !tracked.contains(*f)) {
+            return Err(format!(
+                "`{missing}` is declared by no selected crate; nothing tracks it"
+            ));
+        }
+        return Ok(true);
+    }
     let tree = match &arguments.revision {
         Some(revision) => SourceTree::read_revision(root, revision)?,
         None => SourceTree::read(root)?,
     };
     let mut clean = true;
+    let mut tips = TipResolver::from_environment()?;
     for target in &targets {
         if arguments.check {
             clean &= check(
@@ -695,10 +1031,32 @@ fn run(arguments: Arguments) -> Result<bool, String> {
         } else {
             (read_existing(target)?, None)
         };
-        let (lock, mut lines) = update(existing.as_ref(), target, &tree, &arguments.functions)?;
+        // Card CONTRACT-PIN-TIP-MODE: a regeneration keeps tip entries as
+        // written (they name no revision of this source).
+        let kept_tips = if arguments.regenerate {
+            read_existing(target)
+                .ok()
+                .flatten()
+                .map(|lock| lock.tip)
+                .unwrap_or_default()
+        } else {
+            Vec::new()
+        };
+        let regenerated_from = (!kept_tips.is_empty()).then(|| ContractLock {
+            tip: kept_tips,
+            ..empty_lock(target)
+        });
+        let (lock, mut lines) = update(
+            existing.as_ref().or(regenerated_from.as_ref()),
+            target,
+            &tree,
+            &arguments.functions,
+            arguments.untrack_tip,
+        )?;
         if let Some(replaced) = replaced {
             lines.insert(0, format!("! {replaced}"));
         }
+        lines.extend(tip_notices(&lock, target, &tree, &mut tips)?);
         fs::write(&target.lock, lock.to_text()?)
             .map_err(|error| format!("{}: {error}", target.lock.display()))?;
         println!(

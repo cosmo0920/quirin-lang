@@ -14,6 +14,9 @@
 //! * **contracts** — contracts in force added, removed and changed (text
 //!   digest, mode or status), from each run's `contract_revision` section;
 //! * **pin mismatches** — each run's, and which are new and which resolved;
+//! * **tip tracking** (card CONTRACT-PIN-TIP-MODE) — each run's tip entries
+//!   with their standing, ref, resolved commit and notice, and the tips that
+//!   moved between the runs;
 //! * **assumptions** — flexible trusted contracts added and removed, and the
 //!   standing libc assumption of each run;
 //! * **obligations** — per function, the diagnostics (category and
@@ -327,6 +330,48 @@ pub fn compare(before: &Path, after: &Path) -> Result<Value, String> {
             .map(|record| json!({"name": record["name"], "contracts": record["contracts"]}))
             .collect::<Vec<_>>()
     };
+    // Card CONTRACT-PIN-TIP-MODE: tip entries, from the pinned records that
+    // carry a tip.
+    let tips = |section: &Value| {
+        section["pinned_in_force"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .chain(section["pin_mismatches"].as_array().into_iter().flatten())
+            .filter(|record| record.get("tip").is_some())
+            .filter_map(|record| {
+                let tip = &record["tip"];
+                Some((
+                    record["function"].as_str()?.to_owned(),
+                    json!({
+                        "function": record["function"],
+                        "in_force": record.get("reason").is_none(),
+                        "reason": record.get("reason"),
+                        "repository": tip["repository"]["name"],
+                        "ref": tip["ref"],
+                        "release_label": tip["release_label"],
+                        "resolved_commit": tip["resolved_commit"],
+                        "notice": record["notice"],
+                    }),
+                ))
+            })
+            .collect::<BTreeMap<_, _>>()
+    };
+    let (before_tips, after_tips) = (tips(before_section), tips(after_section));
+    let tip_moved = before_tips
+        .iter()
+        .filter_map(|(name, old)| {
+            let new = after_tips.get(name)?;
+            (old["resolved_commit"] != new["resolved_commit"]).then(|| {
+                json!({
+                    "function": name,
+                    "ref": new["ref"],
+                    "before": old["resolved_commit"],
+                    "after": new["resolved_commit"],
+                })
+            })
+        })
+        .collect::<Vec<_>>();
     // Obligations and verdict moves.
     let mut obligation_added = Vec::new();
     let mut obligation_removed = Vec::new();
@@ -420,6 +465,9 @@ pub fn compare(before: &Path, after: &Path) -> Result<Value, String> {
         "functions_added": count("added"),
         "functions_removed": count("removed"),
         "other_moves": count("other"),
+        "tip_tracked_before": before_tips.len(),
+        "tip_tracked_after": after_tips.len(),
+        "tip_moved": tip_moved.len(),
     });
     Ok(json!({
         "schema_version": 1,
@@ -441,6 +489,11 @@ pub fn compare(before: &Path, after: &Path) -> Result<Value, String> {
             "after": after_pins.values().collect::<Vec<_>>(),
             "new": pin_names(&after_pins).difference(&pin_names(&before_pins)).collect::<Vec<_>>(),
             "resolved": pin_names(&before_pins).difference(&pin_names(&after_pins)).collect::<Vec<_>>(),
+        },
+        "tip_tracking": {
+            "before": before_tips.values().collect::<Vec<_>>(),
+            "after": after_tips.values().collect::<Vec<_>>(),
+            "moved": tip_moved,
         },
         "assumptions": {
             "flexible_trusted": set_difference(&trusted(before_section), &trusted(after_section)),
@@ -489,7 +542,32 @@ pub fn summary(report: &Value) -> String {
         count("pending_to_unknown"),
         count("units_added"),
         count("units_removed"),
-    )
+    ) + &tip_summary(report)
+}
+
+/// Card CONTRACT-PIN-TIP-MODE: the tip clause and each run's notices, only
+/// when either run tracked a tip.
+fn tip_summary(report: &Value) -> String {
+    let count = |key: &str| report["counts"][key].as_u64().unwrap_or_default();
+    if count("tip_tracked_before") == 0 && count("tip_tracked_after") == 0 {
+        return String::new();
+    }
+    let mut text = format!(
+        "; tip-tracked contracts {} -> {} ({} tip(s) moved)",
+        count("tip_tracked_before"),
+        count("tip_tracked_after"),
+        count("tip_moved")
+    );
+    for (run, key) in [("before", "before"), ("after", "after")] {
+        for record in report["tip_tracking"][key].as_array().into_iter().flatten() {
+            text.push_str(&format!(
+                "\ncompare notice ({run}) [{}]: {}",
+                record["notice"]["severity"].as_str().unwrap_or_default(),
+                record["notice"]["message"].as_str().unwrap_or_default()
+            ));
+        }
+    }
+    text
 }
 
 /// Entry point of `quirin-audit compare`.

@@ -34,6 +34,11 @@
 //! unresolved diagnostics are held calls is `Pending`, which a re-pin after
 //! review resolves (card W45-USER-CONTRACT-PLUGINS; `Unknown` before). A flexible declaration is
 //! never compared: it binds by name and declared signature only.
+//!
+//! Card **CONTRACT-PIN-TIP-MODE**: a lock entry may instead track the tip of a
+//! ref (format version 3, [`crate::contract_tip`]); it is decided by the same
+//! [`pin_standing`], and the section records its resolution, notice and
+//! named assumption only when a run has one.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -48,13 +53,22 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
 use crate::c_identity::{NORMALISATION, SourceSite, SourceTree};
+use crate::contract_tip::{
+    Notice, NoticeStanding, TIP_ASSUMPTION_PREFIX, TIP_STATEMENT, TipEntry, TipFailure,
+    TipResolution, TipResolver, notice, tip_decision,
+};
 use crate::report::AuditReport;
 
 /// The lock's file name.
 pub const LOCK_FILE: &str = "contracts.lock";
 
-/// The lock format's version.
+/// The lock format's version for a lock without a tip entry.
 pub const LOCK_VERSION: u32 = 2;
+
+/// Card CONTRACT-PIN-TIP-MODE: the lock format's version for a lock holding a
+/// tip entry. A lock is written in the lowest version that expresses it, so
+/// a lock without a tip entry stays version 2, byte for byte.
+pub const LOCK_VERSION_TIP: u32 = 3;
 
 /// The provider crate whose flexible contracts form the one standing libc
 /// assumption.
@@ -85,6 +99,11 @@ pub struct ContractLock {
     /// Every flexible declaration, sorted by function: listed so that a
     /// change of mode is a change of the lock.
     pub flexible: Vec<FlexibleEntry>,
+    /// Card CONTRACT-PIN-TIP-MODE: every pinned declaration that tracks the
+    /// tip of a ref instead of reviewed identities, sorted by function
+    /// (format version 3 only).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub tip: Vec<TipEntry>,
 }
 
 /// A source a pinned identity was reviewed at: a Git revision, or a
@@ -233,6 +252,7 @@ impl LockV1 {
                 })
                 .collect(),
             flexible: self.flexible,
+            tip: Vec::new(),
         }
     }
 }
@@ -243,16 +263,45 @@ pub enum PinStanding {
     /// In force: the text matches and the sites equal the identity reviewed
     /// at these sources.
     InForce { reviewed_at: Vec<ReviewedSource> },
-    /// Not in force, for this reason, with a one-line account.
+    /// Card CONTRACT-PIN-TIP-MODE: in force through a tip entry: the text
+    /// matches and the sites equal those at the tip's resolved commit.
+    InForceAtTip { tip: Box<TipResolution> },
+    /// Not in force, for this reason, with a one-line account; for a tip
+    /// entry, what resolving its tip found.
     Mismatch {
         reason: PinMismatchReason,
         detail: String,
+        tip: Option<Box<TipResolution>>,
     },
+}
+
+impl PinStanding {
+    /// The tip entry's resolution, when the entry tracks a tip.
+    #[must_use]
+    pub fn tip(&self) -> Option<&TipResolution> {
+        match self {
+            Self::InForce { .. } => None,
+            Self::InForceAtTip { tip } => Some(tip),
+            Self::Mismatch { tip, .. } => tip.as_deref(),
+        }
+    }
+
+    /// The notice of a tip entry (`None` for any other entry).
+    #[must_use]
+    pub fn notice(&self, function: &str) -> Option<Notice> {
+        let standing = match self {
+            Self::InForce { .. } => return None,
+            Self::InForceAtTip { .. } => NoticeStanding::InForce,
+            Self::Mismatch { detail, .. } => NoticeStanding::NotInForce(detail),
+        };
+        self.tip().map(|tip| notice(function, tip, standing))
+    }
 }
 
 /// Compare one pinned declaration (its contract digest and the audited
 /// sites) with its lock entry. The single decision both an audit and
-/// `quirin-audit pin --check` use.
+/// `quirin-audit pin --check` use. A tip entry (card CONTRACT-PIN-TIP-MODE)
+/// is resolved through `tips` and decided by [`tip_decision`].
 #[must_use]
 pub fn pin_standing(
     lock: Option<&ContractLock>,
@@ -260,17 +309,23 @@ pub fn pin_standing(
     contract_sha256: &str,
     sites: &[SourceSite],
     module: &str,
+    tips: &mut TipResolver,
 ) -> PinStanding {
     let Some(lock) = lock else {
         return PinStanding::Mismatch {
             reason: PinMismatchReason::NoLock,
             detail: format!("no {LOCK_FILE} covers `{module}`"),
+            tip: None,
         };
     };
+    if let Some(entry) = lock.tip.iter().find(|e| e.function == function) {
+        return tip_standing(entry, contract_sha256, sites, tips);
+    }
     let Some(entry) = lock.pinned.iter().find(|e| e.function == function) else {
         return PinStanding::Mismatch {
             reason: PinMismatchReason::NotInLock,
             detail: format!("the lock has no pinned entry for `{function}`"),
+            tip: None,
         };
     };
     if entry.contract_sha256 != contract_sha256 {
@@ -282,12 +337,14 @@ pub fn pin_standing(
                 short(&entry.contract_sha256),
                 short(contract_sha256)
             ),
+            tip: None,
         };
     }
     if entry.identities.is_empty() {
         return PinStanding::Mismatch {
             reason: PinMismatchReason::NotInLock,
             detail: format!("the lock records no reviewed identity for `{function}`"),
+            tip: None,
         };
     }
     match entry
@@ -301,7 +358,71 @@ pub fn pin_standing(
         None => PinStanding::Mismatch {
             reason: PinMismatchReason::SourceChanged,
             detail: site_difference(&entry.identities, sites),
+            tip: None,
         },
+    }
+}
+
+/// Card CONTRACT-PIN-TIP-MODE: how a tip entry stands. The tip is resolved
+/// whatever the contract text, so a changed text still reports where the tip
+/// is; [`tip_decision`] decides.
+fn tip_standing(
+    entry: &TipEntry,
+    contract_sha256: &str,
+    sites: &[SourceSite],
+    tips: &mut TipResolver,
+) -> PinStanding {
+    let tip = tips.resolve(entry);
+    let text_matches = entry.contract_sha256 == contract_sha256;
+    let resolved = tip.resolved();
+    let sites_equal = resolved && tip.tip_sites == sites;
+    let (in_force, _) = tip_decision(text_matches, resolved, sites_equal);
+    if in_force {
+        return PinStanding::InForceAtTip { tip: Box::new(tip) };
+    }
+    let (reason, detail) = if !text_matches {
+        (
+            PinMismatchReason::ContractChanged,
+            format!(
+                "the contract text changed since its tip was tracked (lock {}, now {}): track \
+                 the tip again after review",
+                short(&entry.contract_sha256),
+                short(contract_sha256)
+            ),
+        )
+    } else if !resolved {
+        (
+            PinMismatchReason::TipUnresolved,
+            format!(
+                "the tip cannot be resolved ({}): {}",
+                tip.failure.map_or("unresolved", TipFailure::as_str),
+                tip.failure_detail.as_deref().unwrap_or_default()
+            ),
+        )
+    } else {
+        let paths = tip
+            .tip_sites
+            .iter()
+            .chain(sites)
+            .filter(|site| !(tip.tip_sites.contains(site) && sites.contains(site)))
+            .map(|site| site.path.as_str())
+            .collect::<BTreeSet<_>>();
+        (
+            PinMismatchReason::SourceChanged,
+            format!(
+                "the audited source's sites differ from those at the tip of `{}` in `{}` at {}: \
+                 differs in {}",
+                entry.reference,
+                entry.repository.name,
+                tip.resolved_commit.as_deref().unwrap_or_default(),
+                paths.into_iter().collect::<Vec<_>>().join(", ")
+            ),
+        )
+    };
+    PinStanding::Mismatch {
+        reason,
+        detail,
+        tip: Some(Box::new(tip)),
     }
 }
 
@@ -322,7 +443,7 @@ impl ContractLock {
             Some(1) => serde_json::from_value::<LockV1>(value)
                 .map_err(|e| malformed(e.to_string()))?
                 .migrate(),
-            Some(2) => {
+            Some(2 | 3) => {
                 serde_json::from_value::<Self>(value).map_err(|e| malformed(e.to_string()))?
             }
             other => return Err(malformed(format!("unsupported lock_version {other:?}"))),
@@ -332,8 +453,15 @@ impl ContractLock {
     }
 
     fn validate(&self) -> Result<(), String> {
-        if self.lock_version != LOCK_VERSION {
-            return Err(format!("unsupported lock_version {}", self.lock_version));
+        match (self.lock_version, self.tip.is_empty()) {
+            (LOCK_VERSION, true) | (LOCK_VERSION_TIP, false) => {}
+            (LOCK_VERSION, false) => {
+                return Err("a version-2 lock holds a tip entry (it needs version 3)".into());
+            }
+            (LOCK_VERSION_TIP, true) => {
+                return Err("a version-3 lock holds no tip entry (it is version 2)".into());
+            }
+            (other, _) => return Err(format!("unsupported lock_version {other}")),
         }
         if self.normalisation != NORMALISATION {
             return Err(format!(
@@ -352,13 +480,29 @@ impl ContractLock {
             .iter()
             .map(|e| e.function.as_str())
             .collect::<Vec<_>>();
-        for (label, names) in [("pinned", &pinned), ("flexible", &flexible)] {
+        let tip = self
+            .tip
+            .iter()
+            .map(|e| e.function.as_str())
+            .collect::<Vec<_>>();
+        for (label, names) in [("pinned", &pinned), ("flexible", &flexible), ("tip", &tip)] {
             if names.windows(2).any(|pair| pair[0] >= pair[1]) {
                 return Err(format!("{label} entries are not sorted and unique"));
             }
         }
         if let Some(both) = pinned.iter().find(|name| flexible.contains(name)) {
             return Err(format!("`{both}` is both pinned and flexible"));
+        }
+        if let Some(both) = tip
+            .iter()
+            .find(|name| pinned.contains(name) || flexible.contains(name))
+        {
+            return Err(format!(
+                "`{both}` tracks a tip and is also a pinned or flexible entry"
+            ));
+        }
+        for entry in &self.tip {
+            entry.validate()?;
         }
         for entry in &self.pinned {
             let malformed = || format!("malformed entry for `{}`", entry.function);
@@ -423,7 +567,13 @@ impl ContractLock {
     ///
     /// Serialisation failure only.
     pub fn to_text(&self) -> Result<String, String> {
-        serde_json::to_string_pretty(self)
+        let mut lock = self.clone();
+        lock.lock_version = if lock.tip.is_empty() {
+            LOCK_VERSION
+        } else {
+            LOCK_VERSION_TIP
+        };
+        serde_json::to_string_pretty(&lock)
             .map(|text| text + "\n")
             .map_err(|error| error.to_string())
     }
@@ -587,6 +737,10 @@ struct PinOutcome {
     /// Every reviewed identity of the lock entry.
     identities: Vec<ReviewedIdentity>,
     found: Vec<SourceSite>,
+    /// Card CONTRACT-PIN-TIP-MODE: what resolving a tip entry found, and its
+    /// notice.
+    tip: Option<TipResolution>,
+    notice: Option<Notice>,
 }
 
 /// What [`apply_pins`] decided, kept for the report section.
@@ -616,6 +770,8 @@ pub fn apply_pins(
     let digests =
         qcore_contract::contract_revision::declaration_digests(contracts.source_assumptions())?;
     let mut evaluation = PinEvaluation::default();
+    // Card CONTRACT-PIN-TIP-MODE: a malformed repository variable refuses.
+    let mut tips = TipResolver::from_environment()?;
     let mut locks: BTreeMap<PathBuf, ContractLock> = BTreeMap::new();
     let mut pending: Vec<PendingPin> = Vec::new();
     for (name, (module, digest)) in &digests {
@@ -649,7 +805,10 @@ pub fn apply_pins(
         .filter(|(name, _, _, lock, _)| {
             lock.as_ref()
                 .and_then(|path| locks.get(path))
-                .is_some_and(|lock| lock.pinned.iter().any(|entry| &entry.function == name))
+                .is_some_and(|lock| {
+                    lock.pinned.iter().any(|entry| &entry.function == name)
+                        || lock.tip.iter().any(|entry| &entry.function == name)
+                })
         })
         .map(|(name, ..)| name.clone())
         .collect::<BTreeSet<_>>();
@@ -664,9 +823,13 @@ pub fn apply_pins(
         let entry = lock.and_then(|lock| lock.pinned.iter().find(|e| e.function == name));
         let sites = found.get(&name).cloned().unwrap_or_default();
         let identities = entry.map(|e| e.identities.clone()).unwrap_or_default();
-        let (reason, detail, matched) = match pin_standing(lock, &name, &digest, &sites, &module) {
+        let standing = pin_standing(lock, &name, &digest, &sites, &module, &mut tips);
+        let notice = standing.notice(&name);
+        let tip = standing.tip().cloned();
+        let (reason, detail, matched) = match standing {
             PinStanding::InForce { reviewed_at } => (None, String::new(), reviewed_at),
-            PinStanding::Mismatch { reason, detail } => (Some(reason), detail, Vec::new()),
+            PinStanding::InForceAtTip { .. } => (None, String::new(), Vec::new()),
+            PinStanding::Mismatch { reason, detail, .. } => (Some(reason), detail, Vec::new()),
         };
         let lock_display = lock_path.as_ref().map(|path| path.display().to_string());
         if let Some(reason) = reason {
@@ -689,6 +852,8 @@ pub fn apply_pins(
             matched,
             identities,
             found: sites,
+            tip,
+            notice,
         });
     }
     Ok(evaluation)
@@ -881,6 +1046,17 @@ pub fn template(contracts: &ResourceContracts, evaluation: &PinEvaluation) -> Se
                     record["found_sites"] = json!(outcome.found);
                 }
             }
+            // Card CONTRACT-PIN-TIP-MODE: a tip entry's resolution and notice,
+            // only on tip entries, so a run without one is unchanged.
+            if let Some(tip) = &outcome.tip {
+                record["tip"] = json!(tip);
+                if outcome.reason.is_none() {
+                    record["matched_tip_commit"] = json!(tip.resolved_commit);
+                }
+            }
+            if let Some(notice) = &outcome.notice {
+                record["notice"] = json!(notice);
+            }
             PinnedTemplate {
                 function: outcome.function.clone(),
                 in_force: outcome.reason.is_none(),
@@ -912,6 +1088,13 @@ pub fn template(contracts: &ResourceContracts, evaluation: &PinEvaluation) -> Se
                 Some("pending-review")
             } else if contracts.pin_mismatch().contains_key(name) {
                 Some("not-in-force")
+            } else if evaluation
+                .outcomes
+                .iter()
+                .any(|o| &o.function == name && o.reason.is_none() && o.tip.is_some())
+            {
+                // Card CONTRACT-PIN-TIP-MODE: never `pinned-in-force`.
+                Some("tip-in-force")
             } else if mode == RevisionMode::Pinned {
                 Some("pinned-in-force")
             } else {
@@ -1010,7 +1193,7 @@ pub fn render(template: &SectionTemplate, facts: &ReportFacts) -> Value {
             "functions": libc,
         }])
     };
-    json!({
+    let mut section = json!({
         "meaning": MEANING,
         "reason_code": CONTRACT_PIN_MISMATCH,
         "default_mode": RevisionMode::Pinned.as_str(),
@@ -1034,7 +1217,78 @@ pub fn render(template: &SectionTemplate, facts: &ReportFacts) -> Value {
             "standing": standing,
         },
         "contracts": inventory,
-    })
+    });
+    add_tip_tracking(&mut section, template);
+    section
+}
+
+/// What the tip part of the section means, carried in the section itself.
+pub const TIP_MEANING: &str = "tip identities (card CONTRACT-PIN-TIP-MODE, contract spec C06.2): a tip entry's contract targets a future, unreleased release (a release candidate), not a released version; it is in force exactly where its contract text is the pinned one and the audited sites equal those read from the blobs of the tracked ref's current commit, which no person may have reviewed when the tip moved since review; every tip entry in force is a named assumption of this run (`assumptions.tip_tracked`); each tip entry carries a notice, info when in force and warning when not; notices are presentation and evidence and decide no verdict";
+
+/// Card CONTRACT-PIN-TIP-MODE: the tip counts, notices and assumptions of a
+/// rendered section, added only when some pinned record tracks a tip, so a
+/// run without one is byte-identical.
+fn add_tip_tracking(section: &mut Value, template: &SectionTemplate) {
+    let tips = template
+        .pinned
+        .iter()
+        .filter(|pinned| pinned.record.get("tip").is_some())
+        .collect::<Vec<_>>();
+    if tips.is_empty() {
+        return;
+    }
+    let in_force = tips.iter().filter(|pinned| pinned.in_force).count();
+    section["tip_meaning"] = json!(TIP_MEANING);
+    section["counts"]["tip_tracked"] = json!(tips.len());
+    section["counts"]["tip_in_force"] = json!(in_force);
+    section["counts"]["tip_not_in_force"] = json!(tips.len() - in_force);
+    section["tip_notices"] = json!(
+        tips.iter()
+            .map(|pinned| {
+                let mut notice = pinned.record["notice"].clone();
+                notice["function"] = json!(pinned.function);
+                notice
+            })
+            .collect::<Vec<_>>()
+    );
+    section["assumptions"]["tip_tracked"] = json!(
+        tips.iter()
+            .filter(|pinned| pinned.in_force)
+            .map(|pinned| {
+                let tip = &pinned.record["tip"];
+                json!({
+                    "name": format!("{TIP_ASSUMPTION_PREFIX}{}", pinned.function),
+                    "function": pinned.function,
+                    "statement": TIP_STATEMENT,
+                    "repository": tip["repository"],
+                    "ref": tip["ref"],
+                    "release_label": tip["release_label"],
+                    "resolved_commit": tip["resolved_commit"],
+                    "reviewed_commit": tip["reviewed_commit"],
+                    "moved_since_review": tip["moved_since_review"],
+                    "sites_changed_since_review": tip["sites_changed_since_review"],
+                })
+            })
+            .collect::<Vec<_>>()
+    );
+}
+
+/// Card CONTRACT-PIN-TIP-MODE: the console lines of a section's tip notices,
+/// `contract revision notice [SEVERITY]: MESSAGE`, in evaluation order.
+#[must_use]
+pub fn notice_lines(section: &Value) -> Vec<String> {
+    section["tip_notices"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .map(|notice| {
+            format!(
+                "contract revision notice [{}]: {}",
+                notice["severity"].as_str().unwrap_or_default(),
+                notice["message"].as_str().unwrap_or_default()
+            )
+        })
+        .collect()
 }
 
 /// The `contract_revision` section for one finished report.
@@ -1054,10 +1308,25 @@ pub fn section(
 #[must_use]
 pub fn tally(section: &Value) -> String {
     let count = |key: &str| section["counts"][key].as_u64().unwrap_or_default();
+    // Card CONTRACT-PIN-TIP-MODE: the tip clause and one line per notice,
+    // only when the run evaluated a tip entry.
+    let mut tips = String::new();
+    if section["counts"].get("tip_tracked").is_some() {
+        tips = format!(
+            "; {} tracking the tip of an unreleased branch ({} in force, {} not in force)",
+            count("tip_tracked"),
+            count("tip_in_force"),
+            count("tip_not_in_force")
+        );
+        for line in notice_lines(section) {
+            tips.push('\n');
+            tips.push_str(&line);
+        }
+    }
     format!(
         "contract revision: {} pinned ({} in force, {} not in force), {} flexible checked, {} \
          flexible trusted, {} libc under the standing assumption; {} function(s) and {} call \
-         site(s) held Pending ({CONTRACT_PIN_MISMATCH})",
+         site(s) held Pending ({CONTRACT_PIN_MISMATCH}){tips}",
         count("pinned"),
         count("pinned_in_force"),
         count("pinned_not_in_force"),

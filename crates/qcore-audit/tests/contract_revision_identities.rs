@@ -397,8 +397,10 @@ fn a_malformed_version_two_lock_refuses() {
     // An identity with no source; an unknown version.
     let mut empty = lock.clone();
     empty["pinned"][0]["identities"][0]["reviewed_at"] = serde_json::json!([]);
+    // Card CONTRACT-PIN-TIP-MODE made version 3 the tip-entry format, so the
+    // unknown version is 4.
     let mut version = lock.clone();
-    version["lock_version"] = serde_json::json!(3);
+    version["lock_version"] = serde_json::json!(4);
     for (bad, expected) in [
         (twice, "malformed entry"),
         (empty, "malformed entry"),

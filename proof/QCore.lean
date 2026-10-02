@@ -266,6 +266,7 @@ import QCore.NativePlatformMatrix
 import QCore.CallbackTaskHandoff
 import QCore.ContractDeferredReview
 import QCore.ContractRevisionMode
+import QCore.ContractTipMode
 import QCore.VerdictSemigroup
 import QCore.ParenthesisedCallee
 import QCore.ListIteration
