@@ -463,6 +463,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [main-guard-removal](main-guard-removal/README.md) | MAIN-GUARD-REMOVAL |
 
+| [monkey-vhost-property-custody](monkey-vhost-property-custody/README.md) | MONKEY-VHOST-PROPERTY-CUSTODY: `mk_string_dup` and the carried publication |
+
 | [msvc-abi-reader](msvc-abi-reader/README.md) | MSVC default-C ABI declarations |
 
 | [mutex-share-cross](mutex-share-cross/README.md) | MUTEX-SHARE-CROSS — a payload crosses because a verified mutex protects it (wave 32) |

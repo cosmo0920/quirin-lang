@@ -1,0 +1,84 @@
+{
+ "diagnostic_counts": {
+  "counted_user": 4,
+  "summary_conflict": 4,
+  "unknown_alias": 1117,
+  "unsupported": 2616
+ },
+ "leaves": {
+  "owns_linked": {
+   "count": 2,
+   "functions": [
+    "src/flb_input_chunk.c::flb_input_chunk_create"
+   ],
+   "sites": [
+    [
+     "src/flb_input_chunk.c::flb_input_chunk_create",
+     "src/flb_input_chunk.c:2611"
+    ],
+    [
+     "src/flb_input_chunk.c::flb_input_chunk_create",
+     "src/flb_input_chunk.c:2611"
+    ]
+   ]
+  }
+ },
+ "report": "private/mvp/before-system/resource-diagnostics.json",
+ "sha256": "6dad47cc99236b9bc9446414586a8ccda00c9b9ef7d534befd55a6260425887f",
+ "status": {
+  "Safe": 83,
+  "Unknown": 361,
+  "Unsafe": 4
+ },
+ "violation_functions": 4,
+ "violations": {
+  "src/flb_input_chunk.c::input_chunk_has_magic_bytes": [
+   [
+    "summary_conflict",
+    "src/flb_input_chunk.c:291",
+    "inferred custody summary ResourceFunctionContract { parameters: [Owned { nullable: false }, Borrowed], result: None } co"
+   ],
+   [
+    "summary_conflict",
+    "src/flb_input_chunk.c:291",
+    "inferred custody summary ResourceFunctionContract { parameters: [Owned { nullable: false }, Borrowed], result: None } co"
+   ]
+  ],
+  "src/flb_output.c::flb_output_task_flush": [
+   [
+    "counted_user",
+    "src/flb_output.c:541",
+    "`resource_user_exit(task, 0, added)` is refuted: a path returning 0 has added 0 users of `task`"
+   ],
+   [
+    "counted_user",
+    "src/flb_output.c:541",
+    "`resource_user_exit(task, 0, added)` is refuted: a path returning 0 has added 0 users of `task`"
+   ]
+  ],
+  "src/flb_output.c::flb_output_task_singleplex_enqueue": [
+   [
+    "counted_user",
+    "src/flb_output.c:376",
+    "`resource_user_exit(task, -1, restored)` is refuted: a path returning -1 has added 1 users of `task`"
+   ],
+   [
+    "counted_user",
+    "src/flb_output.c:376",
+    "`resource_user_exit(task, -1, restored)` is refuted: a path returning -1 has added 1 users of `task`"
+   ]
+  ],
+  "src/flb_task.c::flb_task_retry_count": [
+   [
+    "summary_conflict",
+    "src/flb_task.c:399",
+    "inferred custody summary ResourceFunctionContract { parameters: [Borrowed, Owned { nullable: false }], result: None } co"
+   ],
+   [
+    "summary_conflict",
+    "src/flb_task.c:399",
+    "inferred custody summary ResourceFunctionContract { parameters: [Borrowed, Owned { nullable: false }], result: None } co"
+   ]
+  ]
+ }
+}

@@ -1,0 +1,41 @@
+{
+ "totals": {
+  "before": {
+   "Unknown": 4177,
+   "Safe": 647,
+   "Unsafe": 10
+  },
+  "after": {
+   "Unknown": 4176,
+   "Safe": 647,
+   "Unsafe": 11
+  }
+ },
+ "moves": [
+  {
+   "unit": "mk_server/mk_http.c",
+   "function": "mk_http_error_page",
+   "before": "Unknown",
+   "after": "Unsafe",
+   "leaf_delta": {
+    "unknown_alias: unresolved resource identity": 1,
+    "leak: live obligation acquired at mk_server/mk_http.c:395": 1,
+    "unsupported: call to uncontracted function `mk_string_dup`": -1
+   }
+  }
+ ],
+ "move_counts": {
+  "Unknown -> Unsafe": 1
+ },
+ "same_status_functions_with_changed_diagnostics": 14,
+ "leaf_delta": {
+  "unsupported: call to uncontracted function `mk_string_dup`": -16,
+  "unsupported: indirect memory access is outside the resource projection": -2,
+  "unsupported: arguments beyond the declared parameters of `mk_print` are outside the resource projection": -2,
+  "unsupported: publication by `mk_list_add` of `ch`, which owns linked objects": -1,
+  "unsupported: publication by `mk_list_add` of `ic`, which owns linked objects": -1,
+  "unknown_alias: unresolved resource identity": 0,
+  "unsupported: nullable resource `__qcore_returned_value` used by a non-null contract": 1,
+  "leak: live obligation acquired at mk_server/mk_http.c:395": 1
+ }
+}

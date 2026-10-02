@@ -1,0 +1,150 @@
+[
+ {
+  "unit": "cio_chunk.c",
+  "function": "cio_chunk_open",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: publication by `mk_list_add` of `ch`, which owns linked objects": -1
+  }
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "function": "flb_input_chunk_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: publication by `mk_list_add` of `ic`, which owns linked objects": -1
+  }
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "function": "mk_rconf_read",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -1,
+   "unsupported: call to uncontracted function `mk_string_dup`": -1
+  }
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "function": "mk_rconf_section_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `mk_string_dup`": -1
+  }
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "function": "mk_rconf_section_entry_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: call to uncontracted function `mk_string_dup`": -2
+  }
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "function": "mk_rconf_section_get_key",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: indirect memory access is outside the resource projection": -1,
+   "unsupported: nullable resource `__qcore_returned_value` used by a non-null contract": 1
+  }
+ },
+ {
+  "unit": "mk_server/mk_config.c",
+  "function": "mk_config_listen_parse",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `mk_string_dup`": -2,
+   "unsupported: indirect memory access is outside the resource projection": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_http.c",
+  "function": "mk_http_error_page",
+  "before": "Unknown",
+  "after": "Unsafe",
+  "leaf_delta": {
+   "leak: live obligation acquired at mk_server/mk_http.c:395": 1,
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: call to uncontracted function `mk_string_dup`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_lib.c",
+  "function": "mk_http_send",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `mk_string_dup`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_lib.c",
+  "function": "mk_vhost_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: call to uncontracted function `mk_string_dup`": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_lib.c",
+  "function": "mk_vhost_set_property",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -2,
+   "unsupported: call to uncontracted function `mk_string_dup`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_mimetype.c",
+  "function": "mk_mimetype_add",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -2,
+   "unsupported: call to uncontracted function `mk_string_dup`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_mimetype.c",
+  "function": "mk_mimetype_init",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": -2,
+   "unsupported: call to uncontracted function `mk_string_dup`": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_read",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 2,
+   "unsupported: call to uncontracted function `mk_string_dup`": -2
+  }
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "function": "mk_vhost_set_single",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: arguments beyond the declared parameters of `mk_print` are outside the resource projection": -2,
+   "unsupported: call to uncontracted function `mk_string_dup`": -1
+  }
+ }
+]

@@ -1,0 +1,26 @@
+{
+ "diagnostic_counts": {
+  "counted_user": 1,
+  "unknown_alias": 1202,
+  "unsupported": 2654
+ },
+ "leaves": {},
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/mvp-after2/resource-diagnostics.json",
+ "sha256": "59171e06af5adb7448288cf27b3f8449abcfdadd64b1708892372618271a915b",
+ "status": {
+  "Pending": 4,
+  "Safe": 45,
+  "Unknown": 354,
+  "Unsafe": 1
+ },
+ "violation_functions": 1,
+ "violations": {
+  "plugins/in_tail/tail_file_budget.c::flb_tail_file_budget_destroy": [
+   [
+    "counted_user",
+    "plugins/in_tail/tail_file_budget.c:124",
+    "a user of `budget` dropped without a release check (line 19005) reaches this exit with none re-added"
+   ]
+  ]
+ }
+}

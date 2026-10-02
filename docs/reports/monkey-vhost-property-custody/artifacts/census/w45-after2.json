@@ -1,0 +1,1618 @@
+[
+ {
+  "unit": "cio_chunk.c",
+  "line": 75,
+  "function": "cio_chunk_open",
+  "call": "mk_list_add",
+  "arguments": [
+   "&ch->_head",
+   "&st->chunks"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [],
+  "container_root": "st",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "cio_chunk.c",
+  "line": 89,
+  "function": "cio_chunk_open",
+  "call": "mk_list_del",
+  "arguments": [
+   "&ch->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `ch`"
+  ],
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "cio_chunk.c",
+  "line": 102,
+  "function": "cio_chunk_open",
+  "call": "mk_list_add",
+  "arguments": [
+   "&ch->_state_head",
+   "&st->chunks_up"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `ch`"
+  ],
+  "container_root": "st",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "cio_chunk.c",
+  "line": 105,
+  "function": "cio_chunk_open",
+  "call": "mk_list_add",
+  "arguments": [
+   "&ch->_state_head",
+   "&st->chunks_down"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `ch`"
+  ],
+  "container_root": "st",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "cio_chunk.c",
+  "line": 131,
+  "function": "cio_chunk_close",
+  "call": "mk_list_del",
+  "arguments": [
+   "&ch->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `ch`, which this function has not published"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "cio_chunk.c",
+  "line": 132,
+  "function": "cio_chunk_close",
+  "call": "mk_list_del",
+  "arguments": [
+   "&ch->_state_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `ch`, which this function has not published"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "cio_chunk.c",
+  "line": 546,
+  "function": "chunk_state_sync",
+  "call": "mk_list_del",
+  "arguments": [
+   "&ch->_state_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `ch`, which this function has not published"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "cio_chunk.c",
+  "line": 549,
+  "function": "chunk_state_sync",
+  "call": "mk_list_add",
+  "arguments": [
+   "&ch->_state_head",
+   "&st->chunks_up"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `ch`"
+  ],
+  "container_root": "st",
+  "shape": "derived-formal",
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "cio_chunk.c",
+  "line": 552,
+  "function": "chunk_state_sync",
+  "call": "mk_list_add",
+  "arguments": [
+   "&ch->_state_head",
+   "&st->chunks_down"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `ch`"
+  ],
+  "container_root": "st",
+  "shape": "derived-formal",
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "cio_stream.c",
+  "line": 174,
+  "function": "cio_stream_create",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_head",
+   "&ctx->streams"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `st`",
+   "unsupported: publication by `mk_list_add` of `st`, which this function does not hold as one live object"
+  ],
+  "container_root": "ctx",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "cio_stream.c",
+  "line": 189,
+  "function": "cio_stream_destroy",
+  "call": "mk_list_del",
+  "arguments": [
+   "&st->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `st`, which this function has not published"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "chunkio.c",
+  "line": 246,
+  "function": "qsort_stream",
+  "call": "mk_list_del",
+  "arguments": [
+   "&chunk->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "entry_reach": "iteration-safe,other-local",
+  "heads": [
+   "&stream->chunks"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "chunkio.c",
+  "line": 255,
+  "function": "qsort_stream",
+  "call": "mk_list_add",
+  "arguments": [
+   "&chunk->_head",
+   "&stream->chunks"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "stream",
+  "shape": "formal",
+  "entry_reach": "iteration-safe,other-local"
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "line": 1775,
+  "function": "flb_input_chunk_map",
+  "call": "mk_list_add",
+  "arguments": [
+   "&ic->_head",
+   "&in->chunks"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `ic`"
+  ],
+  "container_root": "in",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "line": 2599,
+  "function": "flb_input_chunk_create",
+  "call": "mk_list_add",
+  "arguments": [
+   "&ic->_head",
+   "&in->chunks"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [],
+  "container_root": "in",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "line": 2691,
+  "function": "flb_input_chunk_destroy_corrupted",
+  "call": "mk_list_del",
+  "arguments": [
+   "&ic->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `ic`, which this function has not published"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "flb_input_chunk.c",
+  "line": 2798,
+  "function": "flb_input_chunk_destroy",
+  "call": "mk_list_del",
+  "arguments": [
+   "&ic->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `ic`, which this function has not published"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "line": 95,
+  "function": "mk_rconf_section_entry_add",
+  "call": "mk_list_add",
+  "arguments": [
+   "&new->_head",
+   "&section->entries"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `new`"
+  ],
+  "container_root": "section",
+  "shape": "element",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "line": 171,
+  "function": "mk_rconf_meta_add",
+  "call": "mk_list_add",
+  "arguments": [
+   "&meta->_head",
+   "&conf->metas"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `meta`"
+  ],
+  "container_root": "conf",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "line": 463,
+  "function": "mk_rconf_read",
+  "call": "mk_list_add",
+  "arguments": [
+   "&file->_head",
+   "&conf->includes"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [],
+  "container_root": "conf",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "line": 675,
+  "function": "mk_rconf_free",
+  "call": "mk_list_del",
+  "arguments": [
+   "&file->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&conf->includes"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "line": 683,
+  "function": "mk_rconf_free",
+  "call": "mk_list_del",
+  "arguments": [
+   "&entry->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&conf->includes"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "line": 692,
+  "function": "mk_rconf_free",
+  "call": "mk_list_del",
+  "arguments": [
+   "&section->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&conf->includes"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "line": 716,
+  "function": "mk_rconf_free_entries",
+  "call": "mk_list_del",
+  "arguments": [
+   "&entry->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&section->entries"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_core/mk_rconf.c",
+  "line": 738,
+  "function": "mk_rconf_section_add",
+  "call": "mk_list_add",
+  "arguments": [
+   "&new->_head",
+   "&conf->sections"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `new`"
+  ],
+  "container_root": "conf",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_core/mk_string.c",
+  "line": 385,
+  "function": "mk_string_split_line",
+  "call": "mk_list_add",
+  "arguments": [
+   "&new->_head",
+   "list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `new`"
+  ],
+  "container_root": "list",
+  "shape": "owner-returned",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_core/mk_string.c",
+  "line": 399,
+  "function": "mk_string_split_free",
+  "call": "mk_list_del",
+  "arguments": [
+   "&entry->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "list"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_http.c",
+  "line": 106,
+  "function": "mk_http_request_init",
+  "call": "mk_list_add",
+  "arguments": [
+   "&request->in_headers._head",
+   "&request->stream.inputs"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: publication by `mk_list_add` of an object the projection cannot name (`& request -> in_headers . _head`)"
+  ],
+  "container_root": "request",
+  "shape": "formal",
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "mk_server/mk_http.c",
+  "line": 268,
+  "function": "mk_request_premature_close",
+  "call": "mk_list_add",
+  "arguments": [
+   "&sr->_head",
+   "&cs->request_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "cs",
+  "shape": "formal",
+  "entry_reach": "embedded,lookup-first"
+ },
+ {
+  "unit": "mk_server/mk_http.c",
+  "line": 1444,
+  "function": "mk_http_session_remove",
+  "call": "mk_list_del",
+  "arguments": [
+   "&cs->request_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "mk_server/mk_http.c",
+  "line": 1535,
+  "function": "mk_http_request_free_list",
+  "call": "mk_list_del",
+  "arguments": [
+   "&request->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&cs->request_list"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_http.c",
+  "line": 1613,
+  "function": "mk_http_sched_read",
+  "call": "mk_list_add",
+  "arguments": [
+   "&sr->_head",
+   "&cs->request_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "cs",
+  "shape": "callee-result",
+  "entry_reach": "embedded,lookup-first"
+ },
+ {
+  "unit": "mk_server/mk_http_thread.c",
+  "line": 214,
+  "function": "mk_http_thread_create",
+  "call": "mk_list_add",
+  "arguments": [
+   "&mth->_head",
+   "&sched->threads"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "sched",
+  "shape": "callee-result",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_http_thread.c",
+  "line": 245,
+  "function": "mk_http_thread_purge",
+  "call": "mk_list_del",
+  "arguments": [
+   "&mth->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `mth`, which this function has not published"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "mk_server/mk_http_thread.c",
+  "line": 246,
+  "function": "mk_http_thread_purge",
+  "call": "mk_list_add",
+  "arguments": [
+   "&mth->_head",
+   "&sched->threads_purge"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `sched`"
+  ],
+  "container_root": "sched",
+  "shape": "callee-result",
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "mk_server/mk_http_thread.c",
+  "line": 264,
+  "function": "mk_http_thread_destroy",
+  "call": "mk_list_del",
+  "arguments": [
+   "&mth->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `mth`, which this function has not published"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 111,
+  "function": "mk_vhost_fdt_worker_init",
+  "call": "mk_list_add",
+  "arguments": [
+   "&fdt->_head",
+   "list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `fdt`"
+  ],
+  "container_root": "list",
+  "shape": "owner-local",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 134,
+  "function": "mk_vhost_fdt_worker_exit",
+  "call": "mk_list_del",
+  "arguments": [
+   "&fdt->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `fdt`, which this function has not published"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "list"
+  ],
+  "head_shape": [
+   "callee-result"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 414,
+  "function": "mk_vhost_read",
+  "call": "mk_list_add",
+  "arguments": [
+   "&new_alias->_head",
+   "&host->server_names"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `new_alias`"
+  ],
+  "container_root": "host",
+  "shape": "owner-returned",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 491,
+  "function": "mk_vhost_read",
+  "call": "mk_list_add",
+  "arguments": [
+   "&err_page->_head",
+   "&host->error_pages"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `err_page`"
+  ],
+  "container_root": "host",
+  "shape": "owner-returned",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 542,
+  "function": "mk_vhost_read",
+  "call": "mk_list_add",
+  "arguments": [
+   "&h_param->_head",
+   "&h_handler->params"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "h_handler",
+  "shape": "owner-published",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 554,
+  "function": "mk_vhost_read",
+  "call": "mk_list_add",
+  "arguments": [
+   "&h_handler->_head",
+   "&host->handlers"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "host",
+  "shape": "owner-returned",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 611,
+  "function": "mk_vhost_set_single",
+  "call": "mk_list_add",
+  "arguments": [
+   "&halias->_head",
+   "&host->server_names"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `halias`"
+  ],
+  "container_root": "host",
+  "shape": "owner-published",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 626,
+  "function": "mk_vhost_set_single",
+  "call": "mk_list_add",
+  "arguments": [
+   "&host->_head",
+   "&server->hosts"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `host`"
+  ],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 663,
+  "function": "mk_vhost_init",
+  "call": "mk_list_add",
+  "arguments": [
+   "&p_host->_head",
+   "&server->hosts"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 699,
+  "function": "mk_vhost_init",
+  "call": "mk_list_add",
+  "arguments": [
+   "&p_host->_head",
+   "&server->hosts"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 742,
+  "function": "mk_vhost_handler_free",
+  "call": "mk_list_del",
+  "arguments": [
+   "&param->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&h->params"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 765,
+  "function": "mk_vhost_destroy",
+  "call": "mk_list_del",
+  "arguments": [
+   "&halias->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `halias`, which this function has not published"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&vh->server_names"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 785,
+  "function": "mk_vhost_destroy",
+  "call": "mk_list_del",
+  "arguments": [
+   "&ep->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&vh->server_names"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_vhost.c",
+  "line": 801,
+  "function": "mk_vhost_destroy",
+  "call": "mk_list_del",
+  "arguments": [
+   "&vh->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `vh`, which this function has not published"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "mk_server/mk_config.c",
+  "line": 62,
+  "function": "mk_config_listeners_free",
+  "call": "mk_list_del",
+  "arguments": [
+   "&l->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&server->listeners"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_config.c",
+  "line": 596,
+  "function": "mk_config_listener_add",
+  "call": "mk_list_add",
+  "arguments": [
+   "&listen->_head",
+   "&server->listeners"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `listen`",
+   "unsupported: publication by `mk_list_add` of `listen`, which this function does not hold as one live object"
+  ],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_scheduler.c",
+  "line": 828,
+  "function": "mk_sched_event_free",
+  "call": "mk_list_add",
+  "arguments": [
+   "&event->_head",
+   "&sched->event_free_queue"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `sched`"
+  ],
+  "container_root": "sched",
+  "shape": "callee-result",
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "mk_server/mk_scheduler.c",
+  "line": 845,
+  "function": "mk_sched_worker_cb_add",
+  "call": "mk_list_add",
+  "arguments": [
+   "&wcb->_head",
+   "&server->sched_worker_callbacks"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_scheduler.c",
+  "line": 857,
+  "function": "mk_sched_worker_cb_free",
+  "call": "mk_list_del",
+  "arguments": [
+   "&wcb->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&server->sched_worker_callbacks"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_http_parser.c",
+  "line": 284,
+  "function": "header_lookup",
+  "call": "mk_list_del",
+  "arguments": [
+   "&header->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `header`, which this function has not published"
+  ],
+  "entry_reach": "embedded"
+ },
+ {
+  "unit": "mk_server/mk_http_parser.c",
+  "line": 287,
+  "function": "header_lookup",
+  "call": "mk_list_add",
+  "arguments": [
+   "&header->_head",
+   "&p->header_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [],
+  "container_root": "p",
+  "shape": "formal",
+  "entry_reach": "embedded"
+ },
+ {
+  "unit": "mk_server/mk_http_parser.c",
+  "line": 466,
+  "function": "header_lookup",
+  "call": "mk_list_add",
+  "arguments": [
+   "&header_extra->_head",
+   "&p->header_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [],
+  "container_root": "p",
+  "shape": "formal",
+  "entry_reach": "embedded"
+ },
+ {
+  "unit": "mk_server/mk_lib.c",
+  "line": 481,
+  "function": "mk_vhost_create",
+  "call": "mk_list_add",
+  "arguments": [
+   "&halias->_head",
+   "&h->server_names"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `h`"
+  ],
+  "container_root": "h",
+  "shape": "owner-published",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_lib.c",
+  "line": 482,
+  "function": "mk_vhost_create",
+  "call": "mk_list_add",
+  "arguments": [
+   "&h->_head",
+   "&ctx->server->hosts"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `h`"
+  ],
+  "container_root": "ctx",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_lib.c",
+  "line": 499,
+  "function": "mk_vhost_set_property",
+  "call": "mk_list_add",
+  "arguments": [
+   "&ha->_head",
+   "&vh->server_names"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [],
+  "container_root": "vh",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_lib.c",
+  "line": 561,
+  "function": "mk_vhost_handler",
+  "call": "mk_list_add",
+  "arguments": [
+   "&handler->_head",
+   "&vh->handlers"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "vh",
+  "shape": "callee-result",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 221,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_head",
+   "&server->stage10_handler"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 222,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_parent_head",
+   "&plugin->stage_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "plugin",
+  "shape": "mixed:callee-result,other-local",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 228,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_head",
+   "&server->stage20_handler"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 229,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_parent_head",
+   "&plugin->stage_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "plugin",
+  "shape": "mixed:callee-result,other-local",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 235,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_head",
+   "&server->stage30_handler"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 236,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_parent_head",
+   "&plugin->stage_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "plugin",
+  "shape": "mixed:callee-result,other-local",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 242,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_head",
+   "&server->stage40_handler"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 243,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_parent_head",
+   "&plugin->stage_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "plugin",
+  "shape": "mixed:callee-result,other-local",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 249,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_head",
+   "&server->stage50_handler"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 250,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&st->_parent_head",
+   "&plugin->stage_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "plugin",
+  "shape": "mixed:callee-result,other-local",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 256,
+  "function": "mk_plugin_load",
+  "call": "mk_list_add",
+  "arguments": [
+   "&plugin->_head",
+   "&server->plugins"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result,other-local"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 265,
+  "function": "mk_plugin_unregister",
+  "call": "mk_list_del",
+  "arguments": [
+   "&p->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `p`, which this function has not published"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 529,
+  "function": "mk_plugin_exit_stages",
+  "call": "mk_list_del",
+  "arguments": [
+   "&st->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&p->stage_list"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 532,
+  "function": "mk_plugin_exit_stages",
+  "call": "mk_list_del",
+  "arguments": [
+   "&st->_parent_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&p->stage_list"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_plugin.c",
+  "line": 552,
+  "function": "mk_plugin_exit_all",
+  "call": "mk_list_del",
+  "arguments": [
+   "&plugin->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "entry_reach": "iteration-plain",
+  "heads": [
+   "&server->plugins",
+   "&server->plugins"
+  ],
+  "head_shape": [
+   "formal",
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "line": 82,
+  "function": "mk_fifo_worker_create",
+  "call": "mk_list_add",
+  "arguments": [
+   "&fw->_head",
+   "&ctx->workers"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `fw`"
+  ],
+  "container_root": "ctx",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "line": 192,
+  "function": "mk_fifo_queue_create",
+  "call": "mk_list_add",
+  "arguments": [
+   "&q->_head",
+   "&ctx->queues"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "container_root": "ctx",
+  "shape": "formal",
+  "entry_reach": "callee-result,iteration-plain,lookup-first"
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "line": 216,
+  "function": "mk_fifo_queue_destroy",
+  "call": "mk_list_del",
+  "arguments": [
+   "&q->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: indirect memory access is outside the resource projection"
+  ],
+  "entry_reach": "formal-entry"
+ },
+ {
+  "unit": "mk_server/mk_fifo.c",
+  "line": 267,
+  "function": "mk_fifo_worker_destroy_all",
+  "call": "mk_list_del",
+  "arguments": [
+   "&fw->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: loop re-acquisition: an earlier generation that may be live is still held"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "&ctx->workers"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_server.c",
+  "line": 144,
+  "function": "mk_server_listen_free",
+  "call": "mk_list_del",
+  "arguments": [
+   "&listener->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unsupported: unlink by `mk_list_del` of `listener`, which this function has not published"
+  ],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "list"
+  ],
+  "head_shape": [
+   "callee-result"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_server.c",
+  "line": 162,
+  "function": "mk_server_listen_exit",
+  "call": "mk_list_del",
+  "arguments": [
+   "&listen->_head"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [],
+  "entry_reach": "iteration-safe",
+  "heads": [
+   "list"
+  ],
+  "head_shape": [
+   "formal"
+  ]
+ },
+ {
+  "unit": "mk_server/mk_server.c",
+  "line": 247,
+  "function": "mk_server_listen_init",
+  "call": "mk_list_add",
+  "arguments": [
+   "&listener->_head",
+   "listeners"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `listener`"
+  ],
+  "container_root": "listeners",
+  "shape": "owner-returned",
+  "entry_reach": "callee-result"
+ },
+ {
+  "unit": "mk_server/mk_mimetype.c",
+  "line": 110,
+  "function": "mk_mimetype_add",
+  "call": "mk_list_add",
+  "arguments": [
+   "&new_mime->_head",
+   "&server->mimetype_list"
+  ],
+  "status": [
+   "Unknown"
+  ],
+  "leaves": [
+   "unknown_alias: unresolved resource identity `new_mime`"
+  ],
+  "container_root": "server",
+  "shape": "formal",
+  "entry_reach": "callee-result"
+ }
+]

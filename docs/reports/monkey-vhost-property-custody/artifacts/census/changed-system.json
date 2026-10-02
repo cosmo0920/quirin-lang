@@ -1,0 +1,21 @@
+[
+ {
+  "unit": "src/flb_input_chunk.c",
+  "function": "flb_input_chunk_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "leaf_delta": {
+   "unsupported: publication by `mk_list_add` of `ic`, which owns linked objects": -1
+  }
+ },
+ {
+  "unit": "src/flb_output.c",
+  "function": "flb_output_task_singleplex_enqueue",
+  "before": "Unsafe",
+  "after": "Unsafe",
+  "leaf_delta": {
+   "unknown_alias: unresolved resource identity": 1,
+   "unsupported: call to uncontracted function `flb_output_task_queue_enqueue`": -1
+  }
+ }
+]
