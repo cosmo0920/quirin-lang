@@ -759,6 +759,7 @@ open. Each is registered in `named_followups` (recorded by
 | SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN | What is the bounds property's tally on the integrated main? | Medium | none |
 | SUP04-VARIADIC-UPSTREAM-CANDIDATES | Are CG26's two protocol violations real upstream defects? | Medium | none |
 | SUP05-PREDICTION-BEFORE-CODE | Can the order "prediction frozen before implementation" be checked, not asserted? | Medium | none |
+| SUP06-CONFIRMED-VERDICT-STATUS | A fifth verdict, `Confirmed`: fixed at the tip (release candidate) but not in master; Safe-equivalent yet handled on its own | High (verdict contract) | user decision on its semantics before dispatch |
 
 - **SUP01: census inertness proof.** CG27 re-read C03-NFR-REACH with the census
   (`crates/qcore-c-gateway/src/legacy_census.rs`, `compiler/examples/c03_reach_census.rs`), so a census edit that read its
@@ -790,3 +791,30 @@ open. Each is registered in `named_followups` (recorded by
   commit precedes its first implementation commit (a records or validator
   check, not a gate weakening), apply it to the wave-48 reports as a
   measurement, and record the seven as disclosed deviations, not corrections.
+- **SUP06: a `Confirmed` verdict (user direction, 2026-10-02, for future
+  reference; not dispatched).** Raised while asking whether `mk_vhost_set` is
+  Safe at the tip of its fix. The user wants a status beside Safe / Pending /
+  Unsafe / Unknown, `Confirmed`, that callers may treat as Safe-equivalent but
+  that is published and handled as its own value. **Its meaning (user, same
+  day):** the function is *fixed at the tip* (the release candidate a tip-mode
+  contract tracks) *but not in master* (the released line, the audited
+  `HEAD`): the defect is real at the audited revision and its fix is confirmed
+  on the tip, as for `mk_vhost_set` (fix `21a2c190` on
+  `cosmo0920-missing-va_end-on-null`, not yet on Monkey `master`). This changes hard invariant 2
+  and language specification §L21.2 (`Safe < Pending < Unknown < Unsafe`), so
+  the card must settle, with the user, before any code:
+  - **What produces it.** Two facts together: the audited (master) body is not
+    Safe for a reason the tip's body no longer has, and the tip's body is
+    `Safe` (or the user's recorded confirmation of the fix stands for it),
+    resolved through a tip identity (C06.2) to a named commit; recorded in the verdict tuple's assumptions with who, what and
+    which revision; never produced by absence of evidence, never by a tool
+    refusal (fail-closed holds).
+  - **Where it sits.** Its place in the order and the join (`Safe ⊔ Confirmed`,
+    `Confirmed ⊔ Pending`), what "Safe-equivalent" means for a consumer that
+    requires `Safe`, and how a `Pending` (awaiting a human act) becomes
+    `Confirmed` (the act done) or stays apart from it.
+  - **How it is counted.** A separate column in every headline and report, never
+    folded silently into the Safe count; the denominator rule unchanged.
+  - **Where it reaches.** §L21.2, AGENTS.md invariant 2, the Lean verdict model
+    (`QCore.VerdictSemigroup`), every audit route, the sidecars, `compare`,
+    STATUS and the acceptance matrix; an earlier result never changes meaning.
