@@ -119,7 +119,10 @@ fn line_of(body: &str, needle: &str) -> usize {
 }
 
 fn leaks(leaves: &[String]) -> Vec<&String> {
-    leaves.iter().filter(|leaf| leaf.starts_with("leak@")).collect()
+    leaves
+        .iter()
+        .filter(|leaf| leaf.starts_with("leak@"))
+        .collect()
 }
 
 /// `mk_http_error_page`'s :392/:395/:398/:399 with the rest of the body

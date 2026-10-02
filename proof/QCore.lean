@@ -333,5 +333,6 @@ import QCore.IndirectCalls
 import QCore.VariadicConditions
 import QCore.CarriedPublication
 import QCore.RefusedNullTest
+import QCore.RefusedTestAccusation
 
 /-! The executable formal core of QCore-C revision 0.1. -/

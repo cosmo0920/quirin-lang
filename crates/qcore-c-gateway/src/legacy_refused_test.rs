@@ -32,6 +32,24 @@
 //! validity test), exactly as `legacy_joined_provenance::outgoing` decides it,
 //! and [`tied_sites`] reads the sites provenance ties to that name. Both are
 //! pure readings, shared by the rule and by the leak-witness census.
+//!
+//! # The rule (gateway 12e)
+//!
+//! [`settle_absent_edge`] runs on a test's edge only when the older
+//! refinement returned `PointerRefinement::Unknown`, after its `UnknownAlias`
+//! and `unmodeled` are recorded. On the absent edge, each site the tested
+//! binding may denote and provenance ties to the tested name is **settled**:
+//! removed exactly as a decided null test's null edge removes the site its
+//! binding denotes (`remove_null_site`). Nothing else changes: the identity
+//! refusal stays, so the function is never `Safe` by this rule; the other
+//! edge, an untied site and a decided test are left to the older refinement.
+//!
+//! It settles rather than marks an unresolved effect, because the marker is
+//! joined by union: it would also withdraw a leak established on the test's
+//! other edge where the two edges meet. And it needs the tie, because without
+//! it the site may be live under no name on the null edge (an earlier
+//! overwrite of the tested name), where the accusation is established.
+//! `QCore.RefusedTestAccusation` proves both directions.
 use super::*;
 
 /// The tested name when `edge` is the edge of `instruction` on which that name
@@ -62,10 +80,119 @@ pub(crate) fn absent_edge_source(instruction: &LegacyInstruction, edge: usize) -
 /// The sites joined provenance ties to `source` at one node: present on the
 /// node's incoming facts, with `source` among the names that denote the site
 /// on every path on which it exists.
-pub(crate) fn tied_sites(joined: &BTreeMap<usize, BTreeSet<String>>, source: &str) -> BTreeSet<usize> {
+pub(crate) fn tied_sites(
+    joined: &BTreeMap<usize, BTreeSet<String>>,
+    source: &str,
+) -> BTreeSet<usize> {
     joined
         .iter()
         .filter(|(_, names)| names.contains(source))
         .map(|(site, _)| *site)
         .collect()
 }
+
+/// What one edge of a test does to one site (gateway rule 12e). The model is
+/// `QCore.RefusedTestAccusation.edgeStep`; [`EDGE_VECTORS`] is its
+/// `edgeVectors`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum EdgeStep {
+    /// The site is as the older refinement left it.
+    Keep,
+    /// The site does not exist on this edge: removed exactly as a decided null
+    /// test's null edge removes the site its binding denotes.
+    Settle,
+}
+
+impl EdgeStep {
+    #[cfg(test)]
+    pub(crate) const fn code(self) -> &'static str {
+        match self {
+            Self::Keep => "keep",
+            Self::Settle => "settle",
+        }
+    }
+}
+
+/// Rule 12e's decision for one site on one edge: settle exactly on a
+/// **refused** test's **absent** (null or invalid) edge, for a site the tested
+/// binding may denote (**targeted**) and joined provenance **ties** to the
+/// tested name. Every other combination keeps the site: a decided test refines
+/// as it always did, the other edge says nothing about the site's existence,
+/// and an untied site may be live on that edge under no name at all (its
+/// accusation then rests on established facts and stays).
+pub(crate) const fn edge_step(refused: bool, absent: bool, tied: bool, targeted: bool) -> EdgeStep {
+    if refused && absent && tied && targeted {
+        EdgeStep::Settle
+    } else {
+        EdgeStep::Keep
+    }
+}
+
+/// `(refused, absent, tied, targeted)` and the step, shared with
+/// `QCore.RefusedTestAccusation.edgeVectors`.
+pub(crate) type EdgeVector = ((bool, bool, bool, bool), &'static str);
+
+pub(crate) const EDGE_VECTORS: &[EdgeVector] = &[
+    ((false, false, false, false), "keep"),
+    ((false, false, false, true), "keep"),
+    ((false, false, true, false), "keep"),
+    ((false, false, true, true), "keep"),
+    ((false, true, false, false), "keep"),
+    ((false, true, false, true), "keep"),
+    ((false, true, true, false), "keep"),
+    ((false, true, true, true), "keep"),
+    ((true, false, false, false), "keep"),
+    ((true, false, false, true), "keep"),
+    ((true, false, true, false), "keep"),
+    ((true, false, true, true), "keep"),
+    ((true, true, false, false), "keep"),
+    ((true, true, false, true), "keep"),
+    ((true, true, true, false), "keep"),
+    ((true, true, true, true), "settle"),
+];
+
+/// The work-list hook (rule 12e), called for an edge whose test the older
+/// refinement could not decide (`PointerRefinement::Unknown`: the identity
+/// refusal is already reported and the edge already carries `unmodeled`).
+///
+/// `before` is the node's output before the edge was refined (a test's
+/// transfer is empty, so it is the test's own state); `joined` is joined
+/// provenance's facts at the node. Each site the tested binding denotes in
+/// `before` and provenance ties to the tested name is settled on the absent
+/// edge; nothing else changes. Returns the settled sites.
+///
+/// A status witness's test (rule 11v) is not this rule's: its edges decide
+/// another name's storage and are left as they are.
+pub(crate) fn settle_absent_edge(
+    instruction: &LegacyInstruction,
+    edge: usize,
+    before: &AbstractState,
+    joined: &BTreeMap<usize, BTreeSet<String>>,
+    edge_output: &mut AbstractState,
+) -> BTreeSet<usize> {
+    let Some(source) = absent_edge_source(instruction, edge) else {
+        return BTreeSet::new();
+    };
+    if in_place_custody::witnessed_storage(before, source).is_some() {
+        return BTreeSet::new();
+    }
+    let targets = before
+        .pointers
+        .get(source)
+        .map(|pointer| pointer.targets.clone())
+        .unwrap_or_default();
+    let tied = tied_sites(joined, source);
+    let settled = targets
+        .iter()
+        .copied()
+        .filter(|site| edge_step(true, true, tied.contains(site), true) == EdgeStep::Settle)
+        .collect::<BTreeSet<_>>();
+    for &site in &settled {
+        remove_null_site(edge_output, site);
+    }
+    settled
+}
+
+#[cfg(test)]
+#[path = "../tests/unit/legacy_refused_test.rs"]
+mod tests;

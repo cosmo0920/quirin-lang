@@ -12030,6 +12030,16 @@ pub(crate) fn analyze_cfg_with_entry(
                                 variable: source.to_owned(),
                             },
                         });
+                        // Card SUP07-REFUSED-TEST-ACCUSATION (rule 12e): on
+                        // the null edge, a site provenance ties to the tested
+                        // name is NULL or absent; the refusal above stays.
+                        refused_test::settle_absent_edge(
+                            &node.instruction,
+                            edge,
+                            &output,
+                            &joined[node_id],
+                            &mut edge_output,
+                        );
                     }
                     PointerRefinement::Refined => {}
                 }
@@ -15577,6 +15587,38 @@ enum PointerRefinement {
 pub(crate) const LOOP_EXIT_EDGE_RETAINED: &str =
     "loop exit edge retained: a modeled value cannot remove it";
 
+/// The null edge of a decided null test: `site` does not exist on it. Its
+/// status, nullability, replacement, collection and incoming aggregate edges
+/// go, every sibling obligation is retained, and every alias that named it
+/// loses it and may be null. Shared by [`refine_pointer_null`] and card
+/// SUP07-REFUSED-TEST-ACCUSATION's rule 12e (`refused_test::settle_absent_edge`),
+/// so the two cannot drift apart.
+fn remove_null_site(state: &mut AbstractState, site: usize) {
+    state.resources.remove(&site);
+    state.nullable_sites.remove(&site);
+    state.conditional_replacements.remove(&site);
+    // Card W43-INDEXED-RESOURCE-COLLECTIONS: a null array has no elements.
+    state.collections.remove(&site);
+    // The null alternative has no child at this site. Remove precisely
+    // its incoming aggregate edges, retaining every sibling obligation.
+    state.contained.retain(|_, children| {
+        children.remove(&site);
+        !children.is_empty()
+    });
+    state.field_links.retain(|_, fields| {
+        fields.retain(|_, children| {
+            children.remove(&site);
+            !children.is_empty()
+        });
+        !fields.is_empty()
+    });
+    for alias in state.pointers.values_mut() {
+        if alias.targets.remove(&site) {
+            alias.may_be_null = true;
+        }
+    }
+}
+
 fn refine_pointer_null(
     state: &mut AbstractState,
     source: &str,
@@ -15669,29 +15711,7 @@ fn refine_pointer_null(
         };
     }
     if assume_null {
-        state.resources.remove(&site);
-        state.nullable_sites.remove(&site);
-        state.conditional_replacements.remove(&site);
-        // Card W43-INDEXED-RESOURCE-COLLECTIONS: a null array has no elements.
-        state.collections.remove(&site);
-        // The null alternative has no child at this site. Remove precisely
-        // its incoming aggregate edges, retaining every sibling obligation.
-        state.contained.retain(|_, children| {
-            children.remove(&site);
-            !children.is_empty()
-        });
-        state.field_links.retain(|_, fields| {
-            fields.retain(|_, children| {
-                children.remove(&site);
-                !children.is_empty()
-            });
-            !fields.is_empty()
-        });
-        for alias in state.pointers.values_mut() {
-            if alias.targets.remove(&site) {
-                alias.may_be_null = true;
-            }
-        }
+        remove_null_site(state, site);
     } else {
         finalize_replacement_success(state, site);
         for alias in state.pointers.values_mut() {

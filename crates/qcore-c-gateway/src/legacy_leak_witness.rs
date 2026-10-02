@@ -436,6 +436,17 @@ fn settle(
                     )
                     .map(|(_, refinement)| refinement);
                     edge_unknown.push(matches!(refinement, Some(PointerRefinement::Unknown)));
+                    // Card SUP07-REFUSED-TEST-ACCUSATION (rule 12e): as in
+                    // the work list.
+                    if matches!(refinement, Some(PointerRefinement::Unknown)) {
+                        refused_test::settle_absent_edge(
+                            &node.instruction,
+                            edge,
+                            &output,
+                            &joined[node_id],
+                            &mut edge_output,
+                        );
+                    }
                     absent.push(
                         matches!(refinement, Some(PointerRefinement::Unknown))
                             .then(|| refused_test::absent_edge_source(&node.instruction, edge))
