@@ -1,0 +1,49 @@
+changed rows 104; moves {'Unknown -> Safe': 1}
+rdkafka.c::rd_kafka_flush Unknown -> Unknown
+   + 24656 unknown_alias: unresolved resource identity `rd_kafka_yield_thread`
+   - 24653 unsupported: call to uncontracted function `rd_timeout_init`
+   - 24656 unsupported: unmodeled call, aggregate or indirect access in do-while condition
+rdkafka_broker.c::rd_kafka_broker_set_error Unknown -> Unknown
+   + 21144 unknown_alias: unresolved resource identity `rkb`
+   - 21144 unsupported: indirect memory access is outside the resource projection
+rdkafka_cgrp.c::rd_kafka_cgrp_metadata_refresh Unknown -> Unknown
+   + 21730 unknown_alias: unresolved resource identity `rk`
+   - 21730 unsupported: indirect memory access is outside the resource projection
+rdkafka_fetcher.c::rd_kafka_ShareAcknowledgeRequest Unknown -> Unknown
+   + 21979 unknown_alias: unresolved resource identity `rkb`
+   - 21979 unsupported: indirect memory access is outside the resource projection
+rdkafka_fetcher.c::rd_kafka_ShareFetchRequest Unknown -> Unknown
+   + 21863 unknown_alias: unresolved resource identity `rkb`
+   - 21863 unsupported: indirect memory access is outside the resource projection
+rdkafka_fetcher.c::rd_kafka_broker_fetch_toppars Unknown -> Unknown
+   + 22215 unknown_alias: unresolved resource identity `rkb`
+   - 22215 unsupported: indirect memory access is outside the resource projection
+rdkafka_metadata_cache.c::rd_kafka_metadata_cache_topics_count_exists Unknown -> Unknown
+   + 20690 unknown_alias: unresolved resource identity `rkmce`
+   - 20690 unsupported: indirect memory access is outside the resource projection
+rdkafka_request.c::rd_kafka_ApiVersionRequest Unknown -> Unknown
+   + 22323 unknown_alias: unresolved resource identity `rkb`
+   - 22323 unsupported: indirect memory access is outside the resource projection
+rdkafka_request.c::rd_kafka_ConsumerGroupHeartbeatRequest Unknown -> Unknown
+   + 21852 unknown_alias: unresolved resource identity `rkb`
+   + 21854 unknown_alias: unresolved resource identity `rkb`
+   - 21852 unsupported: indirect memory access is outside the resource projection
+   - 21854 unsupported: indirect memory access is outside the resource projection
+rdkafka_request.c::rd_kafka_HeartbeatRequest Unknown -> Unknown
+   + 21731 unknown_alias: unresolved resource identity `rkb`
+   - 21731 unsupported: indirect memory access is outside the resource projection
+rdkafka_request.c::rd_kafka_SyncGroupRequest Unknown -> Unknown
+   + 21602 unknown_alias: unresolved resource identity `rkb`
+   - 21602 unsupported: indirect memory access is outside the resource projection
+rdkafka_timer.c::rd_kafka_timer_next Unknown -> Safe
+   - 19690 unsupported: call to uncontracted function `rd_clock`
+rdkafka_txnmgr.c::rd_kafka_txn_handle_AddOffsetsToTxn Unknown -> Unknown
+   + 21166 unknown_alias: unresolved resource identity `rko`
+   - 21166 unsupported: indirect memory access is outside the resource projection
+rdkafka_txnmgr.c::rd_kafka_txn_handle_TxnOffsetCommit Unknown -> Unknown
+   + 21054 unknown_alias: unresolved resource identity `rko`
+   - 21054 unsupported: indirect memory access is outside the resource projection
+tinycthread_extra.c::cnd_timedwait_msp Unknown -> Unknown
+   + 3021 unknown_alias: unresolved resource identity `timeout_msp`
+   - 3017 unsupported: call to uncontracted function `rd_clock`
+   - 3021 unsupported: call to uncontracted function `rd_clock`

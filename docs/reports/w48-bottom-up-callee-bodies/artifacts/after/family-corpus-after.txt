@@ -1,0 +1,26 @@
+cross  same direct bodies   fns leaves  family
+  589   568    513    333  2974  13327  unsupported: indirect memory access is outside the resource projection
+   81    74     58     29   173    222  unsupported: unmodeled call, aggregate or indirect access in return expression
+   56    49     49     46  1264   3542  unsupported: unmodeled call, aggregate or indirect access in branch condition
+   46    33     31     89  2340  11415  unknown_alias: unresolved resource identity `X`
+   17    10     10      7   200    301  unsupported: braced initializer, expression, or declaration is not modeled
+   13     7      6      6   165    300  unsupported: unrecognized assignment destination
+   13     7      7      8    93    111  unsupported: unmodeled call, aggregate or indirect access in loop condition
+   11     5      5      6   202    840  unsupported: unsupported assignment expression
+   10     4      3      4   156    280  unsupported: unmodeled increment or decrement expression
+    9     3      3      1   128    237  unsupported: store through `X` without an out-parameter contract
+    8     2      2      2    49     91  unsupported: unmodeled expression may mutate a formal resource identity
+    7     1      1      4   116    192  unsupported: arguments beyond the declared parameters of `X` are outside the resource projection
+    7     1      1      1    30     89  unsupported: C operator `X` requires type/operand analysis
+    7     1      1      1     4      4  unsupported: unmodeled call, aggregate or indirect access in switch expression
+    7     1      1      1     1      1  unsupported: arguments do not match resource contract for `X`
+    7     1      1      0     1      1  summary_conflict: inferred custody summary ResourceFunctionContract { parameters: [Borrowed, Released { nullab
+    7     1      1      1     1      1  unsupported: transfer of `X`, which a container holds after its publication
+    6     0      0      2   195    257  unsupported: unmodeled call, aggregate or indirect access in for-loop condition
+    6     0      0      0   192    201  unsupported: nullable resource `X` used by a non-null contract
+    6     0      0      0    29     39  unsupported: loop re-acquisition: an earlier generation that may be live is still held
+    6     0      0      0    23     39  unsupported: `X` is the Clang extension node OffsetOfExpr, which no resource contract or route models
+    6     0      0      0    19     29  unsupported: local declaration may shadow a formal resource identity
+    6     0      0      0    15     23  unsupported: discarded owned result of resource API `X`
+    6     0      0      0    21     22  unsupported: unmodeled call, aggregate or indirect access in do-while condition
+    6     0      0      0    12     14  unsupported: unlink by `X` of `X`, which this function has not published

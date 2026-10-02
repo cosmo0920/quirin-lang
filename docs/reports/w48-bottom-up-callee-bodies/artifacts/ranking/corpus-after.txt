@@ -1,0 +1,95 @@
+route corpus: functions {'Unknown': 4177, 'Safe': 648, 'Unsafe': 9}
+Unknown with a call blocker: 2525; call-only: 489
+    338  i-same-unit
+     70  ii-cross-unit
+     31  iv-decision
+     17  i-same-unit + ii-cross-unit
+      7  i-same-unit + iii-external
+      6  i-same-unit + ii-cross-unit + iii-external
+      5  iii-external
+      4  i-same-unit + iv-decision
+      3  v-builtin
+      2  iii-external + iv-decision
+      2  i-same-unit + v-builtin
+      2  ii-cross-unit + iii-external
+      2  ii-cross-unit + iv-decision
+closure same-unit: freed 0 rounds [0]
+closure cross-unit: freed 5 rounds [5]
+closure ceiling: freed 6 rounds [5, 1, 0]
+closure class-i-safe: freed 425 rounds [425, 0]
+by class: callees / alone / plus-one / sites / callees alone>=2
+  i-same-unit                 1439   266   173   3511   45
+  ii-cross-unit                676    75    71   3238   11
+  iii-external                 246     4    18   1274    0
+  iv-decision                   90    28    22    530    3
+  v-builtin                     11     3     1    100    0
+decision classes: callees / alone (one callee) / freed by the whole class / plus-one / functions / sites
+  1-callbacks-and-retained-pointers                   7    5    5    3    39    60
+  2-in-place-lifecycles-and-reallocation              5    6    6    5    42   178
+  3-reference-counts                                  5    3    3    9    93   132
+  4-handle-kinds-and-no-return                        2    0    1    1     1     2
+  5-system-libraries-outside-the-audited-source      59    2    4    2    26   133
+  6-compiler-builtins-without-an-owning-crate        11    3    3    1    58   100
+  7-monkey-backend-selected-static-inline-bodies     11   10   10    0    11    13
+  8-arena-interior-reading                            1    2    2    1    10    12
+alone +call +leaf  fns sites  class  callee  [home status]
+   10     0     0   15    15  i-same-unit    cJSON_New_Item  [Unknown]
+    9     0     0    9     9  i-same-unit    LZ4_decompress_generic  [Unknown]
+    5     0     0   12    12  ii-cross-unit  cmt_mpack_unpack_array  [Unknown]
+    5     0     0    5     5  ii-cross-unit  ctr_mpack_unpack_array  [Unknown]
+    4     0     0    9    46  i-same-unit    sds_cat_safe  [Unknown]
+    4     0     0    5     5  i-same-unit    LZ4_compress_HC_extStateHC  [Unknown]
+    4     0     0    4     4  i-same-unit    LZ4_compress_HC  [Unknown]
+    4     0     0    4     4  i-same-unit    rd_kafka_admin_result_ret_groups  [Unknown]
+    4     0     0    4     4  i-same-unit    rd_kafka_error_new_v  [Unknown]
+    3     2     1   36   170  iv-decision    cfl_sds_cat_safe  []
+    3     0     2   10    10  ii-cross-unit  cmt_mpack_unpack_map  [Unknown]
+    3     1     0    4     4  i-same-unit    LZ4_decompress_unsafe_generic  [Unknown]
+    3     0     1    4     4  i-same-unit    add  [Unknown]
+    3     0     0    9     9  ii-cross-unit  ctr_mpack_unpack_map  [Unknown]
+    3     0     0    4     4  ii-cross-unit  LZ4_compress_HC_continue  [Unknown]
+    3     0     0    4     4  i-same-unit    LZ4_compress_fast_continue  [Unknown]
+    3     0     0    3     3  i-same-unit    add_item_to_object  [Unknown]
+    3     0     0    3     3  i-same-unit    rd_kafka_admin_result_ret_resources  [Unknown]
+    3     0     0    3     3  i-same-unit    rd_kafka_admin_result_ret_topics  [Unknown]
+    3     0     0    3     3  ii-cross-unit  rd_kafka_assignor_add  [Unknown]
+    2     1     2    8     8  i-same-unit    pb_write  [Unknown]
+    2     0     1   83   132  ii-cross-unit  rd_kafka_op_destroy  [Unknown]
+    2     0     1   10    12  iv-decision    rd_kafka_topic_partition_get_private  []
+    2     0     1    4     6  i-same-unit    load_descriptor_values  [Unknown]
+    2     0     1    4     5  i-same-unit    pb_encode_varint  [Unknown]
+    2     0     1    3     3  i-same-unit    LZ4_compress_fast_extState  [Unknown]
+    2     1     0    3     3  i-same-unit    append_to_ring_buffer  [Unknown]
+    2     0     0   11    33  i-same-unit    setupRackAwareAssignment0  [Unknown,Unknown]
+    2     0     0    4     4  i-same-unit    add_item_to_array  [Unknown]
+    2     0     0    4     4  i-same-unit    rd_kafka_AclBinding_new0  [Unknown]
+    2     0     0    3     3  ii-cross-unit  rd_flags2str  [Unknown]
+    2     0     0    3     3  i-same-unit    rd_kafka_anyconf_dump  [Unknown]
+    2     0     0    3     3  i-same-unit    rd_kafka_topic_partition_list_difference0  [Unknown]
+    2     0     0    2     2  i-same-unit    LZ4_compress_default  [Unknown]
+    2     0     0    2     2  i-same-unit    _cio_file_up  [Unknown]
+    2     0     0    2     2  iv-decision    _mk_event_wait_2  []
+    2     0     0    2     2  i-same-unit    cJSON_ParseWithLengthOpts  [Unknown]
+    2     0     0    2     2  ii-cross-unit  call_once  [not analysed]
+    2     0     0    2     2  i-same-unit    ctr_mpack_consume_int_tag  [Unknown]
+    2     0     0    2     2  i-same-unit    ctr_mpack_consume_uint_tag  [Unknown]
+    2     0     0    2     2  i-same-unit    get_object_item  [Unknown]
+    2     0     0    2     2  i-same-unit    metric_sum_exchange  [Unknown]
+    2     0     0    2     2  i-same-unit    mk_fifo_queue_destroy  [Unknown]
+    2     0     0    2     2  i-same-unit    print  [Unknown]
+    2     0     0    2     2  i-same-unit    rd_kafka_aborted_txns_next_offset  [Unknown]
+    2     0     0    2     2  i-same-unit    rd_kafka_destroy_app  [Unknown]
+    2     0     0    2     2  i-same-unit    rd_kafka_dump0  [Unknown]
+    2     0     0    2     2  i-same-unit    rd_kafka_metadata_copy_internal  [Unknown]
+    2     0     0    2     2  i-same-unit    rd_kafka_metadata_new_topic_mockv_internal  [Unknown]
+    2     0     0    2     2  i-same-unit    rd_kafka_parse_Metadata0  [Unknown]
+    2     0     0    2     2  i-same-unit    rd_kafka_topic_partition_destroy0  [Unknown]
+    2     0     0    2     2  i-same-unit    rd_kafka_topic_partition_list_intersection0  [Unknown]
+    2     0     0    2     2  i-same-unit    rd_kafka_topic_partition_list_union0  [Unknown]
+    2     0     0    2     2  ii-cross-unit  rd_kafka_toppars_pause_resume  [Unknown]
+    2     0     0    2     2  ii-cross-unit  rd_seed  [Unknown]
+    2     0     0    2     2  i-same-unit    rd_slice_reader0  [Unknown]
+    2     0     0    2     2  i-same-unit    replace_item_in_object  [Unknown]
+    2     0     0    2    39  i-same-unit    unit_test_telemetry  [Unknown]
+    2     0     0    2     2  i-same-unit    ut_init_member_internal  [Unknown]
+    1     2     3   31    61  ii-cross-unit  rd_kafka_error_new  [Unknown]

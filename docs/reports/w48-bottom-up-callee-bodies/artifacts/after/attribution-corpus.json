@@ -1,0 +1,1870 @@
+[
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_clusterid",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 24594,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_remains`",
+    "line": 24607,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_committed",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rk`",
+    "line": 23932,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 23929,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_consume0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 23725,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_controllerid",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 24615,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_remains`",
+    "line": 24629,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_flush",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rd_kafka_yield_thread`",
+    "line": 24656,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 24653,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "unmodeled call, aggregate or indirect access in do-while condition",
+    "line": 24656,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_init_wait",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 22205,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_list_groups",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 24969,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_offsets_for_times",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `offsets`",
+    "line": 24200,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 24194,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_query_watermark_offsets",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 24062,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_remains`",
+    "line": 24102,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_seek_partitions",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `partitions`",
+    "line": 23555,
+    "count": 1
+   },
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rk`",
+    "line": 23551,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 23549,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_share_commit_sync",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 23363,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_share_commit_sync_fanout_op",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 23303,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_share_log_fetch_stall",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22219,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_share_record_poll_end",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 23062,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_share_record_poll_start",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 23048,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_stats_emit_all",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22048,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka.c",
+  "function": "rd_kafka_wait_destroyed",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21186,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "unmodeled call, aggregate or indirect access in branch condition",
+    "line": 21188,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_assignor.c",
+  "function": "rd_kafka_assignor_run",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20388,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_ApiVersion_supported0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "unmodeled call, aggregate or indirect access in return expression",
+    "line": 21047,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_any_usable",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 21753,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_remains`",
+    "line": 21769,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_buf_enq0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21500,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_conn_closed",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkb`",
+    "line": 21305,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21304,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_controller",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_remains`",
+    "line": 21871,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_idle_check",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 23244,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_internal_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22951,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_ops_io_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22848,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22852,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22872,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_producer_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_interval0`",
+    "line": 23158,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_retry_bufs_move",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22449,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 23262,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_set_error",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkb`",
+    "line": 21144,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 21144,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_broker_thread_main",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "nested call `rd_clock` inside a modeled call is outside the resource projection",
+    "line": 23342,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_send",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22383,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_broker.c",
+  "function": "rd_kafka_waitresp_find",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21880,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_buf.c",
+  "function": "rd_kafka_bufq_connection_reset",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 19769,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_buf.c",
+  "function": "rd_kafka_bufq_dump",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 19797,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_join_state_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 23950,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_metadata_refresh",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rk`",
+    "line": 21730,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 21730,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_cgrp.c",
+  "function": "rd_kafka_cgrp_serve",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 24254,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_ShareAcknowledgeRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkb`",
+    "line": 21979,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 21979,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_ShareFetchRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkb`",
+    "line": 21863,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 21863,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_broker_fetch_toppars",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkb`",
+    "line": 22215,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 22215,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_fetcher.c",
+  "function": "rd_kafka_toppar_fetch_backoff",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20263,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20271,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_metadata.c",
+  "function": "rd_kafka_metadata",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rk`",
+    "line": 20218,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 20216,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_dump",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20716,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_evict",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20180,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_hint",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rk`",
+    "line": 20526,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20525,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_topic_update",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `mdt`",
+    "line": 20443,
+    "count": 1
+   },
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rk`",
+    "line": 20441,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20440,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_metadata_cache.c",
+  "function": "rd_kafka_metadata_cache_topics_count_exists",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkmce`",
+    "line": 20690,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 20690,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_connection_send_response0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22105,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_mock.c",
+  "function": "rd_kafka_mock_connection_write_out",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `mconn`",
+    "line": 22242,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22241,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_classic_session_tmr_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21083,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_mock_cgrp.c",
+  "function": "rd_kafka_mock_cgrp_consumer_session_tmr_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21726,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_mock_handlers.c",
+  "function": "rd_kafka_mock_handle_ShareFetch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 24808,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_mock_sharegrp.c",
+  "function": "rd_kafka_mock_sgrp_fetch_session_tmr_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22489,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_mock_sharegrp.c",
+  "function": "rd_kafka_mock_sharegroup_session_tmr_cb",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21968,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "rd_kafka_produce_batch",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20200,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_uclock`",
+    "line": 20199,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "unittest_msgq_insert_all_sort",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21201,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21203,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_msg.c",
+  "function": "unittest_msgq_insert_each_sort",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21266,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21269,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_msgset_writer.c",
+  "function": "rd_kafka_msgset_writer_write_msgq",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20053,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_retry_msgq",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20709,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_topic_partition_list_query_leaders",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22487,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 22469,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_remains_limit`",
+    "line": 22500,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_partition.c",
+  "function": "rd_kafka_toppar_offset_retry",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 21025,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_queue.c",
+  "function": "rd_kafka_q_pop_serve0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init_us`",
+    "line": 19906,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_queue.c",
+  "function": "rd_kafka_q_serve0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 20019,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_queue.c",
+  "function": "rd_kafka_q_serve_rkmessages",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 20130,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_queue.c",
+  "function": "rd_kafka_q_serve_share_rkmessages",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 20222,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_range_assignor.c",
+  "function": "rd_kafka_range_assignor_unittest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20518,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_AlterConfigsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23501,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_ApiVersionRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkb`",
+    "line": 22323,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 22323,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_ConsumerGroupHeartbeatRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkb`",
+    "line": 21852,
+    "count": 1
+   },
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkb`",
+    "line": 21854,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 21852,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 21854,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_CreateAclsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23723,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_CreatePartitionsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23448,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_CreateTopicsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23306,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_DeleteAclsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23858,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_DeleteRecordsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23387,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_DeleteTopicsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23349,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_DescribeAclsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23788,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_DescribeConfigsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23612,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_ElectLeadersRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23916,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_HeartbeatRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkb`",
+    "line": 21731,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 21731,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_IncrementalAlterConfigsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23555,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_LeaveGroupRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 21673,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_ListOffsetsRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 20945,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_OffsetFetchRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 21340,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_ProduceRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 23204,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 23214,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_SaslHandshakeRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_kafka_buf_set_abs_timeout0`",
+    "line": 22346,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_SyncGroupRequest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rkb`",
+    "line": 21602,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 21602,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_request.c",
+  "function": "rd_kafka_handle_idempotent_Produce_error",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 22813,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_sasl_cyrus.c",
+  "function": "rd_kafka_sasl_cyrus_kinit_refresh",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20493,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20497,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "rd_kafka_oauthbearer_enqueue_token_refresh_if_necessary",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_uclock`",
+    "line": 20255,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer.c",
+  "function": "rd_kafka_oauthbearer_set_token0",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_uclock`",
+    "line": 20325,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+  "function": "rd_kafka_oidc_assertion_create",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_uclock`",
+    "line": 21454,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_sasl_scram.c",
+  "function": "rd_kafka_sasl_scram_fsm",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20514,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 20541,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_sticky_assignor.c",
+  "function": "rd_kafka_sticky_assignor_unittest",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 23920,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_timer.c",
+  "function": "rd_kafka_timer_next",
+  "before": "Unknown",
+  "after": "Safe",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 19690,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_timer.c",
+  "function": "rd_kafka_timers_next",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 19710,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_timer.c",
+  "function": "rd_kafka_timers_run",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 19728,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 19743,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_curr_api_begin",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 20502,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_handle_AddOffsetsToTxn",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rko`",
+    "line": 21166,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 21166,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdkafka_txnmgr.c",
+  "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `rko`",
+    "line": 21054,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "indirect memory access is outside the resource projection",
+    "line": 21054,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "rdmap.c",
+  "function": "unittest_untyped_map",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 3527,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 3535,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 3567,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 3576,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "tinycthread_extra.c",
+  "function": "cnd_timedwait_abs",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_remains`",
+    "line": 3033,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "tinycthread_extra.c",
+  "function": "cnd_timedwait_ms",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_init`",
+    "line": 2993,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_timeout_remains`",
+    "line": 3009,
+    "count": 1
+   }
+  ]
+ },
+ {
+  "unit": "tinycthread_extra.c",
+  "function": "cnd_timedwait_msp",
+  "before": "Unknown",
+  "after": "Unknown",
+  "added": [
+   {
+    "category": "unknown_alias",
+    "description": "unresolved resource identity `timeout_msp`",
+    "line": 3021,
+    "count": 1
+   }
+  ],
+  "removed": [
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 3017,
+    "count": 1
+   },
+   {
+    "category": "unsupported",
+    "description": "call to uncontracted function `rd_clock`",
+    "line": 3021,
+    "count": 1
+   }
+  ]
+ }
+]

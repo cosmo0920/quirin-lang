@@ -212,6 +212,18 @@ Wave 46 dispatched P1 at Medium and P4's external-contract arm (W46-EXTERNAL-CAL
   short-circuit operand's obligations only where it is evaluated.
 
 ### P4: CALLEE-CLOSURE
+- **Status (round 4, bottom-up):**
+  [W48-BOTTOM-UP-CALLEE-BODIES](../../reports/w48-bottom-up-callee-bodies/README.md)
+  (main `c85cb8806`) ranked every Unknown in-corpus callee body by the
+  callers it frees and its own blockers: every body taken Safe frees 416,
+  338 of them waiting on exactly one body, and no single body frees more
+  than 12. It lifted one rule residual (gateway 12f, a scalar `return` value
+  read as a statement value): `rd_clock` and `rd_uclock` validate, corpus
+  647 → 648 Safe (`rd_kafka_timer_next`), 112 call leaves removed. The
+  cross-unit route was re-measured (5, 10 counting calls held in return and
+  condition leaves) and not built. The residual plan is
+  `W48-BOTTOM-UP-RESIDUAL-PLAN`; the largest coherent shape left is
+  `W48-POINTER-RETURN-THROUGH-CALL-ACTUAL-ROOT` (24).
 - **Status (round 3):** ranked over every callee class on the corpus, system
   and tail-pause routes by
   [W48-CALLEE-CLOSURE-R3](../../reports/w48-callee-closure-r3/README.md)
