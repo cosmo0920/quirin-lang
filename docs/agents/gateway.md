@@ -4502,6 +4502,7 @@ own anchor here.
     `a_null_test_refines_only_the_binding`), bound to `decide` and
     `derive_pointer` by unit tests;
     [report](../reports/va-loop-and-pointer-arg/README.md).
+
 <a id="constraint-12d"></a>
 
 12d. **A publication carries its owner's field-linked children only when
