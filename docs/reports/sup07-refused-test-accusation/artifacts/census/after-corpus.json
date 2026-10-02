@@ -1,0 +1,258 @@
+{
+ "diagnostic_counts": {
+  "leak": 41,
+  "summary_conflict": 2,
+  "unknown_alias": 11463,
+  "unsupported": 29110
+ },
+ "leaves": {},
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a32011d7035553ac0/private/sup07/after/resource-diagnostics.json",
+ "sha256": "25c1820bafb70667d379317d1e16b9a0cb0ef55ad834d6ec21b9a368794ea254",
+ "status": {
+  "Safe": 647,
+  "Unknown": 4177,
+  "Unsafe": 10
+ },
+ "violation_functions": 12,
+ "violations": {
+  "ctr_random.c::ctr_random_get": [
+   [
+    "leak",
+    "ctr_random.c:85",
+    "live obligation acquired at ctr_random.c:66"
+   ]
+  ],
+  "flb_input_chunk.c::input_chunk_has_magic_bytes": [
+   [
+    "summary_conflict",
+    "flb_input_chunk.c:291",
+    "inferred custody summary ResourceFunctionContract { parameters: [Owned { nullable: false }, Borrowed], result: None } co"
+   ]
+  ],
+  "mk_server/mk_http.c::mk_http_error": [
+   [
+    "leak",
+    "mk_server/mk_http.c:1315",
+    "live obligation acquired at mk_server/mk_http.c:1301"
+   ]
+  ],
+  "mk_server/mk_net.c::mk_net_conn_create": [
+   [
+    "leak",
+    "mk_server/mk_net.c:320",
+    "live obligation acquired at mk_server/mk_net.c:247"
+   ]
+  ],
+  "mk_server/mk_scheduler.c::mk_sched_add_connection": [
+   [
+    "leak",
+    "mk_server/mk_scheduler.c:210",
+    "live obligation acquired at mk_server/mk_scheduler.c:201"
+   ],
+   [
+    "leak",
+    "mk_server/mk_scheduler.c:210",
+    "live obligation acquired at mk_server/mk_scheduler.c:205"
+   ]
+  ],
+  "rdhttp.c::unittest_http_get_params_append": [
+   [
+    "leak",
+    "rdhttp.c:805",
+    "live obligation acquired at rdhttp.c:802"
+   ]
+  ],
+  "rdkafka.c::rd_kafka_mem_free": [
+   [
+    "summary_conflict",
+    "rdkafka.c:7131",
+    "inferred custody summary ResourceFunctionContract { parameters: [Borrowed, Released { nullable: false }], result: None }"
+   ]
+  ],
+  "rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_assertion_create": [
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1777",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1777",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1778",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1778",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1779",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1779",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1781",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1781",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1783",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1783",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1785",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1785",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1788",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1788",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1790",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1790",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1792",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1792",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1794",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1794",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1796",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1796",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1798",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1798",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775"
+   ]
+  ],
+  "rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_assertion_parse_from_file": [
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1600",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1599"
+   ],
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1605",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1603"
+   ]
+  ],
+  "rdkafka_sasl_oauthbearer_oidc.c::ut_sasl_oauthbearer_oidc_assertion_process_template_file": [
+   [
+    "leak",
+    "rdkafka_sasl_oauthbearer_oidc.c:1659",
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656"
+   ]
+  ],
+  "rdkafka_sasl_scram.c::rd_kafka_sasl_safe_string": [
+   [
+    "leak",
+    "rdkafka_sasl_scram.c:249",
+    "live obligation acquired at rdkafka_sasl_scram.c:243"
+   ]
+  ],
+  "snappy.c::rd_kafka_snappy_java_uncompress": [
+   [
+    "leak",
+    "snappy.c:1648",
+    "live obligation acquired at snappy.c:1705"
+   ],
+   [
+    "leak",
+    "snappy.c:1660",
+    "live obligation acquired at snappy.c:1705"
+   ],
+   [
+    "leak",
+    "snappy.c:1680",
+    "live obligation acquired at snappy.c:1705"
+   ],
+   [
+    "leak",
+    "snappy.c:1694",
+    "live obligation acquired at snappy.c:1705"
+   ],
+   [
+    "leak",
+    "snappy.c:1701",
+    "live obligation acquired at snappy.c:1705"
+   ],
+   [
+    "leak",
+    "snappy.c:1712",
+    "live obligation acquired at snappy.c:1705"
+   ],
+   [
+    "leak",
+    "snappy.c:1721",
+    "live obligation acquired at snappy.c:1705"
+   ]
+  ]
+ }
+}

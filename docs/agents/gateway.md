@@ -769,6 +769,11 @@ reaches a bound or a branch.
 
 <!-- preserved:constraint-10b:end -->
 
+Rule 10b is amended by [rule 12e](#constraint-12e): on the null edge of a
+refused guard, a site joined provenance (over the tie names) ties to the
+tested name is settled as a decided guard's null edge settles it; the identity
+refusal stays.
+
 <a id="constraint-10c"></a>
 
 10c. **An expression statement is a classified effect or a refusal, never an
@@ -4542,3 +4547,49 @@ own anchor here.
     `releasing_the_owner_after_the_unlink_leaks_the_child`,
     `the_carry_only_replaces_a_refusal`, the shared `publishVectors` and
     `unlinkVectors`); [report](../reports/monkey-vhost-property-custody/README.md).
+
+<a id="constraint-12e"></a>
+
+12e. **A leak claim never rests on a refused test: on the null edge of a
+    guard the projection could not decide, a site joined provenance ties to
+    the tested name is settled.** Card SUP07-REFUSED-TEST-ACCUSATION
+    (`crates/qcore-c-gateway/src/legacy_refused_test.rs`, new; one hook in
+    the custody work list's `PointerRefinement::Unknown` arm and its mirror in
+    the leak-witness census; shared items `remove_null_site` (factored out of
+    `refine_pointer_null`, byte for byte) and `LegacyCfg::tie_names`). It
+    amends rule 10b. (1) **Settle.** Where a null (validity) test refuses
+    (`UnknownAlias`, `unmodeled`), each site the tested binding may denote
+    that joined provenance ties to the tested name at the test (the name
+    denotes the site on every path on which the site exists) is removed on
+    the null (invalid) edge exactly as a decided test's null edge removes its
+    site: on that edge it is NULL or absent. The identity refusal stays, so
+    no function becomes `Safe` by this rule; the other edge, an untied or
+    untargeted site, a status witness's test (11v) and every decided test are
+    unchanged. (2) **Tie names.** The provenance read is joined provenance
+    over `conditional_names` plus each unique local whose only `&` uses are
+    member addresses through it (`&NAME->F`, `&(NAME)->F`): C reads the
+    operand as the postfix `NAME->F` (C11 6.5.2.3, 6.5.3.2), so no pointer to
+    `NAME`'s slot exists and the call and indirect-store frames' premise
+    holds of it; a refused statement still forgets it (its sparing frame is
+    `frame_protected_locals`' as before). Only this rule reads them; rule
+    10b's conditional release and every frame keep `conditional_names`.
+    **Do not** settle without the tie (a site live under no name on the null
+    edge, after an overwrite of the tested name, is an established leak), and
+    **do not** replace the settlement with an unresolved-effect marker: the
+    marker joins by union and withdraws a leak established on the other edge
+    where the two meet. Both were the interim withhold rule's defects
+    (`7493e76a2`, which this rule replaces; its controls stay and pass).
+    Premises stated, not proved: joined provenance's binding sets mean what
+    the Lean `Tied` says (rule 10b's own premise), and the lexical member
+    address reader (trust boundary 28). Measured (corpus `66910c10`, tip
+    rebased onto main `f50fa2009`): **647 / 9 / 4,178** (`dde4837e…`),
+    byte-identical to main with the withhold rule; against main `cffe232d4`
+    (`a7d68d49…`) 2 corrections, provisional Unsafe → Unknown
+    (`mk_http_error_page`, `mk_sched_add_connection`), leak 42 → 39, nothing
+    else; system and tail-pause slice byte-identical; the `mk_vhost_set`
+    probe unchanged. `QCore.RefusedTestAccusation`
+    (`tied_null_edge_owes_nothing`, `without_the_tie_a_null_edge_may_owe`,
+    `settle_iff`, `the_rule_matches_the_executions`,
+    `the_old_claim_was_false`, `an_established_claim_survives_the_join`,
+    `a_marker_would_withdraw_it`, `a_refused_test_is_never_safe`, the shared
+    `edgeVectors`); [report](../reports/sup07-refused-test-accusation/README.md).

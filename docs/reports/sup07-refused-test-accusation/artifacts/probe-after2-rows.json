@@ -1,0 +1,33 @@
+{
+ "probe-after2/tip/mk_vhost_set": {
+  "status": "Unknown",
+  "leaves": [
+   "mk_server/mk_lib.c:533:unsupported:call to uncontracted function `mk_vhost_set_property`"
+  ]
+ },
+ "probe-after2/tip/mk_vhost_set_property": {
+  "status": "Unknown",
+  "leaves": [
+   "mk_server/mk_lib.c:502:unsupported:indirect memory access is outside the resource projection",
+   "mk_server/mk_lib.c:503:unsupported:indirect memory access is outside the resource projection"
+  ]
+ },
+ "probe-after2/master/mk_vhost_set": {
+  "status": "Unknown",
+  "leaves": [
+   "mk_server/mk_lib.c:523:unsupported:va_list protocol refused: `va` may reach a function exit without `va_end`",
+   "mk_server/mk_lib.c:525:unsupported:va_list protocol refused: `va` may reach a function exit without `va_end`",
+   "mk_server/mk_lib.c:526:unsupported:va_list protocol refused: `va` may reach a function exit without `va_end`",
+   "mk_server/mk_lib.c:532:unsupported:call to uncontracted function `mk_vhost_set_property`",
+   "mk_server/mk_lib.c:534:unsupported:va_list protocol refused: `va` may reach a function exit without `va_end`",
+   "mk_server/mk_lib.c:539:unsupported:va_list protocol refused: `va` may reach a function exit without `va_end`"
+  ]
+ },
+ "probe-after2/master/mk_vhost_set_property": {
+  "status": "Unknown",
+  "leaves": [
+   "mk_server/mk_lib.c:502:unsupported:indirect memory access is outside the resource projection",
+   "mk_server/mk_lib.c:503:unsupported:indirect memory access is outside the resource projection"
+  ]
+ }
+}

@@ -760,7 +760,7 @@ open. Each is registered in `named_followups` (recorded by
 | SUP04-VARIADIC-UPSTREAM-CANDIDATES | Are CG26's two protocol violations real upstream defects? | Medium | none |
 | SUP05-PREDICTION-BEFORE-CODE | Can the order "prediction frozen before implementation" be checked, not asserted? | Medium | none |
 | SUP06-CONFIRMED-VERDICT-STATUS | A fifth verdict, `Confirmed`: fixed at the tip (release candidate) but not in master; Safe-equivalent yet handled on its own | High (verdict contract) | user decision on its semantics before dispatch |
-| SUP07-REFUSED-TEST-ACCUSATION | `mk_http_error_page` is a provisional `Unsafe` that its card's own reading calls false: a leak claim resting on a refused null test | High | none (next) |
+| SUP07-REFUSED-TEST-ACCUSATION | `mk_http_error_page` is a provisional `Unsafe` that its card's own reading calls false: a leak claim resting on a refused null test | High | none; done (rule 12e, [report](../../reports/sup07-refused-test-accusation/README.md)) |
 | SUP08-MONKEY-OVERWRITE-CANDIDATES | Are the `DocumentRoot` overwrite and `mk_config_listen_parse`'s `port = NULL` real Monkey leaks? | Medium (user validation) | none |
 
 - **SUP01: census inertness proof.** CG27 re-read C03-NFR-REACH with the census

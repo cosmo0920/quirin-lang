@@ -47,7 +47,12 @@ was accused at the `return -1`, where it is NULL or was never made.
 
 A proof that the Rust computes provenance, targets or edges faithfully. That
 joined provenance's binding sets mean what `Tied` says is rule 10b's own
-premise (`QCore.JoinedProvenanceCycles`, `QCore.JoinedProvenanceCallFrames`);
+premise (`QCore.JoinedProvenanceCycles`, `QCore.JoinedProvenanceCallFrames`),
+here over the tie names, which add each local whose only `&` uses are member
+addresses through it (`&NAME->F`, the member of `*NAME`, C11 6.5.3.2);
+`a_marker_would_withdraw_it` is why this rule replaced the interim withhold
+rule (`QCore.RefusedNullTest`, removed), which marked every nullable site the
+binding may denote;
 the lexical reading of the test and the correspondence with the compiled Rust
 are review premises (trust boundary 28), pinned by the shared-vector test in
 `crates/qcore-c-gateway/tests/unit/legacy_refused_test.rs` and the fixtures in

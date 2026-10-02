@@ -1,0 +1,21 @@
+[
+ {
+  "unit": "mk_server/mk_http.c",
+  "function": "mk_http_error_page",
+  "before": "Unsafe",
+  "after": "Unknown",
+  "leaf_delta": {
+   "leak: live obligation acquired at mk_server/mk_http.c:395": -1
+  }
+ },
+ {
+  "unit": "mk_server/mk_scheduler.c",
+  "function": "mk_sched_add_connection",
+  "before": "Unsafe",
+  "after": "Unknown",
+  "leaf_delta": {
+   "leak: live obligation acquired at mk_server/mk_scheduler.c:201": -1,
+   "leak: live obligation acquired at mk_server/mk_scheduler.c:205": -1
+  }
+ }
+]
