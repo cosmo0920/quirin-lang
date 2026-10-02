@@ -88,7 +88,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
     // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
     // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 58);
+    // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 59);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -786,6 +787,12 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         contract.counted_users.neutral = true;
         old.insert_contract(name, contract);
     }
+    // CONTRACT-PIN-TIP-MODE: `mk_vhost_set` borrows both named arguments
+    // (its borrowed variadic tail is no parameter mode).
+    old.insert_contract(
+        "mk_vhost_set",
+        ResourceFunctionContract::new([P::Borrowed, P::Borrowed], R::None),
+    );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1092,7 +1099,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 55 -> 56 by card W47-CONDVAR-JOIN-PUBLICATION: `libc/pthread_sync.qv`.
     // 56 -> 57 by card W47-CONDVAR-JOIN-STOP-PATHS: `fluent_bit/lib_engine_thread.qv` (five declarations awaiting review).
     // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 58);
+    // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 59);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1325,7 +1333,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 121 -> 122: card W47-LOOP-OWNER-INSTANCE-FLOW adds
     // `fluent_bit/input_instance.qv`, entirely v1 (review markers included)
     // and manifest-selected.
-    assert_eq!(modules.len(), 122, "corpus module count");
+    // 122 -> 123: card CONTRACT-PIN-TIP-MODE adds `monkey/vhost_set.qv`
+    // (SUP04's `mk_vhost_set`, its lock entry a tip identity), entirely v1
+    // and manifest-selected.
+    assert_eq!(modules.len(), 123, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1509,9 +1520,12 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 259 -> 262 by card CG21-CALL-EXITS-AND-BOUNDARIES: `abort`, `exit`
     // and `__assert_fail` appended to `libc/stdlib.qv`, already selected,
     // each with `resource_no_return()`. Selection and rejected unchanged.
+    // 58 -> 59 and 262 -> 263 by card CONTRACT-PIN-TIP-MODE:
+    // `monkey/vhost_set.qv`'s `mk_vhost_set` (borrowed formals, a borrowed
+    // variadic tail, no result), manifest-selected.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (58, 262, 216)
+        (59, 263, 216)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

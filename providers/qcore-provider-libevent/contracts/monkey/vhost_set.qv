@@ -3,10 +3,12 @@ module contract;
 // Monkey `mk_vhost_set` at the release candidate of its va_end fix —
 // resource-projection vocabulary version 1.
 //
-// Supplemental card SUP04-VARIADIC-UPSTREAM-CANDIDATES. ONE TRUSTED
-// ASSUMPTION about one upstream function, PINNED to the fixed body. This
-// module verifies nothing: a declaration is a premise, and any verdict that
-// rests on it is a verdict RELATIVE TO this declaration.
+// Supplemental card SUP04-VARIADIC-UPSTREAM-CANDIDATES, lock entry by card
+// CONTRACT-PIN-TIP-MODE. ONE TRUSTED ASSUMPTION about one upstream function,
+// tracking the TIP of the branch that carries its fix. This module verifies
+// nothing: a declaration is a premise, and any verdict that rests on it is a
+// verdict RELATIVE TO this declaration. It targets a future, unreleased
+// Monkey release (a release candidate), not a released version.
 //
 // ## The defect and its fix
 //
@@ -58,18 +60,42 @@ module contract;
 //   retained, so the tail is `resource_variadic_borrowed_tail()` (contract
 //   specification C04, cards O04-TRACE and CG26-VARIADICS).
 // * The result is a status (0 or -1) that carries no resource.
+// * Not stated, because v1 has no words for it: the body changes `ctx`'s
+//   interior (a `Name` key appends a newly allocated alias to the virtual
+//   host's `server_names`; a `DocumentRoot` key overwrites
+//   `documentroot.data` with a fresh copy without releasing an earlier one,
+//   read only, not validated). `ctx` stays borrowed: none of this moves
+//   custody of a parameter or of a trailing actual.
 //
-// ## Revision mode: pinned to the fix's tip
+// Read against the fixed body (21a2c190, `mk_server/mk_lib.c:509-541`, with
+// `mk_vhost_lookup` at :435 and `mk_vhost_set_property` above it): every
+// clause holds on every path, the `!vh` return included (before `va_start`,
+// so no `va_list` is live there). No clause changed from the draft.
 //
-// The contract is pinned (C06.2, the default): it is in force only where the
-// audited source's `mk_vhost_set` sites equal those reviewed at the fix's tip,
-// recorded by `quirin-audit pin --source-root <monkey checkout at the tip>
-// --function mk_vhost_set` in this crate's `contracts.lock`. At the pinned
-// Fluent Bit corpus (66910c10) the vendored body still has the defect, so the
-// declaration is NOT in force there (`source-changed`); nothing in that corpus
-// calls `mk_vhost_set`, so no verdict moves. When the release candidate
-// moves, re-pin to the new tip; when Fluent Bit vendors the fixed Monkey,
-// pin that revision too.
+// ## Revision mode: tracking the tip of the fix branch (C06.2, tip identity)
+//
+// The declaration is pinned (the default, no marker); its entry in this
+// crate's `contracts.lock` (format version 3) is a TIP identity, not a
+// reviewed revision (the user's decision, 2026-10-02): repository `monkey`
+// (https://github.com/cosmo0920/monkey), ref
+// `refs/heads/cosmo0920-missing-va_end-on-null`, reviewed at 21a2c190. An
+// audit resolves the ref's current commit in the local Monkey repository
+// (`QUIRIN_TIP_REPOSITORIES=monkey=PATH`, else the path the lock records),
+// requires it to descend from 21a2c190, and keeps this declaration in force
+// exactly where the audited source's `mk_vhost_set` sites equal those read
+// from that commit's blobs. When the tip moves, it follows the tip: a
+// revision no person reviewed, which every run lists as the named assumption
+// `tip-tracked:mk_vhost_set` and announces with a notice. It was recorded by
+// `quirin-audit pin --source-root <monkey checkout> --crate
+// qcore-provider-libevent --function mk_vhost_set --track-tip
+// cosmo0920-missing-va_end-on-null --repository-name monkey`.
+//
+// At the pinned Fluent Bit corpus (66910c10) the vendored copy sits under
+// `lib/monkey/` and still has the defect, so the declaration is NOT in force
+// there (`source-changed` against the tip, a warning notice); nothing in that
+// corpus calls `mk_vhost_set`, and its own body is analysed as an undeclared
+// definition either way, so no verdict moves. On a host without the Monkey
+// repository the tip is unresolved (`tip-unresolved`), also out of force.
 //
 // It is not `resource_body_checked` (C06.3): the body is not yet established
 // on route G (an unmodelled call in the loop condition, and the uncontracted

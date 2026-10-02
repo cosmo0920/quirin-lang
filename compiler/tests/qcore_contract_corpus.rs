@@ -1136,6 +1136,9 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("monkey/timeout_teardown.qv", "cb_timeout_teardown_path", 1),
     ("monkey/timeout_teardown.qv", "libevent_self_teardown", 5),
     ("monkey/timeout_teardown.qv", "teardown_obligations", 21),
+    // CONTRACT-PIN-TIP-MODE: SUP04's fixed `mk_vhost_set`, its lock entry a
+    // tip identity (contract spec C06.2).
+    ("monkey/vhost_set.qv", "mk_vhost_set", 5),
     ("monkey/wait_failure_policy.qv", "loop_init_failure", 6),
     (
         "monkey/wait_failure_policy.qv",
@@ -1367,7 +1370,9 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 120 -> 121 by card W47-CONDVAR-JOIN-STOP-PATHS'
     // `fluent_bit/lib_engine_thread.qv`.
     // 121 -> 122 by card W47-LOOP-OWNER-INSTANCE-FLOW's `fluent_bit/input_instance.qv`.
-    assert_eq!(sources.len(), 122, "unexpected contract corpus size");
+    // 122 -> 123 by card CONTRACT-PIN-TIP-MODE's `monkey/vhost_set.qv`
+    // (SUP04's `mk_vhost_set`, its lock entry tracking the fix branch's tip).
+    assert_eq!(sources.len(), 123, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

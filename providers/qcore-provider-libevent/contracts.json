@@ -14,6 +14,7 @@
     "contracts/monkey/native_platform_matrix.qv": "0525b020bca19c28e2b59b57d55f6816f578aea39749cf0b5c7fe04bee2b81a2",
     "contracts/monkey/scalar_observation.qv": "8f400380f17d656598422a0e8430dcf154d96893bba664e620d4e6a60c5e1def",
     "contracts/monkey/timeout_teardown.qv": "dfbc9a41a0066b1a53913703c3c80100f1536fc4cb9fc3a6488b257538808c7b",
+    "contracts/monkey/vhost_set.qv": "640187a5674cd86f7782bf9815e6d72b1082aef66e811f45b2def3e9f757fb34",
     "contracts/monkey/wait_failure_policy.qv": "29aab57c753498539d92140ed08c02694d264394c31b2702232c3dbba6971d64",
     "contracts/monkey/wait_identity_policy.qv": "131694dd932954d26cb085224bd6d25edfc02867e88863ca46de6f6c7572c1c3",
     "contracts/monkey/wait_source_policy.qv": "b78d56857a059c96d0d748e8dd6a4c3ee9bbf527c21e17f3ce9ebcad4fe0c393",
