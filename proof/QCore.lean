@@ -331,5 +331,6 @@ import QCore.DialectTargetIdentity
 import QCore.RelationalPost
 import QCore.IndirectCalls
 import QCore.VariadicConditions
+import QCore.CarriedPublication
 
 /-! The executable formal core of QCore-C revision 0.1. -/

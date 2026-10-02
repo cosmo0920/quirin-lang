@@ -73,6 +73,10 @@ mod loop_generations;
 // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED (rule 11c): partial field links
 // and the settled-exit floor; the G hooks are in `legacy_field_link_join.rs`.
 mod field_link_join;
+// Card MONKEY-VHOST-PROPERTY-CUSTODY (rule 12d): a publication carries the
+// owner's field-linked children; the G hooks are in
+// `legacy_container_publication.rs`.
+mod carried_publication;
 // Card CG18-FOOTPRINT-CONNECTION (rule 11k): source places connected to the
 // core footprint model; the elaborator hook is in `legacy_elaboration.rs`.
 mod footprint_connection;

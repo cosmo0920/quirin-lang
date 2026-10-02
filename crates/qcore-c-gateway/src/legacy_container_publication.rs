@@ -697,11 +697,16 @@ pub(super) fn apply(
                 };
                 match container {
                     Container::CallerFormal(_) | Container::Static(_) => {
-                        // What the object owns through a member or a stored
-                        // child goes into the container with it, but an unlink
-                        // could not hand it back: the owned objects are
-                        // withdrawn in both directions instead, and the call
-                        // is refused, so no exit is certified over them.
+                        // Card MONKEY-VHOST-PROPERTY-CUSTODY (rule 12d): field-
+                        // linked children that are exactly live and
+                        // unencumbered go into the container with their owner,
+                        // and an unlink of the owner hands them back.
+                        let carried = carried_children(state, site);
+                        // What the object owns otherwise, through a member or
+                        // a stored child, goes into the container with it, but
+                        // an unlink could not hand it back: the owned objects
+                        // are withdrawn in both directions instead, and the
+                        // call is refused, so no exit is certified over them.
                         let children = state
                             .field_links
                             .get(&site)
@@ -709,7 +714,11 @@ pub(super) fn apply(
                             .flat_map(|fields| fields.values().flatten().copied())
                             .chain(state.contained.get(&site).into_iter().flatten().copied())
                             .collect::<BTreeSet<_>>();
-                        if !children.is_empty() {
+                        if let Some(carried) = carried {
+                            for child in carried {
+                                state.resources.insert(child, ESCAPED);
+                            }
+                        } else if !children.is_empty() {
                             diagnostics.insert(LegacyDiagnostic {
                                 function: function.to_owned(),
                                 line,
@@ -748,8 +757,29 @@ pub(super) fn apply(
                             if state.published.contains(&site)
                                 && state.resources.get(&site) == Some(&ESCAPED) =>
                         {
-                            state.resources.insert(site, LIVE);
-                            state.published.remove(&site);
+                            // Card MONKEY-VHOST-PROPERTY-CUSTODY (rule 12d): the
+                            // children the publication carried come back with
+                            // their owner; a child that may have been carried
+                            // on some paths only refuses the unlink.
+                            match handed_back(state, site) {
+                                Some(restored) => {
+                                    state.resources.insert(site, LIVE);
+                                    state.published.remove(&site);
+                                    for child in restored {
+                                        state.resources.insert(child, LIVE);
+                                    }
+                                }
+                                None => refuse(
+                                    function,
+                                    line,
+                                    format!(
+                                        "unlink by `{called}` of `{name}`, whose linked objects may have been carried into the container on some paths only"
+                                    ),
+                                    Some(name),
+                                    state,
+                                    diagnostics,
+                                ),
+                            }
                             true
                         }
                         // Card W45-CONTAINER-ROOT-REACH, rule 6: an element of
@@ -782,6 +812,83 @@ pub(super) fn apply(
             }
         }
     }
+}
+
+/// Card MONKEY-VHOST-PROPERTY-CUSTODY (rule 12d): the children a publication
+/// of `owner` carries into the container, or `None` when rule 10d's
+/// withdrawal stands (a contained child, a child that is the owner, or a
+/// field-linked child [`crate::carried_publication::publish_step`] refuses).
+fn carried_children(state: &AbstractState, owner: usize) -> Option<BTreeSet<usize>> {
+    use crate::carried_publication::{ChildFacts, PublishStep, publish_step};
+    if state
+        .contained
+        .get(&owner)
+        .is_some_and(|children| !children.is_empty())
+    {
+        return None;
+    }
+    let mut carried = BTreeSet::new();
+    for (field, children) in state.field_links.get(&owner).into_iter().flatten() {
+        for &child in children {
+            if child == owner {
+                return None;
+            }
+            let facts = ChildFacts {
+                partial: one_sided(state, owner, field, child),
+                status: state.resources.get(&child).copied(),
+                unresolved: state.unresolved_effect_sites.contains(&child),
+                published: state.published.contains(&child),
+                owns: state
+                    .field_links
+                    .get(&child)
+                    .is_some_and(|fields| fields.values().any(|linked| !linked.is_empty()))
+                    || state
+                        .contained
+                        .get(&child)
+                        .is_some_and(|contained| !contained.is_empty()),
+            };
+            match publish_step(facts) {
+                PublishStep::Carry => {
+                    carried.insert(child);
+                }
+                PublishStep::Refuse => return None,
+            }
+        }
+    }
+    Some(carried)
+}
+
+/// Card MONKEY-VHOST-PROPERTY-CUSTODY (rule 12d): the children an unlink of
+/// the published `owner` hands back, or `None` when one may have been carried
+/// on some paths only ([`crate::carried_publication::unlink_step`]).
+fn handed_back(state: &AbstractState, owner: usize) -> Option<BTreeSet<usize>> {
+    use crate::carried_publication::{UnlinkStep, unlink_step};
+    let mut restored = BTreeSet::new();
+    for (field, children) in state.field_links.get(&owner).into_iter().flatten() {
+        for &child in children {
+            match unlink_step(
+                one_sided(state, owner, field, child),
+                state.resources.get(&child).copied(),
+            ) {
+                UnlinkStep::Keep => {}
+                UnlinkStep::Restore => {
+                    restored.insert(child);
+                }
+                UnlinkStep::Refuse => return None,
+            }
+        }
+    }
+    Some(restored)
+}
+
+/// Whether `owner`'s link of `child` under `field` may not hold on every path
+/// (rule 11c's partial triple).
+fn one_sided(state: &AbstractState, owner: usize, field: &str, child: usize) -> bool {
+    state
+        .partial_links
+        .get(&owner)
+        .and_then(|fields| fields.get(field))
+        .is_some_and(|partial| partial.contains(&child))
 }
 
 /// Rule 6's effect: the element `name` denotes becomes this body's live
