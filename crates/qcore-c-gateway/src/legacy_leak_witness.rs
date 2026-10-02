@@ -46,7 +46,7 @@ use super::{
     AbstractState, EntryCustody, LIVE, LegacyCfg, LegacyDiagnostic, LegacyDiagnosticKind,
     LegacyInstruction, NodeAliasFacts, PointerRefinement, TransferContext,
     instruction_produced_sites, joined_provenance, refine_collection_edge, refine_edge,
-    refused_operands, transfer,
+    refused_operands, refused_test, transfer,
 };
 
 /// The environment variable naming the witness stream. Read only with the
@@ -74,6 +74,11 @@ pub struct Step {
     /// The edge this path takes out of the node was a pointer refinement the
     /// analyzer could not decide (`UnknownAlias` on the test).
     pub edge_unknown: bool,
+    /// Card SUP07-REFUSED-TEST-ACCUSATION: that edge is the null (invalid)
+    /// edge of a refused test whose tested binding may denote the site.
+    pub edge_refused_null: bool,
+    /// ... and joined provenance ties the site to the tested name there.
+    pub edge_tied: bool,
     /// Places bound to the site in the node's settled incoming state.
     pub bound: Vec<String>,
 }
@@ -115,6 +120,41 @@ pub struct Witness {
     /// rule on, the unresolved effect this node adds reaches the exit along
     /// that path and the leak is not claimed. `None` means no such node.
     pub handed_path: Option<Vec<Step>>,
+    /// Card SUP07-REFUSED-TEST-ACCUSATION: a path avoiding every null
+    /// (invalid) edge of a refused test whose tested binding may denote the
+    /// site. A leak with a path but no such path is one whose every witness
+    /// keeps the site live only because a refused test did not decide it.
+    pub untested_path: Option<Vec<Step>>,
+    /// A path avoiding only those of the edges above at which joined
+    /// provenance ties the site to the tested name.
+    pub untied_path: Option<Vec<Step>>,
+}
+
+/// Card SUP07-REFUSED-TEST-ACCUSATION: one refused test's null (invalid)
+/// edge, recorded for every analysed body (leaks or none), so the population
+/// the rule reads is sized independently of the leak leaves.
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct RefusedTestEdge {
+    /// Always `"refused_test_edge"`, telling these lines from witnesses.
+    pub record: &'static str,
+    pub unit_seq: u64,
+    pub function: String,
+    pub line: usize,
+    pub source: String,
+    /// Acquisition lines of the sites the tested binding may denote.
+    pub targets: Vec<usize>,
+    /// Acquisition lines of those sites joined provenance ties to the name.
+    pub tied: Vec<usize>,
+    /// Whether any of the tied sites is `LIVE` in the test's state.
+    pub tied_live: bool,
+}
+
+/// Per edge of a refused test: the tested binding's targets and the tied ones,
+/// on the edge that carries no resource at the tested name.
+#[derive(Clone, Default)]
+struct AbsentEdge {
+    targets: BTreeSet<usize>,
+    tied: BTreeSet<usize>,
 }
 
 struct Settled {
@@ -126,6 +166,9 @@ struct Settled {
     marked: BTreeSet<usize>,
     edges: Vec<Option<AbstractState>>,
     edge_unknown: Vec<bool>,
+    /// Card SUP07-REFUSED-TEST-ACCUSATION: per edge, `Some` exactly on a
+    /// refused test's null (invalid) edge.
+    absent: Vec<Option<AbsentEdge>>,
     instruction: String,
 }
 
@@ -182,6 +225,7 @@ pub(super) fn record(
     if std::env::var_os(LEAK_WITNESS_PATH_VARIABLE).is_none() {
         return;
     }
+    record_refused_tests(cfg, incoming, acquisition_lines, context, joined);
     let reported = diagnostics
         .iter()
         .filter_map(|diagnostic| match diagnostic.kind {
@@ -237,11 +281,14 @@ pub(super) fn record(
                     && !exempt.contains(&site)
                     && !output.unresolved_effect_sites.contains(&site);
                 let starts = producers.get(&site).cloned().unwrap_or_default();
-                let path = search(cfg, &settled, incoming, &starts, exit, site, Avoid::Nothing);
-                let clean_path =
-                    search(cfg, &settled, incoming, &starts, exit, site, Avoid::Escapes);
-                let strict_path =
-                    search(cfg, &settled, incoming, &starts, exit, site, Avoid::HandOns);
+                let find = |avoid, edges| {
+                    search(cfg, &settled, incoming, &starts, exit, site, avoid, edges)
+                };
+                let path = find(Avoid::Nothing, EdgeAvoid::Nothing);
+                let clean_path = find(Avoid::Escapes, EdgeAvoid::Nothing);
+                let strict_path = find(Avoid::HandOns, EdgeAvoid::Nothing);
+                let untested_path = find(Avoid::Nothing, EdgeAvoid::RefusedNull);
+                let untied_path = find(Avoid::Nothing, EdgeAvoid::Tied);
                 let handed_path = handed(cfg, &settled, incoming, &starts, exit, site);
                 let candidate = Witness {
                     unit_seq: crate::indirect_census::unit_seq(),
@@ -263,6 +310,8 @@ pub(super) fn record(
                     clean_path,
                     strict_path,
                     handed_path,
+                    untested_path,
+                    untied_path,
                 };
                 let better = match &best {
                     None => true,
@@ -296,6 +345,8 @@ pub(super) fn record(
             clean_path: None,
             strict_path: None,
             handed_path: None,
+            untested_path: None,
+            untied_path: None,
         });
         emit(&witness);
     }
@@ -325,6 +376,7 @@ fn settle(
                     marked: BTreeSet::new(),
                     edges: Vec::new(),
                     edge_unknown: Vec::new(),
+                    absent: Vec::new(),
                     instruction,
                 };
             };
@@ -369,6 +421,7 @@ fn settle(
                 BTreeSet::new()
             };
             let mut edge_unknown = Vec::new();
+            let mut absent = Vec::new();
             let edges = node
                 .successors
                 .iter()
@@ -383,6 +436,23 @@ fn settle(
                     )
                     .map(|(_, refinement)| refinement);
                     edge_unknown.push(matches!(refinement, Some(PointerRefinement::Unknown)));
+                    absent.push(
+                        matches!(refinement, Some(PointerRefinement::Unknown))
+                            .then(|| refused_test::absent_edge_source(&node.instruction, edge))
+                            .flatten()
+                            .map(|source| {
+                                let targets = output
+                                    .pointers
+                                    .get(source)
+                                    .map(|pointer| pointer.targets.clone())
+                                    .unwrap_or_default();
+                                let tied = refused_test::tied_sites(&joined[node_id], source)
+                                    .intersection(&targets)
+                                    .copied()
+                                    .collect();
+                                AbsentEdge { targets, tied }
+                            }),
+                    );
                     if matches!(refinement, Some(PointerRefinement::Infeasible)) {
                         if node.loop_exit_edge == Some(edge) {
                             edge_output = output.clone();
@@ -407,10 +477,27 @@ fn settle(
                 marked,
                 edges,
                 edge_unknown,
+                absent,
                 instruction,
             }
         })
         .collect()
+}
+
+/// Card SUP07-REFUSED-TEST-ACCUSATION: which refused-test edges a witness
+/// search may not take.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum EdgeAvoid {
+    Nothing,
+    /// The null (invalid) edge of a refused test whose binding may denote the
+    /// site.
+    RefusedNull,
+    /// Only those at which joined provenance ties the site to the tested name.
+    Tied,
+}
+
+fn absent_edge(settled: &[Settled], node: usize, edge: usize) -> Option<&AbsentEdge> {
+    settled[node].absent.get(edge).and_then(Option::as_ref)
 }
 
 /// Which refused nodes a witness search may not pass.
@@ -425,6 +512,7 @@ enum Avoid {
 
 /// Breadth-first search from any producer of `site` to `exit` over edges whose
 /// settled output keeps `site` live, avoiding the refused nodes `avoid` names.
+#[allow(clippy::too_many_arguments)]
 fn search(
     cfg: &LegacyCfg,
     settled: &[Settled],
@@ -433,7 +521,13 @@ fn search(
     exit: usize,
     site: usize,
     avoid: Avoid,
+    edges: EdgeAvoid,
 ) -> Option<Vec<Step>> {
+    let skipped = |node: usize, edge: usize| match (edges, absent_edge(settled, node, edge)) {
+        (EdgeAvoid::Nothing, _) | (_, None) => false,
+        (EdgeAvoid::RefusedNull, Some(absent)) => absent.targets.contains(&site),
+        (EdgeAvoid::Tied, Some(absent)) => absent.tied.contains(&site),
+    };
     let blocked = |node: usize| {
         let entry = &settled[node];
         entry.refused
@@ -462,15 +556,25 @@ fn search(
             let mut next: Option<usize> = None;
             while let Some(current) = cursor {
                 let entry = &settled[current];
-                let edge_unknown =
+                let taken = |test: &dyn Fn(usize) -> bool| {
                     next.is_some_and(|following| {
-                        cfg.nodes[current].successors.iter().enumerate().any(
-                            |(edge, &successor)| {
-                                successor == following
-                                    && entry.edge_unknown.get(edge).copied().unwrap_or(false)
-                            },
-                        )
-                    });
+                        cfg.nodes[current]
+                            .successors
+                            .iter()
+                            .enumerate()
+                            .any(|(edge, &successor)| successor == following && test(edge))
+                    })
+                };
+                let edge_unknown =
+                    taken(&|edge| entry.edge_unknown.get(edge).copied().unwrap_or(false));
+                let edge_refused_null = taken(&|edge| {
+                    absent_edge(settled, current, edge)
+                        .is_some_and(|absent| absent.targets.contains(&site))
+                });
+                let edge_tied = taken(&|edge| {
+                    absent_edge(settled, current, edge)
+                        .is_some_and(|absent| absent.tied.contains(&site))
+                });
                 path.push(Step {
                     node: current,
                     line: cfg.nodes[current].line,
@@ -479,6 +583,8 @@ fn search(
                     refused_read: entry.refused && entry.read.contains(&site),
                     refused_call: entry.refused && entry.called.contains(&site),
                     edge_unknown,
+                    edge_refused_null,
+                    edge_tied,
                     bound: incoming[current]
                         .as_ref()
                         .map(|state| bound(state, site))
@@ -494,7 +600,11 @@ fn search(
             let Some(Some(edge_output)) = settled[node].edges.get(edge) else {
                 continue;
             };
-            if !live(edge_output, site) || previous.contains_key(&successor) || blocked(successor) {
+            if !live(edge_output, site)
+                || previous.contains_key(&successor)
+                || blocked(successor)
+                || skipped(node, edge)
+            {
                 continue;
             }
             let arrives = settled[successor]
@@ -580,6 +690,8 @@ fn handed(
                     refused_read: entry.refused && entry.read.contains(&site),
                     refused_call: entry.marked.contains(&site),
                     edge_unknown: false,
+                    edge_refused_null: false,
+                    edge_tied: false,
                     bound: incoming[current]
                         .as_ref()
                         .map(|state| bound(state, site))
@@ -590,7 +702,71 @@ fn handed(
     )
 }
 
+/// Card SUP07-REFUSED-TEST-ACCUSATION: every refused test's null (invalid)
+/// edge whose tested binding denotes some site, from the settled incoming
+/// states. A test node's transfer is empty, so its settled incoming state is
+/// the state its edges are refined from (as `report_retained_loop_exit_edges`
+/// reads it).
+fn record_refused_tests(
+    cfg: &LegacyCfg,
+    incoming: &[Option<AbstractState>],
+    acquisition_lines: &BTreeMap<usize, usize>,
+    context: &TransferContext<'_>,
+    joined: &[BTreeMap<usize, BTreeSet<String>>],
+) {
+    let line_of = |sites: &BTreeSet<usize>| {
+        sites
+            .iter()
+            .map(|site| acquisition_lines.get(site).copied().unwrap_or(0))
+            .collect::<Vec<_>>()
+    };
+    for (node_id, node) in cfg.nodes.iter().enumerate() {
+        let Some(state) = incoming[node_id].as_ref() else {
+            continue;
+        };
+        for edge in 0..node.successors.len() {
+            let Some(source) = refused_test::absent_edge_source(&node.instruction, edge) else {
+                continue;
+            };
+            let mut probe = state.clone();
+            if !matches!(
+                refine_edge(&node.instruction, edge, &mut probe, &context.site_kinds),
+                Some((_, PointerRefinement::Unknown))
+            ) {
+                continue;
+            }
+            let targets = state
+                .pointers
+                .get(source)
+                .map(|pointer| pointer.targets.clone())
+                .unwrap_or_default();
+            if targets.is_empty() {
+                continue;
+            }
+            let tied = refused_test::tied_sites(&joined[node_id], source)
+                .intersection(&targets)
+                .copied()
+                .collect::<BTreeSet<_>>();
+            let record = RefusedTestEdge {
+                record: "refused_test_edge",
+                unit_seq: crate::indirect_census::unit_seq(),
+                function: cfg.function.clone(),
+                line: node.line,
+                source: source.to_owned(),
+                targets: line_of(&targets),
+                tied: line_of(&tied),
+                tied_live: tied.iter().any(|site| live(state, *site)),
+            };
+            emit_line(&record);
+        }
+    }
+}
+
 fn emit(witness: &Witness) {
+    emit_line(witness);
+}
+
+fn emit_line<T: serde::Serialize>(value: &T) {
     let Ok(mut guard) = WITNESSES.lock() else {
         return;
     };
@@ -601,7 +777,7 @@ fn emit(witness: &Witness) {
     let Some(writer) = opened.as_mut() else {
         return;
     };
-    if let Ok(line) = serde_json::to_string(witness) {
+    if let Ok(line) = serde_json::to_string(value) {
         let _ = writeln!(writer, "{line}");
         let _ = writer.flush();
     }

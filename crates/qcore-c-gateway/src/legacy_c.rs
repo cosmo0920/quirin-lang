@@ -250,6 +250,12 @@ pub(crate) mod refused_operands;
 #[path = "legacy_cast_return.rs"]
 pub(crate) mod cast_return;
 
+// Card SUP07-REFUSED-TEST-ACCUSATION (rule 12e): the null edge of a refused
+// test. Everything the card adds lives there; this file only carries the hook
+// marked with the card's name.
+#[path = "legacy_refused_test.rs"]
+pub(crate) mod refused_test;
+
 // Card W45-RETURN-EXPRESSION-FAMILIES: the scalar-result read and the cast of
 // a whole call in `return` position. Everything the card adds lives there;
 // this file only carries the hooks marked with the card's name.
