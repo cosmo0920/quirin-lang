@@ -2,10 +2,13 @@
 
 Card `CG23-RELATIONAL-POSTCONDITIONS` of the
 [Clang gap card queue](../../plans/clang-gap-cards/README.md) (wave 48, round 9,
-phase 4), entries K05 and K11. Base: local `main` `b6a3dc42` (measured there),
-rebased onto main `31a72343` (CG17 11u, CG20 11q, CG25 11v, CG26 11w, CG28 11t, CG27 11x, CG21 11o, CG30 11y, CG16 11s) before the
-gate; composes with CG25's in-place status witness (a disposition never stands
-beside an in-place kind). Route G.
+phase 4), entries K05 and K11. Base: local `main` `b6a3dc42`, where BEFORE and
+AFTER were measured on all three routes. The card was then rebased in turn onto
+every round-9 landing (CG17 11u, CG20 11q, CG25 11v, CG26 11w, CG28 11t, CG27
+11x, CG21 11o, CG30 11y, CG16 11s, CG29 11z), ending at main `01003bc1`. The
+final corpus AFTER and the full gate ran on main `31a72343`, and a targeted
+check on `01003bc1` (§4, §8). It composes with CG25's in-place status witness:
+a disposition never stands beside an in-place kind. Route G.
 
 - **Published property.** The round-9 instruction chose the guarantee. This
   card publishes **custody under return-code-conditioned postconditions**: a
@@ -187,6 +190,24 @@ Binaries: BEFORE `06c0e75c…`, AFTER `45a912a8…`. The AFTER build is commit
 `5d870cf6`. The later commits change no analysis: clippy's
 `.any(&declared)` for `.any(|n| declared(n))`, plus documents and records.
 
+**Final AFTER on the landed base.** At the tip rebased onto main `31a72343`
+(binary `9490c307…`), the corpus arbiter gives **645 / 10 / 4,179** with
+`resource-diagnostics.json` `ceefb6c4…`. That is byte-identical to the
+integrator's measurement of the combined tree that main carries (CG30's
+`integration-corpus.json`, unchanged by CG16 and CG29). The attribution is
+therefore unchanged: no function moves and no leaf changes. System and slice
+were not re-run on the landed base; their identity is the base measurement
+above. The later rebase rewrites only shared records on top of CG29.
+
+Rebase mechanics touched code at four points, none of which changes a reading:
+
+- CG21: its `undeclarable_call` refusal is asked before the `untested` hook,
+  and the `resource_no_return()` premise is checked inside the per-class
+  loop.
+- CG25: the out-mode rule exempts an in-place kind.
+- CG27: its ranked routes keep the declared-disposition guard.
+- CG30: a ninth reserved prefix.
+
 ## 5. Absorbed follow-ups
 
 None is discharged by a corpus movement. Each is amended in place with sizes
@@ -225,7 +246,7 @@ re-measured on `b6a3dc42` (corpus; system where stated):
   refuse. The corpus population is 0 while no corpus callee carries a
   disposition; the lexical bound is 124.
 
-The ledger moves from 678 to 679 on main `31a72343` (666 to 667 on the base): CG23 is retired, 2 entries are registered
+The ledger moves from 680 to 681 on main `01003bc1` (666 to 667 on the base): CG23 is retired, 2 entries are registered
 and 6 are amended (`scripts/update_ledger.py`).
 
 ## 6. Axes (§8)
@@ -263,5 +284,33 @@ and 6 are amended (`scripts/update_ledger.py`).
 
 ## 8. Gate
 
-See [gate/](gate/). Commands, exits and counts are listed in the increment
-paragraph and the card's reply.
+See [gate.json](gate.json) and [gate/](gate/).
+
+**Full gate** at tip `023e8c4b` on main `31a72343`
+(`private/cg23rp/gate-final`):
+
+| Step | Result |
+|---|---|
+| Submodule | exit 0 |
+| `run_test_binaries.py` | 426 units, 439 summaries, **7,397 passed**, 0 failed, 11 ignored |
+| `fmt` | exit 0 |
+| `clippy --locked` | exit 0 |
+| Both reevaluation probes | exit 0 |
+| Lean audits | **273** |
+| Python | 365 tests, 1 expected failure before the matrix regeneration, then green (09a, 09b) |
+| Docs index | exit 0 |
+
+**Earlier attempts:**
+
+- `gate-run1` at the base. Its test build died of a full disk (ENOSPC) and is
+  discarded as evidence.
+- Gates on 8e8ed41f, f0bbc0eb, f6336c9d and db1ea764. All passed:
+  7,215 / 7,287 / 7,301 / 7,324 passed respectively, 0 failed.
+- A targeted check on f1a4c648.
+
+**Targeted check after the last rebase.** On main `01003bc1`
+(`scripts/targeted.sh`, `private/cg23rp/targeted-final`): `cargo check
+--workspace --all-targets`, fmt, clippy, the schemas, contract and gateway
+crates' tests, and the Lean audits.
+
+Every heavy step ran under the shared flock.
