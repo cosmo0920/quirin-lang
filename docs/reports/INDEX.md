@@ -127,11 +127,9 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg21-call-exits-and-boundaries](cg21-call-exits-and-boundaries/README.md) | CG21-CALL-EXITS-AND-BOUNDARIES |
 
-<<<<<<< HEAD
 | [cg23-relational-postconditions](cg23-relational-postconditions/README.md) | CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions and exit-specific summaries |
-=======
+
 | [cg24-alias-extent-frame-vocabulary](cg24-alias-extent-frame-vocabulary/README.md) | CG24-ALIAS-EXTENT-FRAME-VOCABULARY |
->>>>>>> caea5a1b6 (CG24-ALIAS-EXTENT-FRAME-VOCABULARY: AFTER (byte-identical on corpus, system, slice), report, rule 11e measured, STATUS, increment, queue, ledger 680 -> 681, INDEX)
 
 | [cg25-resource-kinds](cg25-resource-kinds/README.md) | CG25-RESOURCE-KINDS: a library-handle kind and an in-place kind |
 
