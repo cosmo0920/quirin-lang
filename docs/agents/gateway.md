@@ -842,6 +842,10 @@ reaches a bound or a branch.
     (`ctx = container_of(arg, …)`) takes the unbound formal entry's rule: its
     borrowed reading let a derived summary call `arg` `Borrowed` while the
     body linked it.
+    Amended by [rule 12d](#constraint-12d): an owner whose field-linked
+    children are each exactly live and unencumbered carries them into the
+    container, and an unlink of it hands them back; every other owner keeps
+    the withdrawal.
 
 <a id="constraint-10e"></a>
 
@@ -4498,3 +4502,42 @@ own anchor here.
     `a_null_test_refines_only_the_binding`), bound to `decide` and
     `derive_pointer` by unit tests;
     [report](../reports/va-loop-and-pointer-arg/README.md).
+<a id="constraint-12d"></a>
+
+12d. **A publication carries its owner's field-linked children only when
+    each is exactly live and unencumbered, and an unlink of the owner hands
+    them back.** Card MONKEY-VHOST-PROPERTY-CUSTODY (`carried_publication.rs`,
+    thin hooks in `legacy_container_publication.rs`; the identifier follows
+    gateway rule 12c (VA-LOOP-AND-POINTER-ARG)). It amends rule 10d's withdrawal of an
+    object that owns linked objects. (1) **Carry.** A publication into a
+    caller's or a static container (rule 10d's admitted containers) of an
+    owner with no contained child (`resource_stored`) decides every child it
+    links through an O00-B08 field link: a child that is exactly live, linked
+    on every path (not rule 11c's partial triple), with no unresolved effect,
+    not itself published and owning no link or contained child of its own is
+    carried (`ESCAPED` with its owner); any other child, an untracked one
+    included, keeps rule 10d's withdrawal byte for byte. The links are kept.
+    (2) **Hand-back.** An unlink of the published owner hands back every
+    must-linked child that is exactly `ESCAPED` (`LIVE` again, as the owner
+    is); a child with an `ESCAPED` bit that is partial or of mixed status
+    refuses the unlink (`… may have been carried into the container on some
+    paths only`); any other child was never carried and is left as it is.
+    Releasing the owner afterwards does not cascade (P-B08-SHALLOW), so a
+    child still held at an exit is a leak. Hand-back is sound because nothing
+    else moves a carried child: a store into a published owner's member
+    refuses (its owner is not live), and a release, consumption or return of
+    an escaped identity is a violation candidate or refused. **Do not** carry
+    an untracked child (it may be a caller's object, whose custody no rule
+    moves), a contained child, or a child through a container rule 10d
+    refuses; **do not** drop the hand-back, without which `mk_list_del`
+    followed by a release of the owner would hide the child's leak. The
+    nested-container relation (a publication into a container inside a
+    body-acquired owner, `W45-CONTAINER-ROOT-REACH`) is not this rule.
+    Premises stated, not proved: the flow's status bits, partial triples,
+    unresolved effects and published set are what the Rust reads; faithful
+    lexical reading of entries and containers (trust boundary 28).
+    `QCore.CarriedPublication` (`carry_iff`, `restore_iff`,
+    `the_name_branch_is_safe`, `the_withdrawal_refused_the_name_branch`,
+    `releasing_the_owner_after_the_unlink_leaks_the_child`,
+    `the_carry_only_replaces_a_refusal`, the shared `publishVectors` and
+    `unlinkVectors`); [report](../reports/monkey-vhost-property-custody/README.md).
