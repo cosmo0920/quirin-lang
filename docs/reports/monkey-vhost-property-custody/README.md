@@ -86,6 +86,14 @@ unlink is not expressible: the child read back through its member is a
 borrowed alias (rule 10t) and rule 5k releases a member only through a
 formal (`CARRIED-CHILD-TEARDOWN-AFTER-UNLINK`).
 
+One pinned test changed deliberately: `retry_lifetime.rs`'s
+`a_publication_of_an_object_that_owns_members_is_refused` pinned rule 10d's
+withdrawal for an owner with one live `p_malloc` member, exactly the shape
+rule 12d carries. It is now
+`a_publication_of_an_object_that_owns_members_carries_only_live_ones`: that
+owner is `Safe`, and the same owner with its member released before the
+publication keeps the withdrawal (not `Safe`).
+
 ## DocumentRoot: a leak candidate, not `Safe`
 
 `vh->documentroot.data = mk_string_dup(v);` stores a fresh copy over a member
