@@ -15,15 +15,16 @@ complete); main did not move during the card.
 - **Rule:** [gateway 11p](../../agents/gateway.md#constraint-11p).
 - **Lean:** `QCore.IndirectCalls`, `proof/AuditIndirectCalls.lean` (21
   theorems), over `QCore.TypedefProjection`.
-- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `4ac5e45c` after them)
+- **Prediction:** [PREDICTION.md](PREDICTION.md), frozen (commit `4831e1cb` before the rebases, `ad493824` after them)
   from the census runs before the AFTER binary was measured; the
   implementation existed, no AFTER run did.
 - **Base:** first pair BEFORE main `b6a3dc42`, AFTER on main `06ad81cb`;
   pair of record BEFORE main `a6adb483` (645 / 10 / 4,179, the integrator's
   `ceefb6c4…`), AFTER on the tip rebased onto main `31a72343` (CG17, CG20,
   CG25, CG26, CG28, CG27, CG21, CG30 and CG16 landed meanwhile; `cargo check
-  --workspace --all-targets` 0 on each rebased tree); standing gate on the
-  same tip.
+  --workspace --all-targets` 0 on each rebased tree); final tip and standing
+  gate rebased onto main `01003bc1` (CG29, corpus byte-identical by its
+  report; not re-measured here).
 - **Absorbed:** LOADER-ABI-INLINE-FNPTR-DECLARATOR (closed); EXTERN-CALL-F
   (function-pointer part) and W47-LOOP-OWNER-FIELD-KEYED-V-AND-F amended.
 
@@ -232,7 +233,7 @@ pass; no per-unit timing was taken.
 
 ## 5. Follow-ups
 
-Ledger 674 → 676 (`scripts/update_ledger.py`, applied to main's matrix):
+Ledger 680 → 682 (`scripts/update_ledger.py`, applied to main's matrix):
 
 - **Retired:** `CG22-INDIRECT-CALLS-AND-CALLBACKS` (every DISCHARGE clause
   holds: BEFORE reproduced, corrections recorded, PREDICTION frozen, AFTER
