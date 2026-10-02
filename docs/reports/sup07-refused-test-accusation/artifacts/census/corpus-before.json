@@ -1,0 +1,481 @@
+{
+ "leak_witnesses": 102,
+ "classes": {
+  "independent": 86,
+  "no_path": 7,
+  "refused_test_only": 6,
+  "tied": 3
+ },
+ "rests_on_refused_test": [
+  {
+   "function": "mk_http_error_page",
+   "line": 6319,
+   "acquisition_line": 6316,
+   "settled": true,
+   "class": "tied",
+   "refused_null_steps": [
+    6318
+   ],
+   "tied_steps": [
+    6318
+   ]
+  },
+  {
+   "function": "mk_http_error_page",
+   "line": 6319,
+   "acquisition_line": 6316,
+   "settled": true,
+   "class": "tied",
+   "refused_null_steps": [
+    6318
+   ],
+   "tied_steps": [
+    6318
+   ]
+  },
+  {
+   "function": "mk_http_error_page",
+   "line": 6319,
+   "acquisition_line": 6316,
+   "settled": true,
+   "class": "tied",
+   "refused_null_steps": [
+    6318
+   ],
+   "tied_steps": [
+    6318
+   ]
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6568,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6572,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6568,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6572,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6568,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6572,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  }
+ ],
+ "path_through_refused_null_edge": [
+  {
+   "function": "mk_http_error_page",
+   "line": 6319,
+   "acquisition_line": 6316,
+   "settled": true,
+   "class": "tied",
+   "refused_null_steps": [
+    6318
+   ],
+   "tied_steps": [
+    6318
+   ]
+  },
+  {
+   "function": "mk_http_error_page",
+   "line": 6319,
+   "acquisition_line": 6316,
+   "settled": true,
+   "class": "tied",
+   "refused_null_steps": [
+    6318
+   ],
+   "tied_steps": [
+    6318
+   ]
+  },
+  {
+   "function": "mk_http_error_page",
+   "line": 6319,
+   "acquisition_line": 6316,
+   "settled": true,
+   "class": "tied",
+   "refused_null_steps": [
+    6318
+   ],
+   "tied_steps": [
+    6318
+   ]
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6568,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6572,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6568,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6572,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6568,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  },
+  {
+   "function": "mk_sched_add_connection",
+   "line": 6576,
+   "acquisition_line": 6572,
+   "settled": true,
+   "class": "refused_test_only",
+   "refused_null_steps": [
+    6574
+   ],
+   "tied_steps": []
+  }
+ ],
+ "refused_test_edges": 133,
+ "refused_test_edges_functions": 46,
+ "tied_edges": 21,
+ "tied_edges_live": 21,
+ "tied_edge_rows": [
+  {
+   "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+   "line": 25786,
+   "source": "host",
+   "targets": [
+    25663
+   ],
+   "tied": [
+    25663
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+   "line": 25786,
+   "source": "host",
+   "targets": [
+    25663
+   ],
+   "tied": [
+    25663
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "line": 25628,
+   "source": "host",
+   "targets": [
+    25480
+   ],
+   "tied": [
+    25480
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "line": 25628,
+   "source": "host",
+   "targets": [
+    25480
+   ],
+   "tied": [
+    25480
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+   "line": 25786,
+   "source": "host",
+   "targets": [
+    25663
+   ],
+   "tied": [
+    25663
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "line": 25628,
+   "source": "host",
+   "targets": [
+    25480
+   ],
+   "tied": [
+    25480
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "line": 21802,
+   "source": "jwt_assertion",
+   "targets": [
+    21731
+   ],
+   "tied": [
+    21731
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "line": 21748,
+   "source": "jwt_assertion",
+   "targets": [
+    21731
+   ],
+   "tied": [
+    21731
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "line": 21802,
+   "source": "jwt_assertion",
+   "targets": [
+    21731
+   ],
+   "tied": [
+    21731
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "line": 21748,
+   "source": "jwt_assertion",
+   "targets": [
+    21731
+   ],
+   "tied": [
+    21731
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+   "line": 21957,
+   "source": "token_endpoint_url",
+   "targets": [
+    21920
+   ],
+   "tied": [
+    21920
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+   "line": 21957,
+   "source": "token_endpoint_url",
+   "targets": [
+    21920
+   ],
+   "tied": [
+    21920
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_jwt_b64_decode_payload",
+   "line": 21340,
+   "source": "converted_src",
+   "targets": [
+    21295
+   ],
+   "tied": [
+    21295
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_jwt_b64_decode_payload",
+   "line": 21339,
+   "source": "payload",
+   "targets": [
+    21325
+   ],
+   "tied": [
+    21325
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_oidc_assertion_parse_template_file",
+   "line": 21417,
+   "source": "template_content",
+   "targets": [
+    21383
+   ],
+   "tied": [
+    21383
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "line": 21802,
+   "source": "jwt_assertion",
+   "targets": [
+    21731
+   ],
+   "tied": [
+    21731
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "line": 21748,
+   "source": "jwt_assertion",
+   "targets": [
+    21731
+   ],
+   "tied": [
+    21731
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+   "line": 21957,
+   "source": "token_endpoint_url",
+   "targets": [
+    21920
+   ],
+   "tied": [
+    21920
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "mk_http_error_page",
+   "line": 6318,
+   "source": "temp",
+   "targets": [
+    6316
+   ],
+   "tied": [
+    6316
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "mk_http_error_page",
+   "line": 6318,
+   "source": "temp",
+   "targets": [
+    6316
+   ],
+   "tied": [
+    6316
+   ],
+   "tied_live": true
+  },
+  {
+   "function": "mk_http_error_page",
+   "line": 6318,
+   "source": "temp",
+   "targets": [
+    6316
+   ],
+   "tied": [
+    6316
+   ],
+   "tied_live": true
+  }
+ ]
+}

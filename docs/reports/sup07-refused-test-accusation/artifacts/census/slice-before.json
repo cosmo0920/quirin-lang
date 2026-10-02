@@ -1,0 +1,11 @@
+{
+ "leak_witnesses": 0,
+ "classes": {},
+ "rests_on_refused_test": [],
+ "path_through_refused_null_edge": [],
+ "refused_test_edges": 8,
+ "refused_test_edges_functions": 1,
+ "tied_edges": 0,
+ "tied_edges_live": 0,
+ "tied_edge_rows": []
+}
