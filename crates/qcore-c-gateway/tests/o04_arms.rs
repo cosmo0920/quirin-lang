@@ -859,21 +859,29 @@ fn the_routes_mask_arm_records_its_named_residual() {
         !remaining.is_empty(),
         "the named blockers are still reported"
     );
-    for description in &remaining {
-        assert!(
-            *description == INDIRECT
-                || *description
+    let unexpected = remaining
+        .iter()
+        .filter(|description| {
+            !(**description == INDIRECT
+                || **description
                     == "unmodeled call, aggregate or indirect access in branch condition"
-                || *description == "call to uncontracted function `flb_trace`"
-                || *description == "call to uncontracted function `flb_time_now`"
+                || **description == "call to uncontracted function `flb_trace`"
+                || **description == "call to uncontracted function `flb_time_now`"
                 // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k), a
-                // deliberate pin update: the gate's refusal of the call to the
-                // uncontracted `msgpack_packer_init` now names it.
-                || *description == "call to uncontracted function `msgpack_packer_init`"
-                || *description == "nullable resource `ic` used by a non-null contract",
-            "unexpected remaining refusal `{description}`"
-        );
-    }
+                // deliberate pin update: the gate's refusals of calls to callees
+                // this fixture leaves uncontracted now name them.
+                || **description == "call to uncontracted function `msgpack_packer_init`"
+                || **description == "call to uncontracted function `mk_list_add`"
+                || **description == "call to uncontracted function `flb_hash_table_add`"
+                || **description == "call to uncontracted function `pthread_mutex_lock`"
+                || **description == "call to uncontracted function `pthread_mutex_unlock`"
+                || **description == "nullable resource `ic` used by a non-null contract")
+        })
+        .collect::<Vec<_>>();
+    assert!(
+        unexpected.is_empty(),
+        "unexpected remaining refusals {unexpected:?}"
+    );
     // Not one of them is a chained *read*: the card's admission removed exactly
     // that family, and nothing else.
     assert!(

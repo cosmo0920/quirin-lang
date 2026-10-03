@@ -996,17 +996,27 @@ fn the_success_exit_keeps_its_named_residual() {
         "the untouched blockers are still reported"
     );
     // Deliberate pin update, card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule
-    // 12k): the gate's refusal of `msgpack_packer_init(&ic->mp_pck, …)`, whose
-    // callee this fixture leaves uncontracted, now names that callee.
-    for description in &remaining {
-        assert!(
-            *description == INDIRECT
-                || *description == "call to uncontracted function `flb_trace`"
-                || *description == "call to uncontracted function `msgpack_packer_init`"
-                || *description == "nullable resource `ic` used by a non-null contract",
-            "unexpected remaining refusal `{description}`"
-        );
-    }
+    // 12k): the gate's refusals of calls whose callees this fixture leaves
+    // uncontracted (`msgpack_packer_init(&ic->mp_pck, …)`, `mk_list_add`,
+    // `flb_hash_table_add`, `pthread_mutex_lock`/`_unlock` with member
+    // actuals) now name those callees.
+    let unexpected = remaining
+        .iter()
+        .filter(|description| {
+            !(**description == INDIRECT
+                || **description == "call to uncontracted function `flb_trace`"
+                || **description == "call to uncontracted function `msgpack_packer_init`"
+                || **description == "call to uncontracted function `mk_list_add`"
+                || **description == "call to uncontracted function `flb_hash_table_add`"
+                || **description == "call to uncontracted function `pthread_mutex_lock`"
+                || **description == "call to uncontracted function `pthread_mutex_unlock`"
+                || **description == "nullable resource `ic` used by a non-null contract")
+        })
+        .collect::<Vec<_>>();
+    assert!(
+        unexpected.is_empty(),
+        "unexpected remaining refusals {unexpected:?}"
+    );
     // The address-of-a-member, list, hash-table and mutex statements are all
     // still refused: eight `INDIRECT` refusals remain on C6's path, one fewer
     // than before this card (the routes-mask read).
@@ -1017,10 +1027,29 @@ fn the_success_exit_keeps_its_named_residual() {
     // that corrected declaration had no rule to admit it. Clause T5 of card
     // NEIGHBOURS-CHAINED-TAIL admits it at the declared data tail, so this
     // count is again exactly B09/B10's territory.
+    //
+    // Deliberate pin update, card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule
+    // 12k): each of the eight is a gate refusal whose callee this fixture
+    // leaves uncontracted (`msgpack_packer_init`, `mk_list_add`, four
+    // `flb_hash_table_add`, `pthread_mutex_lock`/`_unlock`), with actuals W44
+    // reads at a `Borrowed` position, so each now names its callee. The same
+    // eight statements stay refused; none reads the gate's text any more.
     assert_eq!(
         remaining
             .iter()
             .filter(|description| **description == INDIRECT)
+            .count(),
+        0,
+        "B09/B10 territory is untouched: {:?}",
+        caller.diagnostics
+    );
+    assert_eq!(
+        remaining
+            .iter()
+            .filter(
+                |description| description.starts_with("call to uncontracted function `")
+                    && **description != "call to uncontracted function `flb_trace`"
+            )
             .count(),
         8,
         "B09/B10 territory is untouched: {:?}",
