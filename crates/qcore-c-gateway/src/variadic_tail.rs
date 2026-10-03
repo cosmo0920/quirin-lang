@@ -50,6 +50,9 @@
 //! that may bind, a call T3 refused, and every trailing actual of a callee
 //! without the declared tail. Format agreement (gap entry K10) is not checked:
 //! nothing here reads a format string.
+//!
+//! Card CG26-TAIL-RESIDUAL-ACTUALS (rule 12g) reads a position these shapes
+//! refuse once more, from its Clang node ([`crate::variadic_tail_actuals`]).
 
 use qcore_schemas::contract::{ResourceFunctionContract, ResourceParameterMode};
 use serde_json::Value;

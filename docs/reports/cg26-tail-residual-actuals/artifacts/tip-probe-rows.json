@@ -1,0 +1,72 @@
+{
+ "tip:mk_vhost_set": {
+  "before": {
+   "status": "Unknown",
+   "leaves": [
+    "call to uncontracted function `mk_vhost_set_property`"
+   ]
+  },
+  "after2": {
+   "status": "Unknown",
+   "leaves": [
+    "call to uncontracted function `mk_vhost_set_property`"
+   ]
+  }
+ },
+ "tip:mk_vhost_set_property": {
+  "before": {
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection",
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  "after2": {
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection",
+    "indirect memory access is outside the resource projection"
+   ]
+  }
+ },
+ "master:mk_vhost_set": {
+  "before": {
+   "status": "Unknown",
+   "leaves": [
+    "call to uncontracted function `mk_vhost_set_property`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`"
+   ]
+  },
+  "after2": {
+   "status": "Unknown",
+   "leaves": [
+    "call to uncontracted function `mk_vhost_set_property`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`",
+    "va_list protocol refused: `va` may reach a function exit without `va_end`"
+   ]
+  }
+ },
+ "master:mk_vhost_set_property": {
+  "before": {
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection",
+    "indirect memory access is outside the resource projection"
+   ]
+  },
+  "after2": {
+   "status": "Unknown",
+   "leaves": [
+    "indirect memory access is outside the resource projection",
+    "indirect memory access is outside the resource projection"
+   ]
+  }
+ }
+}

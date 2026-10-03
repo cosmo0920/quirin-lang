@@ -1,0 +1,197 @@
+{
+ "transitions": {
+  "Unknown -> Unknown": 15
+ },
+ "status_moves": [],
+ "removed": {
+  "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 25
+ },
+ "added": {},
+ "attribution": {
+  "tail:fprintf": 10,
+  "tail:printf": 2,
+  "tail:snprintf": 3
+ },
+ "moves": [
+  {
+   "function": "mk_server/monkey.c::1::mk_server_info::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:printf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `printf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdbuf.c::1::do_unittest_erase::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdbuf.c::1::do_unittest_write_read_payload_correctness::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka.c::1::rd_kafka_version_str::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_msg.c::1::unittest_msgq_order::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_range_assignor.c::1::rd_kafka_range_assignor_unittest::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 3
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_ssl.c::1::unittest_ssl::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 4
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_sticky_assignor.c::1::rd_kafka_sticky_assignor_unittest::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 4
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_telemetry_decode.c::1::unit_test_telemetry::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdkafka_topic.c::1::rd_kafka_topic_new0::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdlog.c::1::rd_msghdr_print::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:printf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `printf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdstring.c::1::rd_string_render::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:snprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `snprintf` are outside the resource projection": 3
+   },
+   "added": {}
+  },
+  {
+   "function": "rdstring.c::1::ut_string_split::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdunittest.c::1::rd_unittest::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "rdunittest_fetcher.c::1::unittest_fetcher_share_filter_forward::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:fprintf"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `fprintf` are outside the resource projection": 1
+   },
+   "added": {}
+  }
+ ]
+}

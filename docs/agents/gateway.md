@@ -4200,7 +4200,8 @@ own anchor here.
     after the call), or — only under `resource_variadic_borrowed_tail()` —
     **T8** a plain name read as a `Borrowed` place (the flow's liveness and
     alias checks apply). Under the data tail an identity-carrying actual keeps
-    O04-TRACE's refusal. **Do not** read a list event the AST does not show,
+    O04-TRACE's refusal. Rule [12g](#constraint-12g) reads a position T1-T8
+    refuse from its Clang node. **Do not** read a list event the AST does not show,
     admit a protocol on any path that is not certified, lower a `va_*`
     statement before an older route (hard invariant 3), read a pointer
     `va_arg` value as an identity, widen the data tail to identities, or claim
@@ -4641,3 +4642,61 @@ own anchor here.
     `an_owned_object_stays_owed`, `decide_iff`, the shared
     `decisionVectors`, `a_declined_return_is_never_safe`);
     [report](../reports/w48-bottom-up-callee-bodies/README.md).
+
+<a id="constraint-12g"></a>
+
+12g. **A trailing actual rule 11w's token premises refuse is read from its
+    Clang node: data only when no name in it carries a tracked identity, a
+    `Borrowed` place only as one whole answered pointer name under a declared
+    borrowed tail, and a cast is never read.** Card CG26-TAIL-RESIDUAL-ACTUALS
+    (`crates/qcore-c-gateway/src/variadic_tail_actuals.rs`, new; thin hooks in
+    `legacy_variadics.rs` (`tail_readings`, `tail_reading_admits`, a fourth
+    alternative of rule 11w's `tail_widened`); shared items named:
+    `Parser::variadic_tail_readings` in `legacy_c.rs`, set only around rule
+    11w's fallback re-classification, and `Parser::position_answered` in
+    `legacy_typed_roots.rs`, rule 10l's "declared exactly once" premise). It
+    amends rule 11w(4) only by one more admission per trailing position,
+    asked after T1-T8 refuse it, in the same statement fallback and after the
+    same promoted-type premise. The call's argument node is read
+    (`TailExpr::from_node`; parentheses and implicit conversions transparent,
+    and the operand of an arithmetic implicit conversion read as arithmetic
+    even when Clang spells its type only by a typedef of an anonymous
+    enumeration) and classified by one recursion (`classify`): **data** — a
+    literal, a predefined identifier, an enumeration constant, a
+    constant-size `sizeof`/`_Alignof`, an arithmetic object that is not one of
+    the function's integer-carried identities, a pointer or array object rule
+    10l's served never-bound premise answers, and a unary `- + ~ !`, a binary
+    arithmetic, bitwise, shift, comparison or logical operator or a `?:`
+    every operand of which is data; **identity** — one name that may carry a
+    tracked identity; or a **named refusal** (`cast`, `pointer-arithmetic`,
+    `identity-arm`, `identity-operand`, recorded in the parity row
+    `tail_readings`). `read` admits data, and admits an identity as a
+    `Borrowed` place of that name only for a pointer or array object, only
+    under `resource_variadic_borrowed_tail()`, only when rule 10l answers the
+    name (one formal or automatic local of that spelling), and only when the
+    token actual is exactly that name, so the flow's liveness and alias
+    checks apply to the object the actual denotes (`integer-identity`,
+    `identity-under-data-tail`, `unanswered-root` otherwise). A refused
+    reading keeps O04-TRACE's refusal byte for byte. **Do not** read an
+    explicit cast (the card CAST-FORMALIZATION's, rule 12h), read pointer
+    arithmetic or a conditional with an identity-carrying arm or condition as
+    data or as a place, admit an identity under the data tail (nothing widens
+    it), or ask the reading before T1-T8 (every older admission keeps its
+    code, hard invariant 3). Premises stated, not proved: Clang's node and
+    type and the node match (trust boundary 28), rule 10l's never-bound and
+    declaration premises, the integer-carried identities of the descriptor
+    reader, and the declared tail clauses (rule 11w). Measured (corpus
+    `66910c10`, main `cb3085365`): 649 / 9 / 4,176 unchanged
+    (`450a9e54…` → `AFTER2_DIGEST…`); 25 of the 40 tail leaves removed in 15
+    Unknown functions, no other leaf moves, no leak or violation added; the
+    15 left are 6 casts, 3 identity conditionals and 6 leaves of two
+    `rdhttp.c` tests whose statements rule 11w's fallback never matches.
+    System: no status move, `flb_sched_timer_cb_create`'s 2 leaves removed;
+    tail-pause slice byte-identical. `QCore.VariadicTailActuals`
+    (`data_iff_nothing_carried`, `every_data_reading_carries_nothing`,
+    `borrowed_is_the_whole_root`, `the_data_tail_is_never_widened`,
+    `a_cast_is_never_read`, `pointer_arithmetic_is_never_read`,
+    `an_identity_arm_is_refused`, `an_identity_condition_is_refused`,
+    `an_unanswered_root_is_refused`, `an_integer_identity_is_refused`,
+    `the_reading_is_custody_neutral`, the shared `readVectors`);
+    [report](../reports/cg26-tail-residual-actuals/README.md).

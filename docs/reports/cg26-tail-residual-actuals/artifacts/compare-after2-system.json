@@ -1,0 +1,39 @@
+{
+ "transitions": {
+  "Unknown -> Unknown": 2
+ },
+ "status_moves": [],
+ "removed": {
+  "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 2
+ },
+ "added": {},
+ "attribution": {
+  "tail:flb_log_print": 2
+ },
+ "moves": [
+  {
+   "function": "src/flb_scheduler.c::1::flb_sched_timer_cb_create::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  },
+  {
+   "function": "src/flb_scheduler.c::2::flb_sched_timer_cb_create::1",
+   "before": "Unknown",
+   "after": "Unknown",
+   "families": [
+    "tail:flb_log_print"
+   ],
+   "removed": {
+    "unsupported: arguments beyond the declared parameters of `flb_log_print` are outside the resource projection": 1
+   },
+   "added": {}
+  }
+ ]
+}

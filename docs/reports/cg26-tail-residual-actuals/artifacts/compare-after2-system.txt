@@ -1,0 +1,12 @@
+{
+ "transitions": {
+  "Unknown -> Unknown": 2
+ },
+ "attribution": {
+  "tail:flb_log_print": 2
+ },
+ "removed": {
+  "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 2
+ },
+ "added": {}
+}

@@ -1,0 +1,301 @@
+{
+ "summary": {
+  "statements": 9,
+  "lexical_readable": {
+   "True": 8,
+   "False": 1
+  },
+  "functions": 6,
+  "tail_leaves": {
+   "rd_kafka_anyconf_get0": 1,
+   "rd_kafka_conf_set_ssl_cert": 1,
+   "rd_kafka_snappy_java_uncompress": 1,
+   "rd_kafka_ssl_error0": 2,
+   "unittest_http_get": 4,
+   "unittest_http_get_params_append": 2,
+   "unittest_untyped_map": 3,
+   "ut_quantile": 1
+  },
+  "tail_leaf_total": 15
+ },
+ "rows": [
+  {
+   "callee": "snprintf",
+   "function": "rd_kafka_anyconf_get0",
+   "line": 25178,
+   "texts": "snprintf ( tmp , sizeof ( tmp ) , __qcore_literal__ , ( void * ) val )",
+   "tail": [
+    "( void * ) val"
+   ],
+   "promoted": true,
+   "lexical_readable": true,
+   "ast_answers": true,
+   "names": {},
+   "tail_readings": [
+    "refused:cast"
+   ],
+   "function_leaves": {
+    "status": "Unknown",
+    "tail": 1,
+    "other": 21
+   }
+  },
+  {
+   "callee": "snprintf",
+   "function": "rd_kafka_ssl_error0",
+   "line": 20276,
+   "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , file , line , func , buf , data ? __qcore_literal__ : __qcore_literal__ , data ? data : __qcore_literal__ )",
+   "tail": [
+    "file",
+    "line",
+    "func",
+    "buf",
+    "data ? __qcore_literal__ : __qcore_literal__",
+    "data ? data : __qcore_literal__"
+   ],
+   "promoted": true,
+   "lexical_readable": true,
+   "ast_answers": true,
+   "names": {
+    "file": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    },
+    "line": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    },
+    "func": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    },
+    "buf": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    }
+   },
+   "tail_readings": [
+    "borrowed:file",
+    "data",
+    "borrowed:func",
+    "borrowed:buf",
+    "refused:identity-operand",
+    "refused:identity-operand"
+   ],
+   "function_leaves": {
+    "status": "Unknown",
+    "tail": 2,
+    "other": 7
+   }
+  },
+  {
+   "callee": "snprintf",
+   "function": "rd_kafka_ssl_error0",
+   "line": 20278,
+   "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , buf , data ? __qcore_literal__ : __qcore_literal__ , data ? data : __qcore_literal__ )",
+   "tail": [
+    "buf",
+    "data ? __qcore_literal__ : __qcore_literal__",
+    "data ? data : __qcore_literal__"
+   ],
+   "promoted": true,
+   "lexical_readable": true,
+   "ast_answers": true,
+   "names": {
+    "buf": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    }
+   },
+   "tail_readings": [
+    "borrowed:buf",
+    "refused:identity-operand",
+    "refused:identity-operand"
+   ],
+   "function_leaves": {
+    "status": "Unknown",
+    "tail": 2,
+    "other": 7
+   }
+  },
+  {
+   "callee": "snprintf",
+   "function": "rd_kafka_snappy_java_uncompress",
+   "line": 20475,
+   "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , clen , ( ssize_t ) inlen - of )",
+   "tail": [
+    "clen",
+    "( ssize_t ) inlen - of"
+   ],
+   "promoted": true,
+   "lexical_readable": true,
+   "ast_answers": true,
+   "names": {
+    "clen": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    }
+   },
+   "tail_readings": [
+    "data",
+    "refused:cast"
+   ],
+   "function_leaves": {
+    "status": "Unsafe",
+    "tail": 1,
+    "other": 13
+   }
+  },
+  {
+   "callee": "fprintf",
+   "function": "ut_quantile",
+   "line": 4304,
+   "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , ( int64_t ) i )",
+   "tail": [
+    "( int64_t ) i"
+   ],
+   "promoted": true,
+   "lexical_readable": false,
+   "ast_answers": true,
+   "names": {},
+   "tail_readings": [
+    "refused:cast"
+   ],
+   "function_leaves": {
+    "status": "Unknown",
+    "tail": 1,
+    "other": 8
+   }
+  },
+  {
+   "callee": "snprintf",
+   "function": "rd_kafka_conf_set_ssl_cert",
+   "line": 20452,
+   "texts": "snprintf ( errstr , errstr_size , __qcore_literal__ , ( int ) cert_type )",
+   "tail": [
+    "( int ) cert_type"
+   ],
+   "promoted": true,
+   "lexical_readable": true,
+   "ast_answers": true,
+   "names": {},
+   "tail_readings": [
+    "refused:cast"
+   ],
+   "function_leaves": {
+    "status": "Unknown",
+    "tail": 1,
+    "other": 10
+   }
+  },
+  {
+   "callee": "fprintf",
+   "function": "unittest_untyped_map",
+   "line": 3560,
+   "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ , pass , val , val2 ? val2 : __qcore_literal__ , key )",
+   "tail": [
+    "pass",
+    "val",
+    "val2 ? val2 : __qcore_literal__",
+    "key"
+   ],
+   "promoted": true,
+   "lexical_readable": true,
+   "ast_answers": true,
+   "names": {
+    "pass": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    },
+    "val": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    },
+    "key": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    }
+   },
+   "tail_readings": [
+    "data",
+    "borrowed:val",
+    "refused:identity-operand",
+    "borrowed:key"
+   ],
+   "function_leaves": {
+    "status": "Unknown",
+    "tail": 3,
+    "other": 8
+   }
+  },
+  {
+   "callee": "fprintf",
+   "function": "unittest_untyped_map",
+   "line": 3568,
+   "texts": "fprintf ( stderr , __qcore_literal__ __qcore_literal__ __qcore_literal__ __qcore_literal__ , get_cnt , ( float ) ts_get / 1000 . 0 , ts_get / get_cnt )",
+   "tail": [
+    "get_cnt",
+    "( float ) ts_get / 1000 . 0",
+    "ts_get / get_cnt"
+   ],
+   "promoted": true,
+   "lexical_readable": true,
+   "ast_answers": true,
+   "names": {
+    "get_cnt": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    }
+   },
+   "tail_readings": [
+    "data",
+    "refused:cast",
+    "data"
+   ],
+   "function_leaves": {
+    "status": "Unknown",
+    "tail": 3,
+    "other": 8
+   }
+  },
+  {
+   "callee": "fprintf",
+   "function": "unittest_untyped_map",
+   "line": 3577,
+   "texts": "fprintf ( stderr , __qcore_literal__ , cnt , ( float ) ts / 1000 . 0 )",
+   "tail": [
+    "cnt",
+    "( float ) ts / 1000 . 0"
+   ],
+   "promoted": true,
+   "lexical_readable": true,
+   "ast_answers": true,
+   "names": {
+    "cnt": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    }
+   },
+   "tail_readings": [
+    "data",
+    "refused:cast"
+   ],
+   "function_leaves": {
+    "status": "Unknown",
+    "tail": 3,
+    "other": 8
+   }
+  }
+ ]
+}

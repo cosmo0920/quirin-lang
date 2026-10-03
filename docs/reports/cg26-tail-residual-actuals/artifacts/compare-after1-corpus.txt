@@ -1,0 +1,14 @@
+{
+ "transitions": {
+  "Unknown -> Unknown": 15
+ },
+ "attribution": {
+  "tail:fprintf": 10,
+  "tail:printf": 2,
+  "tail:snprintf": 3
+ },
+ "removed": {
+  "unsupported: arguments beyond the declared parameters of `X` are outside the resource projection": 23
+ },
+ "added": {}
+}

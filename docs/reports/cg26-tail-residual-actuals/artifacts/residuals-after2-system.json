@@ -1,0 +1,109 @@
+{
+ "summary": {
+  "statements": 3,
+  "lexical_readable": {
+   "False": 2,
+   "True": 1
+  },
+  "functions": 2,
+  "tail_leaves": {
+   "flb_storage_quarantine_chunk": 2
+  },
+  "tail_leaf_total": 2
+ },
+ "rows": [
+  {
+   "callee": "flb_log_print",
+   "function": "flb_coro_destroy",
+   "line": 8106,
+   "texts": "flb_log_print ( 5 , __qcore_literal__ , 97 , __qcore_literal__ , coro , ( ( ( char * ) coro ) + sizeof ( struct flb_coro ) ) )",
+   "tail": [
+    "coro",
+    "( ( ( char * ) coro ) + sizeof ( struct flb_coro ) )"
+   ],
+   "promoted": true,
+   "lexical_readable": false,
+   "ast_answers": false,
+   "names": {
+    "coro": {
+     "served_never_bound": null,
+     "ast_answered": null,
+     "formal": null
+    }
+   },
+   "tail_readings": [
+    "refused:unanswered-root",
+    "refused:cast"
+   ],
+   "function_leaves": null
+  },
+  {
+   "callee": "snprintf",
+   "function": "flb_storage_quarantine_chunk",
+   "line": 19002,
+   "texts": "snprintf ( name , sizeof ( name ) , __qcore_literal__ , safe_tag , status_code , safe_out , ( void * ) src )",
+   "tail": [
+    "safe_tag",
+    "status_code",
+    "safe_out",
+    "( void * ) src"
+   ],
+   "promoted": true,
+   "lexical_readable": true,
+   "ast_answers": true,
+   "names": {
+    "safe_tag": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    },
+    "status_code": {
+     "served_never_bound": true,
+     "ast_answered": true,
+     "formal": true
+    },
+    "safe_out": {
+     "served_never_bound": false,
+     "ast_answered": true,
+     "formal": false
+    }
+   },
+   "tail_readings": [
+    "borrowed:safe_tag",
+    "data",
+    "borrowed:safe_out",
+    "refused:cast"
+   ],
+   "function_leaves": {
+    "status": "Unknown",
+    "tail": 2,
+    "other": 26
+   }
+  },
+  {
+   "callee": "flb_log_print",
+   "function": "flb_coro_destroy",
+   "line": 8693,
+   "texts": "flb_log_print ( 5 , __qcore_literal__ , 97 , __qcore_literal__ , coro , ( ( ( char * ) coro ) + sizeof ( struct flb_coro ) ) )",
+   "tail": [
+    "coro",
+    "( ( ( char * ) coro ) + sizeof ( struct flb_coro ) )"
+   ],
+   "promoted": true,
+   "lexical_readable": false,
+   "ast_answers": false,
+   "names": {
+    "coro": {
+     "served_never_bound": null,
+     "ast_answered": null,
+     "formal": null
+    }
+   },
+   "tail_readings": [
+    "refused:unanswered-root",
+    "refused:cast"
+   ],
+   "function_leaves": null
+  }
+ ]
+}

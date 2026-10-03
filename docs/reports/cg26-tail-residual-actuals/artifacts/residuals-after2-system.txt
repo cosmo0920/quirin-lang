@@ -1,0 +1,15 @@
+{
+ "statements": 3,
+ "lexical_readable": {
+  "False": 2,
+  "True": 1
+ },
+ "functions": 2,
+ "tail_leaves": {
+  "flb_storage_quarantine_chunk": 2
+ },
+ "tail_leaf_total": 2
+}
+flb_log_print flb_coro_destroy 8106 readable False ast False | ['coro', '( ( ( char * ) coro ) + sizeof ( struct flb_coro ) )'] {'coro': {'served_never_bound': None, 'ast_answered': None, 'formal': None}} ['refused:unanswered-root', 'refused:cast'] | None
+snprintf flb_storage_quarantine_chunk 19002 readable True ast True | ['safe_tag', 'status_code', 'safe_out', '( void * ) src'] {'safe_tag': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'status_code': {'served_never_bound': True, 'ast_answered': True, 'formal': True}, 'safe_out': {'served_never_bound': False, 'ast_answered': True, 'formal': False}} ['borrowed:safe_tag', 'data', 'borrowed:safe_out', 'refused:cast'] | {'status': 'Unknown', 'tail': 2, 'other': 26}
+flb_log_print flb_coro_destroy 8693 readable False ast False | ['coro', '( ( ( char * ) coro ) + sizeof ( struct flb_coro ) )'] {'coro': {'served_never_bound': None, 'ast_answered': None, 'formal': None}} ['refused:unanswered-root', 'refused:cast'] | None
