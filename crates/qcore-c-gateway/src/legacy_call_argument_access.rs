@@ -931,6 +931,82 @@ impl Parser<'_> {
         }
         Some(Probe { result, used })
     }
+
+    /// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (gateway rule 12k; shared
+    /// item added to this module): the classification of `tokens` with every
+    /// memory-reading actual of its first call read as this rule reads an
+    /// actual at a `Borrowed` position, whatever the callee's contract says.
+    /// `None` when the statement has no call, no actual reads memory, or one
+    /// that does is recognised neither lexically ([`recognise`]) nor by the
+    /// typed actual (rule 10k). This is a **reading**, never a lowering: the
+    /// probe is cleared and every counter the classification advanced is
+    /// restored whatever it answers, and the typed reading records no parity.
+    pub(super) fn reclassified_with_borrowed_actuals(
+        &mut self,
+        tokens: &[Token],
+    ) -> Option<LegacyInstruction> {
+        let texts = tokens
+            .iter()
+            .map(|token| token.text.as_str())
+            .collect::<Vec<_>>();
+        let lines = tokens.iter().map(|token| token.line).collect::<Vec<_>>();
+        let (call_index, callee) = find_call(&texts)?;
+        let spans = call_argument_spans(&texts, call_index)?;
+        let arity = spans.len();
+        let mut admitted = Vec::new();
+        for (index, (start, end)) in spans.into_iter().enumerate() {
+            let argument = &texts[start..end];
+            if !super::contains_unmodeled_access(argument) {
+                continue;
+            }
+            let read = match recognise(
+                argument,
+                &self.typed_model,
+                &self.typed_types,
+                &self.collection_types,
+            ) {
+                Ok(read) => read,
+                Err(_) => {
+                    let typed = self.typed_positions_index().and_then(|positions| {
+                        positions.argument(callee, index, arity, argument, lines[start], |name| {
+                            self.position_never_bound(name)
+                        })
+                    });
+                    crate::typed_place::clear_decisions();
+                    let typed = typed?;
+                    ArgumentRead {
+                        bases: typed.plan.scalar.bases,
+                        record_bases: typed.plan.scalar.record_bases,
+                        pointer_valued: typed.pointer_valued,
+                        chains: typed.plan.chains,
+                    }
+                }
+            };
+            admitted.push(AdmittedArgument {
+                callee: callee.to_owned(),
+                index,
+                texts: argument.iter().map(|text| (*text).to_owned()).collect(),
+                read,
+                used: false,
+                release: false,
+            });
+        }
+        if admitted.is_empty() {
+            return None;
+        }
+        let saved = (self.next_site, self.element_lowerings);
+        let previous = std::mem::replace(
+            &mut self.argument_probe,
+            ArgumentProbe {
+                admitted,
+                rerun: true,
+            },
+        );
+        let result = self.classify_simple(tokens);
+        self.argument_probe = previous;
+        (self.next_site, self.element_lowerings) = saved;
+        Some(result)
+    }
 }
 
 /// Whether the destination the classifier named for this statement is exactly

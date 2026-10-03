@@ -122,6 +122,11 @@ pub(crate) mod call_argument_access;
 // call read with rule W44's call-argument access, asked last.
 #[path = "legacy_return_call_access.rs"]
 mod return_call_access;
+// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k): the gate's refusal of a
+// call whose callee is uncontracted names that callee when it decides; asked
+// last, a re-attribution that never admits.
+#[path = "legacy_uncontracted_access.rs"]
+mod uncontracted_access;
 
 // Card W45-CALLEE-SUMMARY-CASCADE: a pointer member handed to a nullable
 // release, a pointer member null test, and the call-site sub-custody guard
@@ -6699,6 +6704,11 @@ impl Parser<'_> {
                 if !strict && !untracked_pointer && returned_evaluation.is_none() {
                     self.census_return(line, &texts);
                 }
+                // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k). Asked
+                // last: the gate's refusal of a whole-call return names the
+                // uncontracted callee where it decides; never an admission.
+                let returned_evaluation =
+                    self.uncontracted_return_attribution(&expression, line, returned_evaluation);
                 Statement::Return {
                     line,
                     writes: self.expression_writes(&expression),
@@ -6901,6 +6911,13 @@ impl Parser<'_> {
                 use_,
             );
         }
+        // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k). Asked last,
+        // only for the gate's refusal: it names the uncontracted callee where
+        // the callee decides; the node stays the same refusal with its writes.
+        self.typed_place_origin
+            .set(origin.map(|origin| (origin, tokens.len())));
+        let instruction = self.uncontracted_access_attribution(tokens, line, instruction);
+        self.typed_place_origin.set(None);
         Statement::Instruction(instruction, line)
     }
 

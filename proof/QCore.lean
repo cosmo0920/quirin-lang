@@ -338,5 +338,6 @@ import QCore.ScalarReturnValue
 import QCore.VariadicTailActuals
 import QCore.RecordObjectPlace
 import QCore.ReturnCallActuals
+import QCore.UncontractedAccessAttribution
 
 /-! The executable formal core of QCore-C revision 0.1. -/
