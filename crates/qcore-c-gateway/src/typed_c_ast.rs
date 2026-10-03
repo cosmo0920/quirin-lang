@@ -11,6 +11,13 @@ use std::io::Write;
 use std::process::Stdio;
 
 /// Parse Clang declarations selected by its substring name filter.
+///
+/// Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: a launch whose executable,
+/// arguments and standard input equal an earlier successful launch's on this
+/// thread is answered by that launch's declarations
+/// ([`crate::clang_reuse::LaunchCache`]); the source importers ask the same
+/// name of the same text repeatedly (23,720 of the suite's 27,558 filtered
+/// launches repeated one).
 pub fn ast_declarations(
     source: &str,
     unit: &C11TranslationUnit<'_>,
@@ -18,20 +25,36 @@ pub fn ast_declarations(
 ) -> Result<Vec<Value>, String> {
     let mut command = crate::clang::command()?;
     unit.append_frontend_flags(&mut command);
+    command.args([
+        "-x",
+        "c",
+        unit.dialect.clang_argument(),
+        "-fsyntax-only",
+        "-Xclang",
+        "-ast-dump=json",
+        "-Xclang",
+        "-ast-dump-filter",
+        "-Xclang",
+        function,
+        "-",
+    ]);
+    FILTERED_DECLARATIONS.with(|cache| {
+        cache.get_or_launch(command, source, |command| {
+            launch_declarations(command, source)
+        })
+    })
+}
+
+thread_local! {
+    static FILTERED_DECLARATIONS: crate::clang_reuse::LaunchCache<Vec<Value>> =
+        const { crate::clang_reuse::LaunchCache::new() };
+}
+
+fn launch_declarations(
+    mut command: std::process::Command,
+    source: &str,
+) -> Result<Vec<Value>, String> {
     let mut child = command
-        .args([
-            "-x",
-            "c",
-            unit.dialect.clang_argument(),
-            "-fsyntax-only",
-            "-Xclang",
-            "-ast-dump=json",
-            "-Xclang",
-            "-ast-dump-filter",
-            "-Xclang",
-            function,
-            "-",
-        ])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())

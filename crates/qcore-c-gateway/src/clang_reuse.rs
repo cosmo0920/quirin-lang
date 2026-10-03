@@ -142,9 +142,131 @@ impl<T> UnitCache<T> {
     }
 }
 
+/// Launches kept per thread by a [`LaunchCache`].
+const LAUNCH_CAPACITY: usize = 32;
+
+/// Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the last [`LAUNCH_CAPACITY`]
+/// successful results of one Clang transport on this thread, keyed by the
+/// launch itself: the resolution environment, the executable, every argument
+/// and the standard input, all compared exactly. The same rules as
+/// [`UnitCache`]: successes only, never a launch whose input may read a file
+/// or whose command carries its own environment or working directory.
+pub(crate) struct LaunchCache<T> {
+    entries: RefCell<Vec<(LaunchKey, Rc<T>)>>,
+}
+
+struct LaunchKey {
+    environment: (Option<OsString>, Option<OsString>),
+    program: OsString,
+    arguments: Vec<OsString>,
+    input: String,
+}
+
+impl LaunchKey {
+    fn matches(
+        &self,
+        environment: &(Option<OsString>, Option<OsString>),
+        command: &std::process::Command,
+        input: &str,
+    ) -> bool {
+        self.environment == *environment
+            && self.program == command.get_program()
+            && self
+                .arguments
+                .iter()
+                .map(OsString::as_os_str)
+                .eq(command.get_args())
+            && self.input == input
+    }
+}
+
+impl<T: Clone> LaunchCache<T> {
+    pub(crate) const fn new() -> Self {
+        Self {
+            entries: RefCell::new(Vec::new()),
+        }
+    }
+
+    /// `launch(command)`'s result, or the stored result of an identical
+    /// earlier launch on this thread. Only a success is stored.
+    pub(crate) fn get_or_launch(
+        &self,
+        command: std::process::Command,
+        input: &str,
+        launch: impl FnOnce(std::process::Command) -> Result<T, String>,
+    ) -> Result<T, String> {
+        if !reads_only_standard_input(input)
+            || command.get_envs().next().is_some()
+            || command.get_current_dir().is_some()
+        {
+            return launch(command);
+        }
+        let environment = crate::clang::resolution_environment();
+        if let Some((_, value)) = self
+            .entries
+            .borrow()
+            .iter()
+            .find(|(key, _)| key.matches(&environment, &command, input))
+        {
+            return Ok(value.as_ref().clone());
+        }
+        let key = LaunchKey {
+            environment,
+            program: command.get_program().to_owned(),
+            arguments: command.get_args().map(ToOwned::to_owned).collect(),
+            input: input.to_owned(),
+        };
+        let value = launch(command)?;
+        let mut entries = self.entries.borrow_mut();
+        if entries.len() == LAUNCH_CAPACITY {
+            entries.remove(0);
+        }
+        entries.push((key, Rc::new(value.clone())));
+        Ok(value)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_launch_is_reused_only_for_the_same_program_arguments_and_input() {
+        let cache = LaunchCache::<usize>::new();
+        let command = |argument: &str| {
+            let mut command = std::process::Command::new("clang");
+            command.args(["-x", "c", argument, "-"]);
+            command
+        };
+        let launches = std::cell::Cell::new(0);
+        let launch = |_: std::process::Command| {
+            launches.set(launches.get() + 1);
+            Ok(launches.get())
+        };
+        assert_eq!(cache.get_or_launch(command("a"), "int x;\n", launch), Ok(1));
+        assert_eq!(cache.get_or_launch(command("a"), "int x;\n", launch), Ok(1));
+        assert_eq!(cache.get_or_launch(command("b"), "int x;\n", launch), Ok(2));
+        assert_eq!(cache.get_or_launch(command("a"), "int y;\n", launch), Ok(3));
+        // A failure is never kept, and a text that may read a file is never
+        // reused.
+        let failed = LaunchCache::<usize>::new();
+        assert!(
+            failed
+                .get_or_launch(command("a"), "int x;\n", |_| Err("no".into()))
+                .is_err()
+        );
+        assert_eq!(
+            failed.get_or_launch(command("a"), "int x;\n", launch),
+            Ok(4)
+        );
+        let include = "#include <a.h>\n";
+        assert_eq!(cache.get_or_launch(command("a"), include, launch), Ok(5));
+        assert_eq!(cache.get_or_launch(command("a"), include, launch), Ok(6));
+        // A command carrying its own environment is never reused.
+        let mut with_env = command("a");
+        with_env.env("X", "1");
+        assert_eq!(cache.get_or_launch(with_env, "int x;\n", launch), Ok(7));
+    }
 
     #[test]
     fn a_text_that_may_read_a_file_is_never_reused() {
