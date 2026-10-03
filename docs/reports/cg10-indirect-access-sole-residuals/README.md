@@ -289,7 +289,10 @@ logs `private/cg10res/gate-g3/`, exits copied to [gate/](gate/), summary
 | `python3 scripts/run_test_binaries.py` | 0 | 441 units, 454 summaries; 7,561 passed, 0 failed, 11 ignored (`private/test-binaries/20261003T213057Z-3295650`) |
 | `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
 | `python3 scripts/check_lean_audits.py` | 0 | 287 audits passed |
-| `python3 -m unittest discover -s scripts/tests`, `build_matrix.py . --gate gate.json`, docs index | see [gate/](gate/) | |
+| `python3 -m unittest discover -s scripts/tests` (before the matrix) | 1 | the expected stale `lean_audits` (286 committed, 287 produced) |
+| `build_matrix.py . --gate gate.json` | 0 | |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK |
+| `build_docs_index.py`, `--check` | 0, 0 | |
 
 **Provider gate** (`scripts/provider-gate.sh g2`, at `468be8322`; `providers/`
 unchanged since): `cargo check --locked`, fmt, clippy 0; 129 provider tests;

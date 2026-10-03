@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG10-INDIRECT-ACCESS-SOLE-BLOCKERS card gate on base cdc2fa878 (main unmoved), code steps at 799dacf1a (later commits: the report, records and gate files only), scripts docs/reports/cg10-indirect-access-sole-blockers/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/cg10sole/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 439 units, 452 summaries, 7,550 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261003T103104Z-3855597); both reevaluation probes exit 0; check_lean_audits.py 286 audits passed (AuditReturnCallActuals.lean and AuditRecordObjectPlace.lean new); python tests and docs index check after build_matrix.py . --gate this file (09a, 09b, 10b, 10c); 08-python before the matrix regeneration failed only on the expected stale lean_audits (284 committed, 286 produced). The first gate run (gate-g1, at e1e15b64d) failed exactly the four pins the card then flipped deliberately with statement-form controls (7,546 passed, 4 failed); every other step of it exited 0. Provider gate: providers/ is unchanged by the card and since CAST-FORMALIZATION's provider gate over the same tree (cdc2fa878 is its merged tip), so provider_tests is that run's figure, not re-run here.",
-  "workspace_tests": 7550,
+  "note": "CG10-INDIRECT-ACCESS-SOLE-RESIDUALS card gate on base 2ecd39531 (main unmoved), code steps at abba7ce22 (later commits: the report, records and gate files only), scripts docs/reports/cg10-indirect-access-sole-residuals/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/cg10res/gate-g3 of this worktree. gate-g3: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 441 units, 454 summaries, 7,561 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261003T213057Z-3295650); both reevaluation probes exit 0; check_lean_audits.py 287 audits passed (AuditUncontractedAccessAttribution.lean new); python tests and docs index check after build_matrix.py . --gate this file (09a, 09b, 10b, 10c); 08-python before the matrix regeneration may fail only on the expected stale lean_audits (286 committed, 287 produced). Provider gate (providers/ changes: two crates' contracts, manifests and locks) ran as gate-g2 at 468be8322, providers/ unchanged since: cargo check --locked, fmt, clippy, 129 provider tests, 24 provider Python tests, contracts.py check, package build and verify of all five packages, every exit 0. gate-g1 (a44bfde7f) stopped at clippy (question_mark, fixed at 468be8322, no behaviour change); gate-g2 failed exactly the deliberate pin flips of the report's section 6 and the two contract pins of section 3 (7,548 passed, 13 failed), every other step 0.",
+  "workspace_tests": 7561,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 286,
+  "lean_audits": 287,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -7030,6 +7030,7 @@
    "AuditTypedSourceOperators.lean",
    "AuditTypedefProjection.lean",
    "AuditUncheckedLinkage.lean",
+   "AuditUncontractedAccessAttribution.lean",
    "AuditUnionBitfieldPlace.lean",
    "AuditUsableRecords.lean",
    "AuditValueConnectives.lean",
@@ -7052,7 +7053,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9bc8931215339a08/docs/reports/cg10-indirect-access-sole-blockers/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ad05dfcab8ee7f52a/docs/reports/cg10-indirect-access-sole-residuals/gate.json)"
  },
  "named_followups": [
   {
