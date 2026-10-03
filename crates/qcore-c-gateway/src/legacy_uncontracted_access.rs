@@ -86,9 +86,7 @@ impl Parser<'_> {
         line: usize,
         evaluation: Option<(LegacyInstruction, bool)>,
     ) -> Option<(LegacyInstruction, bool)> {
-        let Some((instruction, escapes)) = evaluation else {
-            return None;
-        };
+        let (instruction, escapes) = evaluation?;
         let texts = expression
             .iter()
             .map(|token| token.text.as_str())
