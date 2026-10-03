@@ -473,6 +473,29 @@ fn every_other_refused_shape_keeps_its_unknown_and_its_diagnostic() {
         "a parenthesized actual is not a bare member read",
     ];
     for (label, body) in cases {
+        // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k) moves the
+        // uncontracted row deliberately: `storage->cio` is an actual W44 reads
+        // at a `Borrowed` position, so the callee with no contract is what
+        // decides and the refusal names it. Still Unknown, never Safe.
+        if label == "a callee with no contract in force never admits an actual" {
+            let result = analyze(body, "w");
+            assert!(
+                !matches!(result, UnrestrictedLegacyResult::Safe(_)),
+                "{label}"
+            );
+            let w = function(program(&result), "w");
+            assert_eq!(w.status, AnalysisStatus::Unknown, "{label}");
+            assert!(
+                w.diagnostics.iter().any(|diagnostic| matches!(
+                    &diagnostic.kind,
+                    LegacyDiagnosticKind::Unsupported { description }
+                        if description == "call to uncontracted function `b_untracked`"
+                )),
+                "{label}: {:?}",
+                w.diagnostics
+            );
+            continue;
+        }
         // Card CG13 (rule 10w) moves the union-link and union-base rows
         // deliberately (the base row keeps its label as written): `view`
         // is a union step and `cio` read through it a borrow at `b_open`'s

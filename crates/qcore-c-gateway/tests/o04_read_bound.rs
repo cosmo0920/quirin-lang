@@ -995,10 +995,14 @@ fn the_success_exit_keeps_its_named_residual() {
         !remaining.is_empty(),
         "the untouched blockers are still reported"
     );
+    // Deliberate pin update, card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule
+    // 12k): the gate's refusal of `msgpack_packer_init(&ic->mp_pck, …)`, whose
+    // callee this fixture leaves uncontracted, now names that callee.
     for description in &remaining {
         assert!(
             *description == INDIRECT
                 || *description == "call to uncontracted function `flb_trace`"
+                || *description == "call to uncontracted function `msgpack_packer_init`"
                 || *description == "nullable resource `ic` used by a non-null contract",
             "unexpected remaining refusal `{description}`"
         );
@@ -1065,10 +1069,15 @@ fn substituting_the_read_member_declaration_restores_the_refusal() {
             );
         let result = analyze_real(&changed);
         let caller = function(program(&result), "flb_input_chunk_create");
+        // Deliberate pin update, card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS
+        // (rule 12k): a gate refusal whose uncontracted callee decides now
+        // names that callee, so the refusals that return are counted under
+        // either text. Both are the gate's refusal of the statement.
         assert!(
             unsupported(caller)
                 .iter()
-                .filter(|description| **description == INDIRECT)
+                .filter(|description| **description == INDIRECT
+                    || description.starts_with("call to uncontracted function `"))
                 .count()
                 > 8,
             "{reason}: the refusal must return, diagnostics {:?}",

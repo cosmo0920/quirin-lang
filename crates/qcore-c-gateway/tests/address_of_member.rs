@@ -310,9 +310,25 @@ fn an_uncontracted_callee_never_admits_a_member_address() {
     if !clang_available() {
         return;
     }
-    refused(
-        "an uncontracted callee never admits a member address",
+    // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k) re-pins this
+    // deliberately: the member address is an actual W44 reads at a `Borrowed`
+    // position, so the uncontracted callee is what decides and the refusal
+    // names it. The shape is still never admitted: `Unknown`, never `Safe`.
+    let result = analyze(
         "void w(struct a_holder *hold) { a_untracked(&hold->lock); }",
+        "w",
+    );
+    assert!(!matches!(result, UnrestrictedLegacyResult::Safe(_)));
+    let w = function(program(&result), "w");
+    assert_eq!(w.status, AnalysisStatus::Unknown);
+    assert!(
+        w.diagnostics.iter().any(|diagnostic| matches!(
+            &diagnostic.kind,
+            LegacyDiagnosticKind::Unsupported { description }
+                if description == "call to uncontracted function `a_untracked`"
+        )),
+        "{:?}",
+        w.diagnostics
     );
 }
 

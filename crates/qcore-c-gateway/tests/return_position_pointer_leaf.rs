@@ -459,11 +459,15 @@ fn the_adversarial_family_keeps_its_return_refusal() {
     // lexical indirect-access gate on the argument — exactly what
     // `x = z_unknown(view->kind);` reports in a statement. It is still refused,
     // not `Safe` and not certified; only the wording names the real blocker.
+    // Deliberately re-pinned again by card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS
+    // (rule 12k): `view->kind` is an actual W44 reads at a `Borrowed`
+    // position, so the uncontracted callee is what decides, and the refusal
+    // names it, exactly as the statement form now does.
     let lowered = run("int subject(struct z_view *view) { return z_unknown(view->kind); }");
     assert!(!lowered.refuses_return(), "{:?}", lowered.unsupported());
     assert_eq!(
         lowered.unsupported(),
-        vec!["indirect memory access is outside the resource projection".to_owned()]
+        vec!["call to uncontracted function `z_unknown`".to_owned()]
     );
     assert_ne!(lowered.status, AnalysisStatus::Safe);
     assert!(!lowered.certified);

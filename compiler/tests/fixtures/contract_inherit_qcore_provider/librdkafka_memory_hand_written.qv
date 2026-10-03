@@ -86,3 +86,39 @@ contract {
     ensures normal resource_return_none();
     ensures normal resource_no_return();
 };
+
+// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS appended four custody-neutral
+// scalar helpers to the converted module; they inherit nothing either, so
+// their hand-written form is the module's own text and the conversion's
+// parity is unchanged.
+extern fn cnd_timedwait_ms(cnd: ptr<mut, u8>, mtx: ptr<mut, u8>, timeout_ms: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(cnd);
+    ensures normal resource_borrowed(mtx);
+    ensures normal resource_borrowed(timeout_ms);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_hdr_histogram_record(hdr: ptr<mut, u8>, v: i64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(hdr);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_atomic64_add(ra: ptr<mut, u8>, v: i64) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ra);
+    ensures normal resource_borrowed(v);
+    ensures normal resource_return_none();
+};
+
+extern fn rd_atomic64_get(ra: ptr<mut, u8>) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ra);
+    ensures normal resource_return_none();
+};

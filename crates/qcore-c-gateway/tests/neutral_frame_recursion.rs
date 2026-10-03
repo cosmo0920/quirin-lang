@@ -673,12 +673,16 @@ fn heap_link_chain_teardown_stays_refused_and_a_pointer_field_search_certifies()
         void subject(void) { void *p = q_alloc(); purge(p); }";
     let outcome = run(teardown, None);
     assert_eq!(outcome.status("purge"), AnalysisStatus::Unknown);
+    // Deliberate pin update, card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule
+    // 12k): `n->next` is an actual W44 reads at a `Borrowed` position, so the
+    // recursive call's callee, which has no contract or summary, is what
+    // decides, and the refusal names it. The teardown stays refused and no
+    // summary is recorded.
     assert!(
         outcome
             .unsupported("purge")
             .iter()
-            .any(|description| description
-                == "indirect memory access is outside the resource projection")
+            .any(|description| description == "call to uncontracted function `purge`")
     );
     assert!(outcome.records.is_empty());
 

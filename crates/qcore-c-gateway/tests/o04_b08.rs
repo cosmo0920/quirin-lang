@@ -872,10 +872,14 @@ fn every_remaining_refusal_belongs_to_the_out_of_scope_success_exit() {
         !remaining.is_empty(),
         "the named blockers are still reported"
     );
+    // Deliberate pin update, card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule
+    // 12k): the gate's refusal of `msgpack_packer_init(&ic->mp_pck, …)`, whose
+    // callee this fixture leaves uncontracted, now names that callee.
     for description in &remaining {
         assert!(
             *description == INDIRECT
                 || *description == "call to uncontracted function `flb_trace`"
+                || *description == "call to uncontracted function `msgpack_packer_init`"
                 || *description == "nullable resource `ic` used by a non-null contract",
             "unexpected remaining refusal `{description}`"
         );

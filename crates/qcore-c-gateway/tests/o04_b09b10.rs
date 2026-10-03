@@ -901,13 +901,29 @@ fn the_constructor_boundary_is_unchanged() {
     // `st`. At L167 both resolve and the call is modeled; at L185 and L188 the
     // obligation refuses `ch` (`UnknownAlias`), asserted below. The rule was
     // measured off and on in one tree: nothing else in the vector moved.
+    //
+    // **Deliberate pin update, card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule
+    // 12k).** This count was 3. `mk_list_del(&ch->_head)` at L177 hands a
+    // sub-object address to a callee this fixture leaves uncontracted; W44
+    // reads that actual at a `Borrowed` position, so the callee is what
+    // decides and the refusal now names it (asserted below). The statement
+    // stays refused; no identity, exit or verdict moved with it.
     assert_eq!(
         unsupported(constructor)
             .iter()
             .filter(|description| **description == INDIRECT)
             .count(),
-        3,
-        "the constructor keeps three indirect refusals: {:?}",
+        2,
+        "the constructor keeps two indirect refusals: {:?}",
+        constructor.diagnostics
+    );
+    assert!(
+        constructor.diagnostics.iter().any(|diagnostic| {
+            diagnostic.line == 177
+                && matches!(&diagnostic.kind, LegacyDiagnosticKind::Unsupported { description }
+                    if description == "call to uncontracted function `mk_list_del`")
+        }),
+        "{:?}",
         constructor.diagnostics
     );
     for line in [185, 188] {

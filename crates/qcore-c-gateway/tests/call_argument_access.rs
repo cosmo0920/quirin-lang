@@ -331,11 +331,15 @@ fn a_consuming_position_keeps_the_refusal() {
 
 #[test]
 fn an_uncontracted_callee_keeps_the_refusal() {
+    // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (rule 12k) re-pins this
+    // deliberately: the actual is one this rule reads at a `Borrowed`
+    // position, so the callee is what decides and the refusal names it. The
+    // statement stays refused and the status Unknown.
     expect(
         "`y_unknown(r->count)`",
         "void w(struct x_rec *r) { y_unknown(r->count); }",
         "Unknown",
-        &[GATE],
+        &["unsupported:call to uncontracted function `y_unknown`"],
     );
 }
 
