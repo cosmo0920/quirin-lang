@@ -4,7 +4,12 @@ Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION, task 1. Read at base `2ecd39531`
 (line numbers are that revision's; `LC` = `crates/qcore-c-gateway/src/legacy_c.rs`,
 every other path is under `crates/qcore-c-gateway/src/`). The consultation
 orders were read from the code (four read-only census passes, spot-checked);
-the Clang figures and the profile are measured (sections 7 and 8). Rule ids
+the Clang figures and the profile are measured (sections 7 and 8). Since the
+card's split, `LC` code lives in `legacy_c.rs` and its child modules
+(`legacy_classify.rs` holds `classify_simple*`, `legacy_condition_routes.rs`
+the condition helpers, `legacy_return_routes.rs` the return-expression
+routes, `legacy_cfg_builder.rs` `CfgBuilder::compile`); the order is
+unchanged. Rule ids
 are the [gateway rules](../../agents/gateway.md); a card name stands where
 the code names no rule.
 
@@ -75,7 +80,7 @@ directly and asks none of the statement fallbacks.
 | 22 | `record_instantiation_parity` (`legacy_call_instantiation.rs:183`) | 10u | a `ContractCall`, parity runs only | | no effect |
 
 Rows 7-21 are the statement fallback table the card made explicit
-(`legacy_route_table.rs`, section 10).
+(`legacy_route_table.rs`; [report](README.md) section 2).
 
 ### 2.2 `classify_simple` (LC:7167)
 
@@ -157,7 +162,7 @@ condition (`if`: 6168, 6188, 6205, plus the census at 6162; `for`: 6314,
 6333, 6368, plus 6304), three times per `while`/`do`; `distinct_condition`
 twice per `if`. Both are pure over fields nothing mutates during a statement,
 so one evaluation per condition is the same answer (the card computes each
-once, section 10). `opaque_callee` (pure) runs six to nine times per refused
+once, [report](README.md) section 2). `opaque_callee` (pure) runs six to nine times per refused
 condition. The call-free desugar re-asks null, distinct, supported and
 `condition_access` on the leaf; `condition_access` is not pure (a parity
 row), so it is not hoisted.
@@ -189,7 +194,7 @@ evaluation `return_expression_instruction` produced.
    `connective_return`, 11g `statement_expression_return`, 11i
    `atomic_routed_return` (R or an uncontracted atomic builtin), 11u
    `container_of_return`, 12f `scalar_return_value`. These eight are the
-   return fallback table (section 10).
+   return fallback table ([report](README.md) section 2).
 
 Consequence of the order: a refused whole call is re-attributed in step 2,
 so only 10y, 11i and 12i can still act on it; 10s, 10u, 10z, 11g, 11u and
@@ -279,7 +284,7 @@ Clang processes are **3.4 %** of worker time, which the profile (section 8)
 confirms; parsing their 6.65 GB of AST JSON is a larger share (16.7 %). The
 preprocessing repeats read include files from disk, so their output is not a
 function of the launch's arguments and standard input alone; the card does
-not reuse them (section 10).
+not reuse them ([report](README.md) section 3).
 
 The system and slice routes cannot be censused this way: `quirin-audit
 current` refuses an executable other than the compilation database's
@@ -288,8 +293,38 @@ check the wrapper trips. Their Clang share is read from the profile instead.
 
 ### 7.3 The test suite
 
-Measured in the report's suite section (`scripts/tests-timing.sh` with the
-wrapper over `run_test_binaries.py`).
+`run_test_binaries.py` at the base with the wrapper as `QCORE_CLANG`
+(`scripts/tests-timing.sh bcensus 1`; measurement only: the wrapper doubled
+the run phase, and one test, `qcore-audit::test::configured_cli`, failed
+because it records the configured Clang path; [summary](artifacts/clang-census-suite-before.json)).
+Unlike the arbiter, the suite is dominated by Clang:
+
+| Mode | Launches | Clang seconds | Repeats (seconds) |
+|---|---:|---:|---:|
+| filtered AST (`-ast-dump-filter`) | 27,558 | 1,399.5 | **23,720 (1,180.6)** |
+| other (compiling and linking generated C) | 3,347 | 1,272.0 | 0 |
+| `-fsyntax-only` | 14,550 | 774.1 | 10,461 (493.2) |
+| `-E` / `-E -P` | 15,278 | 760.9 | 10,122 (453.2) |
+| whole-unit AST | 8,180 | 585.7 | 3,891 (237.9) |
+| `--version` | 11,590 | 439.8 | 0 (each a fresh identity capture) |
+| `-dumpmachine` | 9,497 | 318.2 | 0 |
+| `-dM -E` | 701 | 48.4 | 694 (47.9) |
+| record layouts | 334 | 17.0 | 297 (14.4) |
+| **total** | **91,035** | **5,615.7** | **49,185 (2,427.1)** |
+
+The Clang seconds are summed over concurrent processes (the run phase was
+595 s with the wrapper, about 300 s without). The heaviest launchers are the
+source-import and route-parity tests: `quirin-source-analysis`'s tests
+(4,267 launches, 406 s), `scalar_tasks` (693 compilations, 399 s), the
+`*_composition_mutations` and `*_composition_source` tests (6,000-7,000
+launches each, about two thirds repeats) and the `*_route_parity` tests;
+the importers ask the same record names of the same text thousands of times
+(`cio_ctx` 2,327, `cio_file` 2,161, `cio_chunk` 2,125, `cio_stream` 2,125).
+Step 7 of the card answers a repeated filtered-AST launch from the first
+one; the repeated `-fsyntax-only` and preprocessing launches are not reused
+(preprocessing reads include files; the preparation's invocation count is a
+reported figure), and `ClangIdentity::capture` stays uncached
+(`GAPO-REMAINING-REDERIVATIONS`).
 
 ## 8. Profile (wall-clock samples, `scripts/gdb_sampler.py`)
 

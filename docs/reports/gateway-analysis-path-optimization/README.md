@@ -8,9 +8,9 @@ unchanged). [PREDICTION.md](PREDICTION.md) was frozen at `c6e61630d`, before
 the first implementation commit; the user's amendment (the Clang layer first)
 arrived before the freeze and is folded into it.
 
-**Outcome.** The pinned corpus arbiter runs in @@CORPUS@@ (median of three,
-`--jobs 4`, parity stream on), the system route in @@SYSTEM@@ and the
-tail-pause slice in @@SLICE@@; `run_test_binaries.py`'s run phase
+**Outcome.** The pinned corpus arbiter runs in 364.1 s instead of 616.4 s (−40.9 %, medians of three,
+`--jobs 4`, parity stream on), the system route in 79.6 s instead of 166.9 s (−52.3 %) and the
+tail-pause slice in 27.6 s instead of 60.1 s (−54.2 %); `run_test_binaries.py`'s run phase
 @@TESTS@@. Every `resource-diagnostics.json` and sidecar is byte-identical to
 BEFORE on all three routes at every step (695 / 9 / 4,130 corpus,
 `d2f5a3f7…`; 85 / 4 / 359 system; the slice unchanged). The one exception to
@@ -57,13 +57,13 @@ multiset with Clang node addresses erased).
 
 | Step | Commit | Change | Corpus / system / slice wall (s) | Identity |
 |---|---|---|---|---|
-| BEFORE | `2ecd39531` | | 658.2, 616.4, @@B3@@ / 172.2, 166.4, @@B3S@@ / 60.9, 59.8, @@B3L@@ | (reference) |
+| BEFORE | `2ecd39531` | | 658.2, 616.4, 613.3 / 172.2, 166.4, 166.9 / 60.9, 59.8, 60.1 | (reference) |
 | 1 | `f36e78f48` | contract-environment readings once per module text (qcore-contract) | 357.4 / 79.4 / 27.4 | identical |
 | 2 | `16a5f5ef1` | unit AST and record-layout dump reused across a unit's scopes (`clang_reuse.rs`) | 362.6 / 80.1 / 28.0 | identical |
-| 3 | `1e844a4dd` | a condition's pure null/distinct tests asked once | @@S3@@ / 80.5 / 28.4 | identical |
-| 4 | `5ef531965` | statement and return fallbacks as two tables, one dispatcher each (`legacy_route_table.rs`) | @@S4@@ / 83.2 / 27.8 | identical |
-| 6 | `368bbc9ed` | the unreachable second copy of the seven call holds removed | @@S6@@ | @@I6@@ |
-| 5 | `@@C5@@` | `legacy_c.rs` split into eight modules, move-only | @@S5@@ | @@I5@@ |
+| 3 | `1e844a4dd` | a condition's pure null/distinct tests asked once | 366.7 (re-run, `step3b`) / 80.5 / 28.4 | identical |
+| 4 | `5ef531965` | statement and return fallbacks as two tables, one dispatcher each (`legacy_route_table.rs`) | 364.9 (re-run, `step4b`) / 83.2 / 27.8 | identical |
+| 6 | `368bbc9ed` | the unreachable second copy of the seven call holds removed | 368.7 / 80.1 / 28.6 | identical |
+| 5 | `ea2c026e0` | `legacy_c.rs` split into eight modules, move-only | 364.1, 363.7, 366.4 / 79.0, 79.6, 79.8 / 27.9, 27.6, 27.4 (the AFTER runs) | identical (three runs) |
 
 **Step 1** (`crates/qcore-contract/src/contract_loader.rs`). The nine
 `declared_*` / `*_obligations` / `*_tails` readers shared one skeleton:
@@ -124,6 +124,17 @@ pushed them past the width limit (the same characters plus 15 trailing
 commas) ([output](artifacts/move-check-step5.txt)). Statement and return
 fallback order, file layout and the module map are in
 [architecture](../../development/architecture.md).
+
+**Step 7** (after the suite's Clang census; not in the frozen prediction).
+The census of `run_test_binaries.py` (ROUTE-MAP section 7.3) found the suite,
+unlike the arbiter, dominated by Clang: 91,035 launches, 49,185 of which
+repeat an earlier launch's arguments and input, 23,720 of them filtered-AST
+dumps the source importers ask again of the same text (`cio_ctx` 2,327
+times). `typed_c_ast::ast_declarations` now answers a launch identical to an
+earlier successful one on the same thread (executable, every argument,
+standard input, resolution environment; never a text that may read a file,
+never a command with its own environment or directory; 32 per thread;
+`clang_reuse::LaunchCache`).
 
 ## 3. Not done, and why
 

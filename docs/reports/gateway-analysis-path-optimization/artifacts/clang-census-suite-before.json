@@ -1,0 +1,2172 @@
+{
+ "total": {
+  "launches": 91035,
+  "seconds": 5615.7,
+  "repeats": 49185,
+  "repeat_seconds": 2427.1,
+  "distinct_inputs": 8503
+ },
+ "modes": {
+  "ast-filtered": {
+   "launches": 27558,
+   "seconds": 1399.5,
+   "out_bytes": 1357346667,
+   "repeats": 23720,
+   "repeat_seconds": 1180.6
+  },
+  "other": {
+   "launches": 3347,
+   "seconds": 1272.0,
+   "out_bytes": 26616,
+   "repeats": 0,
+   "repeat_seconds": 0.0
+  },
+  "syntax": {
+   "launches": 14550,
+   "seconds": 774.1,
+   "out_bytes": 0,
+   "repeats": 10461,
+   "repeat_seconds": 493.2
+  },
+  "preprocess": {
+   "launches": 15278,
+   "seconds": 760.9,
+   "out_bytes": 28814370,
+   "repeats": 10122,
+   "repeat_seconds": 453.2
+  },
+  "ast-full": {
+   "launches": 8180,
+   "seconds": 585.7,
+   "out_bytes": 690210374,
+   "repeats": 3891,
+   "repeat_seconds": 237.9
+  },
+  "version": {
+   "launches": 11590,
+   "seconds": 439.8,
+   "out_bytes": 1413992,
+   "repeats": 0,
+   "repeat_seconds": 0.0
+  },
+  "dumpmachine": {
+   "launches": 9497,
+   "seconds": 318.2,
+   "out_bytes": 189946,
+   "repeats": 0,
+   "repeat_seconds": 0.0
+  },
+  "macros": {
+   "launches": 701,
+   "seconds": 48.4,
+   "out_bytes": 9340294,
+   "repeats": 694,
+   "repeat_seconds": 47.9
+  },
+  "record-layouts": {
+   "launches": 334,
+   "seconds": 17.0,
+   "out_bytes": 450408,
+   "repeats": 297,
+   "repeat_seconds": 14.4
+  }
+ },
+ "parents": {
+  "quirin_source_analysis": {
+   "launches": 4267,
+   "seconds": 406.5,
+   "repeats": 2458,
+   "repeat_seconds": 240.9,
+   "distinct_inputs": 480
+  },
+  "scalar_tasks": {
+   "launches": 693,
+   "seconds": 398.5,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "unsupported_close_composition_mutations": {
+   "launches": 7101,
+   "seconds": 296.8,
+   "repeats": 4569,
+   "repeat_seconds": 209.4,
+   "distinct_inputs": 56
+  },
+  "filesystem_chunk_close_composition_mutations": {
+   "launches": 6614,
+   "seconds": 264.5,
+   "repeats": 4438,
+   "repeat_seconds": 193.0,
+   "distinct_inputs": 18
+  },
+  "file_close_composition_mutations": {
+   "launches": 6253,
+   "seconds": 254.8,
+   "repeats": 4314,
+   "repeat_seconds": 190.3,
+   "distinct_inputs": 8
+  },
+  "unsupported_close_composition_source": {
+   "launches": 5159,
+   "seconds": 223.1,
+   "repeats": 3414,
+   "repeat_seconds": 162.9,
+   "distinct_inputs": 14
+  },
+  "scalar_extern_values": {
+   "launches": 483,
+   "seconds": 207.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "scalar_payloads": {
+   "launches": 378,
+   "seconds": 194.7,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "unsupported_close_route_parity": {
+   "launches": 4803,
+   "seconds": 187.1,
+   "repeats": 3196,
+   "repeat_seconds": 134.2,
+   "distinct_inputs": 92
+  },
+  "filesystem_chunk_close_composition_source": {
+   "launches": 4071,
+   "seconds": 183.1,
+   "repeats": 2728,
+   "repeat_seconds": 134.7,
+   "distinct_inputs": 8
+  },
+  "composition_mutations": {
+   "launches": 3697,
+   "seconds": 160.1,
+   "repeats": 2494,
+   "repeat_seconds": 116.6,
+   "distinct_inputs": 10
+  },
+  "float_buffer_payloads": {
+   "launches": 309,
+   "seconds": 154.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "file_close_composition_source": {
+   "launches": 2960,
+   "seconds": 115.6,
+   "repeats": 2039,
+   "repeat_seconds": 87.0,
+   "distinct_inputs": 2
+  },
+  "file_close_route_parity": {
+   "launches": 2774,
+   "seconds": 110.3,
+   "repeats": 1901,
+   "repeat_seconds": 80.8,
+   "distinct_inputs": 30
+  },
+  "quirin-audit": {
+   "launches": 2856,
+   "seconds": 109.2,
+   "repeats": 1164,
+   "repeat_seconds": 48.3,
+   "distinct_inputs": 43
+  },
+  "qcore_c_gateway": {
+   "launches": 1965,
+   "seconds": 99.2,
+   "repeats": 637,
+   "repeat_seconds": 30.8,
+   "distinct_inputs": 939
+  },
+  "memory_close_composition_mutations": {
+   "launches": 2990,
+   "seconds": 96.7,
+   "repeats": 1852,
+   "repeat_seconds": 66.3,
+   "distinct_inputs": 12
+  },
+  "filesystem_chunk_close_route_parity": {
+   "launches": 2351,
+   "seconds": 92.1,
+   "repeats": 1483,
+   "repeat_seconds": 62.8,
+   "distinct_inputs": 54
+  },
+  "qcore_compiler": {
+   "launches": 1702,
+   "seconds": 91.8,
+   "repeats": 468,
+   "repeat_seconds": 25.1,
+   "distinct_inputs": 217
+  },
+  "cleanup_replay_mutations": {
+   "launches": 1964,
+   "seconds": 66.0,
+   "repeats": 1219,
+   "repeat_seconds": 44.7,
+   "distinct_inputs": 29
+  },
+  "cleanup_replay_route_parity": {
+   "launches": 1464,
+   "seconds": 56.0,
+   "repeats": 896,
+   "repeat_seconds": 37.1,
+   "distinct_inputs": 36
+  },
+  "clang_gap_phase1": {
+   "launches": 707,
+   "seconds": 54.8,
+   "repeats": 189,
+   "repeat_seconds": 14.8,
+   "distinct_inputs": 333
+  },
+  "loop_owner_holder_region": {
+   "launches": 278,
+   "seconds": 42.9,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "memory_close_composition_source": {
+   "launches": 933,
+   "seconds": 31.6,
+   "repeats": 570,
+   "repeat_seconds": 21.2,
+   "distinct_inputs": 4
+  },
+  "qcore_verification": {
+   "launches": 648,
+   "seconds": 31.2,
+   "repeats": 402,
+   "repeat_seconds": 19.7,
+   "distinct_inputs": 31
+  },
+  "loop_owner_instance_flow": {
+   "launches": 158,
+   "seconds": 26.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "scalar_typed_errors": {
+   "launches": 54,
+   "seconds": 26.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "task_route_tsan": {
+   "launches": 73,
+   "seconds": 25.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "loop_owner_premises_instance": {
+   "launches": 133,
+   "seconds": 24.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "float_tasks": {
+   "launches": 33,
+   "seconds": 22.9,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "scalar_buffer_values": {
+   "launches": 63,
+   "seconds": 21.6,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "cg16_index_extents": {
+   "launches": 363,
+   "seconds": 21.5,
+   "repeats": 109,
+   "repeat_seconds": 6.2,
+   "distinct_inputs": 157
+  },
+  "clang_gap_phase2": {
+   "launches": 257,
+   "seconds": 21.4,
+   "repeats": 65,
+   "repeat_seconds": 5.5,
+   "distinct_inputs": 111
+  },
+  "neutral_expression_positions": {
+   "launches": 218,
+   "seconds": 21.2,
+   "repeats": 46,
+   "repeat_seconds": 4.5,
+   "distinct_inputs": 88
+  },
+  "clang_gap_phase4": {
+   "launches": 249,
+   "seconds": 19.6,
+   "repeats": 39,
+   "repeat_seconds": 2.9,
+   "distinct_inputs": 123
+  },
+  "leak_pin_audit": {
+   "launches": 172,
+   "seconds": 19.3,
+   "repeats": 48,
+   "repeat_seconds": 4.9,
+   "distinct_inputs": 67
+  },
+  "memory_close_route_parity": {
+   "launches": 646,
+   "seconds": 19.2,
+   "repeats": 322,
+   "repeat_seconds": 10.0,
+   "distinct_inputs": 28
+  },
+  "constructor_residuals": {
+   "launches": 150,
+   "seconds": 19.2,
+   "repeats": 19,
+   "repeat_seconds": 2.1,
+   "distinct_inputs": 80
+  },
+  "publication_custody": {
+   "launches": 185,
+   "seconds": 19.0,
+   "repeats": 40,
+   "repeat_seconds": 3.9,
+   "distinct_inputs": 88
+  },
+  "loop_owner_property_keys": {
+   "launches": 102,
+   "seconds": 18.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "index_traversal": {
+   "launches": 155,
+   "seconds": 17.9,
+   "repeats": 39,
+   "repeat_seconds": 4.6,
+   "distinct_inputs": 57
+  },
+  "condition_call_desugar": {
+   "launches": 162,
+   "seconds": 17.5,
+   "repeats": 29,
+   "repeat_seconds": 3.2,
+   "distinct_inputs": 40
+  },
+  "indirect_chain_access": {
+   "launches": 143,
+   "seconds": 17.4,
+   "repeats": 34,
+   "repeat_seconds": 3.8,
+   "distinct_inputs": 64
+  },
+  "composition_route_parity": {
+   "launches": 581,
+   "seconds": 17.4,
+   "repeats": 367,
+   "repeat_seconds": 11.5,
+   "distinct_inputs": 14
+  },
+  "nullable_removed": {
+   "launches": 197,
+   "seconds": 17.2,
+   "repeats": 49,
+   "repeat_seconds": 4.2,
+   "distinct_inputs": 78
+  },
+  "indirect_scalar_access": {
+   "launches": 159,
+   "seconds": 17.0,
+   "repeats": 45,
+   "repeat_seconds": 4.1,
+   "distinct_inputs": 55
+  },
+  "scalar_loop_bounds": {
+   "launches": 60,
+   "seconds": 16.7,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "return_position_modeled_call": {
+   "launches": 187,
+   "seconds": 16.1,
+   "repeats": 64,
+   "repeat_seconds": 5.8,
+   "distinct_inputs": 31
+  },
+  "loops_recursion_budgets": {
+   "launches": 355,
+   "seconds": 15.9,
+   "repeats": 100,
+   "repeat_seconds": 4.9,
+   "distinct_inputs": 158
+  },
+  "footprint_connection": {
+   "launches": 334,
+   "seconds": 15.6,
+   "repeats": 256,
+   "repeat_seconds": 11.7,
+   "distinct_inputs": 43
+  },
+  "derived_result_returned": {
+   "launches": 171,
+   "seconds": 15.6,
+   "repeats": 32,
+   "repeat_seconds": 3.1,
+   "distinct_inputs": 73
+  },
+  "float_types": {
+   "launches": 16,
+   "seconds": 15.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "condition_acquisition": {
+   "launches": 237,
+   "seconds": 15.3,
+   "repeats": 67,
+   "repeat_seconds": 4.3,
+   "distinct_inputs": 107
+  },
+  "may_alias_boundary": {
+   "launches": 120,
+   "seconds": 15.3,
+   "repeats": 23,
+   "repeat_seconds": 2.9,
+   "distinct_inputs": 60
+  },
+  "contextual_recursion": {
+   "launches": 408,
+   "seconds": 15.1,
+   "repeats": 111,
+   "repeat_seconds": 4.3,
+   "distinct_inputs": 189
+  },
+  "clang_gap_phase3": {
+   "launches": 172,
+   "seconds": 14.7,
+   "repeats": 47,
+   "repeat_seconds": 3.9,
+   "distinct_inputs": 67
+  },
+  "neutral_frame_recursion": {
+   "launches": 151,
+   "seconds": 14.5,
+   "repeats": 52,
+   "repeat_seconds": 4.8,
+   "distinct_inputs": 60
+  },
+  "hash_contracts": {
+   "launches": 276,
+   "seconds": 14.3,
+   "repeats": 84,
+   "repeat_seconds": 4.5,
+   "distinct_inputs": 108
+  },
+  "o04_b08": {
+   "launches": 128,
+   "seconds": 14.3,
+   "repeats": 28,
+   "repeat_seconds": 3.9,
+   "distinct_inputs": 56
+  },
+  "cg08_casts_and_type_queries": {
+   "launches": 248,
+   "seconds": 14.2,
+   "repeats": 64,
+   "repeat_seconds": 3.7,
+   "distinct_inputs": 104
+  },
+  "indexed_collection": {
+   "launches": 159,
+   "seconds": 14.1,
+   "repeats": 31,
+   "repeat_seconds": 2.8,
+   "distinct_inputs": 65
+  },
+  "scalar_types": {
+   "launches": 34,
+   "seconds": 14.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "composition_source": {
+   "launches": 505,
+   "seconds": 13.7,
+   "repeats": 332,
+   "repeat_seconds": 9.9,
+   "distinct_inputs": 2
+  },
+  "borrowed_field_actuals": {
+   "launches": 99,
+   "seconds": 13.4,
+   "repeats": 20,
+   "repeat_seconds": 3.3,
+   "distinct_inputs": 46
+  },
+  "ffi_struct_import": {
+   "launches": 184,
+   "seconds": 12.9,
+   "repeats": 24,
+   "repeat_seconds": 1.9,
+   "distinct_inputs": 12
+  },
+  "loop_owner_typed_dispatch": {
+   "launches": 79,
+   "seconds": 12.8,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "o04_read_bound": {
+   "launches": 125,
+   "seconds": 12.7,
+   "repeats": 28,
+   "repeat_seconds": 2.9,
+   "distinct_inputs": 54
+  },
+  "qrlib_linkage": {
+   "launches": 125,
+   "seconds": 12.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 6
+  },
+  "reach_gate_positions": {
+   "launches": 130,
+   "seconds": 12.3,
+   "repeats": 36,
+   "repeat_seconds": 3.7,
+   "distinct_inputs": 28
+  },
+  "scalar_positions": {
+   "launches": 36,
+   "seconds": 12.2,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "resource_kinds": {
+   "launches": 166,
+   "seconds": 12.2,
+   "repeats": 33,
+   "repeat_seconds": 2.4,
+   "distinct_inputs": 73
+  },
+  "cg11_pointer_stores": {
+   "launches": 228,
+   "seconds": 12.2,
+   "repeats": 62,
+   "repeat_seconds": 3.1,
+   "distinct_inputs": 95
+  },
+  "frame_source_mutations": {
+   "launches": 149,
+   "seconds": 12.1,
+   "repeats": 55,
+   "repeat_seconds": 5.5,
+   "distinct_inputs": 6
+  },
+  "derived_result": {
+   "launches": 119,
+   "seconds": 12.0,
+   "repeats": 25,
+   "repeat_seconds": 3.1,
+   "distinct_inputs": 43
+  },
+  "return_position_pointer_leaf": {
+   "launches": 133,
+   "seconds": 11.7,
+   "repeats": 49,
+   "repeat_seconds": 4.1,
+   "distinct_inputs": 24
+  },
+  "source_effect_obligations": {
+   "launches": 319,
+   "seconds": 11.3,
+   "repeats": 79,
+   "repeat_seconds": 3.4,
+   "distinct_inputs": 50
+  },
+  "o04_b09b10": {
+   "launches": 130,
+   "seconds": 11.3,
+   "repeats": 25,
+   "repeat_seconds": 2.1,
+   "distinct_inputs": 58
+  },
+  "typed_field_access": {
+   "launches": 122,
+   "seconds": 11.2,
+   "repeats": 32,
+   "repeat_seconds": 3.1,
+   "distinct_inputs": 52
+  },
+  "return_refused_call_lowering": {
+   "launches": 113,
+   "seconds": 11.0,
+   "repeats": 15,
+   "repeat_seconds": 1.5,
+   "distinct_inputs": 24
+  },
+  "contract_noreturn_borrowed_tails": {
+   "launches": 230,
+   "seconds": 10.9,
+   "repeats": 65,
+   "repeat_seconds": 2.9,
+   "distinct_inputs": 101
+  },
+  "address_of_member": {
+   "launches": 109,
+   "seconds": 10.9,
+   "repeats": 28,
+   "repeat_seconds": 3.2,
+   "distinct_inputs": 45
+  },
+  "generic_selection": {
+   "launches": 184,
+   "seconds": 10.7,
+   "repeats": 77,
+   "repeat_seconds": 4.5,
+   "distinct_inputs": 40
+  },
+  "source_effect": {
+   "launches": 310,
+   "seconds": 10.5,
+   "repeats": 79,
+   "repeat_seconds": 3.3,
+   "distinct_inputs": 27
+  },
+  "ct_corpus": {
+   "launches": 145,
+   "seconds": 10.4,
+   "repeats": 53,
+   "repeat_seconds": 1.6,
+   "distinct_inputs": 30
+  },
+  "o04_arms": {
+   "launches": 86,
+   "seconds": 10.2,
+   "repeats": 24,
+   "repeat_seconds": 3.3,
+   "distinct_inputs": 35
+  },
+  "scalar_route_exit_edge": {
+   "launches": 134,
+   "seconds": 10.1,
+   "repeats": 12,
+   "repeat_seconds": 1.1,
+   "distinct_inputs": 39
+  },
+  "o04_constructor_caller": {
+   "launches": 93,
+   "seconds": 10.0,
+   "repeats": 24,
+   "repeat_seconds": 2.7,
+   "distinct_inputs": 36
+  },
+  "cg14_aggregate_values": {
+   "launches": 217,
+   "seconds": 9.8,
+   "repeats": 55,
+   "repeat_seconds": 2.6,
+   "distinct_inputs": 95
+  },
+  "o04_trace": {
+   "launches": 108,
+   "seconds": 9.8,
+   "repeats": 33,
+   "repeat_seconds": 3.2,
+   "distinct_inputs": 37
+  },
+  "descriptor_custody": {
+   "launches": 246,
+   "seconds": 9.6,
+   "repeats": 78,
+   "repeat_seconds": 3.0,
+   "distinct_inputs": 95
+  },
+  "constant_do_while": {
+   "launches": 83,
+   "seconds": 9.5,
+   "repeats": 18,
+   "repeat_seconds": 2.1,
+   "distinct_inputs": 19
+  },
+  "prod_contracts": {
+   "launches": 104,
+   "seconds": 9.4,
+   "repeats": 38,
+   "repeat_seconds": 4.1,
+   "distinct_inputs": 33
+  },
+  "borrow_residuals_boundary": {
+   "launches": 103,
+   "seconds": 9.4,
+   "repeats": 18,
+   "repeat_seconds": 1.8,
+   "distinct_inputs": 46
+  },
+  "frame_source": {
+   "launches": 112,
+   "seconds": 9.4,
+   "repeats": 48,
+   "repeat_seconds": 4.7,
+   "distinct_inputs": 2
+  },
+  "chained_tail": {
+   "launches": 136,
+   "seconds": 9.2,
+   "repeats": 40,
+   "repeat_seconds": 2.8,
+   "distinct_inputs": 56
+  },
+  "atomic_publication_source": {
+   "launches": 199,
+   "seconds": 9.1,
+   "repeats": 24,
+   "repeat_seconds": 1.0,
+   "distinct_inputs": 94
+  },
+  "call_use_source": {
+   "launches": 279,
+   "seconds": 9.0,
+   "repeats": 145,
+   "repeat_seconds": 5.1,
+   "distinct_inputs": 12
+  },
+  "cg12_void_view_readback": {
+   "launches": 191,
+   "seconds": 9.0,
+   "repeats": 48,
+   "repeat_seconds": 2.2,
+   "distinct_inputs": 85
+  },
+  "monkey_wait_projection": {
+   "launches": 249,
+   "seconds": 8.9,
+   "repeats": 105,
+   "repeat_seconds": 3.3,
+   "distinct_inputs": 14
+  },
+  "container_root_reach": {
+   "launches": 111,
+   "seconds": 8.8,
+   "repeats": 14,
+   "repeat_seconds": 0.9,
+   "distinct_inputs": 56
+  },
+  "cg06_value_connectives": {
+   "launches": 163,
+   "seconds": 8.8,
+   "repeats": 57,
+   "repeat_seconds": 3.2,
+   "distinct_inputs": 63
+  },
+  "cg26_variadics": {
+   "launches": 147,
+   "seconds": 8.7,
+   "repeats": 30,
+   "repeat_seconds": 2.1,
+   "distinct_inputs": 59
+  },
+  "return_expression_families": {
+   "launches": 161,
+   "seconds": 8.6,
+   "repeats": 42,
+   "repeat_seconds": 2.2,
+   "distinct_inputs": 65
+  },
+  "callback_task_handoff": {
+   "launches": 106,
+   "seconds": 8.5,
+   "repeats": 52,
+   "repeat_seconds": 4.3,
+   "distinct_inputs": 12
+  },
+  "custody_summary_regression": {
+   "launches": 81,
+   "seconds": 8.4,
+   "repeats": 42,
+   "repeat_seconds": 4.8,
+   "distinct_inputs": 22
+  },
+  "cg30_dialects_flags_types": {
+   "launches": 129,
+   "seconds": 8.4,
+   "repeats": 30,
+   "repeat_seconds": 2.2,
+   "distinct_inputs": 39
+  },
+  "timeout_teardown": {
+   "launches": 87,
+   "seconds": 8.4,
+   "repeats": 60,
+   "repeat_seconds": 6.2,
+   "distinct_inputs": 4
+  },
+  "source_effect_mutations": {
+   "launches": 186,
+   "seconds": 8.3,
+   "repeats": 80,
+   "repeat_seconds": 3.9,
+   "distinct_inputs": 10
+  },
+  "task_record_captures": {
+   "launches": 20,
+   "seconds": 8.2,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "scalar_f02_outcomes": {
+   "launches": 30,
+   "seconds": 8.2,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "relational_postconditions": {
+   "launches": 107,
+   "seconds": 8.2,
+   "repeats": 18,
+   "repeat_seconds": 1.2,
+   "distinct_inputs": 54
+  },
+  "teardown_source": {
+   "launches": 194,
+   "seconds": 8.0,
+   "repeats": 88,
+   "repeat_seconds": 4.2,
+   "distinct_inputs": 12
+  },
+  "cg07_statement_expressions": {
+   "launches": 144,
+   "seconds": 7.7,
+   "repeats": 40,
+   "repeat_seconds": 2.2,
+   "distinct_inputs": 61
+  },
+  "cg26_tail_residual_actuals": {
+   "launches": 131,
+   "seconds": 7.5,
+   "repeats": 37,
+   "repeat_seconds": 2.2,
+   "distinct_inputs": 57
+  },
+  "usable_records": {
+   "launches": 89,
+   "seconds": 7.5,
+   "repeats": 20,
+   "repeat_seconds": 1.5,
+   "distinct_inputs": 1
+  },
+  "examples_suite": {
+   "launches": 26,
+   "seconds": 7.5,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "compile_task_identity": {
+   "launches": 77,
+   "seconds": 7.4,
+   "repeats": 14,
+   "repeat_seconds": 1.7,
+   "distinct_inputs": 3
+  },
+  "bound_untracked_roots": {
+   "launches": 183,
+   "seconds": 7.4,
+   "repeats": 48,
+   "repeat_seconds": 1.8,
+   "distinct_inputs": 84
+  },
+  "access_path_positions": {
+   "launches": 174,
+   "seconds": 7.3,
+   "repeats": 48,
+   "repeat_seconds": 1.9,
+   "distinct_inputs": 76
+  },
+  "sizeof_operand": {
+   "launches": 124,
+   "seconds": 7.2,
+   "repeats": 41,
+   "repeat_seconds": 2.5,
+   "distinct_inputs": 35
+  },
+  "atomic_weak_memory_events": {
+   "launches": 178,
+   "seconds": 7.1,
+   "repeats": 47,
+   "repeat_seconds": 1.9,
+   "distinct_inputs": 79
+  },
+  "scalar_composed_string": {
+   "launches": 30,
+   "seconds": 7.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "c03_neutral_frame_recursion_probe": {
+   "launches": 86,
+   "seconds": 7.0,
+   "repeats": 18,
+   "repeat_seconds": 1.8,
+   "distinct_inputs": 40
+  },
+  "sub_object_stores": {
+   "launches": 140,
+   "seconds": 6.9,
+   "repeats": 35,
+   "repeat_seconds": 1.8,
+   "distinct_inputs": 49
+  },
+  "typed_body_comparison": {
+   "launches": 76,
+   "seconds": 6.9,
+   "repeats": 5,
+   "repeat_seconds": 0.4,
+   "distinct_inputs": 42
+  },
+  "cg03_call_instantiation": {
+   "launches": 168,
+   "seconds": 6.9,
+   "repeats": 40,
+   "repeat_seconds": 1.6,
+   "distinct_inputs": 77
+  },
+  "storage_duration_volatile": {
+   "launches": 140,
+   "seconds": 6.6,
+   "repeats": 35,
+   "repeat_seconds": 1.6,
+   "distinct_inputs": 63
+  },
+  "union_bitfield_places": {
+   "launches": 184,
+   "seconds": 6.6,
+   "repeats": 72,
+   "repeat_seconds": 2.7,
+   "distinct_inputs": 65
+  },
+  "retry_lifetime": {
+   "launches": 65,
+   "seconds": 6.5,
+   "repeats": 15,
+   "repeat_seconds": 1.8,
+   "distinct_inputs": 18
+  },
+  "generic_source": {
+   "launches": 76,
+   "seconds": 6.4,
+   "repeats": 30,
+   "repeat_seconds": 2.9,
+   "distinct_inputs": 5
+  },
+  "layout_extents": {
+   "launches": 129,
+   "seconds": 6.4,
+   "repeats": 32,
+   "repeat_seconds": 1.5,
+   "distinct_inputs": 59
+  },
+  "extern_calls": {
+   "launches": 22,
+   "seconds": 6.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "borrow_liveness_boundary": {
+   "launches": 78,
+   "seconds": 6.2,
+   "repeats": 15,
+   "repeat_seconds": 1.5,
+   "distinct_inputs": 32
+  },
+  "scalar_epoch_tasks": {
+   "launches": 15,
+   "seconds": 6.1,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "chunk_lifecycle_coverage": {
+   "launches": 132,
+   "seconds": 6.0,
+   "repeats": 86,
+   "repeat_seconds": 4.1,
+   "distinct_inputs": 9
+  },
+  "loop_owner_coro_plugin": {
+   "launches": 61,
+   "seconds": 6.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "cg24_frames_and_relations": {
+   "launches": 138,
+   "seconds": 5.9,
+   "repeats": 55,
+   "repeat_seconds": 2.3,
+   "distinct_inputs": 49
+  },
+  "owned_source_tasks": {
+   "launches": 18,
+   "seconds": 5.9,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "intrusive_list_iteration": {
+   "launches": 93,
+   "seconds": 5.8,
+   "repeats": 20,
+   "repeat_seconds": 1.3,
+   "distinct_inputs": 38
+  },
+  "call_argument_access": {
+   "launches": 129,
+   "seconds": 5.8,
+   "repeats": 25,
+   "repeat_seconds": 1.2,
+   "distinct_inputs": 51
+  },
+  "cg22_indirect_calls": {
+   "launches": 111,
+   "seconds": 5.7,
+   "repeats": 21,
+   "repeat_seconds": 1.0,
+   "distinct_inputs": 47
+  },
+  "event_payload": {
+   "launches": 189,
+   "seconds": 5.7,
+   "repeats": 117,
+   "repeat_seconds": 3.5,
+   "distinct_inputs": 8
+  },
+  "boolean_frame_helpers": {
+   "launches": 174,
+   "seconds": 5.6,
+   "repeats": 20,
+   "repeat_seconds": 0.7,
+   "distinct_inputs": 40
+  },
+  "certificate_scope": {
+   "launches": 52,
+   "seconds": 5.6,
+   "repeats": 30,
+   "repeat_seconds": 3.3,
+   "distinct_inputs": 7
+  },
+  "assignment_destination_suffix": {
+   "launches": 74,
+   "seconds": 5.6,
+   "repeats": 19,
+   "repeat_seconds": 1.5,
+   "distinct_inputs": 23
+  },
+  "float_ffi": {
+   "launches": 73,
+   "seconds": 5.6,
+   "repeats": 10,
+   "repeat_seconds": 0.8,
+   "distinct_inputs": 3
+  },
+  "cg21_call_exits": {
+   "launches": 84,
+   "seconds": 5.4,
+   "repeats": 15,
+   "repeat_seconds": 0.9,
+   "distinct_inputs": 40
+  },
+  "teardown_prerequisites": {
+   "launches": 123,
+   "seconds": 5.3,
+   "repeats": 58,
+   "repeat_seconds": 2.5,
+   "distinct_inputs": 6
+  },
+  "sr5_soundness": {
+   "launches": 84,
+   "seconds": 5.3,
+   "repeats": 11,
+   "repeat_seconds": 0.5,
+   "distinct_inputs": 44
+  },
+  "call_use_route_parity": {
+   "launches": 173,
+   "seconds": 5.2,
+   "repeats": 88,
+   "repeat_seconds": 2.8,
+   "distinct_inputs": 12
+  },
+  "counter_source": {
+   "launches": 105,
+   "seconds": 5.2,
+   "repeats": 42,
+   "repeat_seconds": 2.4,
+   "distinct_inputs": 8
+  },
+  "typed_const_pointer_value": {
+   "launches": 124,
+   "seconds": 5.2,
+   "repeats": 30,
+   "repeat_seconds": 1.2,
+   "distinct_inputs": 58
+  },
+  "cg05_nested_call_effects": {
+   "launches": 138,
+   "seconds": 5.2,
+   "repeats": 32,
+   "repeat_seconds": 1.2,
+   "distinct_inputs": 59
+  },
+  "atomic_source_route": {
+   "launches": 139,
+   "seconds": 5.1,
+   "repeats": 34,
+   "repeat_seconds": 1.5,
+   "distinct_inputs": 63
+  },
+  "indirect_access_sole_blockers": {
+   "launches": 74,
+   "seconds": 5.1,
+   "repeats": 16,
+   "repeat_seconds": 0.9,
+   "distinct_inputs": 30
+  },
+  "loop_site_generations": {
+   "launches": 115,
+   "seconds": 5.1,
+   "repeats": 25,
+   "repeat_seconds": 1.2,
+   "distinct_inputs": 51
+  },
+  "access_path_position_residuals": {
+   "launches": 141,
+   "seconds": 4.9,
+   "repeats": 34,
+   "repeat_seconds": 1.2,
+   "distinct_inputs": 66
+  },
+  "gateway_c_location": {
+   "launches": 43,
+   "seconds": 4.9,
+   "repeats": 9,
+   "repeat_seconds": 1.1,
+   "distinct_inputs": 14
+  },
+  "neighbours": {
+   "launches": 113,
+   "seconds": 4.8,
+   "repeats": 75,
+   "repeat_seconds": 3.2,
+   "distinct_inputs": 15
+  },
+  "loop_switch_condition_calls": {
+   "launches": 48,
+   "seconds": 4.8,
+   "repeats": 4,
+   "repeat_seconds": 0.3,
+   "distinct_inputs": 13
+  },
+  "write_lend_tasks_exercise": {
+   "launches": 8,
+   "seconds": 4.8,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "cleanup_replay_source": {
+   "launches": 148,
+   "seconds": 4.7,
+   "repeats": 84,
+   "repeat_seconds": 3.0,
+   "distinct_inputs": 3
+  },
+  "counter_route_parity": {
+   "launches": 142,
+   "seconds": 4.7,
+   "repeats": 80,
+   "repeat_seconds": 2.7,
+   "distinct_inputs": 10
+  },
+  "closures": {
+   "launches": 13,
+   "seconds": 4.6,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "c_numeric_domain": {
+   "launches": 139,
+   "seconds": 4.5,
+   "repeats": 39,
+   "repeat_seconds": 1.4,
+   "distinct_inputs": 36
+  },
+  "teardown_route_parity": {
+   "launches": 164,
+   "seconds": 4.5,
+   "repeats": 70,
+   "repeat_seconds": 2.0,
+   "distinct_inputs": 20
+  },
+  "float_extern": {
+   "launches": 10,
+   "seconds": 4.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "error_payload_tasks": {
+   "launches": 5,
+   "seconds": 4.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "parenthesised_callee": {
+   "launches": 90,
+   "seconds": 4.3,
+   "repeats": 10,
+   "repeat_seconds": 0.5,
+   "distinct_inputs": 64
+  },
+  "cg02_elaboration": {
+   "launches": 107,
+   "seconds": 4.3,
+   "repeats": 29,
+   "repeat_seconds": 1.2,
+   "distinct_inputs": 47
+  },
+  "source_tasks": {
+   "launches": 16,
+   "seconds": 4.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "scalar_member_store": {
+   "launches": 71,
+   "seconds": 4.2,
+   "repeats": 10,
+   "repeat_seconds": 0.5,
+   "distinct_inputs": 32
+  },
+  "va_loop_pointer_arg": {
+   "launches": 102,
+   "seconds": 4.2,
+   "repeats": 21,
+   "repeat_seconds": 0.9,
+   "distinct_inputs": 41
+  },
+  "typed_root_declarations": {
+   "launches": 92,
+   "seconds": 4.1,
+   "repeats": 16,
+   "repeat_seconds": 0.7,
+   "distinct_inputs": 47
+  },
+  "w46_external_callee_contracts": {
+   "launches": 113,
+   "seconds": 4.1,
+   "repeats": 34,
+   "repeat_seconds": 1.2,
+   "distinct_inputs": 45
+  },
+  "cast_formalization": {
+   "launches": 109,
+   "seconds": 4.0,
+   "repeats": 27,
+   "repeat_seconds": 1.0,
+   "distinct_inputs": 47
+  },
+  "wait_failure_paths": {
+   "launches": 72,
+   "seconds": 3.9,
+   "repeats": 36,
+   "repeat_seconds": 2.1,
+   "distinct_inputs": 4
+  },
+  "usable_records_survey": {
+   "launches": 53,
+   "seconds": 3.7,
+   "repeats": 14,
+   "repeat_seconds": 1.4,
+   "distinct_inputs": 1
+  },
+  "e01_source_enumeration": {
+   "launches": 48,
+   "seconds": 3.7,
+   "repeats": 5,
+   "repeat_seconds": 0.3,
+   "distinct_inputs": 22
+  },
+  "loader_abi_modes": {
+   "launches": 61,
+   "seconds": 3.5,
+   "repeats": 21,
+   "repeat_seconds": 1.4,
+   "distinct_inputs": 11
+  },
+  "branch_condition_calls": {
+   "launches": 44,
+   "seconds": 3.5,
+   "repeats": 3,
+   "repeat_seconds": 0.3,
+   "distinct_inputs": 22
+  },
+  "ctraces_capability_boundary": {
+   "launches": 48,
+   "seconds": 3.4,
+   "repeats": 22,
+   "repeat_seconds": 1.8,
+   "distinct_inputs": 2
+  },
+  "refuted_contract_withdrawal": {
+   "launches": 53,
+   "seconds": 3.3,
+   "repeats": 26,
+   "repeat_seconds": 2.1,
+   "distinct_inputs": 5
+  },
+  "review_hold_standing": {
+   "launches": 65,
+   "seconds": 3.3,
+   "repeats": 40,
+   "repeat_seconds": 2.1,
+   "distinct_inputs": 10
+  },
+  "summary_validation_premises": {
+   "launches": 82,
+   "seconds": 3.2,
+   "repeats": 44,
+   "repeat_seconds": 1.7,
+   "distinct_inputs": 22
+  },
+  "observed_wait_composition": {
+   "launches": 72,
+   "seconds": 3.2,
+   "repeats": 36,
+   "repeat_seconds": 1.7,
+   "distinct_inputs": 4
+  },
+  "field_link_join": {
+   "launches": 62,
+   "seconds": 3.1,
+   "repeats": 32,
+   "repeat_seconds": 1.7,
+   "distinct_inputs": 8
+  },
+  "alias_aggregate": {
+   "launches": 80,
+   "seconds": 3.0,
+   "repeats": 18,
+   "repeat_seconds": 0.8,
+   "distinct_inputs": 34
+  },
+  "loader_abi": {
+   "launches": 38,
+   "seconds": 3.0,
+   "repeats": 5,
+   "repeat_seconds": 0.5,
+   "distinct_inputs": 14
+  },
+  "f02_trace_relation": {
+   "launches": 7,
+   "seconds": 3.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "configured_cli": {
+   "launches": 34,
+   "seconds": 3.0,
+   "repeats": 6,
+   "repeat_seconds": 0.6,
+   "distinct_inputs": 4
+  },
+  "w46_libc_event_contract_gaps": {
+   "launches": 88,
+   "seconds": 2.8,
+   "repeats": 39,
+   "repeat_seconds": 1.2,
+   "distinct_inputs": 27
+  },
+  "source_scalar_calls": {
+   "launches": 7,
+   "seconds": 2.7,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "w48_bottom_up_callee_bodies": {
+   "launches": 69,
+   "seconds": 2.7,
+   "repeats": 13,
+   "repeat_seconds": 0.6,
+   "distinct_inputs": 31
+  },
+  "qcore_audit": {
+   "launches": 36,
+   "seconds": 2.6,
+   "repeats": 20,
+   "repeat_seconds": 1.5,
+   "distinct_inputs": 7
+  },
+  "qcore_core": {
+   "launches": 10,
+   "seconds": 2.6,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "lexical_closure_nested_assignment": {
+   "launches": 56,
+   "seconds": 2.6,
+   "repeats": 4,
+   "repeat_seconds": 0.3,
+   "distinct_inputs": 32
+  },
+  "access_path_statements": {
+   "launches": 58,
+   "seconds": 2.6,
+   "repeats": 15,
+   "repeat_seconds": 0.7,
+   "distinct_inputs": 24
+  },
+  "compile_options": {
+   "launches": 72,
+   "seconds": 2.5,
+   "repeats": 20,
+   "repeat_seconds": 0.7,
+   "distinct_inputs": 14
+  },
+  "cg05_elaborator_call_footprints": {
+   "launches": 67,
+   "seconds": 2.5,
+   "repeats": 14,
+   "repeat_seconds": 0.6,
+   "distinct_inputs": 29
+  },
+  "prepared_translation_unit": {
+   "launches": 28,
+   "seconds": 2.4,
+   "repeats": 14,
+   "repeat_seconds": 1.2,
+   "distinct_inputs": 4
+  },
+  "neutral_reach_census": {
+   "launches": 39,
+   "seconds": 2.4,
+   "repeats": 13,
+   "repeat_seconds": 0.8,
+   "distinct_inputs": 14
+  },
+  "contract_deferred_review": {
+   "launches": 51,
+   "seconds": 2.3,
+   "repeats": 32,
+   "repeat_seconds": 1.3,
+   "distinct_inputs": 9
+  },
+  "monkey_vhost_property_custody": {
+   "launches": 48,
+   "seconds": 2.1,
+   "repeats": 11,
+   "repeat_seconds": 0.6,
+   "distinct_inputs": 13
+  },
+  "w48_callee_closure_r3": {
+   "launches": 61,
+   "seconds": 2.0,
+   "repeats": 19,
+   "repeat_seconds": 0.6,
+   "distinct_inputs": 23
+  },
+  "emitted_c_werror": {
+   "launches": 15,
+   "seconds": 1.9,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "source_effect_helper_target": {
+   "launches": 42,
+   "seconds": 1.8,
+   "repeats": 10,
+   "repeat_seconds": 0.6,
+   "distinct_inputs": 4
+  },
+  "loop_owner_predefined_macros": {
+   "launches": 12,
+   "seconds": 1.8,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 1
+  },
+  "monkey_profile": {
+   "launches": 26,
+   "seconds": 1.8,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 6
+  },
+  "w47_callee_closure_r2": {
+   "launches": 62,
+   "seconds": 1.8,
+   "repeats": 20,
+   "repeat_seconds": 0.6,
+   "distinct_inputs": 23
+  },
+  "std_socket_inet": {
+   "launches": 4,
+   "seconds": 1.7,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "call_use_dependents": {
+   "launches": 53,
+   "seconds": 1.7,
+   "repeats": 22,
+   "repeat_seconds": 0.8,
+   "distinct_inputs": 4
+  },
+  "std_socket": {
+   "launches": 4,
+   "seconds": 1.5,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "contract_pin_hold": {
+   "launches": 30,
+   "seconds": 1.5,
+   "repeats": 16,
+   "repeat_seconds": 0.9,
+   "distinct_inputs": 7
+  },
+  "std_http": {
+   "launches": 4,
+   "seconds": 1.5,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "w46_routing_query_contracts": {
+   "launches": 48,
+   "seconds": 1.4,
+   "repeats": 22,
+   "repeat_seconds": 0.6,
+   "distinct_inputs": 15
+  },
+  "metric_aggregate_contracts": {
+   "launches": 35,
+   "seconds": 1.4,
+   "repeats": 21,
+   "repeat_seconds": 0.9,
+   "distinct_inputs": 7
+  },
+  "cg06_connective_footprints": {
+   "launches": 37,
+   "seconds": 1.4,
+   "repeats": 4,
+   "repeat_seconds": 0.2,
+   "distinct_inputs": 19
+  },
+  "thread_examples": {
+   "launches": 5,
+   "seconds": 1.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "certificate_context": {
+   "launches": 21,
+   "seconds": 1.3,
+   "repeats": 2,
+   "repeat_seconds": 0.2,
+   "distinct_inputs": 2
+  },
+  "socket_event_compose": {
+   "launches": 3,
+   "seconds": 1.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "std_io_compose": {
+   "launches": 3,
+   "seconds": 1.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "scoped_read_shares": {
+   "launches": 3,
+   "seconds": 1.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "scoped_read_loans": {
+   "launches": 3,
+   "seconds": 1.2,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "metric_trace_contract_gaps": {
+   "launches": 26,
+   "seconds": 1.1,
+   "repeats": 12,
+   "repeat_seconds": 0.5,
+   "distinct_inputs": 7
+  },
+  "branch_arms": {
+   "launches": 3,
+   "seconds": 1.1,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "sup07_refused_test_accusation": {
+   "launches": 28,
+   "seconds": 1.0,
+   "repeats": 6,
+   "repeat_seconds": 0.3,
+   "distinct_inputs": 8
+  },
+  "http_computed_length": {
+   "launches": 3,
+   "seconds": 1.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "composition_bounds": {
+   "launches": 12,
+   "seconds": 1.0,
+   "repeats": 1,
+   "repeat_seconds": 0.1,
+   "distinct_inputs": 2
+  },
+  "pipe_operator": {
+   "launches": 2,
+   "seconds": 0.9,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "exposed_leak_mechanisms": {
+   "launches": 24,
+   "seconds": 0.9,
+   "repeats": 3,
+   "repeat_seconds": 0.1,
+   "distinct_inputs": 9
+  },
+  "e01_denominator_coverage": {
+   "launches": 29,
+   "seconds": 0.9,
+   "repeats": 9,
+   "repeat_seconds": 0.2,
+   "distinct_inputs": 7
+  },
+  "e01_raw_cond": {
+   "launches": 8,
+   "seconds": 0.8,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 6
+  },
+  "e01_f1_raw_tokenizer": {
+   "launches": 12,
+   "seconds": 0.8,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 9
+  },
+  "checked_mutex_guards": {
+   "launches": 3,
+   "seconds": 0.8,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "refused_call_hand_on": {
+   "launches": 25,
+   "seconds": 0.7,
+   "repeats": 1,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 12
+  },
+  "root_source_set": {
+   "launches": 10,
+   "seconds": 0.7,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "source_loop": {
+   "launches": 2,
+   "seconds": 0.6,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "unsafe_linkage": {
+   "launches": 1,
+   "seconds": 0.6,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "cleanup_vocabulary": {
+   "launches": 14,
+   "seconds": 0.6,
+   "repeats": 7,
+   "repeat_seconds": 0.3,
+   "distinct_inputs": 2
+  },
+  "string_concat": {
+   "launches": 2,
+   "seconds": 0.6,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "obs_reordering": {
+   "launches": 2,
+   "seconds": 0.6,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "std_modules": {
+   "launches": 2,
+   "seconds": 0.5,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "user_contract_plugins": {
+   "launches": 28,
+   "seconds": 0.5,
+   "repeats": 4,
+   "repeat_seconds": 0.1,
+   "distinct_inputs": 4
+  },
+  "e01_stdin_attribution": {
+   "launches": 14,
+   "seconds": 0.5,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 4
+  },
+  "std_string": {
+   "launches": 2,
+   "seconds": 0.5,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "task_io_compose": {
+   "launches": 1,
+   "seconds": 0.5,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "verdict_fold": {
+   "launches": 12,
+   "seconds": 0.5,
+   "repeats": 4,
+   "repeat_seconds": 0.2,
+   "distinct_inputs": 7
+  },
+  "contract_loader": {
+   "launches": 16,
+   "seconds": 0.5,
+   "repeats": 3,
+   "repeat_seconds": 0.1,
+   "distinct_inputs": 10
+  },
+  "std_buffer": {
+   "launches": 2,
+   "seconds": 0.5,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "string_slice_io": {
+   "launches": 2,
+   "seconds": 0.5,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "bitwise_conditions": {
+   "launches": 1,
+   "seconds": 0.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "observer_compile_flags": {
+   "launches": 6,
+   "seconds": 0.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 1
+  },
+  "loops_on_composed_routes": {
+   "launches": 2,
+   "seconds": 0.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "branch_statement": {
+   "launches": 1,
+   "seconds": 0.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "cli": {
+   "launches": 5,
+   "seconds": 0.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "std_event": {
+   "launches": 1,
+   "seconds": 0.4,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "quant_region": {
+   "launches": 1,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "pipe_intrinsic_stage": {
+   "launches": 1,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "second_source_set": {
+   "launches": 5,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "slice_permissions": {
+   "launches": 1,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "logical_connectives": {
+   "launches": 1,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "resource_helper_functions": {
+   "launches": 1,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "loop_owner_census": {
+   "launches": 4,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 2
+  },
+  "compose_event_lines": {
+   "launches": 1,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "write_lend_tasks": {
+   "launches": 1,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "aggregate_owned_field": {
+   "launches": 1,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "cg30_target_identity": {
+   "launches": 5,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 1
+  },
+  "condvar_join_lifecycle": {
+   "launches": 4,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 2
+  },
+  "condvar_join_census": {
+   "launches": 4,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 2
+  },
+  "source_record": {
+   "launches": 1,
+   "seconds": 0.3,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "write_lend": {
+   "launches": 1,
+   "seconds": 0.2,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "loop_unroll_budget": {
+   "launches": 1,
+   "seconds": 0.2,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "refuted_contract_foreign_unlink": {
+   "launches": 5,
+   "seconds": 0.2,
+   "repeats": 1,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 2
+  },
+  "contract_revision_audit": {
+   "launches": 3,
+   "seconds": 0.2,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "clang_gap_flags": {
+   "launches": 4,
+   "seconds": 0.2,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "region_joins_loan": {
+   "launches": 1,
+   "seconds": 0.1,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "region_joins_duties": {
+   "launches": 1,
+   "seconds": 0.1,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "prepared_failure": {
+   "launches": 3,
+   "seconds": 0.1,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 1
+  },
+  "quirin": {
+   "launches": 5,
+   "seconds": 0.1,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 1
+  },
+  "c_numeric_abi_llp64": {
+   "launches": 6,
+   "seconds": 0.1,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 1
+  },
+  "pending_review_report": {
+   "launches": 3,
+   "seconds": 0.1,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "contract_tip_mode": {
+   "launches": 1,
+   "seconds": 0.1,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "contract_revision_identities": {
+   "launches": 1,
+   "seconds": 0.1,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "cycle19_current_command": {
+   "launches": 1,
+   "seconds": 0.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "current_cli": {
+   "launches": 1,
+   "seconds": 0.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "no_build_cli": {
+   "launches": 1,
+   "seconds": 0.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "sr5_pending_gates": {
+   "launches": 1,
+   "seconds": 0.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "systemd": {
+   "launches": 1,
+   "seconds": 0.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  },
+  "checkpoint_cli": {
+   "launches": 1,
+   "seconds": 0.0,
+   "repeats": 0,
+   "repeat_seconds": 0.0,
+   "distinct_inputs": 0
+  }
+ },
+ "filtered_name_repeats_top": [
+  {
+   "filter": "cio_ctx",
+   "count": 2327
+  },
+  {
+   "filter": "cio_file",
+   "count": 2161
+  },
+  {
+   "filter": "cio_chunk",
+   "count": 2125
+  },
+  {
+   "filter": "cio_stream",
+   "count": 2125
+  },
+  {
+   "filter": "cio_file_native_unmap",
+   "count": 834
+  },
+  {
+   "filter": "munmap_file",
+   "count": 666
+  },
+  {
+   "filter": "cio_file_native_close",
+   "count": 626
+  },
+  {
+   "filter": "cio_file_native_delete",
+   "count": 555
+  },
+  {
+   "filter": "cio_file_close",
+   "count": 462
+  },
+  {
+   "filter": "cio_chunk",
+   "count": 424
+  },
+  {
+   "filter": "cio_ctx",
+   "count": 337
+  },
+  {
+   "filter": "qcore_test_size_t",
+   "count": 332
+  },
+  {
+   "filter": "cio_chunk",
+   "count": 272
+  },
+  {
+   "filter": "cio_file",
+   "count": 272
+  },
+  {
+   "filter": "cio_stream",
+   "count": 272
+  }
+ ],
+ "launches_per_input": {
+  "max": 16867,
+  "median": 2
+ }
+}
