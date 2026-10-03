@@ -160,7 +160,12 @@ crate's tip-mode `mk_vhost_set` contract, which by design is in force only at
 Monkey's tip (MONKEY-VHOST-PROPERTY-CUSTODY). Deliberate pin updates:
 `compiler/tests/contract_loader.rs` 265 → 272 v1 declarations and seven
 previous-mode rows; `compiler/tests/qcore_contract_corpus.rs` seven clause
-rows. Controls (`tests/cg10_sole_residual_contracts.rs`, 5, the production
+rows; the hand-written form of the converted `librdkafka/memory.qv`
+(`compiler/tests/fixtures/contract_inherit_qcore_provider/`, four
+declarations that inherit nothing); and the cmetrics inventory digest the
+source-contract consumer pins (`contract/profiles/cmetrics-counter/source-contracts.json`,
+`5ef81f3f…` → `93dcbddb…`, the README's "update that consumer's manifest pin
+deliberately"). Controls (`tests/cg10_sole_residual_contracts.rs`, 5, the production
 sections byte for byte): each declared helper reads its member actuals and is
 `Safe`; without the card each statement names its uncontracted callee; an
 owned buffer handed to a borrowed position and dropped still leaks; the
@@ -270,8 +275,48 @@ P4 callee closure.
 
 ## 6. Gate
 
-See [gate/](gate/) and [gate.json](gate.json) once written; section completed
-with the gate run.
+Standing gate (`docs/agents/validation.md`), `scripts/gate.sh g3` then
+`scripts/finish-gate.sh g3`, code steps at `abba7ce22` on base `2ecd39531`;
+logs `private/cg10res/gate-g3/`, exits copied to [gate/](gate/), summary
+[gate.json](gate.json):
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 441 units, 454 summaries; 7,561 passed, 0 failed, 11 ignored (`private/test-binaries/20261003T213057Z-3295650`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 287 audits passed |
+| `python3 -m unittest discover -s scripts/tests`, `build_matrix.py . --gate gate.json`, docs index | see [gate/](gate/) | |
+
+**Provider gate** (`scripts/provider-gate.sh g2`, at `468be8322`; `providers/`
+unchanged since): `cargo check --locked`, fmt, clippy 0; 129 provider tests;
+24 provider Python tests OK; `providers/contracts.py check` 0; package build 0
+and `verify` 0 for all five packages. Targeted runs before the gate:
+`scripts/targeted.sh t1`, `scripts/pins.sh p1` to `p7` (logs under
+`private/cg10res/`).
+
+**Pins flipped deliberately** (rule 12k; the gate's second run, `gate-g2`,
+failed exactly these and the two contract pins above, 7,548 passed / 13
+failed): each asserted the gate's text on a statement whose uncontracted
+callee rule 12k now names, and each still asserts `Unknown` and never `Safe`:
+`call_argument_access` (`y_unknown(r->count)`), `address_of_member`
+(`a_untracked(&hold->lock)`), `borrowed_field_actuals` (`b_untracked(storage->cio)`),
+`neutral_frame_recursion` (`purge(n->next)`, its own uncontracted recursive
+call), `return_position_pointer_leaf` (`return z_unknown(view->kind)`),
+`o04_b09b10` (the constructor's gate refusals 3 → 2: `mk_list_del(&ch->_head)`
+at L177 is named), and `o04_arms`, `o04_b08`, `o04_read_bound`, whose
+real-unit residual lists gain the fixture-uncontracted
+`msgpack_packer_init`, `mk_list_add`, `flb_hash_table_add`,
+`pthread_mutex_lock`/`_unlock` (B09/B10's eight gate refusals on C6's path now
+name these callees: 8 → 0 under the gate's text, the same 8 statements named;
+the three tests now report every unexpected refusal at once). The first run
+(`gate-g1`) stopped at clippy (`question_mark` in rule 12k's return form,
+fixed at `468be8322` with no behaviour change). The measured binaries were
+built before that fix and before `cargo fmt` (`e6414f3ca`'s code, whitespace
+and that one `?` aside); both are behaviour-neutral.
 
 ## Files
 
@@ -284,7 +329,9 @@ with the gate run.
   `contracts.json` and `contracts.lock`.
 * Tests: `tests/indirect_access_sole_residuals.rs`,
   `tests/cg10_sole_residual_contracts.rs`; pins in
-  `compiler/tests/contract_loader.rs` and `compiler/tests/qcore_contract_corpus.rs`.
+  `compiler/tests/contract_loader.rs`, `compiler/tests/qcore_contract_corpus.rs`,
+  the hand-written conversion fixture, `contract/profiles/cmetrics-counter/source-contracts.json`
+  and the nine gateway tests of section 6.
 * Scripts: `build.sh`, `measure.sh`, `census-run.sh`, `classify.py` (the
   BEFORE census), `callee_census.py`, `callee_kind.py`, `attribution.py`,
   `decides.py`, `class_leaves.py`, `compare.py`, `attribute_contracts.py`,

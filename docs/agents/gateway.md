@@ -4917,7 +4917,9 @@ own anchor here.
     set keyed by line and description, so a line holding two refused statements
     that carried one access leaf now shows both. Parity runs record every
     reading (`position: "uncontracted-access"`, its form, callee and answer).
-    Premises stated, not proved: that the reading leaves no state behind
+    Nine gateway pins that asserted the gate's text on such a statement were
+    flipped deliberately to the named callee, each still `Unknown` (report
+    section 6). Premises stated, not proved: that the reading leaves no state behind
     (bound by the corpus comparison) and the token/AST match (trust boundary
     28). Measured (corpus `66910c10`, main `2ecd39531` plus the rule):
     **695 / 9 / 4,130, no status move**, `d2f5a3f7…` → `00462adf…`; 2,962
