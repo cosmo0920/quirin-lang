@@ -6143,6 +6143,12 @@ impl Parser<'_> {
                 let condition = self.take_parenthesized()?;
                 let condition_supported =
                     self.supported_expression(&condition, ExpressionRole::Decides);
+                // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the null and
+                // distinct tests read only fields no statement changes, so
+                // each is asked once and its answer used at every place
+                // below that asked it again.
+                let null_condition = self.null_condition(&condition);
+                let distinct_condition = self.distinct_condition(&condition);
                 // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a test of a
                 // call's returned value against a constant, for a callee with
                 // a return-code disposition, asked before every other route.
@@ -6162,15 +6168,13 @@ impl Parser<'_> {
                     line,
                     "if",
                     &condition,
-                    !condition_supported
-                        && condition_call.is_none()
-                        && self.null_condition(&condition).is_none(),
+                    !condition_supported && condition_call.is_none() && null_condition.is_none(),
                 );
                 let element_condition = (!condition_supported
                     && relational_plan.is_none()
                     && condition_call.is_none()
                     && condition_access.is_none()
-                    && self.null_condition(&condition).is_none())
+                    && null_condition.is_none())
                 .then(|| self.element_condition(&condition))
                 .flatten();
                 if let Some((_base, _, _)) = &element_condition {
@@ -6190,8 +6194,8 @@ impl Parser<'_> {
                             && condition_call.is_none()
                             && condition_access.is_none()
                             && element_condition.is_none()
-                            && self.null_condition(&condition).is_none()
-                            && self.distinct_condition(&condition).is_none(),
+                            && null_condition.is_none()
+                            && distinct_condition.is_none(),
                     ),
                 };
                 let then_body = self.parse_statement_body()?;
@@ -6207,8 +6211,8 @@ impl Parser<'_> {
                     condition_supported,
                     condition_call,
                     condition_access,
-                    null_condition: self.null_condition(&condition),
-                    distinct_condition: self.distinct_condition(&condition),
+                    null_condition,
+                    distinct_condition,
                     element_condition,
                     condition_plan,
                     then_body,
@@ -6220,6 +6224,9 @@ impl Parser<'_> {
                 let condition = self.take_parenthesized()?;
                 let condition_supported =
                     self.supported_expression(&condition, ExpressionRole::Decides);
+                // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: asked once (see
+                // the `if` arm).
+                let null_condition = self.null_condition(&condition);
                 let condition_call = (!condition_supported)
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
@@ -6232,9 +6239,7 @@ impl Parser<'_> {
                     line,
                     "while",
                     &condition,
-                    !condition_supported
-                        && condition_call.is_none()
-                        && self.null_condition(&condition).is_none(),
+                    !condition_supported && condition_call.is_none() && null_condition.is_none(),
                 );
                 // Card W44-BRANCH-CONDITION-CALLS.
                 let condition_plan = self.planned_condition(
@@ -6244,7 +6249,7 @@ impl Parser<'_> {
                     !condition_supported
                         && condition_call.is_none()
                         && condition_access.is_none()
-                        && self.null_condition(&condition).is_none(),
+                        && null_condition.is_none(),
                 );
                 let body = self.parse_statement_body()?;
                 Ok(Statement::While {
@@ -6253,7 +6258,7 @@ impl Parser<'_> {
                     condition_supported,
                     condition_call,
                     condition_access,
-                    null_condition: self.null_condition(&condition),
+                    null_condition,
                     condition_plan,
                     body,
                 })
@@ -6290,6 +6295,9 @@ impl Parser<'_> {
                 };
                 let condition_supported =
                     self.supported_expression(&condition, ExpressionRole::Decides);
+                // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: asked once (see
+                // the `if` arm).
+                let null_condition = self.null_condition(&condition);
                 let condition_call = (!condition_supported && !condition.is_empty())
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
@@ -6304,9 +6312,7 @@ impl Parser<'_> {
                     line,
                     "for",
                     &condition,
-                    !condition_supported
-                        && condition_call.is_none()
-                        && self.null_condition(&condition).is_none(),
+                    !condition_supported && condition_call.is_none() && null_condition.is_none(),
                 );
                 // Card W44-BRANCH-CONDITION-CALLS.
                 let condition_plan = self.planned_condition(
@@ -6316,7 +6322,7 @@ impl Parser<'_> {
                     !condition_supported
                         && condition_call.is_none()
                         && condition_access.is_none()
-                        && self.null_condition(&condition).is_none(),
+                        && null_condition.is_none(),
                 );
                 let body = self.parse_statement_body()?;
                 let body_end = self.cursor;
@@ -6335,7 +6341,7 @@ impl Parser<'_> {
                 let counted = (self.element_lowerings > lowered_before
                     && condition_supported
                     && condition_call.is_none()
-                    && self.null_condition(&condition).is_none())
+                    && null_condition.is_none())
                 .then(|| {
                     self.counted_loop(
                         init.as_deref(),
@@ -6370,7 +6376,7 @@ impl Parser<'_> {
                     condition_supported,
                     condition_call,
                     condition_access,
-                    null_condition: self.null_condition(&condition),
+                    null_condition,
                     condition_plan,
                     increment,
                     list_step: None,
@@ -6391,6 +6397,9 @@ impl Parser<'_> {
                 self.cursor += 1;
                 let condition_supported =
                     self.supported_expression(&condition, ExpressionRole::Decides);
+                // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: asked once (see
+                // the `if` arm).
+                let null_condition = self.null_condition(&condition);
                 let condition_call = (!condition_supported)
                     .then(|| self.condition_call_instruction(&condition))
                     .flatten()
@@ -6403,9 +6412,7 @@ impl Parser<'_> {
                     line,
                     "do-while",
                     &condition,
-                    !condition_supported
-                        && condition_call.is_none()
-                        && self.null_condition(&condition).is_none(),
+                    !condition_supported && condition_call.is_none() && null_condition.is_none(),
                 );
                 // Card W44-BRANCH-CONDITION-CALLS. The body was parsed first,
                 // as C writes it; its sites precede the condition's.
@@ -6416,7 +6423,7 @@ impl Parser<'_> {
                     !condition_supported
                         && condition_call.is_none()
                         && condition_access.is_none()
-                        && self.null_condition(&condition).is_none(),
+                        && null_condition.is_none(),
                 );
                 Ok(Statement::DoWhile {
                     line,
@@ -6425,7 +6432,7 @@ impl Parser<'_> {
                     condition_call,
                     condition_access,
                     condition_is_literal_zero: condition_is_literal_zero(&condition),
-                    null_condition: self.null_condition(&condition),
+                    null_condition,
                     condition_plan,
                     body,
                 })
