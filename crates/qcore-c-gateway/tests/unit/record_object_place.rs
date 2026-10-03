@@ -41,9 +41,7 @@ fn only_a_dot_only_scalar_place_on_automatic_storage_is_admitted() {
                 let admitted = decide(dot_only, storage(root), access(use_)) == Decision::Admit;
                 assert_eq!(
                     admitted,
-                    dot_only
-                        && matches!(root, "automatic" | "parameter")
-                        && use_ != "other",
+                    dot_only && matches!(root, "automatic" | "parameter") && use_ != "other",
                     "{dot_only} {root} {use_}"
                 );
             }
@@ -121,7 +119,11 @@ fn the_storage_reader_names_each_declaration_class() {
     assert_eq!(root_storage(&function, "0x1"), RootStorage::Parameter);
     assert_eq!(root_storage(&function, "0x2"), RootStorage::Automatic);
     for decl in ["0x3", "0x4", "0x5", "0x6"] {
-        assert_eq!(root_storage(&function, decl), RootStorage::Specified, "{decl}");
+        assert_eq!(
+            root_storage(&function, decl),
+            RootStorage::Specified,
+            "{decl}"
+        );
     }
     assert_eq!(root_storage(&function, "0x9"), RootStorage::Outside);
 }

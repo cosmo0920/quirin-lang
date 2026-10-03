@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (from CAST-FORMALIZATION): every moving function between two route reports, with
-the leaves it lost and gained, attributed to the card's hooks.
+"""CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (from CAST-FORMALIZATION's compare.py):
+every moving function between two route reports, with the leaves it lost and
+gained, attributed to the card's rules.
 
 Usage: compare.py BEFORE AFTER AFTER-PARITY.jsonl OUT.json
 
@@ -9,16 +10,13 @@ row index within the unit), so the system and slice routes' per-configuration
 units are compared one for one. A function moves when its status or its
 multiset of leaves (line, description) changes.
 
-Attribution, from the AFTER parity stream:
-* `H-U0` -- the function has a `cast-semantics-value` row answered
-  `uncast-actuals-admitted` or `uncast-actuals-refused` (the call-actual
-  soundness repair replaced the classifier's answer);
-* `H-U` -- a row answered `uncast-admitted` or `uncast-tail-admitted`;
-* `H-V` -- a lost leaf sits on a line holding an explicit cast of an
-  access-admitting class (`typed-view`, `byte-view`, `qualifier`) at a member
-  root, dereference or subscript base (`cast-semantics-census` rows);
-* `H-SR5` -- a gained leaf is a `return` refusal on a line holding a cast
-  under a `*` (read by hand);
+Attribution, from the AFTER parity stream (the rules' own rows):
+* `12i` -- a `return-call-access` row of the function answered admitted (rule
+  12i read a refused return's call);
+* `12j` -- a `typed-place` row of the function carries a rule-12j place
+  admitted (a `.`-only scalar place on an automatic record object);
+* `callee-summary` -- a lost or gained leaf names a callee whose own function
+  moved to Safe in AFTER (its validated summary now applies);
 * `other` -- none of these (read by hand).
 A function may carry several labels.
 """
@@ -30,8 +28,6 @@ import sys
 
 TEMPLATE = re.compile(r"`[^`]*`")
 ORDER = {"Safe": 0, "Pending": 1, "Unknown": 2, "Unsafe": 3}
-ACCESS = {"member-root", "dereference", "subscript-base"}
-VIEWS = {"typed-view", "byte-view", "qualifier"}
 
 
 def load(path):
@@ -59,20 +55,18 @@ def rows(report):
 def main():
     before, after = rows(load(sys.argv[1])), rows(load(sys.argv[2]))
     hooks = collections.defaultdict(set)
-    access_lines = collections.defaultdict(set)
     for line in open(sys.argv[3], encoding="utf-8"):
-        if '"cast-semantics-value"' in line:
+        if '"return-call-access"' in line:
             row = json.loads(line)
-            answer = row["answer"]
-            if answer.startswith("uncast-actuals"):
-                hooks[row["function"]].add("H-U0")
-            elif answer in ("uncast-admitted", "uncast-tail-admitted"):
-                hooks[row["function"]].add("H-U")
-        elif '"cast-semantics-census"' in line:
+            if row.get("new_admitted"):
+                hooks[row["function"]].add("12i")
+        elif '"rule":"12j"' in line or '"rule": "12j"' in line:
             row = json.loads(line)
-            if row["class"] in VIEWS and row["cast_position"] in ACCESS:
-                for at in (row["line"], row["statement_line"]):
-                    access_lines[row["function"]].add(at)
+            if any(place.get("rule") == "12j" and place.get("admitted")
+                   for place in row.get("places") or []):
+                hooks[row["function"]].add("12j")
+    safe_now = {key[2] for key, (status, _) in after.items()
+                if status == "Safe" and before.get(key, ("absent",))[0] != "Safe"}
     transitions = collections.Counter()
     removed, added = collections.Counter(), collections.Counter()
     moves, attribution = [], collections.Counter()
@@ -89,8 +83,9 @@ def main():
             added[TEMPLATE.sub("`_`", description)] += count
         function = key[2]
         labels = set(hooks.get(function, set()))
-        if any(line in access_lines.get(function, set()) for (line, _) in lost):
-            labels.add("H-V")
+        if any(f"`{callee}`" in description for (_, description) in list(lost) + list(gained)
+               for callee in safe_now if callee != function):
+            labels.add("callee-summary")
         if not labels:
             labels.add("other")
         if old[0] != new[0]:

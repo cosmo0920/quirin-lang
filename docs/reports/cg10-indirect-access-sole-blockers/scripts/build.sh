@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # build.sh NAME [TEST-FILTER] -- CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (from CAST-FORMALIZATION): under the shared heavy lock,
 # `cargo check` the gateway with its tests, run the gateway's unit tests
-# matching TEST-FILTER (default cast_semantics), then build the release
+# matching TEST-FILTER (default record_object_place), then build the release
 # quirin-audit. Every exit is written to a file under private/cg10sole; nothing is
 # piped.
 set -u
 name="$1"
-filter="${2:-cast_semantics}"
+filter="${2:-record_object_place}"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 out="$repo/private/cg10sole"

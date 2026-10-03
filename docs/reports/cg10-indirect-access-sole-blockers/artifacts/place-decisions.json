@@ -1,0 +1,45 @@
+{
+ "stream": "before-parity.jsonl",
+ "rule_10t_place_decisions": {
+  "admitted": 3683,
+  "array-root": 124,
+  "element-place": 92,
+  "deeper-place": 71,
+  "identity": 26,
+  "form:base:CStyleCastExpr": 5
+ },
+ "rule_12j_decisions": {},
+ "rule_12i_consultations": {}
+}
+{
+ "stream": "after1-parity.jsonl",
+ "rule_10t_place_decisions": {
+  "admitted": 3704,
+  "array-root": 125,
+  "element-place": 92,
+  "deeper-place": 71,
+  "identity": 26,
+  "form:base:CStyleCastExpr": 5
+ },
+ "rule_12j_decisions": {
+  "automatic/scalar-store/admit": 266,
+  "automatic/scalar-read/admit": 252,
+  "automatic/other/access": 83,
+  "outside/scalar-store/storage": 24,
+  "parameter/scalar-read/admit": 23,
+  "automatic/scalar-read/hop": 20,
+  "automatic/scalar-store/hop": 11,
+  "outside/other/storage": 8,
+  "automatic/other/hop": 6,
+  "parameter/other/access": 5,
+  "parameter/scalar-store/admit": 3,
+  "outside/scalar-store/hop": 3,
+  "outside/scalar-read/storage": 3
+ },
+ "rule_12i_consultations": {
+  "whole-call/refused": 267,
+  "whole-call/admitted": 40,
+  "scalar-call/refused": 9,
+  "scalar-call/admitted": 1
+ }
+}

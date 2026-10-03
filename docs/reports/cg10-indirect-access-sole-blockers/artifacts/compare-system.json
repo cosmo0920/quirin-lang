@@ -1,0 +1,230 @@
+{
+ "transitions": {
+  "Unknown -> Safe": 2
+ },
+ "status_moves": [
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 1,
+   "function": "flb_engine_started",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "12i"
+   ],
+   "lost": [
+    "19639: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 2,
+   "function": "flb_engine_started",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "12i"
+   ],
+   "lost": [
+    "19639: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  }
+ ],
+ "removed": {
+  "indirect memory access is outside the resource projection": 10,
+  "call to uncontracted function `_`": 2,
+  "unmodeled call, aggregate or indirect access in branch condition": 2
+ },
+ "added": {},
+ "attribution": {
+  "callee-summary": 2,
+  "12i": 4,
+  "other": 2,
+  "12j": 2
+ },
+ "moving_rows": 10,
+ "moves": [
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 1,
+   "function": "flb_engine_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "19892: call to uncontracted function `flb_engine_started`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 1,
+   "function": "flb_engine_started",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "12i"
+   ],
+   "lost": [
+    "19639: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 2,
+   "function": "flb_engine_start",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary"
+   ],
+   "lost": [
+    "19892: call to uncontracted function `flb_engine_started`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_engine.c",
+   "occurrence": 2,
+   "function": "flb_engine_started",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "12i"
+   ],
+   "lost": [
+    "19639: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_has_direct_routes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19310: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_prefers_physical_delete",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12i"
+   ],
+   "lost": [
+    "18365: indirect memory access is outside the resource projection",
+    "18373: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "flb_input_chunk_has_direct_routes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19310: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "flb_input_chunk_prefers_physical_delete",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12i"
+   ],
+   "lost": [
+    "18365: indirect memory access is outside the resource projection",
+    "18373: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "occurrence": 1,
+   "function": "flb_storage_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12j"
+   ],
+   "lost": [
+    "18846: indirect memory access is outside the resource projection",
+    "18848: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_storage.c",
+   "occurrence": 2,
+   "function": "flb_storage_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12j"
+   ],
+   "lost": [
+    "18846: indirect memory access is outside the resource projection",
+    "18848: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  }
+ ]
+}

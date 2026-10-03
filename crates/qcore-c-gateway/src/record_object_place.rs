@@ -161,11 +161,13 @@ pub(crate) fn root_storage(function: &Value, decl: &str) -> RootStorage {
             && matches!(kind(node), "ParmVarDecl" | "VarDecl")
             && node["id"].as_str() == Some(decl)
         {
-            found = Some(match (kind(node), node["storageClass"].as_str(), node.get("tls")) {
-                ("ParmVarDecl", None, None) => RootStorage::Parameter,
-                ("VarDecl", None, None) => RootStorage::Automatic,
-                _ => RootStorage::Specified,
-            });
+            found = Some(
+                match (kind(node), node["storageClass"].as_str(), node.get("tls")) {
+                    ("ParmVarDecl", None, None) => RootStorage::Parameter,
+                    ("VarDecl", None, None) => RootStorage::Automatic,
+                    _ => RootStorage::Specified,
+                },
+            );
         }
     });
     found.unwrap_or(RootStorage::Outside)

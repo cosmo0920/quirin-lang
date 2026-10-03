@@ -110,8 +110,7 @@ impl Parser<'_> {
             let (reads, call) = accepted?;
             return Some(self.lowered_return(expression, &texts, line, reads, call, true));
         }
-        let (call_index, call_end) =
-            crate::legacy_condition_call::unconditional_call_span(&texts)?;
+        let (call_index, call_end) = crate::legacy_condition_call::unconditional_call_span(&texts)?;
         let externally_declared = find_function_body(self.tokens, texts[call_index]).is_none();
         let outside = texts[..call_index]
             .iter()

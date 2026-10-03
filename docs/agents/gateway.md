@@ -2046,6 +2046,9 @@ refusal stays.
     identity is read as untracked on a path where nothing bound it and
     nothing was refused before the access; the never-bound premise stays
     off this route.
+    Amended by [rule 12j](#constraint-12j): a `.`-only scalar place on a
+    record object of the function's automatic storage is read with no root
+    premise (no pointer is read).
 
 <a id="constraint-10u"></a>
 
@@ -4793,3 +4796,90 @@ own anchor here.
     and nine more), bound to `CONVERSION_TABLE`, `classify` and rule 5j's
     reader by shared vectors;
     [report](../reports/cast-formalization/README.md).
+
+<a id="constraint-12i"></a>
+
+12i. **A `return` whose one call the gate refused for its actuals is read
+    with rule W44's call-argument access exactly as the same call as a
+    statement, and returned only as the return position already accepts.**
+    Card CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (`legacy_return_call_access.rs`,
+    a thin hook in `legacy_c.rs::return_statement`; shared items added:
+    `return_call_access::is_gate_refusal`). It amends C-GATEWAY-RETURN-CALL-W4
+    and B01-RETURN-EXPRESSION; W44's premises and the return position's
+    acceptance stand unchanged. Asked last, where every route of the
+    position declined or only re-attributed the gate's refusal
+    (W43-RETURN-EXPRESSION), for (1) **a whole-call return**: the synthetic
+    `PLACE = f(args)` (the reserved place unspelled) refused by the gate,
+    which W44 lowers to its block (the typed reads of every base the used
+    actuals dereference, their second obligation, the call) whose call is a
+    contracted call into exactly `PLACE` with a result
+    `escapes_only_fresh_custody` accepts (a derived result only in the CFG a
+    derived summary is validated on); the return is then the existing pair
+    `PLACE = f(args); return PLACE;` with the reads first; and (2) **B01's
+    one call in a scalar expression** (an externally declared callee, the
+    surrounding operands scalar) whose call W44 lowers to a contracted call
+    with no destination and a `None` result; the exit escapes nothing. C
+    evaluates every actual before the call (C11 6.5.2.2p10). **Do not** use
+    an actual at a custody-taking position (`W44-CALL-ARGUMENT-CUSTODY-POSITION`
+    stays by design), read an uncontracted callee, a descriptor read or a
+    declined probe, accept a reallocated result, or ask the rule before an
+    older route (hard invariant 3); a declined probe restores the site and
+    element counters. Parity runs record every consultation
+    (`position: "return-call-access"`, its form and answer). Premises stated,
+    not proved: W44's and the return position's, and the token/AST match
+    (trust boundary 28). Measured (corpus `66910c10`, main `cdc2fa878` plus the card): 40 whole-call and
+    1 scalar-call returns admitted of 317 consultations; with rule 12j
+    **654 / 9 / 4,171 → 695 / 9 / 4,130** (`d13ed4c1…` → `d2f5a3f7…`), 14
+    of the 41 Unknown → Safe directly by this rule (comparators, atomic
+    getters, `rd_strcmp3`, `XXH_readLE32_align`/`XXH_readLE64_align`), 12 more
+    through callee summaries it validates; no Safe → non-Safe move, no leak
+    or violation added (two Unknown functions now carry the return
+    position's own refusal of a nullable owned result instead of the gate's).  `QCore.ReturnCallActuals`
+    (`the_lowering_is_the_statement_lowering_then_the_exit`,
+    `the_reads_precede_the_call_which_precedes_the_exit`,
+    `a_statement_w44_refuses_keeps_the_refusal`,
+    `a_custody_position_is_never_used`,
+    `a_reallocated_result_keeps_the_refusal`,
+    `the_scalar_form_returns_no_custody`,
+    `the_exit_discharges_nothing_prior` and six more), composed from
+    `QCore.CallArgumentAccess` and `QCore.ReturnCallCustody`, bound to the
+    gateway by `tests/indirect_access_sole_blockers.rs`;
+    [report](../reports/cg10-indirect-access-sole-blockers/README.md).
+
+<a id="constraint-12j"></a>
+
+12j. **A scalar place selected with `.` only from a record object of the
+    function's automatic storage is read with no root premise: no pointer is
+    read, so no binding is read or changed.** Card
+    CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (`record_object_place.rs`, a thin hook
+    in `typed_access_path::Reader::path`; shared item added:
+    `typed_place::record_place_row`). It amends rules 10k(1) and 10t's
+    record-object root; the never-bound premise is unchanged and asked first.
+    Where it refused a `.`-rooted place, the place is admitted when (1) every
+    step is a `.` member selection (a union or bit-field step is rule 10w's,
+    with its decision and frame), (2) the root's Clang declaration is a
+    `ParmVarDecl` of the function (C passes a record by value) or a
+    block-scope `VarDecl` of it with no storage-class specifier and no
+    thread-local storage (C11 6.2.4p5), and (3) the access is a scalar read or
+    a scalar store. The place lowers to no base and no chain: no dereference
+    obligation exists, and the store writes only the scalar member's storage,
+    which no binding names; a store through a union that can hold a pointer
+    keeps W43's refused-write frame. **Do not** read a place with a hop
+    (`->`, a subscript or `*`), a `static`, `extern`, `register`,
+    thread-local or file-scope root, a pointer value, an address, a
+    pointer-valued store or a whole aggregate under this rule, or serve the
+    never-bound answer from it. Parity runs record each decision as a
+    `typed-place` place (`rule: "12j"`, the root's storage, the access and
+    the answer). Premises stated, not proved: faithful Clang extraction of
+    declaration ids, storage classes and member steps (trust boundary 28).
+    Measured on the same run: 544 place decisions admitted (statement and
+    position readers, deduplicated), 15 of the 41 Unknown → Safe directly
+    (12 librdkafka telemetry value builders, `XXH32_reset`, `XXH64_reset`,
+    `cnd_timedwait_ms`); system **83 / 4 / 361 → 85 / 4 / 359**
+    (`flb_engine_started`, twice, by rule 12i), slice no status move.  `QCore.RecordObjectPlace` (`decision_vectors_hold`,
+    `admitted_exactly_on_a_dot_only_scalar_place_of_automatic_storage`,
+    `a_hop_is_never_admitted`, `a_root_outside_automatic_storage_is_refused`,
+    `the_never_bound_answer_is_unchanged`, `a_scalar_store_changes_no_binding`,
+    `a_union_store_keeps_the_frame` and five more), bound to
+    `DECISION_VECTORS` by a shared-vector test;
+    [report](../reports/cg10-indirect-access-sole-blockers/README.md).

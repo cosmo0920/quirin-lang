@@ -1,0 +1,170 @@
+{
+ "transitions": {},
+ "status_moves": [],
+ "removed": {
+  "unmodeled call, aggregate or indirect access in branch condition": 10,
+  "indirect memory access is outside the resource projection": 3,
+  "unmodeled call, aggregate or indirect access in for-loop condition": 2
+ },
+ "added": {
+  "unresolved resource identity `_`": 4
+ },
+ "attribution": {
+  "12j": 7,
+  "other": 1
+ },
+ "moving_rows": 8,
+ "moves": [
+  {
+   "unit": "plugins/in_tail/tail_dockermode.c",
+   "occurrence": 1,
+   "function": "flb_tail_dmode_flush",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12j"
+   ],
+   "lost": [
+    "20330: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_dockermode.c",
+   "occurrence": 1,
+   "function": "modify_json_cond",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12j"
+   ],
+   "lost": [
+    "20116: unmodeled call, aggregate or indirect access in branch condition",
+    "20120: unmodeled call, aggregate or indirect access in for-loop condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_file.c",
+   "occurrence": 1,
+   "function": "flb_tail_repack_map",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12j"
+   ],
+   "lost": [
+    "19996: unmodeled call, aggregate or indirect access in for-loop condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "plugins/in_tail/tail_fs_stat.c",
+   "occurrence": 1,
+   "function": "tail_fs_event",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12j"
+   ],
+   "lost": [
+    "20056: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "20056: unresolved resource identity `fst`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_multiline.c",
+   "occurrence": 1,
+   "function": "flb_tail_mult_pack_line_body",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12j"
+   ],
+   "lost": [
+    "20247: unmodeled call, aggregate or indirect access in branch condition",
+    "20259: unmodeled call, aggregate or indirect access in branch condition",
+    "20267: unmodeled call, aggregate or indirect access in branch condition",
+    "20270: indirect memory access is outside the resource projection",
+    "20287: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "20259: unresolved resource identity `data_map`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_multiline.c",
+   "occurrence": 1,
+   "function": "flb_tail_mult_process_content",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20213: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20213: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_multiline.c",
+   "occurrence": 1,
+   "function": "flb_tail_mult_process_first",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12j"
+   ],
+   "lost": [
+    "20113: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20113: unresolved resource identity `file`"
+   ]
+  },
+  {
+   "unit": "plugins/in_tail/tail_multiline.c",
+   "occurrence": 1,
+   "function": "is_last_key_val_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "12j"
+   ],
+   "lost": [
+    "20138: unmodeled call, aggregate or indirect access in branch condition",
+    "20142: unmodeled call, aggregate or indirect access in branch condition",
+    "20147: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  }
+ ]
+}
