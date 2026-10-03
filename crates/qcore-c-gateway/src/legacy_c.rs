@@ -8688,78 +8688,13 @@ impl Parser<'_> {
                         .collect(),
                 };
             }
-            // Card W45-CONTRACT-DEFERRED-REVIEW: a callee whose declared
-            // contract awaits human review arrives here rewritten, exactly as
-            // uncontracted as a callee with no declaration at all.
-            if let Some(callee) = review_hold::held_callee(function) {
-                return LegacyInstruction::Unknown {
-                    description: review_hold::hold_description(callee),
-                    writes: self.refused_writes(&texts),
-                };
-            }
-            // Card W45-CONTRACT-REVISION-MODE: likewise for a pin mismatch.
-            if let Some(callee) = pin_hold::held_callee(function) {
-                return LegacyInstruction::Unknown {
-                    description: pin_hold::hold_description(callee),
-                    writes: self.refused_writes(&texts),
-                };
-            }
-            // Card W45-REFUTED-CONTRACT-WITHDRAWAL: likewise for a refuted
-            // declaration.
-            if let Some(callee) = refuted_contract::held_callee(function) {
-                return LegacyInstruction::Unknown {
-                    description: refuted_contract::hold_description(callee),
-                    writes: self.refused_writes(&texts),
-                };
-            }
-            // Card W45-SR5-SOUNDNESS: likewise for an escaped source name.
-            if let Some(callee) = reserved_spelling::escaped_callee(function) {
-                return LegacyInstruction::Unknown {
-                    description: reserved_spelling::escaped_call_description(callee),
-                    writes: self.refused_writes(&texts),
-                };
-            }
-            // Card HASH-CONTRACTS: a callee whose declared literal-argument
-            // premise this call site does not satisfy arrives here rewritten,
-            // exactly as uncontracted as any callee with no declaration at all.
-            // Only the wording distinguishes the two, so that a report can tell
-            // "nothing was declared" from "the declaration does not cover this
-            // call".
-            if let Some(description) = literal_premise::unmet_description(function) {
-                return LegacyInstruction::Unknown {
-                    description,
-                    writes: self.refused_writes(&texts),
-                };
-            }
-            // Card LOADER-ABI: a callee whose declared contract this
-            // translation unit's own C declaration contradicts arrives here
-            // rewritten, exactly as uncontracted as a callee with no
-            // declaration at all. The wording carries the refusal key, so a
-            // report can tell a withdrawn declaration from an absent one.
-            if let Some((refusal, callee)) = declared_abi::withdrawn_callee(function) {
-                return LegacyInstruction::Unknown {
-                    description: format!(
-                        "call to `{callee}` whose declared contract was withdrawn against its C \
-                         declaration in this translation unit ({})",
-                        refusal.as_str()
-                    ),
-                    writes: self.refused_writes(&texts),
-                };
-            }
-            // Card LOADER-ABI-MODES: likewise for a declaration the callee's
-            // own body in this unit contradicts. The two withdrawals carry
-            // distinct wordings so a report can tell a signature disagreement
-            // from a custody-duty contradiction.
-            if let Some((refusal, callee)) = declared_modes::withdrawn_callee(function) {
-                return LegacyInstruction::Unknown {
-                    description: format!(
-                        "call to `{callee}` whose declared contract was withdrawn against the \
-                         summary derived from its body in this translation unit ({})",
-                        refusal.as_str()
-                    ),
-                    writes: self.refused_writes(&texts),
-                };
-            }
+            // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the seven call holds
+            // (review, pin and refutation holds, escaped spelling, literal
+            // premise, ABI and mode withdrawals) are answered before the
+            // lexical gate above, for this same `function` (`find_call` over
+            // the same texts) by the same pure name readers, so a held callee
+            // never reaches this arm; the repeated checks that stood here were
+            // unreachable and are removed.
             // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): an extension
             // node, a returns-twice call or a non-local exit is named; only the
             // wording changes.
