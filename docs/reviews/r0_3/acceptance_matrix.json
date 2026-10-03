@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CAST-FORMALIZATION card gate after the rebase onto main 9c5f2079c (CG26-TAIL-RESIDUAL-ACTUALS landed), code steps at 49616d15f (later commits: gate files, the matrix and the report only), scripts docs/reports/cast-formalization/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/castf/gate-g3 of this worktree. gate-g3: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 438 units, 451 summaries, 7,533 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261003T042135Z-3341960); both reevaluation probes exit 0; check_lean_audits.py 284 audits passed (AuditCastSemantics.lean new); python tests and docs index check after build_matrix.py . --gate this file (09a, 09b, 10b, 10c). Provider gate: providers/ is unchanged by the card and between cb3085365 and 9c5f2079c, so the provider gate run before the rebase (gate-g2, scripts/provider-gate.sh, at 0b1e6f3e2 over the same providers tree) stands: cargo check --locked 0, fmt 0, clippy --locked --offline 0, cargo test --workspace --locked --offline 129 passed (exit 0), python3 -m unittest discover -s providers/tests 24 OK (exit 0), contracts.py check 0, package build 0, verify of the five packages 0. Earlier gates: gate-g1 at 388af567c (failed clippy on two test-only items and one unit pin, fixed), gate-g2 at 6f3f23869 on base cb3085365 (7,525 passed, 283 Lean audits, all exits 0). Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit), pair of record: BEFORE main 9c5f2079c + the verdict-neutral census instrument (20a591246) b864e7ba 649/9/4,176 (main's digest); AFTER at 4fbcab80d d13ed4c1 654/9/4,171; system 44/2/188 and tail-pause slice 29/1/238/2 Pending, no status move (slice byte-identical). The commits after 4fbcab80d change records only.",
-  "workspace_tests": 7533,
+  "note": "CG10-INDIRECT-ACCESS-SOLE-BLOCKERS card gate on base cdc2fa878 (main unmoved), code steps at 799dacf1a (later commits: the report, records and gate files only), scripts docs/reports/cg10-indirect-access-sole-blockers/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/cg10sole/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 439 units, 452 summaries, 7,550 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261003T103104Z-3855597); both reevaluation probes exit 0; check_lean_audits.py 286 audits passed (AuditReturnCallActuals.lean and AuditRecordObjectPlace.lean new); python tests and docs index check after build_matrix.py . --gate this file (09a, 09b, 10b, 10c); 08-python before the matrix regeneration failed only on the expected stale lean_audits (284 committed, 286 produced). The first gate run (gate-g1, at e1e15b64d) failed exactly the four pins the card then flipped deliberately with statement-form controls (7,546 passed, 4 failed); every other step of it exited 0. Provider gate: providers/ is unchanged by the card and since CAST-FORMALIZATION's provider gate over the same tree (cdc2fa878 is its merged tip), so provider_tests is that run's figure, not re-run here.",
+  "workspace_tests": 7550,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 284,
+  "lean_audits": 286,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6944,6 +6944,7 @@
    "AuditReasonCarrier.lean",
    "AuditReasonCategory.lean",
    "AuditReclamation.lean",
+   "AuditRecordObjectPlace.lean",
    "AuditRefusedCallHandOn.lean",
    "AuditRefusedHandOnCustody.lean",
    "AuditRefusedTestAccusation.lean",
@@ -6957,6 +6958,7 @@
    "AuditReservedSpelling.lean",
    "AuditResourceCalls.lean",
    "AuditResourceKinds.lean",
+   "AuditReturnCallActuals.lean",
    "AuditReturnCallCustody.lean",
    "AuditReturnExpressionEvaluation.lean",
    "AuditReturnExpressionFamilies.lean",
@@ -7050,7 +7052,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3cac189afb18bdd0/docs/reports/cast-formalization/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a9bc8931215339a08/docs/reports/cg10-indirect-access-sole-blockers/gate.json)"
  },
  "named_followups": [
   {

@@ -226,7 +226,32 @@ Fixed point in rank order: 227, 331, 345, 369, 383, 398, 408, 413, 430, 433, …
 
 ## 5. Gate
 
-GATE_SECTION
+Standing gate (`docs/agents/validation.md`), `scripts/gate.sh g2` then
+`scripts/finish-gate.sh g2`, code steps at `799dacf1a` on base `cdc2fa878`;
+logs `private/cg10sole/gate-g2/`, exits copied to [gate/](gate/), summary
+[gate.json](gate.json):
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 439 units, 452 summaries; 7,550 passed, 0 failed, 11 ignored (`private/test-binaries/20261003T103104Z-3855597`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 286 audits passed |
+| `python3 -m unittest discover -s scripts/tests` (before the matrix) | 1 | the expected stale `lean_audits` (284 committed, 286 produced) |
+| `build_matrix.py . --gate gate.json` | 0 | |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK |
+| `build_docs_index.py`, `--check` | 0, 0 | |
+
+The first run (`gate-g1`, code at `e1e15b64d`) failed exactly the four pins
+§2 flips (7,546 passed, 4 failed); every other step exited 0. Provider gate
+not run: `providers/` is unchanged by the card (and since CAST-FORMALIZATION's
+provider gate over the same tree). Targeted runs: `scripts/targeted.sh t1`
+(the card's unit test and nine neighbouring suites, all 0 but the card's
+first draft) and `scripts/pins.sh p2` (the flipped suites and the card's,
+all 0).
 
 ## Files
 
@@ -239,5 +264,6 @@ GATE_SECTION
   their audits, `proof/QCore.lean`.
 * Scripts: `classify.py` (task 1), `census-run.sh`, `measure.sh`,
   `compare.py`, `place_decisions.py`, `tip-probe.sh`/`tip_rows.py`,
-  `targeted.sh`, `build.sh`, `gate.sh`, `provider-gate.sh` (not run: no
+  `targeted.sh`, `pins.sh`, `build.sh`, `gate.sh`, `finish-gate.sh`,
+  `update_ledger.py`, `update_records.py`, `provider-gate.sh` (not run: no
   `providers/` change).
