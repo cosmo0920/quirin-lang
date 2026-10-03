@@ -409,7 +409,16 @@ pub(crate) fn read(
 /// that carry an identity and the names rule 10l answers (name `n` is `vn`),
 /// and whether the tail is borrowed.
 #[cfg(test)]
-pub(crate) const READ_VECTORS: &[(&str, &[usize], &[usize], bool, &str)] = &[
+pub(crate) type ReadVector = (
+    &'static str,
+    &'static [usize],
+    &'static [usize],
+    bool,
+    &'static str,
+);
+
+#[cfg(test)]
+pub(crate) const READ_VECTORS: &[ReadVector] = &[
     (".lit", &[], &[], false, ".data"),
     ("(.name 1 true)", &[], &[], false, ".data"),
     (
