@@ -217,9 +217,23 @@ fn cg26r_the_node_shapes() {
         TailExpr::from_node(&offset),
         TailExpr::Binary { pointer: true, .. }
     ));
+    // Card CAST-FORMALIZATION (rule 12h), a deliberate flip: a scalar
+    // conversion is read through to its operand's own reading
+    // (`cast_semantics::tail_transparent`); a pointer made an integer stays a
+    // cast, refused.
     let cast = json!({"kind": "CStyleCastExpr", "castKind": "IntegralCast",
                       "type": {"qualType": "long"}, "inner": [i.clone()]});
-    assert!(matches!(TailExpr::from_node(&cast), TailExpr::Cast(_)));
+    assert_eq!(
+        TailExpr::from_node(&cast),
+        TailExpr::Name {
+            name: "i".into(),
+            scalar: true
+        }
+    );
+    let pointer = implicit(reference("p", "char *"), "char *");
+    let integer = json!({"kind": "CStyleCastExpr", "castKind": "PointerToIntegral",
+                         "type": {"qualType": "unsigned long"}, "inner": [pointer]});
+    assert!(matches!(TailExpr::from_node(&integer), TailExpr::Cast(_)));
     let sizeof = json!({"kind": "UnaryExprOrTypeTraitExpr", "name": "sizeof",
                         "type": {"qualType": "unsigned long"}, "argType": {"qualType": "char[256]"}});
     assert_eq!(TailExpr::from_node(&sizeof), TailExpr::Literal);

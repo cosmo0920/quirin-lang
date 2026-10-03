@@ -42,8 +42,11 @@
 //! denotes. Under the data tail an identity keeps O04-TRACE's refusal: this
 //! never widens the data tail (`QCore.VariadicTailActuals`).
 //!
-//! Refused by name: an explicit cast anywhere in the actual (the card
-//! CAST-FORMALIZATION reads casts; none is read here), pointer arithmetic
+//! Refused by name: an explicit cast the conversion table does not read as
+//! its operand (rule 12h, `cast_semantics::tail_transparent`: a scalar
+//! conversion and an identity-preserving pointer conversion are read through
+//! to their operand's own reading here; a pointer made an integer or back is
+//! not), pointer arithmetic
 //! (its root is not a place the projection identifies), a conditional with an
 //! identity-carrying arm, an identity-carrying operand of an operator or of a
 //! condition, an integer-carried identity, an unanswered root, and every
@@ -304,6 +307,16 @@ impl TailExpr {
                 _ => Self::Other,
             },
             "CStyleCastExpr" => match children(node) {
+                // Card CAST-FORMALIZATION (rule 12h): a conversion the table
+                // reads as its operand in a trailing position (a scalar
+                // conversion, an identity-preserving pointer conversion) is
+                // the operand's own reading; every other cast refuses.
+                [inner]
+                    if crate::cast_semantics::classify_node(node)
+                        .is_some_and(crate::cast_semantics::tail_transparent) =>
+                {
+                    Self::from_node(inner)
+                }
                 [inner] => Self::Cast(Box::new(Self::from_node(inner))),
                 _ => Self::Cast(Box::new(Self::Other)),
             },

@@ -566,6 +566,25 @@ pub(crate) fn transparent_cast(mut node: &Value) -> Option<&Value> {
     Some(operand)
 }
 
+/// Card CAST-FORMALIZATION (rule 12h), in rule 12g's trailing-actual reader:
+/// whether a class is read as its operand at a declared variadic tail
+/// position. A `scalar` conversion is (the callee reads a value; an
+/// integer-carried identity in the operand is still refused by the reader's
+/// own name answer), and so is an identity-preserving pointer conversion
+/// (`byte-view`, `typed-view`, `punned-view`, `qualifier`: the same object,
+/// `QCore.CastSemantics.view_preserves_identity`). Every other class (a
+/// pointer made an integer or back, null, a function pointer) is not.
+pub(crate) fn tail_transparent(class: ConversionClass) -> bool {
+    matches!(
+        class,
+        ConversionClass::Scalar
+            | ConversionClass::ByteView
+            | ConversionClass::TypedView
+            | ConversionClass::PunnedView
+            | ConversionClass::Qualifier
+    )
+}
+
 /// Card CAST-FORMALIZATION, H-SR5: the opening index of the parenthesised
 /// group closing at `close` when it spells a type name (identifiers, then
 /// `*`s, at least one identifier): a cast group the dereference count reads

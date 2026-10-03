@@ -15,8 +15,8 @@
 //!   arithmetic, `sizeof`, a conditional of data arms and the assignment form
 //!   `r = snprintf(…)` are data;
 //! * **refusing:** a released pointer at the tail is never `Safe`, a dropped
-//!   one leaks, and the tail refusal stays for a cast (CAST-FORMALIZATION's),
-//!   pointer arithmetic, a conditional with an identity-carrying arm or
+//!   one leaks, and the tail refusal stays for a cast the conversion table
+//!   does not read as its operand (rule 12h), pointer arithmetic, a conditional with an identity-carrying arm or
 //!   condition, and a pointer name under the data tail (`sprintf`).
 //!
 //! A `Safe` here is `Safe` over the fixture and libc assumptions and promotes
@@ -195,11 +195,12 @@ fn casts_pointer_arithmetic_and_identity_arms_stay_refused() {
         return;
     }
     for (statements, callee) in [
-        // An explicit cast: CAST-FORMALIZATION's, never read here.
-        ("fprintf(stderr, \"%ld\", (long) i);", "fprintf"),
-        ("fprintf(stderr, \"%f\", (float) i / 1000.0);", "fprintf"),
+        // Card CAST-FORMALIZATION (rule 12h): the scalar and identity-
+        // preserving casts that were pinned here are read through
+        // (`casts_the_table_reads_as_their_operand_are_read`); a pointer made
+        // an integer keeps the refusal.
         (
-            "char *p = q_alloc(); fprintf(stderr, \"%p\", (void *) p); q_free(p);",
+            "char *p = q_alloc(); fprintf(stderr, \"%lu\", (unsigned long) p); q_free(p);",
             "fprintf",
         ),
         // Pointer arithmetic: its root is not an identified place.
@@ -227,6 +228,32 @@ fn casts_pointer_arithmetic_and_identity_arms_stay_refused() {
         assert!(!run.safe(), "{statements}: {run:?}");
         assert!(run.refused(&tail(callee)), "{statements}: {run:?}");
     }
+}
+
+/// Card CAST-FORMALIZATION (rule 12h), a deliberate flip of the three cast
+/// rows this card pinned refused: a scalar conversion of data is data, and an
+/// identity-preserving pointer conversion of a tracked name is that name's
+/// `Borrowed` place, so its obligations stay (a release before it is never
+/// `Safe`).
+#[test]
+fn casts_the_table_reads_as_their_operand_are_read() {
+    if !clang_available() {
+        return;
+    }
+    for statements in [
+        "fprintf(stderr, \"%ld\", (long) i);",
+        "fprintf(stderr, \"%f\", (float) i / 1000.0);",
+        "char *p = q_alloc(); fprintf(stderr, \"%p\", (void *) p); q_free(p);",
+    ] {
+        let run = run(statements, false);
+        assert!(run.safe(), "{statements}: {run:?}");
+        assert!(!run.refused(&tail("fprintf")), "{statements}: {run:?}");
+    }
+    let run = run(
+        "char *p = q_alloc(); q_free(p); fprintf(stderr, \"%p\", (void *) p);",
+        false,
+    );
+    assert!(!run.safe(), "{run:?}");
 }
 
 /// A pointer name the body declares twice (shadowed) is not answered by rule
