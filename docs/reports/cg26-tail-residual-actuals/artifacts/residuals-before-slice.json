@@ -1,0 +1,35 @@
+{
+ "summary": {
+  "statements": 1,
+  "lexical_readable": {
+   "False": 1
+  },
+  "functions": 1,
+  "tail_leaves": {},
+  "tail_leaf_total": 0
+ },
+ "rows": [
+  {
+   "callee": "flb_log_print",
+   "function": "flb_coro_destroy",
+   "line": 8104,
+   "texts": "flb_log_print ( 5 , __qcore_literal__ , 97 , __qcore_literal__ , coro , ( ( ( char * ) coro ) + sizeof ( struct flb_coro ) ) )",
+   "tail": [
+    "coro",
+    "( ( ( char * ) coro ) + sizeof ( struct flb_coro ) )"
+   ],
+   "promoted": true,
+   "lexical_readable": false,
+   "ast_answers": false,
+   "names": {
+    "coro": {
+     "served_never_bound": null,
+     "ast_answered": null,
+     "formal": null
+    }
+   },
+   "tail_readings": null,
+   "function_leaves": null
+  }
+ ]
+}

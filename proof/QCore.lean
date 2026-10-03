@@ -334,5 +334,6 @@ import QCore.VariadicConditions
 import QCore.CarriedPublication
 import QCore.RefusedTestAccusation
 import QCore.ScalarReturnValue
+import QCore.VariadicTailActuals
 
 /-! The executable formal core of QCore-C revision 0.1. -/

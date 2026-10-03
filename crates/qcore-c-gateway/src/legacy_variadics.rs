@@ -303,7 +303,55 @@ impl Parser<'_> {
                         self.variadic_borrowed_tails.contains(function),
                     )
                     .is_some()
+                    || self.tail_reading_admits(index - named, argument, view.len() - named)
             })
+    }
+
+    /// Card CG26-TAIL-RESIDUAL-ACTUALS (rule 12g): whether the Clang reading
+    /// of trailing position `position` (of `trailing`) admits the actual:
+    /// data, or a `Borrowed` place spelled exactly as the one name the token
+    /// actual is (so the flow checks the object the actual denotes).
+    fn tail_reading_admits(&self, position: usize, argument: &[&str], trailing: usize) -> bool {
+        use crate::variadic_tail_actuals::TailReading;
+        let readings = self.variadic_tail_readings.borrow();
+        let Some(readings) = readings
+            .as_ref()
+            .filter(|readings| readings.len() == trailing)
+        else {
+            return false;
+        };
+        match readings.get(position) {
+            Some(TailReading::Data) => true,
+            Some(TailReading::Borrowed(name)) => argument == [name.as_str()],
+            _ => false,
+        }
+    }
+
+    /// Card CG26-TAIL-RESIDUAL-ACTUALS (rule 12g): the reading of each
+    /// trailing argument node of `call` (after `named` declared parameters).
+    fn tail_readings(
+        &self,
+        call: &Value,
+        named: usize,
+        borrowed_tail: bool,
+    ) -> Vec<crate::variadic_tail_actuals::TailReading> {
+        use crate::variadic_tail_actuals::{NameFacts, TailExpr, read};
+        let facts = NameFacts {
+            carries: &|name, scalar| {
+                if scalar {
+                    self.descriptor_names.contains(name)
+                } else {
+                    !self.position_never_bound(name)
+                }
+            },
+            answered: &|name| self.position_answered(name),
+        };
+        children(call)
+            .get(1 + named..)
+            .unwrap_or_default()
+            .iter()
+            .map(|argument| read(&TailExpr::from_node(argument), &facts, borrowed_tail))
+            .collect()
     }
 
     /// Hook: a call statement the classifier refused only for its trailing
@@ -339,9 +387,16 @@ impl Parser<'_> {
             tail.iter()
                 .all(crate::variadic_tail::promoted_scalar_or_pointer)
         });
+        // Card CG26-TAIL-RESIDUAL-ACTUALS (rule 12g): the trailing actuals
+        // read from their Clang nodes, consulted only where T1-T8 refuse.
+        let readings = promoted.then(|| {
+            self.tail_readings(call, named, self.variadic_borrowed_tails.contains(&callee))
+        });
         let widened = if promoted {
             self.variadic_tail_widening.set(true);
+            *self.variadic_tail_readings.borrow_mut() = readings.clone();
             let widened = self.classify_simple(tokens);
+            *self.variadic_tail_readings.borrow_mut() = None;
             self.variadic_tail_widening.set(false);
             Some(widened)
         } else {
@@ -386,6 +441,10 @@ impl Parser<'_> {
             "new_admitted": admitted && addresses.is_some(),
             "scalar_addresses": addresses,
             "disagreement": admitted && addresses.is_some(),
+            "tail_readings": readings.as_ref().map(|readings| readings
+                .iter()
+                .map(crate::variadic_tail_actuals::TailReading::describe)
+                .collect::<Vec<_>>()),
         }));
         let (Some(call), Some(addresses)) = (widened, addresses) else {
             return None;

@@ -3416,6 +3416,7 @@ fn build_function_cfg_with(
         typed_position_uses: std::cell::Cell::new(0),
         condition_widening: std::cell::Cell::new(0),
         variadic_tail_widening: std::cell::Cell::new(false),
+        variadic_tail_readings: std::cell::RefCell::new(None),
         condition_cycles: condition_acquisition_route::CycleRanges::read(tokens, body_start),
         typed_place_origin: std::cell::Cell::new(None),
         typed_root_declarations: std::cell::OnceCell::new(),
@@ -4811,6 +4812,11 @@ struct Parser<'a> {
     /// Card CG26-VARIADICS (rule 11w): set only around the statement
     /// fallback's re-classification, which reads trailing actuals per position.
     variadic_tail_widening: std::cell::Cell<bool>,
+    /// Card CG26-TAIL-RESIDUAL-ACTUALS (rule 12g): the Clang readings of the
+    /// trailing actuals of the statement the fallback re-classifies (one per
+    /// trailing position), set only around that re-classification.
+    variadic_tail_readings:
+        std::cell::RefCell<Option<Vec<crate::variadic_tail_actuals::TailReading>>>,
     /// Card CG04-CONDITION-ACQUISITION: the body's token ranges that may lie
     /// on a CFG cycle (a split acquisition there is refused).
     condition_cycles: condition_acquisition_route::CycleRanges,

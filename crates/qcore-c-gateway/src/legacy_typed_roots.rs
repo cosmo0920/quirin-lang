@@ -65,6 +65,14 @@ impl Parser<'_> {
             .served_never_bound(name, self.typed_bases.lexical_risky())
     }
 
+    /// Card CG26-TAIL-RESIDUAL-ACTUALS (rule 12g), a named shared item: rule
+    /// 10l's "declared exactly once" premise (one formal or automatic local,
+    /// no reference naming another object of that spelling), from the AST
+    /// reader; `false` where it refuses the function.
+    pub(super) fn position_answered(&self, name: &str) -> bool {
+        self.typed_roots().answered(name)
+    }
+
     /// Rules 10l and 10o: rule 5b's premise for a pointer handed out of the
     /// body.
     pub(super) fn position_pointer_root(&self, name: &str) -> bool {

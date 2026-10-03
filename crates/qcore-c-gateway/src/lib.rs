@@ -176,6 +176,9 @@ mod variadic_nested;
 mod va_list_protocol;
 // Card CG26-VARIADICS (rule 11w): trailing actuals read per position.
 mod variadic_tail;
+// Card CG26-TAIL-RESIDUAL-ACTUALS (rule 12g): a trailing actual read from its
+// Clang node where rule 11w's token premises refuse it.
+mod variadic_tail_actuals;
 
 use qcore_contract::contract_loader;
 

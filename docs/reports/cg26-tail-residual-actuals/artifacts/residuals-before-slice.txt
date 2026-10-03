@@ -1,0 +1,10 @@
+{
+ "statements": 1,
+ "lexical_readable": {
+  "False": 1
+ },
+ "functions": 1,
+ "tail_leaves": {},
+ "tail_leaf_total": 0
+}
+flb_log_print flb_coro_destroy 8104 readable False ast False | ['coro', '( ( ( char * ) coro ) + sizeof ( struct flb_coro ) )'] {'coro': {'served_never_bound': None, 'ast_answered': None, 'formal': None}}  | None

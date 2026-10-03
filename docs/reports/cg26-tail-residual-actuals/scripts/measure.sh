@@ -16,7 +16,7 @@ out="$repo/private/cg26r"
 lock=/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-quirin-spec-cards-compass-bf79e7/e050a85b-f6ef-4b98-a2ab-618145106af2/scratchpad/heavy.lock
 mkdir -p "$out" || exit 2
 cd "$repo" || exit 2
-binary="$repo/target/release/quirin-audit"
+binary="${BINARY:-$repo/target/release/quirin-audit}"
 sha256sum "$binary" > "$out/$name.binary.sha256"
 case ",$routes," in *,corpus,*)
   QCORE_TYPED_PATH_PARITY="$out/$name-parity.jsonl" flock "$lock" python3 scripts/run_pinned_audit.py \
