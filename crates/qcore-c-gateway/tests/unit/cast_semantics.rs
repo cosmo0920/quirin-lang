@@ -149,7 +149,6 @@ fn lean_access(access: Access) -> &'static str {
         Access::NotPointer => ".notPointer",
         Access::Same => ".same",
         Access::Character => ".character",
-        Access::Opaque => ".opaque",
         Access::EffectiveType => ".effectiveType",
         Access::Punned => ".punned",
         Access::Untracked => ".untracked",

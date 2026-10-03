@@ -16,8 +16,9 @@
 //!   identity at all (an integer or the null constant made a pointer), no
 //!   value (`(void) e`), or refused;
 //! * the **access** an lvalue through the result may make ([`Access`]): the
-//!   same object, a character view (C11 6.5p7, no premise), an opaque
-//!   `void *` (no access), an effective-type view (`P-EFFECTIVE-TYPE`), a
+//!   same object, a character view (C11 6.5p7, no premise; a `void *`
+//!   result names no object to access), an effective-type view
+//!   (`P-EFFECTIVE-TYPE`), a
 //!   punned view (an incompatible effective type: refused, never certified),
 //!   an untracked pointer, a callee (CG22), or refused;
 //! * its **obligations**: the premises and owning rules an admission names.
@@ -278,8 +279,6 @@ pub(crate) enum Access {
     Same,
     /// Bytes through a character type (6.5p7): no premise.
     Character,
-    /// A `void *`: nothing until it is converted again.
-    Opaque,
     /// The object at the target type, under `P-EFFECTIVE-TYPE`.
     EffectiveType,
     /// An incompatible effective type: refused.
@@ -504,14 +503,6 @@ impl ConversionClass {
     pub(crate) fn preserves_identity(self) -> bool {
         conversion(self).identity == Identity::Preserved
     }
-
-    /// The refusal a position names for a class it does not admit.
-    pub(crate) fn refusal(self, position: &str) -> String {
-        format!(
-            "cast of class {} is not admitted in {position} (rule 12h)",
-            self.name()
-        )
-    }
 }
 
 /// Card CAST-FORMALIZATION, H-V (rule 12h): whether an explicit cast standing
@@ -542,7 +533,7 @@ pub(crate) fn access_view(node: &Value) -> Result<&Value, crate::void_view::View
             Ok(operand)
         }
         Access::Punned => Err(ViewRefusal::Operand),
-        Access::Callee | Access::Opaque | Access::Refused => Err(ViewRefusal::Target),
+        Access::Callee | Access::Refused => Err(ViewRefusal::Target),
         _ => Err(ViewRefusal::Kind),
     }
 }

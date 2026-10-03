@@ -152,7 +152,6 @@ inductive Access where
   | notPointer
   | same
   | character
-  | opaque
   | effectiveType
   | punned
   | untracked
