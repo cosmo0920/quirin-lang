@@ -293,6 +293,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "cmt_summary_get_count_value",
         3,
     ),
+    // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: the three `cmt_atomic` value
+    // operations (every backend copy read, they agree): marker, borrowed
+    // formals, `none`.
+    ("cmetrics/metric_values.qv", "cmt_atomic_load", 3),
+    ("cmetrics/metric_values.qv", "cmt_atomic_store", 4),
+    (
+        "cmetrics/metric_values.qv",
+        "cmt_atomic_compare_exchange",
+        5,
+    ),
     // Card W37-CORPUS-CONTRACTS-4: the unsigned msgpack tag reader, sole
     // blocker of `unpack_meta_ver`. `output_buffer` is an OUT parameter, but
     // what is written through it is a SCALAR, not a resource identity, so it
@@ -934,6 +944,15 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (`src/rdkafka.c:6640-6649`): marker, five borrowed arguments, `none`
     // and the no-return exit.
     ("librdkafka/memory.qv", "rd_kafka_crash", 8),
+    // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: custody-neutral scalar
+    // helpers (`src/rdatomic.h`, `src/tinycthread_extra.c:92-129`,
+    // `src/rdhdrhistogram.c:391-407`): marker, borrowed formals, `none`.
+    ("librdkafka/memory.qv", "cnd_timedwait_ms", 5),
+    ("librdkafka/memory.qv", "rd_hdr_histogram_record", 4),
+    ("librdkafka/memory.qv", "rd_atomic32_add", 4),
+    ("librdkafka/memory.qv", "rd_atomic32_set", 4),
+    ("librdkafka/memory.qv", "rd_atomic64_add", 4),
+    ("librdkafka/memory.qv", "rd_atomic64_get", 3),
     (
         "librdkafka/queue_destructor.qv",
         "rd_kafka_q_destroy_final",

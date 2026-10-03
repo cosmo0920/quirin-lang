@@ -4884,3 +4884,52 @@ own anchor here.
     `a_union_store_keeps_the_frame` and five more), bound to
     `DECISION_VECTORS` by a shared-vector test;
     [report](../reports/cg10-indirect-access-sole-blockers/README.md).
+
+<a id="constraint-12k"></a>
+
+12k. **The gate's refusal of a call whose uncontracted callee decides names
+    that callee: a re-attribution, never an admission.** Card
+    CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (`legacy_uncontracted_access.rs`; thin
+    hooks, asked last, at the end of `legacy_c.rs::expression_statement` and
+    in `return_statement` after rule 12i; shared item added:
+    `Parser::reclassified_with_borrowed_actuals` in
+    `legacy_call_argument_access.rs`). The lexical gate refuses a statement
+    whose call's actuals read memory before the call's contract is looked up,
+    and rule W44 reads such actuals only at a declared `Borrowed` position or
+    data tail, so an uncontracted callee hid behind `indirect memory access is
+    outside the resource projection` and the callee closure (P4) never counted
+    it. For exactly the gate's refusal of a statement with no braces that reads
+    no tracked descriptor, whose first call names a callee with no contract in
+    force and no review or pin hold, the statement is classified again with
+    every memory-reading actual of that call read as W44 reads one at a
+    `Borrowed` position (the lexical recogniser, else the typed actual of rule
+    10k, recording no parity); when that reading is refused with exactly
+    ``call to uncontracted function `F` `` for the same `F`, the refusal keeps
+    the gate's writes and takes that description. A whole-call `return` is read
+    through its synthetic `PLACE = f(args)` and only its returned evaluation's
+    description changes. The reading's counters are restored and its
+    instruction discarded. **Do not** let the reading lower anything, re-attribute
+    a held call (its refusal is `Pending`, a verdict move), an actual neither
+    reader recognises (`(*__errno_location())`, a nested call, a cast), an
+    access outside the actuals (a member destination) or a descriptor read, or
+    ask the rule before any older route (hard invariant 3). The node stays
+    `Unknown` with the same writes, so no verdict moves; the diagnostics are a
+    set keyed by line and description, so a line holding two refused statements
+    that carried one access leaf now shows both. Parity runs record every
+    reading (`position: "uncontracted-access"`, its form, callee and answer).
+    Premises stated, not proved: that the reading leaves no state behind
+    (bound by the corpus comparison) and the token/AST match (trust boundary
+    28). Measured (corpus `66910c10`, main `2ecd39531` plus the rule):
+    **695 / 9 / 4,130, no status move**, `d2f5a3f7…` → `00462adf…`; 2,962
+    access leaves re-attributed in 1,457 functions (access 13,083 → 10,121,
+    uncontracted call 8,433 → 11,442); of the 331 functions the two
+    uncontracted classes of CG10-INDIRECT-ACCESS-SOLE-BLOCKERS held alone, 215
+    are now blocked by uncontracted calls only; system and slice no status
+    move (474 and 530 leaves). `QCore.UncontractedAccessAttribution`
+    (`the_status_of_a_function_is_unchanged`,
+    `the_verdict_of_every_node_is_unchanged`, `the_writes_are_kept`,
+    `the_result_is_the_gate_refusal_or_the_callees`,
+    `a_held_callee_keeps_the_gate_refusal`,
+    `an_unrecognised_actual_keeps_the_gate_refusal` and nine more), bound by
+    `tests/indirect_access_sole_residuals.rs`;
+    [report](../reports/cg10-indirect-access-sole-residuals/README.md).

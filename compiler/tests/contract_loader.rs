@@ -418,6 +418,18 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("ctr_span_set_flags", 2),
         ("ctr_span_set_dropped_events_count", 2),
         ("ctr_span_set_dropped_links_count", 2),
+        // Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: nine neutral-element
+        // declarations read off their bodies at both audited revisions
+        // (`cmetrics/metric_values.qv`, `librdkafka/memory.qv`).
+        ("cmt_atomic_load", 1),
+        ("cmt_atomic_store", 2),
+        ("cmt_atomic_compare_exchange", 3),
+        ("cnd_timedwait_ms", 3),
+        ("rd_hdr_histogram_record", 2),
+        ("rd_atomic32_add", 2),
+        ("rd_atomic32_set", 2),
+        ("rd_atomic64_add", 2),
+        ("rd_atomic64_get", 1),
         ("ctr_span_set_dropped_attributes_count", 2),
         // W46-METRIC-AGGREGATE-CONTRACTS: scalar reads of histogram and
         // summary values. The indexed getters borrow their index too.
@@ -1544,9 +1556,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 264 -> 265 by card CONTRACT-NORETURN-AND-BORROWED-TAILS: `rd_kafka_crash`
     // appended to `librdkafka/memory.qv`, already selected, with
     // `resource_no_return()`. Selection and rejected unchanged.
+    // 265 -> 274 by card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: three
+    // `cmt_atomic` operations appended to `cmetrics/metric_values.qv` and six
+    // scalar helpers to `librdkafka/memory.qv`, both already selected, each
+    // the neutral element and pinned. Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (60, 265, 216)
+        (60, 274, 216)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
