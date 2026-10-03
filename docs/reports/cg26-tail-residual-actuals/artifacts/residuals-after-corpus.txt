@@ -1,0 +1,32 @@
+{
+ "statements": 11,
+ "lexical_readable": {
+  "True": 8,
+  "False": 3
+ },
+ "functions": 8,
+ "tail_leaves": {
+  "rd_kafka_anyconf_get0": 1,
+  "rd_kafka_conf_set_ssl_cert": 1,
+  "rd_kafka_range_assignor_unittest": 1,
+  "rd_kafka_snappy_java_uncompress": 1,
+  "rd_kafka_ssl_error0": 2,
+  "rd_kafka_sticky_assignor_unittest": 1,
+  "unittest_http_get": 4,
+  "unittest_http_get_params_append": 2,
+  "unittest_untyped_map": 3,
+  "ut_quantile": 1
+ },
+ "tail_leaf_total": 17
+}
+snprintf rd_kafka_anyconf_get0 25178 readable True ast True | ['( void * ) val']  ['refused:cast'] | {'status': 'Unknown', 'tail': 1, 'other': 21}
+fprintf rd_kafka_sticky_assignor_unittest 23926 readable False ast True | ['i', 'j'] {'i': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'j': {'served_never_bound': False, 'ast_answered': True, 'formal': False}} ['data', 'refused:unread'] | {'status': 'Unknown', 'tail': 1, 'other': 21}
+snprintf rd_kafka_ssl_error0 20276 readable True ast True | ['file', 'line', 'func', 'buf', 'data ? __qcore_literal__ : __qcore_literal__', 'data ? data : __qcore_literal__'] {'file': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'line': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'func': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'buf': {'served_never_bound': False, 'ast_answered': True, 'formal': False}} ['borrowed:file', 'data', 'borrowed:func', 'borrowed:buf', 'refused:identity-operand', 'refused:identity-operand'] | {'status': 'Unknown', 'tail': 2, 'other': 7}
+snprintf rd_kafka_ssl_error0 20278 readable True ast True | ['buf', 'data ? __qcore_literal__ : __qcore_literal__', 'data ? data : __qcore_literal__'] {'buf': {'served_never_bound': False, 'ast_answered': True, 'formal': False}} ['borrowed:buf', 'refused:identity-operand', 'refused:identity-operand'] | {'status': 'Unknown', 'tail': 2, 'other': 7}
+fprintf rd_kafka_range_assignor_unittest 20523 readable False ast True | ['i', 'j'] {'i': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'j': {'served_never_bound': False, 'ast_answered': True, 'formal': False}} ['data', 'refused:unread'] | {'status': 'Unknown', 'tail': 1, 'other': 21}
+snprintf rd_kafka_snappy_java_uncompress 20475 readable True ast True | ['clen', '( ssize_t ) inlen - of'] {'clen': {'served_never_bound': False, 'ast_answered': True, 'formal': False}} ['data', 'refused:cast'] | {'status': 'Unsafe', 'tail': 1, 'other': 13}
+fprintf ut_quantile 4304 readable False ast True | ['( int64_t ) i']  ['refused:cast'] | {'status': 'Unknown', 'tail': 1, 'other': 8}
+snprintf rd_kafka_conf_set_ssl_cert 20452 readable True ast True | ['( int ) cert_type']  ['refused:cast'] | {'status': 'Unknown', 'tail': 1, 'other': 10}
+fprintf unittest_untyped_map 3560 readable True ast True | ['pass', 'val', 'val2 ? val2 : __qcore_literal__', 'key'] {'pass': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'val': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'key': {'served_never_bound': False, 'ast_answered': True, 'formal': False}} ['data', 'borrowed:val', 'refused:identity-operand', 'borrowed:key'] | {'status': 'Unknown', 'tail': 3, 'other': 8}
+fprintf unittest_untyped_map 3568 readable True ast True | ['get_cnt', '( float ) ts_get / 1000 . 0', 'ts_get / get_cnt'] {'get_cnt': {'served_never_bound': False, 'ast_answered': True, 'formal': False}} ['data', 'refused:cast', 'data'] | {'status': 'Unknown', 'tail': 3, 'other': 8}
+fprintf unittest_untyped_map 3577 readable True ast True | ['cnt', '( float ) ts / 1000 . 0'] {'cnt': {'served_never_bound': False, 'ast_answered': True, 'formal': False}} ['data', 'refused:cast'] | {'status': 'Unknown', 'tail': 3, 'other': 8}

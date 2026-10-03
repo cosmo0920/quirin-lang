@@ -45,6 +45,8 @@ extern FILE *stderr;
 int fprintf(FILE *stream, const char *format, ...);
 int snprintf(char *s, size_t maxlen, const char *format, ...);
 int sprintf(char *s, const char *format, ...);
+typedef enum { CG_RACK_A, CG_RACK_B } cg_rack_t;
+extern cg_rack_t cg_rack;
 ";
 
 fn contracts() -> ResourceContracts {
@@ -146,6 +148,9 @@ const ACCEPTED: &[&str] = &[
     "fprintf(stderr, \"%s %s\", b, c ? \"FIFO\" : \"LIFO\");",
     // Arithmetic and comparison operators over scalars.
     "fprintf(stderr, \"%d\", ((i >> 2) & 0xff) == 3 || !c);",
+    // A typedef of an anonymous enumeration (`rd_kafka_assignor_ut_rack_config_t`):
+    // Clang gives no desugared spelling, its integral promotion is the evidence.
+    "fprintf(stderr, \"%d %d\", i, cg_rack);",
     // The assignment form.
     "int r = 0; r = snprintf(b, sizeof(b), \"%i.%i\", (i >> 24) & 0xff, (i >> 16) & 0xff); \
      cg_sink(r);",

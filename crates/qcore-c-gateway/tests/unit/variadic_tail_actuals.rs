@@ -239,6 +239,28 @@ fn cg26r_the_node_shapes() {
     assert_eq!(TailExpr::from_node(&pointer_to_function), TailExpr::Other);
     let record = reference("s", "struct s");
     assert_eq!(TailExpr::from_node(&record), TailExpr::Other);
+    // A typedef of an anonymous enumeration has no desugared spelling; the
+    // integral promotion Clang applied to it is the evidence of its type.
+    let anonymous = json!({"kind": "ImplicitCastExpr", "castKind": "IntegralCast",
+                           "type": {"qualType": "unsigned int"},
+                           "inner": [implicit(reference("j", "rack_config_t"), "rack_config_t")]});
+    assert_eq!(
+        TailExpr::from_node(&anonymous),
+        TailExpr::Name {
+            name: "j".into(),
+            scalar: true
+        }
+    );
+    // Without that conversion the same spelling is not read.
+    assert_eq!(
+        TailExpr::from_node(&implicit(reference("j", "rack_config_t"), "rack_config_t")),
+        TailExpr::Other
+    );
+    // A pointer-to-integer conversion is not an arithmetic source.
+    let pointer = json!({"kind": "ImplicitCastExpr", "castKind": "PointerToIntegral",
+                         "type": {"qualType": "long"},
+                         "inner": [implicit(reference("q", "opaque_t"), "opaque_t")]});
+    assert_eq!(TailExpr::from_node(&pointer), TailExpr::Other);
     let enumerator = json!({"kind": "DeclRefExpr", "type": {"qualType": "int"},
                             "referencedDecl": {"kind": "EnumConstantDecl", "name": "E"}});
     assert_eq!(TailExpr::from_node(&enumerator), TailExpr::Literal);

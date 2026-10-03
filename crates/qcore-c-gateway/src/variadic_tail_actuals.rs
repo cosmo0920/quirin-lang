@@ -190,14 +190,42 @@ fn constant_size(text: &str) -> bool {
     })
 }
 
+/// Implicit conversions whose operand C11 6.3.1 makes an arithmetic value
+/// (an integer, which includes an enumeration, or a floating value).
+const ARITHMETIC_SOURCE_CASTS: &[&str] = &[
+    "IntegralCast",
+    "IntegralToFloating",
+    "IntegralToBoolean",
+    "FloatingCast",
+    "FloatingToIntegral",
+    "FloatingToBoolean",
+];
+
 impl TailExpr {
     /// The abstract shape of a Clang expression node.
     pub(crate) fn from_node(node: &Value) -> Self {
+        Self::from_node_in(node, false)
+    }
+
+    /// `arithmetic_source`: the node is the operand of an arithmetic implicit
+    /// conversion (through lvalue conversions and parentheses), so its type
+    /// is arithmetic even where Clang spells it only by a typedef of an
+    /// anonymous enumeration (no desugared spelling).
+    fn from_node_in(node: &Value, arithmetic_source: bool) -> Self {
         match kind(node) {
-            "ParenExpr" | "ImplicitCastExpr" => match children(node) {
-                [inner] => Self::from_node(inner),
+            "ParenExpr" => match children(node) {
+                [inner] => Self::from_node_in(inner, arithmetic_source),
                 _ => Self::Other,
             },
+            "ImplicitCastExpr" => {
+                let cast = node["castKind"].as_str().unwrap_or("");
+                let source = ARITHMETIC_SOURCE_CASTS.contains(&cast)
+                    || (arithmetic_source && matches!(cast, "LValueToRValue" | "NoOp"));
+                match children(node) {
+                    [inner] => Self::from_node_in(inner, source),
+                    _ => Self::Other,
+                }
+            }
             "IntegerLiteral" | "CharacterLiteral" | "FloatingLiteral" | "StringLiteral"
             | "PredefinedExpr" => Self::Literal,
             "UnaryExprOrTypeTraitExpr" => {
@@ -225,7 +253,7 @@ impl TailExpr {
                             return Self::Other;
                         };
                         let text = type_text(node);
-                        if arithmetic(text) {
+                        if arithmetic(text) || (arithmetic_source && !pointer_or_array(text)) {
                             Self::Name {
                                 name: name.to_owned(),
                                 scalar: true,
