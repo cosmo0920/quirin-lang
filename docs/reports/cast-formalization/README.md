@@ -277,5 +277,27 @@ the Monkey binding's `SizeOf` table (CG08-CAST-AND-QUERY-RESIDUALS (f)).
 
 ## 8. Gate
 
-GATE_PLACEHOLDER
+`scripts/gate.sh g2` at `6f3f23869` (each step under the shared lock, each
+exit to a file, nothing piped; exits copied to [gate/](gate/), summary in
+[gate.json](gate.json)); logs in this worktree's `private/castf/gate-g2/`.
+
+| Step | Command | Exit | Counts |
+|---|---|---|---|
+| Check | `cargo check --workspace --all-targets` | 0 | |
+| Submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| Rust | `python3 scripts/run_test_binaries.py` | 0 | 437 units, 450 summaries; 7,525 passed, 0 failed, 11 ignored (`private/test-binaries/20261003T024249Z-2646281`) |
+| Probes | `cargo run -p qcore-compiler --example reevaluation_probe` / `…_followup` | 0 / 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | 283 audits (`AuditCastSemantics.lean` new) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then 0 | 365; the failure was the matrix not yet regenerated (`lean_audits` 282 carried); after `build_matrix.py . --gate gate.json` (09a, 0), 365 OK (09b) |
+| Index | `python3 scripts/build_docs_index.py --check` | 0 | |
+| Provider gate | `scripts/provider-gate.sh` | 0 | `providers/` unchanged; run because `build_matrix.py` needs a measured `provider_tests`: check, fmt, clippy 0; 129 passed; `providers/tests` 24 OK; `contracts.py check`, package build and the five verifies 0 |
+
+A first gate at `388af567c` (`gate-g1`) failed clippy on two test-only items
+(now `#[cfg(test)]`) and one unit test pinning `*(int *)p` of an `int *p`
+refused (the second deliberate flip of §6); its probes and Lean audits
+passed. Clang 21.1.8, recorded in this worktree. The AFTER binary was built at
+`fc2014fb3`; the later commits change no analyzer behaviour (an unused
+variant and method removed, two test-only items gated, tests and records).
 
