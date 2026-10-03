@@ -26,6 +26,9 @@ pub mod call_use_source;
 pub mod c_numeric;
 pub mod c_numeric_obligations;
 mod clang;
+// Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: one unit's Clang results reused
+// across the analysis scopes of a worker thread.
+mod clang_reuse;
 pub mod cleanup_replay_source;
 pub mod composition_source;
 #[cfg(feature = "indirect-census")]

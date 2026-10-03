@@ -9,6 +9,7 @@ use std::collections::BTreeSet;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::PathBuf;
+use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::Mutex;
 
@@ -16,6 +17,7 @@ use serde::de::{MapAccess, SeqAccess, Visitor};
 use serde::{Deserialize, Deserializer};
 use serde_json::Value;
 
+use crate::clang_reuse::{UnitCache, UnitKey};
 use crate::indirect_chain_access::AccessChain;
 // Card W47-TYPED-CONST-POINTER-VALUE (rule 10m): the value check and the
 // pointer-destination source.
@@ -374,6 +376,11 @@ impl EnumFacts {
 
 thread_local! {
     static ANALYSED_SOURCE: RefCell<Option<SourceContext>> = const { RefCell::new(None) };
+    /// Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the unit AST indexes and
+    /// record-layout dumps this thread's scopes read, reused by a later
+    /// scope over the same launch identity ([`crate::clang_reuse`]).
+    static UNIT_ASTS: UnitCache<AstIndex> = const { UnitCache::new() };
+    static UNIT_LAYOUTS: UnitCache<String> = const { UnitCache::new() };
 }
 
 struct SourceContext {
@@ -383,7 +390,15 @@ struct SourceContext {
     frontend_debug: Arc<String>,
     dialect: CCompilerDialect,
     request: LegacyCertificateRequest,
-    ast: OnceCell<Option<AstIndex>>,
+    ast: OnceCell<Option<Rc<AstIndex>>>,
+}
+
+impl SourceContext {
+    /// Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: this scope's Clang launch
+    /// identity, `None` when the launch may not be reused.
+    fn launch_key(&self) -> Option<UnitKey> {
+        UnitKey::new(self.dialect, &self.frontend_debug, &self.source)
+    }
 }
 
 /// Keep only facts later typed-path lookups can use. Decode declarations one
@@ -678,7 +693,15 @@ pub(crate) fn record_layout_dump() -> Option<String> {
             dialect: context.dialect,
             ..C11TranslationUnit::default()
         };
-        crate::typed_c_ast::record_layout_dump(&context.source, &unit).ok()
+        // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: one launch per unit,
+        // not one per consultation; a failure is not kept.
+        UNIT_LAYOUTS
+            .with(|layouts| {
+                layouts.get_or_launch(context.launch_key(), || {
+                    crate::typed_c_ast::record_layout_dump(&context.source, &unit).ok()
+                })
+            })
+            .map(|layout| layout.as_ref().clone())
     })
 }
 
@@ -706,7 +729,9 @@ pub(crate) fn analysed_unit_constants(
     })
 }
 
-/// The analysed unit's AST index, read from Clang once per source context.
+/// The analysed unit's AST index, read from Clang once per source context,
+/// and (card GATEWAY-ANALYSIS-PATH-OPTIMIZATION) shared with a later context
+/// of this thread over the same launch identity.
 fn unit_ast(context: &SourceContext) -> Option<&AstIndex> {
     context
         .ast
@@ -719,12 +744,16 @@ fn unit_ast(context: &SourceContext) -> Option<&AstIndex> {
                 dialect: context.dialect,
                 ..C11TranslationUnit::default()
             };
-            translation_unit_ast_with(&context.source, &unit, |bytes| {
-                AstIndex::from_json(bytes, &context.source)
+            UNIT_ASTS.with(|asts| {
+                asts.get_or_launch(context.launch_key(), || {
+                    translation_unit_ast_with(&context.source, &unit, |bytes| {
+                        AstIndex::from_json(bytes, &context.source)
+                    })
+                    .ok()
+                })
             })
-            .ok()
         })
-        .as_ref()
+        .as_deref()
 }
 
 /// Card **CG22-INDIRECT-CALLS-AND-CALLBACKS** (rule 11p): the analysed

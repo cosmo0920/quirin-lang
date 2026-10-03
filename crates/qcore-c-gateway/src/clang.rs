@@ -23,6 +23,14 @@ pub fn command() -> Result<Command, String> {
     Ok(command)
 }
 
+/// Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the environment [`command`]
+/// resolves the executable under (`QCORE_CLANG`, `PATH`), the part of a
+/// launch's identity that is not its arguments or input
+/// ([`crate::clang_reuse::UnitKey`]).
+pub(crate) fn resolution_environment() -> (Option<OsString>, Option<OsString>) {
+    (std::env::var_os("QCORE_CLANG"), std::env::var_os("PATH"))
+}
+
 /// Trusted description of the Clang executable that actually performs every
 /// gateway preprocessing, syntax and typed-AST run.
 ///
