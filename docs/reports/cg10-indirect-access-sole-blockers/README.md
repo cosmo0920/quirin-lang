@@ -43,10 +43,13 @@ and cross-unit Safe functions whose summaries are not imported
 could lift soundly were therefore the 15 `return-contracted-call` functions
 (W44 is never consulted at the return position) and the 19 record-object
 functions (13 the gate's token view parses, 6 with a parenthesised root read by
-hand). Neither the CG10 root-premise residuals (`CG10-BOUND-ROOT-PATH-REFUSED`,
-`CG10-BOUND-ROOT-NULLABLE-OR-TRACKED`) nor CG11's owner residuals are among the
-sole blockers: their leaves are `unresolved resource identity` refusals, a
-different family, so no function in the 513 carries one.
+hand). The CG10 root-premise residuals (`CG10-BOUND-ROOT-PATH-REFUSED`,
+`CG10-BOUND-ROOT-NULLABLE-OR-TRACKED`) are not among the sole blockers: their
+leaves are `unresolved resource identity` refusals, a different family, so no
+function in the 513 carries one. CG11's unresolved-owner stores
+(`CG11-UNRESOLVED-OWNER-POINTER-STORES`, whose failing premise restores the
+gate's refusal byte for byte) appear in 3 of them (8 leaves), never alone; rule
+10v's refused values (`pointer-store:*`) block 24 alone.
 
 Classification limit: leaves are keyed by (function, internal line); a macro
 line holding several statements is classified by its last census row. The six
@@ -109,6 +112,26 @@ member and into a by-value parameter (each refused with the rule disabled,
 checked once by hand), and keeps the refusal for a `static` and a file-scope
 record, a hop (`o.next->a`) and a pointer value read (`is_count(o.name)`).
 
+**Pins flipped deliberately** (rule 12i; the gate's first run, `gate-g1`,
+failed exactly these four rows, 7,546 passed / 4 failed):
+`neutral_expression_positions`'s `return digits10(*slot);` and
+`return digits10(table[n]);` rows asserted `Unknown` because the return
+position never asked rule W44; they now assert `Safe` beside their statement
+forms (`unsigned int t = digits10(*slot); return t;`), which neither of the
+card's hooks can move — the ground card C-GATEWAY-RETURN-CALL-W4 used for the
+pointer-arithmetic row beside them (renamed
+`a_dereference_in_a_call_actual_agrees_with_the_statement_position` and
+`a_subscript_in_a_call_actual_agrees_with_the_statement_position`).
+`summary_validation_premises`' `get(const void *_p) { const struct c_tp *p =
+_p; return c_same(p->topic, p->topic); }` row and its cascade asserted
+`get` Unknown and its callers withdrawn; `get`'s own row now reads those
+actuals as its statement form does (`int r = c_same(…); return r;`, Safe with
+the same summaries, asserted beside it), so rule 4b validates the summary on
+the premises its row reads, the ground CG06 used for the comparator row of the
+same file. The cascade keeps a negative control: with a `?:` actual, which
+neither W44 nor rule 12i reads, `get` stays Unknown and `mid` and `w` keep
+their uncontracted-call refusals.
+
 ## 3. Measurement
 
 | route | BEFORE | AFTER | digest |
@@ -141,14 +164,15 @@ move in [artifacts/compare-corpus.json](artifacts/compare-corpus.json)):
   (`rd_kafka_consumer_closed`) and `rd_kafka_broker_needs_connection`
   (the header inline `rd_kafka_fatal_error_code`, whose
   `return rd_atomic32_get(&rk->rk_fatal.err)` rule 12i reads). The script's
-  `callee-summary` label names 3; the other 9 conditions' leaves name no
-  callee and were attributed by reading the condition's source line.
+  `callee-summary` label names 3; the other 9 lost leaves (six branch conditions,
+  two returns, one statement) name no callee and were attributed by reading
+  their source lines.
 
 **No Safe → non-Safe move, no correction, no leak or violation added**
 (`leak` 40 → 40). Leaves: indirect-access −231, branch-condition −105, nested
 call −40, uncontracted call −13, unresolved identity −10 / +80 (the newly read
 places' roots, in functions that stay Unknown), return-expression −9, and +3
-`nullable resource \`__qcore_returned_value\` used by a non-null contract` in
+``nullable resource `__qcore_returned_value` used by a non-null contract`` in
 `mk_vhost_fdt_open` and `cmt_metric_name_from_labels`: `return
 open(sr->real_path.data, …)` and `return strdup(ts->labels[i]->value)` now
 reach the return position's existing exit, which refuses a nullable owned
@@ -173,7 +197,7 @@ statement (§1). No Safe → non-Safe, as predicted. System +2 (predicted 0 to
 
 **`mk_vhost_set` at the tip** (`scripts/tip-probe.sh`, contracts-only, this
 card's binary and the BEFORE binary): unchanged. On this base the tip's only
-refusal is `call to uncontracted function \`mk_vhost_set_property\``, and
+refusal is ``call to uncontracted function `mk_vhost_set_property` ``, and
 `mk_vhost_set_property` keeps its two leaves at `mk_lib.c:502`–`503`:
 `vh->documentroot.data = mk_string_dup(v)` (an owned result stored into a
 member, the DocumentRoot custody question — real behaviour, refused) and

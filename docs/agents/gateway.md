@@ -4824,7 +4824,8 @@ own anchor here.
     stays by design), read an uncontracted callee, a descriptor read or a
     declined probe, accept a reallocated result, or ask the rule before an
     older route (hard invariant 3); a declined probe restores the site and
-    element counters. Parity runs record every consultation
+    element counters. Four pins flipped deliberately with statement-form
+    controls (`neutral_expression_positions`, `summary_validation_premises`). Parity runs record every consultation
     (`position: "return-call-access"`, its form and answer). Premises stated,
     not proved: W44's and the return position's, and the token/AST match
     (trust boundary 28). Measured (corpus `66910c10`, main `cdc2fa878` plus the card): 40 whole-call and
