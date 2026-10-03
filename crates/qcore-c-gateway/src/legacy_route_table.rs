@@ -34,6 +34,8 @@ pub(super) struct StatementQuery<'q> {
 /// W45-CONTAINER-ROOT-REACH: an answer that replaces the instruction keeps no
 /// element binding of the refused one).
 pub(super) struct StatementFallback {
+    /// Read by the order test and the `route-census` stream.
+    #[cfg_attr(not(any(test, feature = "route-census")), allow(dead_code))]
     pub(super) rule: &'static str,
     clears_origins: bool,
     ask: for<'p, 'q> fn(&mut Parser<'p>, &StatementQuery<'q>) -> Option<Statement>,
@@ -210,6 +212,8 @@ pub(super) struct ReturnQuery<'q> {
 
 /// One return fallback and its rule.
 pub(super) struct ReturnFallback {
+    /// Read by the order test and the `route-census` stream.
+    #[cfg_attr(not(any(test, feature = "route-census")), allow(dead_code))]
     pub(super) rule: &'static str,
     ask: for<'p, 'q> fn(&mut Parser<'p>, &ReturnQuery<'q>) -> Option<Statement>,
 }
@@ -296,6 +300,8 @@ pub(super) const RETURN_FALLBACKS: &[ReturnFallback] = &[
 
 impl Parser<'_> {
     /// Ask the statement fallbacks in table order; the first answer wins.
+    /// (The row index is the census row's position under `route-census`.)
+    #[allow(clippy::unused_enumerate_index)]
     pub(super) fn ask_statement_fallbacks(
         &mut self,
         query: &StatementQuery<'_>,
@@ -315,6 +321,7 @@ impl Parser<'_> {
     }
 
     /// Ask the return fallbacks in table order; the first answer wins.
+    #[allow(clippy::unused_enumerate_index)]
     pub(super) fn ask_return_fallbacks(&mut self, query: &ReturnQuery<'_>) -> Option<Statement> {
         for (_position, fallback) in RETURN_FALLBACKS.iter().enumerate() {
             let answer = (fallback.ask)(self, query);
