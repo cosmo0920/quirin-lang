@@ -86,8 +86,21 @@ const QUALIFIERS: [&str; 7] = [
 ];
 
 const SCALAR_WORDS: [&str; 15] = [
-    "_Bool", "bool", "char", "short", "int", "long", "signed", "unsigned", "float", "double",
-    "__int128", "_Float16", "__fp16", "__int128_t", "__uint128_t",
+    "_Bool",
+    "bool",
+    "char",
+    "short",
+    "int",
+    "long",
+    "signed",
+    "unsigned",
+    "float",
+    "double",
+    "__int128",
+    "_Float16",
+    "__fp16",
+    "__int128_t",
+    "__uint128_t",
 ];
 
 /// The pointee text of a pointer type and its qualifiers, when `text` is a
@@ -101,7 +114,12 @@ fn pointer_parts(text: &str) -> Option<(String, PointeeQualifiers)> {
         let declarator = &text[open + 2..close];
         if declarator.contains('*') {
             // `R (**)(…)`: a pointer to a function pointer, an object.
-            let inner = format!("{}(*{}){}", &text[..open], &declarator[1..], &text[close + 1..]);
+            let inner = format!(
+                "{}(*{}){}",
+                &text[..open],
+                &declarator[1..],
+                &text[close + 1..]
+            );
             return Some((inner, PointeeQualifiers::default()));
         }
         if !declarator
@@ -496,6 +514,90 @@ impl ConversionClass {
     }
 }
 
+/// Card CAST-FORMALIZATION, H-V (rule 12h): whether an explicit cast standing
+/// where a pointer is read through (`((T *)p)->f`, `*(T *)p`, `((T *)p)[i]`)
+/// is a **view**, by the table's access rule: a `typed-view` (from `void *`
+/// or a character pointer; `P-EFFECTIVE-TYPE`) and a `byte-view` to a
+/// character pointer (C11 6.5p7, no premise) are; a `punned-view` (an
+/// incompatible effective type), a function/object conversion and every other
+/// class are not. The type gate is CG12's: both sides pass the positive
+/// pointer test (no union, `volatile`, `_Atomic` or function pointee) and the
+/// target names an object (`void_view::pointee_key`). Returns the operand.
+pub(crate) fn access_view(node: &Value) -> Result<&Value, crate::void_view::ViewRefusal> {
+    use crate::void_view::{OperandClass, ViewRefusal, operand_class, pointee_key};
+    let class = classify_node(node).ok_or(ViewRefusal::Missing)?;
+    let [operand] = children(node) else {
+        return Err(ViewRefusal::Missing);
+    };
+    let from = crate::typed_access_path::qual(operand).ok_or(ViewRefusal::Missing)?;
+    let to = crate::typed_access_path::qual(node).ok_or(ViewRefusal::Missing)?;
+    match conversion(class).access {
+        Access::EffectiveType | Access::Character => {
+            if operand_class(from) == OperandClass::Other {
+                return Err(ViewRefusal::Operand);
+            }
+            if pointee_key(to).is_none() || type_class(to).1.volatile {
+                return Err(ViewRefusal::Target);
+            }
+            Ok(operand)
+        }
+        Access::Punned => Err(ViewRefusal::Operand),
+        Access::Callee | Access::Opaque | Access::Refused => Err(ViewRefusal::Target),
+        _ => Err(ViewRefusal::Kind),
+    }
+}
+
+/// Card CAST-FORMALIZATION, H-V (rule 12h): the operand of an explicit
+/// `qualifier` conversion (the same pointee type, C11 6.3.2.3p2) standing
+/// where a pointer is read through: the same object at the same type, so the
+/// path reads through it with no view. An added `volatile` or `_Atomic`
+/// keeps its refusal (rule 11h; CG19), and so does a pointee the positive
+/// pointer test refuses.
+pub(crate) fn transparent_cast(mut node: &Value) -> Option<&Value> {
+    while kind(node) == "ParenExpr" {
+        node = children(node).first()?;
+    }
+    if kind(node) != "CStyleCastExpr" || classify_node(node)? != ConversionClass::Qualifier {
+        return None;
+    }
+    let [operand] = children(node) else {
+        return None;
+    };
+    let to = crate::typed_access_path::qual(node)?;
+    let from = crate::typed_access_path::qual(operand)?;
+    let (_, to_qualifiers) = type_class(to);
+    let (_, from_qualifiers) = type_class(from);
+    if to_qualifiers.volatile || to_qualifiers.atomic || from_qualifiers.atomic {
+        return None;
+    }
+    crate::void_view::pointee_key(to)?;
+    crate::void_view::pointee_key(from)?;
+    Some(operand)
+}
+
+/// Card CAST-FORMALIZATION, H-SR5: the opening index of the parenthesised
+/// group closing at `close` when it spells a type name (identifiers, then
+/// `*`s, at least one identifier): a cast group the dereference count reads
+/// through. Whether the words resolve to a type is not asked: the caller
+/// only refuses more by reading through it.
+pub(crate) fn type_group_open(texts: &[&str], close: usize) -> Option<usize> {
+    if texts.get(close) != Some(&")") {
+        return None;
+    }
+    let open = (0..close).rev().find(|&at| texts[at] == "(")?;
+    let group = &texts[open + 1..close];
+    let stars = group.iter().rev().take_while(|text| **text == "*").count();
+    let words = &group[..group.len() - stars];
+    (!words.is_empty()
+        && words.iter().all(|text| {
+            text.chars()
+                .next()
+                .is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
+                && text.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+        }))
+    .then_some(open)
+}
+
 /// The scalar kinds whose `NoOp` reading is a scalar identity conversion.
 fn scalar_kind(kind: &str) -> bool {
     SCALAR_KINDS.contains(&kind) || kind == "BooleanToSignedIntegral"
@@ -607,13 +709,28 @@ pub(crate) const CLASSIFY_VECTORS: [(&str, &str, &str, &str); 28] = [
     ("FloatingToIntegral", "double", "int", "scalar"),
     ("IntegralToBoolean", "int", "_Bool", "scalar"),
     ("PointerToBoolean", "char *", "_Bool", "null-test"),
-    ("PointerToIntegral", "void *", "unsigned long", "pointer-to-integer"),
-    ("IntegralToPointer", "unsigned long", "char *", "integer-to-pointer"),
+    (
+        "PointerToIntegral",
+        "void *",
+        "unsigned long",
+        "pointer-to-integer",
+    ),
+    (
+        "IntegralToPointer",
+        "unsigned long",
+        "char *",
+        "integer-to-pointer",
+    ),
     ("NullToPointer", "int", "void *", "null-pointer"),
     ("BitCast", "struct S *", "void *", "byte-view"),
     ("BitCast", "struct S *", "char *", "byte-view"),
     ("BitCast", "struct S *", "unsigned char *", "byte-view"),
-    ("BitCast", "const struct S *", "const unsigned char *", "byte-view"),
+    (
+        "BitCast",
+        "const struct S *",
+        "const unsigned char *",
+        "byte-view",
+    ),
     ("BitCast", "void *", "struct S *", "typed-view"),
     ("BitCast", "char *", "struct S *", "typed-view"),
     ("BitCast", "unsigned char *", "int *", "typed-view"),
@@ -623,7 +740,12 @@ pub(crate) const CLASSIFY_VECTORS: [(&str, &str, &str, &str); 28] = [
     ("NoOp", "struct S *", "const struct S *", "qualifier"),
     ("NoOp", "const char *", "char *", "qualifier"),
     ("BitCast", "struct S *", "volatile struct S *", "qualifier"),
-    ("BitCast", "int (*)(void *)", "void (*)(void)", "function-pointer"),
+    (
+        "BitCast",
+        "int (*)(void *)",
+        "void (*)(void)",
+        "function-pointer",
+    ),
     ("BitCast", "int (*)(void *)", "void *", "function-object"),
     ("BitCast", "void *", "void (*)(int)", "function-object"),
     ("ToVoid", "int", "void", "discard"),
@@ -767,7 +889,9 @@ pub(crate) fn position(ancestors: &[&Value], cast: &Value) -> Position {
             "BinaryOperator" | "CompoundAssignOperator" => {
                 let opcode = parent["opcode"].as_str().unwrap_or("");
                 let operands = children(parent);
-                let left = operands.first().is_some_and(|left| std::ptr::eq(left, child));
+                let left = operands
+                    .first()
+                    .is_some_and(|left| std::ptr::eq(left, child));
                 if opcode == "=" {
                     return if left {
                         Position::AssignmentDestination

@@ -367,6 +367,16 @@ fn stars_before(texts: &[&str], index: usize, names: &impl NameFacts, closing: u
                 stars += 1;
                 at = previous;
             }
+            // Card CAST-FORMALIZATION (rule 12h,
+            // `W45-SR5-SCALAR-READ-STAR-THROUGH-CAST`): where every `*` counts
+            // (before a member or subscript root), a cast group is
+            // transparent to the count (`QCore.CastSemantics.cast_transparent`):
+            // `*(T *)q->f` dereferences the value `q->f` reads.
+            ")" if closing == usize::MAX
+                && let Some(open) = crate::cast_semantics::type_group_open(texts, previous) =>
+            {
+                at = open;
+            }
             _ => break,
         }
     }

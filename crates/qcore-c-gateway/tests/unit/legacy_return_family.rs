@@ -274,3 +274,33 @@ fn the_definition_result_is_its_prefix_without_a_pointer_level() {
     assert_eq!(definition_result(&texts("int f ( void ) ;"), "f"), None);
     assert_eq!(definition_result(&texts("x = y f ( void ) { }"), "f"), None);
 }
+
+/// Card CAST-FORMALIZATION (rule 12h, `W45-SR5-SCALAR-READ-STAR-THROUGH-CAST`):
+/// `QCore.CastSemantics.sr5Vectors`, each a `return` operand over the
+/// may-bind `q` and its dereference count; rule 5j admits it exactly when the
+/// count is one (`star_through_cast_is_two`, `sr5_vectors_hold`).
+#[test]
+fn a_star_through_a_cast_counts_as_a_dereference() {
+    const LEAN: &str = include_str!("../../../../proof/QCore/CastSemantics.lean");
+    let body = LEAN
+        .split("def sr5Vectors : List (String × Expr × Nat) := [")
+        .nth(1)
+        .expect("sr5Vectors");
+    let rows = body[..body.find("\n]").expect("end")]
+        .lines()
+        .map(str::trim)
+        .filter(|line| line.starts_with('('))
+        .collect::<Vec<_>>();
+    assert_eq!(rows.len(), 6);
+    for row in rows {
+        let spelling = row.split('"').nth(1).expect("spelling");
+        let count = row
+            .trim_end_matches(',')
+            .trim_end_matches(')')
+            .rsplit(", ")
+            .next()
+            .and_then(|count| count.parse::<usize>().ok())
+            .expect("count");
+        assert_eq!(read(spelling).is_some(), count == 1, "{spelling}: {count}");
+    }
+}

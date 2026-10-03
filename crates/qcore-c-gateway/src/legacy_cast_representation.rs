@@ -529,6 +529,13 @@ fn uncast_operand(value: &Value) -> Option<&Value> {
         if !matches!(node["castKind"].as_str(), Some("BitCast" | "NoOp")) {
             break;
         }
+        // Card CAST-FORMALIZATION (rule 12h): the uncast statement denotes
+        // the same object only for a class that keeps the identity.
+        if !crate::cast_semantics::classify_node(node)
+            .is_some_and(crate::cast_semantics::ConversionClass::preserves_identity)
+        {
+            return None;
+        }
         let inner = children(node).first()?;
         if !is_pointer(node) || !is_pointer(inner) {
             return None;

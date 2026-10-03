@@ -140,8 +140,11 @@ fn unlisted_views_are_refused() {
     if !clang_available() {
         return;
     }
+    // Card CAST-FORMALIZATION (rule 12h), a deliberate flip: `*(int *)p` of
+    // an `int *p` is a qualifier conversion (the same type), read through as
+    // the object itself with no view; it is Safe now and pinned in
+    // `cast_formalization.rs`. The pun below keeps its refusal.
     for body in [
-        "void subject(int *p) { int x = *(int *)p; cg_sink(x); }",
         "void subject(long *p) { int x = *(int *)p; cg_sink(x); }",
         "void subject(void) { struct S *s = q_alloc(); struct T *t = q_alloc(); s->v = t; \
          int x = ((struct T *) s->v)->x; cg_sink(x); q_free(t); q_free(s); }",

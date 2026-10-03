@@ -6738,6 +6738,12 @@ impl Parser<'_> {
         self.typed_place_origin
             .set(origin.map(|origin| (origin, tokens.len())));
         let instruction = self.classify_simple(tokens);
+        // Card CAST-FORMALIZATION (rule 12h), a soundness repair asked
+        // first: an identity-preserving cast of a place at a call actual is
+        // that place, so the call is classified as its uncast statement.
+        let instruction = self
+            .uncast_call_actuals(tokens, &instruction)
+            .unwrap_or(instruction);
         self.typed_place_origin.set(None);
         self.element_origins.settle(tokens, &instruction);
         // Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): a declared
@@ -6856,6 +6862,13 @@ impl Parser<'_> {
         // Card CG26-VARIADICS (rule 11w): asked last, only for the declared
         // tail's refusal of a call statement.
         if let Some(lowered) = self.variadic_tail_statement(tokens, line, &instruction) {
+            self.element_origins.clear();
+            return lowered;
+        }
+        // Card CAST-FORMALIZATION (rule 12h): asked last, only for a
+        // refusal: the uncast statement where the conversion table removes a
+        // cast at a value position.
+        if let Some(lowered) = self.uncast_value_statement(tokens, line, &instruction) {
             self.element_origins.clear();
             return lowered;
         }

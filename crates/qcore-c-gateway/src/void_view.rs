@@ -252,7 +252,10 @@ pub(crate) fn explicit_view(mut node: &Value) -> Option<Result<&Value, ViewRefus
     while kind(node) == "ParenExpr" {
         node = children(node).first()?;
     }
-    (kind(node) == "CStyleCastExpr").then(|| classify_view(node))
+    // Card CAST-FORMALIZATION (rule 12h): which conversion is a view is the
+    // conversion table's decision (`cast_semantics::access_view`), of which
+    // `classify_view`'s `void *` row is one case.
+    (kind(node) == "CStyleCastExpr").then(|| crate::cast_semantics::access_view(node))
 }
 
 /// A pointer destination's value that is an explicit view to the

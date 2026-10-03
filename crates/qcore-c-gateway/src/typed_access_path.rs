@@ -1377,6 +1377,13 @@ impl<'a> Reader<'a> {
                     load_view = true;
                 }
             }
+            // Card CAST-FORMALIZATION (rule 12h): a qualifier conversion of the
+            // pointer read through is the same object at the same type.
+            if pointer_operand && let Some(inner) = crate::cast_semantics::transparent_cast(cursor)
+            {
+                cursor = inner;
+                continue;
+            }
             if std::mem::take(&mut pointer_operand)
                 && let Some(view) = crate::void_view::explicit_view(cursor)
             {

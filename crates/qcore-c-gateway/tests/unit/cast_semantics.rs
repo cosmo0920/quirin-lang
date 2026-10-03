@@ -44,7 +44,11 @@ fn identity_and_access_rows_are_the_formal_model() {
     assert_eq!(conversion(C::NullPointer).identity, Identity::Absent);
     // A typed view needs the effective-type premise; a punned one is refused.
     assert_eq!(conversion(C::TypedView).access, Access::EffectiveType);
-    assert!(conversion(C::TypedView).obligations.contains(&P_EFFECTIVE_TYPE));
+    assert!(
+        conversion(C::TypedView)
+            .obligations
+            .contains(&P_EFFECTIVE_TYPE)
+    );
     assert_eq!(conversion(C::PunnedView).access, Access::Punned);
     assert_eq!(conversion(C::ByteView).access, Access::Character);
     // Function and object pointers never convert into each other.
@@ -84,9 +88,15 @@ fn type_classes_read_clang_spellings() {
 #[test]
 fn callee_arity_reads_the_last_parameter_list() {
     assert_eq!(callee_arity("int (*)(const char *, ...)"), Some((1, true)));
-    assert_eq!(callee_arity("int (*)(FILE *, const char *, ...)"), Some((2, true)));
+    assert_eq!(
+        callee_arity("int (*)(FILE *, const char *, ...)"),
+        Some((2, true))
+    );
     assert_eq!(callee_arity("void (*)(void)"), Some((0, false)));
-    assert_eq!(callee_arity("int (*)(int (*)(void), int)"), Some((2, false)));
+    assert_eq!(
+        callee_arity("int (*)(int (*)(void), int)"),
+        Some((2, false))
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -152,9 +162,8 @@ fn lean_access(access: Access) -> &'static str {
 /// `conversionTable` = `CONVERSION_TABLE`, row for row.
 #[test]
 fn lean_conversion_table_matches_the_rust_table() {
-    let rows = lean_rows(
-        "def conversionTable : List (ConvClass × List String × Identity × Access) := [",
-    );
+    let rows =
+        lean_rows("def conversionTable : List (ConvClass × List String × Identity × Access) := [");
     assert_eq!(rows.len(), CONVERSION_TABLE.len());
     for (row, rust) in rows.iter().zip(CONVERSION_TABLE) {
         let kinds = rust
@@ -199,9 +208,8 @@ fn lean_type(text: &str) -> String {
 /// (`classify_vectors_hold`), so the two classifiers agree on the vectors.
 #[test]
 fn lean_classify_vectors_are_the_rust_vectors() {
-    let rows = lean_rows(
-        "def classifyVectors : List (String × TypeClass × TypeClass × ConvClass) := [",
-    );
+    let rows =
+        lean_rows("def classifyVectors : List (String × TypeClass × TypeClass × ConvClass) := [");
     assert_eq!(rows.len(), CLASSIFY_VECTORS.len());
     for (row, (kind, from, to, class)) in rows.iter().zip(CLASSIFY_VECTORS) {
         let expected = format!(

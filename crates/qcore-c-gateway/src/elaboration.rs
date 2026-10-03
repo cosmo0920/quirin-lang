@@ -1423,6 +1423,14 @@ impl<C: Context> Elaborator<'_, C> {
                 })
             }
             Admission::PointerValue if to_pointer && from_pointer => {
+                // Card CAST-FORMALIZATION (rule 12h): the same pointer value
+                // only for a class of the conversion table that keeps the
+                // operand's identity; any other is refused by its class.
+                if let Some(class) = crate::cast_semantics::classify_node(node)
+                    && !class.preserves_identity()
+                {
+                    return Err(Refusal::Cast(class.name().to_owned()));
+                }
                 let part = self.expression(inner)?;
                 if !part.pointer() {
                     return Err(refuse(&cast));
