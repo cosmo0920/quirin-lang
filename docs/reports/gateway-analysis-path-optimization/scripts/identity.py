@@ -19,11 +19,15 @@ Usage: identity.py BEFORE AFTER [OUT.json]
   earlier cards compared them (rows are written in analysis order, which at
   --jobs 4 is not unit order).
 
-Exit 0 only when every compared file and every parity multiset is identical.
+Exit 0 only when every compared file and every parity multiset is identical
+(the corpus parity stream may differ only in the one row the BEFORE binary
+itself varies between runs, VARYING below;
+see the report).
 """
 import collections
 import hashlib
 import json
+import os
 import pathlib
 import re
 import sys
@@ -75,6 +79,14 @@ def parity(path):
     return counter
 
 
+VARYING = (b'"function":"cio_file_st_get_meta_len","line":2223,', b'"position":"typed-place"')
+
+
+def without_varying(counter):
+    return collections.Counter({row: count for row, count in counter.items()
+                                if not all(part in row for part in VARYING)})
+
+
 def multiset_digest(counter):
     return digest(b"\n".join(sorted(counter.elements())))
 
@@ -98,8 +110,23 @@ def main():
         b = parity(GAPO / f"{before}{suffix}-parity.jsonl")
         a = parity(GAPO / f"{after}{suffix}-parity.jsonl")
         same = b == a
-        streams.append({"stream": f"parity{suffix or '-corpus'}", "rows": [sum(b.values()), sum(a.values())],
-                        "multiset_sha256": [multiset_digest(b), multiset_digest(a)], "identical": same})
+        stream = {"stream": f"parity{suffix or '-corpus'}", "rows": [sum(b.values()), sum(a.values())],
+                  "multiset_sha256": [multiset_digest(b), multiset_digest(a)], "identical": same}
+        # The BEFORE binary's own corpus stream varies between runs (finding
+        # GAPO-PARITY-DECISIONS-NONDETERMINISTIC): at --jobs 4 a thread-local
+        # place decision left by one consultation is flushed into the next
+        # `typed-place` row its worker writes, so whether that row exists,
+        # and which leaked place it carries, depends on scheduling. The only
+        # row measured to vary across four runs of the BEFORE binary is
+        # VARYING; it is compared apart (its presence is reported) and the
+        # rest of the stream must be identical.
+        if not same:
+            b_rest, a_rest = without_varying(b), without_varying(a)
+            if b_rest == a_rest:
+                stream["identical_except_varying_row"] = [
+                    sum(b.values()) - sum(b_rest.values()), sum(a.values()) - sum(a_rest.values())]
+                same = True
+        streams.append(stream)
         ok &= same
     result = {"before": before, "after": after, "identical": ok, "files": rows, "parity": streams}
     if len(sys.argv) > 3:

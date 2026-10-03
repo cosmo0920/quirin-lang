@@ -13,7 +13,8 @@ method of a non-trait `impl` and a private named field of a moved struct gain
 `pub(super)`, so the parent and the sibling modules still reach what they
 reached. The parent declares each module at the end of the file (no macro
 is defined in it, so position changes no name resolution) and imports its
-items with `pub use self::NAME::*;` (a glob import binds each item at the
+items with a glob `use self::NAME::*;` as public as the most public moved
+item (a glob import binds each item at the
 lesser of the two visibilities, so the public API is unchanged). Methods of
 `impl Parser` are moved inside a fresh `impl Parser<'_>` block.
 
@@ -22,6 +23,7 @@ With --check it only reports the segments' line ranges. `scripts/move_check.py`
 proves the result is a move.
 """
 import pathlib
+import textwrap
 import re
 import sys
 
@@ -135,8 +137,9 @@ def main():
         while block and not block[-1].strip():
             block.pop()
         moved = widen_visibility(block, kind)
-        header = [
-            f"//! Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: {title}.",
+        header = textwrap.wrap(
+            f"Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: {title}.",
+            width=76, initial_indent="//! ", subsequent_indent="//! ", break_on_hyphens=False) + [
             "//!",
             "//! Moved verbatim from `legacy_c.rs` (only visibility widened to",
             "//! `pub(super)` where the parent or a sibling module reads an item).",
@@ -147,14 +150,22 @@ def main():
         body = ["impl Parser<'_> {"] + moved + ["}"] if kind == "impl" else moved
         (SRC / file).write_text("\n".join(header + body) + "\n")
         del lines[first:last]
-        declaration = [
-            f"// Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: {title}.",
-        ]
+        declaration = textwrap.wrap(
+            f"Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: {title}.",
+            width=76, initial_indent="// ", subsequent_indent="// ", break_on_hyphens=False)
         if cfg:
             declaration.append(f'#[cfg(feature = "{cfg}")]')
         declaration += [f'#[path = "{file}"]', f"mod {module};"]
         if kind == "top":
-            declaration.append(f"pub use self::{module}::*;")
+            # The glob binds each item at the lesser visibility; the import
+            # itself is as public as the most public item it carries.
+            if any(line.startswith("pub ") for line in moved):
+                visibility = "pub "
+            elif any(line.startswith("pub(crate) ") for line in moved):
+                visibility = "pub(crate) "
+            else:
+                visibility = ""
+            declaration.append(f"{visibility}use self::{module}::*;")
         tail = declaration + [""] + tail
     test = find(lines, r'^#\[path = "\.\./tests/unit/legacy_c\.rs"\]$') - 1
     lines[test:test] = tail

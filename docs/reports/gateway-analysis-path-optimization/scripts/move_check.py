@@ -14,6 +14,7 @@ was already `pub(super)` compares too. Prints the counts and every line that is 
 accounted for; exit 0 only when nothing is.
 """
 import collections
+import re
 import subprocess
 import sys
 
@@ -53,23 +54,57 @@ for line in diff.splitlines():
             continue
         added[text.replace("pub(super) ", "", 1)] += 1
 
+# A line git shows as removed from and re-added to the parent (the diff
+# re-aligns a file that lost two thirds of its lines) stayed in the parent;
+# a `#[cfg(feature = ...)]` line the parent gains is split.py's declaration
+# attribute, never a kept line.
+parent_kept = collections.Counter(
+    text.replace("pub(super) ", "", 1) for text in parent_added
+    if text.strip() and not text.startswith("#[cfg(feature = "))
+left_parent = removed - parent_kept
+parent_new = parent_kept - removed
 # split.py's own wrapper lines: one `impl Parser<'_> {` / `}` pair per impl module
 wrappers = added["impl Parser<'_> {"]
-unexplained_removed = removed - added
-unexplained_added = added - removed
+unexplained_removed = left_parent - added
+unexplained_added = added - left_parent
 # each wrapper adds one `impl Parser<'_> {` and one `}` that nothing removed
 for text, allowance in (("impl Parser<'_> {", wrappers), ("}", wrappers)):
     if unexplained_added[text] <= allowance:
         unexplained_added.pop(text, None)
+# the parent's new lines: only split.py's module declarations
 parent_unexplained = [
-    text for text in parent_added
-    if text.strip() and not (
-        text.startswith("// Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION:")
+    text for text in parent_new.elements()
+    if not (
+        text.startswith("// ")
         or text.startswith("#[path = \"legacy_")
         or text.startswith("#[cfg(feature = ")
         or text.startswith("mod ")
-        or text.startswith("pub use self::"))
+        or re.match(r"^(pub |pub\(crate\) )?use self::[a-z_]+::\*;$", text))
 ]
+removed = left_parent
+
+
+# rustfmt re-wraps a moved line that `pub(super) ` pushed past the width
+# limit (a signature, a long constant): the same characters over several
+# lines, plus the trailing comma rustfmt adds after a re-wrapped signature's
+# last parameter. The residual is accepted as a re-wrap when, ignoring
+# whitespace, the two sides hold the same characters except at most one
+# comma per re-wrapped item.
+def characters(lines):
+    return collections.Counter("".join("".join(text.split()) * count for text, count in lines.items()))
+
+
+reflowed = sum(count for text, count in unexplained_removed.items()
+               if re.match(r"^\s*(fn |const |pub)", text))
+residual = characters(unexplained_added)
+residual.subtract(characters(unexplained_removed))
+extra = {char: count for char, count in residual.items() if count}
+rewrap = bool(unexplained_removed) and set(extra) <= {","} and extra.get(",", 0) <= reflowed
+print(f"re-wrapped by rustfmt: {sum(unexplained_removed.values())} line(s) -> "
+      f"{sum(unexplained_added.values())} line(s); character difference ignoring whitespace: "
+      f"{extra or 'none'} ({reflowed} re-wrapped item(s))")
+if rewrap:
+    unexplained_removed, unexplained_added = collections.Counter(), collections.Counter()
 print(f"removed from legacy_c.rs: {sum(removed.values())} non-blank lines")
 print(f"added to the new modules: {sum(added.values())} non-blank lines (headers excluded)")
 print(f"impl wrappers: {wrappers}")
