@@ -1,0 +1,140 @@
+{
+ "total": {
+  "launches": 1549,
+  "seconds": 90.1,
+  "repeats": 601,
+  "repeat_seconds": 26.9,
+  "distinct_inputs": 378
+ },
+ "modes": {
+  "preprocess": {
+   "launches": 762,
+   "seconds": 31.4,
+   "out_bytes": 505118514,
+   "repeats": 390,
+   "repeat_seconds": 16.1
+  },
+  "ast-full": {
+   "launches": 188,
+   "seconds": 25.2,
+   "out_bytes": 6652474890,
+   "repeats": 7,
+   "repeat_seconds": 0.3
+  },
+  "ast-filtered": {
+   "launches": 276,
+   "seconds": 14.9,
+   "out_bytes": 425497698,
+   "repeats": 88,
+   "repeat_seconds": 2.9
+  },
+  "syntax": {
+   "launches": 221,
+   "seconds": 11.8,
+   "out_bytes": 0,
+   "repeats": 34,
+   "repeat_seconds": 1.3
+  },
+  "record-layouts": {
+   "launches": 84,
+   "seconds": 6.5,
+   "out_bytes": 25762332,
+   "repeats": 82,
+   "repeat_seconds": 6.3
+  },
+  "version": {
+   "launches": 10,
+   "seconds": 0.1,
+   "out_bytes": 1220,
+   "repeats": 0,
+   "repeat_seconds": 0.0
+  },
+  "dumpmachine": {
+   "launches": 6,
+   "seconds": 0.1,
+   "out_bytes": 120,
+   "repeats": 0,
+   "repeat_seconds": 0.0
+  },
+  "macros": {
+   "launches": 1,
+   "seconds": 0.0,
+   "out_bytes": 13330,
+   "repeats": 0,
+   "repeat_seconds": 0.0
+  },
+  "other": {
+   "launches": 1,
+   "seconds": 0.0,
+   "out_bytes": 20,
+   "repeats": 0,
+   "repeat_seconds": 0.0
+  }
+ },
+ "filtered_name_repeats_top": [
+  {
+   "filter": "size_t",
+   "count": 8
+  },
+  {
+   "filter": "cio_file",
+   "count": 7
+  },
+  {
+   "filter": "cio_chunk",
+   "count": 6
+  },
+  {
+   "filter": "cio_file",
+   "count": 6
+  },
+  {
+   "filter": "cio_ctx",
+   "count": 6
+  },
+  {
+   "filter": "cio_stream",
+   "count": 6
+  },
+  {
+   "filter": "cio_file_close",
+   "count": 6
+  },
+  {
+   "filter": "munmap_file",
+   "count": 6
+  },
+  {
+   "filter": "cio_chunk",
+   "count": 4
+  },
+  {
+   "filter": "cio_ctx",
+   "count": 4
+  },
+  {
+   "filter": "cio_stream",
+   "count": 4
+  },
+  {
+   "filter": "cio_file_native_close",
+   "count": 4
+  },
+  {
+   "filter": "cio_file_native_unmap",
+   "count": 4
+  },
+  {
+   "filter": "cio_chunk",
+   "count": 4
+  },
+  {
+   "filter": "cio_chunk_counter_total_add",
+   "count": 3
+  }
+ ],
+ "launches_per_input": {
+  "max": 73,
+  "median": 3
+ }
+}

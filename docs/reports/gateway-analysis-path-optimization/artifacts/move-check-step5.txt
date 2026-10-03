@@ -1,0 +1,5 @@
+re-wrapped by rustfmt: 16 line(s) -> 68 line(s); character difference ignoring whitespace: {',': 15} (16 re-wrapped item(s))
+removed from legacy_c.rs: 10267 non-blank lines
+added to the new modules: 10327 non-blank lines (headers excluded)
+impl wrappers: 4
+MOVE-ONLY

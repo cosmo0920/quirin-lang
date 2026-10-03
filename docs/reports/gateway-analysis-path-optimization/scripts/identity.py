@@ -107,6 +107,9 @@ def main():
         ok &= same
     streams = []
     for suffix in ("", "-system", "-slice"):
+        if not (GAPO / f"{after}{suffix}-parity.jsonl").is_file():
+            streams.append({"stream": f"parity{suffix or '-corpus'}", "verdict": "route not measured"})
+            continue
         b = parity(GAPO / f"{before}{suffix}-parity.jsonl")
         a = parity(GAPO / f"{after}{suffix}-parity.jsonl")
         same = b == a
