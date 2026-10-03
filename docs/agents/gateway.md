@@ -2581,6 +2581,8 @@ own anchor here.
     type-size fold), bound to `CAST_TABLE`, `query_operand`, Clang's
     constants and `fold_type_sizes` by shared-vector tests;
     [report](../reports/cg08-casts-and-type-queries/README.md).
+    Amended by [rule 12h](#constraint-12h): the kind table is refined by
+    type classes into one conversion table every route-G position consults.
 
 <a id="constraint-11c"></a>
 
@@ -4700,3 +4702,84 @@ own anchor here.
     `an_unanswered_root_is_refused`, `an_integer_identity_is_refused`,
     `the_reading_is_custody_neutral`, the shared `readVectors`);
     [report](../reports/cg26-tail-residual-actuals/README.md).
+
+<a id="constraint-12h"></a>
+
+12h. **A cast is read by its conversion class, from one table, at every
+    position: an identity-preserving pointer conversion is its operand's
+    identity, an access through it is admitted only as the table's access
+    rule allows, and nothing outside the table is read.** Card
+    CAST-FORMALIZATION (`cast_semantics.rs`, the route-G adapter
+    `legacy_cast_semantics.rs`; thin hooks in `legacy_c.rs`,
+    `legacy_return_family.rs::stars_before`, `typed_access_path.rs`,
+    `void_view.rs::explicit_view`, the elaborator's object-pointer
+    `BitCast`/`NoOp` arm and rule 11b(3)'s `uncast_operand`; shared items
+    added: `cast_semantics::{classify, classify_node, CONVERSION_TABLE,
+    access_view, transparent_cast, type_group_open, explicit_casts}`). It
+    amends rule 11b (and rule 11j's view, and rule 5j's dereference count);
+    every other premise of theirs stands. (1) **The table.** A Clang cast
+    kind is refined by the operand's and the result's type classes (Clang's
+    desugared spellings: scalar, `void`, a pointer to `void`, to a character
+    type, to a function or to another object; `_Atomic` and `volatile` noted)
+    into one conversion class (C11 §6.3, §6.5.4): `scalar` (data; numbers
+    are CG20's), `null-test`, `pointer-to-integer` (provenance lost; rule
+    11b's escape), `integer-to-pointer` and `null-pointer` (no identity),
+    `byte-view` (an object pointer to `void *` or a character pointer:
+    identity preserved, a character access needs no premise, 6.5p7),
+    `typed-view` (from `void *` or a character pointer to another object
+    pointer: identity preserved, an access needs `P-EFFECTIVE-TYPE`; the
+    round trip of a byte view, 6.3.2.3p1/p7), `punned-view` (between two
+    other object pointer types: identity preserved, an access is an
+    incompatible effective type and is refused, never certified),
+    `qualifier` (the same pointee type: the same object; an added
+    `volatile` keeps rule 11h), `function-pointer` (CG22's callee set),
+    `function-object` (not C: refused), `discard` (`(void) e`: its events,
+    no value), and the refused `atomic`, `address-space`, `array-decay`,
+    `unlisted`. Every class's kinds are `CAST_TABLE` rows and its identity
+    effect is their provenance flag. (2) **Access positions** (a member
+    root, a dereference, a subscript base, in the typed access-path
+    reader). A `typed-view` (now also from a character pointer) or a
+    `byte-view` is a view under rule 11j's premises unchanged (an untracked
+    root or a never-bound load, the C02-P-ALIAS check); a `qualifier`
+    conversion is read through with no view; every other class refuses.
+    (3) **Value positions.** A call actual or a variadic tail actual that is
+    an identity-preserving pointer conversion of a place is that place: a
+    call the lexical classifier admitted with such an actual is classified
+    as its uncast statement, whose answer replaces the original's — a
+    soundness repair asked first (the classifier read the actual as no
+    place, so a `Borrowed` `(void *) t` after `t`'s release was `Safe`).
+    A statement every older route refused, whose identity-preserving
+    pointer conversions of a plain name stand at a call actual, a variadic
+    tail, a pointer-step operand, an initializer or an assignment value, is
+    lowered as its uncast statement by the older routes and kept only where
+    they admit it (asked last); in a variadic tail a `scalar` conversion of
+    a declared scalar that is not a descriptor name is removed too, and rule
+    11w's widening is applied with the original statement's Clang node.
+    (4) **Dereference count.** Before a member or subscript root a cast
+    group is transparent to rule 5j's count: `*(T *)q->f` dereferences
+    twice. **Do not** remove a cast at an access position (its type is the
+    access's), admit an access through a `punned-view` or of a tracked
+    root through any view, remove a `scalar` conversion outside a variadic
+    tail, give an integer made a pointer an identity, read a function
+    pointer as an object, or ask the asked-last hooks before an older route
+    (hard invariant 3). Parity runs record every explicit cast
+    (`position: "cast-semantics-census"`: kind, class, position, statement
+    line) and every value-position decision (`"cast-semantics-value"`).
+    Premises stated, not proved: faithful Clang extraction of cast kinds and
+    type spellings and the token/AST match (trust boundary 28), C11
+    6.3.2.3p7 (`P-ALIGNED-POINTER-CONVERSION`) for a pointer conversion, and
+    `P-EFFECTIVE-TYPE` for a typed view's access. Measured (corpus
+    `66910c10`, main `cb3085365`): **649 / 9 / 4,176 → 654 / 9 / 4,171**
+    (`450a9e54…` → `63bbb5a3…`): `LZ4F_readLE32`, `LZ4F_readLE64`,
+    `LZ4F_writeLE32`, `LZ4F_writeLE64` and librdkafka's `unaligned_copy64`
+    Unknown → Safe, 31 more rows change leaves, no Safe → non-Safe move, no
+    leak or violation added; system 44 / 2 / 188 unmoved (two functions
+    change leaves), slice byte-identical. `QCore.CastSemantics`
+    (`classify_vectors_hold`, `agrees`, `view_preserves_identity`,
+    `round_trip_same_pointer`, `pointer_to_integer_loses_provenance`,
+    `integer_to_pointer_no_identity`, `admitted_access_without_premise`,
+    `view_access_needs_the_premise`, `punned_access_refused`,
+    `cast_keeps_events`, `discard_is_effect_only`, `star_through_cast_is_two`
+    and nine more), bound to `CONVERSION_TABLE`, `classify` and rule 5j's
+    reader by shared vectors;
+    [report](../reports/cast-formalization/README.md).
