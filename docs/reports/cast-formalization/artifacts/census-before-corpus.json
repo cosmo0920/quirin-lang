@@ -1,0 +1,1654 @@
+{
+ "casts": 16743,
+ "functions_with_casts": 3225,
+ "cast_leaves": 10392,
+ "functions_with_cast_leaves": 2273,
+ "sole_unknown_functions": 285,
+ "ambiguous_names": [
+  "append_histogram_metric_value",
+  "append_metric_value",
+  "append_new_map_label_key",
+  "append_new_metric_label_value",
+  "append_summary_metric_value",
+  "create_label",
+  "create_map_label",
+  "decode_counter_entry",
+  "decode_gauge_entry",
+  "decode_histogram_entry",
+  "decode_labels",
+  "decode_metrics_entry",
+  "decode_untyped_entry",
+  "destroy_resource",
+  "destroy_temporary_metric_labels",
+  "fetch_metadata_kvlist_key",
+  "format_histogram_bucket",
+  "format_metric",
+  "format_metrics",
+  "initialize_instrumentation_scope",
+  "initialize_resource",
+  "initialize_temporary_metric",
+  "otlp_any_value_destroy",
+  "otlp_any_value_initialize",
+  "otlp_array_destroy",
+  "otlp_array_value_initialize",
+  "otlp_kvlist_destroy",
+  "otlp_kvlist_value_initialize",
+  "otlp_kvpair_destroy",
+  "otlp_kvpair_list_destroy",
+  "otlp_kvpair_list_initialize",
+  "otlp_kvpair_value_initialize",
+  "pack_basic_type",
+  "pack_context_metrics",
+  "pack_metric",
+  "setupRackAwareAssignment",
+  "setupRackAwareAssignment0",
+  "unpack_context",
+  "ut_testMultipleConsumersMixedTopicSubscriptions",
+  "ut_testOneConsumerMultipleTopics",
+  "ut_testOneConsumerNoTopic",
+  "ut_testOneConsumerNonexistentTopic",
+  "ut_testOneConsumerOneTopic",
+  "ut_testOnlyAssignsPartitionsFromSubscribedTopics",
+  "ut_testRackAwareAssignmentWithNonEqualSubscription",
+  "ut_testRackAwareAssignmentWithUniformSubscription",
+  "ut_testTwoConsumersOneTopicOnePartition",
+  "ut_testTwoConsumersOneTopicTwoPartitions",
+  "ut_testTwoConsumersTwoTopicsSixPartitions"
+ ],
+ "families": {
+  "indirect memory access is outside the resource projection": 3575,
+  "unresolved resource identity `_`": 2580,
+  "unmodeled call, aggregate or indirect access in branch condition": 1675,
+  "call to uncontracted function `_`": 991,
+  "unsupported assignment expression": 686,
+  "unrecognized assignment destination": 163,
+  "braced initializer, expression, or declaration is not modeled": 157,
+  "store through `_` without an out-parameter contract": 110,
+  "unmodeled call, aggregate or indirect access in for-loop condition": 72,
+  "C operator `_` requires type/operand analysis": 72,
+  "nested call `_` inside a modeled call is outside the resource projection": 70,
+  "unmodeled call, aggregate or indirect access in return expression": 54,
+  "`_` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 39,
+  "unmodeled call, aggregate or indirect access in loop condition": 31,
+  "unmodeled expression may mutate a formal resource identity": 20,
+  "unmodeled increment or decrement expression": 17,
+  "arguments beyond the declared parameters of `_` are outside the resource projection": 16,
+  "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774": 12,
+  "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775": 12,
+  "live obligation acquired at snappy.c:1705": 6,
+  "resource call with a formal embedded in an unmodeled expression": 5,
+  "local declaration may shadow a formal resource identity": 4,
+  "call to `_` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 4,
+  "nullable resource `_` used by a non-null contract": 3,
+  "call has an unmodeled formal address or borrowed expression": 3,
+  "discarded owned result of resource API `_`": 2,
+  "cast of a possibly tracked value to another carrier in return expression": 1,
+  "arguments do not match resource contract for `_`": 1,
+  "loop re-acquisition: an earlier generation that may be live is still held": 1,
+  "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1589": 1,
+  "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1599": 1,
+  "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1603": 1,
+  "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656": 1,
+  "for-loop clause with a call or grouping is not classified from its stripped spelling": 1,
+  "call to `_` outside its declared literal-argument premise": 1,
+  "unmodeled call, aggregate or indirect access in do-while condition": 1,
+  "inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 1,
+  "live obligation acquired at mk_server/mk_net.c:247": 1,
+  "call to `_` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)": 1
+ },
+ "by_class": {
+  "byte-view": 1046,
+  "discard": 1752,
+  "function-object": 44,
+  "function-pointer": 5,
+  "integer-to-pointer": 74,
+  "null-pointer": 7169,
+  "pointer-to-integer": 44,
+  "punned-view": 237,
+  "qualifier": 332,
+  "scalar": 4982,
+  "typed-view": 964,
+  "unlisted": 94
+ },
+ "by_position": {
+  "assignment-value": 2245,
+  "call-actual": 3060,
+  "condition": 12,
+  "dereference": 80,
+  "initializer": 2515,
+  "member-root": 72,
+  "operand": 5489,
+  "pointer-step": 480,
+  "return": 1251,
+  "statement": 629,
+  "subscript-base": 17,
+  "variadic-tail": 893
+ },
+ "cells": [
+  {
+   "class": "scalar",
+   "position": "initializer",
+   "casts": 1720,
+   "kinds": {
+    "IntegralCast": 499,
+    "NoOp": 1221
+   },
+   "leaves": 3178,
+   "functions": 120,
+   "unknown_functions": 120,
+   "families": {
+    "unresolved resource identity `_`": 870,
+    "indirect memory access is outside the resource projection": 751,
+    "unmodeled call, aggregate or indirect access in branch condition": 738,
+    "unsupported assignment expression": 610,
+    "unrecognized assignment destination": 81,
+    "C operator `_` requires type/operand analysis": 62,
+    "store through `_` without an out-parameter contract": 46,
+    "unmodeled call, aggregate or indirect access in loop condition": 13,
+    "unmodeled expression may mutate a formal resource identity": 4,
+    "call to uncontracted function `_`": 3
+   }
+  },
+  {
+   "class": "null-pointer",
+   "position": "call-actual",
+   "casts": 1972,
+   "kinds": {
+    "NullToPointer": 1972
+   },
+   "leaves": 2671,
+   "functions": 904,
+   "unknown_functions": 902,
+   "families": {
+    "indirect memory access is outside the resource projection": 1132,
+    "unresolved resource identity `_`": 603,
+    "call to uncontracted function `_`": 580,
+    "unmodeled call, aggregate or indirect access in branch condition": 203,
+    "unsupported assignment expression": 84,
+    "braced initializer, expression, or declaration is not modeled": 20,
+    "unmodeled call, aggregate or indirect access in loop condition": 15,
+    "store through `_` without an out-parameter contract": 14,
+    "nested call `_` inside a modeled call is outside the resource projection": 5,
+    "call to `_` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)": 4,
+    "unmodeled call, aggregate or indirect access in return expression": 3,
+    "unmodeled increment or decrement expression": 2
+   }
+  },
+  {
+   "class": "scalar",
+   "position": "variadic-tail",
+   "casts": 687,
+   "kinds": {
+    "NoOp": 242,
+    "IntegralCast": 444,
+    "FloatingToIntegral": 1
+   },
+   "leaves": 2076,
+   "functions": 200,
+   "unknown_functions": 200,
+   "families": {
+    "indirect memory access is outside the resource projection": 614,
+    "unresolved resource identity `_`": 581,
+    "unmodeled call, aggregate or indirect access in branch condition": 357,
+    "unsupported assignment expression": 345,
+    "unrecognized assignment destination": 81,
+    "store through `_` without an out-parameter contract": 50,
+    "C operator `_` requires type/operand analysis": 14,
+    "unmodeled call, aggregate or indirect access in loop condition": 13,
+    "call to uncontracted function `_`": 9,
+    "unmodeled expression may mutate a formal resource identity": 6,
+    "nested call `_` inside a modeled call is outside the resource projection": 3,
+    "arguments beyond the declared parameters of `_` are outside the resource projection": 2
+   }
+  },
+  {
+   "class": "scalar",
+   "position": "operand",
+   "casts": 1241,
+   "kinds": {
+    "NoOp": 336,
+    "IntegralCast": 840,
+    "FloatingToIntegral": 15,
+    "IntegralToFloating": 50
+   },
+   "leaves": 1902,
+   "functions": 248,
+   "unknown_functions": 247,
+   "families": {
+    "unresolved resource identity `_`": 514,
+    "indirect memory access is outside the resource projection": 412,
+    "unmodeled call, aggregate or indirect access in branch condition": 393,
+    "unsupported assignment expression": 359,
+    "unrecognized assignment destination": 82,
+    "store through `_` without an out-parameter contract": 46,
+    "call to uncontracted function `_`": 23,
+    "unmodeled call, aggregate or indirect access in loop condition": 20,
+    "C operator `_` requires type/operand analysis": 14,
+    "braced initializer, expression, or declaration is not modeled": 12,
+    "unmodeled increment or decrement expression": 6,
+    "unmodeled call, aggregate or indirect access in return expression": 5
+   }
+  },
+  {
+   "class": "scalar",
+   "position": "assignment-value",
+   "casts": 654,
+   "kinds": {
+    "IntegralCast": 611,
+    "FloatingToIntegral": 11,
+    "NoOp": 22,
+    "IntegralToFloating": 10
+   },
+   "leaves": 1362,
+   "functions": 181,
+   "unknown_functions": 181,
+   "families": {
+    "unresolved resource identity `_`": 423,
+    "indirect memory access is outside the resource projection": 329,
+    "unmodeled call, aggregate or indirect access in branch condition": 281,
+    "unsupported assignment expression": 262,
+    "store through `_` without an out-parameter contract": 20,
+    "C operator `_` requires type/operand analysis": 14,
+    "call to uncontracted function `_`": 10,
+    "unrecognized assignment destination": 10,
+    "unmodeled expression may mutate a formal resource identity": 8,
+    "unmodeled increment or decrement expression": 2,
+    "nested call `_` inside a modeled call is outside the resource projection": 2,
+    "inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 1
+   }
+  },
+  {
+   "class": "null-pointer",
+   "position": "assignment-value",
+   "casts": 1160,
+   "kinds": {
+    "NullToPointer": 1160
+   },
+   "leaves": 1313,
+   "functions": 363,
+   "unknown_functions": 362,
+   "families": {
+    "indirect memory access is outside the resource projection": 571,
+    "unresolved resource identity `_`": 222,
+    "unmodeled call, aggregate or indirect access in branch condition": 180,
+    "unsupported assignment expression": 178,
+    "store through `_` without an out-parameter contract": 77,
+    "unrecognized assignment destination": 54,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 22,
+    "unmodeled expression may mutate a formal resource identity": 4,
+    "unmodeled increment or decrement expression": 4,
+    "discarded owned result of resource API `_`": 1
+   }
+  },
+  {
+   "class": "null-pointer",
+   "position": "operand",
+   "casts": 2433,
+   "kinds": {
+    "NullToPointer": 2433
+   },
+   "leaves": 1209,
+   "functions": 622,
+   "unknown_functions": 620,
+   "families": {
+    "unresolved resource identity `_`": 560,
+    "indirect memory access is outside the resource projection": 283,
+    "unmodeled call, aggregate or indirect access in branch condition": 210,
+    "braced initializer, expression, or declaration is not modeled": 74,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 40,
+    "call to uncontracted function `_`": 13,
+    "unmodeled call, aggregate or indirect access in loop condition": 8,
+    "unsupported assignment expression": 8,
+    "unrecognized assignment destination": 4,
+    "unmodeled call, aggregate or indirect access in return expression": 2,
+    "nested call `_` inside a modeled call is outside the resource projection": 1,
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1599": 1
+   }
+  },
+  {
+   "class": "discard",
+   "position": "operand",
+   "casts": 1517,
+   "kinds": {
+    "ToVoid": 1517
+   },
+   "leaves": 858,
+   "functions": 300,
+   "unknown_functions": 297,
+   "families": {
+    "unmodeled call, aggregate or indirect access in branch condition": 434,
+    "unresolved resource identity `_`": 155,
+    "indirect memory access is outside the resource projection": 104,
+    "call to uncontracted function `_`": 58,
+    "nested call `_` inside a modeled call is outside the resource projection": 54,
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774": 12,
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775": 12,
+    "arguments beyond the declared parameters of `_` are outside the resource projection": 11,
+    "braced initializer, expression, or declaration is not modeled": 9,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "unmodeled expression may mutate a formal resource identity": 2,
+    "unmodeled increment or decrement expression": 1
+   }
+  },
+  {
+   "class": "scalar",
+   "position": "call-actual",
+   "casts": 418,
+   "kinds": {
+    "IntegralCast": 291,
+    "NoOp": 106,
+    "FloatingToIntegral": 6,
+    "IntegralToFloating": 14,
+    "FloatingCast": 1
+   },
+   "leaves": 266,
+   "functions": 194,
+   "unknown_functions": 194,
+   "families": {
+    "indirect memory access is outside the resource projection": 114,
+    "call to uncontracted function `_`": 87,
+    "unmodeled call, aggregate or indirect access in branch condition": 37,
+    "unresolved resource identity `_`": 9,
+    "braced initializer, expression, or declaration is not modeled": 5,
+    "unmodeled call, aggregate or indirect access in return expression": 4,
+    "local declaration may shadow a formal resource identity": 2,
+    "unrecognized assignment destination": 2,
+    "nested call `_` inside a modeled call is outside the resource projection": 2,
+    "resource call with a formal embedded in an unmodeled expression": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "class": "byte-view",
+   "position": "call-actual",
+   "casts": 319,
+   "kinds": {
+    "BitCast": 317,
+    "NoOp": 2
+   },
+   "leaves": 214,
+   "functions": 140,
+   "unknown_functions": 140,
+   "families": {
+    "indirect memory access is outside the resource projection": 134,
+    "call to uncontracted function `_`": 45,
+    "unmodeled call, aggregate or indirect access in branch condition": 23,
+    "unmodeled expression may mutate a formal resource identity": 7,
+    "unmodeled call, aggregate or indirect access in loop condition": 3,
+    "unresolved resource identity `_`": 1,
+    "arguments do not match resource contract for `_`": 1
+   }
+  },
+  {
+   "class": "null-pointer",
+   "position": "variadic-tail",
+   "casts": 194,
+   "kinds": {
+    "NullToPointer": 194
+   },
+   "leaves": 184,
+   "functions": 51,
+   "unknown_functions": 51,
+   "families": {
+    "unmodeled call, aggregate or indirect access in branch condition": 98,
+    "indirect memory access is outside the resource projection": 82,
+    "call to uncontracted function `_`": 3,
+    "braced initializer, expression, or declaration is not modeled": 1
+   }
+  },
+  {
+   "class": "punned-view",
+   "position": "call-actual",
+   "casts": 86,
+   "kinds": {
+    "NoOp": 14,
+    "BitCast": 72
+   },
+   "leaves": 169,
+   "functions": 75,
+   "unknown_functions": 75,
+   "families": {
+    "call to uncontracted function `_`": 98,
+    "indirect memory access is outside the resource projection": 66,
+    "unmodeled call, aggregate or indirect access in branch condition": 5
+   }
+  },
+  {
+   "class": "byte-view",
+   "position": "pointer-step",
+   "casts": 442,
+   "kinds": {
+    "BitCast": 442
+   },
+   "leaves": 157,
+   "functions": 49,
+   "unknown_functions": 49,
+   "families": {
+    "indirect memory access is outside the resource projection": 87,
+    "`_` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 38,
+    "braced initializer, expression, or declaration is not modeled": 19,
+    "call to uncontracted function `_`": 3,
+    "call has an unmodeled formal address or borrowed expression": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unresolved resource identity `_`": 1,
+    "unrecognized assignment destination": 1,
+    "C operator `_` requires type/operand analysis": 1,
+    "inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 1,
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "class": "typed-view",
+   "position": "assignment-value",
+   "casts": 203,
+   "kinds": {
+    "BitCast": 203
+   },
+   "leaves": 124,
+   "functions": 101,
+   "unknown_functions": 101,
+   "families": {
+    "unresolved resource identity `_`": 100,
+    "indirect memory access is outside the resource projection": 21,
+    "call to uncontracted function `_`": 2,
+    "C operator `_` requires type/operand analysis": 1
+   }
+  },
+  {
+   "class": "byte-view",
+   "position": "initializer",
+   "casts": 73,
+   "kinds": {
+    "BitCast": 73
+   },
+   "leaves": 114,
+   "functions": 52,
+   "unknown_functions": 52,
+   "families": {
+    "call to uncontracted function `_`": 41,
+    "indirect memory access is outside the resource projection": 40,
+    "unresolved resource identity `_`": 22,
+    "braced initializer, expression, or declaration is not modeled": 6,
+    "resource call with a formal embedded in an unmodeled expression": 3,
+    "unrecognized assignment destination": 1,
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "class": "typed-view",
+   "position": "statement",
+   "casts": 355,
+   "kinds": {
+    "BitCast": 355
+   },
+   "leaves": 108,
+   "functions": 31,
+   "unknown_functions": 31,
+   "families": {
+    "indirect memory access is outside the resource projection": 46,
+    "`_` is the Clang extension node OffsetOfExpr, which no resource contract or route models": 38,
+    "braced initializer, expression, or declaration is not modeled": 19,
+    "call to uncontracted function `_`": 3,
+    "unresolved resource identity `_`": 1,
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "class": "typed-view",
+   "position": "initializer",
+   "casts": 132,
+   "kinds": {
+    "BitCast": 132
+   },
+   "leaves": 102,
+   "functions": 63,
+   "unknown_functions": 63,
+   "families": {
+    "unresolved resource identity `_`": 56,
+    "unsupported assignment expression": 20,
+    "indirect memory access is outside the resource projection": 11,
+    "call to uncontracted function `_`": 8,
+    "unrecognized assignment destination": 4,
+    "unmodeled call, aggregate or indirect access in return expression": 3
+   }
+  },
+  {
+   "class": "byte-view",
+   "position": "assignment-value",
+   "casts": 96,
+   "kinds": {
+    "BitCast": 96
+   },
+   "leaves": 96,
+   "functions": 62,
+   "unknown_functions": 62,
+   "families": {
+    "indirect memory access is outside the resource projection": 62,
+    "unresolved resource identity `_`": 13,
+    "store through `_` without an out-parameter contract": 5,
+    "call to uncontracted function `_`": 5,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "unsupported assignment expression": 4,
+    "unrecognized assignment destination": 2,
+    "discarded owned result of resource API `_`": 1
+   }
+  },
+  {
+   "class": "byte-view",
+   "position": "statement",
+   "casts": 47,
+   "kinds": {
+    "BitCast": 47
+   },
+   "leaves": 92,
+   "functions": 33,
+   "unknown_functions": 33,
+   "families": {
+    "call to uncontracted function `_`": 41,
+    "indirect memory access is outside the resource projection": 38,
+    "braced initializer, expression, or declaration is not modeled": 6,
+    "resource call with a formal embedded in an unmodeled expression": 3,
+    "unresolved resource identity `_`": 2,
+    "unrecognized assignment destination": 1,
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "class": "qualifier",
+   "position": "assignment-value",
+   "casts": 88,
+   "kinds": {
+    "NoOp": 88
+   },
+   "leaves": 88,
+   "functions": 46,
+   "unknown_functions": 46,
+   "families": {
+    "indirect memory access is outside the resource projection": 44,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 22,
+    "call to uncontracted function `_`": 13,
+    "unresolved resource identity `_`": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 3
+   }
+  },
+  {
+   "class": "qualifier",
+   "position": "operand",
+   "casts": 100,
+   "kinds": {
+    "NoOp": 100
+   },
+   "leaves": 85,
+   "functions": 45,
+   "unknown_functions": 44,
+   "families": {
+    "braced initializer, expression, or declaration is not modeled": 31,
+    "unmodeled call, aggregate or indirect access in branch condition": 11,
+    "indirect memory access is outside the resource projection": 10,
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774": 9,
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775": 9,
+    "call to uncontracted function `_`": 7,
+    "unresolved resource identity `_`": 6,
+    "unsupported assignment expression": 1,
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "class": "typed-view",
+   "position": "call-actual",
+   "casts": 129,
+   "kinds": {
+    "BitCast": 129
+   },
+   "leaves": 83,
+   "functions": 71,
+   "unknown_functions": 71,
+   "families": {
+    "call to uncontracted function `_`": 54,
+    "indirect memory access is outside the resource projection": 23,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unresolved resource identity `_`": 1,
+    "resource call with a formal embedded in an unmodeled expression": 1,
+    "nested call `_` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "class": "function-object",
+   "position": "call-actual",
+   "casts": 35,
+   "kinds": {
+    "BitCast": 35
+   },
+   "leaves": 73,
+   "functions": 33,
+   "unknown_functions": 33,
+   "families": {
+    "call to uncontracted function `_`": 40,
+    "unmodeled call, aggregate or indirect access in branch condition": 24,
+    "indirect memory access is outside the resource projection": 9
+   }
+  },
+  {
+   "class": "qualifier",
+   "position": "call-actual",
+   "casts": 83,
+   "kinds": {
+    "NoOp": 83
+   },
+   "leaves": 69,
+   "functions": 51,
+   "unknown_functions": 51,
+   "families": {
+    "indirect memory access is outside the resource projection": 31,
+    "call to uncontracted function `_`": 25,
+    "unmodeled call, aggregate or indirect access in branch condition": 13
+   }
+  },
+  {
+   "class": "integer-to-pointer",
+   "position": "operand",
+   "casts": 67,
+   "kinds": {
+    "IntegralToPointer": 67
+   },
+   "leaves": 62,
+   "functions": 28,
+   "unknown_functions": 27,
+   "families": {
+    "unmodeled call, aggregate or indirect access in branch condition": 11,
+    "indirect memory access is outside the resource projection": 9,
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774": 9,
+    "live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775": 9,
+    "braced initializer, expression, or declaration is not modeled": 9,
+    "call to uncontracted function `_`": 7,
+    "unresolved resource identity `_`": 6,
+    "unsupported assignment expression": 1,
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "class": "null-pointer",
+   "position": "initializer",
+   "casts": 543,
+   "kinds": {
+    "NullToPointer": 543
+   },
+   "leaves": 53,
+   "functions": 28,
+   "unknown_functions": 26,
+   "families": {
+    "indirect memory access is outside the resource projection": 30,
+    "call to uncontracted function `_`": 12,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 4,
+    "local declaration may shadow a formal resource identity": 2,
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "class": "typed-view",
+   "position": "dereference",
+   "casts": 69,
+   "kinds": {
+    "BitCast": 69
+   },
+   "leaves": 42,
+   "functions": 23,
+   "unknown_functions": 23,
+   "families": {
+    "indirect memory access is outside the resource projection": 29,
+    "unrecognized assignment destination": 6,
+    "unmodeled call, aggregate or indirect access in return expression": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 3
+   }
+  },
+  {
+   "class": "byte-view",
+   "position": "operand",
+   "casts": 49,
+   "kinds": {
+    "BitCast": 49
+   },
+   "leaves": 38,
+   "functions": 13,
+   "unknown_functions": 13,
+   "families": {
+    "indirect memory access is outside the resource projection": 24,
+    "unsupported assignment expression": 5,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "braced initializer, expression, or declaration is not modeled": 3,
+    "call to uncontracted function `_`": 1,
+    "unrecognized assignment destination": 1
+   }
+  },
+  {
+   "class": "punned-view",
+   "position": "member-root",
+   "casts": 34,
+   "kinds": {
+    "BitCast": 34
+   },
+   "leaves": 30,
+   "functions": 10,
+   "unknown_functions": 10,
+   "families": {
+    "indirect memory access is outside the resource projection": 16,
+    "unmodeled call, aggregate or indirect access in branch condition": 8,
+    "unresolved resource identity `_`": 5,
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "class": "typed-view",
+   "position": "member-root",
+   "casts": 38,
+   "kinds": {
+    "BitCast": 38
+   },
+   "leaves": 24,
+   "functions": 12,
+   "unknown_functions": 12,
+   "families": {
+    "indirect memory access is outside the resource projection": 17,
+    "unresolved resource identity `_`": 5,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "class": "typed-view",
+   "position": "pointer-step",
+   "casts": 25,
+   "kinds": {
+    "BitCast": 25
+   },
+   "leaves": 24,
+   "functions": 20,
+   "unknown_functions": 20,
+   "families": {
+    "indirect memory access is outside the resource projection": 17,
+    "call to uncontracted function `_`": 5,
+    "unsupported assignment expression": 2
+   }
+  },
+  {
+   "class": "punned-view",
+   "position": "initializer",
+   "casts": 27,
+   "kinds": {
+    "NoOp": 6,
+    "BitCast": 21
+   },
+   "leaves": 20,
+   "functions": 17,
+   "unknown_functions": 17,
+   "families": {
+    "unresolved resource identity `_`": 12,
+    "unsupported assignment expression": 5,
+    "call to uncontracted function `_`": 2,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "class": "punned-view",
+   "position": "return",
+   "casts": 56,
+   "kinds": {
+    "BitCast": 34,
+    "NoOp": 22
+   },
+   "leaves": 18,
+   "functions": 17,
+   "unknown_functions": 17,
+   "families": {
+    "unmodeled call, aggregate or indirect access in return expression": 16,
+    "unresolved resource identity `_`": 1,
+    "nullable resource `_` used by a non-null contract": 1
+   }
+  },
+  {
+   "class": "null-pointer",
+   "position": "return",
+   "casts": 867,
+   "kinds": {
+    "NullToPointer": 867
+   },
+   "leaves": 17,
+   "functions": 12,
+   "unknown_functions": 10,
+   "families": {
+    "unmodeled call, aggregate or indirect access in return expression": 8,
+    "live obligation acquired at snappy.c:1705": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "live obligation acquired at mk_server/mk_net.c:247": 1
+   }
+  },
+  {
+   "class": "discard",
+   "position": "statement",
+   "casts": 227,
+   "kinds": {
+    "ToVoid": 227
+   },
+   "leaves": 16,
+   "functions": 13,
+   "unknown_functions": 13,
+   "families": {
+    "call to uncontracted function `_`": 8,
+    "indirect memory access is outside the resource projection": 7,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "class": "punned-view",
+   "position": "assignment-value",
+   "casts": 16,
+   "kinds": {
+    "BitCast": 16
+   },
+   "leaves": 15,
+   "functions": 11,
+   "unknown_functions": 11,
+   "families": {
+    "indirect memory access is outside the resource projection": 10,
+    "C operator `_` requires type/operand analysis": 3,
+    "unresolved resource identity `_`": 2
+   }
+  },
+  {
+   "class": "scalar",
+   "position": "return",
+   "casts": 259,
+   "kinds": {
+    "IntegralCast": 83,
+    "NoOp": 173,
+    "FloatingCast": 1,
+    "FloatingToIntegral": 2
+   },
+   "leaves": 14,
+   "functions": 10,
+   "unknown_functions": 10,
+   "families": {
+    "indirect memory access is outside the resource projection": 6,
+    "unresolved resource identity `_`": 4,
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in return expression": 2
+   }
+  },
+  {
+   "class": "pointer-to-integer",
+   "position": "assignment-value",
+   "casts": 15,
+   "kinds": {
+    "PointerToIntegral": 15
+   },
+   "leaves": 14,
+   "functions": 3,
+   "unknown_functions": 3,
+   "families": {
+    "indirect memory access is outside the resource projection": 13,
+    "inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 1
+   }
+  },
+  {
+   "class": "pointer-to-integer",
+   "position": "operand",
+   "casts": 26,
+   "kinds": {
+    "PointerToIntegral": 26
+   },
+   "leaves": 13,
+   "functions": 6,
+   "unknown_functions": 6,
+   "families": {
+    "unresolved resource identity `_`": 10,
+    "unmodeled call, aggregate or indirect access in return expression": 1,
+    "cast of a possibly tracked value to another carrier in return expression": 1,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "class": "byte-view",
+   "position": "return",
+   "casts": 11,
+   "kinds": {
+    "BitCast": 11
+   },
+   "leaves": 11,
+   "functions": 9,
+   "unknown_functions": 9,
+   "families": {
+    "unmodeled call, aggregate or indirect access in return expression": 3,
+    "call to uncontracted function `_`": 3,
+    "unresolved resource identity `_`": 3,
+    "nullable resource `_` used by a non-null contract": 1,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "class": "punned-view",
+   "position": "pointer-step",
+   "casts": 8,
+   "kinds": {
+    "BitCast": 8
+   },
+   "leaves": 8,
+   "functions": 6,
+   "unknown_functions": 6,
+   "families": {
+    "indirect memory access is outside the resource projection": 4,
+    "C operator `_` requires type/operand analysis": 3,
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "class": "unlisted",
+   "position": "operand",
+   "casts": 39,
+   "kinds": {
+    "IntegralCast": 21,
+    "BitCast": 18
+   },
+   "leaves": 6,
+   "functions": 5,
+   "unknown_functions": 5,
+   "families": {
+    "unresolved resource identity `_`": 6
+   }
+  },
+  {
+   "class": "qualifier",
+   "position": "initializer",
+   "casts": 7,
+   "kinds": {
+    "NoOp": 7
+   },
+   "leaves": 6,
+   "functions": 6,
+   "unknown_functions": 6,
+   "families": {
+    "unresolved resource identity `_`": 4,
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "class": "typed-view",
+   "position": "return",
+   "casts": 8,
+   "kinds": {
+    "BitCast": 7,
+    "NoOp": 1
+   },
+   "leaves": 6,
+   "functions": 5,
+   "unknown_functions": 5,
+   "families": {
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `_`": 1,
+    "unresolved resource identity `_`": 1,
+    "nullable resource `_` used by a non-null contract": 1
+   }
+  },
+  {
+   "class": "qualifier",
+   "position": "return",
+   "casts": 35,
+   "kinds": {
+    "NoOp": 35
+   },
+   "leaves": 6,
+   "functions": 6,
+   "unknown_functions": 6,
+   "families": {
+    "unmodeled call, aggregate or indirect access in return expression": 5,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "class": "punned-view",
+   "position": "operand",
+   "casts": 6,
+   "kinds": {
+    "BitCast": 6
+   },
+   "leaves": 6,
+   "functions": 5,
+   "unknown_functions": 5,
+   "families": {
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "indirect memory access is outside the resource projection": 1,
+    "call to `_` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)": 1,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "class": "byte-view",
+   "position": "variadic-tail",
+   "casts": 4,
+   "kinds": {
+    "BitCast": 4
+   },
+   "leaves": 5,
+   "functions": 4,
+   "unknown_functions": 4,
+   "families": {
+    "indirect memory access is outside the resource projection": 2,
+    "arguments beyond the declared parameters of `_` are outside the resource projection": 1,
+    "unresolved resource identity `_`": 1,
+    "nested call `_` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "class": "unlisted",
+   "position": "condition",
+   "casts": 4,
+   "kinds": {
+    "IntegralCast": 4
+   },
+   "leaves": 4,
+   "functions": 4,
+   "unknown_functions": 4,
+   "families": {
+    "unresolved resource identity `_`": 4
+   }
+  },
+  {
+   "class": "discard",
+   "position": "condition",
+   "casts": 8,
+   "kinds": {
+    "ToVoid": 8
+   },
+   "leaves": 4,
+   "functions": 2,
+   "unknown_functions": 2,
+   "families": {
+    "indirect memory access is outside the resource projection": 3,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "class": "integer-to-pointer",
+   "position": "return",
+   "casts": 6,
+   "kinds": {
+    "IntegralToPointer": 6
+   },
+   "leaves": 4,
+   "functions": 4,
+   "unknown_functions": 4,
+   "families": {
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in return expression": 1,
+    "cast of a possibly tracked value to another carrier in return expression": 1
+   }
+  },
+  {
+   "class": "byte-view",
+   "position": "dereference",
+   "casts": 5,
+   "kinds": {
+    "BitCast": 5
+   },
+   "leaves": 4,
+   "functions": 4,
+   "unknown_functions": 4,
+   "families": {
+    "indirect memory access is outside the resource projection": 3,
+    "unmodeled increment or decrement expression": 1
+   }
+  },
+  {
+   "class": "punned-view",
+   "position": "dereference",
+   "casts": 4,
+   "kinds": {
+    "BitCast": 4
+   },
+   "leaves": 4,
+   "functions": 2,
+   "unknown_functions": 2,
+   "families": {
+    "unrecognized assignment destination": 2,
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "class": "unlisted",
+   "position": "call-actual",
+   "casts": 15,
+   "kinds": {
+    "IntegralCast": 3,
+    "BitCast": 12
+   },
+   "leaves": 3,
+   "functions": 3,
+   "unknown_functions": 3,
+   "families": {
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "class": "unlisted",
+   "position": "assignment-value",
+   "casts": 11,
+   "kinds": {
+    "IntegralCast": 11
+   },
+   "leaves": 3,
+   "functions": 3,
+   "unknown_functions": 3,
+   "families": {
+    "unresolved resource identity `_`": 3
+   }
+  },
+  {
+   "class": "typed-view",
+   "position": "operand",
+   "casts": 4,
+   "kinds": {
+    "BitCast": 4
+   },
+   "leaves": 3,
+   "functions": 3,
+   "unknown_functions": 3,
+   "families": {
+    "unmodeled call, aggregate or indirect access in branch condition": 3
+   }
+  },
+  {
+   "class": "function-pointer",
+   "position": "call-actual",
+   "casts": 3,
+   "kinds": {
+    "BitCast": 3
+   },
+   "leaves": 3,
+   "functions": 3,
+   "unknown_functions": 3,
+   "families": {
+    "indirect memory access is outside the resource projection": 3
+   }
+  },
+  {
+   "class": "qualifier",
+   "position": "subscript-base",
+   "casts": 16,
+   "kinds": {
+    "NoOp": 16
+   },
+   "leaves": 2,
+   "functions": 1,
+   "unknown_functions": 1,
+   "families": {
+    "unrecognized assignment destination": 2
+   }
+  },
+  {
+   "class": "scalar",
+   "position": "pointer-step",
+   "casts": 3,
+   "kinds": {
+    "IntegralCast": 3
+   },
+   "leaves": 2,
+   "functions": 2,
+   "unknown_functions": 2,
+   "families": {
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "class": "qualifier",
+   "position": "dereference",
+   "casts": 2,
+   "kinds": {
+    "NoOp": 2
+   },
+   "leaves": 2,
+   "functions": 2,
+   "unknown_functions": 2,
+   "families": {
+    "unrecognized assignment destination": 1,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "class": "function-object",
+   "position": "assignment-value",
+   "casts": 2,
+   "kinds": {
+    "BitCast": 2
+   },
+   "leaves": 2,
+   "functions": 2,
+   "unknown_functions": 2,
+   "families": {
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "class": "pointer-to-integer",
+   "position": "variadic-tail",
+   "casts": 2,
+   "kinds": {
+    "PointerToIntegral": 2
+   },
+   "leaves": 2,
+   "functions": 1,
+   "unknown_functions": 1,
+   "families": {
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "class": "unlisted",
+   "position": "variadic-tail",
+   "casts": 6,
+   "kinds": {
+    "IntegralCast": 6
+   },
+   "leaves": 1,
+   "functions": 1,
+   "unknown_functions": 1,
+   "families": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "class": "integer-to-pointer",
+   "position": "initializer",
+   "casts": 1,
+   "kinds": {
+    "IntegralToPointer": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "unknown_functions": 1,
+   "families": {
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "class": "qualifier",
+   "position": "pointer-step",
+   "casts": 1,
+   "kinds": {
+    "NoOp": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "unknown_functions": 1,
+   "families": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "class": "typed-view",
+   "position": "subscript-base",
+   "casts": 1,
+   "kinds": {
+    "BitCast": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "unknown_functions": 1,
+   "families": {
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "class": "pointer-to-integer",
+   "position": "pointer-step",
+   "casts": 1,
+   "kinds": {
+    "PointerToIntegral": 1
+   },
+   "leaves": 1,
+   "functions": 1,
+   "unknown_functions": 1,
+   "families": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "class": "function-object",
+   "position": "operand",
+   "casts": 7,
+   "kinds": {
+    "BitCast": 7
+   },
+   "leaves": 0,
+   "functions": 0,
+   "unknown_functions": 0,
+   "families": {}
+  },
+  {
+   "class": "unlisted",
+   "position": "return",
+   "casts": 7,
+   "kinds": {
+    "IntegralCast": 1,
+    "BitCast": 6
+   },
+   "leaves": 0,
+   "functions": 0,
+   "unknown_functions": 0,
+   "families": {}
+  },
+  {
+   "class": "function-pointer",
+   "position": "return",
+   "casts": 2,
+   "kinds": {
+    "BitCast": 2
+   },
+   "leaves": 0,
+   "functions": 0,
+   "unknown_functions": 0,
+   "families": {}
+  },
+  {
+   "class": "unlisted",
+   "position": "initializer",
+   "casts": 12,
+   "kinds": {
+    "BitCast": 6,
+    "IntegralCast": 6
+   },
+   "leaves": 0,
+   "functions": 0,
+   "unknown_functions": 0,
+   "families": {}
+  }
+ ],
+ "sole": [
+  "cJSON.c::buffer_skip_whitespace",
+  "cJSON.c::cJSON_AddItemReferenceToObject",
+  "cJSON.c::cJSON_AddItemToObject",
+  "cJSON.c::cJSON_AddItemToObjectCS",
+  "cJSON.c::cJSON_DetachItemFromArray",
+  "cJSON.c::cJSON_GetArrayItem",
+  "cJSON.c::cJSON_GetArraySize",
+  "cJSON.c::cJSON_GetErrorPtr",
+  "cJSON.c::cJSON_GetNumberValue",
+  "cJSON.c::cJSON_GetObjectItem",
+  "cJSON.c::cJSON_GetObjectItemCaseSensitive",
+  "cJSON.c::cJSON_New_Item",
+  "cJSON.c::cJSON_Print",
+  "cJSON.c::cJSON_PrintUnformatted",
+  "cJSON.c::cJSON_ReplaceItemInArray",
+  "cJSON.c::cJSON_ReplaceItemInObject",
+  "cJSON.c::cJSON_ReplaceItemInObjectCaseSensitive",
+  "cJSON.c::print_string",
+  "cJSON.c::skip_utf8_bom",
+  "cio_file.c::cio_file_is_up",
+  "cmt_cat.c::append_context",
+  "cmt_decode_msgpack.c::create_counter_instance",
+  "cmt_decode_msgpack.c::create_exp_histogram_instance",
+  "cmt_decode_msgpack.c::create_gauge_instance",
+  "cmt_decode_msgpack.c::create_histogram_instance",
+  "cmt_decode_msgpack.c::create_summary_instance",
+  "cmt_decode_msgpack.c::create_untyped_instance",
+  "cmt_decode_msgpack.c::unpack_context",
+  "cmt_decode_msgpack.c::unpack_metric_histogram",
+  "cmt_decode_msgpack.c::unpack_metric_summary",
+  "cmt_encode_influx.c::line_protocol_escape",
+  "cmt_encode_opentelemetry.c::compute_flat_scope_index",
+  "cmt_encode_opentelemetry.c::get_context_arena",
+  "cmt_map.c::metric_labels_match",
+  "cmt_metric.c::cmt_metric_get_value_type",
+  "cmt_metric.c::cmt_metric_sub",
+  "ctr_decode_msgpack.c::unpack_context",
+  "lz4.c::LZ4_NbCommonBytes",
+  "lz4.c::LZ4_clearHash",
+  "lz4.c::LZ4_createStreamDecode",
+  "lz4.c::LZ4_decompress_fast",
+  "lz4.c::LZ4_decompress_fast_extDict",
+  "lz4.c::LZ4_decompress_fast_usingDict",
+  "lz4.c::LZ4_decompress_fast_withPrefix64k",
+  "lz4.c::LZ4_decompress_safe",
+  "lz4.c::LZ4_decompress_safe_doubleDict",
+  "lz4.c::LZ4_decompress_safe_forceExtDict",
+  "lz4.c::LZ4_decompress_safe_partial",
+  "lz4.c::LZ4_decompress_safe_partial_forceExtDict",
+  "lz4.c::LZ4_decompress_safe_partial_withPrefix64k",
+  "lz4.c::LZ4_decompress_safe_partial_withSmallPrefix",
+  "lz4.c::LZ4_decompress_safe_withPrefix64k",
+  "lz4.c::LZ4_decompress_safe_withSmallPrefix",
+  "lz4.c::LZ4_getPositionOnHash",
+  "lz4.c::LZ4_initStream",
+  "lz4.c::LZ4_putPositionOnHash",
+  "lz4.c::LZ4_slideInputBuffer",
+  "lz4frame.c::LZ4F_compressBegin",
+  "lz4frame.c::LZ4F_compressBlockHC_continue",
+  "lz4frame.c::LZ4F_compressBlock_continue",
+  "lz4frame.c::LZ4F_initStream",
+  "lz4frame.c::LZ4F_localSaveDict",
+  "lz4frame.c::LZ4F_readLE32",
+  "lz4frame.c::LZ4F_readLE64",
+  "lz4frame.c::LZ4F_returnErrorCode",
+  "lz4frame.c::LZ4F_writeLE32",
+  "lz4frame.c::LZ4F_writeLE64",
+  "lz4hc.c::LZ4HC_countBack",
+  "lz4hc.c::LZ4_attach_HC_dictionary",
+  "lz4hc.c::LZ4_compressHC2_continue",
+  "lz4hc.c::LZ4_compressHC2_limitedOutput_continue",
+  "lz4hc.c::LZ4_createStreamHC",
+  "mk_core/mk_event.c::mk_event_timeout_disable",
+  "mk_core/mk_iov.c::mk_iov_consume",
+  "mk_core/mk_rconf.c::mk_rconf_section_get_key",
+  "mk_server/mk_http_thread.c::mk_http_thread_initialize_tls_once",
+  "mk_server/mk_plugin.c::mk_handler_param_get",
+  "mk_server/mk_scheduler.c::mk_sched_set_request_list",
+  "mk_server/mk_utils.c::mk_utils_gmt2utime",
+  "nanopb/pb_common.c::pb_field_iter_begin_extension_const",
+  "nanopb/pb_common.c::pb_field_iter_next",
+  "nanopb/pb_decode.c::buf_read",
+  "nanopb/pb_decode.c::pb_dec_bool",
+  "nanopb/pb_decode.c::pb_decode_varint32",
+  "nanopb/pb_encode.c::pb_enc_fixed_length_bytes",
+  "nanopb/pb_encode.c::pb_encode_fixed32",
+  "nanopb/pb_encode.c::pb_encode_fixed64",
+  "rdbuf.c::rd_slice_peeker",
+  "rddl.c::rd_dl_close",
+  "rdkafka.c::rd_kafka_log_syslog",
+  "rdkafka.c::rd_kafka_poll",
+  "rdkafka.c::rd_kafka_queue_poll",
+  "rdkafka.c::rd_kafka_queue_poll_callback",
+  "rdkafka.c::rd_kafka_rebootstrap_tmr_start_maybe",
+  "rdkafka.c::rd_kafka_share_ack_commit_cb_register_op",
+  "rdkafka.c::rd_kafka_share_commit_async_fanout_op",
+  "rdkafka.c::rd_kafka_simple_consumer_add",
+  "rdkafka_admin.c::rd_kafka_AclBindingFilter_copy",
+  "rdkafka_admin.c::rd_kafka_AclBindingFilter_new",
+  "rdkafka_admin.c::rd_kafka_AclBinding_copy",
+  "rdkafka_admin.c::rd_kafka_AclBinding_new",
+  "rdkafka_admin.c::rd_kafka_AdminOptions_set_opaque",
+  "rdkafka_admin.c::rd_kafka_AlterConfigs_result_resources",
+  "rdkafka_admin.c::rd_kafka_AlterConsumerGroupOffsets_result_groups",
+  "rdkafka_admin.c::rd_kafka_AlterUserScramCredentials_result_responses",
+  "rdkafka_admin.c::rd_kafka_ConfigEntry_free",
+  "rdkafka_admin.c::rd_kafka_ConfigEntry_list_copy",
+  "rdkafka_admin.c::rd_kafka_ConfigEntry_synonyms",
+  "rdkafka_admin.c::rd_kafka_ConfigResource_configs",
+  "rdkafka_admin.c::rd_kafka_ConfigResource_free",
+  "rdkafka_admin.c::rd_kafka_ConsumerGroupDescription_member",
+  "rdkafka_admin.c::rd_kafka_ConsumerGroupDescription_new_error",
+  "rdkafka_admin.c::rd_kafka_CreateAcls_result_acls",
+  "rdkafka_admin.c::rd_kafka_CreatePartitions_result_topics",
+  "rdkafka_admin.c::rd_kafka_CreateTopics_result_topics",
+  "rdkafka_admin.c::rd_kafka_DeleteAcls_result_response_free",
+  "rdkafka_admin.c::rd_kafka_DeleteAcls_result_responses",
+  "rdkafka_admin.c::rd_kafka_DeleteConsumerGroupOffsets_result_groups",
+  "rdkafka_admin.c::rd_kafka_DeleteGroups_result_groups",
+  "rdkafka_admin.c::rd_kafka_DeleteTopics_result_topics",
+  "rdkafka_admin.c::rd_kafka_DescribeAcls_result_acls",
+  "rdkafka_admin.c::rd_kafka_DescribeConfigs_result_resources",
+  "rdkafka_admin.c::rd_kafka_DescribeUserScramCredentials_result_descriptions",
+  "rdkafka_admin.c::rd_kafka_ElectLeadersResult_partitions",
+  "rdkafka_admin.c::rd_kafka_ElectLeaders_result_result",
+  "rdkafka_admin.c::rd_kafka_IncrementalAlterConfigs_result_resources",
+  "rdkafka_admin.c::rd_kafka_ListConsumerGroupOffsets_result_groups",
+  "rdkafka_admin.c::rd_kafka_ListOffsets_result_infos",
+  "rdkafka_admin.c::rd_kafka_MemberDescription_copy",
+  "rdkafka_admin.c::rd_kafka_TopicDescription_new_error",
+  "rdkafka_admin.c::rd_kafka_admin_MetadataRequest",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_acl_bindings",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_acl_results",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_delete_acl_result_responses",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_groups",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_resources",
+  "rdkafka_admin.c::rd_kafka_admin_result_ret_topics",
+  "rdkafka_assignor.c::rd_kafka_assignor_find",
+  "rdkafka_assignor.c::rd_kafka_assignor_free",
+  "rdkafka_assignor.c::rd_kafka_assignor_get_metadata_with_empty_userdata",
+  "rdkafka_assignor.c::rd_kafka_assignor_topic_free",
+  "rdkafka_assignor.c::rtrim",
+  "rdkafka_assignor.c::ut_init_member",
+  "rdkafka_assignor.c::ut_populate_internal_broker_metadata",
+  "rdkafka_aux.c::rd_kafka_Node_free",
+  "rdkafka_aux.c::rd_kafka_acl_result_free",
+  "rdkafka_aux.c::rd_kafka_group_result_copy",
+  "rdkafka_aux.c::rd_kafka_group_result_free",
+  "rdkafka_aux.c::rd_kafka_topic_partition_result_copy_opaque",
+  "rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least",
+  "rdkafka_broker.c::rd_kafka_broker_ApiVersion_at_least_no_lock",
+  "rdkafka_broker.c::rd_kafka_broker_update_reconnect_backoff",
+  "rdkafka_cgrp.c::rd_kafka_cgrp_heartbeat",
+  "rdkafka_cgrp.c::rd_kafka_consumer_group_metadata_new",
+  "rdkafka_conf.c::rd_kafka_conf_enable_sasl_queue",
+  "rdkafka_conf.c::rd_kafka_conf_set_background_event_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_closesocket_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_connect_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_consume_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_dr_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_dr_msg_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_engine_callback_data",
+  "rdkafka_conf.c::rd_kafka_conf_set_error_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_events",
+  "rdkafka_conf.c::rd_kafka_conf_set_log_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_oauthbearer_token_refresh_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_offset_commit_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_opaque",
+  "rdkafka_conf.c::rd_kafka_conf_set_open_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_rebalance_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_resolve_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_socket_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_ssl_cert_verify_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_stats_cb",
+  "rdkafka_conf.c::rd_kafka_conf_set_throttle_cb",
+  "rdkafka_conf.c::rd_kafka_conf_validate_broker_version",
+  "rdkafka_conf.c::rd_kafka_conf_validate_single",
+  "rdkafka_conf.c::rd_kafka_topic_conf_set_msg_order_cmp",
+  "rdkafka_conf.c::rd_kafka_topic_conf_set_opaque",
+  "rdkafka_conf.c::rd_kafka_topic_conf_set_partitioner_cb",
+  "rdkafka_feature.c::rd_kafka_ApiVersion_check",
+  "rdkafka_idempotence.c::rd_kafka_idemp_drain_toppar",
+  "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_conf_destroy",
+  "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_conf_dup",
+  "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_conf_set",
+  "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_new",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_acknowledgement",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_broker_state_change",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_commit",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_consume",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_destroy",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_request_sent",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_response_received",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_send",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_thread_exit",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_add_on_thread_start",
+  "rdkafka_interceptor.c::rd_kafka_interceptor_failed",
+  "rdkafka_metadata.c::rd_kafka_metadata_log",
+  "rdkafka_metadata.c::rd_kafka_metadata_refresh_brokers",
+  "rdkafka_metadata.c::rd_kafka_parse_Metadata",
+  "rdkafka_metadata.c::rd_kafka_parse_Metadata_admin",
+  "rdkafka_mock.c::rd_kafka_mock_cluster_io_clear_events",
+  "rdkafka_mock.c::rd_kafka_mock_cluster_io_set_event",
+  "rdkafka_mock.c::rd_kafka_mock_cluster_io_set_events",
+  "rdkafka_mock.c::rd_kafka_mock_error_stack_find",
+  "rdkafka_mock.c::rd_kafka_mock_partition_find",
+  "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_classic_set_state",
+  "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_member_leave_static",
+  "rdkafka_mock_cgrp.c::validate_subscription",
+  "rdkafka_mock_handlers.c::rd_kafka_mock_msgset_est_record_size",
+  "rdkafka_msg.c::rd_kafka_msgq_dump",
+  "rdkafka_msgset_reader.c::rd_kafka_aborted_txns_get_offset",
+  "rdkafka_offset.c::rd_kafka_offset_file_sync",
+  "rdkafka_op.c::rd_kafka_op2str",
+  "rdkafka_partition.c::rd_kafka_topic_partition_list_add",
+  "rdkafka_partition.c::rd_kafka_topic_partition_list_destroy_free",
+  "rdkafka_partition.c::rd_kafka_topic_partition_list_remove_regexes",
+  "rdkafka_partition.c::rd_kafka_toppar_list_copy",
+  "rdkafka_partition.c::rd_kafka_toppar_pause",
+  "rdkafka_partition.c::rd_kafka_toppar_reset_base_msgid",
+  "rdkafka_partition.c::rd_kafka_toppar_resume",
+  "rdkafka_pattern.c::rd_kafka_pattern_add",
+  "rdkafka_plugin.c::rd_kafka_plugins_conf_set",
+  "rdkafka_queue.c::rd_kafka_q_pop",
+  "rdkafka_queue.c::rd_kafka_queue_forward",
+  "rdkafka_queue.c::rd_kafka_queue_length",
+  "rdkafka_range_assignor.c::rd_kafka_range_assignor_init",
+  "rdkafka_range_assignor.c::setupRackAwareAssignment",
+  "rdkafka_request.c::rd_kafka_MetadataRequest",
+  "rdkafka_request.c::rd_kafka_MetadataRequest_resp_cb",
+  "rdkafka_request.c::rd_kafka_buf_read_CurrentLeader",
+  "rdkafka_roundrobin_assignor.c::rd_kafka_roundrobin_assignor_init",
+  "rdkafka_sasl_oauthbearer_oidc.c::rd_kafka_oidc_assertion_get_algo_label",
+  "rdkafka_sasl_scram.c::rd_kafka_sasl_scram_H",
+  "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batch_entry_copy_void",
+  "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batch_entry_destroy_free",
+  "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batches_copy_void",
+  "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batches_destroy_free",
+  "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batches_new_empty",
+  "rdkafka_sticky_assignor.c::PartitionMovements_init",
+  "rdkafka_sticky_assignor.c::rd_kafka_partition_internal_find_rack",
+  "rdkafka_sticky_assignor.c::rd_kafka_sticky_assignor_init",
+  "rdkafka_sticky_assignor.c::setupRackAwareAssignment",
+  "rdkafka_telemetry_decode.c::unit_test_telemetry_decode_error",
+  "rdkafka_telemetry_encode.c::calculate_broker_avg_rtt",
+  "rdkafka_telemetry_encode.c::calculate_consumer_commit_latency_avg",
+  "rdkafka_telemetry_encode.c::calculate_consumer_fetch_latency_avg",
+  "rdkafka_telemetry_encode.c::calculate_consumer_fetch_latency_max",
+  "rdkafka_telemetry_encode.c::calculate_consumer_poll_idle_ratio_avg",
+  "rdkafka_telemetry_encode.c::calculate_consumer_rebalance_latency_avg",
+  "rdkafka_telemetry_encode.c::calculate_produce_latency_avg",
+  "rdkafka_telemetry_encode.c::calculate_produce_latency_max",
+  "rdkafka_telemetry_encode.c::calculate_queue_time_avg",
+  "rdkafka_telemetry_encode.c::calculate_queue_time_max",
+  "rdkafka_telemetry_encode.c::calculate_share_consumer_poll_idle_ratio_avg",
+  "rdkafka_telemetry_encode.c::calculate_share_fetch_latency_avg",
+  "rdkafka_telemetry_encode.c::calculate_share_fetch_latency_max",
+  "rdkafka_telemetry_encode.c::calculate_share_fetch_size_avg",
+  "rdkafka_telemetry_encode.c::calculate_share_fetch_size_max",
+  "rdkafka_telemetry_encode.c::calculate_share_time_between_poll_avg",
+  "rdkafka_telemetry_encode.c::calculate_throttle_avg",
+  "rdkafka_telemetry_encode.c::calculate_throttle_max",
+  "rdkafka_telemetry_encode.c::get_member_id",
+  "rdkafka_timer.c::rd_kafka_timer_unschedule",
+  "rdkafka_transport.c::rd_kafka_transport_request_sent",
+  "rdkafka_txnmgr.c::rd_kafka_txn_state_transition_is_valid",
+  "rdlist.c::rd_list_copy_preallocated",
+  "rdlist.c::rd_list_destroy_free",
+  "rdlist.c::rd_list_elem",
+  "rdlist.c::rd_list_get_int32",
+  "rdlist.c::rd_list_set_int32",
+  "rdmap.c::rd_map_get",
+  "rdstring.c::rd_strcmp3",
+  "rdunittest_fetcher.c::ut_create_share_fetch_response_rko",
+  "rdunittest_fetcher.c::ut_op_destroy_free",
+  "rdunittest_msgset_errors.c::ut_write_msgset_v2_header",
+  "rdxxhash.c::XXH32_canonicalFromHash",
+  "rdxxhash.c::XXH64_canonicalFromHash",
+  "rdxxhash.c::XXH64_digest_endian",
+  "rdxxhash.c::XXH_readLE32_align",
+  "rdxxhash.c::XXH_readLE64_align",
+  "snappy.c::rd_kafka_snappy_uncompressed_length",
+  "snappy.c::unaligned_copy64",
+  "tinycthread_extra.c::rwlock_init",
+  "tinycthread_extra.c::thrd_current_id"
+ ]
+}

@@ -88,3 +88,128 @@ fn callee_arity_reads_the_last_parameter_list() {
     assert_eq!(callee_arity("void (*)(void)"), Some((0, false)));
     assert_eq!(callee_arity("int (*)(int (*)(void), int)"), Some((2, false)));
 }
+
+// ---------------------------------------------------------------------------
+// The binding to `proof/QCore/CastSemantics.lean`.
+// ---------------------------------------------------------------------------
+
+const LEAN: &str = include_str!("../../../../proof/QCore/CastSemantics.lean");
+
+/// The rows of the Lean list starting `start` and ending at `\n]`.
+fn lean_rows(start: &str) -> Vec<String> {
+    let body = LEAN.split(start).nth(1).expect(start);
+    body[..body.find("\n]").expect("list end")]
+        .lines()
+        .map(str::trim)
+        .filter(|line| line.starts_with('('))
+        .map(|line| line.trim_end_matches(',').to_owned())
+        .collect()
+}
+
+/// A kebab-case class name as its Lean constructor (`byte-view` → `byteView`).
+fn camel(name: &str) -> String {
+    let mut out = String::new();
+    let mut upper = false;
+    for character in name.chars() {
+        if character == '-' {
+            upper = true;
+        } else if upper {
+            out.extend(character.to_uppercase());
+            upper = false;
+        } else {
+            out.push(character);
+        }
+    }
+    out
+}
+
+fn lean_identity(identity: Identity) -> &'static str {
+    match identity {
+        Identity::Data => ".data",
+        Identity::Preserved => ".preserved",
+        Identity::Lost => ".lost",
+        Identity::Absent => ".absent",
+        Identity::NoValue => ".noValue",
+        Identity::Refused => ".refused",
+    }
+}
+
+fn lean_access(access: Access) -> &'static str {
+    match access {
+        Access::NotPointer => ".notPointer",
+        Access::Same => ".same",
+        Access::Character => ".character",
+        Access::Opaque => ".opaque",
+        Access::EffectiveType => ".effectiveType",
+        Access::Punned => ".punned",
+        Access::Untracked => ".untracked",
+        Access::Null => ".null",
+        Access::Callee => ".callee",
+        Access::Refused => ".refused",
+    }
+}
+
+/// `conversionTable` = `CONVERSION_TABLE`, row for row.
+#[test]
+fn lean_conversion_table_matches_the_rust_table() {
+    let rows = lean_rows(
+        "def conversionTable : List (ConvClass × List String × Identity × Access) := [",
+    );
+    assert_eq!(rows.len(), CONVERSION_TABLE.len());
+    for (row, rust) in rows.iter().zip(CONVERSION_TABLE) {
+        let kinds = rust
+            .kinds
+            .iter()
+            .map(|kind| format!("\"{kind}\""))
+            .collect::<Vec<_>>()
+            .join(", ");
+        let expected = format!(
+            "(.{}, [{kinds}], {}, {})",
+            camel(rust.class.name()),
+            lean_identity(rust.identity),
+            lean_access(rust.access)
+        );
+        assert_eq!(row, &expected);
+    }
+}
+
+fn lean_pointee(pointee: &Pointee) -> String {
+    match pointee {
+        Pointee::Void => ".void".into(),
+        Pointee::Character(spelling) => format!("(.character \"{spelling}\")"),
+        Pointee::Function => ".function".into(),
+        Pointee::Object(key) => format!("(.object \"{key}\")"),
+    }
+}
+
+fn lean_type(text: &str) -> String {
+    let (class, qualifiers) = type_class(text);
+    match class {
+        TypeClass::Scalar => ".scalar".into(),
+        TypeClass::Void => ".void".into(),
+        TypeClass::Other => ".other".into(),
+        TypeClass::Pointer(pointee) => {
+            format!(".pointer {} {}", lean_pointee(&pointee), qualifiers.atomic)
+        }
+    }
+}
+
+/// `classifyVectors` = `CLASSIFY_VECTORS`, each type text rendered as the Rust
+/// reader classifies it; Lean proves its `classify` agrees on every row
+/// (`classify_vectors_hold`), so the two classifiers agree on the vectors.
+#[test]
+fn lean_classify_vectors_are_the_rust_vectors() {
+    let rows = lean_rows(
+        "def classifyVectors : List (String × TypeClass × TypeClass × ConvClass) := [",
+    );
+    assert_eq!(rows.len(), CLASSIFY_VECTORS.len());
+    for (row, (kind, from, to, class)) in rows.iter().zip(CLASSIFY_VECTORS) {
+        let expected = format!(
+            "(\"{kind}\", {}, {}, .{})",
+            lean_type(from),
+            lean_type(to),
+            camel(class)
+        );
+        assert_eq!(row, &expected);
+    }
+}

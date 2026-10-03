@@ -306,6 +306,7 @@ import QCore.FfiStructImport
 import QCore.UsableRecords
 import QCore.TaskRecordCaptures
 import QCore.CastRepresentation
+import QCore.CastSemantics
 import QCore.Closures
 import QCore.FloatTypes
 import QCore.Ieee754
