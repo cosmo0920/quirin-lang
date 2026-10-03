@@ -1,0 +1,1128 @@
+[
+ {
+  "callee": "rd_kafka_interceptor_method_add",
+  "alone": 14,
+  "touched": 14,
+  "leaves": 14,
+  "units": [
+   "rdkafka_interceptor.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_interceptor.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 2,
+     "braced initializer, expression, or declaration is not modeled": 1,
+     "unmodeled call, aggregate or indirect access in branch condition": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_avg_add",
+  "alone": 12,
+  "touched": 15,
+  "leaves": 34,
+  "units": [
+   "rdkafka.c",
+   "rdkafka_cgrp.c",
+   "rdkafka_telemetry_decode.c"
+  ],
+  "kind": "header-inline",
+  "homes": [
+   {
+    "header": "lib/librdkafka-2.15.0/src/rdavg.h:77"
+   }
+  ]
+ },
+ {
+  "callee": "cmt_atomic_load",
+  "alone": 12,
+  "touched": 13,
+  "leaves": 23,
+  "units": [
+   "cmt_cat.c",
+   "cmt_metric.c",
+   "cmt_metric_histogram.c",
+   "cmt_summary.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "cmt_atomic_clang.c",
+    "status": "Safe",
+    "families": {}
+   }
+  ]
+ },
+ {
+  "callee": "cmt_atomic_store",
+  "alone": 10,
+  "touched": 18,
+  "leaves": 37,
+  "units": [
+   "cmt_cat.c",
+   "cmt_map.c",
+   "cmt_metric.c",
+   "cmt_metric_histogram.c",
+   "cmt_summary.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "cmt_atomic_clang.c",
+    "status": "Safe",
+    "families": {}
+   }
+  ]
+ },
+ {
+  "callee": "rd_atomic64_get",
+  "alone": 8,
+  "touched": 10,
+  "leaves": 10,
+  "units": [
+   "rdkafka.c",
+   "rdkafka_broker.c",
+   "rdkafka_telemetry_encode.c"
+  ],
+  "kind": "header-inline",
+  "homes": [
+   {
+    "header": "lib/librdkafka-2.15.0/src/rdatomic.h:190"
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_log0",
+  "alone": 5,
+  "touched": 24,
+  "leaves": 26,
+  "units": [
+   "rdkafka.c",
+   "rdkafka_admin.c",
+   "rdkafka_assignment.c",
+   "rdkafka_cgrp.c",
+   "rdkafka_idempotence.c",
+   "rdkafka_interceptor.c",
+   "rdkafka_mock.c",
+   "rdkafka_mock_cgrp.c",
+   "rdkafka_mock_sharegrp.c",
+   "rdkafka_offset.c",
+   "rdkafka_partition.c",
+   "rdkafka_topic.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdkafka.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_timer_start0",
+  "alone": 5,
+  "touched": 7,
+  "leaves": 7,
+  "units": [
+   "rdkafka.c",
+   "rdkafka_cgrp.c",
+   "rdkafka_idempotence.c",
+   "rdkafka_mock_cgrp.c",
+   "rdkafka_sasl_cyrus.c",
+   "rdkafka_txnmgr.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_timer.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 2,
+     "unresolved resource identity `_`": 2,
+     "indirect memory access is outside the resource projection": 2
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_confval_set_type",
+  "alone": 5,
+  "touched": 5,
+  "leaves": 5,
+  "units": [
+   "rdkafka_admin.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_conf.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 6,
+     "unmodeled call, aggregate or indirect access in branch condition": 3,
+     "unresolved resource identity `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "ctr_errno_print",
+  "alone": 4,
+  "touched": 6,
+  "leaves": 6,
+  "units": [
+   "ctr_decode_opentelemetry.c",
+   "ctr_encode_opentelemetry.c",
+   "ctr_scope.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "ctr_log.c",
+    "status": "Safe",
+    "families": {}
+   }
+  ]
+ },
+ {
+  "callee": "rd_list_add",
+  "alone": 3,
+  "touched": 9,
+  "leaves": 9,
+  "units": [
+   "rdkafka_admin.c",
+   "rdkafka_broker.c",
+   "rdkafka_metadata_cache.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "rdlist.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 1,
+     "unresolved resource identity `_`": 1,
+     "unrecognized assignment destination": 1,
+     "unmodeled call, aggregate or indirect access in return expression": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_atomic32_add",
+  "alone": 3,
+  "touched": 5,
+  "leaves": 5,
+  "units": [
+   "rdkafka.c",
+   "rdkafka_broker.c",
+   "rdkafka_cert.c",
+   "rdkafka_idempotence.c",
+   "rdkafka_partition.c"
+  ],
+  "kind": "header-inline",
+  "homes": [
+   {
+    "header": "lib/librdkafka-2.15.0/src/rdatomic.h:56"
+   }
+  ]
+ },
+ {
+  "callee": "LZ4F_free",
+  "alone": 3,
+  "touched": 3,
+  "leaves": 10,
+  "units": [
+   "lz4frame.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "lz4frame.c",
+    "status": "Unknown",
+    "families": {
+     "unmodeled call, aggregate or indirect access in branch condition": 1,
+     "indirect memory access is outside the resource projection": 1,
+     "unresolved resource identity `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_atomic64_add",
+  "alone": 3,
+  "touched": 3,
+  "leaves": 9,
+  "units": [
+   "rdkafka_telemetry_decode.c"
+  ],
+  "kind": "header-inline",
+  "homes": [
+   {
+    "header": "lib/librdkafka-2.15.0/src/rdatomic.h:145"
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_queue_new0",
+  "alone": 3,
+  "touched": 3,
+  "leaves": 3,
+  "units": [
+   "rdkafka_queue.c",
+   "rdkafka_sasl.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_queue.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 2,
+     "unresolved resource identity `_`": 1,
+     "nullable resource `_` used by a non-null contract": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_list_clear",
+  "alone": 3,
+  "touched": 3,
+  "leaves": 3,
+  "units": [
+   "rdkafka_mock.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "rdlist.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_list_destroy",
+  "alone": 2,
+  "touched": 6,
+  "leaves": 20,
+  "units": [
+   "rdkafka_admin.c",
+   "rdkafka_assignor.c",
+   "rdkafka_interceptor.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "rdlist.c",
+    "status": "Unknown",
+    "families": {
+     "unresolved resource identity `_`": 2,
+     "call to uncontracted function `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "cio_errno_print",
+  "alone": 2,
+  "touched": 5,
+  "leaves": 7,
+  "units": [
+   "cio_file_unix.c",
+   "cio_stream.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "cio_log.c",
+    "status": "Safe",
+    "families": {}
+   }
+  ]
+ },
+ {
+  "callee": "ctr_attributes_set_bool",
+  "alone": 2,
+  "touched": 3,
+  "leaves": 3,
+  "units": [
+   "ctr_decode_opentelemetry.c",
+   "ctr_span.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "ctr_attributes.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "ctr_attributes_set_double",
+  "alone": 2,
+  "touched": 3,
+  "leaves": 3,
+  "units": [
+   "ctr_decode_opentelemetry.c",
+   "ctr_span.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "ctr_attributes.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "ctr_attributes_set_int64",
+  "alone": 2,
+  "touched": 3,
+  "leaves": 3,
+  "units": [
+   "ctr_decode_opentelemetry.c",
+   "ctr_span.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "ctr_attributes.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "ctr_attributes_set_kvlist",
+  "alone": 2,
+  "touched": 3,
+  "leaves": 3,
+  "units": [
+   "ctr_decode_opentelemetry.c",
+   "ctr_span.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "ctr_attributes.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "ctr_attributes_set_string",
+  "alone": 2,
+  "touched": 3,
+  "leaves": 3,
+  "units": [
+   "ctr_decode_opentelemetry.c",
+   "ctr_span.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "ctr_attributes.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_q_fwd_set0",
+  "alone": 2,
+  "touched": 3,
+  "leaves": 3,
+  "units": [
+   "rdkafka_partition.c",
+   "rdkafka_queue.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_queue.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 2,
+     "call to uncontracted function `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_list_elem",
+  "alone": 2,
+  "touched": 3,
+  "leaves": 3,
+  "units": [
+   "rdkafka_admin.c",
+   "rdkafka_msgset_reader.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "rdlist.c",
+    "status": "Unknown",
+    "families": {
+     "unmodeled call, aggregate or indirect access in return expression": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "LZ4HC_compress_generic",
+  "alone": 2,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "lz4hc.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "lz4hc.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 2,
+     "unresolved resource identity `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "cfl_kvlist_count",
+  "alone": 2,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "ctr_attributes.c",
+   "ctr_encode_opentelemetry.c"
+  ],
+  "kind": "external",
+  "homes": []
+ },
+ {
+  "callee": "cnd_timedwait_ms",
+  "alone": 2,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "rdkafka_broker.c",
+   "rdkafka_metadata_cache.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "tinycthread_extra.c",
+    "status": "Safe",
+    "families": {}
+   }
+  ]
+ },
+ {
+  "callee": "ctr_attributes_set_array",
+  "alone": 2,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "ctr_span.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "ctr_attributes.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "mk_header_prepare",
+  "alone": 2,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "mk_server/mk_lib.c",
+   "mk_server/mk_plugin.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "mk_server/mk_header.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 37,
+     "unresolved resource identity `_`": 14,
+     "call to uncontracted function `_`": 5
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_admin_add_config0",
+  "alone": 2,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "rdkafka_admin.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_admin.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 1,
+     "call to uncontracted function `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_broker_session_update_toppars_list",
+  "alone": 2,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "rdkafka_fetcher.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_fetcher.c",
+    "status": "Unknown",
+    "families": {
+     "unresolved resource identity `_`": 5,
+     "call to uncontracted function `_`": 5,
+     "indirect memory access is outside the resource projection": 2,
+     "store through `_` without an out-parameter contract": 2
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_q_serve_maybe_consume",
+  "alone": 2,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "rdkafka.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_queue.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_txn_clear_partitions_flag",
+  "alone": 2,
+  "touched": 2,
+  "leaves": 3,
+  "units": [
+   "rdkafka_txnmgr.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_txnmgr.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 5,
+     "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+     "unresolved resource identity `_`": 1,
+     "call to uncontracted function `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "sched_thread_cleanup",
+  "alone": 2,
+  "touched": 2,
+  "leaves": 3,
+  "units": [
+   "mk_server/mk_scheduler.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "mk_server/mk_scheduler.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_q_enq",
+  "alone": 1,
+  "touched": 11,
+  "leaves": 11,
+  "units": [
+   "rdkafka.c",
+   "rdkafka_admin.c",
+   "rdkafka_broker.c",
+   "rdkafka_partition.c"
+  ],
+  "kind": "header-inline",
+  "homes": [
+   {
+    "header": "lib/librdkafka-2.15.0/src/rdkafka_queue.h:484"
+   }
+  ]
+ },
+ {
+  "callee": "cmt_atomic_compare_exchange",
+  "alone": 1,
+  "touched": 9,
+  "leaves": 11,
+  "units": [
+   "cmt_cat.c",
+   "cmt_metric.c",
+   "cmt_metric_histogram.c",
+   "cmt_summary.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "cmt_atomic_clang.c",
+    "status": "Safe",
+    "families": {}
+   }
+  ]
+ },
+ {
+  "callee": "cfl_sds_create",
+  "alone": 1,
+  "touched": 7,
+  "leaves": 12,
+  "units": [
+   "cmt_decode_opentelemetry.c",
+   "cmt_opts.c",
+   "ctr_link.c",
+   "ctr_resource.c",
+   "ctr_scope.c",
+   "ctr_span.c"
+  ],
+  "kind": "external",
+  "homes": []
+ },
+ {
+  "callee": "rd_kafka_topic_partition_list_destroy",
+  "alone": 1,
+  "touched": 7,
+  "leaves": 12,
+  "units": [
+   "rdkafka_assignment.c",
+   "rdkafka_assignor.c",
+   "rdkafka_cgrp.c",
+   "rdkafka_mock_cgrp.c",
+   "rdkafka_sticky_assignor.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_partition.c",
+    "status": "Unknown",
+    "families": {
+     "unresolved resource identity `_`": 3,
+     "indirect memory access is outside the resource projection": 2
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_topic_partition_list_new",
+  "alone": 1,
+  "touched": 6,
+  "leaves": 11,
+  "units": [
+   "rdkafka_assignment.c",
+   "rdkafka_assignor.c",
+   "rdkafka_cgrp.c",
+   "rdkafka_partition.c",
+   "rdkafka_sticky_assignor.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_partition.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 1,
+     "unresolved resource identity `_`": 1,
+     "nullable resource `_` used by a non-null contract": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_atomic32_set",
+  "alone": 1,
+  "touched": 3,
+  "leaves": 4,
+  "units": [
+   "rdkafka_buf.c",
+   "rdkafka_cgrp.c"
+  ],
+  "kind": "header-inline",
+  "homes": [
+   {
+    "header": "lib/librdkafka-2.15.0/src/rdatomic.h:118"
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_error_new",
+  "alone": 1,
+  "touched": 3,
+  "leaves": 3,
+  "units": [
+   "rdkafka_admin.c",
+   "rdkafka_share_acknowledgement.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_error.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "cfl_kvlist_insert_bool",
+  "alone": 1,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "ctr_attributes.c",
+   "ctr_decode_opentelemetry.c"
+  ],
+  "kind": "external",
+  "homes": []
+ },
+ {
+  "callee": "cfl_kvlist_insert_double",
+  "alone": 1,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "ctr_attributes.c",
+   "ctr_decode_opentelemetry.c"
+  ],
+  "kind": "external",
+  "homes": []
+ },
+ {
+  "callee": "cfl_kvlist_insert_int64",
+  "alone": 1,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "ctr_attributes.c",
+   "ctr_decode_opentelemetry.c"
+  ],
+  "kind": "external",
+  "homes": []
+ },
+ {
+  "callee": "cfl_kvlist_insert_kvlist",
+  "alone": 1,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "ctr_attributes.c",
+   "ctr_decode_opentelemetry.c"
+  ],
+  "kind": "external",
+  "homes": []
+ },
+ {
+  "callee": "cfl_kvlist_insert_string",
+  "alone": 1,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "ctr_attributes.c",
+   "ctr_decode_opentelemetry.c"
+  ],
+  "kind": "external",
+  "homes": []
+ },
+ {
+  "callee": "cfl_list_size",
+  "alone": 1,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "cmt_encode_opentelemetry.c",
+   "ctr_encode_opentelemetry.c"
+  ],
+  "kind": "header-inline",
+  "homes": [
+   {
+    "header": "lib/cfl/include/cfl/cfl_list.h:200"
+   }
+  ]
+ },
+ {
+  "callee": "mk_http_parser_init",
+  "alone": 1,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "mk_server/mk_http.c"
+  ],
+  "kind": "header-inline",
+  "homes": [
+   {
+    "header": "lib/monkey/include/monkey/mk_http_parser.h:354"
+   }
+  ]
+ },
+ {
+  "callee": "mk_list_init",
+  "alone": 1,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "mk_server/mk_http.c",
+   "mk_server/mk_plugin.c"
+  ],
+  "kind": "header-inline",
+  "homes": [
+   {
+    "header": "lib/chunkio/deps/monkey/include/monkey/mk_core/mk_list.h:47"
+   },
+   {
+    "header": "lib/monkey/include/monkey/mk_core/mk_list.h:48"
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_timer_stop",
+  "alone": 1,
+  "touched": 2,
+  "leaves": 4,
+  "units": [
+   "rdkafka.c",
+   "rdkafka_partition.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_timer.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 1,
+     "unresolved resource identity `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "rd_kafka_topic_partition_destroy0",
+  "alone": 1,
+  "touched": 2,
+  "leaves": 2,
+  "units": [
+   "rdkafka_partition.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdkafka_partition.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 3,
+     "unresolved resource identity `_`": 3
+    }
+   }
+  ]
+ },
+ {
+  "callee": "LZ4_prepareTable",
+  "alone": 1,
+  "touched": 1,
+  "leaves": 1,
+  "units": [
+   "lz4.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "lz4.c",
+    "status": "Unknown",
+    "families": {
+     "indirect memory access is outside the resource projection": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "XXH32_finalize",
+  "alone": 1,
+  "touched": 1,
+  "leaves": 1,
+  "units": [
+   "rdxxhash.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdxxhash.c",
+    "status": "Unknown",
+    "families": {
+     "unmodeled increment or decrement expression": 6,
+     "unresolved resource identity `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "XXH64_finalize",
+  "alone": 1,
+  "touched": 1,
+  "leaves": 1,
+  "units": [
+   "rdxxhash.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "rdxxhash.c",
+    "status": "Unknown",
+    "families": {
+     "unmodeled increment or decrement expression": 12,
+     "unresolved resource identity `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "allocate",
+  "alone": 1,
+  "touched": 1,
+  "leaves": 1,
+  "units": [
+   "cJSON.c"
+  ],
+  "kind": "external",
+  "homes": []
+ },
+ {
+  "callee": "calculate_label_set_hash",
+  "alone": 1,
+  "touched": 1,
+  "leaves": 1,
+  "units": [
+   "cmt_encode_prometheus_remote_write.c"
+  ],
+  "kind": "same-unit",
+  "homes": [
+   {
+    "unit": "cmt_encode_prometheus_remote_write.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 4,
+     "unresolved resource identity `_`": 1,
+     "indirect memory access is outside the resource projection": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "cb",
+  "alone": 1,
+  "touched": 1,
+  "leaves": 1,
+  "units": [
+   "rdkafka_broker.c"
+  ],
+  "kind": "external",
+  "homes": []
+ },
+ {
+  "callee": "cfl_kvlist_insert_array",
+  "alone": 1,
+  "touched": 1,
+  "leaves": 1,
+  "units": [
+   "ctr_attributes.c"
+  ],
+  "kind": "external",
+  "homes": []
+ },
+ {
+  "callee": "cio_chunk_up",
+  "alone": 1,
+  "touched": 1,
+  "leaves": 1,
+  "units": [
+   "flb_input_chunk.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "cio_chunk.c",
+    "status": "Unknown",
+    "families": {
+     "call to uncontracted function `_`": 3,
+     "unresolved resource identity `_`": 1
+    }
+   }
+  ]
+ },
+ {
+  "callee": "cio_file_hash",
+  "alone": 1,
+  "touched": 1,
+  "leaves": 1,
+  "units": [
+   "cio_chunk.c"
+  ],
+  "kind": "cross-unit",
+  "homes": [
+   {
+    "unit": "cio_file.c",
+    "status": "Safe",
+    "families": {}
+   }
+  ]
+ }
+]

@@ -66,6 +66,7 @@ def main() -> int:
                  if set(f["classes"]) <= target}
     report = json.loads((pathlib.Path(args.run) / "resource-diagnostics.json").read_text())
     sole, sole_access, corpus = {}, collections.Counter(), {}
+    sole_status = collections.Counter()
     for unit in report["units"]:
         for function in unit["functions"]:
             key = (unit["file"], function["function"])
@@ -74,12 +75,16 @@ def main() -> int:
             if names:
                 corpus[key + (len(corpus),)] = names
             if key in sole_keys:
+                sole_status[function["status"]] += 1
+                if function["status"] != "Unknown":
+                    continue
                 if names:
                     sole[key] = names
                 else:
                     sole_access[sum(1 for leaf in leaves if leaf.get("description") == IND)] += 1
     record = {
         "sole_population": len(sole_keys),
+        "sole_status": dict(sole_status),
         "sole_decided_by_callees": len(sole),
         "sole_keeping_an_access_leaf": sum(sole_access.values()),
         "sole_ranking": rank(sole, args.top),
@@ -87,8 +92,8 @@ def main() -> int:
         "corpus_ranking": rank(corpus, args.top),
     }
     pathlib.Path(args.out).write_text(json.dumps(record, indent=1) + "\n")
-    print("sole %d decided by callees %d, keeping an access leaf %d" % (
-        len(sole_keys), len(sole), record["sole_keeping_an_access_leaf"]))
+    print("sole %d %s; Unknown decided by callees %d, keeping an access leaf %d" % (
+        len(sole_keys), dict(sole_status), len(sole), record["sole_keeping_an_access_leaf"]))
     for row in record["sole_ranking"][:30]:
         print("  sole   %-44s %3d %3d %3d" % (row["callee"], row["alone"], row["touched"],
                                              row["cumulative"]))

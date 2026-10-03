@@ -1,0 +1,1947 @@
+{
+ "functions": 205,
+ "leaves": 347,
+ "table": [
+  {
+   "class": "uncontracted-callee: an actual neither reader recognises",
+   "alone": 43,
+   "leaves": 99,
+   "touched": 69
+  },
+  {
+   "class": "return-uncontracted-callee: an actual neither reader recognises",
+   "alone": 24,
+   "leaves": 25,
+   "touched": 24
+  },
+  {
+   "class": "custody-position:released",
+   "alone": 12,
+   "leaves": 40,
+   "touched": 23
+  },
+  {
+   "class": "pointer-store:other",
+   "alone": 12,
+   "leaves": 14,
+   "touched": 14
+  },
+  {
+   "class": "elaboration:unlisted form: no value form of this card",
+   "alone": 10,
+   "leaves": 15,
+   "touched": 14
+  },
+  {
+   "class": "pointer-store:formal-pointer",
+   "alone": 9,
+   "leaves": 14,
+   "touched": 12
+  },
+  {
+   "class": "uncontracted-callee: no reading",
+   "alone": 8,
+   "leaves": 18,
+   "touched": 13
+  },
+  {
+   "class": "probe-declined",
+   "alone": 6,
+   "leaves": 11,
+   "touched": 10
+  },
+  {
+   "class": "call-result-store",
+   "alone": 5,
+   "leaves": 15,
+   "touched": 12
+  },
+  {
+   "class": "unrecognised-actual:other",
+   "alone": 5,
+   "leaves": 6,
+   "touched": 6
+  },
+  {
+   "class": "return-uncontracted-callee: no reading",
+   "alone": 5,
+   "leaves": 5,
+   "touched": 5
+  },
+  {
+   "class": "pointer-store:arithmetic",
+   "alone": 3,
+   "leaves": 4,
+   "touched": 4
+  },
+  {
+   "class": "elaboration:unlisted form: no unique Clang node for the statement",
+   "alone": 3,
+   "leaves": 3,
+   "touched": 3
+  },
+  {
+   "class": "return-contracted-call",
+   "alone": 2,
+   "leaves": 3,
+   "touched": 3
+  },
+  {
+   "class": "custody-position:owned",
+   "alone": 2,
+   "leaves": 2,
+   "touched": 2
+  },
+  {
+   "class": "pointer-store:pointer-read",
+   "alone": 2,
+   "leaves": 2,
+   "touched": 2
+  },
+  {
+   "class": "unclassified:CallArgument",
+   "alone": 2,
+   "leaves": 2,
+   "touched": 2
+  },
+  {
+   "class": "unrecognised-actual:address",
+   "alone": 1,
+   "leaves": 8,
+   "touched": 5
+  },
+  {
+   "class": "unrecognised-actual:chain",
+   "alone": 1,
+   "leaves": 8,
+   "touched": 5
+  },
+  {
+   "class": "place:storage",
+   "alone": 1,
+   "leaves": 12,
+   "touched": 2
+  },
+  {
+   "class": "unclassified:AssignmentValue",
+   "alone": 1,
+   "leaves": 2,
+   "touched": 2
+  },
+  {
+   "class": "unrecognised-actual:untyped-base",
+   "alone": 1,
+   "leaves": 2,
+   "touched": 2
+  },
+  {
+   "class": "unrecognised-actual:untyped-member",
+   "alone": 1,
+   "leaves": 2,
+   "touched": 2
+  },
+  {
+   "class": "new",
+   "alone": 1,
+   "leaves": 7,
+   "touched": 1
+  },
+  {
+   "class": "unrecognised-actual:address,chain",
+   "alone": 1,
+   "leaves": 1,
+   "touched": 1
+  },
+  {
+   "class": "unrecognised-actual:call,other",
+   "alone": 1,
+   "leaves": 1,
+   "touched": 1
+  },
+  {
+   "class": "unrecognised-actual:other,untyped-member",
+   "alone": 1,
+   "leaves": 2,
+   "touched": 1
+  },
+  {
+   "class": "pointer-store-flow:unresolved-owner",
+   "alone": 0,
+   "leaves": 8,
+   "touched": 3
+  },
+  {
+   "class": "unrecognised-actual:call",
+   "alone": 0,
+   "leaves": 6,
+   "touched": 3
+  },
+  {
+   "class": "elaboration:place: the typed access-path reader refused it (CG10)",
+   "alone": 0,
+   "leaves": 1,
+   "touched": 1
+  },
+  {
+   "class": "place:hop",
+   "alone": 0,
+   "leaves": 3,
+   "touched": 1
+  },
+  {
+   "class": "pointer-store-flow:owned-field",
+   "alone": 0,
+   "leaves": 1,
+   "touched": 1
+  },
+  {
+   "class": "pointer-store:local-pointer",
+   "alone": 0,
+   "leaves": 1,
+   "touched": 1
+  },
+  {
+   "class": "record-object-place",
+   "alone": 0,
+   "leaves": 2,
+   "touched": 1
+  },
+  {
+   "class": "unrecognised-actual:address,cast",
+   "alone": 0,
+   "leaves": 1,
+   "touched": 1
+  },
+  {
+   "class": "unrecognised-actual:unreadable",
+   "alone": 0,
+   "leaves": 1,
+   "touched": 1
+  }
+ ],
+ "fixed_point_in_rank_order": [
+  [
+   "uncontracted-callee: an actual neither reader recognises",
+   43
+  ],
+  [
+   "return-uncontracted-callee: an actual neither reader recognises",
+   67
+  ],
+  [
+   "custody-position:released",
+   88
+  ],
+  [
+   "pointer-store:other",
+   101
+  ],
+  [
+   "elaboration:unlisted form: no value form of this card",
+   113
+  ],
+  [
+   "pointer-store:formal-pointer",
+   122
+  ],
+  [
+   "uncontracted-callee: no reading",
+   131
+  ],
+  [
+   "probe-declined",
+   140
+  ],
+  [
+   "call-result-store",
+   151
+  ],
+  [
+   "unrecognised-actual:other",
+   157
+  ],
+  [
+   "return-uncontracted-callee: no reading",
+   162
+  ],
+  [
+   "pointer-store:arithmetic",
+   166
+  ],
+  [
+   "elaboration:unlisted form: no unique Clang node for the statement",
+   169
+  ],
+  [
+   "return-contracted-call",
+   172
+  ],
+  [
+   "custody-position:owned",
+   174
+  ],
+  [
+   "pointer-store:pointer-read",
+   176
+  ],
+  [
+   "unclassified:CallArgument",
+   178
+  ],
+  [
+   "unrecognised-actual:address",
+   181
+  ],
+  [
+   "unrecognised-actual:chain",
+   183
+  ],
+  [
+   "place:storage",
+   184
+  ],
+  [
+   "unclassified:AssignmentValue",
+   186
+  ],
+  [
+   "unrecognised-actual:untyped-base",
+   188
+  ],
+  [
+   "unrecognised-actual:untyped-member",
+   189
+  ],
+  [
+   "new",
+   190
+  ],
+  [
+   "unrecognised-actual:address,chain",
+   191
+  ],
+  [
+   "unrecognised-actual:call,other",
+   192
+  ],
+  [
+   "unrecognised-actual:other,untyped-member",
+   193
+  ],
+  [
+   "pointer-store-flow:unresolved-owner",
+   196
+  ],
+  [
+   "unrecognised-actual:call",
+   199
+  ],
+  [
+   "elaboration:place: the typed access-path reader refused it (CG10)",
+   200
+  ],
+  [
+   "place:hop",
+   201
+  ],
+  [
+   "pointer-store-flow:owned-field",
+   201
+  ],
+  [
+   "pointer-store:local-pointer",
+   202
+  ],
+  [
+   "record-object-place",
+   203
+  ],
+  [
+   "unrecognised-actual:address,cast",
+   204
+  ],
+  [
+   "unrecognised-actual:unreadable",
+   205
+  ]
+ ],
+ "rows": [
+  {
+   "unit": "cJSON.c",
+   "function": "cJSON_New_Item",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "function": "cJSON_free",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "function": "print_string",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "function": "suffix_object",
+   "classes": [
+    "pointer-store:formal-pointer",
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "function": "update_offset",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "chunkio.c",
+   "function": "cio_set_log_callback",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cio_file.c",
+   "function": "finalize_checksum",
+   "classes": [
+    "unrecognised-actual:other"
+   ]
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "function": "cio_file_native_compose_path",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "function": "cio_file_native_delete_by_path",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "cio_file_unix.c",
+   "function": "cio_file_native_open",
+   "classes": [
+    "probe-declined",
+    "probe-declined",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "cio_stream.c",
+   "function": "get_stream_path",
+   "classes": [
+    "probe-declined",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "cmt_cat.c",
+   "function": "cat_histogram_values",
+   "classes": [
+    "probe-declined",
+    "uncontracted-callee: no reading",
+    "uncontracted-callee: no reading",
+    "uncontracted-callee: no reading",
+    "unrecognised-actual:call",
+    "unrecognised-actual:call"
+   ]
+  },
+  {
+   "unit": "cmt_cat.c",
+   "function": "cat_summary_values",
+   "classes": [
+    "probe-declined",
+    "uncontracted-callee: no reading",
+    "uncontracted-callee: no reading",
+    "uncontracted-callee: no reading",
+    "uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_counter_instance",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_exp_histogram_instance",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_gauge_instance",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_histogram_instance",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_summary_instance",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "create_untyped_instance",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_metric_unit",
+   "classes": [
+    "custody-position:released",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "cmt_filter.c",
+   "function": "compare_fqname",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "cmt_map.c",
+   "function": "metric_release_storage",
+   "classes": [
+    "custody-position:released",
+    "custody-position:released",
+    "custody-position:released",
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_exp_hist_get_snapshot",
+   "classes": [
+    "new",
+    "new",
+    "new",
+    "new",
+    "new",
+    "new",
+    "new"
+   ]
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_exp_hist_snapshot_destroy",
+   "classes": [
+    "custody-position:released",
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "metric_hist_exchange",
+   "classes": [
+    "uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "cmt_metric_hist_get_value",
+   "classes": [
+    "uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "metric_hist_exchange",
+   "classes": [
+    "uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "cmt_opts.c",
+   "function": "cmt_opts_exit",
+   "classes": [
+    "custody-position:released",
+    "custody-position:released",
+    "custody-position:released",
+    "custody-position:released",
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "summary_quantile_exchange",
+   "classes": [
+    "uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "initialize_resource_spans",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "initialize_scope_spans",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "initialize_spans",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_attributes",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_events",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_name",
+   "classes": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otel_span_set_trace_state",
+   "classes": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "function": "otlp_kvpair_list_initialize",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_id.c",
+   "function": "ctr_id_set",
+   "classes": [
+    "custody-position:released",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_link.c",
+   "function": "ctr_link_set_attributes",
+   "classes": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "ctr_link.c",
+   "function": "ctr_link_set_trace_state",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_resource.c",
+   "function": "ctr_resource_span_set_schema_url",
+   "classes": [
+    "custody-position:released",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_scope.c",
+   "function": "ctr_instrumentation_scope_create",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_scope.c",
+   "function": "ctr_scope_span_set_schema_url",
+   "classes": [
+    "custody-position:released",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_span.c",
+   "function": "ctr_span_set_schema_url",
+   "classes": [
+    "custody-position:released",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "ctr_span.c",
+   "function": "ctr_span_set_trace_state",
+   "classes": [
+    "custody-position:released",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_prepareTable",
+   "classes": [
+    "unrecognised-actual:untyped-base"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_renormDictT",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card",
+    "pointer-store:arithmetic"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "function": "LZ4_resetStream_fast",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_freeCDict",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_freeCompressionContext",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_freeDecompressionContext",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "function": "LZ4F_localSaveDict",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises",
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4HC_clearTables",
+   "classes": [
+    "unrecognised-actual:other,untyped-member",
+    "unrecognised-actual:other,untyped-member"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_attach_HC_dictionary",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_compressHC2_continue",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "function": "LZ4_compressHC2_limitedOutput_continue",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "mk_core/mk_iov.c",
+   "function": "mk_iov_consume",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "mk_core/mk_memory.c",
+   "function": "mk_ptr_create",
+   "classes": [
+    "pointer-store:arithmetic"
+   ]
+  },
+  {
+   "unit": "mk_core/mk_memory.c",
+   "function": "mk_ptr_free",
+   "classes": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "mk_core/mk_memory.c",
+   "function": "mk_ptr_set",
+   "classes": [
+    "pointer-store:formal-pointer",
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_clock.c",
+   "function": "mk_clock_headers_preset",
+   "classes": [
+    "unrecognised-actual:chain",
+    "unrecognised-actual:untyped-member",
+    "pointer-store:local-pointer"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "function": "cb_copy_chunk",
+   "classes": [
+    "unrecognised-actual:other"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_http_parser.c",
+   "function": "request_set",
+   "classes": [
+    "pointer-store:arithmetic"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "free_chunk_header",
+   "classes": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_lib.c",
+   "function": "mk_vhost_set_property",
+   "classes": [
+    "call-result-store",
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_mimetype.c",
+   "function": "mk_mimetype_find",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_broadcast_signal",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_scheduler.c",
+   "function": "mk_sched_worker_cb_add",
+   "classes": [
+    "pointer-store-flow:owned-field",
+    "pointer-store:formal-pointer",
+    "unrecognised-actual:unreadable"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_stream.c",
+   "function": "channel_write_in_file",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_utils.c",
+   "function": "mk_buffer_cat",
+   "classes": [
+    "call-result-store",
+    "unrecognised-actual:other"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "function": "buf_read",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_decode.c",
+   "function": "pb_dec_bool",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "function": "buf_write",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "function": "pb_enc_fixed_length_bytes",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "nanopb/pb_encode.c",
+   "function": "pb_ostream_from_buffer",
+   "classes": [
+    "record-object-place",
+    "pointer-store:other",
+    "record-object-place"
+   ]
+  },
+  {
+   "unit": "rdbase64.c",
+   "function": "rd_base64_encode",
+   "classes": [
+    "call-result-store",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdbuf.c",
+   "function": "extra_alloc",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "rdbuf.c",
+   "function": "rd_buf_init",
+   "classes": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdbuf.c",
+   "function": "rd_segment_dump",
+   "classes": [
+    "unrecognised-actual:untyped-base",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdbuf.c",
+   "function": "rd_segment_write_update",
+   "classes": [
+    "unrecognised-actual:other"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_log_print",
+   "classes": [
+    "unrecognised-actual:untyped-member"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_share_ack_commit_cb_register_op",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_simple_consumer_add",
+   "classes": [
+    "return-uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_stats_emit_broker_reqs",
+   "classes": [
+    "unrecognised-actual:chain",
+    "uncontracted-callee: no reading",
+    "unrecognised-actual:chain",
+    "unrecognised-actual:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_toppar_dump",
+   "classes": [
+    "unrecognised-actual:chain",
+    "unrecognised-actual:call"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ConfigEntry_copy",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "elaboration:unlisted form: no value form of this card",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ConsumerGroupDescription_member",
+   "classes": [
+    "return-uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteGroup_destroy_array",
+   "classes": [
+    "unclassified:CallArgument"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_DeleteTopic_destroy_array",
+   "classes": [
+    "unclassified:CallArgument"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_ElectLeaders_result_result",
+   "classes": [
+    "return-uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_MemberDescription_copy",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_request_op_result_cb_set",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "function": "rd_kafka_admin_result_set_err0",
+   "classes": [
+    "custody-position:released",
+    "call-result-store",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "function": "rd_kafka_assignment_init",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "rd_kafka_assignor_find",
+   "classes": [
+    "return-uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "function": "ut_populate_internal_broker_metadata",
+   "classes": [
+    "pointer-store:other"
+   ]
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "function": "rd_kafka_group_result_copy",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_monitor_op_cb",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_outbufs_space",
+   "classes": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_set_logname",
+   "classes": [
+    "custody-position:released",
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_update_reconnect_backoff",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_weight_usable",
+   "classes": [
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_group_leader_reset",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_heartbeat",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_set_join_state",
+   "classes": [
+    "call-result-store",
+    "uncontracted-callee: no reading",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_set_last_err",
+   "classes": [
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_set_member_id",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "custody-position:released",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_start_max_poll_interval_timer",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_update_session_timeout",
+   "classes": [
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_conf_flags2str",
+   "classes": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_confval_disable",
+   "classes": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_confval_init_int",
+   "classes": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_confval_init_ptr",
+   "classes": [
+    "pointer-store:formal-pointer",
+    "elaboration:place: the typed access-path reader refused it (CG10)"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "function": "rd_kafka_sw_str_sanitize_inplace",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafka_broker_session_update_added_partitions",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafka_broker_session_update_removed_partitions",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafka_share_ack_type_from_msg_op",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card",
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafkap_Fetch_reply_tags_destroy",
+   "classes": [
+    "custody-position:released",
+    "custody-position:released",
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafkap_Fetch_reply_tags_set_topic",
+   "classes": [
+    "unrecognised-actual:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "function": "rd_kafkap_Fetch_reply_tags_set_topic_cnt",
+   "classes": [
+    "unrecognised-actual:other"
+   ]
+  },
+  {
+   "unit": "rdkafka_idempotence.c",
+   "function": "rd_kafka_idemp_drain_toppar",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_idempotence.c",
+   "function": "rd_kafka_idemp_pid_timer_restart",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_acknowledgement",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_broker_state_change",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_commit",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_consume",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_destroy",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_request_sent",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_response_received",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_send",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_thread_exit",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_add_on_thread_start",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "function": "rd_kafka_interceptor_failed",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "function": "rd_kafka_metadata_partition_clear",
+   "classes": [
+    "custody-position:released",
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "function": "rd_kafka_metadata_cache_entry_by_id_cmp",
+   "classes": [
+    "return-contracted-call"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_error_stack_find",
+   "classes": [
+    "unclassified:AssignmentValue"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_error_stack_next",
+   "classes": [
+    "unrecognised-actual:address,chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "function": "rd_kafka_mock_partition_set_leader0",
+   "classes": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_member_assignment_set",
+   "classes": [
+    "custody-position:released",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_rebalance_timer_restart",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "function": "rd_kafka_mock_cgrp_classic_set_state",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "function": "rd_kafka_mock_msgset_est_record_size",
+   "classes": [
+    "elaboration:unlisted form: no unique Clang node for the statement"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "function": "rd_kafka_mock_sgrp_record_release",
+   "classes": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "function": "rd_kafka_msgbatch_set_first_msg",
+   "classes": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "function": "rd_kafka_msgq_enq_sorted",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_gzip",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_lz4",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_snappy",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_msgset_writer.c",
+   "function": "rd_kafka_msgset_writer_compress_zstd",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_file_close",
+   "classes": [
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "function": "rd_kafka_offset_reset_op_cb",
+   "classes": [
+    "unrecognised-actual:address",
+    "uncontracted-callee: an actual neither reader recognises",
+    "unrecognised-actual:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "function": "rd_kafka_op_call",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "pointer-store-flow:unresolved-owner"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "function": "rd_kafka_op_print",
+   "classes": [
+    "unrecognised-actual:call",
+    "unrecognised-actual:call",
+    "unrecognised-actual:call",
+    "unrecognised-actual:chain",
+    "unrecognised-actual:chain"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_fetch_pos2str",
+   "classes": [
+    "unrecognised-actual:call,other"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_clear",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_del_by_idx",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "unrecognised-actual:address,cast"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_list_grow",
+   "classes": [
+    "custody-position:owned"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_topic_partition_set_metadata_from_rktp_stored",
+   "classes": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_insert_msgq",
+   "classes": [
+    "unrecognised-actual:address",
+    "uncontracted-callee: an actual neither reader recognises",
+    "unrecognised-actual:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "function": "rd_kafka_toppar_reset_base_msgid",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "function": "rd_kafka_queue_forward",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "function": "rd_kafka_queue_length",
+   "classes": [
+    "return-uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafka_ListOffsetRequest_parameters_make",
+   "classes": [
+    "pointer-store:formal-pointer",
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafkap_Produce_reply_tags_destroy",
+   "classes": [
+    "custody-position:released",
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafkap_leader_discovery_set_topic_cnt",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "function": "rd_kafkap_leader_discovery_tmpabuf_add_alloc_brokers",
+   "classes": [
+    "elaboration:unlisted form: no unique Clang node for the statement"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_cyrus.c",
+   "function": "rd_kafka_sasl_cyrus_init",
+   "classes": [
+    "pointer-store:other",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "function": "do_unittest_illegal_extension_keys_should_fail",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "function": "rd_kafka_sasl_oauthbearer_token_free",
+   "classes": [
+    "custody-position:released",
+    "custody-position:released",
+    "custody-position:released",
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_scram_H",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_scram.c",
+   "function": "rd_kafka_sasl_scram_conf_validate",
+   "classes": [
+    "call-result-store",
+    "call-result-store",
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "ConsumerPair_cmp",
+   "classes": [
+    "return-contracted-call"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "sort_by_map_elem_val_toppar_list_cnt",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card",
+    "return-contracted-call"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "function": "ut_testConflictingPreviousAssignments",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "clear_unit_test_data",
+   "classes": [
+    "place:storage",
+    "place:storage",
+    "place:storage",
+    "place:hop",
+    "place:hop",
+    "place:hop",
+    "place:storage",
+    "place:storage",
+    "place:storage",
+    "place:storage",
+    "place:storage",
+    "place:storage",
+    "place:storage",
+    "place:storage"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_decoded_int64",
+   "classes": [
+    "place:storage"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_connection_creation_rate",
+   "classes": [
+    "unclassified:AssignmentValue",
+    "unrecognised-actual:address"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_acknowledgements_send_rate",
+   "classes": [
+    "uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_bytes_consumed_rate",
+   "classes": [
+    "uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_fetch_rate",
+   "classes": [
+    "uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_heartbeat_rate",
+   "classes": [
+    "uncontracted-callee: no reading"
+   ]
+  },
+  {
+   "unit": "rdkafka_timer.c",
+   "function": "rd_kafka_timer_schedule",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_timer.c",
+   "function": "rd_kafka_timer_unschedule",
+   "classes": [
+    "pointer-store:pointer-read"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_cmp_rkt",
+   "classes": [
+    "elaboration:unlisted form: no unique Clang node for the statement"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "function": "rd_kafka_topic_set_state",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "call-result-store"
+   ]
+  },
+  {
+   "unit": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_poll",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_transport.c",
+   "function": "rd_kafka_transport_request_sent",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_coord_timer_start",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txn_schedule_register_partitions",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "function": "rd_kafka_txns_init",
+   "classes": [
+    "unrecognised-actual:address",
+    "uncontracted-callee: an actual neither reader recognises",
+    "pointer-store-flow:unresolved-owner",
+    "pointer-store-flow:unresolved-owner",
+    "pointer-store-flow:unresolved-owner",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "uncontracted-callee: an actual neither reader recognises",
+    "unrecognised-actual:address"
+   ]
+  },
+  {
+   "unit": "rdlist.c",
+   "function": "rd_list_dump",
+   "classes": [
+    "unrecognised-actual:address"
+   ]
+  },
+  {
+   "unit": "rdlist.c",
+   "function": "rd_list_grow",
+   "classes": [
+    "custody-position:owned"
+   ]
+  },
+  {
+   "unit": "rdmap.c",
+   "function": "rd_map_alloc_buckets",
+   "classes": [
+    "unrecognised-actual:other"
+   ]
+  },
+  {
+   "unit": "rdmap.c",
+   "function": "rd_map_init",
+   "classes": [
+    "uncontracted-callee: an actual neither reader recognises",
+    "pointer-store-flow:unresolved-owner",
+    "pointer-store-flow:unresolved-owner",
+    "pointer-store-flow:unresolved-owner",
+    "pointer-store-flow:unresolved-owner"
+   ]
+  },
+  {
+   "unit": "rdmap.c",
+   "function": "rd_map_iter_begin",
+   "classes": [
+    "pointer-store:pointer-read"
+   ]
+  },
+  {
+   "unit": "rdstring.c",
+   "function": "rd_strtup_dup",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdxxhash.c",
+   "function": "XXH32_digest_endian",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "rdxxhash.c",
+   "function": "XXH64_digest_endian",
+   "classes": [
+    "return-uncontracted-callee: an actual neither reader recognises"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "append",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "init_snappy_decompressor",
+   "classes": [
+    "pointer-store:formal-pointer"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "peek",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "rd_kafka_snappy_free_env",
+   "classes": [
+    "custody-position:released",
+    "custody-position:released",
+    "custody-position:released"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "rd_kafka_snappy_init_env",
+   "classes": [
+    "probe-declined"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "sink_peek",
+   "classes": [
+    "elaboration:unlisted form: no value form of this card"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "function": "writer_set_expected_length",
+   "classes": [
+    "pointer-store:arithmetic"
+   ]
+  }
+ ]
+}

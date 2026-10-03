@@ -271,6 +271,12 @@ High for anything that could publish a wrong Safe, Medium for measurement.
     automatic record objects) free 41 corpus functions; 481 remain, ranked in
     `CG10-INDIRECT-ACCESS-SOLE-RESIDUALS`
     ([report](../../reports/cg10-indirect-access-sole-blockers/README.md)).
+  - *Status (wave 48, round 18, CG10-INDIRECT-ACCESS-SOLE-RESIDUALS).* Rule
+    12k names the uncontracted callee where it decides a gate refusal (no
+    status move; 2,962 leaves re-attributed); seven declared, pinned contracts
+    free 61 corpus functions; 205 functions remain blocked by the access
+    refusal alone, ranked in the amended entry
+    ([report](../../reports/cg10-indirect-access-sole-residuals/README.md)).
 - **CG11: pointer-valued stores.**
   - *Scope.* This is the unsupported coverage queue's FIELD-CUSTODY (P5),
     promoted from candidate. It covers `s->p = q`, `*slot = p` and

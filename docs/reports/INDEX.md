@@ -109,6 +109,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg10-indirect-access-sole-blockers](cg10-indirect-access-sole-blockers/README.md) | CG10-INDIRECT-ACCESS-SOLE-BLOCKERS: the 513 functions the access refusal blocks alone |
 
+| [cg10-indirect-access-sole-residuals](cg10-indirect-access-sole-residuals/README.md) | CG10-INDIRECT-ACCESS-SOLE-RESIDUALS: the uncontracted callees behind the access refusal |
+
 | [cg11-pointer-valued-stores](cg11-pointer-valued-stores/README.md) | CG11-POINTER-VALUED-STORES |
 
 | [cg12-void-view-readback](cg12-void-view-readback/README.md) | CG12-VOID-VIEW-READBACK: `void *` views and readbacks |

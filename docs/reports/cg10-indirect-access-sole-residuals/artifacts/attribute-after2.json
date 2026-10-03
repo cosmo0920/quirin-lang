@@ -1,0 +1,1635 @@
+{
+ "status_moves_by_label": {
+  "cmt_atomic_store": 15,
+  "cmt_atomic_load": 13,
+  "rd_avg_add": 12,
+  "read": 5,
+  "cmt_atomic_compare_exchange": 5,
+  "rd_atomic64_get": 4,
+  "callee-summary:add": 3,
+  "rd_atomic64_add": 3,
+  "callee-summary:metric_sum_exchange": 2,
+  "cnd_timedwait_ms": 2,
+  "callee-summary:summary_sum_exchange": 1
+ },
+ "moves": [
+  {
+   "unit": "cmt_cat.c",
+   "function": "cat_exp_histogram_values",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_compare_exchange",
+    "cmt_atomic_load",
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5754: unmodeled call, aggregate or indirect access in branch condition",
+    "5889: call to uncontracted function `cmt_atomic_load`",
+    "5890: call to uncontracted function `cmt_atomic_load`",
+    "5891: call to uncontracted function `cmt_atomic_compare_exchange`",
+    "5895: unmodeled call, aggregate or indirect access in branch condition",
+    "5904: unmodeled call, aggregate or indirect access in branch condition",
+    "5905: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "5754: unresolved resource identity `metric_dst`",
+    "5890: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "cmt_cat.c",
+   "function": "cat_histogram_values",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_compare_exchange",
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5670: call to uncontracted function `cmt_atomic_load`",
+    "5674: call to uncontracted function `cmt_atomic_compare_exchange`",
+    "5679: call to uncontracted function `cmt_atomic_load`",
+    "5683: call to uncontracted function `cmt_atomic_compare_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_exp_histogram_count",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "7867: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "7867: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_exp_histogram_sum",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "7900: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "7900: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_exp_histogram_sum_set",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "7883: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "7883: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_histogram_count",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "7628: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "7628: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_histogram_sum",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "7611: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "7611: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_metric_value_type",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "7441: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "7441: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_summary_count",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "7560: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "7560: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_summary_quantiles_set",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "7509: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "7509: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_msgpack.c",
+   "function": "unpack_summary_sum",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "7576: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "7576: unresolved resource identity `decode_context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "function": "decode_summary_data_point",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "7757: unmodeled call, aggregate or indirect access in branch condition",
+    "7763: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": [
+    "7757: unresolved resource identity `sample`",
+    "7763: unresolved resource identity `sample`"
+   ]
+  },
+  {
+   "unit": "cmt_encode_influx.c",
+   "function": "format_metric",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "5820: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "function": "append_metric_value",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5981: call to uncontracted function `cmt_atomic_load`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus.c",
+   "function": "format_summary_quantiles",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "6226: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_prometheus_remote_write.c",
+   "function": "pack_complex_metric_sample",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "7233: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_splunk_hec.c",
+   "function": "format_summary_metric",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "5935: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_map.c",
+   "function": "cmt_map_metric_destroy",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:map_lock",
+    "callee-summary:map_unlock"
+   ],
+   "lost": [
+    "5771: call to uncontracted function `map_lock`",
+    "5775: call to uncontracted function `map_unlock`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_map.c",
+   "function": "cmt_map_metric_get",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:map_lock",
+    "callee-summary:map_unlock"
+   ],
+   "lost": [
+    "5839: call to uncontracted function `map_lock`",
+    "5842: call to uncontracted function `map_unlock`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_map.c",
+   "function": "cmt_map_metrics_expire",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:map_lock",
+    "callee-summary:map_unlock"
+   ],
+   "lost": [
+    "5902: call to uncontracted function `map_lock`",
+    "5903: unresolved resource identity `map`",
+    "5906: indirect memory access is outside the resource projection",
+    "5915: call to uncontracted function `map_unlock`"
+   ],
+   "gained": [
+    "5906: call to uncontracted function `cfl_list_init`"
+   ]
+  },
+  {
+   "unit": "cmt_map.c",
+   "function": "map_lock",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "5490: unmodeled call, aggregate or indirect access in loop condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_map.c",
+   "function": "map_unlock",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5495: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "add",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5401: call to uncontracted function `metric_exchange`",
+    "5404: call to uncontracted function `cmt_atomic_store`",
+    "5405: call to uncontracted function `cmt_atomic_store`",
+    "5406: call to uncontracted function `cmt_atomic_store`",
+    "5407: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_add",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:add"
+   ],
+   "lost": [
+    "5481: call to uncontracted function `add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_dec",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:add"
+   ],
+   "lost": [
+    "5477: call to uncontracted function `add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_exp_hist_get_snapshot",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cmt_metric_exp_hist_lock",
+    "callee-summary:cmt_metric_exp_hist_unlock"
+   ],
+   "lost": [
+    "5605: call to uncontracted function `cmt_metric_exp_hist_lock`",
+    "5618: call to uncontracted function `cmt_metric_exp_hist_unlock`",
+    "5624: call to uncontracted function `cmt_metric_exp_hist_unlock`",
+    "5634: call to uncontracted function `cmt_metric_exp_hist_unlock`",
+    "5642: call to uncontracted function `cmt_metric_exp_hist_unlock`",
+    "5648: call to uncontracted function `cmt_metric_exp_hist_unlock`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_exp_hist_lock",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "5591: unmodeled call, aggregate or indirect access in loop condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_exp_hist_unlock",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5596: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_get_int64_value",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5500: call to uncontracted function `cmt_atomic_load`",
+    "5502: indirect memory access is outside the resource projection",
+    "5505: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_get_start_timestamp",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5573: call to uncontracted function `cmt_atomic_load`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_get_timestamp",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5550: call to uncontracted function `cmt_atomic_load`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_get_uint64_value",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5512: call to uncontracted function `cmt_atomic_load`",
+    "5514: call to uncontracted function `cmt_atomic_load`",
+    "5517: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_get_value",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5490: call to uncontracted function `cmt_atomic_load`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_get_value_snapshot",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5531: call to uncontracted function `cmt_atomic_load`",
+    "5532: call to uncontracted function `cmt_atomic_load`",
+    "5533: call to uncontracted function `cmt_atomic_load`",
+    "5534: call to uncontracted function `cmt_atomic_load`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_get_value_type",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "5495: indirect memory access is outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_has_start_timestamp",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "5569: unmodeled call, aggregate or indirect access in return expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_inc",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:add"
+   ],
+   "lost": [
+    "5472: call to uncontracted function `add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_set_double",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5417: call to uncontracted function `cmt_atomic_store`",
+    "5418: call to uncontracted function `cmt_atomic_store`",
+    "5419: call to uncontracted function `cmt_atomic_store`",
+    "5420: call to uncontracted function `cmt_atomic_store`",
+    "5421: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_set_exp_hist_count",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5577: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_set_exp_hist_sum",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5581: call to uncontracted function `cmt_atomic_store`",
+    "5583: call to uncontracted function `cmt_atomic_store`",
+    "5586: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_set_int64",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5427: call to uncontracted function `cmt_atomic_store`",
+    "5428: call to uncontracted function `cmt_atomic_store`",
+    "5429: call to uncontracted function `cmt_atomic_store`",
+    "5430: call to uncontracted function `cmt_atomic_store`",
+    "5431: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_set_start_timestamp",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5559: call to uncontracted function `cmt_atomic_store`",
+    "5560: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_set_timestamp",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5555: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_set_uint64",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5437: call to uncontracted function `cmt_atomic_store`",
+    "5438: call to uncontracted function `cmt_atomic_store`",
+    "5439: call to uncontracted function `cmt_atomic_store`",
+    "5440: call to uncontracted function `cmt_atomic_store`",
+    "5441: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_sub",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:add"
+   ],
+   "lost": [
+    "5485: call to uncontracted function `add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "cmt_metric_unset_start_timestamp",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5564: call to uncontracted function `cmt_atomic_store`",
+    "5565: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "metric_exchange",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_compare_exchange"
+   ],
+   "lost": [
+    "5387: call to uncontracted function `cmt_atomic_compare_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric.c",
+   "function": "metric_hist_exchange",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5454: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "cmt_metric_hist_count_inc",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5441: call to uncontracted function `cmt_atomic_load`",
+    "5443: call to uncontracted function `metric_hist_count_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "cmt_metric_hist_count_set",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5454: call to uncontracted function `cmt_atomic_load`",
+    "5456: call to uncontracted function `metric_hist_count_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "cmt_metric_hist_get_count_value",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5508: call to uncontracted function `cmt_atomic_load`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "cmt_metric_hist_get_sum_value",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5514: call to uncontracted function `cmt_atomic_load`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "cmt_metric_hist_sum_add",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:metric_sum_exchange"
+   ],
+   "lost": [
+    "5469: call to uncontracted function `metric_sum_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "cmt_metric_hist_sum_set",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:metric_sum_exchange"
+   ],
+   "lost": [
+    "5482: call to uncontracted function `metric_sum_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "metric_hist_count_exchange",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_compare_exchange",
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5399: call to uncontracted function `cmt_atomic_compare_exchange`",
+    "5403: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "metric_hist_exchange",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5391: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_metric_histogram.c",
+   "function": "metric_sum_exchange",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_compare_exchange",
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5415: call to uncontracted function `cmt_atomic_compare_exchange`",
+    "5419: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "cmt_summary_count_set",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5633: call to uncontracted function `cmt_atomic_load`",
+    "5635: call to uncontracted function `summary_count_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "cmt_summary_get_count_value",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5548: call to uncontracted function `cmt_atomic_load`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "cmt_summary_get_sum_value",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_load"
+   ],
+   "lost": [
+    "5542: call to uncontracted function `cmt_atomic_load`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "cmt_summary_set_default",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5664: call to uncontracted function `cmt_atomic_store`",
+    "5669: call to uncontracted function `cmt_summary_sum_set`",
+    "5670: call to uncontracted function `cmt_summary_count_set`"
+   ],
+   "gained": [
+    "5664: unresolved resource identity `metric`"
+   ]
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "cmt_summary_sum_set",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:summary_sum_exchange"
+   ],
+   "lost": [
+    "5622: call to uncontracted function `summary_sum_exchange`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "summary_count_exchange",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_compare_exchange",
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5590: call to uncontracted function `cmt_atomic_compare_exchange`",
+    "5594: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "summary_quantile_exchange",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5566: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_summary.c",
+   "function": "summary_sum_exchange",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cmt_atomic_compare_exchange",
+    "cmt_atomic_store"
+   ],
+   "lost": [
+    "5578: call to uncontracted function `cmt_atomic_compare_exchange`",
+    "5582: call to uncontracted function `cmt_atomic_store`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_share_record_poll_end",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "23073: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "function": "rd_kafka_share_record_poll_start",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "23055: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_any_usable",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_brokers_wait_state_change"
+   ],
+   "lost": [
+    "21772: call to uncontracted function `rd_kafka_brokers_wait_state_change`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_controller",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_brokers_wait_state_change"
+   ],
+   "lost": [
+    "21874: call to uncontracted function `rd_kafka_brokers_wait_state_change`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_broker_weight_usable",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "rd_atomic64_get"
+   ],
+   "lost": [
+    "21704: call to uncontracted function `rd_atomic64_get`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_brokers_wait_state_change",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cnd_timedwait_ms"
+   ],
+   "lost": [
+    "21591: call to uncontracted function `cnd_timedwait_ms`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "function": "rd_kafka_waitresp_find",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "21885: call to uncontracted function `rd_avg_add`",
+    "21886: call to uncontracted function `rd_avg_add`",
+    "21891: call to uncontracted function `rd_avg_add`",
+    "21897: call to uncontracted function `rd_avg_add`",
+    "21904: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": [
+    "21885: unresolved resource identity `rkbuf`",
+    "21886: unresolved resource identity `rkbuf`",
+    "21891: unresolved resource identity `rkbuf`",
+    "21897: unresolved resource identity `rkbuf`",
+    "21904: unresolved resource identity `rkbuf`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_heartbeat_preconditions_met",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "24067: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_consumer_serve",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "24112: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat_leave",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "rd_atomic64_add"
+   ],
+   "lost": [
+    "20874: call to uncontracted function `rd_atomic64_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_join",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "21778: unmodeled call, aggregate or indirect access in branch condition",
+    "21781: unresolved resource identity `rkcg`",
+    "21782: unresolved resource identity `rkcg`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "function": "rd_kafka_cgrp_max_poll_interval_check_tmr_cb",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "read"
+   ],
+   "lost": [
+    "23400: call to uncontracted function `rd_kafka_max_poll_exceeded`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "function": "rd_kafka_metadata_cache_wait_change",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "cnd_timedwait_ms"
+   ],
+   "lost": [
+    "20612: call to uncontracted function `cnd_timedwait_ms`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "function": "rd_kafka_msgset_reader_msg_v2",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "rd_atomic64_add"
+   ],
+   "lost": [
+    "20119: call to uncontracted function `rd_atomic64_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "function": "rd_kafka_op_throttle_time",
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "20303: call to uncontracted function `rd_avg_add`",
+    "20304: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_acknowledgements_send_total",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_atomic64_add"
+   ],
+   "lost": [
+    "22084: call to uncontracted function `rd_atomic64_add`",
+    "22085: call to uncontracted function `rd_atomic64_add`",
+    "22086: call to uncontracted function `rd_atomic64_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_commit_latency",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "22096: call to uncontracted function `rd_avg_add`",
+    "22098: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_fetch_latency",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "22016: call to uncontracted function `rd_avg_add`",
+    "22018: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_heartbeat_total",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_atomic64_add"
+   ],
+   "lost": [
+    "22090: call to uncontracted function `rd_atomic64_add`",
+    "22091: call to uncontracted function `rd_atomic64_add`",
+    "22092: call to uncontracted function `rd_atomic64_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_poll_idle_ratio",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "22044: call to uncontracted function `rd_avg_add`",
+    "22046: call to uncontracted function `rd_avg_add`",
+    "22048: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_produce_latency",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "21999: call to uncontracted function `rd_avg_add`",
+    "22001: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_queue_time",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "21988: call to uncontracted function `rd_avg_add`",
+    "21990: call to uncontracted function `rd_avg_add`",
+    "21992: call to uncontracted function `rd_avg_add`",
+    "21994: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_rebalance_latency",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "22011: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_rtt",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "21977: call to uncontracted function `rd_avg_add`",
+    "21978: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_share_fetch_latency",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "22023: call to uncontracted function `rd_avg_add`",
+    "22026: call to uncontracted function `rd_avg_add`",
+    "22029: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_share_fetch_size",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "22035: call to uncontracted function `rd_avg_add`",
+    "22037: call to uncontracted function `rd_avg_add`",
+    "22039: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_share_fetch_total",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_atomic64_add"
+   ],
+   "lost": [
+    "22077: call to uncontracted function `rd_atomic64_add`",
+    "22078: call to uncontracted function `rd_atomic64_add`",
+    "22079: call to uncontracted function `rd_atomic64_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_share_poll_idle_ratio",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "22053: call to uncontracted function `rd_avg_add`",
+    "22056: call to uncontracted function `rd_avg_add`",
+    "22059: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_throttle_time",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "21982: call to uncontracted function `rd_avg_add`",
+    "21983: call to uncontracted function `rd_avg_add`",
+    "21984: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_decode.c",
+   "function": "unit_test_telemetry_set_time_between_poll",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_avg_add"
+   ],
+   "lost": [
+    "22065: call to uncontracted function `rd_avg_add`",
+    "22068: call to uncontracted function `rd_avg_add`",
+    "22071: call to uncontracted function `rd_avg_add`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_acknowledgements_send_total",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_atomic64_get"
+   ],
+   "lost": [
+    "20545: call to uncontracted function `rd_atomic64_get`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_bytes_consumed_total",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_atomic64_get"
+   ],
+   "lost": [
+    "20470: call to uncontracted function `rd_atomic64_get`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_fetch_total",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_atomic64_get"
+   ],
+   "lost": [
+    "20517: call to uncontracted function `rd_atomic64_get`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_telemetry_encode.c",
+   "function": "calculate_share_heartbeat_total",
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "rd_atomic64_get"
+   ],
+   "lost": [
+    "20577: call to uncontracted function `rd_atomic64_get`"
+   ],
+   "gained": []
+  }
+ ]
+}
