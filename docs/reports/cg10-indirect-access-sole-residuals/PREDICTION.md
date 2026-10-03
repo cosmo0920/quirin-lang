@@ -71,3 +71,58 @@ the declared `rd_atomic32_get` (`rd_atomic64_get`, `rd_atomic32_add`,
 publishes nothing). Not attempted: decision-class callees (retained pointers,
 callbacks, reference counts) are sized, not decided. Gross range before part 2:
 **+20 to +60** Unknown → Safe on the corpus, no Safe → non-Safe move.
+
+## Part 2 (after rule 12k's own corpus measurement, before any contract)
+
+### Rule 12k measured on the corpus (base + `e6414f3ca`, `scripts/attribution.py`)
+
+`00462adf…`, **695 / 9 / 4,130, no status move** (prediction held). 1,457
+functions change leaves: access leaves 13,083 → 10,121 (−2,962), uncontracted
+call leaves 8,433 → 11,442 (+3,009; 47 more than removed because a line holding
+two refused statements carried one access leaf for both, and naming one callee
+shows both). Every changed leaf is that replacement (0 problems). Of the 685
+leaves of the two classes, 463 now name their callee and 222 keep the access
+refusal (inside the 400–600 predicted); of the 331 functions, **215** are now
+blocked by uncontracted calls alone (170–270 predicted) and 116 keep an access
+leaf. Corpus-wide, 758 Unknown functions are blocked only by uncontracted calls
+(477 before). Corpus re-attribution 2,962 leaves, inside 800–3,000.
+
+### Ranking with rule 12k (`scripts/decides.py`, the 331)
+
+rd_avg_add 12 alone / 14 touched; cmt_atomic_store 10 / 14; cmt_atomic_load 8 /
+8; rd_kafka_confval_set_type 5; rd_atomic64_get 4; rd_kafka_interceptor_method_add
+4 (was 14: its `(void *)on_…` cast actual is read by neither reader, so 10 keep
+the access leaf); rd_atomic64_add 3; rd_kafka_queue_new0 3; rd_list_add 3;
+rd_list_clear 3; …; cnd_timedwait_ms 2; cmt_atomic_compare_exchange 1 / 5;
+rd_atomic32_set 1 / 3.
+
+### The contracts this card adds (in force only once pinned)
+
+* `qcore-provider-cmetrics` (`cmetrics/metric_values.qv`): `cmt_atomic_load`,
+  `cmt_atomic_store`, `cmt_atomic_compare_exchange`, borrowed / none; every
+  backend definition read (identical at both revisions); home body `Safe`.
+* `qcore-provider-librdkafka` (`librdkafka/memory.qv`, beside
+  `rd_atomic32_get`): `rd_atomic64_get`, `rd_atomic32_add`, `rd_atomic64_add`,
+  `rd_atomic32_set` (header bodies over `__atomic` builtins, as
+  `rd_atomic32_get`), `cnd_timedwait_ms` (home body `Safe`) and
+  `rd_hdr_histogram_record` (home body `Safe`), the one uncontracted call of
+  the header body `rd_avg_add`, which is then left to W4 in each including
+  unit rather than declared.
+
+Ceiling (every Unknown function whose every leaf is an uncontracted call to
+one of these, plus `rd_avg_add`): **47** corpus functions (23 cmetrics value
+accessors and exchanges, 18 librdkafka telemetry functions over `rd_avg_add` and
+`rd_atomic64_*`, `rd_kafka_brokers_wait_state_change`,
+`rd_kafka_metadata_cache_wait_change`, `rd_kafka_bufq_reset`, `rd_kafka_cert_dup`,
+`rd_kafka_idemp_inflight_toppar_add`, `map_unlock`).
+
+**Predicted: +30 to +50 Unknown → Safe on the corpus** (each freed statement
+still carries W44's typed reads and second obligation, an `UnknownAlias` on a
+bound base keeps a function Unknown; `rd_avg_add`'s 12 callers depend on its
+body validating once `rd_hdr_histogram_record` is declared, which I give
+better than even odds; callers of the freed functions may follow through their
+summaries: 0–8 more). No Safe → non-Safe move. 0–2 new provisional `Unsafe`
+(a body read further may expose a leak), each to be read and classified.
+System and slice: 0 to +3 (to be measured; these callees are corpus
+libraries the slice routes do not compile, except Fluent Bit's own cmetrics
+use).

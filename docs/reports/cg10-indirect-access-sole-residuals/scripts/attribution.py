@@ -90,6 +90,7 @@ def main() -> int:
         "status_moves": [p for p in problems if p.startswith("status")],
         "problems": problems,
         "functions_with_changed_leaves": functions_changed,
+        "leaves_gained_on_a_line_keeping_its_access_leaf": shared_lines(before, after),
         "leaves_reattributed": sum(moved_leaves.values()),
         "leaves_by_callee": dict(moved_leaves.most_common()),
         "functions_by_callee": {k: len(v) for k, v in sorted(
@@ -106,24 +107,42 @@ def main() -> int:
 
 
 def recheck(before, after):
+    """Every changed function: each lost leaf is an access leaf, each gained leaf
+    an uncontracted-call leaf, and every line that gained one either lost its
+    access leaf or still carries one (the diagnostics are a set keyed by line
+    and description, so a line holding two refused statements carried one
+    access leaf for both; re-attributing one of them shows both)."""
     problems = []
     for key in sorted(set(before) & set(after), key=str):
         old, new = collections.Counter(before[key][1]), collections.Counter(after[key][1])
         if old == new:
             continue
         lost, gained = old - new, new - old
-        lost_by_place = collections.Counter()
-        for leaf, count in lost.items():
+        still_access = {leaf[:3] for leaf in new if leaf[3] == IND}
+        lost_places = {leaf[:3] for leaf in lost}
+        for leaf in lost:
             if leaf[3] != IND:
                 problems.append("lost %s %r" % (key, leaf))
-            lost_by_place[leaf[:3]] += count
-        for leaf, count in gained.items():
+        for leaf in gained:
             if not UNCONTRACTED.match(leaf[3]):
                 problems.append("gained %s %r" % (key, leaf))
-            lost_by_place[leaf[:3]] -= count
-        if any(lost_by_place.values()):
-            problems.append("unbalanced %s" % (key,))
+            elif leaf[:3] not in lost_places and leaf[:3] not in still_access:
+                problems.append("unbalanced %s %r" % (key, leaf))
+        for place in lost_places:
+            if not any(leaf[:3] == place for leaf in gained):
+                problems.append("lost without replacement %s %r" % (key, place))
     return problems
+
+
+def shared_lines(before, after):
+    """Leaves gained on a line that kept its access leaf: the line holds a
+    second refused statement."""
+    count = 0
+    for key in set(before) & set(after):
+        old, new = collections.Counter(before[key][1]), collections.Counter(after[key][1])
+        lost_places = {leaf[:3] for leaf in old - new}
+        count += sum(n for leaf, n in (new - old).items() if leaf[:3] not in lost_places)
+    return count
 
 
 if __name__ == "__main__":
