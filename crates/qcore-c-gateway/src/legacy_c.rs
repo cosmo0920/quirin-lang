@@ -327,6 +327,11 @@ pub(crate) mod checked_spec;
 #[path = "legacy_scalar_return_value.rs"]
 mod scalar_return_value;
 
+// Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the statement and return fallback
+// orders as explicit tables, asked by one dispatcher each.
+#[path = "legacy_route_table.rs"]
+mod route_table;
+
 #[cfg(feature = "indirect-census")]
 #[path = "legacy_leak_witness.rs"]
 pub(crate) mod leak_witness;
@@ -6551,60 +6556,16 @@ impl Parser<'_> {
                     return Ok(tested);
                 }
                 let statement = self.return_statement(expression.clone(), line);
-                // Card CG02-ELABORATION-CORE (rule 10s): asked last, only for
-                // a refused return.
-                if return_refused(&statement)
-                    && let Some(elaborated) = self.elaborated_return(&expression, line)
-                {
-                    return Ok(elaborated);
-                }
-                // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): asked
-                // after the elaborator, only for a refused return.
-                if return_refused(&statement)
-                    && let Some(instantiated) = self.instantiated_return(&expression, line)
-                {
-                    return Ok(instantiated);
-                }
-                // Card CG05-NESTED-CALL-EFFECTS (rule 10y): asked last, only
-                // for a refused return or the nested-call refusal.
-                if let Some(nested) = self.nested_call_return(&expression, line, &statement) {
-                    return Ok(nested);
-                }
-                // Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z):
-                // asked last, only for a refused return.
-                if return_refused(&statement)
-                    && let Some(branched) = self.connective_return(&expression, line)
-                {
-                    return Ok(branched);
-                }
-                // Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g):
-                // asked last, only for a refused return.
-                if return_refused(&statement)
-                    && let Some(lowered) =
-                        self.statement_expression_return(&expression, line, expression_origin)
-                {
-                    return Ok(lowered);
-                }
-                // Card CG19-ATOMIC-SOURCE-ROUTE (rule 11i): asked last, only
-                // for a refused return or an uncontracted atomic builtin's.
-                if (return_refused(&statement) || atomic_route::refused_atomic_return(&statement))
-                    && let Some(routed) = self.atomic_routed_return(&expression, line)
-                {
-                    return Ok(routed);
-                }
-                // Card CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): asked last,
-                // only for a refused return.
-                if return_refused(&statement)
-                    && let Some(enclosing) = self.container_of_return(&expression, line)
-                {
-                    return Ok(enclosing);
-                }
-                // Card W48-BOTTOM-UP-CALLEE-BODIES (rule 12f): asked last,
-                // only for a refused return.
-                if return_refused(&statement)
-                    && let Some(value) = self.scalar_return_value(&expression, line)
-                {
-                    return Ok(value);
+                // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the return
+                // fallbacks (10s, 10u, 10y, 10z, 11g, 11i, 11u, 12f), in their
+                // table's order, each with its own entry condition.
+                if let Some(fallback) = self.ask_return_fallbacks(&route_table::ReturnQuery {
+                    expression: &expression,
+                    line,
+                    origin: expression_origin,
+                    statement: &statement,
+                }) {
+                    return Ok(fallback);
                 }
                 Ok(statement)
             }
@@ -6792,118 +6753,16 @@ impl Parser<'_> {
         // Card W45-SUB-OBJECT-STORES: the sub-object store census.
         #[cfg(feature = "indirect-census")]
         self.census_sub_object_store(line, tokens, &instruction);
-        if let Some(sequence) = self.stepped_access(tokens, &instruction) {
-            return Statement::Block(
-                sequence
-                    .into_iter()
-                    .map(|instruction| Statement::Instruction(instruction, line))
-                    .collect(),
-            );
-        }
-        // Card W44-INDIRECT-CALL-ARGUMENT-ACCESS: a call whose actuals
-        // the gate refused, lowered to its actuals' reads and the call.
-        if let Some(sequence) = self.call_argument_access(tokens, &instruction) {
-            return Statement::Block(
-                sequence
-                    .into_iter()
-                    .map(|instruction| Statement::Instruction(instruction, line))
-                    .collect(),
-            );
-        }
-        // Card CG02-ELABORATION-CORE (rule 10s): asked last, only for a
-        // refusal.
-        if let LegacyInstruction::Unknown { description, .. } = &instruction
-            && let Some(elaborated) = self.elaborated_statement(tokens, line, description)
-        {
-            self.element_origins.clear();
-            return elaborated;
-        }
-        // Card CG08-CASTS-AND-TYPE-QUERIES (rule 11b): asked after the
-        // elaborator, only for a refusal.
-        if let Some(uncast) = self.uncast_pointer_statement(tokens, line, &instruction) {
-            self.element_origins.clear();
-            return uncast;
-        }
-        // Card CG03-CALL-SUMMARY-INSTANTIATION (rule 10u): asked last, only
-        // for a call whose lexical substitution was refused or incomplete.
-        if let Some(substituted) = self.substituted_call(tokens, line, &instruction) {
-            self.element_origins.clear();
-            return Statement::Block(
-                substituted
-                    .into_iter()
-                    .map(|instruction| Statement::Instruction(instruction, line))
-                    .collect(),
-            );
-        }
-        // Card CG05-NESTED-CALL-EFFECTS (rule 10y): asked last, only for the
-        // nested-call refusal.
-        if let Some(nested) = self.nested_call_statement(tokens, line, &instruction) {
-            self.element_origins.clear();
-            return Statement::Block(
-                nested
-                    .into_iter()
-                    .map(|instruction| Statement::Instruction(instruction, line))
-                    .collect(),
-            );
-        }
-        // Card CG06-VALUE-CONNECTIVES-AND-CONDITIONAL (rule 10z): asked last,
-        // only for a refusal.
-        if let LegacyInstruction::Unknown { description, .. } = &instruction
-            && let Some(branched) = self.connective_statement(tokens, line, description)
-        {
-            self.element_origins.clear();
-            return branched;
-        }
-        // Card CG07-GENERIC-AND-STATEMENT-EXPRESSIONS (rule 11g): asked last,
-        // only for a refusal.
-        if let LegacyInstruction::Unknown { description, .. } = &instruction
-            && let Some(lowered) =
-                self.statement_expression_statement(tokens, line, origin, description)
-        {
-            self.element_origins.clear();
-            return lowered;
-        }
-        // Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f): asked last,
-        // only for a refusal.
-        if let Some(aggregate) = self.aggregate_statement(tokens, line, &instruction) {
-            self.element_origins.clear();
-            return aggregate;
-        }
-        // Card CG19-ATOMIC-SOURCE-ROUTE (rule 11i): asked last, only for a
-        // refusal: an uncontracted atomic builtin's, or an `_Atomic` store or
-        // read-modify-write statement's.
-        if let Some(routed) = self.atomic_routed_statement(tokens, line, &instruction) {
-            self.element_origins.clear();
-            return routed;
-        }
-        // Card CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): asked last, only for
-        // a refusal: a VLA declaration, and a `container_of` value.
-        if let Some(declared) = self.vla_declaration_statement(tokens, line, &instruction) {
-            self.element_origins.clear();
-            return declared;
-        }
-        if let Some(enclosing) = self.container_of_statement(tokens, line, &instruction) {
-            self.element_origins.clear();
-            return enclosing;
-        }
-        // Card CG26-VARIADICS (rule 11w): asked last, only for an uncontracted
-        // `va_*` builtin's refusal.
-        if let Some(lowered) = self.va_list_statement(tokens, line, &instruction) {
-            self.element_origins.clear();
-            return lowered;
-        }
-        // Card CG26-VARIADICS (rule 11w): asked last, only for the declared
-        // tail's refusal of a call statement.
-        if let Some(lowered) = self.variadic_tail_statement(tokens, line, &instruction) {
-            self.element_origins.clear();
-            return lowered;
-        }
-        // Card CAST-FORMALIZATION (rule 12h): asked last, only for a
-        // refusal: the uncast statement where the conversion table removes a
-        // cast at a value position.
-        if let Some(lowered) = self.uncast_value_statement(tokens, line, &instruction) {
-            self.element_origins.clear();
-            return lowered;
+        // Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the statement fallbacks
+        // (W43 stepped access, W44 call actuals, 10s, 11b, 10u, 10y, 10z, 11g,
+        // 11f, 11i, 11u, 11w, 12h), in their table's order.
+        if let Some(statement) = self.ask_statement_fallbacks(&route_table::StatementQuery {
+            tokens,
+            line,
+            origin,
+            instruction: &instruction,
+        }) {
+            return statement;
         }
         if let LegacyInstruction::ContractCall { destination, .. } = &instruction {
             let use_ = if destination.is_some() {

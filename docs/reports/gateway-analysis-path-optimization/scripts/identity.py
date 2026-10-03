@@ -9,11 +9,11 @@ Usage: identity.py BEFORE AFTER [OUT.json]
   raw; a file that differs raw is compared again with the run's own directory
   name replaced by RUN (an output that names its own path), and both verdicts
   are reported;
-* system: every file of private/gapo/NAME-system/ the same way, except
-  stderr.log, whose `preparation:` line is a wall-time measurement (validation
-  policy): it is compared with that line's figures erased;
-* slice: every file of the shared prepared attempt's gapo-NAME/ the same way
-  (stderr.log likewise);
+* system: every file of private/gapo/NAME-system/ the same way, except that
+  in console.log and stderr.log the `preparation:` line's durations (`N us`,
+  wall-time measurements, validation policy) are erased before comparing;
+  its unit and Clang-invocation counts are compared;
+* slice: every file of the shared prepared attempt's gapo-NAME/ the same way;
 * parity: each route's QCORE_TYPED_PATH_PARITY stream as a multiset of rows
   with Clang AST node addresses ("0x..." values, process memory) erased, as
   earlier cards compared them (rows are written in analysis order, which at
@@ -32,7 +32,7 @@ REPO = pathlib.Path(__file__).resolve().parents[4]
 GAPO = REPO / "private/gapo"
 SLICE = pathlib.Path("/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1")
 ADDRESS = re.compile(rb'"0x[0-9a-f]+"')
-TIMING = re.compile(rb"[0-9]+(\.[0-9]+)?\s*(ms|s|seconds)\b")
+TIMING = re.compile(rb"[0-9]+(\.[0-9]+)?\s*(us|ms|s|seconds)\b")
 
 
 def digest(data):
@@ -41,7 +41,7 @@ def digest(data):
 
 def normalise(data, name, path):
     data = data.replace(name.encode(), b"RUN")
-    if path.name == "stderr.log":
+    if path.name in ("stderr.log", "console.log"):
         data = b"\n".join(TIMING.sub(b"T", line) if b"preparation" in line else line
                           for line in data.split(b"\n"))
     return data
