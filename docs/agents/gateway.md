@@ -4702,6 +4702,10 @@ own anchor here.
     `an_unanswered_root_is_refused`, `an_integer_identity_is_refused`,
     `the_reading_is_custody_neutral`, the shared `readVectors`);
     [report](../reports/cg26-tail-residual-actuals/README.md).
+    Amended by [rule 12h](#constraint-12h): the abstract expression is built
+    through a cast the conversion table reads as its operand at a tail
+    position (`cast_semantics::tail_transparent`); `a_cast_is_never_read`
+    now holds of every other cast.
 
 <a id="constraint-12h"></a>
 
@@ -4754,7 +4758,12 @@ own anchor here.
     lowered as its uncast statement by the older routes and kept only where
     they admit it (asked last); in a variadic tail a `scalar` conversion of
     a declared scalar that is not a descriptor name is removed too, and rule
-    11w's widening is applied with the original statement's Clang node.
+    11w's widening is applied with the original statement's Clang node and
+    rule 12g's readings. Rule 12g's reader builds its abstract expression
+    through a `scalar` or identity-preserving pointer conversion
+    (`tail_transparent`: the operand's own reading, so an integer-carried
+    identity or an unanswered root still refuses) and keeps its `cast`
+    refusal for every other class.
     (4) **Dereference count.** Before a member or subscript root a cast
     group is transparent to rule 5j's count: `*(T *)q->f` dereferences
     twice. **Do not** remove a cast at an access position (its type is the
@@ -4769,12 +4778,13 @@ own anchor here.
     type spellings and the token/AST match (trust boundary 28), C11
     6.3.2.3p7 (`P-ALIGNED-POINTER-CONVERSION`) for a pointer conversion, and
     `P-EFFECTIVE-TYPE` for a typed view's access. Measured (corpus
-    `66910c10`, main `cb3085365`): **649 / 9 / 4,176 → 654 / 9 / 4,171**
-    (`450a9e54…` → `63bbb5a3…`): `LZ4F_readLE32`, `LZ4F_readLE64`,
+    `66910c10`, main `9c5f2079c`): **649 / 9 / 4,176 → 654 / 9 / 4,171**
+    (`b864e7ba…` → `d13ed4c1…`): `LZ4F_readLE32`, `LZ4F_readLE64`,
     `LZ4F_writeLE32`, `LZ4F_writeLE64` and librdkafka's `unaligned_copy64`
-    Unknown → Safe, 31 more rows change leaves, no Safe → non-Safe move, no
-    leak or violation added; system 44 / 2 / 188 unmoved (two functions
-    change leaves), slice byte-identical. `QCore.CastSemantics`
+    Unknown → Safe, 34 more rows change leaves (rule 12g's six cast tail
+    leaves among them), no Safe → non-Safe move, no leak or violation added;
+    system 44 / 2 / 188 unmoved (two functions change leaves), slice
+    byte-identical. `QCore.CastSemantics`
     (`classify_vectors_hold`, `agrees`, `view_preserves_identity`,
     `round_trip_same_pointer`, `pointer_to_integer_loses_provenance`,
     `integer_to_pointer_no_identity`, `admitted_access_without_premise`,

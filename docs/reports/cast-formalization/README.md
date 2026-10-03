@@ -2,14 +2,19 @@
 
 Card CAST-FORMALIZATION (wave 48, round 16; the user's priority, 2026-10-03:
 "We'll always use type casting on our code base so we really wanted to
-formalize this"). Base: local `main` at `cb3085365` (unchanged through the
-card). Gateway [rule 12h](../../agents/gateway.md#constraint-12h), amending
+formalize this"). Base: local `main` at `cb3085365`; rebased onto main
+`9c5f2079c` when CG26-TAIL-RESIDUAL-ACTUALS (rule 12g) landed, and every
+figure of record below is measured on the rebased tip (the first pair, on
+`cb3085365`, is kept in `artifacts/` and §4). Gateway
+[rule 12h](../../agents/gateway.md#constraint-12h), amending
 [rule 11b](../../agents/gateway.md#constraint-11b) (and, through the view,
-rule 11j). Lean `QCore.CastSemantics`, audited by `proof/AuditCastSemantics.lean`
-(21 theorems; 282 → 283 audits). [PREDICTION.md](PREDICTION.md) was frozen at
-`bb2aabe4a`, after the census instrument (`2598f6e4e`, verdict-neutral,
-checked byte-identical) and before any hook that can change a verdict
-(`fc2014fb3`).
+rule 11j; through the trailing-actual reader, rule 12g). Lean
+`QCore.CastSemantics`, audited by `proof/AuditCastSemantics.lean` (21
+theorems; 283 → 284 audits on the rebased base). [PREDICTION.md](PREDICTION.md)
+was frozen at `bb2aabe4a` (rebased as `8e90d0a9e`), after the census
+instrument (`2598f6e4e`, rebased as `20a591246`; verdict-neutral, checked
+byte-identical on both bases) and before any hook that can change a verdict
+(`fc2014fb3`, rebased as `f7c5ee4c2`).
 
 ## 1. The model: one conversion table
 
@@ -56,6 +61,7 @@ preserved, lost ↔ lost, not applicable ↔ absent / no value / data; a scalar
 | **H-V** | member root `((T *)p)->f`, dereference `*(T *)p`, subscript base `((T *)p)[i]` (the typed access-path reader) | `void_view::explicit_view` asks `cast_semantics::access_view`: `typed-view` (now also from a character pointer) and `byte-view` are views, read under rule 11j's premises unchanged (untracked root or never-bound load, the C02-P-ALIAS check); a `qualifier` conversion is read through with no view (`transparent_cast`); `punned-view`, function/object and every other class refuse | the reader's own step (rule 11j's place) |
 | **H-U0** | call actual, variadic tail actual (lexical classifier) | an identity-preserving pointer conversion of a place is that place: a call the classifier admitted with such an actual is classified as its uncast statement, whose answer replaces the original | **soundness repair, asked first** |
 | **H-U** | call actual, variadic tail, pointer-step operand, initializer, assignment value | a refused statement's identity-preserving pointer conversions of a plain name (and, in a variadic tail only, a `scalar` conversion of a non-descriptor scalar) are removed and the uncast statement is lowered by the older routes, kept only where they admit it; rule 11w's tail widening is applied with the original statement's Clang node | last, only for a refusal |
+| **H-12g** | variadic tail actual, rule 12g's Clang reader (`variadic_tail_actuals.rs::TailExpr::from_node`) | a `scalar` or identity-preserving pointer conversion is read through to its operand's own reading (`cast_semantics::tail_transparent`); every other cast keeps 12g's `cast` refusal; the uncast tail statement of H-U carries 12g's readings for its other positions | 12g's own place (asked where T1-T8 refuse) |
 | **H-T** | the elaborator's object-pointer `BitCast`/`NoOp` arm; rule 11b(3)'s uncast operand | ask the class; a non-preserving class refuses by name (`cast \`CLASS\` (CG08)`) | unchanged order; no verdict change |
 
 Returns and call-free conditions keep the elaborator's reading
@@ -92,7 +98,9 @@ exactly when its count is one). No corpus row moved.
 `record_cast_census` (parity runs only) records every explicit cast
 (`CStyleCastExpr`) of a body with its Clang kind, class, position and its
 statement's line; `scripts/census.py` joins them to the route's leaves by
-function and line ([before](artifacts/census-before-corpus.txt),
+function and line (pair of record: [before](artifacts/rebased/census-before2-corpus.txt),
+[after](artifacts/rebased/census-after2-corpus.txt); first pair:
+[before](artifacts/census-before-corpus.txt),
 [after](artifacts/census-after-corpus.txt)). Explicit casts only: an implicit
 conversion is not a cast in the source, and Clang inserts thousands. The
 script gained the refusals column (category `unsupported`) after the
@@ -102,7 +110,7 @@ its other figures unchanged.
 | | BEFORE | AFTER |
 |---|---|---|
 | explicit casts / bodies | 16,743 / 3,225 | 16,743 / 3,225 |
-| leaves on a cast's line / of them refusals (`unsupported`) | 10,392 / 7,777 | 10,384 / 7,745 |
+| leaves on a cast's line / of them refusals (`unsupported`) | 10,383 / 7,768 | 10,371 / 7,732 |
 | functions with such a leaf | 2,273 | 2,268 |
 | Unknown functions every leaf of which is on such a line | 285 | 280 |
 
@@ -111,7 +119,7 @@ The join is by line: a macro-expanded line holding many statements (the
 so these are upper bounds on "a refusal whose statement holds a cast", not on
 "a refusal a cast causes"; most of them carry another blocker (an indirect
 access, an uncontracted call) on the same statement. `NULL` is itself a
-`null-pointer` cast: 7,169 casts, 4,052 joined refusals.
+`null-pointer` cast: 7,169 casts, 4,051 joined refusals.
 
 By class × position (casts / joined refusals / Unknown functions, BEFORE →
 AFTER):
@@ -121,7 +129,7 @@ AFTER):
 | H-V: `typed-view`, `byte-view`, `qualifier` at an access position | 131 | 69 → 65 | 43 → 43 |
 | refused by name: `punned-view` at an access position | 38 | 29 → 29 | 12 → 12 |
 | H-U: identity-preserving pointer classes at value positions | 1,735 | 1,072 → 1,046 | 771 → 766 |
-| H-U: `scalar`, `byte-view` in a variadic tail | 691 | 1,499 → 1,497 | 204 → 202 |
+| H-U, H-12g: `scalar`, `byte-view` in a variadic tail | 691 | 1,499 → 1,496 | 204 → 201 |
 | `function-object`, `integer-to-pointer`, `pointer-to-integer`, `unlisted` | 256 | 142 → 141 | 94 → 94 |
 
 The full class × position × family table is in the census JSON. What the
@@ -134,58 +142,75 @@ refuses.
 
 ## 4. Measurements
 
-`scripts/measure.sh NAME` (corpus arbiter `66910c10 --jobs 4`, system route,
-tail-pause slice; each under the shared lock, each with
+`scripts/remeasure.sh` (the instrument commit built and measured as
+`before2`, the card's tip as `after2`, each with `scripts/build.sh` and
+`scripts/measure.sh`: corpus arbiter `66910c10 --jobs 4`, system route,
+tail-pause slice, each under the shared lock, each with
 `QCORE_TYPED_PATH_PARITY`), `scripts/merged_totals.py`, `scripts/compare.py`,
-`scripts/census.py`. Runs in this worktree's `private/castf/` (`before*`,
-`after1*`); the slice under `private/w47-tail/attempt-1/castf-*` of the main
-checkout.
+`scripts/census.py`. Runs in this worktree's `private/castf/`; the slice under
+`private/w47-tail/attempt-1/castf-*` of the main checkout.
+[Totals](artifacts/rebased/totals.txt).
 
-| Run | BEFORE (main `cb3085365` + instrument, binary `49439047…`) | AFTER (`fc2014fb3`, binary `5cce8256…`) |
+| Run | BEFORE (main `9c5f2079c` + instrument, binary `1893c152…`) | AFTER (`4fbcab80d`, binary `a6c1a706…`) |
 |---|---|---|
-| Corpus | `450a9e54…`, **649 / 9 / 4,176** (main's digest, byte for byte) | `63bbb5a3…`, **654 / 9 / 4,171** |
-| System | `9108b7c1…`, 44 / 2 / 188 | `198c9d24…`, **44 / 2 / 188** |
+| Corpus | `b864e7ba…`, **649 / 9 / 4,176** (main's digest, byte for byte) | `d13ed4c1…`, **654 / 9 / 4,171** |
+| System | `390e8cf1…`, 44 / 2 / 188 | `9a2b18bd…`, **44 / 2 / 188** |
 | Tail-pause slice | `6b9ac710…`, 29 / 1 / 238 / 2 Pending | `6b9ac710…`, byte-identical |
 
 Corpus leaves: leak 40 → 40, summary conflict 2 → 2, unknown_alias 11,482 →
-11,524 (+42), unsupported 28,737 → 28,687 (−50).
+11,524 (+42), unsupported 28,712 → 28,658 (−54).
 
-### 4.1 Every corpus mover ([compare](artifacts/compare-corpus.json))
+### 4.1 Every corpus mover ([compare](artifacts/rebased/compare2-corpus.json))
 
-36 rows move; **+5 Unknown → Safe, no Safe → non-Safe, no correction, no leak
+39 rows move; **+5 Unknown → Safe, no Safe → non-Safe, no correction, no leak
 or violation added.**
 
 | Hook | Functions |
 |---|---|
 | H-U, initializer `T *const p = (T *) formal;` — **Safe** (5) | `lz4frame.c::LZ4F_readLE32`, `LZ4F_readLE64`, `LZ4F_writeLE32`, `LZ4F_writeLE64` (`const BYTE *const srcPtr = (const BYTE *) src;`: rule 11b(3) declined it because the destination type `T *const` fails its pointer test); librdkafka `snappy.c::unaligned_copy64` (the `(u64 *)(src)` / `(u64 *)(dst)` actuals of its load/store helpers) |
-| H-U, refusal → unresolved identity, or the tail refusal gone (20) | `lz4.c::LZ4_getIndexOnHash`, `LZ4_getPositionOnHash`, `LZ4_wildCopy8`, `LZ4_wildCopy32`; `lz4frame.c::LZ4F_compressBegin_usingCDict`, `LZ4F_compressEnd`, `LZ4F_compressFrame_usingCDict`, `LZ4F_compressUpdateImpl`, `LZ4F_decompress`, `LZ4F_flush`, `LZ4F_makeBlock`; `lz4hc.c::LZ4_initStreamHC`, `LZ4_slideInputBufferHC`; `rdkafka_assignor.c::rd_kafka_member_subscriptions_map`, `ut_destroy_metadata`, `verifyNumPartitionsWithRackMismatch0`; `rdkafka_range_assignor.c::rd_kafka_range_assignor_assign_cb`, `rdkafka_sticky_assignor.c::rd_kafka_sticky_assignor_assign_cb` (a `punned-view` initializer: the identity is kept, accesses through the destination stay its declared type's, as rule 11b(3)); and the two tail statements, `rdkafka_cert.c::rd_kafka_conf_set_ssl_cert` (`(int) cert_type`) and `rdkafka_conf.c::rd_kafka_anyconf_get0` (`(void *) val`), each losing its tail refusal with no leaf added |
+| H-U, refusal → unresolved identity, or the tail refusal gone (19) | `lz4.c::LZ4_getIndexOnHash`, `LZ4_getPositionOnHash`, `LZ4_wildCopy8`, `LZ4_wildCopy32`; `lz4frame.c::LZ4F_compressBegin_usingCDict`, `LZ4F_compressEnd`, `LZ4F_compressFrame_usingCDict`, `LZ4F_compressUpdateImpl`, `LZ4F_decompress`, `LZ4F_flush`, `LZ4F_makeBlock`; `lz4hc.c::LZ4_initStreamHC`, `LZ4_slideInputBufferHC`; `rdkafka_assignor.c::rd_kafka_member_subscriptions_map`, `ut_destroy_metadata`, `verifyNumPartitionsWithRackMismatch0`; `rdkafka_range_assignor.c::rd_kafka_range_assignor_assign_cb`, `rdkafka_sticky_assignor.c::rd_kafka_sticky_assignor_assign_cb` (a `punned-view` initializer: the identity is kept, accesses through the destination stay its declared type's, as rule 11b(3)); `rdkafka_conf.c::rd_kafka_anyconf_get0` (`(void *) val` in `snprintf`'s tail) |
+| H-12g, the tail refusal gone, no leaf added (4) | CG26-TAIL-RESIDUAL-ACTUALS' cast residual, every leaf of it: `rdkafka_cert.c::rd_kafka_conf_set_ssl_cert` (`(int) cert_type`), `rdhdrhistogram.c::ut_quantile` (`(int64_t) i`), `rdmap.c::unittest_untyped_map` (`(float) ts_get / 1000.0`, `(float) ts / 1000.0`: two leaves), `snappy.c::rd_kafka_snappy_java_uncompress` (`(ssize_t) inlen - of`; provisional Unsafe on its other leaves, unchanged) |
 | H-V, refusal → unresolved identity (4) | `mk_server/mk_utils.c::mk_utils_gen_hash`, `rdmurmur2.c::rd_murmur2`, `snappy.c::read_uncompressed_length`, `snappy.c::refill_tag` (a `typed-view` of a character pointer read at its first element) |
 | H-U0, refusal → unresolved identity (1) | `rddl.c::rd_dl_close`: `dlclose((void *) handle)` was admitted with no place for `handle` and then refused by the contract check; it is now `handle`'s release, whose binding is unresolved |
 | callers of a newly Safe body (W4 summaries; 6) | `lz4frame.c::LZ4F_decodeHeader`, `LZ4F_headerSize` (their `LZ4F_readLE32` conditions); `snappy.c::emit_literal`, `incremental_copy_fast_path`, `writer_append_from_self`, `writer_try_fast_append` (their `unaligned_copy64` calls now carry a summary; refusal → unresolved identity or a contract-match refusal of the summary) |
 
-Against the prediction: Unknown → Safe 5 (predicted 2 to 12, most likely 5);
-no Safe → non-Safe (predicted none); unsupported −50 (predicted −100 to −800:
-fewer cast statements were a statement's only refusal than the line-join
-suggested); unknown_alias +42 (predicted up to half the fall: met); no new
-leak (predicted at most 3). Counted consultations (de-duplicated): H-U0 25
-admitted; H-U 44 admitted, 2 tail admissions, 264 still refused.
+`compare.py` labels the H-12g rows and the callers `other` (no
+`cast-semantics-value` row: 12g's reader admits them before H-U is asked);
+each was read by hand. Against the prediction: Unknown → Safe 5 (predicted 2
+to 12, most likely 5); no Safe → non-Safe (predicted none); unsupported −54
+(predicted −100 to −800: fewer cast statements were a statement's only
+refusal than the line join suggested); unknown_alias +42 (predicted up to
+half the fall: met); no new leak (predicted at most 3). Consultations
+(de-duplicated): H-U0 25 admitted; H-U 44 admitted, 2 tail admissions, the
+rest still refused.
 
 ### 4.2 System route and slice
 
-System ([compare](artifacts/compare-system.json)): no status move; two
-functions change leaves, each in both of its compile configurations:
+System ([compare](artifacts/rebased/compare2-system.json)): no status move;
+two functions change leaves, each in both of its compile configurations:
 `flb_storage.c::flb_storage_quarantine_chunk` loses its `snprintf` tail
-refusal (the `(void *) src` actual CG26-TAIL-RESIDUAL-ACTUALS registered, H-U
-in the declared borrowed tail; predicted), and `flb_task.c::flb_task_create`
-trades two indirect accesses for one unresolved identity of `task` (H-V).
-`flb_coro_destroy`'s `((char *) coro) + sizeof(struct flb_coro)` (arithmetic
-over a cast) keeps its refusal, as predicted. The slice is byte-identical.
+refusal (the `(void *) src` actual of CG26-TAIL's cast residual, its two
+system leaves; predicted), and `flb_task.c::flb_task_create` trades two
+indirect accesses for one unresolved identity of `task` (H-V).
+`flb_coro_destroy`'s `((char *) coro) + sizeof(struct flb_coro)` is now 12g's
+pointer-arithmetic refusal (the cast is read through, the arithmetic is not);
+it carries no reported leaf. The slice is byte-identical.
+
+### The first pair (base `cb3085365`)
+
+Before the rebase the card measured on `cb3085365` (binaries `49439047…` /
+`5cce8256…`): corpus `450a9e54…` 649 / 9 / 4,176 → `63bbb5a3…` 654 / 9 /
+4,171, the same five Safe moves, 36 rows, unsupported −50, unknown_alias +42;
+system `9108b7c1…` → `198c9d24…` 44 / 2 / 188 with the same two functions;
+slice byte-identical ([compare](artifacts/compare-corpus.json),
+[totals](artifacts/totals.txt)).
 
 ### 4.3 The shared probe: `mk_vhost_set` at the tip
 
 `scripts/tip-probe.sh` (the integrator's `tip-contracts.sh` on a private copy
-of the probe tree; [rows](artifacts/tip-probe/rows-after.txt)), contracts-only
-route, AFTER binary:
+of the probe tree; [rows](artifacts/rebased/tip-probe-rows-after2.txt)),
+contracts-only route, AFTER binary (the first pair's rows,
+[rows](artifacts/tip-probe/rows-after.txt), are the same):
 
 | Copy | Function | Before (main, the rows CONTRACT-NORETURN-AND-BORROWED-TAILS recorded) | After |
 |---|---|---|---|
@@ -245,27 +270,33 @@ unit tests in `tests/unit/cast_semantics.rs` (vectors, the table's rows, the
 |---|---|---|
 | `cg12_void_view_readback::unlisted_views_are_refused` | `*(int *)p` of an `int *p` refused (not a `void *` operand) | removed from the refused list: a `qualifier` conversion, read through (Safe; pinned in `cast_formalization.rs`) |
 | `typed_access_path::tests::unsupported_pointer_store_cast_and_call_refuse` | the plan of `int x = *(int *)p;` over an `int *p` refused | its cast row is now the pun `*(int *)p` over a `long *p` (still refused); the `int *p` form is a qualifier conversion, read through |
+| `cg26_tail_residual_actuals::casts_pointer_arithmetic_and_identity_arms_stay_refused` (rule 12g) | `(long) i`, `(float) i / 1000.0`, `(void *) p` in `fprintf`'s tail refused (left to this card) | moved to `casts_the_table_reads_as_their_operand_are_read` (Safe; a use after release through `(void *) p` is not); a pointer made an integer, `(unsigned long) p`, takes their place in the refused list |
+| `variadic_tail_actuals::tests::cg26r_the_node_shapes` (rule 12g) | an `IntegralCast` cast node is `TailExpr::Cast` | it reads through to the operand's `Name`; a `PointerToIntegral` cast node is `TailExpr::Cast` |
 
 ## 7. Follow-ups
 
-`scripts/update_ledger.py` applies these once (696 → 696):
+`scripts/update_ledger.py` applies these once, on the rebased ledger (698 →
+697); sizes from the pair of record ([before](artifacts/rebased/families-before2.json),
+[after](artifacts/rebased/families-after2.json)):
 
 - **Retired:** `W45-SR5-SCALAR-READ-STAR-THROUGH-CAST` (its DISCHARGE holds: a
   `*` before a cast group that precedes a may-bind member or subscript root
-  counts, with the unit pin bound to `sr5Vectors`).
-- **Amended, with re-measured sizes** ([before](artifacts/families-before.json),
-  [after](artifacts/families-after.json)):
+  counts, with the unit pin bound to `sr5Vectors`), and
+  `CG26-TAIL-RESIDUAL-ACTUALS` (its cast residual, as CG26-TAIL amended it:
+  every listed leaf is read, corpus 6 leaves / 5 functions and system 2 →
+  0, through the table, a scalar cast of data as data and a pointer view of
+  an identified root as that root's `Borrowed` place, never a widening of
+  the data tail).
+- **Amended** (an earlier amendment of this card replaced):
   `CG08-CAST-AND-QUERY-RESIDUALS` (b) 307 leaves / 103 Unknown functions →
   282 / 84 by the census's Clang join, (c) 515 consultations / 297
-  functions, unchanged ([before](artifacts/cast-refusals-before.json),
-  [after](artifacts/cast-refusals-after.json));
+  functions, unchanged ([before](artifacts/rebased/cast-refusals-before2.json),
+  [after](artifacts/rebased/cast-refusals-after2.json));
   `W45-SUB-OBJECT-STORE-PREFIX` (the cast root's view is the table's in the
   typed reader; the lexical store route's cast-root family 33 / 18,
   unchanged); `W43-INDEX-TRAVERSAL-STEP-COMPUTED` (the cast half read; the
   pointer-step cast family 189 / 74, unchanged: member-path casts and
-  offsets with accesses); `CG26-TAIL-RESIDUAL-ACTUALS` (its cast leaves:
-  corpus 3 / 3 → 1 / 1, system `flb_storage_quarantine_chunk` admitted; the
-  other shapes are that card's).
+  offsets with accesses).
 - **Registered:** `CAST-FORMALIZATION-RESIDUAL-CENSUS`, the residual census
   by class and position and by owner (punned and tracked-root views, casts
   of member paths or over arithmetic and calls at value positions, scalar
