@@ -1,0 +1,13 @@
+{
+  "note": "CG26-TAIL-RESIDUAL-ACTUALS card gate on base main cb3085365, code and docs steps at ceb599cc5 (later commits: records and gate files only), scripts docs/reports/cg26-tail-residual-actuals/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/cg26r/gate-g2 of this worktree. A first gate at e0d6c8a0a (private/cg26r/gate-g1, code steps only) failed clippy -D warnings once (type_complexity on the test-only READ_VECTORS constant; check, fmt, tests 7,517 passed, probes and 283 Lean audits passed there), fixed in ceb599cc5 by naming the row type. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 437 units, 450 summaries, 7,517 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261003T025140Z-2852012); both reevaluation probes exit 0; check_lean_audits.py 283 audits passed (282 + AuditVariadicTailActuals); python tests 365 with 1 failure before the matrix regeneration (test_build_matrix_sections: the committed matrix's lean_audits 282 is the derived value the new audit moves to 283, as at every Lean-adding card), rerun after build_matrix.py . --gate this file (09a 0, 09b 0: 365 OK; a first finish-gate run had refused this file for its missing provider_tests field, 09a 1, so 09b was still 1); docs index check 0. No provider path changed, so no provider gate; the provider workspace tests were run for the matrix's provider_tests field (cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline, 129 passed, exit 0, private/cg26r/gate-g2-provider-tests.log). Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main cb3085365 450a9e54 649/9/4,176; AFTER-2 at 225cd9ce8 b864e7ba 649/9/4,176 (25 tail leaves removed in 15 Unknown functions, no status move); system 44/2/188 and tail-pause slice 29/1/238/2 Pending, no status move. The commits after 225cd9ce8 change no analyzer code (records, gate files, a test-only type alias).",
+  "workspace_tests": 7517,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 283,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

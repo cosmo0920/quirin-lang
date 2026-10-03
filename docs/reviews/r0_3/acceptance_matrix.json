@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CONTRACT-NORETURN-AND-BORROWED-TAILS card gate on base main ca3576dd4, code and docs steps at 29491161f (later commits: records, gate files and the ledger/README text only), scripts docs/reports/contract-noreturn-and-borrowed-tails/scripts/gate.sh and provider-gate.sh (each step under the shared flock) and finish-gate.sh, logs private/cnbt/gate-g2 of this worktree. A first gate at 0841d52f3 (private/cnbt/gate-g1) failed 4 tests that pinned flb_log_print's data tail (neighbours 2, prod_contracts 2; 7,506 passed, 4 failed), deliberately re-pinned in 29491161f. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 436 units, 449 summaries, 7,510 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261002T170604Z-1897767); both reevaluation probes exit 0; check_lean_audits.py 282 audits passed (no Lean change); python tests 365 OK, rerun after build_matrix.py . --gate this file (09a, 09b); docs index check 0. Provider gate (providers/ changed: four contract modules and their locks): cargo check --locked 0, fmt 0, clippy --locked --offline 0, cargo test --workspace --locked --offline 129 passed (exit 0), python3 -m unittest discover -s providers/tests exit 1 (23 of 24; test_the_real_workspace_manifest_is_current pins 58 resource-view modules and measures 60, pre-existing at the base: contract-load-path.json is byte-identical to ca3576dd4 and contracts.py check exits 0; registered PROVIDER-LOAD-PATH-VIEW-PIN-STALE), contracts.py check 0, package build 0, verify of the five packages 0. pin and pin --check at 66910c10 and 046accf6: every pin step 0, per-crate checks 0, whole-lock check 1 at both from the tip-tracked mk_vhost_set only (as at the base). Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main ca3576dd4 bcc98d2d 648/9/4,177; AFTER at a54a8236a 450a9e54 649/9/4,176 (cb_debug_chunk_complete Unknown -> Safe); system 44/2/188 and tail-pause slice 29/1/238/2 Pending, no status move. The commits after a54a8236a change no contract text or code but tests and records.",
-  "workspace_tests": 7510,
+  "note": "CG26-TAIL-RESIDUAL-ACTUALS card gate on base main cb3085365, code and docs steps at ceb599cc5 (later commits: records and gate files only), scripts docs/reports/cg26-tail-residual-actuals/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/cg26r/gate-g2 of this worktree. A first gate at e0d6c8a0a (private/cg26r/gate-g1, code steps only) failed clippy -D warnings once (type_complexity on the test-only READ_VECTORS constant; check, fmt, tests 7,517 passed, probes and 283 Lean audits passed there), fixed in ceb599cc5 by naming the row type. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 437 units, 450 summaries, 7,517 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261003T025140Z-2852012); both reevaluation probes exit 0; check_lean_audits.py 283 audits passed (282 + AuditVariadicTailActuals); python tests 365 with 1 failure before the matrix regeneration (test_build_matrix_sections: the committed matrix's lean_audits 282 is the derived value the new audit moves to 283, as at every Lean-adding card), rerun after build_matrix.py . --gate this file (09a 0, 09b 0: 365 OK; a first finish-gate run had refused this file for its missing provider_tests field, 09a 1, so 09b was still 1); docs index check 0. No provider path changed, so no provider gate; the provider workspace tests were run for the matrix's provider_tests field (cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline, 129 passed, exit 0, private/cg26r/gate-g2-provider-tests.log). Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main cb3085365 450a9e54 649/9/4,176; AFTER-2 at 225cd9ce8 b864e7ba 649/9/4,176 (25 tail leaves removed in 15 Unknown functions, no status move); system 44/2/188 and tail-pause slice 29/1/238/2 Pending, no status move. The commits after 225cd9ce8 change no analyzer code (records, gate files, a test-only type alias).",
+  "workspace_tests": 7517,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 282,
+  "lean_audits": 283,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -7032,6 +7032,7 @@
    "AuditValueConnectives.lean",
    "AuditVariadicConditions.lean",
    "AuditVariadicNested.lean",
+   "AuditVariadicTailActuals.lean",
    "AuditVariadics.lean",
    "AuditVerdictSemigroup.lean",
    "AuditVoidViewReadback.lean",
@@ -7048,7 +7049,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-acc140b6252ad542a/docs/reports/contract-noreturn-and-borrowed-tails/gate.json)"
+  "measurement_provenance": "integrator_supplied (docs/reports/cg26-tail-residual-actuals/gate.json)"
  },
  "named_followups": [
   {

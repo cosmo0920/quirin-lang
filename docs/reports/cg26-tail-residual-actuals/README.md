@@ -296,7 +296,36 @@ only):
 
 ## 7. Gate
 
-GATE_SECTION
+The final gate ran at `ceb599cc5` on base `cb3085365`. Commits after it
+touch only records and gate files. It used
+[`scripts/gate.sh`](scripts/gate.sh) and
+[`scripts/finish-gate.sh`](scripts/finish-gate.sh), each step under the
+shared heavy lock. Logs are in this worktree's `private/cg26r/gate-g2`, exits
+in [`gate/`](gate/), and the summary in [`gate.json`](gate.json).
+
+| Step | Command | Exit | Count / note |
+|---|---|---|---|
+| check | `cargo check --workspace --all-targets` | 0 | |
+| submodule | `git submodule update --init --recursive` | 0 | |
+| fmt | `cargo fmt --all -- --check` | 0 | |
+| clippy | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| tests | `python3 scripts/run_test_binaries.py` | 0 | 437 units, 450 summaries, **7,517 passed**, 0 failed, 11 ignored (`private/test-binaries/20261003T025140Z-2852012`) |
+| probes | `reevaluation_probe`, `reevaluation_followup` | 0, 0 | |
+| Lean | `python3 scripts/check_lean_audits.py` | 0 | **283** audits (282 + `AuditVariadicTailActuals`) |
+| Python | `python3 -m unittest discover -s scripts/tests` | 1, then **0** after `build_matrix.py . --gate gate.json` | 365. Before regeneration, `test_build_matrix_sections` fails: the committed matrix's derived `lean_audits` is 282 and the new audit makes it 283, as at every Lean-adding card |
+| docs index | `python3 scripts/build_docs_index.py --check` | 0 | |
+| provider tests | `cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline` | 0 | 129 passed. No provider path changed, so the provider gate is not owed; this ran only for the matrix's `provider_tests` field |
+
+**Earlier attempts.** They are retained, and they are not evidence of a pass:
+
+- **Gate g1** (`e0d6c8a0a`, code steps only, `private/cg26r/gate-g1`) failed
+  clippy once. The lint was `type_complexity` on the test-only
+  `READ_VECTORS` constant. Check, fmt, tests (7,517 passed), the probes and
+  the 283 Lean audits passed. `ceb599cc5` names the row type.
+- **The first `finish-gate.sh` run** refused `gate.json` for its missing
+  `provider_tests` field (09a exit 1).
+
+The corpus binary is unaffected by both: the alias is `#[cfg(test)]`.
 
 ## 8. Follow-ups
 
