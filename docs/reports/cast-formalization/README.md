@@ -94,7 +94,10 @@ exactly when its count is one). No corpus row moved.
 statement's line; `scripts/census.py` joins them to the route's leaves by
 function and line ([before](artifacts/census-before-corpus.txt),
 [after](artifacts/census-after-corpus.txt)). Explicit casts only: an implicit
-conversion is not a cast in the source, and Clang inserts thousands.
+conversion is not a cast in the source, and Clang inserts thousands. The
+script gained the refusals column (category `unsupported`) after the
+prediction froze; the BEFORE census was recomputed from the same BEFORE run,
+its other figures unchanged.
 
 | | BEFORE | AFTER |
 |---|---|---|
