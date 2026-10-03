@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# measure-binary.sh NAME BINARY [ROUTES] -- GATEWAY-ANALYSIS-PATH-OPTIMIZATION:
+# measure.sh with a saved binary (private/gapo/bin/...). run_pinned_audit.py
+# always runs target/release/quirin-audit, so BINARY's bytes are written there
+# first under the shared heavy lock and its digest recorded beside the run;
+# the system and slice routes run BINARY itself. run.json's binary_sha256 is
+# the check that the corpus ran these bytes.
+set -u
+name="$1"; binary="$(cd "$(dirname "$2")" && pwd)/$(basename "$2")"; routes="${3:-corpus,system,slice}"
+here="$(cd "$(dirname "$0")" && pwd)"
+repo="$(cd "$here/../../../.." && pwd)"
+lock=/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-quirin-spec-cards-compass-bf79e7/e050a85b-f6ef-4b98-a2ab-618145106af2/scratchpad/heavy.lock
+case ",$routes," in *,corpus,*)
+  flock "$lock" /usr/bin/env bash -c 'cat "$1" > "$2" && sha256sum "$2" > "$3"' _ \
+    "$binary" "$repo/target/release/quirin-audit" "$repo/private/gapo/$name.corpus-binary.sha256" || exit 3;;
+esac
+BINARY="$binary" "$here/measure.sh" "$name" "$routes"
