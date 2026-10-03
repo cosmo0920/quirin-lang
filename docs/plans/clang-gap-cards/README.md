@@ -264,6 +264,13 @@ High for anything that could publish a wrong Safe, Medium for measurement.
   - *Absorbs:* W46-ACCESS-PATH-TRACKED-MIXED-PLACES, W44-CHAIN-NESTED-AGGREGATE,
     W43-INDIRECT-UNTYPED-SINGLE-ACCESS, REFUSED-HANDON-LINE-GRANULARITY and
     W44-AGGREGATE-PREMISE3-MEMBER-NAME.
+  - *Status (wave 48, round 17, CG10-INDIRECT-ACCESS-SOLE-BLOCKERS).* The 513
+    functions the access refusal blocked alone, classified by the readers'
+    records: 321 hide an uncontracted callee behind the gate (P4). Rules 12i (a
+    refused `return`'s call read with W44) and 12j (`.`-only scalar places on
+    automatic record objects) free 41 corpus functions; 481 remain, ranked in
+    `CG10-INDIRECT-ACCESS-SOLE-RESIDUALS`
+    ([report](../../reports/cg10-indirect-access-sole-blockers/README.md)).
 - **CG11: pointer-valued stores.**
   - *Scope.* This is the unsupported coverage queue's FIELD-CUSTODY (P5),
     promoted from candidate. It covers `s->p = q`, `*slot = p` and

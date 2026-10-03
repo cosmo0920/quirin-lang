@@ -182,7 +182,22 @@ pointer root: the `call-result-store` class, residual). Master keeps its
 
 ## 4. Residual (registered as `CG10-INDIRECT-ACCESS-SOLE-RESIDUALS`)
 
-RESIDUAL_TABLE
+On the AFTER census run (`scripts/census-run.sh census-after1`, byte-identical to the measured AFTER, `d2f5a3f7…`): **481** functions, 916 leaves ([artifact](artifacts/classify-after.json)).
+
+| sub-class | freed alone | leaves | touched | owner |
+| --- | ---: | ---: | ---: | --- |
+| `uncontracted-callee` | 227 | 578 | 285 | P4 callee closure (`W45-CALLEE-CASCADE-RESIDUAL`, `W44-CALLEE-*`) |
+| `return-uncontracted-callee` | 102 | 107 | 104 | P4 callee closure |
+| `pointer-store:other` | 12 | 16 | 16 | rule 10v value classes (CG11): a cast local, an interior address, … |
+| `custody-position:released` | 12 | 43 | 26 | `W44-CALL-ARGUMENT-CUSTODY-POSITION` (by design); rule 5k's member release |
+| `elaboration:unlisted form: no value form of this card` | 10 | 17 | 16 | mixed: pointer arithmetic values, element addresses `&s->iov[i]`, multi-declarator aliases |
+| `pointer-store:formal-pointer` | 9 | 23 | 20 | rule 10v (Q36: an owner identity for `*s`, or a Stored summary mode) |
+| `probe-declined` | 6 | 13 | 12 | owned results stored into members (the field-link model) |
+| `unrecognised-actual:other` | 5 | 6 | 6 | W44 recogniser |
+| `call-result-store` | 4 | 20 | 17 | scalar call results stored through a pointer root (unread) |
+| 15 smaller classes | 23 | — | — | `return-contracted-call` 2 (a by-value record actual, a `?:` actual, a cast actual), `place:storage` 1 (a file-scope record, refused by rule 12j), … |
+
+Fixed point in rank order: 227, 331, 345, 369, 383, 398, 408, 413, 430, 433, …. The uncontracted-callee class grew 218 → 227 alone: nine functions whose other blocker the card read (telemetry builders calling the header inline `rd_atomic64_get` among them) are now blocked by their callee only. Not lifted, each by name: the callee closure (not an access question), custody positions (by design), rule 10v's refused values and owned results stored into members (custody questions with a missing owner premise), and the record-object pointer stores of `pb_ostream_from_buffer` (`stream.callback = &buf_write`, `stream.errmsg = NULL`: identity-free values into a record object, which rule 10v's owner premise reads only when never bound; the function also stores a formal's pointer, so that extension frees nothing).
 
 ## 5. Gate
 
