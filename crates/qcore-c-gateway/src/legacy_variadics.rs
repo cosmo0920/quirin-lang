@@ -329,7 +329,7 @@ impl Parser<'_> {
 
     /// Card CG26-TAIL-RESIDUAL-ACTUALS (rule 12g): the reading of each
     /// trailing argument node of `call` (after `named` declared parameters).
-    fn tail_readings(
+    pub(super) fn tail_readings(
         &self,
         call: &Value,
         named: usize,

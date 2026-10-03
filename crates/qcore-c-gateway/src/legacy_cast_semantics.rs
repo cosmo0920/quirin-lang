@@ -369,8 +369,15 @@ impl Parser<'_> {
         if !promoted {
             return None;
         }
+        // Rule 12g's Clang readings of the original trailing arguments, for
+        // the positions this hook did not uncast (a cast position's reading
+        // refuses, and the uncast name is read by T8 instead).
+        let borrowed = self.variadic_borrowed_tails.contains(&callee);
+        let readings = self.tail_readings(call, named, borrowed);
         self.variadic_tail_widening.set(true);
+        *self.variadic_tail_readings.borrow_mut() = Some(readings);
         let widened = self.classify_simple(synthetic);
+        *self.variadic_tail_readings.borrow_mut() = None;
         self.variadic_tail_widening.set(false);
         if !matches!(widened, LegacyInstruction::ContractCall { .. }) {
             return None;
