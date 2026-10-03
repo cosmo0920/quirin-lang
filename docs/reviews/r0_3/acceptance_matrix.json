@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CG26-TAIL-RESIDUAL-ACTUALS card gate on base main cb3085365, code and docs steps at ceb599cc5 (later commits: records and gate files only), scripts docs/reports/cg26-tail-residual-actuals/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/cg26r/gate-g2 of this worktree. A first gate at e0d6c8a0a (private/cg26r/gate-g1, code steps only) failed clippy -D warnings once (type_complexity on the test-only READ_VECTORS constant; check, fmt, tests 7,517 passed, probes and 283 Lean audits passed there), fixed in ceb599cc5 by naming the row type. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 437 units, 450 summaries, 7,517 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261003T025140Z-2852012); both reevaluation probes exit 0; check_lean_audits.py 283 audits passed (282 + AuditVariadicTailActuals); python tests 365 with 1 failure before the matrix regeneration (test_build_matrix_sections: the committed matrix's lean_audits 282 is the derived value the new audit moves to 283, as at every Lean-adding card), rerun after build_matrix.py . --gate this file (09a 0, 09b 0: 365 OK; a first finish-gate run had refused this file for its missing provider_tests field, 09a 1, so 09b was still 1); docs index check 0. No provider path changed, so no provider gate; the provider workspace tests were run for the matrix's provider_tests field (cargo test --manifest-path providers/Cargo.toml --workspace --locked --offline, 129 passed, exit 0, private/cg26r/gate-g2-provider-tests.log). Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit): BEFORE main cb3085365 450a9e54 649/9/4,176; AFTER-2 at 225cd9ce8 b864e7ba 649/9/4,176 (25 tail leaves removed in 15 Unknown functions, no status move); system 44/2/188 and tail-pause slice 29/1/238/2 Pending, no status move. The commits after 225cd9ce8 change no analyzer code (records, gate files, a test-only type alias).",
-  "workspace_tests": 7517,
+  "note": "CAST-FORMALIZATION card gate after the rebase onto main 9c5f2079c (CG26-TAIL-RESIDUAL-ACTUALS landed), code steps at 49616d15f (later commits: gate files, the matrix and the report only), scripts docs/reports/cast-formalization/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/castf/gate-g3 of this worktree. gate-g3: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 438 units, 451 summaries, 7,533 passed, 0 failed, 11 ignored, exit 0 (private/test-binaries/20261003T042135Z-3341960); both reevaluation probes exit 0; check_lean_audits.py 284 audits passed (AuditCastSemantics.lean new); python tests and docs index check after build_matrix.py . --gate this file (09a, 09b, 10b, 10c). Provider gate: providers/ is unchanged by the card and between cb3085365 and 9c5f2079c, so the provider gate run before the rebase (gate-g2, scripts/provider-gate.sh, at 0b1e6f3e2 over the same providers tree) stands: cargo check --locked 0, fmt 0, clippy --locked --offline 0, cargo test --workspace --locked --offline 129 passed (exit 0), python3 -m unittest discover -s providers/tests 24 OK (exit 0), contracts.py check 0, package build 0, verify of the five packages 0. Earlier gates: gate-g1 at 388af567c (failed clippy on two test-only items and one unit pin, fixed), gate-g2 at 6f3f23869 on base cb3085365 (7,525 passed, 283 Lean audits, all exits 0). Clang 21.1.8. Corpus arbiter (--jobs 4, release quirin-audit), pair of record: BEFORE main 9c5f2079c + the verdict-neutral census instrument (20a591246) b864e7ba 649/9/4,176 (main's digest); AFTER at 4fbcab80d d13ed4c1 654/9/4,171; system 44/2/188 and tail-pause slice 29/1/238/2 Pending, no status move (slice byte-identical). The commits after 4fbcab80d change records only.",
+  "workspace_tests": 7533,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 283,
+  "lean_audits": 284,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6788,6 +6788,7 @@
    "AuditCarriedPublication.lean",
    "AuditCastRepresentation.lean",
    "AuditCastReturnEscape.lean",
+   "AuditCastSemantics.lean",
    "AuditCertificateScope.lean",
    "AuditChainedAccess.lean",
    "AuditChainedTailActual.lean",
@@ -7049,7 +7050,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (docs/reports/cg26-tail-residual-actuals/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a3cac189afb18bdd0/docs/reports/cast-formalization/gate.json)"
  },
  "named_followups": [
   {
