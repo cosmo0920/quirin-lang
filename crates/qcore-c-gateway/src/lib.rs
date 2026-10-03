@@ -126,6 +126,10 @@ mod void_view;
 // Card CG10-BOUND-UNTRACKED-ROOTS (rule 11d): the per-path bound-untracked
 // root premise; the flow hook is `legacy_bound_untracked.rs`.
 mod bound_untracked;
+// Card CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (rule 12j): `.`-only scalar places
+// on a record object of the function's automatic storage; the hook is
+// `typed_access_path::Reader::path`.
+mod record_object_place;
 // Card CG14-AGGREGATE-VALUES-AND-INITIALIZERS (rule 11f): record copies,
 // braced initializers, compound literals and string initializers; the G hook
 // is `legacy_aggregate_value.rs`.

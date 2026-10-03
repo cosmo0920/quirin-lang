@@ -1,0 +1,28 @@
+module contract;
+
+// Card CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (rules 12i and 12j): test
+// assumptions, not a model of any real library. `is_cmp` reads two strings and
+// returns a scalar; `is_dup` reads one and returns a fresh owned copy;
+// `is_count` reads one and returns a scalar.
+
+extern fn is_cmp(a: ptr<const, u8>, b: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(a);
+    ensures normal resource_borrowed(b);
+    ensures normal resource_return_none();
+};
+
+extern fn is_dup(p: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn is_count(p: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};

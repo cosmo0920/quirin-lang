@@ -118,6 +118,10 @@ pub(crate) mod in_place_custody;
 // carries the hooks marked with the card's name.
 #[path = "legacy_call_argument_access.rs"]
 pub(crate) mod call_argument_access;
+// Card CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (rule 12i): a refused `return`'s one
+// call read with rule W44's call-argument access, asked last.
+#[path = "legacy_return_call_access.rs"]
+mod return_call_access;
 
 // Card W45-CALLEE-SUMMARY-CASCADE: a pointer member handed to a nullable
 // release, a pointer member null test, and the call-site sub-custody guard
@@ -6678,6 +6682,18 @@ impl Parser<'_> {
                     && let Some(desugared) = self.typed_connective_return(&expression, line)
                 {
                     return desugared;
+                }
+                // Card CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (rule 12i). Asked
+                // last, where every route above declined or only re-attributed
+                // the gate's refusal.
+                if !strict
+                    && !untracked_pointer
+                    && returned_evaluation.as_ref().is_none_or(|(instruction, _)| {
+                        return_call_access::is_gate_refusal(instruction)
+                    })
+                    && let Some(lowered) = self.return_call_argument_access(&expression, line)
+                {
+                    return lowered;
                 }
                 #[cfg(feature = "indirect-census")]
                 if !strict && !untracked_pointer && returned_evaluation.is_none() {

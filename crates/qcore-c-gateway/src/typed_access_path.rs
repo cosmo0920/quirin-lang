@@ -1525,6 +1525,9 @@ impl<'a> Reader<'a> {
         };
         steps.reverse();
         let first = steps.first()?;
+        // Card CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (rule 12j): a place rule 12j
+        // admitted reads no pointer, so it carries no chain.
+        let mut record_object = false;
         if matches!(first.0, "->" | "*" | "[]") {
             if !self.plan.scalar.bases.contains(&root.to_owned()) {
                 self.plan.scalar.bases.push(root.to_owned());
@@ -1533,7 +1536,32 @@ impl<'a> Reader<'a> {
                 self.plan.scalar.record_bases.push(root.to_owned());
             }
         } else if !(self.never_bound)(root) {
-            return None;
+            // Card CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (rule 12j): asked only
+            // where the never-bound premise refused, a `.`-only scalar place
+            // on a record object of this function's automatic storage.
+            let access = if address || pointer_store || aggregate || !self.scalar(node) {
+                crate::record_object_place::Access::Other
+            } else if store {
+                crate::record_object_place::Access::ScalarStore
+            } else {
+                crate::record_object_place::Access::ScalarRead
+            };
+            let storage = match (self.function, cursor["referencedDecl"]["id"].as_str()) {
+                (Some(function), Some(decl)) => {
+                    crate::record_object_place::root_storage(function, decl)
+                }
+                _ => crate::record_object_place::RootStorage::Outside,
+            };
+            let decision = crate::record_object_place::decide(
+                steps.iter().all(|step| step.0 == "."),
+                storage,
+                access,
+            );
+            crate::record_object_place::record(root, storage, access, decision);
+            if decision != crate::record_object_place::Decision::Admit {
+                return None;
+            }
+            record_object = true;
         }
         let mixed_path = steps.iter().any(|step| step.0 == "[]" && steps.len() != 1)
             || steps.iter().any(|step| step.0 == "*" && steps.len() != 1)
@@ -1544,14 +1572,14 @@ impl<'a> Reader<'a> {
         // outside this projection's tracked graph. Card CG10 (rule 10t): on
         // any other root, the common typed place carries the per-hop
         // obligations the chain model checks, or refuses.
-        let tracked = if mixed_path && !(self.never_bound)(root) {
+        let tracked = if mixed_path && !record_object && !(self.never_bound)(root) {
             Some(crate::typed_place::tracked_chain(node, self.fields, self.function).ok()?)
         } else {
             None
         };
         if let Some(tracked) = &tracked {
             self.plan.chains.push(tracked.chain.clone());
-        } else if steps.len() > 1 || first.0 != "." {
+        } else if !record_object && (steps.len() > 1 || first.0 != ".") {
             let members = steps.iter().map(|step| step.1.clone()).collect::<Vec<_>>();
             let links = if mixed_path {
                 Vec::new()

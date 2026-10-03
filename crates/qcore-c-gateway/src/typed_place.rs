@@ -699,6 +699,15 @@ fn record_decision(place: Option<&TypedPlace>, refusal: Option<&Refusal>) {
     DECISIONS.with(|decisions| decisions.borrow_mut().push(row));
 }
 
+/// Card CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (rule 12j): parity only, one more
+/// place decision of the last consultation, recorded with the others.
+pub(crate) fn record_place_row(row: Value) {
+    if !crate::typed_access_path::parity_enabled() {
+        return;
+    }
+    DECISIONS.with(|decisions| decisions.borrow_mut().push(row));
+}
+
 /// Parity only: forget decisions no consumer recorded.
 pub(crate) fn clear_decisions() {
     DECISIONS.with(|decisions| decisions.borrow_mut().clear());
