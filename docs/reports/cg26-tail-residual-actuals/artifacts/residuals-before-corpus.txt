@@ -1,0 +1,68 @@
+{
+ "statements": 34,
+ "lexical_readable": {
+  "True": 10,
+  "False": 24
+ },
+ "functions": 21,
+ "tail_leaves": {
+  "do_unittest_erase": 1,
+  "do_unittest_write_read_payload_correctness": 1,
+  "mk_server_info": 1,
+  "rd_kafka_anyconf_get0": 1,
+  "rd_kafka_conf_set_ssl_cert": 1,
+  "rd_kafka_range_assignor_unittest": 3,
+  "rd_kafka_snappy_java_uncompress": 1,
+  "rd_kafka_ssl_error0": 2,
+  "rd_kafka_sticky_assignor_unittest": 4,
+  "rd_kafka_topic_new0": 1,
+  "rd_kafka_version_str": 1,
+  "rd_msghdr_print": 1,
+  "rd_string_render": 3,
+  "rd_unittest": 1,
+  "unit_test_telemetry": 1,
+  "unittest_fetcher_share_filter_forward": 1,
+  "unittest_http_get": 4,
+  "unittest_http_get_params_append": 2,
+  "unittest_msgq_order": 1,
+  "unittest_ssl": 4,
+  "unittest_untyped_map": 3,
+  "ut_quantile": 1,
+  "ut_string_split": 1
+ },
+ "tail_leaf_total": 40
+}
+snprintf rd_kafka_version_str 24735 readable True ast True | ['( ver > > 24 ) & 0xff', '( ver > > 16 ) & 0xff', '( ver > > 8 ) & 0xff']   | {'status': 'Unknown', 'tail': 1, 'other': 1}
+snprintf rd_kafka_anyconf_get0 25178 readable True ast True | ['( void * ) val']   | {'status': 'Unknown', 'tail': 1, 'other': 21}
+fprintf rd_kafka_sticky_assignor_unittest 23907 readable False ast True | ['errstr'] {'errstr': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 4, 'other': 21}
+fprintf rd_kafka_sticky_assignor_unittest 23911 readable False ast True | ['errstr'] {'errstr': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 4, 'other': 21}
+fprintf rd_kafka_sticky_assignor_unittest 23923 readable False ast True | ['i'] {'i': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 4, 'other': 21}
+fprintf rd_kafka_sticky_assignor_unittest 23926 readable False ast True | ['i', 'j'] {'i': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'j': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 4, 'other': 21}
+snprintf rd_kafka_topic_new0 20151 readable False ast True | ['topic', 'used_conf_str'] {'topic': {'served_never_bound': False, 'ast_answered': True, 'formal': True}, 'used_conf_str': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 1, 'other': 81}
+fprintf unittest_msgq_order 21015 readable False ast True | ['what', 'fifo ? __qcore_literal__ : __qcore_literal__'] {'what': {'served_never_bound': True, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 1, 'other': 46}
+snprintf rd_kafka_ssl_error0 20276 readable True ast True | ['file', 'line', 'func', 'buf', 'data ? __qcore_literal__ : __qcore_literal__', 'data ? data : __qcore_literal__'] {'file': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'line': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'func': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'buf': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 2, 'other': 7}
+snprintf rd_kafka_ssl_error0 20278 readable True ast True | ['buf', 'data ? __qcore_literal__ : __qcore_literal__', 'data ? data : __qcore_literal__'] {'buf': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 2, 'other': 7}
+fprintf unittest_ssl 21266 readable False ast True | ['i + 1', 'desc'] {'desc': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 4, 'other': 5}
+fprintf unittest_ssl 21267 readable False ast True | ['i + 1', 'desc', 'expected', 'result'] {'desc': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'expected': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'result': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 4, 'other': 5}
+fprintf unittest_ssl 21268 readable False ast True | ['i + 1', 'desc'] {'desc': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 4, 'other': 5}
+fprintf unittest_ssl 21270 readable False ast True | ['i'] {'i': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 4, 'other': 5}
+fprintf rd_kafka_range_assignor_unittest 20484 readable False ast True | ['errstr'] {'errstr': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 3, 'other': 21}
+fprintf rd_kafka_range_assignor_unittest 20488 readable False ast True | ['errstr'] {'errstr': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 3, 'other': 21}
+fprintf rd_kafka_range_assignor_unittest 20523 readable False ast True | ['i', 'j'] {'i': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'j': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 3, 'other': 21}
+fprintf do_unittest_erase 4304 readable False ast True | ['expsz', 'r', 'i'] {'expsz': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'r': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'i': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 1, 'other': 26}
+fprintf do_unittest_write_read_payload_correctness 4141 readable True ast True | ['r', 'max_cnt * sizeof ( crc )'] {'r': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 1, 'other': 17}
+fprintf unit_test_telemetry 21888 readable False ast True | ['metrics_payload_size'] {'metrics_payload_size': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 1, 'other': 111}
+snprintf rd_kafka_snappy_java_uncompress 20475 readable True ast True | ['clen', '( ssize_t ) inlen - of'] {'clen': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unsafe', 'tail': 1, 'other': 13}
+fprintf unittest_fetcher_share_filter_forward 20337 readable False ast True | ['fails'] {'fails': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 1, 'other': 5}
+fprintf ut_quantile 4304 readable False ast True | ['( int64_t ) i']   | {'status': 'Unknown', 'tail': 1, 'other': 8}
+fprintf ut_string_split 3301 readable False ast True | ['i'] {'i': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 1, 'other': 9}
+snprintf rd_string_render 2996 readable False ast True | ['15', 't', 'tof'] {'t': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'tof': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 3, 'other': 24}
+snprintf rd_string_render 3003 readable False ast True | ['tmpkey'] {'tmpkey': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 3, 'other': 24}
+snprintf rd_string_render 3010 readable False ast True | ['tmpkey'] {'tmpkey': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 3, 'other': 24}
+snprintf rd_kafka_conf_set_ssl_cert 20452 readable True ast True | ['( int ) cert_type']   | {'status': 'Unknown', 'tail': 1, 'other': 10}
+fprintf rd_unittest 20557 readable False ast True | ['match'] {'match': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 1, 'other': 13}
+fprintf unittest_untyped_map 3560 readable True ast True | ['pass', 'val', 'val2 ? val2 : __qcore_literal__', 'key'] {'pass': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'val': {'served_never_bound': False, 'ast_answered': True, 'formal': False}, 'key': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 3, 'other': 8}
+fprintf unittest_untyped_map 3568 readable True ast True | ['get_cnt', '( float ) ts_get / 1000 . 0', 'ts_get / get_cnt'] {'get_cnt': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 3, 'other': 8}
+fprintf unittest_untyped_map 3577 readable True ast True | ['cnt', '( float ) ts / 1000 . 0'] {'cnt': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 3, 'other': 8}
+printf mk_server_info 6027 readable False ast True | ['tmp'] {'tmp': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 1, 'other': 15}
+printf rd_msghdr_print 19658 readable False ast True | ['what', 'len'] {'what': {'served_never_bound': False, 'ast_answered': True, 'formal': True}, 'len': {'served_never_bound': False, 'ast_answered': True, 'formal': False}}  | {'status': 'Unknown', 'tail': 1, 'other': 4}
