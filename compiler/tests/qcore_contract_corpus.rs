@@ -949,8 +949,6 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // `src/rdhdrhistogram.c:391-407`): marker, borrowed formals, `none`.
     ("librdkafka/memory.qv", "cnd_timedwait_ms", 5),
     ("librdkafka/memory.qv", "rd_hdr_histogram_record", 4),
-    ("librdkafka/memory.qv", "rd_atomic32_add", 4),
-    ("librdkafka/memory.qv", "rd_atomic32_set", 4),
     ("librdkafka/memory.qv", "rd_atomic64_add", 4),
     ("librdkafka/memory.qv", "rd_atomic64_get", 3),
     (

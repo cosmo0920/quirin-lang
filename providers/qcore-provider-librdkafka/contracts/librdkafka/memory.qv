@@ -321,7 +321,7 @@ contract {
 //   which W4 derives in every including unit (gateway rule 4a): with this
 //   declaration that body can validate, rather than being declared itself.
 //
-// ## Four header bodies no unit reports (declared, as `rd_atomic32_get`)
+// ## Two header bodies no unit reports (declared, as `rd_atomic32_get`)
 //
 // `static RD_INLINE` in `src/rdatomic.h`: every including unit carries a
 // copy, inside W4's derivation scope, but each body's one statement is
@@ -331,13 +331,25 @@ contract {
 // under `W46-HEADER-INLINE-DECLARED-UNCHECKED`. On every configuration arm
 // (an `__atomic_*`/`__sync_*` builtin, a Windows or Solaris intrinsic, or a
 // read and write of `ra->val` under the counter's own mutex) each function
-// reads and/or writes the scalar counter and returns an `int32_t`/`int64_t`;
-// it allocates, frees, stores and transfers nothing.
+// reads and/or writes the scalar counter and returns an `int64_t`; it
+// allocates, frees, stores and transfers nothing.
 //
-//     rd_atomic32_add(rd_atomic32_t *ra, int32_t v)   rdatomic.h:56-72
-//     rd_atomic32_set(rd_atomic32_t *ra, int32_t v)   rdatomic.h:118-134
 //     rd_atomic64_add(rd_atomic64_t *ra, int64_t v)   rdatomic.h:145-161
 //     rd_atomic64_get(rd_atomic64_t *ra)              rdatomic.h:190-202
+//
+// ## Deliberately NOT declared: `rd_atomic32_add`, `rd_atomic32_set`
+//
+// Their bodies have the same custody (borrowed counter, scalar result), but
+// librdkafka's reference counts are these two functions: `src/rd.h:338,351`
+// `#define rd_refcnt_set(R, v) rd_atomic32_set(R, v)` and
+// `#define rd_refcnt_add0(R) rd_atomic32_add(R, 1)`. A name-keyed declaration
+// would therefore read every reference-count `keep` (`rd_kafka_toppar_keep0`,
+// `rd_kafka_cert_dup`) as custody-neutral, which is
+// `W48-CALLEE-DECISION-TABLE` class 3 (reference counts), a decision this card
+// does not make. A first measurement with them declared moved
+// `rd_kafka_cert_dup` and `rd_kafka_toppar_list_copy` (through the header
+// body `rd_kafka_toppar_keep0`) to `Safe`; they were withdrawn before any
+// record (the card's report, section 4).
 //
 // ## ABI (constraint 8)
 //
@@ -364,24 +376,6 @@ extern fn rd_hdr_histogram_record(hdr: ptr<mut, u8>, v: i64) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(hdr);
-    ensures normal resource_borrowed(v);
-    ensures normal resource_return_none();
-};
-
-// --- add to a 32-bit atomic counter, returning the new value ---
-extern fn rd_atomic32_add(ra: ptr<mut, u8>, v: i32) -> i32
-contract {
-    requires resource_contract_v1;
-    ensures normal resource_borrowed(ra);
-    ensures normal resource_borrowed(v);
-    ensures normal resource_return_none();
-};
-
-// --- set a 32-bit atomic counter, returning the previous value ---
-extern fn rd_atomic32_set(ra: ptr<mut, u8>, v: i32) -> i32
-contract {
-    requires resource_contract_v1;
-    ensures normal resource_borrowed(ra);
     ensures normal resource_borrowed(v);
     ensures normal resource_return_none();
 };

@@ -27,8 +27,8 @@ if [ "$mode" = pin ]; then
     step "pin-cmetrics-$tag" "$binary" pin --source-root "$root" --crate qcore-provider-cmetrics \
       --function cmt_atomic_load --function cmt_atomic_store --function cmt_atomic_compare_exchange
     step "pin-librdkafka-$tag" "$binary" pin --source-root "$root" --crate qcore-provider-librdkafka \
-      --function rd_atomic64_get --function rd_atomic32_add --function rd_atomic64_add \
-      --function rd_atomic32_set --function cnd_timedwait_ms --function rd_hdr_histogram_record
+      --function rd_atomic64_get --function rd_atomic64_add \
+      --function cnd_timedwait_ms --function rd_hdr_histogram_record
   done
 fi
 for root in "$old" "$new"; do

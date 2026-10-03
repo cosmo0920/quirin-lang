@@ -1,5 +1,7 @@
 //! CG10-INDIRECT-ACCESS-SOLE-RESIDUALS — controls for the nine declarations
-//! this card lands (`docs/reports/cg10-indirect-access-sole-residuals/README.md`).
+//! this card lands (`docs/reports/cg10-indirect-access-sole-residuals/README.md`),
+//! and the two it deliberately does not (`rd_atomic32_add`/`_set`, which back
+//! librdkafka's reference counts).
 //!
 //! Each section is taken from its production provider module byte for byte
 //! (from the card's section marker to the end of the module; the modules'
@@ -147,8 +149,6 @@ fn run(source: &str, contracts: &ResourceContracts) -> Run {
 }
 
 const BODIES: &[&str] = &[
-    "int subject(struct k *k) { return rd_atomic32_add(&k->n32, 1); }",
-    "int subject(struct k *k) { int32_t old = rd_atomic32_set(&k->n32, 0); return old; }",
     "long long subject(struct k *k) { rd_atomic64_add(&k->n64, 5); return rd_atomic64_get(&k->n64); }",
     "int subject(struct k *k) { return cnd_timedwait_ms(k->cnd, k->lock, 10); }",
     "int subject(struct k *k) { return rd_hdr_histogram_record(k->avg.hdr, 3); }",
@@ -196,6 +196,26 @@ fn a_borrowed_position_takes_no_custody() {
         &production(),
     );
     assert_eq!(run.status, AnalysisStatus::Unsafe, "{run:?}");
+}
+
+#[test]
+fn the_reference_count_wrappers_stay_undeclared() {
+    if !clang_available() {
+        return;
+    }
+    // `rd_refcnt_add0(R)` is `rd_atomic32_add(R, 1)`: declaring it would read
+    // a reference `keep` as custody-neutral (decision class 3).
+    let run = run(
+        "int subject(struct k *k) { return rd_atomic32_add(&k->n32, 1); }",
+        &production(),
+    );
+    assert_eq!(run.status, AnalysisStatus::Unknown, "{run:?}");
+    assert!(
+        run.kinds.iter().any(|kind| matches!(kind,
+            LegacyDiagnosticKind::Unsupported { description }
+                if description == "call to uncontracted function `rd_atomic32_add`")),
+        "{run:?}"
+    );
 }
 
 #[test]
