@@ -1,22 +1,38 @@
 # GATEWAY-ANALYSIS-PATH-OPTIMIZATION: the analysis paths mapped, made explicit and faster, verdict-identical
 
 Card GATEWAY-ANALYSIS-PATH-OPTIMIZATION (wave 48, round 18; refactor). Base:
-local `main` at `2ecd39531`, which did not move during the card (the
-concurrent CG10-INDIRECT-ACCESS-SOLE-RESIDUALS had not landed; nothing was
-rebased). No new gateway rule, no new semantics, no Lean change (286 audits
-unchanged). [PREDICTION.md](PREDICTION.md) was frozen at `c6e61630d`, before
-the first implementation commit; the user's amendment (the Clang layer first)
-arrived before the freeze and is folded into it.
+local `main` at `2ecd39531`; when CG10-INDIRECT-ACCESS-SOLE-RESIDUALS landed
+(`170aba7b0`, rule 12k) the card was rebased onto it without conflicts: rule
+12k's two hooks stay in `legacy_c.rs` (they rewrite the final instruction and
+the return's evaluation, so they are not rows of the fallback tables; the
+route map lists them), the split re-proved a move, and the identity proof was
+taken again against the new base (section 5). No new gateway rule, no new
+semantics, no Lean change (287 audits after the rebase).
+[PREDICTION.md](PREDICTION.md) was frozen at `c6e61630d` (`6a76ee04b` after
+the rebase), before the first implementation commit; the user's amendment
+(the Clang layer first) arrived before the freeze and is folded into it.
+Step 7 was added after the suite's Clang census and is not in the prediction.
 
-**Outcome.** The pinned corpus arbiter runs in 364.1 s instead of 616.4 s (−40.9 %, medians of three,
-`--jobs 4`, parity stream on), the system route in 79.6 s instead of 166.9 s (−52.3 %) and the
-tail-pause slice in 27.6 s instead of 60.1 s (−54.2 %); `run_test_binaries.py`'s run phase
-@@TESTS@@. Every `resource-diagnostics.json` and sidecar is byte-identical to
-BEFORE on all three routes at every step (695 / 9 / 4,130 corpus,
-`d2f5a3f7…`; 85 / 4 / 359 system; the slice unchanged). The one exception to
-a raw comparison is not the card's: the BEFORE binary's own corpus parity
-stream varies between runs in one row (section 4,
+**Outcome.** Medians of three at the original base, `--jobs 4`, parity stream
+on: the pinned corpus arbiter **616.4 → 364.1 s (−40.9 %)**, the system route
+**166.9 → 79.6 s (−52.3 %)**, the tail-pause slice **60.1 → 27.6 s
+(−54.2 %)**; `run_test_binaries.py` run phase **300.7 → 238.8 s (−20.6 %)**,
+wall 308.6 → 245.8 s. After the rebase (one run each): corpus 759.2 → 448.9 s,
+system 192.7 → 63.1 s, slice 69.3 → 21.4 s. Every `resource-diagnostics.json`
+and sidecar is byte-identical to BEFORE on all three routes at every step
+(695 / 9 / 4,130 corpus, `d2f5a3f7…`, at the original base; 756 / 9 / 4,069,
+`ce57d194…`, after the rebase; system and slice totals unchanged). The one
+exception to a raw comparison is not the card's: the BEFORE binary's own
+corpus parity stream varies between runs in one row (section 4,
 `GAPO-PARITY-DECISIONS-NONDETERMINISTIC`).
+
+**Prediction against outcome.** Predicted corpus −30 % to −45 % (measured
+−40.9 %), system −25 % to −45 % (−52.3 %, above the range), slice −15 % to
+−40 % (−54.2 %, above), suite run phase −5 % to −25 % (−20.6 %); step 1
+predicted −25 % to −40 % of corpus wall (measured −46 % on its own run);
+step 2 predicted −3 % to −10 % (measured within noise: the corpus repeats
+only 7 whole-unit AST launches); steps 3-6 predicted no measurable change
+(none measured). Outputs byte-identical, as predicted.
 
 ## 1. Where the time went (task 1)
 
@@ -55,7 +71,7 @@ Each step is its own commit, measured on all three routes and compared with
 run's own name and the `preparation:` durations; each parity stream as a
 multiset with Clang node addresses erased).
 
-| Step | Commit | Change | Corpus / system / slice wall (s) | Identity |
+| Step | Commit (pre-rebase) | Change | Corpus / system / slice wall (s) | Identity |
 |---|---|---|---|---|
 | BEFORE | `2ecd39531` | | 658.2, 616.4, 613.3 / 172.2, 166.4, 166.9 / 60.9, 59.8, 60.1 | (reference) |
 | 1 | `f36e78f48` | contract-environment readings once per module text (qcore-contract) | 357.4 / 79.4 / 27.4 | identical |
@@ -64,6 +80,8 @@ multiset with Clang node addresses erased).
 | 4 | `5ef531965` | statement and return fallbacks as two tables, one dispatcher each (`legacy_route_table.rs`) | 364.9 (re-run, `step4b`) / 83.2 / 27.8 | identical |
 | 6 | `368bbc9ed` | the unreachable second copy of the seven call holds removed | 368.7 / 80.1 / 28.6 | identical |
 | 5 | `ea2c026e0` | `legacy_c.rs` split into eight modules, move-only | 364.1, 363.7, 366.4 / 79.0, 79.6, 79.8 / 27.9, 27.6, 27.4 (the AFTER runs) | identical (three runs) |
+| 7 | `ccc9320c9` | a filtered-AST launch identical to an earlier one on the thread answered by it (`clang_reuse::LaunchCache`) | 358.9 / 47.5 / 22.2 (one run) | identical |
+| rebased | `b15d525a7` on `170aba7b0` | the whole card over rule 12k's main (BEFORE `main2` = `170aba7b0`: 759.2 / 192.7 / 69.3) | 448.9 / 63.1 / 21.4 (one run) | identical to `main2` |
 
 **Step 1** (`crates/qcore-contract/src/contract_loader.rs`). The nine
 `declared_*` / `*_obligations` / `*_tails` readers shared one skeleton:
@@ -134,7 +152,11 @@ times). `typed_c_ast::ast_declarations` now answers a launch identical to an
 earlier successful one on the same thread (executable, every argument,
 standard input, resolution environment; never a text that may read a file,
 never a command with its own environment or directory; 32 per thread;
-`clang_reuse::LaunchCache`).
+`clang_reuse::LaunchCache`). One run each against step 6: corpus 368.7 → 358.9 s, system route
+80.1 → 47.5 s, slice 28.6 → 22.2 s (the configured routes import chunk and
+Monkey sources through the same importers); the three-run medians above are
+of the step-5 tip, so they understate the final tip on the system route and
+the slice.
 
 ## 3. Not done, and why
 
@@ -178,11 +200,72 @@ never a command with its own environment or directory; 32 per thread;
 
 ## 5. Measurement
 
-@@MEASUREMENT@@
+Timing ([table](artifacts/timing.json), `scripts/timing_table.py`): each
+route's wall time measured inside the shared heavy lock (waiting excluded),
+BEFORE and AFTER binaries interleaved (`final1`, `before3`, `final2`,
+`final3`), the same host, `--jobs 4`, parity stream on.
+
+| Route | BEFORE runs (s) | median | AFTER runs (s) | median | change |
+|---|---|---:|---|---:|---:|
+| corpus | 658.2, 616.4, 613.3 | 616.4 | 364.1, 363.7, 366.4 | 364.1 | −40.9 % |
+| system | 172.2, 166.4, 166.9 | 166.9 | 79.0, 79.6, 79.8 | 79.6 | −52.3 % |
+| slice | 60.9, 59.8, 60.1 | 60.1 | 27.9, 27.6, 27.4 | 27.6 | −54.2 % |
+
+`run_test_binaries.py` (default jobs, `scripts/tests-timing.sh`): BEFORE at
+`2ecd39531` (checked out for the runs) walls 421.0, 308.6, 307.1 s, run phases
+300.7, 302.3, 300.5 s; AFTER at the step-7 tip walls 339.0, 245.6, 245.8 s,
+run phases 238.8, 238.8, 239.5 s (the third is the first gate's suite run);
+the first run of each side includes the rebuild. Median run phase
+300.7 → 238.8 s (−20.6 %). All six runs pass (7,550 BEFORE, 7,554 AFTER: the
+card's four new unit tests).
+
+Identity ([proofs](artifacts/identity/)): at every step every output file is
+byte-identical after erasing the run's own directory name (`audit.log`,
+`resource-diagnostics.invocation.json`) and the `preparation:` durations
+(console); every `resource-diagnostics*.json`, `monkey-source.json` and the
+slice's sidecars are raw-identical. Parity streams: system and slice
+identical as multisets in every run; the corpus stream identical except the
+`GAPO-PARITY-DECISIONS-NONDETERMINISTIC` row, which five runs of the BEFORE
+binary wrote four times (626,470 rows) and once not (626,469), carrying `st`
+in some runs and `u` in others; `identity.py` compares that row apart and the
+rest of the stream must match. The route-census build (`census4`) is
+identical too. After the rebase, `main2` (BEFORE at `170aba7b0`) and
+`rebased` agree on every file (`ce57d194…`, 756 / 9 / 4,069) and on every
+parity stream but that row ([proof](artifacts/identity-rebased.json)).
+
+Profile after ([corpus](artifacts/profile-corpus-after.json), the step-5
+binary): the contract environment fell from 42.9 % to 0.7 % of worker time;
+AST JSON parsing is now 35.2 %, waiting on Clang 8.0 %, the analysis 56.2 %;
+the top self-time functions are `literal_premise::restrict_to_declared_literals`
+(11.7 %, a whole-unit token pass per CFG build), a `read` (10.6 %),
+`typed_access_path::node_line` (8.1 %) and `build_function_cfg_with` (7.9 %)
+(`GAPO-REMAINING-REDERIVATIONS`).
 
 ## 6. Gate
 
-@@GATE@@
+Standing gate on the rebased tip (`scripts/gate.sh g2`, every step under the
+shared lock, exits in [gate/](gate/), [gate.json](gate.json)):
+
+| Step | Command | Exit | Result |
+|---|---|---:|---|
+| 00 | `cargo check --workspace --all-targets` | 0 | |
+| 01 | submodule update (`--init --recursive`) | 0 | |
+| 02 | `cargo fmt --all -- --check` | 0 | clean |
+| 03 | `cargo clippy --locked --all-targets -- -D warnings` | 0 | clean |
+| 04 | `python3 scripts/run_test_binaries.py` | 0 | 441 units, 454 summaries; **7,565 passed**, 0 failed, 11 ignored (`private/gapo/tests-gate-g2/`) |
+| 05 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| 06 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| 07 | `python3 scripts/check_lean_audits.py` | 0 | **287** audits (unchanged) |
+| 08-10 | Python suite and `build_docs_index.py --check`, after the matrix regeneration | see [gate/](gate/) | |
+
+The first gate (`gate-g1`, pre-rebase tip on `2ecd39531`) exited 0 at every
+code step (7,554 passed, 286 audits). Also run: `cargo clippy -p
+qcore-c-gateway --all-targets --features route-census,indirect-census -- -D
+warnings`, exit 0 (the card's census feature). Not part of the gate and
+pre-existing in files the card does not touch: the `provenance-rounds-census`
+feature build fails clippy's `private_interfaces` lint in
+`provenance_rounds::record`. The provider gate is not owed: `providers/` is
+unchanged.
 
 ## Files
 
@@ -191,6 +274,7 @@ Scripts (`scripts/`): `measure.sh`, `measure-binary.sh`, `measure-atomic.sh`,
 proof), `parity_diff.py`, `clang-census.sh` + `clang-census-run.sh` +
 `clang_census.py` (Clang census), `gdb_sampler.py` + `profile-run.sh` +
 `profile.py` (profile), `route-census-run.sh`, `tests-timing.sh`,
-`build.sh`, `cargo-step.sh`, `split.py`, `move_check.py`, `update_ledger.py`.
+`build.sh`, `cargo-step.sh`, `split.py`, `move_check.py`, `update_ledger.py`,
+`timing_table.py`, `rebase-measure.sh`, `gate.sh`, `finish-gate.sh`.
 Artifacts (`artifacts/`): the identity proofs, the Clang census and profile
 summaries, the route census, the move check and the timing table.

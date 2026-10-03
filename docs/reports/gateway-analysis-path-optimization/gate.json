@@ -1,0 +1,13 @@
+{
+  "note": "GATEWAY-ANALYSIS-PATH-OPTIMIZATION card gate after the rebase onto 170aba7b0 (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS), code steps at 6aae83c43 (later commits: the report, records and gate files only), scripts docs/reports/gateway-analysis-path-optimization/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/gapo/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 441 units, 454 summaries, 7,565 passed, 0 failed, 11 ignored, exit 0 (private/gapo/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 287 audits passed (unchanged by the card); python tests and docs index check after build_matrix.py . --gate this file (09a, 09b, 10b, 10c). The first gate (gate-g1, at the pre-rebase tip ccc9320c9 on 2ecd39531) exited 0 at every code step with 7,554 passed and 286 audits. Provider gate: providers/ is unchanged by the card, so provider_tests is the base's figure, not re-run here.",
+  "workspace_tests": 7565,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 287,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

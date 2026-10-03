@@ -1,0 +1,85 @@
+{
+ "before": "before1",
+ "after": "step4b",
+ "identical": true,
+ "files": [
+  {
+   "route": "corpus",
+   "file": "audit.log",
+   "bytes": 134159,
+   "sha256": "1aafca2141e3d20fb6ffa1f72c76d00f8490c4d62bd6be6f9871cde8ed7d399d",
+   "raw_identical": false,
+   "identical_after_normalisation": true
+  },
+  {
+   "route": "corpus",
+   "file": "monkey-source.json",
+   "bytes": 1665950,
+   "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+   "raw_identical": true,
+   "identical_after_normalisation": true
+  },
+  {
+   "route": "corpus",
+   "file": "resource-diagnostics.chunk-contracts.json",
+   "bytes": 4186178,
+   "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+   "raw_identical": true,
+   "identical_after_normalisation": true
+  },
+  {
+   "route": "corpus",
+   "file": "resource-diagnostics.contracts.json",
+   "bytes": 735355,
+   "sha256": "24b9de67887a63542bc4fef0ae2f61f21ef39656e639a84ad434e8cfd4171165",
+   "raw_identical": true,
+   "identical_after_normalisation": true
+  },
+  {
+   "route": "corpus",
+   "file": "resource-diagnostics.json",
+   "bytes": 10278741,
+   "sha256": "d2f5a3f7efb45118b4f64fd63d65d3be277c7c247c4527d302814f89458fb15e",
+   "raw_identical": true,
+   "identical_after_normalisation": true
+  },
+  {
+   "route": "corpus",
+   "file": "resource-diagnostics.source-effects.json",
+   "bytes": 118505,
+   "sha256": "f125896ca655eb81bcb49f789e0dbabcc066359cebeaef2b3d2bfc2cf48f7f27",
+   "raw_identical": true,
+   "identical_after_normalisation": true
+  },
+  {
+   "route": "system",
+   "verdict": "not measured on both sides"
+  },
+  {
+   "route": "slice",
+   "verdict": "not measured on both sides"
+  }
+ ],
+ "parity": [
+  {
+   "stream": "parity-corpus",
+   "rows": [
+    626469,
+    626469
+   ],
+   "multiset_sha256": [
+    "6c98b9ff42d77fdedbd8625336733fbff2e6d077bbf806793b964e34d764796a",
+    "6c98b9ff42d77fdedbd8625336733fbff2e6d077bbf806793b964e34d764796a"
+   ],
+   "identical": true
+  },
+  {
+   "stream": "parity-system",
+   "verdict": "route not measured"
+  },
+  {
+   "stream": "parity-slice",
+   "verdict": "route not measured"
+  }
+ ]
+}
