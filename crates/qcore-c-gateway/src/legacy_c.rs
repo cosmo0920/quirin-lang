@@ -231,6 +231,12 @@ mod field_link_join_route;
 #[path = "legacy_cast_representation.rs"]
 mod cast_representation_route;
 
+// Card CAST-FORMALIZATION (rule 12h): the one conversion table's route-G
+// consultations and the explicit-cast census. The hooks naming the card are
+// thin.
+#[path = "legacy_cast_semantics.rs"]
+mod cast_semantics_route;
+
 // Card CG15-STORAGE-DURATION-AND-VOLATILE (rule 11h): a static-duration
 // declaration is no event, and `volatile` objects carry no value-derived
 // fact. The hooks below naming the card are thin.
@@ -3427,6 +3433,8 @@ fn build_function_cfg_with(
     // Card CG08-CASTS-AND-TYPE-QUERIES (`W45-CALLEE-CAST-LEXICAL-PREMISE`):
     // parity runs only.
     parser.record_callee_cast_census(body_start);
+    // Card CAST-FORMALIZATION (rule 12h): parity runs only.
+    parser.record_cast_census();
     // Card CG17-LAYOUT-DERIVED-EXTENTS (rule 11u): parity runs only.
     parser.record_layout_census();
     #[cfg(feature = "indirect-census")]

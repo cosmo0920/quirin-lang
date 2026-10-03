@@ -45,6 +45,9 @@ mod call_instantiation;
 // type-query operands by evaluation class; the G hooks are in
 // `legacy_cast_representation.rs`.
 mod cast_representation;
+// Card CAST-FORMALIZATION (rule 12h): one conversion table, by class, every
+// route-G position consults; the G hooks are in `legacy_cast_semantics.rs`.
+mod cast_semantics;
 // Card CG04-CONDITION-ACQUISITION (rule 10x): acquisitions in conditions and
 // complex condition leaves; the G hooks are in `legacy_condition_acquisition.rs`.
 mod condition_acquisition;
