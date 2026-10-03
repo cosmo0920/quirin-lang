@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # provider-gate.sh NAME -- CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (from CG10-INDIRECT-ACCESS-SOLE-BLOCKERS, from CAST-FORMALIZATION) (from CONTRACT-NORETURN-AND-BORROWED-TAILS, from
-# W48-BOTTOM-UP-CALLEE-BODIES): the provider gate (constraint 18). providers/
-# is unchanged by this card; it is run because build_matrix.py needs a
-# measured provider_tests. Outputs and exits to
+# W48-BOTTOM-UP-CALLEE-BODIES): the provider gate (constraint 18), run because
+# this card changes two provider crates' contracts and locks. Outputs and exits to
 # private/cg10res/gate-NAME/, each step under the shared heavy lock, nothing
 # piped.
 set -u

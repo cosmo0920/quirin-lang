@@ -8,7 +8,7 @@ name="$1"
 here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 logs="$repo/private/cg10res/gate-$name"
-report="$repo/docs/reports/cg10-indirect-access-sole-blockers"
+report="$repo/docs/reports/cg10-indirect-access-sole-residuals"
 cd "$repo" || exit 2
 mkdir -p "$report/gate" || exit 2
 cp "$logs"/*.exit "$logs/head" "$logs/docs-head" "$report/gate/"
