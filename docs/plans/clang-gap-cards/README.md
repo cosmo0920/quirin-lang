@@ -602,7 +602,10 @@ CG22.
     `CG26-VA-PROTOCOL-PRECISION`, `CG26-POINTER-VA-ARG`,
     `CG26-BORROWED-TAIL-DECLARATIONS` (retired by
     CONTRACT-NORETURN-AND-BORROWED-TAILS, residual
-    `CG26-TAIL-RESIDUAL-ACTUALS`), `CG26-ROUTE-T-VARIADICS`.
+    `CG26-TAIL-RESIDUAL-ACTUALS`, read by CG26-TAIL-RESIDUAL-ACTUALS (rule
+    12g, 40 → 15 tail leaves, no move) but for its casts, now
+    CAST-FORMALIZATION's; residuals `CG26-TAIL-IDENTITY-CONDITIONALS` and
+    `CG26-TAIL-UNMATCHED-STATEMENTS`), `CG26-ROUTE-T-VARIADICS`.
     [Report](../../reports/cg26-variadics/README.md).
 - **CG27: loops, recursion and budgets.**
   - *Invariants.* Loop-invariant contracts, widening and loop summaries.

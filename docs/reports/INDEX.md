@@ -135,6 +135,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg25-resource-kinds](cg25-resource-kinds/README.md) | CG25-RESOURCE-KINDS: a library-handle kind and an in-place kind |
 
+| [cg26-tail-residual-actuals](cg26-tail-residual-actuals/README.md) | CG26-TAIL-RESIDUAL-ACTUALS |
+
 | [cg26-variadics](cg26-variadics/README.md) | CG26-VARIADICS: the `va_list` protocol and trailing actuals per position |
 
 | [cg27-loops-recursion-budgets](cg27-loops-recursion-budgets/README.md) | CG27-LOOPS-RECURSION-BUDGETS: checked loop summaries, a signed threshold rank, and budgets as coverage |

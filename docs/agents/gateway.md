@@ -4687,7 +4687,7 @@ own anchor here.
     declaration premises, the integer-carried identities of the descriptor
     reader, and the declared tail clauses (rule 11w). Measured (corpus
     `66910c10`, main `cb3085365`): 649 / 9 / 4,176 unchanged
-    (`450a9e54…` → `AFTER2_DIGEST…`); 25 of the 40 tail leaves removed in 15
+    (`450a9e54…` → `b864e7ba…`); 25 of the 40 tail leaves removed in 15
     Unknown functions, no other leaf moves, no leak or violation added; the
     15 left are 6 casts, 3 identity conditionals and 6 leaves of two
     `rdhttp.c` tests whose statements rule 11w's fallback never matches.
