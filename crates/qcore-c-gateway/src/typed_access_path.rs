@@ -1718,8 +1718,11 @@ mod tests {
                 "struct S { int *next; }; int f(struct S *p, int *q) { p->next = q; return 0; }",
                 "p->next = q",
             ),
+            // Card CAST-FORMALIZATION (rule 12h), a deliberate flip: `*(int *)p`
+            // of an `int *p` is a qualifier conversion, read through; a pun
+            // keeps the refusal.
             (
-                "int f(int *p) { int x = *(int *)p; return 0; }",
+                "int f(long *p) { int x = *(int *)p; return 0; }",
                 "int x = *(int *)p",
             ),
             (

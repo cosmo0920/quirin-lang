@@ -241,6 +241,7 @@ unit tests in `tests/unit/cast_semantics.rs` (vectors, the table's rows, the
 | Test | Was | Now |
 |---|---|---|
 | `cg12_void_view_readback::unlisted_views_are_refused` | `*(int *)p` of an `int *p` refused (not a `void *` operand) | removed from the refused list: a `qualifier` conversion, read through (Safe; pinned in `cast_formalization.rs`) |
+| `typed_access_path::tests::unsupported_pointer_store_cast_and_call_refuse` | the plan of `int x = *(int *)p;` over an `int *p` refused | its cast row is now the pun `*(int *)p` over a `long *p` (still refused); the `int *p` form is a qualifier conversion, read through |
 
 ## 7. Follow-ups
 
