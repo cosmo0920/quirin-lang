@@ -858,6 +858,112 @@ pub fn load_resource_contract_sources(
     Ok(contracts)
 }
 
+/// Card **GATEWAY-ANALYSIS-PATH-OPTIMIZATION**: one declared module text as
+/// the environment readers below read it: the same rejections, the same
+/// parse, the same mode check and every declaration's [`load_function`]
+/// result, in source order, up to and including the first declaration that
+/// fails to load (a reader stops there).
+///
+/// Each reader used to re-parse and re-lex every declared module of the
+/// environment on every call, and the gateway asks them per CFG build: the
+/// measured arbiter spent 43 % of its worker time there. The reading is a
+/// pure function of the (path, text) pair -- every step above reads only
+/// them -- so it is computed once per pair and shared; each reader's own
+/// decisions (which field it collects, its duplicate check) and every error
+/// string, in the order a reader meets them, are unchanged.
+struct ModuleReading {
+    declarations: Vec<DeclarationReading>,
+}
+
+struct DeclarationReading {
+    name: String,
+    /// `PATH: NAME at byte N`, the prefix of every error about it.
+    context: String,
+    loaded: Result<LoadedDeclaration, String>,
+}
+
+/// Readings by path, then by exact text. Bounded: past
+/// [`READING_CAPACITY`] texts a reading is computed and not kept.
+type ModuleReadings =
+    BTreeMap<String, Vec<(String, std::sync::Arc<Result<ModuleReading, String>>)>>;
+
+static MODULE_READINGS: std::sync::Mutex<ModuleReadings> = std::sync::Mutex::new(BTreeMap::new());
+
+const READING_CAPACITY: usize = 4096;
+
+fn read_module(path: &str, source: &str) -> Result<ModuleReading, String> {
+    reject_retired_premise_directive(path, source)?;
+    reject_unresolved_inclusion(path, source)?;
+    let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
+    if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
+        return Err(format!("{path}: expected a nonempty module contract"));
+    }
+    let mut declarations = Vec::new();
+    for declaration in parsed.declarations {
+        let decl = &declaration.value;
+        let loaded = load_function(decl);
+        let failed = loaded.is_err();
+        declarations.push(DeclarationReading {
+            name: decl.name.clone(),
+            context: format!("{path}: {} at byte {}", decl.name, declaration.span.start),
+            loaded,
+        });
+        if failed {
+            break;
+        }
+    }
+    Ok(ModuleReading { declarations })
+}
+
+fn module_reading(path: &str, source: &str) -> std::sync::Arc<Result<ModuleReading, String>> {
+    let cached = |readings: &ModuleReadings| {
+        readings.get(path).and_then(|texts| {
+            texts
+                .iter()
+                .find(|(text, _)| text == source)
+                .map(|(_, reading)| std::sync::Arc::clone(reading))
+        })
+    };
+    if let Some(reading) = cached(&MODULE_READINGS.lock().unwrap_or_else(|e| e.into_inner())) {
+        return reading;
+    }
+    let reading = std::sync::Arc::new(read_module(path, source));
+    let mut readings = MODULE_READINGS.lock().unwrap_or_else(|e| e.into_inner());
+    if let Some(raced) = cached(&readings) {
+        return raced;
+    }
+    if readings.values().map(Vec::len).sum::<usize>() < READING_CAPACITY {
+        readings
+            .entry(path.to_owned())
+            .or_default()
+            .push((source.to_owned(), std::sync::Arc::clone(&reading)));
+    }
+    reading
+}
+
+/// Visit every declaration of `sources` as the readers below did: module by
+/// module in path order, a module's rejection first, then each declaration
+/// in source order, a load failure ending the walk with `CONTEXT: ERROR`.
+/// `visit` gets the name, the context and the loaded declaration, and may end
+/// the walk with its own error.
+fn each_loaded_declaration(
+    sources: &BTreeMap<String, String>,
+    mut visit: impl FnMut(&str, &str, &LoadedDeclaration) -> Result<(), String>,
+) -> Result<(), String> {
+    for (path, source) in sources {
+        let reading = module_reading(path, source);
+        let reading = reading.as_ref().as_ref().map_err(Clone::clone)?;
+        for declaration in &reading.declarations {
+            let loaded = declaration
+                .loaded
+                .as_ref()
+                .map_err(|e| format!("{}: {e}", declaration.context))?;
+            visit(&declaration.name, &declaration.context, loaded)?;
+        }
+    }
+    Ok(())
+}
+
 /// The names declaring a `resource_variadic_data_tail()` in `sources`.
 ///
 /// Derived from the same trusted texts [`load_resource_contract_sources`]
@@ -865,22 +971,12 @@ pub fn load_resource_contract_sources(
 /// reject yields an error here too, never a partial set.
 pub fn variadic_data_tails(sources: &BTreeMap<String, String>) -> Result<BTreeSet<String>, String> {
     let mut tails = BTreeSet::new();
-    for (path, source) in sources {
-        reject_retired_premise_directive(path, source)?;
-        reject_unresolved_inclusion(path, source)?;
-        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
-        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
-            return Err(format!("{path}: expected a nonempty module contract"));
+    each_loaded_declaration(sources, |name, _, loaded| {
+        if loaded.variadic_data_tail {
+            tails.insert(name.to_owned());
         }
-        for declaration in parsed.declarations {
-            let decl = &declaration.value;
-            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            if loaded.variadic_data_tail {
-                tails.insert(decl.name.clone());
-            }
-        }
-    }
+        Ok(())
+    })?;
     Ok(tails)
 }
 
@@ -891,22 +987,12 @@ pub fn variadic_borrowed_tails(
     sources: &BTreeMap<String, String>,
 ) -> Result<BTreeSet<String>, String> {
     let mut tails = BTreeSet::new();
-    for (path, source) in sources {
-        reject_retired_premise_directive(path, source)?;
-        reject_unresolved_inclusion(path, source)?;
-        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
-        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
-            return Err(format!("{path}: expected a nonempty module contract"));
+    each_loaded_declaration(sources, |name, _, loaded| {
+        if loaded.variadic_borrowed_tail {
+            tails.insert(name.to_owned());
         }
-        for declaration in parsed.declarations {
-            let decl = &declaration.value;
-            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            if loaded.variadic_borrowed_tail {
-                tails.insert(decl.name.clone());
-            }
-        }
-    }
+        Ok(())
+    })?;
     Ok(tails)
 }
 
@@ -917,22 +1003,12 @@ pub fn variadic_borrowed_tails(
 /// reads, and total-or-reject in the same way as [`variadic_data_tails`].
 pub fn no_return_callees(sources: &BTreeMap<String, String>) -> Result<BTreeSet<String>, String> {
     let mut callees = BTreeSet::new();
-    for (path, source) in sources {
-        reject_retired_premise_directive(path, source)?;
-        reject_unresolved_inclusion(path, source)?;
-        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
-        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
-            return Err(format!("{path}: expected a nonempty module contract"));
+    each_loaded_declaration(sources, |name, _, loaded| {
+        if loaded.no_return {
+            callees.insert(name.to_owned());
         }
-        for declaration in parsed.declarations {
-            let decl = &declaration.value;
-            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            if loaded.no_return {
-                callees.insert(decl.name.clone());
-            }
-        }
-    }
+        Ok(())
+    })?;
     Ok(callees)
 }
 
@@ -949,22 +1025,15 @@ pub fn declared_abi_signatures(
     sources: &BTreeMap<String, String>,
 ) -> Result<BTreeMap<String, DeclaredAbiSignature>, String> {
     let mut signatures = BTreeMap::new();
-    for (path, source) in sources {
-        reject_retired_premise_directive(path, source)?;
-        reject_unresolved_inclusion(path, source)?;
-        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
-        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
-            return Err(format!("{path}: expected a nonempty module contract"));
+    each_loaded_declaration(sources, |name, context, loaded| {
+        if signatures
+            .insert(name.to_owned(), loaded.abi.clone())
+            .is_some()
+        {
+            return Err(format!("{context}: duplicate function contract"));
         }
-        for declaration in parsed.declarations {
-            let decl = &declaration.value;
-            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            if signatures.insert(decl.name.clone(), loaded.abi).is_some() {
-                return Err(format!("{context}: duplicate function contract"));
-            }
-        }
-    }
+        Ok(())
+    })?;
     Ok(signatures)
 }
 
@@ -996,31 +1065,21 @@ pub fn literal_argument_premises(
     sources: &BTreeMap<String, String>,
 ) -> Result<BTreeMap<String, Vec<DeclaredLiteralArgument>>, String> {
     let mut premises = BTreeMap::new();
-    for (path, source) in sources {
-        reject_retired_premise_directive(path, source)?;
-        reject_unresolved_inclusion(path, source)?;
-        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
-        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
-            return Err(format!("{path}: expected a nonempty module contract"));
-        }
-        for declaration in parsed.declarations {
-            let decl = &declaration.value;
-            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            if !loaded.literal_arguments.is_empty() {
-                // Function names are unique across a selection, so a name that
-                // is already present is a duplicate declaration, which
-                // `load_resource_contract_sources` rejects; refuse here too
-                // rather than silently keeping one of them.
-                if premises
-                    .insert(decl.name.clone(), loaded.literal_arguments)
-                    .is_some()
-                {
-                    return Err(format!("{context}: duplicate function contract"));
-                }
+    each_loaded_declaration(sources, |name, context, loaded| {
+        if !loaded.literal_arguments.is_empty() {
+            // Function names are unique across a selection, so a name that
+            // is already present is a duplicate declaration, which
+            // `load_resource_contract_sources` rejects; refuse here too
+            // rather than silently keeping one of them.
+            if premises
+                .insert(name.to_owned(), loaded.literal_arguments.clone())
+                .is_some()
+            {
+                return Err(format!("{context}: duplicate function contract"));
             }
         }
-    }
+        Ok(())
+    })?;
     Ok(premises)
 }
 
@@ -1052,22 +1111,12 @@ pub fn checked_specifications(
     sources: &BTreeMap<String, String>,
 ) -> Result<BTreeSet<String>, String> {
     let mut checked = BTreeSet::new();
-    for (path, source) in sources {
-        reject_retired_premise_directive(path, source)?;
-        reject_unresolved_inclusion(path, source)?;
-        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
-        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
-            return Err(format!("{path}: expected a nonempty module contract"));
+    each_loaded_declaration(sources, |name, _, loaded| {
+        if loaded.body_checked {
+            checked.insert(name.to_owned());
         }
-        for declaration in parsed.declarations {
-            let decl = &declaration.value;
-            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            if loaded.body_checked {
-                checked.insert(decl.name.clone());
-            }
-        }
-    }
+        Ok(())
+    })?;
     Ok(checked)
 }
 
@@ -2601,24 +2650,14 @@ pub fn loop_owner_obligations(
     sources: &BTreeMap<String, String>,
 ) -> Result<BTreeMap<String, DeclaredLoopOwner>, String> {
     let mut obligations = BTreeMap::new();
-    for (path, source) in sources {
-        reject_retired_premise_directive(path, source)?;
-        reject_unresolved_inclusion(path, source)?;
-        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
-        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
-            return Err(format!("{path}: expected a nonempty module contract"));
+    each_loaded_declaration(sources, |name, context, loaded| {
+        if let Some(obligation) = loaded.loop_owner
+            && obligations.insert(name.to_owned(), obligation).is_some()
+        {
+            return Err(format!("{context}: duplicate function contract"));
         }
-        for declaration in parsed.declarations {
-            let decl = &declaration.value;
-            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            if let Some(obligation) = loaded.loop_owner
-                && obligations.insert(decl.name.clone(), obligation).is_some()
-            {
-                return Err(format!("{context}: duplicate function contract"));
-            }
-        }
-    }
+        Ok(())
+    })?;
     Ok(obligations)
 }
 
@@ -2737,24 +2776,14 @@ pub fn thread_sync_obligations(
     sources: &BTreeMap<String, String>,
 ) -> Result<BTreeMap<String, DeclaredThreadSync>, String> {
     let mut obligations = BTreeMap::new();
-    for (path, source) in sources {
-        reject_retired_premise_directive(path, source)?;
-        reject_unresolved_inclusion(path, source)?;
-        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
-        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
-            return Err(format!("{path}: expected a nonempty module contract"));
+    each_loaded_declaration(sources, |name, context, loaded| {
+        if let Some(obligation) = loaded.thread_sync
+            && obligations.insert(name.to_owned(), obligation).is_some()
+        {
+            return Err(format!("{context}: duplicate function contract"));
         }
-        for declaration in parsed.declarations {
-            let decl = &declaration.value;
-            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            if let Some(obligation) = loaded.thread_sync
-                && obligations.insert(decl.name.clone(), obligation).is_some()
-            {
-                return Err(format!("{context}: duplicate function contract"));
-            }
-        }
-    }
+        Ok(())
+    })?;
     Ok(obligations)
 }
 
@@ -2808,24 +2837,14 @@ pub fn lifecycle_obligations(
     sources: &BTreeMap<String, String>,
 ) -> Result<BTreeMap<String, DeclaredLifecycle>, String> {
     let mut obligations = BTreeMap::new();
-    for (path, source) in sources {
-        reject_retired_premise_directive(path, source)?;
-        reject_unresolved_inclusion(path, source)?;
-        let parsed = parse_source_program(source).map_err(|e| format!("{path}: {e}"))?;
-        if parsed.mode != SourceModuleMode::Contract || parsed.declarations.is_empty() {
-            return Err(format!("{path}: expected a nonempty module contract"));
+    each_loaded_declaration(sources, |name, context, loaded| {
+        if let Some(obligation) = loaded.lifecycle
+            && obligations.insert(name.to_owned(), obligation).is_some()
+        {
+            return Err(format!("{context}: duplicate function contract"));
         }
-        for declaration in parsed.declarations {
-            let decl = &declaration.value;
-            let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            let loaded = load_function(decl).map_err(|e| format!("{context}: {e}"))?;
-            if let Some(obligation) = loaded.lifecycle
-                && obligations.insert(decl.name.clone(), obligation).is_some()
-            {
-                return Err(format!("{context}: duplicate function contract"));
-            }
-        }
-    }
+        Ok(())
+    })?;
     Ok(obligations)
 }
 
