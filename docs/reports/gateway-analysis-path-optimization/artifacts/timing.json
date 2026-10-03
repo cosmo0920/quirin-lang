@@ -47,7 +47,113 @@
   }
  },
  "suite": {
-  "before": {},
-  "after": {}
+  "before": {
+   "b1": {
+    "wall": 421.043,
+    "phases": {
+     "build": 112.369,
+     "capture": 7.852,
+     "run": 300.699
+    },
+    "totals": {
+     "passed": 7550,
+     "failed": 0,
+     "ignored": 11,
+     "measured": 0,
+     "filtered": 0,
+     "summaries": 452
+    }
+   },
+   "b2": {
+    "wall": 308.571,
+    "phases": {
+     "build": 0.326,
+     "capture": 5.886,
+     "run": 302.251
+    },
+    "totals": {
+     "passed": 7550,
+     "failed": 0,
+     "ignored": 11,
+     "measured": 0,
+     "filtered": 0,
+     "summaries": 452
+    }
+   },
+   "b3": {
+    "wall": 307.05,
+    "phases": {
+     "build": 0.316,
+     "capture": 6.114,
+     "run": 300.497
+    },
+    "totals": {
+     "passed": 7550,
+     "failed": 0,
+     "ignored": 11,
+     "measured": 0,
+     "filtered": 0,
+     "summaries": 452
+    }
+   }
+  },
+  "after": {
+   "a1": {
+    "wall": 338.971,
+    "phases": {
+     "build": 94.076,
+     "capture": 5.921,
+     "run": 238.84
+    },
+    "totals": {
+     "passed": 7554,
+     "failed": 0,
+     "ignored": 11,
+     "measured": 0,
+     "filtered": 0,
+     "summaries": 452
+    }
+   },
+   "a2": {
+    "wall": 245.589,
+    "phases": {
+     "build": 0.377,
+     "capture": 6.272,
+     "run": 238.822
+    },
+    "totals": {
+     "passed": 7554,
+     "failed": 0,
+     "ignored": 11,
+     "measured": 0,
+     "filtered": 0,
+     "summaries": 452
+    }
+   },
+   "a3": {
+    "wall": 245.824,
+    "phases": {
+     "build": 0.37,
+     "capture": 5.798,
+     "run": 239.547
+    },
+    "totals": {
+     "passed": 7554,
+     "failed": 0,
+     "ignored": 11,
+     "measured": 0,
+     "filtered": 0,
+     "summaries": 452
+    }
+   }
+  },
+  "median_before": {
+   "wall": 308.571,
+   "run_phase": 300.699
+  },
+  "median_after": {
+   "wall": 245.824,
+   "run_phase": 238.84
+  }
  }
 }

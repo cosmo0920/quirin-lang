@@ -4,8 +4,9 @@
 # standing per-change gate (docs/agents/validation.md), every step's output and
 # exit to private/gapo/gate-NAME/, nothing piped. PART is `code` (steps 00-07)
 # or `docs` (08-09, after the records) or `all` (default). Step 04's suite run
-# writes its logs to private/gapo/tests-a3/ and its wall time (inside the lock)
-# to private/gapo/tests-a3.seconds: it is the third AFTER suite timing run.
+# writes its logs to private/gapo/tests-SUITE_NAME/ (default gate-NAME; the first
+# gate, g1, wrote tests-a3) and its wall time (inside the lock)
+# to private/gapo/tests-SUITE_NAME.seconds (g1: the third AFTER suite timing run).
 # Each step runs under the shared heavy lock.
 set -u
 name="$1"
@@ -30,13 +31,13 @@ if [ "$part" != docs ]; then
   step 03-clippy cargo clippy --locked --all-targets -- -D warnings
   flock "$lock" /usr/bin/env bash -c '
     start=$EPOCHREALTIME
-    python3 scripts/run_test_binaries.py --log-dir "$1/tests-a3" > "$2/04-tests.log" 2>&1
+    python3 scripts/run_test_binaries.py --log-dir "$1/tests-$3" > "$2/04-tests.log" 2>&1
     rc=$?
     end=$EPOCHREALTIME
     echo "$rc" > "$2/04-tests.exit"
-    echo "$rc" > "$1/tests-a3.exit"
-    awk -v s="$start" -v e="$end" "BEGIN { printf \"%.3f\n\", e - s }" > "$1/tests-a3.seconds"
-  ' _ "$repo/private/gapo" "$out"
+    echo "$rc" > "$1/tests-$3.exit"
+    awk -v s="$start" -v e="$end" "BEGIN { printf \"%.3f\n\", e - s }" > "$1/tests-$3.seconds"
+  ' _ "$repo/private/gapo" "$out" "${SUITE_NAME:-gate-$name}"
   step 05-probe cargo run -p qcore-compiler --example reevaluation_probe
   step 06-followup cargo run -p qcore-compiler --example reevaluation_followup
   step 07-lean python3 scripts/check_lean_audits.py

@@ -78,6 +78,7 @@ directly and asks none of the statement fallbacks.
 | 20 | `legacy_variadics.rs:363` `variadic_tail_statement` | 11w, 12g | the tail refusal of a callee with a declared tail | Clang; re-runs `classify_simple` widened (398) | block |
 | 21 | `legacy_cast_semantics.rs:299` `uncast_value_statement` | 12h (H-U) | `Unknown` with `(` | Clang; re-enters `expression_statement`; `uncast_tail` re-runs `classify_simple` twice | statement |
 | 22 | `record_instantiation_parity` (`legacy_call_instantiation.rs:183`) | 10u | a `ContractCall`, parity runs only | | no effect |
+| 23 | `legacy_uncontracted_access.rs` `uncontracted_access_attribution` (landed after the base, carried through the rebase) | 12k | the gate's refusal | the callee's contract state | re-words the refusal to name an uncontracted callee where it decides; never admits |
 
 Rows 7-21 are the statement fallback table the card made explicit
 (`legacy_route_table.rs`; [report](README.md) section 2).
@@ -187,7 +188,10 @@ evaluation `return_expression_instruction` produced.
    `typed_return_instruction` (Clang); 11h `static_address_return` (Clang);
    then 10n `typed_connective_return` (`legacy_typed_residuals.rs:32`) and 12i
    `return_call_argument_access` (`legacy_return_call_access.rs:80`, for E
-   absent or the gate refusal; `classify_simple(PLACE = expr)` a third time).
+   absent or the gate refusal; `classify_simple(PLACE = expr)` a third time);
+   last (since CG10-INDIRECT-ACCESS-SOLE-RESIDUALS, after the census hook),
+   12k `uncontracted_return_attribution`, which re-words the gate's refusal
+   of a whole-call return to name its uncontracted callee.
 3. Back in `parse_statement`, the return fallbacks, each for R unless noted:
    10s `elaborated_return`, 10u `instantiated_return`, 10y
    `nested_call_return` (R or the nested-call refusal), 10z
