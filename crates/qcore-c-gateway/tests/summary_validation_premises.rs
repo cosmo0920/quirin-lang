@@ -142,9 +142,6 @@ fn row<'a>(
     (status.as_str(), keys.iter().map(String::as_str).collect())
 }
 
-const UNCONTRACTED_GET: &str = "unsupported:call to uncontracted function `get`";
-const UNCONTRACTED_MID: &str = "unsupported:call to uncontracted function `mid`";
-
 /// librdkafka's `rd_kafka_topic_partition_cmp` / `…_cmp_opaque` shape. The
 /// comparator's summary (`Owned`, `Owned`) seeds `_a` and `_b` as entry
 /// resources; its own row, analysed with that summary in force, protects
@@ -185,12 +182,27 @@ fn a_copy_read_in_a_call_actual_serves_no_caller() {
     if !clang_available() {
         return;
     }
+    // FLIPPED by CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (rule 12i), on the
+    // ground the comparator row above was flipped: `get`'s own row refused
+    // `return c_same(p->topic, p->topic)` only because the return position
+    // never asked rule W44, which reads those actuals at the statement
+    // position. Now it does, the row is `Safe` on exactly the premises the
+    // summary is validated on (rule 4b holds), and the caller's call is
+    // contracted. The statement form is the control: neither of the card's
+    // hooks can move it, and it was and is `Safe` with the same summaries.
     let rows = rows(
         "int get(const void *_p) { const struct c_tp *p = _p; return c_same(p->topic, p->topic); } \
          int w(const void *q) { return get(q); }",
     );
-    assert_eq!(row(&rows, "w"), ("Unknown", vec![UNCONTRACTED_GET]));
-    assert_eq!(row(&rows, "get").0, "Unknown");
+    assert_eq!(row(&rows, "w"), ("Safe", vec![]));
+    assert_eq!(row(&rows, "get"), ("Safe", vec![]));
+    let statement = crate::rows(
+        "int get(const void *_p) { const struct c_tp *p = _p; \
+         int r = c_same(p->topic, p->topic); return r; } \
+         int w(const void *q) { return get(q); }",
+    );
+    assert_eq!(row(&statement, "w"), ("Safe", vec![]));
+    assert_eq!(row(&statement, "get"), ("Safe", vec![]));
 }
 
 /// A withdrawn summary cascades: the middle function's body now holds an
@@ -206,8 +218,33 @@ fn a_withdrawn_summary_withdraws_its_callers_summaries() {
          int mid(const void *q) { return get(q); } \
          int w(const void *q) { return mid(q); }",
     );
-    assert_eq!(row(&rows, "w"), ("Unknown", vec![UNCONTRACTED_MID]));
-    assert_eq!(row(&rows, "mid"), ("Unknown", vec![UNCONTRACTED_GET]));
+    // FLIPPED by CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (rule 12i): `get` now
+    // validates (see the row above), so neither summary is withdrawn.
+    assert_eq!(row(&rows, "w"), ("Safe", vec![]));
+    assert_eq!(row(&rows, "mid"), ("Safe", vec![]));
+    // The cascade itself still holds where `get`'s own row refuses: a `?:`
+    // actual, which neither rule W44 nor rule 12i reads.
+    let rows = crate::rows(
+        "int get(const void *_p) { const struct c_tp *p = _p; \
+         return c_same(p->topic ? p->topic : \"\", p->topic); } \
+         int mid(const void *q) { return get(q); } \
+         int w(const void *q) { return mid(q); }",
+    );
+    assert_eq!(row(&rows, "get").0, "Unknown");
+    assert_eq!(
+        row(&rows, "mid"),
+        (
+            "Unknown",
+            vec!["unsupported:call to uncontracted function `get`"]
+        )
+    );
+    assert_eq!(
+        row(&rows, "w"),
+        (
+            "Unknown",
+            vec!["unsupported:call to uncontracted function `mid`"]
+        )
+    );
 }
 
 /// Positive controls. A copy of a seeded formal whose reads the reported run

@@ -346,8 +346,18 @@ fn an_address_of_actual_stays_unknown() {
 }
 
 /// A dereference in the same position.
+///
+/// **Deliberate pin update, card `CG10-INDIRECT-ACCESS-SOLE-BLOCKERS` (gateway
+/// rule 12i, `docs/reports/cg10-indirect-access-sole-blockers/README.md`).**
+/// This row asserted `Unknown`: the gate refused `*slot` and the return
+/// position never asked rule W44, which reads exactly that actual at the
+/// statement position. Rule 12i asks it, with the same statement the return
+/// position classifies, so `return digits10(*slot);` now agrees with its
+/// statement form, whose verdict neither of the card's hooks can move (no
+/// `return` call, no `.`-rooted place): the second leg is that control. The
+/// read keeps W44's obligation on `slot`; no bounds claim is made.
 #[test]
-fn a_dereference_in_a_return_expression_stays_unknown() {
+fn a_dereference_in_a_call_actual_agrees_with_the_statement_position() {
     if !clang_available() {
         return;
     }
@@ -357,8 +367,15 @@ fn a_dereference_in_a_return_expression_stays_unknown() {
             return digits10(*slot);
         }}"
     );
-    let run = run(&program);
-    assert_eq!(run.status("dereferenced"), AnalysisStatus::Unknown);
+    assert_eq!(run(&program).status("dereferenced"), AnalysisStatus::Safe);
+    let statement = format!(
+        "{DIGITS10}
+        unsigned long dereferenced(unsigned long *slot) {{
+            unsigned int t = digits10(*slot);
+            return t;
+        }}"
+    );
+    assert_eq!(run(&statement).status("dereferenced"), AnalysisStatus::Safe);
 }
 
 /// Pointer arithmetic inside an otherwise admitted call actual.
@@ -378,8 +395,9 @@ fn a_dereference_in_a_return_expression_stays_unknown() {
 /// operand walker does refuse `p`, and the *neutral-expression* route still
 /// refuses this actual. That route is simply no longer the only way a `return`
 /// can be modeled. The neighbouring dereference and subscript rows are the
-/// evidence that nothing broader moved: both keep `Unknown`, because
-/// `classify_simple`'s own access gate refuses `*` and `[` where it admits `+`.
+/// evidence that nothing broader moved: both kept `Unknown`, because
+/// `classify_simple`'s own access gate refuses `*` and `[` where it admits `+`
+/// (until rule 12i read them as the statement position does, below).
 #[test]
 fn pointer_arithmetic_in_a_call_actual_agrees_with_the_statement_position() {
     if !clang_available() {
@@ -407,8 +425,12 @@ fn pointer_arithmetic_in_a_call_actual_agrees_with_the_statement_position() {
 }
 
 /// A subscript in the same position.
+///
+/// **Deliberate pin update, card `CG10-INDIRECT-ACCESS-SOLE-BLOCKERS` (rule
+/// 12i)**, on the dereference row's ground: the statement form below is the
+/// control, and no bounds claim is made for `table[n]`.
 #[test]
-fn a_subscript_in_a_return_expression_stays_unknown() {
+fn a_subscript_in_a_call_actual_agrees_with_the_statement_position() {
     if !clang_available() {
         return;
     }
@@ -418,8 +440,15 @@ fn a_subscript_in_a_return_expression_stays_unknown() {
             return digits10(table[n]);
         }}"
     );
-    let run = run(&program);
-    assert_eq!(run.status("indexed"), AnalysisStatus::Unknown);
+    assert_eq!(run(&program).status("indexed"), AnalysisStatus::Safe);
+    let statement = format!(
+        "{DIGITS10}
+        unsigned long indexed(unsigned long *table, unsigned long n) {{
+            unsigned int t = digits10(table[n]);
+            return t;
+        }}"
+    );
+    assert_eq!(run(&statement).status("indexed"), AnalysisStatus::Safe);
 }
 
 /// A pointer actual: the C00 hazard the conjunction exists to refuse. `p` is

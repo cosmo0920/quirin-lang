@@ -49,10 +49,11 @@ sole blockers: their leaves are `unresolved resource identity` refusals, a
 different family, so no function in the 513 carries one.
 
 Classification limit: leaves are keyed by (function, internal line); a macro
-line holding several statements is classified by its last census row. Six
-telemetry functions counted as record-object places alone also carry, on the
-same macro line (`brokers_max`), a loop statement the census row did not name;
-they stay Unknown (§3).
+line holding several statements is classified by its last census row. The six
+parenthesised-root telemetry functions counted by hand as record-object places
+(`calculate_produce_latency_max`, `calculate_throttle_max`, …) expand
+`brokers_max` on that line, whose loop over the brokers holds another refused
+statement the census row did not name; they stay Unknown (§3).
 
 ## 2. The lifts
 
