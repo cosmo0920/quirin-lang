@@ -2,6 +2,7 @@
  "casts": 16743,
  "functions_with_casts": 3225,
  "cast_leaves": 10392,
+ "cast_refusals": 7777,
  "functions_with_cast_leaves": 2273,
  "sole_unknown_functions": 285,
  "ambiguous_names": [
@@ -134,6 +135,7 @@
     "NoOp": 1221
    },
    "leaves": 3178,
+   "refusals": 2308,
    "functions": 120,
    "unknown_functions": 120,
    "families": {
@@ -157,6 +159,7 @@
     "NullToPointer": 1972
    },
    "leaves": 2671,
+   "refusals": 2068,
    "functions": 904,
    "unknown_functions": 902,
    "families": {
@@ -184,6 +187,7 @@
     "FloatingToIntegral": 1
    },
    "leaves": 2076,
+   "refusals": 1495,
    "functions": 200,
    "unknown_functions": 200,
    "families": {
@@ -212,6 +216,7 @@
     "IntegralToFloating": 50
    },
    "leaves": 1902,
+   "refusals": 1388,
    "functions": 248,
    "unknown_functions": 247,
    "families": {
@@ -240,6 +245,7 @@
     "IntegralToFloating": 10
    },
    "leaves": 1362,
+   "refusals": 939,
    "functions": 181,
    "unknown_functions": 181,
    "families": {
@@ -265,6 +271,7 @@
     "NullToPointer": 1160
    },
    "leaves": 1313,
+   "refusals": 1091,
    "functions": 363,
    "unknown_functions": 362,
    "families": {
@@ -288,6 +295,7 @@
     "NullToPointer": 2433
    },
    "leaves": 1209,
+   "refusals": 646,
    "functions": 622,
    "unknown_functions": 620,
    "families": {
@@ -313,6 +321,7 @@
     "ToVoid": 1517
    },
    "leaves": 858,
+   "refusals": 675,
    "functions": 300,
    "unknown_functions": 297,
    "families": {
@@ -342,6 +351,7 @@
     "FloatingCast": 1
    },
    "leaves": 266,
+   "refusals": 257,
    "functions": 194,
    "unknown_functions": 194,
    "families": {
@@ -368,6 +378,7 @@
     "NoOp": 2
    },
    "leaves": 214,
+   "refusals": 213,
    "functions": 140,
    "unknown_functions": 140,
    "families": {
@@ -388,6 +399,7 @@
     "NullToPointer": 194
    },
    "leaves": 184,
+   "refusals": 184,
    "functions": 51,
    "unknown_functions": 51,
    "families": {
@@ -406,6 +418,7 @@
     "BitCast": 72
    },
    "leaves": 169,
+   "refusals": 169,
    "functions": 75,
    "unknown_functions": 75,
    "families": {
@@ -422,6 +435,7 @@
     "BitCast": 442
    },
    "leaves": 157,
+   "refusals": 156,
    "functions": 49,
    "unknown_functions": 49,
    "families": {
@@ -446,6 +460,7 @@
     "BitCast": 203
    },
    "leaves": 124,
+   "refusals": 24,
    "functions": 101,
    "unknown_functions": 101,
    "families": {
@@ -463,6 +478,7 @@
     "BitCast": 73
    },
    "leaves": 114,
+   "refusals": 92,
    "functions": 52,
    "unknown_functions": 52,
    "families": {
@@ -483,6 +499,7 @@
     "BitCast": 355
    },
    "leaves": 108,
+   "refusals": 107,
    "functions": 31,
    "unknown_functions": 31,
    "families": {
@@ -502,6 +519,7 @@
     "BitCast": 132
    },
    "leaves": 102,
+   "refusals": 46,
    "functions": 63,
    "unknown_functions": 63,
    "families": {
@@ -521,6 +539,7 @@
     "BitCast": 96
    },
    "leaves": 96,
+   "refusals": 83,
    "functions": 62,
    "unknown_functions": 62,
    "families": {
@@ -542,6 +561,7 @@
     "BitCast": 47
    },
    "leaves": 92,
+   "refusals": 90,
    "functions": 33,
    "unknown_functions": 33,
    "families": {
@@ -562,6 +582,7 @@
     "NoOp": 88
    },
    "leaves": 88,
+   "refusals": 82,
    "functions": 46,
    "unknown_functions": 46,
    "families": {
@@ -580,6 +601,7 @@
     "NoOp": 100
    },
    "leaves": 85,
+   "refusals": 61,
    "functions": 45,
    "unknown_functions": 44,
    "families": {
@@ -602,6 +624,7 @@
     "BitCast": 129
    },
    "leaves": 83,
+   "refusals": 82,
    "functions": 71,
    "unknown_functions": 71,
    "families": {
@@ -621,6 +644,7 @@
     "BitCast": 35
    },
    "leaves": 73,
+   "refusals": 73,
    "functions": 33,
    "unknown_functions": 33,
    "families": {
@@ -637,6 +661,7 @@
     "NoOp": 83
    },
    "leaves": 69,
+   "refusals": 69,
    "functions": 51,
    "unknown_functions": 51,
    "families": {
@@ -653,6 +678,7 @@
     "IntegralToPointer": 67
    },
    "leaves": 62,
+   "refusals": 38,
    "functions": 28,
    "unknown_functions": 27,
    "families": {
@@ -675,6 +701,7 @@
     "NullToPointer": 543
    },
    "leaves": 53,
+   "refusals": 53,
    "functions": 28,
    "unknown_functions": 26,
    "families": {
@@ -694,6 +721,7 @@
     "BitCast": 69
    },
    "leaves": 42,
+   "refusals": 42,
    "functions": 23,
    "unknown_functions": 23,
    "families": {
@@ -711,6 +739,7 @@
     "BitCast": 49
    },
    "leaves": 38,
+   "refusals": 38,
    "functions": 13,
    "unknown_functions": 13,
    "families": {
@@ -730,6 +759,7 @@
     "BitCast": 34
    },
    "leaves": 30,
+   "refusals": 25,
    "functions": 10,
    "unknown_functions": 10,
    "families": {
@@ -747,6 +777,7 @@
     "BitCast": 38
    },
    "leaves": 24,
+   "refusals": 19,
    "functions": 12,
    "unknown_functions": 12,
    "families": {
@@ -764,6 +795,7 @@
     "BitCast": 25
    },
    "leaves": 24,
+   "refusals": 24,
    "functions": 20,
    "unknown_functions": 20,
    "families": {
@@ -781,6 +813,7 @@
     "BitCast": 21
    },
    "leaves": 20,
+   "refusals": 8,
    "functions": 17,
    "unknown_functions": 17,
    "families": {
@@ -799,6 +832,7 @@
     "NoOp": 22
    },
    "leaves": 18,
+   "refusals": 17,
    "functions": 17,
    "unknown_functions": 17,
    "families": {
@@ -815,6 +849,7 @@
     "NullToPointer": 867
    },
    "leaves": 17,
+   "refusals": 10,
    "functions": 12,
    "unknown_functions": 10,
    "families": {
@@ -832,6 +867,7 @@
     "ToVoid": 227
    },
    "leaves": 16,
+   "refusals": 15,
    "functions": 13,
    "unknown_functions": 13,
    "families": {
@@ -848,6 +884,7 @@
     "BitCast": 16
    },
    "leaves": 15,
+   "refusals": 13,
    "functions": 11,
    "unknown_functions": 11,
    "families": {
@@ -867,6 +904,7 @@
     "FloatingToIntegral": 2
    },
    "leaves": 14,
+   "refusals": 10,
    "functions": 10,
    "unknown_functions": 10,
    "families": {
@@ -884,6 +922,7 @@
     "PointerToIntegral": 15
    },
    "leaves": 14,
+   "refusals": 14,
    "functions": 3,
    "unknown_functions": 3,
    "families": {
@@ -899,6 +938,7 @@
     "PointerToIntegral": 26
    },
    "leaves": 13,
+   "refusals": 3,
    "functions": 6,
    "unknown_functions": 6,
    "families": {
@@ -916,6 +956,7 @@
     "BitCast": 11
    },
    "leaves": 11,
+   "refusals": 8,
    "functions": 9,
    "unknown_functions": 9,
    "families": {
@@ -934,6 +975,7 @@
     "BitCast": 8
    },
    "leaves": 8,
+   "refusals": 8,
    "functions": 6,
    "unknown_functions": 6,
    "families": {
@@ -951,6 +993,7 @@
     "BitCast": 18
    },
    "leaves": 6,
+   "refusals": 0,
    "functions": 5,
    "unknown_functions": 5,
    "families": {
@@ -965,6 +1008,7 @@
     "NoOp": 7
    },
    "leaves": 6,
+   "refusals": 2,
    "functions": 6,
    "unknown_functions": 6,
    "families": {
@@ -981,6 +1025,7 @@
     "NoOp": 1
    },
    "leaves": 6,
+   "refusals": 5,
    "functions": 5,
    "unknown_functions": 5,
    "families": {
@@ -998,6 +1043,7 @@
     "NoOp": 35
    },
    "leaves": 6,
+   "refusals": 5,
    "functions": 6,
    "unknown_functions": 6,
    "families": {
@@ -1013,6 +1059,7 @@
     "BitCast": 6
    },
    "leaves": 6,
+   "refusals": 6,
    "functions": 5,
    "unknown_functions": 5,
    "families": {
@@ -1030,6 +1077,7 @@
     "BitCast": 4
    },
    "leaves": 5,
+   "refusals": 4,
    "functions": 4,
    "unknown_functions": 4,
    "families": {
@@ -1047,6 +1095,7 @@
     "IntegralCast": 4
    },
    "leaves": 4,
+   "refusals": 0,
    "functions": 4,
    "unknown_functions": 4,
    "families": {
@@ -1061,6 +1110,7 @@
     "ToVoid": 8
    },
    "leaves": 4,
+   "refusals": 3,
    "functions": 2,
    "unknown_functions": 2,
    "families": {
@@ -1076,6 +1126,7 @@
     "IntegralToPointer": 6
    },
    "leaves": 4,
+   "refusals": 4,
    "functions": 4,
    "unknown_functions": 4,
    "families": {
@@ -1092,6 +1143,7 @@
     "BitCast": 5
    },
    "leaves": 4,
+   "refusals": 4,
    "functions": 4,
    "unknown_functions": 4,
    "families": {
@@ -1107,6 +1159,7 @@
     "BitCast": 4
    },
    "leaves": 4,
+   "refusals": 4,
    "functions": 2,
    "unknown_functions": 2,
    "families": {
@@ -1123,6 +1176,7 @@
     "BitCast": 12
    },
    "leaves": 3,
+   "refusals": 3,
    "functions": 3,
    "unknown_functions": 3,
    "families": {
@@ -1138,6 +1192,7 @@
     "IntegralCast": 11
    },
    "leaves": 3,
+   "refusals": 0,
    "functions": 3,
    "unknown_functions": 3,
    "families": {
@@ -1152,6 +1207,7 @@
     "BitCast": 4
    },
    "leaves": 3,
+   "refusals": 3,
    "functions": 3,
    "unknown_functions": 3,
    "families": {
@@ -1166,6 +1222,7 @@
     "BitCast": 3
    },
    "leaves": 3,
+   "refusals": 3,
    "functions": 3,
    "unknown_functions": 3,
    "families": {
@@ -1180,6 +1237,7 @@
     "NoOp": 16
    },
    "leaves": 2,
+   "refusals": 2,
    "functions": 1,
    "unknown_functions": 1,
    "families": {
@@ -1194,6 +1252,7 @@
     "IntegralCast": 3
    },
    "leaves": 2,
+   "refusals": 2,
    "functions": 2,
    "unknown_functions": 2,
    "families": {
@@ -1208,6 +1267,7 @@
     "NoOp": 2
    },
    "leaves": 2,
+   "refusals": 2,
    "functions": 2,
    "unknown_functions": 2,
    "families": {
@@ -1223,6 +1283,7 @@
     "BitCast": 2
    },
    "leaves": 2,
+   "refusals": 2,
    "functions": 2,
    "unknown_functions": 2,
    "families": {
@@ -1237,6 +1298,7 @@
     "PointerToIntegral": 2
    },
    "leaves": 2,
+   "refusals": 2,
    "functions": 1,
    "unknown_functions": 1,
    "families": {
@@ -1251,6 +1313,7 @@
     "IntegralCast": 6
    },
    "leaves": 1,
+   "refusals": 1,
    "functions": 1,
    "unknown_functions": 1,
    "families": {
@@ -1265,6 +1328,7 @@
     "IntegralToPointer": 1
    },
    "leaves": 1,
+   "refusals": 1,
    "functions": 1,
    "unknown_functions": 1,
    "families": {
@@ -1279,6 +1343,7 @@
     "NoOp": 1
    },
    "leaves": 1,
+   "refusals": 1,
    "functions": 1,
    "unknown_functions": 1,
    "families": {
@@ -1293,6 +1358,7 @@
     "BitCast": 1
    },
    "leaves": 1,
+   "refusals": 0,
    "functions": 1,
    "unknown_functions": 1,
    "families": {
@@ -1307,6 +1373,7 @@
     "PointerToIntegral": 1
    },
    "leaves": 1,
+   "refusals": 1,
    "functions": 1,
    "unknown_functions": 1,
    "families": {
@@ -1321,6 +1388,7 @@
     "BitCast": 7
    },
    "leaves": 0,
+   "refusals": 0,
    "functions": 0,
    "unknown_functions": 0,
    "families": {}
@@ -1334,6 +1402,7 @@
     "BitCast": 6
    },
    "leaves": 0,
+   "refusals": 0,
    "functions": 0,
    "unknown_functions": 0,
    "families": {}
@@ -1346,6 +1415,7 @@
     "BitCast": 2
    },
    "leaves": 0,
+   "refusals": 0,
    "functions": 0,
    "unknown_functions": 0,
    "families": {}
@@ -1359,6 +1429,7 @@
     "IntegralCast": 6
    },
    "leaves": 0,
+   "refusals": 0,
    "functions": 0,
    "unknown_functions": 0,
    "families": {}

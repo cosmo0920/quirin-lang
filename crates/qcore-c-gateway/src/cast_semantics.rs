@@ -664,6 +664,7 @@ pub(crate) fn classify_node(node: &Value) -> Option<ConversionClass> {
 /// class refines is a `CAST_TABLE` row or one of the two decays, and a class
 /// that preserves an identity refines only rows whose provenance is kept,
 /// a class that loses one only rows whose provenance is lost.
+#[cfg(test)]
 pub(crate) fn agrees_with_cast_table() -> bool {
     use crate::cast_representation::{Provenance, representation};
     CONVERSION_TABLE.iter().all(|row| {
@@ -694,6 +695,7 @@ pub(crate) fn agrees_with_cast_table() -> bool {
 
 /// The shared classification vectors (`QCore.CastSemantics.classifyVectors`):
 /// `(kind, operand type, result type, class)`.
+#[cfg(test)]
 pub(crate) const CLASSIFY_VECTORS: [(&str, &str, &str, &str); 28] = [
     ("IntegralCast", "int", "unsigned long", "scalar"),
     ("NoOp", "int", "int", "scalar"),

@@ -1,0 +1,849 @@
+{
+ "transitions": {
+  "Unknown -> Safe": 5
+ },
+ "status_moves": [
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_readLE32",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1083: unsupported assignment expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_readLE64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1100: unsupported assignment expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_writeLE32",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1092: unsupported assignment expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_writeLE64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1113: unsupported assignment expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "unaligned_copy64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "19662: unresolved resource identity `src`",
+    "19663: unresolved resource identity `dst`"
+   ],
+   "gained": []
+  }
+ ],
+ "removed": {
+  "unsupported assignment expression": 25,
+  "call to uncontracted function `_`": 18,
+  "unresolved resource identity `_`": 9,
+  "indirect memory access is outside the resource projection": 6,
+  "unmodeled call, aggregate or indirect access in branch condition": 4,
+  "unmodeled increment or decrement expression": 2,
+  "arguments beyond the declared parameters of `_` are outside the resource projection": 2,
+  "arguments do not match resource contract for `_`": 1
+ },
+ "added": {
+  "unresolved resource identity `_`": 51,
+  "arguments do not match resource contract for `_`": 5,
+  "unmodeled expression may mutate a formal resource identity": 2,
+  "call has an unmodeled formal address or borrowed expression": 1
+ },
+ "attribution": {
+  "H-U": 25,
+  "other": 6,
+  "H-V": 4,
+  "H-U0": 1
+ },
+ "moving_rows": 36,
+ "moves": [
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_getIndexOnHash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "567: unsupported assignment expression",
+    "572: unsupported assignment expression"
+   ],
+   "gained": [
+    "567: unresolved resource identity `tableBase`",
+    "572: unresolved resource identity `tableBase`"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_getPositionOnHash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "581: unsupported assignment expression",
+    "582: unsupported assignment expression"
+   ],
+   "gained": [
+    "581: unresolved resource identity `tableBase`",
+    "582: unresolved resource identity `tableBase`"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_wildCopy32",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "414: unsupported assignment expression"
+   ],
+   "gained": [
+    "414: unresolved resource identity `dstEnd`"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_wildCopy8",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "383: unsupported assignment expression"
+   ],
+   "gained": [
+    "383: unresolved resource identity `dstEnd`"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_compressBegin_usingCDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1403: unsupported assignment expression",
+    "1404: unresolved resource identity `dstStart`",
+    "1457: call to uncontracted function `LZ4F_writeLE32`",
+    "1460: unmodeled increment or decrement expression",
+    "1466: unmodeled increment or decrement expression",
+    "1468: indirect memory access is outside the resource projection",
+    "1473: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "1403: unresolved resource identity `dstBuffer`",
+    "1457: unresolved resource identity `dstPtr`",
+    "1460: unmodeled expression may mutate a formal resource identity",
+    "1466: unmodeled expression may mutate a formal resource identity",
+    "1468: unresolved resource identity `dstPtr`",
+    "1473: unresolved resource identity `dstPtr`"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_compressEnd",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1717: unsupported assignment expression",
+    "1718: unresolved resource identity `dstStart`",
+    "1726: call to uncontracted function `LZ4F_writeLE32`",
+    "1732: call to uncontracted function `LZ4F_writeLE32`"
+   ],
+   "gained": [
+    "1717: unresolved resource identity `dstBuffer`",
+    "1726: unresolved resource identity `dstPtr`",
+    "1732: unresolved resource identity `dstPtr`"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_compressFrame_usingCDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1238: unsupported assignment expression",
+    "1239: unresolved resource identity `dstStart`"
+   ],
+   "gained": [
+    "1238: unresolved resource identity `dstBuffer`"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_compressUpdateImpl",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1585: unsupported assignment expression",
+    "1586: unresolved resource identity `dstStart`"
+   ],
+   "gained": [
+    "1585: unresolved resource identity `dstBuffer`"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_decodeHeader",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "1821: unmodeled call, aggregate or indirect access in branch condition",
+    "1832: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "1821: unresolved resource identity `srcPtr`",
+    "1832: unresolved resource identity `srcPtr`"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_decompress",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1984: unsupported assignment expression",
+    "1986: unresolved resource identity `srcStart`",
+    "1987: unsupported assignment expression",
+    "1989: unresolved resource identity `dstStart`",
+    "2074: call to uncontracted function `LZ4F_readLE32`",
+    "2159: call to uncontracted function `LZ4F_readLE32`",
+    "2309: call to uncontracted function `LZ4F_readLE32`",
+    "2339: call to uncontracted function `LZ4F_readLE32`"
+   ],
+   "gained": [
+    "1984: unresolved resource identity `srcBuffer`",
+    "1987: unresolved resource identity `dstBuffer`",
+    "2074: unresolved resource identity `selectedIn`",
+    "2159: unresolved resource identity `crcSrc`",
+    "2309: unresolved resource identity `selectedIn`",
+    "2339: unresolved resource identity `selectedIn`"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_flush",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1690: unsupported assignment expression",
+    "1691: unresolved resource identity `dstStart`"
+   ],
+   "gained": [
+    "1690: unresolved resource identity `dstBuffer`"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_headerSize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "1883: unmodeled call, aggregate or indirect access in branch condition",
+    "1885: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "1883: unresolved resource identity `src`",
+    "1885: unresolved resource identity `src`"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_makeBlock",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1503: unsupported assignment expression",
+    "1511: call to uncontracted function `LZ4F_writeLE32`",
+    "1514: call to uncontracted function `LZ4F_writeLE32`",
+    "1518: call to uncontracted function `LZ4F_writeLE32`"
+   ],
+   "gained": [
+    "1503: unresolved resource identity `dst`",
+    "1511: unresolved resource identity `cSizePtr`",
+    "1512: call has an unmodeled formal address or borrowed expression",
+    "1514: unresolved resource identity `cSizePtr`",
+    "1518: arguments do not match resource contract for `LZ4F_writeLE32`"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_readLE32",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1083: unsupported assignment expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_readLE64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1100: unsupported assignment expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_writeLE32",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1092: unsupported assignment expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_writeLE64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1113: unsupported assignment expression"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_initStreamHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1288: unsupported assignment expression"
+   ],
+   "gained": [
+    "1288: unresolved resource identity `buffer`",
+    "1296: unresolved resource identity `LZ4_streamHCPtr`"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_slideInputBufferHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "1470: unsupported assignment expression"
+   ],
+   "gained": [
+    "1470: unresolved resource identity `LZ4HC_Data`"
+   ]
+  },
+  {
+   "unit": "mk_server/mk_utils.c",
+   "occurrence": 1,
+   "function": "mk_utils_gen_hash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-V"
+   ],
+   "lost": [
+    "6085: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "6085: unresolved resource identity `data`"
+   ]
+  },
+  {
+   "unit": "rddl.c",
+   "occurrence": 1,
+   "function": "rd_dl_close",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U0"
+   ],
+   "lost": [
+    "2994: arguments do not match resource contract for `dlclose`"
+   ],
+   "gained": [
+    "2994: unresolved resource identity `handle`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_member_subscriptions_map",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "20347: unsupported assignment expression"
+   ],
+   "gained": [
+    "20347: unresolved resource identity `metadata`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "ut_destroy_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "20718: unsupported assignment expression"
+   ],
+   "gained": [
+    "20718: unresolved resource identity `md`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "verifyNumPartitionsWithRackMismatch0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "20879: unsupported assignment expression"
+   ],
+   "gained": [
+    "20879: unresolved resource identity `metadata`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cert.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_set_ssl_cert",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "20452: arguments beyond the declared parameters of `snprintf` are outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_anyconf_get0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "25178: arguments beyond the declared parameters of `snprintf` are outside the resource projection"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_range_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_range_assignor_assign_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "19865: unsupported assignment expression"
+   ],
+   "gained": [
+    "19865: unresolved resource identity `metadata`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sticky_assignor_assign_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "22234: unsupported assignment expression"
+   ],
+   "gained": [
+    "22234: unresolved resource identity `metadata`"
+   ]
+  },
+  {
+   "unit": "rdmurmur2.c",
+   "occurrence": 1,
+   "function": "rd_murmur2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-V"
+   ],
+   "lost": [
+    "2885: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "2885: unresolved resource identity `data`"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "emit_literal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19936: call to uncontracted function `unaligned_copy64`",
+    "19937: call to uncontracted function `unaligned_copy64`"
+   ],
+   "gained": [
+    "19936: unresolved resource identity `literal`",
+    "19936: unresolved resource identity `op`",
+    "19937: arguments do not match resource contract for `unaligned_copy64`"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "incremental_copy_fast_path",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19849: call to uncontracted function `unaligned_copy64`",
+    "19854: call to uncontracted function `unaligned_copy64`"
+   ],
+   "gained": [
+    "19849: unresolved resource identity `op`",
+    "19849: unresolved resource identity `src`",
+    "19854: unresolved resource identity `op`",
+    "19854: unresolved resource identity `src`"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "read_uncompressed_length",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-V"
+   ],
+   "lost": [
+    "20203: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20203: unresolved resource identity `ip`"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "refill_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "H-V"
+   ],
+   "lost": [
+    "20290: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "20290: unresolved resource identity `ip`"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "unaligned_copy64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "H-U"
+   ],
+   "lost": [
+    "19662: unresolved resource identity `src`",
+    "19663: unresolved resource identity `dst`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "writer_append_from_self",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19869: call to uncontracted function `unaligned_copy64`",
+    "19870: call to uncontracted function `unaligned_copy64`"
+   ],
+   "gained": [
+    "19869: arguments do not match resource contract for `unaligned_copy64`",
+    "19869: unresolved resource identity `op`",
+    "19870: arguments do not match resource contract for `unaligned_copy64`"
+   ]
+  },
+  {
+   "unit": "snappy.c",
+   "occurrence": 1,
+   "function": "writer_try_fast_append",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19901: call to uncontracted function `unaligned_copy64`",
+    "19902: call to uncontracted function `unaligned_copy64`"
+   ],
+   "gained": [
+    "19901: unresolved resource identity `ip`",
+    "19901: unresolved resource identity `op`",
+    "19902: arguments do not match resource contract for `unaligned_copy64`"
+   ]
+  }
+ ]
+}

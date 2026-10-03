@@ -73,6 +73,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [card-scope-guard](card-scope-guard/README.md) | `CARD-SCOPE-GUARD` — a mechanism that makes a delegated card unable to advance `main` |
 
+| [cast-formalization](cast-formalization/README.md) | CAST-FORMALIZATION: one formal cast semantics for route G |
+
 | [certificate-context-binding](certificate-context-binding/README.md) | Certificate context binding |
 
 | [cg00-clang-gap-baseline](cg00-clang-gap-baseline/README.md) | CG00-CLANG-GAP-BASELINE: executed BEFORE controls for the Clang gap entries, and their corpus attribution |

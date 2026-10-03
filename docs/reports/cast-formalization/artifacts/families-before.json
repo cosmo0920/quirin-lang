@@ -1,0 +1,22 @@
+{
+ "cg08-b": {
+  "leaves": 307,
+  "functions": 103,
+  "unknown_functions": 103
+ },
+ "cast-root-store": {
+  "leaves": 33,
+  "functions": 18,
+  "unknown_functions": 18
+ },
+ "cast-step": {
+  "leaves": 189,
+  "functions": 74,
+  "unknown_functions": 74
+ },
+ "tail-cast": {
+  "leaves": 3,
+  "functions": 3,
+  "unknown_functions": 3
+ }
+}

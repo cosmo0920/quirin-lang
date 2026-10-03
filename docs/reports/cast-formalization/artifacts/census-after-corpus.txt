@@ -1,0 +1,113 @@
+casts 16743 in 3225 functions; cast leaves 10384 (refusals 7745) in 2268 functions; sole-cast Unknown 280
+
+class                position                   casts  leaves refusals    fns    unk
+scalar               initializer                 1720    3178     2308    120    120
+null-pointer         call-actual                 1972    2671     2068    904    902
+scalar               variadic-tail                687    2075     1494    199    199
+scalar               operand                     1241    1902     1388    248    247
+scalar               assignment-value             654    1362      939    181    181
+null-pointer         assignment-value            1160    1313     1091    363    362
+null-pointer         operand                     2433    1209      646    622    620
+discard              operand                     1517     858      675    300    297
+scalar               call-actual                  418     266      257    194    194
+byte-view            call-actual                  319     214      212    140    140
+null-pointer         variadic-tail                194     184      184     51     51
+punned-view          call-actual                   86     169      169     75     75
+byte-view            pointer-step                 442     157      156     49     49
+typed-view           assignment-value             203     124       24    101    101
+byte-view            initializer                   73     112       92     51     51
+typed-view           statement                    355     108      107     31     31
+typed-view           initializer                  132      98       26     59     59
+byte-view            assignment-value              96      96       83     62     62
+byte-view            statement                     47      92       90     33     33
+qualifier            assignment-value              88      88       82     46     46
+qualifier            operand                      100      85       60     45     44
+typed-view           call-actual                  129      83       82     71     71
+function-object      call-actual                   35      73       73     33     33
+qualifier            call-actual                   83      69       69     51     51
+integer-to-pointer   operand                       67      62       37     28     27
+null-pointer         initializer                  543      53       53     28     26
+typed-view           dereference                   69      42       41     23     23
+byte-view            operand                       49      38       38     13     13
+punned-view          member-root                   34      30       25     10     10
+typed-view           member-root                   38      24       19     12     12
+typed-view           pointer-step                  25      24       24     20     20
+punned-view          initializer                   27      20        3     17     17
+punned-view          return                        56      18       17     17     17
+null-pointer         return                       867      17       10     12     10
+discard              statement                    227      16       15     13     13
+punned-view          assignment-value              16      15       13     11     11
+scalar               return                       259      14       10     10     10
+pointer-to-integer   assignment-value              15      14       14      3      3
+pointer-to-integer   operand                       26      13        3      6      6
+byte-view            return                        11      11        8      9      9
+punned-view          pointer-step                   8       8        8      6      6
+unlisted             operand                       39       6        0      5      5
+qualifier            initializer                    7       6        2      6      6
+typed-view           return                         8       6        5      5      5
+qualifier            return                        35       6        5      6      6
+punned-view          operand                        6       6        6      5      5
+unlisted             condition                      4       4        0      4      4
+byte-view            variadic-tail                  4       4        3      3      3
+discard              condition                      8       4        3      2      2
+integer-to-pointer   return                         6       4        4      4      4
+byte-view            dereference                    5       4        2      4      4
+punned-view          dereference                    4       4        4      2      2
+unlisted             call-actual                   15       3        3      3      3
+unlisted             assignment-value              11       3        0      3      3
+typed-view           operand                        4       3        3      3      3
+function-pointer     call-actual                    3       3        3      3      3
+qualifier            subscript-base                16       2        2      1      1
+scalar               pointer-step                   3       2        2      2      2
+qualifier            dereference                    2       2        1      2      2
+function-object      assignment-value               2       2        2      2      2
+pointer-to-integer   variadic-tail                  2       2        2      1      1
+unlisted             variadic-tail                  6       1        1      1      1
+integer-to-pointer   initializer                    1       1        1      1      1
+qualifier            pointer-step                   1       1        1      1      1
+typed-view           subscript-base                 1       1        0      1      1
+pointer-to-integer   pointer-step                   1       1        1      1      1
+function-object      operand                        7       0        0      0      0
+unlisted             return                         7       0        0      0      0
+function-pointer     return                         2       0        0      0      0
+unlisted             initializer                   12       0        0      0      0
+
+families of cast leaves:
+  3571  indirect memory access is outside the resource projection
+  2604  unresolved resource identity `_`
+  1675  unmodeled call, aggregate or indirect access in branch condition
+   991  call to uncontracted function `_`
+   661  unsupported assignment expression
+   163  unrecognized assignment destination
+   157  braced initializer, expression, or declaration is not modeled
+   110  store through `_` without an out-parameter contract
+    72  unmodeled call, aggregate or indirect access in for-loop condition
+    72  C operator `_` requires type/operand analysis
+    70  nested call `_` inside a modeled call is outside the resource projection
+    54  unmodeled call, aggregate or indirect access in return expression
+    39  `_` is the Clang extension node OffsetOfExpr, which no resource contract or route models
+    31  unmodeled call, aggregate or indirect access in loop condition
+    22  unmodeled expression may mutate a formal resource identity
+    15  unmodeled increment or decrement expression
+    14  arguments beyond the declared parameters of `_` are outside the resource projection
+    12  live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1774
+    12  live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1775
+     6  live obligation acquired at snappy.c:1705
+     5  resource call with a formal embedded in an unmodeled expression
+     4  local declaration may shadow a formal resource identity
+     4  call to `_` outside its declared thread-synchronization obligation (no derived thread, predicate loop or join on this route)
+     3  nullable resource `_` used by a non-null contract
+     3  call has an unmodeled formal address or borrowed expression
+     2  discarded owned result of resource API `_`
+     1  cast of a possibly tracked value to another carrier in return expression
+     1  loop re-acquisition: an earlier generation that may be live is still held
+     1  live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1589
+     1  live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1599
+     1  live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1603
+     1  live obligation acquired at rdkafka_sasl_oauthbearer_oidc.c:1656
+     1  for-loop clause with a call or grouping is not classified from its stripped spelling
+     1  call to `_` outside its declared literal-argument premise
+     1  unmodeled call, aggregate or indirect access in do-while condition
+     1  inline assembly is an opaque boundary: its clobbers and memory effects are not modelled
+     1  live obligation acquired at mk_server/mk_net.c:247
+     1  call to `_` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)

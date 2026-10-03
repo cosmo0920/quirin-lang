@@ -12,7 +12,9 @@ line, tokens): a body the route builds twice records twice.
 
 A leaf (one diagnostic of a function) is a **cast leaf** when a cast of the
 same function sits on the leaf's line or its statement starts there. The
-census counts, per (class, position): the casts, the cast leaves and their
+census counts, per (class, position): the casts, the cast leaves (and, of
+them, the refusals: category `unsupported`, as opposed to an unresolved
+identity or a leak downstream) and their
 refusal families (backticked names erased), the functions and the Unknown
 functions holding one; and the Unknown functions every one of whose leaves is
 a cast leaf ("sole": the upper bound of what a cast reading alone could free).
@@ -78,7 +80,7 @@ def main():
                                  for d in entry.get("diagnostics") or []]
 
     by_cell = collections.defaultdict(lambda: {
-        "casts": 0, "leaves": 0, "families": collections.Counter(), "functions": set(),
+        "casts": 0, "leaves": 0, "refusals": 0, "families": collections.Counter(), "functions": set(),
         "unknown_functions": set(), "kinds": collections.Counter()})
     for function, rows in casts.items():
         for row in rows:
@@ -90,6 +92,7 @@ def main():
     sole, any_cast = [], []
     families = collections.Counter()
     total_leaves = 0
+    total_refusals = 0
     ambiguous = set()
     for (file, function), record in functions.items():
         rows = casts.get(function, [])
@@ -109,10 +112,12 @@ def main():
                 continue
             cast_leaves += 1
             total_leaves += 1
+            total_refusals += category == "unsupported"
             families[family(description)] += 1
             for cell_key in cells:
                 cell = by_cell[cell_key]
                 cell["leaves"] += 1
+                cell["refusals"] += category == "unsupported"
                 cell["families"][family(description)] += 1
                 cell["functions"].add("%s::%s" % (file, function))
                 if record["status"] == "Unknown":
@@ -127,7 +132,7 @@ def main():
     for (cls, position), cell in sorted(by_cell.items(), key=lambda kv: -kv[1]["leaves"]):
         cells.append({
             "class": cls, "position": position, "casts": cell["casts"],
-            "kinds": dict(cell["kinds"]), "leaves": cell["leaves"],
+            "kinds": dict(cell["kinds"]), "leaves": cell["leaves"], "refusals": cell["refusals"],
             "functions": len(cell["functions"]), "unknown_functions": len(cell["unknown_functions"]),
             "families": dict(cell["families"].most_common(12)),
         })
@@ -135,6 +140,7 @@ def main():
         "casts": sum(len(rows) for rows in casts.values()),
         "functions_with_casts": len(casts),
         "cast_leaves": total_leaves,
+        "cast_refusals": total_refusals,
         "functions_with_cast_leaves": len(any_cast),
         "sole_unknown_functions": len(sole),
         "ambiguous_names": sorted(ambiguous),
@@ -148,14 +154,17 @@ def main():
     }
     pathlib.Path(args.out).write_text(json.dumps(summary, indent=1, ensure_ascii=False) + "\n")
     text = pathlib.Path(args.out).with_suffix(".txt")
-    lines = ["casts %d in %d functions; cast leaves %d in %d functions; sole-cast Unknown %d" % (
+    lines = ["casts %d in %d functions; cast leaves %d (refusals %d) in %d functions; sole-cast Unknown %d" % (
         summary["casts"], summary["functions_with_casts"], summary["cast_leaves"],
-        summary["functions_with_cast_leaves"], summary["sole_unknown_functions"])]
+        summary["cast_refusals"], summary["functions_with_cast_leaves"],
+        summary["sole_unknown_functions"])]
     lines.append("")
-    lines.append("%-20s %-24s %7s %7s %6s %6s" % ("class", "position", "casts", "leaves", "fns", "unk"))
+    lines.append("%-20s %-24s %7s %7s %8s %6s %6s" % ("class", "position", "casts", "leaves",
+                                                    "refusals", "fns", "unk"))
     for c in cells:
-        lines.append("%-20s %-24s %7d %7d %6d %6d" % (c["class"], c["position"], c["casts"],
-                                                       c["leaves"], c["functions"], c["unknown_functions"]))
+        lines.append("%-20s %-24s %7d %7d %8d %6d %6d" % (
+            c["class"], c["position"], c["casts"], c["leaves"], c["refusals"], c["functions"],
+            c["unknown_functions"]))
     lines.append("")
     lines.append("families of cast leaves:")
     for name, count in families.most_common(40):
