@@ -6,6 +6,174 @@
   "normalisation": "c-tokens-v1",
   "pinned": [
     {
+      "function": "cmt_atomic_compare_exchange",
+      "module": "cmetrics/metric_values.qv",
+      "contract_sha256": "356bd15567a2d01291eba3d2de1f8ef16d44a9d71a5f403346d63683afc6d456",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/include/cmetrics/cmt_atomic.h",
+              "kind": "declaration",
+              "declaration_sha256": "ab89d5af266adc1b7af3563a22b3ce2c8cfd7c8a3d750088f313232421927978"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_clang.c",
+              "kind": "definition",
+              "declaration_sha256": "f24afe41cee9d72cb08a650e211992403b3bc728c90716aec9ea0b8beefa51dc",
+              "body_sha256": "1d60003421b289fd6405dc46a93a2dc5a84b08fd2615b6ae89c3584b528abcfc"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_gcc.c",
+              "kind": "definition",
+              "declaration_sha256": "f24afe41cee9d72cb08a650e211992403b3bc728c90716aec9ea0b8beefa51dc",
+              "body_sha256": "1d60003421b289fd6405dc46a93a2dc5a84b08fd2615b6ae89c3584b528abcfc"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_generic.c",
+              "kind": "definition",
+              "declaration_sha256": "f24afe41cee9d72cb08a650e211992403b3bc728c90716aec9ea0b8beefa51dc",
+              "body_sha256": "ea865cf7aee4790fc832a561e68af9fecf0207bc1c23b9a32b267dc866a8a1d1"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_msvc.c",
+              "kind": "definition",
+              "declaration_sha256": "ab89d5af266adc1b7af3563a22b3ce2c8cfd7c8a3d750088f313232421927978",
+              "body_sha256": "07afd532e69e5d8f6bfd97f3731c38375a3cb31299899dcdf7a0a719edee5a96"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_msvc.c",
+              "kind": "definition",
+              "declaration_sha256": "ab89d5af266adc1b7af3563a22b3ce2c8cfd7c8a3d750088f313232421927978",
+              "body_sha256": "4061c5aecf8aa18872e96b956329bdfcf868a16d0fd291f060f6c212ded2b039"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cmt_atomic_load",
+      "module": "cmetrics/metric_values.qv",
+      "contract_sha256": "f4d2a0186eefe1c1b3c62ce518258737a9f10a7f3c4476c6d4e9a0c03e909bb2",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/include/cmetrics/cmt_atomic.h",
+              "kind": "declaration",
+              "declaration_sha256": "e1fc3db0a893d43581a9b01497204fd954afaf738c1fc84332ab574ee4d4394d"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_clang.c",
+              "kind": "definition",
+              "declaration_sha256": "360e380afce6c4ddcc7ed74662590798853efe19371927e6d97a2a9f62b6d8f2",
+              "body_sha256": "acebf69c6252ccfa884d1b95c861f11a3bcd048f884d056d852935ef267ca2d0"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_gcc.c",
+              "kind": "definition",
+              "declaration_sha256": "360e380afce6c4ddcc7ed74662590798853efe19371927e6d97a2a9f62b6d8f2",
+              "body_sha256": "acebf69c6252ccfa884d1b95c861f11a3bcd048f884d056d852935ef267ca2d0"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_generic.c",
+              "kind": "definition",
+              "declaration_sha256": "360e380afce6c4ddcc7ed74662590798853efe19371927e6d97a2a9f62b6d8f2",
+              "body_sha256": "79846272371b6b3d1863d404777670bdf48b6d3e5f839f8418627000d7d34e59"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_msvc.c",
+              "kind": "definition",
+              "declaration_sha256": "e1fc3db0a893d43581a9b01497204fd954afaf738c1fc84332ab574ee4d4394d",
+              "body_sha256": "767332ed033593583d81173aa475177e43e4ed3ab49e5e9c0063c55fe015e932"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_msvc.c",
+              "kind": "definition",
+              "declaration_sha256": "e1fc3db0a893d43581a9b01497204fd954afaf738c1fc84332ab574ee4d4394d",
+              "body_sha256": "984de7989c511a6b2892d03fd26ea7cb1eeda89a548e892dd77fa7af4b64fe59"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cmt_atomic_store",
+      "module": "cmetrics/metric_values.qv",
+      "contract_sha256": "eb517cc572a0085763f695a4169af44065faf0df7d8bad248cfe0c69093e70e6",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cmetrics/include/cmetrics/cmt_atomic.h",
+              "kind": "declaration",
+              "declaration_sha256": "82c8b917927b0f764714a8c2a9eaeb8a3332b9f159f1ff8f7ee229b4252cc79b"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_clang.c",
+              "kind": "definition",
+              "declaration_sha256": "7ae300d5ab95ec4ebcd76a87f7b9031db9713c336f758f09424c4af8732b8677",
+              "body_sha256": "404888619cb781a67022d4a7ab76177fbfd7e51ded20feb6fe4a10fb740ea7cb"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_gcc.c",
+              "kind": "definition",
+              "declaration_sha256": "7ae300d5ab95ec4ebcd76a87f7b9031db9713c336f758f09424c4af8732b8677",
+              "body_sha256": "404888619cb781a67022d4a7ab76177fbfd7e51ded20feb6fe4a10fb740ea7cb"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_generic.c",
+              "kind": "definition",
+              "declaration_sha256": "7ae300d5ab95ec4ebcd76a87f7b9031db9713c336f758f09424c4af8732b8677",
+              "body_sha256": "a92171d0ede6450ed1dfd377d1669831f3ab8577874755be621ab89ecb74b148"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_msvc.c",
+              "kind": "definition",
+              "declaration_sha256": "82c8b917927b0f764714a8c2a9eaeb8a3332b9f159f1ff8f7ee229b4252cc79b",
+              "body_sha256": "24f5b58f483a40818685ac64b4a580ee9c175a7dace84c77c6783fc709f3e34d"
+            },
+            {
+              "path": "lib/cmetrics/src/cmt_atomic_msvc.c",
+              "kind": "definition",
+              "declaration_sha256": "82c8b917927b0f764714a8c2a9eaeb8a3332b9f159f1ff8f7ee229b4252cc79b",
+              "body_sha256": "99f7983a84abcf1707d18ac5cbe4206ed8f399381fe6af2ddf4adaeb30914f8f"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cmt_destroy",
       "module": "cmetrics/context_lifetime.qv",
       "contract_sha256": "78afe929cbda4c4e30f9b70d537943e41cba9ee4ddf2e99231968df25a6cd54d",

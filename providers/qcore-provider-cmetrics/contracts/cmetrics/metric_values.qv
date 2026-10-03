@@ -122,6 +122,8 @@ module contract;
 // (`cmt_atomic_clang.c`, `_gcc.c`, `_generic.c`, `_msvc.c` twice), three of them
 // `inline` with no `static`/`extern` against a plain extern prototype — the
 // `ADD-NAME-COLLISION` hazard, recorded here as `CMT-ATOMIC-BACKEND-COPIES`.
+// (Declared at the end of this module by card
+// CG10-INDIRECT-ACCESS-SOLE-RESIDUALS, after reading every copy: they agree.)
 
 // --- the metric's timestamp, read atomically ---
 extern fn cmt_metric_get_timestamp(metric: ptr<mut, u8>) -> u64
@@ -270,5 +272,80 @@ extern fn cmt_summary_get_count_value(metric: ptr<mut, u8>) -> u64
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(metric);
+    ensures normal resource_return_none();
+};
+
+// Card CG10-INDIRECT-ACCESS-SOLE-RESIDUALS (wave 48, round 18): the three
+// value operations of `cmt_atomic`, which W37 left undeclared above
+// (`CMT-ATOMIC-BACKEND-COPIES`). Each is the NEUTRAL ELEMENT (every formal
+// borrowed, the scalar result `resource_return_none()`), pinned (contract
+// spec C06.2) after reading every definition at both audited revisions
+// (`66910c10` and `046accf6`: `cmt_atomic.h` and the four backend files are
+// byte-identical across the two).
+//
+// ## Why the backend copies do not decline these
+//
+// The W37 refinement of `ADD-NAME-COLLISION`: what matters is whether the
+// definitions AGREE, not how many there are. CMake compiles exactly one
+// backend (`src/CMakeLists.txt`: `cmt_atomic_msvc.c`, `_clang.c`, `_gcc.c` or
+// `_generic.c`); all five definitions of each name spell the prototype of
+// `include/cmetrics/cmt_atomic.h:7-9` and agree on custody:
+//
+//   * `_gcc.c` and `_clang.c` (byte-identical bodies): `__atomic_load_n`,
+//     `__atomic_store_n`, `__atomic_compare_exchange` on `storage`;
+//   * `_generic.c`: the same reads and writes of `*storage` under a global
+//     `pthread_mutex_t` set up once by `pthread_once`, returning 0 when that
+//     set-up failed;
+//   * `_msvc.c`: under a global `CRITICAL_SECTION` (32-bit) or with
+//     `_Interlocked*64` intrinsics (`_WIN64`).
+//
+// Every definition reads and/or writes the `uint64_t` at `storage` and returns
+// a scalar (`int`, `void`, `uint64_t`). None frees, stores, retains or
+// transfers `storage`, and no custody crosses the call in either direction.
+// `cmt_atomic_clang.c` is the unit the corpus analyses (its `cmt_atomic_*`
+// rows are `Safe` on the BEFORE run), so
+// constraint 8's duty gate compares these declarations with the W4 summary
+// of that body there.
+//
+// ## Why now
+//
+// Gateway rule 12k names `cmt_atomic_load`/`_store`/`_compare_exchange` as
+// what decides refused statements (`cmt_atomic_load(&metric->hist_count)`)
+// of the functions the indirect-access refusal blocked alone, 19 of them by
+// one of these three callees alone. The calls sit in other units, which no
+// summary route reaches.
+//
+// ## ABI (constraint 8)
+//
+// `uint64_t *` is `ptr<mut, u8>`; `uint64_t` is `u64`, `int` `i32`, `void`
+// `unit` (LP64).
+//
+// NOT CLAIMED: atomicity, memory ordering, the generic backend's 0 on a
+// failed mutex set-up, or `storage`'s validity or lifetime.
+
+// --- read a 64-bit value atomically ---
+extern fn cmt_atomic_load(storage: ptr<mut, u8>) -> u64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(storage);
+    ensures normal resource_return_none();
+};
+
+// --- store a 64-bit value atomically ---
+extern fn cmt_atomic_store(storage: ptr<mut, u8>, new_value: u64) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(storage);
+    ensures normal resource_borrowed(new_value);
+    ensures normal resource_return_none();
+};
+
+// --- compare and exchange a 64-bit value atomically ---
+extern fn cmt_atomic_compare_exchange(storage: ptr<mut, u8>, old_value: u64, new_value: u64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(storage);
+    ensures normal resource_borrowed(old_value);
+    ensures normal resource_borrowed(new_value);
     ensures normal resource_return_none();
 };
