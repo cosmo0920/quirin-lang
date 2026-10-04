@@ -4,7 +4,7 @@
   "contract_version": "qcore.bounds.contract.v1",
   "source_sha256": "52a6ddc02f145a6fc05684828b1969b4e3f6c558c4149d1627db3fd511d8faac",
   "target": "26c59b1b7ceafad34e5276fe19c2a26f7eeabeed45f8fc3d83468fc32e3dec64",
-  "contracts_sha256": "b71bc89de6f000e3a7d7f6c873fe7a08920c3bed1718800d19b2ad82696ddbd2",
+  "contracts_sha256": "991840022870b86563e4e75733284570b199a6cee91f6aa8907be536dbcee336",
   "functions": [
     {
       "function": "cio_file_st_get_meta_len",

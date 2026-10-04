@@ -120,7 +120,11 @@ bounds module, so the only route is the API. The probe
 functions from the pinned corpus source (read only, through the include path)
 under two **test-only** declarations, review-held as written (they are not
 provider contracts and nobody reviewed them), and again with the markers
-removed:
+removed. `probe/run.sh` writes the declarations into `private/qic/` rather than
+tracking a `.qv` file: CG16's census
+`the_reserved_spellings_are_unused_by_tracked_contracts` keeps every tracked
+contract module free of bounds vocabulary, and the first gate (g1) failed on
+exactly that when the probe was a tracked `chunkio-held.qv` (section 6).
 
 | Function | Held | Resolved |
 |---|---|---|
