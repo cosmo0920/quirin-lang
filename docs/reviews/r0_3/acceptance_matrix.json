@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "GATEWAY-ANALYSIS-PATH-OPTIMIZATION card gate after the rebase onto 170aba7b0 (CG10-INDIRECT-ACCESS-SOLE-RESIDUALS), code steps at 6aae83c43 (later commits: the report, records and gate files only), scripts docs/reports/gateway-analysis-path-optimization/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/gapo/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 441 units, 454 summaries, 7,565 passed, 0 failed, 11 ignored, exit 0 (private/gapo/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 287 audits passed (unchanged by the card); python tests and docs index check after build_matrix.py . --gate this file (09a, 09b, 10b, 10c). The first gate (gate-g1, at the pre-rebase tip ccc9320c9 on 2ecd39531) exited 0 at every code step with 7,554 passed and 286 audits. Provider gate: providers/ is unchanged by the card, so provider_tests is the base's figure, not re-run here.",
-  "workspace_tests": 7565,
+  "note": "QUANT-INDEX-CHECKS card gate on base 0ebe77f86, every step at 5ef8ef181 (later commits: gate files, the regenerated matrix and records only), scripts docs/reports/quant-index-checks/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/qic/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 444 units, 457 summaries, 7,595 passed, 0 failed, 11 ignored, exit 0 (private/qic/tests-g2); both reevaluation probes exit 0; check_lean_audits.py 288 audits passed (287 -> 288, AuditIndexQuant.lean); python tests 08 exit 1 before the matrix regeneration (the committed matrix carried lean_audits 287), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). The first gate (gate-g1, at 8c87bd664) failed step 04 (7,594 passed, 1 failed: qcore-contract bounds_contract::the_reserved_spellings_are_unused_by_tracked_contracts, a tracked probe .qv using bounds vocabulary; fixed at 5ef8ef181) and was stopped. Provider gate: providers/ is unchanged by the card, so provider_tests is the base's figure, not re-run here.",
+  "workspace_tests": 7595,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 287,
+  "lean_audits": 288,
   "lean_audit_files": [
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
@@ -6874,6 +6874,7 @@
    "AuditIeee754.lean",
    "AuditIndexExtent.lean",
    "AuditIndexExtentFrames.lean",
+   "AuditIndexQuant.lean",
    "AuditIndexTraversal.lean",
    "AuditIndexedCollection.lean",
    "AuditIndirectCalls.lean",
@@ -7053,7 +7054,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a7964cf5be11d1afd/docs/reports/gateway-analysis-path-optimization/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aa91dff182df31393/docs/reports/quant-index-checks/gate.json)"
  },
  "named_followups": [
   {

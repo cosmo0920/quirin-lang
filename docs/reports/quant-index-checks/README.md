@@ -155,4 +155,28 @@ callee need not use every index it admits).
 
 ## 6. Gate
 
-GATE-PLACEHOLDER
+Standing gate `g2` (`scripts/gate.sh`, every step under the shared lock, logs
+`private/qic/gate-g2/`, exits copied to [`gate/`](gate/), summary in
+[`gate.json`](gate.json)), every step at `5ef8ef181`:
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| 00 | `cargo check --workspace --all-targets` | 0 | |
+| 01 | submodule update `--init --recursive` | 0 | |
+| 02 | `cargo fmt --all -- --check` | 0 | |
+| 03 | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| 04 | `python3 scripts/run_test_binaries.py` | 0 | 444 units, 7,595 passed, 0 failed, 11 ignored (`private/qic/tests-g2/`) |
+| 05 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| 06 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| 07 | `python3 scripts/check_lean_audits.py` | 0 | 288 audits (287 → 288) |
+| 08 | `python3 -m unittest discover -s scripts/tests` | 1 | 365 run, 1 failure: the committed matrix still carried `lean_audits` 287 |
+| 09a | `build_matrix.py . --gate gate.json` | 0 | matrix regenerated (288 audits, `AuditIndexQuant.lean`) |
+| 09b | `python3 -m unittest discover -s scripts/tests` | 0 | 365 OK |
+| 09, 10b, 10c | `build_docs_index.py`, `--check` | 0 | |
+
+The first gate (`g1`, at `8c87bd664`) failed step 04 with 7,594 passed and 1
+failed, the CG16 census `the_reserved_spellings_are_unused_by_tracked_contracts`
+finding the probe's tracked `chunkio-held.qv`; the declarations moved into
+`probe/run.sh` (`5ef8ef181`) and that gate was stopped. `providers/` is
+unchanged, so the provider gate was not run. Measurement binaries were built in
+`private/qic/target-rel`; `cargo clean --profile dev` ran after the tests.
