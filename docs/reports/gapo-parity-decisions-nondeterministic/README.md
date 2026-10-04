@@ -255,9 +255,9 @@ Standing gate on the rebased tip `873fc2dc0` (code at `a1293f094`),
 | 05 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
 | 06 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
 | 07 | `python3 scripts/check_lean_audits.py` | 0 | **288** audits (QUANT-INDEX-CHECKS' module; none added here) |
-| 08 | `python3 -m unittest discover -s scripts/tests` | see [gate/](gate/) | after the records |
-| 09 | `python3 scripts/build_docs_index.py --check` | see [gate/](gate/) | after the records |
-| 09a-10c | matrix regenerated with this gate.json, Python suite, docs index and check | see [gate/](gate/) | |
+| 08 | `python3 -m unittest discover -s scripts/tests` | 0 | 365 OK |
+| 09 | `python3 scripts/build_docs_index.py --check` | 0 | |
+| 09a-10c | matrix regenerated with this gate.json, Python suite, docs index and check | 0, 0, 0, 0 | |
 
 The one failure is `qcore-verifier-host`'s
 `execution_quota::a_forced_override_never_weakens_an_execution`

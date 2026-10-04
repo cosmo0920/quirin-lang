@@ -6753,8 +6753,8 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "QUANT-INDEX-CHECKS card gate on base 0ebe77f86, every step at 5ef8ef181 (later commits: gate files, the regenerated matrix and records only), scripts docs/reports/quant-index-checks/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/qic/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 444 units, 457 summaries, 7,595 passed, 0 failed, 11 ignored, exit 0 (private/qic/tests-g2); both reevaluation probes exit 0; check_lean_audits.py 288 audits passed (287 -> 288, AuditIndexQuant.lean); python tests 08 exit 1 before the matrix regeneration (the committed matrix carried lean_audits 287), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). The first gate (gate-g1, at 8c87bd664) failed step 04 (7,594 passed, 1 failed: qcore-contract bounds_contract::the_reserved_spellings_are_unused_by_tracked_contracts, a tracked probe .qv using bounds vocabulary; fixed at 5ef8ef181) and was stopped. Provider gate: providers/ is unchanged by the card, so provider_tests is the base's figure, not re-run here.",
-  "workspace_tests": 7595,
+  "note": "GAPO-PARITY-DECISIONS-NONDETERMINISTIC card gate after the rebase onto cdad4dfd0 (QUANT-INDEX-CHECKS), code steps at 873fc2dc0 (code at a1293f094; later commits: records and gate files only), scripts docs/reports/gapo-parity-decisions-nondeterministic/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/gapo-nd/gate-g3 of this worktree. gate-g3: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 444 units, 457 summaries, 7,598 passed, 1 failed, 11 ignored, exit 101 (private/gapo-nd/tests-gate-g3): the one failure is qcore-verifier-host execution_quota::a_forced_override_never_weakens_an_execution with Spawn(\"Text file busy (os error 26)\") on a host shared with another card; the binary alone passed 13/13 (private/gapo-nd/quota-isolated3.log); recorded on LOAD-SENSITIVE-ROW-UNNAMED; the card touches no verifier-host code. Both reevaluation probes exit 0; check_lean_audits.py 288 audits passed (QUANT-INDEX-CHECKS' module, none added by this card); python tests and docs index check after the records, then rerun after build_matrix.py . --gate this file (09a, 09b, 10b, 10c). Earlier: gate-g2 at the pre-rebase cefdff475 exited 0 at every step but the suite (7,568 passed, 1 failed in the same binary, isolated 13/13 after one more failure of another row), python 365 OK, docs index check 0; gate-g1 at ac31392d9 passed the suite (7,569 passed, 0 failed) and every code step but clippy (too_many_arguments, fixed by an allow in the next commit; clippy then 0, census-feature clippy 0). Provider gate: providers/ is unchanged by the card, so provider_tests is the base's figure, not re-run here.",
+  "workspace_tests": 7598,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
   "lean_audits": 288,
@@ -7052,9 +7052,9 @@
   "reevaluation_followup_exit": 0,
   "cargo_fmt": "clean",
   "cargo_clippy": "clean",
-  "standing_gate": "complete",
+  "standing_gate": "complete with one recorded load-sensitive failure (execution_quota ETXTBSY, LOAD-SENSITIVE-ROW-UNNAMED amended), isolated rerun 13/13",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aa91dff182df31393/docs/reports/quant-index-checks/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aef957dc0440a5d9b/docs/reports/gapo-parity-decisions-nondeterministic/gate.json)"
  },
  "named_followups": [
   {
