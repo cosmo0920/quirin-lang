@@ -716,6 +716,9 @@ fn clauses_of(declaration: &SourceDeclaration) -> Vec<Clause> {
                         SourceContractClauseKind::Quant(selector) => {
                             format!("quant {}", selector_text(selector))
                         }
+                        // Card QUANT-INDEX-CHECKS: rendered as written, so a
+                        // re-rendered clause parses back to the same kind.
+                        SourceContractClauseKind::QuantCheck => "quant checks".to_owned(),
                     };
                     (introducer, clause.value.expression_source.clone())
                 })

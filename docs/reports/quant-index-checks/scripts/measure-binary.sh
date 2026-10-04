@@ -11,7 +11,8 @@ here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 lock=/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-quirin-spec-cards-compass-bf79e7/e050a85b-f6ef-4b98-a2ab-618145106af2/scratchpad/heavy.lock
 case ",$routes," in *,corpus,*)
-  flock "$lock" /usr/bin/env bash -c 'cat "$1" > "$2" && sha256sum "$2" > "$3"' _ \
+  mkdir -p "$repo/target/release" || exit 2
+  flock "$lock" /usr/bin/env bash -c 'cat "$1" > "$2" && chmod +x "$2" && sha256sum "$2" > "$3"' _ \
     "$binary" "$repo/target/release/quirin-audit" "$repo/private/qic/$name.corpus-binary.sha256" || exit 3;;
 esac
 BINARY="$binary" "$here/measure.sh" "$name" "$routes"

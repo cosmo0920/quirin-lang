@@ -105,6 +105,7 @@ impl ViewDeclaration {
                     SourceContractClauseKind::Quant(selector) => {
                         format!("quant {}", selector_name(selector))
                     }
+                    SourceContractClauseKind::QuantCheck => "quant checks".into(),
                 },
                 expression: clause.value.expression_source.trim().to_owned(),
             })

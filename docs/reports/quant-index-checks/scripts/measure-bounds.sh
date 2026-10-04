@@ -14,10 +14,10 @@ here="$(cd "$(dirname "$0")" && pwd)"
 repo="$(cd "$here/../../../.." && pwd)"
 out="$repo/private/qic"
 lock=/tmp/claude-1000/-home-cosmo-Documents-GitHub-qcore-c--claude-worktrees-quirin-spec-cards-compass-bf79e7/e050a85b-f6ef-4b98-a2ab-618145106af2/scratchpad/heavy.lock
-mkdir -p "$out" || exit 2
+mkdir -p "$out" "$repo/target/release" || exit 2
 cd "$repo" || exit 2
 flock "$lock" /usr/bin/env bash -c '
-  cat "$1" > "$2" && sha256sum "$2" > "$3" || exit 3
+  cat "$1" > "$2" && chmod +x "$2" && sha256sum "$2" > "$3" || exit 3
   start=$EPOCHREALTIME
   QCORE_BOUNDS_PROPERTY="$4-bounds.jsonl" python3 scripts/run_pinned_audit.py "$4-bounds" 66910c10 \
     --inputs-root /home/cosmo/Documents/GitHub/qcore-c/build/cycle19 --jobs 4 \

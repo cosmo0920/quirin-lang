@@ -119,6 +119,15 @@ pub enum SourceContractClauseKind {
     Requires,
     Ensures(SourceContractExitSelector),
     Quant(SourceContractExitSelector),
+    /// Card `QUANT-INDEX-CHECKS`: `quant checks P, Idx #i: PREDICATE;`, a
+    /// quantified index **check** collocated with the pointer formal `P` it
+    /// constrains. It is not an exit selector and carries none: the clause is
+    /// a check of the body and an obligation of its callers, never a
+    /// postcondition. Only the bounds contract v1 consumer reads it
+    /// (`qcore_contract::bounds_contract`); every other consumer rejects or
+    /// skips it exactly as it does a `quant` clause. Before this card the
+    /// spelling was a parse error (`checks` is no exit selector).
+    QuantCheck,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -1128,6 +1137,8 @@ impl<'a> SourceParser<'a> {
             let clause_start = cursor;
             let (kind, expression_start) = if self.word(cursor, "requires") {
                 (SourceContractClauseKind::Requires, cursor + 1)
+            } else if self.word(cursor, "quant") && self.word(cursor + 1, "checks") {
+                (SourceContractClauseKind::QuantCheck, cursor + 2)
             } else if self.word(cursor, "ensures") || self.word(cursor, "quant") {
                 let is_quant = self.word(cursor, "quant");
                 let (selector, next) = self.contract_exit_selector(cursor + 1, close)?;
