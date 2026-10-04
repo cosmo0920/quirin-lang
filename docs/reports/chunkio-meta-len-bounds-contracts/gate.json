@@ -1,0 +1,13 @@
+{
+  "note": "CHUNKIO-META-LEN-BOUNDS-CONTRACTS card gate on base e2031f65a (rebased from cdad4dfd0), every code step at 58f694db9 (later commits: one Python pin, gate files, the regenerated matrix and records only), scripts docs/reports/chunkio-meta-len-bounds-contracts/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/chunkio-meta-len-bounds-contracts/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 447 units, 460 summaries, 7,610 passed, 0 failed, 11 ignored, exit 0 (private/chunkio-meta-len-bounds-contracts/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 289 audits passed (288 -> 289, AuditBoundsPinHold.lean); python tests 08 exit 1 with 2 failures: the committed matrix carried lean_audits 288, and scripts/tests/test_contract_corpus.py still pinned 124 corpus modules (75 under qcore-provider-*), updated deliberately to 125 (76); then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). The first gate (gate-g1, at bb025569d) failed step 04 with 7,609 passed and 1 failed (qcore-compiler contract_loader's corpus pins: 124 -> 125 modules, resource-v1 rejected 216 -> 218, updated deliberately at d96926d35); its other code steps were 0. Provider gate (provider-gate-g1, at d96926d35; providers/ unchanged since): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of all five packages 0, providers Python suite 25 tests OK.",
+  "workspace_tests": 7610,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 289,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

@@ -41,8 +41,10 @@ class CanonicalCorpus(unittest.TestCase):
         # in quirin-provider-fluent-bit.
         # 122 -> 123: CONTRACT-PIN-TIP-MODE's monkey/vhost_set.qv
         # 123 -> 124: MONKEY-VHOST-PROPERTY-CUSTODY's monkey/string.qv
-        self.assertEqual(len(modules), 124)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 75)
+        # 124 -> 125: CHUNKIO-META-LEN-BOUNDS-CONTRACTS's chunkio/meta_len_bounds.qv
+        # (a bounds contract v1 module) in qcore-provider-chunkio (75 -> 76).
+        self.assertEqual(len(modules), 125)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 76)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 49)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))
