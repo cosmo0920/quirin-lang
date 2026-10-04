@@ -168,4 +168,34 @@ same three modules) and the custody routes above are byte-identical.
 
 ## 7. Gate
 
-Filled in by the gate records (section added at the gate).
+Standing gate `g2` ([`scripts/gate.sh`](scripts/gate.sh), every step under the
+shared lock, logs `private/chunkio-meta-len-bounds-contracts/gate-g2/`, exits
+copied to [`gate/`](gate/), summary in [`gate.json`](gate.json)), every code
+step at `58f694db9`:
+
+| Step | Command | Exit | Count |
+|---|---|---|---|
+| 00 | `cargo check --workspace --all-targets` | 0 | |
+| 01 | submodule update `--init --recursive` | 0 | |
+| 02 | `cargo fmt --all -- --check` | 0 | |
+| 03 | `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| 04 | `python3 scripts/run_test_binaries.py` | 0 | 447 units, 7,610 passed, 0 failed, 11 ignored (`tests-gate-g2/`) |
+| 05 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| 06 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| 07 | `python3 scripts/check_lean_audits.py` | 0 | 289 audits (288 → 289) |
+| 08 | `python3 -m unittest discover -s scripts/tests` | 1 | 365 run, 2 failures: the committed matrix carried `lean_audits` 288; `test_contract_corpus.py` still pinned 124 modules (75 under `qcore-provider-*`), updated deliberately to 125 (76) |
+| 09a | `build_matrix.py . --gate gate.json` | 0 | matrix regenerated (289 audits) |
+| 09b | `python3 -m unittest discover -s scripts/tests` | 0 | 365 OK |
+| 09, 10b, 10c | `build_docs_index.py`, `--check` | 0 | |
+
+Provider gate `g1` ([`scripts/provider-gate.sh`](scripts/provider-gate.sh), at
+`d96926d35`, `providers/` unchanged since; exits `gate/p*.exit`): `cargo check
+--locked` 0, `cargo test --locked` 0 (129 passed), fmt 0, clippy 0,
+`contracts.py check` 0, `package.py build` 0, `package.py verify` 0 for all five
+packages, `python3 -m unittest discover -s providers/tests` 0 (25 tests).
+
+The first gate (`g1`, code at `bb025569d`) failed step 04 with 7,609 passed and
+1 failed: `contract_loader`'s corpus pins (124 → 125 modules, resource-v1
+rejected 216 → 218), updated deliberately at `d96926d35`; its other code steps
+were 0. `cargo clean --profile dev` ran after the measurements; the release
+binaries were built in `private/chunkio-meta-len-bounds-contracts/target-rel`.
