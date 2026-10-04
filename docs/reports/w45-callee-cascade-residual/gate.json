@@ -1,0 +1,13 @@
+{
+  "note": "W45-CALLEE-CASCADE-RESIDUAL card gate on base 3905139cd, every code step at 6ebce9839 (later commits: records, the gate files and the regenerated matrix only), scripts docs/reports/w45-callee-cascade-residual/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/w45ccr/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 447 units, 460 summaries, 7,610 passed, 0 failed, 11 ignored, exit 0 (private/w45ccr/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 289 audits passed (unchanged: contracts only, no Lean); python tests 08 exit 0 (365 OK) on the committed matrix; docs index check 0; then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). The first gate (gate-g1, at 7156b4d2d) was stopped by its runner after step 02 (cargo fmt exit 1: rustfmt's layout of four new clause rows in compiler/tests/qcore_contract_corpus.rs, formatted at 6ebce9839 with no other change); its steps 00 and 01 were 0. Provider gate (provider-gate-g2, at 6ebce9839): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of all five packages 0, providers Python suite 25 tests OK. Targeted before the gate: contract_loader and qcore_contract_corpus (private/w45ccr/targeted-t2, exit 0; t1 exit 101 before the deliberate pin updates).",
+  "workspace_tests": 7610,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete",
+  "lean_audits": 289,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}

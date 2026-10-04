@@ -213,7 +213,34 @@ in the file-scope `global_error`); class 2 7 / 18; class 3 9 / 19; class 7
 
 ## 6. Gate
 
-Recorded in section 7 after the run.
+Standing gate (`docs/agents/validation.md`), [`scripts/gate.sh`](scripts/gate.sh)
+`g2` then [`scripts/finish-gate.sh`](scripts/finish-gate.sh) `g2`, code steps
+at `6ebce9839` on base `3905139cd`; logs `private/w45ccr/gate-g2/`, exits
+copied to [gate/](gate/), summary [gate.json](gate.json):
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 447 units, 460 summaries; 7,610 passed, 0 failed, 11 ignored (`private/w45ccr/tests-gate-g2`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 289 audits passed (unchanged) |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK |
+| `build_docs_index.py --check` | 0 | |
+| `build_matrix.py . --gate gate.json`, the Python suite again, the index | see [gate/](gate/) | |
+
+The first run (`gate-g1`) was stopped after `cargo fmt` exited 1 on rustfmt's
+layout of four new clause rows; formatted at `6ebce9839`, nothing else changed.
+
+**Provider gate** ([`scripts/provider-gate.sh`](scripts/provider-gate.sh) `g2`,
+at `6ebce9839`, logs `private/w45ccr/provider-gate-g2/`, exits in
+[gate/](gate/)): `cargo check --locked` 0, `cargo test` 0 (129 passed), fmt 0,
+clippy 0, `providers/contracts.py check` 0, package build 0 and `verify` 0 for
+all five packages, `python3 -m unittest discover -s providers/tests` 0 (25
+tests OK). Pins: [`scripts/pin.sh`](scripts/pin.sh), logs
+`private/w45ccr/pin-p1/` (section 3).
 
 ## Files
 
