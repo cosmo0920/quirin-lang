@@ -309,3 +309,10 @@ unit tests.
   `legacy_typed_positions.rs`, `legacy_call_argument_access.rs`,
   `typed_position_shapes.rs`, `legacy_call_instantiation.rs`,
   `value_connective.rs`, `legacy_value_connective.rs`, `lib.rs`.
+
+**Integrator re-run (2026-10-04).** Gate step 04 above exited 101 on one
+load-sensitive `execution_quota` row (ETXTBSY, recorded under
+`LOAD-SENSITIVE-ROW-UNNAMED`). The integrator re-ran
+`python3 scripts/run_test_binaries.py` on tip `8155c763b`, under the shared heavy
+lock with no other suite running. It exited 0: 444 units, 457 summaries,
+7,599 passed, 0 failed, 11 ignored (`private/test-binaries/20261004T043143Z-899047/`).
