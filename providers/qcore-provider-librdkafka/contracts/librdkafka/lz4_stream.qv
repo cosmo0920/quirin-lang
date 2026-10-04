@@ -217,3 +217,98 @@ contract {
     ensures normal resource_borrowed(maxOutputSize);
     ensures normal resource_return_none();
 };
+
+// ## Card CALLEE-RETENTION-CLASS1, stage (b): the retaining stream states
+//
+// USER DECISION 2026-10-05 (W48-CALLEE-DECISION-TABLE class 1, "split by
+// shape"): a pointer retained in a holder is stated by
+// `resource_retained_by(P, holder)` (contract spec C04.14, gateway rule 12t).
+// The caller keeps custody of `P`'s object, but must establish that it
+// outlives the holder, or that the holder is reset or destroyed first;
+// otherwise the call is never `Safe`. A declaration carrying the clause is
+// withheld from the function map, so no consumer that does not implement it
+// reads `src` as borrowed and forgotten. Pinned (C06.2) after reading the
+// bodies at both audited revisions (`lib/librdkafka-2.15.0/src/lz4.c` and
+// `lz4hc.c` are byte-identical at `66910c10` and `046accf6`).
+//
+//   * `LZ4_compress_HC_extStateHC(state, src, …)` (`lz4hc.c:951-956`) calls
+//     `LZ4_initStreamHC(state)` and then `_fastReset` (`:939-949`), whose
+//     `LZ4HC_init_internal(ctx, src)` (`:100-116`) stores `prefixStart`, `end`
+//     and `dictStart = src` in the state: after the call `state` holds
+//     pointers into `src`, which a later `LZ4_compress_HC_continue` on the
+//     same state reads as its dictionary. `state` is retained-by holder.
+//   * `LZ4_compress_HC_continue(LZ4_streamHCPtr, src, …)` (`:1151-1157`, over
+//     `LZ4_compressHC_continue_generic`, `:1112-1149`) auto-initialises the
+//     same pointers from `src` and moves `end` to the end of `src`.
+//   * `LZ4_compress_fast_continue(LZ4_stream, source, …)` (`lz4.c:1637-1713`)
+//     sets `streamPtr->dictionary = (const BYTE*)source` and
+//     `dictSize = inputSize` before returning (`:1709`): the next block reads `source`
+//     as its dictionary.
+//   * `LZ4_compress_fast_extState(state, source, …)` (`lz4.c:1351-1372`)
+//     re-initialises the whole state (`LZ4_initStream` zeroes it), then
+//     compresses with `noDict`. On a 64-bit target the hash table holds
+//     offsets, not pointers; with `byPtr` (32-bit, `source` above
+//     `LZ4_DISTANCE_MAX`, `:1361`, `:1368`) it holds pointers into `source`. The
+//     declaration states the retention on every target, which is the
+//     refusing direction, and the reset that precedes it
+//     (`resource_holder_reset(state)`).
+//
+// `dst`/`dest` are written and not kept, the sizes and levels are data: all
+// `resource_borrowed`. NOT CLAIMED: anything about a `dictCtx` another
+// stream attached (`LZ4_attach_dictionary`), which these calls keep.
+
+// --- HC one-shot over a caller's state: the state keeps pointers into `src`
+extern fn LZ4_compress_HC_extStateHC(state: ptr<mut, u8>, src: ptr<const, u8>, dst: ptr<mut, u8>, srcSize: i32, dstCapacity: i32, compressionLevel: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(state);
+    ensures normal resource_borrowed(src);
+    ensures normal resource_borrowed(dst);
+    ensures normal resource_borrowed(srcSize);
+    ensures normal resource_borrowed(dstCapacity);
+    ensures normal resource_borrowed(compressionLevel);
+    ensures normal resource_retained_by(src, state);
+    ensures normal resource_return_none();
+};
+
+// --- HC streaming: the stream keeps `src` as its dictionary ----------------
+extern fn LZ4_compress_HC_continue(LZ4_streamHCPtr: ptr<mut, u8>, src: ptr<const, u8>, dst: ptr<mut, u8>, srcSize: i32, dstCapacity: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(LZ4_streamHCPtr);
+    ensures normal resource_borrowed(src);
+    ensures normal resource_borrowed(dst);
+    ensures normal resource_borrowed(srcSize);
+    ensures normal resource_borrowed(dstCapacity);
+    ensures normal resource_retained_by(src, LZ4_streamHCPtr);
+    ensures normal resource_return_none();
+};
+
+// --- fast streaming: the stream keeps `source` as its dictionary ------------
+extern fn LZ4_compress_fast_continue(LZ4_stream: ptr<mut, u8>, source: ptr<const, u8>, dest: ptr<mut, u8>, inputSize: i32, maxOutputSize: i32, acceleration: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(LZ4_stream);
+    ensures normal resource_borrowed(source);
+    ensures normal resource_borrowed(dest);
+    ensures normal resource_borrowed(inputSize);
+    ensures normal resource_borrowed(maxOutputSize);
+    ensures normal resource_borrowed(acceleration);
+    ensures normal resource_retained_by(source, LZ4_stream);
+    ensures normal resource_return_none();
+};
+
+// --- fast one-shot over a caller's state: reset, then `source` kept ---------
+extern fn LZ4_compress_fast_extState(state: ptr<mut, u8>, source: ptr<const, u8>, dest: ptr<mut, u8>, inputSize: i32, maxOutputSize: i32, acceleration: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(state);
+    ensures normal resource_borrowed(source);
+    ensures normal resource_borrowed(dest);
+    ensures normal resource_borrowed(inputSize);
+    ensures normal resource_borrowed(maxOutputSize);
+    ensures normal resource_borrowed(acceleration);
+    ensures normal resource_holder_reset(state);
+    ensures normal resource_retained_by(source, state);
+    ensures normal resource_return_none();
+};

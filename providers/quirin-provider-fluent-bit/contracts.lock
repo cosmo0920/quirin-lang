@@ -6,6 +6,33 @@
   "normalisation": "c-tokens-v1",
   "pinned": [
     {
+      "function": "append_to_ring_buffer",
+      "module": "fluent_bit/input_chunk_helpers.qv",
+      "contract_sha256": "138998d93a8021db21225eeaf614c83d15d0b163cee23320608e680e87d1463d",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "src/flb_input_chunk.c",
+              "kind": "definition",
+              "declaration_sha256": "c349f3bb8fa509716cc6a67a0c0b549b46704a313f100c94af986a9ec7c5e167",
+              "body_sha256": "065b3f4642b57f2824c14095e2257c4c2d7b08d79170caf3b839634dfbfc1951"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cb_queue_chunks",
       "module": "fluent_bit/storage_backlog.qv",
       "contract_sha256": "595296735868b877d3f3abdb66541ff9244460d13e698061bddaf8efd7c436e2",

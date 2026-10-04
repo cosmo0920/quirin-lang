@@ -127,3 +127,47 @@ contract {
     ensures normal resource_borrowed(tag_len);
     ensures normal resource_return_none();
 };
+
+// ## Card CALLEE-RETENTION-CLASS1, stage (b): the raw chunk handed to the
+// engine keeps its input instance
+//
+// USER DECISION 2026-10-05 (W48-CALLEE-DECISION-TABLE class 1, "split by
+// shape"; contract spec C04.14, gateway rule 12t). Pinned (C06.2) after
+// reading the body at both audited revisions (`src/flb_input_chunk.c:3559-3655`
+// is identical at `66910c10` and `046accf6`; the file differs elsewhere):
+//
+//   * `append_to_ring_buffer(ins, …)` allocates a raw chunk, stores
+//     `cr->ins = ins`, copies `tag` (`flb_sds_create_len`) and `buf`
+//     (`memcpy` into `cr->buf_data`), and writes the chunk pointer into
+//     `ins->rb`, retrying up to ten times; the engine thread's collector
+//     dequeues it and reads `cr->ins` later. On every failure (`buf_size ==
+//     0`, no memory, a full ring after the retries) the chunk is destroyed
+//     (`destroy_chunk_raw`) and nothing is kept.
+//   * So `ins` is retained by a holder no caller object denotes — the ring
+//     buffer and then another thread — until the engine processes the chunk
+//     or `flb_input_chunk_ring_buffer_cleanup` drains it at instance
+//     teardown: the `global` holder. A caller can establish that only by a
+//     teardown order no per-unit route decides, so every call is refused
+//     (`retention-undecided`): Unknown, never Safe.
+//   * `tag`, `buf`: copied, `resource_borrowed`; the scalars are data. The
+//     chunk's own custody passes to the ring buffer inside the call and is
+//     no caller's.
+//
+// NOT CLAIMED: the ring buffer's capacity, the retry timing, or that the
+// engine dequeues every chunk.
+
+// --- a raw chunk enqueued for the engine keeps `ins` ------------------------
+extern fn append_to_ring_buffer(ins: ptr<mut, u8>, event_type: i32, flags: i32, records: usize, tag: ptr<const, u8>, tag_len: usize, buf: ptr<const, u8>, buf_size: usize) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ins);
+    ensures normal resource_borrowed(event_type);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_borrowed(records);
+    ensures normal resource_borrowed(tag);
+    ensures normal resource_borrowed(tag_len);
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(buf_size);
+    ensures normal resource_retained_by(ins, global);
+    ensures normal resource_return_none();
+};
