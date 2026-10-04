@@ -390,7 +390,38 @@ project axiom (289 → 291 audits):
 
 ## 10. Gate
 
-GATE-SECTION
+Standing gate (`docs/agents/validation.md`), [`scripts/gate.sh`](scripts/gate.sh)
+`g1` then [`scripts/finish-gate.sh`](scripts/finish-gate.sh) `g1`, code steps
+at `15a939326` on base `6fc62c015`; logs `private/crc1/gate-g1/`, exits copied to
+[gate/](gate/), summary [gate.json](gate.json):
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 449 units, 462 summaries; 7,628 passed, 0 failed, 11 ignored (`private/crc1/tests-gate-g1`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 291 audits passed (289 + `AuditRelationalForwarding` + `AuditRetainedBy`) |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK |
+| `build_docs_index.py --check` | 0 | |
+| `build_matrix.py . --gate gate.json` before the Python suite (the committed matrix carried 289 Lean audits; the card adds two), then again with the final `gate.json`, the Python suite again (365 OK), the index | 0 | see [gate/](gate/) |
+
+**Provider gate** ([`scripts/provider-gate.sh`](scripts/provider-gate.sh) `g1`,
+logs `private/crc1/provider-gate-g1/`, exits in [gate/](gate/)): `cargo check
+--locked` 0, `cargo test` 0 (P449 units, 462 summaries; 7,628 passed, 0 failed, 11 ignored passed), fmt 0, clippy 0,
+`providers/contracts.py check` 0, package build 0 and `verify` 0 for every
+package, `python3 -m unittest discover -s providers/tests` 0 (25 tests OK).
+Pins: [`scripts/pin.sh`](scripts/pin.sh) (logs `private/crc1/pin-a1/`,
+`pin-a3/`, `pin-b1/`); the deliberate pin updates were checked first by
+[`scripts/pins-test.sh`](scripts/pins-test.sh) (`p1`: `contract_loader` 101,
+the mode-preservation test now skips the side tables; `p2`: both 0), and the
+card's own tests by [`scripts/targeted.sh`](scripts/targeted.sh) (`t1`, all
+0).
+
+The measured binaries were built before `cargo fmt` laid out the new modules
+and before the test-only edits; the gate's code is that tree formatted.
 
 ## Files
 
