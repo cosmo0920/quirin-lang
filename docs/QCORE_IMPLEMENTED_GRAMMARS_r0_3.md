@@ -3722,7 +3722,19 @@ quantified index check [G05c](#g05c-quantified-index-checks). The meanings are C
 `resource_*` and `bounds_*` predicates are disjoint, so each loader rejects the
 other's modules. The reserved words were absent from every tracked contract
 module when they were introduced (the census test
-`the_reserved_spellings_are_unused_by_tracked_contracts`).
+`the_reserved_spellings_are_unused_by_tracked_contracts`). Card
+CHUNKIO-META-LEN-BOUNDS-CONTRACTS (gateway rule
+[12r](agents/gateway.md#constraint-12r)) ships the first tracked bounds
+module, `providers/qcore-provider-chunkio/contracts/chunkio/meta_len_bounds.qv`,
+in its crate's `bounds_view` on the load path (never its resource view); the
+census now exempts a module the bounds loader accepts and still finds the
+words in no other tracked module. A bounds module is a `.qv` contract module
+like any other, so the compiler's frontend gate also reads it: the `&&` and
+`||` of a G05c predicate are the predicate's own connectives, admitted by the
+operator gate (`Q038`) inside a `quant checks` clause and nowhere else in a
+contract module (before the card a tracked quant check failed the contract
+corpus's compiler regression on its `&&`). Pins: C06.2's lock format, in the
+crate's `bounds-contracts.lock`.
 
 ## G05c. Quantified index checks
 

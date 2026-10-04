@@ -241,3 +241,18 @@ or one naming an unowned module (`QI014`). Packages are unchanged: the view
 lives only in the load path. The union of the resource views must equal
 `cycle19-resource-contracts.json`'s selected modules; current counts are in
 [STATUS](../STATUS.md). [Report](../reports/w44-provider-resource-view/README.md).
+
+**Bounds view (CHUNKIO-META-LEN-BOUNDS-CONTRACTS, gateway rule
+[12r](gateway.md#constraint-12r)).** A bounds contract v1 module (C09.1) lives
+in its library's provider crate like a resource module and is listed in the
+crate record's generated `bounds_view`: the owned modules the bounds loader
+accepts, computed by the same probe and written and checked by
+`providers/contracts.py`. The two views are disjoint (the Rust reader refuses a
+module in both), so no resource selection loads a bounds module. Its pins live
+in the crate's `bounds-contracts.lock` (C06.2's lock format), written only by
+`quirin-audit pin --bounds` after review at every pinned revision and verified
+with the resource locks by `pin --verify-contracts` (so by `contracts.py
+check`); a bounds declaration whose pin is not in force is held
+(`contract-pin-mismatch`). Packages carry the module through the unchanged
+inventory; no audit route reads contract modules from a package.
+[Report](../reports/chunkio-meta-len-bounds-contracts/README.md).

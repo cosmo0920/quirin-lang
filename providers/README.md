@@ -70,7 +70,12 @@ loader accepts, which `quirin-audit --provider NAME` selects. `sync` computes it
 by running the loader (`cargo run -p qcore-audit --example
 provider_resource_views`, so it needs the repository workspace), and `check`
 refuses a view that names a module the loader refuses or omits one it accepts
-(card W44-PROVIDER-RESOURCE-VIEW). Both actions
+(card W44-PROVIDER-RESOURCE-VIEW). Each record also carries a `bounds_view`,
+the owned modules the bounds contract v1 loader accepts (disjoint from the
+resource view), which the audit routes load when `QCORE_BOUNDS_PROPERTY`
+selects the bounds property; their pins are the crate's
+`bounds-contracts.lock`, written by `quirin-audit pin --bounds --source-root
+<checkout>` after review (card CHUNKIO-META-LEN-BOUNDS-CONTRACTS). Both actions
 refuse symbolic links, invalid or unowned paths, and any reintroduced
 `contract/qcore/` legacy tree. Intentional declaration/clause changes still
 require the corpus pin updates.
