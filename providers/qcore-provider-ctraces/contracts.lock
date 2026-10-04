@@ -6,6 +6,38 @@
   "normalisation": "c-tokens-v1",
   "pinned": [
     {
+      "function": "ctr_attributes_set_array",
+      "module": "ctraces/context_lifetime.qv",
+      "contract_sha256": "69b1dc1d4becc0d916921aa4dfd8055c6a4e451c4215701ab1d82a7a0a54a07e",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/ctraces/include/ctraces/ctr_attributes.h",
+              "kind": "declaration",
+              "declaration_sha256": "3f78bd10d7955cecffcc7e3691b84a105354aaf6bce56ff5eafafafdc66d1a5b"
+            },
+            {
+              "path": "lib/ctraces/src/ctr_attributes.c",
+              "kind": "definition",
+              "declaration_sha256": "3f78bd10d7955cecffcc7e3691b84a105354aaf6bce56ff5eafafafdc66d1a5b",
+              "body_sha256": "23a9f7928dd5efc7d0d067c0ee91a59aa5f41e1b8cadb46e9cccf5cea04ff147"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "ctr_attributes_set_bool",
       "module": "ctraces/context_lifetime.qv",
       "contract_sha256": "b7acd3edc8acb99db17b3f38c925948b534f6e3f77b925cb36336b5ab2e3af4c",
@@ -96,6 +128,38 @@
               "kind": "definition",
               "declaration_sha256": "fe6abcf7917f6203f400606c2005c58899533033153c49d4c0dbbf107612764b",
               "body_sha256": "250dd55f2b664fe275ba21a10d25595d91ed4f8d92e579072f662bbfbc089150"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "ctr_attributes_set_kvlist",
+      "module": "ctraces/context_lifetime.qv",
+      "contract_sha256": "f27b6fdea41bd2e44f825b853d2bef51b26f3dae70c94b553f2429b786913cd9",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/ctraces/include/ctraces/ctr_attributes.h",
+              "kind": "declaration",
+              "declaration_sha256": "8c8ac5498555583aae7011ac4c9f751f403cb75960b681ae33051a74fc92a39b"
+            },
+            {
+              "path": "lib/ctraces/src/ctr_attributes.c",
+              "kind": "definition",
+              "declaration_sha256": "8c8ac5498555583aae7011ac4c9f751f403cb75960b681ae33051a74fc92a39b",
+              "body_sha256": "4f31562bca3af01b59bacbf9f7ee8e57782f24a96988b48e815694bfcc9dcf6a"
             }
           ]
         }

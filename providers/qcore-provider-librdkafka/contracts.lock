@@ -129,6 +129,33 @@
       ]
     },
     {
+      "function": "add_item_to_array",
+      "module": "librdkafka/cjson.qv",
+      "contract_sha256": "59e12b5a4d04a0a0989a912eca23601ec07a6f34c832a6be3b1759e03f3b15fe",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/cJSON.c",
+              "kind": "definition",
+              "declaration_sha256": "4594d454f3226811d6c3b6ec7fbc9c387894eead32f0c7149bd6442f3d6f834b",
+              "body_sha256": "0f2ea78e8db24d105f3d287080de9b9ecdce0cb182f20182720d3405e4ffb26f"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cJSON_Delete",
       "module": "librdkafka/cjson.qv",
       "contract_sha256": "cd3e9720bef46e4be1e28404b0a0ee3f05c869897661d28f8727aa4f31f46858",
@@ -752,6 +779,33 @@
               "kind": "definition",
               "declaration_sha256": "ccc5465d17b28c687665eaa9371281797dae64dbfa8008bc8322b728a65c3b51",
               "body_sha256": "04f444b34513419e821347dd5dceeb3ecd89901ff99d7896832be77eebf9fc2d"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "replace_item_in_object",
+      "module": "librdkafka/cjson.qv",
+      "contract_sha256": "ae9d087d225b3b94963803ba6b6d2439f5f6720f3992ad11503900af9d29ba50",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/librdkafka-2.15.0/src/cJSON.c",
+              "kind": "definition",
+              "declaration_sha256": "67a8c0ecd3ea8cf5267f2cb746792f373b2fb40fa1bdb688278c0e0bcd199594",
+              "body_sha256": "3065bcc995ef5183a684c4389e1dc62a523c99d60be16c852a48b91bd2c11012"
             }
           ]
         }
