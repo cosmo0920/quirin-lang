@@ -1,0 +1,462 @@
+[
+ {
+  "reference": "rebased1",
+  "run": "rebased2",
+  "identical": true,
+  "files": [
+   {
+    "route": "corpus",
+    "file": "audit.log",
+    "bytes": 133833,
+    "sha256": "750a8fc1258f194f8fa7618998f2c71568e8160a6197b76a26b3201549a24502",
+    "raw_identical": false,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "monkey-source.json",
+    "bytes": 1665950,
+    "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.chunk-contracts.json",
+    "bytes": 4186178,
+    "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.contracts.json",
+    "bytes": 760207,
+    "sha256": "eb805aaa86af615c688a9e71231319401c7aa202f4e7ddf1c718c45f37edd5b0",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.json",
+    "bytes": 10239521,
+    "sha256": "ce57d194a9af2cd96a5d7a218b16824abd4cf3db2a5ac3a20dcd84369d879f50",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.source-effects.json",
+    "bytes": 118505,
+    "sha256": "0d694e29e1176e295b5b40bfd562d13d309e30184221e5649f8a677a63073c97",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "file": "console.log",
+    "bytes": 11688,
+    "sha256": "9d2b496d46efb07231e9a9c661c080089d4a67d033aa906e6af32029b13342f8",
+    "raw_identical": false,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "file": "resource-diagnostics.chunk-contracts.json",
+    "bytes": 385,
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "file": "resource-diagnostics.contracts.json",
+    "bytes": 757105,
+    "sha256": "3e38d2e785f8572737331332a1de95732191219678a7ebe24518c4bb125ee3ec",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "file": "resource-diagnostics.invocation.json",
+    "bytes": 4538,
+    "sha256": "5a4e9c97ef81ccd125fd40d921479c17f83a30071b017e5a64bd284c8bc30891",
+    "raw_identical": false,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "file": "resource-diagnostics.json",
+    "bytes": 1558603,
+    "sha256": "72862acb546b5dbd62178193a98233c7e10c3e47bec80ca08238b1ef01afae38",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "file": "resource-diagnostics.source-effects.json",
+    "bytes": 385,
+    "sha256": "e7e0d254d9e7ee199672b981e3fc764b702b35a1757bb0f4570a9438e6b87922",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "file": "stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "slice",
+    "file": "console.log",
+    "bytes": 12565,
+    "sha256": "5904b67138574493b7faf680366f7e7355274b255a6d3415b9f5010bb15c404e",
+    "raw_identical": false,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "slice",
+    "file": "resource-diagnostics.chunk-contracts.json",
+    "bytes": 385,
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "slice",
+    "file": "resource-diagnostics.contracts.json",
+    "bytes": 756949,
+    "sha256": "d98f1dc28adec0c2dad235350d92fd7dc185da942f9fd1102520dec6242d7e8a",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "slice",
+    "file": "resource-diagnostics.invocation.json",
+    "bytes": 5081,
+    "sha256": "b1d063b435909901250bdaedf0e9df9f723ff9334a9f4ee8eef7c549a86e50fe",
+    "raw_identical": false,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "slice",
+    "file": "resource-diagnostics.json",
+    "bytes": 1566901,
+    "sha256": "21adb1f518a560bc63a0261d4d455cd63479f648278e2db09baf99c49464e552",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "slice",
+    "file": "resource-diagnostics.source-effects.json",
+    "bytes": 385,
+    "sha256": "a97259087e4ad89a4662edcb494b27c27e80f06c62e404a19076224bbc0a2bd8",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "slice",
+    "file": "stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   }
+  ],
+  "parity": [
+   {
+    "stream": "parity-corpus",
+    "rows": [
+     669449,
+     669449
+    ],
+    "multiset_sha256": [
+     "072a299c13198fa4625631fff01fddc8bc3b35931d780a1979e706d5aa5ef7c6",
+     "072a299c13198fa4625631fff01fddc8bc3b35931d780a1979e706d5aa5ef7c6"
+    ],
+    "identical": true
+   },
+   {
+    "stream": "parity-system",
+    "rows": [
+     141186,
+     141186
+    ],
+    "multiset_sha256": [
+     "3ff6cf21f71dc756a6d09a2a88168456fee9198da200c79bc11050f45ddaf1ec",
+     "3ff6cf21f71dc756a6d09a2a88168456fee9198da200c79bc11050f45ddaf1ec"
+    ],
+    "identical": true
+   },
+   {
+    "stream": "parity-slice",
+    "rows": [
+     50426,
+     50426
+    ],
+    "multiset_sha256": [
+     "6fc088c2f47abe33e1137d928832821d44c7fd353c947a087080037fd7fa7847",
+     "6fc088c2f47abe33e1137d928832821d44c7fd353c947a087080037fd7fa7847"
+    ],
+    "identical": true
+   }
+  ]
+ },
+ {
+  "reference": "rebased1",
+  "run": "rebased3",
+  "identical": true,
+  "files": [
+   {
+    "route": "corpus",
+    "file": "audit.log",
+    "bytes": 133833,
+    "sha256": "8f8883735ff1b1f8b2def4e20ee5c4fe20b65895990162cbf5064c2bb785c4d8",
+    "raw_identical": false,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "monkey-source.json",
+    "bytes": 1665950,
+    "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.chunk-contracts.json",
+    "bytes": 4186178,
+    "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.contracts.json",
+    "bytes": 760207,
+    "sha256": "eb805aaa86af615c688a9e71231319401c7aa202f4e7ddf1c718c45f37edd5b0",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.json",
+    "bytes": 10239521,
+    "sha256": "ce57d194a9af2cd96a5d7a218b16824abd4cf3db2a5ac3a20dcd84369d879f50",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.source-effects.json",
+    "bytes": 118505,
+    "sha256": "0d694e29e1176e295b5b40bfd562d13d309e30184221e5649f8a677a63073c97",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "route": "slice",
+    "verdict": "not measured on both sides"
+   }
+  ],
+  "parity": [
+   {
+    "stream": "parity-corpus",
+    "rows": [
+     669449,
+     669449
+    ],
+    "multiset_sha256": [
+     "072a299c13198fa4625631fff01fddc8bc3b35931d780a1979e706d5aa5ef7c6",
+     "072a299c13198fa4625631fff01fddc8bc3b35931d780a1979e706d5aa5ef7c6"
+    ],
+    "identical": true
+   },
+   {
+    "stream": "parity-system",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "stream": "parity-slice",
+    "verdict": "not measured on both sides"
+   }
+  ]
+ },
+ {
+  "reference": "rebased1",
+  "run": "rebased4",
+  "identical": true,
+  "files": [
+   {
+    "route": "corpus",
+    "file": "audit.log",
+    "bytes": 133833,
+    "sha256": "471480d26bd4f0c48eced6c7d2e5f2a1d88546c0428c4d3a8a34983f9989f864",
+    "raw_identical": false,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "monkey-source.json",
+    "bytes": 1665950,
+    "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.chunk-contracts.json",
+    "bytes": 4186178,
+    "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.contracts.json",
+    "bytes": 760207,
+    "sha256": "eb805aaa86af615c688a9e71231319401c7aa202f4e7ddf1c718c45f37edd5b0",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.json",
+    "bytes": 10239521,
+    "sha256": "ce57d194a9af2cd96a5d7a218b16824abd4cf3db2a5ac3a20dcd84369d879f50",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.source-effects.json",
+    "bytes": 118505,
+    "sha256": "0d694e29e1176e295b5b40bfd562d13d309e30184221e5649f8a677a63073c97",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "route": "slice",
+    "verdict": "not measured on both sides"
+   }
+  ],
+  "parity": [
+   {
+    "stream": "parity-corpus",
+    "rows": [
+     669449,
+     669449
+    ],
+    "multiset_sha256": [
+     "072a299c13198fa4625631fff01fddc8bc3b35931d780a1979e706d5aa5ef7c6",
+     "072a299c13198fa4625631fff01fddc8bc3b35931d780a1979e706d5aa5ef7c6"
+    ],
+    "identical": true
+   },
+   {
+    "stream": "parity-system",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "stream": "parity-slice",
+    "verdict": "not measured on both sides"
+   }
+  ]
+ },
+ {
+  "reference": "rebased1",
+  "run": "rebased5",
+  "identical": true,
+  "files": [
+   {
+    "route": "corpus",
+    "file": "audit.log",
+    "bytes": 133833,
+    "sha256": "010b4de6d4145c650f643a60aacc85d7c501e97d95243cfcdeba682e3002b73f",
+    "raw_identical": false,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "monkey-source.json",
+    "bytes": 1665950,
+    "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.chunk-contracts.json",
+    "bytes": 4186178,
+    "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.contracts.json",
+    "bytes": 760207,
+    "sha256": "eb805aaa86af615c688a9e71231319401c7aa202f4e7ddf1c718c45f37edd5b0",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.json",
+    "bytes": 10239521,
+    "sha256": "ce57d194a9af2cd96a5d7a218b16824abd4cf3db2a5ac3a20dcd84369d879f50",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.source-effects.json",
+    "bytes": 118505,
+    "sha256": "0d694e29e1176e295b5b40bfd562d13d309e30184221e5649f8a677a63073c97",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "route": "slice",
+    "verdict": "not measured on both sides"
+   }
+  ],
+  "parity": [
+   {
+    "stream": "parity-corpus",
+    "rows": [
+     669449,
+     669449
+    ],
+    "multiset_sha256": [
+     "072a299c13198fa4625631fff01fddc8bc3b35931d780a1979e706d5aa5ef7c6",
+     "072a299c13198fa4625631fff01fddc8bc3b35931d780a1979e706d5aa5ef7c6"
+    ],
+    "identical": true
+   },
+   {
+    "stream": "parity-system",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "stream": "parity-slice",
+    "verdict": "not measured on both sides"
+   }
+  ]
+ }
+]

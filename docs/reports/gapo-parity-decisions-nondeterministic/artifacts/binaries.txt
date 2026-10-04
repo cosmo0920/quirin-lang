@@ -1,5 +1,7 @@
 7d050d1cc1d020ed49f021d0f0b6178f58d8908e53d83f01167681d99bd1bc04  private/gapo-nd/bin/before
 a574fa581ce977877f3e2c5f11c1a2db0b6dabf0c47e39927c511de3e3d80021  private/gapo-nd/bin/after
+b217cf8179e2869ee7cb90f7f033d9ca5486288c14ed0109798c3116080228b3  private/gapo-nd/bin/main2
+af119440a4bab2843cbe4241816468b820153b855c7d50f054f258c62723aa36  private/gapo-nd/bin/rebased
 before1 run.json binary_sha256 equals the binary: OK
 before2 run.json binary_sha256 equals the binary: OK
 before3 run.json binary_sha256 equals the binary: OK
@@ -12,3 +14,9 @@ after4 run.json binary_sha256 equals the binary: OK
 after5 run.json binary_sha256 equals the binary: OK
 before-np run.json binary_sha256 equals the binary: OK
 after-np run.json binary_sha256 equals the binary: OK
+main2 run.json binary_sha256 equals the binary: OK
+rebased1 run.json binary_sha256 equals the binary: OK
+rebased2 run.json binary_sha256 equals the binary: OK
+rebased3 run.json binary_sha256 equals the binary: OK
+rebased4 run.json binary_sha256 equals the binary: OK
+rebased5 run.json binary_sha256 equals the binary: OK

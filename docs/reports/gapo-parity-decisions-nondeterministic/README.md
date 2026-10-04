@@ -1,12 +1,15 @@
 # GAPO-PARITY-DECISIONS-NONDETERMINISTIC: a consultation's parity decisions are its own
 
 Card GAPO-PARITY-DECISIONS-NONDETERMINISTIC (wave 48, round 19; determinism
-fix). Base: local `main` at `0ebe77f86`. Authority: the ledger entry of the
+fix). Base: local `main` at `0ebe77f86`; when QUANT-INDEX-CHECKS landed
+(`cdad4dfd0`, rule 12l) the card was rebased onto it, conflicts only in the
+records, and the determinism proof was taken again on the rebased tip
+(section 5, after the rebase). Authority: the ledger entry of the
 same name and section 4 of the
 [optimization card's report](../gateway-analysis-path-optimization/README.md).
 Gateway rule **12q** (new); no Lean change (section 6).
-[PREDICTION.md](PREDICTION.md) was frozen at `fd91fd536`, before the first
-implementation commit.
+[PREDICTION.md](PREDICTION.md) was frozen at `fd91fd536` (`ce014cd3b` after
+the rebase), before the first implementation commit.
 
 **Outcome.** The corpus parity stream (`QCORE_TYPED_PATH_PARITY`) is now one
 multiset over five `--jobs 4` runs of one binary; five runs of the BEFORE
@@ -157,7 +160,7 @@ lowering choice. It stays registered; this card does not touch it.
 Five corpus runs per side, system and slice twice per side, `--jobs 4`, each
 run under the shared lock with its own copy of the binary
 ([measure.sh](scripts/measure.sh), [runs.sh](scripts/runs.sh)); the AFTER
-binary is `private/gapo-nd/bin/after`, `a574fa58…` (tip `ac31392d9`). Identity
+binary is `private/gapo-nd/bin/after`, `a574fa58…` (`ac31392d9`, before the rebase). Identity
 proofs by [identity.py](scripts/identity.py) (the optimization card's script
 without its VARYING exception: every row of every stream is compared),
 row classes by [parity_classes.py](scripts/parity_classes.py).
@@ -198,13 +201,31 @@ against 23.6, 23.7 s; with the stream off, corpus 344.6 s on both sides. The
 ranges overlap; the per-parser call graph is read only on parity runs, so
 any cost it adds is confined to them.
 
+**After the rebase** onto `cdad4dfd0` ([proofs](artifacts/identity-rebased.json),
+[against main](artifacts/identity-main2-rebased.json),
+[main against the first base](artifacts/identity-before1-main2.json),
+[classes](artifacts/classes-main2-rebased.json)): main's binary (`main2`,
+`b217cf81…`, one run of each route) writes every file byte-identical to
+`before1` (QUANT-INDEX-CHECKS moves nothing on these routes) and a corpus
+stream of 669,570 rows, the `before3` multiset (`3007a75b…`: the varying row
+absent this time). Five corpus runs of the rebased binary (`rebased1`…`5`,
+`af119440…`, tip code `a1293f094`), system and slice twice: **every file
+identical to `main2`, one corpus multiset over five runs** (669,449 rows,
+`072a299c…`, the same multiset as before the rebase), system and slice streams
+identical to main's; against `main2` the stream loses the same 121 rows and
+nothing else. Totals: corpus 756 / 9 / 4,069 (`ce57d194…`), system 85 / 4 /
+359, slice 45 / 1 / 354 / 4 Pending. Corpus wall time: main 370.2 s, rebased
+375.6-381.1 s (median 378.2); system 47.3 against 49.5, 50.0 s; slice 21.6
+against 22.2, 22.8 s.
+
 ## 6. Lean
 
 None owed. The card moves parity bookkeeping from thread-local lists into a
 value the consumer owns, replaces an address-keyed parity cache, and makes
 four restores unwind-safe. No decision table, transfer, route order or
 verdict changes, and no Lean definition models the parity stream or the
-restored scopes' bookkeeping. Lean audits stay at 287.
+restored scopes' bookkeeping. Lean audits: 287 at the first base, 288 after
+the rebase (QUANT-INDEX-CHECKS' module), none added here.
 
 ## 7. Prediction against outcome
 
@@ -212,7 +233,7 @@ restored scopes' bookkeeping. Lean audits stay at 287.
 |---|---|
 | 1. Verdicts and published diagnostics byte-identical | **Held**: every file identical on all three routes, totals unchanged |
 | 2. BEFORE nondeterminism reproduces in `typed-place` rows only | **Held**: one row, `cio_file_st_get_meta_len` line 2223 (`st`), in four of five runs |
-| 3. Five AFTER corpus runs one multiset; system and slice twice each identical | **Held** |
+| 3. Five AFTER corpus runs one multiset; system and slice twice each identical | **Held**, before and after the rebase |
 | 4. AFTER against BEFORE: removals only, all `typed-place` rows of declined consultations; 1 to 50 row kinds | **Held**: 122 rows, 43 kinds, all `of_position: "statement"`, no content change, no other position touched |
 | 5. Timing within noise (about 2 %) | **Borderline**: corpus median +2.0 % with overlapping ranges on a shared host; parity-off runs equal |
 | 6. No Lean change | **Held** (section 6) |
@@ -220,9 +241,9 @@ restored scopes' bookkeeping. Lean audits stay at 287.
 
 ## 8. Gate
 
-Standing gate at `cefdff475` (code at `8f29ac91a`), `scripts/gate.sh g2`,
-every step under the shared lock, exits in [gate/](gate/),
-[gate.json](gate.json):
+Standing gate on the rebased tip `873fc2dc0` (code at `a1293f094`),
+`scripts/gate.sh g3`, every step under the shared lock, exits in
+[gate/](gate/), [gate.json](gate.json):
 
 | Step | Command | Exit | Result |
 |---|---|---:|---|
@@ -230,30 +251,34 @@ every step under the shared lock, exits in [gate/](gate/),
 | 01 | submodule update (`--init --recursive`) | 0 | |
 | 02 | `cargo fmt --all -- --check` | 0 | clean |
 | 03 | `cargo clippy --locked --all-targets -- -D warnings` | 0 | clean |
-| 04 | `python3 scripts/run_test_binaries.py` | 101 | 441 units, 454 summaries; **7,568 passed, 1 failed**, 11 ignored (`private/gapo-nd/tests-gate-g2/`) |
+| 04 | `python3 scripts/run_test_binaries.py` | 101 | 444 units, 457 summaries; **7,598 passed, 1 failed**, 11 ignored (`private/gapo-nd/tests-gate-g3/`) |
 | 05 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
 | 06 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
-| 07 | `python3 scripts/check_lean_audits.py` | 0 | **287** audits (unchanged) |
-| 08 | `python3 -m unittest discover -s scripts/tests` | 0 | 365 OK |
-| 09 | `python3 scripts/build_docs_index.py --check` | 0 | |
+| 07 | `python3 scripts/check_lean_audits.py` | 0 | **288** audits (QUANT-INDEX-CHECKS' module; none added here) |
+| 08 | `python3 -m unittest discover -s scripts/tests` | see [gate/](gate/) | after the records |
+| 09 | `python3 scripts/build_docs_index.py --check` | see [gate/](gate/) | after the records |
 | 09a-10c | matrix regenerated with this gate.json, Python suite, docs index and check | see [gate/](gate/) | |
 
 The one failure is `qcore-verifier-host`'s
-`execution_quota::a_declared_quota_bounds_a_fork_storm_in_this_execution_only`
-(`quota_observed` was `None`), on a host shared with another card's builds
-and arbiters. The binary alone then failed a different row of the same file
-the same way once (`private/gapo-nd/quota-isolated.log`) and passed 13 of 13
-on the next run (`quota-isolated2.log`); the card changes no verifier-host
-code, and the observation is added to `LOAD-SENSITIVE-ROW-UNNAMED` (the
-binary's earlier `Broken pipe` rows are recorded there). The first gate
-(`gate-g1`, at `ac31392d9`) passed the suite (7,569 passed, 0 failed) and
-every other code step but clippy, whose `too_many_arguments` on
-`StatementIndex::argument` `8f29ac91a` answers with an `allow` (the
-codebase's convention, 19 sites); clippy then exited 0, and so did the
-gateway's census-feature clippy (`--features route-census,indirect-census`).
-The measured AFTER binary was built at `ac31392d9`; `8f29ac91a` adds only that
-attribute and its comment. The provider gate is not owed: `providers/` is
-unchanged. The workspace count grows by the card's four unit tests.
+`execution_quota::a_forced_override_never_weakens_an_execution`
+(`Spawn("Text file busy (os error 26)")`, the ETXTBSY signature) on a host
+shared with another card's builds and arbiters; the binary alone passed 13 of
+13 (`private/gapo-nd/quota-isolated3.log`). The card changes no verifier-host
+code. Earlier gates: `gate-g2` (pre-rebase `cefdff475`, code `8f29ac91a`)
+exited 0 at every step but the suite, 7,568 passed / 1 failed in the same
+binary (`a_declared_quota_bounds_a_fork_storm_in_this_execution_only`,
+`quota_observed` `None`; the binary alone failed another row the same way
+once, then passed 13/13), Python 365 OK, docs index check 0; `gate-g1`
+(`ac31392d9`) passed the suite (7,569 passed, 0 failed) and every code step
+but clippy, whose `too_many_arguments` on `StatementIndex::argument`
+`8f29ac91a` answers with an `allow` (the codebase's convention, 19 sites);
+clippy then exited 0, and so did the gateway's census-feature clippy
+(`--features route-census,indirect-census`). The three `execution_quota`
+observations are added to `LOAD-SENSITIVE-ROW-UNNAMED`. The pre-rebase AFTER
+binary was built at `ac31392d9` (`8f29ac91a` adds only that attribute and its
+comment); the rebased binary at `873fc2dc0`'s code. The provider gate is not
+owed: `providers/` is unchanged. The workspace count grows by the card's four
+unit tests.
 
 ## 9. Follow-ups
 

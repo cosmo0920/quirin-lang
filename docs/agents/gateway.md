@@ -5036,7 +5036,8 @@ own anchor here.
     only into parity rows, and the address-keyed call graph only into parity
     rows. No Lean change: the rule moves parity bookkeeping and restores, and
     no decision table, transfer or verdict changes. Measured (corpus
-    `66910c10`, system and tail-pause slice, main `0ebe77f86` plus the rule):
+    `66910c10`, system and tail-pause slice, main `0ebe77f86` plus the rule,
+    and again on `cdad4dfd0`):
     every `resource-diagnostics*.json` and sidecar byte-identical (756 / 9 /
     4,069, `ce57d194…`); the corpus parity stream, which five runs of the
     BEFORE binary wrote in two multisets, is one multiset over five AFTER
