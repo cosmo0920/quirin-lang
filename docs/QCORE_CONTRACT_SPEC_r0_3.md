@@ -838,8 +838,9 @@ review-hold standing rule, validates reachability before `Unsafe`, withdraws a
 return extent its analysed body refutes from the unit's callers, and re-derives
 recorded evidence before admitting it; and the audit's explicit selection
 (`QCORE_BOUNDS_PROPERTY`), which publishes bounds and combined rows beside an
-unchanged custody report. Not landed, each a named residual of the CG16
-ledger entry: C06.2 pins for bounds declarations (they bind by name and
+unchanged custody report. Not landed at CG16, each a named residual of its
+ledger entry (pins, placement and packaging, and the audit selection landed
+since, below): C06.2 pins for bounds declarations (they bind by name and
 signature; no pin hold is produced), inclusion, inheritance, packaging and
 checkpoint transport of bounds modules, a bounds-module selection on the audit
 routes (they run with an empty bounds environment), the cross-unit refutation
@@ -848,6 +849,34 @@ stable parameter relation (CG20), variable-length and flexible extents (CG17),
 multi-base and derived relations (CG24), and bounds summaries of callee bodies.
 Card QUANT-INDEX-CHECKS adds the quantified index check `quant checks P, Idx
 #i: …;` to the same consumer (C09.2).
+
+**Transport and pins (card CHUNKIO-META-LEN-BOUNDS-CONTRACTS, 2026-10-04;
+gateway rule [12r](agents/gateway.md#constraint-12r)).** Landed: bounds
+modules live in their library's provider crate and are listed in the crate
+record's generated `bounds_view` on the published load path (the owned modules
+the bounds loader accepts; disjoint from the resource view, so no resource
+selection loads one); with `QCORE_BOUNDS_PROPERTY` the pinned route, the
+configured route and the contracts route load every bounds view on the load
+path their resource manifest names before any unit is analysed. A bounds
+declaration is **pinned** (C06.2's default; there is no flexible bounds
+declaration): its reviewed identities live in the crate's
+`bounds-contracts.lock` (C06.2's lock format, keyed by the declaration's
+normalised text digest, which covers every clause and a quant check's
+predicate), written only by `quirin-audit pin --bounds` and verified with the
+resource locks by `pin --verify-contracts`; a declaration whose pin is not in
+force (`no-lock`, `not-in-lock`, `contract-changed`, `source-changed`) is held
+under the reason code `contract-pin-mismatch` exactly as a review marker holds
+it (discharges nothing, accuses nothing, `Pending` at most), and a re-pin after
+review is the act that resolves it. The first reviewed declarations are
+chunkio's header accessors `cio_file_st_get_meta_len` and
+`cio_file_st_set_meta_len` (`quant checks map, Idx #i: 22 <= #i && #i < 24;`
+with a closed read, resp. write, frame), pinned at `66910c10` and `046accf6`.
+A header-defined function has no row on the audit routes (they report each
+unit's main-source definitions), so its declaration is applied at its callers
+and its body is checked only where a consumer analyses it. Still not landed
+(`CG16-BOUNDS-CONTRACT-TRANSPORT`): checkpoint transport, inclusion and
+inheritance of bounds modules, the cross-unit refutation phase on the routes,
+and tip tracking for bounds pins.
 
 **Frames and derived relations (card CG24-ALIAS-EXTENT-FRAME-VOCABULARY,
 2026-10-02; gateway rule [11e](agents/gateway.md#constraint-11e)).** Landed in
@@ -1076,11 +1105,14 @@ consumer can drop it silently. Rejected:
   inside an argument would hide a second expression grammar.
 
 `Idx #i` is the clause's binder only: it is not the language's `Idx + Ordered`
-capability (§L06) and does not touch `index.closed`. Not landed (named
-residuals): transport, pins and audit selection of bounds modules
-(`CG16-BOUNDS-CONTRACT-TRANSPORT`, so the audit routes still run with an empty
-bounds environment) and symbolic forms beyond `[0, f)`
-(`CG16-BOUNDS-SYMBOLIC-RANGES`).
+capability (§L06) and does not touch `index.closed`. Its `&&` and `||` are
+the predicate's own connectives: the frontend's operator gate admits them
+inside a `quant checks` clause and nowhere else in a contract module (card
+CHUNKIO-META-LEN-BOUNDS-CONTRACTS; before it, a tracked module carrying a
+quant check failed to compile at `Q038`). Pins, transport and audit selection
+of bounds modules landed with card CHUNKIO-META-LEN-BOUNDS-CONTRACTS (C09.1's
+status paragraph). Not landed (named residual): symbolic forms beyond
+`[0, f)` (`CG16-BOUNDS-SYMBOLIC-RANGES`).
 
 ## C10. Cleanup and OS endpoint contracts
 

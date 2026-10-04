@@ -153,6 +153,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [cg30-dialects-flags-types](cg30-dialects-flags-types/README.md) | CG30-DIALECTS-FLAGS-TYPES: dialect, target and type identities, and refused extensions |
 
+| [chunkio-meta-len-bounds-contracts](chunkio-meta-len-bounds-contracts/README.md) | CHUNKIO-META-LEN-BOUNDS-CONTRACTS |
+
 | [compose-event-lines](compose-event-lines/README.md) | COMPOSE-EVENT-LINES — source lines in an event program, and why the comparison stays strict (wave 23) |
 
 | [composed-window-reach](composed-window-reach/README.md) | `COMPOSED-WINDOW-REACH` (wave 41) — the composed route's window function, measured |
