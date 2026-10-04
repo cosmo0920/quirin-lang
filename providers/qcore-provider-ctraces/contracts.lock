@@ -8,7 +8,7 @@
     {
       "function": "ctr_attributes_set_array",
       "module": "ctraces/context_lifetime.qv",
-      "contract_sha256": "69b1dc1d4becc0d916921aa4dfd8055c6a4e451c4215701ab1d82a7a0a54a07e",
+      "contract_sha256": "2762a069f930b2c9f5b5fe87da90aea88f43c359edd99a792a4380a532c3992b",
       "identities": [
         {
           "reviewed_at": [
@@ -136,7 +136,7 @@
     {
       "function": "ctr_attributes_set_kvlist",
       "module": "ctraces/context_lifetime.qv",
-      "contract_sha256": "f27b6fdea41bd2e44f825b853d2bef51b26f3dae70c94b553f2429b786913cd9",
+      "contract_sha256": "261edf6425449e40bcb73c60b71d10a1ea4c927259b495c4827dc8539f730cb0",
       "identities": [
         {
           "reviewed_at": [
