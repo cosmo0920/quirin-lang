@@ -1,0 +1,165 @@
+{
+  "property": "c.bounds.index-extent.v1",
+  "model_version": "qcore.bounds.model.v1",
+  "contract_version": "qcore.bounds.contract.v1",
+  "source_sha256": "52a6ddc02f145a6fc05684828b1969b4e3f6c558c4149d1627db3fd511d8faac",
+  "target": "26c59b1b7ceafad34e5276fe19c2a26f7eeabeed45f8fc3d83468fc32e3dec64",
+  "contracts_sha256": "6d5cbf8dba73ab16f497f159c4ab7ae1111fcbe56d29c63d5e14ce0fc8831a7e",
+  "functions": [
+    {
+      "function": "cio_file_st_get_meta_len",
+      "property": "c.bounds.index-extent.v1",
+      "verdict": "Safe",
+      "reasons": [],
+      "scope": "conditional on `cio_file_st_get_meta_len`'s bounds preconditions (declared): quant checks map, Idx #i: 0 <= #i && #i < 24",
+      "assumptions": [
+        "declared: `cio_file_st_get_meta_len` quant checks map, Idx #i: 0 <= #i && #i < 24"
+      ],
+      "accesses": [
+        {
+          "kind": "element-access",
+          "position": "return",
+          "subject": "map@entry[Const(22)] of Const(24) elements",
+          "line": 240,
+          "actual": "in-bounds",
+          "hypothetical": "in-bounds"
+        },
+        {
+          "kind": "element-access",
+          "position": "return",
+          "subject": "map@entry[Const(23)] of Const(24) elements",
+          "line": 240,
+          "actual": "in-bounds",
+          "hypothetical": "in-bounds"
+        }
+      ],
+      "refutes_own_contract": false
+    },
+    {
+      "function": "cio_file_st_set_meta_len",
+      "property": "c.bounds.index-extent.v1",
+      "verdict": "Safe",
+      "reasons": [],
+      "scope": "conditional on `cio_file_st_set_meta_len`'s bounds preconditions (declared): quant checks map, Idx #i: 22 <= #i && #i <= 23",
+      "assumptions": [
+        "declared: `cio_file_st_set_meta_len` quant checks map, Idx #i: 22 <= #i && #i <= 23"
+      ],
+      "accesses": [
+        {
+          "kind": "element-access",
+          "position": "statement",
+          "subject": "map@entry[Const(22)] of Const(24) elements",
+          "line": 244,
+          "actual": "in-bounds",
+          "hypothetical": "in-bounds"
+        },
+        {
+          "kind": "element-access",
+          "position": "statement",
+          "subject": "map@entry[Const(23)] of Const(24) elements",
+          "line": 245,
+          "actual": "in-bounds",
+          "hypothetical": "in-bounds"
+        }
+      ],
+      "refutes_own_contract": false
+    },
+    {
+      "function": "cio_file_st_get_hash",
+      "property": "c.bounds.index-extent.v1",
+      "verdict": "Unknown",
+      "reasons": [
+        "bounds-missing-extent: no extent established for `map`"
+      ],
+      "scope": "unconditional",
+      "assumptions": [],
+      "accesses": [
+        {
+          "kind": "formation",
+          "position": "return",
+          "subject": "no extent established for `map`",
+          "line": 236,
+          "actual": "bounds-missing-extent: no extent established for `map`",
+          "hypothetical": "bounds-missing-extent: no extent established for `map`"
+        }
+      ],
+      "refutes_own_contract": false
+    },
+    {
+      "function": "cio_file_st_get_content",
+      "property": "c.bounds.index-extent.v1",
+      "verdict": "Unknown",
+      "reasons": [
+        "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 0 <= #i && #i < 24",
+        "bounds-missing-extent: no extent established for `map`"
+      ],
+      "scope": "unconditional",
+      "assumptions": [],
+      "accesses": [
+        {
+          "kind": "call-precondition",
+          "position": "actual",
+          "subject": "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 0 <= #i && #i < 24",
+          "line": 254,
+          "actual": "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 0 <= #i && #i < 24",
+          "hypothetical": "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 0 <= #i && #i < 24"
+        },
+        {
+          "kind": "formation",
+          "position": "return",
+          "subject": "no extent established for `map`",
+          "line": 255,
+          "actual": "bounds-missing-extent: no extent established for `map`",
+          "hypothetical": "bounds-missing-extent: no extent established for `map`"
+        },
+        {
+          "kind": "formation",
+          "position": "return",
+          "subject": "no extent established for `map`",
+          "line": 255,
+          "actual": "bounds-missing-extent: no extent established for `map`",
+          "hypothetical": "bounds-missing-extent: no extent established for `map`"
+        }
+      ],
+      "refutes_own_contract": false
+    },
+    {
+      "function": "probe_full_header",
+      "property": "c.bounds.index-extent.v1",
+      "verdict": "Safe",
+      "reasons": [],
+      "scope": "unconditional",
+      "assumptions": [],
+      "accesses": [
+        {
+          "kind": "call-precondition",
+          "position": "actual",
+          "subject": "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 0 <= #i && #i < 24",
+          "line": 307,
+          "actual": "in-bounds",
+          "hypothetical": "in-bounds"
+        }
+      ],
+      "refutes_own_contract": false
+    },
+    {
+      "function": "probe_short_header",
+      "property": "c.bounds.index-extent.v1",
+      "verdict": "Unsafe",
+      "reasons": [],
+      "scope": "unconditional",
+      "assumptions": [],
+      "accesses": [
+        {
+          "kind": "call-precondition",
+          "position": "actual",
+          "subject": "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 0 <= #i && #i < 24",
+          "line": 312,
+          "actual": "violation",
+          "hypothetical": "violation"
+        }
+      ],
+      "refutes_own_contract": false
+    }
+  ]
+}

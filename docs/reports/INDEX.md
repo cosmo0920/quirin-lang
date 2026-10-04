@@ -525,6 +525,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 | Card directory | Original report title |
 |---|---|
 
+| [quant-index-checks](quant-index-checks/README.md) | QUANT-INDEX-CHECKS |
+
 | [quant-region-source](quant-region-source/README.md) | QUANT-REGION-SOURCE — the first source path to `RegionOp::QuantOpen` |
 
 | [quiet-emission-streams](quiet-emission-streams/README.md) | Quiet emission and composable streams |

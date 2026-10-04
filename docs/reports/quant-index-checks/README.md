@@ -90,7 +90,54 @@ evidence cannot be reused across the change.
 
 ## 4. Prediction against outcome
 
-MEASUREMENT-PLACEHOLDER
+Binaries: BEFORE `1e028e2f…` built at `0ebe77f86` (checked out for the build),
+AFTER `a9c41374…` built at `f04d18fc4` (the final code), each copied to
+`private/qic/bin/` and checked against every run's `run.json` `binary_sha256`.
+Scripts: [`scripts/`](scripts/) (`measure-binary.sh`, `measure-bounds.sh`,
+`identity.py`); digests and the identity table in [`artifacts/`](artifacts/).
+
+| Route | BEFORE | AFTER | Prediction |
+|---|---|---|---|
+| Corpus arbiter (custody) | 756 / 9 / 4,069, `ce57d194…` | identical, `ce57d194…` | identical: held |
+| System route | 85 / 4 / 359, `878b06d4…` | identical | identical: held |
+| Tail-pause slice | 45 / 4 Pending / 354 / 1, `0fcc81a6…` | identical | identical: held |
+| Typed-path parity (corpus / system / slice) | 669,570 / 141,186 / 50,426 rows | equal multisets | identical: held |
+| Corpus with `QCORE_BOUNDS_PROPERTY` | bounds rows `822a7633…`: 162 Safe / 0 Pending / 0 Unsafe / 4,759 Unknown | byte-identical rows and custody report | identical: held |
+
+Every compared file is identical after erasing the run's own directory name
+and the system routes' preparation durations (`artifacts/identity-routes.json`,
+20 files). No function moved on any route; there is nothing to attribute.
+
+The bounds tally on this main matches the STATUS figures measured on
+`b6a3dc42` (162 / 0 / 0 / 4,759); the combined row is now **111 Safe / 4,801
+Unknown / 9 Unsafe** (it was 111 / 4,800 / 10), following custody's own move
+from 10 to 9 provisional Unsafe since then, not this card
+(`SUP03-BOUNDS-TALLY-ON-INTEGRATED-MAIN` owns that re-measurement).
+
+**The bounds property where it can be selected today.** No audit route loads a
+bounds module, so the only route is the API. The probe
+([`probe/`](probe/), `quant_index_probe` example) analyses chunkio's header
+functions from the pinned corpus source (read only, through the include path)
+under two **test-only** declarations, review-held as written (they are not
+provider contracts and nobody reviewed them), and again with the markers
+removed:
+
+| Function | Held | Resolved |
+|---|---|---|
+| `cio_file_st_get_meta_len` (`map[22]`, `map[23]`; check `0 <= #i && #i < 24`) | Pending | Safe |
+| `cio_file_st_set_meta_len` (writes `map[22]`, `map[23]`; check `22 <= #i && #i <= 23`) | Pending | Safe |
+| `cio_file_st_get_hash` (`map + 2`, no declaration) | Unknown, missing extent | Unknown |
+| `cio_file_st_get_content` (passes its own `map`, no extent) | Unknown | Unknown, the callee's obligation unestablished |
+| `probe_full_header` (written for the card, `char header[24]`) | Pending | Safe |
+| `probe_short_header` (written for the card, `char header[16]`) | Unknown, `bounds-held-premise-violation` | Unsafe (a provisional violation of a test-only declaration in the card's own fixture, not an upstream finding) |
+
+The prediction's controls all held as predicted (the Rust tests
+`crates/qcore-c-gateway/tests/quant_index_checks.rs`, 12;
+`crates/qcore-contract/tests/bounds_quant.rs`, 11;
+`crates/qcore-core/tests/index_quant.rs`, 7). One reading was refined while
+writing them, not a prediction miss: a checked formal passed on to a callee
+without a constant check is an undecided escape, never a refutation (the
+callee need not use every index it admits).
 
 ## 5. Follow-ups
 

@@ -4987,7 +4987,16 @@ own anchor here.
     index other than the matching prefix, reinterpret `||`, or read a quant
     check in a custody consumer. Premises stated, not proved: faithful Clang
     extraction (trust boundary 28) and that a resolved check describes its
-    external body (C06's `Declared`). MEASURED-PLACEHOLDER
+    external body (C06's `Declared`). Measured (corpus `66910c10`, system, tail-pause slice, base `0ebe77f86`,
+    binaries `1e028e2f…` before and `a9c41374…` after): every route
+    **byte-identical** (corpus 756 / 9 / 4,069 `ce57d194…`, system 85 / 4 /
+    359 `878b06d4…`, slice `0fcc81a6…`, the three typed-path parity streams
+    equal multisets) and the bounds-selected corpus identical (bounds rows
+    `822a7633…`, 162 Safe / 4,759 Unknown): the audit routes carry no bounds
+    module, so no quant check reaches them. Through the API, chunkio's header
+    `cio_file_st_get_meta_len` and `cio_file_st_set_meta_len` under test-only
+    checks are Pending held and Safe resolved; a 16-byte caller written for
+    the probe is Unsafe resolved, Unknown held.
     `QCore.IndexQuant` (`mem_reading`, `reading_sound`, `reading_complete`,
     `or_reading_literal`, `over_wide_disjunction_admits_every_index`,
     `bounded_hull_sound`, `empty_admits_nothing`,

@@ -1,0 +1,10 @@
+1e028e2f62fe61fd0aea3bcaa8459e70a2ae2cb7e434a62f5c8dbe8f908686d5  private/qic/bin/before
+a9c41374a119c824a2b824c75709c7120b4b8078f77a980315578e688da3f50a  private/qic/bin/after
+ce57d194a9af2cd96a5d7a218b16824abd4cf3db2a5ac3a20dcd84369d879f50  private/qic/before/resource-diagnostics.json
+ce57d194a9af2cd96a5d7a218b16824abd4cf3db2a5ac3a20dcd84369d879f50  private/qic/after/resource-diagnostics.json
+878b06d4a988f6c2ffd40e562e6cc907629b8f25608889ff90a2b51c4be81070  private/qic/before-system/resource-diagnostics.json
+878b06d4a988f6c2ffd40e562e6cc907629b8f25608889ff90a2b51c4be81070  private/qic/after-system/resource-diagnostics.json
+0fcc81a605a680c5db6d3044d5002de9870ca2e86a64ab263419b4b185530d42  /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/qic-before/resource-diagnostics.json
+0fcc81a605a680c5db6d3044d5002de9870ca2e86a64ab263419b4b185530d42  /home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/qic-after/resource-diagnostics.json
+822a763331424a6e244aeef1cc23e0b810606b361ab62fb501a50360bd6ed955  private/qic/before-bounds.jsonl
+822a763331424a6e244aeef1cc23e0b810606b361ab62fb501a50360bd6ed955  private/qic/after-bounds.jsonl

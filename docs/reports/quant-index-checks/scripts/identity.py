@@ -44,7 +44,10 @@ def digest(data):
 
 
 def normalise(data, name, path):
-    data = data.replace(name.encode(), b"RUN")
+    # Only the run's own path components (a bare word such as "before" also
+    # occurs in ordinary log text, which must not be rewritten).
+    for prefix in (b"/", b"qic-"):
+        data = data.replace(prefix + name.encode(), prefix + b"RUN")
     if path.name in ("stderr.log", "console.log"):
         data = b"\n".join(TIMING.sub(b"T", line) if b"preparation" in line else line
                           for line in data.split(b"\n"))
