@@ -67,7 +67,7 @@ contract {
 
 This example has an observation-shaped predicate, not a resource-v1 declaration. Which identifiers are bound, what values are supplied, and whether `input_is_valid` has source evidence depend on the selected consumer. A structural parse does not supply those facts.
 
-The shared envelopes are `requires expression;`, `ensures selector expression;`, and `quant selector expression;`. Selectors are `normal`, `any`, and `error(E)` with nonempty type text. Structural retention of `any`, a typed error, or a quantitative clause does not extend the narrower observation or resource-v1 vocabularies. Those consumers reject unsupported forms.
+The shared envelopes are `requires expression;`, `ensures selector expression;`, and `quant selector expression;`. Selectors are `normal`, `any`, and `error(E)` with nonempty type text. Card QUANT-INDEX-CHECKS adds a fourth, `quant checks expression;`, which carries no selector: the structural parser retains it, and only the bounds consumer reads it ([C09.2](#c092-quantified-index-checks-quant-checks)). Structural retention of `any`, a typed error, or a quantitative clause does not extend the narrower observation or resource-v1 vocabularies. Those consumers reject unsupported forms.
 
 The source parser rejects empty clauses and unknown clause introducers. It does not implement a general theorem prover for the retained expression text. Language-level effects, `own`, `borrow`, usage annotations, access requirements and task protocols need their specified source/model elaborators; the external resource loader is not a fallback elaborator for them.
 
@@ -846,6 +846,8 @@ routes (they run with an empty bounds environment), the cross-unit refutation
 phase on the audit routes (the API takes the table), symbolic ranges beyond a
 stable parameter relation (CG20), variable-length and flexible extents (CG17),
 multi-base and derived relations (CG24), and bounds summaries of callee bodies.
+Card QUANT-INDEX-CHECKS adds the quantified index check `quant checks P, Idx
+#i: …;` to the same consumer (C09.2).
 
 **Frames and derived relations (card CG24-ALIAS-EXTENT-FRAME-VOCABULARY,
 2026-10-02; gateway rule [11e](agents/gateway.md#constraint-11e)).** Landed in
@@ -969,6 +971,116 @@ and MUST NOT advertise a bounds guarantee. Missing bounds support for a request
 that includes bounds is `Unknown`, never an omitted row or an empty successful
 scope. Diagnostic reasons, assumptions and certificates MUST preserve the
 object/extent relation and every selected access or named import failure.
+
+### C09.2. Quantified index checks: `quant checks`
+
+**Card QUANT-INDEX-CHECKS, 2026-10-04 (user request: a `quant` constraint over
+an index with `==`, `<`, `>`, `<=`, `>=`); gateway rule
+[12l](agents/gateway.md#constraint-12l); grammar
+[G05c](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05c-quantified-index-checks).** A
+bounds contract v1 declaration (C09.1) may state, for one pointer formal, which
+indices the function uses through it:
+
+```qcore
+module contract;
+extern fn cio_file_st_get_meta_len(map: ptr<mut, u8>) -> u16
+contract {
+    requires bounds_contract_v1;
+    quant checks map, Idx #i: 0 <= #i && #i < 24;
+};
+```
+
+**Meaning (user decision 1).** `#i` is bound **universally**: every index the
+function reads or writes through `map` satisfies the predicate. An index counts
+elements of the C pointee type the audited declaration states (`elements` of
+C09.1); `#i` ranges over the mathematical integers, and a C index value enters
+through the source consumer's value reading, which applies C's conversions
+under the recorded target; each judged access records its index expression's C
+type. The predicate is comparisons `==`, `<`, `>`, `<=`, `>=` between the bound
+variable, standing alone on one side, and a **bound term** (a canonical decimal
+literal, a scalar formal's entry value, `+`/`-` of those, at most one formal and
+added once), joined by `&&` (binding tighter) and `||`, grouped by parentheses.
+A range is written with `&&`. `||` is admitted and read **literally**: the user's
+spelling `#i < u || l < #i` admits every index when `l < u` and is rejected as
+unbounded; it is never reinterpreted as `&&`. One bound variable per clause and
+one clause per formal.
+
+**The admitted set.** The predicate's interval reading (disjunctive normal form)
+is exact over the integers (Lean `QCore.IndexQuant.mem_reading`). A set that is
+**unbounded** (some range lacks a lower or an upper bound, decided from the form
+alone) or, for a constant predicate, **empty** rejects the module; a symbolic set
+found empty under a call's actuals decides nothing at that call. The facts carry
+two forms: a bounded constant union, and the symbolic prefix `[0, f)` (`0 <= #i
+&& #i < f`, the reading of `bounds_extent(P, f, elements)`); any other form with
+a formal is accepted by the loader and yields **no fact** (a named Unknown
+reason), never Safe.
+
+**Checking uses.**
+
+* **Body side.** The formal enters with the extent its callers must cover (from
+  the least admitted index, or from `P` when that is not negative, to the
+  greatest), and every element access, dereference and `->` through it,
+  directly or through a copy or `P + k`, is first decided against the admitted
+  set: **inside** (every value of the index admitted), then the ordinary extent
+  decision follows; **outside** (no value admitted), the body **refutes** its
+  declaration, which is withdrawn from the unit's callers (C06.4, rule 11s(7)),
+  and the access is Unknown; otherwise the access is Unknown. An access is never
+  in bounds on an undecided index. The seeded extent is a lower bound (the check
+  says which indices are used, not how large the object is), so a decision *out
+  of bounds* against it, a formation beyond it for instance, is undecided and
+  never a violation.
+* **Call side.** Each caller must establish that the actual's extent covers
+  every admitted index under the actuals' values; the object being contiguous,
+  that is the element accesses at the least and greatest admitted index. A
+  violation is a call-precondition violation under rule 11s's reachability
+  (`Unsafe` only when definitely reached under in-force premises; held premises
+  accuse nothing); an unestablished extent, an unevaluated formal, an empty set
+  or an unread form is Unknown.
+* **Escape.** A checked formal passed to a callee is an access the body cannot
+  see: it is decided inside only when the callee's own constant quant check on
+  that position, shifted by the actual's constant offset, lies inside the
+  caller's set; otherwise the pass is Unknown (never a refutation, since the
+  callee need not use every index it admits).
+
+Review, digests and verdicts are C09.1's: a contract-level
+`bounds_review_pending(…)` holds the check (`Pending` when it is the sole
+obstacle), the clause text is part of the declaration digest, a resolved check is
+a `Declared` assumption, and an independently validated violation elsewhere
+still joins as `Unsafe`.
+
+**Placement (user decision 2) and the rejected alternatives.** The user
+suggested a collocated check instead of an `ensures`-like syntax. The clause
+`quant checks P, Idx #i: …;` was chosen: (1) it is collocated with what it
+constrains, naming the formal as its subject, one clause per formal like
+`bounds_extent(P, …)`; (2) it is a check of the body and an obligation of the
+callers, so it has its own introducer and **no exit selector**, and the
+selector-based `quant normal …` envelope of C03 keeps its structural,
+`ensures`-shaped meaning; (3) every consumer already enumerates contract
+clauses, so the resource-v1 loader refuses it and the structural parser retains
+it (the spelling `quant checks` was a parse error before this card), and no
+consumer can drop it silently. Rejected:
+
+* a **parameter-collocated** `map: ptr<mut, u8> [| quant Idx #i: … |]`: the
+  predicate would sit inside the parameter's type text, which every
+  declaration reader reconstructs (resource v1's signature comparison,
+  inclusion digests, the source checker), and its `<`/`<=` would break the
+  angle-bracket depth by which the parameter list is split at commas; the
+  `[| quant #c_ffi |]` precedent (C04.12) is a declaration-level marker kept out
+  of the declaration's tokens, which a per-parameter predicate cannot be, and
+  in type position the predicate would read as a refinement type, which it is
+  not;
+* **overloading `quant normal …`** with check meaning (an exit-selector,
+  postcondition-shaped envelope);
+* a **predicate call** such as `requires bounds_index_where(P, …)`: G05b's
+  predicate calls are identifier/comma forms, and comparisons and connectives
+  inside an argument would hide a second expression grammar.
+
+`Idx #i` is the clause's binder only: it is not the language's `Idx + Ordered`
+capability (§L06) and does not touch `index.closed`. Not landed (named
+residuals): transport, pins and audit selection of bounds modules
+(`CG16-BOUNDS-CONTRACT-TRANSPORT`, so the audit routes still run with an empty
+bounds environment) and symbolic forms beyond `[0, f)`
+(`CG16-BOUNDS-SYMBOLIC-RANGES`).
 
 ## C10. Cleanup and OS endpoint contracts
 

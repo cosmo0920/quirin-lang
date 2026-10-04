@@ -3716,12 +3716,59 @@ and `DIGITS` is canonical (no sign, suffix, base or leading zero);
 parameter, object, return and `bounds_preserves_extents`; one contract-level
 marker, or clause-level markers, never both, never a marker around a marker
 or around the selector; only `requires` and `ensures normal`. No inclusion or
-inheritance (G05a) exists for this vocabulary. The meanings are C09.1's;
+inheritance (G05a) exists for this vocabulary. Card QUANT-INDEX-CHECKS adds the
+quantified index check [G05c](#g05c-quantified-index-checks). The meanings are C09.1's;
 `elements` counts the C pointee type the audited declaration states.
 `resource_*` and `bounds_*` predicates are disjoint, so each loader rejects the
 other's modules. The reserved words were absent from every tracked contract
 module when they were introduced (the census test
 `the_reserved_spellings_are_unused_by_tracked_contracts`).
+
+## G05c. Quantified index checks
+
+Card QUANT-INDEX-CHECKS, contract specification
+[C09.2](QCORE_CONTRACT_SPEC_r0_3.md#c092-quantified-index-checks-quant-checks),
+gateway rule [12l](agents/gateway.md#constraint-12l). One more `bounds_clause`
+of G05b, read by `crates/qcore-contract/src/bounds_quant.rs` (decisions:
+`qcore_core::index_quant`):
+
+```ebnf
+bounds_clause = … | quant_check ;
+quant_check   = "quant", "checks", IDENT, ",", "Idx", "#", IDENT, ":", q_or, ";" ;
+q_or          = q_and, {"||", q_and} ;
+q_and         = q_primary, {"&&", q_primary} ;
+q_primary     = "(", q_or, ")" | q_side, q_relation, q_side ;
+q_side        = "#", IDENT | q_term ;
+q_term        = ["-"], q_operand, {("+" | "-"), q_operand} ;
+q_operand     = DIGITS | IDENT ;
+q_relation    = "==" | "<" | ">" | "<=" | ">=" ;
+```
+
+The structural parser (G01) reads `quant checks` as its own clause kind
+(`SourceContractClauseKind::QuantCheck`, no exit selector) and retains the text
+after it; before this card the spelling was a parse error, so no previously
+accepted text changes meaning. Static conditions, each rejecting the whole
+module with a named diagnostic: the subject `IDENT` is a pointer parameter
+(`ptr<mut, u8>` or `ptr<const, u8>`; not a scalar, a slot or another name,
+`quant-check-subject`); the binder is exactly `Idx #VAR`
+(`quant-check-binder`, `quant-check-shape`); every `#` names `VAR`, which stands
+alone on exactly one side of every comparison (`quant-check-variable`); a
+comparison is not chained (`quant-check-chained`); `!=`, `!`, `*` and every other
+operator are refused (`quant-check-operator`); a `q_operand` is a canonical
+`DIGITS` (no sign, suffix, base or leading zero) or a scalar parameter of the
+declaration, never an enumeration constant, macro or global, and a term names
+at most one parameter with coefficient one and takes no parentheses
+(`quant-check-term`); an end that overflows the integer model is refused
+(`quant-check-overflow`); at most 512 predicate tokens, 64 nested groups and 64
+ranges in the disjunctive normal form (`quant-check-size`); every range bounds
+the variable from below and from above (`quant-check-unbounded`); a constant
+predicate admits some index (`quant-check-empty`); at most one quant check per
+formal (`duplicate bounds clause for quant P`) and none on a formal that also
+states `bounds_extent` (`quant-check-with-extent`). An unbalanced group is
+refused by the structural parser before the reader. The clause is part of the
+declaration digest. Review markers are contract-level only (a clause-level
+`bounds_review_pending(…)` wraps a predicate call, which this clause is not).
+`resource_*` consumers reject the clause kind.
 
 ## G06. Observation predicate grammar
 

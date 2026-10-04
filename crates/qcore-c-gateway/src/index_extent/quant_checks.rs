@@ -435,6 +435,10 @@ impl Analysis<'_> {
         state: &State,
         reach: bool,
     ) -> bool {
+        // No checked formal in this function: nothing can escape.
+        if self.quant.is_empty() {
+            return true;
+        }
         let mut clear = true;
         for (position, argument) in arguments.iter().enumerate() {
             let Target::Known { object, offset, .. } = self.target(argument, state) else {

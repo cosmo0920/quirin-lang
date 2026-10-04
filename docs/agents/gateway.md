@@ -3887,7 +3887,9 @@ own anchor here.
     uncontracted callee (the API takes a cross-unit table). Recorded evidence
     is admitted only when a re-derivation from the same source, target
     (Clang's `__SIZEOF_*__`, `__CHAR_UNSIGNED__`, `__PTRDIFF_MAX__`) and
-    bounds contracts has the same identity, accesses and verdict. **Do not**
+    bounds contracts has the same identity, accesses and verdict. Amended by
+    [rule 12l](#constraint-12l): a body whose access through a quant-checked
+    formal is decided outside its check refutes it the same way. **Do not**
     let a custody result, a custody profile's no-undefined-behaviour premise
     or a loaded declaration discharge a bounds obligation, let a declaration
     enlarge or replace a source extent, publish `Unsafe` for a violation not
@@ -4935,3 +4937,65 @@ own anchor here.
     `an_unrecognised_actual_keeps_the_gate_refusal` and nine more), bound by
     `tests/indirect_access_sole_residuals.rs`;
     [report](../reports/cg10-indirect-access-sole-residuals/README.md).
+
+<a id="constraint-12l"></a>
+
+12l. **A quantified index check `quant checks P, Idx #i: PRED;` is a check of
+    the body and an obligation of every caller, never a postcondition: an
+    access through `P` is in bounds only when its index is decided inside the
+    admitted set, an access decided outside refutes the declaration, and the
+    check never accuses.** Card QUANT-INDEX-CHECKS extends rule 11s's
+    vocabulary (contract specification
+    [C09.2](../QCORE_CONTRACT_SPEC_r0_3.md#c092-quantified-index-checks-quant-checks),
+    grammar G05c; `qcore_core::index_quant`, the reader
+    `qcore_contract::bounds_quant`, the gateway module
+    `index_extent/quant_checks.rs` with thin hooks in `index_extent.rs`;
+    shared items added: `SourceContractClauseKind::QuantCheck` in the
+    structural parser and `BoundsClause::QuantCheck`; no custody code, no hook
+    in `legacy_c.rs` or `typed_source.rs`, and resource v1 rejects the clause).
+    (1) **Reading.** `#i` is universal over the indices used through the
+    pointer formal `P`, in elements of its C pointee type, over the
+    mathematical integers; comparisons `==`, `<`, `>`, `<=`, `>=` against a
+    bound term (literal, scalar formal, `+`/`-`, one formal added once), `&&`,
+    `||` read literally, parentheses; the interval reading is exact. An
+    unbounded set, or an empty constant one, rejects the module; the facts
+    carry a bounded constant union or the prefix `[0, f)`, and any other
+    symbolic form is `bounds-quant-check-no-fact`. (2) **Body.** `P` enters
+    with the extent its callers must cover (object `P@entry`, offset
+    `-min(lo, 0)`, count to the greatest admitted index), registered as a
+    quant object; an element access, dereference or `->` through it (directly,
+    through a copy or `P + k`) is decided against the set first: inside, the
+    extent decision follows; outside (while live), the row keeps
+    `bounds-contract-refuted-by-body` and the unit's callers see an
+    uncontracted callee (rule 11s(7)'s two phases), the access recording
+    `bounds-quant-check-refuted`; undecided, `bounds-quant-check-undecided`.
+    A decision out of bounds against a quant object's seeded extent (a
+    formation beyond it, a callee requiring more) is
+    `bounds-range-not-contained`, never a violation: the check bounds the
+    extent from below only. (3) **Callers.** The obligation is the element
+    accesses at the least and greatest admitted index under the actuals'
+    values (`both_in_bounds`), or rule 11s's symbol cover for `[0, f)`; a
+    violation is `Unsafe` only under rule 11s(6)'s reachability and in-force
+    premises, an empty set under the actuals is
+    `bounds-inconsistent-premises`, and a callee's return facts are used only
+    when this obligation is established. (4) **Escape.** A quant object passed
+    to a contracted callee is decided inside only when the callee's constant
+    check on that position, shifted by the constant offset, lies inside the
+    set; otherwise `bounds-quant-check-escapes` (never a refutation). **Do
+    not** let a quant check enlarge a source extent, publish a violation of
+    the check itself, decide an access inside on an undecided or symbolic
+    index other than the matching prefix, reinterpret `||`, or read a quant
+    check in a custody consumer. Premises stated, not proved: faithful Clang
+    extraction (trust boundary 28) and that a resolved check describes its
+    external body (C06's `Declared`). MEASURED-PLACEHOLDER
+    `QCore.IndexQuant` (`mem_reading`, `reading_sound`, `reading_complete`,
+    `or_reading_literal`, `over_wide_disjunction_admits_every_index`,
+    `bounded_hull_sound`, `empty_admits_nothing`,
+    `unbounded_admits_beyond_every_bound`, `inside_sound`, `outside_sound`,
+    `an_unknown_index_is_never_inside`, `quant_refusal_never_safe`,
+    `quant_refusal_never_accuses`, `covering_the_ends_covers_the_hull`,
+    `shifted_within_sound` and 21 more), bound to `qcore_core::index_quant` by
+    `admittedVectors`, `decideVectors` and `shiftVectors`
+    (`crates/qcore-core/tests/index_quant.rs`) and to route G by
+    `tests/quant_index_checks.rs`;
+    [report](../reports/quant-index-checks/README.md).
