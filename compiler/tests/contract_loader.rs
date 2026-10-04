@@ -428,6 +428,31 @@ fn production_contracts_preserve_the_previous_resource_modes() {
         ("rd_hdr_histogram_record", 2),
         ("rd_atomic64_add", 2),
         ("rd_atomic64_get", 1),
+        // Card W45-CALLEE-CASCADE-RESIDUAL: nineteen neutral-element
+        // declarations read off their bodies at both audited revisions
+        // (`librdkafka/lz4_stream.qv`, `librdkafka/kafka_mem.qv`,
+        // `ctraces/context_lifetime.qv`, `cfl/sds_lifetime.qv`,
+        // `chunkio/chunk_residency.qv`); its two owned-result declarations
+        // are listed after this loop.
+        ("LZ4_compress_HC", 5),
+        ("LZ4_decompress_unsafe_generic", 6),
+        ("LZ4_compress_default", 4),
+        ("load_descriptor_values", 1),
+        ("rd_kafka_aborted_txns_next_offset", 4),
+        ("rd_kafka_anyconf_desensitize", 2),
+        ("rd_kafka_dump0", 3),
+        ("ctr_mpack_consume_uint_tag", 2),
+        ("ctr_mpack_consume_int_tag", 2),
+        ("ctr_attributes_set_string", 3),
+        ("ctr_attributes_set_bool", 3),
+        ("ctr_attributes_set_int64", 3),
+        ("ctr_attributes_set_double", 3),
+        ("cfl_kvlist_count", 1),
+        ("cfl_kvlist_insert_string", 3),
+        ("cfl_kvlist_insert_bool", 3),
+        ("cfl_kvlist_insert_int64", 3),
+        ("cfl_kvlist_insert_double", 3),
+        ("_cio_file_up", 2),
         ("ctr_span_set_dropped_attributes_count", 2),
         // W46-METRIC-AGGREGATE-CONTRACTS: scalar reads of histogram and
         // summary values. The indexed getters borrow their index too.
@@ -813,6 +838,20 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     old.insert_contract(
         "mk_string_dup",
         ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
+    );
+    // W45-CALLEE-CASCADE-RESIDUAL: `cJSON_New_Item` borrows its hook table and
+    // `rd_kafka_metadata_copy_internal` its source and scalars; each returns
+    // a fresh owned, nullable allocation.
+    old.insert_contract(
+        "cJSON_New_Item",
+        ResourceFunctionContract::new([P::Borrowed], R::Owned { nullable: true }),
+    );
+    old.insert_contract(
+        "rd_kafka_metadata_copy_internal",
+        ResourceFunctionContract::new(
+            [P::Borrowed, P::Borrowed, P::Borrowed],
+            R::Owned { nullable: true },
+        ),
     );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
@@ -1561,13 +1600,20 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `cmt_atomic` operations appended to `cmetrics/metric_values.qv` and four
     // scalar helpers to `librdkafka/memory.qv`, both already selected, each
     // the neutral element and pinned. Selection and rejected unchanged.
+    // 272 -> 293 by card W45-CALLEE-CASCADE-RESIDUAL: twenty-one pinned
+    // declarations appended to five already-selected modules
+    // (`librdkafka/cjson.qv` 1, `librdkafka/lz4_stream.qv` 3,
+    // `librdkafka/kafka_mem.qv` 5, `ctraces/context_lifetime.qv` 6,
+    // `cfl/sds_lifetime.qv` 5, `chunkio/chunk_residency.qv` 1); nineteen are
+    // the neutral element, two return an owned allocation. Selection and
+    // rejected unchanged.
     // 216 -> 218 rejected by card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the two
     // bounds declarations of `chunkio/meta_len_bounds.qv`
     // (`cio_file_st_get_meta_len`, `cio_file_st_set_meta_len`) belong to the
     // bounds consumer and are deliberately rejected by resource-v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (60, 272, 218)
+        (60, 293, 218)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

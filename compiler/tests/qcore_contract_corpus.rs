@@ -22,6 +22,14 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // (`lib/cfl/src/cfl_arena.c:354-371`): marker, borrowed arena, count and
     // size, and a nullable result interior to the arena.
     ("cfl/sds_lifetime.qv", "cfl_arena_calloc", 5),
+    // Card W45-CALLEE-CASCADE-RESIDUAL: the kvlist count and the four copying
+    // inserts (`lib/cfl/src/cfl_kvlist.c:561-705`): marker, borrowed formals,
+    // `none`.
+    ("cfl/sds_lifetime.qv", "cfl_kvlist_count", 3),
+    ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_string", 5),
+    ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_bool", 5),
+    ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_int64", 5),
+    ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_double", 5),
     // Card W37-CORPUS-CONTRACTS-4: the CFL wall-clock reading, sole blocker
     // of `ctr_span_end`. Zero parameters and a scalar `uint64_t` result, so
     // the contract is `requires` + `return_none` and nothing else — the
@@ -43,6 +51,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("chunkio/chunk_residency.qv", "cio_chunk_is_up", 3),
     ("chunkio/chunk_residency.qv", "cio_chunk_up_force", 3),
     ("chunkio/chunk_residency.qv", "cio_chunk_down", 3),
+    // Card W45-CALLEE-CASCADE-RESIDUAL: `cio_chunk_up_force`'s body
+    // (`lib/chunkio/src/cio_file.c:816-883`): marker, borrowed chunk and flag,
+    // `none`.
+    ("chunkio/chunk_residency.qv", "_cio_file_up", 4),
     // Card W31-CORPUS-CONTRACTS-2: the corpus moves 74 -> 76 modules with this
     // file and `fluent_bit/input_chunk_total_size.qv`, and the resource-v1
     // declaration count 41 -> 43. Deliberate; see
@@ -340,6 +352,15 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "ctr_span_set_dropped_attributes_count",
         4,
     ),
+    // Card W45-CALLEE-CASCADE-RESIDUAL: two msgpack tag readers and four
+    // copying attribute setters (`ctr_mpack_utils.c`, `ctr_attributes.c:54-76`):
+    // marker, borrowed formals, `none`.
+    ("ctraces/context_lifetime.qv", "ctr_mpack_consume_uint_tag", 4),
+    ("ctraces/context_lifetime.qv", "ctr_mpack_consume_int_tag", 4),
+    ("ctraces/context_lifetime.qv", "ctr_attributes_set_string", 5),
+    ("ctraces/context_lifetime.qv", "ctr_attributes_set_bool", 5),
+    ("ctraces/context_lifetime.qv", "ctr_attributes_set_int64", 5),
+    ("ctraces/context_lifetime.qv", "ctr_attributes_set_double", 5),
     (
         "fluent_bit/busy_state.qv",
         "flb_input_chunk_release_lock",
@@ -921,11 +942,30 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // condition `while (item != NULL)` precedes every dereference, and the
     // three call sites do reach the null path.
     ("librdkafka/cjson.qv", "cJSON_Delete", 3),
+    // Card W45-CALLEE-CASCADE-RESIDUAL: the node constructor (`:241-250`):
+    // marker, borrowed hook table, an owned nullable result.
+    ("librdkafka/cjson.qv", "cJSON_New_Item", 3),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read
     // nowhere, `ptr` is forwarded to the already-declared `rd_free`.
     ("librdkafka/kafka_mem.qv", "rd_kafka_mem_free", 4),
+    // Card W45-CALLEE-CASCADE-RESIDUAL: five librdkafka-internal helpers,
+    // marker and borrowed formals; four `none`, the metadata copy an owned
+    // nullable result.
+    ("librdkafka/kafka_mem.qv", "load_descriptor_values", 3),
+    (
+        "librdkafka/kafka_mem.qv",
+        "rd_kafka_aborted_txns_next_offset",
+        6,
+    ),
+    ("librdkafka/kafka_mem.qv", "rd_kafka_anyconf_desensitize", 4),
+    ("librdkafka/kafka_mem.qv", "rd_kafka_dump0", 5),
+    (
+        "librdkafka/kafka_mem.qv",
+        "rd_kafka_metadata_copy_internal",
+        5,
+    ),
     // Card W37-CORPUS-CONTRACTS-4: the deprecated in-place LZ4 stream reset,
     // sole blocker of `LZ4_resetStreamState`. ZEROING IS NOT RELEASING — the
     // body is one `MEM_INIT` (memset) through the parameter, and the freeing
@@ -933,6 +973,16 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // `kafka_mem.qcore` above. Read from
     // `lib/librdkafka-2.15.0/src/lz4.c:1524-1528`.
     ("librdkafka/lz4_stream.qv", "LZ4_resetStream", 3),
+    // Card W45-CALLEE-CASCADE-RESIDUAL: three one-shot buffer functions
+    // (`lz4hc.c:958-973`, `lz4.c:1799-1896`, `lz4.c:1440-1443`): marker,
+    // borrowed formals, `none`.
+    ("librdkafka/lz4_stream.qv", "LZ4_compress_HC", 7),
+    (
+        "librdkafka/lz4_stream.qv",
+        "LZ4_decompress_unsafe_generic",
+        8,
+    ),
+    ("librdkafka/lz4_stream.qv", "LZ4_compress_default", 6),
     ("librdkafka/memory.qv", "rd_malloc", 3),
     ("librdkafka/memory.qv", "rd_calloc", 4),
     ("librdkafka/memory.qv", "rd_strdup", 3),

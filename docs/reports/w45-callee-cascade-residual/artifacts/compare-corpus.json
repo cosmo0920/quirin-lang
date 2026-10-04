@@ -1,0 +1,2660 @@
+{
+ "statuses_before": {
+  "Unknown": 4069,
+  "Safe": 756,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 4022,
+  "Safe": 803,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Unknown -> Safe": 47
+ },
+ "status_moves_by_label": {
+  "callee:cJSON_New_Item": 7,
+  "callee:LZ4_decompress_unsafe_generic": 4,
+  "callee:load_descriptor_values": 3,
+  "callee:_cio_file_up": 2,
+  "callee:cfl_kvlist_count": 2,
+  "callee:ctr_mpack_consume_int_tag": 2,
+  "callee:ctr_mpack_consume_uint_tag": 2,
+  "callee:ctr_attributes_set_bool": 2,
+  "callee:ctr_attributes_set_double": 2,
+  "callee:ctr_attributes_set_int64": 2,
+  "callee:ctr_attributes_set_string": 2,
+  "callee:LZ4_compress_default": 2,
+  "callee:LZ4_compress_HC": 2,
+  "callee:rd_kafka_dump0": 2,
+  "callee:rd_kafka_anyconf_desensitize": 2,
+  "callee:rd_kafka_metadata_copy_internal": 2,
+  "callee:rd_kafka_aborted_txns_next_offset": 2,
+  "callee:cfl_kvlist_insert_bool": 1,
+  "callee:cfl_kvlist_insert_double": 1,
+  "callee:cfl_kvlist_insert_int64": 1,
+  "callee:cfl_kvlist_insert_string": 1,
+  "callee-summary:LZ4_decompress_fast": 1
+ },
+ "removed": {
+  "call to uncontracted function `_`": 133,
+  "unresolved resource identity `_`": 29,
+  "unmodeled call, aggregate or indirect access in branch condition": 4
+ },
+ "added": {
+  "unresolved resource identity `_`": 18,
+  "nullable resource `_` used by a non-null contract": 18,
+  "indirect memory access is outside the resource projection": 4,
+  "loop re-acquisition: an earlier generation that may be live is still held": 3,
+  "nested call `_` inside a modeled call is outside the resource projection": 2
+ },
+ "moving_rows": 97,
+ "status_moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateArray",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3298: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateBool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3210: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateFalse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3201: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateNull",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3183: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateNumber",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3219: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3307: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateTrue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3192: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_up",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:_cio_file_up"
+   ],
+   "lost": [
+    "3389: call to uncontracted function `_cio_file_up`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_up_force",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:_cio_file_up"
+   ],
+   "lost": [
+    "3393: call to uncontracted function `_cio_file_up`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_count",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_count"
+   ],
+   "lost": [
+    "6785: call to uncontracted function `cfl_kvlist_count`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_bool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_bool"
+   ],
+   "lost": [
+    "6796: call to uncontracted function `cfl_kvlist_insert_bool`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_double",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_double"
+   ],
+   "lost": [
+    "6804: call to uncontracted function `cfl_kvlist_insert_double`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_int64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_int64"
+   ],
+   "lost": [
+    "6800: call to uncontracted function `cfl_kvlist_insert_int64`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_string"
+   ],
+   "lost": [
+    "6789: call to uncontracted function `cfl_kvlist_insert_string`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "get_attributes_count",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_count"
+   ],
+   "lost": [
+    "8908: call to uncontracted function `cfl_kvlist_count`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_mpack_utils.c",
+   "occurrence": 1,
+   "function": "ctr_mpack_consume_int32_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_mpack_consume_int_tag"
+   ],
+   "lost": [
+    "2099: call to uncontracted function `ctr_mpack_consume_int_tag`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_mpack_utils.c",
+   "occurrence": 1,
+   "function": "ctr_mpack_consume_int64_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_mpack_consume_int_tag"
+   ],
+   "lost": [
+    "2107: call to uncontracted function `ctr_mpack_consume_int_tag`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_mpack_utils.c",
+   "occurrence": 1,
+   "function": "ctr_mpack_consume_uint32_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_mpack_consume_uint_tag"
+   ],
+   "lost": [
+    "2061: call to uncontracted function `ctr_mpack_consume_uint_tag`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_mpack_utils.c",
+   "occurrence": 1,
+   "function": "ctr_mpack_consume_uint64_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_mpack_consume_uint_tag"
+   ],
+   "lost": [
+    "2069: call to uncontracted function `ctr_mpack_consume_uint_tag`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_bool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_bool"
+   ],
+   "lost": [
+    "7077: call to uncontracted function `ctr_attributes_set_bool`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_double",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_double"
+   ],
+   "lost": [
+    "7085: call to uncontracted function `ctr_attributes_set_double`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_int64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_int64"
+   ],
+   "lost": [
+    "7081: call to uncontracted function `ctr_attributes_set_int64`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_string"
+   ],
+   "lost": [
+    "7073: call to uncontracted function `ctr_attributes_set_string`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_bool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_bool"
+   ],
+   "lost": [
+    "6900: call to uncontracted function `ctr_attributes_set_bool`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_double",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_double"
+   ],
+   "lost": [
+    "6908: call to uncontracted function `ctr_attributes_set_double`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_int64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_int64"
+   ],
+   "lost": [
+    "6904: call to uncontracted function `ctr_attributes_set_int64`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_string"
+   ],
+   "lost": [
+    "6896: call to uncontracted function `ctr_attributes_set_string`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_compress_default"
+   ],
+   "lost": [
+    "1853: call to uncontracted function `LZ4_compress_default`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_limitedOutput",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_compress_default"
+   ],
+   "lost": [
+    "1849: call to uncontracted function `LZ4_compress_default`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_fast",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_unsafe_generic"
+   ],
+   "lost": [
+    "1638: call to uncontracted function `LZ4_decompress_unsafe_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_fast_extDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_unsafe_generic"
+   ],
+   "lost": [
+    "1696: call to uncontracted function `LZ4_decompress_unsafe_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_fast_usingDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_unsafe_generic"
+   ],
+   "lost": [
+    "1841: call to uncontracted function `LZ4_decompress_unsafe_generic`",
+    "1845: call to uncontracted function `LZ4_decompress_fast_extDict`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_fast_withPrefix64k",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_unsafe_generic"
+   ],
+   "lost": [
+    "1657: call to uncontracted function `LZ4_decompress_unsafe_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_uncompress",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:LZ4_decompress_fast"
+   ],
+   "lost": [
+    "1873: call to uncontracted function `LZ4_decompress_fast`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC2_limitedOutput",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC"
+   ],
+   "lost": [
+    "1432: call to uncontracted function `LZ4_compress_HC`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC_limitedOutput",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC"
+   ],
+   "lost": [
+    "1430: call to uncontracted function `LZ4_compress_HC`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_common.c",
+   "occurrence": 1,
+   "function": "pb_field_iter_find",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:load_descriptor_values"
+   ],
+   "lost": [
+    "485: unresolved resource identity `iter`",
+    "488: call to uncontracted function `load_descriptor_values`",
+    "496: call to uncontracted function `load_descriptor_values`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_common.c",
+   "occurrence": 1,
+   "function": "pb_field_iter_find_extension",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:load_descriptor_values"
+   ],
+   "lost": [
+    "516: call to uncontracted function `load_descriptor_values`",
+    "519: call to uncontracted function `load_descriptor_values`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_common.c",
+   "occurrence": 1,
+   "function": "pb_field_iter_next",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:load_descriptor_values"
+   ],
+   "lost": [
+    "461: call to uncontracted function `load_descriptor_values`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_crash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_dump0"
+   ],
+   "lost": [
+    "24752: call to uncontracted function `rd_kafka_dump0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_dump0"
+   ],
+   "lost": [
+    "24571: call to uncontracted function `rd_kafka_dump0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_desensitize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_anyconf_desensitize"
+   ],
+   "lost": [
+    "24762: call to uncontracted function `rd_kafka_anyconf_desensitize`",
+    "24763: call to uncontracted function `rd_kafka_anyconf_desensitize`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_conf_desensitize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_anyconf_desensitize"
+   ],
+   "lost": [
+    "24766: call to uncontracted function `rd_kafka_anyconf_desensitize`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_metadata_copy_internal"
+   ],
+   "lost": [
+    "20352: call to uncontracted function `rd_kafka_metadata_copy_internal`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_copy_add_racks",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_metadata_copy_internal"
+   ],
+   "lost": [
+    "20357: call to uncontracted function `rd_kafka_metadata_copy_internal`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "rd_kafka_aborted_txns_get_offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_aborted_txns_next_offset"
+   ],
+   "lost": [
+    "20559: call to uncontracted function `rd_kafka_aborted_txns_next_offset`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "rd_kafka_aborted_txns_pop_offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_aborted_txns_next_offset"
+   ],
+   "lost": [
+    "20553: call to uncontracted function `rd_kafka_aborted_txns_next_offset`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_AddArrayToObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateArray"
+   ],
+   "lost": [
+    "3015: call to uncontracted function `cJSON_CreateArray`",
+    "3020: unresolved resource identity `array`"
+   ],
+   "gained": [
+    "3018: nullable resource `array` used by a non-null contract",
+    "3018: unresolved resource identity `array`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_AddBoolToObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateBool"
+   ],
+   "lost": [
+    "2965: call to uncontracted function `cJSON_CreateBool`",
+    "2970: unresolved resource identity `bool_item`"
+   ],
+   "gained": [
+    "2968: nullable resource `bool_item` used by a non-null contract",
+    "2968: unresolved resource identity `bool_item`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_AddFalseToObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateFalse"
+   ],
+   "lost": [
+    "2955: call to uncontracted function `cJSON_CreateFalse`",
+    "2960: unresolved resource identity `false_item`"
+   ],
+   "gained": [
+    "2958: nullable resource `false_item` used by a non-null contract",
+    "2958: unresolved resource identity `false_item`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_AddNullToObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateNull"
+   ],
+   "lost": [
+    "2935: call to uncontracted function `cJSON_CreateNull`",
+    "2940: unresolved resource identity `null`"
+   ],
+   "gained": [
+    "2938: nullable resource `null` used by a non-null contract",
+    "2938: unresolved resource identity `null`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_AddNumberToObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateNumber"
+   ],
+   "lost": [
+    "2975: call to uncontracted function `cJSON_CreateNumber`",
+    "2980: unresolved resource identity `number_item`"
+   ],
+   "gained": [
+    "2978: nullable resource `number_item` used by a non-null contract",
+    "2978: unresolved resource identity `number_item`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_AddObjectToObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateObject"
+   ],
+   "lost": [
+    "3005: call to uncontracted function `cJSON_CreateObject`",
+    "3010: unresolved resource identity `object_item`"
+   ],
+   "gained": [
+    "3008: nullable resource `object_item` used by a non-null contract",
+    "3008: unresolved resource identity `object_item`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_AddTrueToObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateTrue"
+   ],
+   "lost": [
+    "2945: call to uncontracted function `cJSON_CreateTrue`",
+    "2950: unresolved resource identity `true_item`"
+   ],
+   "gained": [
+    "2948: nullable resource `true_item` used by a non-null contract",
+    "2948: unresolved resource identity `true_item`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateArray",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3298: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateArrayReference",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3274: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": [
+    "3277: indirect memory access is outside the resource projection",
+    "3279: nullable resource `item` used by a non-null contract",
+    "3279: unresolved resource identity `item`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateBool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3210: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateDoubleArray",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateArray",
+    "callee-summary:cJSON_CreateNumber"
+   ],
+   "lost": [
+    "3392: call to uncontracted function `cJSON_CreateArray`",
+    "3395: call to uncontracted function `cJSON_CreateNumber`",
+    "3396: unresolved resource identity `n`",
+    "3401: unresolved resource identity `i`"
+   ],
+   "gained": [
+    "3395: loop re-acquisition: an earlier generation that may be live is still held",
+    "3414: nullable resource `a` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateFalse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3201: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateFloatArray",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateArray",
+    "callee-summary:cJSON_CreateNumber"
+   ],
+   "lost": [
+    "3358: call to uncontracted function `cJSON_CreateArray`",
+    "3361: call to uncontracted function `cJSON_CreateNumber`",
+    "3362: unresolved resource identity `n`",
+    "3367: unresolved resource identity `i`"
+   ],
+   "gained": [
+    "3361: loop re-acquisition: an earlier generation that may be live is still held",
+    "3380: nullable resource `a` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateIntArray",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateArray",
+    "callee-summary:cJSON_CreateNumber"
+   ],
+   "lost": [
+    "3324: call to uncontracted function `cJSON_CreateArray`",
+    "3327: call to uncontracted function `cJSON_CreateNumber`",
+    "3328: unresolved resource identity `n`",
+    "3333: unresolved resource identity `i`"
+   ],
+   "gained": [
+    "3327: loop re-acquisition: an earlier generation that may be live is still held",
+    "3346: nullable resource `a` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateNull",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3183: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateNumber",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3219: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3307: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateObjectReference",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3266: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": [
+    "3269: indirect memory access is outside the resource projection",
+    "3271: nullable resource `item` used by a non-null contract",
+    "3271: unresolved resource identity `item`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateRaw",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3283: call to uncontracted function `cJSON_New_Item`",
+    "3288: unresolved resource identity `item`",
+    "3290: unresolved resource identity `item`"
+   ],
+   "gained": [
+    "3294: nullable resource `item` used by a non-null contract",
+    "3294: unresolved resource identity `item`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateString",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3241: call to uncontracted function `cJSON_New_Item`",
+    "3246: unresolved resource identity `item`",
+    "3248: unresolved resource identity `item`"
+   ],
+   "gained": [
+    "3252: nullable resource `item` used by a non-null contract",
+    "3252: unresolved resource identity `item`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateStringArray",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cJSON_CreateArray"
+   ],
+   "lost": [
+    "3426: call to uncontracted function `cJSON_CreateArray`"
+   ],
+   "gained": [
+    "3448: nullable resource `a` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateStringReference",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3256: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": [
+    "3260: indirect memory access is outside the resource projection",
+    "3262: nullable resource `item` used by a non-null contract",
+    "3262: unresolved resource identity `item`"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_CreateTrue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3192: call to uncontracted function `cJSON_New_Item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_Duplicate_rec",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "3465: call to uncontracted function `cJSON_New_Item`",
+    "3466: unresolved resource identity `newitem`",
+    "3470: unresolved resource identity `newitem`",
+    "3471: unresolved resource identity `newitem`",
+    "3472: unresolved resource identity `newitem`"
+   ],
+   "gained": [
+    "3491: nullable resource `newitem` used by a non-null contract",
+    "3521: nullable resource `newitem` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_ParseWithLengthOpts",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "2175: call to uncontracted function `cJSON_New_Item`",
+    "2176: unresolved resource identity `item`",
+    "2196: unresolved resource identity `item`",
+    "2198: unresolved resource identity `item`",
+    "2200: unresolved resource identity `item`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "create_reference",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cJSON_New_Item"
+   ],
+   "lost": [
+    "2833: call to uncontracted function `cJSON_New_Item`",
+    "2834: unresolved resource identity `reference`",
+    "2840: unresolved resource identity `reference`",
+    "2842: unresolved resource identity `reference`"
+   ],
+   "gained": [
+    "2839: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_scan_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:cio_file_up"
+   ],
+   "lost": [
+    "3649: call to uncontracted function `cio_file_up`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_up",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:_cio_file_up"
+   ],
+   "lost": [
+    "3389: call to uncontracted function `_cio_file_up`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cio_file.c",
+   "occurrence": 1,
+   "function": "cio_file_up_force",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:_cio_file_up"
+   ],
+   "lost": [
+    "3393: call to uncontracted function `_cio_file_up`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_exponential_histogram_data_point",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_bool",
+    "callee:cfl_kvlist_insert_double"
+   ],
+   "lost": [
+    "8134: call to uncontracted function `cfl_kvlist_insert_bool`",
+    "8136: call to uncontracted function `cfl_kvlist_insert_bool`",
+    "8137: call to uncontracted function `cfl_kvlist_insert_double`",
+    "8140: call to uncontracted function `cfl_kvlist_insert_bool`",
+    "8141: call to uncontracted function `cfl_kvlist_insert_double`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_histogram_data_point",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_bool",
+    "callee:cfl_kvlist_insert_double"
+   ],
+   "lost": [
+    "7896: call to uncontracted function `cfl_kvlist_insert_bool`",
+    "7898: call to uncontracted function `cfl_kvlist_insert_bool`",
+    "7899: call to uncontracted function `cfl_kvlist_insert_double`",
+    "7902: call to uncontracted function `cfl_kvlist_insert_bool`",
+    "7903: call to uncontracted function `cfl_kvlist_insert_double`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_numerical_data_point",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_string"
+   ],
+   "lost": [
+    "7658: call to uncontracted function `cfl_kvlist_insert_string`",
+    "7661: call to uncontracted function `cfl_kvlist_insert_string`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_resource_metadata_and_attributes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_int64"
+   ],
+   "lost": [
+    "8575: call to uncontracted function `cfl_kvlist_insert_int64`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_resource_metrics_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_string"
+   ],
+   "lost": [
+    "8609: call to uncontracted function `cfl_kvlist_insert_string`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_scope_metadata_and_attributes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_int64",
+    "callee:cfl_kvlist_insert_string"
+   ],
+   "lost": [
+    "8451: call to uncontracted function `cfl_kvlist_insert_string`",
+    "8457: call to uncontracted function `cfl_kvlist_insert_string`",
+    "8462: call to uncontracted function `cfl_kvlist_insert_int64`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_scope_metrics_entry",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_string"
+   ],
+   "lost": [
+    "8517: call to uncontracted function `cfl_kvlist_insert_string`"
+   ],
+   "gained": [
+    "8517: unresolved resource identity `context`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "decode_scope_metrics_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_string"
+   ],
+   "lost": [
+    "8496: call to uncontracted function `cfl_kvlist_insert_string`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "apply_metric_metadata_from_otlp_context",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "7191: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "cfl_kvlist_to_otlp_kvpair_list",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_count"
+   ],
+   "lost": [
+    "7729: call to uncontracted function `cfl_kvlist_count`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "cfl_variant_kvlist_to_otlp_any_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_count"
+   ],
+   "lost": [
+    "7756: call to uncontracted function `cfl_kvlist_count`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "create_exemplar_from_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "7026: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_instrumentation_scope",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "8116: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "initialize_resource",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "8981: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_count",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_count"
+   ],
+   "lost": [
+    "6785: call to uncontracted function `cfl_kvlist_count`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_bool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_bool"
+   ],
+   "lost": [
+    "6796: call to uncontracted function `cfl_kvlist_insert_bool`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_double",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_double"
+   ],
+   "lost": [
+    "6804: call to uncontracted function `cfl_kvlist_insert_double`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_int64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_int64"
+   ],
+   "lost": [
+    "6800: call to uncontracted function `cfl_kvlist_insert_int64`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_string"
+   ],
+   "lost": [
+    "6789: call to uncontracted function `cfl_kvlist_insert_string`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "convert_bool_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_bool",
+    "callee:ctr_attributes_set_bool"
+   ],
+   "lost": [
+    "8538: call to uncontracted function `ctr_attributes_set_bool`",
+    "8544: call to uncontracted function `cfl_kvlist_insert_bool`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "convert_double_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_double",
+    "callee:ctr_attributes_set_double"
+   ],
+   "lost": [
+    "8582: call to uncontracted function `ctr_attributes_set_double`",
+    "8588: call to uncontracted function `cfl_kvlist_insert_double`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "convert_int_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_int64",
+    "callee:ctr_attributes_set_int64"
+   ],
+   "lost": [
+    "8560: call to uncontracted function `ctr_attributes_set_int64`",
+    "8566: call to uncontracted function `cfl_kvlist_insert_int64`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "convert_string_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_string",
+    "callee:ctr_attributes_set_string"
+   ],
+   "lost": [
+    "8516: call to uncontracted function `ctr_attributes_set_string`",
+    "8522: call to uncontracted function `cfl_kvlist_insert_string`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "ctr_kvlist_to_otlp_kvpair_list",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_count"
+   ],
+   "lost": [
+    "8730: call to uncontracted function `cfl_kvlist_count`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "ctr_set_resource",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:get_attributes_count"
+   ],
+   "lost": [
+    "8917: call to uncontracted function `get_attributes_count`"
+   ],
+   "gained": [
+    "8917: unresolved resource identity `otel_resource`"
+   ]
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "ctr_variant_kvlist_to_otlp_any_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_count"
+   ],
+   "lost": [
+    "8757: call to uncontracted function `cfl_kvlist_count`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "get_attributes_count",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_count"
+   ],
+   "lost": [
+    "8908: call to uncontracted function `cfl_kvlist_count`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_encode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "set_instrumentation_scope",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:get_attributes_count"
+   ],
+   "lost": [
+    "9203: call to uncontracted function `get_attributes_count`"
+   ],
+   "gained": [
+    "9203: unresolved resource identity `otel_scope`"
+   ]
+  },
+  {
+   "unit": "ctr_mpack_utils.c",
+   "occurrence": 1,
+   "function": "ctr_mpack_consume_int32_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_mpack_consume_int_tag"
+   ],
+   "lost": [
+    "2099: call to uncontracted function `ctr_mpack_consume_int_tag`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_mpack_utils.c",
+   "occurrence": 1,
+   "function": "ctr_mpack_consume_int64_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_mpack_consume_int_tag"
+   ],
+   "lost": [
+    "2107: call to uncontracted function `ctr_mpack_consume_int_tag`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_mpack_utils.c",
+   "occurrence": 1,
+   "function": "ctr_mpack_consume_uint32_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_mpack_consume_uint_tag"
+   ],
+   "lost": [
+    "2061: call to uncontracted function `ctr_mpack_consume_uint_tag`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_mpack_utils.c",
+   "occurrence": 1,
+   "function": "ctr_mpack_consume_uint64_tag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_mpack_consume_uint_tag"
+   ],
+   "lost": [
+    "2069: call to uncontracted function `ctr_mpack_consume_uint_tag`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_resource.c",
+   "occurrence": 1,
+   "function": "ctr_resource_create_default",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_int64",
+    "callee:ctr_attributes_set_string"
+   ],
+   "lost": [
+    "6784: call to uncontracted function `ctr_attributes_set_string`",
+    "6785: call to uncontracted function `ctr_attributes_set_int64`"
+   ],
+   "gained": [
+    "6784: unresolved resource identity `res`",
+    "6785: unresolved resource identity `res`"
+   ]
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_bool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_bool"
+   ],
+   "lost": [
+    "7077: call to uncontracted function `ctr_attributes_set_bool`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_double",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_double"
+   ],
+   "lost": [
+    "7085: call to uncontracted function `ctr_attributes_set_double`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_int64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_int64"
+   ],
+   "lost": [
+    "7081: call to uncontracted function `ctr_attributes_set_int64`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_string"
+   ],
+   "lost": [
+    "7073: call to uncontracted function `ctr_attributes_set_string`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_bool",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_bool"
+   ],
+   "lost": [
+    "6900: call to uncontracted function `ctr_attributes_set_bool`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_double",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_double"
+   ],
+   "lost": [
+    "6908: call to uncontracted function `ctr_attributes_set_double`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_int64",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_int64"
+   ],
+   "lost": [
+    "6904: call to uncontracted function `ctr_attributes_set_int64`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_string",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_string"
+   ],
+   "lost": [
+    "6896: call to uncontracted function `ctr_attributes_set_string`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_compress_default"
+   ],
+   "lost": [
+    "1853: call to uncontracted function `LZ4_compress_default`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_limitedOutput",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_compress_default"
+   ],
+   "lost": [
+    "1849: call to uncontracted function `LZ4_compress_default`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_fast",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_unsafe_generic"
+   ],
+   "lost": [
+    "1638: call to uncontracted function `LZ4_decompress_unsafe_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_fast_continue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:LZ4_decompress_fast"
+   ],
+   "lost": [
+    "1785: call to uncontracted function `LZ4_decompress_fast`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_fast_extDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_unsafe_generic"
+   ],
+   "lost": [
+    "1696: call to uncontracted function `LZ4_decompress_unsafe_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_fast_usingDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_unsafe_generic"
+   ],
+   "lost": [
+    "1841: call to uncontracted function `LZ4_decompress_unsafe_generic`",
+    "1845: call to uncontracted function `LZ4_decompress_fast_extDict`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_fast_withPrefix64k",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_unsafe_generic"
+   ],
+   "lost": [
+    "1657: call to uncontracted function `LZ4_decompress_unsafe_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_uncompress",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:LZ4_decompress_fast"
+   ],
+   "lost": [
+    "1873: call to uncontracted function `LZ4_decompress_fast`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC"
+   ],
+   "lost": [
+    "1429: call to uncontracted function `LZ4_compress_HC`"
+   ],
+   "gained": [
+    "1429: nested call `LZ4_compressBound` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC"
+   ],
+   "lost": [
+    "1431: call to uncontracted function `LZ4_compress_HC`"
+   ],
+   "gained": [
+    "1431: nested call `LZ4_compressBound` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC2_limitedOutput",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC"
+   ],
+   "lost": [
+    "1432: call to uncontracted function `LZ4_compress_HC`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC_limitedOutput",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC"
+   ],
+   "lost": [
+    "1430: call to uncontracted function `LZ4_compress_HC`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_common.c",
+   "occurrence": 1,
+   "function": "pb_field_iter_begin",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:load_descriptor_values"
+   ],
+   "lost": [
+    "440: call to uncontracted function `load_descriptor_values`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_common.c",
+   "occurrence": 1,
+   "function": "pb_field_iter_find",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:load_descriptor_values"
+   ],
+   "lost": [
+    "485: unresolved resource identity `iter`",
+    "488: call to uncontracted function `load_descriptor_values`",
+    "496: call to uncontracted function `load_descriptor_values`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_common.c",
+   "occurrence": 1,
+   "function": "pb_field_iter_find_extension",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:load_descriptor_values"
+   ],
+   "lost": [
+    "516: call to uncontracted function `load_descriptor_values`",
+    "519: call to uncontracted function `load_descriptor_values`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "nanopb/pb_common.c",
+   "occurrence": 1,
+   "function": "pb_field_iter_next",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:load_descriptor_values"
+   ],
+   "lost": [
+    "461: call to uncontracted function `load_descriptor_values`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_crash",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_dump0"
+   ],
+   "lost": [
+    "24752: call to uncontracted function `rd_kafka_dump0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_dump0"
+   ],
+   "lost": [
+    "24571: call to uncontracted function `rd_kafka_dump0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_desensitize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_anyconf_desensitize"
+   ],
+   "lost": [
+    "24762: call to uncontracted function `rd_kafka_anyconf_desensitize`",
+    "24763: call to uncontracted function `rd_kafka_anyconf_desensitize`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_conf_desensitize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_anyconf_desensitize"
+   ],
+   "lost": [
+    "24766: call to uncontracted function `rd_kafka_anyconf_desensitize`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_metadata_copy_internal"
+   ],
+   "lost": [
+    "20352: call to uncontracted function `rd_kafka_metadata_copy_internal`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_copy_add_racks",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_metadata_copy_internal"
+   ],
+   "lost": [
+    "20357: call to uncontracted function `rd_kafka_metadata_copy_internal`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "rd_kafka_aborted_txns_get_offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_aborted_txns_next_offset"
+   ],
+   "lost": [
+    "20559: call to uncontracted function `rd_kafka_aborted_txns_next_offset`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "rd_kafka_aborted_txns_pop_offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_aborted_txns_next_offset"
+   ],
+   "lost": [
+    "20553: call to uncontracted function `rd_kafka_aborted_txns_next_offset`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgset_reader_msg_v2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_aborted_txns_pop_offset"
+   ],
+   "lost": [
+    "20069: call to uncontracted function `rd_kafka_aborted_txns_pop_offset`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgset_reader_msgs_v2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_aborted_txns_get_offset"
+   ],
+   "lost": [
+    "20135: call to uncontracted function `rd_kafka_aborted_txns_get_offset`"
+   ],
+   "gained": [
+    "20135: unresolved resource identity `msetr`"
+   ]
+  },
+  {
+   "unit": "rdkafka_msgset_reader.c",
+   "occurrence": 1,
+   "function": "unittest_aborted_txns",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_aborted_txns_get_offset",
+    "callee-summary:rd_kafka_aborted_txns_pop_offset"
+   ],
+   "lost": [
+    "20601: call to uncontracted function `rd_kafka_aborted_txns_get_offset`",
+    "20603: call to uncontracted function `rd_kafka_aborted_txns_get_offset`",
+    "20605: call to uncontracted function `rd_kafka_aborted_txns_pop_offset`",
+    "20608: call to uncontracted function `rd_kafka_aborted_txns_get_offset`",
+    "20610: call to uncontracted function `rd_kafka_aborted_txns_get_offset`",
+    "20612: call to uncontracted function `rd_kafka_aborted_txns_pop_offset`",
+    "20613: call to uncontracted function `rd_kafka_aborted_txns_get_offset`",
+    "20615: call to uncontracted function `rd_kafka_aborted_txns_pop_offset`",
+    "20616: call to uncontracted function `rd_kafka_aborted_txns_get_offset`",
+    "20618: call to uncontracted function `rd_kafka_aborted_txns_get_offset`",
+    "20620: call to uncontracted function `rd_kafka_aborted_txns_pop_offset`",
+    "20621: call to uncontracted function `rd_kafka_aborted_txns_get_offset`",
+    "20623: call to uncontracted function `rd_kafka_aborted_txns_get_offset`",
+    "20625: call to uncontracted function `rd_kafka_aborted_txns_pop_offset`",
+    "20626: call to uncontracted function `rd_kafka_aborted_txns_pop_offset`",
+    "20627: call to uncontracted function `rd_kafka_aborted_txns_pop_offset`",
+    "20628: call to uncontracted function `rd_kafka_aborted_txns_get_offset`",
+    "20630: call to uncontracted function `rd_kafka_aborted_txns_get_offset`"
+   ],
+   "gained": []
+  }
+ ]
+}

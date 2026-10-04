@@ -93,6 +93,7 @@
   "sched_thread_cleanup": ["destructor", "destroys every element of a list"],
   "setupRackAwareAssignment0": ["decision-2", "owned metadata into a caller slot when given; also char **subscriptions[] (unreadable)"],
   "unit_test_telemetry": ["reader-fnptr-inline", "void (*set_metric_value)(...) inline declarator"],
-  "ut_init_member_internal": ["decision-2", "allocates member strings into the caller's rkgm (in-place construction)"]
+  "ut_init_member_internal": ["decision-2", "allocates member strings into the caller's rkgm (in-place construction)"],
+  "get_or_create_external_metadata_kvlist": ["decision-8", "surfaced on the AFTER (2 alone once the cfl_kvlist_insert_string leaves of its callers were decided): returns a child kvlist of root, fetched or created and inserted with cfl_kvlist_insert_kvlist (custody-taking)"]
  }
 }
