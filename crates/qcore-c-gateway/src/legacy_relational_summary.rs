@@ -43,7 +43,8 @@ use crate::relational_post::{
 const SPECIFIERS: &[&str] = &["static", "inline", "extern", "__inline", "__inline__"];
 
 /// The definition of `function`: the name's index and the body's braces.
-fn definition(tokens: &[Token], function: &str) -> Option<(usize, usize, usize)> {
+/// (Shared with rule 12s, `legacy_relational_forwarding.rs`.)
+pub(super) fn definition(tokens: &[Token], function: &str) -> Option<(usize, usize, usize)> {
     for (index, token) in tokens.iter().enumerate() {
         if token.text != function || tokens.get(index + 1).map(|t| t.text.as_str()) != Some("(") {
             continue;
@@ -165,6 +166,9 @@ pub(super) fn infer_exit_specific(
 pub(super) enum BodySummary {
     Ordinary(ResourceFunctionContract),
     ExitSpecific(RelationalContract),
+    /// Card CALLEE-RETENTION-CLASS1 (rule 12s): the classes a forwarding body
+    /// takes from its callee, each validated on its restricted body.
+    Forwarded(RelationalContract),
 }
 
 /// The reason `declared` is contradicted by `body`, if it is.
@@ -190,6 +194,26 @@ pub(super) fn contradiction(declared: &RelationalContract, body: &BodySummary) -
                     {
                         return Some(format!(
                             "the body's exits returning {} differ from the `{} {}` class",
+                            exit.relation.constant,
+                            class.relation.op.spelling(),
+                            class.relation.constant
+                        ));
+                    }
+                }
+            }
+            None
+        }
+        // Card CALLEE-RETENTION-CLASS1 (rule 12s): a forwarded class and a
+        // declared class that share a returned value must agree.
+        BodySummary::Forwarded(body) => {
+            for exit in &body.classes {
+                for class in &declared.classes {
+                    if class.relation.meets(exit.relation)
+                        && class.contract.custody_projection() != exit.contract
+                    {
+                        return Some(format!(
+                            "the body's forwarded `{} {}` class differs from the `{} {}` class",
+                            exit.relation.op.spelling(),
                             exit.relation.constant,
                             class.relation.op.spelling(),
                             class.relation.constant

@@ -3131,7 +3131,20 @@ fn analyze_defined_function(
             }
             None => analyze_cfg(cfg),
         },
-        None => analyze_cfg(cfg),
+        // Card CALLEE-RETENTION-CLASS1 (rule 12s(2)): a function whose own
+        // return-code disposition is in force is decided per class.
+        None => derivation
+            .environment()
+            .relational_contract(function)
+            .and_then(|contract| {
+                crate::legacy_summary::relational_forwarding::relational_row(
+                    tokens,
+                    function,
+                    derivation.environment(),
+                    contract,
+                )
+            })
+            .unwrap_or_else(|| analyze_cfg(cfg)),
     };
     if let Some((inferred, declared)) = derivation.conflict(function) {
         let line = find_function_body(tokens, function).map_or(0, |(_, line)| line);

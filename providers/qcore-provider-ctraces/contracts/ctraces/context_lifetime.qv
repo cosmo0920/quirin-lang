@@ -249,3 +249,47 @@ contract {
     ensures normal resource_borrowed(value);
     ensures normal resource_return_none();
 };
+
+// ## Card CALLEE-RETENTION-CLASS1, stage (a): the custody-taking setters
+//
+// USER DECISION 2026-10-05 (W48-CALLEE-DECISION-TABLE class 1, "split by
+// shape"). Pinned (C06.2) after reading the bodies at both audited revisions
+// (`lib/ctraces/src/ctr_attributes.c:78-88` is byte-identical at `66910c10`
+// and `046accf6`):
+//
+//     int ctr_attributes_set_array(struct ctrace_attributes *attr, char *key,
+//                                  struct cfl_array *value)
+//     {
+//         return cfl_kvlist_insert_array(attr->kv, key, value);
+//     }
+//
+// and `ctr_attributes_set_kvlist` likewise over `cfl_kvlist_insert_kvlist`.
+// Each forwards the cfl insert's returned value unchanged (both `int`), so it
+// has the insert's disposition (quirin-provider-cfl `sds_lifetime.qv`): `eq 0`
+// `value` consumed into `attr->kv`, `ne 0` still the caller's. Declared here
+// because their callers (`ctr_span.c`'s `ctr_span_set_attribute_*` and
+// `ctr_span_event_set_attribute_*`) sit in another unit; in their own unit the
+// body is checked against the declaration by the forwarding route (gateway
+// rule 12s), and a contradiction withdraws it at every call site there.
+// `attr` is read (`attr->kv`) and keeps its custody; `key` is copied by the
+// insert: both `resource_borrowed`.
+
+extern fn ctr_attributes_set_array(attr: ptr<mut, u8>, key: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(attr);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_on_return(eq, 0, resource_consumed(value, nullable));
+    ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
+    ensures normal resource_return_none();
+};
+
+extern fn ctr_attributes_set_kvlist(attr: ptr<mut, u8>, key: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(attr);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_on_return(eq, 0, resource_consumed(value, nullable));
+    ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
+    ensures normal resource_return_none();
+};

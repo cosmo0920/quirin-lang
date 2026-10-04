@@ -357,3 +357,61 @@ contract {
     ensures normal resource_borrowed(value);
     ensures normal resource_return_none();
 };
+
+// ## Card CALLEE-RETENTION-CLASS1, stage (a): the custody-taking inserts
+//
+// USER DECISION 2026-10-05 (W48-CALLEE-DECISION-TABLE class 1, "split by
+// shape"): a custody-taking insert is a conditional custody transfer on
+// success, stated as a return-code disposition (contract spec C04.13, gateway
+// rule 11r). Pinned (C06.2) after reading the bodies at both audited
+// revisions (`lib/cfl/src/cfl_kvlist.c`, `cfl_variant.c` and
+// `cfl_container.c` are byte-identical at `66910c10` and `046accf6`).
+//
+// `cfl_kvlist_insert_array(list, key, value)` (`cfl_kvlist.c:641-649`)
+// returns -1 for a null argument and otherwise
+// `cfl_kvlist_insert_array_s(list, key, strlen(key), value)` (`:353-381`):
+//
+//   * -1 when `value` is NULL, `key_size > INT_MAX`, or
+//     `cfl_variant_create_from_array_in(list->arena, value)` fails
+//     (`cfl_variant.c:573-592`: another arena, no memory, or
+//     `cfl_container_claim_array` refusing an array another container
+//     already owns); nothing of `value` changed.
+//   * -2 when `cfl_kvlist_insert_s` (`:439-492`) refuses: the body calls
+//     `cfl_container_release_variant(value_instance)` (`cfl_container.c:577`:
+//     the array's `owner` back to NULL), sets `value_instance->data.as_array`
+//     to NULL and destroys only the variant, so `value` is untouched and the
+//     caller's again.
+//   * 0 after the pair is linked into `list` with the variant owning `value`:
+//     destroying the list destroys the variant, which destroys the array
+//     (`cfl_variant_destroy`, `cfl_variant.c:629-631`).
+//
+// So `eq 0`: `value` is the list's, `resource_consumed`; `ne 0`: the
+// caller's, `resource_owned`; both `nullable` (a null `value` returns -1).
+// `key` is copied (`cfl_sds_create_len_in`, `:466`) and `list` keeps its
+// custody: both `resource_borrowed`. `cfl_kvlist_insert_kvlist`
+// (`:661-669`, `_s` at `:407-437`) is the same with a kvlist, and also
+// returns -1 when `list == value`.
+//
+// NOT CLAIMED: anything about arenas beyond the refusal above; that the
+// list's own release is reached.
+
+// --- `value` becomes the list's on 0 ---------------------------------------
+extern fn cfl_kvlist_insert_array(list: ptr<mut, u8>, key: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_on_return(eq, 0, resource_consumed(value, nullable));
+    ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_kvlist_insert_kvlist(list: ptr<mut, u8>, key: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_on_return(eq, 0, resource_consumed(value, nullable));
+    ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
+    ensures normal resource_return_none();
+};

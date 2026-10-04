@@ -192,3 +192,100 @@ contract {
     ensures normal resource_borrowed(hooks);
     ensures normal resource_return_owned(nullable);
 };
+
+// ## Card CALLEE-RETENTION-CLASS1, stage (a): the custody-taking inserts
+//
+// USER DECISION 2026-10-05 (W48-CALLEE-DECISION-TABLE class 1, "split by
+// shape"): a custody-taking insert is a conditional custody transfer on
+// success, stated as a return-code disposition (contract spec C04.13, gateway
+// rule 11r), with no new vocabulary. Each declaration below is pinned (C06.2)
+// after reading the body at both audited revisions
+// (`lib/librdkafka-2.15.0/src/cJSON.c` is byte-identical at `66910c10` and
+// `046accf6`). Both functions are `static` in `cJSON.c`, the unit that also
+// holds their callers, so each declaration is checked against its body there
+// (rules 11r(5) and 12s): a body summary that contradicts a class withdraws it.
+// `cJSON_bool` is `typedef int cJSON_bool;` (`cJSON.h:132`), `i32`; `true` and
+// `false` are `((cJSON_bool)1)` and `((cJSON_bool)0)` (`cJSON.c:65-70`).
+//
+// ## `add_item_to_array`, read from `cJSON.c:2012-2042`
+//
+//     static cJSON_bool add_item_to_array(cJSON *array, cJSON *item)
+//     {
+//         cJSON *child = NULL;
+//         if ((item == NULL) || (array == NULL) || (array == item))
+//             return false;
+//         child = array->child;
+//         if (child == NULL) {
+//             array->child = item; item->prev = item; item->next = NULL;
+//         } else {
+//             if (child->prev) {
+//                 suffix_object(child->prev, item);
+//                 array->child->prev = item;
+//             }
+//         }
+//         return true;
+//     }
+//
+//   * A nonzero return links `item` into `array`'s child list: from then on
+//     `cJSON_Delete(array)` releases it (`cJSON_Delete` recurses into
+//     `child`, declared above), so the caller's custody moved:
+//     `resource_consumed`. A zero return touches nothing: the caller still
+//     holds `item`, `resource_owned`. Both classes `nullable`: a null `item`
+//     returns 0 before any dereference, and a null carries no custody.
+//   * `array` is read and its links written; its own custody is unchanged:
+//     `resource_borrowed`.
+//   * PREMISE (cJSON's list invariant, kept by every cJSON list operation): a
+//     non-empty array's `child->prev` is its last element, never NULL. If a
+//     caller broke it, the `child->prev == NULL` arm returns true without
+//     linking `item`, which this declaration would read as a transfer.
+//
+// ## `replace_item_in_object`, read from `cJSON.c:2412-2433` (with
+// `cJSON_ReplaceItemViaPointer`, `:2353-2400`, and `get_object_item`,
+// `:1936-1967`)
+//
+//   * `replacement == NULL` or `string == NULL` returns false untouched; the
+//     body then frees `replacement->string` (unless const) and replaces it by
+//     `cJSON_strdup(string)`, returning false when that fails: `replacement`
+//     owns the new key either way. `cJSON_ReplaceItemViaPointer(object,
+//     get_object_item(object, string, case_sensitive), replacement)` returns
+//     false for a null `object`, an empty object or a key not found (nothing
+//     linked), and true after linking `replacement` in the found item's place
+//     and `cJSON_Delete`-ing that item (an object-owned child). A nonzero
+//     return: `replacement` is the object's, `resource_consumed`; zero: still
+//     the caller's, `resource_owned`; both `nullable`.
+//   * `object` keeps its custody (a child it owned is replaced and released
+//     inside it): `resource_borrowed`. `string` is copied, never kept:
+//     `resource_borrowed`. `case_sensitive` is data.
+//   * The `replacement == item` arm returns true having changed nothing: the
+//     caller passed an object the object already held, which no live custody
+//     of the caller's can name (an `owned` or `consumed` position demands
+//     one).
+//
+// NOT CLAIMED: anything about `global_hooks`' allocator; anything about the
+// relative order of keys; that a released child was not also held elsewhere.
+// `add_item_to_object` is deliberately NOT declared: its `constant_key` arm
+// stores the caller's `string` in the item (`item->string =
+// cast_away_const(string)`, `:2077-2080`), a retained pointer (stage (b)), and
+// its callers pass `false`/`true` as casts, which no literal premise reads.
+
+// --- links `item` into `array` on a nonzero return -------------------------
+extern fn add_item_to_array(array: ptr<mut, u8>, item: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(array);
+    ensures normal resource_on_return(ne, 0, resource_consumed(item, nullable));
+    ensures normal resource_on_return(eq, 0, resource_owned(item, nullable));
+    ensures normal resource_return_none();
+};
+
+// --- puts `replacement` in place of `object[string]` on a nonzero return ---
+extern fn replace_item_in_object(object: ptr<mut, u8>, string: ptr<const, u8>, replacement: ptr<mut, u8>, case_sensitive: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(object);
+    ensures normal resource_borrowed(string);
+    ensures normal resource_on_return(ne, 0, resource_consumed(replacement, nullable));
+    ensures normal resource_on_return(eq, 0, resource_owned(replacement, nullable));
+    ensures normal resource_borrowed(case_sensitive);
+    ensures normal resource_return_none();
+};

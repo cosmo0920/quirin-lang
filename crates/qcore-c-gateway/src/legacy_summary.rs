@@ -279,6 +279,17 @@ pub(crate) fn derive_custody_summaries(
                                 infer_validated_summary,
                             )
                             .map(relational::BodySummary::ExitSpecific)
+                        })
+                        // Card CALLEE-RETENTION-CLASS1 (rule 12s): a body
+                        // that forwards another disposition.
+                        .or_else(|| {
+                            relational_forwarding::infer_forwarded(
+                                tokens,
+                                &name,
+                                &derivation.environment,
+                                infer_validated_summary,
+                            )
+                            .map(relational::BodySummary::Forwarded)
                         });
                     if let Some(reason) = body
                         .as_ref()
@@ -330,7 +341,20 @@ pub(crate) fn derive_custody_summaries(
                                 installed = true;
                             }
                             Some(_) => still_pending.push(name),
-                            None => still_pending.push(name),
+                            // Card CALLEE-RETENTION-CLASS1 (rule 12s): the
+                            // forwarding route, after the exit-specific one.
+                            None => match relational_forwarding::infer_forwarded(
+                                tokens,
+                                &name,
+                                &derivation.environment,
+                                infer_validated_summary,
+                            ) {
+                                Some(summary) => {
+                                    derivation.environment.insert_relational(name, summary);
+                                    installed = true;
+                                }
+                                None => still_pending.push(name),
+                            },
                         }
                     }
                     None => still_pending.push(name),
@@ -1535,6 +1559,11 @@ mod premises;
 // the body check of a declared return-code disposition.
 #[path = "legacy_relational_summary.rs"]
 mod relational;
+
+// Card CALLEE-RETENTION-CLASS1, stage (a) (rule 12s): relational forwarding
+// and the per-class row.
+#[path = "legacy_relational_forwarding.rs"]
+pub(crate) mod relational_forwarding;
 
 #[cfg(test)]
 #[path = "../tests/unit/legacy_summary.rs"]
