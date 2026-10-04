@@ -15,11 +15,17 @@ import re
 import sys
 
 ADDRESS = re.compile(rb'"0x[0-9a-f]+"')
+# CALLEE-RETENTION-CLASS1: the parity rows Debug-print lowered instructions,
+# and `ContractCall` gained a `retention` field (rule 12t). Its empty value is
+# erased too, so a row differs only where a decision did.
+RETENTION_NONE = b", retention: None"
 
 
 def read(path, erase):
     rows = pathlib.Path(path).read_bytes().splitlines()
-    return [ADDRESS.sub(b'"0x"', row) for row in rows] if erase else rows
+    if not erase:
+        return rows
+    return [ADDRESS.sub(b'"0x"', row).replace(RETENTION_NONE, b"") for row in rows]
 
 
 def main():

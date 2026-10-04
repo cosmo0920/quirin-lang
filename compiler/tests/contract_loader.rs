@@ -1611,9 +1611,18 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // bounds declarations of `chunkio/meta_len_bounds.qv`
     // (`cio_file_st_get_meta_len`, `cio_file_st_set_meta_len`) belong to the
     // bounds consumer and are deliberately rejected by resource-v1.
+    // 293 -> 304 by card CALLEE-RETENTION-CLASS1: six return-code
+    // dispositions (`librdkafka/cjson.qv`'s `add_item_to_array` and
+    // `replace_item_in_object`, `cfl/sds_lifetime.qv`'s
+    // `cfl_kvlist_insert_array`/`_kvlist`, `ctraces/context_lifetime.qv`'s
+    // `ctr_attributes_set_array`/`_kvlist`) and five retaining declarations
+    // (`librdkafka/lz4_stream.qv`'s four LZ4 stream functions,
+    // `fluent_bit/input_chunk_helpers.qv`'s `append_to_ring_buffer`), all
+    // appended to already-selected modules and pinned. Selection and rejected
+    // unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (60, 293, 218)
+        (60, 304, 218)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -1621,8 +1630,16 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // W47-LOOP-OWNER-INSTANCE-FLOW, 1 from W47-FLB-LIB-LIFECYCLE, 1 from W47-SERVICE-PROPERTY-KEYS).
     let loaded = load_resource_contract_manifest(&manifest()).unwrap();
     assert_eq!(loaded.pending_review().len(), 11);
+    // Card CALLEE-RETENTION-CLASS1: a return-code disposition and a retaining
+    // declaration are loaded and withheld from the function map into their own
+    // tables (contract spec C04.13, C04.14), six and five of them.
+    assert_eq!(loaded.relational().len(), 6);
+    assert_eq!(loaded.retaining().len(), 5);
     assert_eq!(
-        loaded.functions().len() + loaded.pending_review().len(),
+        loaded.functions().len()
+            + loaded.pending_review().len()
+            + loaded.relational().len()
+            + loaded.retaining().len(),
         v1_declarations
     );
 

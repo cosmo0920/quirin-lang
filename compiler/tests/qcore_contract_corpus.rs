@@ -30,6 +30,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_bool", 5),
     ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_int64", 5),
     ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_double", 5),
+    // Card CALLEE-RETENTION-CLASS1, stage (a): the custody-taking inserts,
+    // marker, two borrowed formals, two return-code classes, `none`.
+    ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_array", 6),
+    ("cfl/sds_lifetime.qv", "cfl_kvlist_insert_kvlist", 6),
     // Card W37-CORPUS-CONTRACTS-4: the CFL wall-clock reading, sole blocker
     // of `ctr_span_end`. Zero parameters and a scalar `uint64_t` result, so
     // the contract is `requires` + `return_none` and nothing else — the
@@ -377,6 +381,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "ctr_attributes_set_double",
         5,
     ),
+    // Card CALLEE-RETENTION-CLASS1, stage (a): the forwarding setters,
+    // marker, two borrowed formals, two return-code classes, `none`.
+    ("ctraces/context_lifetime.qv", "ctr_attributes_set_array", 6),
+    ("ctraces/context_lifetime.qv", "ctr_attributes_set_kvlist", 6),
     (
         "fluent_bit/busy_state.qv",
         "flb_input_chunk_release_lock",
@@ -441,6 +449,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "fluent_bit/input_chunk_helpers.qv",
         "input_chunk_write_header",
         6,
+    ),
+    // Card CALLEE-RETENTION-CLASS1, stage (b): marker, eight borrowed
+    // formals, the retention of `ins` by the `global` holder, `none`.
+    (
+        "fluent_bit/input_chunk_helpers.qv",
+        "append_to_ring_buffer",
+        11,
     ),
     (
         "fluent_bit/input_chunk_is_up.qv",
@@ -961,6 +976,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W45-CALLEE-CASCADE-RESIDUAL: the node constructor (`:241-250`):
     // marker, borrowed hook table, an owned nullable result.
     ("librdkafka/cjson.qv", "cJSON_New_Item", 3),
+    // Card CALLEE-RETENTION-CLASS1, stage (a): the custody-taking inserts,
+    // marker, borrowed formals, two return-code classes, `none`.
+    ("librdkafka/cjson.qv", "add_item_to_array", 5),
+    ("librdkafka/cjson.qv", "replace_item_in_object", 7),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read
@@ -999,6 +1018,13 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         8,
     ),
     ("librdkafka/lz4_stream.qv", "LZ4_compress_default", 6),
+    // Card CALLEE-RETENTION-CLASS1, stage (b): the retaining stream states,
+    // marker, borrowed formals, the retention (and for `_extState` the
+    // holder reset), `none`.
+    ("librdkafka/lz4_stream.qv", "LZ4_compress_HC_extStateHC", 9),
+    ("librdkafka/lz4_stream.qv", "LZ4_compress_HC_continue", 8),
+    ("librdkafka/lz4_stream.qv", "LZ4_compress_fast_continue", 9),
+    ("librdkafka/lz4_stream.qv", "LZ4_compress_fast_extState", 10),
     ("librdkafka/memory.qv", "rd_malloc", 3),
     ("librdkafka/memory.qv", "rd_calloc", 4),
     ("librdkafka/memory.qv", "rd_strdup", 3),
