@@ -12,4 +12,3 @@ import QCore.RelationalForwarding
 #print axioms QCore.RelationalForwarding.a_caller_edge_selects_the_exit_disposition
 #print axioms QCore.RelationalForwarding.the_row_covers_every_path
 #print axioms QCore.RelationalForwarding.a_conversion_can_move_a_value_between_classes
-#print axioms QCore.RelationalForwarding.representative_vectors_hold

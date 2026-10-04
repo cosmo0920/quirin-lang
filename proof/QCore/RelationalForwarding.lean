@@ -18,9 +18,11 @@ A forwarding body's paths each end at an exit: a literal `v`, or a forwarded
 call whose callee returned `x`; either way the function returns that value
 (the same type, so C converts nothing). The classes are the callee's
 relations, pairwise disjoint and total. The body restricted to class `r`
-keeps exactly the paths whose returned value satisfies `r` (a literal outside
-`r` diverges; a forwarded call is lowered to the decided test `f() OP K`,
-true exactly on `r` by `test_shape_is_exact`, whose false edge diverges).
+keeps exactly the paths whose returned value satisfies `r`: a literal outside
+`r` diverges, and the forwarded call is read under the callee's class `r` —
+the disposition rule 11r's decided test `f() OP K` (true exactly on `r` by
+`test_shape_is_exact`) selects on its true edge, the false edge being the
+other classes' restricted bodies.
 
 ## The theorems
 
@@ -37,8 +39,8 @@ true exactly on `r` by `test_shape_is_exact`, whose false edge diverges).
 * `the_row_covers_every_path`: the per-class row checks every path once.
 * `a_conversion_can_move_a_value_between_classes`: why the two result types
   must be spelled alike.
-* `representative_sat`, `representative_vectors_hold`: the literal each
-  restricted body returns lies in its class (shared with Rust).
+* `representative_sat`, `meets_self`: every relation is inhabited, so a
+  class always meets itself.
 
 ## What this is not
 
@@ -46,7 +48,7 @@ A model of the decision over abstract dispositions `D`. That the ordinary
 inference validates a restricted body exactly on the paths it keeps, that the
 lowering of `return f(ARGS);` is the C it replaces on the kept path, and the
 correspondence with the compiled Rust are review premises (trust boundary 28),
-pinned by the module's unit tests and
+pinned by `legacy_relational_forwarding.rs`'s unit tests and
 `crates/qcore-c-gateway/tests/callee_retention_class1.rs`.
 -/
 
@@ -173,18 +175,5 @@ callee's would return a value of another class. -/
 theorem a_conversion_can_move_a_value_between_classes :
     ∃ x : Int, (Rel.mk .ne 0).sat x = true ∧ (Rel.mk .eq 0).sat (x % 256) = true :=
   ⟨256, by decide, by decide⟩
-
-/-! ## Shared vectors -/
-
-/-- `representative` of `legacy_relational_forwarding.rs`, row by row:
-operator, constant, representative. -/
-def representativeVectors : List (Op × Int × Int) := [
-  (.eq, 0, 0), (.ne, 0, 1), (.lt, 0, -1), (.le, 0, 0), (.gt, 0, 1), (.ge, 0, 0),
-  (.eq, -2, -2), (.ne, -2, -1), (.lt, 3, 2), (.gt, 3, 4)
-]
-
-theorem representative_vectors_hold :
-    representativeVectors.all (fun (o, k, v) => representative ⟨o, k⟩ == v) = true := by
-  decide
 
 end QCore.RelationalForwarding

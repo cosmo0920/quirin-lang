@@ -157,7 +157,8 @@ pub(crate) fn address_of_name<'a>(argument: &'a [&'a str]) -> Option<&'a str> {
 
 /// Whether `node` is the one automatic object named `name` this function
 /// declares: exactly one `VarDecl` of that name (and no formal of it), with no
-/// storage class, whose type is neither a pointer nor an array.
+/// storage class, whose type is neither a pointer nor an array. Shared with
+/// card CALLEE-RETENTION-CLASS1's frame holder (gateway rule 12t).
 pub(crate) fn one_automatic_object(function: &Value, name: &str) -> bool {
     fn walk<'a>(node: &'a Value, name: &str, found: &mut Vec<&'a Value>) {
         if matches!(kind(node), "VarDecl" | "ParmVarDecl") && node["name"].as_str() == Some(name) {
