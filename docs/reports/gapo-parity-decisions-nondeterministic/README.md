@@ -220,7 +220,40 @@ restored scopes' bookkeeping. Lean audits stay at 287.
 
 ## 8. Gate
 
-GATETABLE
+Standing gate at `cefdff475` (code at `8f29ac91a`), `scripts/gate.sh g2`,
+every step under the shared lock, exits in [gate/](gate/),
+[gate.json](gate.json):
+
+| Step | Command | Exit | Result |
+|---|---|---:|---|
+| 00 | `cargo check --workspace --all-targets` | 0 | |
+| 01 | submodule update (`--init --recursive`) | 0 | |
+| 02 | `cargo fmt --all -- --check` | 0 | clean |
+| 03 | `cargo clippy --locked --all-targets -- -D warnings` | 0 | clean |
+| 04 | `python3 scripts/run_test_binaries.py` | 101 | 441 units, 454 summaries; **7,568 passed, 1 failed**, 11 ignored (`private/gapo-nd/tests-gate-g2/`) |
+| 05 | `cargo run -p qcore-compiler --example reevaluation_probe` | 0 | |
+| 06 | `cargo run -p qcore-compiler --example reevaluation_followup` | 0 | |
+| 07 | `python3 scripts/check_lean_audits.py` | 0 | **287** audits (unchanged) |
+| 08 | `python3 -m unittest discover -s scripts/tests` | 0 | 365 OK |
+| 09 | `python3 scripts/build_docs_index.py --check` | 0 | |
+| 09a-10c | matrix regenerated with this gate.json, Python suite, docs index and check | see [gate/](gate/) | |
+
+The one failure is `qcore-verifier-host`'s
+`execution_quota::a_declared_quota_bounds_a_fork_storm_in_this_execution_only`
+(`quota_observed` was `None`), on a host shared with another card's builds
+and arbiters. The binary alone then failed a different row of the same file
+the same way once (`private/gapo-nd/quota-isolated.log`) and passed 13 of 13
+on the next run (`quota-isolated2.log`); the card changes no verifier-host
+code, and the observation is added to `LOAD-SENSITIVE-ROW-UNNAMED` (the
+binary's earlier `Broken pipe` rows are recorded there). The first gate
+(`gate-g1`, at `ac31392d9`) passed the suite (7,569 passed, 0 failed) and
+every other code step but clippy, whose `too_many_arguments` on
+`StatementIndex::argument` `8f29ac91a` answers with an `allow` (the
+codebase's convention, 19 sites); clippy then exited 0, and so did the
+gateway's census-feature clippy (`--features route-census,indirect-census`).
+The measured AFTER binary was built at `ac31392d9`; `8f29ac91a` adds only that
+attribute and its comment. The provider gate is not owed: `providers/` is
+unchanged. The workspace count grows by the card's four unit tests.
 
 ## 9. Follow-ups
 
@@ -229,6 +262,8 @@ GATETABLE
   without one), and five `--jobs 4` runs of one binary write identical
   multisets.
 * `GAPO-RETURN-PROBE-COUNTER-RESTORATION`: unchanged (section 4).
+* `LOAD-SENSITIVE-ROW-UNNAMED`: amended with the gate's `execution_quota`
+  observations (section 8); its DISCHARGE is unchanged.
 * Nothing new registered: every leaking state the audit found is fixed here.
 
 ## Files

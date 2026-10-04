@@ -1,0 +1,13 @@
+{
+  "note": "GAPO-PARITY-DECISIONS-NONDETERMINISTIC card gate at cefdff475 (code at 8f29ac91a; later commits: records and gate files only), base main 0ebe77f86, scripts docs/reports/gapo-parity-decisions-nondeterministic/scripts/gate.sh (each step under the shared flock) and finish-gate.sh, logs private/gapo-nd/gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 441 units, 454 summaries, 7,568 passed, 1 failed, 11 ignored, exit 101 (private/gapo-nd/tests-gate-g2): the one failure is qcore-verifier-host execution_quota::a_declared_quota_bounds_a_fork_storm_in_this_execution_only (quota_observed None) on a host shared with another card; the binary alone failed a different row of the same file once (private/gapo-nd/quota-isolated.log) and then passed 13/13 (quota-isolated2.log), recorded on LOAD-SENSITIVE-ROW-UNNAMED; the card touches no verifier-host code. Both reevaluation probes exit 0; check_lean_audits.py 287 audits passed (unchanged); python tests 365 OK and docs index check 0 before the matrix regeneration, rerun after build_matrix.py . --gate this file (09a, 09b, 10b, 10c). gate-g1 at ac31392d9 (the implementation commit, before the clippy allow): check, submodule, fmt 0; clippy 101 (too_many_arguments on StatementIndex::argument, fixed in 8f29ac91a, then clippy 0 and the route-census,indirect-census feature clippy 0); suite 7,569 passed, 0 failed, 11 ignored, exit 0; probes 0; 287 Lean audits. Provider gate: providers/ is unchanged by the card, so provider_tests is the base's figure, not re-run here.",
+  "workspace_tests": 7568,
+  "provider_tests": 129,
+  "python_evidence_validator_tests": 365,
+  "reevaluation_probe_exit": 0,
+  "reevaluation_followup_exit": 0,
+  "cargo_fmt": "clean",
+  "cargo_clippy": "clean",
+  "standing_gate": "complete with one recorded load-sensitive failure (execution_quota, LOAD-SENSITIVE-ROW-UNNAMED amended): isolated rerun 1 failed another row of the binary, rerun 2 passed 13/13",
+  "lean_audits": 287,
+  "clang": "present: Ubuntu clang version 21.1.8 (6ubuntu1)"
+}
