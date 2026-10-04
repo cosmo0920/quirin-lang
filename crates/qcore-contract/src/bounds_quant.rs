@@ -211,8 +211,7 @@ impl Parser<'_> {
                     .into()
             }
             Some(token) if relation(token).is_some() => {
-                "quant-check-chained: a comparison is not chained; write `0 <= #i && #i < N`"
-                    .into()
+                "quant-check-chained: a comparison is not chained; write `0 <= #i && #i < N`".into()
             }
             Some(token) => format!(
                 "quant-check-operator: `{}` is not admitted in a quant check",

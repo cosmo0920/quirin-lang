@@ -30,7 +30,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use qcore_contract::bounds_contract::{BoundsClause, BoundsFunctionContract, BoundsClauseEntry};
+use qcore_contract::bounds_contract::{BoundsClause, BoundsClauseEntry, BoundsFunctionContract};
 use qcore_core::index_extent::{
     Count, Decision, IndexFact, Judgement, Outcome, PointerFact, Refusal, Standing,
 };
@@ -131,7 +131,9 @@ impl Analysis<'_> {
                         hi.checked_add(origin)
                             .and_then(|end| end.checked_add(1))
                             .and_then(|count| u128::try_from(count).ok())
-                            .map(|count| (QuantSet::Constant(intervals), origin, Count::Const(count)))
+                            .map(|count| {
+                                (QuantSet::Constant(intervals), origin, Count::Const(count))
+                            })
                     }
                     Err(_) => None,
                 }
@@ -289,7 +291,10 @@ impl Analysis<'_> {
                     record_kind,
                     position,
                     subject.clone(),
-                    format!("bounds-quant-check-undecided ({}): {subject}", refusal.code()),
+                    format!(
+                        "bounds-quant-check-undecided ({}): {subject}",
+                        refusal.code()
+                    ),
                     state,
                 );
                 Some(false)
@@ -440,19 +445,22 @@ impl Analysis<'_> {
             };
             let relative = add_offsets(&offset, &IndexFact::Const(-checked.origin));
             let callee_check = contract.parameters.get(position).and_then(|p| {
-                contract.clauses.iter().find_map(|entry| match &entry.clause {
-                    BoundsClause::QuantCheck {
-                        parameter,
-                        predicate,
-                        ..
-                    } if *parameter == p.name => Some(predicate.clone()),
-                    _ => None,
-                })
+                contract
+                    .clauses
+                    .iter()
+                    .find_map(|entry| match &entry.clause {
+                        BoundsClause::QuantCheck {
+                            parameter,
+                            predicate,
+                            ..
+                        } if *parameter == p.name => Some(predicate.clone()),
+                        _ => None,
+                    })
             });
             let mut ignored = BTreeSet::new();
             let callee_set = callee_check.and_then(|predicate| {
-                let (values, _) = self
-                    .actual_formals(contract, &predicate, arguments, state, &mut ignored)?;
+                let (values, _) =
+                    self.actual_formals(contract, &predicate, arguments, state, &mut ignored)?;
                 constant_set(&predicate, &values).ok()
             });
             let decision = match (callee_set, &relative) {

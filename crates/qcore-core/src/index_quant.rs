@@ -297,7 +297,9 @@ impl QuantPredicate {
         let mut upper = None;
         for (relation, bound) in conjunction {
             match (relation, &bound.formal) {
-                (Relation::Ge, None) => lower = Some(lower.map_or(bound.constant, |l| l.max(bound.constant))),
+                (Relation::Ge, None) => {
+                    lower = Some(lower.map_or(bound.constant, |l| l.max(bound.constant)))
+                }
                 (Relation::Gt, None) => {
                     let value = bound.constant.checked_add(1)?;
                     lower = Some(lower.map_or(value, |l| l.max(value)));
@@ -409,7 +411,13 @@ pub fn index_admitted(set: &QuantSet, index: &IndexFact) -> QuantDecision {
                 QuantDecision::Undecided(Refusal::SymbolMismatch)
             }
         }
-        (IndexFact::Range { lo, hi: Count::Const(h) }, set) => {
+        (
+            IndexFact::Range {
+                lo,
+                hi: Count::Const(h),
+            },
+            set,
+        ) => {
             let Ok(h) = i128::try_from(*h) else {
                 return QuantDecision::Undecided(Refusal::Overflow);
             };
@@ -436,7 +444,13 @@ pub fn index_admitted(set: &QuantSet, index: &IndexFact) -> QuantDecision {
                 }
             }
         }
-        (IndexFact::Range { lo, hi: Count::Symbol(s) }, QuantSet::Prefix(n)) => {
+        (
+            IndexFact::Range {
+                lo,
+                hi: Count::Symbol(s),
+            },
+            QuantSet::Prefix(n),
+        ) => {
             if s != n {
                 QuantDecision::Undecided(Refusal::SymbolMismatch)
             } else if *lo < 0 {
@@ -445,9 +459,13 @@ pub fn index_admitted(set: &QuantSet, index: &IndexFact) -> QuantDecision {
                 QuantDecision::Inside
             }
         }
-        (IndexFact::Range { hi: Count::Symbol(_), .. }, QuantSet::Constant(_)) => {
-            QuantDecision::Undecided(Refusal::SymbolMismatch)
-        }
+        (
+            IndexFact::Range {
+                hi: Count::Symbol(_),
+                ..
+            },
+            QuantSet::Constant(_),
+        ) => QuantDecision::Undecided(Refusal::SymbolMismatch),
     }
 }
 

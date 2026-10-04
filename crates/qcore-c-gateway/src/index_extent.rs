@@ -2575,7 +2575,9 @@ impl<'a> Analysis<'a> {
                     parameter,
                     predicate,
                     ..
-                } => self.quant_established(contract, parameter, predicate, arguments, reading, held),
+                } => {
+                    self.quant_established(contract, parameter, predicate, arguments, reading, held)
+                }
                 _ => true,
             };
             if !established {

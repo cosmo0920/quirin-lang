@@ -205,7 +205,9 @@ fn index(term: &Term) -> IndexFact {
 
 fn set(term: &Term) -> QuantSet {
     match name(term) {
-        (".constant", [intervals]) => QuantSet::Constant(list(intervals).iter().map(pair).collect()),
+        (".constant", [intervals]) => {
+            QuantSet::Constant(list(intervals).iter().map(pair).collect())
+        }
         (".pre", [s]) => QuantSet::Prefix(format!("v{}", int(s))),
         other => panic!("set {other:?}"),
     }
@@ -244,7 +246,11 @@ fn the_admitted_vectors_agree_with_lean() {
     for row in vectors {
         let p = predicate(&row[0]);
         let reading = p.reading(&zero).expect("a reading");
-        assert_eq!(rust_hull(&admitted(&reading)), admitted_hull(&row[1]), "{p:?}");
+        assert_eq!(
+            rust_hull(&admitted(&reading)),
+            admitted_hull(&row[1]),
+            "{p:?}"
+        );
     }
 }
 
@@ -266,7 +272,11 @@ fn the_shift_vectors_agree_with_lean() {
         let s = set(&row[0]);
         let inner = list(&row[1]).iter().map(pair).collect::<Vec<_>>();
         let k = int(&row[2]);
-        assert_eq!(shifted_within(&s, &inner, k), decision(&row[3]), "{s:?} {inner:?} {k}");
+        assert_eq!(
+            shifted_within(&s, &inner, k),
+            decision(&row[3]),
+            "{s:?} {inner:?} {k}"
+        );
     }
 }
 

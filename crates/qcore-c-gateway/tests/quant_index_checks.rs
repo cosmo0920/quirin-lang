@@ -81,11 +81,23 @@ fn the_motivating_body_is_safe_within_its_check_and_pending_when_held() {
     if !clang_available() {
         return;
     }
-    let r = row(META_BODY, "get_meta_len", &contracts(&meta("0 <= #i && #i < 24", false)));
+    let r = row(
+        META_BODY,
+        "get_meta_len",
+        &contracts(&meta("0 <= #i && #i < 24", false)),
+    );
     assert_eq!(row_verdict(&r), Safe, "{r:#?}");
-    assert!(r.scope.contains("quant checks map, Idx #i: 0 <= #i && #i < 24"), "{r:#?}");
+    assert!(
+        r.scope
+            .contains("quant checks map, Idx #i: 0 <= #i && #i < 24"),
+        "{r:#?}"
+    );
     assert!(!r.refutes_own_contract);
-    let r = row(META_BODY, "get_meta_len", &contracts(&meta("0 <= #i && #i < 24", true)));
+    let r = row(
+        META_BODY,
+        "get_meta_len",
+        &contracts(&meta("0 <= #i && #i < 24", true)),
+    );
     assert_eq!(row_verdict(&r), Pending, "{r:#?}");
     assert!(has_reason(&r, "awaiting-human-review"), "{r:#?}");
 }
@@ -109,7 +121,11 @@ fn every_comparison_operator_admits_exactly_its_indices() {
         ("#i == 22", Unknown),
     ];
     for (predicate, expected) in cases {
-        let r = row(META_BODY, "get_meta_len", &contracts(&meta(predicate, false)));
+        let r = row(
+            META_BODY,
+            "get_meta_len",
+            &contracts(&meta(predicate, false)),
+        );
         assert_eq!(row_verdict(&r), expected, "{predicate}: {r:#?}");
         if expected == Unknown {
             // The body accesses an index the check excludes: it refutes its
@@ -117,7 +133,9 @@ fn every_comparison_operator_admits_exactly_its_indices() {
             assert!(r.refutes_own_contract, "{predicate}: {r:#?}");
             assert!(has_reason(&r, "bounds-contract-refuted-by-body"), "{r:#?}");
             assert!(
-                r.accesses.iter().any(|a| a.actual.contains("bounds-quant-check-refuted")),
+                r.accesses
+                    .iter()
+                    .any(|a| a.actual.contains("bounds-quant-check-refuted")),
                 "{r:#?}"
             );
         }
@@ -165,10 +183,15 @@ contract {
     );
     assert_eq!(row_verdict(&r), Unknown, "{r:#?}");
     assert!(
-        r.accesses.iter().any(|a| a.actual.contains("bounds-quant-check-undecided")),
+        r.accesses
+            .iter()
+            .any(|a| a.actual.contains("bounds-quant-check-undecided")),
         "{r:#?}"
     );
-    assert!(!r.refutes_own_contract, "undecided is not a refutation: {r:#?}");
+    assert!(
+        !r.refutes_own_contract,
+        "undecided is not a refutation: {r:#?}"
+    );
     // A counted loop over exactly the admitted range is decided inside.
     let r = row(
         "unsigned char pick(char *map, int k) { int s = 0; for (int i = 0; i < 24; i++) s += map[i]; return s; }",
@@ -198,7 +221,11 @@ contract {
 };
 ";
     // `*map` is index 0, outside `[22, 23]`.
-    let r = row("unsigned char walk(char *map) { return *map; }", "walk", &contracts(text));
+    let r = row(
+        "unsigned char walk(char *map) { return *map; }",
+        "walk",
+        &contracts(text),
+    );
     assert_eq!(row_verdict(&r), Unknown, "{r:#?}");
     assert!(r.refutes_own_contract, "{r:#?}");
     // A copy at an offset keeps the object: `p[1]` is `map[23]`.
@@ -256,8 +283,14 @@ contract {{
         ))
     };
     let body = "int sum(char *buf, int len) { int s = 0; for (int i = 0; i < len; i++) s += buf[i]; return s; }";
-    assert_eq!(row_verdict(&row(body, "sum", &check("0 <= #i && #i < len"))), Safe);
-    assert_eq!(row_verdict(&row(body, "sum", &check("#i >= 0 && #i <= len - 1"))), Safe);
+    assert_eq!(
+        row_verdict(&row(body, "sum", &check("0 <= #i && #i < len"))),
+        Safe
+    );
+    assert_eq!(
+        row_verdict(&row(body, "sum", &check("#i >= 0 && #i <= len - 1"))),
+        Safe
+    );
     // A formal plus an offset is accepted by the loader but has no fact.
     let r = row(body, "sum", &check("0 <= #i && #i < len + 1"));
     assert_eq!(row_verdict(&r), Unknown, "{r:#?}");
@@ -288,19 +321,24 @@ fn a_caller_covers_every_admitted_index() {
     };
     let (v, r) = verdict("unsigned short caller(void) { char hdr[24]; return get_meta_len(hdr); }");
     assert_eq!(v, Safe, "{r:#?}");
-    let (v, r) = verdict("unsigned short caller(void) { char hdr[64]; return get_meta_len(hdr + 40); }");
+    let (v, r) =
+        verdict("unsigned short caller(void) { char hdr[64]; return get_meta_len(hdr + 40); }");
     assert_eq!(v, Safe, "{r:#?}");
     // Too small, definitely reached: a validated call-precondition violation.
     let (v, r) = verdict("unsigned short caller(void) { char hdr[16]; return get_meta_len(hdr); }");
     assert_eq!(v, Unsafe, "{r:#?}");
-    let (v, r) = verdict("unsigned short caller(void) { char hdr[64]; return get_meta_len(hdr + 41); }");
+    let (v, r) =
+        verdict("unsigned short caller(void) { char hdr[64]; return get_meta_len(hdr + 41); }");
     assert_eq!(v, Unsafe, "{r:#?}");
     // Too small under a branch: reachability unresolved, Unknown.
     let (v, r) = verdict(
         "unsigned short caller(void) { char hdr[16]; if (opaque()) return get_meta_len(hdr); return 0; }",
     );
     assert_eq!(v, Unknown, "{r:#?}");
-    assert!(has_reason(&r, "bounds-violation-reachability-unresolved"), "{r:#?}");
+    assert!(
+        has_reason(&r, "bounds-violation-reachability-unresolved"),
+        "{r:#?}"
+    );
     // An actual with no established extent decides nothing.
     let (v, r) = verdict("unsigned short caller(char *p) { return get_meta_len(p); }");
     assert_eq!(v, Unknown, "{r:#?}");
@@ -308,7 +346,9 @@ fn a_caller_covers_every_admitted_index() {
     // A held callee: the obligation rests on its review.
     let held = contracts(&meta("0 <= #i && #i < 24", true));
     let r = row(
-        &format!("{callee}\nunsigned short caller(void) {{ char hdr[24]; return get_meta_len(hdr); }}"),
+        &format!(
+            "{callee}\nunsigned short caller(void) {{ char hdr[24]; return get_meta_len(hdr); }}"
+        ),
         "caller",
         &held,
     );
@@ -377,7 +417,9 @@ void relay(char *p, int n) { fill(p, n); }";
         "{r:#?}"
     );
     assert!(
-        r.accesses.iter().any(|a| a.actual.contains("bounds-quant-check-escapes")),
+        r.accesses
+            .iter()
+            .any(|a| a.actual.contains("bounds-quant-check-escapes")),
         "{r:#?}"
     );
 }
@@ -394,7 +436,11 @@ unsigned short caller(void) { char hdr[32]; return get_meta_len(hdr); }";
     assert_eq!(row_verdict(&rs[0]), Unknown, "{:#?}", rs[0]);
     assert!(rs[0].refutes_own_contract);
     assert_eq!(row_verdict(&rs[1]), Unknown, "{:#?}", rs[1]);
-    assert!(has_reason(&rs[1], "states no bounds contract"), "{:#?}", rs[1]);
+    assert!(
+        has_reason(&rs[1], "states no bounds contract"),
+        "{:#?}",
+        rs[1]
+    );
 }
 
 #[test]
@@ -416,7 +462,8 @@ contract {{
 ",
         meta("0 <= #i && #i < 24", false)
     ));
-    let decls = "unsigned char tail(char *m); unsigned char wide(char *m); void q_observe(void *p);";
+    let decls =
+        "unsigned char tail(char *m); unsigned char wide(char *m); void q_observe(void *p);";
     let r = row(
         &format!("{decls}\nunsigned short get_meta_len(char *map) {{ return tail(map + 22); }}"),
         "get_meta_len",

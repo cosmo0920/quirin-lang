@@ -28,8 +28,9 @@ contract {{
 }
 
 fn check(predicate: &str) -> Result<QuantPredicate, String> {
-    let contracts =
-        load_bounds_contract_sources(&module(&format!("    quant checks map, Idx #i: {predicate};")))?;
+    let contracts = load_bounds_contract_sources(&module(&format!(
+        "    quant checks map, Idx #i: {predicate};"
+    )))?;
     let contract = contracts.contract("get_meta_len").expect("declared");
     contract
         .clauses
@@ -71,7 +72,11 @@ fn the_motivating_range_loads_as_a_conjunction() {
     let contracts =
         load_bounds_contract_sources(&module("    quant checks map, Idx #i: 0 <= #i && #i < 24;"))
             .expect("loads");
-    let entry = contracts.contract("get_meta_len").expect("declared").clauses[0].clone();
+    let entry = contracts
+        .contract("get_meta_len")
+        .expect("declared")
+        .clauses[0]
+        .clone();
     assert_eq!(entry.text, "quant checks map, Idx #i: 0 <= #i && #i < 24");
     assert!(entry.clause.is_precondition(), "a caller obligation");
 }
@@ -96,7 +101,10 @@ fn every_comparison_operator_loads_with_the_variable_on_either_side() {
         let mut stack = vec![&read];
         while let Some(node) = stack.pop() {
             match node {
-                QuantPredicate::Compare { relation: r, bound: b } => {
+                QuantPredicate::Compare {
+                    relation: r,
+                    bound: b,
+                } => {
                     found |= *r == relation && *b == constant(bound);
                 }
                 QuantPredicate::And(a, b) | QuantPredicate::Or(a, b) => {
@@ -159,7 +167,10 @@ fn unsupported_forms_are_rejected_by_name() {
     rejected("0 <= #i && #i < map", "quant-check-term");
     rejected("0 <= #i && #i < 024", "quant-check-term");
     rejected("0 <= #i && #i < (24)", "quant-check-term");
-    rejected("0 <= #i && #i < 99999999999999999999999999999999999999999", "quant-check-overflow");
+    rejected(
+        "0 <= #i && #i < 99999999999999999999999999999999999999999",
+        "quant-check-overflow",
+    );
     rejected("0 <= #i &&", "quant-check-shape");
     // An unbalanced group never reaches the reader: the structural parser
     // refuses the module first.
@@ -186,13 +197,34 @@ fn unbounded_and_empty_sets_are_rejected() {
 fn the_header_subject_and_binder_are_checked() {
     let load = |clause: &str| load_bounds_contract_sources(&module(clause));
     for (clause, code) in [
-        ("    quant checks len, Idx #i: 0 <= #i && #i < 4;", "quant-check-subject"),
-        ("    quant checks out, Idx #i: 0 <= #i && #i < 4;", "quant-check-subject"),
-        ("    quant checks nothing, Idx #i: 0 <= #i && #i < 4;", "quant-check-subject"),
-        ("    quant checks map, Index #i: 0 <= #i && #i < 4;", "quant-check-binder"),
-        ("    quant checks map, Idx i: 0 <= #i && #i < 4;", "quant-check-shape"),
-        ("    quant checks map Idx #i: 0 <= #i && #i < 4;", "quant-check-shape"),
-        ("    quant checks map, Idx #i 0 <= #i && #i < 4;", "quant-check-shape"),
+        (
+            "    quant checks len, Idx #i: 0 <= #i && #i < 4;",
+            "quant-check-subject",
+        ),
+        (
+            "    quant checks out, Idx #i: 0 <= #i && #i < 4;",
+            "quant-check-subject",
+        ),
+        (
+            "    quant checks nothing, Idx #i: 0 <= #i && #i < 4;",
+            "quant-check-subject",
+        ),
+        (
+            "    quant checks map, Index #i: 0 <= #i && #i < 4;",
+            "quant-check-binder",
+        ),
+        (
+            "    quant checks map, Idx i: 0 <= #i && #i < 4;",
+            "quant-check-shape",
+        ),
+        (
+            "    quant checks map Idx #i: 0 <= #i && #i < 4;",
+            "quant-check-shape",
+        ),
+        (
+            "    quant checks map, Idx #i 0 <= #i && #i < 4;",
+            "quant-check-shape",
+        ),
         ("    quant checks map, Idx #i:;", "quant-check-shape"),
         (
             "    quant checks map, Idx #i: 0 <= #i && #i < 4;\n    quant checks map, Idx #i: 0 <= #i && #i < 8;",
@@ -266,11 +298,9 @@ contract {
         "map, Idx #i: 0 <= #i && #i < 24"
     );
     // Resource v1 rejects the module: its vocabulary has no quant check.
-    let error = load_resource_contract_sources(&BTreeMap::from([(
-        "r.qv".to_owned(),
-        text.to_owned(),
-    )]))
-    .expect_err("resource v1 rejects a quant check");
+    let error =
+        load_resource_contract_sources(&BTreeMap::from([("r.qv".to_owned(), text.to_owned())]))
+            .expect_err("resource v1 rejects a quant check");
     assert!(error.to_string().contains("quantitative"), "{error}");
     // The selector-based `quant normal` envelope keeps its meaning.
     let parsed = parse_source_program(
@@ -278,7 +308,12 @@ contract {
     )
     .expect("structural parse");
     assert!(matches!(
-        parsed.declarations[0].value.function_contract.as_ref().unwrap().clauses[0]
+        parsed.declarations[0]
+            .value
+            .function_contract
+            .as_ref()
+            .unwrap()
+            .clauses[0]
             .value
             .kind,
         SourceContractClauseKind::Quant(_)
