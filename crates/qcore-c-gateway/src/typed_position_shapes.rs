@@ -490,15 +490,15 @@ pub(crate) fn record(
             walk(index, node, &mut features);
             let open = |_: &str| true;
             let plan: Option<StatementPlan> = match residual {
-                Residual::Condition => index.condition(texts, line, open),
-                Residual::Assignment => index.assignment(texts, line, open),
-                Residual::Return => index.returned(texts, line, open, open),
+                Residual::Condition => index.condition(texts, line, open, None),
+                Residual::Assignment => index.assignment(texts, line, open, None),
+                Residual::Return => index.returned(texts, line, open, open, None),
                 Residual::Argument {
                     callee,
                     index: at,
                     arity,
                 } => index
-                    .argument(callee, at, arity, texts, line, open)
+                    .argument(callee, at, arity, texts, line, open, None)
                     .map(|plan| plan.plan),
             };
             relaxed = Some(plan.is_some());

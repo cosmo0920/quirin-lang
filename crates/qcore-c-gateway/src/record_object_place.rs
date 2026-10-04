@@ -180,21 +180,31 @@ fn visit(node: &Value, f: &mut impl FnMut(&Value)) {
     }
 }
 
-/// Parity only: the decision as a `typed-place` place row.
-pub(crate) fn record(root: &str, storage: RootStorage, access: Access, decision: Decision) {
-    if !crate::typed_access_path::parity_enabled() {
+/// Parity only: the decision as a `typed-place` place row, into the
+/// consultation's own record when its consumer records one (card
+/// GAPO-PARITY-DECISIONS-NONDETERMINISTIC, rule 12q).
+pub(crate) fn record(
+    decisions: Option<&crate::consultation_decisions::Decisions>,
+    root: &str,
+    storage: RootStorage,
+    access: Access,
+    decision: Decision,
+) {
+    let Some(decisions) = decisions else {
         return;
-    }
-    crate::typed_place::record_place_row(serde_json::json!({
-        "rule": "12j",
-        "record_object": {
-            "name": root,
-            "storage": storage.code(),
-            "access": access.code(),
-        },
-        "admitted": decision == Decision::Admit,
-        "refusal": (decision != Decision::Admit).then(|| decision.code()),
-    }));
+    };
+    decisions.place(|| {
+        serde_json::json!({
+            "rule": "12j",
+            "record_object": {
+                "name": root,
+                "storage": storage.code(),
+                "access": access.code(),
+            },
+            "admitted": decision == Decision::Admit,
+            "refusal": (decision != Decision::Admit).then(|| decision.code()),
+        })
+    });
 }
 
 #[cfg(test)]

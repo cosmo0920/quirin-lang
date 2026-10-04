@@ -257,10 +257,17 @@ pub(crate) fn on_edge<T>(edge: &[(&Value, Option<usize>)], body: impl FnOnce() -
         .iter()
         .filter_map(|(region, child)| child.map(|child| (address(region), child)))
         .collect::<Vec<_>>();
-    let previous = EDGE.with(|cell| std::mem::replace(&mut *cell.borrow_mut(), chosen));
-    let result = body();
-    EDGE.with(|cell| *cell.borrow_mut() = previous);
-    result
+    // Card GAPO-PARITY-DECISIONS-NONDETERMINISTIC (rule 12q): restored on
+    // every exit, an unwind included.
+    struct Restore(Vec<(usize, usize)>);
+    impl Drop for Restore {
+        fn drop(&mut self) {
+            let previous = std::mem::take(&mut self.0);
+            EDGE.with(|cell| *cell.borrow_mut() = previous);
+        }
+    }
+    let _restore = Restore(EDGE.with(|cell| std::mem::replace(&mut *cell.borrow_mut(), chosen)));
+    body()
 }
 
 /// The node C evaluates at `actual` on the current edge: through parentheses
@@ -317,10 +324,16 @@ thread_local! {
 /// Run `body` with `root` (an edge's substituted full expression) as the
 /// current edge's root.
 pub(crate) fn with_edge_root<T>(root: Value, body: impl FnOnce() -> T) -> T {
-    let previous = EDGE_ROOT.with(|cell| cell.replace(Some(root)));
-    let result = body();
-    EDGE_ROOT.with(|cell| *cell.borrow_mut() = previous);
-    result
+    // Rule 12q: restored on every exit, an unwind included.
+    struct Restore(Option<Value>);
+    impl Drop for Restore {
+        fn drop(&mut self) {
+            let previous = self.0.take();
+            EDGE_ROOT.with(|cell| *cell.borrow_mut() = previous);
+        }
+    }
+    let _restore = Restore(EDGE_ROOT.with(|cell| cell.replace(Some(root))));
+    body()
 }
 
 /// Rule 11m: the full expression C evaluates on the edge being lowered, when
@@ -340,10 +353,15 @@ thread_local! {
 /// Run `body` while the condition routes decide `node`, a region's deciding
 /// operand.
 pub(crate) fn deciding<T>(node: &Value, body: impl FnOnce() -> T) -> T {
-    let previous = DECIDING.with(|cell| cell.replace(address(node)));
-    let result = body();
-    DECIDING.with(|cell| cell.set(previous));
-    result
+    // Rule 12q: restored on every exit, an unwind included.
+    struct Restore(usize);
+    impl Drop for Restore {
+        fn drop(&mut self) {
+            DECIDING.with(|cell| cell.set(self.0));
+        }
+    }
+    let _restore = Restore(DECIDING.with(|cell| cell.replace(address(node))));
+    body()
 }
 
 /// Among several Clang nodes carrying an operand's line and tokens, the one

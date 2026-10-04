@@ -63,7 +63,6 @@
 //! The Lean model is `QCore.TypedPlace`; its decision vectors are this
 //! module's [`DECISION_VECTORS`].
 
-use std::cell::RefCell;
 use std::collections::BTreeMap;
 
 use serde_json::Value;
@@ -601,16 +600,21 @@ pub(crate) struct TrackedPlace {
 
 /// The tracked-root route: the place `node` designates, if its root is a
 /// pointer this function declares once and [`decide`] admits its shape.
+///
+/// Card GAPO-PARITY-DECISIONS-NONDETERMINISTIC (rule 12q): the decision is
+/// recorded into the consultation's own `decisions`, when its consumer
+/// records one.
 pub(crate) fn tracked_chain(
     node: &Value,
     fields: &BTreeMap<String, Option<FieldFacts>>,
     function: Option<&Value>,
+    decisions: Option<&crate::consultation_decisions::Decisions>,
 ) -> Result<TrackedPlace, Refusal> {
     let place = read_place(node, fields).inspect_err(|refusal| {
-        record_decision(None, Some(refusal));
+        record_decision(decisions, None, Some(refusal));
     })?;
     let result = tracked_chain_of(&place, function);
-    record_decision(Some(&place), result.as_ref().err());
+    record_decision(decisions, Some(&place), result.as_ref().err());
     result
 }
 
@@ -668,76 +672,37 @@ fn tracked_chain_of(place: &TypedPlace, function: Option<&Value>) -> Result<Trac
     })
 }
 
-thread_local! {
-    /// Parity only: the place decisions made since the last record.
-    static DECISIONS: RefCell<Vec<Value>> = const { RefCell::new(Vec::new()) };
-}
-
-fn record_decision(place: Option<&TypedPlace>, refusal: Option<&Refusal>) {
-    if !crate::typed_access_path::parity_enabled() {
-        return;
-    }
-    let row = serde_json::json!({
-        "place": place.map(|place| serde_json::json!({
-            "decl": place.decl,
-            "name": place.name,
-            "decl_kind": place.decl_kind,
-            "root": place.root.code(),
-            "root_type": place.root_type,
-            "steps": place.steps.iter().map(|step| serde_json::json!({
-                "kind": step.kind.code(),
-                "member": step.member,
-                "field": step.field,
-                "type": step.ty,
-                "view": step.view,
-                "storage": step.storage.code(),
-            })).collect::<Vec<_>>(),
-        })),
-        "admitted": refusal.is_none(),
-        "refusal": refusal.map(Refusal::code),
-    });
-    DECISIONS.with(|decisions| decisions.borrow_mut().push(row));
-}
-
-/// Card CG10-INDIRECT-ACCESS-SOLE-BLOCKERS (rule 12j): parity only, one more
-/// place decision of the last consultation, recorded with the others.
-pub(crate) fn record_place_row(row: Value) {
-    if !crate::typed_access_path::parity_enabled() {
-        return;
-    }
-    DECISIONS.with(|decisions| decisions.borrow_mut().push(row));
-}
-
-/// Parity only: forget decisions no consumer recorded.
-pub(crate) fn clear_decisions() {
-    DECISIONS.with(|decisions| decisions.borrow_mut().clear());
-}
-
-/// Parity only: one `typed-place` row for every place decision the last
-/// consultation made at `position`, with the consultation's answer.
-pub(crate) fn record_decisions(
-    function: &str,
-    line: usize,
-    texts: &[&str],
-    position: &str,
-    admitted: bool,
+/// Parity only: one place decision, into the consultation's own record
+/// (rule 12q). A reader whose consumer records nothing keeps nothing.
+fn record_decision(
+    decisions: Option<&crate::consultation_decisions::Decisions>,
+    place: Option<&TypedPlace>,
+    refusal: Option<&Refusal>,
 ) {
-    let decisions = DECISIONS.with(|decisions| std::mem::take(&mut *decisions.borrow_mut()));
-    if decisions.is_empty() || !crate::typed_access_path::parity_enabled() {
+    let Some(decisions) = decisions else {
         return;
-    }
-    crate::typed_access_path::record_row(serde_json::json!({
-        "function": function,
-        "line": line,
-        "texts": texts,
-        "position": "typed-place",
-        "of_position": position,
-        "old_route": "old_refusal",
-        "old_admitted": false,
-        "new_admitted": admitted,
-        "places": decisions,
-        "disagreement": admitted,
-    }));
+    };
+    decisions.place(|| {
+        serde_json::json!({
+            "place": place.map(|place| serde_json::json!({
+                "decl": place.decl,
+                "name": place.name,
+                "decl_kind": place.decl_kind,
+                "root": place.root.code(),
+                "root_type": place.root_type,
+                "steps": place.steps.iter().map(|step| serde_json::json!({
+                    "kind": step.kind.code(),
+                    "member": step.member,
+                    "field": step.field,
+                    "type": step.ty,
+                    "view": step.view,
+                    "storage": step.storage.code(),
+                })).collect::<Vec<_>>(),
+            })),
+            "admitted": refusal.is_none(),
+            "refusal": refusal.map(Refusal::code),
+        })
+    });
 }
 
 /// I04: the gateway's own occurrence of a token run on its line.

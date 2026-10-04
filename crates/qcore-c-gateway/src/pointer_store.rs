@@ -55,7 +55,6 @@
 //! The Lean model is `QCore.PointerStore`; its decision vectors are this
 //! module's [`DECISION_VECTORS`].
 
-use std::cell::RefCell;
 use std::collections::BTreeMap;
 
 use serde_json::Value;
@@ -525,7 +524,7 @@ pub(crate) fn read_store(reader: &mut Reader<'_>, place: &Value, value: &Value) 
     let destination = match crate::typed_place::read_place(place, reader.fields()) {
         Ok(destination) => destination,
         Err(_) => {
-            record(None, None, false);
+            record(reader.decisions(), None, None, false);
             return None;
         }
     };
@@ -535,7 +534,12 @@ pub(crate) fn read_store(reader: &mut Reader<'_>, place: &Value, value: &Value) 
             .name
             .as_ref()
             .is_none_or(|(name, id)| reader.function().is_some_and(|f| unique_name(f, name, id)));
-    record(Some(&destination), Some(reading.class), admitted);
+    record(
+        reader.decisions(),
+        Some(&destination),
+        Some(reading.class),
+        admitted,
+    );
     if !admitted {
         return None;
     }
@@ -577,38 +581,27 @@ pub(crate) fn has_pointer_store(cfg: &crate::legacy_c::LegacyCfg) -> bool {
     })
 }
 
-thread_local! {
-    /// Parity only: the classifications made since the last record.
-    static DECISIONS: RefCell<Vec<Value>> = const { RefCell::new(Vec::new()) };
-}
-
-fn record(place: Option<&TypedPlace>, value: Option<ValueClass>, admitted: bool) {
-    if !crate::typed_access_path::parity_enabled() {
+/// Parity only: one classification, into the consultation's own record
+/// (card GAPO-PARITY-DECISIONS-NONDETERMINISTIC, rule 12q). Its consumer
+/// writes the `pointer-store` row
+/// ([`crate::consultation_decisions::Decisions::record_classifications`]).
+fn record(
+    decisions: Option<&crate::consultation_decisions::Decisions>,
+    place: Option<&TypedPlace>,
+    value: Option<ValueClass>,
+    admitted: bool,
+) {
+    let Some(decisions) = decisions else {
         return;
-    }
-    let row = serde_json::json!({
-        "place": place.map(spell),
-        "root": place.map(|place| place.root.code()),
-        "value": value.map(ValueClass::code),
-        "admitted": admitted,
+    };
+    decisions.classification(|| {
+        serde_json::json!({
+            "place": place.map(spell),
+            "root": place.map(|place| place.root.code()),
+            "value": value.map(ValueClass::code),
+            "admitted": admitted,
+        })
     });
-    DECISIONS.with(|decisions| decisions.borrow_mut().push(row));
-}
-
-/// Parity only: one `pointer-store` row for the classifications the last
-/// statement consultation made.
-pub(crate) fn record_decisions(function: &str, line: usize, texts: &[&str]) {
-    let decisions = DECISIONS.with(|decisions| std::mem::take(&mut *decisions.borrow_mut()));
-    if decisions.is_empty() || !crate::typed_access_path::parity_enabled() {
-        return;
-    }
-    crate::typed_access_path::record_row(serde_json::json!({
-        "function": function,
-        "line": line,
-        "texts": texts,
-        "position": "pointer-store",
-        "classifications": decisions,
-    }));
 }
 
 /// Parity only: the flow's decision on one admitted classification.

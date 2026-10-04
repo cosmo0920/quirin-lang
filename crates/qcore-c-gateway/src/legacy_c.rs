@@ -3441,6 +3441,7 @@ fn build_function_cfg_with(
         typed_place_origin: std::cell::Cell::new(None),
         typed_root_declarations: std::cell::OnceCell::new(),
         declared_no_return: std::cell::OnceCell::new(),
+        call_graph_components: std::cell::OnceCell::new(),
     };
     // Card W47-TYPED-ROOT-DECLARATION-READER: parity runs only.
     parser.record_typed_root_parity();
@@ -4124,6 +4125,12 @@ struct Parser<'a> {
     /// Card CG21-CALL-EXITS-AND-BOUNDARIES (rule 11o): the callees the
     /// environment declares `resource_no_return()` for, read on first use.
     declared_no_return: std::cell::OnceCell<BTreeSet<String>>,
+    /// Card GAPO-PARITY-DECISIONS-NONDETERMINISTIC (rule 12q): the direct-call
+    /// graph's components of `tokens`, read on first use by the parity
+    /// stream's call-instantiation rows. It replaces a thread-local cache
+    /// keyed by the token slice's address, which a later stream allocated at
+    /// the same address with the same length could have answered.
+    call_graph_components: std::cell::OnceCell<BTreeMap<String, usize>>,
     cursor: usize,
     contracts: &'a ResourceContracts,
     next_site: usize,
@@ -4256,14 +4263,19 @@ impl Parser<'_> {
         // the lexical and AST closures. Card CG10 (rule 10t): several
         // candidates are told apart by this run's own occurrence.
         let line = tokens.first()?.line;
+        // Card GAPO-PARITY-DECISIONS-NONDETERMINISTIC (rule 12q): this
+        // consultation's own parity decisions, recorded below and dropped
+        // with the frame.
+        let decisions = crate::consultation_decisions::Decisions::new();
         let plan = index.statement_with(
             &texts,
             line,
             &|| crate::typed_place::occurrence(self.tokens, self.typed_place_origin.get(), tokens),
             |name| self.joined_never_bound(name),
+            Some(&decisions),
         );
-        crate::typed_place::record_decisions(function, line, &texts, "statement", plan.is_some());
-        crate::pointer_store::record_decisions(function, line, &texts);
+        decisions.record_places(function, line, &texts, "statement", plan.is_some());
+        decisions.record_classifications(function, line, &texts);
         plan
     }
 

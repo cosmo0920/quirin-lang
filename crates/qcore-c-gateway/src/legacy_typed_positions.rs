@@ -93,10 +93,15 @@ impl Parser<'_> {
             return None;
         }
         let line = tokens.first()?.line;
-        let plan = self
-            .typed_positions_index()?
-            .condition(&texts, line, |name| self.position_never_bound(name));
-        crate::typed_place::record_decisions(
+        // Rule 12q: this consultation's own parity decisions.
+        let decisions = crate::consultation_decisions::Decisions::new();
+        let plan = self.typed_positions_index()?.condition(
+            &texts,
+            line,
+            |name| self.position_never_bound(name),
+            Some(&decisions),
+        );
+        decisions.record_places(
             &self.typed_path_function,
             line,
             &texts,
@@ -177,12 +182,15 @@ impl Parser<'_> {
             return None;
         }
         let line = statement.first()?.line;
-        let plan = self
-            .typed_positions_index()?
-            .assignment(&statement_texts, line, |candidate| {
-                self.position_never_bound(candidate)
-            });
-        crate::typed_place::record_decisions(
+        // Rule 12q: this consultation's own parity decisions.
+        let decisions = crate::consultation_decisions::Decisions::new();
+        let plan = self.typed_positions_index()?.assignment(
+            &statement_texts,
+            line,
+            |candidate| self.position_never_bound(candidate),
+            Some(&decisions),
+        );
+        decisions.record_places(
             &self.typed_path_function,
             line,
             &statement_texts,
@@ -268,13 +276,16 @@ impl Parser<'_> {
             return None;
         }
         let line = expression.first()?.line;
+        // Rule 12q: this consultation's own parity decisions.
+        let decisions = crate::consultation_decisions::Decisions::new();
         let plan = self.typed_positions_index()?.returned(
             &texts,
             line,
             |name| self.position_never_bound(name),
             |name| self.pointer_root(name),
+            Some(&decisions),
         );
-        crate::typed_place::record_decisions(
+        decisions.record_places(
             &self.typed_path_function,
             line,
             &texts,
@@ -304,12 +315,18 @@ impl Parser<'_> {
         argument: &[&str],
         line: usize,
     ) -> Option<crate::typed_access_positions::ArgumentPlan> {
-        let plan =
-            self.typed_positions_index()?
-                .argument(callee, index, arity, argument, line, |name| {
-                    self.position_never_bound(name)
-                });
-        crate::typed_place::record_decisions(
+        // Rule 12q: this consultation's own parity decisions.
+        let decisions = crate::consultation_decisions::Decisions::new();
+        let plan = self.typed_positions_index()?.argument(
+            callee,
+            index,
+            arity,
+            argument,
+            line,
+            |name| self.position_never_bound(name),
+            Some(&decisions),
+        );
+        decisions.record_places(
             &self.typed_path_function,
             line,
             argument,
@@ -364,9 +381,15 @@ impl Parser<'_> {
             return;
         }
         let candidate = self.typed_positions_index().and_then(|typed| {
-            typed.argument(callee, index, arity, argument, line, |name| {
-                self.position_never_bound(name)
-            })
+            typed.argument(
+                callee,
+                index,
+                arity,
+                argument,
+                line,
+                |name| self.position_never_bound(name),
+                None,
+            )
         });
         crate::typed_access_path::record_position_legacy(
             &self.typed_path_function,
@@ -399,10 +422,14 @@ impl Parser<'_> {
         let candidate = self
             .typed_positions_index()
             .and_then(|index| match position {
-                "return" => {
-                    index.returned(&texts, line, never_bound, |name| self.pointer_root(name))
-                }
-                _ => index.condition(&texts, line, never_bound),
+                "return" => index.returned(
+                    &texts,
+                    line,
+                    never_bound,
+                    |name| self.pointer_root(name),
+                    None,
+                ),
+                _ => index.condition(&texts, line, never_bound, None),
             });
         crate::typed_access_path::record_position_legacy(
             &self.typed_path_function,

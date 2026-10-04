@@ -54,6 +54,9 @@ mod cast_semantics;
 // Card CG04-CONDITION-ACQUISITION (rule 10x): acquisitions in conditions and
 // complex condition leaves; the G hooks are in `legacy_condition_acquisition.rs`.
 mod condition_acquisition;
+// Card GAPO-PARITY-DECISIONS-NONDETERMINISTIC (rule 12q): a consultation's
+// parity decisions, owned by the consumer that records them.
+mod consultation_decisions;
 // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): return-code dispositions;
 // the G hooks are in `legacy_relational_post.rs` and `legacy_summary.rs`.
 mod relational_post;

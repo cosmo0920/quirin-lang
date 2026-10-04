@@ -222,7 +222,10 @@ impl Parser<'_> {
             ));
         }
         for (consumer, callee, result, identity, use_) in calls {
-            let standing = parity_standing(self.tokens, &self.typed_path_function, &callee);
+            let component = self
+                .call_graph_components
+                .get_or_init(|| unit_graph(self.tokens));
+            let standing = parity_standing(component, &self.typed_path_function, &callee);
             if let Err(decline) = call_instantiation::accept(standing, result, identity, use_) {
                 record_row(json!({
                     "function": self.typed_path_function,
@@ -683,22 +686,15 @@ impl Parser<'_> {
     }
 }
 
-/// The unit's direct-call graph, read once per unit and thread for the
-/// parity stream only: every name the lexical definition scan finds a body
-/// for (the first `NAME ( … ) {`, as `find_function_body` reads it) and its
-/// strongly connected component. A callee shares the enclosing function's
-/// component exactly when it reaches the function back, which is
-/// `recursive_local_callee`'s question; the admissions ask that function
-/// itself.
-struct UnitGraph {
-    key: (usize, usize),
-    component: std::collections::BTreeMap<String, usize>,
-}
-
-thread_local! {
-    static UNIT_GRAPH: std::cell::RefCell<Option<UnitGraph>> = const { std::cell::RefCell::new(None) };
-}
-
+/// The unit's direct-call graph, for the parity stream only: every name the
+/// lexical definition scan finds a body for (the first `NAME ( … ) {`, as
+/// `find_function_body` reads it) and its strongly connected component. A
+/// callee shares the enclosing function's component exactly when it reaches
+/// the function back, which is `recursive_local_callee`'s question; the
+/// admissions ask that function itself. Card
+/// GAPO-PARITY-DECISIONS-NONDETERMINISTIC (rule 12q): read once per parser
+/// (`Parser::call_graph_components`), never from a thread-local keyed by the
+/// stream's address.
 fn unit_graph(tokens: &[Token]) -> std::collections::BTreeMap<String, usize> {
     use std::collections::{BTreeMap, BTreeSet};
     // First body per name; a name whose first call-shaped occurrence does
@@ -799,25 +795,19 @@ fn unit_graph(tokens: &[Token]) -> std::collections::BTreeMap<String, usize> {
         .collect()
 }
 
-/// The standing the parity stream records (see [`UnitGraph`]).
-fn parity_standing(tokens: &[Token], function: &str, callee: &str) -> Standing {
-    let key = (tokens.as_ptr() as usize, tokens.len());
-    UNIT_GRAPH.with(|cell| {
-        let mut cell = cell.borrow_mut();
-        if cell.as_ref().is_none_or(|graph| graph.key != key) {
-            *cell = Some(UnitGraph {
-                key,
-                component: unit_graph(tokens),
-            });
-        }
-        let graph = cell.as_ref().expect("just built");
-        match (graph.component.get(callee), graph.component.get(function)) {
-            (Some(_), _) if callee == function => Standing::Recursive,
-            (Some(a), Some(b)) if a == b => Standing::Recursive,
-            (Some(_), _) => Standing::Validated,
-            (None, _) => Standing::Declared,
-        }
-    })
+/// The standing the parity stream records, from `component` (the parser's
+/// [`unit_graph`]).
+fn parity_standing(
+    component: &std::collections::BTreeMap<String, usize>,
+    function: &str,
+    callee: &str,
+) -> Standing {
+    match (component.get(callee), component.get(function)) {
+        (Some(_), _) if callee == function => Standing::Recursive,
+        (Some(a), Some(b)) if a == b => Standing::Recursive,
+        (Some(_), _) => Standing::Validated,
+        (None, _) => Standing::Declared,
+    }
 }
 
 /// Whether a `return` expression takes an address outside its calls' actuals:

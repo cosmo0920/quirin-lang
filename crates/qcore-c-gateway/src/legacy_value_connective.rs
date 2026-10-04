@@ -421,7 +421,15 @@ impl Parser<'_> {
             .iter()
             .map(|(region, choice)| (*region, value_connective::chosen_child(region, *choice)))
             .collect::<Vec<_>>();
-        LOWERING.set(true);
+        // Card GAPO-PARITY-DECISIONS-NONDETERMINISTIC (rule 12q): the flag
+        // is restored to its previous value on every exit, an unwind included.
+        struct Restore(bool);
+        impl Drop for Restore {
+            fn drop(&mut self) {
+                LOWERING.set(self.0);
+            }
+        }
+        let _restore = Restore(LOWERING.replace(true));
         // The edge's own full expression, for rule 10y's consumers to read
         // where no source node carries the edge's tokens (rule 11m).
         let node = value_connective::substitute(lowering.root, choices);
@@ -429,7 +437,6 @@ impl Parser<'_> {
         let lowered = value_connective::on_edge(&edge, || {
             value_connective::with_edge_root(root, || self.edge(lowering, &run, &node))
         });
-        LOWERING.set(false);
         lowered.ok_or(Decline::Leaf)
     }
 

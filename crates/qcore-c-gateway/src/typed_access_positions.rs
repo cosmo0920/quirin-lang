@@ -258,7 +258,6 @@ impl Reader<'_> {
 impl StatementIndex {
     /// The unique expression node on `line` whose tokens are exactly `texts`.
     pub(crate) fn expression_node(&self, texts: &[&str], line: usize) -> Option<&Value> {
-        crate::typed_place::clear_decisions();
         let body = children(&self.function)
             .iter()
             .find(|node| kind(node) == "CompoundStmt")?;
@@ -283,15 +282,18 @@ impl StatementIndex {
         }
     }
 
-    /// A controlling-expression operand read as a typed condition.
+    /// A controlling-expression operand read as a typed condition. Here and
+    /// in the other position consultations, the reader's parity decisions go
+    /// into `decisions` (rule 12q); `None` keeps nothing.
     pub(crate) fn condition(
         &self,
         texts: &[&str],
         line: usize,
         never_bound: impl Fn(&str) -> bool,
+        decisions: Option<&crate::consultation_decisions::Decisions>,
     ) -> Option<StatementPlan> {
         let node = self.expression_node(texts, line)?;
-        let mut reader = self.reader(&never_bound);
+        let mut reader = self.reader(&never_bound).recording(decisions);
         reader.condition(node)?;
         Some(reader.plan)
     }
@@ -302,12 +304,13 @@ impl StatementIndex {
         texts: &[&str],
         line: usize,
         never_bound: impl Fn(&str) -> bool,
+        decisions: Option<&crate::consultation_decisions::Decisions>,
     ) -> Option<StatementPlan> {
         let node = self.expression_node(texts, line)?;
         if kind(node) != "BinaryOperator" || node["opcode"].as_str() != Some("=") {
             return None;
         }
-        let mut reader = self.reader(&never_bound);
+        let mut reader = self.reader(&never_bound).recording(decisions);
         reader.statement(node)?;
         Some(reader.plan)
     }
@@ -321,9 +324,10 @@ impl StatementIndex {
         line: usize,
         never_bound: impl Fn(&str) -> bool,
         pointer_root: impl Fn(&str) -> bool,
+        decisions: Option<&crate::consultation_decisions::Decisions>,
     ) -> Option<StatementPlan> {
         let node = self.expression_node(texts, line)?;
-        let mut reader = self.reader(&never_bound);
+        let mut reader = self.reader(&never_bound).recording(decisions);
         let pointer = reader.value(node)?;
         if pointer && !reader.roots_admit(&pointer_root) {
             return None;
@@ -373,10 +377,10 @@ impl StatementIndex {
         texts: &[&str],
         line: usize,
         never_bound: impl Fn(&str) -> bool,
+        decisions: Option<&crate::consultation_decisions::Decisions>,
     ) -> Option<ArgumentPlan> {
         let actual = self.argument_node(callee, index, arity, texts, line)?;
-        crate::typed_place::clear_decisions();
-        let mut reader = self.reader(&never_bound);
+        let mut reader = self.reader(&never_bound).recording(decisions);
         // Rule 10n: an address `&PATH` is a pointer value, never a read.
         let mut address = false;
         let pointer_valued = match strip_pointer_value(actual) {
@@ -434,7 +438,7 @@ mod tests {
         with_index(source, |index| {
             let wanted = texts(operand);
             let wanted = wanted.iter().map(String::as_str).collect::<Vec<_>>();
-            index.condition(&wanted, 1, |_| true)
+            index.condition(&wanted, 1, |_| true, None)
         })
     }
 
@@ -486,7 +490,7 @@ mod tests {
             let wanted = texts("r = p->next");
             let wanted = wanted.iter().map(String::as_str).collect::<Vec<_>>();
             let plan = index
-                .assignment(&wanted, 1, |_| true)
+                .assignment(&wanted, 1, |_| true, None)
                 .expect("typed assignment");
             assert!(plan.borrowed_destination);
             assert_eq!(plan.scalar.destination.as_deref(), Some("r"));
@@ -499,16 +503,24 @@ mod tests {
         with_index(source, |index| {
             let ternary = texts("p->next ? 1 : 0");
             let ternary = ternary.iter().map(String::as_str).collect::<Vec<_>>();
-            assert!(index.returned(&ternary, 1, |_| true, |_| true).is_none());
+            assert!(
+                index
+                    .returned(&ternary, 1, |_| true, |_| true, None)
+                    .is_none()
+            );
         });
         let source = "struct S { struct S *next; char name[8]; int value; }; struct S *f(struct S *p) { return p->next; }";
         with_index(source, |index| {
             let wanted = texts("p->next");
             let wanted = wanted.iter().map(String::as_str).collect::<Vec<_>>();
-            assert!(index.returned(&wanted, 1, |_| true, |_| true).is_some());
             assert!(
                 index
-                    .returned(&wanted, 1, |_| true, |name| name != "p")
+                    .returned(&wanted, 1, |_| true, |_| true, None)
+                    .is_some()
+            );
+            assert!(
+                index
+                    .returned(&wanted, 1, |_| true, |name| name != "p", None)
                     .is_none()
             );
         });
@@ -516,7 +528,11 @@ mod tests {
         with_index(source, |index| {
             let wanted = texts("p->name");
             let wanted = wanted.iter().map(String::as_str).collect::<Vec<_>>();
-            assert!(index.returned(&wanted, 1, |_| true, |_| true).is_none());
+            assert!(
+                index
+                    .returned(&wanted, 1, |_| true, |_| true, None)
+                    .is_none()
+            );
         });
     }
 
@@ -527,7 +543,7 @@ mod tests {
             let scalar = texts("p->value");
             let scalar = scalar.iter().map(String::as_str).collect::<Vec<_>>();
             let read = index
-                .argument("g", 0, 2, &scalar, 1, |_| true)
+                .argument("g", 0, 2, &scalar, 1, |_| true, None)
                 .expect("scalar actual");
             assert!(!read.pointer_valued);
             let pointer = texts("p->next");
@@ -535,7 +551,7 @@ mod tests {
             let open = |_: &str| true;
             assert!(
                 index
-                    .argument("g", 1, 2, &pointer, 1, open)
+                    .argument("g", 1, 2, &pointer, 1, open, None)
                     .unwrap()
                     .pointer_valued
             );
@@ -544,7 +560,7 @@ mod tests {
             // per-path premise when it is an eligible chain root. BEFORE:
             // refused here.
             let deferred = index
-                .argument("g", 1, 2, &pointer, 1, |name| name != "p")
+                .argument("g", 1, 2, &pointer, 1, |name| name != "p", None)
                 .expect("deferred to the flow");
             assert!(deferred.pointer_valued);
             assert!(deferred.plan.chains.iter().all(|chain| chain.root == "p"
@@ -552,8 +568,8 @@ mod tests {
                 && chain.root_bound_untracked
                 && chain.root_untracked_only));
             assert!(!deferred.plan.chains.is_empty());
-            assert!(index.argument("g", 0, 2, &pointer, 1, open).is_none());
-            assert!(index.argument("h", 0, 2, &scalar, 1, open).is_none());
+            assert!(index.argument("g", 0, 2, &pointer, 1, open, None).is_none());
+            assert!(index.argument("h", 0, 2, &scalar, 1, open, None).is_none());
         });
     }
 }

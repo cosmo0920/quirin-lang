@@ -168,7 +168,7 @@ fn place_of(source: &str, spelling: &str, line: usize) -> Result<TrackedPlace, R
         .map(|token| token.text.as_str())
         .collect::<Vec<_>>();
     let node = index.expression_node(&texts, line).expect("node");
-    tracked_chain(node, &index.fields, Some(&index.function))
+    tracked_chain(node, &index.fields, Some(&index.function), None)
 }
 
 #[test]
@@ -322,12 +322,24 @@ fn identical_statements_on_one_line_are_told_apart_by_occurrence() {
         let origin = Some((start, width));
         assert!(
             index
-                .statement_with(&texts, 1, &|| occurrence(&tokens, origin, run), |_| true)
+                .statement_with(
+                    &texts,
+                    1,
+                    &|| occurrence(&tokens, origin, run),
+                    |_| true,
+                    None
+                )
                 .is_some()
         );
         assert!(
             index
-                .statement_with(&texts, 1, &|| occurrence(&tokens, None, run), |_| true)
+                .statement_with(
+                    &texts,
+                    1,
+                    &|| occurrence(&tokens, None, run),
+                    |_| true,
+                    None
+                )
                 .is_none()
         );
     }
@@ -350,7 +362,8 @@ fn identical_statements_on_one_line_are_told_apart_by_occurrence() {
                 &texts,
                 1,
                 &|| occurrence(&rewritten, Some((starts[0], width)), run),
-                |_| true
+                |_| true,
+                None
             )
             .is_none()
     );

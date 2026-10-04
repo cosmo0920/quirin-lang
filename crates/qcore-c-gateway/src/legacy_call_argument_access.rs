@@ -967,13 +967,19 @@ impl Parser<'_> {
             ) {
                 Ok(read) => read,
                 Err(_) => {
+                    // Rule 12q: a consultation that records nothing keeps no
+                    // parity decisions.
                     let typed = self.typed_positions_index().and_then(|positions| {
-                        positions.argument(callee, index, arity, argument, lines[start], |name| {
-                            self.position_never_bound(name)
-                        })
-                    });
-                    crate::typed_place::clear_decisions();
-                    let typed = typed?;
+                        positions.argument(
+                            callee,
+                            index,
+                            arity,
+                            argument,
+                            lines[start],
+                            |name| self.position_never_bound(name),
+                            None,
+                        )
+                    })?;
                     ArgumentRead {
                         bases: typed.plan.scalar.bases,
                         record_bases: typed.plan.scalar.record_bases,

@@ -849,17 +849,19 @@ impl StatementIndex {
         line: usize,
         never_bound: impl Fn(&str) -> bool,
     ) -> Option<StatementPlan> {
-        self.statement_with(texts, line, &|| None, never_bound)
+        self.statement_with(texts, line, &|| None, never_bound, None)
     }
 
     /// [`Self::statement`], where several candidates are told apart by the
-    /// gateway's own `occurrence` of the run (card CG10, I04).
+    /// gateway's own `occurrence` of the run (card CG10, I04). The reader's
+    /// parity decisions go into `decisions` (rule 12q).
     pub(crate) fn statement_with(
         &self,
         texts: &[&str],
         line: usize,
         occurrence: &dyn Fn() -> Option<crate::typed_place::Occurrence>,
         never_bound: impl Fn(&str) -> bool,
+        decisions: Option<&crate::consultation_decisions::Decisions>,
     ) -> Option<StatementPlan> {
         let matched = self
             .by_line
@@ -877,8 +879,7 @@ impl StatementIndex {
             [_, _, ..] => self.by_occurrence(&matched, line, &occurrence()?)?,
             [] => return None,
         };
-        crate::typed_place::clear_decisions();
-        let mut reader = self.reader(&never_bound);
+        let mut reader = self.reader(&never_bound).recording(decisions);
         // Card CG11 (rule 10v): only the statement route reads a pointer store.
         reader.pointer_stores = true;
         reader.statement(node)?;
@@ -905,6 +906,7 @@ impl StatementIndex {
             records: &self.records,
             never_bound,
             function: Some(&self.function),
+            decisions: None,
         }
     }
 
@@ -1176,12 +1178,32 @@ pub(crate) struct Reader<'a> {
     /// Card CG10-COMMON-TYPED-PLACE (rule 10t): the function whose body the
     /// reader reads, for the tracked-root place's DeclID identity.
     function: Option<&'a Value>,
+    /// Card GAPO-PARITY-DECISIONS-NONDETERMINISTIC (rule 12q): the record
+    /// this reader's parity decisions go into, owned by the consumer that
+    /// records them; `None` keeps nothing.
+    decisions: Option<&'a crate::consultation_decisions::Decisions>,
 }
 
 impl<'a> Reader<'a> {
     /// Card CG11 (rule 10v): the unit's field facts.
     pub(crate) fn fields(&self) -> &'a BTreeMap<String, Option<FieldFacts>> {
         self.fields
+    }
+
+    /// Card GAPO-PARITY-DECISIONS-NONDETERMINISTIC (rule 12q): this reader
+    /// writes its parity decisions into `decisions`, which its consumer owns
+    /// and records.
+    pub(crate) fn recording(
+        mut self,
+        decisions: Option<&'a crate::consultation_decisions::Decisions>,
+    ) -> Self {
+        self.decisions = decisions;
+        self
+    }
+
+    /// Rule 12q: the record this reader writes its parity decisions into.
+    pub(crate) fn decisions(&self) -> Option<&'a crate::consultation_decisions::Decisions> {
+        self.decisions
     }
 
     /// Card CG11 (rule 10v): the function whose body the reader reads.
@@ -1586,7 +1608,7 @@ impl<'a> Reader<'a> {
                 storage,
                 access,
             );
-            crate::record_object_place::record(root, storage, access, decision);
+            crate::record_object_place::record(self.decisions, root, storage, access, decision);
             if decision != crate::record_object_place::Decision::Admit {
                 return None;
             }
@@ -1602,7 +1624,10 @@ impl<'a> Reader<'a> {
         // any other root, the common typed place carries the per-hop
         // obligations the chain model checks, or refuses.
         let tracked = if mixed_path && !record_object && !(self.never_bound)(root) {
-            Some(crate::typed_place::tracked_chain(node, self.fields, self.function).ok()?)
+            Some(
+                crate::typed_place::tracked_chain(node, self.fields, self.function, self.decisions)
+                    .ok()?,
+            )
         } else {
             None
         };
