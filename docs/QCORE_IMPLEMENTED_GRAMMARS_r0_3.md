@@ -3548,7 +3548,8 @@ resource_predicate = "resource_borrowed", "(", IDENT, ")"
   | "resource_return_reallocated", "(", IDENT, ",", nullability, ")"
   | "resource_no_return", "(", ")"   (* card CG21, contract spec C04.3.3 *)
   | counted_user_predicate
-  | container_predicate ;
+  | container_predicate
+  | retention_predicate ;
 nullability = "nullable" | "nonnull" ;
 (* card W45-FB-RETRY-LIFETIME, contract specification C04.7 and C04.8 *)
 counted_user_predicate =
@@ -3569,7 +3570,13 @@ relation_op = "eq" | "ne" | "lt" | "le" | "gt" | "ge" ;
 disposition_predicate = "resource_borrowed", "(", IDENT, ")"
   | ("resource_owned" | "resource_consumed" | "resource_released" | "resource_out"),
     "(", IDENT, ",", nullability, ")" ;
+(* card CALLEE-RETENTION-CLASS1, contract specification C04.14 *)
+retention_predicate =
+    "resource_retained_by", "(", IDENT, ",", (IDENT | "global"), ")"  (* retained, holder *)
+  | "resource_holder_reset", "(", IDENT, ")" ;
 ```
+
+The retention predicates (card CALLEE-RETENTION-CLASS1, contract specification C04.14) carry static conditions of their own: the retained parameter and a holder parameter are distinct depth-one pointer parameters (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carry no kind; the holder is either such a parameter or the word `global`, and a declaration with a parameter named `global` rejects the clause; a parameter is retained at most once and a holder reset at most once; and a retention predicate stands only beside plain parameter and result predicates and revision markers (a return-code disposition, a review marker, the checked-specification marker, a literal premise, a variadic tail, the no-return exit and a counted-user, container, loop-owner, thread-synchronization or lifecycle clause each reject the module beside it). Every violation rejects the whole module. A declaration carrying one is loaded and validated in full and then withheld from the function map (C04.14); inheritance (G05a) compares its retentions.
 
 The return-code dispositions (card CG23-RELATIONAL-POSTCONDITIONS, contract specification C04.13) carry static conditions of their own: the distinct `(relation_op, integer_literal)` pairs are pairwise disjoint and cover every integer; the literal is canonical and fits a C `int`; a parameter carries either one ordinary mode or exactly one disposition per class; the entry requirement of a conditional parameter agrees across classes; the result is `resource_return_none()` over a signed integer type; classes that all state the same contract, a disposition beside an in-place kind, and a disposition beside a review marker, the checked-specification marker, a literal premise, a variadic tail or a counted-user, container, loop-owner, thread-synchronization or lifecycle clause, reject the module. Every violation rejects the whole module.
 

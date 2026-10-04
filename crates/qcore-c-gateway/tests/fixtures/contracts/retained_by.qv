@@ -1,0 +1,45 @@
+module contract;
+
+// Card CALLEE-RETENTION-CLASS1 (gateway rule 12t, contract spec C04.14):
+// synthetic `r_*` callees, one retaining `src` in a `state` holder, one
+// resetting the holder, one retaining a pointer in the program-lifetime
+// holder. Trusted test assumptions, not facts about any library.
+
+extern fn r_alloc(n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn r_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn r_keep(state: ptr<mut, u8>, src: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(state);
+    ensures normal resource_borrowed(src);
+    ensures normal resource_retained_by(src, state);
+    ensures normal resource_return_none();
+};
+
+extern fn r_reset(state: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(state);
+    ensures normal resource_holder_reset(state);
+    ensures normal resource_return_none();
+};
+
+extern fn r_global(value: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_retained_by(value, global);
+    ensures normal resource_return_none();
+};

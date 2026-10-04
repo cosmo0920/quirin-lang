@@ -543,6 +543,50 @@ contract {
 
 **Not in this clause.** A disposition conditioned on an *argument's* value (C04.4, C04.5), a pointer result's nullness as a class (the nullable result modes cover the one existing case), a retained-storage result, and a release of a set reachable from a parameter are not stated by it.
 
+**Forwarding (card CALLEE-RETENTION-CLASS1, gateway rule 12s).** A body whose every `return` is a plain integer literal or `return f(ARGS);` of one callee with a disposition in force, whose result type is spelled exactly as that callee's (so C converts nothing between the two values), takes the callee's classes: each class is validated by the ordinary route on the body restricted to the exits returning a value in it, the forwarded call read through the decided test of that class. A function whose own disposition is in force (declared and not withdrawn, or inferred) has its own row decided per class: `Safe` only when every restricted body validates its class's contract and the joint body reports nothing. A declared disposition, like every declaration, is compared with the analysed unit's C declaration (C04.1) and evaluated against its pin (C06.2); a unit's withdrawals of other names never drop it. The Lean model is `QCore.RelationalForwarding`.
+
+### C04.14. Retained pointers
+
+Card CALLEE-RETENTION-CLASS1 (gateway rule 12t), on the user's decision recorded here verbatim from the card's brief:
+
+> **USER DECISION 2026-10-05.** The decision is on `W48-CALLEE-DECISION-TABLE` class 1 ("callbacks and retained pointers"). The user chose **"split by shape"**. The three shapes: **(a) Custody-taking inserts → conditional custody transfer on success**, using the existing relational postconditions (CG23, gateway rule 11r, contract spec on return-code dispositions), no new vocabulary. **(b) A pointer retained in a holder → a new `retained_by(P, holder)` clause.** The caller **keeps** custody, but must establish that P's object outlives the holder (or that the holder is destroyed or reset before P is released). Otherwise the result is **Pending** (a named, human-resolvable reason) or Unknown, **never Safe**. Releasing P while a live holder retains it is a use-after-free hazard. Validate reachability before any Unsafe; it is provisional, never presented as an upstream defect. **(c) Callbacks over retained elements → CG22's callback contracts** (gateway rule 11p); where the callback contract vocabulary does not cover a member, record exactly what is missing, and size it.
+
+Shape (a) is C04.13 with its forwarding; shape (b) is this clause; shape (c) has no vocabulary yet (`CG22-CALLBACK-REGISTRY-CONTRACT`).
+
+```qcore
+extern fn keep(state: ptr<mut, u8>, src: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(state);
+    ensures normal resource_borrowed(src);
+    ensures normal resource_retained_by(src, state);
+    ensures normal resource_return_none();
+};
+
+extern fn reset(state: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(state);
+    ensures normal resource_holder_reset(state);
+    ensures normal resource_return_none();
+};
+```
+
+`resource_retained_by(P, H)` declares that after the call the object `H` designates (or, for the word `global`, storage of static duration or a holder no caller object denotes: a file-scope object, a queue another thread drains) keeps a pointer into the object `P` designates. `resource_holder_reset(H)` declares that after the call `H` keeps nothing it kept before. Total-or-reject (C04): `P` and a holder parameter are distinct depth-one pointer parameters, `resource_borrowed`, with no kind; `P` is retained at most once and a holder reset at most once; a parameter named `global` rejects the clause; the clauses stand only beside plain parameter and result predicates and revision markers. The grammar is G05.
+
+**Meaning.** The caller **keeps custody** of `P`'s object: the call takes none, and `P`'s mode stays `resource_borrowed`. But the object must outlive the holder, or the holder must be reset or destroyed before the object is released: a release of the object while a live holder keeps a pointer into it leaves the holder dangling, a use-after-free hazard the moment the holder reads it. **A retained pointer is never borrowed and forgotten**: the declaration is loaded and validated in full and then **withheld from the function map** (the C06.1 precedent, `ResourceContracts::retaining`), so a consumer that knows nothing of retention sees an uncontracted callee. A consumer that honours it MUST establish that the object outlives the holder; otherwise the call is `Unknown` (or `Pending` under a named, human-resolvable reason), **never `Safe`**. A release while held is refused, never accused: the hazard is real only if the holder reads the pointer afterwards, which the caller does not decide, so no `Unsafe` rests on it.
+
+**What "outlives" is decided from (gateway rule 12t).** The route-G consumer decides exactly these, and refuses everything else with the reason `retention-undecided`:
+
+* **Static storage.** A string literal outlives every holder.
+* **The frame.** A holder spelled `&L`, for `L` one automatic, non-pointer, non-array object of the calling function that the body names only as a whole `&L` actual of a retaining or resetting callee, dies when the function returns, and nothing it holds is copied out. An object the caller of this function supplied (an unrebound formal this body holds no custody of) outlives it. An object this body tracks is recorded as held by `L` until `L` is reset or the function returns; a release of it before then is refused (`retention-released-while-held`).
+* **A holder reset or destroyed.** A tracked heap holder releases what it holds when it is released; a `resource_holder_reset(H)` call drops what `H` holds. A tracked holder that still holds at an exit (returned, stored or leaked) may outlive the frame: the exit refuses.
+* **The program-lifetime holder.** `global` keeps only static storage: any other `P` there is undecided.
+
+A holder the caller supplied (a formal, a member reached through one) or an actual the consumer cannot name is undecided: the caller of *this* function decides the holder's lifetime, and a retention is not forwarded into a summary. Records join by union over paths. The C gateway's per-unit route is such a consumer; every other consumer sees an uncontracted callee. Not in this clause: a retention conditioned on an argument's value (an arm that copies and an arm that keeps), a retention beside a return-code disposition (cJSON's `add_item_to_object`), a pointer derived from `P` handed back through an out slot, and a callback the holder invokes over what it keeps (shape (c)).
+
+**Checked, never trusted.** A retaining declaration is pinned (C06.2) and evaluated against its pin like every declaration, and compared with the unit's C declaration (C04.1); no inference replaces it in a unit that defines its body. Its body is not yet checked against the retention (`RETAINED-BY-BODY-CHECK`): it is a declared assumption (constraint 4). The Lean model is `QCore.RetainedBy`.
+
 ## C05. Manifests and immutable assumptions
 
 A resource manifest has the following existing version-1 shape:

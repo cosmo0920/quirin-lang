@@ -27,13 +27,15 @@
 //! The function then takes the callee's relations as its classes. For each
 //! class `r` the body is restricted to the exits returning a value in `r`:
 //! a literal outside `r` becomes the divergent `for (;;);` (rule 11r's own
-//! device), and a forwarded `return f(ARGS);` becomes
-//! `{ if (f(ARGS) OP K) return R; for (;;); }` with `x OP K` the relation `r`
-//! and `R` a literal in it. Rule 11r's decided test reads that condition, so
-//! the call is classified once, under the callee's class `r` on the path that
-//! returns, and the other path diverges. The **ordinary** inference and
-//! validation then run unchanged on the restricted body, and the class `r`
-//! takes the contract validated there. A class that does not validate, a test
+//! device), and a forwarded `return f(ARGS);` keeps its spelling with `f`
+//! read as the callee's class `r` (its minted class name): exactly the
+//! contract rule 11r's decided test `f(ARGS) OP K` selects on its true edge
+//! (`QCore.RelationalForwarding.a_forwarded_call_applies_the_callee_class`),
+//! the false edge being the other classes' restricted bodies. The statement
+//! keeps its own position, so every typed reader of the return statement
+//! (a member-read actual, rule 10k) reads it as it reads the original. The
+//! **ordinary** inference and validation then run unchanged on the
+//! restricted body, and the class `r` takes the contract validated there. A class that does not validate, a test
 //! rule 11r refuses (a callee whose other classes disagree on the false edge),
 //! a non-`unit` result, classes that all agree, or classes whose entry
 //! requirements differ publish nothing.
@@ -45,12 +47,12 @@
 //! unresolved formal, and was never `Safe`. Its row is now decided per class:
 //! each restricted body (as above) is analysed under that class's contract as
 //! its entry and must validate against it (`observations_match_contract`,
-//! the W4 gate); the published row is then the **joint** body — the original
-//! body with each forwarded return lowered to the two-armed decided test
-//! `{ if (f(ARGS) OP K) return R; return R'; }` — analysed under the common
-//! entry, and it is published only when it reports no diagnostic. Every path
-//! of the original body ends in one class's exit or diverges, so the classes
-//! together cover every path. Any failure keeps the contract-free row.
+//! the W4 gate). Every path of the original body ends in one class's exit or
+//! diverges, so the classes together cover every path. The published row is
+//! the first class's restricted analysis when the body forwards (its value is
+//! read only through its classes), and otherwise the whole body analysed
+//! under the common entry, published only when it reports no diagnostic. Any
+//! failure keeps the contract-free row.
 //!
 //! The Lean model is `QCore.RelationalForwarding`.
 
@@ -61,7 +63,7 @@ use crate::legacy_c::{
     build_function_cfg, function_parameters,
 };
 use crate::relational_post::{
-    ExitClass, RelationOp, RelationalContract, RelationalOrigin, ReturnRelation, integer_constant,
+    ExitClass, RelationalContract, RelationalOrigin, ReturnRelation, integer_constant,
 };
 
 use super::relational::definition;
@@ -251,43 +253,10 @@ fn forwarded_relations(
     relations
 }
 
-/// A value the relation holds: the constant itself, or its neighbour.
-pub(crate) fn representative(relation: ReturnRelation) -> i64 {
-    match relation.op {
-        RelationOp::Eq | RelationOp::Le | RelationOp::Ge => relation.constant,
-        RelationOp::Ne | RelationOp::Gt => relation.constant + 1,
-        RelationOp::Lt => relation.constant - 1,
-    }
-}
-
 fn synthetic(text: &str, line: usize) -> Token {
     Token {
         text: text.to_owned(),
         line,
-    }
-}
-
-/// The C comparison tokens of `op`, one punctuator per token as the lexer
-/// emits them.
-fn comparison(op: RelationOp) -> &'static [&'static str] {
-    match op {
-        RelationOp::Eq => &["=", "="],
-        RelationOp::Ne => &["!", "="],
-        RelationOp::Lt => &["<"],
-        RelationOp::Le => &["<", "="],
-        RelationOp::Gt => &[">"],
-        RelationOp::Ge => &[">", "="],
-    }
-}
-
-fn integer_tokens(value: i64, line: usize) -> Vec<Token> {
-    if value < 0 {
-        vec![
-            synthetic("-", line),
-            synthetic(&value.unsigned_abs().to_string(), line),
-        ]
-    } else {
-        vec![synthetic(&value.to_string(), line)]
     }
 }
 
@@ -298,82 +267,63 @@ fn diverge(line: usize) -> Vec<Token> {
         .collect()
 }
 
-/// `( CALL OP K )`, the decided test of one class.
-fn test(tokens: &[Token], start: usize, end: usize, relation: ReturnRelation) -> Vec<Token> {
-    let line = tokens[start].line;
-    let mut out = vec![synthetic("(", line)];
-    out.extend_from_slice(&tokens[start..=end]);
-    out.extend(comparison(relation.op).iter().map(|op| synthetic(op, line)));
-    out.extend(integer_tokens(relation.constant, line));
-    out.push(synthetic(")", line));
-    out
-}
-
-/// How one forwarded return is lowered.
-enum Lowering {
-    /// The restricted body of one class: returns there, diverges otherwise.
-    Class(ReturnRelation),
-    /// The joint body of a two-class disposition: each arm returns.
-    Joint(ReturnRelation, ReturnRelation),
-}
-
-/// `tokens` with every `return` of `returns` rewritten for `lowering`.
-fn rewrite(tokens: &[Token], returns: &[Return], lowering: &Lowering) -> Vec<Token> {
-    let mut out = Vec::with_capacity(tokens.len() + returns.len() * 16);
-    let mut copied = 0usize;
+/// The body restricted to the exits returning a value in `relation`, and the
+/// environment it is read under: a literal outside the relation becomes
+/// `for (;;);`, and each forwarded callee `f` is read under its class of that
+/// relation, installed under its own name (the contract rule 11r's decided
+/// test `f(ARGS) OP K` selects on its true edge). The statement keeps its
+/// spelling and position, so every typed reader of the return reads it as it
+/// reads the original. `None` when a forwarded callee has no class of that
+/// relation, or is also called anywhere but in a forwarded `return` (the
+/// class would then govern a call whose value no return forwards).
+fn restrict(
+    tokens: &[Token],
+    open_close: (usize, usize),
+    returns: &[Return],
+    relation: ReturnRelation,
+    environment: &ResourceContracts,
+) -> Option<(Vec<Token>, ResourceContracts)> {
+    let (open, close) = open_close;
+    let mut restricted = environment.clone();
+    let mut forwarded: Vec<&str> = Vec::new();
     for ret in returns {
-        let line = tokens[ret.start].line;
-        let replacement = match (&ret.value, lowering) {
-            (Returned::Literal(value), Lowering::Class(relation)) => {
-                if relation.holds(i128::from(*value)) {
-                    continue;
-                }
-                diverge(line)
-            }
-            (Returned::Literal(_), Lowering::Joint(..)) => continue,
-            (
-                Returned::Forward {
-                    call_start,
-                    call_end,
-                    ..
-                },
-                Lowering::Class(relation),
-            ) => {
-                let mut statement = vec![synthetic("{", line), synthetic("if", line)];
-                statement.extend(test(tokens, *call_start, *call_end, *relation));
-                statement.push(synthetic("return", line));
-                statement.extend(integer_tokens(representative(*relation), line));
-                statement.push(synthetic(";", line));
-                statement.extend(diverge(line));
-                statement.push(synthetic("}", line));
-                statement
-            }
-            (
-                Returned::Forward {
-                    call_start,
-                    call_end,
-                    ..
-                },
-                Lowering::Joint(first, second),
-            ) => {
-                let mut statement = vec![synthetic("{", line), synthetic("if", line)];
-                statement.extend(test(tokens, *call_start, *call_end, *first));
-                statement.push(synthetic("return", line));
-                statement.extend(integer_tokens(representative(*first), line));
-                statement.push(synthetic(";", line));
-                statement.push(synthetic("return", line));
-                statement.extend(integer_tokens(representative(*second), line));
-                statement.push(synthetic(";", line));
-                statement.push(synthetic("}", line));
-                statement
-            }
-        };
-        out.extend_from_slice(&tokens[copied..ret.start]);
-        out.extend(replacement);
-        copied = ret.end + 1;
+        if let Returned::Forward { callee, .. } = &ret.value
+            && !forwarded.contains(&callee.as_str())
+        {
+            forwarded.push(callee);
+        }
     }
-    out.extend_from_slice(&tokens[copied..]);
-    out
+    for callee in forwarded {
+        let returned = returns
+            .iter()
+            .filter(|ret| matches!(&ret.value, Returned::Forward { callee: c, .. } if c == callee))
+            .count();
+        let called = (open..close)
+            .filter(|&index| {
+                tokens[index].text == callee && tokens.get(index + 1).is_some_and(|t| t.text == "(")
+            })
+            .count();
+        if called != returned {
+            return None;
+        }
+        let class = environment
+            .relational_contract(callee)?
+            .classes
+            .iter()
+            .find(|class| class.relation == relation)?;
+        restricted.insert_contract(callee, class.contract.clone());
+    }
+    let mut out = tokens.to_vec();
+    // Right to left, so earlier spans keep their indices.
+    for ret in returns.iter().rev() {
+        if let Returned::Literal(value) = ret.value
+            && !relation.holds(i128::from(value))
+        {
+            let line = tokens[ret.start].line;
+            out.splice(ret.start..=ret.end, diverge(line));
+        }
+    }
+    Some((out, restricted))
 }
 
 /// What a parameter mode asks of the caller at entry: nothing, live custody
@@ -415,10 +365,10 @@ fn qualifying_body(
     tokens: &[Token],
     function: &str,
     environment: &ResourceContracts,
-) -> Option<(usize, Vec<Return>)> {
+) -> Option<(usize, (usize, usize), Vec<Return>)> {
     let (name, open, close) = definition(tokens, function)?;
     let returns = read_returns(tokens, open, close, environment)?;
-    Some((name, returns))
+    Some((name, (open, close), returns))
 }
 
 /// Rule 12s(1): the forwarded disposition of `function`, or `None`. `infer`
@@ -430,7 +380,7 @@ pub(crate) fn infer_forwarded(
     environment: &ResourceContracts,
     infer: impl Fn(&[Token], &str, &ResourceContracts) -> Option<ResourceFunctionContract>,
 ) -> Option<RelationalContract> {
-    let (name, returns) = qualifying_body(tokens, function, environment)?;
+    let (name, body, returns) = qualifying_body(tokens, function, environment)?;
     let relations = forwarded_relations(&returns, environment)?;
     // The forwarded value is the function's own: C converts nothing only when
     // the two result types are spelled alike.
@@ -453,8 +403,8 @@ pub(crate) fn infer_forwarded(
     }
     let mut classes = Vec::with_capacity(relations.len());
     for relation in relations {
-        let body = rewrite(tokens, &returns, &Lowering::Class(relation));
-        let contract = infer(&body, function, environment)?;
+        let (restricted, under) = restrict(tokens, body, &returns, relation, environment)?;
+        let contract = infer(&restricted, function, &under)?;
         if contract.result != qcore_schemas::contract::ResourceReturnMode::None {
             return None;
         }
@@ -479,7 +429,7 @@ pub(crate) fn relational_row(
     if contract.withdrawn.is_some() || !entries_agree(&contract.classes) {
         return None;
     }
-    let (_, returns) = qualifying_body(tokens, function, environment)?;
+    let (_, body, returns) = qualifying_body(tokens, function, environment)?;
     let forwards = returns
         .iter()
         .any(|ret| matches!(ret.value, Returned::Forward { .. }));
@@ -493,10 +443,13 @@ pub(crate) fn relational_row(
             return None;
         }
     }
+    // Each class's restricted body under that class's contract; the row is
+    // published only when every one validates.
+    let mut first = None;
     for class in &contract.classes {
-        let body = rewrite(tokens, &returns, &Lowering::Class(class.relation));
-        let cfg = build_function_cfg(&body, function, environment).ok()?;
-        let parameters = function_parameters(&body, function)?;
+        let (restricted, under) = restrict(tokens, body, &returns, class.relation, environment)?;
+        let cfg = build_function_cfg(&restricted, function, &under).ok()?;
+        let parameters = function_parameters(&restricted, function)?;
         let entry = EntryCustody::build(&cfg, &parameters, &class.contract)?;
         let (candidate, observations) = analyze_cfg_with_entry(cfg, &entry);
         if !crate::legacy_summary::observations_match_contract(
@@ -507,21 +460,18 @@ pub(crate) fn relational_row(
         ) {
             return None;
         }
+        first.get_or_insert(candidate);
     }
-    let joint = if forwards {
-        let [first, second] = contract.classes.as_slice() else {
-            return None;
-        };
-        rewrite(
-            tokens,
-            &returns,
-            &Lowering::Joint(first.relation, second.relation),
-        )
-    } else {
-        tokens.to_vec()
-    };
-    let cfg = build_function_cfg(&joint, function, environment).ok()?;
-    let parameters = function_parameters(&joint, function)?;
+    if forwards {
+        // The forwarded call's value is read only through its classes: the
+        // published row is the first class's restricted analysis, every class
+        // having validated with no diagnostic.
+        return first;
+    }
+    // Literal returns only: the whole body under the common entry, which
+    // every class shares (`entries_agree`).
+    let cfg = build_function_cfg(tokens, function, environment).ok()?;
+    let parameters = function_parameters(tokens, function)?;
     let entry = EntryCustody::build(&cfg, &parameters, &contract.classes[0].contract)?;
     let (candidate, _) = analyze_cfg_with_entry(cfg, &entry);
     (candidate.status == AnalysisStatus::Safe && candidate.diagnostics.is_empty())
@@ -531,6 +481,7 @@ pub(crate) fn relational_row(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::relational_post::RelationOp;
 
     fn stream(text: &str) -> Vec<Token> {
         let mut out = Vec::new();
@@ -553,17 +504,7 @@ mod tests {
     }
 
     #[test]
-    fn representatives_lie_in_their_relations() {
-        for op in RelationOp::ALL {
-            for constant in [-2, 0, 3] {
-                let relation = ReturnRelation::new(op, constant);
-                assert!(relation.holds(i128::from(representative(relation))));
-            }
-        }
-    }
-
-    #[test]
-    fn a_forwarded_return_is_lowered_per_class_and_jointly() {
+    fn a_forwarded_return_reads_its_class_in_each_restricted_body() {
         use qcore_schemas::contract::ResourceReturnMode;
         let tokens = stream("int w ( void * p ) { if ( ! p ) return - 1 ; return ( f ( p ) ) ; }");
         let eq = ReturnRelation::new(RelationOp::Eq, 0);
@@ -591,20 +532,45 @@ mod tests {
         assert!(matches!(&returns[1].value, Returned::Forward { callee, .. } if callee == "f"));
         // An undeclared callee is no forwarded return.
         assert!(read_returns(&tokens, open, close, &ResourceContracts::default()).is_none());
+        let (eq_body, eq_under) =
+            restrict(&tokens, (open, close), &returns, eq, &environment).expect("eq");
         assert_eq!(
-            texts(&rewrite(&tokens, &returns, &Lowering::Class(eq))),
-            "int w ( void * p ) { if ( ! p ) for ( ; ; ) ; \
-             { if ( f ( p ) = = 0 ) return 0 ; for ( ; ; ) ; } }"
+            texts(&eq_body),
+            "int w ( void * p ) { if ( ! p ) for ( ; ; ) ; return ( f ( p ) ) ; }"
         );
         assert_eq!(
-            texts(&rewrite(&tokens, &returns, &Lowering::Class(ne))),
-            "int w ( void * p ) { if ( ! p ) return - 1 ; \
-             { if ( f ( p ) ! = 0 ) return 1 ; for ( ; ; ) ; } }"
+            eq_under.contract("f").map(|c| c.parameters.clone()),
+            Some(vec![ResourceParameterMode::Consumed { nullable: true }])
+        );
+        let (ne_body, ne_under) =
+            restrict(&tokens, (open, close), &returns, ne, &environment).expect("ne");
+        assert_eq!(
+            texts(&ne_body),
+            "int w ( void * p ) { if ( ! p ) return - 1 ; return ( f ( p ) ) ; }"
         );
         assert_eq!(
-            texts(&rewrite(&tokens, &returns, &Lowering::Joint(eq, ne))),
-            "int w ( void * p ) { if ( ! p ) return - 1 ; \
-             { if ( f ( p ) = = 0 ) return 0 ; return 1 ; } }"
+            ne_under.contract("f").map(|c| c.parameters.clone()),
+            Some(vec![ResourceParameterMode::Owned { nullable: true }])
+        );
+        // A relation the callee has no class of.
+        assert!(
+            restrict(
+                &tokens,
+                (open, close),
+                &returns,
+                ReturnRelation::new(RelationOp::Lt, 0),
+                &environment
+            )
+            .is_none()
+        );
+        // A callee also called outside a forwarded return.
+        let twice = stream("int w ( void * p ) { f ( p ) ; return f ( p ) ; }");
+        let (twice_open, twice_close) = (7, twice.len() - 1);
+        let twice_returns =
+            read_returns(&twice, twice_open, twice_close, &environment).expect("forwards");
+        assert!(
+            restrict(&twice, (twice_open, twice_close), &twice_returns, eq, &environment)
+                .is_none()
         );
     }
 

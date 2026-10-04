@@ -272,15 +272,20 @@ contract {
 // body is checked against the declaration by the forwarding route (gateway
 // rule 12s), and a contradiction withdraws it at every call site there.
 // `attr` is read (`attr->kv`) and keeps its custody; `key` is copied by the
-// insert: both `resource_borrowed`.
+// insert: both `resource_borrowed`. `value` is declared `nonnull` although the
+// insert tolerates NULL: rule 11r(5) compares a declared class with the body's
+// validated summary exactly, and the forwarding route's summary binds the
+// formal non-null (W4 proposes a nullable precondition only where a path
+// needs one), so `nullable` would be withdrawn against this very body. The
+// stronger precondition is the refusing direction for a caller.
 
 extern fn ctr_attributes_set_array(attr: ptr<mut, u8>, key: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
 contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(attr);
     ensures normal resource_borrowed(key);
-    ensures normal resource_on_return(eq, 0, resource_consumed(value, nullable));
-    ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
+    ensures normal resource_on_return(eq, 0, resource_consumed(value, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_owned(value, nonnull));
     ensures normal resource_return_none();
 };
 
@@ -289,7 +294,7 @@ contract {
     requires resource_contract_v1;
     ensures normal resource_borrowed(attr);
     ensures normal resource_borrowed(key);
-    ensures normal resource_on_return(eq, 0, resource_consumed(value, nullable));
-    ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
+    ensures normal resource_on_return(eq, 0, resource_consumed(value, nonnull));
+    ensures normal resource_on_return(ne, 0, resource_owned(value, nonnull));
     ensures normal resource_return_none();
 };

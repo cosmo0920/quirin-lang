@@ -332,6 +332,8 @@ import QCore.ResourceKinds
 import QCore.Variadics
 import QCore.DialectTargetIdentity
 import QCore.RelationalPost
+import QCore.RelationalForwarding
+import QCore.RetainedBy
 import QCore.IndirectCalls
 import QCore.VariadicConditions
 import QCore.CarriedPublication
