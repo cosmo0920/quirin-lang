@@ -35,6 +35,7 @@
     "contracts/chunkio/lock_state.qv": "f0ea9b0797b0c490a7a1321111b2c94f2822b78b2afadcc14619d7f6f3ba557d",
     "contracts/chunkio/memory_backend.qv": "e74af40022bc05152618d435798265cd846158ba77c522414fd012426dd5c233",
     "contracts/chunkio/memory_close.qv": "61db735502775fae6cfd875f3bd6c4d3c137c16b3cf34114eaef246ecca348fc",
+    "contracts/chunkio/meta_len_bounds.qv": "e999709a8db5ff2a65d36757c68d7440c8d6e6af05139b47f262b93d0aa96554",
     "contracts/chunkio/nested_cleanup.qv": "88f4f54f56b89a830f7b1b93bbf586ec8f012fa6588f8fc4e8f4a40c3ebbc7c7",
     "contracts/chunkio/nested_memory_teardown.qv": "810a0d07e4e4135c7ac0fe0a803abcf3c12e61194b7a010adad974f646bcfc6e",
     "contracts/chunkio/parent_teardown.qv": "75782fc62cfdb795f52706492e6bddbb5626a6493fafc5ee4761c46742bc4068",

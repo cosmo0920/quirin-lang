@@ -191,6 +191,12 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("chunkio/lock_state.qv", "cio_chunk_unlock", 8),
     ("chunkio/memory_backend.qv", "cio_memfs_close", 22),
     ("chunkio/memory_close.qv", "cio_chunk_close", 19),
+    // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the corpus's first bounds
+    // contract v1 module (the crate's bounds view, never a resource view):
+    // the header accessors of `lib/chunkio/include/chunkio/cio_file_st.h:76-86`,
+    // selector, quant check `22 <= #i && #i < 24` and a closed frame each.
+    ("chunkio/meta_len_bounds.qv", "cio_file_st_get_meta_len", 3),
+    ("chunkio/meta_len_bounds.qv", "cio_file_st_set_meta_len", 3),
     ("chunkio/nested_cleanup.qv", "nested_cleanup", 12),
     (
         "chunkio/nested_memory_teardown.qv",
@@ -1397,7 +1403,10 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // (SUP04's `mk_vhost_set`, its lock entry tracking the fix branch's tip).
     // 123 -> 124 by card MONKEY-VHOST-PROPERTY-CUSTODY's `monkey/string.qv`
     // (`mk_string_dup`).
-    assert_eq!(sources.len(), 124, "unexpected contract corpus size");
+    // 124 -> 125 by card CHUNKIO-META-LEN-BOUNDS-CONTRACTS'
+    // `chunkio/meta_len_bounds.qv`, the first bounds contract v1 module
+    // (pinned in `bounds-contracts.lock`, outside every resource view).
+    assert_eq!(sources.len(), 125, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

@@ -1,0 +1,40 @@
+module contract;
+
+// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS (user request 2026-10-04: "we must
+// write down the listed cio_file functions' contracts"). Bounds contract v1
+// (contract specification C09.1, C09.2; gateway rules 11s, 11e, 12l, 12r), a
+// property vocabulary of its own: this module is in the crate's bounds view,
+// never in its resource view, and the resource loader rejects it.
+//
+// Read from `lib/chunkio/include/chunkio/cio_file_st.h`, byte-identical at
+// the two pinned Fluent Bit revisions 66910c10 and 046accf6 (sha256
+// 02eb3909...). The chunk file header is CIO_FILE_HEADER_MIN (24) bytes; the
+// metadata length is its last two bytes, big-endian, at offsets 22 and 23.
+//
+// Admitted range: exactly the indices each body uses, `22 <= #i && #i < 24`
+// (the header reading `0 <= #i && #i < 24` would admit 22 indices neither body
+// touches). Either way a caller covers indices 22 and 23: 24 bytes from `map`.
+// Frames (rule 11e): `map` is the only pointer formal, so the closed frame is
+// one clause: get only reads through it, set only writes through it.
+//
+// Not review-held: written after reading the source at the user's request and
+// pinned with `quirin-audit pin --bounds` at both revisions
+// (`bounds-contracts.lock`); a changed body or clause takes it out of force.
+
+// static inline uint16_t cio_file_st_get_meta_len(char *map)
+//     return (uint16_t) ((uint8_t) map[22] << 8) | (uint8_t) map[23];
+extern fn cio_file_st_get_meta_len(map: ptr<mut, u8>) -> u16
+contract {
+    requires bounds_contract_v1;
+    quant checks map, Idx #i: 22 <= #i && #i < 24;
+    ensures normal bounds_frame_reads(map);
+};
+
+// static inline void cio_file_st_set_meta_len(char *map, uint16_t len)
+//     map[22] = (uint8_t) (len >> 8);  map[23] = (uint8_t) (len & 0xFF);
+extern fn cio_file_st_set_meta_len(map: ptr<mut, u8>, len: u16) -> unit
+contract {
+    requires bounds_contract_v1;
+    quant checks map, Idx #i: 22 <= #i && #i < 24;
+    ensures normal bounds_frame_writes(map);
+};

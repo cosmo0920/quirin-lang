@@ -187,7 +187,10 @@
 //! the only position where there is something to lower onto: `source.branch.v1`
 //! (card `IF-STATEMENT`) turns them into nested branches, and there is still no
 //! Boolean expression tier anywhere else to hold the value.
-use crate::frontend::{SemanticPass, SourceBlock, SourceDiagnostic, SourceProgram, StatementKind};
+use crate::frontend::{
+    SemanticPass, SourceBlock, SourceContractClauseKind, SourceDiagnostic, SourceProgram,
+    StatementKind,
+};
 use crate::lexer::{Span, Symbol, Token, TokenKind};
 
 /// A refusal recorded while desugaring. Carried on the parsed program and
@@ -929,6 +932,22 @@ fn condition_spans(program: &SourceProgram) -> Vec<Span> {
     spans
 }
 
+/// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the predicate spans of every
+/// `quant checks P, Idx #i: PREDICATE;` clause (G05c). Its `&&` and `||` are
+/// the predicate's own connectives, read literally by the bounds reader
+/// (`qcore_contract::bounds_quant`), not expressions of this tier: the clause
+/// has no exit selector, nothing lowers it, and no other consumer reads it.
+fn quant_check_spans(program: &SourceProgram) -> Vec<Span> {
+    program
+        .declarations
+        .iter()
+        .filter_map(|declaration| declaration.value.function_contract.as_ref())
+        .flat_map(|contract| &contract.clauses)
+        .filter(|clause| clause.value.kind == SourceContractClauseKind::QuantCheck)
+        .map(|clause| clause.value.expression_span)
+        .collect()
+}
+
 /// Raise the operator refusals recorded for one input file.
 ///
 /// Called per input file before name/type checking, beside
@@ -965,6 +984,12 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
             .iter()
             .any(|extent| extent.start <= span.start && span.end <= extent.end)
     };
+    let quant_checks = quant_check_spans(program);
+    let in_quant_check = |span: Span| {
+        quant_checks
+            .iter()
+            .any(|extent| extent.start <= span.start && span.end <= extent.end)
+    };
 
     // Card `W48-QR-CLOSURES`: the two bars of a closure's capture list (the
     // one `||` of an empty list) are the closure's, directly after
@@ -988,6 +1013,11 @@ pub fn check_source_operators(program: &SourceProgram) -> Result<(), Vec<SourceD
     };
     for (index, token) in tokens.iter().enumerate() {
         let message = match &token.kind {
+            // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: a quant check's own
+            // connectives (G05c).
+            TokenKind::Symbol(Symbol::PipePipe | Symbol::AndAnd) if in_quant_check(token.span) => {
+                continue;
+            }
             TokenKind::Symbol(Symbol::Pipe | Symbol::PipePipe) if closure_bar(token.span) => {
                 continue;
             }

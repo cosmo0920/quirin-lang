@@ -43,6 +43,7 @@
         "chunkio/lock_state.qv",
         "chunkio/memory_backend.qv",
         "chunkio/memory_close.qv",
+        "chunkio/meta_len_bounds.qv",
         "chunkio/nested_cleanup.qv",
         "chunkio/nested_memory_teardown.qv",
         "chunkio/parent_teardown.qv",
@@ -60,6 +61,9 @@
         "chunkio/chunk_residency.qv",
         "chunkio/chunk_sizes.qv",
         "chunkio/resource_open_close.qv"
+      ],
+      "bounds_view": [
+        "chunkio/meta_len_bounds.qv"
       ]
     },
     {
@@ -81,7 +85,8 @@
         "cmetrics/context_lifetime.qv",
         "cmetrics/metric_values.qv",
         "cmetrics/mpack_utils.qv"
-      ]
+      ],
+      "bounds_view": []
     },
     {
       "name": "qcore-provider-ctraces",
@@ -97,7 +102,8 @@
       "published": {},
       "resource_view": [
         "ctraces/context_lifetime.qv"
-      ]
+      ],
+      "bounds_view": []
     },
     {
       "name": "qcore-provider-libevent",
@@ -136,7 +142,8 @@
         "monkey/scalar_observation.qv",
         "monkey/string.qv",
         "monkey/vhost_set.qv"
-      ]
+      ],
+      "bounds_view": []
     },
     {
       "name": "qcore-provider-librdkafka",
@@ -164,7 +171,8 @@
         "librdkafka/lz4_stream.qv",
         "librdkafka/memory.qv",
         "librdkafka/topic_partition.qv"
-      ]
+      ],
+      "bounds_view": []
     },
     {
       "name": "quirin-provider-cfl",
@@ -182,7 +190,8 @@
       "resource_view": [
         "cfl/sds_lifetime.qv",
         "cfl/time.qv"
-      ]
+      ],
+      "bounds_view": []
     },
     {
       "name": "quirin-provider-fluent-bit",
@@ -239,7 +248,8 @@
         "fluent_bit/task_route_queries.qv",
         "fluent_bit/task_users.qv",
         "fluent_bit/time.qv"
-      ]
+      ],
+      "bounds_view": []
     },
     {
       "name": "quirin-provider-libc",
@@ -288,7 +298,8 @@
         "libc/threads.qv",
         "libc/time.qv",
         "libc/unistd.qv"
-      ]
+      ],
+      "bounds_view": []
     },
     {
       "name": "quirin-provider-mpack",
@@ -302,7 +313,8 @@
       "published": {},
       "resource_view": [
         "mpack/writer.qv"
-      ]
+      ],
+      "bounds_view": []
     },
     {
       "name": "quirin-provider-msgpack",
@@ -316,7 +328,8 @@
       "published": {},
       "resource_view": [
         "msgpack/packer.qv"
-      ]
+      ],
+      "bounds_view": []
     },
     {
       "name": "quirin-provider-shared",
@@ -337,7 +350,8 @@
         "library/source_projection.qv"
       ],
       "published": {},
-      "resource_view": []
+      "resource_view": [],
+      "bounds_view": []
     }
   ]
 }
