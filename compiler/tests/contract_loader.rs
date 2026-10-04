@@ -1361,7 +1361,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 123 -> 124: card MONKEY-VHOST-PROPERTY-CUSTODY adds `monkey/string.qv`
     // (`mk_string_dup`, pinned at 66910c10, 046accf6 and Monkey 21a2c190),
     // entirely v1 and manifest-selected.
-    assert_eq!(modules.len(), 124, "corpus module count");
+    // 124 -> 125: card CHUNKIO-META-LEN-BOUNDS-CONTRACTS adds
+    // `chunkio/meta_len_bounds.qv`, a bounds contract v1 module (the crate's
+    // bounds view, never selected): resource-v1 rejects both declarations.
+    assert_eq!(modules.len(), 125, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1558,9 +1561,13 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `cmt_atomic` operations appended to `cmetrics/metric_values.qv` and four
     // scalar helpers to `librdkafka/memory.qv`, both already selected, each
     // the neutral element and pinned. Selection and rejected unchanged.
+    // 216 -> 218 rejected by card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the two
+    // bounds declarations of `chunkio/meta_len_bounds.qv`
+    // (`cio_file_st_get_meta_len`, `cio_file_st_set_meta_len`) belong to the
+    // bounds consumer and are deliberately rejected by resource-v1.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (60, 272, 216)
+        (60, 272, 218)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

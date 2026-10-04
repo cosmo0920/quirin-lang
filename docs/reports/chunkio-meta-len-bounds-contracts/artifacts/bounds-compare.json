@@ -1,0 +1,431 @@
+{
+ "before": "base",
+ "after": "after",
+ "rows": 4921,
+ "identity_changed_rows": 4921,
+ "identity_only_rows": 4912,
+ "contracts_sha256_pairs": [
+  [
+   "06b325a5bdf25ef3f2277f26898d0c74064893d6dbaf992d5e14a3708d5ac800",
+   "79bd0d18298c4dc8671b4306d8d20724a1ddcc73470b02eeb761e7b650dff904",
+   4921
+  ]
+ ],
+ "verdict_moves": [],
+ "same_verdict_other_changes": [
+  {
+   "row": [
+    "chunkio",
+    "cio_file.c",
+    "adjust_layout",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_set_meta_len` argument 1 is a pointer and `cio_file_st_set_meta_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_set_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_set_meta_len` argument 1 is a pointer and `cio_file_st_set_meta_len` states no bounds contract",
+      2929,
+      "bounds-missing-extent: `cio_file_st_set_meta_len` argument 1 is a pointer and `cio_file_st_set_meta_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_set_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+      2929,
+      "bounds-missing-extent: `cio_file_st_set_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+     ]
+    }
+   ],
+   "judgement_count": [
+    9,
+    9
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_file.c",
+    "cio_file_calculate_checksum",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract",
+      2892,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+      2892,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+     ]
+    }
+   ],
+   "judgement_count": [
+    14,
+    14
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_file.c",
+    "cio_file_format_check",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract",
+      3002,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+      3002,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+     ]
+    }
+   ],
+   "judgement_count": [
+    73,
+    73
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_file.c",
+    "cio_file_scan_dump",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract",
+      3656,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+      3656,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+     ]
+    }
+   ],
+   "judgement_count": [
+    29,
+    29
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_file.c",
+    "cio_file_write_metadata",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract",
+      3512,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+      3512,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+     ]
+    }
+   ],
+   "judgement_count": [
+    37,
+    37
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_file.c",
+    "get_available_size",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Safe",
+    "Safe"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract",
+      2952,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+      2952,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+     ]
+    }
+   ],
+   "judgement_count": [
+    5,
+    5
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_meta.c",
+    "cio_meta_cmp",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract",
+      2463,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+      2463,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+     ]
+    }
+   ],
+   "judgement_count": [
+    18,
+    18
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_meta.c",
+    "cio_meta_read",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract",
+      2430,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+      2430,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+     ]
+    }
+   ],
+   "judgement_count": [
+    20,
+    20
+   ]
+  },
+  {
+   "row": [
+    "chunkio",
+    "cio_meta.c",
+    "cio_meta_size",
+    1
+   ],
+   "bounds": [
+    "Unknown",
+    "Unknown"
+   ],
+   "custody": [
+    "Unknown",
+    "Unknown"
+   ],
+   "combined": [
+    "Unknown",
+    "Unknown"
+   ],
+   "reasons_removed": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+   ],
+   "reasons_added": [
+    "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+   ],
+   "judgements_changed": [
+    {
+     "before": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract",
+      2406,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` argument 1 is a pointer and `cio_file_st_get_meta_len` states no bounds contract"
+     ],
+     "after": [
+      "call-precondition",
+      "`cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24",
+      2406,
+      "bounds-missing-extent: `cio_file_st_get_meta_len` requires quant checks map, Idx #i: 22 <= #i && #i < 24"
+     ]
+    }
+   ],
+   "judgement_count": [
+    12,
+    12
+   ]
+  }
+ ]
+}

@@ -1,0 +1,6 @@
+pin: qcore-provider-chunkio (bounds): 2 pinned, 0 flexible; recorded at git 046accf6aded7906f66a1baf0202da349e521736; wrote /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a998af274e8ec5f7d/providers/qcore-provider-chunkio/bounds-contracts.lock
+  + cio_file_st_get_meta_len
+  + cio_file_st_set_meta_len
+pin: qcore-provider-chunkio (bounds): 2 pinned, 0 flexible; recorded at git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97; wrote /home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a998af274e8ec5f7d/providers/qcore-provider-chunkio/bounds-contracts.lock
+  ~ cio_file_st_get_meta_len: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
+  ~ cio_file_st_set_meta_len: git 66910c10a4d7eafa810b84229cf2dcf7b0f26f97 recorded beside git 046accf6aded7906f66a1baf0202da349e521736
