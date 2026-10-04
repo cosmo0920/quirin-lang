@@ -1,0 +1,7351 @@
+{
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a322ddcfdf5da170c/private/crc1/after-b1/resource-diagnostics.json",
+ "statuses": {
+  "Unknown": 4013,
+  "Safe": 812,
+  "Unsafe": 9
+ },
+ "population": 625,
+ "alone_total": 449,
+ "ranking": [
+  {
+   "callee": "LZ4_decompress_generic",
+   "alone": 9,
+   "pair": 0,
+   "touched": 9,
+   "cumulative": 9,
+   "freed": [
+    "lz4.c::LZ4_decompress_safe",
+    "lz4.c::LZ4_decompress_safe_doubleDict",
+    "lz4.c::LZ4_decompress_safe_forceExtDict",
+    "lz4.c::LZ4_decompress_safe_partial",
+    "lz4.c::LZ4_decompress_safe_partial_forceExtDict",
+    "lz4.c::LZ4_decompress_safe_partial_withPrefix64k",
+    "lz4.c::LZ4_decompress_safe_partial_withSmallPrefix",
+    "lz4.c::LZ4_decompress_safe_withPrefix64k",
+    "lz4.c::LZ4_decompress_safe_withSmallPrefix"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "lz4.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 29,
+      "unrecognized assignment destination": 27,
+      "unsupported assignment expression": 26,
+      "unresolved resource identity `_`": 24
+     }
+    }
+   ]
+  },
+  {
+   "callee": "cmt_mpack_unpack_array",
+   "alone": 5,
+   "pair": 0,
+   "touched": 5,
+   "cumulative": 14,
+   "freed": [
+    "cmt_decode_msgpack.c::unpack_basic_type_values",
+    "cmt_decode_msgpack.c::unpack_context_metrics",
+    "cmt_decode_msgpack.c::unpack_meta_labels",
+    "cmt_decode_msgpack.c::unpack_meta_static_labels",
+    "cmt_decode_msgpack.c::unpack_metric_labels"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "cmt_mpack_utils.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 4,
+      "unmodeled call, aggregate or indirect access in branch condition": 3,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "ctr_mpack_unpack_array",
+   "alone": 5,
+   "pair": 0,
+   "touched": 5,
+   "cumulative": 19,
+   "freed": [
+    "ctr_decode_msgpack.c::unpack_resource_span_scope_spans",
+    "ctr_decode_msgpack.c::unpack_resource_spans",
+    "ctr_decode_msgpack.c::unpack_scope_span_spans",
+    "ctr_decode_msgpack.c::unpack_span_events",
+    "ctr_decode_msgpack.c::unpack_span_links"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "ctr_mpack_utils.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 4,
+      "unmodeled call, aggregate or indirect access in branch condition": 3,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_confval_set_type",
+   "alone": 5,
+   "pair": 0,
+   "touched": 5,
+   "cumulative": 24,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_AdminOptions_set_broker",
+    "rdkafka_admin.c::rd_kafka_AdminOptions_set_opaque",
+    "rdkafka_admin.c::rd_kafka_AdminOptions_set_operation_timeout",
+    "rdkafka_admin.c::rd_kafka_AdminOptions_set_request_timeout",
+    "rdkafka_admin.c::rd_kafka_AdminOptions_set_validate_only"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_conf.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 6,
+      "unmodeled call, aggregate or indirect access in branch condition": 3,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_admin_result_ret_groups",
+   "alone": 4,
+   "pair": 0,
+   "touched": 4,
+   "cumulative": 28,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_AlterConsumerGroupOffsets_result_groups",
+    "rdkafka_admin.c::rd_kafka_DeleteConsumerGroupOffsets_result_groups",
+    "rdkafka_admin.c::rd_kafka_DeleteGroups_result_groups",
+    "rdkafka_admin.c::rd_kafka_ListConsumerGroupOffsets_result_groups"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "unmodeled call, aggregate or indirect access in return expression": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_error_new_v",
+   "alone": 4,
+   "pair": 0,
+   "touched": 4,
+   "cumulative": 32,
+   "freed": [
+    "rdkafka_error.c::rd_kafka_error_new",
+    "rdkafka_error.c::rd_kafka_error_new_fatal",
+    "rdkafka_error.c::rd_kafka_error_new_retriable",
+    "rdkafka_error.c::rd_kafka_error_new_txn_requires_abort"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_error.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 6,
+      "va_list protocol refused: `_` is not a plain local of the function's outermost block": 2,
+      "indirect memory access is outside the resource projection": 2,
+      "nullable resource `_` used by a non-null contract": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_interceptor_method_add",
+   "alone": 4,
+   "pair": 0,
+   "touched": 4,
+   "cumulative": 36,
+   "freed": [
+    "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_conf_destroy",
+    "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_conf_dup",
+    "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_conf_set",
+    "rdkafka_interceptor.c::rd_kafka_conf_interceptor_add_on_new"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_interceptor.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 2,
+      "braced initializer, expression, or declaration is not modeled": 1,
+      "unmodeled call, aggregate or indirect access in branch condition": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "sds_cat_safe",
+   "alone": 4,
+   "pair": 0,
+   "touched": 4,
+   "cumulative": 40,
+   "freed": [
+    "ctr_encode_text.c::format_bool",
+    "ctr_encode_text.c::format_double",
+    "ctr_encode_text.c::format_int64",
+    "ctr_encode_text.c::format_string"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "ctr_encode_text.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "cfl_sds_cat_safe",
+   "alone": 3,
+   "pair": 2,
+   "touched": 8,
+   "cumulative": 43,
+   "freed": [
+    "cmt_encode_splunk_hec.c::format_metric_type",
+    "cmt_encode_text.c::append_bytes_value",
+    "ctr_encode_text.c::sds_cat_safe"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "rd_kafka_error_new",
+   "alone": 3,
+   "pair": 4,
+   "touched": 8,
+   "cumulative": 46,
+   "freed": [
+    "rdkafka.c::rd_kafka_share_consumer_closed_error",
+    "rdkafka_share_acknowledgement.c::rd_kafka_share_ensure_all_acknowledged_if_explicit",
+    "rdkafka_txnmgr.c::rd_kafka_ensure_transactional"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_error.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_list_destroy",
+   "alone": 3,
+   "pair": 0,
+   "touched": 6,
+   "cumulative": 49,
+   "freed": [
+    "rdkafka_assignor.c::rd_kafka_assignors_term",
+    "rdkafka_interceptor.c::rd_kafka_interceptors_destroy",
+    "rdlist.c::rd_list_destroy_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdlist.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 2,
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_queue_new0",
+   "alone": 3,
+   "pair": 0,
+   "touched": 4,
+   "cumulative": 52,
+   "freed": [
+    "rdkafka_queue.c::rd_kafka_queue_get_consumer",
+    "rdkafka_queue.c::rd_kafka_queue_get_main",
+    "rdkafka_sasl.c::rd_kafka_queue_get_sasl"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_queue.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 2,
+      "unresolved resource identity `_`": 1,
+      "nullable resource `_` used by a non-null contract": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "add_item_to_object",
+   "alone": 3,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 55,
+   "freed": [
+    "cJSON.c::cJSON_AddItemReferenceToObject",
+    "cJSON.c::cJSON_AddItemToObject",
+    "cJSON.c::cJSON_AddItemToObjectCS"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cJSON.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 5,
+      "indirect memory access is outside the resource projection": 2,
+      "call to uncontracted function `_`": 1,
+      "call to `_` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "cmt_mpack_unpack_map",
+   "alone": 3,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 58,
+   "freed": [
+    "cmt_decode_msgpack.c::unpack_context",
+    "cmt_decode_msgpack.c::unpack_context_header",
+    "cmt_decode_msgpack.c::unpack_context_processing_section"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "cmt_mpack_utils.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 5,
+      "call to uncontracted function `_`": 4,
+      "unmodeled call, aggregate or indirect access in branch condition": 3,
+      "unmodeled call, aggregate or indirect access in loop condition": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "ctr_mpack_unpack_map",
+   "alone": 3,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 61,
+   "freed": [
+    "ctr_decode_msgpack.c::unpack_context",
+    "ctr_decode_msgpack.c::unpack_resource",
+    "ctr_decode_msgpack.c::unpack_span_status"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "ctr_mpack_utils.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 5,
+      "call to uncontracted function `_`": 4,
+      "unmodeled call, aggregate or indirect access in branch condition": 3,
+      "unmodeled call, aggregate or indirect access in loop condition": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "format_metric",
+   "alone": 3,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 64,
+   "freed": [
+    "cmt_encode_influx.c::format_metrics",
+    "cmt_encode_splunk_hec.c::format_metrics",
+    "cmt_encode_text.c::format_metrics"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cmt_encode_influx.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 14,
+      "unresolved resource identity `_`": 6,
+      "indirect memory access is outside the resource projection": 4,
+      "braced initializer, expression, or declaration is not modeled": 2
+     }
+    },
+    {
+     "unit": "cmt_encode_prometheus.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 9,
+      "unresolved resource identity `_`": 4,
+      "braced initializer, expression, or declaration is not modeled": 2,
+      "indirect memory access is outside the resource projection": 1
+     }
+    },
+    {
+     "unit": "cmt_encode_splunk_hec.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 5,
+      "indirect memory access is outside the resource projection": 5,
+      "unresolved resource identity `_`": 5,
+      "unmodeled call, aggregate or indirect access in branch condition": 2
+     }
+    },
+    {
+     "unit": "cmt_encode_text.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 19,
+      "indirect memory access is outside the resource projection": 7,
+      "unresolved resource identity `_`": 6,
+      "braced initializer, expression, or declaration is not modeled": 3
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_flags2str",
+   "alone": 3,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 67,
+   "freed": [
+    "rdkafka.c::rd_kafka_purge_flags2str",
+    "rdkafka_event.c::rd_kafka_event_debug_contexts",
+    "rdkafka_request.c::rd_kafka_actions2str"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdstring.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 2,
+      "unmodeled expression may mutate a formal resource identity": 1,
+      "call has an unmodeled formal address or borrowed expression": 1,
+      "indirect memory access is outside the resource projection": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_admin_result_ret_resources",
+   "alone": 3,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 70,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_AlterConfigs_result_resources",
+    "rdkafka_admin.c::rd_kafka_DescribeConfigs_result_resources",
+    "rdkafka_admin.c::rd_kafka_IncrementalAlterConfigs_result_resources"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "unmodeled call, aggregate or indirect access in return expression": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_admin_result_ret_topics",
+   "alone": 3,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 73,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_CreatePartitions_result_topics",
+    "rdkafka_admin.c::rd_kafka_CreateTopics_result_topics",
+    "rdkafka_admin.c::rd_kafka_DeleteTopics_result_topics"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "unmodeled call, aggregate or indirect access in return expression": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_assignor_add",
+   "alone": 3,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 76,
+   "freed": [
+    "rdkafka_range_assignor.c::rd_kafka_range_assignor_init",
+    "rdkafka_roundrobin_assignor.c::rd_kafka_roundrobin_assignor_init",
+    "rdkafka_sticky_assignor.c::rd_kafka_sticky_assignor_init"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_assignor.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 9,
+      "unresolved resource identity `_`": 2,
+      "unmodeled call, aggregate or indirect access in branch condition": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_list_add",
+   "alone": 3,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 79,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConfigResource_add_ConfigEntry",
+    "rdkafka_broker.c::rd_kafka_brokers_wait_state_change_async",
+    "rdkafka_metadata_cache.c::rd_kafka_metadata_cache_wait_state_change_async"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdlist.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 1,
+      "unresolved resource identity `_`": 1,
+      "unrecognized assignment destination": 1,
+      "unmodeled call, aggregate or indirect access in return expression": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_list_clear",
+   "alone": 3,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 82,
+   "freed": [
+    "rdkafka_mock.c::rd_kafka_mock_clear_requests",
+    "rdkafka_mock.c::rd_kafka_mock_start_request_tracking",
+    "rdkafka_mock.c::rd_kafka_mock_stop_request_tracking"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdlist.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "get_or_create_external_metadata_kvlist",
+   "alone": 2,
+   "pair": 2,
+   "touched": 4,
+   "cumulative": 84,
+   "freed": [
+    "cmt_decode_opentelemetry.c::decode_resource_metrics_metadata",
+    "cmt_decode_opentelemetry.c::decode_scope_metrics_metadata"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cmt_decode_opentelemetry.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3,
+      "unresolved resource identity `_`": 3
+     }
+    }
+   ]
+  },
+  {
+   "callee": "pb_write",
+   "alone": 2,
+   "pair": 1,
+   "touched": 3,
+   "cumulative": 86,
+   "freed": [
+    "nanopb/pb_encode.c::pb_encode_fixed32",
+    "nanopb/pb_encode.c::pb_encode_fixed64"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "nanopb/pb_encode.c",
+     "status": "Unknown",
+     "families": {
+      "unmodeled call, aggregate or indirect access in branch condition": 2,
+      "unresolved resource identity `_`": 2,
+      "unmodeled call, aggregate or indirect access in return expression": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_atomic32_add",
+   "alone": 2,
+   "pair": 1,
+   "touched": 3,
+   "cumulative": 88,
+   "freed": [
+    "rdkafka_cert.c::rd_kafka_cert_dup",
+    "rdkafka_idempotence.c::rd_kafka_idemp_inflight_toppar_add"
+   ],
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/librdkafka-2.15.0/src/rdatomic.h:56"
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 90,
+   "freed": [
+    "rdkafka_assignment.c::rd_kafka_assignment_destroy",
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_destroy_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_partition.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 3,
+      "indirect memory access is outside the resource projection": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_difference0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 92,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_difference_by_id",
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_difference_by_name"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_partition.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 4,
+      "call to uncontracted function `_`": 2,
+      "unresolved resource identity `_`": 2,
+      "unmodeled increment or decrement expression": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "_mk_event_wait_2",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 94,
+   "freed": [
+    "mk_core/mk_event.c::mk_event_wait",
+    "mk_core/mk_event.c::mk_event_wait_2"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "cJSON_ParseWithLengthOpts",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 96,
+   "freed": [
+    "cJSON.c::cJSON_ParseWithLength",
+    "cJSON.c::cJSON_ParseWithOpts"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cJSON.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 7,
+      "unmodeled call, aggregate or indirect access in branch condition": 2,
+      "call to uncontracted function `_`": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "call_once",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 98,
+   "freed": [
+    "rdkafka.c::rd_kafka_global_init",
+    "rdkafka.c::rd_kafka_thread_srand"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "get_object_item",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 100,
+   "freed": [
+    "cJSON.c::cJSON_GetObjectItem",
+    "cJSON.c::cJSON_GetObjectItemCaseSensitive"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cJSON.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 4,
+      "unmodeled call, aggregate or indirect access in loop condition": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "mk_fifo_queue_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 102,
+   "freed": [
+    "mk_server/mk_fifo.c::mk_fifo_queue_destroy_all",
+    "mk_server/mk_fifo.c::mk_fifo_queue_id_destroy"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "mk_server/mk_fifo.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "mk_header_prepare",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 104,
+   "freed": [
+    "mk_server/mk_lib.c::headers_setup",
+    "mk_server/mk_plugin.c::mk_plugin_header_prepare"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "mk_server/mk_header.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 26,
+      "call to uncontracted function `_`": 16,
+      "unresolved resource identity `_`": 14
+     }
+    }
+   ]
+  },
+  {
+   "callee": "pb_encode_varint",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 106,
+   "freed": [
+    "nanopb/pb_encode.c::pb_encode_svarint",
+    "nanopb/pb_encode.c::pb_encode_tag"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "nanopb/pb_encode.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "print",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 108,
+   "freed": [
+    "cJSON.c::cJSON_Print",
+    "cJSON.c::cJSON_PrintUnformatted"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cJSON.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 11,
+      "unresolved resource identity `_`": 9,
+      "unmodeled call, aggregate or indirect access in branch condition": 2,
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_AclBinding_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 110,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_AclBinding_destroy_array",
+    "rdkafka_admin.c::rd_kafka_AclBinding_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_AclBinding_new0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 112,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_AclBindingFilter_new",
+    "rdkafka_admin.c::rd_kafka_AclBinding_new"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 5,
+      "indirect memory access is outside the resource projection": 4,
+      "nullable resource `_` used by a non-null contract": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_AlterConsumerGroupOffsets_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 114,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_AlterConsumerGroupOffsets_destroy_array",
+    "rdkafka_admin.c::rd_kafka_AlterConsumerGroupOffsets_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_ConfigResource_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 116,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConfigResource_destroy_array",
+    "rdkafka_admin.c::rd_kafka_ConfigResource_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_ConsumerGroupDescription_new",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 118,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConsumerGroupDescription_copy",
+    "rdkafka_admin.c::rd_kafka_ConsumerGroupDescription_new_error"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 5,
+      "unresolved resource identity `_`": 5,
+      "call to uncontracted function `_`": 3,
+      "nullable resource `_` used by a non-null contract": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_DeleteConsumerGroupOffsets_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 120,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_DeleteConsumerGroupOffsets_destroy_array",
+    "rdkafka_admin.c::rd_kafka_DeleteConsumerGroupOffsets_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_ListConsumerGroupOffsets_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 122,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ListConsumerGroupOffsets_destroy_array",
+    "rdkafka_admin.c::rd_kafka_ListConsumerGroupOffsets_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_NewPartitions_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 124,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_NewPartitions_destroy_array",
+    "rdkafka_admin.c::rd_kafka_NewPartitions_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_NewTopic_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 126,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_NewTopic_destroy_array",
+    "rdkafka_admin.c::rd_kafka_NewTopic_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 2,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_UserScramCredentialAlteration_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 128,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_UserScramCredentialAlteration_destroy_array",
+    "rdkafka_admin.c::rd_kafka_UserScramCredentialAlteration_destroy_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 3,
+      "unresolved resource identity `_`": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_admin_add_config0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 130,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConfigResource_set_config",
+    "rdkafka_admin.c::rd_kafka_NewTopic_set_config"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_admin.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 1,
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_anyconf_dump",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 132,
+   "freed": [
+    "rdkafka_conf.c::rd_kafka_conf_dump",
+    "rdkafka_conf.c::rd_kafka_topic_conf_dump"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_conf.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 6,
+      "loop re-acquisition: an earlier generation that may be live is still held": 2,
+      "unmodeled increment or decrement expression": 2,
+      "indirect memory access is outside the resource projection": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_destroy_app",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 134,
+   "freed": [
+    "rdkafka.c::rd_kafka_destroy",
+    "rdkafka.c::rd_kafka_destroy_flags"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 15,
+      "unresolved resource identity `_`": 11,
+      "call to uncontracted function `_`": 7,
+      "unmodeled call, aggregate or indirect access in branch condition": 4
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_err_action",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 136,
+   "freed": [
+    "rdkafka_request.c::rd_kafka_handle_OffsetCommit_error",
+    "rdkafka_request.c::rd_kafka_handle_OffsetFetch_err_action"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_request.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 2,
+      "indirect memory access is outside the resource projection": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_metadata_new_topic_mockv_internal",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 138,
+   "freed": [
+    "rdkafka_metadata.c::rd_kafka_metadata_new_topic_mockv",
+    "rdkafka_metadata.c::rd_kafka_metadata_new_topic_with_partition_replicas_mockv"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_metadata.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 2,
+      "indirect memory access is outside the resource projection": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_oauthbearer_set_token_failure",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 140,
+   "freed": [
+    "rdkafka_sasl.c::rd_kafka_share_oauthbearer_set_token_failure",
+    "rdkafka_sasl_oauthbearer_oidc.c::rd_kafka_oidc_token_metadata_aws_iam_refresh_cb"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdkafka.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_op_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 142,
+   "freed": [
+    "rdkafka_event.c::rd_kafka_event_destroy",
+    "rdunittest_fetcher.c::ut_op_destroy_free"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_op.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 56,
+      "unmodeled call, aggregate or indirect access in branch condition": 49,
+      "unresolved resource identity `_`": 7,
+      "call to uncontracted function `_`": 5
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_parse_Metadata0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 144,
+   "freed": [
+    "rdkafka_metadata.c::rd_kafka_parse_Metadata",
+    "rdkafka_metadata.c::rd_kafka_parse_Metadata_admin"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_metadata.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 160,
+      "indirect memory access is outside the resource projection": 102,
+      "unmodeled call, aggregate or indirect access in branch condition": 47,
+      "call to uncontracted function `_`": 26
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_pop_serve0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 146,
+   "freed": [
+    "rdkafka_queue.c::rd_kafka_q_pop_serve",
+    "rdkafka_queue.c::rd_kafka_q_pop_serve_maybe_consume"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_queue.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 9,
+      "unmodeled call, aggregate or indirect access in branch condition": 2,
+      "unmodeled call, aggregate or indirect access in loop condition": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_serve0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 148,
+   "freed": [
+    "rdkafka_queue.c::rd_kafka_q_serve",
+    "rdkafka_queue.c::rd_kafka_q_serve_maybe_consume"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_queue.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 10,
+      "unmodeled call, aggregate or indirect access in branch condition": 2,
+      "unmodeled call, aggregate or indirect access in loop condition": 2,
+      "indirect memory access is outside the resource projection": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_serve_maybe_consume",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 150,
+   "freed": [
+    "rdkafka.c::rd_kafka_poll",
+    "rdkafka.c::rd_kafka_queue_poll_callback"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_queue.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_destroy0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 152,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_destroy",
+    "rdkafka_partition.c::rd_kafka_topic_partition_destroy_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_partition.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 3,
+      "unresolved resource identity `_`": 3
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_get_private",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 154,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_set_current_leader_epoch",
+    "rdkafka_partition.c::rd_kafka_topic_partition_set_leader_epoch"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_intersection0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 156,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_intersection_by_id",
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_intersection_by_name"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_partition.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 5,
+      "unresolved resource identity `_`": 2,
+      "unmodeled increment or decrement expression": 2,
+      "braced initializer, expression, or declaration is not modeled": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_union0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 158,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_union_by_id",
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_union_by_name"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_partition.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 5
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_result_destroy",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 160,
+   "freed": [
+    "rdkafka_aux.c::rd_kafka_topic_partition_result_destroy_array",
+    "rdkafka_aux.c::rd_kafka_topic_partition_result_free"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_aux.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 2,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_toppars_pause_resume",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 162,
+   "freed": [
+    "rdkafka_subscription.c::rd_kafka_pause_partitions",
+    "rdkafka_subscription.c::rd_kafka_resume_partitions"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_partition.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 6,
+      "unresolved resource identity `_`": 4,
+      "indirect memory access is outside the resource projection": 3
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_txn_clear_partitions_flag",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 164,
+   "freed": [
+    "rdkafka_txnmgr.c::rd_kafka_txn_clear_partitions",
+    "rdkafka_txnmgr.c::rd_kafka_txn_clear_pending_partitions"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_txnmgr.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 5,
+      "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+      "unresolved resource identity `_`": 1,
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_slice_reader0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 166,
+   "freed": [
+    "rdbuf.c::rd_slice_peeker",
+    "rdbuf.c::rd_slice_reader"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdbuf.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 4,
+      "unresolved resource identity `_`": 3
+     }
+    }
+   ]
+  },
+  {
+   "callee": "sched_thread_cleanup",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 168,
+   "freed": [
+    "mk_server/mk_scheduler.c::mk_sched_threads_destroy_all",
+    "mk_server/mk_scheduler.c::mk_sched_threads_purge"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "mk_server/mk_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "setupRackAwareAssignment0",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 170,
+   "freed": [
+    "rdkafka_range_assignor.c::setupRackAwareAssignment",
+    "rdkafka_sticky_assignor.c::setupRackAwareAssignment"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_range_assignor.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3,
+      "indirect memory access is outside the resource projection": 3,
+      "unsupported assignment expression": 1,
+      "unresolved resource identity `_`": 1
+     }
+    },
+    {
+     "unit": "rdkafka_sticky_assignor.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 4,
+      "indirect memory access is outside the resource projection": 4,
+      "unresolved resource identity `_`": 3,
+      "unsupported assignment expression": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "unit_test_telemetry",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 172,
+   "freed": [
+    "rdkafka_telemetry_decode.c::unit_test_telemetry_gauge",
+    "rdkafka_telemetry_decode.c::unit_test_telemetry_sum"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_telemetry_decode.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 70,
+      "unmodeled call, aggregate or indirect access in branch condition": 21,
+      "call to uncontracted function `_`": 10,
+      "unresolved resource identity `_`": 9
+     }
+    }
+   ]
+  },
+  {
+   "callee": "ut_init_member_internal",
+   "alone": 2,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 174,
+   "freed": [
+    "rdkafka_assignor.c::ut_init_member",
+    "rdkafka_assignor.c::ut_init_member_with_rackv"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_assignor.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 6,
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "cmt_map_metric_get",
+   "alone": 1,
+   "pair": 1,
+   "touched": 11,
+   "cumulative": 175,
+   "freed": [
+    "cmt_map.c::cmt_map_metric_get_val"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cmt_map.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "cJSON_DetachItemViaPointer",
+   "alone": 1,
+   "pair": 2,
+   "touched": 3,
+   "cumulative": 176,
+   "freed": [
+    "cJSON.c::cJSON_DetachItemFromArray"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cJSON.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 4,
+      "unmodeled call, aggregate or indirect access in branch condition": 3
+     }
+    }
+   ]
+  },
+  {
+   "callee": "cfl_list_size",
+   "alone": 1,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 177,
+   "freed": [
+    "cmt_encode_opentelemetry.c::is_metric_empty"
+   ],
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/cfl/include/cfl/cfl_list.h:200"
+    }
+   ]
+  },
+  {
+   "callee": "clone_kvlist_entry",
+   "alone": 1,
+   "pair": 2,
+   "touched": 3,
+   "cumulative": 180,
+   "freed": [
+    "cmt_decode_opentelemetry.c::clone_kvlist"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cmt_decode_opentelemetry.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 3
+     }
+    }
+   ]
+  },
+  {
+   "callee": "fetch_metadata_kvlist_key",
+   "alone": 1,
+   "pair": 1,
+   "touched": 3,
+   "cumulative": 181,
+   "freed": [
+    "cmt_encode_text.c::get_data_point_metadata_context"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cmt_encode_opentelemetry.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 2,
+      "call to uncontracted function `_`": 1
+     }
+    },
+    {
+     "unit": "cmt_encode_text.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "unresolved resource identity `_`": 1,
+      "unmodeled call, aggregate or indirect access in return expression": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_atomic32_set",
+   "alone": 1,
+   "pair": 2,
+   "touched": 3,
+   "cumulative": 182,
+   "freed": [
+    "rdkafka_buf.c::rd_kafka_bufq_reset"
+   ],
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/librdkafka-2.15.0/src/rdatomic.h:118"
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_buf_new_request0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 183,
+   "freed": [
+    "rdkafka_request.c::rd_kafka_ListOffsetRequest_buf_new"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "rdkafka_buf.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 7,
+      "unresolved resource identity `_`": 4,
+      "indirect memory access is outside the resource projection": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_enq",
+   "alone": 1,
+   "pair": 2,
+   "touched": 3,
+   "cumulative": 184,
+   "freed": [
+    "rdkafka.c::rd_kafka_share_fetch_fanout_enqueue"
+   ],
+   "kind": "header-inline",
+   "homes": [
+    {
+     "header": "lib/librdkafka-2.15.0/src/rdkafka_queue.h:484"
+    }
+   ]
+  },
+  {
+   "callee": "LZ4F_compressUpdateImpl",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 185,
+   "freed": [
+    "lz4frame.c::LZ4F_compressUpdate"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "lz4frame.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 19,
+      "call to uncontracted function `_`": 9,
+      "indirect memory access is outside the resource projection": 6,
+      "unsupported assignment expression": 3
+     }
+    }
+   ]
+  },
+  {
+   "callee": "LZ4_decompress_safe",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 186,
+   "freed": [
+    "lz4.c::LZ4_uncompress_unknownOutputSize"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "lz4.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "LZ4_initStreamHC",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 187,
+   "freed": [
+    "lz4hc.c::LZ4_resetStreamHC"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "lz4hc.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 2,
+      "unmodeled call, aggregate or indirect access in branch condition": 1,
+      "indirect memory access is outside the resource projection": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "cio_os_mkpath",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 188,
+   "freed": [
+    "cio_os.c::cio_os_mkpath"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "cio_os.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "kvlist_fetch_uint64",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 189,
+   "freed": [
+    "cmt_encode_opentelemetry.c::resolve_data_point_start_timestamp"
+   ]
+  },
+  {
+   "callee": "mk_list_init",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 190,
+   "freed": [
+    "mk_server/mk_plugin.c::mk_plugin_load_static"
+   ]
+  },
+  {
+   "callee": "pack_context_metrics",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 191,
+   "freed": [
+    "cmt_encode_cloudwatch_emf.c::pack_emf_payload"
+   ]
+  },
+  {
+   "callee": "pack_kvlist",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 192,
+   "freed": [
+    "ctr_encode_msgpack.c::pack_attributes"
+   ]
+  },
+  {
+   "callee": "pack_metric",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 193,
+   "freed": [
+    "cmt_encode_cloudwatch_emf.c::pack_metrics"
+   ]
+  },
+  {
+   "callee": "pthread_key_create",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 194,
+   "freed": [
+    "mk_server/mk_http_thread.c::mk_http_thread_initialize_tls_once"
+   ]
+  },
+  {
+   "callee": "pthread_setspecific",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 196,
+   "freed": [
+    "mk_server/mk_scheduler.c::mk_sched_set_request_list"
+   ]
+  },
+  {
+   "callee": "rd_atomic64_set",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 197,
+   "freed": [
+    "rdkafka.c::rd_kafka_share_record_poll_start"
+   ]
+  },
+  {
+   "callee": "rd_kafka_admin_result_set_err0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 198,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_admin_result_set_err"
+   ]
+  },
+  {
+   "callee": "rd_kafka_buf_write_i8",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 199,
+   "freed": [
+    "rdkafka_buf.c::rd_kafka_buf_upgrade_flexver_request"
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_destroy_owner",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 200,
+   "freed": [
+    "rdunittest_fetcher.c::ut_destroy_mock_queue"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_add",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 201,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_add_range"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_add0",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 202,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_add"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_cmp",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 203,
+   "freed": [
+    "rdkafka_cgrp.c::rd_kafka_cgrp_consumer_is_new_assignment_different"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 204,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_copy_opaque"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_find0",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 205,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_find_idx"
+   ]
+  },
+  {
+   "callee": "rd_kafka_toppar_destroy0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 206,
+   "freed": [
+    "rdkafka_msg.c::rd_kafka_msgbatch_destroy"
+   ]
+  },
+  {
+   "callee": "ERR_clear_error",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 207,
+   "freed": [
+    "rdkafka_ssl.c::rd_kafka_transport_ssl_clear_error"
+   ]
+  },
+  {
+   "callee": "LZ4F_compressBegin_usingCDict",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 208,
+   "freed": [
+    "lz4frame.c::LZ4F_compressBegin"
+   ]
+  },
+  {
+   "callee": "LZ4F_compressBound_internal",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 209,
+   "freed": [
+    "lz4frame.c::LZ4F_compressBound"
+   ]
+  },
+  {
+   "callee": "LZ4F_createCDict_advanced",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 210,
+   "freed": [
+    "lz4frame.c::LZ4F_createCDict"
+   ]
+  },
+  {
+   "callee": "LZ4HC_compress_generic_internal",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 211,
+   "freed": [
+    "lz4hc.c::LZ4HC_compress_generic_noDictCtx"
+   ]
+  },
+  {
+   "callee": "LZ4_compressHC_continue_generic",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 212,
+   "freed": [
+    "lz4hc.c::LZ4_compress_HC_continue_destSize"
+   ]
+  },
+  {
+   "callee": "LZ4_compress_fast",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 213,
+   "freed": [
+    "lz4.c::LZ4_compress_default"
+   ]
+  },
+  {
+   "callee": "LZ4_createStream",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 214,
+   "freed": [
+    "lz4.c::LZ4_create"
+   ]
+  },
+  {
+   "callee": "XXH32",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 215,
+   "freed": [
+    "lz4frame.c::LZ4F_headerChecksum"
+   ]
+  },
+  {
+   "callee": "XXH32_digest_endian",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 216,
+   "freed": [
+    "rdxxhash.c::XXH32_digest"
+   ]
+  },
+  {
+   "callee": "XXH32_endian_align",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 217,
+   "freed": [
+    "rdxxhash.c::XXH32"
+   ]
+  },
+  {
+   "callee": "XXH32_update_endian",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 218,
+   "freed": [
+    "rdxxhash.c::XXH32_update"
+   ]
+  },
+  {
+   "callee": "XXH64_digest_endian",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 219,
+   "freed": [
+    "rdxxhash.c::XXH64_digest"
+   ]
+  },
+  {
+   "callee": "XXH64_endian_align",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 220,
+   "freed": [
+    "rdxxhash.c::XXH64"
+   ]
+  },
+  {
+   "callee": "XXH64_update_endian",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 221,
+   "freed": [
+    "rdxxhash.c::XXH64_update"
+   ]
+  },
+  {
+   "callee": "__builtin_ctz",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 222,
+   "freed": [
+    "snappy.c::find_lsb_set_non_zero"
+   ]
+  },
+  {
+   "callee": "__builtin_ctzll",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 223,
+   "freed": [
+    "snappy.c::find_lsb_set_non_zero64"
+   ]
+  },
+  {
+   "callee": "__builtin_nanf",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 224,
+   "freed": [
+    "cJSON.c::cJSON_GetNumberValue"
+   ]
+  },
+  {
+   "callee": "_mk_event_add",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 225,
+   "freed": [
+    "mk_core/mk_event.c::mk_event_add"
+   ]
+  },
+  {
+   "callee": "_mk_event_channel_create",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 226,
+   "freed": [
+    "mk_core/mk_event.c::mk_event_channel_create"
+   ]
+  },
+  {
+   "callee": "_mk_event_channel_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 227,
+   "freed": [
+    "mk_core/mk_event.c::mk_event_channel_destroy"
+   ]
+  },
+  {
+   "callee": "_mk_event_del",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 228,
+   "freed": [
+    "mk_core/mk_event.c::mk_event_del"
+   ]
+  },
+  {
+   "callee": "_mk_event_inject",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 229,
+   "freed": [
+    "mk_core/mk_event.c::mk_event_inject"
+   ]
+  },
+  {
+   "callee": "_mk_event_timeout_create",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 230,
+   "freed": [
+    "mk_core/mk_event.c::mk_event_timeout_create"
+   ]
+  },
+  {
+   "callee": "_mk_event_timeout_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 231,
+   "freed": [
+    "mk_core/mk_event.c::mk_event_timeout_destroy"
+   ]
+  },
+  {
+   "callee": "accept4",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 232,
+   "freed": [
+    "mk_server/mk_socket.c::mk_socket_accept"
+   ]
+  },
+  {
+   "callee": "append_context",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 233,
+   "freed": [
+    "cmt_cat.c::cmt_cat"
+   ]
+  },
+  {
+   "callee": "batch_add_resource",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 234,
+   "freed": [
+    "cmt_encode_opentelemetry_batch.c::batch_ensure_resource"
+   ]
+  },
+  {
+   "callee": "bind",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 235,
+   "freed": [
+    "mk_server/mk_socket.c::mk_socket_bind"
+   ]
+  },
+  {
+   "callee": "bsearch",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 236,
+   "freed": [
+    "rdkafka_feature.c::rd_kafka_ApiVersion_check"
+   ]
+  },
+  {
+   "callee": "cJSON_Duplicate_rec",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 237,
+   "freed": [
+    "cJSON.c::cJSON_Duplicate"
+   ]
+  },
+  {
+   "callee": "cJSON_ParseWithOpts",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 238,
+   "freed": [
+    "cJSON.c::cJSON_Parse"
+   ]
+  },
+  {
+   "callee": "cJSON_ReplaceItemViaPointer",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 239,
+   "freed": [
+    "cJSON.c::cJSON_ReplaceItemInArray"
+   ]
+  },
+  {
+   "callee": "calculate_label_set_hash",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 240,
+   "freed": [
+    "cmt_encode_prometheus_remote_write.c::count_metrics_with_matching_label_set"
+   ]
+  },
+  {
+   "callee": "cfl_array_append_bool",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 241,
+   "freed": [
+    "ctr_decode_opentelemetry.c::convert_bool_value"
+   ]
+  },
+  {
+   "callee": "cfl_array_append_double",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 242,
+   "freed": [
+    "ctr_decode_opentelemetry.c::convert_double_value"
+   ]
+  },
+  {
+   "callee": "cfl_array_append_int64",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 243,
+   "freed": [
+    "ctr_decode_opentelemetry.c::convert_int_value"
+   ]
+  },
+  {
+   "callee": "cfl_array_append_string",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 244,
+   "freed": [
+    "ctr_decode_opentelemetry.c::convert_string_value"
+   ]
+  },
+  {
+   "callee": "cio_chunk_up",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 245,
+   "freed": [
+    "flb_input_chunk.c::flb_input_chunk_set_up"
+   ]
+  },
+  {
+   "callee": "cio_file_hash",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 246,
+   "freed": [
+    "cio_chunk.c::cio_chunk_hash"
+   ]
+  },
+  {
+   "callee": "cio_file_native_get_size",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 247,
+   "freed": [
+    "cio_file.c::cio_file_real_size"
+   ]
+  },
+  {
+   "callee": "cio_file_native_lookup_group",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 248,
+   "freed": [
+    "cio_file.c::cio_file_lookup_group"
+   ]
+  },
+  {
+   "callee": "cio_file_native_lookup_user",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 249,
+   "freed": [
+    "cio_file.c::cio_file_lookup_user"
+   ]
+  },
+  {
+   "callee": "cio_file_st_set_content_len",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 250,
+   "freed": [
+    "cio_file.c::write_init_header"
+   ]
+  },
+  {
+   "callee": "cio_scan_streams",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 251,
+   "freed": [
+    "chunkio.c::cio_load"
+   ]
+  },
+  {
+   "callee": "cio_stream_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 252,
+   "freed": [
+    "cio_stream.c::cio_stream_destroy_all"
+   ]
+  },
+  {
+   "callee": "cio_stream_size_chunks_up",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 253,
+   "freed": [
+    "flb_input_chunk.c::flb_input_chunk_total_size"
+   ]
+  },
+  {
+   "callee": "clone_array_entry",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 254,
+   "freed": [
+    "cmt_decode_opentelemetry.c::clone_array"
+   ]
+  },
+  {
+   "callee": "cmt_atomic_initialize",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 255,
+   "freed": [
+    "cmetrics.c::cmt_initialize"
+   ]
+  },
+  {
+   "callee": "cmt_labels_add_kv",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 256,
+   "freed": [
+    "cmetrics.c::cmt_label_add"
+   ]
+  },
+  {
+   "callee": "cmt_map_metrics_expire",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 257,
+   "freed": [
+    "cmetrics.c::cmt_expire"
+   ]
+  },
+  {
+   "callee": "cnd_signal",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 258,
+   "freed": [
+    "rdkafka_timer.c::rd_kafka_timers_interrupt"
+   ]
+  },
+  {
+   "callee": "crc32c_zeros",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 259,
+   "freed": [
+    "crc32c.c::crc32c_init_hw"
+   ]
+  },
+  {
+   "callee": "ctr_kvlist_to_otlp_kvpair_list",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 260,
+   "freed": [
+    "ctr_encode_opentelemetry.c::set_attributes_from_ctr"
+   ]
+  },
+  {
+   "callee": "ctr_span_event_add_ts",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 261,
+   "freed": [
+    "ctr_span.c::ctr_span_event_add"
+   ]
+  },
+  {
+   "callee": "ctr_span_set_parent_span_id",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 262,
+   "freed": [
+    "ctr_span.c::ctr_span_set_parent_span_id_with_cid"
+   ]
+  },
+  {
+   "callee": "ctr_span_set_span_id",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 263,
+   "freed": [
+    "ctr_span.c::ctr_span_set_span_id_with_cid"
+   ]
+  },
+  {
+   "callee": "ctr_span_set_trace_id",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 264,
+   "freed": [
+    "ctr_span.c::ctr_span_set_trace_id_with_cid"
+   ]
+  },
+  {
+   "callee": "curl_global_init",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 265,
+   "freed": [
+    "rdhttp.c::rd_http_global_init"
+   ]
+  },
+  {
+   "callee": "decode_numerical_samples",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 266,
+   "freed": [
+    "cmt_decode_prometheus_remote_write.c::decode_numerical_time_series"
+   ]
+  },
+  {
+   "callee": "decode_resource_metrics_entry",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 267,
+   "freed": [
+    "cmt_decode_opentelemetry.c::decode_service_request"
+   ]
+  },
+  {
+   "callee": "destroy_context_list",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 268,
+   "freed": [
+    "cmt_decode_opentelemetry.c::cmt_decode_opentelemetry_destroy"
+   ]
+  },
+  {
+   "callee": "emit_copy_less_than64",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 269,
+   "freed": [
+    "snappy.c::emit_copy"
+   ]
+  },
+  {
+   "callee": "get_array_item",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 270,
+   "freed": [
+    "cJSON.c::cJSON_GetArrayItem"
+   ]
+  },
+  {
+   "callee": "gf2_matrix_times",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 271,
+   "freed": [
+    "crc32c.c::gf2_matrix_square"
+   ]
+  },
+  {
+   "callee": "http_parser_transfer_encoding_chunked",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 272,
+   "freed": [
+    "mk_server/mk_http_parser.c::mk_http_parser_read_chunked_content"
+   ]
+  },
+  {
+   "callee": "input_chunk_append_raw",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 273,
+   "freed": [
+    "flb_input_chunk.c::flb_input_chunk_append_raw_local"
+   ]
+  },
+  {
+   "callee": "is_metric_empty",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 274,
+   "freed": [
+    "cmt_encode_opentelemetry.c::get_metric_count"
+   ]
+  },
+  {
+   "callee": "map_metric_get_unlocked",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 275,
+   "freed": [
+    "cmt_map.c::cmt_map_metric_get"
+   ]
+  },
+  {
+   "callee": "mk_channel_stream_write",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 276,
+   "freed": [
+    "mk_server/mk_lib.c::mk_http_flush"
+   ]
+  },
+  {
+   "callee": "mk_config_listen_parse",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 277,
+   "freed": [
+    "mk_server/mk_config.c::mk_config_listen_read"
+   ]
+  },
+  {
+   "callee": "mk_config_set_property",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 278,
+   "freed": [
+    "mk_server/mk_lib.c::mk_config_set"
+   ]
+  },
+  {
+   "callee": "mk_event_del",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 279,
+   "freed": [
+    "mk_core/mk_event.c::mk_event_timeout_disable"
+   ]
+  },
+  {
+   "callee": "mk_fifo_queue_create",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 280,
+   "freed": [
+    "mk_server/mk_lib.c::mk_mq_create"
+   ]
+  },
+  {
+   "callee": "mk_fifo_send",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 281,
+   "freed": [
+    "mk_server/mk_lib.c::mk_mq_send"
+   ]
+  },
+  {
+   "callee": "mk_http_error",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 282,
+   "freed": [
+    "mk_server/mk_plugin.c::mk_plugin_http_error"
+   ]
+  },
+  {
+   "callee": "mk_http_parser_init",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 283,
+   "freed": [
+    "mk_server/mk_http.c::mk_http_request_ka_next"
+   ]
+  },
+  {
+   "callee": "mk_http_parser_read_chunked_content",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 284,
+   "freed": [
+    "mk_server/mk_http_parser.c::mk_http_parser_chunked_decode_buf"
+   ]
+  },
+  {
+   "callee": "mk_http_thread_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 285,
+   "freed": [
+    "mk_server/mk_scheduler.c::sched_thread_cleanup"
+   ]
+  },
+  {
+   "callee": "mk_http_thread_resume",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 286,
+   "freed": [
+    "mk_server/mk_http_thread.c::mk_http_thread_start"
+   ]
+  },
+  {
+   "callee": "mk_iov_free",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 287,
+   "freed": [
+    "mk_server/mk_header.c::cb_stream_iov_extended_free"
+   ]
+  },
+  {
+   "callee": "mk_iov_free_marked",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 288,
+   "freed": [
+    "mk_server/mk_header.c::mk_header_cb_finished"
+   ]
+  },
+  {
+   "callee": "mk_iov_send",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 289,
+   "freed": [
+    "mk_server/mk_net.c::net_plain_writev"
+   ]
+  },
+  {
+   "callee": "mk_sched_launch_thread",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 290,
+   "freed": [
+    "mk_server/mk_server.c::mk_server_launch_workers"
+   ]
+  },
+  {
+   "callee": "mk_sched_worker_cb_add",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 291,
+   "freed": [
+    "mk_server/mk_lib.c::mk_worker_callback"
+   ]
+  },
+  {
+   "callee": "mk_server_cork_flag",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 292,
+   "freed": [
+    "mk_server/mk_http.c::mk_http_cb_file_on_consume"
+   ]
+  },
+  {
+   "callee": "mk_vhost_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 293,
+   "freed": [
+    "mk_server/mk_vhost.c::mk_vhost_free_all"
+   ]
+  },
+  {
+   "callee": "mk_vhost_fdt_close",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 294,
+   "freed": [
+    "mk_server/mk_vhost.c::mk_vhost_close"
+   ]
+  },
+  {
+   "callee": "mmap_file",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 295,
+   "freed": [
+    "cio_file.c::cio_file_read_prepare"
+   ]
+  },
+  {
+   "callee": "msg_write",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 296,
+   "freed": [
+    "mk_server/mk_fifo.c::mk_fifo_send"
+   ]
+  },
+  {
+   "callee": "mtx_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 297,
+   "freed": [
+    "rdkafka_sasl_cyrus.c::rd_kafka_sasl_cyrus_global_term"
+   ]
+  },
+  {
+   "callee": "opentelemetry__proto__collector__metrics__v1__export_metrics_service_request__init",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 298,
+   "freed": [
+    "cmt_encode_opentelemetry_batch.c::metrics_batch_view_init"
+   ]
+  },
+  {
+   "callee": "otlp_kvpair_list_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 299,
+   "freed": [
+    "ctr_encode_opentelemetry.c::destroy_attributes"
+   ]
+  },
+  {
+   "callee": "pb_decode_inner",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 300,
+   "freed": [
+    "nanopb/pb_decode.c::pb_decode"
+   ]
+  },
+  {
+   "callee": "pb_decode_varint32_eof",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 301,
+   "freed": [
+    "nanopb/pb_decode.c::pb_decode_varint32"
+   ]
+  },
+  {
+   "callee": "pb_field_iter_begin",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 302,
+   "freed": [
+    "nanopb/pb_common.c::pb_field_iter_begin_const"
+   ]
+  },
+  {
+   "callee": "pb_field_iter_begin_extension",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 303,
+   "freed": [
+    "nanopb/pb_common.c::pb_field_iter_begin_extension_const"
+   ]
+  },
+  {
+   "callee": "pthread_getspecific",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 304,
+   "freed": [
+    "mk_server/mk_plugin.c::mk_plugin_sched_get_thread_conf"
+   ]
+  },
+  {
+   "callee": "pthread_once",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 305,
+   "freed": [
+    "mk_server/mk_http_thread.c::mk_http_thread_initialize_tls"
+   ]
+  },
+  {
+   "callee": "pthread_rwlock_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 306,
+   "freed": [
+    "tinycthread_extra.c::rwlock_destroy"
+   ]
+  },
+  {
+   "callee": "pthread_rwlock_init",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 307,
+   "freed": [
+    "tinycthread_extra.c::rwlock_init"
+   ]
+  },
+  {
+   "callee": "rd_atomic32_sub",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 308,
+   "freed": [
+    "rdkafka_broker.c::rd_kafka_broker_persistent_connection_del"
+   ]
+  },
+  {
+   "callee": "rd_avl_find",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 309,
+   "freed": [
+    "rdkafka_msgset_reader.c::rd_kafka_aborted_txns_offsets_for_pid"
+   ]
+  },
+  {
+   "callee": "rd_buf_alloc_segment",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 310,
+   "freed": [
+    "rdbuf.c::rd_buf_write_ensure"
+   ]
+  },
+  {
+   "callee": "rd_buf_get_writable0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 311,
+   "freed": [
+    "rdbuf.c::rd_buf_get_writable"
+   ]
+  },
+  {
+   "callee": "rd_bytes_hash",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 312,
+   "freed": [
+    "rdkafka.c::rd_kafka_Uuid_hash"
+   ]
+  },
+  {
+   "callee": "rd_kafka_AclBindingFilter_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 313,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_AclBindingFilter_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_AclBinding_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 314,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_AclBinding_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_AlterConsumerGroupOffsets_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 315,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_AlterConsumerGroupOffsets_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_AlterUserScramCredentials_result_response_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 316,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_AlterUserScramCredentials_result_response_destroy_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ClusterDescription_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 317,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ClusterDescription_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ConfigEntry_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 318,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConfigEntry_list_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ConfigEntry_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 319,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConfigEntry_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ConfigEntry_new0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 320,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConfigEntry_new"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ConsumerGroupDescription_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 321,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConsumerGroupDescription_copy_opaque"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ConsumerGroupDescription_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 322,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConsumerGroupDescription_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ConsumerGroupListing_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 323,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy_opaque"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ConsumerGroupListing_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 324,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConsumerGroupListing_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_DeleteAcls_result_response_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 325,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_DeleteAcls_result_response_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_DeleteConsumerGroupOffsets_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 326,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_DeleteConsumerGroupOffsets_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_DeleteGroup_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 327,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_DeleteGroup_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_DeleteRecords_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 328,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_DeleteRecords_destroy_array"
+   ]
+  },
+  {
+   "callee": "rd_kafka_DeleteTopic_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 329,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_DeleteTopic_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ElectLeadersResult_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 330,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ElectLeadersResult_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ElectLeadersResult_partitions",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 331,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ElectLeaders_result_partitions"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ElectLeaders_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 332,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ElectLeaders_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ElectLeaders_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 333,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ElectLeaders_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ListConsumerGroupOffsets_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 334,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ListConsumerGroupOffsets_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ListConsumerGroupsResult_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 335,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy_opaque"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ListConsumerGroupsResult_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 336,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ListConsumerGroupsResult_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 337,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ListConsumerGroupsResult_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ListOffsetsResultInfo_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 338,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy_opaque"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ListOffsetsResultInfo_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 339,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_destroy_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ListOffsetsResultInfo_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 340,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_MemberDescription_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 341,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_MemberDescription_list_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_MemberDescription_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 342,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_MemberDescription_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_MetadataRequest0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 343,
+   "freed": [
+    "rdkafka_request.c::rd_kafka_MetadataRequest_resp_cb"
+   ]
+  },
+  {
+   "callee": "rd_kafka_MetadataRequest_resp_cb",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 344,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_admin_MetadataRequest"
+   ]
+  },
+  {
+   "callee": "rd_kafka_Node_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 345,
+   "freed": [
+    "rdkafka_aux.c::rd_kafka_Node_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_Node_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 346,
+   "freed": [
+    "rdkafka_aux.c::rd_kafka_Node_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_TopicDescription_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 347,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_TopicDescription_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_TopicDescription_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 348,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_TopicDescription_new_error"
+   ]
+  },
+  {
+   "callee": "rd_kafka_UserScramCredentialsDescription_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 349,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_UserScramCredentialsDescription_destroy_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_Uuid_hash",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 350,
+   "freed": [
+    "rdkafka.c::rd_kafka_Uuid_map_hash"
+   ]
+  },
+  {
+   "callee": "rd_kafka_acl_result_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 351,
+   "freed": [
+    "rdkafka_aux.c::rd_kafka_acl_result_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_admin_result_ret_acl_bindings",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 352,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_DescribeAcls_result_acls"
+   ]
+  },
+  {
+   "callee": "rd_kafka_admin_result_ret_acl_results",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 353,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_CreateAcls_result_acls"
+   ]
+  },
+  {
+   "callee": "rd_kafka_admin_result_ret_delete_acl_result_responses",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 354,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_DeleteAcls_result_responses"
+   ]
+  },
+  {
+   "callee": "rd_kafka_anyconf_get",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 355,
+   "freed": [
+    "rdkafka_conf.c::rd_kafka_topic_conf_get"
+   ]
+  },
+  {
+   "callee": "rd_kafka_anyconf_set",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 356,
+   "freed": [
+    "rdkafka_conf.c::rd_kafka_topic_conf_set"
+   ]
+  },
+  {
+   "callee": "rd_kafka_assignor_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 357,
+   "freed": [
+    "rdkafka_assignor.c::rd_kafka_assignor_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_assignor_topic_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 358,
+   "freed": [
+    "rdkafka_assignor.c::rd_kafka_assignor_topic_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_ApiVersion_at_least",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 359,
+   "freed": [
+    "rdkafka_metadata.c::rd_kafka_has_reliable_leader_epochs"
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_ApiVersion_supported0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 360,
+   "freed": [
+    "rdkafka_broker.c::rd_kafka_broker_ApiVersion_supported"
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_connect_up",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 361,
+   "freed": [
+    "rdkafka_sasl.c::rd_kafka_sasl_auth_done"
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_controller_nowait",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 362,
+   "freed": [
+    "rdkafka_broker.c::rd_kafka_broker_controller"
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_get_state",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 363,
+   "freed": [
+    "rdkafka_topic.c::rd_kafka_toppar_needs_query"
+   ]
+  },
+  {
+   "callee": "rd_kafka_broker_monitor_del",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 364,
+   "freed": [
+    "rdkafka_broker.c::rd_kafka_broker_prepare_destroy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_buf_read_topic_partitions_nullable",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 365,
+   "freed": [
+    "rdkafka_request.c::rd_kafka_buf_read_topic_partitions"
+   ]
+  },
+  {
+   "callee": "rd_kafka_consume0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 366,
+   "freed": [
+    "rdkafka.c::rd_kafka_consume_queue"
+   ]
+  },
+  {
+   "callee": "rd_kafka_consume_batch0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 367,
+   "freed": [
+    "rdkafka.c::rd_kafka_consume_batch_queue"
+   ]
+  },
+  {
+   "callee": "rd_kafka_consume_callback0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 368,
+   "freed": [
+    "rdkafka.c::rd_kafka_consume_callback_queue"
+   ]
+  },
+  {
+   "callee": "rd_kafka_consumer_group_metadata_new_with_genid",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 369,
+   "freed": [
+    "rdkafka_cgrp.c::rd_kafka_consumer_group_metadata_new"
+   ]
+  },
+  {
+   "callee": "rd_kafka_consumer_protocol_member_metadata_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 370,
+   "freed": [
+    "rdkafka_assignor.c::rd_kafka_assignor_get_metadata_with_empty_userdata"
+   ]
+  },
+  {
+   "callee": "rd_kafka_err2str",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 371,
+   "freed": [
+    "rdkafka_admin.c::rd_kafka_ConfigResource_error_string"
+   ]
+  },
+  {
+   "callee": "rd_kafka_error_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 372,
+   "freed": [
+    "rdkafka_error.c::rd_kafka_error_copy_opaque"
+   ]
+  },
+  {
+   "callee": "rd_kafka_get_legacy_ApiVersions",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 373,
+   "freed": [
+    "rdkafka_conf.c::rd_kafka_conf_validate_broker_version"
+   ]
+  },
+  {
+   "callee": "rd_kafka_group_result_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 374,
+   "freed": [
+    "rdkafka_aux.c::rd_kafka_group_result_copy_opaque"
+   ]
+  },
+  {
+   "callee": "rd_kafka_group_result_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 375,
+   "freed": [
+    "rdkafka_aux.c::rd_kafka_group_result_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_log_buf",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 376,
+   "freed": [
+    "rdkafka.c::rd_kafka_log0"
+   ]
+  },
+  {
+   "callee": "rd_kafka_mem_calloc",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 377,
+   "freed": [
+    "lz4hc.c::LZ4_createStreamHC"
+   ]
+  },
+  {
+   "callee": "rd_kafka_message_setup",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 378,
+   "freed": [
+    "rdkafka_msg.c::rd_kafka_message_get_from_rkm"
+   ]
+  },
+  {
+   "callee": "rd_kafka_metadata_request",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 379,
+   "freed": [
+    "rdkafka_metadata.c::rd_kafka_metadata_refresh_brokers"
+   ]
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_consumer_member_returned_assignment_set",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 380,
+   "freed": [
+    "rdkafka_mock_cgrp.c::rd_kafka_mock_cgrp_consumer_member_leave_static"
+   ]
+  },
+  {
+   "callee": "rd_kafka_mock_cluster_io_set_event",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 381,
+   "freed": [
+    "rdkafka_mock.c::rd_kafka_mock_connection_set_blocking"
+   ]
+  },
+  {
+   "callee": "rd_kafka_msg_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 382,
+   "freed": [
+    "rdkafka_msg.c::rd_kafka_produce"
+   ]
+  },
+  {
+   "callee": "rd_kafka_oauthbearer_set_token",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 383,
+   "freed": [
+    "rdkafka_sasl.c::rd_kafka_share_oauthbearer_set_token"
+   ]
+  },
+  {
+   "callee": "rd_kafka_oauthbearer_set_token0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 384,
+   "freed": [
+    "rdkafka.c::rd_kafka_oauthbearer_set_token"
+   ]
+  },
+  {
+   "callee": "rd_kafka_oauthbearer_set_token_failure0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 385,
+   "freed": [
+    "rdkafka.c::rd_kafka_oauthbearer_set_token_failure"
+   ]
+  },
+  {
+   "callee": "rd_kafka_offset_file_sync",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 386,
+   "freed": [
+    "rdkafka_offset.c::rd_kafka_offset_sync"
+   ]
+  },
+  {
+   "callee": "rd_kafka_pattern_list_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 387,
+   "freed": [
+    "rdkafka_pattern.c::rd_kafka_pattern_list_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_plugins_conf_set0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 388,
+   "freed": [
+    "rdkafka_plugin.c::rd_kafka_plugins_conf_set"
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_cb_event_enable",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 389,
+   "freed": [
+    "rdkafka_queue.c::rd_kafka_queue_cb_event_enable"
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_fwd_set0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 390,
+   "freed": [
+    "rdkafka_queue.c::rd_kafka_set_log_queue"
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_io_event_enable",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 391,
+   "freed": [
+    "rdkafka_queue.c::rd_kafka_queue_io_event_enable"
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_pop_serve",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 392,
+   "freed": [
+    "rdkafka_queue.c::rd_kafka_q_pop"
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_pop_serve_maybe_consume",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 393,
+   "freed": [
+    "rdkafka.c::rd_kafka_queue_poll"
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_purge0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 394,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_toppar_purge_and_disable_queues"
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_serve_rkmessages",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 395,
+   "freed": [
+    "rdkafka.c::rd_kafka_consume_batch0"
+   ]
+  },
+  {
+   "callee": "rd_kafka_q_yield",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 396,
+   "freed": [
+    "rdkafka_queue.c::rd_kafka_queue_yield"
+   ]
+  },
+  {
+   "callee": "rd_kafka_queue_get_sasl",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 397,
+   "freed": [
+    "rdkafka_sasl.c::rd_kafka_share_queue_get_sasl"
+   ]
+  },
+  {
+   "callee": "rd_kafka_sasl_background_callbacks_enable",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 398,
+   "freed": [
+    "rdkafka_sasl.c::rd_kafka_share_sasl_background_callbacks_enable"
+   ]
+  },
+  {
+   "callee": "rd_kafka_sasl_cyrus_global_init",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 399,
+   "freed": [
+    "rdkafka_sasl.c::rd_kafka_sasl_global_init"
+   ]
+  },
+  {
+   "callee": "rd_kafka_sasl_cyrus_global_term",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 400,
+   "freed": [
+    "rdkafka_sasl.c::rd_kafka_sasl_global_term"
+   ]
+  },
+  {
+   "callee": "rd_kafka_sasl_set_credentials",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 401,
+   "freed": [
+    "rdkafka_sasl.c::rd_kafka_share_sasl_set_credentials"
+   ]
+  },
+  {
+   "callee": "rd_kafka_share_ack_all",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 402,
+   "freed": [
+    "rdkafka_share_acknowledgement.c::rd_kafka_share_acknowledge_all_if_implicit"
+   ]
+  },
+  {
+   "callee": "rd_kafka_share_ack_batch_entry_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 403,
+   "freed": [
+    "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batch_entry_copy_void"
+   ]
+  },
+  {
+   "callee": "rd_kafka_share_ack_batch_entry_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 404,
+   "freed": [
+    "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batch_entry_destroy_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_share_ack_batches_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 405,
+   "freed": [
+    "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batches_copy_void"
+   ]
+  },
+  {
+   "callee": "rd_kafka_share_ack_batches_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 406,
+   "freed": [
+    "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batches_destroy_free"
+   ]
+  },
+  {
+   "callee": "rd_kafka_share_ack_batches_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 407,
+   "freed": [
+    "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batches_new_empty"
+   ]
+  },
+  {
+   "callee": "rd_kafka_share_acknowledge_type",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 408,
+   "freed": [
+    "rdkafka_share_acknowledgement.c::rd_kafka_share_acknowledge"
+   ]
+  },
+  {
+   "callee": "rd_kafka_share_fetch_reply_op",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 409,
+   "freed": [
+    "rdkafka.c::rd_kafka_share_fetch_reply_op_cb"
+   ]
+  },
+  {
+   "callee": "rd_kafka_ssl_error0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 410,
+   "freed": [
+    "rdkafka_ssl.c::rd_kafka_ssl_error"
+   ]
+  },
+  {
+   "callee": "rd_kafka_stats_emit_all",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 411,
+   "freed": [
+    "rdkafka.c::rd_kafka_stats_emit_tmr_cb"
+   ]
+  },
+  {
+   "callee": "rd_kafka_telemetry_fsm",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 412,
+   "freed": [
+    "rdkafka_telemetry.c::rd_kafka_telemetry_fsm_tmr_cb"
+   ]
+  },
+  {
+   "callee": "rd_kafka_timer_start0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 413,
+   "freed": [
+    "rdkafka.c::rd_kafka_rebootstrap_tmr_start_maybe"
+   ]
+  },
+  {
+   "callee": "rd_kafka_timer_stop",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 414,
+   "freed": [
+    "rdkafka.c::rd_kafka_rebootstrap_tmr_stop"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_by_id_cmp",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 415,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_by_id_cmp_opaque"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_cmp",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 416,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_cmp_opaque"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 417,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_copy_void"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_find_by_id0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 418,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_find_idx_by_id"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_grow",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 419,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_init"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_match",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 420,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_remove_regexes"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_query_leaders_async_worker",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 421,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_new_with_id_and_name",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 422,
+   "freed": [
+    "rdunittest_fetcher.c::ut_create_rktpar_with_id"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_result_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 423,
+   "freed": [
+    "rdkafka_aux.c::rd_kafka_topic_partition_result_copy_opaque"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_result_new",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 424,
+   "freed": [
+    "rdkafka_aux.c::rd_kafka_topic_partition_result_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_leader_epoch",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 425,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_set_from_fetch_pos"
+   ]
+  },
+  {
+   "callee": "rd_kafka_toppar_fetch_decide",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 426,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_broker_consumer_toppar_serve"
+   ]
+  },
+  {
+   "callee": "rd_kafka_toppar_keep0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 427,
+   "freed": [
+    "rdkafka_partition.c::rd_kafka_toppar_list_copy"
+   ]
+  },
+  {
+   "callee": "rd_kafka_transport_socket_recvmsg",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 428,
+   "freed": [
+    "rdkafka_transport.c::rd_kafka_transport_socket_recv"
+   ]
+  },
+  {
+   "callee": "rd_kafka_transport_socket_sendmsg",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 429,
+   "freed": [
+    "rdkafka_transport.c::rd_kafka_transport_socket_send"
+   ]
+  },
+  {
+   "callee": "rd_list_copy_preallocated0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 430,
+   "freed": [
+    "rdlist.c::rd_list_copy_preallocated"
+   ]
+  },
+  {
+   "callee": "rd_list_destroy_elems",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 431,
+   "freed": [
+    "rdlist.c::rd_list_clear"
+   ]
+  },
+  {
+   "callee": "rd_map_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 432,
+   "freed": [
+    "rdkafka_sticky_assignor.c::PartitionMovements_destroy"
+   ]
+  },
+  {
+   "callee": "rd_map_init",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 433,
+   "freed": [
+    "rdkafka_sticky_assignor.c::PartitionMovements_init"
+   ]
+  },
+  {
+   "callee": "rd_qsort_r_cmp",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 434,
+   "freed": [
+    "rdports.c::rd_qsort_r_trampoline"
+   ]
+  },
+  {
+   "callee": "rd_rand",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 435,
+   "freed": [
+    "rdrand.c::rd_jitter"
+   ]
+  },
+  {
+   "callee": "rd_seed",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 436,
+   "freed": [
+    "rdrand.c::rd_rand"
+   ]
+  },
+  {
+   "callee": "rd_slice_init",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 437,
+   "freed": [
+    "rdbuf.c::rd_slice_init_full"
+   ]
+  },
+  {
+   "callee": "rd_slice_narrow",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 438,
+   "freed": [
+    "rdbuf.c::rd_slice_narrow_relative"
+   ]
+  },
+  {
+   "callee": "rd_slice_narrow_copy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 439,
+   "freed": [
+    "rdbuf.c::rd_slice_narrow_copy_relative"
+   ]
+  },
+  {
+   "callee": "rd_strtup_new0",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 440,
+   "freed": [
+    "rdstring.c::rd_strtup_new"
+   ]
+  },
+  {
+   "callee": "rd_unittest",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 441,
+   "freed": [
+    "rdkafka.c::rd_kafka_unittest"
+   ]
+  },
+  {
+   "callee": "rd_ut_features_check",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 442,
+   "freed": [
+    "rdkafka_feature.c::unittest_feature"
+   ]
+  },
+  {
+   "callee": "shutdown",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 443,
+   "freed": [
+    "rdkafka_transport.c::rd_kafka_transport_shutdown"
+   ]
+  },
+  {
+   "callee": "skip",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 444,
+   "freed": [
+    "snappy.c::exit_snappy_decompressor"
+   ]
+  },
+  {
+   "callee": "thrd_current",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 445,
+   "freed": [
+    "tinycthread_extra.c::thrd_current_id"
+   ]
+  },
+  {
+   "callee": "thrd_current_id",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 446,
+   "freed": [
+    "rdkafka_ssl.c::rd_kafka_transport_ssl_threadid_cb"
+   ]
+  },
+  {
+   "callee": "thrd_setname",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 447,
+   "freed": [
+    "rdkafka.c::rd_kafka_set_thread_sysname"
+   ]
+  },
+  {
+   "callee": "unit_test_telemetry_match_requested_metrics_no_duplicates",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 448,
+   "freed": [
+    "rdkafka_telemetry.c::unittest_telemetry"
+   ]
+  },
+  {
+   "callee": "unittest_consumer_group_metadata_iteration",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 449,
+   "freed": [
+    "rdkafka_cgrp.c::unittest_consumer_group_metadata"
+   ]
+  },
+  {
+   "callee": "ut_ListConsumerGroups_response_merge",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 450,
+   "freed": [
+    "rdkafka_admin.c::unittest_admin"
+   ]
+  },
+  {
+   "callee": "ut_assignors",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 451,
+   "freed": [
+    "rdkafka_assignor.c::unittest_assignors"
+   ]
+  },
+  {
+   "callee": "writev",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 452,
+   "freed": [
+    "mk_core/mk_iov.c::mk_iov_send"
+   ]
+  },
+  {
+   "callee": "cmt_log_print",
+   "alone": 0,
+   "pair": 4,
+   "touched": 13,
+   "cumulative": 453,
+   "freed": []
+  },
+  {
+   "callee": "cfl_list_add",
+   "alone": 0,
+   "pair": 6,
+   "touched": 6,
+   "cumulative": 453,
+   "freed": []
+  },
+  {
+   "callee": "cfl_sds_create_size",
+   "alone": 0,
+   "pair": 3,
+   "touched": 6,
+   "cumulative": 453,
+   "freed": []
+  },
+  {
+   "callee": "create_map_label",
+   "alone": 0,
+   "pair": 4,
+   "touched": 4,
+   "cumulative": 457,
+   "freed": []
+  },
+  {
+   "callee": "mpack_start_array",
+   "alone": 0,
+   "pair": 1,
+   "touched": 4,
+   "cumulative": 457,
+   "freed": []
+  },
+  {
+   "callee": "mpack_start_map",
+   "alone": 0,
+   "pair": 1,
+   "touched": 4,
+   "cumulative": 457,
+   "freed": []
+  },
+  {
+   "callee": "cfl_sds_printf",
+   "alone": 0,
+   "pair": 3,
+   "touched": 3,
+   "cumulative": 457,
+   "freed": []
+  },
+  {
+   "callee": "cmt_map_metric_get_val",
+   "alone": 0,
+   "pair": 3,
+   "touched": 3,
+   "cumulative": 460,
+   "freed": []
+  },
+  {
+   "callee": "cmt_metric_set",
+   "alone": 0,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 463,
+   "freed": []
+  },
+  {
+   "callee": "convert_otel_attrs",
+   "alone": 0,
+   "pair": 1,
+   "touched": 3,
+   "cumulative": 463,
+   "freed": []
+  },
+  {
+   "callee": "format_metrics",
+   "alone": 0,
+   "pair": 3,
+   "touched": 3,
+   "cumulative": 466,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_anyconf_copy",
+   "alone": 0,
+   "pair": 1,
+   "touched": 3,
+   "cumulative": 466,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_broker_buf_enq_replyq",
+   "alone": 0,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 466,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_log0",
+   "alone": 0,
+   "pair": 3,
+   "touched": 3,
+   "cumulative": 469,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_oauthbearer_unsecured_token0",
+   "alone": 0,
+   "pair": 3,
+   "touched": 3,
+   "cumulative": 469,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_sasl_oauthbearer_token_free",
+   "alone": 0,
+   "pair": 3,
+   "touched": 3,
+   "cumulative": 472,
+   "freed": []
+  },
+  {
+   "callee": "rd_list_copy_to",
+   "alone": 0,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 472,
+   "freed": []
+  },
+  {
+   "callee": "rd_list_init_copy",
+   "alone": 0,
+   "pair": 0,
+   "touched": 3,
+   "cumulative": 472,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_hashPosition",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 472,
+   "freed": []
+  },
+  {
+   "callee": "__builtin_va_arg",
+   "alone": 0,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 472,
+   "freed": []
+  },
+  {
+   "callee": "cfl_sds_set_len",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 472,
+   "freed": []
+  },
+  {
+   "callee": "cfl_variant_destroy",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 472,
+   "freed": []
+  },
+  {
+   "callee": "cio_log_print",
+   "alone": 0,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 472,
+   "freed": []
+  },
+  {
+   "callee": "clone_variant",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 472,
+   "freed": []
+  },
+  {
+   "callee": "cmt_metric_add",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 474,
+   "freed": []
+  },
+  {
+   "callee": "cmt_metric_inc",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 476,
+   "freed": []
+  },
+  {
+   "callee": "create_label",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 478,
+   "freed": []
+  },
+  {
+   "callee": "ctr_attributes_destroy",
+   "alone": 0,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 479,
+   "freed": []
+  },
+  {
+   "callee": "format_attributes",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 481,
+   "freed": []
+  },
+  {
+   "callee": "get_metric_otlp_metadata_context",
+   "alone": 0,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 482,
+   "freed": []
+  },
+  {
+   "callee": "mk_sched_broadcast_signal",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 482,
+   "freed": []
+  },
+  {
+   "callee": "mk_sched_remove_client",
+   "alone": 0,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 482,
+   "freed": []
+  },
+  {
+   "callee": "mtx_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 482,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_assign0",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 484,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_broker_ApiVersion_supported",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 484,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_buf_write_str",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 485,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_buf_write_topic_partitions",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 485,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_conf_new",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 485,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_error_destroy",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 485,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_interceptors_on_conf_dup",
+   "alone": 0,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 487,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_metadata_cache_delete",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 487,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_consumer_target_assignment_set",
+   "alone": 0,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 487,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_share_consumer_close",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 487,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_share_destroy",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 489,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_conf_new",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 490,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_new",
+   "alone": 0,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 491,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_sort_by_topic_id",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 493,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_partition_new",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 493,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_partition_update",
+   "alone": 0,
+   "pair": 2,
+   "touched": 2,
+   "cumulative": 495,
+   "freed": []
+  },
+  {
+   "callee": "BIO_free",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 495,
+   "freed": []
+  },
+  {
+   "callee": "BIO_new_mem_buf",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 495,
+   "freed": []
+  },
+  {
+   "callee": "ENGINE_free",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 495,
+   "freed": []
+  },
+  {
+   "callee": "LZ4F_returnErrorCode",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 496,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_compress_HC_extStateHC_fastReset",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 497,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_decompress_safe_forceExtDict",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 497,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_decompress_safe_partial",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 497,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_decompress_safe_partial_forceExtDict",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 497,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_decompress_safe_partial_withPrefix64k",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 497,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_decompress_safe_partial_withSmallPrefix",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 498,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_decompress_safe_withPrefix64k",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 498,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_decompress_safe_withSmallPrefix",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 499,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_getPositionOnHash",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 500,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_putPositionOnHash",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 501,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_sizeofState",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 501,
+   "freed": []
+  },
+  {
+   "callee": "LZ4_sizeofStateHC",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 502,
+   "freed": []
+  },
+  {
+   "callee": "PEM_read_bio_PrivateKey",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 503,
+   "freed": []
+  },
+  {
+   "callee": "SSL_CTX_free",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 504,
+   "freed": []
+  },
+  {
+   "callee": "SSL_free",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 504,
+   "freed": []
+  },
+  {
+   "callee": "SSL_shutdown",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 505,
+   "freed": []
+  },
+  {
+   "callee": "__builtin_alloca",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 505,
+   "freed": []
+  },
+  {
+   "callee": "append_attribute_to_exponential_histogram_data_point",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 505,
+   "freed": []
+  },
+  {
+   "callee": "append_attribute_to_histogram_data_point",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 505,
+   "freed": []
+  },
+  {
+   "callee": "append_attribute_to_numerical_data_point",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 505,
+   "freed": []
+  },
+  {
+   "callee": "append_attribute_to_summary_data_point",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 506,
+   "freed": []
+  },
+  {
+   "callee": "append_exp_histogram_metric_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 506,
+   "freed": []
+  },
+  {
+   "callee": "append_histogram_metric_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 506,
+   "freed": []
+  },
+  {
+   "callee": "append_metric_to_timeseries",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 506,
+   "freed": []
+  },
+  {
+   "callee": "append_metric_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 506,
+   "freed": []
+  },
+  {
+   "callee": "append_summary_metric_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 507,
+   "freed": []
+  },
+  {
+   "callee": "append_variant_value",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 508,
+   "freed": []
+  },
+  {
+   "callee": "cJSON_GetObjectItem",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 509,
+   "freed": []
+  },
+  {
+   "callee": "cJSON_GetObjectItemCaseSensitive",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 510,
+   "freed": []
+  },
+  {
+   "callee": "cJSON_InitHooks",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 510,
+   "freed": []
+  },
+  {
+   "callee": "cfl_arena_create_with_options",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 510,
+   "freed": []
+  },
+  {
+   "callee": "cfl_arena_options_init",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 511,
+   "freed": []
+  },
+  {
+   "callee": "cfl_array_append",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 512,
+   "freed": []
+  },
+  {
+   "callee": "cfl_array_append_bytes",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 512,
+   "freed": []
+  },
+  {
+   "callee": "cfl_kvlist_insert",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 513,
+   "freed": []
+  },
+  {
+   "callee": "cfl_kvlist_insert_bytes",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 514,
+   "freed": []
+  },
+  {
+   "callee": "cfl_sds_len_set",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 515,
+   "freed": []
+  },
+  {
+   "callee": "cio_chunk_get_content",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 515,
+   "freed": []
+  },
+  {
+   "callee": "cio_chunk_get_real_size",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 515,
+   "freed": []
+  },
+  {
+   "callee": "cio_file_delete",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 516,
+   "freed": []
+  },
+  {
+   "callee": "cio_meta_size",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 517,
+   "freed": []
+  },
+  {
+   "callee": "cio_os_isdir",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 518,
+   "freed": []
+  },
+  {
+   "callee": "cmt_cat_counter",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 518,
+   "freed": []
+  },
+  {
+   "callee": "cmt_cat_exp_histogram",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 518,
+   "freed": []
+  },
+  {
+   "callee": "cmt_cat_gauge",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 518,
+   "freed": []
+  },
+  {
+   "callee": "cmt_cat_histogram",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 518,
+   "freed": []
+  },
+  {
+   "callee": "cmt_cat_summary",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 518,
+   "freed": []
+  },
+  {
+   "callee": "cmt_cat_untyped",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 519,
+   "freed": []
+  },
+  {
+   "callee": "cmt_histogram_buckets_create_size",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 520,
+   "freed": []
+  },
+  {
+   "callee": "cmt_map_metric_destroy",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 520,
+   "freed": []
+  },
+  {
+   "callee": "cmt_metric_dec",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 521,
+   "freed": []
+  },
+  {
+   "callee": "cmt_metric_sub",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 522,
+   "freed": []
+  },
+  {
+   "callee": "cnd_broadcast",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 522,
+   "freed": []
+  },
+  {
+   "callee": "cnd_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 522,
+   "freed": []
+  },
+  {
+   "callee": "compute_flat_scope_index",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 523,
+   "freed": []
+  },
+  {
+   "callee": "connect",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 523,
+   "freed": []
+  },
+  {
+   "callee": "convert_array_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 523,
+   "freed": []
+  },
+  {
+   "callee": "convert_bool_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 523,
+   "freed": []
+  },
+  {
+   "callee": "convert_bytes_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 523,
+   "freed": []
+  },
+  {
+   "callee": "convert_double_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 523,
+   "freed": []
+  },
+  {
+   "callee": "convert_int_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 523,
+   "freed": []
+  },
+  {
+   "callee": "convert_kvlist_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 523,
+   "freed": []
+  },
+  {
+   "callee": "convert_string_value",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 524,
+   "freed": []
+  },
+  {
+   "callee": "count_metrics",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 524,
+   "freed": []
+  },
+  {
+   "callee": "crc32c_hw",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 524,
+   "freed": []
+  },
+  {
+   "callee": "crc32c_sw",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 525,
+   "freed": []
+  },
+  {
+   "callee": "create_counter_instance",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 525,
+   "freed": []
+  },
+  {
+   "callee": "create_exp_histogram_instance",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 525,
+   "freed": []
+  },
+  {
+   "callee": "create_export_service_request",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 525,
+   "freed": []
+  },
+  {
+   "callee": "create_gauge_instance",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 525,
+   "freed": []
+  },
+  {
+   "callee": "create_histogram_instance",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 525,
+   "freed": []
+  },
+  {
+   "callee": "create_summary_instance",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 525,
+   "freed": []
+  },
+  {
+   "callee": "create_untyped_instance",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 526,
+   "freed": []
+  },
+  {
+   "callee": "ctr_id_get_buf",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 526,
+   "freed": []
+  },
+  {
+   "callee": "ctr_instrumentation_scope_create",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 526,
+   "freed": []
+  },
+  {
+   "callee": "ctr_link_create",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 527,
+   "freed": []
+  },
+  {
+   "callee": "ctr_resource_set_attributes",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 527,
+   "freed": []
+  },
+  {
+   "callee": "ctr_resource_set_dropped_attr_count",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 528,
+   "freed": []
+  },
+  {
+   "callee": "ctr_scope_span_set_instrumentation_scope",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 529,
+   "freed": []
+  },
+  {
+   "callee": "curl_url",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 529,
+   "freed": []
+  },
+  {
+   "callee": "curl_url_cleanup",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 529,
+   "freed": []
+  },
+  {
+   "callee": "curl_url_get",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 529,
+   "freed": []
+  },
+  {
+   "callee": "curl_url_set",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 530,
+   "freed": []
+  },
+  {
+   "callee": "destroy_exponential_histogram_data_point",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 530,
+   "freed": []
+  },
+  {
+   "callee": "destroy_export_service_request",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 530,
+   "freed": []
+  },
+  {
+   "callee": "destroy_histogram_data_point",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 530,
+   "freed": []
+  },
+  {
+   "callee": "destroy_numerical_data_point",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_config_all_explicit_values",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_config_defaults",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_config_empty_should_fail",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_config_empty_value_should_fail",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_config_explicit_scope_and_life",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_config_extensions",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_config_no_principal_should_fail",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_config_unrecognized_should_fail",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_config_value_with_quote_should_fail",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_erase",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_illegal_extension_keys_should_fail",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_iov_verify0",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 531,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_odd_extension_size_should_fail",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 532,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_write_iov",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 532,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_write_read",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 532,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_write_read_payload_correctness",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 532,
+   "freed": []
+  },
+  {
+   "callee": "do_unittest_write_split_seek",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 533,
+   "freed": []
+  },
+  {
+   "callee": "flb_mp_count",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 533,
+   "freed": []
+  },
+  {
+   "callee": "flb_mp_count_log_records",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 534,
+   "freed": []
+  },
+  {
+   "callee": "format_context_common",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 534,
+   "freed": []
+  },
+  {
+   "callee": "format_metric_labels",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 535,
+   "freed": []
+  },
+  {
+   "callee": "format_span",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 536,
+   "freed": []
+  },
+  {
+   "callee": "freeaddrinfo",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 536,
+   "freed": []
+  },
+  {
+   "callee": "getaddrinfo",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 537,
+   "freed": []
+  },
+  {
+   "callee": "getrlimit",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 537,
+   "freed": []
+  },
+  {
+   "callee": "metric_escape",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 538,
+   "freed": []
+  },
+  {
+   "callee": "metrics_check_label_value_existence",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 539,
+   "freed": []
+  },
+  {
+   "callee": "mk_clock_exit",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 539,
+   "freed": []
+  },
+  {
+   "callee": "mk_config_free_all",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 539,
+   "freed": []
+  },
+  {
+   "callee": "mk_event_loop_destroy",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 539,
+   "freed": []
+  },
+  {
+   "callee": "mk_http_thread_initialize_tls",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 540,
+   "freed": []
+  },
+  {
+   "callee": "mk_plugin_exit_all",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 540,
+   "freed": []
+  },
+  {
+   "callee": "mk_sched_exit",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 540,
+   "freed": []
+  },
+  {
+   "callee": "mk_sched_get_connection",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 540,
+   "freed": []
+  },
+  {
+   "callee": "mk_sched_get_thread_conf",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 541,
+   "freed": []
+  },
+  {
+   "callee": "mk_sched_threads_destroy_conn",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 542,
+   "freed": []
+  },
+  {
+   "callee": "mk_sched_workers_join",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 542,
+   "freed": []
+  },
+  {
+   "callee": "mk_server_loop_balancer",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 542,
+   "freed": []
+  },
+  {
+   "callee": "mk_stream_in_release",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 542,
+   "freed": []
+  },
+  {
+   "callee": "mk_stream_release",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 543,
+   "freed": []
+  },
+  {
+   "callee": "mk_tls_exit",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 543,
+   "freed": []
+  },
+  {
+   "callee": "mk_utils_worker_rename",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 544,
+   "freed": []
+  },
+  {
+   "callee": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__get_packed_size",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 544,
+   "freed": []
+  },
+  {
+   "callee": "opentelemetry__proto__collector__trace__v1__export_trace_service_request__pack",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 545,
+   "freed": []
+  },
+  {
+   "callee": "opentelemetry__proto__metrics__v1__metrics_data__get_packed_size",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 545,
+   "freed": []
+  },
+  {
+   "callee": "opentelemetry__proto__metrics__v1__metrics_data__pack",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 546,
+   "freed": []
+  },
+  {
+   "callee": "pack_array",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 547,
+   "freed": []
+  },
+  {
+   "callee": "pack_cfl_variant_kvlist",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 547,
+   "freed": []
+  },
+  {
+   "callee": "pack_context_header",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 548,
+   "freed": []
+  },
+  {
+   "callee": "pack_header",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 549,
+   "freed": []
+  },
+  {
+   "callee": "pack_metric_metadata",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 549,
+   "freed": []
+  },
+  {
+   "callee": "pack_metrics",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 550,
+   "freed": []
+  },
+  {
+   "callee": "pack_span",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 551,
+   "freed": []
+  },
+  {
+   "callee": "pack_static_labels",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 552,
+   "freed": []
+  },
+  {
+   "callee": "pack_static_processing_section",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 553,
+   "freed": []
+  },
+  {
+   "callee": "pack_variant",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 554,
+   "freed": []
+  },
+  {
+   "callee": "pb_encode_varint_32",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 555,
+   "freed": []
+  },
+  {
+   "callee": "pthread_mutex_destroy",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 556,
+   "freed": []
+  },
+  {
+   "callee": "rd_avl_balance_node",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 556,
+   "freed": []
+  },
+  {
+   "callee": "rd_avl_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 556,
+   "freed": []
+  },
+  {
+   "callee": "rd_avl_move",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 557,
+   "freed": []
+  },
+  {
+   "callee": "rd_buf_destroy",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 557,
+   "freed": []
+  },
+  {
+   "callee": "rd_buf_get_segment_at_offset",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 557,
+   "freed": []
+  },
+  {
+   "callee": "rd_buf_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 557,
+   "freed": []
+  },
+  {
+   "callee": "rd_buf_write_ensure",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 558,
+   "freed": []
+  },
+  {
+   "callee": "rd_crc32c_global_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 558,
+   "freed": []
+  },
+  {
+   "callee": "rd_http_global_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 558,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_ConfigResource_new",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 559,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_ListOffsetRequest_buf_new",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 559,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_ListOffsetRequest_parameters_new",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 559,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_NewPartitions_new",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 560,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_NewTopic_new",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 561,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_OffsetFetchRequest",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 561,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_aborted_txns_add",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 561,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_aborted_txns_destroy",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 561,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_aborted_txns_new",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 561,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_aborted_txns_sort",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 562,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_admin_incremental_add_config0",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 563,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_admin_request_op_new",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 564,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_admin_request_op_target_all_new",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 565,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_admin_result_enq",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 565,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_admin_result_new",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 566,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_broker_buf_enq0",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 566,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 566,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 567,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_broker_session_update_epoch",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 567,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_broker_session_update_partitions",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 568,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_buf_callback",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 569,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_buf_finalize_arraycnt",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 569,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_buf_handle_op",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 569,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_buf_set_maker",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 569,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_buf_write_arraycnt",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 569,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_buf_write_bool",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 570,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_cgrp_consumer_expedite_next_heartbeat",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 571,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_cgrp_handle_assignment_cooperative",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 571,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_confval_disable",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 571,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_confval_get_int",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 571,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_confval_init_int",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 571,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_confval_init_ptr",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 572,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_consume_start0",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 572,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_consumer_close0",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 572,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_consumer_close_q",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 573,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_error_code",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 573,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_error_is_fatal",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 574,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_fetch_op_app_prepare",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 574,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_metadata_cache_entry_new",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 574,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_metadata_cache_find",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 575,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_metadata_cache_find_by_id",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 576,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_metadata_cache_insert",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 577,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_metadata_fast_leader_query",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 577,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_classic_rebalance_timer_restart",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 577,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_classic_set_state",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 577,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_classic_sync_done",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 578,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_consumer_target_assignment_calculate_range",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 578,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_consumer_target_assignment_destroy",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 579,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_cgrp_consumer_target_assignment_recalculate",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 580,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_cgrps_classic_connection_closed",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 580,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_cgrps_consumer_connection_closed",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 580,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_error_stack_find",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 580,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_error_stack_next",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 581,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_push_request_errors_array",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 582,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_mock_sharegrps_connection_closed",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 583,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_msg_partitioner_consistent",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 583,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_msg_partitioner_random",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 584,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_msgset_writer_finalize_MessageSet_v2_header",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 585,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_op_call",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 586,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_op_new0",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 586,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_op_req",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 587,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_op_req0",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 587,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_pattern_add",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 587,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_pattern_new",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 588,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_q_new0",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 589,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_rebalance_op",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 590,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_share_build_ack_details",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 590,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_share_consumer_closed_error",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 591,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_ssl_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 592,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_timer_schedule_next",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 592,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_timer_unschedule",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 593,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_conf_dup",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 594,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_destroy0",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 594,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_keep_app",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 594,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_new",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 594,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_new0",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 595,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_add_list",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 596,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_del_by_idx",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 597,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_sort_by_topic",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 598,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_partition_list_str",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 599,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_partition_set_topic_id",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 600,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_topic_proper",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 601,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_toppar_get2",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 602,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_toppar_new0",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 603,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_txn_curr_api_set_result0",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 603,
+   "freed": []
+  },
+  {
+   "callee": "rd_kafka_txn_set_state",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 604,
+   "freed": []
+  },
+  {
+   "callee": "rd_list_apply",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 605,
+   "freed": []
+  },
+  {
+   "callee": "rd_list_elem",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 606,
+   "freed": []
+  },
+  {
+   "callee": "rd_list_init",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 607,
+   "freed": []
+  },
+  {
+   "callee": "rd_slice_init_seg",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 608,
+   "freed": []
+  },
+  {
+   "callee": "rd_ut_ApiVersion_at_least",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 608,
+   "freed": []
+  },
+  {
+   "callee": "rd_ut_reconnect_backoff",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 609,
+   "freed": []
+  },
+  {
+   "callee": "set_up_time_series_for_label_set",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 610,
+   "freed": []
+  },
+  {
+   "callee": "setrlimit",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 611,
+   "freed": []
+  },
+  {
+   "callee": "unit_test_telemetry_gauge",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 611,
+   "freed": []
+  },
+  {
+   "callee": "unit_test_telemetry_sum",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 612,
+   "freed": []
+  },
+  {
+   "callee": "unittest_consumer_group_metadata",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 612,
+   "freed": []
+  },
+  {
+   "callee": "unittest_handle_GetTelemetrySubscriptions",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 612,
+   "freed": []
+  },
+  {
+   "callee": "unittest_http_get",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 612,
+   "freed": []
+  },
+  {
+   "callee": "unittest_http_get_params_append",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 613,
+   "freed": []
+  },
+  {
+   "callee": "unittest_idempotent_producer",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_list_to_map",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_map_to_list",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_member_metadata_serdes",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_msgset_all_error_types_with_valid",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_msgset_all_errors",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_msgset_all_success",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_msgset_crc_error_share_consumer",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_msgset_decompression_error_share_consumer",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_msgset_mixed_crc_success_decomp",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_msgset_mixed_magic_success_crc_success",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_msgset_mixed_success_crc_success",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 614,
+   "freed": []
+  },
+  {
+   "callee": "unittest_msgset_unsupported_magic_share_consumer",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 615,
+   "freed": []
+  },
+  {
+   "callee": "unittest_scram_nonce",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 615,
+   "freed": []
+  },
+  {
+   "callee": "unittest_scram_safe",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 616,
+   "freed": []
+  },
+  {
+   "callee": "unittest_set_intersect",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 616,
+   "freed": []
+  },
+  {
+   "callee": "unittest_set_subtract",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 617,
+   "freed": []
+  },
+  {
+   "callee": "unittest_typed_map",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 617,
+   "freed": []
+  },
+  {
+   "callee": "unittest_typed_map2",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 617,
+   "freed": []
+  },
+  {
+   "callee": "unittest_untyped_map",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 618,
+   "freed": []
+  },
+  {
+   "callee": "ut_cgrp_consumer_member_next_assignment",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 618,
+   "freed": []
+  },
+  {
+   "callee": "ut_create_mock_rkshare",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 618,
+   "freed": []
+  },
+  {
+   "callee": "ut_destroy_mock_rkshare",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_high_sigfig",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_max",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_mean",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_min",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_minmax_trackable",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_mock_txn_aborted_range_recorded",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_mock_txn_control_batch_written",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_mock_txn_get_creates_and_reuses",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_mock_txn_lso_calculation",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_mock_txn_offset_is_aborted",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 619,
+   "freed": []
+  },
+  {
+   "callee": "ut_mock_txn_partition_add_and_clear",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 620,
+   "freed": []
+  },
+  {
+   "callee": "ut_nan",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 620,
+   "freed": []
+  },
+  {
+   "callee": "ut_quantile",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 620,
+   "freed": []
+  },
+  {
+   "callee": "ut_reset",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 620,
+   "freed": []
+  },
+  {
+   "callee": "ut_sasl_oauthbearer_oidc_assertion_create",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 620,
+   "freed": []
+  },
+  {
+   "callee": "ut_sasl_oauthbearer_oidc_assertion_parse_from_file",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 620,
+   "freed": []
+  },
+  {
+   "callee": "ut_sasl_oauthbearer_oidc_assertion_process_template_file",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 621,
+   "freed": []
+  },
+  {
+   "callee": "ut_sasl_oauthbearer_oidc_jwt_bearer_base64url_encode",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 621,
+   "freed": []
+  },
+  {
+   "callee": "ut_sasl_oauthbearer_oidc_jwt_bearer_build_request_body",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 622,
+   "freed": []
+  },
+  {
+   "callee": "ut_sasl_oauthbearer_oidc_post_fields",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 622,
+   "freed": []
+  },
+  {
+   "callee": "ut_sasl_oauthbearer_oidc_post_fields_with_empty_scope",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 622,
+   "freed": []
+  },
+  {
+   "callee": "ut_sasl_oauthbearer_oidc_should_succeed",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 622,
+   "freed": []
+  },
+  {
+   "callee": "ut_sasl_oauthbearer_oidc_sub_claim_name",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 622,
+   "freed": []
+  },
+  {
+   "callee": "ut_sasl_oauthbearer_oidc_with_empty_key",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 623,
+   "freed": []
+  },
+  {
+   "callee": "ut_sigfigs",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 623,
+   "freed": []
+  },
+  {
+   "callee": "ut_stddev",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 623,
+   "freed": []
+  },
+  {
+   "callee": "ut_strcasestr",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 623,
+   "freed": []
+  },
+  {
+   "callee": "ut_string_split",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 624,
+   "freed": []
+  },
+  {
+   "callee": "ut_subbucketmask_overflow",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 624,
+   "freed": []
+  },
+  {
+   "callee": "ut_totalcount",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 624,
+   "freed": []
+  },
+  {
+   "callee": "ut_unitmagnitude_overflow",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 625,
+   "freed": []
+  }
+ ]
+}

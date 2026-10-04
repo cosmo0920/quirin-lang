@@ -1,0 +1,17 @@
+{
+ "rows": [
+  141186,
+  141210
+ ],
+ "byte_identical_in_order": false,
+ "identical_in_order_addresses_erased": false,
+ "multiset_identical": false,
+ "only_before": 0,
+ "only_after": 24,
+ "functions_with_differences": 1,
+ "differences_outside_moving_functions": {},
+ "groups": {
+  "after flb_output_task_queue_enqueue bound-untracked-closure": 12,
+  "after flb_output_task_queue_enqueue root-declarations": 12
+ }
+}

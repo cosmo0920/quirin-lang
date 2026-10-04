@@ -123,7 +123,9 @@ fn whole_call(tokens: &[Token], mut start: usize, mut end: usize) -> Option<(usi
         .chars()
         .next()
         .is_some_and(|first| first == '_' || first.is_ascii_alphabetic())
-        && name.chars().all(|ch| ch == '_' || ch.is_ascii_alphanumeric());
+        && name
+            .chars()
+            .all(|ch| ch == '_' || ch.is_ascii_alphanumeric());
     if !identifier || tokens.get(start + 1)?.text != "(" {
         return None;
     }
@@ -202,7 +204,9 @@ fn result_words(tokens: &[Token], name: usize) -> Option<Vec<String>> {
         word.chars()
             .next()
             .is_some_and(|first| first == '_' || first.is_ascii_alphabetic())
-            && word.chars().all(|ch| ch == '_' || ch.is_ascii_alphanumeric())
+            && word
+                .chars()
+                .all(|ch| ch == '_' || ch.is_ascii_alphanumeric())
     };
     (!words.is_empty() && words.iter().all(identifier)).then_some(words)
 }
@@ -569,8 +573,14 @@ mod tests {
         let twice_returns =
             read_returns(&twice, twice_open, twice_close, &environment).expect("forwards");
         assert!(
-            restrict(&twice, (twice_open, twice_close), &twice_returns, eq, &environment)
-                .is_none()
+            restrict(
+                &twice,
+                (twice_open, twice_close),
+                &twice_returns,
+                eq,
+                &environment
+            )
+            .is_none()
         );
     }
 

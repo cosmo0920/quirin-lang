@@ -1,0 +1,99 @@
+{
+ "statuses_before": {
+  "Unknown": 359,
+  "Safe": 85,
+  "Unsafe": 4
+ },
+ "statuses_after": {
+  "Unknown": 357,
+  "Safe": 87,
+  "Unsafe": 4
+ },
+ "transitions": {
+  "Unknown -> Safe": 2
+ },
+ "status_moves_by_label": {
+  "other": 2
+ },
+ "removed": {
+  "unresolved resource identity `_`": 4
+ },
+ "added": {},
+ "moving_rows": 2,
+ "status_moves": [
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_task_queue_enqueue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "17797: unresolved resource identity `retry`",
+    "17801: unresolved resource identity `retry`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_task_queue_enqueue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "17797: unresolved resource identity `retry`",
+    "17801: unresolved resource identity `retry`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 1,
+   "function": "flb_output_task_queue_enqueue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "17797: unresolved resource identity `retry`",
+    "17801: unresolved resource identity `retry`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "src/flb_output.c",
+   "occurrence": 2,
+   "function": "flb_output_task_queue_enqueue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "17797: unresolved resource identity `retry`",
+    "17801: unresolved resource identity `retry`"
+   ],
+   "gained": []
+  }
+ ]
+}

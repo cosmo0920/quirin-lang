@@ -1,0 +1,406 @@
+{
+ "statuses_before": {
+  "Unknown": 4013,
+  "Safe": 812,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 4013,
+  "Safe": 812,
+  "Unsafe": 9
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to uncontracted function `_`": 20
+ },
+ "added": {
+  "call to `_` retains `_` in `_`, whose lifetime this body does not decide against it (retention-undecided)": 16,
+  "nested call `_` inside a modeled call is outside the resource projection": 3,
+  "indirect memory access is outside the resource projection": 1
+ },
+ "moving_rows": 20,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_append_raw",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:append_to_ring_buffer"
+   ],
+   "lost": [
+    "20373: call to uncontracted function `append_to_ring_buffer`"
+   ],
+   "gained": [
+    "20373: call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_ring_buffer_enqueue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:append_to_ring_buffer"
+   ],
+   "lost": [
+    "20398: call to uncontracted function `append_to_ring_buffer`"
+   ],
+   "gained": [
+    "20398: call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:append_to_ring_buffer"
+   ],
+   "lost": [
+    "20408: call to uncontracted function `append_to_ring_buffer`"
+   ],
+   "gained": [
+    "20408: call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_continue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_fast_continue"
+   ],
+   "lost": [
+    "1869: call to uncontracted function `LZ4_compress_fast_continue`"
+   ],
+   "gained": [
+    "1869: call to `LZ4_compress_fast_continue` retains `source` in `LZ4_stream`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_destSize_extState",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_fast_extState"
+   ],
+   "lost": [
+    "1037: call to uncontracted function `LZ4_compress_fast_extState`"
+   ],
+   "gained": [
+    "1037: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_fast",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_fast_extState"
+   ],
+   "lost": [
+    "1025: call to uncontracted function `LZ4_compress_fast_extState`"
+   ],
+   "gained": [
+    "1025: call to `LZ4_compress_fast_extState` retains `source` in `ctxPtr`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_limitedOutput_continue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_fast_continue"
+   ],
+   "lost": [
+    "1865: call to uncontracted function `LZ4_compress_fast_continue`"
+   ],
+   "gained": [
+    "1865: call to `LZ4_compress_fast_continue` retains `src` in `LZ4_stream`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_limitedOutput_withState",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_fast_extState"
+   ],
+   "lost": [
+    "1857: call to uncontracted function `LZ4_compress_fast_extState`"
+   ],
+   "gained": [
+    "1857: call to `LZ4_compress_fast_extState` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_withState",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_fast_extState"
+   ],
+   "lost": [
+    "1861: call to uncontracted function `LZ4_compress_fast_extState`"
+   ],
+   "gained": [
+    "1861: call to `LZ4_compress_fast_extState` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_compressBlock",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_fast_continue"
+   ],
+   "lost": [
+    "1528: call to uncontracted function `LZ4_compress_fast_continue`"
+   ],
+   "gained": [
+    "1528: call to `LZ4_compress_fast_continue` retains `src` in `( LZ4_stream_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_compressBlockHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC_continue"
+   ],
+   "lost": [
+    "1544: call to uncontracted function `LZ4_compress_HC_continue`"
+   ],
+   "gained": [
+    "1544: call to `LZ4_compress_HC_continue` retains `src` in `( LZ4_streamHC_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_compressBlockHC_continue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC_continue"
+   ],
+   "lost": [
+    "1551: call to uncontracted function `LZ4_compress_HC_continue`"
+   ],
+   "gained": [
+    "1551: call to `LZ4_compress_HC_continue` retains `src` in `( LZ4_streamHC_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4frame.c",
+   "occurrence": 1,
+   "function": "LZ4F_compressBlock_continue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_fast_continue"
+   ],
+   "lost": [
+    "1538: call to uncontracted function `LZ4_compress_fast_continue`"
+   ],
+   "gained": [
+    "1538: call to `LZ4_compress_fast_continue` retains `src` in `( LZ4_stream_t * ) ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC2_limitedOutput_withStateHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC_extStateHC"
+   ],
+   "lost": [
+    "1436: call to uncontracted function `LZ4_compress_HC_extStateHC`"
+   ],
+   "gained": [
+    "1436: call to `LZ4_compress_HC_extStateHC` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC2_withStateHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC_extStateHC"
+   ],
+   "lost": [
+    "1435: call to uncontracted function `LZ4_compress_HC_extStateHC`"
+   ],
+   "gained": [
+    "1435: nested call `LZ4_compressBound` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC_continue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC_continue"
+   ],
+   "lost": [
+    "1437: call to uncontracted function `LZ4_compress_HC_continue`"
+   ],
+   "gained": [
+    "1437: nested call `LZ4_compressBound` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC_limitedOutput_continue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC_continue"
+   ],
+   "lost": [
+    "1438: call to uncontracted function `LZ4_compress_HC_continue`"
+   ],
+   "gained": [
+    "1438: call to `LZ4_compress_HC_continue` retains `src` in `ctx`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC_limitedOutput_withStateHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC_extStateHC"
+   ],
+   "lost": [
+    "1434: call to uncontracted function `LZ4_compress_HC_extStateHC`"
+   ],
+   "gained": [
+    "1434: call to `LZ4_compress_HC_extStateHC` retains `src` in `state`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compressHC_withStateHC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC_extStateHC"
+   ],
+   "lost": [
+    "1433: call to uncontracted function `LZ4_compress_HC_extStateHC`"
+   ],
+   "gained": [
+    "1433: nested call `LZ4_compressBound` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "lz4hc.c",
+   "occurrence": 1,
+   "function": "LZ4_compress_HC",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:LZ4_compress_HC_extStateHC"
+   ],
+   "lost": [
+    "1259: call to uncontracted function `LZ4_compress_HC_extStateHC`"
+   ],
+   "gained": [
+    "1259: call to `LZ4_compress_HC_extStateHC` retains `src` in `statePtr`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  }
+ ]
+}

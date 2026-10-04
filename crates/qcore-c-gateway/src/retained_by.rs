@@ -144,15 +144,15 @@ pub fn undecided_description(callee: &str, retained: &str, holder: &str) -> Stri
 /// The refusal of a release or transfer of a held object.
 #[must_use]
 pub fn released_while_held_description(name: &str) -> String {
-    format!("`{name}` is released or transferred while a live holder retains it ({RELEASED_WHILE_HELD})")
+    format!(
+        "`{name}` is released or transferred while a live holder retains it ({RELEASED_WHILE_HELD})"
+    )
 }
 
 /// The refusal of an exit at which a tracked holder still retains something.
 #[must_use]
 pub fn exit_description(name: &str) -> String {
-    format!(
-        "a holder retaining `{name}` may outlive this function's frame ({UNDECIDED})"
-    )
+    format!("a holder retaining `{name}` may outlive this function's frame ({UNDECIDED})")
 }
 
 /// One event of a path, for the shared trace vectors: what the transfer
@@ -288,7 +288,10 @@ pub fn trace(name: &str) -> Vec<Event> {
         ))],
         "frame-dies-at-exit" => vec![Event::Retain(decide(&Retained::Tracked(1), &frame()))],
         "static-in-global" => vec![Event::Retain(decide(&Retained::Static, &Holder::Global))],
-        "tracked-in-global" => vec![Event::Retain(decide(&Retained::Tracked(1), &Holder::Global))],
+        "tracked-in-global" => vec![Event::Retain(decide(
+            &Retained::Tracked(1),
+            &Holder::Global,
+        ))],
         "unknown-holder" => vec![Event::Retain(decide(
             &Retained::CallerObject("src".into()),
             &Holder::Foreign,

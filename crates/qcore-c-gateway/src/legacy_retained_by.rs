@@ -184,13 +184,12 @@ impl Parser<'_> {
             writes: this.refused_writes(texts),
         };
         let Some(spans) = super::call_argument_spans(texts, call_index) else {
-            return Some(refuse(
-                self,
-                undecided_description(function, "?", "?"),
-            ));
+            return Some(refuse(self, undecided_description(function, "?", "?")));
         };
         let actual = |index: usize| -> Option<&[&str]> {
-            spans.get(index).map(|&(start, end)| strip(&texts[start..end]))
+            spans
+                .get(index)
+                .map(|&(start, end)| strip(&texts[start..end]))
         };
         let body = self.function_body_texts();
         let holder = |this: &Self, index: usize| -> Option<(HolderSpelling, String)> {
@@ -224,11 +223,13 @@ impl Parser<'_> {
                 // string literal, since a character literal there is an
                 // integer-to-pointer conversion Clang rejects by default).
                 Some(["__qcore_literal__"]) => Some(RetainedSpelling::Literal),
-                Some([name]) if is_identifier(name) => Some(if self.caller_formals.contains(name) {
-                    RetainedSpelling::Formal((*name).to_owned())
-                } else {
-                    RetainedSpelling::Name((*name).to_owned())
-                }),
+                Some([name]) if is_identifier(name) => {
+                    Some(if self.caller_formals.contains(name) {
+                        RetainedSpelling::Formal((*name).to_owned())
+                    } else {
+                        RetainedSpelling::Name((*name).to_owned())
+                    })
+                }
                 _ => None,
             };
             let held = match retention.holder {
@@ -331,7 +332,9 @@ fn retained_class(state: &AbstractState, retained: &RetainedSpelling) -> Retaine
             Some(_) => tracked(state, name).map_or(Retained::Other, Retained::Tracked),
             None => Retained::CallerObject(name.clone()),
         },
-        RetainedSpelling::Name(name) => tracked(state, name).map_or(Retained::Other, Retained::Tracked),
+        RetainedSpelling::Name(name) => {
+            tracked(state, name).map_or(Retained::Other, Retained::Tracked)
+        }
     }
 }
 
@@ -347,13 +350,18 @@ pub(super) fn apply(
 ) {
     for reset in &operands.resets {
         match holder_class(state, reset) {
-            Holder::Frame(name) => state.retained.retain(|(_, by)| *by != HeldBy::Frame(name.clone())),
+            Holder::Frame(name) => state
+                .retained
+                .retain(|(_, by)| *by != HeldBy::Frame(name.clone())),
             Holder::Tracked(site) => state.retained.retain(|(_, by)| *by != HeldBy::Site(site)),
             Holder::Global | Holder::Foreign => {}
         }
     }
     for (retained, retained_text, holder, holder_text) in &operands.retentions {
-        match decide(&retained_class(state, retained), &holder_class(state, holder)) {
+        match decide(
+            &retained_class(state, retained),
+            &holder_class(state, holder),
+        ) {
             Decision::Outlives => {}
             Decision::Record(object, by) => {
                 state.retained.insert((object, by));

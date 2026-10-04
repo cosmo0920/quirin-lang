@@ -39,10 +39,7 @@ fn contracts(files: &[(&str, &str)]) -> ResourceContracts {
 
 fn relational() -> ResourceContracts {
     contracts(&[
-        (
-            "q_base.qcore",
-            include_str!("fixtures/contracts/q_base.qv"),
-        ),
+        ("q_base.qcore", include_str!("fixtures/contracts/q_base.qv")),
         (
             "relational_post.qcore",
             include_str!("fixtures/contracts/relational_post.qv"),
@@ -136,7 +133,11 @@ fn rows(prelude: &str, source: &str, environment: &ResourceContracts) -> BTreeMa
                             _ => None,
                         })
                         .collect(),
-                    kinds: row.diagnostics.iter().map(|d| format!("{:?}", d.kind)).collect(),
+                    kinds: row
+                        .diagnostics
+                        .iter()
+                        .map(|d| format!("{:?}", d.kind))
+                        .collect(),
                 },
             )
         })
@@ -165,7 +166,11 @@ fn a_forwarding_wrapper_takes_its_callee_classes_and_its_row_is_decided_per_clas
         assert!(rows[name].safe(), "{name}: {:?}", rows[name]);
     }
     // C converts `int` to `long` here: no forwarding, the older refusal.
-    assert!(rows["wrap_long"].refused_with("relational-untested"), "{:?}", rows["wrap_long"]);
+    assert!(
+        rows["wrap_long"].refused_with("relational-untested"),
+        "{:?}",
+        rows["wrap_long"]
+    );
 }
 
 #[test]
@@ -179,7 +184,11 @@ fn a_transfer_on_success_with_the_caller_releasing_on_failure_is_safe() {
     );
     let rows = rows(RELATIONAL, &source, &relational());
     assert!(rows["subject"].safe(), "{:?}", rows["subject"]);
-    assert!(rows["subject_wrapped"].safe(), "{:?}", rows["subject_wrapped"]);
+    assert!(
+        rows["subject_wrapped"].safe(),
+        "{:?}",
+        rows["subject_wrapped"]
+    );
 }
 
 #[test]
@@ -193,13 +202,25 @@ fn releasing_on_success_or_leaving_the_value_untested_is_never_safe() {
     );
     let rows = rows(RELATIONAL, &source, &relational());
     // Released after the transfer on the success edge, kept on the other.
-    assert_eq!(rows["wrong_edge"].status, AnalysisStatus::Unsafe, "{:?}", rows["wrong_edge"]);
-    assert!(
-        rows["wrong_edge"].kinds.iter().any(|k| k.starts_with("ReleaseAfterEscape")),
+    assert_eq!(
+        rows["wrong_edge"].status,
+        AnalysisStatus::Unsafe,
         "{:?}",
         rows["wrong_edge"]
     );
-    assert!(rows["untested"].refused_with("relational-untested"), "{:?}", rows["untested"]);
+    assert!(
+        rows["wrong_edge"]
+            .kinds
+            .iter()
+            .any(|k| k.starts_with("ReleaseAfterEscape")),
+        "{:?}",
+        rows["wrong_edge"]
+    );
+    assert!(
+        rows["untested"].refused_with("relational-untested"),
+        "{:?}",
+        rows["untested"]
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -231,9 +252,17 @@ fn a_pointer_outliving_its_holder_is_safe() {
     // A caller's object outlives an automatic holder of this frame.
     assert!(rows["frame_formal"].safe(), "{:?}", rows["frame_formal"]);
     // The holder is reset before the pointer is released.
-    assert!(rows["reset_then_release"].safe(), "{:?}", rows["reset_then_release"]);
+    assert!(
+        rows["reset_then_release"].safe(),
+        "{:?}",
+        rows["reset_then_release"]
+    );
     // A tracked heap holder is released before the pointer.
-    assert!(rows["holder_released_first"].safe(), "{:?}", rows["holder_released_first"]);
+    assert!(
+        rows["holder_released_first"].safe(),
+        "{:?}",
+        rows["holder_released_first"]
+    );
 }
 
 #[test]
@@ -269,7 +298,11 @@ fn a_global_holder_keeps_only_static_storage() {
         return;
     }
     let rows = controls();
-    assert!(rows["global_literal"].safe(), "{:?}", rows["global_literal"]);
+    assert!(
+        rows["global_literal"].safe(),
+        "{:?}",
+        rows["global_literal"]
+    );
     let row = &rows["global_heap"];
     assert_eq!(row.status, AnalysisStatus::Unknown, "{row:?}");
     assert!(row.refused_with("retention-undecided"), "{row:?}");

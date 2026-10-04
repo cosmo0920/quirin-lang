@@ -69,6 +69,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [c-gateway-wave](c-gateway-wave/README.md) | C gateway refinements after the worktree sweep |
 
+| [callee-retention-class1](callee-retention-class1/README.md) | CALLEE-RETENTION-CLASS1: class 1 split by shape |
+
 | [canonical-contract-locations](canonical-contract-locations/README.md) | Canonical contract locations |
 
 | [card-scope-guard](card-scope-guard/README.md) | `CARD-SCOPE-GUARD` — a mechanism that makes a delegated card unable to advance `main` |

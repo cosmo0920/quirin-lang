@@ -1,0 +1,138 @@
+{
+ "statuses_before": {
+  "Unknown": 357,
+  "Safe": 87,
+  "Unsafe": 4
+ },
+ "statuses_after": {
+  "Unknown": 357,
+  "Safe": 87,
+  "Unsafe": 4
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {
+  "call to uncontracted function `_`": 6
+ },
+ "added": {
+  "call to `_` retains `_` in `_`, whose lifetime this body does not decide against it (retention-undecided)": 6
+ },
+ "moving_rows": 6,
+ "status_moves": [],
+ "moves": [
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_append_raw",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:append_to_ring_buffer"
+   ],
+   "lost": [
+    "20440: call to uncontracted function `append_to_ring_buffer`"
+   ],
+   "gained": [
+    "20440: call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_ring_buffer_enqueue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:append_to_ring_buffer"
+   ],
+   "lost": [
+    "20465: call to uncontracted function `append_to_ring_buffer`"
+   ],
+   "gained": [
+    "20465: call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 1,
+   "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:append_to_ring_buffer"
+   ],
+   "lost": [
+    "20475: call to uncontracted function `append_to_ring_buffer`"
+   ],
+   "gained": [
+    "20475: call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "flb_input_chunk_append_raw",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:append_to_ring_buffer"
+   ],
+   "lost": [
+    "20440: call to uncontracted function `append_to_ring_buffer`"
+   ],
+   "gained": [
+    "20440: call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "flb_input_chunk_ring_buffer_enqueue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:append_to_ring_buffer"
+   ],
+   "lost": [
+    "20465: call to uncontracted function `append_to_ring_buffer`"
+   ],
+   "gained": [
+    "20465: call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  },
+  {
+   "unit": "src/flb_input_chunk.c",
+   "occurrence": 2,
+   "function": "flb_input_chunk_ring_buffer_enqueue_log_routing",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:append_to_ring_buffer"
+   ],
+   "lost": [
+    "20475: call to uncontracted function `append_to_ring_buffer`"
+   ],
+   "gained": [
+    "20475: call to `append_to_ring_buffer` retains `in` in `global`, whose lifetime this body does not decide against it (retention-undecided)"
+   ]
+  }
+ ]
+}

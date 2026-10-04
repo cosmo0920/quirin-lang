@@ -5119,3 +5119,147 @@ own anchor here.
     changed clause, missing entry) and
     `crates/qcore-c-gateway/tests/chunkio_meta_len_bounds.rs`;
     [report](../reports/chunkio-meta-len-bounds-contracts/README.md).
+
+<a id="constraint-12s"></a>
+
+12s. **A whole-call return of a callee with a return-code disposition
+    forwards its classes, each validated on the body restricted to that
+    class; a function whose disposition is in force has its row decided per
+    class; and a disposition is pinned, ABI-checked and kept through a
+    unit's withdrawals like every declaration.** Card
+    CALLEE-RETENTION-CLASS1, stage (a), on the user's decision of 2026-10-05
+    ("split by shape", contract specification C04.13 *Forwarding*, C04.14):
+    `legacy_relational_forwarding.rs` (`infer_forwarded`, `relational_row`,
+    `restrict`), thin hooks in `legacy_summary.rs`
+    (`derive_custody_summaries`: the forwarding route after rule 11r's
+    exit-specific one, and as a body summary of a declared disposition),
+    `legacy_relational_summary.rs` (`BodySummary::Forwarded`, compared by
+    relation overlap) and `analyze_defined_function`; shared items added:
+    `ResourceContracts::carry_side_declarations` (used by
+    `legacy_declared_abi.rs`'s `withdraw_environment` and
+    `legacy_checked_spec.rs`'s reduction), `PinMismatch::{relational,
+    retaining}` and the side tables in `withhold_for_pin_mismatch`,
+    `with_human_holds_in_force`, `in_force_before_pins` and
+    `check_source_assumptions`, `AbiAgreement::read` over the side tables,
+    `qcore-audit`'s `apply_pins` over them. It amends rule 11r. (1)
+    **Forwarding.** After every ordinary route and the exit-specific route
+    published nothing, a body whose every `return` is a plain integer
+    literal or `return f(ARGS);` (the whole expression one call, optionally
+    parenthesised) of callees with dispositions in force sharing one set of
+    class relations, whose result type is spelled exactly as each forwarded
+    callee's (C converts nothing between the two values), whose literals each
+    lie in a class, and which calls each forwarded callee only in those
+    returns, takes the callee's classes: for each class `r` the literals
+    outside `r` become `for (;;);` and the forwarded callee is read under its
+    class `r` installed under its own name — the contract rule 11r's decided
+    test `f(ARGS) OP K` selects on its true edge — so the return keeps its
+    spelling and position for every typed reader; the ordinary inference
+    and validation run unchanged, and `r` takes the contract validated
+    there. Classes that all agree, a non-`unit` result or classes whose entry
+    requirements differ publish nothing. (2) **The row.** A function whose
+    own disposition is in force (declared and not withdrawn, or inferred) is
+    decided per class: every restricted body is analysed under its class's
+    contract and must validate (`observations_match_contract`); the
+    published row is the first class's restricted analysis for a forwarding
+    body, and the whole body under the common entry for a literal-only one
+    (no diagnostic); any failure keeps the contract-free row. (3) **The
+    integration gaps closed.** Before this card a disposition was never in
+    the function map, and so (i) a unit that withdrew any declaration (an
+    ABI or checked-specification reduction) rebuilt its environment from the
+    function map and dropped every disposition, (ii) no disposition was
+    compared with the unit's C declaration, and (iii) the pin evaluation
+    skipped dispositions, so a pinned one was in force at any revision; no
+    corpus callee carried one, so none of this had been exercised. Now each
+    reduction carries the side tables, the ABI agreement reads them, and a
+    pin mismatch withholds a disposition (or a retaining declaration, rule
+    12t) from its own table and restores it there. **Do not** forward
+    through a converting return, a callee also called outside its forwarded
+    returns, or callees with different class sets; read a forwarded callee
+    under a class anywhere but in its restricted body; publish a row from
+    one class while another failed; or let a reduction rebuild an
+    environment from its function map alone. Premises stated, not proved:
+    faithful extraction (trust boundary 28), the declared dispositions
+    (constraint 4), and that replacing a `return` by divergence leaves every
+    state on every other path as it was (rule 11r's own). Measured
+    (corpus `66910c10`, system and tail-pause slice; base main `6fc62c015`,
+    binary `331fb897…` with the stage's six pinned dispositions): corpus
+    803 / 9 / 4,022 → **812 / 9 / 4,013** (`2734991a…` → `cc47d362…`),
+    **+9 Unknown → Safe** (`cJSON_AddItemToArray`, `cJSON_ReplaceItemInObject`
+    and `_CaseSensitive`, `ctr_attributes_set_array`/`_kvlist` by their own
+    per-class rows, the four `ctr_span*` setters), six functions changing
+    leaves only; system 85 / 4 / 359 → 87 / 4 / 357
+    (`flb_output_task_queue_enqueue` in both its units: an exit-specific
+    summary rule 11r already inferred, its row now decided per class);
+    slice no move; no Safe → non-Safe move, no leak or violation added.
+    `QCore.RelationalForwarding` (`every_path_is_kept_by_one_class`,
+    `no_path_is_kept_by_two_classes`, `a_forwarded_call_applies_the_callee_class`,
+    `the_published_class_holds_at_every_exit`,
+    `a_caller_edge_selects_the_exit_disposition`, `the_row_covers_every_path`,
+    `a_conversion_can_move_a_value_between_classes` and three more), bound by
+    the module's unit tests and `tests/callee_retention_class1.rs`;
+    [report](../reports/callee-retention-class1/README.md).
+
+<a id="constraint-12t"></a>
+
+12t. **A pointer a callee retains stays the caller's, is never borrowed and
+    forgotten, and is `Safe` only where the caller establishes that its
+    object outlives the holder; a release while held is refused, never
+    accused.** Card CALLEE-RETENTION-CLASS1, stage (b), on the user's
+    decision of 2026-10-05 ("split by shape", contract specification C04.14,
+    grammar G05): the vocabulary `qcore_schemas::retained_by`
+    (`RetainingContract`, `Retention`, `RetentionHolder`;
+    `ResourceContracts::{retaining, retaining_contract, insert_retaining}`,
+    additive, skipped when empty), the loader clause
+    `crates/qcore-contract/src/contract_retained_by.rs`, the pure decisions
+    `crates/qcore-c-gateway/src/retained_by.rs` (`decide`, `replay`,
+    `DECISION_VECTORS`, `TRACE_VECTORS`), the route-G adapter
+    `legacy_retained_by.rs`; shared items added: `ContractCall::retention`,
+    `AbstractState::retained` (joined by union), hooks in
+    `build_function_cfg_with` (the minted environment), the classifier's
+    uncontracted fallback (before rule 11r's), the `ContractCall` transfer
+    (after the container effect), `apply_resource_action` and the exit
+    report; a tenth reserved prefix (`qcore_retained__`, `legacy_reserved_spelling.rs`);
+    `in_place_custody::one_automatic_object` made crate-visible. (1)
+    **Withheld.** A declaration with `resource_retained_by(P, H)` or
+    `resource_holder_reset(H)` is never in the function map; every consumer
+    but route G sees an uncontracted callee, and no inference replaces it.
+    (2) **Decided at the call.** `P` is a string literal (static storage), an
+    unrebound formal this body holds no custody of (a caller's object), one
+    known live identity this body tracks, or anything else; `H` is a frame
+    holder (`&L`, `L` one automatic, non-pointer, non-array object of this
+    function named only as whole `&L` actuals of retaining or resetting
+    callees), one tracked identity, the `global` holder, or anything else.
+    A static `P` outlives every holder; a caller's object outlives a frame
+    holder; a tracked `P` in a frame or tracked holder, and a caller's object
+    in a tracked holder, are recorded; everything else — a formal or
+    member holder, `global` for a non-static `P`, an unreadable actual — is
+    refused (`retention-undecided`, Unknown). (3) **Records.** A reset of a
+    frame or tracked holder, or a release of a tracked holder, drops what it
+    held; a release or transfer of a recorded `P` is refused
+    (`retention-released-while-held`), never a violation; at an exit a frame
+    holder dies, and a tracked holder still holding refuses. **Do not** read
+    a retained pointer as borrowed, decide a holder the caller supplied,
+    accept a static object other than a literal without a storage reading,
+    accuse a release while held, or forward a retention into a summary.
+    Premises stated, not proved: faithful extraction (trust boundary 28),
+    the declared retentions (constraint 4; `RETAINED-BY-BODY-CHECK`), and
+    P-RETAINED-LITERAL (the lexer's `__qcore_literal__` at a pointer position
+    is a string literal: a character literal there is an integer-to-pointer
+    conversion Clang rejects by default). Measured
+    (binary `19a16144…`, the five pinned retaining declarations added to
+    stage (a)'s tree): **no status moves on any route** (corpus
+    812 / 9 / 4,013, `cc47d362…` → `a43d02cb…`; system 87 / 4 / 357; slice
+    unchanged), as predicted for callers that each pass a formal as both the
+    pointer and its holder: 20 corpus functions trade
+    ``call to uncontracted function`` for `retention-undecided` (16), the
+    nested `LZ4_compressBound` actual the uncontracted call hid (3) or the
+    access gate (1); system 3 functions in two units; no leak, violation or
+    `Unsafe` added.
+    `QCore.RetainedBy` (`a_safe_path_never_releases_a_held_identity`,
+    `a_safe_path_leaves_no_tracked_holder_holding`, `undecided_is_refused`,
+    `reset_before_release_is_safe`, `release_before_reset_is_refused`,
+    `a_holder_outliving_its_pointer_is_refused`, `global_holder_controls`,
+    `an_unknown_holder_is_refused`, `decision_vectors_hold`,
+    `trace_vectors_hold` and ten more), bound to `retained_by.rs` by the
+    shared vectors and to route G by `tests/callee_retention_class1.rs`;
+    [report](../reports/callee-retention-class1/README.md).

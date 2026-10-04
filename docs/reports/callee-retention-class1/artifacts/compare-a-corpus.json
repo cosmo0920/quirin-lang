@@ -1,0 +1,459 @@
+{
+ "statuses_before": {
+  "Unknown": 4022,
+  "Safe": 803,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 4013,
+  "Safe": 812,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Unknown -> Safe": 9
+ },
+ "status_moves_by_label": {
+  "callee:replace_item_in_object": 2,
+  "callee:ctr_attributes_set_array": 2,
+  "callee:ctr_attributes_set_kvlist": 2,
+  "callee:add_item_to_array": 1,
+  "callee:cfl_kvlist_insert_array": 1,
+  "callee:cfl_kvlist_insert_kvlist": 1
+ },
+ "removed": {
+  "call to uncontracted function `_`": 16
+ },
+ "added": {
+  "call to `_` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)": 3,
+  "unresolved resource identity `_`": 3,
+  "indirect memory access is outside the resource projection": 1
+ },
+ "moving_rows": 15,
+ "status_moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_AddItemToArray",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:add_item_to_array"
+   ],
+   "lost": [
+    "2870: call to uncontracted function `add_item_to_array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_ReplaceItemInObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:replace_item_in_object"
+   ],
+   "lost": [
+    "3175: call to uncontracted function `replace_item_in_object`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_ReplaceItemInObjectCaseSensitive",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:replace_item_in_object"
+   ],
+   "lost": [
+    "3179: call to uncontracted function `replace_item_in_object`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_array"
+   ],
+   "lost": [
+    "6809: call to uncontracted function `cfl_kvlist_insert_array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_kvlist"
+   ],
+   "lost": [
+    "6814: call to uncontracted function `cfl_kvlist_insert_kvlist`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_array"
+   ],
+   "lost": [
+    "7090: call to uncontracted function `ctr_attributes_set_array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_kvlist"
+   ],
+   "lost": [
+    "7095: call to uncontracted function `ctr_attributes_set_kvlist`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_array"
+   ],
+   "lost": [
+    "6913: call to uncontracted function `ctr_attributes_set_array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_kvlist"
+   ],
+   "lost": [
+    "6918: call to uncontracted function `ctr_attributes_set_kvlist`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "add_item_to_object",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:add_item_to_array"
+   ],
+   "lost": [
+    "2907: call to uncontracted function `add_item_to_array`"
+   ],
+   "gained": [
+    "2907: call to `add_item_to_array` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_AddItemReferenceToArray",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:add_item_to_array"
+   ],
+   "lost": [
+    "2923: call to uncontracted function `add_item_to_array`"
+   ],
+   "gained": [
+    "2923: call to `add_item_to_array` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_AddItemToArray",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:add_item_to_array"
+   ],
+   "lost": [
+    "2870: call to uncontracted function `add_item_to_array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_InsertItemInArray",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:add_item_to_array"
+   ],
+   "lost": [
+    "3089: call to uncontracted function `add_item_to_array`"
+   ],
+   "gained": [
+    "3089: call to `add_item_to_array` whose return-code disposition needs its returned value tested against a constant where it stands (relational-untested)"
+   ]
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_ReplaceItemInObject",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:replace_item_in_object"
+   ],
+   "lost": [
+    "3175: call to uncontracted function `replace_item_in_object`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cJSON.c",
+   "occurrence": 1,
+   "function": "cJSON_ReplaceItemInObjectCaseSensitive",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:replace_item_in_object"
+   ],
+   "lost": [
+    "3179: call to uncontracted function `replace_item_in_object`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "clone_exemplars_to_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_array",
+    "callee:cfl_kvlist_insert_kvlist"
+   ],
+   "lost": [
+    "7421: call to uncontracted function `cfl_kvlist_insert_kvlist`",
+    "7436: call to uncontracted function `cfl_kvlist_insert_array`"
+   ],
+   "gained": [
+    "7422: unresolved resource identity `filtered_attributes`",
+    "7437: unresolved resource identity `array`"
+   ]
+  },
+  {
+   "unit": "cmt_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "get_or_create_external_metadata_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_kvlist"
+   ],
+   "lost": [
+    "7203: call to uncontracted function `cfl_kvlist_insert_kvlist`"
+   ],
+   "gained": [
+    "7206: unresolved resource identity `entry_kvlist`"
+   ]
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_array"
+   ],
+   "lost": [
+    "6809: call to uncontracted function `cfl_kvlist_insert_array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_attributes.c",
+   "occurrence": 1,
+   "function": "ctr_attributes_set_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_kvlist"
+   ],
+   "lost": [
+    "6814: call to uncontracted function `cfl_kvlist_insert_kvlist`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_decode_opentelemetry.c",
+   "occurrence": 1,
+   "function": "convert_kvlist_value",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:cfl_kvlist_insert_kvlist"
+   ],
+   "lost": [
+    "8675: call to uncontracted function `cfl_kvlist_insert_kvlist`"
+   ],
+   "gained": [
+    "8675: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_array"
+   ],
+   "lost": [
+    "7090: call to uncontracted function `ctr_attributes_set_array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_event_set_attribute_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_kvlist"
+   ],
+   "lost": [
+    "7095: call to uncontracted function `ctr_attributes_set_kvlist`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_array"
+   ],
+   "lost": [
+    "6913: call to uncontracted function `ctr_attributes_set_array`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "ctr_span.c",
+   "occurrence": 1,
+   "function": "ctr_span_set_attribute_kvlist",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:ctr_attributes_set_kvlist"
+   ],
+   "lost": [
+    "6918: call to uncontracted function `ctr_attributes_set_kvlist`"
+   ],
+   "gained": []
+  }
+ ]
+}

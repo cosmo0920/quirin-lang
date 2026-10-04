@@ -1,0 +1,15 @@
+tip.json mk_vhost_set Unknown
+    mk_server/mk_lib.c:533 call to uncontracted function `mk_vhost_set_property`
+tip.json mk_vhost_set_property Unknown
+    mk_server/mk_lib.c:502 indirect memory access is outside the resource projection
+    mk_server/mk_lib.c:503 indirect memory access is outside the resource projection
+master.json mk_vhost_set Unknown
+    mk_server/mk_lib.c:523 va_list protocol refused: `va` may reach a function exit without `va_end`
+    mk_server/mk_lib.c:525 va_list protocol refused: `va` may reach a function exit without `va_end`
+    mk_server/mk_lib.c:526 va_list protocol refused: `va` may reach a function exit without `va_end`
+    mk_server/mk_lib.c:532 call to uncontracted function `mk_vhost_set_property`
+    mk_server/mk_lib.c:534 va_list protocol refused: `va` may reach a function exit without `va_end`
+    mk_server/mk_lib.c:539 va_list protocol refused: `va` may reach a function exit without `va_end`
+master.json mk_vhost_set_property Unknown
+    mk_server/mk_lib.c:502 indirect memory access is outside the resource projection
+    mk_server/mk_lib.c:503 indirect memory access is outside the resource projection

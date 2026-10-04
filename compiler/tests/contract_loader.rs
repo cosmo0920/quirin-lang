@@ -874,6 +874,15 @@ fn production_contracts_preserve_the_previous_resource_modes() {
                 assert!(contracts.contract(&name).is_none(), "{name}");
                 continue;
             }
+            // Card CALLEE-RETENTION-CLASS1: a return-code disposition and a
+            // retaining declaration are withheld into their own tables (C04.13,
+            // C04.14); neither has a previous plain mode to preserve.
+            if contracts.relational_contract(&name).is_some()
+                || contracts.retaining_contract(&name).is_some()
+            {
+                assert!(contracts.contract(&name).is_none(), "{name}");
+                continue;
+            }
             assert_eq!(
                 canonical(contracts.contract(&name).unwrap().clone()),
                 canonical(old.contract(&name).unwrap().clone()),

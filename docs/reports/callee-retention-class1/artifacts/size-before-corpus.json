@@ -1,0 +1,178 @@
+{
+ "report": "private/crc1/before/resource-diagnostics.json",
+ "members": {
+  "a": {
+   "add_item_to_object": {
+    "leaves": 3,
+    "functions": 3,
+    "alone": 3
+   },
+   "add_item_to_array": {
+    "leaves": 4,
+    "functions": 4,
+    "alone": 2
+   },
+   "replace_item_in_object": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 2
+   },
+   "cfl_kvlist_insert_array": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 1
+   },
+   "cfl_kvlist_insert_kvlist": {
+    "leaves": 4,
+    "functions": 4,
+    "alone": 1
+   },
+   "ctr_attributes_set_array": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 2
+   },
+   "ctr_attributes_set_kvlist": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 2
+   }
+  },
+  "b": {
+   "LZ4_compress_HC_extStateHC": {
+    "leaves": 5,
+    "functions": 5,
+    "alone": 4
+   },
+   "LZ4_compress_HC_continue": {
+    "leaves": 4,
+    "functions": 4,
+    "alone": 3
+   },
+   "LZ4_compress_fast_continue": {
+    "leaves": 4,
+    "functions": 4,
+    "alone": 3
+   },
+   "LZ4_compress_fast_extState": {
+    "leaves": 4,
+    "functions": 4,
+    "alone": 2
+   },
+   "append_to_ring_buffer": {
+    "leaves": 3,
+    "functions": 3,
+    "alone": 2
+   },
+   "rd_kafka_confval_set_type": {
+    "leaves": 12,
+    "functions": 11,
+    "alone": 5
+   },
+   "cJSON_ParseWithLengthOpts": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 2
+   },
+   "rd_kafka_interceptor_method_add": {
+    "leaves": 4,
+    "functions": 4,
+    "alone": 4
+   }
+  },
+  "c": {
+   "rd_list_destroy": {
+    "leaves": 184,
+    "functions": 110,
+    "alone": 3
+   },
+   "rd_list_clear": {
+    "leaves": 4,
+    "functions": 4,
+    "alone": 3
+   },
+   "cmt_mpack_unpack_array": {
+    "leaves": 12,
+    "functions": 12,
+    "alone": 5
+   },
+   "cmt_mpack_unpack_map": {
+    "leaves": 10,
+    "functions": 10,
+    "alone": 3
+   },
+   "ctr_mpack_unpack_array": {
+    "leaves": 5,
+    "functions": 5,
+    "alone": 5
+   },
+   "ctr_mpack_unpack_map": {
+    "leaves": 9,
+    "functions": 9,
+    "alone": 3
+   },
+   "pb_write": {
+    "leaves": 8,
+    "functions": 8,
+    "alone": 2
+   },
+   "pb_encode_varint": {
+    "leaves": 5,
+    "functions": 4,
+    "alone": 2
+   },
+   "rd_kafka_q_serve0": {
+    "leaves": 3,
+    "functions": 3,
+    "alone": 2
+   },
+   "rd_kafka_q_pop_serve0": {
+    "leaves": 3,
+    "functions": 3,
+    "alone": 2
+   },
+   "rd_kafka_q_serve_maybe_consume": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 2
+   },
+   "rd_kafka_op_destroy": {
+    "leaves": 132,
+    "functions": 83,
+    "alone": 2
+   }
+  },
+  "older": {
+   "bsearch": {
+    "leaves": 7,
+    "functions": 6,
+    "alone": 1
+   },
+   "qsort": {
+    "leaves": 4,
+    "functions": 3,
+    "alone": 0
+   },
+   "pthread_once": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 1
+   },
+   "pthread_getspecific": {
+    "leaves": 16,
+    "functions": 15,
+    "alone": 1
+   },
+   "pthread_setspecific": {
+    "leaves": 15,
+    "functions": 10,
+    "alone": 1
+   },
+   "mk_sched_get_thread_conf": {
+    "leaves": 9,
+    "functions": 9,
+    "alone": 0
+   }
+  }
+ }
+}

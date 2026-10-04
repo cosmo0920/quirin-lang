@@ -1245,12 +1245,17 @@ fn declared_relational(
         })
         // Card CALLEE-RETENTION-CLASS1: a disposition withheld for its pin is
         // still declared.
-        .chain(contracts.pin_mismatch().iter().filter_map(|(name, withheld)| {
-            withheld
-                .relational
-                .clone()
-                .map(|relational| (name.clone(), relational))
-        }))
+        .chain(
+            contracts
+                .pin_mismatch()
+                .iter()
+                .filter_map(|(name, withheld)| {
+                    withheld
+                        .relational
+                        .clone()
+                        .map(|relational| (name.clone(), relational))
+                }),
+        )
         .collect()
 }
 
@@ -1263,12 +1268,17 @@ fn declared_retaining(
         .retaining()
         .iter()
         .map(|(name, contract)| (name.clone(), contract.clone()))
-        .chain(contracts.pin_mismatch().iter().filter_map(|(name, withheld)| {
-            withheld
-                .retaining
-                .clone()
-                .map(|retaining| (name.clone(), retaining))
-        }))
+        .chain(
+            contracts
+                .pin_mismatch()
+                .iter()
+                .filter_map(|(name, withheld)| {
+                    withheld
+                        .retaining
+                        .clone()
+                        .map(|retaining| (name.clone(), retaining))
+                }),
+        )
         .collect()
 }
 

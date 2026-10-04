@@ -384,7 +384,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card CALLEE-RETENTION-CLASS1, stage (a): the forwarding setters,
     // marker, two borrowed formals, two return-code classes, `none`.
     ("ctraces/context_lifetime.qv", "ctr_attributes_set_array", 6),
-    ("ctraces/context_lifetime.qv", "ctr_attributes_set_kvlist", 6),
+    (
+        "ctraces/context_lifetime.qv",
+        "ctr_attributes_set_kvlist",
+        6,
+    ),
     (
         "fluent_bit/busy_state.qv",
         "flb_input_chunk_release_lock",

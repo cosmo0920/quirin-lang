@@ -1,0 +1,35 @@
+{
+ "rows": [
+  141186,
+  139962
+ ],
+ "byte_identical_in_order": false,
+ "identical_in_order_addresses_erased": false,
+ "multiset_identical": false,
+ "only_before": 1260,
+ "only_after": 36,
+ "functions_with_differences": 3,
+ "differences_outside_moving_functions": {
+  "before append_to_ring_buffer": 1248
+ },
+ "groups": {
+  "before append_to_ring_buffer elaboration-statement": 216,
+  "before append_to_ring_buffer cast-semantics-census": 192,
+  "before append_to_ring_buffer call-argument": 168,
+  "before append_to_ring_buffer aggregate-value": 168,
+  "before append_to_ring_buffer condition-desugar": 144,
+  "before append_to_ring_buffer ?": 120,
+  "before append_to_ring_buffer pointer-store": 48,
+  "before append_to_ring_buffer condition": 48,
+  "before append_to_ring_buffer call-exit-census": 48,
+  "before append_to_ring_buffer bound-untracked-closure": 24,
+  "before append_to_ring_buffer root-declarations": 24,
+  "before append_to_ring_buffer uncontracted-access": 24,
+  "before append_to_ring_buffer bound-untracked-root": 16,
+  "before flb_input_chunk_append_raw elaboration-statement": 12,
+  "after flb_output_task_queue_enqueue bound-untracked-closure": 12,
+  "after flb_output_task_queue_enqueue root-declarations": 12,
+  "after flb_input_chunk_append_raw elaboration-statement": 12,
+  "before append_to_ring_buffer pointer-store-flow": 8
+ }
+}
