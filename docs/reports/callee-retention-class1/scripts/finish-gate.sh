@@ -13,6 +13,12 @@ cd "$repo" || exit 2
 mkdir -p "$report/gate" || exit 2
 cp "$logs"/*.exit "$logs/head" "$logs/docs-head" "$report/gate/"
 cp "$logs/clang-version.txt" "$report/gate/clang-version.txt"
+# The provider gate's exits and head, prefixed.
+providers="$repo/private/crc1/provider-gate-$name"
+for exitfile in "$providers"/*.exit; do
+  cp "$exitfile" "$report/gate/provider-$(basename "$exitfile")"
+done
+cp "$providers/head" "$report/gate/provider-head"
 python3 docs/reports/remaining-d02/build_matrix.py . --gate "$report/gate.json" > "$logs/09a-matrix.log" 2>&1
 echo $? > "$report/gate/09a-matrix.exit"
 python3 -m unittest discover -s scripts/tests > "$logs/09b-python.log" 2>&1

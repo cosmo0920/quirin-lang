@@ -53,7 +53,7 @@ contract specification C04.13 *Forwarding*; Lean
 iterations shaped it:
 
 * **a1** (`after-a1`, `64698db4…`): the corpus was **byte-identical** to the
-  BEFORE although every new declaration was pinned in force. Reading why
+  BEFORE although the sidecar reported every new declaration pinned in force. Reading why
   found three gaps in rule 11r's integration, latent since CG23 because no
   corpus callee had carried a disposition: (i) a unit that withdraws any
   declaration (LOADER-ABI's `withdraw_environment`, the checked-specification
@@ -252,7 +252,8 @@ rankings for [corpus](artifacts/rank-after-corpus.json),
 The callback contract vocabulary the decision names does not exist:
 `CG22-CALLBACK-REGISTRY-CONTRACT` is open (rule 11p states no capture and no
 unregistration, so route G has no registry). Each member was read at both
-revisions (byte-identical bodies) and is sized on the BEFORE corpus
+revisions (every body byte-identical except the two map unpackers, to which
+`046accf6` adds a duplicate-key check) and is sized on the BEFORE corpus
 ([sizes](artifacts/size-before-corpus.json); leaves naming it / functions
 carrying one / functions it decides alone). No code: the stage's AFTER is
 stage (b)'s.
@@ -261,7 +262,7 @@ stage (b)'s.
 | --- | ---: | --- |
 | `rd_list_destroy` | 184 / 110 / 3 | runs the free callback `rd_list_init` stored in the list (`rl_free_cb`) over every element the list retained (`rd_list_destroy_elems`, `rdlist.c:290-308`), then frees the list only when `RD_LIST_F_ALLOCATED` is set: a **registry** of the callback stored at initialisation, an **element-custody** relation of `rd_list_add` (custody moves into a list that has a free callback, is merely retained by one without), and a **flag-conditioned self-release** |
 | `rd_list_clear` | 4 / 4 / 3 | the same over the elements, no self-release |
-| `cmt_mpack_unpack_array` / `_map` | 12 / 12 / 5, 10 / 10 / 3 | invokes its callback argument synchronously, zero or more times, with `context` (`cmt_mpack_utils.c:246-303`): a **synchronous invocation** clause (`f` called during the call only, with these actuals, its own contract applied to them per call, under a loop-safe composition) |
+| `cmt_mpack_unpack_array` / `_map` | 12 / 12 / 5, 10 / 10 / 3 | the array form invokes its callback argument synchronously, zero or more times, with `context` (`cmt_mpack_utils.c:246-303`): a **synchronous invocation** clause (`f` called during the call only, with these actuals, its own contract applied per call under a loop-safe composition); the map form dispatches through the caller's callback **table** (`callback_list[i].handler`, chosen by the entry's key, `:177-…`), which also needs the table's candidates closed (rule 11p's constant-table reading) |
 | `ctr_mpack_unpack_array` / `_map` | 5 / 5 / 5, 9 / 9 / 3 | the same (ctraces) |
 | `pb_write`, `pb_encode_varint` | 8 / 8 / 2, 5 / 4 / 2 | invokes the callback the stream holds (`stream->callback`, `pb_encode.c:83-104`): an invocation through a **member of a borrowed object** (an open set under rule 11p) needs the registry that set it |
 | `rd_kafka_q_serve0`, `_pop_serve0`, `_serve_maybe_consume` | 3 / 3 / 2, 3 / 3 / 2, 2 / 2 / 2 | serve ops through a callback argument or the queue's own `rkq_serve`; `cb_type` is an enum typedef (`W43-LIBC-ABI-READER-SHAPES`) and the ops carry reference counts (class 3) |
