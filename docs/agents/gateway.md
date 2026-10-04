@@ -5008,3 +5008,38 @@ own anchor here.
     (`crates/qcore-core/tests/index_quant.rs`) and to route G by
     `tests/quant_index_checks.rs`;
     [report](../reports/quant-index-checks/README.md).
+
+<a id="constraint-12q"></a>
+
+12q. **State a consultation, scope or lowering sets belongs to it and is gone
+    on every exit: nothing one consultation leaves on a worker thread reaches
+    another.** Card GAPO-PARITY-DECISIONS-NONDETERMINISTIC
+    (`consultation_decisions.rs`; shared items added: a `decisions` parameter
+    on `StatementIndex::statement_with`, `condition`, `assignment`,
+    `returned` and `argument`, on `typed_place::tracked_chain` and
+    `record_object_place::record`; `typed_access_path::Reader::recording` and
+    `Reader::decisions`; `Parser::call_graph_components`). A typed
+    access-path reader's parity decisions (rule 10t's and 12j's places, rule
+    10v's classifications) go into a `Decisions` value that the consumer which
+    records them owns and hands to the reader; a reader without one keeps
+    nothing, and the value is dropped with the consumer's frame on every exit
+    path, early returns and declined probes included. Thread-local state that
+    scopes a lowering (rules 10z and 11m's edge, edge root and deciding
+    operand, route G's lowering flag, the analysed source) is set by a drop
+    guard that restores the previous value, an unwind included. A cache that
+    outlives one consultation is keyed by the complete identity of what it
+    answers (GATEWAY-ANALYSIS-PATH-OPTIMIZATION's launch caches), never by an
+    address. **Do not** add a thread-local list one consultation fills and a
+    later one drains, a set-then-reset-to-a-constant pair around a call that
+    can nest, or a cache keyed by a pointer. The replaced state never reached
+    a verdict: the decision lists were written only on parity runs and read
+    only into parity rows, and the address-keyed call graph only into parity
+    rows. No Lean change: the rule moves parity bookkeeping and restores, and
+    no decision table, transfer or verdict changes. Measured (corpus
+    `66910c10`, system and tail-pause slice, main `0ebe77f86` plus the rule):
+    every `resource-diagnostics*.json` and sidecar byte-identical (756 / 9 /
+    4,069, `ce57d194…`); the corpus parity stream, which five runs of the
+    BEFORE binary wrote in two multisets, is one multiset over five AFTER
+    runs; the 122 removed `typed-place` rows (43 kinds, 30 functions) were
+    leftovers written by statement consultations whose own node did not
+    match; [report](../reports/gapo-parity-decisions-nondeterministic/README.md).

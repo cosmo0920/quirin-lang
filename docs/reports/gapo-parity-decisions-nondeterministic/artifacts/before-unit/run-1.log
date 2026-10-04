@@ -1,0 +1,22 @@
+   Compiling qcore-c-gateway v0.1.0 (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aef957dc0440a5d9b/crates/qcore-c-gateway)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.62s
+     Running unittests src/lib.rs (target/debug/deps/qcore_c_gateway-22a8c924baa35ffc)
+
+running 1 test
+test typed_place::tests::gapo_nd_before_a_declined_consultation_holds_no_leftover ... FAILED
+
+failures:
+
+---- typed_place::tests::gapo_nd_before_a_declined_consultation_holds_no_leftover stdout ----
+
+thread 'typed_place::tests::gapo_nd_before_a_declined_consultation_holds_no_leftover' (4166357) panicked at crates/qcore-c-gateway/src/../tests/unit/typed_place.rs:403:5:
+the declined consultation's typed-place row would carry 1 leftover decision(s): [Object {"admitted": Bool(true), "place": Object {"decl": String("0x5d745d26a410"), "decl_kind": String("ParmVarDecl"), "name": String("s"), "root": String("pointer"), "root_type": String("struct S *"), "steps": Array [Object {"field": String("0x5d745d26a2d8"), "kind": String("arrow"), "member": String("next"), "storage": String("ordinary"), "type": String("struct S *"), "view": String("struct S *")}, Object {"field": String("0x5d745d26a1d0"), "kind": String("arrow"), "member": String("in"), "storage": String("ordinary"), "type": String("struct I"), "view": String("struct S *")}, Object {"field": String("0x5d745d26a088"), "kind": String("dot"), "member": String("x"), "storage": String("ordinary"), "type": String("int"), "view": String("struct I")}]}, "refusal": Null}]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    typed_place::tests::gapo_nd_before_a_declined_consultation_holds_no_leftover
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 958 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p qcore-c-gateway --lib`

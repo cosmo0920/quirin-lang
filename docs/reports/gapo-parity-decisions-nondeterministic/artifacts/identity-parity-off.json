@@ -1,0 +1,156 @@
+[
+ {
+  "reference": "before1",
+  "run": "before-np",
+  "identical": true,
+  "files": [
+   {
+    "route": "corpus",
+    "file": "audit.log",
+    "bytes": 133834,
+    "sha256": "eb16d207b0b8161f4d83a5aa14f3823c96ce54de5093e91cca9334b2f895df5a",
+    "raw_identical": false,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "monkey-source.json",
+    "bytes": 1665950,
+    "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.chunk-contracts.json",
+    "bytes": 4186178,
+    "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.contracts.json",
+    "bytes": 760207,
+    "sha256": "eb805aaa86af615c688a9e71231319401c7aa202f4e7ddf1c718c45f37edd5b0",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.json",
+    "bytes": 10239521,
+    "sha256": "ce57d194a9af2cd96a5d7a218b16824abd4cf3db2a5ac3a20dcd84369d879f50",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.source-effects.json",
+    "bytes": 118505,
+    "sha256": "0d694e29e1176e295b5b40bfd562d13d309e30184221e5649f8a677a63073c97",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "route": "slice",
+    "verdict": "not measured on both sides"
+   }
+  ],
+  "parity": [
+   {
+    "stream": "parity-corpus",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "stream": "parity-system",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "stream": "parity-slice",
+    "verdict": "not measured on both sides"
+   }
+  ]
+ },
+ {
+  "reference": "before1",
+  "run": "after-np",
+  "identical": true,
+  "files": [
+   {
+    "route": "corpus",
+    "file": "audit.log",
+    "bytes": 133833,
+    "sha256": "3a9d193006b8cb4386993199c35de8e7dabece4605c9d5c8aa2bab5502eed787",
+    "raw_identical": false,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "monkey-source.json",
+    "bytes": 1665950,
+    "sha256": "57acfc58c4f7dddf2623efb3c9dc3e8f2dc276835e15cd18a157414696bb2f11",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.chunk-contracts.json",
+    "bytes": 4186178,
+    "sha256": "cbbcfd9c176005146c1946d5fcd4dc83cc9ec041a3397b10b1f0ab16ae6c0484",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.contracts.json",
+    "bytes": 760207,
+    "sha256": "eb805aaa86af615c688a9e71231319401c7aa202f4e7ddf1c718c45f37edd5b0",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.json",
+    "bytes": 10239521,
+    "sha256": "ce57d194a9af2cd96a5d7a218b16824abd4cf3db2a5ac3a20dcd84369d879f50",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "corpus",
+    "file": "resource-diagnostics.source-effects.json",
+    "bytes": 118505,
+    "sha256": "0d694e29e1176e295b5b40bfd562d13d309e30184221e5649f8a677a63073c97",
+    "raw_identical": true,
+    "identical_after_normalisation": true
+   },
+   {
+    "route": "system",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "route": "slice",
+    "verdict": "not measured on both sides"
+   }
+  ],
+  "parity": [
+   {
+    "stream": "parity-corpus",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "stream": "parity-system",
+    "verdict": "not measured on both sides"
+   },
+   {
+    "stream": "parity-slice",
+    "verdict": "not measured on both sides"
+   }
+  ]
+ }
+]

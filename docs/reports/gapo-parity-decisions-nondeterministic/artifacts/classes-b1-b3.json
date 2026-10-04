@@ -1,0 +1,38 @@
+{
+ "reference": "before1",
+ "run": "before3",
+ "suffix": "",
+ "rows": [
+  669571,
+  669570
+ ],
+ "summary": {
+  "only_reference": {
+   "typed-place / statement": 1
+  },
+  "only_run": {}
+ },
+ "typed_place_rows_changed_in_content": 0,
+ "detail": {
+  "only_reference": [
+   {
+    "count": 1,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "cio_file_st_get_meta_len",
+    "line": 2223,
+    "texts": "__qcore_returned_value = ( uint16_t ) ( ( uint8_t ) map [ 22 ] < < 8 ) | ( uint8_t ) map [ 23 ]",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "st",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   }
+  ],
+  "only_run": []
+ }
+}

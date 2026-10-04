@@ -1,0 +1,1352 @@
+{
+ "reference": "before1",
+ "run": "after1",
+ "suffix": "",
+ "rows": [
+  669571,
+  669449
+ ],
+ "summary": {
+  "only_reference": {
+   "typed-place / statement": 122
+  },
+  "only_run": {}
+ },
+ "typed_place_rows_changed_in_content": 0,
+ "detail": {
+  "only_reference": [
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_connection_creation_rate",
+    "line": 20274,
+    "texts": "rkb = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "total",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_connection_creation_total",
+    "line": 20255,
+    "texts": "rkb = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "total",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkb",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "total",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkb",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "total",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkb",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "total",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkb",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 2,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_consumer_assigned_partitions",
+    "line": 20353,
+    "texts": "assigned_partitions . int_value = 0",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "assigned_partitions",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_consumer_fetch_latency_avg",
+    "line": 20390,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_consumer_fetch_latency_max",
+    "line": 20398,
+    "texts": "max_fetch_time . int_value = ( ( _rkb_ - > rkb_telemetry . rd_avg_rollover . rkb_avg_fetch_latency . ra_v . maxv ) )",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_fetch_time",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "max_fetch_time",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_consumer_fetch_latency_max",
+    "line": 20398,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_fetch_time",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "_rkb_",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_produce_latency_avg",
+    "line": 20305,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_produce_latency_max",
+    "line": 20313,
+    "texts": "max_rtt . int_value = ( ( _rkb_ - > rkb_telemetry . rd_avg_rollover . rkb_avg_produce_latency . ra_v . maxv ) )",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_rtt",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "max_rtt",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_produce_latency_max",
+    "line": 20313,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_rtt",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "_rkb_",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_queue_time_avg",
+    "line": 20337,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_queue_time_max",
+    "line": 20345,
+    "texts": "max_queue_time . int_value = ( ( _rkb_ - > rkb_telemetry . rd_avg_rollover . rkb_avg_outbuf_latency . ra_v . maxv ) )",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_queue_time",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "max_queue_time",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_queue_time_max",
+    "line": 20345,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_queue_time",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "_rkb_",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_share_fetch_latency_avg",
+    "line": 20454,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_share_fetch_latency_max",
+    "line": 20462,
+    "texts": "max_share_fetch_latency . int_value = ( ( _rkb_ - > rkb_telemetry . rd_avg_rollover . rkb_avg_share_fetch_latency . ra_v . maxv ) )",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_share_fetch_latency",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "max_share_fetch_latency",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_share_fetch_latency_max",
+    "line": 20462,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_share_fetch_latency",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "_rkb_",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_share_fetch_size_avg",
+    "line": 20501,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_share_fetch_size_max",
+    "line": 20509,
+    "texts": "max_share_fetch_size . int_value = ( ( _rkb_ - > rkb_telemetry . rd_avg_rollover . rkb_avg_share_fetch_size . ra_v . maxv ) )",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_share_fetch_size",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "max_share_fetch_size",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_share_fetch_size_max",
+    "line": 20509,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_share_fetch_size",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "_rkb_",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_throttle_avg",
+    "line": 20321,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rd_avg_rollover",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_throttle_max",
+    "line": 20329,
+    "texts": "max_throttle . int_value = ( ( _rkb_ - > rkb_telemetry . rd_avg_rollover . rkb_avg_throttle . ra_v . maxv ) )",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_throttle",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "max_throttle",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "calculate_throttle_max",
+    "line": 20329,
+    "texts": "_rkb_ = & rk - > rk_brokers - > tqh_first",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "max_throttle",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "_rkb_",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 1,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "cio_file_st_get_meta_len",
+    "line": 2223,
+    "texts": "__qcore_returned_value = ( uint16_t ) ( ( uint8_t ) map [ 22 ] < < 8 ) | ( uint8_t ) map [ 23 ]",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "st",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 4,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "pb_decode_inner",
+    "line": 955,
+    "texts": "__qcore_returned_value = ( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "iter",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 4,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "pb_decode_inner",
+    "line": 975,
+    "texts": "__qcore_returned_value = ( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "iter",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "fields_seen",
+      "admitted": false,
+      "refusal": "hop"
+     }
+    ]
+   },
+   {
+    "count": 4,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "pb_decode_inner",
+    "line": 994,
+    "texts": "__qcore_returned_value = ( stream - > errmsg = ( stream ) - > errmsg ? ( stream ) - > errmsg : ( __qcore_literal__ ) ) , 0",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "fields_seen",
+      "admitted": false,
+      "refusal": "hop"
+     },
+     {
+      "rule": "12j",
+      "name": "fields_seen",
+      "admitted": false,
+      "refusal": "hop"
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_hdr_histogram_mean",
+    "line": 4242,
+    "texts": "__qcore_returned_value = ( double ) total / ( double ) hdr - > totalCount",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "it",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "it",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "it",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "it",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "it",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "12j",
+      "name": "it",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_broker_ApiVersion_supported0",
+    "line": 21047,
+    "texts": "__qcore_returned_value = ret . MaxVer",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "12j",
+      "name": "ret",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_broker_handle_ApiVersion",
+    "line": 22245,
+    "texts": "retry_ApiVersion = ( ( apis [ i ] . MaxVer ) )",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "request",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_cgrp_group_assignment_modify",
+    "line": 23283,
+    "texts": "rkcg - > rkcg_c . assignment_size = 0",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rkcg",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_conf_finalize",
+    "line": 26029,
+    "texts": "conf - > socket_timeout_ms = ( ( 900 ) )",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "conf",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 4,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_mock_cluster_new",
+    "line": 23419,
+    "texts": "mcluster - > defaults . replication_factor = ( ( broker_cnt ) )",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "mcluster",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 2,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_msgq_enq",
+    "line": 13819,
+    "texts": "__qcore_returned_value = ( int ) + + rkmq - > rkmq_msg_cnt",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 2,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_msgq_enq",
+    "line": 13819,
+    "texts": "__qcore_returned_value = ( int ) + + rkmq - > rkmq_msg_cnt",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 2,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_msgq_enq",
+    "line": 13820,
+    "texts": "__qcore_returned_value = ( int ) + + rkmq - > rkmq_msg_cnt",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 2,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_msgq_enq",
+    "line": 13820,
+    "texts": "__qcore_returned_value = ( int ) + + rkmq - > rkmq_msg_cnt",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 2,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_msgq_enq",
+    "line": 13820,
+    "texts": "__qcore_returned_value = ( int ) + + rkmq - > rkmq_msg_cnt",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 2,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_msgq_enq",
+    "line": 13820,
+    "texts": "__qcore_returned_value = ( int ) + + rkmq - > rkmq_msg_cnt",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 1,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_msgq_enq_sorted0",
+    "line": 20307,
+    "texts": "__qcore_returned_value = + + rkmq - > rkmq_msg_cnt",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 1,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_msgq_find_pos",
+    "line": 20325,
+    "texts": "curr = start_pos ? start_pos : rd_kafka_msgq_first rkmq",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     },
+     {
+      "rule": "10t",
+      "name": "rkm",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 5,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_msgset_writer_write_msgq",
+    "line": 20047,
+    "texts": "size_t max_msg_size = ( ( ( size_t ) msetw - > msetw_rkb - > rkb_rk - > rk_conf . batch_size ) )",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "msetw",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_send_push_telemetry",
+    "line": 20910,
+    "texts": "rk - > rk_telemetry . state = RD_KAFKA_TELEMETRY_PUSH_SENT",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rk",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "rd_kafka_share_fetch_reply_handle",
+    "line": 21251,
+    "texts": "rko_orig - > rko_u . share_fetch . records_fetched = 0",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "rko_orig",
+      "admitted": true,
+      "refusal": null
+     }
+    ]
+   },
+   {
+    "count": 3,
+    "position": "typed-place",
+    "of_position": "statement",
+    "function": "utf16_literal_to_utf8",
+    "line": 1886,
+    "texts": "utf8_position = unsigned char utf8_length - 1",
+    "new_admitted": false,
+    "places": [
+     {
+      "rule": "10t",
+      "name": "output_pointer",
+      "admitted": false,
+      "refusal": "element-place"
+     }
+    ]
+   }
+  ],
+  "only_run": []
+ }
+}
