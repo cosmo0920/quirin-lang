@@ -369,6 +369,9 @@ impl StatementIndex {
 
     /// The actual at `index` of the one call of `callee` whose actual there is
     /// exactly `texts` on `line`.
+    // Rule 12q's `decisions` is the eighth: the call's identity (callee,
+    // index, arity), its tokens and line, the premise and the record.
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn argument(
         &self,
         callee: &str,
