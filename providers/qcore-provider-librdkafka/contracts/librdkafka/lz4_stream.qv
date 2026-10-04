@@ -111,3 +111,109 @@ contract {
     ensures normal resource_borrowed(LZ4_stream);
     ensures normal resource_return_none();
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL: three one-shot LZ4 buffer functions
+//
+// THREE TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading each
+// body at both audited revisions (`lib/librdkafka-2.15.0/src/lz4.c` and
+// `lz4hc.c` are byte-identical at `66910c10` and `046accf6`). Each is the only
+// uncontracted call of the deprecated wrappers in its own unit, every one a
+// `return CALLEE(...)` over its formals: `LZ4_compress_HC` of
+// `LZ4_compressHC`, `LZ4_compressHC2`, `LZ4_compressHC_limitedOutput` and
+// `LZ4_compressHC2_limitedOutput` (`lz4hc.c`); `LZ4_decompress_unsafe_generic`
+// of `LZ4_decompress_fast`, `_fast_withPrefix64k` and `_fast_extDict`;
+// `LZ4_compress_default` of `LZ4_compress` and `LZ4_compress_limitedOutput`
+// (`lz4.c`).
+//
+// ## `LZ4_compress_HC`, read from `lz4hc.c:958-973`
+//
+//     int LZ4_compress_HC(const char* src, char* dst, int srcSize, int dstCapacity, int compressionLevel)
+//     {
+//         int cSize;
+//     #if defined(LZ4HC_HEAPMODE) && LZ4HC_HEAPMODE==1
+//         LZ4_streamHC_t* const statePtr = (LZ4_streamHC_t*)ALLOC(sizeof(LZ4_streamHC_t));
+//         if (statePtr==NULL) return 0;
+//     #else
+//         LZ4_streamHC_t state;
+//         LZ4_streamHC_t* const statePtr = &state;
+//     #endif
+//         cSize = LZ4_compress_HC_extStateHC(statePtr, src, dst, srcSize, dstCapacity, compressionLevel);
+//     #if defined(LZ4HC_HEAPMODE) && LZ4HC_HEAPMODE==1
+//         FREEMEM(statePtr);
+//     #endif
+//         return cSize;
+//     }
+//
+// `LZ4HC_HEAPMODE` defaults to 1 (`:46-48`): the state is allocated and freed
+// on every path that allocated it, or is a local. Either way the state, which
+// `LZ4_compress_HC_extStateHC` fills with pointers into `src`, dies with the
+// call, so nothing given outlives it. `src` is read, `dst` written up to
+// `dstCapacity`, and the result is a byte count (0 on failure).
+//
+// ## `LZ4_decompress_unsafe_generic`, read from `lz4.c:1799-1896`
+//
+// A `LZ4_FORCE_INLINE` (`static inline`) loop that reads `istart`, copies
+// literals and matches into `ostart` (from `ostart`'s own prefix or from
+// `dictStart`), and returns the bytes read or -1. It allocates nothing and
+// stores no pointer outside its locals.
+//
+// ## `LZ4_compress_default`, read from `lz4.c:1440-1443`
+//
+// `return LZ4_compress_fast(src, dst, srcSize, maxOutputSize, 1);`, whose state
+// (`:1421-1437`) is a local (`LZ4_HEAPMODE` defaults to 0, `:43-45`) or
+// `ALLOC`ed and `FREEMEM`ed around the one `LZ4_compress_fast_extState` call.
+//
+// ## Custody
+//
+// Every pointer formal is read or written through and not stored, freed or
+// transferred: `resource_borrowed`; every result is an `int`:
+// `resource_return_none()`. The stream-state forms are NOT declared here: the
+// `_extState`, `_extStateHC` and `_continue` functions leave pointers into
+// `src` in a state the caller owns (W48-CALLEE-DECISION-TABLE class 1).
+//
+// ## ABI (constraint 8)
+//
+// `const char *` and `const BYTE *` (`typedef uint8_t BYTE;`, `:307`) are
+// `ptr<const, u8>`; `char *` and `BYTE *` `ptr<mut, u8>`; `int` `i32`;
+// `size_t` `usize`. `LZ4_decompress_unsafe_generic` is `static`, one
+// definition in the tree.
+//
+// NOT CLAIMED: bounds (that `dst` holds `dstCapacity` bytes, or that the
+// unsafe decoder stays inside `ostart`, which is the caller's premise by its
+// name), the compressed format, or the result's value.
+
+// --- one-shot high-compression into a caller buffer ------------------------
+extern fn LZ4_compress_HC(src: ptr<const, u8>, dst: ptr<mut, u8>, srcSize: i32, dstCapacity: i32, compressionLevel: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(src);
+    ensures normal resource_borrowed(dst);
+    ensures normal resource_borrowed(srcSize);
+    ensures normal resource_borrowed(dstCapacity);
+    ensures normal resource_borrowed(compressionLevel);
+    ensures normal resource_return_none();
+};
+
+// --- the unchecked decoder over caller buffers ------------------------------
+extern fn LZ4_decompress_unsafe_generic(istart: ptr<const, u8>, ostart: ptr<mut, u8>, decompressedSize: i32, prefixSize: usize, dictStart: ptr<const, u8>, dictSize: usize) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(istart);
+    ensures normal resource_borrowed(ostart);
+    ensures normal resource_borrowed(decompressedSize);
+    ensures normal resource_borrowed(prefixSize);
+    ensures normal resource_borrowed(dictStart);
+    ensures normal resource_borrowed(dictSize);
+    ensures normal resource_return_none();
+};
+
+// --- one-shot default compression into a caller buffer ---------------------
+extern fn LZ4_compress_default(src: ptr<const, u8>, dst: ptr<mut, u8>, srcSize: i32, maxOutputSize: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(src);
+    ensures normal resource_borrowed(dst);
+    ensures normal resource_borrowed(srcSize);
+    ensures normal resource_borrowed(maxOutputSize);
+    ensures normal resource_return_none();
+};

@@ -250,3 +250,110 @@ contract {
     ensures normal resource_borrowed(size);
     ensures normal resource_return_interior(arena, nullable);
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL: the kvlist count and four copying
+// ## inserts
+//
+// FIVE TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading each
+// body at both audited revisions (`lib/cfl/src/cfl_kvlist.c`,
+// `cfl_variant.c` and `cfl_container.c` are byte-identical at `66910c10` and
+// `046accf6`). They sit in this module, the crate's one resource-view module
+// besides `time.qv`, because one new kvlist module would add a selected
+// module for five declarations.
+//
+// `cfl_kvlist_count` is the only uncontracted call of `ctr_attributes_count`
+// (`lib/ctraces/src/ctr_attributes.c:49-52`) and of `get_attributes_count`
+// (`ctr_encode_opentelemetry.c`). Each insert is the only uncontracted call of
+// the ctraces setter of its type (`ctr_attributes_set_string`, `_int64`,
+// `_bool`, `_double`, `ctr_attributes.c:54-76`), which the ctraces crate now
+// declares on this reading (`ctraces/context_lifetime.qv`).
+//
+// ## `cfl_kvlist_count`, read from `cfl_kvlist.c:698-705`
+//
+// `if (list == NULL) return 0; return cfl_list_size(&list->list);` — a count
+// of the list's links.
+//
+// ## The inserts, read from `cfl_kvlist.c:561-578`, `:601-639` and the `_s`
+// ## forms at `:162-188`, `:245-351`
+//
+// Each NULL-tests `list` and `key` (and `value` for the string), takes
+// `strlen(key)` and calls its `_s` form, which:
+//
+//   1. creates a NEW variant in `list->arena` holding a COPY of the value:
+//      `cfl_variant_create_from_string_s_in(..., referenced = CFL_FALSE)`
+//      copies the string with `cfl_sds_create_len_in` (`cfl_variant.c:437-473`);
+//      the int64, bool and double forms store the scalar
+//      (`:497-547`);
+//   2. calls `cfl_kvlist_insert_s` (`:439-496`), which allocates a pair, COPIES
+//      `key` with `cfl_sds_create_len_in`, moves the new variant into the list
+//      (`cfl_container_move_variant_to_kvlist`, `cfl_container.c:526-575`) and
+//      links the pair into `list->list`; on any failure it frees what it
+//      allocated, and the `_s` form destroys the new variant and returns -2.
+//
+// So every new allocation is owned by `list` (released by
+// `cfl_kvlist_destroy`), the caller's `key` and value are copied and never
+// retained, and nothing the caller owns changes hands.
+//
+// ## NOT the array, kvlist, reference or bytes inserts
+//
+// `cfl_kvlist_insert_array`/`_kvlist` wrap the caller's container in a variant
+// that the list takes on success (and give back on failure), and
+// `cfl_kvlist_insert_reference`/`_bytes(..., referenced)` keep the caller's
+// pointer: custody-taking or retaining readings, left to the user
+// (W48-CALLEE-DECISION-TABLE). They are not declared.
+//
+// ## Custody and ABI (constraint 8)
+//
+// Every pointer formal `resource_borrowed`, every scalar `resource_borrowed`,
+// every result an `int`: `resource_return_none()`. Prototypes
+// `include/cfl/cfl_kvlist.h:66-101` agree with the definitions:
+// `struct cfl_kvlist *` and `char *` are `ptr<mut, u8>`, `int` `i32`,
+// `int64_t` `i64`, `double` `f64`.
+//
+// NOT CLAIMED: a duplicate key (the insert appends; lookups find the first),
+// the arena's capacity, or the list's contents.
+
+// --- the number of pairs in a kvlist ----------------------------------------
+extern fn cfl_kvlist_count(list: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_return_none();
+};
+
+// --- copying inserts ---------------------------------------------------------
+extern fn cfl_kvlist_insert_string(list: ptr<mut, u8>, key: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_kvlist_insert_bool(list: ptr<mut, u8>, key: ptr<mut, u8>, value: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_kvlist_insert_int64(list: ptr<mut, u8>, key: ptr<mut, u8>, value: i64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn cfl_kvlist_insert_double(list: ptr<mut, u8>, key: ptr<mut, u8>, value: f64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};

@@ -6,6 +6,33 @@
   "normalisation": "c-tokens-v1",
   "pinned": [
     {
+      "function": "_cio_file_up",
+      "module": "chunkio/chunk_residency.qv",
+      "contract_sha256": "c5a4a55ac9057208da1f94c1ab7073f7513ece7f4e11c06ca4d059abf5776aeb",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/chunkio/src/cio_file.c",
+              "kind": "definition",
+              "declaration_sha256": "91a71f3db9a2a385d5a6fedcd43fad36c9b17b9978c7d5969fa3a40c01a342d2",
+              "body_sha256": "8baba1719619e14995993f9e6b5133402da2819878dced24010dfcbec9f995a8"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cio_chunk_close",
       "module": "chunkio/resource_open_close.qv",
       "contract_sha256": "4e05d5ca414bbb75d3dbbec8d81e23e030162acd061112f1ed0587cab39b59d8",

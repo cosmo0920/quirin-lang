@@ -115,3 +115,37 @@ contract {
     ensures normal resource_borrowed(ch);
     ensures normal resource_return_none();
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL: `_cio_file_up`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (`lib/chunkio/src/cio_file.c` is byte-identical at
+// `66910c10` and `046accf6`). It is the body `cio_chunk_up_force`'s
+// declaration above already reads (`cio_file.c:816-883`), and the only
+// uncontracted call of its two wrappers in the same unit, `cio_file_up`
+// (`:889-892`, `return _cio_file_up(ch, CIO_TRUE);`) and `cio_file_up_force`
+// (`:901-904`, `CIO_FALSE`).
+//
+// It refuses when `cf = ch->backend` is already mapped or open; when
+// `enforced`, refuses past the context's `max_chunks_up` (`open_and_up`,
+// `:564-571`, a comparison of two counters); then opens the native file,
+// updates `cf->fs_size` and maps the content, and on `CIO_CORRUPTED` or
+// `CIO_RETRY` closes the descriptor it just opened. It frees neither `ch` nor
+// `ch->backend`, stores `ch` nowhere, and returns an `int` status. The
+// caller's custody of the chunk is unchanged: `resource_borrowed(ch)`, the
+// scalar `enforced` `resource_borrowed`, `resource_return_none()`, exactly
+// `cio_chunk_up_force`'s reading, with the same NOT CLAIMED
+// (`NEIGHBOURS-RESIDENCY-ENDPOINTS`: the descriptor and the mapping live inside
+// the chunk and are not tracked here).
+//
+// ABI: `static int _cio_file_up(struct cio_chunk *ch, int enforced)`, one
+// definition in the tree; `ptr<mut, u8>`, `i32`, `-> i32`.
+
+// --- open and map a file chunk's content -----------------------------------
+extern fn _cio_file_up(ch: ptr<mut, u8>, enforced: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(ch);
+    ensures normal resource_borrowed(enforced);
+    ensures normal resource_return_none();
+};

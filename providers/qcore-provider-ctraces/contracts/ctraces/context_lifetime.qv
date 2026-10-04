@@ -135,3 +135,117 @@ contract {
     ensures normal resource_borrowed(count);
     ensures normal resource_return_none();
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL: two msgpack tag readers and four
+// ## copying attribute setters
+//
+// SIX TRUSTED ASSUMPTIONS, pinned (contract spec C06.2) after reading each
+// body at both audited revisions. Each is the only uncontracted call of two
+// projected functions (main `3905139cd`):
+//
+// | callee | its callers |
+// | --- | --- |
+// | `ctr_mpack_consume_uint_tag` | `ctr_mpack_consume_uint32_tag`, `_uint64_tag` (`ctr_mpack_utils.c`) |
+// | `ctr_mpack_consume_int_tag` | `ctr_mpack_consume_int32_tag`, `_int64_tag` |
+// | `ctr_attributes_set_string`/`_int64`/`_bool`/`_double` | `ctr_span_set_attribute_*` and `ctr_span_event_set_attribute_*` of the same type (`ctr_span.c`) |
+//
+// ## The msgpack tag readers, read from `lib/ctraces/src/ctr_mpack_utils.c`
+// (`:110-139` and `:160-189` at `66910c10`; `:111-143` and `:167-199` at
+// `046accf6`)
+//
+// The shape `cmt_mpack_consume_uint_tag` is declared on
+// (`cmetrics/mpack_utils.qv`): both pointer formals NULL-tested, one
+// `mpack_read_tag(reader)`, the reader's error flag tested, and on an `int` or
+// `uint` tag one scalar written through `output_buffer`; an `int` status. The
+// two revisions differ only in a range check: `046accf6` refuses a negative
+// `int` into the unsigned reader and a `uint` above `INT64_MAX` into the
+// signed one (`CTR_MPACK_CORRUPT_INPUT_DATA_ERROR`) before the write. Neither
+// arm allocates, frees or stores a pointer, so the declaration below is true
+// at both.
+//
+// ## The setters, read from `lib/ctraces/src/ctr_attributes.c:54-76`
+// (identical text at `:58-80` of `046accf6`)
+//
+//     int ctr_attributes_set_string(struct ctrace_attributes *attr, char *key, char *value)
+//     {
+//         return cfl_kvlist_insert_string(attr->kv, key, value);
+//     }
+//
+// `_int64` and `_double` are the same over `cfl_kvlist_insert_int64`/`_double`;
+// `_bool` first returns -1 unless `b` is `CTR_TRUE` or `CTR_FALSE`. Each cfl
+// insert (`cfl/sds_lifetime.qv`, same card) copies `key` and the value into a
+// new pair the attribute list owns, so the caller's `key` and `value` stay
+// the caller's and nothing given is retained. The `_array` and `_kvlist`
+// setters are NOT declared: `cfl_kvlist_insert_array`/`_kvlist` take custody
+// of `value` on success only (W48-CALLEE-DECISION-TABLE).
+//
+// ## Custody
+//
+// Every pointer formal is read or written through and not stored, freed or
+// transferred: `resource_borrowed`; every result is an `int` status:
+// `resource_return_none()`.
+//
+// ## ABI (constraint 8)
+//
+// Prototypes `ctr_mpack_utils.h:37,40` and `ctr_attributes.h:35-38` agree with
+// the definitions. `mpack_reader_t *`, `int64_t *`, `uint64_t *`,
+// `struct ctrace_attributes *` and `char *` are `ptr<mut, u8>`; `int` `i32`,
+// `int64_t` `i64`, `double` `f64`.
+//
+// NOT CLAIMED: the decoded value, `*output_buffer` on a failure path, the
+// attribute list's contents, or what happens to an existing key.
+
+// --- one unsigned msgpack tag into a caller-supplied scalar slot -----------
+extern fn ctr_mpack_consume_uint_tag(reader: ptr<mut, u8>, output_buffer: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(output_buffer);
+    ensures normal resource_return_none();
+};
+
+// --- one signed msgpack tag into a caller-supplied scalar slot -------------
+extern fn ctr_mpack_consume_int_tag(reader: ptr<mut, u8>, output_buffer: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(reader);
+    ensures normal resource_borrowed(output_buffer);
+    ensures normal resource_return_none();
+};
+
+// --- copying attribute setters ----------------------------------------------
+extern fn ctr_attributes_set_string(attr: ptr<mut, u8>, key: ptr<mut, u8>, value: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(attr);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn ctr_attributes_set_bool(attr: ptr<mut, u8>, key: ptr<mut, u8>, b: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(attr);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(b);
+    ensures normal resource_return_none();
+};
+
+extern fn ctr_attributes_set_int64(attr: ptr<mut, u8>, key: ptr<mut, u8>, value: i64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(attr);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+extern fn ctr_attributes_set_double(attr: ptr<mut, u8>, key: ptr<mut, u8>, value: f64) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(attr);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};

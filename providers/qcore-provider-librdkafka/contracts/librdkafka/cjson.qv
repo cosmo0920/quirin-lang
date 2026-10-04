@@ -138,3 +138,57 @@ contract {
     ensures normal resource_released(item, nullable);
     ensures normal resource_return_none();
 };
+
+// ## Card W45-CALLEE-CASCADE-RESIDUAL: `cJSON_New_Item`
+//
+// ONE TRUSTED ASSUMPTION, pinned (contract spec C06.2) after reading the body
+// at both audited revisions (`lib/librdkafka-2.15.0/src/cJSON.c` is
+// byte-identical at `66910c10` and `046accf6`). It is the only uncontracted
+// call of ten projected functions in the same unit, each `item =
+// cJSON_New_Item(&global_hooks); if (item) { <fields> } return item;`:
+// `cJSON_CreateNull`, `_True`, `_False`, `_Bool`, `_Number`, `_Array`,
+// `_Object`, `_StringReference`, `_ObjectReference` and `_ArrayReference`
+// (`:2446-2603`). Measured on main `3905139cd`: the head of the 704 functions
+// blocked by uncontracted calls alone.
+//
+// ## The body, read from `lib/librdkafka-2.15.0/src/cJSON.c:241-250`
+//
+//     static cJSON *cJSON_New_Item(const internal_hooks * const hooks)
+//     {
+//         cJSON* node = (cJSON*)hooks->allocate(sizeof(cJSON));
+//         if (node)
+//         {
+//             memset(node, '\0', sizeof(cJSON));
+//         }
+//
+//         return node;
+//     }
+//
+//   * The result is a fresh allocation or NULL, handed to the caller:
+//     `resource_return_owned(nullable)`. `hooks->allocate` is `malloc` in
+//     `global_hooks` (`:186`; `internal_malloc` is `#define`d to `malloc` off
+//     MSVC, `:178`) unless `cJSON_InitHooks` installed a user allocator; the
+//     release is `cJSON_Delete` (above), which frees the node through the
+//     matching `deallocate` hook. The parse paths pass
+//     `&input_buffer->hooks`, a copy of `global_hooks` (`:1159`).
+//   * `hooks` is read (one indirect call through its first member) and not
+//     stored: `resource_borrowed`.
+//
+// ## ABI (constraint 8)
+//
+// `static`, one definition in the tree. `const internal_hooks * const` is one
+// object-pointer level to a const tagged struct (`typedef struct
+// internal_hooks {...} internal_hooks;`, `:156-161`), `ptr<const, u8>`;
+// `cJSON *` is `ptr<mut, u8>`.
+//
+// NOT CLAIMED: that `hooks->allocate` is `malloc` (a user hook pair is a
+// premise of whoever installed it); anything about `cJSON_InitHooks` changing
+// the hooks between an allocation and its release.
+
+// --- the cJSON node constructor --------------------------------------------
+extern fn cJSON_New_Item(hooks: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(hooks);
+    ensures normal resource_return_owned(nullable);
+};

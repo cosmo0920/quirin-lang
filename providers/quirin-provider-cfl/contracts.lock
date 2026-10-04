@@ -38,6 +38,166 @@
       ]
     },
     {
+      "function": "cfl_kvlist_count",
+      "module": "cfl/sds_lifetime.qv",
+      "contract_sha256": "9ff5af34f51bbc0732f4f044c1557f393afca2170c5aa2903ebe25fc1a62a62f",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cfl/include/cfl/cfl_kvlist.h",
+              "kind": "declaration",
+              "declaration_sha256": "3fa2dab870f69098a0f8fc91c2bf384255d4fff802d68d7e041f300e2c746470"
+            },
+            {
+              "path": "lib/cfl/src/cfl_kvlist.c",
+              "kind": "definition",
+              "declaration_sha256": "3fa2dab870f69098a0f8fc91c2bf384255d4fff802d68d7e041f300e2c746470",
+              "body_sha256": "605163fada4461b1505573e3a4ce43de60b99126cf7222c52951923382ba9f7f"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cfl_kvlist_insert_bool",
+      "module": "cfl/sds_lifetime.qv",
+      "contract_sha256": "adaadfcc2ea1d1c205ebcf0ff83cc5cec15a7c05a50ae081cfdd44d492f3c8d4",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cfl/include/cfl/cfl_kvlist.h",
+              "kind": "declaration",
+              "declaration_sha256": "704435a6d34dd5a873236cfee61c4a4ccfa4909f7fa926be437f3ce342e49846"
+            },
+            {
+              "path": "lib/cfl/src/cfl_kvlist.c",
+              "kind": "definition",
+              "declaration_sha256": "704435a6d34dd5a873236cfee61c4a4ccfa4909f7fa926be437f3ce342e49846",
+              "body_sha256": "da4ba1a05bad05368b07ec4767102ea547c67db5647e82a53b24db94147be3c5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cfl_kvlist_insert_double",
+      "module": "cfl/sds_lifetime.qv",
+      "contract_sha256": "14560ac3c0f5824e184baf0c2a65f2be6a1e1a1e285063ee199e02522add786c",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cfl/include/cfl/cfl_kvlist.h",
+              "kind": "declaration",
+              "declaration_sha256": "525b18afdeadb42257b05c69e53be227192437e299138f02e6a85890c9638810"
+            },
+            {
+              "path": "lib/cfl/src/cfl_kvlist.c",
+              "kind": "definition",
+              "declaration_sha256": "525b18afdeadb42257b05c69e53be227192437e299138f02e6a85890c9638810",
+              "body_sha256": "408caf0fcfeff6a439ac35727ca645004fc7bc95db63595ecff1938a407021af"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cfl_kvlist_insert_int64",
+      "module": "cfl/sds_lifetime.qv",
+      "contract_sha256": "9b0d192d745798487454631e03eb20c9638c2878d6dfa1a3cdc4e6dfc8fc830b",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cfl/include/cfl/cfl_kvlist.h",
+              "kind": "declaration",
+              "declaration_sha256": "4661a912a98eb9f09a87d17f839276d830899b6d9e56f43b4f5b07af64a637f5"
+            },
+            {
+              "path": "lib/cfl/src/cfl_kvlist.c",
+              "kind": "definition",
+              "declaration_sha256": "4661a912a98eb9f09a87d17f839276d830899b6d9e56f43b4f5b07af64a637f5",
+              "body_sha256": "05f015ba3a3593dd3150f79d76526e527365d452c24fa9dfa5b0f71f921d7386"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "function": "cfl_kvlist_insert_string",
+      "module": "cfl/sds_lifetime.qv",
+      "contract_sha256": "b044b4672faad57bea7e781c5264779594df6c23d8fe6b0277fb3888e9b4206b",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/cfl/include/cfl/cfl_kvlist.h",
+              "kind": "declaration",
+              "declaration_sha256": "54031c7887f1c8259965e6cd3164064c1772a11e64e284757418ddaee9b3246e"
+            },
+            {
+              "path": "lib/cfl/src/cfl_kvlist.c",
+              "kind": "definition",
+              "declaration_sha256": "54031c7887f1c8259965e6cd3164064c1772a11e64e284757418ddaee9b3246e",
+              "body_sha256": "0b737cba5da8b5985ec16c4602b52d524984062befcae309aa4b59f86b3747a8"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "function": "cfl_sds_destroy",
       "module": "cfl/sds_lifetime.qv",
       "contract_sha256": "35529034b5141fb407fda784094208c87f4295ba829e14e0066d6de5fb44814e",
