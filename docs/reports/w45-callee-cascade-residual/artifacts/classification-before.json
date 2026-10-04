@@ -1,99 +1,381 @@
 {
- "note": "W45-CALLEE-CASCADE-RESIDUAL, task 1: every callee deciding at least 2 corpus functions alone on the BEFORE run (main 3905139cd, ce57d194...), placed by reading its body at 66910c10 and 046accf6 (scripts/body.py). `contract`: written by this card; `decision-N`: W48-CALLEE-DECISION-TABLE class N (left to the user); `reader-*`: the declared-ABI reader cannot project the C declaration, so any declaration is withdrawn at every call site (W43-LIBC-ABI-READER-SHAPES and LOADER-ABI-INLINE-FNPTR-DECLARATOR); `destructor`: W44-CALLEE-DESTRUCTOR-SUMMARY (a release whose callers release an element of a container or wrap a void * formal; predicted yield at most 1); `other`: the reason is given.",
+ "note": "W45-CALLEE-CASCADE-RESIDUAL, task 1: every callee deciding at least 2 corpus functions alone on the BEFORE run (main 3905139cd, ce57d194...), placed by reading its body at 66910c10 and 046accf6 (scripts/body.py). `contract`: written by this card; `decision-N`: W48-CALLEE-DECISION-TABLE class N (left to the user); `reader-*`: the declared-ABI reader cannot project the C declaration, so any declaration is withdrawn at every call site (W43-LIBC-ABI-READER-SHAPES); `destructor`: W44-CALLEE-DESTRUCTOR-SUMMARY (a release whose callers release an element of a container or wrap a void * formal; predicted yield at most 1); `other`: the reason is given.",
  "callees": {
-  "cJSON_New_Item": ["contract", "static; allocates through hooks->allocate, zeroes, returns the node or NULL: owned nullable result, hooks borrowed"],
-  "LZ4_decompress_generic": ["reader-enum", "parameters earlyEnd_directive and dict_directive are untagged enum typedefs (lz4.c:1947-1948)"],
-  "cmt_mpack_unpack_array": ["decision-1", "invokes entry_processor_callback(reader, index, context) per entry"],
-  "ctr_mpack_unpack_array": ["decision-1", "invokes entry_processor_callback(reader, index, context) per entry"],
-  "rd_kafka_confval_set_type": ["decision-1", "RD_KAFKA_CONFVAL_PTR arm stores valuep into confval->u.PTR (retains a given pointer); also an enum parameter and result"],
-  "LZ4_compress_HC": ["contract", "one-shot: the state is a local (or ALLOC then FREEMEM under LZ4HC_HEAPMODE); src read, dst written, int result"],
-  "LZ4_compress_HC_extStateHC": ["decision-1", "initialises the caller's state with pointers into src (LZ4HC_init_internal), which outlive the call"],
-  "rd_kafka_admin_result_ret_groups": ["decision-8", "returns rko->rko_u.admin_result.results.rl_elems, a child array the op's list owns: the extended interior reading"],
-  "rd_kafka_error_new_v": ["reader-enum", "rd_kafka_resp_err_t code (enum typedef); result owned"],
-  "rd_kafka_interceptor_method_add": ["decision-1", "retains ic_opaque and the callback in a list element (recorded by CG10-INDIRECT-ACCESS-SOLE-RESIDUALS)"],
-  "sds_cat_safe": ["decision-2", "static inline wrapper of cfl_sds_cat_safe (in-place reallocation)"],
-  "cfl_sds_cat_safe": ["decision-2", "in-place reallocation of *buf (class 2 since W48-CALLEE-CLOSURE-R3)"],
-  "rd_kafka_error_new": ["reader-enum", "rd_kafka_resp_err_t code; variadic"],
-  "rd_list_destroy": ["decision-1", "runs rl_free_cb on every element, then frees rl only when RD_LIST_F_ALLOCATED: a callback over retained elements and a flag-conditional release"],
-  "LZ4_compress_HC_continue": ["decision-1", "the stream retains pointers into src as its dictionary"],
-  "LZ4_compress_fast_continue": ["decision-1", "the stream retains pointers into src as its dictionary"],
-  "LZ4_decompress_unsafe_generic": ["contract", "reads istart and the dictionary, writes ostart, returns the bytes read or -1; no allocation"],
-  "rd_kafka_queue_new0": ["decision-3", "rd_kafka_q_keep(rkq) (reference count) and stores rk and rkq in the new handle"],
-  "add_item_to_object": ["decision-1", "takes custody of item (links it into object; a constant key or a reference changes the release on cJSON_Delete)"],
-  "cmt_mpack_unpack_map": ["decision-1", "dispatches callbacks from a handler table with context"],
-  "ctr_mpack_unpack_map": ["decision-1", "dispatches callbacks from a handler table with context"],
-  "format_metric": ["decision-2", "appends to *buf through cfl_sds_cat_safe (three static bodies, one per encoder)"],
-  "rd_flags2str": ["reader-const-pp", "const char **desc: a pointer to pointer to const, which the reader does not project"],
-  "rd_kafka_admin_result_ret_resources": ["decision-8", "as rd_kafka_admin_result_ret_groups"],
-  "rd_kafka_admin_result_ret_topics": ["decision-8", "as rd_kafka_admin_result_ret_groups"],
-  "rd_kafka_assignor_add": ["decision-1", "registers callbacks and opaque in a new assignor; also inline function-pointer declarators and enum parameters"],
-  "rd_list_add": ["decision-1", "retains elem"],
-  "rd_list_clear": ["decision-1", "runs rl_free_cb on every retained element"],
-  "ctr_attributes_set_int64": ["contract", "copies the scalar into a new variant through cfl_kvlist_insert_int64"],
-  "ctr_attributes_set_string": ["contract", "cfl_kvlist_insert_string copies key and value (referenced = CFL_FALSE)"],
-  "append_to_ring_buffer": ["decision-1", "stores ins in a new input_chunk_raw handed to the ring buffer (retains a given pointer); corpus 2, system 2"],
-  "ctr_attributes_set_bool": ["contract", "copies the flag"],
-  "ctr_attributes_set_double": ["contract", "copies the value"],
-  "pb_write": ["decision-1", "invokes stream->callback"],
-  "rd_atomic32_add": ["decision-3", "backs rd_refcnt_add0 (rd.h:351)"],
-  "rd_kafka_topic_partition_list_destroy": ["decision-3", "destroys every element through rd_kafka_topic_partition_destroy0, which drops the toppar references in _private"],
-  "rd_kafka_topic_partition_list_difference0": ["reader-fnptr-inline", "int(cmp)(...) and unsigned int(hash)(...) inline declarators"],
-  "LZ4_compress_default": ["contract", "LZ4_compress_fast(src, dst, srcSize, maxOutputSize, 1): a local or heap-and-freed state"],
-  "LZ4_compress_fast_extState": ["decision-1", "initialises the caller's state, which keeps pointers relative to src"],
-  "_cio_file_up": ["contract", "the body cio_chunk_up_force's declaration already reads (chunk_residency.qv): opens and maps inside ch->backend, frees nothing, int status"],
-  "_mk_event_wait_2": ["decision-7", "Monkey backend-selected static inline body"],
-  "add_item_to_array": ["decision-1", "takes custody of item"],
-  "cJSON_ParseWithLengthOpts": ["decision-1", "on failure stores value into the file-scope global_error (retains a given pointer); const char ** parameter"],
-  "call_once": ["decision-1", "runs a callback once (pthread_once's class)"],
-  "cfl_kvlist_count": ["contract", "NULL test then cfl_list_size(&list->list): a scalar read"],
-  "ctr_attributes_set_array": ["decision-1", "cfl_kvlist_insert_array takes custody of value on success only (cfl_kvlist.c:353-381)"],
-  "ctr_attributes_set_kvlist": ["decision-1", "cfl_kvlist_insert_kvlist takes custody of value on success only (cfl_kvlist.c:407-437)"],
-  "ctr_mpack_consume_int_tag": ["contract", "cmt_mpack_consume_uint_tag's shape (mpack_utils.qv): scalar into a caller slot; 046accf6 adds a range check"],
-  "ctr_mpack_consume_uint_tag": ["contract", "as ctr_mpack_consume_int_tag; 046accf6 adds a sign check"],
-  "get_object_item": ["decision-8", "returns a child node of object: the extended interior reading"],
-  "load_descriptor_values": ["contract", "decodes descriptor words into iter's own fields (pointers derived from iter->message); bool result"],
-  "mk_fifo_queue_destroy": ["destructor", "unlinks q from the fifo list and frees it; both callers take q from that list"],
-  "mk_header_prepare": ["decision-2", "allocates header buffers (mk_string_build) into sr's iov with free-on-release flags: an in-place lifecycle of sr"],
-  "pb_encode_varint": ["decision-1", "pb_write's callback"],
-  "print": ["other", "a static cJSON helper named `print`: a name-keyed declaration of so generic a name is not written (ADD-NAME-COLLISION); owned result"],
-  "rd_kafka_AclBinding_destroy": ["destructor", "callers release an array element or a void * formal"],
-  "rd_kafka_AclBinding_new0": ["reader-enum", "five enum parameters"],
-  "rd_kafka_AlterConsumerGroupOffsets_destroy": ["decision-3", "rd_kafka_topic_partition_list_destroy of the interior list"],
-  "rd_kafka_ConfigResource_destroy": ["decision-1", "rd_list_destroy of the embedded list"],
-  "rd_kafka_ConsumerGroupDescription_new": ["reader-enum", "enum parameters"],
-  "rd_kafka_DeleteConsumerGroupOffsets_destroy": ["decision-3", "as AlterConsumerGroupOffsets_destroy"],
-  "rd_kafka_ListConsumerGroupOffsets_destroy": ["decision-3", "as AlterConsumerGroupOffsets_destroy"],
-  "rd_kafka_NewPartitions_destroy": ["decision-1", "rd_list_destroy of the embedded list"],
-  "rd_kafka_NewTopic_destroy": ["decision-1", "rd_list_destroy of two embedded lists"],
-  "rd_kafka_UserScramCredentialAlteration_destroy": ["destructor", "callers release an array element or a void * formal"],
-  "rd_kafka_aborted_txns_next_offset": ["contract", "an AVL lookup and a list index read; may advance the node's scalar index"],
-  "rd_kafka_admin_add_config0": ["reader-enum", "rd_kafka_resp_err_t result"],
-  "rd_kafka_anyconf_desensitize": ["contract", "overwrites sensitive string values in place (rd_kafka_desensitize_str); frees and stores nothing"],
-  "rd_kafka_anyconf_dump": ["reader-const-pp", "const char ** result"],
-  "rd_kafka_destroy_app": ["decision-1", "terminates and joins threads; returns early without rd_kafka_destroy_final under F_IMMEDIATE (a flag-conditional release)"],
-  "rd_kafka_dump0": ["contract", "prints to fp; balanced locks when `locks`"],
-  "rd_kafka_err_action": ["reader-enum", "rd_kafka_resp_err_t err; variadic"],
-  "rd_kafka_metadata_copy_internal": ["contract", "copies src into one rd_tmpabuf allocation (asserting on failure) and returns it; released by rd_kafka_metadata_destroy (rd_free)"],
-  "rd_kafka_metadata_new_topic_mockv_internal": ["other", "takes the caller's va_list (rule 11w); test-only"],
-  "rd_kafka_oauthbearer_set_token_failure": ["reader-enum", "rd_kafka_resp_err_t result"],
-  "rd_kafka_op_destroy": ["decision-1", "runs the op callback, drops references"],
-  "rd_kafka_parse_Metadata0": ["decision-2", "an owned metadata into the out slot *mdip on success"],
-  "rd_kafka_q_pop_serve0": ["decision-1", "serves ops through callback with opaque"],
-  "rd_kafka_q_serve0": ["decision-1", "serves ops through callback with opaque"],
-  "rd_kafka_q_serve_maybe_consume": ["decision-1", "serves ops through callback with opaque"],
-  "rd_kafka_topic_partition_destroy0": ["decision-3", "drops the toppar reference held in _private"],
-  "rd_kafka_topic_partition_get_private": ["decision-8", "the class-8 callee already in the table"],
-  "rd_kafka_topic_partition_list_intersection0": ["reader-fnptr-inline", "inline function-pointer declarators"],
-  "rd_kafka_topic_partition_list_union0": ["reader-fnptr-inline", "inline function-pointer declarators"],
-  "rd_kafka_topic_partition_result_destroy": ["decision-3", "rd_kafka_topic_partition_destroy of the interior partition"],
-  "rd_kafka_toppars_pause_resume": ["reader-enum", "rd_kafka_resp_err_t result"],
-  "rd_kafka_txn_clear_partitions_flag": ["decision-3", "rd_kafka_toppar_destroy on every listed toppar"],
-  "rd_slice_reader0": ["reader-const-pp", "const void **p"],
-  "replace_item_in_object": ["decision-1", "takes custody of replacement"],
-  "sched_thread_cleanup": ["destructor", "destroys every element of a list"],
-  "setupRackAwareAssignment0": ["decision-2", "owned metadata into a caller slot when given; also char **subscriptions[] (unreadable)"],
-  "unit_test_telemetry": ["reader-fnptr-inline", "void (*set_metric_value)(...) inline declarator"],
-  "ut_init_member_internal": ["decision-2", "allocates member strings into the caller's rkgm (in-place construction)"],
-  "get_or_create_external_metadata_kvlist": ["decision-8", "surfaced on the AFTER (2 alone once the cfl_kvlist_insert_string leaves of its callers were decided): returns a child kvlist of root, fetched or created and inserted with cfl_kvlist_insert_kvlist (custody-taking)"]
+  "cJSON_New_Item": [
+   "contract",
+   "static; allocates through hooks->allocate, zeroes, returns the node or NULL: owned nullable result, hooks borrowed"
+  ],
+  "LZ4_decompress_generic": [
+   "reader-enum",
+   "parameters earlyEnd_directive and dict_directive are untagged enum typedefs (lz4.c:1947-1948)"
+  ],
+  "cmt_mpack_unpack_array": [
+   "decision-1",
+   "invokes entry_processor_callback(reader, index, context) per entry"
+  ],
+  "ctr_mpack_unpack_array": [
+   "decision-1",
+   "invokes entry_processor_callback(reader, index, context) per entry"
+  ],
+  "rd_kafka_confval_set_type": [
+   "decision-1",
+   "RD_KAFKA_CONFVAL_PTR arm stores valuep into confval->u.PTR (retains a given pointer); also an enum parameter and result"
+  ],
+  "LZ4_compress_HC": [
+   "contract",
+   "one-shot: the state is a local (or ALLOC then FREEMEM under LZ4HC_HEAPMODE); src read, dst written, int result"
+  ],
+  "LZ4_compress_HC_extStateHC": [
+   "decision-1",
+   "initialises the caller's state with pointers into src (LZ4HC_init_internal), which outlive the call"
+  ],
+  "rd_kafka_admin_result_ret_groups": [
+   "decision-8",
+   "returns rko->rko_u.admin_result.results.rl_elems, a child array the op's list owns: the extended interior reading"
+  ],
+  "rd_kafka_error_new_v": [
+   "reader-enum",
+   "rd_kafka_resp_err_t code (enum typedef); result owned"
+  ],
+  "rd_kafka_interceptor_method_add": [
+   "decision-1",
+   "retains ic_opaque and the callback in a list element (recorded by CG10-INDIRECT-ACCESS-SOLE-RESIDUALS)"
+  ],
+  "sds_cat_safe": [
+   "decision-2",
+   "static inline wrapper of cfl_sds_cat_safe (in-place reallocation)"
+  ],
+  "cfl_sds_cat_safe": [
+   "decision-2",
+   "in-place reallocation of *buf (class 2 since W48-CALLEE-CLOSURE-R3)"
+  ],
+  "rd_kafka_error_new": [
+   "reader-enum",
+   "rd_kafka_resp_err_t code; variadic"
+  ],
+  "rd_list_destroy": [
+   "decision-1",
+   "runs rl_free_cb on every element, then frees rl only when RD_LIST_F_ALLOCATED: a callback over retained elements and a flag-conditional release"
+  ],
+  "LZ4_compress_HC_continue": [
+   "decision-1",
+   "the stream retains pointers into src as its dictionary"
+  ],
+  "LZ4_compress_fast_continue": [
+   "decision-1",
+   "the stream retains pointers into src as its dictionary"
+  ],
+  "LZ4_decompress_unsafe_generic": [
+   "contract",
+   "reads istart and the dictionary, writes ostart, returns the bytes read or -1; no allocation"
+  ],
+  "rd_kafka_queue_new0": [
+   "decision-3",
+   "rd_kafka_q_keep(rkq) (reference count) and stores rk and rkq in the new handle"
+  ],
+  "add_item_to_object": [
+   "decision-1",
+   "takes custody of item (links it into object; a constant key or a reference changes the release on cJSON_Delete)"
+  ],
+  "cmt_mpack_unpack_map": [
+   "decision-1",
+   "dispatches callbacks from a handler table with context"
+  ],
+  "ctr_mpack_unpack_map": [
+   "decision-1",
+   "dispatches callbacks from a handler table with context"
+  ],
+  "format_metric": [
+   "decision-2",
+   "appends to *buf through cfl_sds_cat_safe (three static bodies, one per encoder)"
+  ],
+  "rd_flags2str": [
+   "reader-const-pp",
+   "const char **desc: a pointer to pointer to const, which the reader does not project"
+  ],
+  "rd_kafka_admin_result_ret_resources": [
+   "decision-8",
+   "as rd_kafka_admin_result_ret_groups"
+  ],
+  "rd_kafka_admin_result_ret_topics": [
+   "decision-8",
+   "as rd_kafka_admin_result_ret_groups"
+  ],
+  "rd_kafka_assignor_add": [
+   "decision-1",
+   "registers the assign and on_assignment callbacks and opaque in a new assignor; also enum parameters"
+  ],
+  "rd_list_add": [
+   "decision-1",
+   "retains elem"
+  ],
+  "rd_list_clear": [
+   "decision-1",
+   "runs rl_free_cb on every retained element"
+  ],
+  "ctr_attributes_set_int64": [
+   "contract",
+   "copies the scalar into a new variant through cfl_kvlist_insert_int64"
+  ],
+  "ctr_attributes_set_string": [
+   "contract",
+   "cfl_kvlist_insert_string copies key and value (referenced = CFL_FALSE)"
+  ],
+  "append_to_ring_buffer": [
+   "decision-1",
+   "stores ins in a new input_chunk_raw handed to the ring buffer (retains a given pointer); corpus 2, system 2"
+  ],
+  "ctr_attributes_set_bool": [
+   "contract",
+   "copies the flag"
+  ],
+  "ctr_attributes_set_double": [
+   "contract",
+   "copies the value"
+  ],
+  "pb_write": [
+   "decision-1",
+   "invokes stream->callback"
+  ],
+  "rd_atomic32_add": [
+   "decision-3",
+   "backs rd_refcnt_add0 (rd.h:351)"
+  ],
+  "rd_kafka_topic_partition_list_destroy": [
+   "decision-3",
+   "destroys every element through rd_kafka_topic_partition_destroy0, which drops the toppar references in _private"
+  ],
+  "rd_kafka_topic_partition_list_difference0": [
+   "decision-1",
+   "builds a map over b through the cmp and hash callbacks it is given (RD_MAP_INITIALIZER); returns a new list"
+  ],
+  "LZ4_compress_default": [
+   "contract",
+   "LZ4_compress_fast(src, dst, srcSize, maxOutputSize, 1): a local or heap-and-freed state"
+  ],
+  "LZ4_compress_fast_extState": [
+   "decision-1",
+   "initialises the caller's state, which keeps pointers relative to src"
+  ],
+  "_cio_file_up": [
+   "contract",
+   "the body cio_chunk_up_force's declaration already reads (chunk_residency.qv): opens and maps inside ch->backend, frees nothing, int status"
+  ],
+  "_mk_event_wait_2": [
+   "decision-7",
+   "Monkey backend-selected static inline body"
+  ],
+  "add_item_to_array": [
+   "decision-1",
+   "takes custody of item"
+  ],
+  "cJSON_ParseWithLengthOpts": [
+   "decision-1",
+   "on failure stores value into the file-scope global_error (retains a given pointer); const char ** parameter"
+  ],
+  "call_once": [
+   "decision-1",
+   "runs a callback once (pthread_once's class)"
+  ],
+  "cfl_kvlist_count": [
+   "contract",
+   "NULL test then cfl_list_size(&list->list): a scalar read"
+  ],
+  "ctr_attributes_set_array": [
+   "decision-1",
+   "cfl_kvlist_insert_array takes custody of value on success only (cfl_kvlist.c:353-381)"
+  ],
+  "ctr_attributes_set_kvlist": [
+   "decision-1",
+   "cfl_kvlist_insert_kvlist takes custody of value on success only (cfl_kvlist.c:407-437)"
+  ],
+  "ctr_mpack_consume_int_tag": [
+   "contract",
+   "cmt_mpack_consume_uint_tag's shape (mpack_utils.qv): scalar into a caller slot; 046accf6 adds a range check"
+  ],
+  "ctr_mpack_consume_uint_tag": [
+   "contract",
+   "as ctr_mpack_consume_int_tag; 046accf6 adds a sign check"
+  ],
+  "get_object_item": [
+   "decision-8",
+   "returns a child node of object: the extended interior reading"
+  ],
+  "load_descriptor_values": [
+   "contract",
+   "decodes descriptor words into iter's own fields (pointers derived from iter->message); bool result"
+  ],
+  "mk_fifo_queue_destroy": [
+   "destructor",
+   "unlinks q from the fifo list and frees it; both callers take q from that list"
+  ],
+  "mk_header_prepare": [
+   "decision-2",
+   "allocates header buffers (mk_string_build) into sr's iov with free-on-release flags: an in-place lifecycle of sr"
+  ],
+  "pb_encode_varint": [
+   "decision-1",
+   "pb_write's callback"
+  ],
+  "print": [
+   "other",
+   "a static cJSON helper named `print`: a name-keyed declaration of so generic a name is not written (ADD-NAME-COLLISION); owned result"
+  ],
+  "rd_kafka_AclBinding_destroy": [
+   "destructor",
+   "callers release an array element or a void * formal"
+  ],
+  "rd_kafka_AclBinding_new0": [
+   "reader-enum",
+   "five enum parameters"
+  ],
+  "rd_kafka_AlterConsumerGroupOffsets_destroy": [
+   "decision-3",
+   "rd_kafka_topic_partition_list_destroy of the interior list"
+  ],
+  "rd_kafka_ConfigResource_destroy": [
+   "decision-1",
+   "rd_list_destroy of the embedded list"
+  ],
+  "rd_kafka_ConsumerGroupDescription_new": [
+   "reader-enum",
+   "enum parameters"
+  ],
+  "rd_kafka_DeleteConsumerGroupOffsets_destroy": [
+   "decision-3",
+   "as AlterConsumerGroupOffsets_destroy"
+  ],
+  "rd_kafka_ListConsumerGroupOffsets_destroy": [
+   "decision-3",
+   "as AlterConsumerGroupOffsets_destroy"
+  ],
+  "rd_kafka_NewPartitions_destroy": [
+   "decision-1",
+   "rd_list_destroy of the embedded list"
+  ],
+  "rd_kafka_NewTopic_destroy": [
+   "decision-1",
+   "rd_list_destroy of two embedded lists"
+  ],
+  "rd_kafka_UserScramCredentialAlteration_destroy": [
+   "destructor",
+   "callers release an array element or a void * formal"
+  ],
+  "rd_kafka_aborted_txns_next_offset": [
+   "contract",
+   "an AVL lookup and a list index read; may advance the node's scalar index"
+  ],
+  "rd_kafka_admin_add_config0": [
+   "reader-enum",
+   "rd_kafka_resp_err_t result"
+  ],
+  "rd_kafka_anyconf_desensitize": [
+   "contract",
+   "overwrites sensitive string values in place (rd_kafka_desensitize_str); frees and stores nothing"
+  ],
+  "rd_kafka_anyconf_dump": [
+   "reader-const-pp",
+   "const char ** result"
+  ],
+  "rd_kafka_destroy_app": [
+   "decision-1",
+   "terminates and joins threads; returns early without rd_kafka_destroy_final under F_IMMEDIATE (a flag-conditional release)"
+  ],
+  "rd_kafka_dump0": [
+   "contract",
+   "prints to fp; balanced locks when `locks`"
+  ],
+  "rd_kafka_err_action": [
+   "reader-enum",
+   "rd_kafka_resp_err_t err; variadic"
+  ],
+  "rd_kafka_metadata_copy_internal": [
+   "contract",
+   "copies src into one rd_tmpabuf allocation (asserting on failure) and returns it; released by rd_kafka_metadata_destroy (rd_free)"
+  ],
+  "rd_kafka_metadata_new_topic_mockv_internal": [
+   "other",
+   "takes the caller's va_list (rule 11w); test-only"
+  ],
+  "rd_kafka_oauthbearer_set_token_failure": [
+   "reader-enum",
+   "rd_kafka_resp_err_t result"
+  ],
+  "rd_kafka_op_destroy": [
+   "decision-1",
+   "runs the op callback, drops references"
+  ],
+  "rd_kafka_parse_Metadata0": [
+   "decision-2",
+   "an owned metadata into the out slot *mdip on success"
+  ],
+  "rd_kafka_q_pop_serve0": [
+   "decision-1",
+   "serves ops through callback with opaque"
+  ],
+  "rd_kafka_q_serve0": [
+   "decision-1",
+   "serves ops through callback with opaque"
+  ],
+  "rd_kafka_q_serve_maybe_consume": [
+   "decision-1",
+   "serves ops through callback with opaque"
+  ],
+  "rd_kafka_topic_partition_destroy0": [
+   "decision-3",
+   "drops the toppar reference held in _private"
+  ],
+  "rd_kafka_topic_partition_get_private": [
+   "decision-8",
+   "the class-8 callee already in the table"
+  ],
+  "rd_kafka_topic_partition_list_intersection0": [
+   "decision-1",
+   "as difference0: cmp and hash callbacks"
+  ],
+  "rd_kafka_topic_partition_list_union0": [
+   "decision-1",
+   "as difference0: cmp and hash callbacks"
+  ],
+  "rd_kafka_topic_partition_result_destroy": [
+   "decision-3",
+   "rd_kafka_topic_partition_destroy of the interior partition"
+  ],
+  "rd_kafka_toppars_pause_resume": [
+   "reader-enum",
+   "rd_kafka_resp_err_t result"
+  ],
+  "rd_kafka_txn_clear_partitions_flag": [
+   "decision-3",
+   "rd_kafka_toppar_destroy on every listed toppar"
+  ],
+  "rd_slice_reader0": [
+   "reader-const-pp",
+   "const void **p"
+  ],
+  "replace_item_in_object": [
+   "decision-1",
+   "takes custody of replacement"
+  ],
+  "sched_thread_cleanup": [
+   "destructor",
+   "destroys every element of a list"
+  ],
+  "setupRackAwareAssignment0": [
+   "decision-2",
+   "owned metadata into a caller slot when given; also char **subscriptions[] (unreadable)"
+  ],
+  "unit_test_telemetry": [
+   "decision-1",
+   "a unit test that invokes its set_metric_value callback on a calloc'd rd_kafka_t"
+  ],
+  "ut_init_member_internal": [
+   "decision-2",
+   "allocates member strings into the caller's rkgm (in-place construction)"
+  ],
+  "get_or_create_external_metadata_kvlist": [
+   "decision-8",
+   "surfaced on the AFTER (2 alone once the cfl_kvlist_insert_string leaves of its callers were decided): returns a child kvlist of root, fetched or created and inserted with cfl_kvlist_insert_kvlist (custody-taking)"
+  ]
  }
 }

@@ -1,0 +1,105 @@
+population 704; decided alone by one callee 517
+unclassified (alone < 2)     callees  649  alone  278  pair  192
+decision-1                   callees   36  alone   94  pair    2
+      cmt_mpack_unpack_array 5
+      ctr_mpack_unpack_array 5
+      rd_kafka_confval_set_type 5
+      LZ4_compress_HC_extStateHC 4
+      rd_kafka_interceptor_method_add 4
+      rd_list_destroy 3
+      LZ4_compress_HC_continue 3
+      LZ4_compress_fast_continue 3
+      add_item_to_object 3
+      cmt_mpack_unpack_map 3
+      ctr_mpack_unpack_map 3
+      rd_kafka_assignor_add 3
+      rd_list_add 3
+      rd_list_clear 3
+      append_to_ring_buffer 2
+      pb_write 2
+      rd_kafka_topic_partition_list_difference0 2
+      LZ4_compress_fast_extState 2
+      add_item_to_array 2
+      cJSON_ParseWithLengthOpts 2
+      call_once 2
+      ctr_attributes_set_array 2
+      ctr_attributes_set_kvlist 2
+      pb_encode_varint 2
+      rd_kafka_ConfigResource_destroy 2
+      rd_kafka_NewPartitions_destroy 2
+      rd_kafka_NewTopic_destroy 2
+      rd_kafka_destroy_app 2
+      rd_kafka_op_destroy 2
+      rd_kafka_q_pop_serve0 2
+      rd_kafka_q_serve0 2
+      rd_kafka_q_serve_maybe_consume 2
+      rd_kafka_topic_partition_list_intersection0 2
+      rd_kafka_topic_partition_list_union0 2
+      replace_item_in_object 2
+      unit_test_telemetry 2
+contract                     callees   17  alone   45  pair    1
+      cJSON_New_Item 10
+      LZ4_compress_HC 4
+      LZ4_decompress_unsafe_generic 3
+      ctr_attributes_set_int64 2
+      ctr_attributes_set_string 2
+      ctr_attributes_set_bool 2
+      ctr_attributes_set_double 2
+      LZ4_compress_default 2
+      _cio_file_up 2
+      cfl_kvlist_count 2
+      ctr_mpack_consume_int_tag 2
+      ctr_mpack_consume_uint_tag 2
+      load_descriptor_values 2
+      rd_kafka_aborted_txns_next_offset 2
+      rd_kafka_anyconf_desensitize 2
+      rd_kafka_dump0 2
+      rd_kafka_metadata_copy_internal 2
+reader-enum                  callees    9  alone   28  pair    4
+      LZ4_decompress_generic 9
+      rd_kafka_error_new_v 4
+      rd_kafka_error_new 3
+      rd_kafka_AclBinding_new0 2
+      rd_kafka_ConsumerGroupDescription_new 2
+      rd_kafka_admin_add_config0 2
+      rd_kafka_err_action 2
+      rd_kafka_oauthbearer_set_token_failure 2
+      rd_kafka_toppars_pause_resume 2
+decision-3                   callees    9  alone   19  pair    1
+      rd_kafka_queue_new0 3
+      rd_atomic32_add 2
+      rd_kafka_topic_partition_list_destroy 2
+      rd_kafka_AlterConsumerGroupOffsets_destroy 2
+      rd_kafka_DeleteConsumerGroupOffsets_destroy 2
+      rd_kafka_ListConsumerGroupOffsets_destroy 2
+      rd_kafka_topic_partition_destroy0 2
+      rd_kafka_topic_partition_result_destroy 2
+      rd_kafka_txn_clear_partitions_flag 2
+decision-2                   callees    7  alone   18  pair    2
+      sds_cat_safe 4
+      cfl_sds_cat_safe 3
+      format_metric 3
+      mk_header_prepare 2
+      rd_kafka_parse_Metadata0 2
+      setupRackAwareAssignment0 2
+      ut_init_member_internal 2
+decision-8                   callees    6  alone   14  pair    2
+      rd_kafka_admin_result_ret_groups 4
+      rd_kafka_admin_result_ret_resources 3
+      rd_kafka_admin_result_ret_topics 3
+      get_object_item 2
+      rd_kafka_topic_partition_get_private 2
+destructor                   callees    4  alone    8  pair    0
+      mk_fifo_queue_destroy 2
+      rd_kafka_AclBinding_destroy 2
+      rd_kafka_UserScramCredentialAlteration_destroy 2
+      sched_thread_cleanup 2
+reader-const-pp              callees    3  alone    7  pair    0
+      rd_flags2str 3
+      rd_kafka_anyconf_dump 2
+      rd_slice_reader0 2
+other                        callees    2  alone    4  pair    0
+      print 2
+      rd_kafka_metadata_new_topic_mockv_internal 2
+decision-7                   callees    1  alone    2  pair    0
+      _mk_event_wait_2 2

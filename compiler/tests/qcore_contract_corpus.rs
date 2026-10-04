@@ -355,12 +355,28 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // Card W45-CALLEE-CASCADE-RESIDUAL: two msgpack tag readers and four
     // copying attribute setters (`ctr_mpack_utils.c`, `ctr_attributes.c:54-76`):
     // marker, borrowed formals, `none`.
-    ("ctraces/context_lifetime.qv", "ctr_mpack_consume_uint_tag", 4),
-    ("ctraces/context_lifetime.qv", "ctr_mpack_consume_int_tag", 4),
-    ("ctraces/context_lifetime.qv", "ctr_attributes_set_string", 5),
+    (
+        "ctraces/context_lifetime.qv",
+        "ctr_mpack_consume_uint_tag",
+        4,
+    ),
+    (
+        "ctraces/context_lifetime.qv",
+        "ctr_mpack_consume_int_tag",
+        4,
+    ),
+    (
+        "ctraces/context_lifetime.qv",
+        "ctr_attributes_set_string",
+        5,
+    ),
     ("ctraces/context_lifetime.qv", "ctr_attributes_set_bool", 5),
     ("ctraces/context_lifetime.qv", "ctr_attributes_set_int64", 5),
-    ("ctraces/context_lifetime.qv", "ctr_attributes_set_double", 5),
+    (
+        "ctraces/context_lifetime.qv",
+        "ctr_attributes_set_double",
+        5,
+    ),
     (
         "fluent_bit/busy_state.qv",
         "flb_input_chunk_release_lock",
