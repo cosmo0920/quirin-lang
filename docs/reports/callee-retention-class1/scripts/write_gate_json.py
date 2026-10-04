@@ -25,7 +25,7 @@ def main() -> int:
         return 1
     tests = (logs / "04-tests.log").read_text()
     totals = re.search(r"test binaries: (\d+) units, (\d+) summaries; (\d+) passed; (\d+) failed; (\d+) ignored", tests)
-    lean = re.search(r"(\d+) (?:Lean )?audits? passed", (logs / "07-lean.log").read_text())
+    lean = re.search(r"Passed (\d+) Lean audits", (logs / "07-lean.log").read_text())
     provider_tests = sum(int(n) for n in re.findall(r"test result: ok\. (\d+) passed", (provider / "p2-test.log").read_text()))
     python = re.search(r"Ran (\d+) tests", (logs / "08-python.log").read_text()) if (logs / "08-python.log").exists() else None
     provider_python = re.search(r"Ran (\d+) tests", (provider / "p8-unittest.log").read_text())
