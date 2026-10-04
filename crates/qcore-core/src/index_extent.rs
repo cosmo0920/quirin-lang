@@ -454,6 +454,11 @@ pub const HELD_VIOLATION: &str = "bounds-held-premise-violation";
 pub const UNREACHED_VIOLATION: &str = "bounds-violation-reachability-unresolved";
 /// The reason a held declaration contributes.
 pub const AWAITING_REVIEW: &str = "awaiting-human-review";
+/// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the reason a declaration held
+/// because its pin is not in force contributes (C06.2's code). A held clause
+/// that is a pin hold is rendered with this prefix by its declaration and
+/// reported as it is; every other held clause is a review marker's.
+pub const CONTRACT_PIN_MISMATCH: &str = "contract-pin-mismatch";
 
 /// The bounds verdict of one function, from every judgement and the
 /// function-level reasons (contradicted declarations, import failures, an
@@ -484,7 +489,13 @@ pub fn bounds_verdict(
             Outcome::InBounds | Outcome::Excluded => {}
             Outcome::Held(clauses) => {
                 held = true;
-                reasons.extend(clauses.iter().map(|c| format!("{AWAITING_REVIEW}: {c}")));
+                reasons.extend(clauses.iter().map(|c| {
+                    if c.starts_with(CONTRACT_PIN_MISMATCH) {
+                        c.clone()
+                    } else {
+                        format!("{AWAITING_REVIEW}: {c}")
+                    }
+                }));
             }
             Outcome::Violation { .. } => {
                 other = true;

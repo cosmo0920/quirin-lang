@@ -84,6 +84,16 @@
 //! resolved declaration is a `Declared` assumption, never a proof of its C
 //! body. Every declaration's normalised text is digested, so a changed clause
 //! never reuses an earlier admission.
+//!
+//! # Pins (card CHUNKIO-META-LEN-BOUNDS-CONTRACTS)
+//!
+//! A declaration an audit route transports from a provider crate is compared
+//! with its crate's bounds lock (C06.2; `qcore_audit::bounds_selection`). One
+//! whose pin is not in force is **held** by
+//! [`BoundsContracts::hold_for_pin_mismatch`], exactly as a review marker holds
+//! it: [`BoundsFunctionContract::held`] reads both, so it discharges nothing
+//! and accuses nothing, and a re-pin after review is the human act that
+//! resolves it. The hold is part of the environment digest.
 
 use std::collections::BTreeMap;
 
@@ -254,12 +264,31 @@ pub struct BoundsFunctionContract {
     pub contract_review: Option<ReviewNote>,
     /// SHA-256 of the normalised declaration text (tokens joined by one space).
     pub text_sha256: String,
+    /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: set when an audit route found
+    /// the declaration's pin not in force; it is then held.
+    pub pin_hold: Option<PinHold>,
 }
 
+/// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: why a declaration's pin is not in
+/// force (C06.2's reason spelling and the one-line account).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PinHold {
+    /// `no-lock`, `not-in-lock`, `contract-changed`, `source-changed` or
+    /// `tip-unresolved`.
+    pub reason: String,
+    pub detail: String,
+}
+
+/// The reason code a pin hold carries, as resource pins name it.
+pub use qcore_core::index_extent::CONTRACT_PIN_MISMATCH;
+
 impl BoundsFunctionContract {
-    /// Held: one marker anywhere holds the whole conjunction.
+    /// Held: one marker anywhere holds the whole conjunction, and so does a
+    /// pin not in force (card CHUNKIO-META-LEN-BOUNDS-CONTRACTS).
     pub fn held(&self) -> bool {
-        self.contract_review.is_some() || self.clauses.iter().any(|c| c.review.is_some())
+        self.contract_review.is_some()
+            || self.clauses.iter().any(|c| c.review.is_some())
+            || self.pin_hold.is_some()
     }
 
     /// Every hold, named: `NAME: CLAUSE — REASON [owner OWNER] (CATEGORY)`.
@@ -286,6 +315,12 @@ impl BoundsFunctionContract {
             if let Some(note) = &clause.review {
                 out.push(render(&clause.text, note));
             }
+        }
+        if let Some(hold) = &self.pin_hold {
+            out.push(format!(
+                "{CONTRACT_PIN_MISMATCH}: {}: contract — pin {}: {} (re-pin after review; sha256 {})",
+                self.name, hold.reason, hold.detail, self.text_sha256
+            ));
         }
         out
     }
@@ -350,7 +385,41 @@ impl BoundsContracts {
             text.push_str("\nrefuted ");
             text.push_str(name);
         }
+        // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: a pin hold changes what the
+        // environment decides, so it is part of its identity (absent when no
+        // declaration is held, so earlier digests are unchanged).
+        for (name, contract) in &self.functions {
+            if let Some(hold) = &contract.pin_hold {
+                text.push_str("\npin-held ");
+                text.push_str(name);
+                text.push(' ');
+                text.push_str(&hold.reason);
+            }
+        }
         sha256_hex(text.as_bytes())
+    }
+
+    /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: hold `name`, whose pin is not
+    /// in force for `reason` (C06.2's spelling).
+    ///
+    /// # Errors
+    ///
+    /// A name the environment does not declare.
+    pub fn hold_for_pin_mismatch(
+        &mut self,
+        name: &str,
+        reason: &str,
+        detail: &str,
+    ) -> Result<(), String> {
+        let contract = self
+            .functions
+            .get_mut(name)
+            .ok_or_else(|| format!("no bounds declaration `{name}` to hold"))?;
+        contract.pin_hold = Some(PinHold {
+            reason: reason.to_owned(),
+            detail: detail.to_owned(),
+        });
+        Ok(())
     }
 
     /// The declaration a caller may rely on: none for a refuted name.
@@ -821,6 +890,7 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
         clauses,
         contract_review,
         text_sha256: sha256_hex(normalised.join(";\n").as_bytes()),
+        pin_hold: None,
     })
 }
 

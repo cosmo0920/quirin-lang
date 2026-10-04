@@ -137,6 +137,12 @@ contract {
 /// The source-spelling census for the new identifiers: none of them occurs
 /// in any tracked contract module before this card (they are new words, so a
 /// module that already used one would change meaning).
+///
+/// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS (deliberate change): a tracked
+/// module the bounds loader accepts (a provider's bounds view: chunkio's
+/// `meta_len_bounds.qv`) uses this vocabulary with its meaning, so it is
+/// exempt; every other tracked module still uses none of the words, and the
+/// number of tracked bounds modules is pinned.
 #[test]
 fn the_reserved_spellings_are_unused_by_tracked_contracts() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
@@ -150,8 +156,13 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
         })
         .collect::<Vec<_>>();
     assert!(!files.is_empty(), "no tracked contract modules");
+    let mut bounds_modules = Vec::new();
     for file in files {
         let text = std::fs::read_to_string(&file).unwrap_or_default();
+        if load_bounds_contract_sources(&one(&text)).is_ok() {
+            bounds_modules.push(file);
+            continue;
+        }
         for spelling in RESERVED_SPELLINGS {
             if spelling == "rewrite_before_acceptance" {
                 continue; // C06.1's own word, reused with its meaning.
@@ -163,4 +174,55 @@ fn the_reserved_spellings_are_unused_by_tracked_contracts() {
             );
         }
     }
+    assert_eq!(
+        bounds_modules.len(),
+        1,
+        "tracked bounds modules: {bounds_modules:?}"
+    );
+    assert!(bounds_modules[0].ends_with("chunkio/meta_len_bounds.qv"));
+}
+
+/// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: a pin not in force holds the whole
+/// declaration exactly as a review marker does (`QCore.BoundsPinHold`'s
+/// `standingVectors`: held unless no marker and the pin in force), names
+/// itself in the holds, and is part of the environment digest.
+#[test]
+fn a_pin_hold_holds_the_declaration_and_changes_the_digest() {
+    let held = FILL.replace(
+        "    requires bounds_extent",
+        "    requires bounds_review_pending(\"layout\");\n    requires bounds_extent",
+    );
+    // (review marker, pin not in force, held)
+    for (review, mismatch, expected) in [
+        (false, false, false),
+        (true, false, true),
+        (false, true, true),
+        (true, true, true),
+    ] {
+        let mut contracts =
+            load_bounds_contract_sources(&one(if review { &held } else { FILL })).unwrap();
+        let before = contracts.digest();
+        if mismatch {
+            contracts
+                .hold_for_pin_mismatch("fill", "source-changed", "body differs")
+                .unwrap();
+            assert_ne!(contracts.digest(), before);
+        } else {
+            assert_eq!(contracts.digest(), before);
+        }
+        let fill = &contracts.functions["fill"];
+        assert_eq!(fill.held(), expected, "{review} {mismatch}");
+        assert_eq!(
+            fill.holds().iter().any(
+                |h| h.starts_with("contract-pin-mismatch: fill: contract — pin source-changed")
+            ),
+            mismatch
+        );
+    }
+    let mut contracts = load_bounds_contract_sources(&one(FILL)).unwrap();
+    assert!(
+        contracts
+            .hold_for_pin_mismatch("absent", "no-lock", "")
+            .is_err()
+    );
 }

@@ -132,6 +132,15 @@ pub fn run(
         )?,
         &root,
     )?;
+    // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: with the bounds property
+    // selected, the bounds views of the manifest's load path, pinned over the
+    // audited source, before any unit is analysed.
+    crate::bounds_selection::select_for_route(
+        "pinned",
+        contract_manifest,
+        &fs::read_to_string(contract_manifest).map_err(|e| e.to_string())?,
+        &root,
+    )?;
     // Card W45-CONTRACT-DEFERRED-REVIEW: kept so the pending-review section can
     // be added once the report it counts is complete.
     let mut contract_sidecar = None;

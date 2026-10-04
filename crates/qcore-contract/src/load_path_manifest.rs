@@ -47,6 +47,14 @@
 //! accepts. This reader checks its shape only (sorted, unique, owned); an
 //! absent view is not a default, and a whole-crate selection refuses it.
 //!
+//! **Bounds view (card CHUNKIO-META-LEN-BOUNDS-CONTRACTS).** A crate record
+//! may also carry `bounds_view`: the owned modules the bounds contract v1
+//! loader accepts (`qcore_contract::bounds_contract`), generated and checked
+//! the same way. The audit routes load every bounds view when the bounds
+//! property is selected. This reader checks its shape (sorted, unique, owned)
+//! and that no module is in both views: the two loaders reject each other's
+//! vocabulary, so a module in both is a stale or hand-edited manifest.
+//!
 //! **User load paths (card W45-USER-CONTRACT-PLUGINS).** A user keeps their
 //! own contract crates outside this repository, laid out like the
 //! `quirin-provider-*` crates, and lists them in their own load-path manifest
@@ -177,6 +185,9 @@ struct CrateRecord {
     published: BTreeMap<String, String>,
     #[serde(default)]
     resource_view: Option<Vec<String>>,
+    /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS.
+    #[serde(default)]
+    bounds_view: Option<Vec<String>>,
 }
 
 /// A load path read from its manifest, with the directory each crate's
@@ -191,6 +202,10 @@ pub struct LoadPathManifest {
     /// W44-PROVIDER-RESOURCE-VIEW), sorted owned modules. A crate that
     /// declares none is absent.
     pub resource_views: BTreeMap<String, Vec<String>>,
+    /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: crate name to its declared
+    /// bounds view, sorted owned modules disjoint from its resource view. A
+    /// crate that declares none is absent.
+    pub bounds_views: BTreeMap<String, Vec<String>>,
     /// Card W45-USER-CONTRACT-PLUGINS: present exactly for a manifest that
     /// extends a shipped one.
     pub extension: Option<LoadPathExtension>,
@@ -347,6 +362,7 @@ fn read_manifest(
     let mut crates = Vec::with_capacity(manifest.crates.len());
     let mut contract_roots = BTreeMap::new();
     let mut resource_views = BTreeMap::new();
+    let mut bounds_views = BTreeMap::new();
     for record in manifest.crates {
         let name = record.name.clone();
         if !relative_directory(&record.contracts) {
@@ -417,6 +433,33 @@ fn read_manifest(
             }
             resource_views.insert(name.clone(), view.clone());
         }
+        // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds view's shape.
+        if let Some(view) = &record.bounds_view {
+            if view.windows(2).any(|pair| pair[0] >= pair[1]) {
+                return Err(refuse(
+                    &name,
+                    "bounds view modules are not sorted and unique".into(),
+                ));
+            }
+            if let Some(module) = view.iter().find(|module| !listed.contains(*module)) {
+                return Err(refuse(
+                    &name,
+                    format!("bounds view names `{module}`, which the crate does not own"),
+                ));
+            }
+            if let Some(module) = view.iter().find(|module| {
+                record
+                    .resource_view
+                    .as_ref()
+                    .is_some_and(|resource| resource.contains(module))
+            }) {
+                return Err(refuse(
+                    &name,
+                    format!("`{module}` is in both its resource view and its bounds view"),
+                ));
+            }
+            bounds_views.insert(name.clone(), view.clone());
+        }
         let mut modules = BTreeMap::new();
         for module in &record.modules {
             let file = root.join(module);
@@ -455,6 +498,7 @@ fn read_manifest(
             load_path: ContractLoadPath::new(crates)?,
             contract_roots,
             resource_views,
+            bounds_views,
             extension: None,
         });
     };
@@ -540,10 +584,13 @@ fn read_manifest(
     roots.extend(contract_roots);
     let mut views = shipped.resource_views;
     views.extend(resource_views);
+    let mut all_bounds_views = shipped.bounds_views;
+    all_bounds_views.extend(bounds_views);
     Ok(LoadPathManifest {
         load_path: ContractLoadPath::new(all)?,
         contract_roots: roots,
         resource_views: views,
+        bounds_views: all_bounds_views,
         extension: Some(LoadPathExtension {
             base: base_path,
             base_sha256,

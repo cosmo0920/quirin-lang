@@ -34,6 +34,14 @@
 //! identity of `HEAD`. Every other run keeps tip entries as written. Every
 //! command that meets a tip entry prints its notice: the contract targets a
 //! future, unreleased release (`info` in force, `warning` not).
+//!
+//! Card **CHUNKIO-META-LEN-BOUNDS-CONTRACTS**: `--bounds` selects the bounds
+//! locks instead (`bounds-contracts.lock`, one per crate with a non-empty
+//! bounds view, [`crate::bounds_selection`]): `pin --bounds`, `pin --bounds
+//! --check`, `--regenerate` and `--drop-revision` act on them exactly as on
+//! the resource locks; every bounds declaration is pinned (bounds v1 has no
+//! flexible mode) and tip tracking is not offered for them. `--verify-contracts`
+//! verifies the resource and the bounds locks.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -61,7 +69,8 @@ DIR] [--crate NAME]... [--function NAME]... [--regenerate | --check [--revision 
 --drop-revision REV [--load-path FILE | --modules DIR] [--crate NAME]... [--function NAME]... | \
 pin --verify-contracts [--load-path FILE] [--crate NAME]... | pin --source-root DIR --function \
 NAME... --track-tip REF [--repository-name NAME] [--repository-url URL] [--release-label TEXT] | \
-pin --source-root DIR --function NAME... --untrack-tip";
+pin --source-root DIR --function NAME... --untrack-tip (`--bounds` with a pin, --check, \
+--regenerate or --drop-revision selects the bounds locks)";
 
 /// The lock's generated-by line.
 pub const GENERATED_BY: &str = "quirin-audit pin";
@@ -91,6 +100,8 @@ struct Arguments {
     repository_name: Option<String>,
     repository_url: Option<String>,
     release_label: Option<String>,
+    /// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: act on the bounds locks.
+    bounds: bool,
 }
 
 fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
@@ -116,6 +127,7 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
             "--repository-name" => parsed.repository_name = Some(value("--repository-name")?),
             "--repository-url" => parsed.repository_url = Some(value("--repository-url")?),
             "--release-label" => parsed.release_label = Some(value("--release-label")?),
+            "--bounds" => parsed.bounds = true,
             other => return Err(format!("unknown argument `{other}`")),
         }
     }
@@ -177,14 +189,119 @@ fn parse(arguments: Vec<String>) -> Result<Arguments, String> {
     if parsed.modules.is_some() && (parsed.load_path.is_some() || !parsed.crates.is_empty()) {
         return Err("--modules is not combined with --load-path or --crate".into());
     }
+    if parsed.bounds
+        && (parsed.modules.is_some()
+            || parsed.track_tip.is_some()
+            || parsed.untrack_tip
+            || parsed.verify_contracts)
+    {
+        return Err(
+            "--bounds pins the bounds views of load-path crates: no --modules, --track-tip, \
+             --untrack-tip or --verify-contracts (which verifies both kinds of lock)"
+                .into(),
+        );
+    }
     Ok(parsed)
 }
 
-/// One lock target: the environment to pin and where its lock lives.
+/// One lock target: the declarations to pin and where its lock lives.
 struct Target {
     owner: String,
+    /// How the target is named in output: the owner, and `(bounds)` for a
+    /// bounds lock (card CHUNKIO-META-LEN-BOUNDS-CONTRACTS).
+    label: String,
     lock: PathBuf,
-    contracts: ResourceContracts,
+    /// Function to (module name, contract digest, mode).
+    declared: BTreeMap<String, (String, String, RevisionMode)>,
+}
+
+impl Target {
+    fn resource(
+        owner: String,
+        lock: PathBuf,
+        contracts: &ResourceContracts,
+    ) -> Result<Self, String> {
+        Ok(Self {
+            label: owner.clone(),
+            owner,
+            lock,
+            declared: resource_declarations(contracts)?,
+        })
+    }
+}
+
+/// Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds lock targets, one per
+/// crate (every crate with a non-empty bounds view, or the named ones that
+/// have one when `all` is false and `crates` names them).
+fn bounds_targets(
+    load_path: &Path,
+    crates: &[String],
+    strict: bool,
+) -> Result<Vec<Target>, String> {
+    let load_path = &load_path
+        .canonicalize()
+        .map_err(|error| format!("{}: {error}", load_path.display()))?;
+    let manifest = load_contract_load_path_manifest(load_path)?;
+    let names = if crates.is_empty() {
+        manifest
+            .bounds_views
+            .iter()
+            .filter(|(_, view)| !view.is_empty())
+            .filter(|(name, _)| {
+                manifest
+                    .extension
+                    .as_ref()
+                    .is_none_or(|extension| extension.user_crates.contains(*name))
+            })
+            .map(|(name, _)| name.clone())
+            .collect::<Vec<_>>()
+    } else {
+        crates.to_vec()
+    };
+    let mut targets = Vec::new();
+    for name in names {
+        let root = manifest
+            .contract_roots
+            .get(&name)
+            .and_then(|contracts| contracts.parent())
+            .ok_or_else(|| format!("`{name}` is not a crate on {}", load_path.display()))?;
+        let Some(view) = manifest
+            .bounds_views
+            .get(&name)
+            .filter(|view| !view.is_empty())
+        else {
+            if strict {
+                return Err(format!("`{name}` declares no bounds view to pin"));
+            }
+            continue;
+        };
+        let single = qcore_contract::load_path_manifest::LoadPathManifest {
+            bounds_views: BTreeMap::from([(name.clone(), view.clone())]),
+            ..manifest.clone()
+        };
+        let (contracts, _) = crate::bounds_selection::load_views(&single)?;
+        let declared = contracts
+            .functions
+            .iter()
+            .map(|(function, contract)| {
+                (
+                    function.clone(),
+                    (
+                        module_name(&contract.module),
+                        contract.text_sha256.clone(),
+                        RevisionMode::Pinned,
+                    ),
+                )
+            })
+            .collect();
+        targets.push(Target {
+            label: format!("{name} (bounds)"),
+            owner: name.clone(),
+            lock: root.join(crate::bounds_selection::BOUNDS_LOCK_FILE),
+            declared,
+        });
+    }
+    Ok(targets)
 }
 
 fn crate_targets(load_path: &Path, crates: &[String]) -> Result<Vec<Target>, String> {
@@ -228,11 +345,11 @@ fn crate_targets(load_path: &Path, crates: &[String]) -> Result<Vec<Target>, Str
             SelectionSource::CommandLine,
         )?;
         let contracts = ContractInput::providers(&resolved, None).load()?;
-        targets.push(Target {
-            owner: name.clone(),
-            lock: root.join(LOCK_FILE),
-            contracts,
-        });
+        targets.push(Target::resource(
+            name.clone(),
+            root.join(LOCK_FILE),
+            &contracts,
+        )?);
     }
     Ok(targets)
 }
@@ -269,11 +386,11 @@ fn module_targets(directory: &Path) -> Result<Vec<Target>, String> {
                 .map(|name| name.to_string_lossy().into_owned())
         })
         .unwrap_or_else(|| directory.display().to_string());
-    Ok(vec![Target {
+    Ok(vec![Target::resource(
         owner,
-        lock: directory.join(LOCK_FILE),
-        contracts,
-    }])
+        directory.join(LOCK_FILE),
+        &contracts,
+    )?])
 }
 
 /// The module name a lock records: the crate-relative module path, or the
@@ -296,20 +413,28 @@ fn module_name(key: &str) -> String {
     }
 }
 
-/// The current declarations of a target: function to (module name, contract
-/// digest, mode).
+/// The current declarations of a resource environment: function to (module
+/// name, contract digest, mode).
+fn resource_declarations(
+    contracts: &ResourceContracts,
+) -> Result<BTreeMap<String, (String, String, RevisionMode)>, String> {
+    Ok(
+        qcore_contract::contract_revision::declaration_digests(contracts.source_assumptions())?
+            .into_iter()
+            .map(|(name, (module, digest))| {
+                let mode = contracts.revision_mode(&name);
+                (name, (module_name(&module), digest, mode))
+            })
+            .collect(),
+    )
+}
+
+/// The current declarations of a target.
+#[allow(clippy::unnecessary_wraps)]
 fn declarations(
     target: &Target,
 ) -> Result<BTreeMap<String, (String, String, RevisionMode)>, String> {
-    Ok(qcore_contract::contract_revision::declaration_digests(
-        target.contracts.source_assumptions(),
-    )?
-    .into_iter()
-    .map(|(name, (module, digest))| {
-        let mode = target.contracts.revision_mode(&name);
-        (name, (module_name(&module), digest, mode))
-    })
-    .collect())
+    Ok(target.declared.clone())
 }
 
 /// An empty lock for a target.
@@ -352,7 +477,7 @@ fn update(
     if let Some(unknown) = functions.iter().find(|name| !known.contains(name)) {
         return Err(format!(
             "`{unknown}` is declared by no contract of {}",
-            target.owner
+            target.label
         ));
     }
     // Card CONTRACT-PIN-TIP-MODE: `--untrack-tip` names tip entries only.
@@ -361,7 +486,7 @@ fn update(
             !existing.is_some_and(|lock| lock.tip.iter().any(|e| &e.function == *name))
         })
     {
-        return Err(format!("`{name}` does not track a tip in {}", target.owner));
+        return Err(format!("`{name}` does not track a tip in {}", target.label));
     }
     let source = ReviewedSource::of(tree);
     let chosen = |name: &str| functions.is_empty() || functions.contains(name);
@@ -541,7 +666,7 @@ fn track(
             None => {
                 return Err(format!(
                     "`{name}` is declared by no contract of {}",
-                    target.owner
+                    target.label
                 ));
             }
         }
@@ -856,7 +981,7 @@ fn check(
     println!(
         "pin: {} at {}: {recorded} recorded, {via_other} in force through another revision, \
          {tip_clause}{out} not in force, {stale} stale ({})",
-        target.owner,
+        target.label,
         source.label(),
         target.lock.display()
     );
@@ -877,13 +1002,23 @@ fn read_existing(target: &Target) -> Result<Option<ContractLock>, String> {
 fn run(arguments: Arguments) -> Result<bool, String> {
     let targets = match &arguments.modules {
         Some(directory) => module_targets(directory)?,
-        None => crate_targets(
-            arguments
+        None => {
+            let load_path = arguments
                 .load_path
                 .as_deref()
-                .unwrap_or_else(|| Path::new(DEFAULT_LOAD_PATH)),
-            &arguments.crates,
-        )?,
+                .unwrap_or_else(|| Path::new(DEFAULT_LOAD_PATH));
+            // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: `--verify-contracts`
+            // verifies both kinds of lock; `--bounds` selects the bounds locks.
+            if arguments.verify_contracts {
+                let mut targets = crate_targets(load_path, &arguments.crates)?;
+                targets.extend(bounds_targets(load_path, &arguments.crates, false)?);
+                targets
+            } else if arguments.bounds {
+                bounds_targets(load_path, &arguments.crates, true)?
+            } else {
+                crate_targets(load_path, &arguments.crates)?
+            }
+        }
     };
     if arguments.verify_contracts {
         let mut clean = true;
@@ -893,7 +1028,13 @@ fn run(arguments: Arguments) -> Result<bool, String> {
             let existing = read_existing(target)?;
             let problems = match &existing {
                 Some(lock) => contracts_agree(lock, &declared),
-                None => vec![format!("no {LOCK_FILE}")],
+                None => vec![format!(
+                    "no {}",
+                    target
+                        .lock
+                        .file_name()
+                        .map_or_else(|| LOCK_FILE.into(), |name| name.to_string_lossy())
+                )],
             };
             if problems.is_empty() {
                 let pinned = declared
@@ -914,7 +1055,7 @@ fn run(arguments: Arguments) -> Result<bool, String> {
                 };
                 println!(
                     "pin: {}: lock lists every declaration ({} pinned{tip_clause}, {} flexible)",
-                    target.owner,
+                    target.label,
                     pinned,
                     declared.len() - pinned
                 );
@@ -928,7 +1069,7 @@ fn run(arguments: Arguments) -> Result<bool, String> {
             } else {
                 clean = false;
                 for problem in problems {
-                    println!("pin: {}: stale lock: {problem}", target.owner);
+                    println!("pin: {}: stale lock: {problem}", target.label);
                 }
             }
         }
@@ -967,7 +1108,7 @@ fn run(arguments: Arguments) -> Result<bool, String> {
                 .map_err(|error| format!("{}: {error}", target.lock.display()))?;
             println!(
                 "pin: {}: dropped {} from {touched} entr(ies); wrote {}",
-                target.owner,
+                target.label,
                 named
                     .iter()
                     .next()
@@ -995,7 +1136,7 @@ fn run(arguments: Arguments) -> Result<bool, String> {
                 .map_err(|error| format!("{}: {error}", target.lock.display()))?;
             println!(
                 "pin: {}: {} pinned, {} tracking a tip, {} flexible; wrote {}",
-                target.owner,
+                target.label,
                 lock.pinned.len(),
                 lock.tip.len(),
                 lock.flexible.len(),
@@ -1078,7 +1219,7 @@ fn run(arguments: Arguments) -> Result<bool, String> {
             .map_err(|error| format!("{}: {error}", target.lock.display()))?;
         println!(
             "pin: {}: {} pinned, {} flexible; recorded at {}; wrote {}",
-            target.owner,
+            target.label,
             lock.pinned.len(),
             lock.flexible.len(),
             ReviewedSource::of(&tree).label(),

@@ -58,6 +58,29 @@ def loader_like(root, load_path_file):
         for record in manifest["crates"]}
 
 
+# Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: a bounds contract v1 module, which
+# the resource loader refuses and the bounds loader accepts.
+BOUNDS = ("module contract;\nextern fn get_meta_len(map: ptr<mut, u8>) -> u16\ncontract {\n"
+          "    requires bounds_contract_v1;\n    quant checks map, Idx #i: 22 <= #i && #i < 24;\n};\n")
+
+
+def loader_with_bounds(root, load_path_file):
+    """A stand-in for both loaders: a module selecting `bounds_contract_v1`
+    is in the bounds view only; `loader_like` decides the resource view."""
+    load_path_file = Path(load_path_file)
+    manifest = json.loads(load_path_file.read_text())
+    resource = loader_like(root, load_path_file)
+    result = {}
+    for record in manifest["crates"]:
+        texts = {module: (load_path_file.parent / record["contracts"] / module).read_text()
+                 for module in record["modules"]}
+        bounds = [m for m in record["modules"] if "bounds_contract_v1" in texts[m]]
+        result[record["name"]] = {"resource_view": [m for m in resource[record["name"]]
+                                                    if m not in bounds],
+                                  "bounds_view": bounds}
+    return result
+
+
 def lib_rs(namespace, published):
     items = ", ".join(f'"{m}"' for m in published)
     return (f'pub const NAMESPACE: &str = "{namespace}";\n'
@@ -291,6 +314,60 @@ class LoadPathManifest(unittest.TestCase):
             self.assertEqual(load_path_file.read_bytes(), good)
             contracts.maintain_load_path(tree.root, metadata=metadata, views=loader_like)
 
+    def test_bounds_views_are_generated_by_sync_and_checked(self):
+        """Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds view is the
+        bounds loader's, written by `sync` beside the resource view, checked by
+        `check`, and disjoint from the resource view."""
+        with tempfile.TemporaryDirectory() as temporary:
+            tree = Tree(temporary)
+            tree.crate("quirin-provider-app", "app", [], {"app/meta.qv": BOUNDS})
+            metadata = tree.metadata()
+            written = contracts.maintain_load_path(tree.root, sync=True, metadata=metadata,
+                                                   views=loader_with_bounds)
+            bounds = {c["name"]: c["bounds_view"] for c in written["crates"]}
+            resource = {c["name"]: c["resource_view"] for c in written["crates"]}
+            self.assertEqual(bounds, {"qcore-provider-exe": [], "quirin-provider-app": ["app/meta.qv"],
+                                      "quirin-provider-libc": []})
+            self.assertEqual(resource["quirin-provider-app"], ["app/wrap.qcore"])
+            contracts.maintain_load_path(tree.root, metadata=metadata, views=loader_with_bounds)
+            load_path_file = tree.root / "contract-load-path.json"
+            good = load_path_file.read_bytes()
+
+            def declare(key, view):
+                manifest = json.loads(good)
+                for record in manifest["crates"]:
+                    if record["name"] == "quirin-provider-app":
+                        if view is None:
+                            del record[key]
+                        else:
+                            record[key] = view
+                load_path_file.write_text(json.dumps(manifest, indent=2) + "\n")
+
+            cases = [
+                ("bounds_view", [], r"quirin-provider-app omits modules the bounds loader accepts: "
+                                    r"\['app/meta.qv'\]"),
+                ("bounds_view", None, "quirin-provider-app declares no bounds view"),
+                ("resource_view", ["app/meta.qv", "app/wrap.qcore"],
+                 r"quirin-provider-app declares modules the resource loader refuses: "
+                 r"\['app/meta.qv'\]"),
+            ]
+            for key, view, message in cases:
+                with self.subTest(key=key, view=view):
+                    declare(key, view)
+                    with self.assertRaisesRegex(ValueError, message):
+                        contracts.maintain_load_path(tree.root, metadata=metadata,
+                                                     views=loader_with_bounds)
+            load_path_file.write_bytes(good)
+            self.assertEqual(load_path_file.read_bytes(), good)
+
+            def both(root, load_path_file):
+                views = loader_with_bounds(root, load_path_file)
+                views["quirin-provider-app"]["resource_view"] = ["app/meta.qv", "app/wrap.qcore"]
+                return views
+
+            with self.assertRaisesRegex(ValueError, "in both the resource and the bounds view"):
+                contracts.maintain_load_path(tree.root, sync=True, metadata=metadata, views=both)
+
     def test_a_probe_failure_or_an_unowned_view_is_an_error_not_an_empty_view(self):
         with tempfile.TemporaryDirectory() as temporary:
             tree = Tree(temporary)
@@ -383,6 +460,12 @@ class LoadPathManifest(unittest.TestCase):
         self.assertEqual(sum(len(view) for view in views.values()), 60)
         self.assertEqual(views["quirin-provider-shared"], [])
         self.assertEqual(len(views["quirin-provider-libc"]), 17)
+        # Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the one bounds module, in its
+        # crate's bounds view and in no resource view.
+        bounds = {c["name"]: c["bounds_view"] for c in manifest["crates"]}
+        self.assertEqual({name: view for name, view in bounds.items() if view},
+                         {"qcore-provider-chunkio": ["chunkio/meta_len_bounds.qv"]})
+        self.assertNotIn("chunkio/meta_len_bounds.qv", views["qcore-provider-chunkio"])
         # The real inventories: exactly the two crates that inherit carry pins.
         rows = {row["crate"]: row["includes"] for row in contracts.maintain(load_path=manifest)}
         self.assertEqual(rows, {"qcore-provider-chunkio": 0, "qcore-provider-cmetrics": 0,

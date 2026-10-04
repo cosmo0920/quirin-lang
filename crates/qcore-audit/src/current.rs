@@ -151,6 +151,13 @@ impl CurrentAudit {
             )?,
             &checkout,
         )?;
+        // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds environment.
+        crate::bounds_selection::select_for_route(
+            "configured",
+            input.manifest_path(),
+            input.manifest_text(),
+            &checkout,
+        )?;
         let manifest_text = input.manifest_text().to_owned();
         let source_profile_sha256 = profile.manifest_digest().to_owned();
         let dependencies = BTreeMap::from([

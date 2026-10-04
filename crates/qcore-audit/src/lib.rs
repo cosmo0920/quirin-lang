@@ -37,6 +37,7 @@ pub mod pending_review;
 pub mod review_hold_reasons;
 // Card W45-CONTRACT-REVISION-MODE: source identities, contract locks, the pin
 // evaluation and its report section.
+pub mod bounds_selection;
 pub mod c_identity;
 pub mod contract_pin;
 pub mod contract_revision;

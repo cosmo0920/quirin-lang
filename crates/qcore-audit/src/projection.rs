@@ -33,7 +33,9 @@ fn custody_value(status: AnalysisStatus) -> qcore_c_gateway::index_extent::Bound
 /// Card CG16-INDEX-AND-OFFSET-EXTENTS: when the bounds property is selected,
 /// record each function's bounds row beside its custody status and the
 /// combined verdict of a request naming both. Reads the custody result; never
-/// changes it. With no bounds declaration selected, the environment is empty.
+/// changes it. The environment is the one the route installed (card
+/// CHUNKIO-META-LEN-BOUNDS-CONTRACTS, [`crate::bounds_selection`]); a route
+/// that installed none runs with the empty environment.
 fn record_bounds(
     library: &str,
     file: &str,
@@ -50,10 +52,11 @@ fn record_bounds(
     if std::env::var_os(BOUNDS_SELECTION).is_none() {
         return;
     }
-    let contracts = qcore_contract::bounds_contract::BoundsContracts::default();
+    let contracts = crate::bounds_selection::environment();
+    let contracts = contracts.as_ref();
     let analysed = match preprocessed {
-        Some(text) => analyze_bounds_preprocessed(text, unit, functions, &contracts),
-        None => analyze_bounds_c11(unit, functions, &contracts),
+        Some(text) => analyze_bounds_preprocessed(text, unit, functions, contracts),
+        None => analyze_bounds_c11(unit, functions, contracts),
     };
     let custody = summary_of(result);
     for name in functions {

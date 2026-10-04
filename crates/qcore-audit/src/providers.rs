@@ -411,6 +411,12 @@ pub fn resolve_all_loaded(
 /// when it loads alone; a view or the union that does not load together
 /// refuses the probe. Declared views are not read: this computes them, and
 /// `providers/contracts.py` writes (`sync`) or compares (`check`) the result.
+///
+/// Card **CHUNKIO-META-LEN-BOUNDS-CONTRACTS**: the same probe computes each
+/// crate's **bounds view**, the owned modules the bounds contract v1 loader
+/// accepts alone (keyed `crate:module`, as the audit routes load them); every
+/// bounds view must also load together. The two loaders reject each other's
+/// vocabulary, so the views are disjoint.
 pub fn probe_resource_views(load_path: &Path) -> Result<Value, String> {
     let load_path = &std::path::absolute(load_path).map_err(|error| error.to_string())?;
     let manifest =
@@ -426,6 +432,7 @@ pub fn probe_resource_views(load_path: &Path) -> Result<Value, String> {
     };
     let mut crates = serde_json::Map::new();
     let mut union = Vec::new();
+    let mut bounds_union = BTreeMap::new();
     // Card W45-USER-CONTRACT-PLUGINS: on a user load path only the user's own
     // crates are probed; the extended load path's views are its own.
     let probed = manifest.contract_roots.keys().filter(|name| {
@@ -460,10 +467,30 @@ pub fn probe_resource_views(load_path: &Path) -> Result<Value, String> {
             .map(|entry| entry[name.len() + 1..].to_owned())
             .collect();
         union.extend(view);
+        // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds loader's view.
+        let mut bounds_view = Vec::new();
+        for (module, text) in &krate.modules {
+            let key = format!("{name}:{module}");
+            let alone = BTreeMap::from([(key.clone(), text.clone())]);
+            if qcore_contract::bounds_contract::load_bounds_contract_sources(&alone).is_ok() {
+                bounds_view.push(module.clone());
+                bounds_union.insert(key, text.clone());
+            }
+        }
+        if let Some(both) = bounds_view.iter().find(|module| modules.contains(*module)) {
+            return Err(format!(
+                "`{name}:{both}` is accepted by both the resource and the bounds loader"
+            ));
+        }
         crates.insert(
             name.clone(),
-            json!({"resource_view": modules, "refused": refused}),
+            json!({"resource_view": modules, "refused": refused, "bounds_view": bounds_view}),
         );
+    }
+    if !bounds_union.is_empty() {
+        qcore_contract::bounds_contract::load_bounds_contract_sources(&bounds_union).map_err(
+            |error| format!("the bounds views of the load path do not load together: {error}"),
+        )?;
     }
     if !union.is_empty() {
         load(&union)?.map_err(|error| {
@@ -475,7 +502,7 @@ pub fn probe_resource_views(load_path: &Path) -> Result<Value, String> {
         "load_path": load_path,
         "load_path_sha256": sha256_hex(&fs::read(load_path).map_err(|error| error.to_string())?),
         "crates": crates,
-        "rule": "a module is in its crate's resource view exactly when quirin-audit's NAME:MODULE selection of it, lowered and loaded by the unchanged resource-contract manifest loader, is accepted; each view, and all views together, must also load",
+        "rule": "a module is in its crate's resource view exactly when quirin-audit's NAME:MODULE selection of it, lowered and loaded by the unchanged resource-contract manifest loader, is accepted; each view, and all views together, must also load; a module is in its crate's bounds view exactly when the bounds contract v1 loader accepts it alone, and all bounds views must load together",
     }))
 }
 

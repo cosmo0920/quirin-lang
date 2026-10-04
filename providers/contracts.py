@@ -14,6 +14,11 @@ accepts, which `quirin-audit --provider NAME` selects. `sync` generates it by
 running the loader (`cargo run -p qcore-audit --example
 provider_resource_views`); `check` recomputes it and refuses a view that
 declares a module the loader refuses or omits one it accepts.
+Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: each record also carries its
+`bounds_view`, the owned modules the bounds contract v1 loader accepts (a
+separate property vocabulary, never in a resource view), computed by the same
+probe; the audit routes load every bounds view when the bounds property is
+selected (`QCORE_BOUNDS_PROPERTY`), and `quirin-audit pin --bounds` pins them.
 The retired ``contract/qcore`` compatibility tree is refused so it cannot
 silently become a second source of provider contracts again.
 """
@@ -248,13 +253,17 @@ def include_pins(contracts, load_path, root=ROOT):
 # loader (`qcore_audit::providers::probe_resource_views`), built from the
 # repository workspace that contains this providers workspace.
 RESOURCE_VIEW = "resource_view"
+# Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds loader's view, from the
+# same probe run.
+BOUNDS_VIEW = "bounds_view"
 
 
 def loader_resource_views(root, load_path_file):
-    """The loader's resource view of every crate on `load_path_file`:
-    `{crate: [module, ...]}`, sorted owned modules. Runs the probe example in
-    the repository workspace; any failure of the probe is an error, never an
-    empty view."""
+    """The loaders' views of every crate on `load_path_file`: `{crate:
+    {"resource_view": [module, ...], "bounds_view": [module, ...]}}`, sorted
+    owned modules (card CHUNKIO-META-LEN-BOUNDS-CONTRACTS added the bounds
+    view). Runs the probe example in the repository workspace; any failure of
+    the probe is an error, never an empty view."""
     workspace = Path(root).resolve().parent / "Cargo.toml"
     command = ["cargo", "run", "--quiet", "--offline", "--locked", "--manifest-path",
                str(workspace), "-p", "qcore-audit", "--example", "provider_resource_views",
@@ -264,7 +273,17 @@ def loader_resource_views(root, load_path_file):
         raise ValueError(f"resource view probe failed (exit {completed.returncode}): "
                          f"{completed.stderr.strip()}")
     probe = json.loads(completed.stdout)
-    return {name: record[RESOURCE_VIEW] for name, record in probe["crates"].items()}
+    return {name: {RESOURCE_VIEW: record[RESOURCE_VIEW], BOUNDS_VIEW: record[BOUNDS_VIEW]}
+            for name, record in probe["crates"].items()}
+
+
+def split_views(value):
+    """A probe value: `{"resource_view": [...], "bounds_view": [...]}`, or a
+    bare list, which is a resource view beside an empty bounds view (the form
+    of a stand-in loader that knows no bounds vocabulary)."""
+    if isinstance(value, list):
+        return value, []
+    return value[RESOURCE_VIEW], value[BOUNDS_VIEW]
 
 
 # Card W45-CONTRACT-REVISION-MODE: every crate with a resource view keeps a
@@ -292,18 +311,24 @@ def verify_locks(root, load_path_file):
 
 
 def with_resource_views(load_path, views):
-    """`load_path` with each crate's `resource_view` from `views`, validated:
-    one view per crate, sorted, unique and owned."""
+    """`load_path` with each crate's `resource_view` and `bounds_view` from
+    `views`, validated: one of each per crate, sorted, unique, owned and
+    disjoint (a module is in at most one property's view)."""
     crates = {record["name"]: record for record in load_path["crates"]}
     if set(views) != set(crates):
         raise ValueError(f"resource view probe names crates {sorted(views)}, "
                          f"not the load path's {sorted(crates)}")
     result = {"schema_version": load_path["schema_version"], "crates": []}
     for record in load_path["crates"]:
-        view = list(views[record["name"]])
+        view, bounds = (list(v) for v in split_views(views[record["name"]]))
         if view != sorted(set(view)) or not set(view) <= set(record["modules"]):
             raise ValueError(f"{record['name']}: resource view {view} is not sorted, unique and owned")
-        result["crates"].append({**record, RESOURCE_VIEW: view})
+        if bounds != sorted(set(bounds)) or not set(bounds) <= set(record["modules"]):
+            raise ValueError(f"{record['name']}: bounds view {bounds} is not sorted, unique and owned")
+        if set(view) & set(bounds):
+            raise ValueError(f"{record['name']}: modules in both the resource and the bounds view: "
+                             f"{sorted(set(view) & set(bounds))}")
+        result["crates"].append({**record, RESOURCE_VIEW: view, BOUNDS_VIEW: bounds})
     return result
 
 
@@ -311,23 +336,24 @@ def view_difference(declared, computed):
     """Why a declared view differs from the loader's: per crate, the declared
     modules the loader refuses and the accepted modules the view omits."""
     reasons = []
-    computed_views = {record["name"]: record.get(RESOURCE_VIEW) for record in computed["crates"]}
-    for record in declared.get("crates", []):
-        expected = computed_views.get(record["name"])
-        if expected is None:
-            continue
-        view = record.get(RESOURCE_VIEW)
-        if view is None:
-            reasons.append(f"{record['name']} declares no resource view")
-            continue
-        refused = sorted(set(view) - set(expected))
-        omitted = sorted(set(expected) - set(view))
-        if refused:
-            reasons.append(f"{record['name']} declares modules the resource loader refuses: {refused}")
-        if omitted:
-            reasons.append(f"{record['name']} omits modules the resource loader accepts: {omitted}")
-        if not refused and not omitted and view != expected:
-            reasons.append(f"{record['name']}'s resource view is not sorted and unique")
+    for key, kind in ((RESOURCE_VIEW, "resource"), (BOUNDS_VIEW, "bounds")):
+        computed_views = {record["name"]: record.get(key) for record in computed["crates"]}
+        for record in declared.get("crates", []):
+            expected = computed_views.get(record["name"])
+            if expected is None:
+                continue
+            view = record.get(key)
+            if view is None:
+                reasons.append(f"{record['name']} declares no {kind} view")
+                continue
+            refused = sorted(set(view) - set(expected))
+            omitted = sorted(set(expected) - set(view))
+            if refused:
+                reasons.append(f"{record['name']} declares modules the {kind} loader refuses: {refused}")
+            if omitted:
+                reasons.append(f"{record['name']} omits modules the {kind} loader accepts: {omitted}")
+            if not refused and not omitted and view != expected:
+                reasons.append(f"{record['name']}'s {kind} view is not sorted and unique")
     return reasons
 
 
@@ -352,7 +378,7 @@ def maintain_load_path(root=ROOT, sync=False, metadata=None, views=None):
         raise ValueError(f"stale contract load-path manifest: {load_path_file}")
     declared = json.loads(load_path_file.read_text())
     stripped = {**declared, "crates": [
-        {key: value for key, value in record.items() if key != RESOURCE_VIEW}
+        {key: value for key, value in record.items() if key not in (RESOURCE_VIEW, BOUNDS_VIEW)}
         for record in declared.get("crates", [])]}
     if stripped != load_path:
         raise ValueError(f"stale contract load-path manifest: {load_path_file}")
@@ -445,7 +471,8 @@ def main():
         "load_path": [{"crate": c["name"], "namespace": c["namespace"], "version": c["version"],
                        "dependencies": c["dependencies"], "modules": len(c["modules"]),
                        "published": sorted(c["published"]),
-                       "resource_view": len(c[RESOURCE_VIEW])} for c in load_path["crates"]],
+                       "resource_view": len(c[RESOURCE_VIEW]),
+                       "bounds_view": len(c[BOUNDS_VIEW])} for c in load_path["crates"]],
     }, indent=2))
 
 

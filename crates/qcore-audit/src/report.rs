@@ -210,7 +210,17 @@ impl AuditReport {
         bytes.push(b'\n');
         let summary_path = path.with_extension("summary.json");
         fs::write(&summary_path, bytes)
-            .map_err(|e| format!("could not write {}: {e}", summary_path.display()))
+            .map_err(|e| format!("could not write {}: {e}", summary_path.display()))?;
+        // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds environment the
+        // route installed (selection, modules, pins), beside the rows.
+        if let Some(record) = crate::bounds_selection::installed_record() {
+            let mut bytes = serde_json::to_vec_pretty(&record).map_err(|e| e.to_string())?;
+            bytes.push(b'\n');
+            let contracts_path = path.with_extension("contracts.json");
+            fs::write(&contracts_path, bytes)
+                .map_err(|e| format!("could not write {}: {e}", contracts_path.display()))?;
+        }
+        Ok(())
     }
 
     /// An empty report over the same revision, into which one unit's rows are

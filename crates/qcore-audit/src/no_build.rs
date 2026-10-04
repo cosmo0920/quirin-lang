@@ -673,6 +673,13 @@ impl NoBuildAudit {
             )?,
             &root,
         )?;
+        // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds environment.
+        crate::bounds_selection::select_for_route(
+            "contracts",
+            input.manifest_path(),
+            input.manifest_text(),
+            &root,
+        )?;
         let manifest_text = input.manifest_text().to_owned();
         // The no-build "source profile": the selection and the assumed
         // configuration. Every compile-task identity and every certificate's
@@ -1053,6 +1060,9 @@ impl NoBuildAudit {
             });
             self.sidecar["files"] = json!(self.files);
             self.report.write(path)?;
+            // Card CHUNKIO-META-LEN-BOUNDS-CONTRACTS: the bounds rows, when the
+            // property is selected (nothing otherwise).
+            self.report.write_bounds_selection()?;
             let mut bytes =
                 serde_json::to_vec_pretty(&self.sidecar).map_err(|error| error.to_string())?;
             bytes.push(b'\n');
