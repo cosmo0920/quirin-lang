@@ -42,7 +42,12 @@ where both are (measurement in the table below). CG24-ALIAS-EXTENT-FRAME-VOCABUL
 frames, which are not custody modes, and derived results (offset/length,
 several bases) checked against their bases and refuted by contradicting
 bodies; with no bounds declaration selected on the audit routes they reach no
-function yet.
+function yet. QUANT-INDEX-CHECKS (gateway rule 12l, contract spec C09.2) adds
+the quantified index check `quant checks P, Idx #i: PRED;` to the same
+vocabulary: checked on the body (an access decided outside the check refutes
+the declaration, an undecided one stays Unknown) and as each caller's
+obligation; it also reaches no audited function until bounds modules are
+transported (`CG16-BOUNDS-CONTRACT-TRANSPORT`).
 
 | Measure | Recorded value | Source |
 |---|---|---|
