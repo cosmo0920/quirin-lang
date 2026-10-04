@@ -7,6 +7,7 @@
 //! separately checked boundary in the caller.
 
 pub mod bounds_contract;
+pub mod bounds_quant;
 pub mod bundle;
 pub mod contract_inclusion;
 pub mod contract_loader;

@@ -94,6 +94,10 @@ use qcore_core::index_extent_frames::{
 };
 use serde_json::Value;
 
+/// Card QUANT-INDEX-CHECKS (gateway rule 12l): `quant checks` on both sides
+/// of the call boundary.
+mod quant_checks;
+
 /// The property, its verdict values and the composition, for consumers that
 /// reach the core through this gateway (the audit routes).
 pub use qcore_core::index_extent::{BOUNDS_PROPERTY, BoundsVerdict, Request, compose};
@@ -594,6 +598,9 @@ struct Analysis<'a> {
     own: Option<&'a BoundsFunctionContract>,
     /// The body refutes `own`'s return extent.
     refuted: bool,
+    /// Card QUANT-INDEX-CHECKS: the function's own quant-checked pointer
+    /// formals, by the object name their seeded fact carries.
+    quant: BTreeMap<String, quant_checks::QuantObject>,
 }
 
 fn offset_of(node: &Value) -> Option<usize> {
@@ -916,6 +923,7 @@ fn declares_checked_relation(contract: &BoundsFunctionContract) -> bool {
             BoundsClause::ReturnExtent { .. }
                 | BoundsClause::Frame { .. }
                 | BoundsClause::ReturnDerived { .. }
+                | BoundsClause::QuantCheck { .. }
         )
     })
 }
@@ -1597,7 +1605,7 @@ impl<'a> Analysis<'a> {
                         _ => Decision::Undecided(Refusal::UnsupportedRange),
                     },
                 };
-                (decision, subject)
+                (self.quant_lower_bound_only(target, decision), subject)
             }
         }
     }
@@ -1614,6 +1622,13 @@ impl<'a> Analysis<'a> {
         reach: bool,
         state: &State,
     ) -> bool {
+        // Card QUANT-INDEX-CHECKS: through a quant-checked formal, the index
+        // is decided against the admitted set first.
+        if let Some(clear) =
+            self.quant_access(node, kind, position, &target, &index, formation, state)
+        {
+            return clear;
+        }
         let (decision, subject) = self.decide_access(&target, &index.fact, formation);
         let mut held = index.held.clone();
         if let Target::Known { held: h, .. } = &target {
@@ -1934,6 +1949,7 @@ impl<'a> Analysis<'a> {
             }
             return clear;
         };
+        clear &= self.quant_escapes(contract, &arguments, state, reach);
         clear & self.callee_preconditions(node, contract, &arguments, state, reach)
     }
 
@@ -2048,6 +2064,15 @@ impl<'a> Analysis<'a> {
                         state,
                     );
                 }
+                BoundsClause::QuantCheck {
+                    parameter,
+                    predicate,
+                    ..
+                } => {
+                    clear &= self.quant_call_obligation(
+                        contract, entry, parameter, predicate, arguments, &holds, state, reach,
+                    );
+                }
                 _ => {}
             }
         }
@@ -2055,8 +2080,13 @@ impl<'a> Analysis<'a> {
     }
 
     /// The target can hold `required` units from its offset: forming
-    /// `target + required` is valid.
+    /// `target + required` is valid (a quant object's extent is a lower
+    /// bound, card QUANT-INDEX-CHECKS).
     fn covers(&self, target: &Target, required: &Val, unit: BoundsUnit) -> Decision {
+        self.quant_lower_bound_only(target, self.covers_extent(target, required, unit))
+    }
+
+    fn covers_extent(&self, target: &Target, required: &Val, unit: BoundsUnit) -> Decision {
         let Target::Known {
             count,
             unit: have,
@@ -2541,6 +2571,11 @@ impl<'a> Analysis<'a> {
                     };
                     core::element_access(Some(&count), &value.fact) == Decision::InBounds
                 }
+                BoundsClause::QuantCheck {
+                    parameter,
+                    predicate,
+                    ..
+                } => self.quant_established(contract, parameter, predicate, arguments, reading, held),
                 _ => true,
             };
             if !established {
@@ -3565,6 +3600,7 @@ fn analyze_function(
         conditional: 0,
         own: contract,
         refuted: false,
+        quant: BTreeMap::new(),
     };
     let mut state = State {
         facts: Facts::default(),
@@ -3705,6 +3741,8 @@ fn analyze_function(
                     entry.text
                 ));
             }
+            // Card QUANT-INDEX-CHECKS: the quant-checked formals.
+            analysis.seed_quant_checks(contract, &parameters, &mut state, &holds);
         }
     }
     if let Some(body) = body {

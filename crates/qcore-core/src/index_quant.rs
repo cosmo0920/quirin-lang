@@ -458,20 +458,22 @@ pub fn shifted_within(outer: &QuantSet, inner: &[(i128, i128)], offset: i128) ->
     let mut inside = true;
     let mut outside = true;
     for (lo, hi) in inner {
+        if lo > hi {
+            return QuantDecision::Undecided(Refusal::EmptyRange);
+        }
         let (Some(lo), Some(hi)) = (lo.checked_add(offset), hi.checked_add(offset)) else {
             return QuantDecision::Undecided(Refusal::Overflow);
         };
         let Some(top) = hi.checked_add(1) else {
             return QuantDecision::Undecided(Refusal::Overflow);
         };
+        // A negative end reads as `[lo, -1]`, a superset (Lean's `toNat`):
+        // inside or outside it is inside or outside the interval itself.
         match index_admitted(
             outer,
             &IndexFact::Range {
                 lo,
-                hi: match u128::try_from(top) {
-                    Ok(top) => Count::Const(top),
-                    Err(_) => return QuantDecision::Undecided(Refusal::RangeNotContained),
-                },
+                hi: Count::Const(u128::try_from(top).unwrap_or(0)),
             },
         ) {
             QuantDecision::Inside => outside = false,

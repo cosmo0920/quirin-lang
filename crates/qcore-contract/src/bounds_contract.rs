@@ -27,9 +27,21 @@
 //! ensures normal bounds_frame_writes(P);       // CG24: may write what P reaches
 //! ensures normal bounds_frame_moves(P);        // CG24: may resize, move, release it
 //! ensures normal bounds_return_derived(P, OFF, LEN, UNIT); // CG24: result is P + OFF, LEN UNIT
+//! quant checks P, Idx #i: PREDICATE;         // QUANT-INDEX-CHECKS: every index through P
 //! COUNT = a scalar parameter of the declaration | a canonical decimal literal
 //! UNIT  = elements | bytes
 //! ```
+//!
+//! # Quantified index checks (card QUANT-INDEX-CHECKS)
+//!
+//! `quant checks P, Idx #i: PREDICATE;` binds `#i` universally: every index
+//! the function reads or writes through the pointer formal `P` satisfies
+//! `PREDICATE` (comparisons `==`, `<`, `>`, `<=`, `>=` of `#i` against a bound
+//! term, joined by `&&` and `||`). It is a check of the body and an obligation
+//! of each caller (the actual's extent covers every admitted index), never a
+//! postcondition, so it has its own introducer and no exit selector. The
+//! reader is [`crate::bounds_quant`]; the decisions are
+//! [`qcore_core::index_quant`]'s.
 //!
 //! # Frames and derived relations (card CG24-ALIAS-EXTENT-FRAME-VOCABULARY)
 //!
@@ -183,13 +195,23 @@ pub enum BoundsClause {
         length: BoundsCount,
         unit: BoundsUnit,
     },
+    /// Card QUANT-INDEX-CHECKS: every index through `parameter` satisfies
+    /// `predicate` over the bound variable `#variable`.
+    QuantCheck {
+        parameter: String,
+        variable: String,
+        predicate: qcore_core::index_quant::QuantPredicate,
+    },
 }
 
 impl BoundsClause {
     pub fn is_precondition(&self) -> bool {
         matches!(
             self,
-            Self::Extent { .. } | Self::Index { .. } | Self::GlobalExtent { .. }
+            Self::Extent { .. }
+                | Self::Index { .. }
+                | Self::GlobalExtent { .. }
+                | Self::QuantCheck { .. }
         )
     }
 }
@@ -508,6 +530,19 @@ struct Reader<'a> {
     result: Option<ParameterKind>,
 }
 
+impl crate::bounds_quant::Formals for Reader<'_> {
+    fn is_scalar(&self, name: &str) -> bool {
+        self.parameters
+            .iter()
+            .any(|p| p.name == name && p.kind == ParameterKind::Scalar)
+    }
+    fn is_pointer(&self, name: &str) -> bool {
+        self.parameters
+            .iter()
+            .any(|p| p.name == name && p.kind == ParameterKind::Pointer)
+    }
+}
+
 impl Reader<'_> {
     fn count(&self, group: &[TokenKind]) -> Result<BoundsCount, String> {
         if let Some(value) = canonical_literal(group) {
@@ -666,6 +701,23 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
     )];
     for clause in &contract.clauses {
         let clause = &clause.value;
+        // Card QUANT-INDEX-CHECKS: the collocated index check.
+        if clause.kind == SourceContractClauseKind::QuantCheck {
+            let tokens = tokens_of(&clause.expression_source)?;
+            let text = crate::bounds_quant::clause_text(&tokens);
+            normalised.push(text.clone());
+            let read = crate::bounds_quant::read_quant_check(&tokens, &reader)?;
+            clauses.push(BoundsClauseEntry {
+                clause: BoundsClause::QuantCheck {
+                    parameter: read.parameter,
+                    variable: read.variable,
+                    predicate: read.predicate,
+                },
+                text,
+                review: None,
+            });
+            continue;
+        }
         let requires = match &clause.kind {
             SourceContractClauseKind::Requires => true,
             SourceContractClauseKind::Ensures(SourceContractExitSelector::Normal) => false,
@@ -743,9 +795,21 @@ fn load_function(path: &str, decl: &SourceDeclaration) -> Result<BoundsFunctionC
             BoundsClause::PreservesExtents => "preserves".into(),
             BoundsClause::Frame { parameter, .. } => format!("frame {parameter}"),
             BoundsClause::ReturnDerived { parameter, .. } => format!("derived {parameter}"),
+            BoundsClause::QuantCheck { parameter, .. } => format!("quant {parameter}"),
         };
         if !seen.insert(key.clone()) {
             return Err(format!("duplicate bounds clause for {key}"));
+        }
+    }
+    // Card QUANT-INDEX-CHECKS: a pointer states its extent or its index
+    // check, not both (the check's caller obligation is the extent it needs).
+    for entry in &clauses {
+        if let BoundsClause::QuantCheck { parameter, .. } = &entry.clause
+            && seen.contains(&format!("extent {parameter}"))
+        {
+            return Err(format!(
+                "quant-check-with-extent: `{parameter}` states both a bounds_extent and a quant check"
+            ));
         }
     }
     frame_conditions(&parameters, &clauses)?;
