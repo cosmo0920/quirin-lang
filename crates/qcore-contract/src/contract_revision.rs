@@ -290,6 +290,11 @@ pub fn in_force_before_pins(
                 "`{name}` is withheld for a pin mismatch but its contract is flexible"
             ));
         }
+        // Card CALLEE-RETENTION-CLASS1: a withheld disposition or retaining
+        // declaration was never in the function map.
+        if withheld.relational.is_some() || withheld.retaining.is_some() {
+            continue;
+        }
         if functions
             .insert(name.clone(), withheld.contract.clone())
             .is_some()

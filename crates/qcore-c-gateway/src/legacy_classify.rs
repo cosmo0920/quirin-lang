@@ -1635,6 +1635,7 @@ impl Parser<'_> {
                 );
                 return LegacyInstruction::ContractCall {
                     container,
+                    retention: None,
                     function: function.to_owned(),
                     destination,
                     arguments,
@@ -1676,6 +1677,12 @@ impl Parser<'_> {
                     description,
                     writes: self.refused_writes(&texts),
                 };
+            }
+            // Card CALLEE-RETENTION-CLASS1 (rule 12t): a retaining callee,
+            // classified under its custody contract where its retentions can
+            // be decided, refused where they cannot.
+            if let Some(instruction) = self.retaining_call(tokens, &texts, call_index, function) {
+                return instruction;
             }
             // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a callee whose
             // return-code disposition this use selects no class of.

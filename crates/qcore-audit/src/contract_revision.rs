@@ -793,9 +793,13 @@ pub fn apply_pins(
             );
             locks.insert(path.clone(), read);
         }
-        if contracts.contract(name).is_none()
-            || contracts.revision_mode(name) != RevisionMode::Pinned
-        {
+        // Card CALLEE-RETENTION-CLASS1: a return-code disposition and a
+        // retaining declaration are pinned like any declaration in force; the
+        // two tables sit beside the function map, never in it.
+        let in_force = contracts.contract(name).is_some()
+            || contracts.relational_contract(name).is_some()
+            || contracts.retaining_contract(name).is_some();
+        if !in_force || contracts.revision_mode(name) != RevisionMode::Pinned {
             continue;
         }
         pending.push((name.clone(), module.clone(), owner, lock, digest.clone()));

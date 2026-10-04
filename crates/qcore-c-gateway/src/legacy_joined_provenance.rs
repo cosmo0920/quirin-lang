@@ -802,6 +802,7 @@ mod tests {
             alias_reads: Vec::new(),
             nested: Vec::new(),
             container: None,
+            retention: None,
         };
         cfg.conditional_names.insert("q".to_string());
         let reachable = BTreeSet::from([0, 1, 2, 3]);
@@ -906,6 +907,7 @@ mod tests {
             alias_reads: Vec::new(),
             nested: Vec::new(),
             container: None,
+            retention: None,
         }
     }
 

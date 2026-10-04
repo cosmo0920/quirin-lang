@@ -20,13 +20,12 @@ import re
 import sys
 
 DECLARED = [
-    "cJSON_New_Item", "LZ4_compress_HC", "LZ4_decompress_unsafe_generic", "LZ4_compress_default",
-    "load_descriptor_values", "rd_kafka_aborted_txns_next_offset", "rd_kafka_anyconf_desensitize",
-    "rd_kafka_dump0", "rd_kafka_metadata_copy_internal", "ctr_mpack_consume_uint_tag",
-    "ctr_mpack_consume_int_tag", "ctr_attributes_set_string", "ctr_attributes_set_bool",
-    "ctr_attributes_set_int64", "ctr_attributes_set_double", "cfl_kvlist_count",
-    "cfl_kvlist_insert_string", "cfl_kvlist_insert_bool", "cfl_kvlist_insert_int64",
-    "cfl_kvlist_insert_double", "_cio_file_up",
+    # stage (a)
+    "add_item_to_array", "replace_item_in_object", "cfl_kvlist_insert_array",
+    "cfl_kvlist_insert_kvlist", "ctr_attributes_set_array", "ctr_attributes_set_kvlist",
+    # stage (b)
+    "add_item_to_object", "LZ4_compress_HC_extStateHC", "LZ4_compress_HC_continue",
+    "LZ4_compress_fast_continue", "LZ4_compress_fast_extState", "append_to_ring_buffer",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 

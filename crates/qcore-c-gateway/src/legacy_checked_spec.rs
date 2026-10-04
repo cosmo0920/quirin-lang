@@ -98,6 +98,9 @@ fn reduced(
             reduced.insert_contract(name, contract.clone());
         }
     }
+    // Card CALLEE-RETENTION-CLASS1: the dispositions and retaining
+    // declarations stay in force.
+    reduced.carry_side_declarations(contracts, |_| false);
     reduced.set_source_assumptions(contracts.source_assumptions().clone());
     reduced
 }

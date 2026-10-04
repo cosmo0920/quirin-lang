@@ -1440,6 +1440,7 @@ fn only_a_released_position_of_a_contracted_call_records_a_release() {
             alias_reads: Vec::new(),
             nested: Vec::new(),
             container: None,
+            retention: None,
         };
         assert_eq!(
             released_names(&instruction) == vec!["a"],

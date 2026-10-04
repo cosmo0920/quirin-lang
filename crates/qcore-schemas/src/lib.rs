@@ -19,6 +19,7 @@ pub mod reactor;
 pub mod reason;
 // Card CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions.
 pub mod relational_post;
+pub mod retained_by;
 pub mod verdict;
 
 pub mod witness;

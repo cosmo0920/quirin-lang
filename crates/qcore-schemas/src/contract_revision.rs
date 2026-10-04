@@ -170,4 +170,14 @@ pub struct PinMismatch {
     pub lock: Option<String>,
     /// A one-line account of the difference.
     pub detail: String,
+    /// Card CALLEE-RETENTION-CLASS1: the withheld declaration's return-code
+    /// disposition, when it states one (`contract` is then its first class
+    /// and never an entry of the function map). Omitted when unset.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub relational: Option<crate::relational_post::RelationalContract>,
+    /// Card CALLEE-RETENTION-CLASS1: the withheld declaration's retention
+    /// clauses, when it states some (`contract` is then its custody contract
+    /// and never an entry of the function map). Omitted when unset.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub retaining: Option<crate::retained_by::RetainingContract>,
 }

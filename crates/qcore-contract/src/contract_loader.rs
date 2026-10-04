@@ -311,6 +311,10 @@ mod in_place;
 // Card CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions (§C04.13).
 #[path = "contract_relational.rs"]
 mod relational;
+
+// Card CALLEE-RETENTION-CLASS1: the retention clauses (§C04.14).
+#[path = "contract_retained_by.rs"]
+mod retained_by;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
@@ -627,6 +631,10 @@ struct LoadedDeclaration {
     /// dispositions (§C04.13). When set, `contract` is its first class and the
     /// declaration is installed only as a relational contract.
     relational: Option<qcore_schemas::relational_post::RelationalContract>,
+    /// Card CALLEE-RETENTION-CLASS1: the declaration's retention clauses
+    /// (§C04.14). When set, the declaration is installed only as a retaining
+    /// contract, never in the function map.
+    retaining: Option<qcore_schemas::retained_by::RetainingContract>,
 }
 
 /// The parameter vocabulary: every scalar, every pointer, `fnptr` and
@@ -815,6 +823,7 @@ pub fn load_resource_contract_sources(
             if contracts.contract(&decl.name).is_some()
                 || pending.contains_key(&decl.name)
                 || contracts.relational_contract(&decl.name).is_some()
+                || contracts.retaining_contract(&decl.name).is_some()
             {
                 return Err(format!("{context}: duplicate function contract"));
             }
@@ -837,6 +846,12 @@ pub fn load_resource_contract_sources(
                 // function map; a consumer that knows nothing of return-code
                 // dispositions sees an uncontracted callee.
                 contracts.insert_relational(&decl.name, relational);
+            } else if let Some(retaining) = loaded.retaining {
+                // Card CALLEE-RETENTION-CLASS1: never an entry of the function
+                // map; a consumer that knows nothing of retention sees an
+                // uncontracted callee, so a retained pointer is never read as
+                // borrowed and forgotten.
+                contracts.insert_retaining(&decl.name, retaining);
             } else if loaded.review.is_empty() {
                 contracts.insert_contract(&decl.name, loaded.contract);
             } else {
@@ -1190,6 +1205,7 @@ pub fn check_source_assumptions(contracts: &ResourceContracts) -> Result<(), Str
             || loaded.pending_review() != contracts.pending_review()
             || loaded.declared_revisions() != contracts.declared_revisions()
             || loaded.relational() != &declared_relational(contracts)
+            || loaded.retaining() != &declared_retaining(contracts)
         {
             return Err("resource contracts differ from their declared source assumptions".into());
         }
@@ -1227,6 +1243,32 @@ fn declared_relational(
             contract.withdrawn = None;
             (name.clone(), contract)
         })
+        // Card CALLEE-RETENTION-CLASS1: a disposition withheld for its pin is
+        // still declared.
+        .chain(contracts.pin_mismatch().iter().filter_map(|(name, withheld)| {
+            withheld
+                .relational
+                .clone()
+                .map(|relational| (name.clone(), relational))
+        }))
+        .collect()
+}
+
+/// Card CALLEE-RETENTION-CLASS1: the declared retaining contracts, those
+/// withheld for their pin included.
+fn declared_retaining(
+    contracts: &ResourceContracts,
+) -> BTreeMap<String, qcore_schemas::retained_by::RetainingContract> {
+    contracts
+        .retaining()
+        .iter()
+        .map(|(name, contract)| (name.clone(), contract.clone()))
+        .chain(contracts.pin_mismatch().iter().filter_map(|(name, withheld)| {
+            withheld
+                .retaining
+                .clone()
+                .map(|retaining| (name.clone(), retaining))
+        }))
         .collect()
 }
 
@@ -1376,6 +1418,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
             || !review_inherited(&child_loaded.review, &parent_loaded.review)
             || child_loaded.body_checked != parent_loaded.body_checked
             || child_loaded.relational != parent_loaded.relational
+            || child_loaded.retaining != parent_loaded.retaining
         {
             return Err(refuse(format!(
                 "`{child_name}` would not mean what its parent `{}` means under the resource-v1 \
@@ -1581,6 +1624,10 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     // Card CG23-RELATIONAL-POSTCONDITIONS: every `resource_on_return` clause,
     // in clause order.
     let mut conditional: Vec<(qcore_schemas::relational_post::ReturnRelation, String)> = Vec::new();
+    // Card CALLEE-RETENTION-CLASS1: every `resource_retained_by(p, h)` and
+    // `resource_holder_reset(h)`, as written, in clause order.
+    let mut retentions: Vec<(String, String)> = Vec::new();
+    let mut resets: Vec<String> = Vec::new();
     for clause in clauses {
         let requires = clause.value.kind == SourceContractClauseKind::Requires;
         // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
@@ -1747,6 +1794,20 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         if let Some(clause) = counted_users::parse(Some(&words), expression)? {
             counted_users::record(&mut collected, clause, &index)?;
             continue;
+        }
+        // Card CALLEE-RETENTION-CLASS1 (§C04.14): the retention clauses, read
+        // before the three-word parameter predicates; validated below once
+        // every mode is read.
+        match words.as_slice() {
+            [retained_by::RETAINED_BY, p, h] => {
+                retentions.push(((*p).to_owned(), (*h).to_owned()));
+                continue;
+            }
+            [retained_by::HOLDER_RESET, h] => {
+                resets.push((*h).to_owned());
+                continue;
+            }
+            _ => {}
         }
         // The variadic data tail is a *whole-declaration* fact, not a parameter
         // or result mode: it says what the arguments the declaration does not
@@ -2134,8 +2195,39 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         .next()
         .map(|class| class.contract)
         .ok_or("missing parameter mode")?;
+    // Card CALLEE-RETENTION-CLASS1 (§C04.14).
+    let retaining = if retentions.is_empty() && resets.is_empty() {
+        None
+    } else {
+        if is_relational
+            || !review.is_empty()
+            || body_checked
+            || variadic_data_tail
+            || no_return
+            || !literal_arguments.is_empty()
+            || loop_owner.is_some()
+            || thread_sync.is_some()
+            || lifecycle.is_some()
+            || !collected.users.is_empty()
+            || !collected.container_effects.is_empty()
+        {
+            return Err(
+                "a retention clause stands only beside plain parameter and result predicates"
+                    .into(),
+            );
+        }
+        Some(retained_by::declaration(
+            &retentions,
+            &resets,
+            &contract,
+            &parameter_types,
+            &parameter_kinds,
+            &names,
+        )?)
+    };
     Ok(LoadedDeclaration {
         relational,
+        retaining,
         contract,
         variadic_data_tail,
         variadic_borrowed_tail,
@@ -2345,6 +2437,7 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
     );
     Ok(LoadedDeclaration {
         relational: None,
+        retaining: None,
         contract,
         variadic_data_tail: false,
         variadic_borrowed_tail: false,

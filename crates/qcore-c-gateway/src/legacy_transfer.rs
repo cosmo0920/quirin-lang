@@ -261,6 +261,11 @@ pub(super) struct AbstractState {
     /// holds. Joined by intersection; empty in every function that calls no
     /// declared in-place initialiser, which keeps the join as it was.
     pub(super) status_witnesses: BTreeMap<String, (usize, String)>,
+    /// Card **CALLEE-RETENTION-CLASS1** (rule 12t): what a holder retains on
+    /// this path ([`retained_by_route`]). Joined by union, so a retention one
+    /// arriving path recorded is kept. Empty in every function that calls no
+    /// retaining callee, which keeps the join as it was.
+    pub(super) retained: BTreeSet<(crate::retained_by::HeldObject, crate::retained_by::HeldBy)>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -381,6 +386,7 @@ impl AbstractState {
         self.join_field_links(incoming);
         container_publication::join(&mut self.published, &incoming.published);
         in_place_custody::join_witnesses(&mut self.status_witnesses, &incoming.status_witnesses);
+        self.retained.extend(incoming.retained.iter().cloned());
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         self.join_collections(&before, incoming);
@@ -1813,6 +1819,8 @@ pub(crate) fn analyze_cfg_with_entry(
                 &exempt,
                 &mut diagnostics,
             );
+            // Card CALLEE-RETENTION-CLASS1 (rule 12t).
+            retained_by_route::report_exit(&cfg.function, node.line, &output, &mut diagnostics);
         }
         for (edge, &successor) in node.successors.iter().enumerate() {
             let mut edge_output = output.clone();
@@ -3792,6 +3800,7 @@ pub(super) fn transfer_base(
             alias_reads: _,
             nested,
             container,
+            retention,
         } => {
             // Card O04-TRACE: the admitted nested call's declared effects, in
             // order, before the enclosing call's. It produces nothing, so its
@@ -3868,6 +3877,18 @@ pub(super) fn transfer_base(
             // the call's borrowed reading.
             if let Some(operands) = container {
                 container_publication::apply(
+                    function,
+                    node.line,
+                    called,
+                    operands,
+                    &mut state,
+                    diagnostics,
+                );
+            }
+            // Card CALLEE-RETENTION-CLASS1 (rule 12t): the declared resets and
+            // retentions, after the call's borrowed reading.
+            if let Some(operands) = retention {
+                retained_by_route::apply(
                     function,
                     node.line,
                     called,
@@ -4388,6 +4409,25 @@ pub(super) fn apply_resource_action(
             state.unmodeled = true;
             continue;
         }
+        // Card CALLEE-RETENTION-CLASS1 (rule 12t): a pointer a live holder
+        // retains is neither released nor handed on; the refusal is a hazard,
+        // never an accusation.
+        if retained_by_route::refuse_release_of_held(
+            function,
+            line,
+            source,
+            site,
+            state,
+            diagnostics,
+        ) {
+            let held = AbstractPointer {
+                targets: BTreeSet::from([site]),
+                ..AbstractPointer::default()
+            };
+            mark_unresolved_effect(state, &held);
+            state.unmodeled = true;
+            continue;
+        }
         if escape && status != LIVE {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),
@@ -4433,6 +4473,9 @@ pub(super) fn apply_resource_action(
             state
                 .resources
                 .insert(site, (status & !(LIVE | CONTAINED)) | RELEASED);
+            // Card CALLEE-RETENTION-CLASS1 (rule 12t): a released holder
+            // holds nothing any more.
+            retained_by_route::holder_released(state, site);
         }
         // Card B08-FIELD-LINK-JOIN-SILENT-UNRESOLVED: the escape census, and
         // the refusal of an escape that does not carry a possibly-live child

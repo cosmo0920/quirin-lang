@@ -253,7 +253,9 @@ pub(crate) fn derive_custody_summaries(
     // Card CG23-RELATIONAL-POSTCONDITIONS: a declared return-code
     // disposition is a declaration of its component like any other.
     let declared = |name: &String| {
-        contracts.contract(name).is_some() || contracts.relational_contract(name).is_some()
+        contracts.contract(name).is_some()
+            || contracts.relational_contract(name).is_some()
+            || contracts.retaining_contract(name).is_some()
     };
     for component in strongly_connected_components(&graph) {
         // Seeded at "no summary" and iterated until nothing more installs.
@@ -265,6 +267,12 @@ pub(crate) fn derive_custody_summaries(
             let mut installed = false;
             let mut still_pending = Vec::new();
             for name in pending {
+                // Card CALLEE-RETENTION-CLASS1 (rule 12t): a retaining
+                // declaration is never replaced by an inference, which would
+                // read its retained pointer as borrowed.
+                if contracts.retaining_contract(&name).is_some() {
+                    continue;
+                }
                 // Card CG23-RELATIONAL-POSTCONDITIONS (rule 11r): a declared
                 // return-code disposition is checked against the body and
                 // never replaced by an inference.

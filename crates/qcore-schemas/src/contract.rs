@@ -681,6 +681,12 @@ pub struct ResourceContracts {
     /// so every environment without one serializes byte for byte as before.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     relational: BTreeMap<String, crate::relational_post::RelationalContract>,
+    /// Card CALLEE-RETENTION-CLASS1: declarations with retention clauses
+    /// (§C04.14), keyed by function name and disjoint from `functions`, so a
+    /// consumer that knows nothing of retention sees an uncontracted callee and
+    /// never reads a retained pointer as borrowed. Omitted when empty.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    retaining: BTreeMap<String, crate::retained_by::RetainingContract>,
 }
 
 impl ResourceContracts {
@@ -698,6 +704,7 @@ impl ResourceContracts {
             pin_mismatch: BTreeMap::new(),
             refuted_by_body: BTreeMap::new(),
             relational: BTreeMap::new(),
+            retaining: BTreeMap::new(),
         }
     }
 
@@ -811,10 +818,24 @@ impl ResourceContracts {
         if self.revision_mode(name) != crate::contract_revision::RevisionMode::Pinned {
             return Err(format!("`{name}` is flexible and has no pin to mismatch"));
         }
-        let contract = self
-            .functions
-            .remove(name)
-            .ok_or_else(|| format!("`{name}` is not a contract in force"))?;
+        // Card CALLEE-RETENTION-CLASS1: a pinned return-code disposition or
+        // retaining declaration is withheld from its own table the same way,
+        // and restored to it by [`Self::with_human_holds_in_force`].
+        let (contract, relational, retaining) = if let Some(contract) = self.functions.remove(name)
+        {
+            (contract, None, None)
+        } else if let Some(relational) = self.relational.remove(name) {
+            let first = relational
+                .classes
+                .first()
+                .map(|class| class.contract.clone())
+                .ok_or_else(|| format!("`{name}` states no return-code class"))?;
+            (first, Some(relational), None)
+        } else if let Some(retaining) = self.retaining.remove(name) {
+            (retaining.contract.clone(), None, Some(retaining))
+        } else {
+            return Err(format!("`{name}` is not a contract in force"));
+        };
         self.pin_mismatch.insert(
             name.to_owned(),
             crate::contract_revision::PinMismatch {
@@ -823,6 +844,8 @@ impl ResourceContracts {
                 reason,
                 lock,
                 detail,
+                relational,
+                retaining,
             },
         );
         Ok(())
@@ -868,7 +891,15 @@ impl ResourceContracts {
             resolved.functions.insert(name, pending.contract);
         }
         for (name, withheld) in std::mem::take(&mut resolved.pin_mismatch) {
-            resolved.functions.insert(name, withheld.contract);
+            // Card CALLEE-RETENTION-CLASS1: each declaration back in its own
+            // table, never a disposition or a retention read as plain.
+            if let Some(relational) = withheld.relational {
+                resolved.relational.insert(name, relational);
+            } else if let Some(retaining) = withheld.retaining {
+                resolved.retaining.insert(name, retaining);
+            } else {
+                resolved.functions.insert(name, withheld.contract);
+            }
         }
         Some(resolved)
     }
@@ -917,5 +948,48 @@ impl ResourceContracts {
         if let Some(contract) = self.relational.get_mut(name) {
             contract.withdrawn = Some(reason);
         }
+    }
+
+    /// Card CALLEE-RETENTION-CLASS1: the declarations with retention clauses,
+    /// keyed by function name. None of them is in [`Self::functions`].
+    #[must_use]
+    pub fn retaining(&self) -> &BTreeMap<String, crate::retained_by::RetainingContract> {
+        &self.retaining
+    }
+
+    /// The retaining declaration of `name`, if it has one.
+    #[must_use]
+    pub fn retaining_contract(&self, name: &str) -> Option<&crate::retained_by::RetainingContract> {
+        self.retaining.get(name)
+    }
+
+    /// Card CALLEE-RETENTION-CLASS1: carry `from`'s return-code dispositions
+    /// and retaining declarations into this environment, except the names
+    /// `withdrawn` holds. An environment rebuilt from another's function map
+    /// (a unit's withdrawals) keeps them this way, so a withdrawal of one name
+    /// never drops every other declaration of those tables.
+    pub fn carry_side_declarations(&mut self, from: &Self, withdrawn: impl Fn(&str) -> bool) {
+        for (name, contract) in &from.relational {
+            if !withdrawn(name) {
+                self.relational.insert(name.clone(), contract.clone());
+            }
+        }
+        for (name, contract) in &from.retaining {
+            if !withdrawn(name) {
+                self.retaining.insert(name.clone(), contract.clone());
+            }
+        }
+    }
+
+    /// Install a retaining declaration for `name`. The name leaves the
+    /// function map: one name has one reading.
+    pub fn insert_retaining(
+        &mut self,
+        name: impl Into<String>,
+        contract: crate::retained_by::RetainingContract,
+    ) {
+        let name = name.into();
+        self.functions.remove(&name);
+        self.retaining.insert(name, contract);
     }
 }

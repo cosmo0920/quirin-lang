@@ -305,6 +305,11 @@ mod layout_extents_route;
 // plan and the untested refusal).
 #[path = "legacy_relational_post.rs"]
 mod relational_route;
+// Card CALLEE-RETENTION-CLASS1 (rule 12t): retained pointers (the minted
+// custody environment, the call-site decision, the records the transfer
+// keeps, the release and exit refusals).
+#[path = "legacy_retained_by.rs"]
+pub(crate) mod retained_by_route;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
@@ -467,6 +472,11 @@ pub enum LegacyInstruction {
         /// ([`container_publication`]). `None` for every call whose contract
         /// in force has none.
         container: Option<Box<container_publication::Operands>>,
+        /// Card **CALLEE-RETENTION-CLASS1** (rule 12t): the decided
+        /// retentions and holder resets of a retaining callee, applied after
+        /// its borrowed reading ([`retained_by_route`]). `None` for every
+        /// other call.
+        retention: Option<Box<retained_by_route::Operands>>,
     },
     BranchOnNull {
         source: String,
@@ -3287,6 +3297,11 @@ fn build_function_cfg_with(
     let tokens = stored_returns.as_deref().unwrap_or(tokens);
     let class_environment = relational_route::class_environment(tokens, contracts);
     let contracts = class_environment.as_ref().unwrap_or(contracts);
+    // Card CALLEE-RETENTION-CLASS1 (rule 12t): the custody contract of every
+    // retaining declaration the stream names, under its minted name. The
+    // identity on an environment with none.
+    let retaining_environment = retained_by_route::retaining_environment(tokens, contracts);
+    let contracts = retaining_environment.as_ref().unwrap_or(contracts);
     let normalized = out_alias::normalize(tokens, function, contracts);
     let tokens = normalized.as_deref().unwrap_or(tokens);
     let (body_start, line) = find_function_body(tokens, function)

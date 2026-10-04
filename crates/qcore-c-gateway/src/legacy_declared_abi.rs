@@ -448,9 +448,14 @@ impl AbiAgreement {
     /// Decide agreement for every contracted name, over one preprocessed
     /// translation unit and one contract environment.
     pub(crate) fn read(tokens: &[Token], contracts: &ResourceContracts) -> Self {
+        // Card CALLEE-RETENTION-CLASS1: a return-code disposition and a
+        // retaining declaration are compared with the unit's C declaration
+        // like every other declaration.
         let names = contracts
             .functions()
             .keys()
+            .chain(contracts.relational().keys())
+            .chain(contracts.retaining().keys())
             .map(String::as_str)
             .collect::<BTreeSet<_>>();
         if names.is_empty() {
@@ -527,6 +532,9 @@ impl AbiAgreement {
                 reduced.insert_contract(name, contract.clone());
             }
         }
+        // Card CALLEE-RETENTION-CLASS1: the dispositions and retaining
+        // declarations this unit does not withdraw stay in force.
+        reduced.carry_side_declarations(contracts, |name| self.withdrawn.contains_key(name));
         reduced.set_source_assumptions(contracts.source_assumptions().clone());
         Some(reduced)
     }
