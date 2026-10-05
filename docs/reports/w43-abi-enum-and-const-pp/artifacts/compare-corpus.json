@@ -1,0 +1,2969 @@
+{
+ "statuses_before": {
+  "Unknown": 4013,
+  "Safe": 812,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3979,
+  "Safe": 846,
+  "Unsafe": 9
+ },
+ "transitions": {
+  "Unknown -> Safe": 34
+ },
+ "status_moves_by_label": {
+  "callee:LZ4_decompress_generic": 9,
+  "callee:rd_kafka_error_new": 3,
+  "callee-summary:LZ4_decompress_safe": 2,
+  "callee:rd_kafka_AclBinding_new0": 2,
+  "callee:rd_kafka_admin_add_config0": 2,
+  "callee:rd_kafka_ConsumerGroupDescription_new": 2,
+  "callee:rd_kafka_anyconf_dump": 2,
+  "callee:rd_kafka_err_action": 2,
+  "callee:rd_kafka_oauthbearer_set_token_failure": 2,
+  "callee:rd_kafka_toppars_pause_resume": 2,
+  "callee-summary:LZ4_decompress_safe_partial": 1,
+  "callee-summary:LZ4_decompress_safe_partial_forceExtDict": 1,
+  "callee-summary:LZ4_decompress_safe_partial_withPrefix64k": 1,
+  "callee-summary:LZ4_decompress_safe_partial_withSmallPrefix": 1,
+  "callee-summary:LZ4_decompress_safe_forceExtDict": 1,
+  "callee-summary:LZ4_decompress_safe_withPrefix64k": 1,
+  "callee-summary:LZ4_decompress_safe_withSmallPrefix": 1,
+  "callee:getrlimit": 1,
+  "callee:setrlimit": 1,
+  "callee-summary:rd_kafka_AclBindingFilter_new": 1,
+  "callee-summary:rd_kafka_AclBinding_new": 1,
+  "callee-summary:rd_kafka_ConsumerGroupDescription_copy": 1,
+  "callee:rd_flags2str": 1
+ },
+ "removed": {
+  "call to uncontracted function `_`": 172,
+  "unmodeled call, aggregate or indirect access in branch condition": 9,
+  "unresolved resource identity `_`": 9
+ },
+ "added": {
+  "unresolved resource identity `_`": 55,
+  "nullable resource `_` used by a non-null contract": 52,
+  "indirect memory access is outside the resource projection": 16,
+  "nested call `_` inside a modeled call is outside the resource projection": 9,
+  "loop re-acquisition: an earlier generation that may be live is still held": 4,
+  "call to `_` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)": 4,
+  "unmodeled call, aggregate or indirect access in return expression": 2,
+  "call has an unmodeled formal address or borrowed expression": 1,
+  "arguments beyond the declared parameters of `_` are outside the resource projection": 1
+ },
+ "moving_rows": 119,
+ "status_moves": [
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1624: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_doubleDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1704: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_forceExtDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1680: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_partial",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1631: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_partial_forceExtDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1689: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_partial_usingDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:LZ4_decompress_safe_partial",
+    "callee-summary:LZ4_decompress_safe_partial_forceExtDict",
+    "callee-summary:LZ4_decompress_safe_partial_withPrefix64k",
+    "callee-summary:LZ4_decompress_safe_partial_withSmallPrefix"
+   ],
+   "lost": [
+    "1827: call to uncontracted function `LZ4_decompress_safe_partial`",
+    "1830: call to uncontracted function `LZ4_decompress_safe_partial_withPrefix64k`",
+    "1833: call to uncontracted function `LZ4_decompress_safe_partial_withSmallPrefix`",
+    "1836: call to uncontracted function `LZ4_decompress_safe_partial_forceExtDict`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_partial_withPrefix64k",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1651: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_partial_withSmallPrefix",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1672: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_usingDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:LZ4_decompress_safe",
+    "callee-summary:LZ4_decompress_safe_forceExtDict",
+    "callee-summary:LZ4_decompress_safe_withPrefix64k",
+    "callee-summary:LZ4_decompress_safe_withSmallPrefix"
+   ],
+   "lost": [
+    "1813: call to uncontracted function `LZ4_decompress_safe`",
+    "1816: call to uncontracted function `LZ4_decompress_safe_withPrefix64k`",
+    "1819: call to uncontracted function `LZ4_decompress_safe_withSmallPrefix`",
+    "1822: call to uncontracted function `LZ4_decompress_safe_forceExtDict`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_withPrefix64k",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1644: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_withSmallPrefix",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1664: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_uncompress_unknownOutputSize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:LZ4_decompress_safe"
+   ],
+   "lost": [
+    "1877: call to uncontracted function `LZ4_decompress_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "occurrence": 1,
+   "function": "mk_server_capacity",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:getrlimit",
+    "callee:setrlimit"
+   ],
+   "lost": [
+    "6182: call to uncontracted function `getrlimit`",
+    "6187: call to uncontracted function `setrlimit`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_consumer_closed_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "23028: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBindingFilter_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_AclBindingFilter_new"
+   ],
+   "lost": [
+    "23427: call to uncontracted function `rd_kafka_AclBindingFilter_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBindingFilter_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_AclBinding_new0"
+   ],
+   "lost": [
+    "23382: call to uncontracted function `rd_kafka_AclBinding_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBinding_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_AclBinding_new"
+   ],
+   "lost": [
+    "23418: call to uncontracted function `rd_kafka_AclBinding_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBinding_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_AclBinding_new0"
+   ],
+   "lost": [
+    "23348: call to uncontracted function `rd_kafka_AclBinding_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_set_config",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_add_config0"
+   ],
+   "lost": [
+    "21878: call to uncontracted function `rd_kafka_admin_add_config0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescription_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConsumerGroupDescription_new"
+   ],
+   "lost": [
+    "25316: call to uncontracted function `rd_kafka_ConsumerGroupDescription_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescription_copy_opaque",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_ConsumerGroupDescription_copy"
+   ],
+   "lost": [
+    "25325: call to uncontracted function `rd_kafka_ConsumerGroupDescription_copy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescription_new_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConsumerGroupDescription_new"
+   ],
+   "lost": [
+    "25308: call to uncontracted function `rd_kafka_ConsumerGroupDescription_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewTopic_set_config",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_add_config0"
+   ],
+   "lost": [
+    "21296: call to uncontracted function `rd_kafka_admin_add_config0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_anyconf_dump"
+   ],
+   "lost": [
+    "25308: call to uncontracted function `rd_kafka_anyconf_dump`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_conf_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_anyconf_dump"
+   ],
+   "lost": [
+    "25313: call to uncontracted function `rd_kafka_anyconf_dump`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_event.c",
+   "occurrence": 1,
+   "function": "rd_kafka_event_debug_contexts",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_flags2str"
+   ],
+   "lost": [
+    "19826: call to uncontracted function `rd_flags2str`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_OffsetCommit_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "21359: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_OffsetFetch_err_action",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "21090: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_oauthbearer_set_token_failure",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_oauthbearer_set_token_failure"
+   ],
+   "lost": [
+    "20988: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_oauthbearer_set_token_failure"
+   ],
+   "lost": [
+    "21964: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_ensure_all_acknowledged_if_explicit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "19614: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_pause_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppars_pause_resume"
+   ],
+   "lost": [
+    "19808: call to uncontracted function `rd_kafka_toppars_pause_resume`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_resume_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppars_pause_resume"
+   ],
+   "lost": [
+    "19815: call to uncontracted function `rd_kafka_toppars_pause_resume`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ensure_transactional",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20271: call to uncontracted function `rd_kafka_error_new`",
+    "20276: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1624: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_continue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:LZ4_decompress_safe",
+    "callee-summary:LZ4_decompress_safe_doubleDict",
+    "callee-summary:LZ4_decompress_safe_forceExtDict",
+    "callee-summary:LZ4_decompress_safe_withPrefix64k",
+    "callee-summary:LZ4_decompress_safe_withSmallPrefix"
+   ],
+   "lost": [
+    "1746: call to uncontracted function `LZ4_decompress_safe`",
+    "1752: call to uncontracted function `LZ4_decompress_safe_withPrefix64k`",
+    "1754: call to uncontracted function `LZ4_decompress_safe_withSmallPrefix`",
+    "1757: call to uncontracted function `LZ4_decompress_safe_doubleDict`",
+    "1765: call to uncontracted function `LZ4_decompress_safe_forceExtDict`"
+   ],
+   "gained": [
+    "1754: unresolved resource identity `lz4sd`",
+    "1757: unresolved resource identity `lz4sd`",
+    "1765: unresolved resource identity `lz4sd`"
+   ]
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_doubleDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1704: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_forceExtDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1680: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_partial",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1631: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_partial_forceExtDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1689: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_partial_usingDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:LZ4_decompress_safe_partial",
+    "callee-summary:LZ4_decompress_safe_partial_forceExtDict",
+    "callee-summary:LZ4_decompress_safe_partial_withPrefix64k",
+    "callee-summary:LZ4_decompress_safe_partial_withSmallPrefix"
+   ],
+   "lost": [
+    "1827: call to uncontracted function `LZ4_decompress_safe_partial`",
+    "1830: call to uncontracted function `LZ4_decompress_safe_partial_withPrefix64k`",
+    "1833: call to uncontracted function `LZ4_decompress_safe_partial_withSmallPrefix`",
+    "1836: call to uncontracted function `LZ4_decompress_safe_partial_forceExtDict`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_partial_withPrefix64k",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1651: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_partial_withSmallPrefix",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1672: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_usingDict",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:LZ4_decompress_safe",
+    "callee-summary:LZ4_decompress_safe_forceExtDict",
+    "callee-summary:LZ4_decompress_safe_withPrefix64k",
+    "callee-summary:LZ4_decompress_safe_withSmallPrefix"
+   ],
+   "lost": [
+    "1813: call to uncontracted function `LZ4_decompress_safe`",
+    "1816: call to uncontracted function `LZ4_decompress_safe_withPrefix64k`",
+    "1819: call to uncontracted function `LZ4_decompress_safe_withSmallPrefix`",
+    "1822: call to uncontracted function `LZ4_decompress_safe_forceExtDict`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_withPrefix64k",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1644: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_decompress_safe_withSmallPrefix",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:LZ4_decompress_generic"
+   ],
+   "lost": [
+    "1664: call to uncontracted function `LZ4_decompress_generic`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "lz4.c",
+   "occurrence": 1,
+   "function": "LZ4_uncompress_unknownOutputSize",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:LZ4_decompress_safe"
+   ],
+   "lost": [
+    "1877: call to uncontracted function `LZ4_decompress_safe`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_server.c",
+   "occurrence": 1,
+   "function": "mk_server_capacity",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:getrlimit",
+    "callee:setrlimit"
+   ],
+   "lost": [
+    "6182: call to uncontracted function `getrlimit`",
+    "6187: call to uncontracted function `setrlimit`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "mk_server/mk_user.c",
+   "occurrence": 1,
+   "function": "mk_user_set_uidgid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "6053: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "23879: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "23886: nullable resource `error` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close_q",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "23801: call to uncontracted function `rd_kafka_error_new`",
+    "23805: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "23801: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "23801: unresolved resource identity `__qcore_returned_value`",
+    "23805: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "23805: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "23822: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "23822: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "23822: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_destroy_app",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_flags2str"
+   ],
+   "lost": [
+    "21717: call to uncontracted function `rd_flags2str`",
+    "21719: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_purge_flags2str",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_flags2str"
+   ],
+   "lost": [
+    "24722: call to uncontracted function `rd_flags2str`"
+   ],
+   "gained": [
+    "24722: unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "23552: call to uncontracted function `rd_kafka_error_new`",
+    "23556: call to uncontracted function `rd_kafka_error_new`",
+    "23589: call to uncontracted function `rd_kafka_error_new`",
+    "23598: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "23552: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "23552: unresolved resource identity `__qcore_returned_value`",
+    "23556: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "23556: unresolved resource identity `__qcore_returned_value`",
+    "23589: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "23589: unresolved resource identity `__qcore_returned_value`",
+    "23598: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "23598: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_acquire",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "22716: call to uncontracted function `rd_kafka_error_new`",
+    "22726: call to uncontracted function `rd_kafka_error_new`",
+    "22734: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "22716: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "22716: unresolved resource identity `__qcore_returned_value`",
+    "22726: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "22726: unresolved resource identity `__qcore_returned_value`",
+    "22734: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "22734: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_async",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23317: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "23334: nullable resource `error` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23352: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "23388: nullable resource `error` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_consumer_close",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23904: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "23912: nullable resource `error` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_consumer_close_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23831: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "23841: nullable resource `error` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_consumer_closed_err",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_share_consumer_closed_error"
+   ],
+   "lost": [
+    "23036: call to uncontracted function `rd_kafka_share_consumer_closed_error`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_consumer_closed_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "23028: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_poll",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "23110: call to uncontracted function `rd_kafka_error_new`",
+    "23115: unmodeled call, aggregate or indirect access in branch condition",
+    "23124: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "23146: nullable resource `error` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_set_acknowledgement_commit_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22776: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": [
+    "22794: nullable resource `error` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBindingFilter_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_AclBindingFilter_new"
+   ],
+   "lost": [
+    "23427: call to uncontracted function `rd_kafka_AclBindingFilter_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBindingFilter_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_AclBinding_new0"
+   ],
+   "lost": [
+    "23382: call to uncontracted function `rd_kafka_AclBinding_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBinding_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_AclBinding_new"
+   ],
+   "lost": [
+    "23418: call to uncontracted function `rd_kafka_AclBinding_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AclBinding_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_AclBinding_new0"
+   ],
+   "lost": [
+    "23348: call to uncontracted function `rd_kafka_AclBinding_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_copy_to",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type"
+   ],
+   "lost": [
+    "21139: call to uncontracted function `rd_kafka_confval_set_type`",
+    "21148: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "21139: indirect memory access is outside the resource projection",
+    "21148: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_broker",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type"
+   ],
+   "lost": [
+    "20938: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "20938: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_include_authorized_operations",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type"
+   ],
+   "lost": [
+    "20963: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "20963: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_isolation_level",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type"
+   ],
+   "lost": [
+    "20945: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "20945: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_match_consumer_group_states",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type",
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20987: call to uncontracted function `rd_kafka_error_new`",
+    "20994: call to uncontracted function `rd_kafka_error_new`",
+    "21002: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "20987: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20987: unresolved resource identity `__qcore_returned_value`",
+    "20994: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20994: unresolved resource identity `__qcore_returned_value`",
+    "21002: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_match_consumer_group_types",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type",
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "21029: call to uncontracted function `rd_kafka_error_new`",
+    "21034: call to uncontracted function `rd_kafka_error_new`",
+    "21041: call to uncontracted function `rd_kafka_error_new`",
+    "21049: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "21029: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "21029: unresolved resource identity `__qcore_returned_value`",
+    "21034: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "21034: unresolved resource identity `__qcore_returned_value`",
+    "21041: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "21041: unresolved resource identity `__qcore_returned_value`",
+    "21049: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_opaque",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type"
+   ],
+   "lost": [
+    "21059: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "21059: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_operation_timeout",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type"
+   ],
+   "lost": [
+    "20919: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "20919: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_request_timeout",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type"
+   ],
+   "lost": [
+    "20910: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "20910: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_require_stable_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type"
+   ],
+   "lost": [
+    "20954: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "20954: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AdminOptions_set_validate_only",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_confval_set_type"
+   ],
+   "lost": [
+    "20928: call to uncontracted function `rd_kafka_confval_set_type`"
+   ],
+   "gained": [
+    "20928: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_add_incremental_config",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "21886: call to uncontracted function `rd_kafka_error_new`",
+    "21891: call to uncontracted function `rd_kafka_error_new`",
+    "21897: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "21886: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "21886: unresolved resource identity `__qcore_returned_value`",
+    "21891: call has an unmodeled formal address or borrowed expression",
+    "21897: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "21897: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConfigResource_set_config",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_add_config0"
+   ],
+   "lost": [
+    "21878: call to uncontracted function `rd_kafka_admin_add_config0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConsumerGroupDescription_new"
+   ],
+   "lost": [
+    "25755: call to uncontracted function `rd_kafka_ConsumerGroupDescription_new`",
+    "25761: call to uncontracted function `rd_kafka_ConsumerGroupDescription_new_error`"
+   ],
+   "gained": [
+    "25755: nested call `rd_kafka_consumer_group_state_code` inside a modeled call is outside the resource projection",
+    "25761: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescription_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConsumerGroupDescription_new"
+   ],
+   "lost": [
+    "25316: call to uncontracted function `rd_kafka_ConsumerGroupDescription_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescription_copy_opaque",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_ConsumerGroupDescription_copy"
+   ],
+   "lost": [
+    "25325: call to uncontracted function `rd_kafka_ConsumerGroupDescription_copy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescription_new_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConsumerGroupDescription_new"
+   ],
+   "lost": [
+    "25308: call to uncontracted function `rd_kafka_ConsumerGroupDescription_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteAclsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_AclBinding_new0"
+   ],
+   "lost": [
+    "24405: call to uncontracted function `rd_kafka_AclBinding_new0`"
+   ],
+   "gained": [
+    "24405: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeAclsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_AclBinding_new0"
+   ],
+   "lost": [
+    "23608: call to uncontracted function `rd_kafka_AclBinding_new0`"
+   ],
+   "gained": [
+    "23608: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_ConsumerGroupDescription_new",
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "25503: call to uncontracted function `rd_kafka_error_new`",
+    "25512: call to uncontracted function `rd_kafka_error_new`",
+    "25588: call to uncontracted function `rd_kafka_ConsumerGroupDescription_new`",
+    "25594: call to uncontracted function `rd_kafka_ConsumerGroupDescription_new_error`"
+   ],
+   "gained": [
+    "25503: nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection",
+    "25512: arguments beyond the declared parameters of `rd_kafka_error_new` are outside the resource projection",
+    "25588: nested call `rd_kafka_consumer_group_state_code` inside a modeled call is outside the resource projection",
+    "25594: loop re-acquisition: an earlier generation that may be live is still held"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConsumerGroups_response_merge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "25838: call to uncontracted function `rd_kafka_ConsumerGroupDescription_copy`",
+    "25840: call to uncontracted function `rd_kafka_error_new`",
+    "25842: call to uncontracted function `rd_kafka_ConsumerGroupDescription_new_error`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "24921: call to uncontracted function `rd_kafka_error_new`",
+    "24994: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "24921: nested call `rd_kafka_broker_id` inside a modeled call is outside the resource projection",
+    "24994: nested call `rd_kafka_broker_id` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_NewTopic_set_config",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_admin_add_config0"
+   ],
+   "lost": [
+    "21296: call to uncontracted function `rd_kafka_admin_add_config0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_incremental_add_config0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "21284: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "21284: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "21284: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment_pause",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppars_pause_resume"
+   ],
+   "lost": [
+    "20753: call to uncontracted function `rd_kafka_toppars_pause_resume`"
+   ],
+   "gained": [
+    "20753: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment_resume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppars_pause_resume"
+   ],
+   "lost": [
+    "20764: call to uncontracted function `rd_kafka_toppars_pause_resume`"
+   ],
+   "gained": [
+    "20764: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment_subtract",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20689: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "20689: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20689: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_assignment_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20549: call to uncontracted function `rd_kafka_error_new`",
+    "20556: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "20549: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20549: unresolved resource identity `__qcore_returned_value`",
+    "20549: unresolved resource identity `rktpar`",
+    "20556: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20556: unresolved resource identity `__qcore_returned_value`",
+    "20556: unresolved resource identity `rktpar`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_assignment_subtract",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20644: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "20644: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20644: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "22193: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_FindCoordinator",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "20694: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_Heartbeat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "22535: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_JoinGroup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "21531: unresolved resource identity `request`",
+    "21601: unresolved resource identity `request`",
+    "21654: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "22412: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_SyncGroup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "21366: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_assign_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "23872: call to uncontracted function `rd_kafka_error_new`",
+    "23882: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_group_metadata_read",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "24691: call to uncontracted function `rd_kafka_error_new`",
+    "24694: call to uncontracted function `rd_kafka_error_new`",
+    "24701: call to uncontracted function `rd_kafka_error_new`",
+    "24706: call to uncontracted function `rd_kafka_error_new`",
+    "24714: call to uncontracted function `rd_kafka_error_new`",
+    "24719: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "24691: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "24691: unresolved resource identity `__qcore_returned_value`",
+    "24694: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "24694: unresolved resource identity `__qcore_returned_value`",
+    "24701: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "24701: unresolved resource identity `__qcore_returned_value`",
+    "24706: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "24706: unresolved resource identity `__qcore_returned_value`",
+    "24714: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "24714: unresolved resource identity `__qcore_returned_value`",
+    "24719: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "24719: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_anyconf_dump_dbg",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_anyconf_dump"
+   ],
+   "lost": [
+    "25331: call to uncontracted function `rd_kafka_anyconf_dump`",
+    "25335: unresolved resource identity `rk`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_anyconf_dump"
+   ],
+   "lost": [
+    "25308: call to uncontracted function `rd_kafka_anyconf_dump`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_conf.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_conf_dump",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_anyconf_dump"
+   ],
+   "lost": [
+    "25313: call to uncontracted function `rd_kafka_anyconf_dump`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_coord.c",
+   "occurrence": 1,
+   "function": "rd_kafka_coord_req_handle_FindCoordinator",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "20359: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_error.c",
+   "occurrence": 1,
+   "function": "rd_kafka_error_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new_v"
+   ],
+   "lost": [
+    "19618: call to uncontracted function `rd_kafka_error_new_v`"
+   ],
+   "gained": [
+    "19618: call to `rd_kafka_error_new_v` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)"
+   ]
+  },
+  {
+   "unit": "rdkafka_error.c",
+   "occurrence": 1,
+   "function": "rd_kafka_error_new_fatal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new_v"
+   ],
+   "lost": [
+    "19627: call to uncontracted function `rd_kafka_error_new_v`"
+   ],
+   "gained": [
+    "19627: call to `rd_kafka_error_new_v` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)"
+   ]
+  },
+  {
+   "unit": "rdkafka_error.c",
+   "occurrence": 1,
+   "function": "rd_kafka_error_new_retriable",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new_v"
+   ],
+   "lost": [
+    "19637: call to uncontracted function `rd_kafka_error_new_v`"
+   ],
+   "gained": [
+    "19637: call to `rd_kafka_error_new_v` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)"
+   ]
+  },
+  {
+   "unit": "rdkafka_error.c",
+   "occurrence": 1,
+   "function": "rd_kafka_error_new_txn_requires_abort",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new_v"
+   ],
+   "lost": [
+    "19649: call to uncontracted function `rd_kafka_error_new_v`"
+   ],
+   "gained": [
+    "19649: call to `rd_kafka_error_new_v` whose declared contract was withdrawn against its C declaration in this translation unit (abi-unreadable-declaration)"
+   ]
+  },
+  {
+   "unit": "rdkafka_event.c",
+   "occurrence": 1,
+   "function": "rd_kafka_event_debug_contexts",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_flags2str"
+   ],
+   "lost": [
+    "19826: call to uncontracted function `rd_flags2str`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_interceptor_add_on_conf_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_interceptor_method_add"
+   ],
+   "lost": [
+    "20036: call to uncontracted function `rd_kafka_interceptor_method_add`"
+   ],
+   "gained": [
+    "20036: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_interceptor_add_on_conf_dup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_interceptor_method_add"
+   ],
+   "lost": [
+    "20027: call to uncontracted function `rd_kafka_interceptor_method_add`"
+   ],
+   "gained": [
+    "20027: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_interceptor_add_on_conf_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_interceptor_method_add"
+   ],
+   "lost": [
+    "20018: call to uncontracted function `rd_kafka_interceptor_method_add`"
+   ],
+   "gained": [
+    "20018: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_interceptor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_conf_interceptor_add_on_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_interceptor_method_add"
+   ],
+   "lost": [
+    "20045: call to uncontracted function `rd_kafka_interceptor_method_add`"
+   ],
+   "gained": [
+    "20045: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_produceva",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20002: call to uncontracted function `rd_kafka_error_new`",
+    "20014: call to uncontracted function `rd_kafka_error_new`",
+    "20022: call to uncontracted function `rd_kafka_error_new`",
+    "20031: call to uncontracted function `rd_kafka_error_new`",
+    "20039: call to uncontracted function `rd_kafka_error_new`",
+    "20048: call to uncontracted function `rd_kafka_error_new`",
+    "20062: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "20014: nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection",
+    "20031: unresolved resource identity `vu`",
+    "20048: nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection",
+    "20062: nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection",
+    "20074: nullable resource `error` used by a non-null contract"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offset_store_message",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20553: call to uncontracted function `rd_kafka_error_new`",
+    "20557: call to uncontracted function `rd_kafka_error_new`",
+    "20564: call to uncontracted function `rd_kafka_error_new`",
+    "20566: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "20553: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20553: unresolved resource identity `__qcore_returned_value`",
+    "20557: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20557: unresolved resource identity `__qcore_returned_value`",
+    "20564: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20564: unresolved resource identity `__qcore_returned_value`",
+    "20566: nested call `rd_kafka_err2str` inside a modeled call is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_handle_OffsetForLeaderEpoch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "20707: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_error_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20244: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "20244: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20244: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_set_log_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20349: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "20349: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20349: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescribeRequest",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "23934: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "23934: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "23934: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeGroupsRequest",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "21984: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "21984: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "21984: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListGroupsRequest",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "21944: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "21944: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "21944: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_actions2str",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_flags2str"
+   ],
+   "lost": [
+    "20378: call to uncontracted function `rd_flags2str`"
+   ],
+   "gained": [
+    "20378: unmodeled call, aggregate or indirect access in return expression"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_LeaveGroup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "21693: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_ListOffsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "20995: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_Metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "22041: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_OffsetCommit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "21427: call to uncontracted function `rd_kafka_handle_OffsetCommit_error`",
+    "21439: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_OffsetCommit_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "21359: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_OffsetFetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_handle_OffsetFetch_err_action"
+   ],
+   "lost": [
+    "21221: call to uncontracted function `rd_kafka_handle_OffsetFetch_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_OffsetFetch_err_action",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_err_action"
+   ],
+   "lost": [
+    "21090: call to uncontracted function `rd_kafka_err_action`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_Produce_error",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22983: unresolved resource identity `request`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_background_callbacks_enable",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20933: call to uncontracted function `rd_kafka_error_new`",
+    "20938: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "20933: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20933: unresolved resource identity `__qcore_returned_value`",
+    "20938: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "20938: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_set_credentials",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "21001: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "21001: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "21001: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_oauthbearer_set_token_failure",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_oauthbearer_set_token_failure"
+   ],
+   "lost": [
+    "20988: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oauthbearer_unsecured_token",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_oauthbearer_set_token_failure"
+   ],
+   "lost": [
+    "20696: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oidc_token_client_credentials_refresh_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_oauthbearer_set_token_failure"
+   ],
+   "lost": [
+    "21844: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`",
+    "21852: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`",
+    "21868: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`"
+   ],
+   "gained": [
+    "21844: unresolved resource identity `herr`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oidc_token_jwt_bearer_refresh_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_oauthbearer_set_token_failure"
+   ],
+   "lost": [
+    "21749: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`",
+    "21756: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`",
+    "21769: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`",
+    "21782: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`",
+    "21798: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`"
+   ],
+   "gained": [
+    "21769: unresolved resource identity `herr`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oidc_token_metadata_aws_iam_refresh_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_oauthbearer_set_token_failure"
+   ],
+   "lost": [
+    "21964: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer_oidc.c",
+   "occurrence": 1,
+   "function": "rd_kafka_oidc_token_metadata_azure_imds_refresh_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_oauthbearer_set_token_failure"
+   ],
+   "lost": [
+    "21915: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`",
+    "21926: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`",
+    "21934: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`",
+    "21950: call to uncontracted function `rd_kafka_oauthbearer_set_token_failure`"
+   ],
+   "gained": [
+    "21926: unresolved resource identity `herr`"
+   ]
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_ensure_all_acknowledged_if_explicit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "19614: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assign0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "19681: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "19681: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "19681: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_incremental_assign",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "19710: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "19710: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "19710: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_incremental_unassign",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "19719: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "19719: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "19719: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_pause_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppars_pause_resume"
+   ],
+   "lost": [
+    "19808: call to uncontracted function `rd_kafka_toppars_pause_resume`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_resume_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_toppars_pause_resume"
+   ],
+   "lost": [
+    "19815: call to uncontracted function `rd_kafka_toppars_pause_resume`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ensure_transactional",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20271: call to uncontracted function `rd_kafka_error_new`",
+    "20276: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_send_offsets_to_transaction",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "21297: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "21297: nullable resource `__qcore_returned_value` used by a non-null contract",
+    "21297: unresolved resource identity `__qcore_returned_value`"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_curr_api_begin",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20478: unmodeled call, aggregate or indirect access in branch condition",
+    "20479: unresolved resource identity `error`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_require_states0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee:rd_kafka_error_new"
+   ],
+   "lost": [
+    "20285: unmodeled call, aggregate or indirect access in branch condition",
+    "20288: unresolved resource identity `rk`",
+    "20290: unresolved resource identity `rk`",
+    "20293: unresolved resource identity `rk`",
+    "20294: call to uncontracted function `rd_kafka_error_new`"
+   ],
+   "gained": [
+    "20301: nullable resource `error` used by a non-null contract",
+    "20301: unresolved resource identity `error`"
+   ]
+  }
+ ]
+}

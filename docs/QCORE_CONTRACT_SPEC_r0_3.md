@@ -102,7 +102,58 @@ The pointer vocabulary is exactly:
 ptr<mut, u8>
 ptr<const, u8>
 ptr<mut, ptr<mut, u8>>
+ptr<mut, ptr<const, u8>>
 ```
+
+**Card W43-ABI-ENUM-AND-CONST-PP (gateway rules 12u, 12v, 12w).** The user's
+decisions, recorded verbatim from the card's brief:
+
+> **USER DECISION 2026-10-05.**
+> 1. **Integer projection for enum typedefs.** A parameter or result whose C type is an enum (tagged or untagged, through any typedef chain) is spelled in the contract as its **underlying integer type**, e.g. `i32` or `u32`. The reader takes that type from Clang's AST for the target (`fixedUnderlyingType` or the computed enum integer type), never assumes `int`, and requires an exact width and signedness match. If Clang does not state the type, refuse. No new type grammar; the contract does not record the enum's name.
+> 2. **Shapes covered: enum typedefs and pointer-to-pointer-to-const** (`const char **`, `const void **`; today `pointer_projection` admits only `T **`). State the const-qualification rule precisely: which level is const, and what a `ptr<…>` spelling must say. Transparent unions (`__CONST_SOCKADDR_ARG`) and `va_list` stay registered, out of scope.
+> 3. **Conditional clauses on an enum argument's value, in this card.** Some callees behave differently by an enum argument's value. `rd_kafka_confval_set_type` retains `valuep` only when `valuetype` is the PTR constant (5 functions alone). Add a guard, e.g. `when PARAM == CONST` (design the exact spelling; reuse the QUANT-INDEX-CHECKS comparison operators `==`, `<`, `>`, `<=`, `>=` and their evaluation model). A clause then applies only when the caller's actual is decided to satisfy the guard. An undecided actual gets the **cautious reading**: the union or join of every guarded clause, never the favourable one. Guards are over integer-typed (including enum-projected) parameters only, and constants are integer literals. Do not name enum constants: the integer projection carries no names, so state the value with its source citation in a comment. Requirements: total-or-reject grammar; guards must partition or cover: an uncovered value gets the cautious reading; Lean: the guard semantics, the cautious join, and the theorem that an undecided guard never yields Safe where the cautious reading would not; body check: where the body is available (W4 validation), each guarded clause is validated under its guard.
+
+Decision 3's example does not hold of the body it names: the card read
+`rd_kafka_confval_set_type` (`rdkafka_conf.c:3763-3874` at `66910c10` and
+`046accf6`) and its retaining arm switches on `confval->valuetype`, the
+holder's own stored type, never on the `valuetype` argument. Its declaration
+therefore carries the cautious, unguarded retention; the guard (C04.14.1) is
+in the vocabulary with no corpus declaration using it.
+
+*Enumerations (rule 12u).* A consumer reading the C side MUST project an
+enumeration type, at a parameter or a result, reached directly (`enum TAG`)
+or through any typedef chain, untagged or tagged, to exactly one spelling:
+the scalar of the width and signedness of the integer type **Clang states for
+that enumeration in the analysed unit** (an enumeration without a negative
+value is `unsigned int`, `u32`, on the audited target; one with a negative
+value `int`, `i32`; a value beyond `int` a 64-bit type; a fixed underlying
+type its own). It MUST NOT assume `int`, MUST NOT admit the pointer-width
+`isize`/`usize` readings an ordinary `long` also has, and MUST refuse
+(withdraw the declaration as unreadable) whenever Clang does not state the
+type: a failed launch, an incomplete enumeration, a type the probe cannot
+name at file scope, two or no compatible standard types, a signedness that
+disagrees. The C gateway asks Clang through one appended probe per unit
+(`sizeof`, the sign of `(T)-1`, and `__builtin_types_compatible_p` against
+the ten standard integer types); the per-unit frontend request carries no
+`--target`, `-fshort-enums` or `-m32`, the boundary `ABI-ENUM-UNIT-FRONTEND-FLAGS` records (as
+CG20 recorded for plain `long`). A pointer to an
+enumeration is an object pointer as before. The Lean model is
+`QCore.AbiEnumConstPointer`.
+
+*Pointers to pointers to const (rule 12v).* `ptr<A, ptr<B, u8>>` reads its
+qualifiers from the outside in: `A` qualifies the pointee of the outer
+pointer, which is the slot (the inner pointer object), and `B` qualifies the
+innermost pointee. `ptr<mut, ptr<const, u8>>` is therefore exactly a pointer
+to an unqualified pointer to a `const` object: `const char **`,
+`const void **`, `const T *p[]` (adjusted), and a typedef chain whose
+innermost specifiers carry the `const`. A qualifier on the slot — between the
+two `*` (`char *const *`), on a typedef name that stands for a pointer
+(`const str *` for `typedef char *str;`), or on a link of a typedef chain
+that stands for a pointer — has no spelling and MUST be refused. `char **`
+and `const char **` are distinct types (C11 6.7.6.1p2, 6.7.3p10), so neither
+spelling admits the other. The new spelling carries custody as
+`ptr<mut, ptr<mut, u8>>` does, except that `resource_out` still requires
+`ptr<mut, ptr<mut, u8>>` exactly.
 
 The function-pointer vocabulary is exactly:
 
@@ -257,7 +308,7 @@ Only normal C returns are represented by v1 postconditions, apart from the no-re
 
 General success-dependent parameter modes (beyond the return-code dispositions of C04.13), exceptional exits, `ensures any`, `ensures error(E)`, quantitative clauses other than the counted-user clauses of C04.7, effects, access permissions and synchronization are not in v1; the loop-owner obligation of C04.9 and the thread-synchronization obligation of C04.10 are call-site preconditions, not synchronization clauses. Non-null pointer error sentinels such as `MAP_FAILED` are not representable. The scalar failure sentinel `-1` of a descriptor is, through the `descriptor` kind and its `sentinel`/`valid` validity words (§C04.6); no other scalar sentinel is, and nullability is never reinterpreted as one.
 
-**Value-dependent parameter modes are not in v1.** A parameter mode is fixed per declaration; no clause conditions a *mode* on an argument's value, and C04.5's premise does not add one — it restricts where the whole declaration applies, leaving every mode exactly as written.
+**Value-dependent parameter modes are not in v1.** A parameter mode is fixed per declaration; no clause conditions a *mode* on an argument's value, and C04.5's premise does not add one — it restricts where the whole declaration applies, leaving every mode exactly as written. The one value-conditioned clause is the guarded retention of C04.14.1 (card W43-ABI-ENUM-AND-CONST-PP), which conditions a `resource_retained_by` clause, never a mode.
 
 The loader rejects syntax that attempts to express unsupported semantics. It cannot discover that a syntactically admitted declaration is semantically false of a named C function. For example, merely writing a pointer-returning `mmap`-like name with `resource_return_owned(nullable)` does not enable sentinel validation. Applying that model to an API whose failure is non-null would be an invalid trusted assumption. A broader profile MUST model success tests, endpoint kinds, generations and failure residuals explicitly; it MUST NOT reinterpret v1 nullability silently.
 
@@ -583,9 +634,28 @@ contract {
 * **A holder reset or destroyed.** A tracked heap holder releases what it holds when it is released; a `resource_holder_reset(H)` call drops what `H` holds. A tracked holder that still holds at an exit (returned, stored or leaked) may outlive the frame: the exit refuses.
 * **The program-lifetime holder.** `global` keeps only static storage: any other `P` there is undecided.
 
-A holder the caller supplied (a formal, a member reached through one) or an actual the consumer cannot name is undecided: the caller of *this* function decides the holder's lifetime, and a retention is not forwarded into a summary. Records join by union over paths. The C gateway's per-unit route is such a consumer; every other consumer sees an uncontracted callee. Not in this clause: a retention conditioned on an argument's value (an arm that copies and an arm that keeps), a retention beside a return-code disposition (cJSON's `add_item_to_object`), a pointer derived from `P` handed back through an out slot, and a callback the holder invokes over what it keeps (shape (c)).
+A holder the caller supplied (a formal, a member reached through one) or an actual the consumer cannot name is undecided: the caller of *this* function decides the holder's lifetime, and a retention is not forwarded into a summary. Records join by union over paths. The C gateway's per-unit route is such a consumer; every other consumer sees an uncontracted callee. Not in this clause: a retention conditioned on an argument's value (an arm that copies and an arm that keeps; since card W43-ABI-ENUM-AND-CONST-PP the guarded form of C04.14.1), a retention beside a return-code disposition (cJSON's `add_item_to_object`), a pointer derived from `P` handed back through an out slot, and a callback the holder invokes over what it keeps (shape (c)).
 
 **Checked, never trusted.** A retaining declaration is pinned (C06.2) and evaluated against its pin like every declaration, and compared with the unit's C declaration (C04.1); no inference replaces it in a unit that defines its body. Its body is not yet checked against the retention (`RETAINED-BY-BODY-CHECK`): it is a declared assumption (constraint 4). The Lean model is `QCore.RetainedBy`.
+
+#### C04.14.1. Guarded retentions
+
+Card W43-ABI-ENUM-AND-CONST-PP (gateway rule 12w), on the user's decision 3 recorded in C04.1:
+
+```qcore
+ensures normal resource_retained_by(P, H) when X OP K;
+```
+
+**Grammar** (G05, total-or-reject). A guard stands only on `resource_retained_by`. `X` names an integer parameter of the same declaration (`i8`–`i64`, `isize`, `u8`–`u64`, `usize`, enumeration projections included; not `bool`, a float, a pointer, `fnptr` or `va_list`), distinct from `P` and `H`. `OP` is one of QUANT-INDEX-CHECKS' comparisons (C09.2), `==`, `<`, `>`, `<=`, `>=`, evaluated over the mathematical integers; `!=`, `&&`, `||` and a second guard are not admitted. `K` is a canonical decimal literal (C04.5's spelling), never a name: the integer projection carries no enumeration names, so a declaration states the constant's value and cites its source in a comment. `K` lies in `X`'s range and the guard **partitions** the range: some value satisfies it and some does not (`x >= 0` on `u32` rejects). Every violation rejects the whole module.
+
+**Meaning.** The clause holds exactly at the calls whose actual at `X` satisfies the guard: each guarded clause partitions `X`'s values into its arm (the clause holds) and the complement (it does not), so every value is covered. A consumer MUST apply it so:
+
+* a call whose actual at `X` is **decided** — a decimal integer constant (C04.5.1's structural erasures: matched parentheses, an integer suffix; and a leading `-`), or a file-scope enumeration constant whose value Clang states for the analysed unit and which the calling function does not shadow — and lies in `X`'s range: the clause is in force when the guard holds and not in force when it fails;
+* every other call (a variable, an expression, a cast, a value out of range that C converts, a shadowed or unread constant) is **undecided** and reads the **cautious** union: every guarded clause in force. A consumer MUST NOT read the favourable arm for an undecided actual.
+
+**Body check.** Where the analysed unit defines the callee's body, a guarded clause stands in that unit only when the body **validates** it: every mention of `P` outside a guard region is a null or equality test or a dereference (never under `&`), where a guard region is the braced then-block of `if (X OP K)` with exactly the guard's comparison, or a `case` arm of `switch (X)` that no other label falls into and whose constant satisfies the guard; `X` is never written and the body has no `goto`. A guard the body does not validate is removed in that unit, which is the cautious reading at every call there. The check establishes only that the body cannot keep `P` when the guard fails; the retention itself stays the declared assumption C04.14 describes. In another unit the guard is a declared assumption like every clause, pinned (C06.2) after review.
+
+**No corpus declaration carries a guard.** The decision's example, `rd_kafka_confval_set_type`, retains `valuep` on the holder's own stored type, not the argument (C04.1): it is declared with the cautious retention, and the in-unit check refuses a guard on that body shape. The Lean model is `QCore.RetentionGuard`.
 
 ## C05. Manifests and immutable assumptions
 

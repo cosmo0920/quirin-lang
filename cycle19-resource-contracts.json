@@ -35,6 +35,7 @@
     "providers/qcore-provider-libevent/contracts/monkey/vhost_set.qv",
     "qcore-provider-librdkafka:librdkafka/memory.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/cjson.qv",
+    "providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/kafka_mem.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/lz4_stream.qv",
     "providers/qcore-provider-librdkafka/contracts/librdkafka/topic_partition.qv",

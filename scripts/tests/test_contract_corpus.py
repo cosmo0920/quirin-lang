@@ -43,8 +43,10 @@ class CanonicalCorpus(unittest.TestCase):
         # 123 -> 124: MONKEY-VHOST-PROPERTY-CUSTODY's monkey/string.qv
         # 124 -> 125: CHUNKIO-META-LEN-BOUNDS-CONTRACTS's chunkio/meta_len_bounds.qv
         # (a bounds contract v1 module) in qcore-provider-chunkio (75 -> 76).
-        self.assertEqual(len(modules), 125)
-        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 76)
+        # 125 -> 126: W43-ABI-ENUM-AND-CONST-PP's librdkafka/client.qv in
+        # qcore-provider-librdkafka (76 -> 77).
+        self.assertEqual(len(modules), 126)
+        self.assertEqual(sum(any(part.startswith("qcore-provider-") for part in path.parts) for path in modules.values()), 77)
         self.assertEqual(sum(any(part.startswith("quirin-provider-") for part in path.parts) for path in modules.values()), 49)
         libc = [path for name, path in modules.items() if name.startswith("libc/")]
         self.assertTrue(libc and all("quirin-provider-libc" in path.parts for path in libc))

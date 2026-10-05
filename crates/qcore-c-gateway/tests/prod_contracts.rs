@@ -930,5 +930,6 @@ fn the_modules_under_test_are_the_production_ones() {
     // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
     // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
     // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 60);
+    // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 61);
 }

@@ -417,10 +417,19 @@ const ROWS: &[Row] = &[
         c: "void k_use(struct k_item **p, int n);",
         outcome: None,
     },
+    // Card W43-ABI-ENUM-AND-CONST-PP (rule 12v): `const char **` is read now,
+    // as `ptr<mut, ptr<const, u8>>`, so a declared pointer to a mutable
+    // pointer disagrees (it was unreadable before; withdrawn either way).
+    Row {
+        label: "a pointer to a pointer to const is not a pointer to a mutable pointer",
+        declared: "p: ptr<mut, ptr<mut, u8>>, n: i32",
+        c: "void k_use(const char **p, int n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
     Row {
         label: "a qualifier between two pointer levels has no spelling here",
         declared: "p: ptr<mut, ptr<mut, u8>>, n: i32",
-        c: "void k_use(const char **p, int n);",
+        c: "void k_use(char *const *p, int n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
     Row {
@@ -515,11 +524,20 @@ const ROWS: &[Row] = &[
         c: "typedef struct { int a; } k_rec;\nvoid k_use(void *p, k_rec n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
+    // Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): an enumeration is read now,
+    // as the integer type Clang states for it, never assumed `int`: this one
+    // has no negative value, so Clang's type is `unsigned int`.
     Row {
-        label: "an untagged `enum` value keeps the C11 6.7.2.2p4 refusal",
+        label: "an untagged `enum` value is its Clang integer type, never assumed `int`",
         declared: "p: ptr<mut, u8>, n: i32",
         c: "typedef enum { K_A, K_B } k_kind;\nvoid k_use(void *p, k_kind n);",
-        outcome: Some(AbiRefusal::UnreadableDeclaration),
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "and agrees spelled as that type",
+        declared: "p: ptr<mut, u8>, n: u32",
+        c: "typedef enum { K_A, K_B } k_kind;\nvoid k_use(void *p, k_kind n);",
+        outcome: None,
     },
     Row {
         label: "but a pointer to that enumeration is readable, as `enum tag *` already was",
@@ -593,10 +611,18 @@ const ROWS: &[Row] = &[
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
     // -- types with no established spelling --------------------------------
+    // Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): implementation-defined, so
+    // read from Clang (`unsigned int` here), never assumed `int`.
     Row {
         label: "an enumeration's compatible integer type is implementation-defined",
         declared: "p: ptr<mut, u8>, n: i32",
         c: "enum k_kind { K_A, K_B };\nvoid k_use(void *p, enum k_kind n);",
+        outcome: Some(AbiRefusal::ParameterTypeDisagreement),
+    },
+    Row {
+        label: "an incomplete enumeration has no type Clang states",
+        declared: "p: ptr<mut, u8>, n: u32",
+        c: "enum k_kind;\nvoid k_use(void *p, enum k_kind n);",
         outcome: Some(AbiRefusal::UnreadableDeclaration),
     },
     Row {

@@ -20,12 +20,16 @@ import re
 import sys
 
 DECLARED = [
-    # stage (a)
-    "add_item_to_array", "replace_item_in_object", "cfl_kvlist_insert_array",
-    "cfl_kvlist_insert_kvlist", "ctr_attributes_set_array", "ctr_attributes_set_kvlist",
-    # stage (b)
-    "add_item_to_object", "LZ4_compress_HC_extStateHC", "LZ4_compress_HC_continue",
-    "LZ4_compress_fast_continue", "LZ4_compress_fast_extState", "append_to_ring_buffer",
+    # W43-ABI-ENUM-AND-CONST-PP: enum shape (rule 12u)
+    "LZ4_decompress_generic", "rd_kafka_error_new_v", "rd_kafka_error_new",
+    "rd_kafka_err_action", "rd_kafka_oauthbearer_set_token_failure",
+    "rd_kafka_toppars_pause_resume", "rd_kafka_AclBinding_new0",
+    "rd_kafka_ConsumerGroupDescription_new", "rd_kafka_admin_add_config0",
+    "getrlimit", "setrlimit",
+    # const-pp shape (rule 12v)
+    "rd_flags2str", "rd_kafka_anyconf_dump",
+    # class-1 retainers (rule 12t, cautious)
+    "rd_kafka_confval_set_type", "rd_kafka_interceptor_method_add",
 ]
 TEMPLATE = re.compile(r"`[^`]*`")
 

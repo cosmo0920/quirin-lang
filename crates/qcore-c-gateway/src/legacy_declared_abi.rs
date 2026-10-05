@@ -188,6 +188,28 @@
 //! models both steps; faithful extraction and correspondence remain
 //! boundary-28 premises.
 //!
+//! # What card W43-ABI-ENUM-AND-CONST-PP widened
+//!
+//! Two shapes the reader refused, on the user's decisions of 2026-10-05
+//! (contract specification C04.1):
+//!
+//! * **an enumeration** (rule 12u) — `enum TAG`, or a typedef chain ending in
+//!   one or in an untagged `typedef enum { … } NAME;`
+//!   ([`TypedefTarget::UntaggedEnum`]) — projects, at a parameter or result,
+//!   to the one integer spelling of the width and signedness Clang states
+//!   for it in the analysed unit ([`super::enum_projection`]). The reading is
+//!   two-phase inside [`AbiAgreement::read`]: a first pass records every
+//!   enumeration a contracted declaration names, one appended Clang probe
+//!   answers them all, and the declarations are read again with the answers.
+//!   Outside that scope (and whenever Clang does not answer) an enumeration
+//!   still refuses, never read as `int`;
+//! * **a pointer to a pointer to const** (rule 12v) — `const char **` —
+//!   projects to `ptr<mut, ptr<const, u8>>` ([`pointer_projection`]). A
+//!   qualifier on the slot (written between the `*`, on a typedef name that
+//!   stands for a pointer, or on a pointer link of a typedef chain) refuses.
+//!
+//! `QCore.AbiEnumConstPointer` is the Lean model.
+//!
 //! Card CG20-NUMERIC-DOMAIN (rule 11q) removes the reader's LP64 premise for
 //! ordinary `long` everywhere else: [`project_arithmetic`] reads one `long`
 //! word as the 64-bit projection only when the analysing Clang's default

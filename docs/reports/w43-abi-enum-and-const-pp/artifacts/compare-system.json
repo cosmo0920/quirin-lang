@@ -1,0 +1,19 @@
+{
+ "statuses_before": {
+  "Unknown": 357,
+  "Safe": 87,
+  "Unsafe": 4
+ },
+ "statuses_after": {
+  "Unknown": 357,
+  "Safe": 87,
+  "Unsafe": 4
+ },
+ "transitions": {},
+ "status_moves_by_label": {},
+ "removed": {},
+ "added": {},
+ "moving_rows": 0,
+ "status_moves": [],
+ "moves": []
+}

@@ -90,7 +90,8 @@ fn production_contracts_preserve_the_previous_resource_modes() {
     // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
     // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
     // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
-    assert_eq!(contracts.source_assumptions().len(), 60);
+    // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
+    assert_eq!(contracts.source_assumptions().len(), 61);
     check_source_assumptions(&contracts).unwrap();
     let mut old = ResourceContracts::default();
     for name in [
@@ -853,6 +854,46 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             R::Owned { nullable: true },
         ),
     );
+    // W43-ABI-ENUM-AND-CONST-PP: declarations over enumeration and
+    // pointer-to-pointer-to-const prototypes (rules 12u, 12v). Every parameter
+    // is borrowed; five return a fresh owned, nullable allocation and
+    // `rd_flags2str` returns its `dst` (an exact, never-null alias). The two
+    // retaining ones are withheld into their own table above.
+    for name in [
+        "LZ4_decompress_generic",
+        "rd_kafka_err_action",
+        "rd_kafka_oauthbearer_set_token_failure",
+        "rd_kafka_toppars_pause_resume",
+        "rd_kafka_admin_add_config0",
+        "getrlimit",
+        "setrlimit",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
+    for name in [
+        "rd_kafka_error_new_v",
+        "rd_kafka_error_new",
+        "rd_kafka_AclBinding_new0",
+        "rd_kafka_ConsumerGroupDescription_new",
+        "rd_kafka_anyconf_dump",
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new([], R::Owned { nullable: true }),
+        );
+    }
+    old.insert_contract(
+        "rd_flags2str",
+        ResourceFunctionContract::new(
+            vec![P::Borrowed; 4],
+            R::Derived {
+                parameter: 0,
+                extent: DerivedExtent::Exact,
+                nullable: false,
+                const_dropped: false,
+            },
+        ),
+    );
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1170,7 +1211,8 @@ fn certificates_replay_exact_assumptions_and_reject_table_mutation() {
     // 57 -> 58 by card W47-LOOP-OWNER-INSTANCE-FLOW: `fluent_bit/input_instance.qv`.
     // 58 -> 59 by card CONTRACT-PIN-TIP-MODE: `monkey/vhost_set.qv`.
     // 59 -> 60 by card MONKEY-VHOST-PROPERTY-CUSTODY: `monkey/string.qv`.
-    assert_eq!(certificate.contracts.source_assumptions().len(), 60);
+    // 60 -> 61 by card W43-ABI-ENUM-AND-CONST-PP: `librdkafka/client.qv`.
+    assert_eq!(certificate.contracts.source_assumptions().len(), 61);
     certificate
         .contracts
         .insert("malloc", ResourceApiKind::Neutral);
@@ -1419,7 +1461,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // 124 -> 125: card CHUNKIO-META-LEN-BOUNDS-CONTRACTS adds
     // `chunkio/meta_len_bounds.qv`, a bounds contract v1 module (the crate's
     // bounds view, never selected): resource-v1 rejects both declarations.
-    assert_eq!(modules.len(), 125, "corpus module count");
+    // 125 -> 126: card W43-ABI-ENUM-AND-CONST-PP adds `librdkafka/client.qv`
+    // (twelve librdkafka declarations over enumeration and pointer-to-const
+    // prototypes, two of them retaining), entirely v1 and manifest-selected.
+    assert_eq!(modules.len(), 126, "corpus module count");
 
     let mut selected = 0;
     let mut v1_declarations = 0;
@@ -1636,9 +1681,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `fluent_bit/input_chunk_helpers.qv`'s `append_to_ring_buffer`), all
     // appended to already-selected modules and pinned. Selection and rejected
     // unchanged.
+    // 60 -> 61 selected and 304 -> 319 by card W43-ABI-ENUM-AND-CONST-PP: the
+    // new `librdkafka/client.qv` (twelve declarations, two of them retaining),
+    // `LZ4_decompress_generic` appended to `librdkafka/lz4_stream.qv`, and the
+    // flexible libc `getrlimit`/`setrlimit` appended to `libc/process.qv`, all
+    // pinned (the libc pair flexible). Rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (60, 304, 218)
+        (61, 319, 218)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -1648,9 +1698,11 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     assert_eq!(loaded.pending_review().len(), 11);
     // Card CALLEE-RETENTION-CLASS1: a return-code disposition and a retaining
     // declaration are loaded and withheld from the function map into their own
-    // tables (contract spec C04.13, C04.14), six and five of them.
+    // tables (contract spec C04.13, C04.14), six and five of them; card
+    // W43-ABI-ENUM-AND-CONST-PP adds two retaining declarations
+    // (`rd_kafka_confval_set_type`, `rd_kafka_interceptor_method_add`): 5 -> 7.
     assert_eq!(loaded.relational().len(), 6);
-    assert_eq!(loaded.retaining().len(), 5);
+    assert_eq!(loaded.retaining().len(), 7);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

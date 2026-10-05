@@ -3513,7 +3513,10 @@ scalar_abi  = "bool" | "i8" | "i16" | "i32" | "i64" | "isize"
             | "u8" | "u16" | "u32" | "u64" | "usize" ;
 pointer_abi = "ptr", "<", "mut", ",", "u8", ">"
             | "ptr", "<", "const", ",", "u8", ">"
-            | "ptr", "<", "mut", ",", "ptr", "<", "mut", ",", "u8", ">", ">" ;
+            | "ptr", "<", "mut", ",", "ptr", "<", "mut", ",", "u8", ">", ">"
+            | "ptr", "<", "mut", ",", "ptr", "<", "const", ",", "u8", ">", ">" ;
+  (* the last: card W43-ABI-ENUM-AND-CONST-PP, a pointer to a pointer to const,
+     contract specification C04.1 *)
 resource_clause = "requires", "resource_contract_v1", ";"
                 | "requires", literal_argument_premise, ";"
                 | "requires", contract_review_marker, ";"
@@ -3572,9 +3575,15 @@ disposition_predicate = "resource_borrowed", "(", IDENT, ")"
     "(", IDENT, ",", nullability, ")" ;
 (* card CALLEE-RETENTION-CLASS1, contract specification C04.14 *)
 retention_predicate =
-    "resource_retained_by", "(", IDENT, ",", (IDENT | "global"), ")"  (* retained, holder *)
+    "resource_retained_by", "(", IDENT, ",", (IDENT | "global"), ")",  (* retained, holder *)
+    [retention_guard]
   | "resource_holder_reset", "(", IDENT, ")" ;
+(* card W43-ABI-ENUM-AND-CONST-PP, contract specification C04.14.1 *)
+retention_guard = "when", IDENT, guard_op, integer_literal ;
+guard_op = "==" | "<" | ">" | "<=" | ">=" ;
 ```
+
+A `retention_guard` (card W43-ABI-ENUM-AND-CONST-PP, contract specification C04.14.1) stands only on `resource_retained_by` (a guard on any other predicate, and a second `when`, reject the module; a clause-level revision marker wraps a guarded clause as it wraps a bare one); `when` is reserved in a clause expression. Its `IDENT` names an integer parameter of the declaration (`i8` through `i64`, `isize`, `u8` through `u64`, `usize`; never `bool`, a float, a pointer, `fnptr` or `va_list`) other than the clause's retained pointer and holder; its `integer_literal` follows the canonical-literal rule below and lies in that parameter's range; and the guard partitions the range (some value satisfies it and some does not). `!=` and Boolean combinations are not admitted. Every violation rejects the whole module.
 
 The retention predicates (card CALLEE-RETENTION-CLASS1, contract specification C04.14) carry static conditions of their own: the retained parameter and a holder parameter are distinct depth-one pointer parameters (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carry no kind; the holder is either such a parameter or the word `global`, and a declaration with a parameter named `global` rejects the clause; a parameter is retained at most once and a holder reset at most once; and a retention predicate stands only beside plain parameter and result predicates and revision markers (a return-code disposition, a review marker, the checked-specification marker, a literal premise, a variadic tail, the no-return exit and a counted-user, container, loop-owner, thread-synchronization or lifecycle clause each reject the module beside it). Every violation rejects the whole module. A declaration carrying one is loaded and validated in full and then withheld from the function map (C04.14); inheritance (G05a) compares its retentions.
 

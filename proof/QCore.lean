@@ -334,6 +334,8 @@ import QCore.DialectTargetIdentity
 import QCore.RelationalPost
 import QCore.RelationalForwarding
 import QCore.RetainedBy
+import QCore.RetentionGuard
+import QCore.AbiEnumConstPointer
 import QCore.IndirectCalls
 import QCore.VariadicConditions
 import QCore.CarriedPublication

@@ -735,6 +735,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("libc/memory.qv", "calloc", 5),
     ("libc/memory.qv", "free", 4),
     ("libc/process.qv", "prctl", 6),
+    // Card W43-ABI-ENUM-AND-CONST-PP: `getrlimit`/`setrlimit` over the
+    // enumeration typedef `__rlimit_resource_t` (rule 12u): marker, flexible
+    // revision, two borrowed formals, `none`.
+    ("libc/process.qv", "getrlimit", 5),
+    ("libc/process.qv", "setrlimit", 5),
     // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF. Three clauses each: the marker,
     // the borrowed mutex pointer and the `int` result. `pthread_mutex_t` is a
     // union the typedef DEFINES, which card LOADER-ABI's reader would not read;
@@ -984,6 +989,30 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     // marker, borrowed formals, two return-code classes, `none`.
     ("librdkafka/cjson.qv", "add_item_to_array", 5),
     ("librdkafka/cjson.qv", "replace_item_in_object", 7),
+    // Card W43-ABI-ENUM-AND-CONST-PP: librdkafka functions over enumeration
+    // (rule 12u) and pointer-to-pointer-to-const (rule 12v) prototypes:
+    // marker, borrowed formals, a variadic data tail for the two variadic
+    // ones, two retentions (`resource_retained_by`), the result mode.
+    ("librdkafka/client.qv", "rd_kafka_error_new_v", 5),
+    ("librdkafka/client.qv", "rd_kafka_error_new", 5),
+    ("librdkafka/client.qv", "rd_kafka_err_action", 6),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_oauthbearer_set_token_failure",
+        4,
+    ),
+    ("librdkafka/client.qv", "rd_kafka_toppars_pause_resume", 7),
+    ("librdkafka/client.qv", "rd_kafka_AclBinding_new0", 11),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_ConsumerGroupDescription_new",
+        12,
+    ),
+    ("librdkafka/client.qv", "rd_kafka_admin_add_config0", 5),
+    ("librdkafka/client.qv", "rd_kafka_anyconf_dump", 7),
+    ("librdkafka/client.qv", "rd_kafka_confval_set_type", 8),
+    ("librdkafka/client.qv", "rd_kafka_interceptor_method_add", 8),
+    ("librdkafka/client.qv", "rd_flags2str", 6),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read
@@ -1021,6 +1050,10 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         "LZ4_decompress_unsafe_generic",
         8,
     ),
+    // Card W43-ABI-ENUM-AND-CONST-PP: the generic checked decoder
+    // (`lz4.c:1942-2344`, two enumeration directives, rule 12u): marker,
+    // nine borrowed formals, `none`.
+    ("librdkafka/lz4_stream.qv", "LZ4_decompress_generic", 11),
     ("librdkafka/lz4_stream.qv", "LZ4_compress_default", 6),
     // Card CALLEE-RETENTION-CLASS1, stage (b): the retaining stream states,
     // marker, borrowed formals, the retention (and for `_extState` the
@@ -1502,7 +1535,8 @@ fn every_qcore_contract_source_parses_round_trips_and_compiles() {
     // 124 -> 125 by card CHUNKIO-META-LEN-BOUNDS-CONTRACTS'
     // `chunkio/meta_len_bounds.qv`, the first bounds contract v1 module
     // (pinned in `bounds-contracts.lock`, outside every resource view).
-    assert_eq!(sources.len(), 125, "unexpected contract corpus size");
+    // 125 -> 126 by card W43-ABI-ENUM-AND-CONST-PP's `librdkafka/client.qv`.
+    assert_eq!(sources.len(), 126, "unexpected contract corpus size");
 
     for (logical, path) in &sources {
         let written = fs::read_to_string(path).expect("contract source is readable");

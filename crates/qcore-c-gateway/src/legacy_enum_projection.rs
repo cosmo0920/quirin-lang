@@ -59,8 +59,8 @@
 //!
 //! The analysed unit is read under the gateway's frontend request, which
 //! transports no `--target` (CG30): a per-unit `-arch` or `-fshort-enums`
-//! that the request does not carry is not seen, exactly the boundary
-//! `CG20-ABI-READER-ARCH-FLAG` records for plain `long`.
+//! that the request does not carry is not seen (`ABI-ENUM-UNIT-FRONTEND-FLAGS`,
+//! the boundary CG20 records for plain `long`).
 //!
 //! `QCore.AbiEnumConstPointer` is the Lean model.
 //!

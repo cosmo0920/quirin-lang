@@ -1,0 +1,108 @@
+{
+ "report": "private/w43aecp/a3/resource-diagnostics.json",
+ "members": {
+  "enum": {
+   "LZ4_decompress_generic": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_error_new_v": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_error_new": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_AclBinding_new0": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_ConsumerGroupDescription_new": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_admin_add_config0": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_err_action": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_oauthbearer_set_token_failure": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_toppars_pause_resume": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "getrlimit": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "setrlimit": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   }
+  },
+  "const-pp": {
+   "rd_flags2str": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_anyconf_dump": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_slice_reader0": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 2
+   }
+  },
+  "class1": {
+   "rd_kafka_confval_set_type": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "rd_kafka_interceptor_method_add": {
+    "leaves": 0,
+    "functions": 0,
+    "alone": 0
+   },
+   "add_item_to_object": {
+    "leaves": 3,
+    "functions": 3,
+    "alone": 3
+   },
+   "cJSON_ParseWithLengthOpts": {
+    "leaves": 2,
+    "functions": 2,
+    "alone": 2
+   }
+  },
+  "also-enum": {
+   "rd_kafka_assignor_add": {
+    "leaves": 3,
+    "functions": 3,
+    "alone": 3
+   }
+  }
+ }
+}
