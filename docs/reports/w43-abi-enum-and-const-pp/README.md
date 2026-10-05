@@ -232,8 +232,36 @@ amended. Registered: `ABI-ENUM-UNIT-FRONTEND-FLAGS`,
 
 ## 10. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) (filled when the gate
-completes).
+Standing gate (`docs/agents/validation.md`), [`scripts/gate.sh`](scripts/gate.sh)
+`g2` then [`scripts/finish-gate.sh`](scripts/finish-gate.sh) `g2`, code steps
+at `72f81604f` on base `4f55fa4c4`; logs `private/w43aecp/gate-g2/`, exits in
+[gate/](gate/), summary [gate.json](gate.json). (A first attempt, `g1`, stopped
+at clippy's `collapsible_match` in the enumerator scan; fixed, and every step
+rerun as `g2`.)
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| `git submodule update --init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 452 units, 465 summaries; 7,647 passed, 0 failed, 11 ignored (`private/w43aecp/tests-gate-g2`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 293 audits passed (291 + `AuditAbiEnumConstPointer` + `AuditRetentionGuard`) |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK, after `build_matrix.py . --gate gate.json` (the committed matrix carried 291 Lean audits; the stale-matrix run, 1 failure, is kept as `private/w43aecp/gate-g2-08-stale-matrix*.log`) |
+| `build_docs_index.py --check` | 0 | |
+| `build_matrix.py` with the final `gate.json`, the Python suite again, the index and its check | 0 | see [gate/](gate/) |
+
+**Provider gate** ([`scripts/provider-gate.sh`](scripts/provider-gate.sh) `g2`,
+logs `private/w43aecp/provider-gate-g2/`): `cargo check --locked` 0,
+`cargo test` 0 (129 passed), fmt 0, clippy 0, `providers/contracts.py check` 0,
+package build 0 and `verify` 0 for all five packages,
+`python3 -m unittest discover -s providers/tests` 0 (25 tests OK). Pins: §5.
+
+The measured binary (`a2`) was built before `cargo fmt`, the clippy
+refactor (behaviour-identical) and documentation edits; the corpus AFTER
+(`a3`) also selected `client.qv` in the manifest the arbiter reads at run time.
+The gate's code is that tree.
 
 ## Files
 

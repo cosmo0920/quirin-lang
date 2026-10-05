@@ -6626,7 +6626,7 @@
   ]
  },
  "corpus": {
-  "contract_modules": 125,
+  "contract_modules": 126,
   "contract_modules_pinned_by": "compiler/tests/qcore_contract_corpus.rs",
   "contract_clause_pin": {
    "const": "EXPECTED_CONTRACTS",
@@ -6753,12 +6753,13 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "CALLEE-RETENTION-CLASS1 card gate on base 6fc62c015, every code step at 15a939326, scripts docs/reports/callee-retention-class1/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/crc1/gate-g1 and private/crc1/provider-gate-g1 of this worktree. gate-g1: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 449 units, 462 summaries, 7,628 passed, 0 failed, 11 ignored, exit 0 (private/crc1/tests-gate-g1); both reevaluation probes exit 0; check_lean_audits.py 291 audits passed (289 + AuditRelationalForwarding + AuditRetainedBy); python tests 08 exit 0 (365 OK) on the committed matrix; docs index check 0; then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g1): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
-  "workspace_tests": 7628,
+  "note": "W43-ABI-ENUM-AND-CONST-PP card gate on base 4f55fa4c4, every code step at 72f81604f, scripts docs/reports/w43-abi-enum-and-const-pp/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/w43aecp/gate-g2 and private/w43aecp/provider-gate-g2 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py 452 units, 465 summaries, 7,647 passed, 0 failed, 11 ignored, exit 0 (private/w43aecp/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 293 audits passed (291 + AuditAbiEnumConstPointer + AuditRetentionGuard); python tests 08 exit 0 (365 OK) on the committed matrix; docs index check 0; then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g2): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
+  "workspace_tests": 7647,
   "provider_tests": 129,
   "python_evidence_validator_tests": 365,
-  "lean_audits": 291,
+  "lean_audits": 293,
   "lean_audit_files": [
+   "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
    "AuditAggregateStore.lean",
    "AuditAggregateValue.lean",
@@ -6962,6 +6963,7 @@
    "AuditResourceCalls.lean",
    "AuditResourceKinds.lean",
    "AuditRetainedBy.lean",
+   "AuditRetentionGuard.lean",
    "AuditReturnCallActuals.lean",
    "AuditReturnCallCustody.lean",
    "AuditReturnExpressionEvaluation.lean",
@@ -7057,7 +7059,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a322ddcfdf5da170c/docs/reports/callee-retention-class1/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aa47169901f5399cd/docs/reports/w43-abi-enum-and-const-pp/gate.json)"
  },
  "named_followups": [
   {
