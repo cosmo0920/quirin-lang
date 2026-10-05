@@ -145,13 +145,12 @@ fn is_file_scope_enumerator(tokens: &[Token], name: &str) -> bool {
             "enum" if depth == 0 => {
                 let open = match tokens.get(index + 1).map(|token| token.text.as_str()) {
                     Some("{") => index + 1,
-                    Some(tag) if is_identifier(tag) => {
-                        if tokens.get(index + 2).map(|token| token.text.as_str()) == Some("{") {
-                            index + 2
-                        } else {
-                            index += 1;
-                            continue;
-                        }
+                    Some(tag)
+                        if is_identifier(tag)
+                            && tokens.get(index + 2).map(|token| token.text.as_str())
+                                == Some("{") =>
+                    {
+                        index + 2
                     }
                     _ => {
                         index += 1;

@@ -950,6 +950,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [w42-unprojected-definitions](w42-unprojected-definitions/README.md) | W42-UNPROJECTED-DEFINITIONS — exact leaf census |
 
+| [w43-abi-enum-and-const-pp](w43-abi-enum-and-const-pp/README.md) | W43-ABI-ENUM-AND-CONST-PP: enumerations, pointers to pointers to const, guarded retentions |
+
 | [w43-chunk-source-profile](w43-chunk-source-profile/README.md) | W43 chunk source profile |
 
 | [w43-descriptor-native-check](w43-descriptor-native-check/README.md) | W43-DESCRIPTOR-NATIVE-CHECK: descriptor lifecycles checked on native executions |

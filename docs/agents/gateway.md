@@ -5263,3 +5263,91 @@ own anchor here.
     `trace_vectors_hold` and ten more), bound to `retained_by.rs` by the
     shared vectors and to route G by `tests/callee_retention_class1.rs`;
     [report](../reports/callee-retention-class1/README.md).
+
+<a id="constraint-12u"></a>
+
+12u. **An enumeration in a declaration's C prototype is the integer type
+    Clang states for it in the analysed unit, exactly, and nothing when Clang
+    does not state it.** Card W43-ABI-ENUM-AND-CONST-PP, on the user's
+    decision of 2026-10-05 (contract specification C04.1): the declared-ABI
+    reader (`legacy_declared_abi.rs`; shared items added:
+    `TypedefTarget::UntaggedEnum`, the two-phase read in
+    `AbiAgreement::read`, the census entering the source it reads) projects an
+    enumeration parameter or result — `enum TAG`, an untagged
+    `typedef enum { … } NAME`, any typedef chain to either — through
+    `legacy_enum_projection.rs`: a first reading records every enumeration a
+    contracted declaration names, one appended Clang probe per unit
+    (`typed_access_path::appended_declarations`, a shared item; `sizeof(T) *
+    __CHAR_BIT__`, the sign of `(T)-1` and `__builtin_types_compatible_p`
+    against the ten standard integer types) answers them, and the reading is
+    repeated with the answers. The projection is the one spelling of the probed
+    width and signedness (`i8`…`u64`, never `isize`/`usize`), admitted only
+    when exactly one standard type is compatible and its signedness is the
+    probed one. A failed launch, an incomplete enumeration, a block-scope
+    typedef, a source spelling the probe prefix and every reading outside
+    `AbiAgreement::read` refuse (`abi-unreadable-declaration`), so `int` is
+    never assumed. **Do not** guess an enumeration's type from its
+    enumerators, read it outside the analysed unit, or admit the pointer-width
+    readings. Premises stated, not proved: faithful extraction (trust boundary
+    28), Clang's `__builtin_types_compatible_p` answering exactly the
+    enumeration's integer type, and the unit read under the gateway's frontend
+    request (`ABI-ENUM-UNIT-FRONTEND-FLAGS`). Measured with rules 12v and 12w
+    and fifteen pinned declarations (binary `552d86ab…`, corpus manifest
+    selecting `librdkafka/client.qv`): corpus 812 / 9 / 4,013 → **846 / 9 /
+    3,979** (`a43d02cb…` → `686fca16…`, **+34 Unknown → Safe**, no Safe →
+    non-Safe move, no leak or violation added), system and slice no row
+    moves. `QCore.AbiEnumConstPointer`; tests
+    `tests/abi_enum_const_pp.rs`, `tests/loader_abi.rs`;
+    [report](../reports/w43-abi-enum-and-const-pp/README.md).
+
+<a id="constraint-12v"></a>
+
+12v. **A pointer to a pointer to const is `ptr<mut, ptr<const, u8>>`, and a
+    qualifier on the pointer in between has no spelling.** Card
+    W43-ABI-ENUM-AND-CONST-PP (contract specification C04.1; loader
+    `POINTER_ABI_TYPES`, a shared item): `ptr<A, ptr<B, u8>>` reads its
+    qualifiers outside in, `A` on the slot (the inner pointer object), `B` on
+    the innermost pointee. The reader's `pointer_projection(2, true)` answers
+    the new spelling for `const char **`, `const void **`, an adjusted
+    `const char *p[]` and a typedef chain whose innermost specifiers carry the
+    `const`; a qualifier between the two `*`, a qualifier on a typedef name
+    that stands for a pointer (`const str *`) and a chain link qualifying a
+    pointer refuse, as every depth-two `const` reading did before. `char **`
+    and `const char **` never admit each other; `resource_out` still requires
+    `ptr<mut, ptr<mut, u8>>`; derived results and retentions stay depth one.
+    **Do not** drop a slot qualifier or fold the two spellings together.
+    `QCore.AbiEnumConstPointer`; [report](../reports/w43-abi-enum-and-const-pp/README.md).
+
+<a id="constraint-12w"></a>
+
+12w. **A guarded retention holds where the caller's actual is decided to
+    satisfy its guard, everywhere else the cautious union stands, and in its
+    own unit only a body that cannot keep the pointer when the guard fails
+    keeps the guard.** Card W43-ABI-ENUM-AND-CONST-PP, on the user's decision
+    of 2026-10-05 (contract specification C04.14.1, grammar G05):
+    `resource_retained_by(P, H) when X OP K` (`RetentionGuard`,
+    `GuardRelation`, `GuardDecision` in `qcore_schemas::retained_by`, additive,
+    skipped in the serialised form when absent; the loader's
+    `split_guard`/`guard_partitions`), route G's
+    `legacy_retention_guard.rs` with two hooks: (1) rule 12t's classifier
+    decides the actual at `X` — a decimal constant (matched parentheses, an
+    integer suffix, a leading `-`) or a file-scope enumeration constant whose
+    value an appended Clang probe states and which the calling function's own
+    Clang definition does not shadow — in `X`'s range: a decided failure drops
+    the clause at that call; a decided success, a variable, a value C converts
+    and anything unread keep it; (2) beside the ABI gate, in a unit defining
+    the callee, `settle` removes every guard the body does not validate: each
+    mention of `P` outside a guard region (an exact `if (X OP K) { … }`, or a
+    `case` arm of `switch (X)` no other label falls into) is a null or
+    equality test or a dereference, `X` is never written, no `goto`.
+    **Do not** read the favourable arm for an undecided actual, guard
+    anything but a retention, or take an enumeration constant's value from
+    anywhere but Clang. No corpus declaration carries a guard: the decision's
+    example, `rd_kafka_confval_set_type`, retains on the holder's own type
+    (`GUARDED-CLAUSE-WIDENING`). `QCore.RetentionGuard`
+    (`an_undecided_guard_is_safe_only_where_the_cautious_reading_is`,
+    `the_cautious_reading_bounds_every_reading`,
+    `a_validated_body_keeps_nothing_when_the_guard_fails`,
+    `an_admitted_guard_partitions_its_range`); tests
+    `tests/retention_guard.rs`, `crates/qcore-contract/tests/retention_guard_clause.rs`;
+    [report](../reports/w43-abi-enum-and-const-pp/README.md).
