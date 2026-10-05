@@ -256,6 +256,13 @@ pub fn declared_abi_census(
     contracts: &ResourceContracts,
 ) -> Vec<AbiAgreementRow> {
     let tokens = super::tokenize(preprocessed);
+    // Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): the census reads the unit
+    // the analysis would, so an enumeration is asked of Clang here too.
+    let _scope = crate::typed_access_path::enter_source(
+        preprocessed,
+        super::CCompilerDialect::C11,
+        None,
+    );
     let agreement = AbiAgreement::read(&tokens, contracts);
     let mut rows = Vec::new();
     for (function, refusal) in agreement.withdrawn() {
@@ -484,7 +491,18 @@ impl AbiAgreement {
             .iter()
             .map(|token| token.text.as_str())
             .collect::<Vec<_>>();
-        let read = read_c_declarations(&texts, &names);
+        // Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): a first reading records
+        // every enumeration type a contracted declaration names; Clang is
+        // asked about them once, over the analysed unit, and the reading is
+        // repeated with its answers. No enumeration, no launch.
+        let (read, enumerations) =
+            super::enum_projection::collecting(|| read_c_declarations(&texts, &names));
+        let read = if enumerations.is_empty() {
+            read
+        } else {
+            let answers = super::enum_projection::query(&enumerations);
+            super::enum_projection::answering(answers, || read_c_declarations(&texts, &names))
+        };
         let mut agreement = Self::default();
         for name in names {
             let Some(signature) = declared.get(name) else {
@@ -788,6 +806,12 @@ enum TypedefTarget {
     /// second `typedef struct msgpack_packer msgpack_packer;` in the same unit
     /// compose to one reading instead of colliding.
     Aggregate { stars: usize },
+    /// Card **W43-ABI-ENUM-AND-CONST-PP** (rule 12u): an `enum` defined by
+    /// this typedef with **no tag** and no pointer level —
+    /// `typedef enum { … } rd_async_t;`. As a value it is the integer
+    /// projection Clang states for it ([`super::enum_projection`]); under a
+    /// pointer it is the object type [`TypedefTarget::Aggregate`] reads.
+    UntaggedEnum,
     /// A pointer to function, at exactly one pointer level —
     /// `typedef int (*msgpack_packer_write)(void *, const char *, size_t);`.
     FunctionPointer,
@@ -951,6 +975,10 @@ fn read_aggregate_typedef<'a>(slice: &[&'a str]) -> Option<(&'a str, TypedefTarg
             specifiers: vec![kind.to_owned(), tag.to_owned()],
             stars,
         },
+        // Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): an untagged enumeration
+        // is recorded as one, so its value can be projected; a pointer to it
+        // is an object pointer like any other aggregate's.
+        None if kind == "enum" && stars == 0 => TypedefTarget::UntaggedEnum,
         None => TypedefTarget::Aggregate { stars },
     };
     Some((name, target))
@@ -1300,7 +1328,86 @@ fn pointer_projection(stars: usize, const_pointee: bool) -> BTreeSet<&'static st
         (1, false) => BTreeSet::from(["ptr<mut, u8>"]),
         (1, true) => BTreeSet::from(["ptr<const, u8>"]),
         (2, false) => BTreeSet::from(["ptr<mut, ptr<mut, u8>>"]),
+        // Card W43-ABI-ENUM-AND-CONST-PP (rule 12v): a pointer to a pointer
+        // to const — `const char **`, `const void **`. The `const` is on the
+        // innermost pointee; the pointer in between (the slot) is not
+        // qualified. Every caller reaches this only with that reading: a
+        // qualifier written between the two `*` and a qualifier on a typedef
+        // name that stands for a pointer both refuse before it.
+        (2, true) => BTreeSet::from([CONST_POINTEE_SLOT]),
         _ => BTreeSet::new(),
+    }
+}
+
+/// The spelling of a pointer to a pointer to const (rule 12v):
+/// `ptr<mut, ptr<const, u8>>`. The outer `mut` says the slot the outer pointer
+/// designates is not `const`; the inner `const` is the innermost pointee's.
+const CONST_POINTEE_SLOT: &str = "ptr<mut, ptr<const, u8>>";
+
+/// Whether the typedef `name` stands for a pointer (object or function).
+fn typedef_is_pointer(name: &str, typedefs: &BTreeMap<String, TypedefTarget>) -> bool {
+    matches!(
+        resolve_typedef(name, typedefs, 0),
+        Some(
+            TypedefTarget::Declarator { stars: 1.., .. }
+                | TypedefTarget::Aggregate { stars: 1.. }
+                | TypedefTarget::FunctionPointer
+        )
+    )
+}
+
+/// Rule 12v: whether some link of the typedef chain from `name` writes a
+/// qualifier on a name that stands for a pointer — `typedef const str
+/// cstr_t;` for `typedef char *str;` — which qualifies a pointer level, not
+/// the innermost pointee. [`resolve_typedef`] folds such a link away, which
+/// the depth-two readings before this card never had to care about; an over-
+/// deep chain answers `true`.
+fn chain_qualifies_a_pointer(
+    name: &str,
+    typedefs: &BTreeMap<String, TypedefTarget>,
+    depth: usize,
+) -> bool {
+    if depth >= TYPEDEF_DEPTH_LIMIT {
+        return true;
+    }
+    let Some(TypedefTarget::Declarator { specifiers, .. }) = typedefs.get(name) else {
+        return false;
+    };
+    let qualified = specifiers
+        .iter()
+        .any(|word| QUALIFIERS.contains(&word.as_str()));
+    let core = specifiers
+        .iter()
+        .map(String::as_str)
+        .filter(|word| !QUALIFIERS.contains(word) && !DISCARDED_SPECIFIERS.contains(word))
+        .collect::<Vec<_>>();
+    match core.as_slice() {
+        [inner]
+            if !ARITHMETIC_WORDS.contains(inner)
+                && !matches!(*inner, "struct" | "union" | "enum") =>
+        {
+            (qualified && typedef_is_pointer(inner, typedefs))
+                || chain_qualifies_a_pointer(inner, typedefs, depth + 1)
+        }
+        _ => false,
+    }
+}
+
+/// Rule 12v: a depth-two pointer-to-const reading reached through the
+/// typedef `name` stands only when no link of its chain qualifies a pointer.
+fn refuse_qualified_chain(
+    projection: Option<BTreeSet<&'static str>>,
+    name: &str,
+    typedefs: &BTreeMap<String, TypedefTarget>,
+) -> Option<BTreeSet<&'static str>> {
+    match projection {
+        Some(spellings)
+            if spellings.contains(CONST_POINTEE_SLOT)
+                && chain_qualifies_a_pointer(name, typedefs, 0) =>
+        {
+            None
+        }
+        other => other,
     }
 }
 
@@ -1343,18 +1450,33 @@ fn project_declarator(
             ["struct", tag] | ["union", tag] | ["enum", tag] => is_c_identifier(tag),
             ["struct"] | ["union"] | ["enum"] => false,
             [name] if !ARITHMETIC_WORDS.contains(name) => {
+                // Card W43-ABI-ENUM-AND-CONST-PP (rule 12v): a qualifier
+                // written on a typedef name that stands for a pointer
+                // qualifies that pointer — `const str *` is `char *const *`
+                // — never the innermost pointee. That is the inner-pointer
+                // qualifier this vocabulary cannot spell, so it refuses, as
+                // it did before the card (no depth-two projection carried a
+                // `const`); and so does a chain whose own links qualify a
+                // pointer, for a reading that would carry one now.
+                if const_pointee && typedef_is_pointer(name, typedefs) {
+                    return None;
+                }
                 match resolve_typedef(name, typedefs, 0) {
                     Some(TypedefTarget::Declarator {
                         specifiers,
                         stars: target_stars,
                     }) => {
                         let target = specifiers.iter().map(String::as_str).collect::<Vec<_>>();
-                        return project_declarator_resolved(
-                            &target,
-                            target_stars + stars,
-                            const_pointee,
+                        return refuse_qualified_chain(
+                            project_declarator_resolved(
+                                &target,
+                                target_stars + stars,
+                                const_pointee,
+                                typedefs,
+                                result,
+                            ),
+                            name,
                             typedefs,
-                            result,
                         );
                     }
                     // An aggregate defined by its own typedef is an object type
@@ -1364,6 +1486,12 @@ fn project_declarator(
                         stars: target_stars,
                     }) => {
                         let projection = pointer_projection(target_stars + stars, const_pointee);
+                        return (!projection.is_empty()).then_some(projection);
+                    }
+                    // Card W43-ABI-ENUM-AND-CONST-PP: so does a pointer to an
+                    // untagged enumeration.
+                    Some(TypedefTarget::UntaggedEnum) => {
+                        let projection = pointer_projection(stars, const_pointee);
                         return (!projection.is_empty()).then_some(projection);
                     }
                     // `ABI-FNPTR-DEPTH1`: a pointer *to* a function pointer is
@@ -1446,6 +1574,7 @@ fn resolve_typedef(
         TypedefTarget::Aggregate { stars } => {
             return Some(TypedefTarget::Aggregate { stars: *stars });
         }
+        TypedefTarget::UntaggedEnum => return Some(TypedefTarget::UntaggedEnum),
         TypedefTarget::Declarator { specifiers, stars } => (specifiers, *stars),
     };
     let core = specifiers
@@ -1473,6 +1602,14 @@ fn resolve_typedef(
                 return Some(TypedefTarget::Aggregate {
                     stars: deeper_stars + stars,
                 });
+            }
+            // Card W43-ABI-ENUM-AND-CONST-PP: a name for an untagged
+            // enumeration stays one; a pointer to it is an object pointer.
+            Some(TypedefTarget::UntaggedEnum) if stars == 0 => {
+                return Some(TypedefTarget::UntaggedEnum);
+            }
+            Some(TypedefTarget::UntaggedEnum) => {
+                return Some(TypedefTarget::Aggregate { stars });
             }
             // A name for a function pointer keeps its one pointer level; a name
             // for a *pointer to* one is `ABI-FNPTR-DEPTH1` again.
@@ -1664,12 +1801,23 @@ fn project_scalar(
                 }
                 TypedefTarget::Declarator { specifiers, stars } => {
                     let target = specifiers.iter().map(String::as_str).collect::<Vec<_>>();
-                    project_declarator_resolved(&target, stars, false, typedefs, result)
+                    refuse_qualified_chain(
+                        project_declarator_resolved(&target, stars, false, typedefs, result),
+                        name,
+                        typedefs,
+                    )
                 }
                 // An aggregate *value* has no spelling in this vocabulary, for
                 // the same reason a `struct tag` value has none. Refused, not
                 // guessed at some integer.
                 TypedefTarget::Aggregate { stars: 0 } => None,
+                // Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): an untagged
+                // enumeration's value is the integer projection Clang states
+                // for it, asked by the outermost name (a typedef is
+                // transparent, so every name of the chain denotes it).
+                TypedefTarget::UntaggedEnum => {
+                    super::enum_projection::project(name).map(|spelling| BTreeSet::from([spelling]))
+                }
                 TypedefTarget::Aggregate { stars } => {
                     let projection = pointer_projection(stars, false);
                     (!projection.is_empty()).then_some(projection)
@@ -1682,7 +1830,13 @@ fn project_scalar(
         }
         // An enumeration's compatible integer type is implementation-defined
         // (C11 6.7.2.2p4), so no spelling of this vocabulary is established by
-        // the declaration. Refused rather than guessed at `int`.
+        // the declaration alone. Card W43-ABI-ENUM-AND-CONST-PP (rule 12u):
+        // Clang states it for the analysed unit; without that answer it is
+        // refused, never guessed at `int`.
+        ["enum", tag] if is_c_identifier(tag) => {
+            super::enum_projection::project(&format!("enum {tag}"))
+                .map(|spelling| BTreeSet::from([spelling]))
+        }
         _ => None,
     }
 }

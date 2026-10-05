@@ -678,6 +678,33 @@ pub(crate) fn definition_ast(function: &str) -> Option<Value> {
     })
 }
 
+/// Card **W43-ABI-ENUM-AND-CONST-PP** (rule 12u): Clang's declarations named
+/// by `filter` (its substring name filter) after `suffix` is appended to the
+/// analysed translation unit, read with the unit's own frontend request.
+/// The probe is raw transport: the caller owns the exact shape it reads.
+/// `None` outside an analysed source, when the source already spells the
+/// filter (a probe name the source could forge), and on any Clang or JSON
+/// failure.
+pub(crate) fn appended_declarations(suffix: &str, filter: &str) -> Option<Vec<Value>> {
+    ANALYSED_SOURCE.with(|cell| {
+        let borrow = cell.borrow();
+        let context = borrow.as_ref()?;
+        if context.source.contains(filter) {
+            return None;
+        }
+        let probed = format!("{}\n{suffix}\n", context.source);
+        let unit = C11TranslationUnit {
+            source: &probed,
+            include_paths: context.request.include_paths.clone(),
+            definitions: context.request.definitions.clone(),
+            preprocessor_options: context.request.preprocessor_options.clone(),
+            dialect: context.dialect,
+            ..C11TranslationUnit::default()
+        };
+        crate::typed_c_ast::ast_declarations(&probed, &unit, filter).ok()
+    })
+}
+
 /// Card CG13-UNION-AND-BITFIELD-PLACES (rule 10w): Clang's record layout
 /// dump of the analysed translation unit, with the frontend request the AST
 /// was read with. `None` outside an analysed source or on any Clang failure.

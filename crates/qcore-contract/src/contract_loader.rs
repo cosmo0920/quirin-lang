@@ -338,8 +338,21 @@ pub const SCALAR_ABI_TYPES: &[&str] = &[
 ];
 
 /// Opaque C ABI pointer projections. These are the custody-bearing types.
-pub const POINTER_ABI_TYPES: &[&str] =
-    &["ptr<mut, u8>", "ptr<const, u8>", "ptr<mut, ptr<mut, u8>>"];
+///
+/// Card **W43-ABI-ENUM-AND-CONST-PP** (gateway rule 12v) added
+/// `ptr<mut, ptr<const, u8>>`, a pointer to a pointer to const (`const char
+/// **`, `const void **`): the outer `mut` says the slot the outer pointer
+/// designates is not `const`, the inner `const` is the innermost pointee's.
+/// It carries custody exactly as `ptr<mut, ptr<mut, u8>>` does, except that
+/// `resource_out` still requires that one spelling (a fresh object delivered
+/// through a slot of pointers to const has no measured need). A qualifier on
+/// the slot (`char *const *`) has no spelling and stays refused.
+pub const POINTER_ABI_TYPES: &[&str] = &[
+    "ptr<mut, u8>",
+    "ptr<const, u8>",
+    "ptr<mut, ptr<mut, u8>>",
+    "ptr<mut, ptr<const, u8>>",
+];
 
 /// The opaque C ABI projection of a **pointer to function** (card
 /// **CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF**).
@@ -1636,7 +1649,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     let mut conditional: Vec<(qcore_schemas::relational_post::ReturnRelation, String)> = Vec::new();
     // Card CALLEE-RETENTION-CLASS1: every `resource_retained_by(p, h)` and
     // `resource_holder_reset(h)`, as written, in clause order.
-    let mut retentions: Vec<(String, String)> = Vec::new();
+    let mut retentions: Vec<(String, String, Option<retained_by::WrittenGuard>)> = Vec::new();
     let mut resets: Vec<String> = Vec::new();
     for clause in clauses {
         let requires = clause.value.kind == SourceContractClauseKind::Requires;
@@ -1786,6 +1799,23 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             literal_arguments.push(DeclaredLiteralArgument { parameter, literal });
             continue;
         }
+        // Card W43-ABI-ENUM-AND-CONST-PP (§C04.14.1, rule 12w): a guarded
+        // clause, `CLAUSE when X OP K`. Only a retention takes a guard; any
+        // other guarded clause, and any other use of `when`, rejects.
+        if let Some((guarded, guard)) = retained_by::split_guard(expression)? {
+            match predicate_call(guarded)?.as_slice() {
+                [name, p, h] if name == retained_by::RETAINED_BY => {
+                    retentions.push((p.clone(), h.clone(), Some(guard)));
+                    continue;
+                }
+                _ => {
+                    return Err(format!(
+                        "a guard stands only on `{}`: `{expression}`",
+                        retained_by::RETAINED_BY
+                    ));
+                }
+            }
+        }
         // Card CG23-RELATIONAL-POSTCONDITIONS: a return-code disposition
         // (§C04.13), read before the identifier-only predicate reader.
         if let Some(disposition) = relational::clause(expression)? {
@@ -1810,7 +1840,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         // every mode is read.
         match words.as_slice() {
             [retained_by::RETAINED_BY, p, h] => {
-                retentions.push(((*p).to_owned(), (*h).to_owned()));
+                retentions.push(((*p).to_owned(), (*h).to_owned(), None));
                 continue;
             }
             [retained_by::HOLDER_RESET, h] => {

@@ -156,6 +156,7 @@
       ],
       "modules": [
         "librdkafka/cjson.qv",
+        "librdkafka/client.qv",
         "librdkafka/kafka_mem.qv",
         "librdkafka/lz4_stream.qv",
         "librdkafka/memory.qv",
@@ -167,6 +168,7 @@
       "published": {},
       "resource_view": [
         "librdkafka/cjson.qv",
+        "librdkafka/client.qv",
         "librdkafka/kafka_mem.qv",
         "librdkafka/lz4_stream.qv",
         "librdkafka/memory.qv",

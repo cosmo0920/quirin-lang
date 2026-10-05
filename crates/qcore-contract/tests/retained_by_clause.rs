@@ -48,7 +48,8 @@ fn a_retaining_declaration_loads_and_is_withheld_from_the_function_map() {
         keep.retentions,
         [Retention {
             retained: 1,
-            holder: RetentionHolder::Parameter { index: 0 }
+            holder: RetentionHolder::Parameter { index: 0 },
+            guard: None,
         }]
     );
     assert_eq!(keep.resets, [0]);

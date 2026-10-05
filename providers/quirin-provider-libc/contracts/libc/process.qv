@@ -33,9 +33,9 @@ module contract;
 //   (`regexec`, `regerror` spell `const regex_t *__restrict __preg`, which
 //   this card's reader withdrew; card W43-LIBC-RESTRICT-PROTOTYPES declares
 //   both in `libc/regex.qcore`.)
-//   `getrlimit`, `setrlimit`: their first parameter is the enumeration typedef
-//   `__rlimit_resource_t`, which the reader does not project; measured
-//   withdrawn at every call site.
+//   (`getrlimit`, `setrlimit`, whose first parameter is the enumeration
+//   typedef `__rlimit_resource_t`, are declared below since card
+//   W43-ABI-ENUM-AND-CONST-PP, gateway rule 12u.)
 //   `regcomp` allocates storage inside the caller's `regex_t`, released by
 //   `regfree`: an in-place object lifecycle v1 cannot state.
 //
@@ -50,5 +50,45 @@ contract {
     requires resource_literal_argument(option, 15);
     ensures normal resource_borrowed(option);
     ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};
+
+// <sys/resource.h> -- card W43-ABI-ENUM-AND-CONST-PP (gateway rule 12u).
+//
+// TRUSTED ASSUMPTIONS about glibc's `getrlimit` and `setrlimit` (trust
+// boundary 28), flexible like every libc declaration. Read from the prototypes
+// the analysed units declare under `_GNU_SOURCE`
+// (`/usr/include/x86_64-linux-gnu/sys/resource.h` on the audited host):
+//
+//   typedef enum __rlimit_resource __rlimit_resource_t;
+//   extern int getrlimit (__rlimit_resource_t __resource,
+//                         struct rlimit *__rlimits) __THROW __nonnull ((2));
+//   extern int setrlimit (__rlimit_resource_t __resource,
+//                         const struct rlimit *__rlimits) __THROW __nonnull ((2));
+//
+// `enum __rlimit_resource` (`bits/resource.h`) runs from `RLIMIT_CPU = 0` to
+// `__RLIMIT_NLIMITS = 16` with no negative value, so Clang's integer type for
+// it is `unsigned int`: the first parameter is `u32` (USER DECISION
+// 2026-10-05, contract specification C04.1). A unit that declares the
+// parameter `int` (no `_GNU_SOURCE`) disagrees and withdraws the declaration
+// there. `getrlimit` writes the two limits into `*rlimits`; `setrlimit` reads
+// them. Neither allocates, frees or keeps a pointer, and the `int` result is
+// data.
+
+extern fn getrlimit(resource: u32, rlimits: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(resource);
+    ensures normal resource_borrowed(rlimits);
+    ensures normal resource_return_none();
+};
+
+extern fn setrlimit(resource: u32, rlimits: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(resource);
+    ensures normal resource_borrowed(rlimits);
     ensures normal resource_return_none();
 };

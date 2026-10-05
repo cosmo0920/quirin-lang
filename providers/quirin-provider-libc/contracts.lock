@@ -167,6 +167,11 @@
       "contract_sha256": "886a32d461d5b3175a62eeeb65f827ca8b6aca7d4ea0bc0761ac2ddb88a90484"
     },
     {
+      "function": "getrlimit",
+      "module": "libc/process.qv",
+      "contract_sha256": "aa6460a242004d164159ddf8f029936376fdfaffd7b0ea46db113564d22a171d"
+    },
+    {
       "function": "getsockopt",
       "module": "libc/socket.qv",
       "contract_sha256": "e918f6dbbb7eecff033d173e08380c677aa7250dcbeb0213fc429996e5b84616"
@@ -420,6 +425,11 @@
       "function": "sendfile",
       "module": "libc/socket.qv",
       "contract_sha256": "09fefe94523ec2e28171a70e00ff72f7dd167c2e378c16d0d422b6415bdb0fb4"
+    },
+    {
+      "function": "setrlimit",
+      "module": "libc/process.qv",
+      "contract_sha256": "0c3eb64358b32dcf5080db856296c566855e43e5b6314c026861fa6a598f2b55"
     },
     {
       "function": "setsid",

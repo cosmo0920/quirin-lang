@@ -207,6 +207,33 @@ contract {
     ensures normal resource_return_none();
 };
 
+// --- the generic checked decoder over caller buffers -----------------------
+// Card W43-ABI-ENUM-AND-CONST-PP (gateway rule 12u). `LZ4_decompress_generic`
+// (`lz4.c:1942-2344`, `LZ4_FORCE_INLINE`, byte-identical at `66910c10` and
+// `046accf6`) decodes `src` into `dst`, reading back-references from
+// `lowPrefix` and `dictStart`; every call in its body is a copy, a load or a
+// store over those buffers (`LZ4_memcpy`, `LZ4_memmove`, `LZ4_wildCopy8`,
+// `LZ4_wildCopy32`, `LZ4_memcpy_using_offset`, `LZ4_readLE16`,
+// `LZ4_write32`, `read_variable_length`). It allocates, frees and keeps
+// nothing. `partialDecoding` (`earlyEnd_directive`, `:1772`,
+// `decode_full_block = 0, partial_decode = 1`) and `dict` (`dict_directive`,
+// `:726`, `noDict = 0 … usingDictCtx`) are untagged enumerations with no
+// negative value: Clang's integer type for both is `unsigned int`, `u32`.
+extern fn LZ4_decompress_generic(src: ptr<const, u8>, dst: ptr<mut, u8>, srcSize: i32, outputSize: i32, partialDecoding: u32, dict: u32, lowPrefix: ptr<const, u8>, dictStart: ptr<const, u8>, dictSize: usize) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(src);
+    ensures normal resource_borrowed(dst);
+    ensures normal resource_borrowed(srcSize);
+    ensures normal resource_borrowed(outputSize);
+    ensures normal resource_borrowed(partialDecoding);
+    ensures normal resource_borrowed(dict);
+    ensures normal resource_borrowed(lowPrefix);
+    ensures normal resource_borrowed(dictStart);
+    ensures normal resource_borrowed(dictSize);
+    ensures normal resource_return_none();
+};
+
 // --- one-shot default compression into a caller buffer ---------------------
 extern fn LZ4_compress_default(src: ptr<const, u8>, dst: ptr<mut, u8>, srcSize: i32, maxOutputSize: i32) -> i32
 contract {

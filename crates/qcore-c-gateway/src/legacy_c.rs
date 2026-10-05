@@ -48,6 +48,10 @@ pub(crate) mod literal_premise;
 
 #[path = "legacy_declared_abi.rs"]
 pub mod declared_abi;
+// Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): an enumeration's integer
+// projection, read from Clang over the analysed unit.
+#[path = "legacy_enum_projection.rs"]
+pub(crate) mod enum_projection;
 // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): route G's dialect and extension hooks.
 #[path = "legacy_dialect_hook.rs"]
 mod dialect_hook;
@@ -310,6 +314,9 @@ mod relational_route;
 // keeps, the release and exit refusals).
 #[path = "legacy_retained_by.rs"]
 pub(crate) mod retained_by_route;
+// Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): guarded retention clauses.
+#[path = "legacy_retention_guard.rs"]
+pub(crate) mod retention_guard;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
@@ -2208,6 +2215,10 @@ fn analyze_legacy_c_tokens_under_holds(
     let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
     let withdrawn_tokens = agreement.withdraw_call_sites(tokens);
     let tokens = withdrawn_tokens.as_deref().unwrap_or(tokens);
+    // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded retention whose
+    // body this unit defines stands only when the body validates it.
+    let guards_settled = retention_guard::settle(tokens, contracts);
+    let contracts = guards_settled.as_ref().unwrap_or(contracts);
     // Card LOADER-ABI-MODES, applied here for the same uniformity reason: this
     // entry point does not pass through the translation-unit pass, so a
     // declaration a body in the same stream contradicts would otherwise still
@@ -2845,6 +2856,10 @@ pub(crate) fn recursive_component_census(
     let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
+    // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded retention whose
+    // body this unit defines stands only when the body validates it.
+    let guards_settled = retention_guard::settle(&tokens, contracts);
+    let contracts = guards_settled.as_ref().unwrap_or(contracts);
     let mut names = function_names(&tokens, &conditionals).definitions;
     // Card W44-CORPUS-CALLEE-SUMMARIES: the same derivation scope as the analysis.
     let definitions = names.clone();
@@ -2974,6 +2989,10 @@ fn analyze_translation_unit_under_holds(
     let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
+    // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded retention whose
+    // body this unit defines stands only when the body validates it.
+    let guards_settled = retention_guard::settle(&tokens, contracts);
+    let contracts = guards_settled.as_ref().unwrap_or(contracts);
     let mut names = function_names(&tokens, &conditionals).definitions;
     // Card W44-CORPUS-CALLEE-SUMMARIES: every definition, kept before the
     // selection narrows `names`, for the derivation scope below.

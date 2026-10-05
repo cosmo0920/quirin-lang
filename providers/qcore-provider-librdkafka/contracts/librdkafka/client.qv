@@ -1,0 +1,250 @@
+module contract;
+
+// # librdkafka client functions with enumeration or pointer-to-const-pointer
+// # prototypes
+//
+// Card W43-ABI-ENUM-AND-CONST-PP. Every declaration below was undeclarable
+// before the card: its C prototype carries an enumeration type (gateway rule
+// 12u) or a pointer to a pointer to const (rule 12v), which the declared-ABI
+// reader withdrew at every call site (`W43-LIBC-ABI-READER-SHAPES`).
+//
+// USER DECISION 2026-10-05 (contract specification C04.1): an enumeration
+// parameter or result is spelled as its underlying integer type, which the
+// reader takes from Clang for the analysed unit and compares exactly (width
+// and signedness). The declaration does not name the enumeration. Read from
+// the pinned build (`66910c10`, Clang 21, x86-64):
+//
+//   * `rd_kafka_resp_err_t` (`rdkafka.h`) starts at
+//     `RD_KAFKA_RESP_ERR__BEGIN = -200`: it has a negative value, so its
+//     integer type is `int`: `i32`;
+//   * `rd_async_t` (`rdtypes.h:57-60`, `RD_DONT_CARE = 0, RD_SYNC, RD_ASYNC`),
+//     `rd_kafka_confval_type_t` (`rdkafka_confval.h:40-44`, `INT = 0, STR,
+//     PTR`) and the admin enumerations `rd_kafka_ResourceType_t`,
+//     `rd_kafka_ResourcePatternType_t`, `rd_kafka_AclOperation_t`,
+//     `rd_kafka_AclPermissionType_t`, `rd_kafka_consumer_group_state_t` and
+//     `rd_kafka_consumer_group_type_t` (`rdkafka.h`) have no negative value
+//     except where noted, so their integer type is `unsigned int`: `u32`.
+//     `rd_kafka_consumer_group_type_t` starts at
+//     `RD_KAFKA_CONSUMER_GROUP_TYPE_UNKNOWN = 0`; none is negative.
+//
+// A unit whose Clang states another type withdraws the declaration there
+// (the refusing direction). Every body below was read at both audited
+// revisions and is byte-identical at `66910c10` and `046accf6`
+// (`scripts/body.py`). Each declaration is pinned (C06.2).
+
+// ## Errors
+//
+// `rd_kafka_error_new_v(code, fmt, ap)` (`rdkafka_error.c:51-74`) measures the
+// formatted string on a copy of `ap` (`va_copy`, `rd_vsnprintf(NULL, 0, …)`,
+// `va_end`), allocates the error and its string in one `rd_malloc` block,
+// stores `code` and formats into the block. It keeps nothing the caller
+// passed: `fmt` and `ap` are read. The result is a fresh allocation the
+// caller owns (released by `rd_kafka_error_destroy`); `rd_malloc` inherits
+// libc's nullable result, which is the statement here too.
+// `rd_kafka_error_new(code, fmt, ...)` (`:112-123`) is `va_start`, the same
+// call, `va_end`; its trailing arguments are format data.
+
+extern fn rd_kafka_error_new_v(code: i32, fmt: ptr<const, u8>, ap: va_list) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(code);
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_borrowed(ap);
+    ensures normal resource_return_owned(nullable);
+};
+
+extern fn rd_kafka_error_new(code: i32, fmt: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(code);
+    ensures normal resource_borrowed(fmt);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_owned(nullable);
+};
+
+// `rd_kafka_err_action(rkb, err, request, ...)` (`rdkafka_request.c:81-163`)
+// reads `(action, error)` integer pairs from its trailing arguments until a
+// zero action, maps `err` to an action mask and logs through the broker; it
+// allocates, frees and keeps nothing. Every trailing argument is an `int`.
+extern fn rd_kafka_err_action(rkb: ptr<mut, u8>, err: i32, request: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkb);
+    ensures normal resource_borrowed(err);
+    ensures normal resource_borrowed(request);
+    ensures normal resource_variadic_data_tail();
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_oauthbearer_set_token_failure(rk, errstr)` (`rdkafka.c:370-377`)
+// forwards to `rd_kafka_oauthbearer_set_token_failure0`
+// (`rdkafka_sasl_oauthbearer.c:462-503`), which copies `errstr`
+// (`rd_strdup`) into the handle it owns and enqueues an error op formatted
+// from it; or returns `RD_KAFKA_RESP_ERR__NOT_IMPLEMENTED` without SASL
+// OAUTHBEARER. `errstr` is read, never kept.
+extern fn rd_kafka_oauthbearer_set_token_failure(rk: ptr<mut, u8>, errstr: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(errstr);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_toppars_pause_resume(rk, pause, async, flag, partitions)`
+// (`rdkafka_partition.c:2587-2669`) creates and destroys its own temporary
+// queue when synchronous, looks up and releases a reference to each
+// partition's toppar, and writes each element's `err`. It keeps no pointer
+// the caller passed.
+extern fn rd_kafka_toppars_pause_resume(rk: ptr<mut, u8>, pause: u8, async_mode: u32, flag: i32, partitions: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(pause);
+    ensures normal resource_borrowed(async_mode);
+    ensures normal resource_borrowed(flag);
+    ensures normal resource_borrowed(partitions);
+    ensures normal resource_return_none();
+};
+
+// ## Admin objects
+//
+// `rd_kafka_AclBinding_new0` (static, `rdkafka_admin.c:5202-5227`)
+// allocates the binding (`rd_calloc`), copies `name`, `principal` and `host`
+// (`rd_strdup`, each only when non-NULL), stores the four enumerations and,
+// when `err` is nonzero, a fresh `rd_kafka_error_new(err, "%s", errstr)`. It
+// keeps no pointer the caller passed. The binding is the caller's
+// (`rd_kafka_AclBinding_destroy`).
+extern fn rd_kafka_AclBinding_new0(restype: u32, name: ptr<const, u8>, resource_pattern_type: u32, principal: ptr<const, u8>, host: ptr<const, u8>, operation: u32, permission_type: u32, err: i32, errstr: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(restype);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(resource_pattern_type);
+    ensures normal resource_borrowed(principal);
+    ensures normal resource_borrowed(host);
+    ensures normal resource_borrowed(operation);
+    ensures normal resource_borrowed(permission_type);
+    ensures normal resource_borrowed(err);
+    ensures normal resource_borrowed(errstr);
+    ensures normal resource_return_owned(nullable);
+};
+
+// `rd_kafka_ConsumerGroupDescription_new` (static, `:7987-8022`) allocates
+// the description, copies `group_id` and `partition_assignor` (`rd_strdup`;
+// a NULL assignor is stored as NULL), copies `members`
+// (`rd_list_init_copy` + `rd_list_copy_to` with the member copier), the
+// operations array (`rd_kafka_AuthorizedOperations_copy`) and the
+// coordinator (`rd_kafka_Node_copy`), and builds a fresh error from `error`'s
+// code and string. Every pointer the caller passed is read, none kept.
+extern fn rd_kafka_ConsumerGroupDescription_new(group_id: ptr<const, u8>, is_simple_consumer_group: u8, members: ptr<const, u8>, partition_assignor: ptr<const, u8>, authorized_operations: ptr<const, u8>, authorized_operations_cnt: i32, state: u32, group_type: u32, coordinator: ptr<const, u8>, source_error: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(group_id);
+    ensures normal resource_borrowed(is_simple_consumer_group);
+    ensures normal resource_borrowed(members);
+    ensures normal resource_borrowed(partition_assignor);
+    ensures normal resource_borrowed(authorized_operations);
+    ensures normal resource_borrowed(authorized_operations_cnt);
+    ensures normal resource_borrowed(state);
+    ensures normal resource_borrowed(group_type);
+    ensures normal resource_borrowed(coordinator);
+    ensures normal resource_borrowed(source_error);
+    ensures normal resource_return_owned(nullable);
+};
+
+// `rd_kafka_admin_add_config0(rl, name, value)` (static, `:2025-2037`)
+// returns `RD_KAFKA_RESP_ERR__INVALID_ARG` for a NULL `name`; otherwise it
+// allocates an entry whose key/value pair is a copy (`rd_strtup_new`) and
+// appends that fresh entry to `rl`. The list is the caller's and keeps no
+// pointer the caller passed.
+extern fn rd_kafka_admin_add_config0(rl: ptr<mut, u8>, name: ptr<const, u8>, value: ptr<const, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rl);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(value);
+    ensures normal resource_return_none();
+};
+
+// ## Configuration
+//
+// `rd_kafka_anyconf_dump(scope, conf, cntp, only_modified,
+// redact_sensitive)` (static, `rdkafka_conf.c:3442-3487`) allocates an array
+// of `2 * N` string pointers (`rd_calloc`), fills it with fresh copies of each
+// property's name and value (`rd_strdup`, `rd_malloc`), stores the count in
+// `*cntp` and returns the array as `const char **` (rule 12v). The array and
+// its strings are the caller's (`rd_kafka_conf_dump_free`); `conf` is read.
+extern fn rd_kafka_anyconf_dump(scope: i32, conf: ptr<const, u8>, cntp: ptr<mut, u8>, only_modified: u8, redact_sensitive: u8) -> ptr<mut, ptr<const, u8>>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(scope);
+    ensures normal resource_borrowed(conf);
+    ensures normal resource_borrowed(cntp);
+    ensures normal resource_borrowed(only_modified);
+    ensures normal resource_borrowed(redact_sensitive);
+    ensures normal resource_return_owned(nullable);
+};
+
+// `rd_kafka_confval_set_type(confval, valuetype, valuep, errstr,
+// errstr_size)` (`:3763-3874`) switches on **`confval->valuetype`**, the
+// holder's own stored type: its INT arm reads `*valuep` or parses it, its
+// STR arm copies it (`rd_strdup`), and its PTR arm stores it
+// (`confval->u.PTR = (void *)valuep`) without reading the `valuetype`
+// argument at all. The retention is therefore NOT conditioned on the
+// argument (USER DECISION 2026-10-05's guard, C04.14.1, would be false of
+// this body, which a caller passing the INT constant (0) for a PTR-typed
+// `confval` still has retained), and it is declared unconditionally: the
+// cautious reading.
+extern fn rd_kafka_confval_set_type(confval: ptr<mut, u8>, valuetype: u32, valuep: ptr<const, u8>, errstr: ptr<mut, u8>, errstr_size: usize) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(confval);
+    ensures normal resource_borrowed(valuetype);
+    ensures normal resource_borrowed(valuep);
+    ensures normal resource_borrowed(errstr);
+    ensures normal resource_borrowed(errstr_size);
+    ensures normal resource_retained_by(valuep, confval);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_interceptor_method_add(list, ic_name, func, ic_opaque)` (static,
+// `rdkafka_interceptor.c:137-153`) returns `RD_KAFKA_RESP_ERR__CONFLICT` when
+// a unique list already holds the same method; otherwise it allocates a
+// method (`rd_kafka_interceptor_method_new`, `:107-119`) that copies
+// `ic_name` (`rd_strdup`) and keeps `func` and `ic_opaque`, and appends it to
+// `list`. Both kept pointers are declared retained by `list` on every return
+// (the conflict return keeps neither: the refusing direction).
+extern fn rd_kafka_interceptor_method_add(list: ptr<mut, u8>, ic_name: ptr<const, u8>, func: ptr<mut, u8>, ic_opaque: ptr<mut, u8>) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(list);
+    ensures normal resource_borrowed(ic_name);
+    ensures normal resource_borrowed(func);
+    ensures normal resource_borrowed(ic_opaque);
+    ensures normal resource_retained_by(func, list);
+    ensures normal resource_retained_by(ic_opaque, list);
+    ensures normal resource_return_none();
+};
+
+// ## Strings
+//
+// `rd_flags2str(dst, size, desc, flags)` (`rdstring.c:225-249`) walks the
+// NULL-terminated `desc` array of names (`const char **`, rule 12v), appends
+// the name of each set bit into `dst` (`rd_snprintf`) and returns `dst`
+// itself on every path. `desc` and its strings are read.
+extern fn rd_flags2str(dst: ptr<mut, u8>, size: usize, desc: ptr<mut, ptr<const, u8>>, flags: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(dst);
+    ensures normal resource_borrowed(size);
+    ensures normal resource_borrowed(desc);
+    ensures normal resource_borrowed(flags);
+    ensures normal resource_return_alias(dst, nonnull);
+};
+
+// NOT DECLARED, recorded in the card report:
+//   `rd_slice_reader0(slice, p, update_pos)` (`rdbuf.c:842-875`) stores an
+//   interior pointer of `slice`'s segment through `p` (`const void **`): the
+//   reader now projects the type (rule 12v), but no v1 mode states a derived
+//   pointer delivered through an out slot (C04.14's last exclusion; the
+//   ground `strtol` was refused on).

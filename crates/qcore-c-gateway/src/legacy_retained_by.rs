@@ -216,6 +216,20 @@ impl Parser<'_> {
             resets: Vec::new(),
         };
         for retention in &declaration.retentions {
+            // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded clause a
+            // decided actual fails is not in force at this call; a decided
+            // success and an undecided actual keep it (the cautious reading).
+            if let Some(guard) = retention.guard {
+                let decision = super::retention_guard::decide(
+                    self.tokens,
+                    &self.typed_path_function,
+                    actual(guard.parameter),
+                    guard,
+                );
+                if !qcore_schemas::retained_by::RetentionGuard::in_force(decision) {
+                    continue;
+                }
+            }
             let retained_text = actual(retention.retained).map(|a| a.join(" "));
             let retained = match actual(retention.retained) {
                 // The lexer collapses a string literal to this placeholder

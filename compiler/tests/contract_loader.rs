@@ -1198,9 +1198,16 @@ fn every_abi_scalar_is_a_borrowed_only_projection() {
             "f64"
         ]
     );
+    // Card W43-ABI-ENUM-AND-CONST-PP (gateway rule 12v) added the pointer to
+    // a pointer to const, deliberately.
     assert_eq!(
         POINTER_ABI_TYPES,
-        ["ptr<mut, u8>", "ptr<const, u8>", "ptr<mut, ptr<mut, u8>>"]
+        [
+            "ptr<mut, u8>",
+            "ptr<const, u8>",
+            "ptr<mut, ptr<mut, u8>>",
+            "ptr<mut, ptr<const, u8>>"
+        ]
     );
     // Card CONSTRUCTOR-RESIDUALS-ABI-TYPEDEF added the projection of a pointer
     // to function, under the same condition NEIGHBOURS stated for the floats: a
