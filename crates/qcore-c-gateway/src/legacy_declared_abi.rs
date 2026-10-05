@@ -280,11 +280,8 @@ pub fn declared_abi_census(
     let tokens = super::tokenize(preprocessed);
     // Card W43-ABI-ENUM-AND-CONST-PP (rule 12u): the census reads the unit
     // the analysis would, so an enumeration is asked of Clang here too.
-    let _scope = crate::typed_access_path::enter_source(
-        preprocessed,
-        super::CCompilerDialect::C11,
-        None,
-    );
+    let _scope =
+        crate::typed_access_path::enter_source(preprocessed, super::CCompilerDialect::C11, None);
     let agreement = AbiAgreement::read(&tokens, contracts);
     let mut rows = Vec::new();
     for (function, refusal) in agreement.withdrawn() {

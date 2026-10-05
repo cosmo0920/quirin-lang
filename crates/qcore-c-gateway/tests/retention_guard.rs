@@ -137,7 +137,13 @@ fn a_decided_failure_drops_the_clause_and_everything_else_keeps_it() {
         assert!(safe(&rows, name), "{name}: {:?}", rows[name]);
     }
     // The caller supplied the holder: a retention that stands is undecided.
-    for name in ["decided_on", "undecided", "out_of_range", "enum_on", "shadowed"] {
+    for name in [
+        "decided_on",
+        "undecided",
+        "out_of_range",
+        "enum_on",
+        "shadowed",
+    ] {
         assert!(retention_undecided(&rows, name), "{name}: {:?}", rows[name]);
     }
 }
@@ -159,8 +165,16 @@ int g_set(struct st *state, unsigned kind, const void *src) {
 }
 ";
     let validated = rows(&format!("{validating}{CALLERS}"), "decided_off");
-    assert!(safe(&validated, "decided_off"), "{:?}", validated["decided_off"]);
-    assert!(retention_undecided(&validated, "decided_on"), "{:?}", validated["decided_on"]);
+    assert!(
+        safe(&validated, "decided_off"),
+        "{:?}",
+        validated["decided_off"]
+    );
+    assert!(
+        retention_undecided(&validated, "decided_on"),
+        "{:?}",
+        validated["decided_on"]
+    );
     // The retention depends on the holder's own state, not the argument
     // (the shape `rd_kafka_confval_set_type` has): not validated, so the
     // cautious reading stands at every call of this unit.

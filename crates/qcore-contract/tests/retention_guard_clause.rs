@@ -33,8 +33,10 @@ contract {{
 
 #[test]
 fn a_guarded_retention_loads_with_its_guard_and_range() {
-    let contracts =
-        load(&declaration("resource_retained_by(value, holder) when kind == 2")).expect("loads");
+    let contracts = load(&declaration(
+        "resource_retained_by(value, holder) when kind == 2",
+    ))
+    .expect("loads");
     let set = contracts.retaining_contract("set").expect("retaining");
     assert_eq!(
         set.retentions,
@@ -52,16 +54,39 @@ fn a_guarded_retention_loads_with_its_guard_and_range() {
     );
     check_source_assumptions(&contracts).expect("the retained texts reload to the same tables");
     for (clause, relation, constant) in [
-        ("resource_retained_by(value, holder) when kind<3", GuardRelation::Lt, 3),
-        ("resource_retained_by(value, holder) when delta >= -4", GuardRelation::Ge, -4),
-        ("resource_retained_by(value, holder) when delta <= 0", GuardRelation::Le, 0),
-        ("resource_retained_by(value, global) when kind > 7", GuardRelation::Gt, 7),
+        (
+            "resource_retained_by(value, holder) when kind<3",
+            GuardRelation::Lt,
+            3,
+        ),
+        (
+            "resource_retained_by(value, holder) when delta >= -4",
+            GuardRelation::Ge,
+            -4,
+        ),
+        (
+            "resource_retained_by(value, holder) when delta <= 0",
+            GuardRelation::Le,
+            0,
+        ),
+        (
+            "resource_retained_by(value, global) when kind > 7",
+            GuardRelation::Gt,
+            7,
+        ),
     ] {
         let contracts = load(&declaration(clause)).expect(clause);
-        let guard = contracts.retaining_contract("set").expect("retaining").retentions[0]
+        let guard = contracts
+            .retaining_contract("set")
+            .expect("retaining")
+            .retentions[0]
             .guard
             .expect("guarded");
-        assert_eq!((guard.relation, guard.constant), (relation, constant), "{clause}");
+        assert_eq!(
+            (guard.relation, guard.constant),
+            (relation, constant),
+            "{clause}"
+        );
     }
 }
 

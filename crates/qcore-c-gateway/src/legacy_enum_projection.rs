@@ -313,9 +313,15 @@ mod tests {
 
     #[test]
     fn exactly_one_compatible_type_of_the_probed_signedness_projects() {
-        assert_eq!(projection_of(&facts(32, false, "unsigned int")), Some("u32"));
+        assert_eq!(
+            projection_of(&facts(32, false, "unsigned int")),
+            Some("u32")
+        );
         assert_eq!(projection_of(&facts(32, true, "int")), Some("i32"));
-        assert_eq!(projection_of(&facts(64, false, "unsigned long")), Some("u64"));
+        assert_eq!(
+            projection_of(&facts(64, false, "unsigned long")),
+            Some("u64")
+        );
         assert_eq!(projection_of(&facts(8, false, "unsigned char")), Some("u8"));
         assert_eq!(projection_of(&facts(16, true, "short")), Some("i16"));
     }
@@ -341,7 +347,10 @@ mod tests {
             assert_eq!(project("enum e"), None);
             assert_eq!(project("e_t"), None);
         });
-        assert_eq!(seen, BTreeSet::from(["e_t".to_owned(), "enum e".to_owned()]));
+        assert_eq!(
+            seen,
+            BTreeSet::from(["e_t".to_owned(), "enum e".to_owned()])
+        );
         assert_eq!(project("enum e"), None);
         let answers = BTreeMap::from([("e_t".to_owned(), Some("u32"))]);
         answering(answers, || {

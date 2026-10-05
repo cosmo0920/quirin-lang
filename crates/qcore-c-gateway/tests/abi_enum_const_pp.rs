@@ -16,7 +16,9 @@ use qcore_schemas::contract::ResourceContracts;
 fn contracts(signature: &str, parameters: &[&str], result: &str) -> ResourceContracts {
     let mut clauses = String::new();
     for parameter in parameters {
-        clauses.push_str(&format!("    ensures normal resource_borrowed({parameter});\n"));
+        clauses.push_str(&format!(
+            "    ensures normal resource_borrowed({parameter});\n"
+        ));
     }
     let module = format!(
         "module contract;\n\nextern fn {signature}\ncontract {{\n    requires resource_contract_v1;\n{clauses}    ensures normal {result};\n}};\n"
@@ -48,7 +50,10 @@ fn an_enumeration_without_a_negative_value_is_unsigned_int() {
         return;
     }
     let c = "typedef enum { A, B } e_t;\nint k(e_t v);";
-    assert_eq!(outcome(c, "k(v: u32) -> i32", &["v"], NONE), AbiOutcome::Agreed);
+    assert_eq!(
+        outcome(c, "k(v: u32) -> i32", &["v"], NONE),
+        AbiOutcome::Agreed
+    );
     // `int` is never assumed: Clang says `unsigned int`.
     assert_eq!(
         outcome(c, "k(v: i32) -> i32", &["v"], NONE),
@@ -87,7 +92,10 @@ fn a_wide_or_fixed_enumeration_is_its_own_width() {
         return;
     }
     let wide = "enum big { BIG = 0x100000000 };\nint k(enum big v);";
-    assert_eq!(outcome(wide, "k(v: u64) -> i32", &["v"], NONE), AbiOutcome::Agreed);
+    assert_eq!(
+        outcome(wide, "k(v: u64) -> i32", &["v"], NONE),
+        AbiOutcome::Agreed
+    );
     // The pointer-width reading a `long` also admits is not the exact one.
     assert_eq!(
         outcome(wide, "k(v: usize) -> i32", &["v"], NONE),
@@ -130,7 +138,12 @@ fn a_pointer_to_an_enumeration_is_an_object_pointer() {
 fn a_pointer_to_a_pointer_to_const_has_its_own_spelling() {
     let direct = "int k(const char **v);";
     assert_eq!(
-        outcome(direct, "k(v: ptr<mut, ptr<const, u8>>) -> i32", &["v"], NONE),
+        outcome(
+            direct,
+            "k(v: ptr<mut, ptr<const, u8>>) -> i32",
+            &["v"],
+            NONE
+        ),
         AbiOutcome::Agreed
     );
     assert_eq!(
@@ -139,7 +152,12 @@ fn a_pointer_to_a_pointer_to_const_has_its_own_spelling() {
     );
     let unqualified = "int k(char **v);";
     assert_eq!(
-        outcome(unqualified, "k(v: ptr<mut, ptr<const, u8>>) -> i32", &["v"], NONE),
+        outcome(
+            unqualified,
+            "k(v: ptr<mut, ptr<const, u8>>) -> i32",
+            &["v"],
+            NONE
+        ),
         AbiOutcome::Withdrawn(AbiRefusal::ParameterTypeDisagreement)
     );
     let void = "int k(const void **v);";

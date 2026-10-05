@@ -65,12 +65,10 @@ fn is_integer_suffix(suffix: &str) -> bool {
     let long = |text: &str| matches!(text, "" | "l" | "L" | "ll" | "LL");
     let unsigned = |text: &str| matches!(text, "u" | "U");
     long(suffix)
-        || suffix
-            .char_indices()
-            .any(|(at, _)| {
-                let (head, tail) = suffix.split_at(at);
-                (unsigned(head) && long(tail)) || (long(head) && unsigned(tail))
-            })
+        || suffix.char_indices().any(|(at, _)| {
+            let (head, tail) = suffix.split_at(at);
+            (unsigned(head) && long(tail)) || (long(head) && unsigned(tail))
+        })
         || unsigned(suffix)
 }
 
@@ -239,9 +237,10 @@ fn constant_value(tokens: &[Token], function: &str, words: &[&str]) -> Option<i1
         return Some(value);
     }
     match strip(words) {
-        [name] if is_identifier(name)
-            && is_file_scope_enumerator(tokens, name)
-            && !shadowed_in(function, name) =>
+        [name]
+            if is_identifier(name)
+                && is_file_scope_enumerator(tokens, name)
+                && !shadowed_in(function, name) =>
         {
             clang_enumerator_value(name)
         }
@@ -531,8 +530,22 @@ fn harmless_use(words: &[&str], at: usize) -> bool {
             && star.checked_sub(1).is_some_and(|before| {
                 matches!(
                     words[before],
-                    "(" | "," | "=" | ";" | "{" | "}" | "return" | "?" | ":" | "+" | "-"
-                        | "<" | ">" | "|" | "^" | "~" | "!"
+                    "(" | ","
+                        | "="
+                        | ";"
+                        | "{"
+                        | "}"
+                        | "return"
+                        | "?"
+                        | ":"
+                        | "+"
+                        | "-"
+                        | "<"
+                        | ">"
+                        | "|"
+                        | "^"
+                        | "~"
+                        | "!"
                 )
             })
     };
@@ -592,8 +605,8 @@ pub(crate) fn validated(
             (Some("<"), Some("<")) | (Some(">"), Some(">")) => true,
             _ => false,
         };
-        let incremented = at >= 2
-            && matches!((words[at - 2], words[at - 1]), ("+", "+") | ("-", "-"));
+        let incremented =
+            at >= 2 && matches!((words[at - 2], words[at - 1]), ("+", "+") | ("-", "-"));
         if assigned || incremented || previous == Some("&") {
             return false;
         }
