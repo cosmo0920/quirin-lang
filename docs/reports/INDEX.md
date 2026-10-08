@@ -558,6 +558,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [r03-loop-counts](r03-loop-counts/README.md) | Revision 0.3 R06: exact repetition and maximum counts |
 
+| [refcount-family-blocking-callees](refcount-family-blocking-callees/README.md) | REFCOUNT-FAMILY-BLOCKING-CALLEES: the callees that break reference families |
+
 | [refcount-reference-returning-declarations](refcount-reference-returning-declarations/README.md) | REFCOUNT-REFERENCE-RETURNING-DECLARATIONS: returned references and result holders |
 
 | [refcount-resource-kind](refcount-resource-kind/README.md) | REFCOUNT-RESOURCE-KIND: the reference-count resource kind |
