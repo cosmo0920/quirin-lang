@@ -5478,3 +5478,101 @@ own anchor here.
     hands back or forwards, and the declaration stays a declared assumption
     in every other unit. Unit tests in `legacy_slot_move_borrow.rs`, the
     withdrawal control in `tests/slot_move_interior_borrow.rs`; [report](../reports/slot-move-and-interior-borrow/README.md).
+
+<a id="constraint-13b"></a>
+
+13b. **A reference count is a resource kind: each function balances the
+    references it takes or hands them off, the last drop invalidates every
+    name of the object, and keep and drop are never read as custody-neutral.**
+    Card REFCOUNT-RESOURCE-KIND, class 3, on the user's decision of
+    2026-10-05 (contract specification C04.17, grammar G05):
+    `resource_reference_kept(p)` and `resource_reference_dropped(p)`
+    (`qcore_schemas::reference_count`, `RetainingContract::{references,
+    references_withdrawn}`, skipped when empty; the loader's
+    `contract_reference_count.rs`) are withheld from the function map with the
+    retaining declarations, so every consumer but route G sees an uncontracted
+    callee; `resource_return_kind(reference)` beside `resource_return_owned`
+    is a returned reference (`ResourceKind::Reference`, a shared item: the
+    kind table, `observed_kind`, the use-after-close candidate and the Lean
+    kind list exclude or list it). The pure decisions are
+    `crates/qcore-c-gateway/src/reference_count.rs` (`decide_keep`,
+    `decide_drop`, `owed`, `decide_exit`, `ref_step`, `REFERENCE_VECTORS`,
+    `REFERENCE_TRACE_VECTORS`), the route-G adapter
+    `legacy_reference_count.rs`; shared items added:
+    `AbstractState::references` (joined by site, a disagreeing count
+    undecided), `retained_by_route::Operands::references`, the reserved site a
+    keep may mint (`Parser::reserve_reference_site`, read by the kind table),
+    `slot_move_route::Invalid::{ReferenceDropped, ReferenceFreed}`
+    (`defined_body` made `pub(super)`), hooks in `apply_contract_call` (a
+    returned reference starts an acquired family), `remove_null_site`,
+    `report_leaks` (families are the route's), the exit report, the loop
+    generations' `rename` (a family's count follows its site) and the slot
+    move's held-elsewhere test (a family is never moved). A keep of a name
+    bound to no tracked identity (an unrebound formal, an untracked local,
+    through a pointer cast) mints a family held once and binds the name and
+    the result; a keep of a live family adds one; anything else, and a keep
+    into a place that is not a plain name, refuses (`reference-undecided`). A
+    drop subtracts one; the one that reaches zero is possibly final: the
+    family is discharged and every name bound to it is invalidated, so a later
+    read refuses (`reference-dropped`), never accused. A drop the function does
+    not hold (an unbound formal, a member read, a family handed off or held by
+    a field link, a container or a holder) refuses
+    (`reference-drop-unheld`); a drop past an **acquired** family's last drop
+    is an over-drop, a `DoubleRelease` candidate on a path with no refusal.
+    At an exit a family owes its count, less one when it escaped (alone or
+    with the owner it is linked into), was stored or was published: a leak
+    candidate on a path with no refusal, `reference-unbalanced` on one with
+    a refusal; an identity a refused statement may have handed on is
+    withdrawn as for any resource. A heap release of a family is a kind
+    mismatch. **Do not** declare an `rd_atomic32_*` primitive as a reference
+    or as neutral (a reference keep and a statistics counter are the same
+    call after preprocessing: `rd.h:298,351`), read keep or drop as borrowed,
+    infer a reference result, or accuse a use after a last drop. Premises
+    stated, not proved: faithful extraction (trust boundary 28) and the
+    declared keeps and drops (constraint 4; rule 13c checks what it can).
+    Measured (binary `bfd36e2a…`, sixteen pinned
+    declarations in `librdkafka/client.qv`): corpus 872 / 9 / 3,953 →
+    **884 / 9 / 3,941** (`52d14db1…` → `7a4595d6…`, **+12 Unknown → Safe**:
+    the five destructor `_free` wrappers, `rd_kafka_topic_partition_destroy`
+    and `_destroy_free`, the three `rd_kafka_queue_get_*` and one cascade over
+    the queue handle constructor, and `rd_kafka_toppar_list_copy`, a keep
+    returned), no Safe → non-Safe move, no leak or violation added; system and
+    slice no row moves (parity multisets identical); 138 corpus leaves read
+    `reference-drop-unheld`, 131 of them through a plain name holding a
+    reference from an undeclared reference-returning call
+    (`rd_kafka_toppar_get2`, `rd_kafka_q_new0`) or a caller's reference
+    (`REFCOUNT-REFERENCE-RETURNING-DECLARATIONS`).
+    `QCore.ReferenceCount` (`a_safe_path_is_balanced`,
+    `a_missing_drop_is_never_safe`,
+    `a_statistics_counter_is_never_read_as_a_reference`,
+    `a_counter_changes_no_family`, `the_neutral_reading_is_not_admitted`,
+    `an_alias_use_after_a_possibly_final_drop_is_refused`,
+    `an_over_drop_of_an_acquired_family_is_a_violation`,
+    `reference_vectors_hold`, `reference_trace_vectors_hold` and sixteen
+    more); tests `tests/refcount_resource_kind.rs` (the brief's seven
+    controls and the vectors bound to the Lean text),
+    `crates/qcore-contract/tests/reference_clause.rs`;
+    [report](../reports/refcount-resource-kind/README.md).
+
+<a id="constraint-13c"></a>
+
+13c. **In a unit that defines a keep or drop declaration's body, the
+    declaration stands only where its body validates it, and a withdrawn one
+    keeps refusing.** Card REFCOUNT-RESOURCE-KIND (`reference_route::settle`,
+    beside rule 13a's at the three unit entry points; a header `static
+    inline` body is defined in every unit that includes it): the referenced
+    formal is never assigned and never has its address taken; it is mentioned
+    only through member accesses, as a whole actual of a call, or in a null
+    test; nothing stores or returns it except an alias keep's `return p;`
+    (every other body returns nothing); the body has no `goto`; and it
+    touches the object (a member access, or a whole actual at the same
+    reference position of a declared callee: `rd_kafka_q_destroy_owner`
+    forwards to `rd_kafka_q_destroy0`). Otherwise the declaration is marked
+    withdrawn in that unit (`references_withdrawn`): every call there refuses
+    (`reference-withdrawn`) and, unlike rule 13a's withdrawal, it stays in the
+    retaining table so no inference reads the body in its place (the neutral
+    reading is never admitted). Structural: it establishes that the body hands
+    back exactly its argument and stores nothing of it; the count arithmetic
+    stays a declared assumption pinned to the body. Unit tests in
+    `legacy_reference_count.rs`, the withdrawal control in
+    `tests/refcount_resource_kind.rs`; [report](../reports/refcount-resource-kind/README.md).

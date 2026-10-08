@@ -558,6 +558,8 @@ Regenerate with `python3 scripts/build_docs_index.py`; validate with `--check`.
 
 | [r03-loop-counts](r03-loop-counts/README.md) | Revision 0.3 R06: exact repetition and maximum counts |
 
+| [refcount-resource-kind](refcount-resource-kind/README.md) | REFCOUNT-RESOURCE-KIND: the reference-count resource kind |
+
 | [region-credit-joins](region-credit-joins/README.md) | REGION-CREDIT-JOINS — the composed region: parent-local credit after the joins |
 
 | [region-joins-duties](region-joins-duties/README.md) | REGION-JOINS-DUTIES — real duties in the composed region's pack |

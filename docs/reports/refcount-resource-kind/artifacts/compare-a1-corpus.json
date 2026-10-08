@@ -1,0 +1,5164 @@
+{
+ "statuses_before": {
+  "Unknown": 3953,
+  "Safe": 872,
+  "Unsafe": 9
+ },
+ "statuses_after": {
+  "Unknown": 3940,
+  "Safe": 884,
+  "Unsafe": 10
+ },
+ "transitions": {
+  "Unknown -> Safe": 12,
+  "Unknown -> Unsafe": 1
+ },
+ "status_moves_by_label": {
+  "other": 12,
+  "callee-summary:rd_kafka_queue_get_sasl": 1
+ },
+ "removed": {
+  "call to uncontracted function `_`": 374,
+  "indirect memory access is outside the resource projection": 8,
+  "unresolved resource identity `_`": 5,
+  "unmodeled call, aggregate or indirect access in branch condition": 1
+ },
+ "added": {
+  "call to `_` with `_`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)": 138,
+  "indirect memory access is outside the resource projection": 100,
+  "unresolved resource identity `_`": 99,
+  "call to uncontracted function `_`": 7,
+  "call to `_` with `_`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)": 7,
+  "unmodeled expression may mutate a formal resource identity": 6,
+  "loop re-acquisition: an earlier generation that may be live is still held": 5,
+  "call to `_` outside its declared literal-argument premise": 3,
+  "nullable resource `_` used by a non-null contract": 3,
+  "a reference taken at line 20104 may still be owed at this exit (reference-unbalanced)": 1,
+  "live obligation acquired at rdkafka_partition.c:4906": 1,
+  "a reference taken at line 22828 may still be owed at this exit (reference-unbalanced)": 1,
+  "a reference taken at line 20611 may still be owed at this exit (reference-unbalanced)": 1,
+  "a reference taken at line 20281 may still be owed at this exit (reference-unbalanced)": 1,
+  "a reference taken at line 19875 may still be owed at this exit (reference-unbalanced)": 1
+ },
+ "moving_rows": 244,
+ "status_moves": [
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24463: call to uncontracted function `rd_kafka_AlterConsumerGroupOffsets_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23146: call to uncontracted function `rd_kafka_DeleteConsumerGroupOffsets_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupOffsets_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24629: call to uncontracted function `rd_kafka_ListConsumerGroupOffsets_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_result_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19844: call to uncontracted function `rd_kafka_topic_partition_result_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_purge_ua_toppar_queues",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22828: call to uncontracted function `rd_kafka_toppar_keep0`",
+    "22836: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "0: a reference taken at line 22828 may still be owed at this exit (reference-unbalanced)",
+    "0: live obligation acquired at rdkafka_partition.c:4906",
+    "22828: loop re-acquisition: an earlier generation that may be live is still held",
+    "22836: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21782: call to uncontracted function `rd_kafka_topic_partition_destroy0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21779: call to uncontracted function `rd_kafka_topic_partition_destroy0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21794: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_list_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21574: call to uncontracted function `rd_kafka_toppar_keep0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20300: call to uncontracted function `rd_kafka_queue_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_main",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20295: call to uncontracted function `rd_kafka_queue_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_sasl",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20867: call to uncontracted function `rd_kafka_queue_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_queue_get_sasl",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_queue_get_sasl"
+   ],
+   "lost": [
+    "20960: call to uncontracted function `rd_kafka_queue_get_sasl`"
+   ],
+   "gained": []
+  }
+ ],
+ "moves": [
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_committed",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23969: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "23941: call to uncontracted function `rd_kafka_op_set_replyq`",
+    "23969: call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23773: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "23773: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_batch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23640: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "23640: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_callback",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23709: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "23709: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_start0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23440: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "23446: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "23452: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "23440: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "23446: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "23452: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_stop",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23503: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "23503: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consume_stop0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23481: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "23481: call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_consumer_close0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23850: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "23877: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "23850: call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "23877: call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21642: call to uncontracted function `rd_kafka_q_destroy0`",
+    "21671: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "21672: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "21680: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "21642: indirect memory access is outside the resource projection",
+    "21671: indirect memory access is outside the resource projection",
+    "21672: indirect memory access is outside the resource projection",
+    "21680: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_destroy_internal",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21804: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "21804: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_get_watermark_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24139: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "24139: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_list_groups",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "25024: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "25024: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22670: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "22670: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offsets_for_times",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24224: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "24229: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24224: call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "24229: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_position",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23988: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "23988: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_purge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24712: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "24712: call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_query_watermark_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24078: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24099: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24110: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "24078: unresolved resource identity `partitions`",
+    "24099: unresolved resource identity `partitions`",
+    "24110: call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_query_wmark_offsets_resp_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24025: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24035: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24052: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24025: unresolved resource identity `offsets`",
+    "24035: unresolved resource identity `offsets`",
+    "24052: unresolved resource identity `offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23531: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "23532: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "23535: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "23538: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "23531: call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "23532: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "23535: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "23538: call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_seek_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23579: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "23588: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "23596: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "23610: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "23579: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "23588: call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "23596: call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "23610: call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23379: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "23379: call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_select_broker",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22813: call to uncontracted function `rd_kafka_toppar_keep0`",
+    "22829: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "22813: call to `rd_kafka_toppar_keep0` with `rktp`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)",
+    "22813: loop re-acquisition: an earlier generation that may be live is still held",
+    "22829: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConsumerGroupOffsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24578: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24583: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24578: unresolved resource identity `copied_offsets`",
+    "24583: unresolved resource identity `copied_offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConsumerGroupOffsetsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24528: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24528: unresolved resource identity `partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConsumerGroupOffsets_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24459: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24459: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConsumerGroupOffsets_destroy_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24470: call to uncontracted function `rd_kafka_AlterConsumerGroupOffsets_destroy`"
+   ],
+   "gained": [
+    "24470: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_AlterConsumerGroupOffsets_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24463: call to uncontracted function `rd_kafka_AlterConsumerGroupOffsets_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ConsumerGroupDescribeResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "25739: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25740: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25790: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25791: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "25739: unresolved resource identity `assignment`",
+    "25740: unresolved resource identity `target_assignment`",
+    "25790: unresolved resource identity `assignment`",
+    "25791: unresolved resource identity `target_assignment`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteConsumerGroupOffsets_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23142: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23142: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteConsumerGroupOffsets_destroy_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23153: call to uncontracted function `rd_kafka_DeleteConsumerGroupOffsets_destroy`"
+   ],
+   "gained": [
+    "23153: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteConsumerGroupOffsets_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23146: call to uncontracted function `rd_kafka_DeleteConsumerGroupOffsets_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteRecords",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22836: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22836: unresolved resource identity `copied_offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DeleteRecords_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22442: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22442: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_DescribeConsumerGroupsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "25569: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "25569: unresolved resource identity `partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ElectLeaders",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "26609: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "26620: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "26609: unresolved resource identity `copied_partitions`",
+    "26620: unresolved resource identity `copied_partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ElectLeaders_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "26442: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "26442: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupOffsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24742: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24748: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24742: unresolved resource identity `copied_offsets`",
+    "24748: unresolved resource identity `copied_offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupOffsetsResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24695: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24700: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24695: unresolved resource identity `offsets`",
+    "24700: unresolved resource identity `offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupOffsets_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24623: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24623: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupOffsets_destroy_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24636: call to uncontracted function `rd_kafka_ListConsumerGroupOffsets_destroy`"
+   ],
+   "gained": [
+    "24636: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListConsumerGroupOffsets_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24629: call to uncontracted function `rd_kafka_ListConsumerGroupOffsets_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_MemberDescription_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "25227: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25229: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "25227: indirect memory access is outside the resource projection",
+    "25229: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_OffsetDeleteResponse_parse",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23195: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23195: unresolved resource identity `partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_admin.c",
+   "occurrence": 1,
+   "function": "rd_kafka_admin_eonce_timeout_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20482: call to uncontracted function `rd_kafka_enq_once_trigger`"
+   ],
+   "gained": [
+    "20482: call to `rd_kafka_enq_once_trigger` with `eonce`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20771: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20772: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20774: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20776: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20771: indirect memory access is outside the resource projection",
+    "20772: indirect memory access is outside the resource projection",
+    "20774: indirect memory access is outside the resource projection",
+    "20776: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment_handle_OffsetFetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20264: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20307: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20264: unresolved resource identity `offsets`",
+    "20307: unresolved resource identity `offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignment.c",
+   "occurrence": 1,
+   "function": "rd_kafka_assignment_serve_pending",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20451: indirect memory access is outside the resource projection",
+    "20463: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20451: unmodeled expression may mutate a formal resource identity",
+    "20463: unresolved resource identity `partitions_to_query`"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_group_member_clear",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20204: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20206: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20208: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20204: indirect memory access is outside the resource projection",
+    "20206: indirect memory access is outside the resource projection",
+    "20208: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_assignor.c",
+   "occurrence": 1,
+   "function": "ut_set_owned",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20731: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20731: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "occurrence": 1,
+   "function": "rd_kafka_group_result_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19714: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "19714: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_result_destroy_array",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19829: call to uncontracted function `rd_kafka_topic_partition_result_destroy`"
+   ],
+   "gained": [
+    "19829: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_aux.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_result_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19844: call to uncontracted function `rd_kafka_topic_partition_result_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_background.c",
+   "occurrence": 1,
+   "function": "rd_kafka_background_thread_create",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20202: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "20202: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23466: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "23466: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_monitor_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24165: unresolved resource identity `rkbmon`"
+   ],
+   "gained": [
+    "24165: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_monitor_del",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24178: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "24178: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_op_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22642: call to uncontracted function `rd_kafka_toppar_keep0`",
+    "22646: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "22652: call to uncontracted function `rd_kafka_toppar_keep0`",
+    "22722: call to uncontracted function `rd_kafka_q_destroy0`",
+    "22742: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "22646: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "22722: indirect memory access is outside the resource projection",
+    "22742: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_share_session_add_remove_toppar",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22547: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "22547: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_broker.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_state_change_trigger_eonce",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21614: call to uncontracted function `rd_kafka_enq_once_trigger`"
+   ],
+   "gained": [
+    "21614: call to `rd_kafka_enq_once_trigger` with `eonce`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_assigned_offsets_commit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22948: unresolved resource identity `rkcg`"
+   ],
+   "gained": [
+    "22948: call to uncontracted function `rd_kafka_op_set_replyq`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_calculate_subscribe_revoking_partitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23539: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23539: unresolved resource identity `revoking`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_apply_next_subscribe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20769: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20769: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_handle_Metadata_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21985: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21985: unresolved resource identity `assignment_with_metadata`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_handle_next_assignment",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21875: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "21884: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "21890: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21875: indirect memory access is outside the resource projection",
+    "21884: indirect memory access is outside the resource projection",
+    "21890: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_incr_unassign_done",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24168: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24168: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_next_target_assignment_request_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22001: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22010: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22013: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22016: unresolved resource identity `rkcg`"
+   ],
+   "gained": [
+    "22001: unresolved resource identity `new_target_assignment`",
+    "22010: unresolved resource identity `assignment_with_metadata`",
+    "22013: unresolved resource identity `assignment_with_metadata`",
+    "22016: call to uncontracted function `rd_kafka_op_set_replyq`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_reset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20816: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20817: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20819: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20816: indirect memory access is outside the resource projection",
+    "20817: indirect memory access is outside the resource projection",
+    "20819: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_consumer_subscribe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24135: indirect memory access is outside the resource projection",
+    "24144: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24135: unmodeled expression may mutate a formal resource identity",
+    "24144: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20498: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20499: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20500: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20507: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20508: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20509: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20514: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20498: indirect memory access is outside the resource projection",
+    "20499: indirect memory access is outside the resource projection",
+    "20500: indirect memory access is outside the resource projection",
+    "20507: indirect memory access is outside the resource projection",
+    "20508: indirect memory access is outside the resource projection",
+    "20509: indirect memory access is outside the resource projection",
+    "20514: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_get_unsubscribing_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23509: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23509: unresolved resource identity `result`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_group_assignment_modify",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23276: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23276: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_group_assignment_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23208: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23208: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_ConsumerGroupHeartbeat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22085: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22092: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22104: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22109: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22139: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22085: indirect memory access is outside the resource projection",
+    "22092: unresolved resource identity `assigned_topic_partitions`",
+    "22104: indirect memory access is outside the resource projection",
+    "22109: indirect memory access is outside the resource projection",
+    "22139: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_JoinGroup",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21635: unresolved resource identity `rkcg`"
+   ],
+   "gained": [
+    "21635: call to uncontracted function `rd_kafka_op_set_replyq`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_ShareGroupHeartbeat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22307: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22314: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22326: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22331: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22361: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22307: indirect memory access is outside the resource projection",
+    "22314: unresolved resource identity `assigned_topic_partitions`",
+    "22326: indirect memory access is outside the resource projection",
+    "22331: indirect memory access is outside the resource projection",
+    "22361: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_SyncGroup_memberstate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21312: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "21322: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21312: unresolved resource identity `assignment`",
+    "21322: unresolved resource identity `assignment`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_assign_op",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23851: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23856: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23851: indirect memory access is outside the resource projection",
+    "23856: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_handle_assignment_cooperative",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23197: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23198: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23197: unresolved resource identity `newly_added`",
+    "23198: unresolved resource identity `revoked`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_incr_unassign_done",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23032: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23032: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_metadata_refresh",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "21756: call to uncontracted function `rd_kafka_op_set_replyq`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_metadata_update_check",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24536: call to uncontracted function `rd_kafka_rebalance_op_incr`",
+    "24542: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24536: unmodeled expression may mutate a formal resource identity",
+    "24542: unresolved resource identity `owned_but_not_exist`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_modify_subscription",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23618: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23620: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23624: indirect memory access is outside the resource projection",
+    "23626: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23643: indirect memory access is outside the resource projection",
+    "23647: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23618: unresolved resource identity `revoking`",
+    "23620: unresolved resource identity `unsubscribing_topics`",
+    "23624: unmodeled expression may mutate a formal resource identity",
+    "23626: unresolved resource identity `unsubscribing_topics`",
+    "23643: unmodeled expression may mutate a formal resource identity",
+    "23647: unresolved resource identity `revoking`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_partition_add",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22637: call to uncontracted function `rd_kafka_toppar_keep0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_partition_del",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22659: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "22659: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_subscription_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23549: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23550: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23587: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23549: indirect memory access is outside the resource projection",
+    "23550: indirect memory access is outside the resource projection",
+    "23587: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_terminate0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23741: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "23741: call to `rd_kafka_q_destroy0` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cgrp_update_committed_offsets",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22721: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "22721: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_cooperative_protocol_adjust_assignment",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21226: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21226: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_group_MemberMetadata_consumer_read",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21497: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21497: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_propagate_consumer_topic_errors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23452: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23435: unresolved resource identity `errored`",
+    "23452: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_topic_err_propagate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23481: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23481: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "unittest_list_to_map",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24883: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24883: unresolved resource identity `list`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "unittest_map_to_list",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24862: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24862: unresolved resource identity `list`"
+   ]
+  },
+  {
+   "unit": "rdkafka_cgrp.c",
+   "occurrence": 1,
+   "function": "unittest_member_metadata_serdes",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24923: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24923: unresolved resource identity `owned_partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_fetch_toppars",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22189: call to uncontracted function `rd_kafka_toppar_keep0`"
+   ],
+   "gained": [
+    "22189: unresolved resource identity `tver`"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_session_add_partition_to_toppars_in_session",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21331: call to uncontracted function `rd_kafka_toppar_keep0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21341: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "21341: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_session_reset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21286: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "21306: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "21286: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "21306: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_broker_session_update_toppars_list",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21377: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "21377: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_fetch_reply_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20762: call to uncontracted function `rd_kafka_topic_destroy0`",
+    "20777: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20762: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20777: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20685: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "20691: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20685: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20691: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21225: call to uncontracted function `rd_kafka_topic_destroy0`",
+    "21254: call to uncontracted function `rd_kafka_topic_destroy0`",
+    "21270: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "21225: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "21254: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "21270: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_fetcher.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_fetch_reply_handle_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21150: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "21152: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "21150: call to `rd_kafka_q_destroy_owner` with `temp_fetchq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "21152: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20254: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "20242: call to uncontracted function `rd_kafka_op_set_replyq`",
+    "20254: call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_topic_match",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20909: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20909: unresolved resource identity `unmatched`"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata.c",
+   "occurrence": 1,
+   "function": "rd_kafka_parse_Metadata0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20728: call to uncontracted function `rd_kafka_topic_destroy0`",
+    "20751: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20728: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20751: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_metadata_cache.c",
+   "occurrence": 1,
+   "function": "rd_kafka_metadata_cache_propagate_changes_trigger_eonce",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20621: call to uncontracted function `rd_kafka_enq_once_trigger`"
+   ],
+   "gained": [
+    "20621: call to `rd_kafka_enq_once_trigger` with `eonce`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cluster_destroy0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23365: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "23365: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock.c",
+   "occurrence": 1,
+   "function": "ut_cgrp_consumer_member_next_assignment0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23665: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23678: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23683: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23684: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23665: unresolved resource identity `member_target_assignment`",
+    "23683: unresolved resource identity `next_assignment`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_current_assignment_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21351: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21351: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21681: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "21682: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "21683: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21681: indirect memory access is outside the resource projection",
+    "21682: indirect memory access is outside the resource projection",
+    "21683: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_needs_assignment",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21451: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21451: unresolved resource identity `returned_assignment`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_needs_revocation",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21440: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21440: unresolved resource identity `intersection`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_next_assignment",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21498: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21498: unresolved resource identity `assignment_to_return`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_next_assignment_can_bump_epoch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21421: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "21422: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21421: unresolved resource identity `assigned_partitions`",
+    "21422: unresolved resource identity `double_assignment`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_returned_assignment_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21363: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21363: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_cgrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_cgrp_consumer_member_target_assignment_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21208: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21208: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_handle_ConsumerGroupHeartbeat",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24077: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24078: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24079: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24083: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24084: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "24085: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "24077: unresolved resource identity `sent_assignment`",
+    "24078: unresolved resource identity `existing_assignment`",
+    "24079: unresolved resource identity `next_assignment`",
+    "24083: unresolved resource identity `sent_assignment`",
+    "24084: unresolved resource identity `existing_assignment`",
+    "24085: unresolved resource identity `next_assignment`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_handle_Metadata",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23018: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23023: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23018: unresolved resource identity `requested_topics`",
+    "23023: unresolved resource identity `requested_topics`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_handle_ShareAcknowledge",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "25481: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25492: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25496: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "25481: unresolved resource identity `ack_partitions`",
+    "25492: unresolved resource identity `ack_partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_handlers.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_handle_ShareFetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "25174: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25175: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25187: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25188: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25192: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "25193: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "25174: unresolved resource identity `requested_partitions`",
+    "25187: unresolved resource identity `requested_partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sgrp_fetch_session_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22374: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22374: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sharegroup_assignment_recalculate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22164: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22164: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sharegroup_member_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21948: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21948: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_mock_sharegrp.c",
+   "occurrence": 1,
+   "function": "rd_kafka_mock_sharegroup_target_assignment_set",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22225: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22225: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msg_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19796: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "19796: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msg_partitioner",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20558: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20558: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_msgbatch_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20791: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20791: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_produce_batch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20244: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "20277: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20244: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20277: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_producev",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20104: call to uncontracted function `rd_kafka_topic_keep`",
+    "20163: call to uncontracted function `rd_kafka_topic_destroy0`",
+    "20178: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20104: call to `rd_kafka_topic_keep` with `rkt`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)",
+    "20104: loop re-acquisition: an earlier generation that may be live is still held",
+    "20155: a reference taken at line 20104 may still be owed at this exit (reference-unbalanced)",
+    "20163: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20178: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_msg.c",
+   "occurrence": 1,
+   "function": "rd_kafka_produceva",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19978: call to uncontracted function `rd_kafka_topic_keep`",
+    "20066: call to uncontracted function `rd_kafka_topic_destroy0`",
+    "20070: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "19978: call to `rd_kafka_topic_keep` with `rkt`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)",
+    "19978: loop re-acquisition: an earlier generation that may be live is still held",
+    "20066: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20070: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20361: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "20361: call to `rd_kafka_q_destroy_owner` with `repq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit_message",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20377: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20377: unresolved resource identity `offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_commit_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20413: call to uncontracted function `rd_kafka_q_destroy0`",
+    "20415: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "20413: call to `rd_kafka_q_destroy0` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20415: call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offset_broker_commit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20464: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20464: unresolved resource identity `offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offset_broker_commit_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20445: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20445: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offset_store",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20509: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20509: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offset_validate",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20837: call to uncontracted function `rd_kafka_toppar_keep0`",
+    "20842: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20838: unresolved resource identity `rktp->rktp_leader`",
+    "20842: unresolved resource identity `parts`"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_offsets_store",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20537: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20537: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_offset.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_handle_OffsetForLeaderEpoch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20683: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "20763: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20764: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "20775: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20776: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20683: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20763: unresolved resource identity `parts`",
+    "20764: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20775: unresolved resource identity `parts`",
+    "20776: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20083: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20083: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_req",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20221: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "20221: call to `rd_kafka_q_destroy_owner` with `recvq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_op.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_req0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20209: call to uncontracted function `rd_kafka_op_set_replyq`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_partition_leader_query_eonce_timeout_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22349: call to uncontracted function `rd_kafka_enq_once_trigger`"
+   ],
+   "gained": [
+    "22349: call to `rd_kafka_enq_once_trigger` with `eonce`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_partition_leader_query_eonce_timer_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22356: call to uncontracted function `rd_kafka_enq_once_trigger`"
+   ],
+   "gained": [
+    "22356: call to `rd_kafka_enq_once_trigger` with `eonce`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_purge_ua_toppar_queues",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unsafe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22828: call to uncontracted function `rd_kafka_toppar_keep0`",
+    "22836: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "0: a reference taken at line 22828 may still be owed at this exit (reference-unbalanced)",
+    "0: live obligation acquired at rdkafka_partition.c:4906",
+    "22828: loop re-acquisition: an earlier generation that may be live is still held",
+    "22836: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21782: call to uncontracted function `rd_kafka_topic_partition_destroy0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21779: call to uncontracted function `rd_kafka_topic_partition_destroy0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_clear",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21775: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "21775: call to `rd_kafka_topic_partition_destroy0` outside its declared literal-argument premise"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_del_by_idx",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22107: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "22107: call to `rd_kafka_topic_partition_destroy0` outside its declared literal-argument premise"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21788: indirect memory access is outside the resource projection"
+   ],
+   "gained": [
+    "21788: call to `rd_kafka_topic_partition_destroy0` outside its declared literal-argument premise"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21794: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_find_by_id0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_topic_partition_destroy"
+   ],
+   "lost": [
+    "22039: call to uncontracted function `rd_kafka_topic_partition_destroy`"
+   ],
+   "gained": [
+    "22039: unresolved resource identity `rktpar`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_get_topics",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22532: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "22532: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_list_union0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22913: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22913: unresolved resource identity `b_minus_a`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_private_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21693: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "21693: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_consumer_lag_req",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20303: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20303: unresolved resource identity `partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_desired_get",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20541: call to uncontracted function `rd_kafka_toppar_keep0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_desired_link",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20548: call to uncontracted function `rd_kafka_toppar_keep0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_desired_unlink",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20559: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20559: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_destroy_final",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20399: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20400: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20402: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20399: indirect memory access is outside the resource projection",
+    "20400: indirect memory access is outside the resource projection",
+    "20402: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_enq_msg",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20616: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "0: a reference taken at line 20611 may still be owed at this exit (reference-unbalanced)",
+    "20616: call to `rd_kafka_q_destroy0` with `wakeup_q`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_get0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20436: call to uncontracted function `rd_kafka_toppar_keep0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_get2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20463: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20463: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_get_by_id2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20493: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20493: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_handle_Offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20969: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20978: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "21005: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "21013: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "21014: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20969: unresolved resource identity `offsets`",
+    "20978: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "21005: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "21013: unresolved resource identity `offsets`",
+    "21014: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_lag_handle_Offset",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20259: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20271: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "20273: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20259: unresolved resource identity `offsets`",
+    "20271: unresolved resource identity `offsets`",
+    "20273: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_list_copy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21574: call to uncontracted function `rd_kafka_toppar_keep0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_new0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20382: call to uncontracted function `rd_kafka_toppar_keep0`"
+   ],
+   "gained": [
+    "20382: call to `rd_kafka_toppar_keep0` with `rktp`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_offset_request",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21059: call to uncontracted function `rd_kafka_toppar_keep0`",
+    "21075: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21075: unresolved resource identity `offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_op_serve",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21306: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "21330: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "21344: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "21306: unresolved resource identity `offsets`",
+    "21330: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "21344: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_partition.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppars_pause_resume",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21490: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "21496: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "21490: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "21496: call to `rd_kafka_q_destroy_owner` with `tmpq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_enq_once_trigger_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20525: call to uncontracted function `rd_kafka_enq_once_trigger`"
+   ],
+   "gained": [
+    "20525: call to `rd_kafka_enq_once_trigger` with `eonce`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_apply",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20450: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "20450: call to `rd_kafka_q_destroy0` with `fwdq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_fwd_set0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19762: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "19762: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_pop_serve0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19963: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "19963: call to `rd_kafka_q_destroy0` with `fwdq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_purge0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19789: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "19789: call to `rd_kafka_q_destroy0` with `fwdq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_purge_toppar_version",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19817: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "19817: call to `rd_kafka_q_destroy0` with `fwdq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20016: call to uncontracted function `rd_kafka_q_destroy0`",
+    "20054: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "20016: call to `rd_kafka_q_destroy0` with `fwdq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20054: call to `rd_kafka_q_destroy_owner` with `& localq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_rkmessages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20126: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "20126: call to `rd_kafka_q_destroy0` with `fwdq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_q_serve_share_rkmessages",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20218: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "20218: call to `rd_kafka_q_destroy0` with `fwdq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20272: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20274: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "20272: indirect memory access is outside the resource projection",
+    "20274: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_background",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20329: call to uncontracted function `rd_kafka_queue_new0`"
+   ],
+   "gained": [
+    "20329: unresolved resource identity `rk`"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20300: call to uncontracted function `rd_kafka_queue_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_main",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20295: call to uncontracted function `rd_kafka_queue_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_partition",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20313: call to uncontracted function `rd_kafka_queue_new0`",
+    "20314: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20313: unresolved resource identity `rktp`",
+    "20314: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20289: call to uncontracted function `rd_kafka_queue_new0`",
+    "20290: call to uncontracted function `rd_kafka_q_destroy0`",
+    "20291: unresolved resource identity `rkqu`"
+   ],
+   "gained": [
+    "20290: call to `rd_kafka_q_destroy0` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_queue.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_new0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [],
+   "gained": [
+    "20283: a reference taken at line 20281 may still be owed at this exit (reference-unbalanced)"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_ListOffsetRequest_parameters_destroy_free",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20776: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20776: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_buf_read_topic_partitions_nullable",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20575: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "20575: unresolved resource identity `parts`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_OffsetCommit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21431: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21431: unresolved resource identity `partitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_handle_OffsetFetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21203: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "21203: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "rd_kafka_op_handle_OffsetFetch",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21258: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21258: unresolved resource identity `offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka_request.c",
+   "occurrence": 1,
+   "function": "unittest_idempotent_producer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "24436: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "24436: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_queue_get_sasl",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20867: call to uncontracted function `rd_kafka_queue_new0`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_background_callbacks_enable",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20932: unmodeled call, aggregate or indirect access in branch condition"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_term",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20893: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "20893: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sasl.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_queue_get_sasl",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Safe"
+   ],
+   "labels": [
+    "callee-summary:rd_kafka_queue_get_sasl"
+   ],
+   "lost": [
+    "20960: call to uncontracted function `rd_kafka_queue_get_sasl`"
+   ],
+   "gained": []
+  },
+  {
+   "unit": "rdkafka_sasl_oauthbearer.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sasl_oauthbearer_term",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20886: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "20886: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_share_acknowledgement.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_commit_sync_send_response",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20303: call to uncontracted function `rd_kafka_q_destroy0`"
+   ],
+   "gained": [
+    "20303: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "assignToMembers",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22215: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22215: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "balance",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21904: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21904: unresolved resource identity `leftoverUnassignedPartitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sticky_assignor_assign_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22329: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22330: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22329: unresolved resource identity `unassignedPartitions`",
+    "22330: unresolved resource identity `sortedPartitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sticky_assignor_on_assignment_cb",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22351: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22351: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "rd_kafka_sticky_assignor_state_destroy",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22398: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22398: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "setupRackAwareAssignment0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23653: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23653: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "sortPartitions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22145: indirect memory access is outside the resource projection",
+    "22148: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "22189: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22145: unmodeled expression may mutate a formal resource identity",
+    "22148: unresolved resource identity `partitions2`",
+    "22189: unresolved resource identity `prevPartitions`"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "ut_populate_member_owned_partitions_generation",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22424: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22424: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "ut_testRackAwareAssignmentWithNonEqualSubscription",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23851: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23851: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "ut_testRackAwareAssignmentWithUniformSubscription",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "23756: call to uncontracted function `rd_kafka_topic_partition_list_destroy`",
+    "23776: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "23756: indirect memory access is outside the resource projection",
+    "23776: indirect memory access is outside the resource projection"
+   ]
+  },
+  {
+   "unit": "rdkafka_sticky_assignor.c",
+   "occurrence": 1,
+   "function": "ut_testSameSubscriptions",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "22915: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "22915: unresolved resource identity `subscription`"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_share_subscribe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19660: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "19660: unresolved resource identity `topics_cpy`"
+   ]
+  },
+  {
+   "unit": "rdkafka_subscription.c",
+   "occurrence": 1,
+   "function": "rd_kafka_subscribe",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19621: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "19621: unresolved resource identity `topics_cpy`"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_assign_uas",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20527: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20527: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_destroy_app",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19881: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "19881: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_find0_fl",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19938: call to uncontracted function `rd_kafka_topic_keep`"
+   ],
+   "gained": [
+    "19943: nullable resource `rkt` used by a non-null contract",
+    "19943: unresolved resource identity `rkt`"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_find_by_topic_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19950: call to uncontracted function `rd_kafka_topic_keep`"
+   ],
+   "gained": [
+    "19954: nullable resource `rkt` used by a non-null contract",
+    "19954: unresolved resource identity `rkt`"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_find_fl",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19922: call to uncontracted function `rd_kafka_topic_keep`"
+   ],
+   "gained": [
+    "19928: nullable resource `rkt` used by a non-null contract",
+    "19928: unresolved resource identity `rkt`"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_keep_app",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19875: call to uncontracted function `rd_kafka_topic_keep`"
+   ],
+   "gained": [
+    "0: a reference taken at line 19875 may still be owed at this exit (reference-unbalanced)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_metadata_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20666: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20666: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_metadata_update2",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20708: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20708: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_new",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20226: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20226: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_new0",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20133: call to uncontracted function `rd_kafka_topic_keep`"
+   ],
+   "gained": [
+    "20133: call to `rd_kafka_topic_keep` with `rkt`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_new_with_id",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20200: call to uncontracted function `rd_kafka_topic_keep`"
+   ],
+   "gained": [
+    "20200: call to `rd_kafka_topic_keep` with `rkt`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_opaque",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20878: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20878: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_available",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20866: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20866: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partition_cnt_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20430: call to uncontracted function `rd_kafka_toppar_keep0`",
+    "20431: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "20465: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20430: indirect memory access is outside the resource projection",
+    "20431: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20465: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_partitions_remove",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20738: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "20741: call to uncontracted function `rd_kafka_topic_keep`",
+    "20745: call to uncontracted function `rd_kafka_toppar_keep0`",
+    "20749: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "20758: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "20761: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20738: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20745: call to `rd_kafka_toppar_keep0` with `rktp`: the kept object is not a name this route reads, or its count is undecided (reference-undecided)",
+    "20745: loop re-acquisition: an earlier generation that may be live is still held",
+    "20749: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20758: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20761: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_topic_scan_all",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20830: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20830: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_topic.c",
+   "occurrence": 1,
+   "function": "rd_kafka_toppar_leader_update",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20281: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "20321: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20281: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20321: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_send_offsets_to_transaction",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21307: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21307: unresolved resource identity `valid_offsets`"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_clear_partitions_flag",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20848: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20848: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_handle_AddPartitionsToTxn",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20716: call to uncontracted function `rd_kafka_toppar_destroy0`",
+    "20722: call to uncontracted function `rd_kafka_topic_destroy0`"
+   ],
+   "gained": [
+    "20716: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20722: call to `rd_kafka_topic_destroy0` with `rkt`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdkafka_txnmgr.c",
+   "occurrence": 1,
+   "function": "rd_kafka_txn_handle_TxnOffsetCommit",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "21007: call to uncontracted function `rd_kafka_topic_partition_list_destroy`"
+   ],
+   "gained": [
+    "21007: unresolved resource identity `partitions`"
+   ]
+  },
+  {
+   "unit": "rdunittest_fetcher.c",
+   "occurrence": 1,
+   "function": "ut_destroy_mock_queue",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19636: call to uncontracted function `rd_kafka_q_destroy_owner`"
+   ],
+   "gained": [
+    "19636: call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_error_types_with_valid",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20444: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20445: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20444: call to `rd_kafka_q_destroy_owner` with `response_q`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20445: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_errors",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20328: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20329: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20328: call to `rd_kafka_q_destroy_owner` with `response_q`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20329: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_all_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20264: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20265: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20264: call to `rd_kafka_q_destroy_owner` with `response_q`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20265: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_crc_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19869: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "19870: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "19869: call to `rd_kafka_q_destroy_owner` with `response_q`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "19870: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_decompression_error_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19934: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "19935: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "19934: call to `rd_kafka_q_destroy_owner` with `response_q`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "19935: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_crc_success_decomp",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20134: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20135: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20134: call to `rd_kafka_q_destroy_owner` with `response_q`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20135: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_magic_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20210: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20211: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20210: call to `rd_kafka_q_destroy_owner` with `response_q`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20211: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_mixed_success_crc_success",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "20061: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "20062: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "20061: call to `rd_kafka_q_destroy_owner` with `response_q`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "20062: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "unit": "rdunittest_msgset_errors.c",
+   "occurrence": 1,
+   "function": "unittest_msgset_unsupported_magic_share_consumer",
+   "row": 1,
+   "status": [
+    "Unknown",
+    "Unknown"
+   ],
+   "labels": [
+    "other"
+   ],
+   "lost": [
+    "19992: call to uncontracted function `rd_kafka_q_destroy_owner`",
+    "19993: call to uncontracted function `rd_kafka_toppar_destroy0`"
+   ],
+   "gained": [
+    "19992: call to `rd_kafka_q_destroy_owner` with `response_q`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)",
+    "19993: call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  }
+ ]
+}

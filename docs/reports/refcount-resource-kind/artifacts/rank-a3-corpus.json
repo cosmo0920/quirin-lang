@@ -1,5 +1,5 @@
 {
- "report": "private/rrk/a3/resource-diagnostics.json",
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a4ab159b8642d97df/private/rrk/a3/resource-diagnostics.json",
  "statuses": {
   "Unknown": 3941,
   "Safe": 884,
