@@ -750,3 +750,119 @@ contract {
     ensures normal resource_reference_dropped(rkq);
     ensures normal resource_return_none();
 };
+
+// # Callees between a reference's acquisition and its drop
+//
+// Card REFCOUNT-FAMILY-BLOCKING-CALLEES. Rule 13b withdraws a reference
+// family at a refused statement that may hand its name on, so a drop after a
+// call to an uncontracted callee stays unheld. The card ranked, for every
+// declared family the corpus withdrew, the statements that withdrew it
+// (`docs/reports/refcount-family-blocking-callees/`). The callees below are
+// the members of those withdrawer sets that the vocabulary on main states
+// exactly: each body was read at `66910c10` and `046accf6` (byte-identical,
+// `scripts/body.py`), none keeps, drops, retains or moves a reference on the
+// object it is handed, and each is pinned (C06.2). Callees that keep a
+// reference on their argument into an owner they build (an op, a reply
+// queue, a forwarding queue) or take a C structure by value are not declared
+// (`W48-CALLEE-DECISION-TABLE` class 3, `REFCOUNT-BY-VALUE-AGGREGATE-ABI`).
+//
+// THE SERVED-QUEUE PREMISE (a declared assumption, constraint 4).
+// `rd_kafka_q_pop`, `rd_kafka_q_wait_result` and `rd_kafka_q_purge0` may run
+// a popped op's own callback (`rd_kafka_op_handle` -> `rd_kafka_op_call`,
+// `rd_kafka_op_destroy`'s `RD_KAFKA_RESP_ERR__DESTROY` call), which receives
+// the served queue or the op: the declarations assume such a callback takes
+// over no reference the caller holds on that queue. The callbacks themselves
+// are not modelled (`CG22-CALLBACK-REGISTRY-CONTRACT`); `rd_kafka_q_serve*`
+// and `rd_kafka_q_pop_serve*`, which take a callback argument, stay
+// undeclared.
+
+// ## Popping and purging a queue
+//
+// `rd_kafka_q_pop(rkq, timeout_us, version)` (`rdkafka_queue.c:537-540`) is
+// `rd_kafka_q_pop_serve(rkq, timeout_us, version, RD_KAFKA_Q_CB_RETURN, NULL,
+// NULL)` (`:507-515`), i.e. the static `rd_kafka_q_pop_serve0` (`:398-505`):
+// under `rkq->rkq_lock` it either takes the forward queue
+// (`rd_kafka_q_fwd_get`, `rdkafka_queue.h:286-299`, which keeps
+// `rkq->rkq_fwdq`), pops from it recursively and drops it again
+// (`rd_kafka_q_destroy(fwdq)`): another object, balanced; or it dequeues ops
+// (`rd_kafka_q_deq0`), lets `rd_kafka_op_handle` handle each (a handled op is
+// destroyed there) and returns the first op handed back, or NULL on a yield
+// or when the absolute timeout passes. The returned op is unlinked and the
+// caller's (released by `rd_kafka_op_destroy`):
+// `resource_return_owned(nullable)`. `rkq` is only locked, read and dequeued
+// from. `timeout_us` is `rd_ts_t` (`int64_t`), `version` `int32_t`.
+
+extern fn rd_kafka_q_pop(rkq: ptr<mut, u8>, timeout_us: i64, version: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(timeout_us);
+    ensures normal resource_borrowed(version);
+    ensures normal resource_return_owned(nullable);
+};
+
+// `rd_kafka_q_wait_result(rkq, timeout_ms)` (`rdkafka_queue.c:1199-1212`):
+// `rko = rd_kafka_q_pop(rkq, rd_timeout_us(timeout_ms), 0)`; NULL gives
+// `RD_KAFKA_RESP_ERR__TIMED_OUT`, otherwise the op's `rko_err` is read and the
+// op destroyed (`rd_kafka_op_destroy`). It returns that error code and keeps
+// nothing: `rkq` is borrowed. The result is `rd_kafka_resp_err_t`, `i32`
+// (rule 12u, see the head of this module).
+
+extern fn rd_kafka_q_wait_result(rkq: ptr<mut, u8>, timeout_ms: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(timeout_ms);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_q_purge0(rkq, do_lock)` (`rdkafka_queue.c:205-243`; the
+// `rd_kafka_q_purge` macro, `rdkafka_queue.h:208`, passes `1`): with a forward
+// queue, purges that (`rd_kafka_q_fwd_get` keeps it, `rd_kafka_q_purge(fwdq)`,
+// `rd_kafka_q_destroy(fwdq)`: balanced) and returns its count; otherwise moves
+// the queue's ops to a local list (`TAILQ_MOVE`), marks the queue served,
+// resets its list and counters (`rd_kafka_q_reset`, `rdkafka_queue.h:263-268`)
+// and destroys each moved op (`rd_kafka_op_destroy`, which drops what the op
+// held, not the caller's). `rkq` itself is never kept, dropped or stored:
+// borrowed. The result is the number of ops purged.
+
+extern fn rd_kafka_q_purge0(rkq: ptr<mut, u8>, do_lock: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(do_lock);
+    ensures normal resource_return_none();
+};
+
+// ## Toppar accessors
+//
+// `rd_kafka_toppar_needs_query(rk, rktp)` (`rdkafka_topic.c:1858-1887`,
+// `static`): reads `rktp->rktp_broker`, its `rkb_source`, its state
+// (`rd_kafka_broker_get_state`, `rdkafka_broker.h:513-519`: locks the broker,
+// reads `rkb_state`) and `rk->rk_conf.sparse_connections`, and returns one of
+// the string literals `"not delegated"`, `"internal"`, `"down"`, or NULL. Its
+// result is static storage, no custody: `resource_return_none()`, as
+// `gai_strerror`'s.
+
+extern fn rd_kafka_toppar_needs_query(rk: ptr<mut, u8>, rktp: ptr<mut, u8>) -> ptr<const, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rk);
+    ensures normal resource_borrowed(rktp);
+    ensures normal resource_return_none();
+};
+
+// `rd_kafka_toppar_fetch_backoff(rkb, rktp, err)` (`rdkafka_fetcher.c:60-95`,
+// `static`): picks a backoff from `rkb->rkb_rk->rk_conf` by `err`, writes the
+// scalar `rktp->rktp_ts_fetch_backoff`, logs (`rd_rkb_dbg`, reading
+// `rd_kafka_err2str(err)`, a static string) and returns the absolute backoff
+// time (`rd_ts_t`, `int64_t`). `err` is `rd_kafka_resp_err_t`, `i32`.
+
+extern fn rd_kafka_toppar_fetch_backoff(rkb: ptr<mut, u8>, rktp: ptr<mut, u8>, err: i32) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rkb);
+    ensures normal resource_borrowed(rktp);
+    ensures normal resource_borrowed(err);
+    ensures normal resource_return_none();
+};

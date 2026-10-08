@@ -1768,9 +1768,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // returned references (`rd_kafka_q_new0` also retaining `rk` and `func` by
     // its result) and the drop `ut_destroy_mock_queue`. Selection and rejected
     // unchanged.
+    // 359 -> 364 by card REFCOUNT-FAMILY-BLOCKING-CALLEES: five plain
+    // declarations appended to `librdkafka/client.qv`, all pinned and in the
+    // function map (`rd_kafka_q_pop`, `rd_kafka_q_wait_result`,
+    // `rd_kafka_q_purge0`, `rd_kafka_toppar_needs_query`,
+    // `rd_kafka_toppar_fetch_backoff`). Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 359, 218)
+        (61, 364, 218)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every

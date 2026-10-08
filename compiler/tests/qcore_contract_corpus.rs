@@ -1113,6 +1113,14 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/client.qv", "ut_create_mock_toppar", 6),
     ("librdkafka/client.qv", "ut_create_mock_queue", 3),
     ("librdkafka/client.qv", "ut_destroy_mock_queue", 4),
+    // Card REFCOUNT-FAMILY-BLOCKING-CALLEES: five plain declarations between a
+    // reference's acquisition and its drop (marker, borrowed formals, the
+    // result: `rd_kafka_q_pop`'s owned nullable op, `none` otherwise).
+    ("librdkafka/client.qv", "rd_kafka_q_pop", 5),
+    ("librdkafka/client.qv", "rd_kafka_q_wait_result", 4),
+    ("librdkafka/client.qv", "rd_kafka_q_purge0", 4),
+    ("librdkafka/client.qv", "rd_kafka_toppar_needs_query", 4),
+    ("librdkafka/client.qv", "rd_kafka_toppar_fetch_backoff", 5),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read
