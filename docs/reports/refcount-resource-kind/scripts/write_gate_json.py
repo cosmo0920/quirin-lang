@@ -10,7 +10,7 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
-REPORT = REPO / "docs/reports/slot-move-and-interior-borrow"
+REPORT = REPO / "docs/reports/refcount-resource-kind"
 
 
 def main() -> int:
@@ -33,7 +33,7 @@ def main() -> int:
     head = (logs / "head").read_text().strip()
     note = (
         f"SLOT-MOVE-AND-INTERIOR-BORROW card gate on base 6cbcc4e9c, every code step at {head[:9]}, scripts "
-        "docs/reports/slot-move-and-interior-borrow/scripts/gate.sh (each step under the shared flock), "
+        "docs/reports/refcount-resource-kind/scripts/gate.sh (each step under the shared flock), "
         f"provider-gate.sh and finish-gate.sh, logs private/rrk/gate-{name} and "
         f"private/rrk/provider-gate-{name} of this worktree. gate-{name}: cargo check --workspace "
         "--all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py "
