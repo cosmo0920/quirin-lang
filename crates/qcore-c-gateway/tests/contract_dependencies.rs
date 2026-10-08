@@ -18,7 +18,7 @@ use qcore_c_gateway::contract_dependencies::{
 use qcore_c_gateway::legacy_c::{
     AnalysisStatus, LegacyCfg, LegacyCfgNode, LegacyFunctionSummary, LegacyInstruction,
     LegacyProgramSummary, ResourceApiKind, ResourceContracts, ResourceFunctionContract,
-    analyze_legacy_c_translation_unit,
+    ResourceParameterMode, ResourceReturnMode, analyze_legacy_c_translation_unit,
 };
 use qcore_schemas::contract_consultation::Consulted;
 
@@ -246,10 +246,15 @@ void released(void *p) { free(p); }\n\
 void unrelated(int x) { int y = x + 1; (void) y; }\n";
 
 fn unit_contracts() -> ResourceContracts {
-    let mut contracts = ResourceContracts::new([
-        ("malloc", ResourceApiKind::Acquire),
-        ("free", ResourceApiKind::Release),
-    ]);
+    let mut contracts = ResourceContracts::new([("free", ResourceApiKind::Release)]);
+    contracts.insert_contract(
+        "malloc",
+        ResourceFunctionContract {
+            parameters: vec![ResourceParameterMode::Borrowed],
+            result: ResourceReturnMode::Owned { nullable: true },
+            ..ResourceFunctionContract::default()
+        },
+    );
     // A declaration whose body this unit defines and validates (W4).
     contracts.insert("released", ResourceApiKind::Release);
     contracts

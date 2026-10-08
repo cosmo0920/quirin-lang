@@ -1115,8 +1115,11 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
     ("librdkafka/client.qv", "ut_destroy_mock_queue", 4),
     // Card REFCOUNT-FAMILY-BLOCKING-CALLEES: four plain declarations between a
     // reference's acquisition and its drop (marker, borrowed formals, `none`).
-    ("librdkafka/client.qv", "rd_kafka_q_wait_result", 4),
-    ("librdkafka/client.qv", "rd_kafka_q_purge0", 4),
+    // Card VERDICT-CONTRACT-DEPENDENCIES: the first two also state the
+    // served-queue premise (`requires resource_premise(served_queue, ...)`,
+    // contract spec C04.18), one clause each: 4 -> 5.
+    ("librdkafka/client.qv", "rd_kafka_q_wait_result", 5),
+    ("librdkafka/client.qv", "rd_kafka_q_purge0", 5),
     ("librdkafka/client.qv", "rd_kafka_toppar_needs_query", 4),
     ("librdkafka/client.qv", "rd_kafka_toppar_fetch_backoff", 5),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
