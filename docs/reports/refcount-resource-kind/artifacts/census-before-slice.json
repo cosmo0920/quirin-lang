@@ -1,0 +1,12 @@
+{
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/private/w47-tail/attempt-1/rrk-before/resource-diagnostics.json",
+ "statuses": {
+  "Unknown": 354,
+  "Safe": 45,
+  "Pending": 4,
+  "Unsafe": 1
+ },
+ "members": {},
+ "by_set": [],
+ "mixed": []
+}

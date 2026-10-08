@@ -1,0 +1,11 @@
+{
+ "report": "private/rrk/before-system/resource-diagnostics.json",
+ "statuses": {
+  "Unknown": 357,
+  "Safe": 87,
+  "Unsafe": 4
+ },
+ "members": {},
+ "by_set": [],
+ "mixed": []
+}
