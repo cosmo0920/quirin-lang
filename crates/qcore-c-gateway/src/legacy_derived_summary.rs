@@ -352,7 +352,14 @@ fn propose(
                 const_dropped: observed_dropped,
             } if entry.derived_bases.get(&site) == Some(&base) => {
                 derived = true;
-                if observed_extent == DerivedExtent::Interior {
+                // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): one borrowed
+                // exit makes the summary borrowed, never a plain interior
+                // result that would lose the borrow's ending rules.
+                if observed_extent == DerivedExtent::Borrowed {
+                    extent = DerivedExtent::Borrowed;
+                } else if observed_extent == DerivedExtent::Interior
+                    && extent != DerivedExtent::Borrowed
+                {
                     extent = DerivedExtent::Interior;
                 }
                 nullable |= observed_nullable;

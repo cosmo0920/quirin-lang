@@ -269,5 +269,7 @@ pub(super) fn declaration(
         contract: contract.clone(),
         retentions: declared,
         resets: reset,
+        slot_moves: Vec::new(),
+        derived_outs: Vec::new(),
     })
 }

@@ -61,6 +61,9 @@ pub struct Operands {
     /// `(retained, its spelling, holder, its spelling)`.
     pub retentions: Vec<(RetainedSpelling, String, HolderSpelling, String)>,
     pub resets: Vec<HolderSpelling>,
+    /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (rules 12x, 12z): the slot
+    /// operands, applied after the retentions ([`super::slot_move_route`]).
+    pub slots: Vec<super::slot_move_route::SlotOperand>,
 }
 
 /// The environment the parser reads: `contracts` plus the custody contract of
@@ -151,7 +154,13 @@ fn only_holder_mentions(body: &[&str], name: &str, contracts: &ResourceContracts
                     _ => {}
                 }
             }
-            if callee.is_some_and(|callee| contracts.retaining_contract(callee).is_some()) {
+            // Card SLOT-MOVE-AND-INTERIOR-BORROW: only a callee that retains
+            // or resets is a holder position, not one with slot clauses alone.
+            if callee.is_some_and(|callee| {
+                contracts
+                    .retaining_contract(callee)
+                    .is_some_and(qcore_schemas::retained_by::RetainingContract::retains)
+            }) {
                 continue;
             }
             return false;
@@ -214,6 +223,7 @@ impl Parser<'_> {
         let mut operands = Operands {
             retentions: Vec::new(),
             resets: Vec::new(),
+            slots: Vec::new(),
         };
         for retention in &declaration.retentions {
             // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded clause a
@@ -279,6 +289,17 @@ impl Parser<'_> {
             // recorded, which is the identity: it keeps the borrowed reading.
             if let Some((held, _)) = holder(self, reset) {
                 operands.resets.push(held);
+            }
+        }
+        // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12z): the slot
+        // operands, or the call's refusal.
+        if !declaration.slot_moves.is_empty() || !declaration.derived_outs.is_empty() {
+            let owned = |index: usize| -> Option<Vec<String>> {
+                actual(index).map(|words| words.iter().map(|word| (*word).to_owned()).collect())
+            };
+            match self.slot_operands(function, &declaration, &owned, body.as_deref()) {
+                Ok(slots) => operands.slots = slots,
+                Err(description) => return Some(refuse(self, description)),
             }
         }
         // Classify the call under its custody contract, then name the callee.
@@ -395,6 +416,17 @@ pub(super) fn apply(
                 state.unmodeled = true;
             }
         }
+    }
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12z).
+    if !operands.slots.is_empty() {
+        super::slot_move_route::apply(
+            function,
+            line,
+            retained_callee(called).unwrap_or(called),
+            &operands.slots,
+            state,
+            diagnostics,
+        );
     }
 }
 

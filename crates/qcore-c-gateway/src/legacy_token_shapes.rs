@@ -529,11 +529,41 @@ pub(super) fn derived_base(argument: &[&str]) -> DerivedBase {
     DerivedBase::Unmodeled
 }
 
+/// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (gateway rule 12y): the place a
+/// borrowed result's base actual spelled `( T * ) place` designates. A
+/// conversion of a pointer to another object pointer type keeps its address
+/// (C11 6.3.2.3p7), so the parent the result is borrowed from is the place's
+/// object. The type group is read structurally: identifiers and keywords, at
+/// least one `*`, the last token a `*`; anything else is not read. Used only
+/// for a `Borrowed` extent (`legacy_classify.rs`); every other derived result
+/// keeps [`derived_base`]'s reading (`DERIVED-BASE-CAST-READING`).
+pub(super) fn cast_place(argument: &[&str]) -> Option<String> {
+    let argument = strip_parentheses(argument);
+    if argument.first() != Some(&"(") {
+        return None;
+    }
+    let close = argument.iter().position(|token| *token == ")")?;
+    let group = &argument[1..close];
+    if group.last() != Some(&"*")
+        || !group
+            .iter()
+            .all(|token| *token == "*" || is_identifier(token))
+        || !group.first().is_some_and(|token| is_identifier(token))
+    {
+        return None;
+    }
+    canonical_place(strip_parentheses(&argument[close + 1..]))
+}
+
 /// Card **W43-RESULT-ALIAS-RETURNED**: `contract` with a derived result read at
 /// the interior extent. Used for a base spelled `place ± offset`, whose value
 /// is inside the place's object but is not the place's own value.
 pub(super) fn interior_extent(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
-    if let ResourceReturnMode::Derived { extent, .. } = &mut contract.result {
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): a borrowed result stays
+    // borrowed; an offset changes only an exact alias.
+    if let ResourceReturnMode::Derived { extent, .. } = &mut contract.result
+        && *extent == DerivedExtent::Exact
+    {
         *extent = DerivedExtent::Interior;
     }
     contract

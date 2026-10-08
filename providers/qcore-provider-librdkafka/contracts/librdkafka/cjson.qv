@@ -289,3 +289,50 @@ contract {
     ensures normal resource_borrowed(case_sensitive);
     ensures normal resource_return_none();
 };
+
+// # Borrowed child and derived out slot (card SLOT-MOVE-AND-INTERIOR-BORROW)
+//
+// USER DECISION 2026-10-05 (`W48-CALLEE-DECISION-TABLE` class 8, contract
+// specification C04.3.4): the result is borrowed from the parent: no release
+// obligation, valid only while the parent lives and is not mutated through
+// another path, a write through it is a write to the parent.
+//
+// `get_object_item` (`cJSON.c:1936-1966`, static, byte-identical at both
+// revisions; the only definition of the name) walks `object->child` along
+// `->next` and returns the matching element or NULL: a child `object` owns.
+// Rule 13a checks the declaration against this body in `cJSON.c` (every
+// return is NULL or reached from `object` by member reads). `case_sensitive`
+// is `cJSON_bool`, `int` (`cJSON.h:132`).
+
+extern fn get_object_item(object: ptr<const, u8>, name: ptr<const, u8>, case_sensitive: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(object);
+    ensures normal resource_borrowed(name);
+    ensures normal resource_borrowed(case_sensitive);
+    ensures normal resource_return_borrowed_from(object, nullable);
+};
+
+// `cJSON_ParseWithLengthOpts` (`cJSON.c:1142-1222`, byte-identical at both
+// revisions) returns a fresh tree or NULL, stores `value` into the file-scope
+// `global_error.json` on failure (`local_error.json = value`, `:1198`, then
+// `global_error = local_error`, `:1215`: a pointer the program-
+// lifetime holder keeps, rule 12t) and writes a pointer into `value` through
+// `return_parse_end` when it is not NULL (`:1184`, `:1212`): a derived out
+// slot (C04.16, INTERIOR-OUT-SLOT-MODE). In `cJSON.c`, its only unit, rule
+// 13a does not read the slot's stores (one through a struct-local copy of
+// `value`, one through `buffer_at_offset`), so the declaration is withdrawn
+// there; its two callers stay Unknown either way (each retains its own
+// formal `value` in `global`, undecided under rule 12t).
+
+extern fn cJSON_ParseWithLengthOpts(value: ptr<const, u8>, buffer_length: usize, return_parse_end: ptr<mut, ptr<const, u8>>, require_null_terminated: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(value);
+    ensures normal resource_borrowed(buffer_length);
+    ensures normal resource_borrowed(return_parse_end);
+    ensures normal resource_borrowed(require_null_terminated);
+    ensures normal resource_retained_by(value, global);
+    ensures normal resource_out_derived(return_parse_end, value, nullable);
+    ensures normal resource_return_owned(nullable);
+};

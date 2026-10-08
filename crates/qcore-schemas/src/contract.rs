@@ -91,6 +91,16 @@ pub enum DerivedExtent {
     Exact,
     /// The result points somewhere into the base object (`strchr`, `memchr`).
     Interior,
+    /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (contract spec §C04.3.4, gateway
+    /// rule 12y; USER DECISION 2026-10-05, `W48-CALLEE-DECISION-TABLE` class
+    /// 8): the result is **borrowed from the parent** the base designates — an
+    /// interior pointer, a child object the parent owns, or a child the call
+    /// creates and links into the parent. It owns nothing; it is valid only
+    /// while the parent lives and is not mutated through another path, so a
+    /// consumer ends it at a parent release or at any call that may mutate the
+    /// parent, and refuses every later use; a release of it is refused, never
+    /// accused; a write through it is a write to the parent.
+    Borrowed,
 }
 
 /// Card W43-DESCRIPTOR-RESOURCE-TRACKING: **which** obligation a custody
@@ -979,6 +989,16 @@ impl ResourceContracts {
                 self.retaining.insert(name.clone(), contract.clone());
             }
         }
+    }
+
+    /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (gateway rule 13a): remove
+    /// `name`'s declaration from the function map and the retaining table, so
+    /// every call site of this environment sees an uncontracted callee. Used
+    /// for a translation unit whose own body of `name` does not validate a
+    /// declared slot or borrowed-result clause.
+    pub fn withdraw_declaration(&mut self, name: &str) {
+        self.functions.remove(name);
+        self.retaining.remove(name);
     }
 
     /// Install a retaining declaration for `name`. The name leaves the

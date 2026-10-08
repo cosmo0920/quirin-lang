@@ -315,6 +315,10 @@ mod relational;
 // Card CALLEE-RETENTION-CLASS1: the retention clauses (§C04.14).
 #[path = "contract_retained_by.rs"]
 mod retained_by;
+// Card SLOT-MOVE-AND-INTERIOR-BORROW: the slot clauses (§C04.15, §C04.16) and
+// the borrowed result (§C04.3.4).
+#[path = "contract_slot_move.rs"]
+pub mod slot_move;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
@@ -1651,6 +1655,9 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     // `resource_holder_reset(h)`, as written, in clause order.
     let mut retentions: Vec<(String, String, Option<retained_by::WrittenGuard>)> = Vec::new();
     let mut resets: Vec<String> = Vec::new();
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW: every `resource_slot_moved(s, n)` and
+    // `resource_out_derived(s, p, n)`, as written, in clause order.
+    let mut slot_clauses: Vec<slot_move::WrittenSlot> = Vec::new();
     for clause in clauses {
         let requires = clause.value.kind == SourceContractClauseKind::Requires;
         // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
@@ -1849,6 +1856,13 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             }
             _ => {}
         }
+        // Card SLOT-MOVE-AND-INTERIOR-BORROW (§C04.15, §C04.16): the slot
+        // clauses, read before the parameter predicates; validated below once
+        // every mode is read.
+        if let Some(written) = slot_move::clause(&words) {
+            slot_clauses.push(written);
+            continue;
+        }
         // The variadic data tail is a *whole-declaration* fact, not a parameter
         // or result mode: it says what the arguments the declaration does not
         // name carry. It takes no argument (a tail has no index to point at)
@@ -1920,8 +1934,12 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             }
             // Card W43-LIBC-RESULT-ALIAS. `const_dropped` is decided below,
             // from the declared types, once the whole signature is known.
+            // Card SLOT-MOVE-AND-INTERIOR-BORROW (§C04.3.4): the borrowed
+            // result of class 8 is the same mode at the `Borrowed` extent.
             [
-                name @ ("resource_return_alias" | "resource_return_interior"),
+                name @ ("resource_return_alias"
+                | "resource_return_interior"
+                | slot_move::RETURN_BORROWED_FROM),
                 parameter,
                 null,
             ] => {
@@ -1929,10 +1947,10 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                 Some((
                     ResourceReturnMode::Derived {
                         parameter: index(parameter)?,
-                        extent: if *name == "resource_return_alias" {
-                            DerivedExtent::Exact
-                        } else {
-                            DerivedExtent::Interior
+                        extent: match *name {
+                            "resource_return_alias" => DerivedExtent::Exact,
+                            "resource_return_interior" => DerivedExtent::Interior,
+                            _ => DerivedExtent::Borrowed,
                         },
                         nullable,
                         const_dropped: false,
@@ -2126,6 +2144,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         // it to point into.
         if let ResourceReturnMode::Derived {
             parameter,
+            extent,
             ref mut const_dropped,
             ..
         } = result
@@ -2134,13 +2153,20 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
             if parameters[parameter] != ResourceParameterMode::Borrowed {
                 return Err("a derived result requires a borrowed base parameter".into());
             }
+            // Card SLOT-MOVE-AND-INTERIOR-BORROW (§C04.3.4): a borrowed result
+            // may also be a pointer to the parent's array of child pointers.
+            let results: &[&str] = if extent == DerivedExtent::Borrowed {
+                &slot_move::BORROWED_RESULTS
+            } else {
+                &DEPTH_ONE
+            };
             if !DEPTH_ONE.contains(&parameter_types[parameter].as_str())
-                || !DEPTH_ONE.contains(&return_type)
+                || !results.contains(&return_type)
             {
                 return Err("a derived result requires a depth-one pointer base and result".into());
             }
             *const_dropped =
-                parameter_types[parameter] == "ptr<const, u8>" && return_type == "ptr<mut, u8>";
+                parameter_types[parameter] == "ptr<const, u8>" && return_type.starts_with("ptr<mut,");
         }
         for (i, mode) in parameters.iter().enumerate() {
             let ty = token_kinds(&decl.parameters[i].type_source)?;
@@ -2236,7 +2262,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         .map(|class| class.contract)
         .ok_or("missing parameter mode")?;
     // Card CALLEE-RETENTION-CLASS1 (§C04.14).
-    let retaining = if retentions.is_empty() && resets.is_empty() {
+    let retaining = if retentions.is_empty() && resets.is_empty() && slot_clauses.is_empty() {
         None
     } else {
         if is_relational
@@ -2256,14 +2282,34 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                     .into(),
             );
         }
-        Some(retained_by::declaration(
+        let mut declared = retained_by::declaration(
             &retentions,
             &resets,
             &contract,
             &parameter_types,
             &parameter_kinds,
             &names,
-        )?)
+        )?;
+        // Card SLOT-MOVE-AND-INTERIOR-BORROW (§C04.15, §C04.16).
+        let (slot_moves, derived_outs) = slot_move::declaration(
+            &slot_clauses,
+            &contract,
+            &parameter_types,
+            &parameter_kinds,
+            &names,
+        )?;
+        if let Some(retention) = declared.retentions.iter().find(|retention| {
+            slot_moves.iter().any(|moved| moved.slot == retention.retained)
+                || derived_outs.iter().any(|out| out.slot == retention.retained)
+        }) {
+            return Err(format!(
+                "a slot is not also a retained pointer (parameter {})",
+                retention.retained
+            ));
+        }
+        declared.slot_moves = slot_moves;
+        declared.derived_outs = derived_outs;
+        Some(declared)
     };
     Ok(LoadedDeclaration {
         relational,

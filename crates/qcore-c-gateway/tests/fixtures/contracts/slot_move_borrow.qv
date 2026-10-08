@@ -1,0 +1,80 @@
+module contract;
+
+// Card SLOT-MOVE-AND-INTERIOR-BORROW (gateway rules 12x, 12y, 12z, 13a): a
+// generic surface for the slot move, the borrowed result and the derived out
+// slot. Synthetic trusted test assumptions, not a model of any real library:
+// `sm_cat` stands for `cfl_sds_cat_safe` (the slot's object may be
+// reallocated), `sm_child` for a child accessor (`get_object_item`),
+// `sm_private` for a lazily created child (`rd_kafka_topic_partition_get_private`),
+// `sm_reader` for `rd_slice_reader0` and `sm_strtol` for `strtol`.
+
+extern fn sm_alloc(n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn sm_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn sm_len(s: ptr<const, u8>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(s);
+    ensures normal resource_return_none();
+};
+
+extern fn sm_touch(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
+
+extern fn sm_cat(slot: ptr<mut, ptr<mut, u8>>, text: ptr<const, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(slot);
+    ensures normal resource_borrowed(text);
+    ensures normal resource_slot_moved(slot, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn sm_child(parent: ptr<mut, u8>, key: ptr<const, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(parent);
+    ensures normal resource_borrowed(key);
+    ensures normal resource_return_borrowed_from(parent, nullable);
+};
+
+extern fn sm_private(parent: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(parent);
+    ensures normal resource_return_borrowed_from(parent, nonnull);
+};
+
+extern fn sm_reader(slice: ptr<mut, u8>, out: ptr<mut, ptr<mut, u8>>) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(slice);
+    ensures normal resource_borrowed(out);
+    ensures normal resource_out_derived(out, slice, nonnull);
+    ensures normal resource_return_none();
+};
+
+extern fn sm_strtol(nptr: ptr<const, u8>, end: ptr<mut, ptr<mut, u8>>, base: i32) -> i64
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(nptr);
+    ensures normal resource_borrowed(end);
+    ensures normal resource_borrowed(base);
+    ensures normal resource_out_derived(end, nptr, nullable);
+    ensures normal resource_return_none();
+};

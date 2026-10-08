@@ -1505,6 +1505,10 @@ impl Parser<'_> {
                                 // is that position's place, decided by
                                 // `in_place_actuals` below.
                                 && !self.in_place_address(&contract, index, argument)
+                                // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules
+                                // 12x, 12z): `&NAME` at a slot position is
+                                // decided by the slot's own rule.
+                                && !self.slot_address(function, index, argument)
                                 && (((!matches!(mode, ResourceParameterMode::Out { .. })
                                     && argument.contains(&"&"))
                                     || (matches!(mode, ResourceParameterMode::Borrowed)
@@ -1566,11 +1570,30 @@ impl Parser<'_> {
                 // over one is refused rather than bound to nothing. A discarded
                 // result binds nothing and keeps its ordinary argument places.
                 let mut offset_base = false;
-                if let ResourceReturnMode::Derived { parameter, .. } = contract.result {
+                if let ResourceReturnMode::Derived {
+                    parameter, extent, ..
+                } = contract.result
+                {
                     match raw_arguments
                         .as_ref()
                         .and_then(|arguments| arguments.get(parameter))
-                        .map(|argument| derived_base(argument))
+                        .map(|argument| match derived_base(argument) {
+                            // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): a
+                            // borrowed result's parent may be spelled through a
+                            // pointer cast of a place.
+                            DerivedBase::Unmodeled
+                                if extent == qcore_schemas::contract::DerivedExtent::Borrowed =>
+                            {
+                                cast_place(argument).map_or(
+                                    DerivedBase::Unmodeled,
+                                    |place| DerivedBase::Place {
+                                        place,
+                                        offset: false,
+                                    },
+                                )
+                            }
+                            base => base,
+                        })
                     {
                         Some(DerivedBase::Place { place, offset }) => {
                             arguments[parameter] = Some(place);

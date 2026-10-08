@@ -1442,8 +1442,15 @@ fn result_matches(
                         const_dropped: observed_dropped,
                     } => {
                         entry.derived_bases.get(&site) == Some(&parameter)
-                            && (observed_extent == DerivedExtent::Exact
-                                || extent == DerivedExtent::Interior)
+                            // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): a
+                            // borrowed result covers every extent; a borrowed
+                            // exit is covered by nothing else.
+                            && match (extent, observed_extent) {
+                                (DerivedExtent::Borrowed, _)
+                                | (DerivedExtent::Interior, DerivedExtent::Exact | DerivedExtent::Interior)
+                                | (DerivedExtent::Exact, DerivedExtent::Exact) => true,
+                                (DerivedExtent::Exact | DerivedExtent::Interior, _) => false,
+                            }
                             && (!observed_nullable || nullable)
                             && (!observed_dropped || const_dropped)
                     }

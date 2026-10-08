@@ -260,7 +260,7 @@ pub(crate) fn decide(
 
 /// The parameter names of the definition of `function` in `tokens`, in
 /// order, and the index of its body's `{`.
-fn definition(tokens: &[Token], function: &str) -> Option<(Vec<String>, usize)> {
+pub(crate) fn definition(tokens: &[Token], function: &str) -> Option<(Vec<String>, usize)> {
     let (open, _) = super::find_function_body(tokens, function)?;
     let close_parameters = open.checked_sub(1)?;
     let mut depth = 0usize;

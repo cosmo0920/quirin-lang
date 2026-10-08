@@ -20,6 +20,8 @@ pub mod reason;
 // Card CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions.
 pub mod relational_post;
 pub mod retained_by;
+// Card SLOT-MOVE-AND-INTERIOR-BORROW: slot moves and derived out slots.
+pub mod slot_move;
 pub mod verdict;
 
 pub mod witness;

@@ -101,12 +101,19 @@ impl Derivation {
                 stepped: movement,
             },
             Self::Derived {
+                extent,
                 const_dropped,
                 nullable,
                 stepped,
-                ..
             } => Self::Derived {
-                extent: DerivedExtent::Interior,
+                // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): arithmetic on
+                // a borrowed pointer stays inside the parent's object and keeps
+                // the borrow; every other derivation becomes interior.
+                extent: if extent == DerivedExtent::Borrowed {
+                    DerivedExtent::Borrowed
+                } else {
+                    DerivedExtent::Interior
+                },
                 const_dropped,
                 nullable,
                 // A declared interior result stepped forward still lies after
@@ -266,6 +273,14 @@ pub(super) struct AbstractState {
     /// arriving path recorded is kept. Empty in every function that calls no
     /// retaining callee, which keeps the join as it was.
     pub(super) retained: BTreeSet<(crate::retained_by::HeldObject, crate::retained_by::HeldBy)>,
+    /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (rules 12x, 12y): names whose
+    /// value a slot move or a borrow's end invalidated; a read refuses.
+    /// Joined by union; empty in every function that calls no slot-moving or
+    /// borrowed-result callee, which keeps the join as it was.
+    pub(super) invalidated: BTreeMap<String, slot_move_route::Invalid>,
+    /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (rule 12y): the borrowed results
+    /// each name holds. Joined by union.
+    pub(super) borrows: BTreeMap<String, BTreeSet<slot_move_route::Borrow>>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -387,6 +402,7 @@ impl AbstractState {
         container_publication::join(&mut self.published, &incoming.published);
         in_place_custody::join_witnesses(&mut self.status_witnesses, &incoming.status_witnesses);
         self.retained.extend(incoming.retained.iter().cloned());
+        slot_move_route::join(self, incoming);
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         self.join_collections(&before, incoming);
@@ -1388,7 +1404,20 @@ pub(super) fn report_derived_pointer_violations(
             let Some(status) = state.resources.get(&site).copied() else {
                 continue;
             };
-            let kind = if status & RELEASED != 0 {
+            let kind = if status & RELEASED != 0
+                && matches!(
+                    pointer.derivation,
+                    Derivation::Derived {
+                        extent: DerivedExtent::Borrowed,
+                        ..
+                    }
+                ) {
+                // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): a borrow its
+                // parent's release ended is refused, never accused.
+                LegacyDiagnosticKind::UnknownAlias {
+                    variable: place.to_owned(),
+                }
+            } else if status & RELEASED != 0 {
                 LegacyDiagnosticKind::UseAfterRelease {
                     acquisition_line: acquisition_line(acquisition_lines, site),
                 }
@@ -1445,12 +1474,27 @@ pub(super) fn report_indirect_scalar_violations(
                 continue;
             };
             if status & RELEASED != 0 {
+                // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): through a
+                // borrow, refused, never accused.
+                let kind = if matches!(
+                    pointer.derivation,
+                    Derivation::Derived {
+                        extent: DerivedExtent::Borrowed,
+                        ..
+                    }
+                ) {
+                    LegacyDiagnosticKind::UnknownAlias {
+                        variable: base.clone(),
+                    }
+                } else {
+                    LegacyDiagnosticKind::UseAfterRelease {
+                        acquisition_line: acquisition_line(acquisition_lines, site),
+                    }
+                };
                 diagnostics.insert(LegacyDiagnostic {
                     function: cfg.function.clone(),
                     line: node.line,
-                    kind: LegacyDiagnosticKind::UseAfterRelease {
-                        acquisition_line: acquisition_line(acquisition_lines, site),
-                    },
+                    kind,
                 });
             }
         }
@@ -2514,6 +2558,15 @@ pub(super) fn transfer(
     alias: &NodeAliasFacts,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) -> AbstractState {
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y): reads of
+    // invalidated names refuse, and mutations end the borrows they may reach.
+    let state = slot_move_route::before(
+        function,
+        node,
+        state,
+        &context.traversal.scalars,
+        diagnostics,
+    );
     let mut output = transfer_dispatch(
         function,
         node,
@@ -2523,6 +2576,7 @@ pub(super) fn transfer(
         alias,
         diagnostics,
     );
+    slot_move_route::after(node, &mut output);
     in_place_custody::forget_witnesses(&node.instruction, &mut output, writes_scalar);
     in_place_custody::record_witness(&node.instruction, &mut output);
     output
@@ -4215,6 +4269,28 @@ pub(super) fn scalar_member_store_base_resolves(state: &AbstractState, base: &st
     let Some(pointer) = state.pointers.get(base) else {
         return false;
     };
+    // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): a store through a
+    // non-null borrow is a write to its parent, admitted where the parent is
+    // the caller's object (no target) or one live identity.
+    if matches!(
+        pointer.derivation,
+        Derivation::Derived {
+            extent: DerivedExtent::Borrowed,
+            ..
+        }
+    ) && !pointer.may_be_null
+    {
+        return match pointer.targets.iter().copied().collect::<Vec<_>>()[..] {
+            [] => pointer.unknown,
+            [site] => {
+                !pointer.unknown
+                    && !state.nullable_sites.contains(&site)
+                    && !state.unresolved_effect_sites.contains(&site)
+                    && state.resources.get(&site) == Some(&LIVE)
+            }
+            _ => false,
+        };
+    }
     // Card W43-LIBC-RESULT-ALIAS: nor is a derived pointer a store base.
     if pointer.unknown
         || pointer.may_be_null
@@ -4943,7 +5019,9 @@ pub(super) fn derive_pointer(
         return AbstractPointer {
             targets: BTreeSet::new(),
             unknown: true,
-            may_be_null: true,
+            // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): a borrowed
+            // result's nullness is the declaration's own (§C04.3.1 rule 4).
+            may_be_null: extent != DerivedExtent::Borrowed || nullable,
             derivation: Derivation::Derived {
                 extent,
                 const_dropped,
@@ -4968,7 +5046,11 @@ pub(super) fn derive_pointer(
             // and a result that may sit at the object's start stays `Any`.
             stepped,
         } => Derivation::Derived {
-            extent: if base_extent == DerivedExtent::Exact && extent == DerivedExtent::Exact {
+            // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): a pointer derived
+            // from a borrow, or borrowed from a derived pointer, is a borrow.
+            extent: if base_extent == DerivedExtent::Borrowed || extent == DerivedExtent::Borrowed {
+                DerivedExtent::Borrowed
+            } else if base_extent == DerivedExtent::Exact && extent == DerivedExtent::Exact {
                 DerivedExtent::Exact
             } else {
                 DerivedExtent::Interior
@@ -4982,7 +5064,19 @@ pub(super) fn derive_pointer(
     AbstractPointer {
         targets: base.targets.clone(),
         unknown: base.unknown,
-        may_be_null: base.may_be_null || nullable,
+        // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 12y): a borrowed result's
+        // nullness is the declaration's own (§C04.3.1 rule 4).
+        may_be_null: if matches!(
+            derivation,
+            Derivation::Derived {
+                extent: DerivedExtent::Borrowed,
+                ..
+            }
+        ) {
+            nullable
+        } else {
+            base.may_be_null || nullable
+        },
         derivation,
     }
 }

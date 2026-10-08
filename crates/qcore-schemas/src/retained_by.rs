@@ -164,7 +164,9 @@ impl RetentionGuard {
 
 /// A declaration with retention clauses: its custody contract (every retained
 /// pointer and every reset holder `resource_borrowed`), its retentions and
-/// the parameters whose holders it resets.
+/// the parameters whose holders it resets. Card SLOT-MOVE-AND-INTERIOR-BORROW:
+/// also a declaration with slot-move or derived-out-slot clauses, withheld
+/// from the function map the same way.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct RetainingContract {
     pub contract: ResourceFunctionContract,
@@ -172,4 +174,23 @@ pub struct RetainingContract {
     pub retentions: Vec<Retention>,
     /// `resource_holder_reset(h)`, in clause order; at most one per parameter.
     pub resets: Vec<usize>,
+    /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (§C04.15, rule 12x):
+    /// `resource_slot_moved(s, n)`, in clause order; at most one per slot.
+    /// Omitted when empty, so every retaining declaration before the card
+    /// serializes as it did.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub slot_moves: Vec<crate::slot_move::SlotMove>,
+    /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (§C04.16, rule 12z):
+    /// `resource_out_derived(s, p, n)`, in clause order; at most one per slot.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub derived_outs: Vec<crate::slot_move::DerivedOut>,
+}
+
+impl RetainingContract {
+    /// Whether the declaration retains a pointer or resets a holder (rule
+    /// 12t's own clauses), as opposed to carrying only slot clauses.
+    #[must_use]
+    pub fn retains(&self) -> bool {
+        !self.retentions.is_empty() || !self.resets.is_empty()
+    }
 }

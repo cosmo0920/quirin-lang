@@ -248,3 +248,72 @@ contract {
 //   reader now projects the type (rule 12v), but no v1 mode states a derived
 //   pointer delivered through an out slot (C04.14's last exclusion; the
 //   ground `strtol` was refused on).
+
+// # Borrowed children and a derived out slot (card SLOT-MOVE-AND-INTERIOR-BORROW)
+//
+// USER DECISION 2026-10-05 (`W48-CALLEE-DECISION-TABLE` class 8, contract
+// specification C04.3.4; `INTERIOR-OUT-SLOT-MODE`, C04.16). Every body below
+// is byte-identical at `66910c10` and `046accf6`.
+//
+// `rd_kafka_admin_result_ret_topics`, `_ret_resources`, `_ret_groups`
+// (`rdkafka_admin.c:518-530`, `534-546`, `578-590`, static) set `*cntp` and
+// return `(const T **)rko->rko_u.admin_result.results.rl_elems`: the result
+// list's element array, which the op owns and which is NULL for an empty list
+// that never grew. Rule 13a checks each against its body in `rdkafka_admin.c`.
+
+extern fn rd_kafka_admin_result_ret_topics(rko: ptr<const, u8>, cntp: ptr<mut, u8>) -> ptr<mut, ptr<const, u8>>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_borrowed(cntp);
+    ensures normal resource_return_borrowed_from(rko, nullable);
+};
+
+extern fn rd_kafka_admin_result_ret_resources(rko: ptr<const, u8>, cntp: ptr<mut, u8>) -> ptr<mut, ptr<const, u8>>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_borrowed(cntp);
+    ensures normal resource_return_borrowed_from(rko, nullable);
+};
+
+extern fn rd_kafka_admin_result_ret_groups(rko: ptr<const, u8>, cntp: ptr<mut, u8>) -> ptr<mut, ptr<const, u8>>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rko);
+    ensures normal resource_borrowed(cntp);
+    ensures normal resource_return_borrowed_from(rko, nullable);
+};
+
+// `rd_kafka_topic_partition_get_private` (`rdkafka_partition.h:868-878`,
+// `static RD_INLINE`, so defined in every unit including the header) returns
+// `rktpar->_private`, first creating it with
+// `rd_kafka_topic_partition_private_new()` (`:856-864`, `rd_calloc`, which
+// asserts on failure) and linking it into `rktpar->_private`: a lazily
+// created child the partition owns, never NULL. Rule 13a checks it in each
+// unit (the created child is stored into a member of the parent before the
+// return).
+
+extern fn rd_kafka_topic_partition_get_private(rktpar: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(rktpar);
+    ensures normal resource_return_borrowed_from(rktpar, nonnull);
+};
+
+// `rd_slice_reader0` (`rdbuf.c:842-875`) writes `seg->seg_p + rof` through
+// `p`, where `seg` is walked from `slice->seg` along the segment list, and
+// only when it returns nonzero: a pointer into the buffer `slice` reads,
+// owning nothing. `p` is `const void **` (`ptr<mut, ptr<const, u8>>`, rule
+// 12v); every caller passes `&LOCAL` or its own slot. Rule 13a checks the
+// declaration against this body in `rdbuf.c`, its only unit.
+
+extern fn rd_slice_reader0(slice: ptr<mut, u8>, p: ptr<mut, ptr<const, u8>>, update_pos: i32) -> usize
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(slice);
+    ensures normal resource_borrowed(p);
+    ensures normal resource_borrowed(update_pos);
+    ensures normal resource_out_derived(p, slice, nonnull);
+    ensures normal resource_return_none();
+};

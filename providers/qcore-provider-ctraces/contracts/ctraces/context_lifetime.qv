@@ -298,3 +298,29 @@ contract {
     ensures normal resource_on_return(ne, 0, resource_owned(value, nonnull));
     ensures normal resource_return_none();
 };
+
+// # Slot move (card SLOT-MOVE-AND-INTERIOR-BORROW, class 2, gateway rule 12x)
+//
+// `lib/ctraces/src/ctr_encode_text.c:22-28` (byte-identical at `66910c10` and
+// `046accf6`; the only definition of the name in either tree):
+//
+//     static inline void sds_cat_safe(cfl_sds_t *buf, char *str)
+//     {
+//         int len;
+//         len = strlen(str);
+//         cfl_sds_cat_safe(buf, str, len);
+//     }
+//
+// It forwards its slot to `cfl_sds_cat_safe` (quirin-provider-cfl,
+// `resource_slot_moved(buf, nullable)`) and reads `str`: the same slot move.
+// Rule 13a checks it against this body in `ctr_encode_text.c` (every mention
+// of `buf` is a whole actual at a slot-moving position).
+
+extern fn sds_cat_safe(buf: ptr<mut, ptr<mut, u8>>, str: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(str);
+    ensures normal resource_slot_moved(buf, nullable);
+    ensures normal resource_return_none();
+};

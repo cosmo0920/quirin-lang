@@ -63,6 +63,9 @@ mod relational_post;
 // Card CALLEE-RETENTION-CLASS1 (gateway rule 12t): retained pointers; the
 // decisions are here, the G hooks in `legacy_retained_by.rs`.
 pub mod retained_by;
+// Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y, 12z): the pure
+// decisions are here, the G hooks in `legacy_slot_move_borrow.rs`.
+pub mod slot_move_borrow;
 // Card CG02-ELABORATION-CORE (rule 10s): the common expression elaborator and
 // its order model; the G hooks are in `legacy_elaboration.rs`.
 mod elaboration;

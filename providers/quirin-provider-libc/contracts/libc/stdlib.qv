@@ -32,9 +32,10 @@ module contract;
 //   (`exit` and `abort` are declared below with `resource_no_return()`,
 //   card CG21-CALL-EXITS-AND-BOUNDARIES; W43-LIBC-CONTRACTS had declined
 //   them while v1 had no no-return exit.)
-//   `strtol`/`strtoll`/`strtoull`/`strtod` store an alias INTO `__nptr`
-//   through `char **__endptr`; `ptr<mut, ptr<mut, u8>>` admits only
-//   `resource_out`, and the stored value is an alias, not fresh custody.
+//   (`strtol`/`strtoll`/`strtoul`/`strtoull`/`strtod` are declared below
+//   with a derived out slot, card SLOT-MOVE-AND-INTERIOR-BORROW;
+//   W43-LIBC-CONTRACTS had declined them while `ptr<mut, ptr<mut, u8>>`
+//   admitted only `resource_out`.)
 //   `qsort` invokes a caller-supplied comparator whose effects the
 //   declaration cannot state. `realpath` returns either its second argument
 //   or a fresh `malloc` allocation, a conditional alias.
@@ -136,4 +137,72 @@ contract {
     ensures normal resource_borrowed(function);
     ensures normal resource_return_none();
     ensures normal resource_no_return();
+};
+
+// ## Derived out slots (card SLOT-MOVE-AND-INTERIOR-BORROW, C04.16)
+//
+// `strtol`, `strtoll`, `strtoul`, `strtoull` and `strtod` (C11 7.22.1.3-4)
+// store, when `endptr` is not NULL, a pointer to the first character after
+// the parsed number, or `nptr` itself when nothing was parsed, through
+// `endptr`: a pointer derived from `nptr`, owning nothing, `const` dropped
+// (`char **endptr` over `const char *nptr`). They allocate, free and retain
+// nothing. W43-LIBC-CONTRACTS declined them while `ptr<mut, ptr<mut, u8>>`
+// admitted only `resource_out` (fresh custody); the derived out slot states
+// exactly the store. glibc 2.x prototypes (`stdlib.h`): `long int`,
+// `long long int`, `unsigned long int`, `unsigned long long int`, `double`;
+// the `__restrict` after a parameter's last `*` qualifies the parameter object
+// and is dropped (C04.1).
+
+extern fn strtol(nptr: ptr<const, u8>, endptr: ptr<mut, ptr<mut, u8>>, base: i32) -> i64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(nptr);
+    ensures normal resource_borrowed(endptr);
+    ensures normal resource_borrowed(base);
+    ensures normal resource_out_derived(endptr, nptr, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn strtoll(nptr: ptr<const, u8>, endptr: ptr<mut, ptr<mut, u8>>, base: i32) -> i64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(nptr);
+    ensures normal resource_borrowed(endptr);
+    ensures normal resource_borrowed(base);
+    ensures normal resource_out_derived(endptr, nptr, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn strtoul(nptr: ptr<const, u8>, endptr: ptr<mut, ptr<mut, u8>>, base: i32) -> u64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(nptr);
+    ensures normal resource_borrowed(endptr);
+    ensures normal resource_borrowed(base);
+    ensures normal resource_out_derived(endptr, nptr, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn strtoull(nptr: ptr<const, u8>, endptr: ptr<mut, ptr<mut, u8>>, base: i32) -> u64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(nptr);
+    ensures normal resource_borrowed(endptr);
+    ensures normal resource_borrowed(base);
+    ensures normal resource_out_derived(endptr, nptr, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn strtod(nptr: ptr<const, u8>, endptr: ptr<mut, ptr<mut, u8>>) -> f64
+contract {
+    requires resource_contract_v1;
+    requires resource_revision(flexible);
+    ensures normal resource_borrowed(nptr);
+    ensures normal resource_borrowed(endptr);
+    ensures normal resource_out_derived(endptr, nptr, nullable);
+    ensures normal resource_return_none();
 };

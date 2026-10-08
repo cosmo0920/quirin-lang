@@ -415,3 +415,43 @@ contract {
     ensures normal resource_on_return(ne, 0, resource_owned(value, nullable));
     ensures normal resource_return_none();
 };
+
+// # Slot move (card SLOT-MOVE-AND-INTERIOR-BORROW, class 2, gateway rule 12x)
+//
+// USER DECISION 2026-10-05 (`W48-CALLEE-DECISION-TABLE` class 2, contract
+// specification C04.15): after the call the slot `T **s` still owns an
+// object, possibly a new one; every alias of the old pointer is invalid; on
+// failure the original stays owned by the slot.
+//
+// `lib/cfl/src/cfl_sds.c:376-389` (byte-identical at `66910c10` and
+// `046accf6`):
+//
+//     void cfl_sds_cat_safe(cfl_sds_t *buf, const char *str, int len)
+//     {
+//         cfl_sds_t tmp;
+//         if (buf == NULL || *buf == NULL) { return; }
+//         tmp = cfl_sds_cat(*buf, str, len);
+//         if (!tmp) { return; }
+//         *buf = tmp;
+//     }
+//
+// `cfl_sds_cat` (`:290-…`) grows `*buf` through `cfl_sds_increase`, whose
+// `realloc(head, new_size)` (`:182`) may move the object, and returns NULL
+// leaving it as it was on any failure; a source inside the buffer survives the
+// move (`:310-326`). So the slot always owns one object (the original, or the
+// grown one), an alias of the old `*buf` may be dangling afterwards, and a
+// NULL `buf` or `*buf` changes nothing: `resource_slot_moved(buf, nullable)`.
+// `cfl_sds_t` is `char *` (`cfl_sds.h:32`), so `buf` is `ptr<mut, ptr<mut, u8>>`.
+// In `cfl_sds.c` itself the body stores through the slot, which rule 13a's
+// structural check does not read as a slot move: the declaration is withdrawn
+// there and is a declared assumption everywhere else.
+
+extern fn cfl_sds_cat_safe(buf: ptr<mut, ptr<mut, u8>>, str: ptr<const, u8>, len: i32) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(buf);
+    ensures normal resource_borrowed(str);
+    ensures normal resource_borrowed(len);
+    ensures normal resource_slot_moved(buf, nullable);
+    ensures normal resource_return_none();
+};
