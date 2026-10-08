@@ -6753,11 +6753,11 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "REFCOUNT-RESOURCE-KIND card gate on base 9258289c9, every code step at ea628235d, scripts docs/reports/refcount-resource-kind/scripts/gate.sh (each step under the shared flock), provider-gate.sh, rerun-fmt.sh and finish-gate.sh, logs private/rrk/gate-g1 and private/rrk/provider-gate-g1 of this worktree. gate-g1: cargo check --workspace --all-targets 0; submodule 0; clippy --locked 0; run_test_binaries.py 456 units, 469 summaries, 7,691 passed, 0 failed, 11 ignored, exit 0 (private/rrk/tests-gate-g1); both reevaluation probes exit 0; check_lean_audits.py 297 audits passed (296 + AuditReferenceCount); docs index check 0. The first attempt's cargo fmt --check (standing and provider) was 1 on one whitespace-only test edit (compiler/tests/contract_loader.rs), fixed by its own commit; at f8f18fc89 fmt 0 (standing and provider), cargo check 0 and clippy 0 were rerun (rerun-fmt.sh; the first attempt kept as *-attempt1); the python suite on the committed matrix failed 1 (the stale Lean audit count, 296; kept as 08-python-stale-matrix), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g1): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0 (rerun), clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
-  "workspace_tests": 7691,
+  "note": "REFCOUNT-REFERENCE-RETURNING-DECLARATIONS card gate on base e27f98d5b, every code step at ee4640a6f, scripts docs/reports/refcount-reference-returning-declarations/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/rrrd/gate-g1 and private/rrrd/provider-gate-g1 of this worktree. gate-g1: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 457 units, 470 summaries, 7,703 passed, 0 failed, 11 ignored, exit 0 (private/rrrd/tests-gate-g1); both reevaluation probes exit 0; check_lean_audits.py 298 audits passed (297 + AuditReferenceResult); docs index check 0. The python suite on the committed matrix failed 1 (the stale Lean audit count, 297; kept as 08-python-stale-matrix), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g1): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
+  "workspace_tests": 7703,
   "provider_tests": 129,
   "python_evidence_validator_tests": null,
-  "lean_audits": 297,
+  "lean_audits": 298,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
    "AuditAggregateOwnedField.lean",
@@ -6951,6 +6951,7 @@
    "AuditReclamation.lean",
    "AuditRecordObjectPlace.lean",
    "AuditReferenceCount.lean",
+   "AuditReferenceResult.lean",
    "AuditRefusedCallHandOn.lean",
    "AuditRefusedHandOnCustody.lean",
    "AuditRefusedTestAccusation.lean",
@@ -7063,7 +7064,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-a4ab159b8642d97df/docs/reports/refcount-resource-kind/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aee9c7bbf78d5c9e8/docs/reports/refcount-reference-returning-declarations/gate.json)"
  },
  "named_followups": [
   {

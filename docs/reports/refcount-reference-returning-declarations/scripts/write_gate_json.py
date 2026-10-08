@@ -10,7 +10,7 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parents[4]
-REPORT = REPO / "docs/reports/refcount-resource-kind"
+REPORT = REPO / "docs/reports/refcount-reference-returning-declarations"
 
 
 def main() -> int:
@@ -31,25 +31,21 @@ def main() -> int:
     provider_python = re.search(r"Ran (\d+) tests", (provider / "p8-unittest.log").read_text())
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
-    rerun = (logs / "rerun-head").read_text().strip()
     note = (
-        f"REFCOUNT-RESOURCE-KIND card gate on base 9258289c9, every code step at {head[:9]}, scripts "
-        "docs/reports/refcount-resource-kind/scripts/gate.sh (each step under the shared flock), "
-        f"provider-gate.sh, rerun-fmt.sh and finish-gate.sh, logs private/rrrd/gate-{name} and "
-        f"private/rrrd/provider-gate-{name} of this worktree. gate-{name}: cargo check --workspace "
-        "--all-targets 0; submodule 0; clippy --locked 0; run_test_binaries.py "
+        f"REFCOUNT-REFERENCE-RETURNING-DECLARATIONS card gate on base e27f98d5b, every code step at "
+        f"{head[:9]}, scripts docs/reports/refcount-reference-returning-declarations/scripts/gate.sh "
+        "(each step under the shared flock), provider-gate.sh and finish-gate.sh, logs "
+        f"private/rrrd/gate-{name} and private/rrrd/provider-gate-{name} of this worktree. "
+        f"gate-{name}: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; "
+        "clippy --locked 0; run_test_binaries.py "
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit 0 (private/rrrd/tests-gate-{name}); "
-        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (296 + "
-        "AuditReferenceCount); docs index check 0. The first attempt's cargo fmt --check (standing "
-        "and provider) was 1 on one whitespace-only test edit (compiler/tests/contract_loader.rs), "
-        f"fixed by its own commit; at {rerun[:9]} fmt 0 (standing and provider), cargo check 0 and "
-        "clippy 0 were rerun (rerun-fmt.sh; the first attempt kept as *-attempt1); the python suite "
-        "on the committed matrix failed 1 (the stale Lean audit count, 296; kept as "
-        "08-python-stale-matrix), then build_matrix.py . --gate this file (09a), the python suite "
-        "(09b) and the docs index (10b, 10c). "
+        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (297 + "
+        "AuditReferenceResult); docs index check 0. The python suite on the committed matrix failed 1 "
+        "(the stale Lean audit count, 297; kept as 08-python-stale-matrix), then build_matrix.py . "
+        "--gate this file (09a), the python suite (09b) and the docs index (10b, 10c). "
         f"Provider gate (provider-gate-{name}): cargo check --locked 0, cargo test {provider_tests} passed "
-        "(exit 0), fmt 0 (rerun), clippy 0, contracts.py check 0, package build 0, package verify of every "
+        "(exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every "
         f"package 0, providers Python suite {provider_python.group(1)} tests OK."
     )
     gate = {

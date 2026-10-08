@@ -249,7 +249,32 @@ Amended: `REFCOUNT-INFERRED-REFERENCE-RESULT` (not needed by any member; 0),
 
 ## 8. Gate
 
-Filled in by the gate commit.
+Standing gate (`docs/agents/validation.md`), [`scripts/gate.sh`](scripts/gate.sh)
+`g1`, every code step at `ee4640a6f` on base `e27f98d5b`; logs
+`private/rrrd/gate-g1/`, exits in [gate/](gate/), summary [gate.json](gate.json).
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update `--init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 457 units, 470 summaries; 7,703 passed, 0 failed, 11 ignored (`private/rrrd/tests-gate-g1`, 354.8 s inside the lock) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 298 audits passed (297 + `AuditReferenceResult`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then 0 | the committed matrix carried 297 Lean audits (kept as `08-python-stale-matrix*`); after `build_matrix.py . --gate gate.json` (09a, 0), 365 tests OK (09b) |
+| `build_docs_index.py --check` | 0 | and 0 again after the matrix (10b, 10c) |
+
+**Provider gate** ([`scripts/provider-gate.sh`](scripts/provider-gate.sh) `g1`,
+logs `private/rrrd/provider-gate-g1/`): `cargo check --locked` 0, `cargo test`
+0 (129 passed), fmt 0, clippy 0, `providers/contracts.py check` 0, package
+build 0 and `verify` 0 for all five packages, `python3 -m unittest discover -s
+providers/tests` 0 (25 tests OK). Pins: section 3.
+
+Disk: the suite's debug build took the shared disk to 45 GB free (above the
+40 GB floor); `cargo clean --profile dev` (workspace and `providers/`) after
+the gate restored 100 GB. The private release target was deleted after the
+measurements; the saved binaries stay in `private/rrrd/bin/`.
 
 ## Files
 
