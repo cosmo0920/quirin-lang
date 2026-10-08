@@ -235,7 +235,19 @@ compares the named premises only (the literal premise is compared by index
 as before). `qcore-audit::checkpoint_cli` (3): the composer printed the
 dependency tally after the refutation tally, the whole run before it. An
 earlier attempt (`g1`) stopped at clippy (`collapsible_match`, fixed at
-`8b200b77d`). Final gate: [gate.json](gate.json) and [gate/](gate/).
+`8b200b77d`). Final gate `g3` (code steps at `a40511490`, every step under the
+shared lock, logs `private/vcd/gate-g3/`): `cargo check --workspace
+--all-targets` 0; submodule 0; fmt 0; clippy `--locked` 0;
+`run_test_binaries.py` 460 units, 473 summaries, **7,718 passed, 0 failed**,
+11 ignored, exit 0 (`private/vcd/tests-gate-g3/`); both reevaluation probes
+0; `check_lean_audits.py` **299** audits passed; the Python suite 1 before
+the matrix regeneration (it reads the committed Lean count, 298), then
+`build_matrix.py --gate gate.json` 0 and the suite **365 OK** (09b); docs
+index build and `--check` 0. Provider gate `pg3` (at `58bc2b290`, providers
+unchanged since): `cargo check --locked` 0, `cargo test` 129 passed, fmt 0,
+clippy 0, `contracts.py check` 0 (after `contracts.py sync` of the librdkafka
+inventory), package build 0, verify of all five packages 0, providers Python
+suite 25 OK. Records: [gate.json](gate.json) and [gate/](gate/).
 
 ## 9. Ledger
 

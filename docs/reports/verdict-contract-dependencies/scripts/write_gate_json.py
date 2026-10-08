@@ -22,7 +22,10 @@ def main() -> int:
     provider = REPO / "private/vcd" / f"provider-gate-{provider_name}"
     exits = {path.stem: path.read_text().strip() for path in sorted(logs.glob("*.exit"))}
     provider_exits = {path.stem: path.read_text().strip() for path in sorted(provider.glob("*.exit"))}
-    bad = {k: v for k, v in {**exits, **provider_exits}.items() if v != "0"}
+    # The python suite (08) reads the committed matrix, which counts the Lean
+    # audits (298 -> 299): it fails until build_matrix.py (09a) regenerates the
+    # matrix with this file, and finish-gate.sh reruns it (09b), the authority.
+    bad = {k: v for k, v in {**exits, **provider_exits}.items() if v != "0" and k != "08-python"}
     if bad:
         print("nonzero exits:", bad)
         return 1
@@ -44,7 +47,7 @@ def main() -> int:
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit 0 (private/vcd/tests-gate-{name}); "
         f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (with the new "
-        "AuditContractDependencies); python suite and docs index check per gate/ (08, 09), then "
+        "AuditContractDependencies); python suite before the matrix regeneration 08 = 1 (Lean audits 298 -> 299 in the committed matrix), docs index check 09 = 0, then "
         "build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). "
         f"Provider gate (provider-gate-{provider_name}, at {(provider / 'head').read_text().strip()[:9]}; providers/ as at the code steps: the served-queue premise, the re-pinned lock and the synced inventory): cargo check --locked 0, cargo test {provider_tests} passed "
         "(exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every "
