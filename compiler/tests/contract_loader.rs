@@ -955,6 +955,17 @@ fn production_contracts_preserve_the_previous_resource_modes() {
                 .with_result_kind(ResourceKind::Reference),
         );
     }
+    // Card REFCOUNT-FAMILY-BLOCKING-CALLEES: four plain declarations between a
+    // reference's acquisition and its drop had no previous reading; each
+    // borrows every parameter and returns no custody.
+    for name in [
+        "rd_kafka_q_wait_result",
+        "rd_kafka_q_purge0",
+        "rd_kafka_toppar_needs_query",
+        "rd_kafka_toppar_fetch_backoff",
+    ] {
+        old.insert_contract(name, ResourceFunctionContract::new([], R::None));
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
