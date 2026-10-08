@@ -15,10 +15,15 @@ import QCore.ReferenceCount
 #print axioms QCore.ReferenceCount.step_keeps_refused
 #print axioms QCore.ReferenceCount.foldl_keeps_refused
 #print axioms QCore.ReferenceCount.a_refused_path_is_never_safe
+#print axioms QCore.ReferenceCount.a_violation_is_never_safe
 #print axioms QCore.ReferenceCount.a_statistics_counter_is_never_read_as_a_reference
 #print axioms QCore.ReferenceCount.a_counter_changes_no_family
 #print axioms QCore.ReferenceCount.the_neutral_reading_is_not_admitted
 #print axioms QCore.ReferenceCount.nameOf_map_invalidate
 #print axioms QCore.ReferenceCount.an_alias_use_after_a_possibly_final_drop_is_refused
+#print axioms QCore.ReferenceCount.a_use_after_the_last_drop_is_refused_never_accused
+#print axioms QCore.ReferenceCount.an_over_drop_of_an_acquired_family_is_a_violation
+#print axioms QCore.ReferenceCount.an_over_drop_on_a_refused_path_is_not_accused
+#print axioms QCore.ReferenceCount.a_drop_past_a_borrowed_familys_last_drop_is_refused
 #print axioms QCore.ReferenceCount.reference_vectors_hold
 #print axioms QCore.ReferenceCount.reference_trace_vectors_hold

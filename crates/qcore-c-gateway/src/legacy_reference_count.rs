@@ -31,9 +31,10 @@ use super::{
     LegacyInstruction, Parser, Token,
 };
 use crate::reference_count::{
-    Binding, DropDecision, ExitOutcome, Held, KeepDecision, UNBALANCED, UNDECIDED, WITHDRAWN,
-    decide_drop, decide_exit, decide_keep, owed,
+    Binding, DROPPED, DropDecision, ExitOutcome, Family, Held, KeepDecision, UNBALANCED, UNDECIDED,
+    WITHDRAWN, decide_drop, decide_exit, decide_keep, owed,
 };
+use super::slot_move_route::Invalid;
 
 /// The largest count a family is tracked to; one more keep makes it
 /// undecided, which bounds the work list.
@@ -203,11 +204,11 @@ fn handed(state: &AbstractState, site: usize) -> Option<bool> {
 
 /// What `name` denotes for a reference operation.
 fn binding(state: &AbstractState, name: &str) -> (Binding, Option<usize>) {
-    if state.invalidated.get(name) == Some(&super::slot_move_route::Invalid::ReferenceDropped) {
-        return (Binding::Invalid, None);
-    }
-    if state.invalidated.contains_key(name) {
-        return (Binding::Other, None);
+    match state.invalidated.get(name) {
+        Some(Invalid::ReferenceDropped) => return (Binding::Invalid, None),
+        Some(Invalid::ReferenceFreed { site }) => return (Binding::Freed, Some(*site)),
+        Some(_) => return (Binding::Other, None),
+        None => {}
     }
     let Some(pointer) = state.pointers.get(name) else {
         return (Binding::Unbound, None);
@@ -230,7 +231,7 @@ fn binding(state: &AbstractState, name: &str) -> (Binding, Option<usize>) {
     if pointer.unknown || pointer.may_be_null || state.unresolved_effect_sites.contains(&site) {
         return (Binding::Other, None);
     }
-    let Some(held) = state.references.get(&site).copied() else {
+    let Some(Family { held, .. }) = state.references.get(&site).copied() else {
         return (Binding::Other, None);
     };
     // For a keep or a drop, a family a structure other than names holds (a
@@ -291,6 +292,37 @@ fn refuse(
     state.unmodeled = true;
 }
 
+/// Hook 3 (before the call's reads are refused): whether `name` is the
+/// actual of one of the call's drops, read past an acquired family's last
+/// drop. Rule 13b decides that read itself (an over-drop), so the generic
+/// read refusal leaves it alone.
+pub(super) fn decides_read(instruction: &LegacyInstruction, name: &str) -> bool {
+    let LegacyInstruction::ContractCall {
+        retention: Some(operands),
+        ..
+    } = instruction
+    else {
+        return false;
+    };
+    operands.references.iter().any(|operand| {
+        operand.operation == ReferenceOperation::Dropped && operand.name.as_deref() == Some(name)
+    })
+}
+
+/// Hook 3: a declared reference-returning call (`resource_return_owned` with
+/// the reference kind) starts an acquired family at the site it created.
+pub(super) fn acquired(state: &mut AbstractState, site: usize) {
+    let family = if state.references.contains_key(&site) {
+        Family {
+            held: Held::Undecided,
+            acquired: true,
+        }
+    } else {
+        Family::ACQUIRED
+    };
+    state.references.insert(site, family);
+}
+
 /// Hook 3: the call's keeps and drops, decided against `state`.
 #[allow(clippy::too_many_arguments)]
 pub(super) fn apply(
@@ -300,6 +332,7 @@ pub(super) fn apply(
     operands: &[ReferenceOperand],
     destination: Option<&str>,
     produced_sites: &[usize],
+    acquisition_lines: &BTreeMap<usize, usize>,
     state: &mut AbstractState,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
@@ -309,7 +342,7 @@ pub(super) fn apply(
             .as_deref()
             .map_or((Binding::Other, None), |name| binding(state, name));
         // A read of an invalidated name was refused before the call.
-        let invalid = found == Binding::Invalid;
+        let invalid = matches!(found, Binding::Invalid | Binding::Freed);
         match operand.operation {
             ReferenceOperation::Kept => {
                 if let Some(destination) = destination.filter(|place| !is_plain(place)) {
@@ -345,16 +378,19 @@ pub(super) fn apply(
                         // A site minted again on a later iteration of a loop
                         // while the earlier family is still recorded: the two
                         // generations share it, so its count is undecided.
-                        let held = if state.references.contains_key(&minted)
+                        let family = if state.references.contains_key(&minted)
                             || state.resources.contains_key(&minted)
                         {
-                            Held::Undecided
+                            Family {
+                                held: Held::Undecided,
+                                acquired: false,
+                            }
                         } else {
-                            Held::Known(1)
+                            Family::KEPT
                         };
                         state.resources.insert(minted, LIVE);
                         state.nullable_sites.remove(&minted);
-                        state.references.insert(minted, held);
+                        state.references.insert(minted, family);
                         bind(state, name, minted);
                         minted
                     }
@@ -362,11 +398,12 @@ pub(super) fn apply(
                         let Some(site) = site else {
                             continue;
                         };
-                        let held = match state.references.get(&site).copied() {
-                            Some(Held::Known(held)) if held < HELD_BOUND => Held::Known(held + 1),
-                            _ => Held::Undecided,
-                        };
-                        state.references.insert(site, held);
+                        if let Some(family) = state.references.get_mut(&site) {
+                            family.held = match family.held {
+                                Held::Known(held) if held < HELD_BOUND => Held::Known(held + 1),
+                                _ => Held::Undecided,
+                            };
+                        }
                         site
                     }
                     KeepDecision::Refuse(reason) => {
@@ -392,9 +429,10 @@ pub(super) fn apply(
             ReferenceOperation::Dropped => match decide_drop(found) {
                 DropDecision::Decrement => {
                     if let Some(site) = site
-                        && let Some(Held::Known(held)) = state.references.get(&site).copied()
+                        && let Some(family) = state.references.get_mut(&site)
+                        && let Held::Known(held) = family.held
                     {
-                        state.references.insert(site, Held::Known(held - 1));
+                        family.held = Held::Known(held - 1);
                     }
                 }
                 DropDecision::Final => {
@@ -402,8 +440,18 @@ pub(super) fn apply(
                         continue;
                     };
                     // Possibly final: the object may be freed. The family is
-                    // discharged and every name bound to it is invalidated.
-                    state.references.remove(&site);
+                    // discharged and every name bound to it is invalidated;
+                    // an acquired family's names remember it, so a further
+                    // drop through one is an over-drop.
+                    let acquired = state
+                        .references
+                        .remove(&site)
+                        .is_some_and(|family| family.acquired);
+                    let reason = if acquired {
+                        Invalid::ReferenceFreed { site }
+                    } else {
+                        Invalid::ReferenceDropped
+                    };
                     state.resources.remove(&site);
                     state.nullable_sites.remove(&site);
                     let names = state
@@ -414,9 +462,33 @@ pub(super) fn apply(
                         .collect::<Vec<_>>();
                     for name in names {
                         state.pointers.remove(&name);
-                        state
-                            .invalidated
-                            .insert(name, super::slot_move_route::Invalid::ReferenceDropped);
+                        state.invalidated.insert(name, reason);
+                    }
+                }
+                // A drop past an acquired family's last drop: every reference
+                // the function could see is already dropped. A violation
+                // candidate on a path that refused nothing, provisional and
+                // never an upstream defect; a refusal on any other path.
+                DropDecision::OverDrop => {
+                    if state.unmodeled {
+                        refuse(
+                            function,
+                            line,
+                            called,
+                            &operand.text,
+                            "a drop past the last drop of a reference this function acquired",
+                            DROPPED,
+                            state,
+                            diagnostics,
+                        );
+                    } else if let Some(site) = site {
+                        diagnostics.insert(LegacyDiagnostic {
+                            function: function.to_owned(),
+                            line,
+                            kind: LegacyDiagnosticKind::DoubleRelease {
+                                acquisition_line: super::acquisition_line(acquisition_lines, site),
+                            },
+                        });
                     }
                 }
                 DropDecision::Refuse(reason) => {
@@ -447,7 +519,7 @@ pub(super) fn report_exit(
     acquisition_lines: &BTreeMap<usize, usize>,
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
-    for (&site, &held) in &state.references {
+    for (&site, &Family { held, .. }) in &state.references {
         if state.unresolved_effect_sites.contains(&site) {
             continue;
         }
@@ -474,12 +546,12 @@ pub(super) fn report_exit(
 
 /// Hook 5: two paths' families, by site; counts that disagree are undecided.
 pub(super) fn join(state: &mut AbstractState, incoming: &AbstractState) {
-    for (&site, &held) in &incoming.references {
+    for (&site, &family) in &incoming.references {
         state
             .references
             .entry(site)
-            .and_modify(|current| *current = current.join(held))
-            .or_insert(held);
+            .and_modify(|current| *current = current.join(family))
+            .or_insert(family);
     }
 }
 

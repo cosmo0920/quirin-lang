@@ -138,13 +138,20 @@ fn a_reference_result_is_the_alias_or_none() {
 }
 
 #[test]
-fn the_reference_kind_is_never_spelled_by_a_kind_clause() {
+fn the_reference_kind_is_spelled_only_on_an_owned_result() {
+    // A parameter position never spells it.
     let parameter = declaration(
         "p: ptr<mut, u8>",
         "    ensures normal resource_released(p, nonnull);\n    ensures normal resource_kind(p, reference);\n    ensures normal resource_return_none();\n",
     );
     let error = load(&parameter).expect_err("rejected");
     assert!(error.contains("resource_reference_kept"), "{error}");
-    let result = "extern fn k() -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_return_owned(nonnull);\n    ensures normal resource_return_kind(reference);\n};\n";
-    assert!(load(result).is_err());
+    // A reference-returning call: an owned result of the reference kind.
+    let result = "extern fn k() -> ptr<mut, u8>\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_return_owned(nullable);\n    ensures normal resource_return_kind(reference);\n};\n";
+    let contracts = load(result).expect("an owned reference result loads");
+    let contract = contracts.contract("k").expect("in the function map");
+    assert_eq!(contract.result_kind, qcore_schemas::contract::ResourceKind::Reference);
+    // On any other result it rejects the module.
+    let none = "extern fn k() -> unit\ncontract {\n    requires resource_contract_v1;\n    ensures normal resource_return_none();\n    ensures normal resource_return_kind(reference);\n};\n";
+    assert!(load(none).is_err());
 }

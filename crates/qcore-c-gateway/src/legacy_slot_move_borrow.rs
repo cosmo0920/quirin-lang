@@ -72,6 +72,11 @@ pub enum Invalid {
     /// Card **REFCOUNT-RESOURCE-KIND** (rule 13b): a name bound to a
     /// reference family whose possibly-final drop discharged it.
     ReferenceDropped,
+    /// Card **REFCOUNT-RESOURCE-KIND** (rule 13b): a name bound to an
+    /// acquired family (the object a declared reference-returning call
+    /// created at `site`) whose last drop discharged it; a further drop
+    /// through it is an over-drop.
+    ReferenceFreed { site: usize },
 }
 
 /// One borrowed result a name holds (rule 12y): the take that produced it
@@ -698,6 +703,13 @@ pub(super) fn before(
     }
     if !state.invalidated.is_empty() {
         for name in reads(&node.instruction) {
+            // Card REFCOUNT-RESOURCE-KIND (rule 13b): a drop's own actual
+            // past an acquired family's last drop is the rule's to decide.
+            if matches!(state.invalidated.get(&name), Some(Invalid::ReferenceFreed { .. }))
+                && super::reference_route::decides_read(&node.instruction, &name)
+            {
+                continue;
+            }
             if let Some(reason) = state.invalidated.get(&name) {
                 let description = match reason {
                     Invalid::SlotMoved => format!(
@@ -706,7 +718,7 @@ pub(super) fn before(
                     Invalid::BorrowEnded => format!(
                         "use of `{name}` after its object moved or its parent changed ({ENDED})"
                     ),
-                    Invalid::ReferenceDropped => format!(
+                    Invalid::ReferenceDropped | Invalid::ReferenceFreed { .. } => format!(
                         "use of `{name}` after a possibly-final drop of its reference ({})",
                         crate::reference_count::DROPPED
                     ),

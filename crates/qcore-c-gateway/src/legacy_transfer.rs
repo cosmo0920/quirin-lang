@@ -285,7 +285,7 @@ pub(super) struct AbstractState {
     /// this path holds, by site, with their counts. Joined by site, a count
     /// the arriving paths disagree on becoming undecided. Empty in every
     /// function that calls no keep, which keeps the join as it was.
-    pub(super) references: BTreeMap<usize, crate::reference_count::Held>,
+    pub(super) references: BTreeMap<usize, crate::reference_count::Family>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -3973,6 +3973,7 @@ pub(super) fn transfer_base(
                         &operands.references,
                         destination.as_deref(),
                         produced_sites,
+                        acquisition_lines,
                         &mut state,
                         diagnostics,
                     );
@@ -4928,6 +4929,11 @@ pub(super) fn apply_contract_call(
                 return;
             };
             create_resource(state, destination, site, nullable);
+            // Card REFCOUNT-RESOURCE-KIND (rule 13b): a reference-returning
+            // call starts an acquired family.
+            if contract.result_kind == ResourceKind::Reference {
+                reference_route::acquired(state, site);
+            }
         }
         ResourceReturnMode::Reallocated {
             parameter,
@@ -5641,6 +5647,8 @@ pub(crate) const LOOP_EXIT_EDGE_RETAINED: &str =
 /// so the two cannot drift apart.
 pub(super) fn remove_null_site(state: &mut AbstractState, site: usize) {
     state.resources.remove(&site);
+    // Card REFCOUNT-RESOURCE-KIND: a null reference holds no reference.
+    state.references.remove(&site);
     state.nullable_sites.remove(&site);
     state.conditional_replacements.remove(&site);
     // Card W43-INDEXED-RESOURCE-COLLECTIONS: a null array has no elements.

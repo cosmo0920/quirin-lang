@@ -1921,7 +1921,7 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                 continue;
             }
             ["resource_return_kind", kind] => {
-                let kind = declared_kind(kind)?;
+                let kind = declared_result_kind(kind)?;
                 if result_kind.replace(kind).is_some() {
                     return Err("duplicate result kind".into());
                 }
@@ -3183,15 +3183,27 @@ fn declared_kind(word: &str) -> Result<ResourceKind, String> {
         Some(ResourceKind::Heap) => {
             Err("the heap kind is spelled by omitting the kind clause, not by `heap`".into())
         }
-        // Card REFCOUNT-RESOURCE-KIND (§C04.17): a reference is created and
-        // discharged only by the reference clauses, counted per object.
+        // Card REFCOUNT-RESOURCE-KIND (§C04.17): a reference is taken and
+        // dropped only by the reference clauses, counted per object; no
+        // parameter position spells it.
         Some(ResourceKind::Reference) => Err(
-            "the reference kind is spelled by `resource_reference_kept` and \
-             `resource_reference_dropped`, not by a kind clause"
+            "the reference kind is taken by `resource_reference_kept` and dropped by \
+             `resource_reference_dropped`, not spelled on a parameter"
                 .into(),
         ),
         Some(kind) => Ok(kind),
         None => Err(format!("unsupported resource kind {word}")),
+    }
+}
+
+/// A declared non-heap result kind. Card REFCOUNT-RESOURCE-KIND (§C04.17):
+/// the reference kind is admitted here, on an owned result only (a call that
+/// returns one reference its caller owes: a reference-returning constructor
+/// or lookup); `check_kinds` requires the owned result.
+fn declared_result_kind(word: &str) -> Result<ResourceKind, String> {
+    match ResourceKind::from_spelling(word) {
+        Some(ResourceKind::Reference) => Ok(ResourceKind::Reference),
+        _ => declared_kind(word),
     }
 }
 

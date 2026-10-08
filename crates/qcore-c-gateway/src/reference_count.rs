@@ -29,6 +29,14 @@
 //! caller's reference needs a declaration. At an exit, `held` minus the
 //! hand-off is what the function still owes: zero is balanced, more is a leak
 //! candidate on a path with no refusal and a refusal on a path that has one.
+//!
+//! A family is **acquired** when a declared reference-returning call created
+//! the object (`resource_return_owned` with the reference kind): the function
+//! holds every reference to it that it can see. A drop after such a family's
+//! last drop is then an **over-drop** — the function drops a reference it
+//! never held — and is a violation candidate on a path with no refusal; a
+//! drop past a borrowed family's last drop may consume the caller's
+//! reference and is refused.
 
 /// The refusal reasons, as they appear in diagnostics.
 pub const DROPPED: &str = "reference-dropped";
@@ -56,6 +64,36 @@ impl Held {
     }
 }
 
+/// One family's record on a path: its count, and whether a declared
+/// reference-returning call created its object.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Family {
+    pub held: Held,
+    pub acquired: bool,
+}
+
+impl Family {
+    /// A family a keep of an untracked name starts.
+    pub const KEPT: Self = Self {
+        held: Held::Known(1),
+        acquired: false,
+    };
+    /// A family a reference-returning call starts.
+    pub const ACQUIRED: Self = Self {
+        held: Held::Known(1),
+        acquired: true,
+    };
+
+    /// The join of two paths' records of one site.
+    #[must_use]
+    pub const fn join(self, other: Self) -> Self {
+        Self {
+            held: self.held.join(other.held),
+            acquired: self.acquired || other.acquired,
+        }
+    }
+}
+
 /// What a reference operation's actual denotes on the path.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Binding {
@@ -65,8 +103,11 @@ pub enum Binding {
     /// A name bound to exactly one live family. `handed`: one of its
     /// references was handed off (returned, linked into an owner).
     Family { held: Held, handed: bool },
-    /// A name a possibly-final drop invalidated.
+    /// A name a possibly-final drop of a borrowed family invalidated.
     Invalid,
+    /// A name the last drop of an acquired family invalidated: every
+    /// reference the function could see is dropped.
+    Freed,
     /// Anything else: a tracked identity of another kind, an ambiguous,
     /// unknown, possibly-null or derived binding, an actual the reader does
     /// not name.
@@ -90,6 +131,8 @@ pub enum DropDecision {
     Decrement,
     /// The last reference this function holds: possibly final.
     Final,
+    /// A drop past an acquired family's last drop: a violation candidate.
+    OverDrop,
     Refuse(&'static str),
 }
 
@@ -102,7 +145,7 @@ pub const fn decide_keep(binding: Binding) -> KeepDecision {
             held: Held::Known(_),
             handed: false,
         } => KeepDecision::Add,
-        Binding::Invalid => KeepDecision::Refuse(DROPPED),
+        Binding::Invalid | Binding::Freed => KeepDecision::Refuse(DROPPED),
         Binding::Family { .. } | Binding::Other => KeepDecision::Refuse(UNDECIDED),
     }
 }
@@ -124,6 +167,7 @@ pub const fn decide_drop(binding: Binding) -> DropDecision {
             ..
         } => DropDecision::Refuse(UNDECIDED),
         Binding::Invalid => DropDecision::Refuse(DROPPED),
+        Binding::Freed => DropDecision::OverDrop,
         Binding::Family { handed: true, .. } | Binding::Unbound | Binding::Other => {
             DropDecision::Refuse(UNHELD)
         }
@@ -163,7 +207,7 @@ pub const fn decide_exit(owed: Option<u32>, modeled: bool) -> ExitOutcome {
 
 /// `(binding, keep, drop)`, shared with `QCore.ReferenceCount`
 /// (`reference_vectors_hold`).
-pub const REFERENCE_VECTORS: [(Binding, KeepDecision, DropDecision); 8] = [
+pub const REFERENCE_VECTORS: [(Binding, KeepDecision, DropDecision); 9] = [
     (Binding::Unbound, KeepDecision::Mint, DropDecision::Refuse(UNHELD)),
     (
         Binding::Family {
@@ -215,11 +259,18 @@ pub const REFERENCE_VECTORS: [(Binding, KeepDecision, DropDecision); 8] = [
         KeepDecision::Refuse(UNDECIDED),
         DropDecision::Refuse(UNHELD),
     ),
+    (
+        Binding::Freed,
+        KeepDecision::Refuse(DROPPED),
+        DropDecision::OverDrop,
+    ),
 ];
 
 /// One event of a path, over names (`u8`), for the replay.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum RefEvent {
+    /// `n = make();` of a declared reference-returning call.
+    Acquire(u8),
     /// `keep(n);`, the result discarded.
     Keep(u8),
     /// `d = keep(n);` (a keep returns its argument).
@@ -247,23 +298,27 @@ pub enum RefOutcome {
     Safe,
     Leak,
     Refused,
+    /// An over-drop: a violation candidate.
+    Violation,
 }
 
 /// A name's binding in the replay.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum ReplayName {
     Bound(u8),
-    Invalid,
+    /// `acquired`: the family the last drop discharged was acquired.
+    Invalid { acquired: bool },
 }
 
 /// The replay's state.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct RefState {
     names: Vec<(u8, ReplayName)>,
-    /// `(family, held, handed)`.
-    families: Vec<(u8, u32, bool)>,
+    /// `(family, held, handed, acquired)`.
+    families: Vec<(u8, u32, bool, bool)>,
     next: u8,
     pub refused: bool,
+    pub violation: bool,
 }
 
 impl RefState {
@@ -281,19 +336,24 @@ impl RefState {
         }
     }
 
-    fn family(&self, family: u8) -> Option<(u32, bool)> {
+    fn family(&self, family: u8) -> Option<(u32, bool, bool)> {
         self.families
             .iter()
-            .find(|(f, _, _)| *f == family)
-            .map(|(_, held, handed)| (*held, *handed))
+            .find(|(f, _, _, _)| *f == family)
+            .map(|(_, held, handed, acquired)| (*held, *handed, *acquired))
+    }
+
+    fn invalid(&self, name: u8) -> bool {
+        matches!(self.name(name), Some(ReplayName::Invalid { .. }))
     }
 
     fn binding(&self, name: u8) -> Binding {
         match self.name(name) {
             None => Binding::Unbound,
-            Some(ReplayName::Invalid) => Binding::Invalid,
+            Some(ReplayName::Invalid { acquired: false }) => Binding::Invalid,
+            Some(ReplayName::Invalid { acquired: true }) => Binding::Freed,
             Some(ReplayName::Bound(family)) => match self.family(family) {
-                Some((held, handed)) => Binding::Family {
+                Some((held, handed, _)) => Binding::Family {
                     held: Held::Known(held),
                     handed,
                 },
@@ -316,14 +376,16 @@ impl RefState {
     pub fn owing(&self) -> usize {
         self.families
             .iter()
-            .filter(|(_, held, handed)| owed(Held::Known(*held), *handed) != Some(0))
+            .filter(|(_, held, handed, _)| owed(Held::Known(*held), *handed) != Some(0))
             .count()
     }
 
     /// The path's outcome.
     #[must_use]
     pub fn outcome(&self) -> RefOutcome {
-        if self.refused {
+        if self.violation {
+            RefOutcome::Violation
+        } else if self.refused {
             RefOutcome::Refused
         } else if self.owing() > 0 {
             RefOutcome::Leak
@@ -338,11 +400,11 @@ fn keep(state: &mut RefState, name: u8) {
         (KeepDecision::Mint, _) => {
             let family = state.next;
             state.next += 1;
-            state.families.push((family, 1, false));
+            state.families.push((family, 1, false, false));
             state.set(name, Some(ReplayName::Bound(family)));
         }
         (KeepDecision::Add, Some(ReplayName::Bound(family))) => {
-            if let Some((held, handed)) = state.family(family) {
+            if let Some((held, handed, _)) = state.family(family) {
                 state.update(family, held + 1, handed);
             }
         }
@@ -353,6 +415,12 @@ fn keep(state: &mut RefState, name: u8) {
 /// One step of the replay (`QCore.ReferenceCount.step`).
 pub fn ref_step(state: &mut RefState, event: RefEvent) {
     match event {
+        RefEvent::Acquire(name) => {
+            let family = state.next;
+            state.next += 1;
+            state.families.push((family, 1, false, true));
+            state.set(name, Some(ReplayName::Bound(family)));
+        }
         RefEvent::Keep(name) => keep(state, name),
         RefEvent::KeepTo(destination, name) => {
             keep(state, name);
@@ -362,34 +430,39 @@ pub fn ref_step(state: &mut RefState, event: RefEvent) {
             }
         }
         RefEvent::Alias(destination, name) => match state.name(name) {
-            Some(ReplayName::Invalid) => state.refused = true,
+            Some(ReplayName::Invalid { .. }) => state.refused = true,
             binding => state.set(destination, binding),
         },
         RefEvent::Drop(name) => match (decide_drop(state.binding(name)), state.name(name)) {
             (DropDecision::Decrement, Some(ReplayName::Bound(family))) => {
-                if let Some((held, handed)) = state.family(family) {
+                if let Some((held, handed, _)) = state.family(family) {
                     state.update(family, held - 1, handed);
                 }
             }
             (DropDecision::Final, Some(ReplayName::Bound(family))) => {
-                state.families.retain(|(f, _, _)| *f != family);
+                let acquired = state
+                    .family(family)
+                    .is_some_and(|(_, _, acquired)| acquired);
+                state.families.retain(|(f, _, _, _)| *f != family);
                 for entry in &mut state.names {
                     if entry.1 == ReplayName::Bound(family) {
-                        entry.1 = ReplayName::Invalid;
+                        entry.1 = ReplayName::Invalid { acquired };
                     }
                 }
             }
+            // An over-drop is accused only on a path that refused nothing.
+            (DropDecision::OverDrop, _) if !state.refused => state.violation = true,
             _ => state.refused = true,
         },
         RefEvent::Use(name) => {
-            if state.name(name) == Some(ReplayName::Invalid) {
+            if state.invalid(name) {
                 state.refused = true;
             }
         }
         RefEvent::Handoff(name) => match state.name(name) {
-            Some(ReplayName::Invalid) => state.refused = true,
+            Some(ReplayName::Invalid { .. }) => state.refused = true,
             Some(ReplayName::Bound(family)) => match state.family(family) {
-                Some((held, false)) => state.update(family, held, true),
+                Some((held, false, _)) => state.update(family, held, true),
                 _ => state.refused = true,
             },
             None => {}
@@ -410,7 +483,7 @@ pub fn ref_replay(path: &[RefEvent]) -> RefState {
 
 /// `(path, outcome)`, shared with `QCore.ReferenceCount`
 /// (`reference_trace_vectors_hold`).
-pub const REFERENCE_TRACE_VECTORS: [(&[RefEvent], RefOutcome); 16] = [
+pub const REFERENCE_TRACE_VECTORS: [(&[RefEvent], RefOutcome); 21] = [
     // Balanced keep and drop.
     (&[RefEvent::Keep(0), RefEvent::Drop(0)], RefOutcome::Safe),
     // A missing drop.
@@ -481,6 +554,31 @@ pub const REFERENCE_TRACE_VECTORS: [(&[RefEvent], RefOutcome); 16] = [
     ),
     // A withdrawn declaration.
     (&[RefEvent::Withdrawn(0)], RefOutcome::Refused),
+    // A reference-returning call, dropped once: balanced.
+    (&[RefEvent::Acquire(0), RefEvent::Drop(0)], RefOutcome::Safe),
+    // ... never dropped: a leak candidate.
+    (&[RefEvent::Acquire(0), RefEvent::Use(0)], RefOutcome::Leak),
+    // ... dropped twice: an over-drop, a violation candidate.
+    (
+        &[RefEvent::Acquire(0), RefEvent::Drop(0), RefEvent::Drop(0)],
+        RefOutcome::Violation,
+    ),
+    // ... used after its last drop: refused, never accused.
+    (
+        &[RefEvent::Acquire(0), RefEvent::Drop(0), RefEvent::Use(0)],
+        RefOutcome::Refused,
+    ),
+    // ... kept once more and dropped twice: balanced.
+    (
+        &[
+            RefEvent::Acquire(0),
+            RefEvent::Keep(0),
+            RefEvent::Drop(0),
+            RefEvent::Use(0),
+            RefEvent::Drop(0),
+        ],
+        RefOutcome::Safe,
+    ),
 ];
 
 #[cfg(test)]

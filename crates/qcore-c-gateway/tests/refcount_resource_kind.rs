@@ -25,7 +25,7 @@ use qcore_contract::contract_loader::load_resource_contract_sources;
 
 const PRELUDE: &str = "\
 typedef unsigned long size_t;
-void *rc_alloc(size_t n); void rc_free(void *p); void rc_use(void *p);
+void *rc_alloc(size_t n); void rc_free(void *p); void rc_use(void *p); void *rc_new(size_t n);
 void *rc_keep(void *p); void rc_keep_void(void *p); void rc_drop(void *p);
 int rc_atomic_add(int *ra, int v); void unknown_call(void *p);
 struct obj { int refcnt; int stats; };
@@ -346,6 +346,65 @@ fn a_use_after_a_possibly_final_drop_is_refused() {
     assert!(row.refused(), "{row:?}");
 }
 
+#[test]
+fn a_returned_reference_is_owned_by_the_caller() {
+    if !clang_available() {
+        return;
+    }
+    // A reference-returning call: the caller owes one drop.
+    let row = one(
+        "void f(void) { void *r = rc_new(1); if (!r) return; rc_use(r); rc_drop(r); }",
+        "f",
+    );
+    assert!(row.safe(), "{row:?}");
+    let row = one(
+        "void f(void) { void *r = rc_new(1); if (!r) return; rc_use(r); }",
+        "f",
+    );
+    assert!(!row.safe() && row.mentions("Leak"), "{row:?}");
+    // Kept once more: two drops balance it.
+    let row = one(
+        "void f(void) { void *r = rc_new(1); if (!r) return; rc_keep(r); rc_drop(r); \
+         rc_use(r); rc_drop(r); }",
+        "f",
+    );
+    assert!(row.safe(), "{row:?}");
+    // Handed on to the caller.
+    let row = one(
+        "void *f(void) { void *r = rc_new(1); if (!r) return 0; return r; }",
+        "f",
+    );
+    assert!(row.safe(), "{row:?}");
+}
+
+#[test]
+fn an_over_drop_of_an_acquired_reference_is_a_violation_candidate() {
+    if !clang_available() {
+        return;
+    }
+    let row = one(
+        "void f(void) {\n void *r = rc_new(1);\n if (!r) return;\n rc_drop(r);\n rc_drop(r);\n}",
+        "f",
+    );
+    assert!(
+        row.status == AnalysisStatus::Unsafe && row.mentions("DoubleRelease"),
+        "{row:?}"
+    );
+    // On a path that already refused something it is refused, not accused.
+    let row = one(
+        "void f(void *q) {\n void *r = rc_new(1);\n if (!r) return;\n rc_drop(q);\n \
+         rc_drop(r);\n rc_drop(r);\n}",
+        "f",
+    );
+    assert!(row.refused() && !row.mentions("DoubleRelease"), "{row:?}");
+    // A use after the last drop: refused, never accused.
+    let row = one(
+        "void f(void) {\n void *r = rc_new(1);\n if (!r) return;\n rc_drop(r);\n rc_use(r);\n}",
+        "f",
+    );
+    assert!(row.refused() && row.mentions("reference-dropped"), "{row:?}");
+}
+
 // ---------------------------------------------------------------------------
 // The neutral reading and the body check (rule 13c)
 // ---------------------------------------------------------------------------
@@ -353,6 +412,8 @@ fn a_use_after_a_possibly_final_drop_is_refused() {
 #[test]
 fn a_reference_declaration_is_withheld_from_the_function_map() {
     let contracts = contracts();
+    // A reference-returning call is an ordinary owned result, in the map.
+    assert!(contracts.contract("rc_new").is_some());
     for name in ["rc_keep", "rc_keep_void", "rc_drop", "obj_keep"] {
         assert!(contracts.contract(name).is_none(), "{name}");
         assert!(
@@ -425,6 +486,7 @@ fn lean_binding(binding: Binding) -> String {
             handed,
         } => format!("(.family .undecided {handed})"),
         Binding::Invalid => ".invalid".to_owned(),
+        Binding::Freed => ".freed".to_owned(),
         Binding::Other => ".other".to_owned(),
     }
 }
@@ -450,12 +512,14 @@ fn lean_drop(decision: DropDecision) -> String {
     match decision {
         DropDecision::Decrement => ".decrement".to_owned(),
         DropDecision::Final => ".final".to_owned(),
+        DropDecision::OverDrop => ".overDrop".to_owned(),
         DropDecision::Refuse(reason) => format!("(.refuse {})", lean_reason(reason)),
     }
 }
 
 fn lean_event(event: RefEvent) -> String {
     match event {
+        RefEvent::Acquire(n) => format!(".acquire {n}"),
         RefEvent::Keep(n) => format!(".keep {n}"),
         RefEvent::KeepTo(d, n) => format!(".keepTo {d} {n}"),
         RefEvent::Alias(d, n) => format!(".alias {d} {n}"),
@@ -473,6 +537,7 @@ fn lean_outcome(outcome: RefOutcome) -> &'static str {
         RefOutcome::Safe => ".safe",
         RefOutcome::Leak => ".leak",
         RefOutcome::Refused => ".refused",
+        RefOutcome::Violation => ".violation",
     }
 }
 

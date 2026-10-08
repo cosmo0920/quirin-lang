@@ -228,7 +228,7 @@ fn rename(state: &mut AbstractState, from: usize, into: usize) {
         state
             .references
             .entry(into)
-            .and_modify(|current| *current = crate::reference_count::Held::Undecided)
+            .and_modify(|current| current.held = crate::reference_count::Held::Undecided)
             .or_insert(held);
     }
     for pointer in state.pointers.values_mut() {

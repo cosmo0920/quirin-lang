@@ -81,6 +81,7 @@ inductive Binding where
   | unbound
   | family (held : Held) (handed : Bool)
   | invalid
+  | freed
   | other
   deriving DecidableEq, Repr
 
@@ -99,6 +100,7 @@ inductive KeepDecision where
 inductive DropDecision where
   | decrement
   | final
+  | overDrop
   | refuse (reason : Reason)
   deriving DecidableEq, Repr
 
@@ -107,6 +109,7 @@ def decideKeep : Binding → KeepDecision
   | .unbound => .mint
   | .family (.known _) false => .add
   | .invalid => .refuse .dropped
+  | .freed => .refuse .dropped
   | .family _ _ => .refuse .undecided
   | .other => .refuse .undecided
 
@@ -118,6 +121,7 @@ def decideDrop : Binding → DropDecision
   | .family .undecided _ => .refuse .undecided
   | .family (.known _) true => .refuse .unheld
   | .invalid => .refuse .dropped
+  | .freed => .overDrop
   | .unbound => .refuse .unheld
   | .other => .refuse .unheld
 
@@ -129,6 +133,7 @@ theorem a_mint_needs_an_unbound_name (b : Binding) (h : decideKeep b = .mint) :
   | family held handed =>
       cases held <;> cases handed <;> simp [decideKeep] at h
   | invalid => simp [decideKeep] at h
+  | freed => simp [decideKeep] at h
   | other => simp [decideKeep] at h
 
 /-- Only the last reference a function holds is a possibly-final drop. -/
@@ -148,6 +153,7 @@ theorem a_final_drop_is_the_last_reference (b : Binding) (h : decideDrop b = .fi
               | n + 2, h => simp [decideDrop] at h
       | undecided => cases handed <;> simp [decideDrop] at h
   | invalid => simp [decideDrop] at h
+  | freed => simp [decideDrop] at h
   | other => simp [decideDrop] at h
 
 /-- A drop of a reference the function does not hold is refused. -/
@@ -194,18 +200,22 @@ theorem a_balanced_exit_owes_nothing (o : Option Nat) (m : Bool)
 
 inductive Name where
   | bound (family : Nat)
-  | invalid
+  /-- `acquired`: the family the last drop discharged was acquired. -/
+  | invalid (acquired : Bool)
   deriving DecidableEq, Repr
 
 structure State where
   names : List (Nat × Name)
   /-- `(family, held, handed)`. -/
   families : List (Nat × Nat × Bool)
+  /-- The families a declared reference-returning call started. -/
+  acquired : List Nat
   next : Nat
   refused : Bool
+  violation : Bool
   deriving DecidableEq, Repr
 
-def State.empty : State := ⟨[], [], 0, false⟩
+def State.empty : State := ⟨[], [], [], 0, false, false⟩
 
 def nameOf (st : State) (n : Nat) : Option Name :=
   (st.names.find? fun e => e.1 == n).map (·.2)
@@ -220,7 +230,8 @@ def familyOf (st : State) (f : Nat) : Option (Nat × Bool) :=
 def bindingOf (st : State) (n : Nat) : Binding :=
   match nameOf st n with
   | none => .unbound
-  | some .invalid => .invalid
+  | some (.invalid false) => .invalid
+  | some (.invalid true) => .freed
   | some (.bound f) =>
       match familyOf st f with
       | some (h, handed) => .family (.known h) handed
@@ -243,6 +254,7 @@ def keep (st : State) (n : Nat) : State :=
   | _, _ => refuse st
 
 inductive Event where
+  | acquire (n : Nat)
   | keep (n : Nat)
   | keepTo (d n : Nat)
   | alias (d n : Nat)
@@ -256,13 +268,17 @@ inductive Event where
 
 /-- `reference_count::ref_step`. -/
 def step (st : State) : Event → State
+  | .acquire n =>
+      { setName st n (some (.bound st.next)) with
+          families := st.families ++ [(st.next, 1, false)],
+          acquired := st.next :: st.acquired, next := st.next + 1 }
   | .keep n => keep st n
   | .keepTo d n =>
       let s := keep st n
       if s.refused then s else setName s d (nameOf s n)
   | .alias d n =>
       match nameOf st n with
-      | some .invalid => refuse st
+      | some (.invalid _) => refuse st
       | b => setName st d b
   | .drop n =>
       match decideDrop (bindingOf st n), nameOf st n with
@@ -272,12 +288,17 @@ def step (st : State) : Event → State
           | none => st
       | .final, some (.bound f) =>
           { st with families := st.families.filter (fun e => e.1 != f),
-                    names := st.names.map fun e => if e.2 == .bound f then (e.1, .invalid) else e }
+                    names := st.names.map fun e =>
+                      if e.2 == .bound f then (e.1, .invalid (st.acquired.contains f)) else e }
+      | .overDrop, _ => if st.refused then refuse st else { st with violation := true }
       | _, _ => refuse st
-  | .use n => if nameOf st n == some .invalid then refuse st else st
+  | .use n =>
+      match nameOf st n with
+      | some (.invalid _) => refuse st
+      | _ => st
   | .handoff n =>
       match nameOf st n with
-      | some .invalid => refuse st
+      | some (.invalid _) => refuse st
       | some (.bound f) =>
           match familyOf st f with
           | some (h, false) => update st f h true
@@ -297,10 +318,13 @@ inductive Outcome where
   | safe
   | leak
   | refused
+  | violation
   deriving DecidableEq, Repr
 
 def outcome (st : State) : Outcome :=
-  if st.refused then .refused else if (owing st).isEmpty then .safe else .leak
+  if st.violation then .violation
+  else if st.refused then .refused
+  else if (owing st).isEmpty then .safe else .leak
 
 /-! ## Balance -/
 
@@ -309,6 +333,8 @@ theorem a_safe_path_is_balanced (st : State) (h : outcome st = .safe) :
     ∀ e ∈ st.families, owed (.known e.2.1) e.2.2 = some 0 := by
   intro e he
   unfold outcome at h
+  split at h
+  · cases h
   split at h
   · cases h
   · split at h
@@ -341,12 +367,16 @@ theorem step_keeps_refused (st : State) (e : Event) (h : st.refused = true) :
     intro n
     unfold keep
     split
-    · simpa [setName] using (by cases (some (Name.bound st.next) : Option Name) <;> simpa [setName] using h)
+    · show (setName st n (some (.bound st.next))).refused = true
+      rw [setName_refused]; exact h
     · split
       · simpa [update] using h
       · exact h
     · rfl
   cases e with
+  | acquire n =>
+      show (setName st n (some (.bound st.next))).refused = true
+      rw [setName_refused]; exact h
   | keep n => exact hk n
   | keepTo d n =>
       simp only [step]
@@ -366,8 +396,13 @@ theorem step_keeps_refused (st : State) (e : Event) (h : st.refused = true) :
         · simpa [update] using h
         · exact h
       · simpa using h
+      · simp [h, refuse]
       · rfl
-  | use n => simp only [step]; split <;> simp_all [refuse]
+  | use n =>
+      simp only [step]
+      split
+      · rfl
+      · exact h
   | handoff n =>
       simp only [step]
       split
@@ -386,13 +421,21 @@ theorem foldl_keeps_refused (st : State) (es : List Event) (h : st.refused = tru
   | nil => simpa using h
   | cons e es ih => exact ih _ (step_keeps_refused st e h)
 
-/-- A path with a refusal anywhere is never safe. -/
+/-- A path with a refusal anywhere is never safe (it is refused, or a
+violation candidate an earlier step found). -/
 theorem a_refused_path_is_never_safe (pre post : List Event) :
-    outcome ((pre ++ .refuse :: post).foldl step State.empty) = .refused := by
+    outcome ((pre ++ .refuse :: post).foldl step State.empty) ≠ .safe := by
   have hr : (step (pre.foldl step State.empty) .refuse).refused = true := rfl
   have := foldl_keeps_refused _ post hr
   rw [List.foldl_append, List.foldl_cons]
-  simp [outcome, this]
+  unfold outcome
+  generalize List.foldl step (step (List.foldl step State.empty pre) Event.refuse) post = st at this
+  cases hv : st.violation <;> simp [this]
+
+/-- A violation candidate is never safe. -/
+theorem a_violation_is_never_safe (st : State) (h : st.violation = true) :
+    outcome st = .violation := by
+  simp [outcome, h]
 
 /-! ## The primitive and the neutral reading -/
 
@@ -457,14 +500,14 @@ theorem the_neutral_reading_is_not_admitted (d : Decl) (c : Clause) (st : State)
 
 /-! ## The last drop -/
 
-theorem nameOf_map_invalidate (st : State) (f b : Nat)
+theorem nameOf_map_invalidate (st : State) (f b : Nat) (a : Bool)
     (hb : nameOf st b = some (.bound f)) :
-    nameOf { st with names := st.names.map fun e => if e.2 == .bound f then (e.1, .invalid) else e,
-                     families := st.families.filter (fun e => e.1 != f) } b = some .invalid := by
+    nameOf { st with names := st.names.map fun e => if e.2 == .bound f then (e.1, .invalid a) else e,
+                     families := st.families.filter (fun e => e.1 != f) } b = some (.invalid a) := by
   unfold nameOf at hb ⊢
   simp only [List.find?_map]
   have hkey : ((fun e : Nat × Name => e.1 == b) ∘
-      fun e : Nat × Name => if e.2 == .bound f then (e.1, Name.invalid) else e) =
+      fun e : Nat × Name => if e.2 == .bound f then (e.1, Name.invalid a) else e) =
       fun e : Nat × Name => e.1 == b := by
     funext e
     simp only [Function.comp]
@@ -487,13 +530,45 @@ theorem an_alias_use_after_a_possibly_final_drop_is_refused (st : State) (f a b 
     simp [bindingOf, ha, hf]
   have hdrop : step st (.drop a) =
       { st with families := st.families.filter (fun e => e.1 != f),
-                names := st.names.map fun e => if e.2 == .bound f then (e.1, .invalid) else e } := by
+                names := st.names.map fun e =>
+                  if e.2 == .bound f then (e.1, .invalid (st.acquired.contains f)) else e } := by
     simp [step, hbind, decideDrop, ha]
   rw [hdrop]
-  have hinv := nameOf_map_invalidate st f b hb
+  have hinv := nameOf_map_invalidate st f b (st.acquired.contains f) hb
   simp only [step]
   rw [hinv]
   simp [refuse]
+
+/-- A use after the last drop, through any name, is refused and never
+accused, whatever created the family. -/
+theorem a_use_after_the_last_drop_is_refused_never_accused (st : State) (a : Nat) (acq : Bool)
+    (ha : nameOf st a = some (.invalid acq)) :
+    (step st (.use a)).refused = true ∧ (step st (.use a)).violation = st.violation := by
+  simp [step, ha, refuse]
+
+/-- **A validated over-drop is a violation candidate**: a drop through a name
+the last drop of an acquired family invalidated, on a path that refused
+nothing. -/
+theorem an_over_drop_of_an_acquired_family_is_a_violation (st : State) (a : Nat)
+    (ha : nameOf st a = some (.invalid true)) (hr : st.refused = false) :
+    (step st (.drop a)).violation = true := by
+  have hb : bindingOf st a = .freed := by simp [bindingOf, ha]
+  simp [step, hb, decideDrop, hr]
+
+/-- On a path that already refused something the over-drop is not accused. -/
+theorem an_over_drop_on_a_refused_path_is_not_accused (st : State) (a : Nat)
+    (ha : nameOf st a = some (.invalid true)) (hr : st.refused = true) :
+    (step st (.drop a)).violation = st.violation := by
+  have hb : bindingOf st a = .freed := by simp [bindingOf, ha]
+  simp [step, hb, decideDrop, hr, refuse]
+
+/-- A drop past a borrowed family's last drop may consume the caller's
+reference: refused, never accused. -/
+theorem a_drop_past_a_borrowed_familys_last_drop_is_refused (st : State) (a : Nat)
+    (ha : nameOf st a = some (.invalid false)) :
+    (step st (.drop a)).refused = true ∧ (step st (.drop a)).violation = st.violation := by
+  have hb : bindingOf st a = .invalid := by simp [bindingOf, ha]
+  simp [step, hb, decideDrop, refuse]
 
 /-! ## Shared vectors -/
 
@@ -506,7 +581,8 @@ def referenceVectors : List (Binding × KeepDecision × DropDecision) := [
   ((.family .undecided false), (.refuse .undecided), (.refuse .undecided)),
   ((.family (.known 0) false), .add, (.refuse .unheld)),
   (.invalid, (.refuse .dropped), (.refuse .dropped)),
-  (.other, (.refuse .undecided), (.refuse .unheld))
+  (.other, (.refuse .undecided), (.refuse .unheld)),
+  (.freed, (.refuse .dropped), .overDrop)
 ]
 
 theorem reference_vectors_hold :
@@ -530,7 +606,12 @@ def referenceTraceVectors : List (List Event × Outcome) := [
   ([.keep 0, .keep 0, .handoff 0], .leak),
   ([.keep 0, .handoff 0, .drop 0], .refused),
   ([.keep 0, .counter 0, .drop 0], .refused),
-  ([.withdrawn 0], .refused)
+  ([.withdrawn 0], .refused),
+  ([.acquire 0, .drop 0], .safe),
+  ([.acquire 0, .use 0], .leak),
+  ([.acquire 0, .drop 0, .drop 0], .violation),
+  ([.acquire 0, .drop 0, .use 0], .refused),
+  ([.acquire 0, .keep 0, .drop 0, .use 0, .drop 0], .safe)
 ]
 
 theorem reference_trace_vectors_hold :
