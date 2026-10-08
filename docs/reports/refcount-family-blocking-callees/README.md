@@ -252,6 +252,57 @@ Disk: 84–85 % used, 89 GB or more free throughout (floor 40 GB). The private
 release target was deleted after the measurements; the saved binaries stay in
 `private/rfbc/bin/`.
 
+## 9. Review evidence for the served-queue premise (integrator, 2026-10-09)
+
+The contracts of `rd_kafka_q_wait_result` and `rd_kafka_q_purge0` (section 3)
+rest on the served-queue premise stated in `librdkafka/client.qv`: an op
+callback they may run takes over no reference the caller holds on the served
+queue. Both bodies analyse to Unknown, so per contract specification C06 each
+declaration stands as a declared assumption, published like every other
+reviewed contract: the run's `contract_revision.pinned_in_force` lists both
+(`body_analysed: true`, reviewed at `66910c10` and `046accf6`), under the run's
+trust statement "declared resource-projection assumptions, not verified C
+behavior". The one function the premise lets go Safe is
+`rd_kafka_toppar_purge_and_disable_queues`; at the user's direction (2026-10-09)
+it stays Safe on that footing, and the premise's evidence is recorded here.
+
+[`scripts/served_queue_callbacks.py`](scripts/served_queue_callbacks.py) read
+`lib/librdkafka-2.15.0/src` at both pinned revisions (extracted read-only with
+`git archive`; both revisions carry librdkafka 2.15.0 and the two outputs are
+byte-identical: [66910c10](artifacts/served-queue-callbacks-66910c10.json),
+[046accf6](artifacts/served-queue-callbacks-046accf6.json)). The reading is
+lexical: evidence for the review, not a proof.
+
+* **Callbacks.** 28 functions have the op-callback signature
+  `rd_kafka_op_res_t f(rd_kafka_t *, rd_kafka_q_t *, rd_kafka_op_t *)`. Every
+  callback named at an `rd_kafka_op_new_cb(...)` call or an `rko_op_cb =`
+  assignment is one of them, except the parameter `cb` of a forwarding wrapper,
+  whose actuals are again such callbacks (C's type of `rko_op_cb`).
+* **The queue parameter.** None of the 28 mentions its queue parameter; only
+  `rd_kafka_op_call` forwards it to the callback.
+* **Direct queue operations.** None of the 28 keeps, drops, forwards or
+  destroys a queue in its own body.
+* **The destroy path.** `rd_kafka_op_destroy` invokes an op's callback as
+  `rko->rko_op_cb(rko->rko_rk, NULL, rko)`: the queue argument is NULL.
+* **Reachable queue operations.** Nine callbacks reach, by name through the
+  call graph, 14 functions that keep or drop a queue reference. Each was read:
+  `rd_kafka_q_fwd_get` keeps a forward queue that `rd_kafka_q_enq1`,
+  `rd_kafka_q_len` and `rd_kafka_q_purge0` drop again (balanced, another
+  object); `rd_kafka_q_fwd_set0` drops the forward reference its source queue
+  stores and keeps the new one (field-owned); `rd_kafka_replyq_copy` keeps for
+  the copy; `rd_kafka_replyq_enq`, `rd_kafka_op_destroy`,
+  `rd_kafka_coord_req_destroy`, `rd_kafka_coord_req_fsm`,
+  `rd_kafka_OffsetCommitRequest` and `rd_kafka_EndTxnRequest` drop references
+  their reply queues own; `rd_kafka_share_commit_sync_send_response` drops the
+  reply queue its consumer group stores; `rd_kafka_toppar_op_fetch_start`
+  forwards through `rd_kafka_q_fwd_set0`. Every one releases a reference an op,
+  a reply queue or a queue field took, never one a caller of
+  `rd_kafka_q_wait_result` or `rd_kafka_q_purge0` holds.
+
+The general gap this exposed is registered as `VERDICT-CONTRACT-DEPENDENCIES`:
+a published Safe row lists no contracts it rests on; the dependency is
+recorded only run-wide.
+
 ## Files
 
 * Contracts: `providers/qcore-provider-librdkafka/contracts/librdkafka/client.qv`,

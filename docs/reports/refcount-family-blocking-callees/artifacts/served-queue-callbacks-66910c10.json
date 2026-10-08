@@ -1,0 +1,284 @@
+{
+ "callbacks": 28,
+ "callbacks_mentioning_queue_param": [],
+ "callbacks_with_direct_queue_ops": [],
+ "detail": {
+  "rd_kafka_DeleteRecords_leaders_queried_cb": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_admin.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_ListOffsets_leaders_queried_cb": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_admin.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_admin_fanout_worker": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_admin.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": [
+    "rd_kafka_op_destroy",
+    "rd_kafka_q_enq1",
+    "rd_kafka_q_fwd_get",
+    "rd_kafka_replyq_copy",
+    "rd_kafka_replyq_enq"
+   ]
+  },
+  "rd_kafka_admin_worker": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_admin.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_broker_monitor_op_cb": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_broker.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_cgrp_assignor_handle_Metadata_op": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_cgrp.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_cgrp_consumer_handle_Metadata_op": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_cgrp.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_cgrp_handle_Metadata_op": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_cgrp.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": [
+    "rd_kafka_OffsetCommitRequest",
+    "rd_kafka_coord_req_destroy",
+    "rd_kafka_coord_req_fsm",
+    "rd_kafka_op_destroy",
+    "rd_kafka_q_enq1",
+    "rd_kafka_q_fwd_get",
+    "rd_kafka_q_fwd_set0",
+    "rd_kafka_q_len",
+    "rd_kafka_q_purge0",
+    "rd_kafka_replyq_copy",
+    "rd_kafka_replyq_enq",
+    "rd_kafka_toppar_op_fetch_start"
+   ]
+  },
+  "rd_kafka_oauthbearer_refresh_op": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_sasl_oauthbearer.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": [
+    "rd_kafka_op_destroy",
+    "rd_kafka_q_enq1",
+    "rd_kafka_q_fwd_get",
+    "rd_kafka_replyq_copy",
+    "rd_kafka_replyq_enq"
+   ]
+  },
+  "rd_kafka_offset_reset_op_cb": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_offset.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": [
+    "rd_kafka_coord_req_destroy",
+    "rd_kafka_coord_req_fsm",
+    "rd_kafka_op_destroy",
+    "rd_kafka_q_enq1",
+    "rd_kafka_q_fwd_get",
+    "rd_kafka_replyq_copy",
+    "rd_kafka_replyq_enq"
+   ]
+  },
+  "rd_kafka_offset_validate_op_cb": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_offset.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": [
+    "rd_kafka_coord_req_destroy",
+    "rd_kafka_coord_req_fsm",
+    "rd_kafka_op_destroy",
+    "rd_kafka_q_enq1",
+    "rd_kafka_q_fwd_get",
+    "rd_kafka_replyq_copy",
+    "rd_kafka_replyq_enq"
+   ]
+  },
+  "rd_kafka_op_call": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_op.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [
+    "res = rko->rko_op_cb(rk, rkq, rko);"
+   ],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_share_ack_commit_cb_register_op": {
+   "direct_queue_ops": [],
+   "file": "rdkafka.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_share_commit_async_fanout_op": {
+   "direct_queue_ops": [],
+   "file": "rdkafka.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_share_commit_sync_fanout_op": {
+   "direct_queue_ops": [],
+   "file": "rdkafka.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": [
+    "rd_kafka_op_destroy",
+    "rd_kafka_q_enq1",
+    "rd_kafka_q_fwd_get",
+    "rd_kafka_replyq_copy",
+    "rd_kafka_replyq_enq",
+    "rd_kafka_share_commit_sync_send_response"
+   ]
+  },
+  "rd_kafka_share_fetch_fanout_op": {
+   "direct_queue_ops": [],
+   "file": "rdkafka.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_share_fetch_reply_op_cb": {
+   "direct_queue_ops": [],
+   "file": "rdkafka.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": [
+    "rd_kafka_op_destroy",
+    "rd_kafka_q_enq1",
+    "rd_kafka_q_fwd_get",
+    "rd_kafka_replyq_copy",
+    "rd_kafka_replyq_enq",
+    "rd_kafka_share_commit_sync_send_response"
+   ]
+  },
+  "rd_kafka_topic_partition_list_query_leaders_async_worker_op_cb": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_partition.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_txn_op_abort_transaction": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_txnmgr.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": [
+    "rd_kafka_EndTxnRequest",
+    "rd_kafka_coord_req_destroy",
+    "rd_kafka_coord_req_fsm",
+    "rd_kafka_op_destroy",
+    "rd_kafka_q_enq1",
+    "rd_kafka_q_fwd_get",
+    "rd_kafka_replyq_copy",
+    "rd_kafka_replyq_enq"
+   ]
+  },
+  "rd_kafka_txn_op_abort_transaction_ack": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_txnmgr.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_txn_op_ack_init_transactions": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_txnmgr.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_txn_op_begin_abort": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_txnmgr.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_txn_op_begin_commit": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_txnmgr.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_txn_op_begin_transaction": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_txnmgr.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": [
+    "rd_kafka_op_destroy",
+    "rd_kafka_q_enq1",
+    "rd_kafka_q_fwd_get",
+    "rd_kafka_replyq_copy",
+    "rd_kafka_replyq_enq"
+   ]
+  },
+  "rd_kafka_txn_op_commit_transaction": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_txnmgr.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_txn_op_commit_transaction_ack": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_txnmgr.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_txn_op_init_transactions": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_txnmgr.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  },
+  "rd_kafka_txn_op_send_offsets_to_transaction": {
+   "direct_queue_ops": [],
+   "file": "rdkafka_txnmgr.c",
+   "queue_param": "rkq",
+   "queue_param_mentions": [],
+   "reachable_queue_ops": []
+  }
+ },
+ "named_callbacks_not_matching_signature": [
+  "cb"
+ ],
+ "named_through_variables": [
+  "cb"
+ ],
+ "op_destroy_callback_invocations": [
+  "res          = rko->rko_op_cb(rko->rko_rk, NULL, rko);"
+ ]
+}
