@@ -6753,10 +6753,10 @@
   "note": "providers/ is a separate Cargo workspace, excluded from the core workspace; P01 verified empirically that the core workspace builds and passes its full suite with providers/ moved out of the tree."
  },
  "validation": {
-  "note": "REFCOUNT-REFERENCE-RETURNING-DECLARATIONS card gate on base e27f98d5b, every code step at ee4640a6f, scripts docs/reports/refcount-reference-returning-declarations/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/rrrd/gate-g1 and private/rrrd/provider-gate-g1 of this worktree. gate-g1: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 457 units, 470 summaries, 7,703 passed, 0 failed, 11 ignored, exit 0 (private/rrrd/tests-gate-g1); both reevaluation probes exit 0; check_lean_audits.py 298 audits passed (297 + AuditReferenceResult); docs index check 0. The python suite on the committed matrix failed 1 (the stale Lean audit count, 297; kept as 08-python-stale-matrix), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g1): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
+  "note": "REFCOUNT-FAMILY-BLOCKING-CALLEES card gate on base 652dc085f, every code step at 313afd5da, scripts docs/reports/refcount-family-blocking-callees/scripts/gate.sh (each step under the shared flock), provider-gate.sh and finish-gate.sh, logs private/rfbc/gate-g2 and private/rfbc/provider-gate-g1 of this worktree. gate-g2: cargo check --workspace --all-targets 0; submodule 0; cargo fmt --check 0; clippy --locked 0; run_test_binaries.py 457 units, 470 summaries, 7,703 passed, 0 failed, 11 ignored, exit 0 (private/rfbc/tests-gate-g2); both reevaluation probes exit 0; check_lean_audits.py 298 audits passed (no Lean change: contracts only); python suite and docs index check per gate/ (08, 09), then build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). Provider gate (provider-gate-g1, at c7d8f7937; providers/ unchanged since): cargo check --locked 0, cargo test 129 passed (exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every package 0, providers Python suite 25 tests OK.",
   "workspace_tests": 7703,
   "provider_tests": 129,
-  "python_evidence_validator_tests": null,
+  "python_evidence_validator_tests": 365,
   "lean_audits": 298,
   "lean_audit_files": [
    "AuditAbiEnumConstPointer.lean",
@@ -7064,7 +7064,7 @@
   "cargo_clippy": "clean",
   "standing_gate": "complete",
   "full_language_conformance": false,
-  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-aee9c7bbf78d5c9e8/docs/reports/refcount-reference-returning-declarations/gate.json)"
+  "measurement_provenance": "integrator_supplied (/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ac7b725ad4a6faced/docs/reports/refcount-family-blocking-callees/gate.json)"
  },
  "named_followups": [
   {

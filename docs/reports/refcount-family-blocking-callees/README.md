@@ -218,7 +218,39 @@ checked by the existing loader, the pins and the ABI reader.
 
 ## 8. Gate
 
-See [gate.json](gate.json) and [gate/](gate/).
+Standing gate (`docs/agents/validation.md`), [`scripts/gate.sh`](scripts/gate.sh)
+`g2`, every code step at `313afd5da` on base `652dc085f`, docs steps at
+`0bef46b46`; logs `private/rfbc/gate-g2/`, exits in [gate/](gate/), summary
+[gate.json](gate.json).
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update `--init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 0 | |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | |
+| `python3 scripts/run_test_binaries.py` | 0 | 457 units, 470 summaries; 7,703 passed, 0 failed, 11 ignored (`private/rfbc/tests-gate-g2`, 301.2 s inside the lock) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 298 audits passed (unchanged) |
+| `python3 -m unittest discover -s scripts/tests` | 0 | 365 tests OK; again 0 after `build_matrix.py . --gate gate.json` (09a 0, 09b 0) |
+| `build_docs_index.py --check` | 0 | and 0 after the matrix (10b, 10c) |
+
+The first run, `g1` (code steps at `c7d8f7937`), failed one test:
+`contract_loader`'s `production_contracts_preserve_the_previous_resource_modes`
+(7,702 passed, 1 failed), whose previous-modes table lacked the four new
+declarations; `313afd5da` adds them (borrowed, no custody) and `g2` reran
+every code step.
+
+**Provider gate** ([`scripts/provider-gate.sh`](scripts/provider-gate.sh) `g1`,
+at `c7d8f7937`; `providers/` is unchanged since; logs
+`private/rfbc/provider-gate-g1/`): `cargo check --locked` 0, `cargo test` 0
+(129 passed), fmt 0, clippy 0, `providers/contracts.py check` 0, package build
+0 and `verify` 0 for all five packages, `python3 -m unittest discover -s
+providers/tests` 0 (25 tests OK). Pins: section 3.
+
+Disk: 84–85 % used, 89 GB or more free throughout (floor 40 GB). The private
+release target was deleted after the measurements; the saved binaries stay in
+`private/rfbc/bin/`.
 
 ## Files
 
