@@ -333,6 +333,9 @@ fn held_elsewhere(state: &AbstractState, site: usize) -> bool {
             .values()
             .any(|(held, _)| *held == site)
         || state.nullable_sites.contains(&site)
+        // Card REFCOUNT-RESOURCE-KIND (rule 13b): a reference family is held
+        // by its count, not by a name: a slot move of it is refused.
+        || state.references.contains_key(&site)
 }
 
 fn refuse(

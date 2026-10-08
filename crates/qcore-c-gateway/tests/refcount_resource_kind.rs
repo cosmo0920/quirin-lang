@@ -258,6 +258,28 @@ fn a_keep_stored_into_a_tracked_owner_is_handed_off() {
         "f",
     );
     assert!(row.safe(), "{row:?}");
+    // An owner freed while it holds the reference: the reference is still
+    // owed (a field link hands nothing off unless the owner escapes).
+    let row = one(
+        "void f(struct obj *p) { struct holder *o; struct obj *r; \
+         o = rc_alloc(8); r = rc_keep(p); o->ref = r; rc_free(o); }",
+        "f",
+    );
+    assert!(!row.safe(), "{row:?}");
+    // A drop of the reference the owner holds: refused.
+    let row = one(
+        "struct holder *f(struct obj *p) { struct holder *o; struct obj *r; \
+         o = rc_alloc(8); r = rc_keep(p); o->ref = r; rc_drop(r); return o; }",
+        "f",
+    );
+    assert!(row.refused() && row.mentions("reference-drop-unheld"), "{row:?}");
+    // A keep in a loop, dropped in the same iteration: balanced.
+    let row = one(
+        "void f(struct obj **v, int n) {\n int i;\n for (i = 0; i < n; i++) {\n \
+         struct obj *o = v[i];\n rc_keep(o);\n rc_use(o);\n rc_drop(o);\n }\n}",
+        "f",
+    );
+    assert!(!row.mentions("Leak"), "{row:?}");
     // Kept straight into a member: a place this route does not track.
     let row = one(
         "void f(struct holder *h, void *p) { h->ref = rc_keep(p); }",

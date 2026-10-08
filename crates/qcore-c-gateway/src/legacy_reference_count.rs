@@ -172,7 +172,7 @@ pub(super) fn reserved_site(instruction: &LegacyInstruction) -> Option<usize> {
 }
 
 /// Whether a family's site is held by a structure other than names: a field
-/// link, a container, a holder.
+/// link, a stored containment, a container publication, a holder.
 fn linked(state: &AbstractState, site: usize) -> bool {
     state
         .field_links
@@ -188,11 +188,14 @@ fn linked(state: &AbstractState, site: usize) -> bool {
         })
 }
 
-/// Whether one of the family's references was handed off, `None` when the
-/// paths disagree.
+/// Whether one of the family's references was handed off at an exit (it
+/// escaped, alone or with the owner it is linked into, or was published or
+/// stored), `None` when the paths disagree. A field link to an owner that
+/// does not escape, and a holder's retention, hand nothing off: the
+/// reference is still owed.
 fn handed(state: &AbstractState, site: usize) -> Option<bool> {
     match state.resources.get(&site).copied() {
-        Some(LIVE) => Some(linked(state, site)),
+        Some(LIVE) => Some(state.published.contains(&site)),
         Some(super::ESCAPED | super::CONTAINED) => Some(true),
         _ => None,
     }
@@ -230,8 +233,17 @@ fn binding(state: &AbstractState, name: &str) -> (Binding, Option<usize>) {
     let Some(held) = state.references.get(&site).copied() else {
         return (Binding::Other, None);
     };
+    // For a keep or a drop, a family a structure other than names holds (a
+    // field link, a container, a holder) counts as handed: a drop of it is
+    // refused, as a release while held is (rule 12t).
     match handed(state, site) {
-        Some(handed) => (Binding::Family { held, handed }, Some(site)),
+        Some(handed) => (
+            Binding::Family {
+                held,
+                handed: handed || linked(state, site),
+            },
+            Some(site),
+        ),
         None => (
             Binding::Family {
                 held: Held::Undecided,
