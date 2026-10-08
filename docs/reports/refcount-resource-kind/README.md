@@ -279,7 +279,31 @@ alone), `REFCOUNT-KEEP-INTO-PLACE` (7 / 7 / 0), `REFCOUNT-CONTAINER-REFERENCE-SE
 
 ## 9. Gate
 
-See [gate.json](gate.json) and [gate/](gate/) once run.
+Standing gate (`docs/agents/validation.md`), [`scripts/gate.sh`](scripts/gate.sh)
+`g1`, code steps at `ea628235d` on base `9258289c9`; logs `private/rrk/gate-g1/`,
+exits in [gate/](gate/), summary [gate.json](gate.json).
+
+| step | exit | result |
+| --- | ---: | --- |
+| `cargo check --workspace --all-targets` | 0 | |
+| submodule update `--init --recursive` | 0 | |
+| `cargo fmt --all -- --check` | 1, then 0 | one whitespace-only test edit (`compiler/tests/contract_loader.rs`), fixed by `f8f18fc89`; fmt, `cargo check` and clippy rerun at that head, 0 ([`scripts/rerun-fmt.sh`](scripts/rerun-fmt.sh); the first attempt kept as `02-fmt-attempt1.log`) |
+| `cargo clippy --locked --all-targets -- -D warnings` | 0 | 0 again at `f8f18fc89` |
+| `python3 scripts/run_test_binaries.py` | 0 | 456 units, 469 summaries; 7,691 passed, 0 failed, 11 ignored (`private/rrk/tests-gate-g1`) |
+| `reevaluation_probe` / `reevaluation_followup` | 0 / 0 | |
+| `python3 scripts/check_lean_audits.py` | 0 | 297 audits passed (296 + `AuditReferenceCount`) |
+| `python3 -m unittest discover -s scripts/tests` | 1, then 0 | the committed matrix carried 296 Lean audits (kept as `08-python-stale-matrix*.log`); after `build_matrix.py . --gate gate.json` (09a, 0), 365 tests OK (09b) |
+| `build_docs_index.py --check` | 0 | and 0 again after the matrix (10b, 10c) |
+
+**Provider gate** ([`scripts/provider-gate.sh`](scripts/provider-gate.sh) `g1`,
+logs `private/rrk/provider-gate-g1/`): `cargo check --locked` 0, `cargo test` 0
+(129 passed), fmt 1 on the same test edit then 0 at `f8f18fc89`, clippy 0,
+`providers/contracts.py check` 0, package build 0 and `verify` 0 for all five
+packages, `python3 -m unittest discover -s providers/tests` 0 (25 tests OK).
+Pins: section 4.
+
+The suite's debug build left 4.9 GB free on the shared disk at the gate's end
+(every step had already exited 0); `cargo clean --profile dev` restored 52 GB.
 
 ## Files
 

@@ -31,20 +31,25 @@ def main() -> int:
     provider_python = re.search(r"Ran (\d+) tests", (provider / "p8-unittest.log").read_text())
     clang = (logs / "clang-version.txt").read_text().splitlines()[0]
     head = (logs / "head").read_text().strip()
+    rerun = (logs / "rerun-head").read_text().strip()
     note = (
-        f"SLOT-MOVE-AND-INTERIOR-BORROW card gate on base 6cbcc4e9c, every code step at {head[:9]}, scripts "
+        f"REFCOUNT-RESOURCE-KIND card gate on base 9258289c9, every code step at {head[:9]}, scripts "
         "docs/reports/refcount-resource-kind/scripts/gate.sh (each step under the shared flock), "
-        f"provider-gate.sh and finish-gate.sh, logs private/rrk/gate-{name} and "
+        f"provider-gate.sh, rerun-fmt.sh and finish-gate.sh, logs private/rrk/gate-{name} and "
         f"private/rrk/provider-gate-{name} of this worktree. gate-{name}: cargo check --workspace "
-        "--all-targets 0; submodule 0; fmt 0; clippy --locked 0; run_test_binaries.py "
+        "--all-targets 0; submodule 0; clippy --locked 0; run_test_binaries.py "
         f"{totals.group(1)} units, {totals.group(2)} summaries, {int(totals.group(3)):,} passed, "
         f"{totals.group(4)} failed, {totals.group(5)} ignored, exit 0 (private/rrk/tests-gate-{name}); "
-        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (293 + "
-        "AuditSlotMove + AuditInteriorBorrow + AuditDerivedOutSlot); python tests 08 exit 0 "
-        f"({python.group(1) if python else '?'} OK) on the committed matrix; docs index check 0; then "
-        "build_matrix.py . --gate this file (09a), the python suite (09b) and the docs index (10b, 10c). "
+        f"both reevaluation probes exit 0; check_lean_audits.py {lean.group(1)} audits passed (296 + "
+        "AuditReferenceCount); docs index check 0. The first attempt's cargo fmt --check (standing "
+        "and provider) was 1 on one whitespace-only test edit (compiler/tests/contract_loader.rs), "
+        f"fixed by its own commit; at {rerun[:9]} fmt 0 (standing and provider), cargo check 0 and "
+        "clippy 0 were rerun (rerun-fmt.sh; the first attempt kept as *-attempt1); the python suite "
+        "on the committed matrix failed 1 (the stale Lean audit count, 296; kept as "
+        "08-python-stale-matrix), then build_matrix.py . --gate this file (09a), the python suite "
+        "(09b) and the docs index (10b, 10c). "
         f"Provider gate (provider-gate-{name}): cargo check --locked 0, cargo test {provider_tests} passed "
-        "(exit 0), fmt 0, clippy 0, contracts.py check 0, package build 0, package verify of every "
+        "(exit 0), fmt 0 (rerun), clippy 0, contracts.py check 0, package build 0, package verify of every "
         f"package 0, providers Python suite {provider_python.group(1)} tests OK."
     )
     gate = {
