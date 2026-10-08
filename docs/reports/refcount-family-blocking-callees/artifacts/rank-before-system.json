@@ -1,0 +1,654 @@
+{
+ "report": "/home/cosmo/Documents/GitHub/qcore-c/.claude/worktrees/agent-ac7b725ad4a6faced/private/rfbc/before-system/resource-diagnostics.json",
+ "statuses": {
+  "Unknown": 357,
+  "Safe": 87,
+  "Unsafe": 4
+ },
+ "population": 26,
+ "alone_total": 18,
+ "ranking": [
+  {
+   "callee": "cio_stats_get",
+   "alone": 1,
+   "pair": 1,
+   "touched": 3,
+   "cumulative": 1,
+   "freed": [
+    "src/flb_storage.c::flb_storage_chunk_count"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_engine_flush",
+   "alone": 1,
+   "pair": 0,
+   "touched": 2,
+   "cumulative": 2,
+   "freed": [
+    "src/flb_engine.c::flb_engine_manager"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_engine.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 1,
+      "call to uncontracted function `_`": 1
+     }
+    },
+    {
+     "unit": "src/flb_engine.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 1,
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_sched_timer_destroy",
+   "alone": 1,
+   "pair": 1,
+   "touched": 2,
+   "cumulative": 3,
+   "freed": [
+    "src/flb_scheduler.c::flb_sched_timer_cb_destroy"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "indirect memory access is outside the resource projection": 1,
+      "unresolved resource identity `_`": 1
+     }
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1,
+      "indirect memory access is outside the resource projection": 1,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "cio_chunk_up",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 4,
+   "freed": [
+    "src/flb_input_chunk.c::flb_input_chunk_set_up"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "cio_stream_size_chunks_up",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 5,
+   "freed": [
+    "src/flb_input_chunk.c::flb_input_chunk_total_size"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_config_map_create",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 6,
+   "freed": [
+    "src/flb_output.c::flb_output_get_global_config_map"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_config_prop_get",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 7,
+   "freed": [
+    "src/flb_output.c::flb_output_get_property"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_config_task_map_grow",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 8,
+   "freed": [
+    "src/flb_task.c::map_get_task_id"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_http_client_debug_setup",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 9,
+   "freed": [
+    "src/flb_output.c::flb_output_set_http_debug_callbacks"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_input_coro_finished",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 10,
+   "freed": [
+    "src/flb_engine.c::handle_input_event"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_output_task_queue_flush_one",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 11,
+   "freed": [
+    "src/flb_output.c::flb_output_task_singleplex_flush_next"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_output.c",
+     "status": "Unknown",
+     "families": {
+      "counted-user operation by `_` on `_`, which is not a formal this function never rebinds": 1,
+      "call to `_` whose declared contract its own analysed body refutes (contract-refuted-by-body)": 1,
+      "unresolved resource identity `_`": 1,
+      "indirect memory access is outside the resource projection": 1
+     }
+    },
+    {
+     "unit": "src/flb_output.c",
+     "status": "Unknown",
+     "families": {
+      "counted-user operation by `_` on `_`, which is not a formal this function never rebinds": 1,
+      "call to `_` whose declared contract its own analysed body refutes (contract-refuted-by-body)": 1,
+      "unresolved resource identity `_`": 1,
+      "indirect memory access is outside the resource projection": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_sched_timer_coro_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 12,
+   "freed": [
+    "src/flb_scheduler.c::flb_sched_timer_coro_cleanup"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 2,
+      "unresolved resource identity `_`": 1
+     }
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 2,
+      "unresolved resource identity `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_task_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 13,
+   "freed": [
+    "src/flb_engine.c::flb_engine_destroy_tasks"
+   ],
+   "kind": "cross-unit",
+   "homes": [
+    {
+     "unit": "src/flb_task.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 4,
+      "call to uncontracted function `_`": 3,
+      "unresolved resource identity `_`": 3,
+      "unmodeled call, aggregate or indirect access in branch condition": 2
+     }
+    },
+    {
+     "unit": "src/flb_task.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 4,
+      "call to uncontracted function `_`": 3,
+      "unresolved resource identity `_`": 3,
+      "unmodeled call, aggregate or indirect access in branch condition": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "input_chunk_append_raw",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 14,
+   "freed": [
+    "src/flb_input_chunk.c::flb_input_chunk_append_raw_local"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_input_chunk.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 19,
+      "unresolved resource identity `_`": 12,
+      "braced initializer, expression, or declaration is not modeled": 4,
+      "indirect memory access is outside the resource projection": 4
+     }
+    },
+    {
+     "unit": "src/flb_input_chunk.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 19,
+      "unresolved resource identity `_`": 12,
+      "braced initializer, expression, or declaration is not modeled": 4,
+      "indirect memory access is outside the resource projection": 4
+     }
+    }
+   ]
+  },
+  {
+   "callee": "map_get_task_id",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 15,
+   "freed": [
+    "src/flb_task.c::flb_task_map_get_task_id"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_task.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    },
+    {
+     "unit": "src/flb_task.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "mk_event_timeout_destroy",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 16,
+   "freed": [
+    "src/flb_scheduler.c::flb_sched_timer_cb_disable"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "pthread_once",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 17,
+   "freed": [
+    "src/flb_engine.c::flb_engine_evl_init"
+   ],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "random_uniform",
+   "alone": 1,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 18,
+   "freed": [
+    "src/flb_scheduler.c::backoff_full_jitter"
+   ],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "unmodeled call, aggregate or indirect access in branch condition": 1,
+      "call to uncontracted function `_`": 1
+     }
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "unmodeled call, aggregate or indirect access in branch condition": 1,
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "cio_chunk_get_content",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 18,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "cio_chunk_get_real_size",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 18,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "cio_meta_size",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 19,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "cmt_gauge_set",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 20,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_coro_resume",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 20,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_downstream_conn_timeouts",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 20,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_engine_adaptive_flush_update",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 20,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_engine.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 11,
+      "unmodeled call, aggregate or indirect access in branch condition": 2
+     }
+    },
+    {
+     "unit": "src/flb_engine.c",
+     "status": "Unknown",
+     "families": {
+      "unresolved resource identity `_`": 11,
+      "unmodeled call, aggregate or indirect access in branch condition": 2
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_engine_manager",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 20,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_engine.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    },
+    {
+     "unit": "src/flb_engine.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_input_collector_fd",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 20,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_me_fd_event",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 20,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_mp_count",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 20,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_mp_count_log_records",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 21,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_sched_timer_coro_cleanup",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 22,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "call to uncontracted function `_`": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_sched_timer_coro_create",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 23,
+   "freed": [],
+   "kind": "same-unit",
+   "homes": [
+    {
+     "unit": "src/flb_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 9,
+      "call to uncontracted function `_`": 3,
+      "unresolved resource identity `_`": 2,
+      "inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 1
+     }
+    },
+    {
+     "unit": "src/flb_scheduler.c",
+     "status": "Unknown",
+     "families": {
+      "indirect memory access is outside the resource projection": 9,
+      "call to uncontracted function `_`": 3,
+      "unresolved resource identity `_`": 2,
+      "inline assembly is an opaque boundary: its clobbers and memory effects are not modelled": 1
+     }
+    }
+   ]
+  },
+  {
+   "callee": "flb_sp_fd_event",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 23,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_upstream_conn_timeouts",
+   "alone": 0,
+   "pair": 1,
+   "touched": 1,
+   "cumulative": 24,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "flb_utils_timer_consume",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 25,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "msgpack_pack_map",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 25,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "msgpack_pack_str",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 25,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "msgpack_pack_str_body",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 25,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  },
+  {
+   "callee": "msgpack_pack_uint64",
+   "alone": 0,
+   "pair": 0,
+   "touched": 1,
+   "cumulative": 26,
+   "freed": [],
+   "kind": "external",
+   "homes": []
+  }
+ ]
+}
