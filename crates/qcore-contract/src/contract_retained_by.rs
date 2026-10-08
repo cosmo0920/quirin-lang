@@ -271,5 +271,7 @@ pub(super) fn declaration(
         resets: reset,
         slot_moves: Vec::new(),
         derived_outs: Vec::new(),
+        references: Vec::new(),
+        references_withdrawn: false,
     })
 }

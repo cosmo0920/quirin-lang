@@ -320,6 +320,10 @@ pub(crate) mod retention_guard;
 // Card SLOT-MOVE-AND-INTERIOR-BORROW (rules 12x, 12y, 12z, 13a).
 #[path = "legacy_slot_move_borrow.rs"]
 pub(crate) mod slot_move_route;
+// Card REFCOUNT-RESOURCE-KIND (rules 13b, 13c): reference counts (the
+// operands, the keep and drop transfer, the exit balance, the body checks).
+#[path = "legacy_reference_count.rs"]
+pub(crate) mod reference_route;
 
 // Card W44-C11-GENERIC-SELECTION: a C11 generic selection whose associations
 // are one expression up to pointer casts is lowered to that expression before
@@ -2226,6 +2230,10 @@ fn analyze_legacy_c_tokens_under_holds(
     // declaration whose body this unit defines stands only when it validates.
     let slots_settled = slot_move_route::settle(tokens, contracts);
     let contracts = slots_settled.as_ref().unwrap_or(contracts);
+    // Card REFCOUNT-RESOURCE-KIND (rule 13c): a reference declaration whose
+    // body this unit defines stands only when the body validates it.
+    let references_settled = reference_route::settle(tokens, contracts);
+    let contracts = references_settled.as_ref().unwrap_or(contracts);
     // Card LOADER-ABI-MODES, applied here for the same uniformity reason: this
     // entry point does not pass through the translation-unit pass, so a
     // declaration a body in the same stream contradicts would otherwise still
@@ -2870,6 +2878,10 @@ pub(crate) fn recursive_component_census(
     // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 13a).
     let slots_settled = slot_move_route::settle(&tokens, contracts);
     let contracts = slots_settled.as_ref().unwrap_or(contracts);
+    // Card REFCOUNT-RESOURCE-KIND (rule 13c): a reference declaration whose
+    // body this unit defines stands only when the body validates it.
+    let references_settled = reference_route::settle(&tokens, contracts);
+    let contracts = references_settled.as_ref().unwrap_or(contracts);
     let mut names = function_names(&tokens, &conditionals).definitions;
     // Card W44-CORPUS-CALLEE-SUMMARIES: the same derivation scope as the analysis.
     let definitions = names.clone();
@@ -3006,6 +3018,10 @@ fn analyze_translation_unit_under_holds(
     // Card SLOT-MOVE-AND-INTERIOR-BORROW (rule 13a).
     let slots_settled = slot_move_route::settle(&tokens, contracts);
     let contracts = slots_settled.as_ref().unwrap_or(contracts);
+    // Card REFCOUNT-RESOURCE-KIND (rule 13c): a reference declaration whose
+    // body this unit defines stands only when the body validates it.
+    let references_settled = reference_route::settle(&tokens, contracts);
+    let contracts = references_settled.as_ref().unwrap_or(contracts);
     let mut names = function_names(&tokens, &conditionals).definitions;
     // Card W44-CORPUS-CALLEE-SUMMARIES: every definition, kept before the
     // selection narrows `names`, for the derivation scope below.

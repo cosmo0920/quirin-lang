@@ -1,0 +1,63 @@
+module contract;
+
+// Card REFCOUNT-RESOURCE-KIND (gateway rules 13b, 13c): a generic surface for
+// the reference-count kind. Synthetic trusted test assumptions, not a model of
+// any real library: `rc_keep` stands for `rd_kafka_toppar_keep0` (returns its
+// argument after one increment), `rc_keep_void` for a keep whose result is
+// unit, `rc_drop` for `rd_kafka_toppar_destroy0`, `obj_keep` for a keep wrapper
+// whose body the unit defines over the atomic primitive. The primitive
+// `rc_atomic_add` (the `rd_atomic32_add` stand-in) is deliberately not
+// declared.
+
+extern fn rc_alloc(n: usize) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(n);
+    ensures normal resource_return_owned(nonnull);
+};
+
+extern fn rc_free(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_released(p, nullable);
+    ensures normal resource_return_none();
+};
+
+extern fn rc_use(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_return_none();
+};
+
+extern fn rc_keep(p: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_reference_kept(p);
+    ensures normal resource_return_alias(p, nonnull);
+};
+
+extern fn rc_keep_void(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_reference_kept(p);
+    ensures normal resource_return_none();
+};
+
+extern fn rc_drop(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_reference_dropped(p);
+    ensures normal resource_return_none();
+};
+
+extern fn obj_keep(o: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(o);
+    ensures normal resource_reference_kept(o);
+    ensures normal resource_return_alias(o, nonnull);
+};

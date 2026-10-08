@@ -69,6 +69,9 @@ pub enum Invalid {
     SlotMoved,
     /// Rule 12y: a borrow its parent's release or mutation ended.
     BorrowEnded,
+    /// Card **REFCOUNT-RESOURCE-KIND** (rule 13b): a name bound to a
+    /// reference family whose possibly-final drop discharged it.
+    ReferenceDropped,
 }
 
 /// One borrowed result a name holds (rule 12y): the take that produced it
@@ -693,18 +696,22 @@ pub(super) fn before(
     if !state.invalidated.is_empty() {
         for name in reads(&node.instruction) {
             if let Some(reason) = state.invalidated.get(&name) {
-                let rule = match reason {
-                    Invalid::SlotMoved => ALIAS,
-                    Invalid::BorrowEnded => ENDED,
+                let description = match reason {
+                    Invalid::SlotMoved => format!(
+                        "use of `{name}` after its object moved or its parent changed ({ALIAS})"
+                    ),
+                    Invalid::BorrowEnded => format!(
+                        "use of `{name}` after its object moved or its parent changed ({ENDED})"
+                    ),
+                    Invalid::ReferenceDropped => format!(
+                        "use of `{name}` after a possibly-final drop of its reference ({})",
+                        crate::reference_count::DROPPED
+                    ),
                 };
                 diagnostics.insert(LegacyDiagnostic {
                     function: function.to_owned(),
                     line: node.line,
-                    kind: LegacyDiagnosticKind::Unsupported {
-                        description: format!(
-                            "use of `{name}` after its object moved or its parent changed ({rule})"
-                        ),
-                    },
+                    kind: LegacyDiagnosticKind::Unsupported { description },
                 });
                 state.unmodeled = true;
             }
@@ -845,7 +852,7 @@ pub(super) fn join(state: &mut AbstractState, incoming: &AbstractState) {
 }
 
 /// The parameter names and body words of `function`'s definition in `tokens`.
-fn defined_body<'a>(tokens: &'a [Token], function: &str) -> Option<(Vec<String>, Vec<&'a str>)> {
+pub(super) fn defined_body<'a>(tokens: &'a [Token], function: &str) -> Option<(Vec<String>, Vec<&'a str>)> {
     let (parameters, open) = super::retention_guard::definition(tokens, function)?;
     let close = super::matching(tokens, open, "{", "}")?;
     let words = tokens[open..=close]

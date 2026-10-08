@@ -64,6 +64,9 @@ pub struct Operands {
     /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (rules 12x, 12z): the slot
     /// operands, applied after the retentions ([`super::slot_move_route`]).
     pub slots: Vec<super::slot_move_route::SlotOperand>,
+    /// Card **REFCOUNT-RESOURCE-KIND** (rule 13b): the keeps and drops,
+    /// applied after the slots ([`super::reference_route`]).
+    pub references: Vec<super::reference_route::ReferenceOperand>,
 }
 
 /// The environment the parser reads: `contracts` plus the custody contract of
@@ -83,7 +86,11 @@ pub(super) fn retaining_environment(
     }
     let mut environment = contracts.clone();
     for (name, declaration) in retaining {
-        environment.insert_contract(retained_name(name), declaration.contract.clone());
+        // Card REFCOUNT-RESOURCE-KIND: a keep's alias result is the route's.
+        environment.insert_contract(
+            retained_name(name),
+            super::reference_route::custody_contract(declaration),
+        );
     }
     Some(environment)
 }
@@ -224,7 +231,19 @@ impl Parser<'_> {
             retentions: Vec::new(),
             resets: Vec::new(),
             slots: Vec::new(),
+            references: Vec::new(),
         };
+        // Card REFCOUNT-RESOURCE-KIND (rules 13b, 13c): the reference
+        // operands, or the refusal of a declaration withdrawn in this unit.
+        if !declaration.references.is_empty() {
+            let owned = |index: usize| -> Option<Vec<String>> {
+                actual(index).map(|words| words.iter().map(|word| (*word).to_owned()).collect())
+            };
+            match self.reference_operands(function, &declaration, &owned) {
+                Ok(references) => operands.references = references,
+                Err(description) => return Some(refuse(self, description)),
+            }
+        }
         for retention in &declaration.retentions {
             // Card W43-ABI-ENUM-AND-CONST-PP (rule 12w): a guarded clause a
             // decided actual fails is not in force at this call; a decided
@@ -320,6 +339,8 @@ impl Parser<'_> {
             }
             _ => {}
         }
+        // Card REFCOUNT-RESOURCE-KIND (rule 13b): the site a keep may mint.
+        self.reserve_reference_site(&mut instruction);
         Some(instruction)
     }
 

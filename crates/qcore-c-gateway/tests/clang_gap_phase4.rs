@@ -371,9 +371,12 @@ fn k06_derived_results_have_no_offset_or_length() {
 /// CG00's BEFORE control for K07 held at `b6a3dc42` (four kinds). Card
 /// CG25-RESOURCE-KINDS (rule 11v) adds the `dynamic_library` and in-place
 /// `regex` kinds, each with a declared use; an undeclared spelling such as a
-/// generic `handle` stays outside resource v1.
+/// generic `handle` stays outside resource v1. Card REFCOUNT-RESOURCE-KIND
+/// (rule 13b) adds the reference kind, created and discharged only by its own
+/// clauses and never spelled by a kind clause (deliberate update: six kinds to
+/// seven).
 #[test]
-fn k07_resource_kinds_are_exactly_six() {
+fn k07_resource_kinds_are_exactly_seven() {
     assert_eq!(
         ResourceKind::ALL,
         [
@@ -383,8 +386,12 @@ fn k07_resource_kinds_are_exactly_six() {
             ResourceKind::Directory,
             ResourceKind::DynamicLibrary,
             ResourceKind::Regex,
+            ResourceKind::Reference,
         ]
     );
+    let error = load("    ensures normal resource_borrowed(p);\n    ensures normal resource_borrowed(n);\n    ensures normal resource_return_owned(nonnull);\n    ensures normal resource_return_kind(reference);\n")
+        .expect_err("the reference kind is not spelled by a kind clause");
+    assert!(error.contains("resource_reference_kept"), "{error}");
     let error = load("    ensures normal resource_borrowed(p);\n    ensures normal resource_borrowed(n);\n    ensures normal resource_return_owned(nonnull);\n    ensures normal resource_return_kind(handle);\n")
         .expect_err("an undeclared kind is outside resource v1");
     assert!(!error.is_empty());

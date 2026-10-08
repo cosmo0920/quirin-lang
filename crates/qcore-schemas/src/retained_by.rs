@@ -184,6 +184,19 @@ pub struct RetainingContract {
     /// `resource_out_derived(s, p, n)`, in clause order; at most one per slot.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub derived_outs: Vec<crate::slot_move::DerivedOut>,
+    /// Card **REFCOUNT-RESOURCE-KIND** (§C04.17, rule 13b):
+    /// `resource_reference_kept(p)` / `resource_reference_dropped(p)`, in
+    /// clause order; at most one per declaration. Omitted when empty.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub references: Vec<crate::reference_count::ReferenceClause>,
+    /// Card **REFCOUNT-RESOURCE-KIND** (rule 13c): set only in a translation
+    /// unit whose own body of the declaration does not validate its reference
+    /// clause. Every call there refuses (`reference-withdrawn`); the
+    /// declaration is not dropped from the table, so no inference reads the
+    /// body in its place (the neutral reading is never admitted). Never set
+    /// by the loader; omitted when false.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub references_withdrawn: bool,
 }
 
 impl RetainingContract {

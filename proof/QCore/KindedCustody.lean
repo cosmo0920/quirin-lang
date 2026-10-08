@@ -62,6 +62,11 @@ inductive Kind where
   | directory
   | dynamicLibrary
   | regex
+  /-- Card REFCOUNT-RESOURCE-KIND (§C04.17): one reference a function holds on
+  a reference-counted object (`QCore.ReferenceCount`). A use after its last
+  drop is refused there, never accused, so this model's use-after-close
+  candidate excludes it as it excludes the heap. -/
+  | reference
   deriving DecidableEq, Repr
 
 /-- The kinds carried by an integer rather than a pointer. -/
@@ -162,7 +167,7 @@ def transfer (s : State) : Instruction → State
   | .use x =>
       match s.binding x with
       | some site =>
-          if s.status site = some .released ∧ s.kind site ≠ .heap then
+          if s.status site = some .released ∧ s.kind site ≠ .heap ∧ s.kind site ≠ .reference then
             { s with diagnostics := .useAfterClose site :: .unknown :: s.diagnostics }
           else transferBase s (.use x)
       | none => s
@@ -416,12 +421,13 @@ theorem arithmetic_creates_no_identity (s : State) (y x : Nat) :
 
 /-! ### Use after close -/
 
-/-- A use of a released non-heap identity is a candidate. -/
+/-- A use of a released non-heap identity is a candidate (a reference's is
+refused, as the heap's is). -/
 theorem a_use_after_close_is_a_candidate (s : State) (x site : Nat)
     (hb : s.binding x = some site) (hr : s.status site = some .released)
-    (hk : s.kind site ≠ .heap) :
+    (hk : s.kind site ≠ .heap) (hn : s.kind site ≠ .reference) :
     .useAfterClose site ∈ (transfer s (.use x)).diagnostics := by
-  simp [transfer, hb, hr, hk]
+  simp [transfer, hb, hr, hk, hn]
 
 /-- The heap keeps its pre-existing refusal, unaccused. -/
 theorem a_heap_use_after_release_keeps_its_refusal (s : State) (x site : Nat)

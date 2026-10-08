@@ -69,6 +69,7 @@ def _root_.QCore.KindedCustody.Kind.spelling : Kind → String
   | .directory => "directory"
   | .dynamicLibrary => "dynamic_library"
   | .regex => "regex"
+  | .reference => "reference"
 
 def Carrier.word : Carrier → String
   | .pointer => "pointer"
@@ -77,7 +78,7 @@ def Carrier.word : Carrier → String
 
 /-- Every kind, in the Rust `ResourceKind::ALL` order. -/
 def allKinds : List Kind :=
-  [.heap, .descriptor, .stream, .directory, .dynamicLibrary, .regex]
+  [.heap, .descriptor, .stream, .directory, .dynamicLibrary, .regex, .reference]
 
 /-- `KIND_VECTORS`: spelling, carrier, integer-carried, in place. -/
 def kindVectors : List (String × String × Bool × Bool) := [
@@ -86,7 +87,8 @@ def kindVectors : List (String × String × Bool × Bool) := [
   ("stream", "pointer", false, false),
   ("directory", "pointer", false, false),
   ("dynamic_library", "pointer", false, false),
-  ("regex", "storage", false, true)
+  ("regex", "storage", false, true),
+  ("reference", "pointer", false, false)
 ]
 
 theorem kind_vectors_are_the_table :
@@ -143,7 +145,7 @@ theorem a_symbol_lookup_after_close_is_a_candidate (s : State) (x site : Nat)
     (hb : s.binding x = some site) (hr : s.status site = some .released)
     (hk : s.kind site = .dynamicLibrary) :
     .useAfterClose site ∈ (transfer s (.use x)).diagnostics :=
-  a_use_after_close_is_a_candidate s x site hb hr (by simp [hk])
+  a_use_after_close_is_a_candidate s x site hb hr (by simp [hk]) (by simp [hk])
 
 /-! ### The in-place model -/
 

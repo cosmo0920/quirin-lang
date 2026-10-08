@@ -319,6 +319,9 @@ mod retained_by;
 // the borrowed result (§C04.3.4).
 #[path = "contract_slot_move.rs"]
 pub mod slot_move;
+// Card REFCOUNT-RESOURCE-KIND: the reference clauses (§C04.17).
+#[path = "contract_reference_count.rs"]
+mod reference_count;
 use qcore_schemas::contract::{
     ContractTrust, DerivedExtent, PendingHumanReview, ResourceContracts, ResourceFunctionContract,
     ResourceKind, ResourceParameterMode, ResourceReturnMode, ReviewDeferral, ReviewDisposition,
@@ -1658,6 +1661,9 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     // Card SLOT-MOVE-AND-INTERIOR-BORROW: every `resource_slot_moved(s, n)` and
     // `resource_out_derived(s, p, n)`, as written, in clause order.
     let mut slot_clauses: Vec<slot_move::WrittenSlot> = Vec::new();
+    // Card REFCOUNT-RESOURCE-KIND: every `resource_reference_kept(p)` and
+    // `resource_reference_dropped(p)`, as written, in clause order.
+    let mut reference_clauses: Vec<reference_count::WrittenReference> = Vec::new();
     for clause in clauses {
         let requires = clause.value.kind == SourceContractClauseKind::Requires;
         // Card W45-CONTRACT-REVISION-MODE: a revision marker, contract-level (a
@@ -1861,6 +1867,13 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         // every mode is read.
         if let Some(written) = slot_move::clause(&words) {
             slot_clauses.push(written);
+            continue;
+        }
+        // Card REFCOUNT-RESOURCE-KIND (§C04.17): the reference clauses, read
+        // before the parameter predicates; validated below once every mode is
+        // read.
+        if let Some(written) = reference_count::clause(&words) {
+            reference_clauses.push(written);
             continue;
         }
         // The variadic data tail is a *whole-declaration* fact, not a parameter
@@ -2262,7 +2275,11 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         .map(|class| class.contract)
         .ok_or("missing parameter mode")?;
     // Card CALLEE-RETENTION-CLASS1 (§C04.14).
-    let retaining = if retentions.is_empty() && resets.is_empty() && slot_clauses.is_empty() {
+    let retaining = if retentions.is_empty()
+        && resets.is_empty()
+        && slot_clauses.is_empty()
+        && reference_clauses.is_empty()
+    {
         None
     } else {
         if is_relational
@@ -2313,6 +2330,31 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         }
         declared.slot_moves = slot_moves;
         declared.derived_outs = derived_outs;
+        // Card REFCOUNT-RESOURCE-KIND (§C04.17).
+        let references = reference_count::declaration(
+            &reference_clauses,
+            &contract,
+            &parameter_types,
+            &parameter_kinds,
+            &names,
+        )?;
+        if let Some(reference) = references.iter().find(|reference| {
+            declared
+                .retentions
+                .iter()
+                .any(|retention| retention.retained == reference.parameter)
+                || declared.slot_moves.iter().any(|moved| moved.slot == reference.parameter)
+                || declared
+                    .derived_outs
+                    .iter()
+                    .any(|out| out.slot == reference.parameter || out.base == reference.parameter)
+        }) {
+            return Err(format!(
+                "a referenced object is not also retained or a slot (parameter {})",
+                reference.parameter
+            ));
+        }
+        declared.references = references;
         Some(declared)
     };
     Ok(LoadedDeclaration {
@@ -3141,6 +3183,13 @@ fn declared_kind(word: &str) -> Result<ResourceKind, String> {
         Some(ResourceKind::Heap) => {
             Err("the heap kind is spelled by omitting the kind clause, not by `heap`".into())
         }
+        // Card REFCOUNT-RESOURCE-KIND (§C04.17): a reference is created and
+        // discharged only by the reference clauses, counted per object.
+        Some(ResourceKind::Reference) => Err(
+            "the reference kind is spelled by `resource_reference_kept` and \
+             `resource_reference_dropped`, not by a kind clause"
+                .into(),
+        ),
         Some(kind) => Ok(kind),
         None => Err(format!("unsupported resource kind {word}")),
     }

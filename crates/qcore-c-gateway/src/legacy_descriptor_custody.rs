@@ -532,6 +532,10 @@ pub(crate) fn site_kinds<'a>(
 ) -> BTreeMap<usize, ResourceKind> {
     let mut kinds = BTreeMap::new();
     for instruction in instructions {
+        // Card REFCOUNT-RESOURCE-KIND (rule 13b): the family a keep mints.
+        if let Some((site, kind)) = super::reference_route::site_kind(instruction) {
+            kinds.insert(site, kind);
+        }
         let LegacyInstruction::ContractCall {
             contract,
             produced_sites,

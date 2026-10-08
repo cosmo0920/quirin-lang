@@ -48,11 +48,15 @@ const MAX_ARGUMENT_VALUES: usize = 16;
 
 /// The observed kind a declared resource kind binds to. Heap has none, and
 /// neither has a kind the native descriptor harness does not record (card
-/// CG25-RESOURCE-KINDS: `dynamic_library`, `regex`); binding one is an error.
+/// CG25-RESOURCE-KINDS: `dynamic_library`, `regex`; card REFCOUNT-RESOURCE-KIND:
+/// `reference`); binding one is an error.
 #[must_use]
 pub fn observed_kind(kind: ResourceKind) -> Option<Kind> {
     match kind {
-        ResourceKind::Heap | ResourceKind::DynamicLibrary | ResourceKind::Regex => None,
+        ResourceKind::Heap
+        | ResourceKind::DynamicLibrary
+        | ResourceKind::Regex
+        | ResourceKind::Reference => None,
         ResourceKind::Descriptor => Some(Kind::Fd),
         ResourceKind::Stream => Some(Kind::File),
         ResourceKind::Directory => Some(Kind::Dir),

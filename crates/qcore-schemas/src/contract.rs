@@ -144,6 +144,13 @@ pub enum ResourceKind {
     /// returned pointer. Its failure value is a nonzero status from the
     /// initialising call. See [`ResourceKind::is_in_place`].
     Regex,
+    /// Card **REFCOUNT-RESOURCE-KIND** (§C04.17, gateway rule 13b): one
+    /// reference a function holds on a reference-counted object. Pointer-
+    /// carried. Created only by `resource_reference_kept` and discharged only
+    /// by `resource_reference_dropped`, never by a heap release; no
+    /// `resource_kind` clause spells it, because its obligation is counted per
+    /// object rather than owned per pointer.
+    Reference,
 }
 
 /// Card **CG25-RESOURCE-KINDS**: what carries a kind's identity.
@@ -161,13 +168,14 @@ pub enum ResourceCarrier {
 
 impl ResourceKind {
     /// Every kind, in declaration order.
-    pub const ALL: [Self; 6] = [
+    pub const ALL: [Self; 7] = [
         Self::Heap,
         Self::Descriptor,
         Self::Stream,
         Self::Directory,
         Self::DynamicLibrary,
         Self::Regex,
+        Self::Reference,
     ];
 
     #[must_use]
@@ -181,9 +189,11 @@ impl ResourceKind {
         match self {
             Self::Descriptor => ResourceCarrier::Integer,
             Self::Regex => ResourceCarrier::Storage,
-            Self::Heap | Self::Stream | Self::Directory | Self::DynamicLibrary => {
-                ResourceCarrier::Pointer
-            }
+            Self::Heap
+            | Self::Stream
+            | Self::Directory
+            | Self::DynamicLibrary
+            | Self::Reference => ResourceCarrier::Pointer,
         }
     }
 
@@ -216,6 +226,7 @@ impl ResourceKind {
             Self::Directory => "directory",
             Self::DynamicLibrary => "dynamic_library",
             Self::Regex => "regex",
+            Self::Reference => "reference",
         }
     }
 

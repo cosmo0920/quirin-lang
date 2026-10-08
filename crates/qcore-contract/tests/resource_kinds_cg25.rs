@@ -34,6 +34,8 @@ fn every_kind_has_one_spelling_and_one_carrier() {
             ("directory", ResourceCarrier::Pointer),
             ("dynamic_library", ResourceCarrier::Pointer),
             ("regex", ResourceCarrier::Storage),
+            // Card REFCOUNT-RESOURCE-KIND (§C04.17).
+            ("reference", ResourceCarrier::Pointer),
         ]
     );
     for kind in ResourceKind::ALL {

@@ -281,6 +281,11 @@ pub(super) struct AbstractState {
     /// Card **SLOT-MOVE-AND-INTERIOR-BORROW** (rule 12y): the borrowed results
     /// each name holds. Joined by union.
     pub(super) borrows: BTreeMap<String, BTreeSet<slot_move_route::Borrow>>,
+    /// Card **REFCOUNT-RESOURCE-KIND** (rule 13b): the reference families
+    /// this path holds, by site, with their counts. Joined by site, a count
+    /// the arriving paths disagree on becoming undecided. Empty in every
+    /// function that calls no keep, which keeps the join as it was.
+    pub(super) references: BTreeMap<usize, crate::reference_count::Held>,
 }
 
 /// The scalar facts one abstract state proves: a name bound to the null
@@ -403,6 +408,7 @@ impl AbstractState {
         in_place_custody::join_witnesses(&mut self.status_witnesses, &incoming.status_witnesses);
         self.retained.extend(incoming.retained.iter().cloned());
         slot_move_route::join(self, incoming);
+        reference_route::join(self, incoming);
         self.widened |= incoming.widened;
         self.unmodeled |= incoming.unmodeled;
         self.join_collections(&before, incoming);
@@ -1865,6 +1871,14 @@ pub(crate) fn analyze_cfg_with_entry(
             );
             // Card CALLEE-RETENTION-CLASS1 (rule 12t).
             retained_by_route::report_exit(&cfg.function, node.line, &output, &mut diagnostics);
+            // Card REFCOUNT-RESOURCE-KIND (rule 13b): what each family owes.
+            reference_route::report_exit(
+                &cfg.function,
+                node.line,
+                &output,
+                &acquisition_lines,
+                &mut diagnostics,
+            );
         }
         for (edge, &successor) in node.successors.iter().enumerate() {
             let mut edge_output = output.clone();
@@ -3950,6 +3964,19 @@ pub(super) fn transfer_base(
                     &mut state,
                     diagnostics,
                 );
+                // Card REFCOUNT-RESOURCE-KIND (rule 13b): the keeps and drops.
+                if !operands.references.is_empty() {
+                    reference_route::apply(
+                        function,
+                        node.line,
+                        called,
+                        &operands.references,
+                        destination.as_deref(),
+                        produced_sites,
+                        &mut state,
+                        diagnostics,
+                    );
+                }
             }
         }
         LegacyInstruction::OpaqueValue {
@@ -5341,8 +5368,12 @@ pub(super) fn report_kind_violations(
                         released: expected,
                     }
                 }
+                // Card REFCOUNT-RESOURCE-KIND: a reference used after its
+                // last drop is refused (rule 13b), never accused, as the
+                // heap's use after release is.
                 ResourceParameterMode::Borrowed
                     if !acquired.is_heap()
+                        && acquired != ResourceKind::Reference
                         && state
                             .resources
                             .get(&site)
@@ -5736,9 +5767,12 @@ pub(super) fn report_leaks(
     diagnostics: &mut BTreeSet<LegacyDiagnostic>,
 ) {
     for (&site, &status) in &state.resources {
+        // Card REFCOUNT-RESOURCE-KIND (rule 13b): a reference family's
+        // balance is `reference_route::report_exit`'s.
         if status & LIVE != 0
             && !exempt.contains(&site)
             && !state.unresolved_effect_sites.contains(&site)
+            && !state.references.contains_key(&site)
         {
             diagnostics.insert(LegacyDiagnostic {
                 function: function.to_owned(),

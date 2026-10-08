@@ -17,6 +17,8 @@ pub mod plugin;
 pub mod profile;
 pub mod reactor;
 pub mod reason;
+// Card REFCOUNT-RESOURCE-KIND: reference counts.
+pub mod reference_count;
 // Card CG23-RELATIONAL-POSTCONDITIONS: return-code dispositions.
 pub mod relational_post;
 pub mod retained_by;
