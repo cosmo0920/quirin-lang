@@ -110,8 +110,12 @@ corpus **881 / 9 / 3,944** `36fd1649…` (432.5 s), system 87 / 4 / 357
 
 ## 3. AFTER and the identity proof
 
-Binary `private/vcd/bin/a4` `851bf3dd…` (= `run.json`), every route exit 0:
-corpus 436.9 s, system 60.8 s, slice 27.1 s (no measurable cost).
+Binary `private/vcd/bin/a5` `377d3462…` (= `run.json`; the card's final
+code), every route exit 0: corpus 433.0 s, system 58.7 s, slice 27.2 s (no
+measurable cost against BEFORE's 432.5 / 58.7 / 26.2 s). The first AFTER,
+`a4` (`851bf3dd…`), wrote byte-identical reports on every route; between the
+two the gate found two defects, both fixed before `a5` (§8), neither on a path
+the routes take.
 [`scripts/identity.sh`](scripts/identity.sh) runs
 [`verdict_projection.py`](scripts/verdict_projection.py) and `parity.py` on
 each route. The projection removes exactly the card's keys and re-serialises
@@ -222,7 +226,16 @@ and `crates/qcore-audit/tests/contract_dependencies_report.rs`.
 
 ## 8. Gate
 
-See [gate](#gate-records) below (filled from `private/vcd/gate-*`).
+Gate `g2` (at `8b200b77d`) failed two test binaries, both the card's defects,
+fixed at `58bc2b290`: `qcore-contract::contract_inherit` (7): the
+inherited-declaration agreement compared the rendered literal-argument
+premise, which names each declaration's own parameter, so a child inheriting
+a literal premise (`flb_table_put` from `cfl_table_put`) was refused; it now
+compares the named premises only (the literal premise is compared by index
+as before). `qcore-audit::checkpoint_cli` (3): the composer printed the
+dependency tally after the refutation tally, the whole run before it. An
+earlier attempt (`g1`) stopped at clippy (`collapsible_match`, fixed at
+`8b200b77d`). Final gate: [gate.json](gate.json) and [gate/](gate/).
 
 ## 9. Ledger
 

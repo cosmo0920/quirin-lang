@@ -5700,7 +5700,7 @@ own anchor here.
     settled (`qcore_audit::contract_dependencies::annotate_unit`). **Do not**
     read the log from any analysis decision, attribute a lookup a body does
     not spell to its row, or source the set from a lexical scan alone.
-    Measured (binary `851bf3dd…`): every row of corpus (4,834), system (448)
+    Measured (binary `377d3462…`): every row of corpus (4,834), system (448)
     and slice (404) carries it; corpus Safe rows rest on 0.77 declarations on
     average (at most 12). Controls in `tests/contract_dependencies.rs`;
     `QCore.ContractDependencies` (`an_applied_call_is_a_dependency`,
