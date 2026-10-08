@@ -1799,6 +1799,14 @@ as a named premise; a certificate missing one is refused (`Q067`). It replaces
 the former "the builder links the library that supplies each callee" premise;
 the builder keeps only the include path.
 
+A legacy-C audit row names, as its `assumptions`, the contract declarations
+its derivation consulted (`contract_dependencies`, card
+VERDICT-CONTRACT-DEPENDENCIES, contract specification C06.5): each with its
+contract digest, mode, status, body standing (`validated`,
+`declared-assumption`, `held`) and premises in the run's dependency section.
+Before the card those were listed only run-wide; the tuple's shape is
+unchanged, and the field decides nothing.
+
 **Safe** means that the named property is established for the identified subject, scope, and assumptions with complete coverage under the selected profile. **Unsafe** means a validated defect or counterexample under that profile. **Unknown** means the requested property was not established, including unsupported behavior, incomplete imports, missing premises, invalid evidence, or exhausted analysis bounds. **Pending** (card W45-USER-CONTRACT-PLUGINS, approved 2026-09-26) means the requested property was not decided by the tool and awaits a named human act: a review edit (`awaiting-human-review`), a re-pin after review (`contract-pin-mismatch`) or a checkable certificate for a checker plugin's claim (`plugin-claim-uncertified`). Pending is not Safe, stays in every denominator exactly as Unknown does, and is produced only by one of those named reasons (§L21.2).
 
 These words MUST NOT be repurposed to mean successful parsing, a green build, contract loading, or observed cleanup in a few fixtures. Rejection of malformed source is a compilation result, not necessarily a semantic counterexample to a well-formed program.

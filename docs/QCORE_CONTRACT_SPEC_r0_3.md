@@ -80,7 +80,7 @@ The selected source set MUST be nonempty. Every selected source MUST parse as a 
 Every extern declaration MUST satisfy all of the following:
 
 1. Its entire signature belongs to the admitted ABI projection, with unique parameter names and no usage annotations, generics, effects, extra signature syntax, or ignored tail tokens.
-2. It has exactly one `requires resource_contract_v1;` marker. The only other admitted preconditions are the literal-argument premise of C04.5, the checked-specification marker of C06.3, the loop-owner obligation of C04.9 and the thread-synchronization obligation of C04.10; every other `requires` spelling is rejected.
+2. It has exactly one `requires resource_contract_v1;` marker. The only other admitted preconditions are the literal-argument premise of C04.5, the checked-specification marker of C06.3, the loop-owner obligation of C04.9, the thread-synchronization obligation of C04.10 and the named premise of C04.18; every other `requires` spelling is rejected.
 3. Every other clause is an admitted `ensures normal` predicate call. Each parameter receives exactly one mode and the result receives exactly one result mode.
 4. Parameter/result types, nullability arguments, ownership references and return references meet the compatibility rules below.
 
@@ -839,6 +839,27 @@ contract {
 
 **Checked against bodies (rule 13c).** In a unit that defines a keep or drop declaration's body (a header `static inline` body is defined in every unit that includes it), the declaration stands only when the body validates it structurally: `p` is never assigned and never has its address taken; it is mentioned only through member accesses, as a whole actual of a call, or in a null test; nothing stores or returns it except a keep's `return p;` (an alias keep returns exactly `p`, every other body returns nothing); the body has no `goto`; and it touches the object (a member access, or a whole actual at the same reference position of a declared callee: `rd_kafka_q_destroy_owner` forwards to `rd_kafka_q_destroy0`). Otherwise the declaration is marked withdrawn in that unit: every call there refuses (`reference-withdrawn`), and — unlike rule 13a's withdrawal — it is not dropped, so no inference reads the body in its place. The check establishes that the body hands back exactly its argument and keeps or stores nothing else of it; that the count arithmetic is the one declared stays a declared assumption (constraint 4), pinned to the body (C06.2). The Lean model is `QCore.ReferenceCount`.
 
+### C04.18. Named premises
+
+Card VERDICT-CONTRACT-DEPENDENCIES (user direction 2026-10-09, "handle as safe as possible"). A declaration MAY name an assumption it rests on that its clauses do not state, beside the selector:
+
+```qcore
+extern fn rd_kafka_q_purge0(rkq: ptr<mut, u8>, do_lock: i32) -> i32
+contract {
+    requires resource_contract_v1;
+    requires resource_premise(served_queue, "an op callback the call may run (rd_kafka_op_handle, rd_kafka_op_call, rd_kafka_op_destroy) takes over no reference the caller holds on the served queue");
+    ensures normal resource_borrowed(rkq);
+    ensures normal resource_borrowed(do_lock);
+    ensures normal resource_return_none();
+};
+```
+
+**Loading.** Total-or-reject (C04). `NAME` is a lowercase identifier (`[a-z][a-z0-9_]*`) and `STATEMENT` one plain string literal, not blank, with no escape and no control character; a second premise of the same name on one declaration, any other argument shape, and the clause under `ensures` each reject the **whole module**. A declaration MAY carry several premises of distinct names. The grammar is [G05](QCORE_IMPLEMENTED_GRAMMARS_r0_3.md#g05-resource-loader-v1).
+
+**Meaning.** The premise changes no mode and applies or withdraws nothing: the function map is the map the declaration has without it, and no consumer that decides a verdict reads it. It is rederived from the retained texts (`declaration_premises`, `declared_premises`), as the literal-argument premise (C04.5) and the checked-specification marker (C06.3) are, and published with every row that rests on the declaration (C06.5). Because the clause is part of the declaration's text, the declaration's contract digest — and so its pin (C06.2) — covers it: adding, removing or rewording a premise takes a pinned declaration out of force until it is reviewed and pinned again. Each literal-argument premise (C04.5) is reported as the premise `literal_argument` (`p = LITERAL`), and the premises a rule states for a clause are reported with it (rule 13e's `P-RESULT-HOLDER-LAST-DROP` and `P-RETAINED-PREDEFINED` for `resource_retained_by(p, result)`).
+
+**Inheritance (C15).** Elaboration copies a parent's clauses, premises included, and the agreement check compares them, so a child never sheds its parent's premise.
+
 ## C05. Manifests and immutable assumptions
 
 A resource manifest has the following existing version-1 shape:
@@ -885,6 +906,12 @@ An inferred summary MUST be invalidated when the function, its relevant callees,
 **Derivation scope (card W44-CORPUS-CALLEE-SUMMARIES).** Under a main-source selection, the definitions an inference considers MAY exceed the definitions the unit reports, but only by unselected definitions the selection reaches through direct calls that have **internal linkage on their own definition** (`static`, not `extern`; C11 6.2.2p3), so that every call to them in the unit runs the analysed body, and whose names are not reserved in every context (`__x`, `_X`; C11 7.1.3), which leaves C library header bodies to the libc provider. A definition of external linkage MUST NOT be admitted this way: a call to a function with an inline definition may run the external definition instead (C11 6.7.4p7). An admitted definition obtains a summary only through the same validation, never changes the reported scope, and is re-derived by a certificate check from the same selection. The Lean model is `QCore.CalleeSummaryScope`.
 
 **Objects released through a formal (card W45-CALLEE-SUMMARY-CASCADE).** A validated inference MAY rest on a body that hands a member `B->F` of a formal `B` to a `resource_released(_, nullable)` position, provided the read's obligations pass (every base resolves, no base owns sub-custody and no read place is bound, so the released object is none the analysis tracks) and the release is the last use of that place: `B` is never copied, the place is released once and before that only null-tested, no loop or non-local jump can repeat the release, and `B` itself is released afterwards on every path, so the inference states `resource_released` for `B`. Such a summary states the formals' modes only, and the objects it releases through a formal are not in its vocabulary; therefore every call to a function defined in the unit whose contract in force is not a declaration, and whose body or a body it calls hands such a read to a call, MUST refuse an actual whose target owns sub-custody (a field link, a contained child or an indexed collection) before the summary is applied. A non-null release of such a read and a release of a member address MUST keep the refusal. The Lean model is `QCore.MemberRelease`.
+
+### C06.5. Per-verdict contract dependencies
+
+Card VERDICT-CONTRACT-DEPENDENCIES (gateway rules 13f–13h). Every published legacy-C row carries `contract_dependencies`: the declarations its derivation consulted, split by their standing at the consultation (`declarations` in force, `held`, `withdrawn`), and the in-unit `summaries` whose own dependencies were added. The set is taken from the route's own consultations — every lookup of the row's own work whose name the row's body spells, every callee its solved CFG applies a contract of, its own name (its entry contract), and transitively those of every in-unit summary it consulted. It may over-approximate; it never omits a declaration a consulted call relied on.
+
+The audit's contract sidecar carries a `contract_dependencies` section: per declaration its contract digest, mode and status (C06.2), its premises (C04.18), the rows and `Safe` rows that consulted it, and its **body standing** for the run. A declaration is `validated` only where every unit that examined one of its bodies validated it — an equal W4 summary, the body analysed under the declaration's entry custody matching every exit and `Safe` with no diagnostic, or a structural check of gateway rules 11r, 12w, 13a, 13c and 13d — and at least one did; one held for a human act (C06.1, C06.2) is `held`; every other is a `declared-assumption`: there is no analysed body, or one did not validate it, and the declaration stands as reviewed (this section's opening paragraph). A declared assumption is never labelled `validated`. The section ends with the reviewer's roll-up of the `Safe` rows (resting on no declaration, only on validated declarations, on a declared assumption) and the twenty declared assumptions most `Safe` rows rest on. Both the row field and the section are evidence: no verdict reads them, and removing them restores the report byte for byte. The Lean model is `QCore.ContractDependencies`.
 
 ### C06.1. Contracts awaiting human review
 

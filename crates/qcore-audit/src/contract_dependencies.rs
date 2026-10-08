@@ -320,22 +320,37 @@ impl Facts {
     }
 }
 
-/// The run-level body standing of one declaration (rule 13g).
+/// The run-level body standing of one declaration (rule 13g): `held` for a
+/// declaration held for a human act (`status` `pending-review` or
+/// `not-in-force`); `validated` only when some unit validated an examined
+/// body and none left one unvalidated or failed; otherwise
+/// `declared-assumption`. `QCore.ContractDependencies.standing`.
 #[must_use]
-fn body_standing(status: Option<&str>, bodies: Option<&Bodies>) -> &'static str {
+pub fn body_standing_of(
+    status: Option<&str>,
+    validated_units: usize,
+    unvalidated_units: usize,
+    failed_units: usize,
+) -> &'static str {
     if matches!(status, Some("pending-review" | "not-in-force")) {
         return "held";
     }
-    match bodies {
-        Some(bodies)
-            if bodies.validated_units > 0
-                && bodies.unvalidated_units == 0
-                && bodies.failed_units == 0 =>
-        {
-            "validated"
-        }
-        _ => "declared-assumption",
+    if validated_units > 0 && unvalidated_units == 0 && failed_units == 0 {
+        "validated"
+    } else {
+        "declared-assumption"
     }
+}
+
+fn body_standing(status: Option<&str>, bodies: Option<&Bodies>) -> &'static str {
+    let (validated, unvalidated, failed) = bodies.map_or((0, 0, 0), |bodies| {
+        (
+            bodies.validated_units,
+            bodies.unvalidated_units,
+            bodies.failed_units,
+        )
+    });
+    body_standing_of(status, validated, unvalidated, failed)
 }
 
 /// The section for `facts` under the rendered `contract_revision` section
