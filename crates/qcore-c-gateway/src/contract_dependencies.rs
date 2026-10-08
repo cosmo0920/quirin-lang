@@ -262,11 +262,10 @@ pub(crate) fn body(function: &str, tokens: &[crate::legacy_c::Token], start: usi
             text if text
                 .chars()
                 .next()
-                .is_some_and(|first| first == '_' || first.is_ascii_alphabetic()) =>
+                .is_some_and(|first| first == '_' || first.is_ascii_alphabetic())
+                && !names.contains(text) =>
             {
-                if !names.contains(text) {
-                    names.insert(text.to_owned());
-                }
+                names.insert(text.to_owned());
             }
             _ => {}
         }
