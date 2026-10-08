@@ -775,6 +775,11 @@ contract {
 // are not modelled (`CG22-CALLBACK-REGISTRY-CONTRACT`); `rd_kafka_q_serve*`
 // and `rd_kafka_q_pop_serve*`, which take a callback argument, stay
 // undeclared.
+//
+// Card VERDICT-CONTRACT-DEPENDENCIES: both declarations state the premise as
+// `requires resource_premise(served_queue, "...")` (contract spec C04.18), so
+// every verdict that rests on either names it; the review evidence is
+// `docs/reports/refcount-family-blocking-callees/README.md` section 9.
 
 // ## Waiting on and purging a queue
 //
@@ -808,6 +813,7 @@ contract {
 extern fn rd_kafka_q_wait_result(rkq: ptr<mut, u8>, timeout_ms: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(served_queue, "an op callback the call may run (rd_kafka_op_handle, rd_kafka_op_call, rd_kafka_op_destroy) takes over no reference the caller holds on the served queue");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(timeout_ms);
     ensures normal resource_return_none();
@@ -826,6 +832,7 @@ contract {
 extern fn rd_kafka_q_purge0(rkq: ptr<mut, u8>, do_lock: i32) -> i32
 contract {
     requires resource_contract_v1;
+    requires resource_premise(served_queue, "an op callback the call may run (rd_kafka_op_handle, rd_kafka_op_call, rd_kafka_op_destroy) takes over no reference the caller holds on the served queue");
     ensures normal resource_borrowed(rkq);
     ensures normal resource_borrowed(do_lock);
     ensures normal resource_return_none();

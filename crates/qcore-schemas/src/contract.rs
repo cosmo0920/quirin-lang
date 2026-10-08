@@ -925,9 +925,15 @@ impl ResourceContracts {
         Some(resolved)
     }
 
+    /// The contract of `name` in the function map. Card
+    /// VERDICT-CONTRACT-DEPENDENCIES: the lookup is noted in the thread's
+    /// consultation log when one is open (evidence only; it changes nothing
+    /// this returns).
     #[must_use]
     pub fn contract(&self, name: &str) -> Option<&ResourceFunctionContract> {
-        self.functions.get(name)
+        let found = self.functions.get(name);
+        crate::contract_consultation::note(name, found.is_some());
+        found
     }
 
     #[must_use]
@@ -948,7 +954,9 @@ impl ResourceContracts {
         &self,
         name: &str,
     ) -> Option<&crate::relational_post::RelationalContract> {
-        self.relational.get(name)
+        let found = self.relational.get(name);
+        crate::contract_consultation::note(name, found.is_some());
+        found
     }
 
     /// Install a return-code disposition for `name`. The name leaves the
@@ -981,7 +989,9 @@ impl ResourceContracts {
     /// The retaining declaration of `name`, if it has one.
     #[must_use]
     pub fn retaining_contract(&self, name: &str) -> Option<&crate::retained_by::RetainingContract> {
-        self.retaining.get(name)
+        let found = self.retaining.get(name);
+        crate::contract_consultation::note(name, found.is_some());
+        found
     }
 
     /// Card CALLEE-RETENTION-CLASS1: carry `from`'s return-code dispositions

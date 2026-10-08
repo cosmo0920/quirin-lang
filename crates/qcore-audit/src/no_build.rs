@@ -1030,6 +1030,12 @@ impl NoBuildAudit {
         // flexible assumptions, tallied and published the same way.
         let revision = crate::contract_revision::section(&self.contracts, &self.pins, &self.report);
         println!("{}", crate::contract_revision::tally(&revision));
+        // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13h).
+        let premises = crate::contract_dependencies::premises(&self.contracts)?;
+        let dependencies =
+            crate::contract_dependencies::section(&revision, &premises, &self.report);
+        println!("{}", crate::contract_dependencies::tally(&dependencies));
+        self.sidecar[crate::contract_dependencies::SECTION_KEY] = dependencies;
         self.sidecar["contract_revision"] = revision;
         // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table, its
         // digest and the calls it held, tallied and published the same way.

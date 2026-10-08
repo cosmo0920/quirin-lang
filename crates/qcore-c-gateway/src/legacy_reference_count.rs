@@ -753,6 +753,9 @@ fn settle_clauses(tokens: &[Token], contracts: &ResourceContracts) -> Option<Res
         });
         if !valid {
             withdrawn.push((name.clone(), declaration.clone()));
+        } else {
+            // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g).
+            crate::contract_dependencies::validated(name, "13c");
         }
     }
     if withdrawn.is_empty() {
@@ -760,6 +763,7 @@ fn settle_clauses(tokens: &[Token], contracts: &ResourceContracts) -> Option<Res
     }
     let mut settled = contracts.clone();
     for (name, mut declaration) in withdrawn {
+        crate::contract_dependencies::withdrawn(&name, "13c", true);
         declaration.references_withdrawn = true;
         settled.insert_retaining(name, declaration);
     }

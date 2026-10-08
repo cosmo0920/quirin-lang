@@ -63,7 +63,7 @@ use super::Token;
 /// reader still sees a *call* — one to a function nothing declares — rather
 /// than an unrecognised token it might drop. No corpus symbol begins with it
 /// (asserted by the tests), so the rewrite can never collide with a real name.
-pub(super) const UNMET_PREFIX: &str = "qcore_premise_unmet__";
+pub(crate) const UNMET_PREFIX: &str = "qcore_premise_unmet__";
 
 /// The mark that follows [`UNMET_PREFIX`] when the unmet premise is a declared
 /// loop-owner obligation (card **W47-LOOP-OWNER-CONTRACTS**, rule 10p). It

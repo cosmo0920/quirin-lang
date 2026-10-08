@@ -314,12 +314,16 @@ pub fn project_unit_into(
         return Ok(());
     }
     counts.source_functions += source_functions.len();
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the unit's consultations,
+    // recorded around its analysis alone (evidence; nothing reads it back).
+    let recording = qcore_c_gateway::contract_dependencies::Recording::start();
     let result = analyze_unrestricted_c11_with_inventory(
         unit,
         &source_functions[0],
         contracts,
         Some(inventory),
     );
+    let dependencies = recording.finish();
     // Card GATEWAY-C-LOCATION: the original `file:line` every diagnostic of
     // this unit is presented at. Derived only where there is a diagnostic to
     // attribute, from the *authoritative* preprocessed text — the bytes the
@@ -353,6 +357,7 @@ pub fn project_unit_into(
             inventory,
             source_functions,
             contracts,
+            dependencies: &dependencies,
         },
         result,
         locations.as_ref(),
@@ -436,7 +441,11 @@ pub fn project_prepared_unit_into(
         return Ok(());
     }
     counts.source_functions += source_functions.len();
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): recorded around the
+    // analysis alone; the certificate recheck below runs outside it.
+    let recording = qcore_c_gateway::contract_dependencies::Recording::start();
     let result = analyze_prepared_translation_unit(prepared, &source_functions[0], contracts);
+    let dependencies = recording.finish();
     let result = match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) => {
             let policy = AuditContractTrustPolicy::DeclaredSourcesAreTrustedAssumptions;
@@ -501,6 +510,7 @@ pub fn project_prepared_unit_into(
             inventory,
             source_functions,
             contracts,
+            dependencies: &dependencies,
         },
         result,
         Some(prepared.locations()),
@@ -538,6 +548,8 @@ struct ProjectionContext<'a> {
     /// The environment the unit was analysed under (card
     /// W47-REVIEW-HOLD-CONCRETE-REASON: it names each held call's reasons).
     contracts: &'a ResourceContracts,
+    /// Card VERDICT-CONTRACT-DEPENDENCIES: what the unit's analysis recorded.
+    dependencies: &'a qcore_c_gateway::contract_dependencies::UnitRecord,
 }
 
 fn record_projection(
@@ -554,6 +566,7 @@ fn record_projection(
         inventory,
         source_functions,
         contracts,
+        dependencies,
     } = context;
     let result = match result {
         Ok(UnrestrictedLegacyResult::Safe(certificate)) if !inventory.supports_unit_safe() => {
@@ -603,6 +616,9 @@ fn record_projection(
     if let Some(row) = report.last_unit_mut() {
         crate::review_hold_reasons::annotate_unit(row, contracts)
             .map_err(|error| format!("{library}/{file}: {error}"))?;
+        // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the row fields, after
+        // the verdict is settled; additive.
+        crate::contract_dependencies::annotate_unit(row, dependencies, &result, contracts);
     }
     report.record_enumeration(inventory);
     // Card W45-USER-CONTRACT-PLUGINS: the unit is tallied and printed under

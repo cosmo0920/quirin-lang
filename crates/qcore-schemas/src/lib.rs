@@ -7,6 +7,9 @@
 //! only; the trusted core re-exports these types for compatibility.
 
 pub mod contract;
+// Card VERDICT-CONTRACT-DEPENDENCIES (gateway rule 13f): the per-thread log of
+// the names a resource environment was asked for; evidence only.
+pub mod contract_consultation;
 pub mod contract_refutation;
 pub mod contract_revision;
 pub mod digest;

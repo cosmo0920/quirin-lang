@@ -1,0 +1,477 @@
+//! Card **VERDICT-CONTRACT-DEPENDENCIES** (gateway rules 13f–13h): every
+//! published row's contract dependencies, and the run's dependency section.
+//!
+//! # The row field (rule 13f)
+//!
+//! Each function row of a unit gains `contract_dependencies`: the declared
+//! names its derivation consulted
+//! ([`qcore_c_gateway::contract_dependencies::row_dependencies`]), split by
+//! their standing at the consultation (`declarations` in force, `held`,
+//! `withdrawn`) with the in-unit `summaries` whose own dependencies were
+//! added. The unit row gains `contract_body_evidence` when the unit examined
+//! the body of a declared function: what each body made of its declaration.
+//! Both keys are written after the unit's verdict is settled, from a record
+//! no analysis reads, so the row's status and diagnostics are those it had
+//! without them.
+//!
+//! # The section (rule 13h)
+//!
+//! The contract sidecar's `contract_dependencies` section is a fold of the
+//! rows ([`Facts`]) under the `contract_revision` inventory and the declared
+//! premises: per declaration its digest, mode and status, its **body
+//! standing** for the run, its premises and how many rows (and `Safe` rows)
+//! consulted it; and the reviewer's roll-up of the `Safe` rows. A
+//! declaration is `validated` for the run only when every unit that examined
+//! one of its bodies validated it and at least one did; one held for a human
+//! act is `held`; every other is a `declared-assumption` (contract
+//! specification C06): no body, or a body that did not validate it.
+
+use std::collections::{BTreeMap, BTreeSet};
+
+use qcore_c_gateway::contract_dependencies::{RowDependencies, UnitRecord, declared};
+use qcore_c_gateway::legacy_c::{LegacyProgramSummary, UnrestrictedLegacyResult};
+use qcore_schemas::contract::ResourceContracts;
+use qcore_schemas::retained_by::RetentionHolder;
+use serde_json::{Value, json};
+
+use crate::report::AuditReport;
+
+/// The row key.
+pub const ROW_KEY: &str = "contract_dependencies";
+
+/// The unit key.
+pub const UNIT_KEY: &str = "contract_body_evidence";
+
+/// The sidecar key of the section, and of the premises a checkpointed run
+/// records before its units.
+pub const SECTION_KEY: &str = "contract_dependencies";
+pub const PREMISES_KEY: &str = "contract_premises";
+
+/// What the section means, carried in the section itself.
+pub const MEANING: &str = "the contract declarations each published row's derivation consulted (rule 13f): every name a lookup of the row's own work asked for, every callee its solved CFG applies a contract of, and transitively those of every in-unit summary it consulted; over-approximated, never omitted. `body_standing` (rule 13g): `validated` only where every unit that examined a body of the declared function validated the declaration (an equal W4 summary, the body under the declaration's entry custody matching every exit and Safe, or the structural checks of rules 11r, 12w, 13a, 13c and 13d) and at least one did; `held` for a declaration held for a human act; otherwise `declared-assumption` (contract specification C06): there is no analysed body, or it did not validate the declaration. Premises are the named assumptions a declaration states (`resource_premise`), its literal-argument premises, and the premises a rule states for its clause (rule 13e for a result holder). Evidence only: no verdict reads this section or the row fields";
+
+/// The premises rule 13e states for a declaration whose result holds a
+/// retained pointer.
+const RESULT_HOLDER_PREMISES: [(&str, &str); 2] = [
+    (
+        "P-RESULT-HOLDER-LAST-DROP",
+        "every reference the function could see on an object it obtained itself is dropped; a reference a callee took through a position declared resource_borrowed is that declaration's assumption (rule 13e)",
+    ),
+    (
+        "P-RETAINED-PREDEFINED",
+        "__func__, __FUNCTION__ and __PRETTY_FUNCTION__ at a retained position are static storage (C11 6.4.2.2p1; rule 13e)",
+    ),
+];
+
+/// The analysed summary of a unit result, when it has rows.
+fn summary_of(result: &Result<UnrestrictedLegacyResult, impl Sized>) -> Option<&LegacyProgramSummary> {
+    match result {
+        Ok(UnrestrictedLegacyResult::Safe(certificate)) => Some(&certificate.summary),
+        Ok(UnrestrictedLegacyResult::Unsafe(summary)) => Some(summary),
+        Ok(UnrestrictedLegacyResult::Unknown { partial, .. }) => partial.as_ref(),
+        Err(_) => None,
+    }
+}
+
+fn names(set: &BTreeSet<String>) -> Value {
+    json!(set.iter().collect::<Vec<_>>())
+}
+
+/// The row field of one row's dependencies: `declarations` always, the
+/// other lists only when nonempty.
+#[must_use]
+pub fn row_field(dependencies: &RowDependencies) -> Value {
+    let mut field = json!({ "declarations": names(&dependencies.declarations) });
+    if !dependencies.held.is_empty() {
+        field["held"] = names(&dependencies.held);
+    }
+    if !dependencies.withdrawn.is_empty() {
+        field["withdrawn"] = names(&dependencies.withdrawn);
+    }
+    if !dependencies.summaries.is_empty() {
+        field["summaries"] = names(&dependencies.summaries);
+    }
+    field
+}
+
+/// The unit field: what each examined body made of its declaration, for the
+/// declared names only; `None` when the unit examined none.
+#[must_use]
+pub fn unit_field(record: &UnitRecord, contracts: &ResourceContracts) -> Option<Value> {
+    let mut validated = serde_json::Map::new();
+    let mut unvalidated = Vec::new();
+    let mut failed = serde_json::Map::new();
+    for (name, outcome) in record.body_outcomes() {
+        if !declared(contracts, &name) {
+            continue;
+        }
+        match outcome {
+            qcore_c_gateway::contract_dependencies::BodyOutcome::Validated => {
+                validated.insert(name.clone(), json!(record.validated[&name]));
+            }
+            qcore_c_gateway::contract_dependencies::BodyOutcome::Unvalidated => {
+                unvalidated.push(name);
+            }
+            qcore_c_gateway::contract_dependencies::BodyOutcome::Failed => {
+                failed.insert(name.clone(), json!(record.failed[&name]));
+            }
+        }
+    }
+    let withdrawn = record
+        .withdrawn
+        .iter()
+        .filter(|(name, _)| declared(contracts, name))
+        .map(|(name, why)| (name.clone(), json!(why)))
+        .collect::<serde_json::Map<_, _>>();
+    if validated.is_empty() && unvalidated.is_empty() && failed.is_empty() && withdrawn.is_empty()
+    {
+        return None;
+    }
+    Some(json!({
+        "validated": validated,
+        "unvalidated": unvalidated,
+        "failed": failed,
+        "withdrawn": withdrawn,
+    }))
+}
+
+/// Add the row and unit fields to the unit row `row` the report just
+/// recorded for `result`, from the unit's `record` under `contracts`.
+pub fn annotate_unit(
+    row: &mut Value,
+    record: &UnitRecord,
+    result: &Result<UnrestrictedLegacyResult, impl Sized>,
+    contracts: &ResourceContracts,
+) {
+    let Some(summary) = summary_of(result) else {
+        return;
+    };
+    let dependencies =
+        qcore_c_gateway::contract_dependencies::row_dependencies(record, summary, contracts);
+    for function in row["functions"].as_array_mut().into_iter().flatten() {
+        let Some(name) = function["function"].as_str() else {
+            continue;
+        };
+        if let Some(dependencies) = dependencies.get(name) {
+            function[ROW_KEY] = row_field(dependencies);
+        }
+    }
+    if let Some(field) = unit_field(record, contracts) {
+        row[UNIT_KEY] = field;
+    }
+}
+
+/// The premises of every declaration of `contracts`: declared and
+/// literal-argument premises from the retained texts, and rule 13e's for a
+/// result holder. An unreadable source set is refused, never read as none.
+///
+/// # Errors
+///
+/// The loader's refusal of the retained texts.
+pub fn premises(contracts: &ResourceContracts) -> Result<Value, String> {
+    let mut premises = BTreeMap::<String, Vec<Value>>::new();
+    for (name, declared) in qcore_contract::contract_loader::declared_premises(contracts)? {
+        premises.entry(name).or_default().extend(declared.into_iter().map(|premise| {
+            json!({
+                "name": premise.name,
+                "statement": premise.statement,
+                "origin": premise.origin.as_str(),
+            })
+        }));
+    }
+    for (name, retaining) in contracts.retaining() {
+        if retaining
+            .retentions
+            .iter()
+            .any(|retention| retention.holder == RetentionHolder::Result)
+        {
+            premises
+                .entry(name.clone())
+                .or_default()
+                .extend(RESULT_HOLDER_PREMISES.iter().map(|(premise, statement)| {
+                    json!({"name": premise, "statement": statement, "origin": "rule-13e"})
+                }));
+        }
+    }
+    Ok(json!(premises))
+}
+
+/// What the section reads of the rows: a per-unit fold, so a composed
+/// report's facts are the absorb of its groups' (card W45-AUDIT-CHECKPOINTS).
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Facts {
+    /// Per declared name: rows consulting it, by standing at the row.
+    rows: BTreeMap<String, Uses>,
+    /// Per declared name: unit outcomes of its bodies, and the evidence.
+    bodies: BTreeMap<String, Bodies>,
+    /// `Safe` rows, each as its declarations, held and withdrawn names.
+    safe: Vec<(BTreeSet<String>, usize)>,
+    rows_annotated: usize,
+    safe_rows: usize,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+struct Uses {
+    rows: usize,
+    safe_rows: usize,
+    held_rows: usize,
+    withdrawn_rows: usize,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+struct Bodies {
+    validated_units: usize,
+    unvalidated_units: usize,
+    failed_units: usize,
+    validated_by: BTreeSet<String>,
+    failed_by: BTreeSet<String>,
+    withdrawn_units: usize,
+}
+
+fn strings(value: &Value) -> impl Iterator<Item = &str> {
+    value.as_array().into_iter().flatten().filter_map(Value::as_str)
+}
+
+impl Facts {
+    /// The facts of every unit row of `rows`.
+    #[must_use]
+    pub fn of_rows(rows: &[Value]) -> Self {
+        let mut facts = Self::default();
+        for unit in rows {
+            facts.absorb_unit(unit);
+        }
+        facts
+    }
+
+    /// Absorb one unit row.
+    pub fn absorb_unit(&mut self, unit: &Value) {
+        for function in unit["functions"].as_array().into_iter().flatten() {
+            let Some(field) = function.get(ROW_KEY) else {
+                continue;
+            };
+            self.rows_annotated += 1;
+            let safe = function["status"] == "Safe";
+            let declarations = strings(&field["declarations"])
+                .map(str::to_owned)
+                .collect::<BTreeSet<_>>();
+            for name in &declarations {
+                let uses = self.rows.entry(name.clone()).or_default();
+                uses.rows += 1;
+                uses.safe_rows += usize::from(safe);
+            }
+            let mut other = 0;
+            for name in strings(&field["held"]) {
+                let uses = self.rows.entry(name.to_owned()).or_default();
+                uses.held_rows += 1;
+                other += 1;
+            }
+            for name in strings(&field["withdrawn"]) {
+                let uses = self.rows.entry(name.to_owned()).or_default();
+                uses.withdrawn_rows += 1;
+                other += 1;
+            }
+            if safe {
+                self.safe_rows += 1;
+                self.safe.push((declarations, other));
+            }
+        }
+        let evidence = &unit[UNIT_KEY];
+        for (name, by) in evidence["validated"].as_object().into_iter().flatten() {
+            let bodies = self.bodies.entry(name.clone()).or_default();
+            bodies.validated_units += 1;
+            bodies
+                .validated_by
+                .extend(strings(by).map(str::to_owned));
+        }
+        for name in strings(&evidence["unvalidated"]) {
+            self.bodies.entry(name.to_owned()).or_default().unvalidated_units += 1;
+        }
+        for (name, why) in evidence["failed"].as_object().into_iter().flatten() {
+            let bodies = self.bodies.entry(name.clone()).or_default();
+            bodies.failed_units += 1;
+            bodies.failed_by.extend(strings(why).map(str::to_owned));
+        }
+        for name in evidence["withdrawn"].as_object().into_iter().flatten().map(|(n, _)| n) {
+            self.bodies.entry(name.clone()).or_default().withdrawn_units += 1;
+        }
+    }
+
+    /// Unite `other`'s facts with these.
+    pub fn absorb(&mut self, other: Self) {
+        for (name, uses) in other.rows {
+            let mine = self.rows.entry(name).or_default();
+            mine.rows += uses.rows;
+            mine.safe_rows += uses.safe_rows;
+            mine.held_rows += uses.held_rows;
+            mine.withdrawn_rows += uses.withdrawn_rows;
+        }
+        for (name, bodies) in other.bodies {
+            let mine = self.bodies.entry(name).or_default();
+            mine.validated_units += bodies.validated_units;
+            mine.unvalidated_units += bodies.unvalidated_units;
+            mine.failed_units += bodies.failed_units;
+            mine.withdrawn_units += bodies.withdrawn_units;
+            mine.validated_by.extend(bodies.validated_by);
+            mine.failed_by.extend(bodies.failed_by);
+        }
+        self.safe.extend(other.safe);
+        self.rows_annotated += other.rows_annotated;
+        self.safe_rows += other.safe_rows;
+    }
+}
+
+/// The run-level body standing of one declaration (rule 13g).
+#[must_use]
+fn body_standing(status: Option<&str>, bodies: Option<&Bodies>) -> &'static str {
+    if matches!(status, Some("pending-review" | "not-in-force")) {
+        return "held";
+    }
+    match bodies {
+        Some(bodies)
+            if bodies.validated_units > 0
+                && bodies.unvalidated_units == 0
+                && bodies.failed_units == 0 =>
+        {
+            "validated"
+        }
+        _ => "declared-assumption",
+    }
+}
+
+/// The section for `facts` under the rendered `contract_revision` section
+/// `revision` and the `premises` map ([`premises`]).
+#[must_use]
+pub fn render(facts: &Facts, revision: &Value, premises: &Value) -> Value {
+    let inventory = &revision["contracts"];
+    let names = facts
+        .rows
+        .keys()
+        .chain(facts.bodies.keys())
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let mut declarations = serde_json::Map::new();
+    let mut standing = BTreeMap::new();
+    for name in &names {
+        let entry = &inventory[name];
+        let status = entry["status"].as_str();
+        let bodies = facts.bodies.get(name);
+        let body = body_standing(status, bodies);
+        standing.insert(name.clone(), body);
+        let uses = facts.rows.get(name).cloned().unwrap_or_default();
+        let mut record = json!({
+            "contract_sha256": entry["contract_sha256"],
+            "mode": entry["mode"],
+            "status": entry["status"],
+            "module": entry["module"],
+            "body_standing": body,
+            "rows": uses.rows,
+            "safe_rows": uses.safe_rows,
+            "premises": premises.get(name).cloned().unwrap_or_else(|| json!([])),
+        });
+        if uses.held_rows > 0 {
+            record["held_rows"] = json!(uses.held_rows);
+        }
+        if uses.withdrawn_rows > 0 {
+            record["withdrawn_rows"] = json!(uses.withdrawn_rows);
+        }
+        if let Some(bodies) = bodies {
+            record["bodies"] = json!({
+                "validated_units": bodies.validated_units,
+                "unvalidated_units": bodies.unvalidated_units,
+                "failed_units": bodies.failed_units,
+                "withdrawn_units": bodies.withdrawn_units,
+                "validated_by": bodies.validated_by,
+                "failed_by": bodies.failed_by,
+            });
+        }
+        declarations.insert(name.clone(), record);
+    }
+    let mut none = 0;
+    let mut only_validated = 0;
+    let mut on_assumption = 0;
+    let mut on_held_or_withdrawn = 0;
+    for (rested, other) in &facts.safe {
+        if *other > 0 {
+            on_held_or_withdrawn += 1;
+        } else if rested.is_empty() {
+            none += 1;
+        } else if rested
+            .iter()
+            .all(|name| standing.get(name) == Some(&"validated"))
+        {
+            only_validated += 1;
+        } else {
+            on_assumption += 1;
+        }
+    }
+    let mut assumptions = facts
+        .rows
+        .iter()
+        .filter(|(name, uses)| {
+            uses.safe_rows > 0 && standing.get(*name) == Some(&"declared-assumption")
+        })
+        .map(|(name, uses)| (uses.safe_rows, name))
+        .collect::<Vec<_>>();
+    assumptions.sort_by(|a, b| b.0.cmp(&a.0).then_with(|| a.1.cmp(b.1)));
+    let top = assumptions
+        .iter()
+        .take(20)
+        .map(|(safe_rows, name)| {
+            let record = &declarations[name.as_str()];
+            json!({
+                "function": name,
+                "safe_rows": safe_rows,
+                "mode": record["mode"],
+                "status": record["status"],
+                "premises": record["premises"],
+            })
+        })
+        .collect::<Vec<_>>();
+    let count = |body: &str| standing.values().filter(|value| **value == body).count();
+    json!({
+        "meaning": MEANING,
+        "counts": {
+            "rows_annotated": facts.rows_annotated,
+            "declarations_consulted": declarations.len(),
+            "validated": count("validated"),
+            "declared_assumption": count("declared-assumption"),
+            "held": count("held"),
+        },
+        "safe_rollup": {
+            "safe_rows": facts.safe_rows,
+            "resting_on_no_declaration": none,
+            "resting_only_on_validated_declarations": only_validated,
+            "resting_on_a_declared_assumption": on_assumption,
+            "consulting_a_held_or_withdrawn_declaration": on_held_or_withdrawn,
+            "top_declared_assumptions": top,
+        },
+        "declarations": declarations,
+    })
+}
+
+/// The section of one finished report.
+#[must_use]
+pub fn section(revision: &Value, premises: &Value, report: &AuditReport) -> Value {
+    render(&Facts::of_rows(report.unit_rows()), revision, premises)
+}
+
+/// The one-line console tally of a [`section`].
+#[must_use]
+pub fn tally(section: &Value) -> String {
+    let rollup = &section["safe_rollup"];
+    let count = |key: &str| rollup[key].as_u64().unwrap_or_default();
+    format!(
+        "contract dependencies: {} Safe row(s): {} on no declaration, {} only on validated \
+         declarations, {} on a declared assumption, {} consulting a held or withdrawn \
+         declaration; {} declaration(s) consulted ({} validated)",
+        count("safe_rows"),
+        count("resting_on_no_declaration"),
+        count("resting_only_on_validated_declarations"),
+        count("resting_on_a_declared_assumption"),
+        count("consulting_a_held_or_withdrawn_declaration"),
+        section["counts"]["declarations_consulted"]
+            .as_u64()
+            .unwrap_or_default(),
+        section["counts"]["validated"].as_u64().unwrap_or_default(),
+    )
+}

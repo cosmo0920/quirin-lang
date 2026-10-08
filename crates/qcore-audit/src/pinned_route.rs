@@ -435,6 +435,12 @@ pub fn run(
     // flexible assumptions, tallied and added the same additive way.
     let revision_section = crate::contract_revision::section(&contracts, &pins, &report);
     println!("{}", crate::contract_revision::tally(&revision_section));
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13h): the rows' dependencies
+    // under that inventory, tallied and added the same additive way.
+    let dependency_premises = crate::contract_dependencies::premises(&contracts)?;
+    let dependency_section =
+        crate::contract_dependencies::section(&revision_section, &dependency_premises, &report);
+    println!("{}", crate::contract_dependencies::tally(&dependency_section));
     // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table, its digest
     // and the calls it held, tallied and added the same additive way.
     let refuted_section = crate::refuted_contracts::section(&applied, &report);
@@ -443,6 +449,7 @@ pub fn run(
         inputs["pending_human_review"] = pending;
         inputs["contract_revision"] = revision_section;
         inputs["refuted_contracts"] = refuted_section;
+        inputs[crate::contract_dependencies::SECTION_KEY] = dependency_section;
         let bytes = serde_json::to_vec_pretty(&inputs).map_err(|e| e.to_string())?;
         fs::write(&sidecar, bytes).map_err(|e| format!("{}: {e}", sidecar.display()))?;
     }

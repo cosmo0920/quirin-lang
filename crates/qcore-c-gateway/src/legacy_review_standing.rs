@@ -234,7 +234,11 @@ where
         // this module can check it against: fail closed.
         return settle(rows, Err("nothing is held for a human act"));
     };
-    match crate::typed_access_path::without_parity_rows(|| analyse(&resolved)) {
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): no body evidence is kept
+    // from an analysis whose holds are not in force.
+    match crate::contract_dependencies::hypothetical(|| {
+        crate::typed_access_path::without_parity_rows(|| analyse(&resolved))
+    }) {
         Ok(resolved_rows) => settle(rows, Ok(&resolved_rows)),
         Err(error) => settle(rows, Err(&error.to_string())),
     }

@@ -348,8 +348,14 @@ pub(crate) fn settle(tokens: &[Token], contracts: &ResourceContracts) -> Option<
                 any = true;
             }
         }
+        // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): a guard the body
+        // does not validate is dropped (the cautious union), not withdrawn,
+        // and the declaration is then not validated here.
         if any {
+            crate::contract_dependencies::failed(name, "12w");
             changed.push((name.clone(), settled));
+        } else {
+            crate::contract_dependencies::validated(name, "12w");
         }
     }
     if changed.is_empty() {

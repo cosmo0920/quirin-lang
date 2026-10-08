@@ -192,6 +192,10 @@ impl CurrentAudit {
         {
             assumptions["contract_inclusion"] = provenance;
         }
+        // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13h): the declarations'
+        // premises, recorded before any unit so a composer has them.
+        assumptions[crate::contract_dependencies::PREMISES_KEY] =
+            crate::contract_dependencies::premises(&contracts)?;
         if let Some(record) = input.provider_record() {
             assumptions["provider_selection"] = record.clone();
         }
@@ -540,6 +544,14 @@ impl CurrentAudit {
         // flexible assumptions, tallied and published the same way.
         let revision = crate::contract_revision::section(&self.contracts, &self.pins, &self.report);
         println!("{}", crate::contract_revision::tally(&revision));
+        // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13h).
+        let dependencies = crate::contract_dependencies::section(
+            &revision,
+            &self.assumptions[crate::contract_dependencies::PREMISES_KEY],
+            &self.report,
+        );
+        println!("{}", crate::contract_dependencies::tally(&dependencies));
+        self.assumptions[crate::contract_dependencies::SECTION_KEY] = dependencies;
         self.assumptions["contract_revision"] = revision;
         // Card W45-REFUTED-CONTRACT-WITHDRAWAL: the refutation table, its
         // digest and the calls it held, tallied and published the same way.

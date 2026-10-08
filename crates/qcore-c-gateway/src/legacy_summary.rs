@@ -169,6 +169,13 @@ pub(crate) struct CustodyDerivation {
     /// [`crate::legacy_census`] alone: no analysis, certificate or report
     /// consults it, so it cannot move a verdict.
     census: Vec<NeutralComponentCensus>,
+    /// Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): declared return-code
+    /// dispositions a body summary of this derivation confirmed (11r). Read
+    /// only as body evidence; no analysis consults it.
+    relational_confirmed: BTreeSet<String>,
+    /// Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): declared dispositions
+    /// this derivation withdrew because their body contradicts them (11r).
+    relational_contradicted: BTreeSet<String>,
 }
 
 impl CustodyDerivation {
@@ -216,6 +223,12 @@ impl CustodyDerivation {
     /// contracts are not repeated here: they travel with the environment, and a
     /// record a declaration of the same recursive component produced is
     /// withheld rather than republished as an inference (U7).
+    /// Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): the declared
+    /// dispositions this derivation's bodies confirmed and contradicted.
+    pub(crate) fn relational_evidence(&self) -> (&BTreeSet<String>, &BTreeSet<String>) {
+        (&self.relational_confirmed, &self.relational_contradicted)
+    }
+
     pub(crate) fn records(&self) -> Vec<ResourceSummaryRecord> {
         self.inferred
             .iter()
@@ -304,6 +317,10 @@ pub(crate) fn derive_custody_summaries(
                         .and_then(|body| relational::contradiction(declared, body))
                     {
                         derivation.environment.withdraw_relational(&name, reason);
+                        derivation.relational_contradicted.insert(name.clone());
+                    } else if body.is_some() {
+                        // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g).
+                        derivation.relational_confirmed.insert(name.clone());
                     }
                     continue;
                 }
@@ -481,6 +498,18 @@ pub(crate) fn derive_custody_summaries(
         }
     }
     premises::record_derivation(&graph, &derivation.inferred, contracts);
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): every name this
+    // derivation gave an in-unit summary, which a consulting row's
+    // dependencies read through.
+    for name in names {
+        let installed = (derivation.environment.functions().contains_key(name)
+            && !contracts.functions().contains_key(name))
+            || (derivation.environment.relational().contains_key(name)
+                && !contracts.relational().contains_key(name));
+        if installed {
+            crate::contract_dependencies::inferred(name);
+        }
+    }
     derivation
 }
 
@@ -580,9 +609,13 @@ fn infer_validated_summary(
     function: &str,
     environment: &ResourceContracts,
 ) -> Option<ResourceFunctionContract> {
-    infer_live_entry_summary(tokens, function, environment)
-        .or_else(|| infer_removed_wrapper(tokens, function, environment))
-        .or_else(|| infer_derived_result(tokens, function, environment))
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the inference's lookups
+    // are `function`'s consultations.
+    crate::contract_dependencies::within(function, || {
+        infer_live_entry_summary(tokens, function, environment)
+            .or_else(|| infer_removed_wrapper(tokens, function, environment))
+            .or_else(|| infer_derived_result(tokens, function, environment))
+    })
 }
 
 /// Card **W43-RESULT-ALIAS-RETURNED**: the derived-result route, consulted

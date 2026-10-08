@@ -367,6 +367,20 @@ pub(crate) fn contextual_cfg_under(
     zero: bool,
     own: Option<&ResourceFunctionContract>,
 ) -> Option<LegacyCfg> {
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f).
+    crate::contract_dependencies::within(function, || {
+        contextual_cfg_unscoped(tokens, function, environment, descriptor, zero, own)
+    })
+}
+
+fn contextual_cfg_unscoped(
+    tokens: &[Token],
+    function: &str,
+    environment: &ResourceContracts,
+    descriptor: &ContextFunction,
+    zero: bool,
+    own: Option<&ResourceFunctionContract>,
+) -> Option<LegacyCfg> {
     // A checked summary borrows the scalar control and is identical at every
     // rank. Erase only its proved `control - 1` actual to a scalar placeholder
     // for the resource CFG; this is NOT a claim that its runtime value is zero.

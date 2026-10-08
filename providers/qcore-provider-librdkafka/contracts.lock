@@ -1532,7 +1532,7 @@
     {
       "function": "rd_kafka_q_purge0",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "b2b04fa93ee3e5d699826b89411d8e03ec7e67ffc08f288dfaf2ffcbd8dd0036",
+      "contract_sha256": "913b644f9a70e1e8649e58f937b5542286ae82a17bb28e5e21915092ae1c1333",
       "identities": [
         {
           "reviewed_at": [
@@ -1564,7 +1564,7 @@
     {
       "function": "rd_kafka_q_wait_result",
       "module": "librdkafka/client.qv",
-      "contract_sha256": "47a534be19db3a4c0c2a4effa983649051dc1221216509c836ecd5f1eb670060",
+      "contract_sha256": "477cc6376bc855abdd3b457a5bdbe89880faf92a234d7ffa096d6327b219115c",
       "identities": [
         {
           "reviewed_at": [

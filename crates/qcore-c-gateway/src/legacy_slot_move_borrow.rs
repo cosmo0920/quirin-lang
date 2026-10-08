@@ -1136,6 +1136,9 @@ pub(crate) fn settle(tokens: &[Token], contracts: &ResourceContracts) -> Option<
                 .all(|out| out_validated(&body, named(out.slot), named(out.base), contracts));
         if !valid {
             withdrawn.push(name.clone());
+        } else {
+            // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g).
+            crate::contract_dependencies::validated(name, "13a");
         }
     }
     for (name, contract) in contracts.functions() {
@@ -1155,6 +1158,9 @@ pub(crate) fn settle(tokens: &[Token], contracts: &ResourceContracts) -> Option<
             .is_some_and(|parent| !parent.is_empty() && borrowed_validated(&body, parent))
         {
             withdrawn.push(name.clone());
+        } else {
+            // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g).
+            crate::contract_dependencies::validated(name, "13a");
         }
     }
     if withdrawn.is_empty() {
@@ -1162,6 +1168,7 @@ pub(crate) fn settle(tokens: &[Token], contracts: &ResourceContracts) -> Option<
     }
     let mut settled = contracts.clone();
     for name in withdrawn {
+        crate::contract_dependencies::withdrawn(&name, "13a", true);
         settled.withdraw_declaration(&name);
     }
     Some(settled)

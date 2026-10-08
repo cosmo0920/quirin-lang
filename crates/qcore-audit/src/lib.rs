@@ -41,6 +41,9 @@ pub mod bounds_selection;
 pub mod c_identity;
 pub mod contract_pin;
 pub mod contract_revision;
+// Card VERDICT-CONTRACT-DEPENDENCIES (rules 13f-13h): the row fields and the
+// run's dependency section.
+pub mod contract_dependencies;
 pub mod contract_tip;
 pub mod prepare;
 mod prepare_json;
@@ -650,6 +653,12 @@ pub fn run_config_with_jobs(path: &Path, flag_jobs: Option<usize>) -> Result<Aud
     // Card W45-CONTRACT-REVISION-MODE: revision modes, pin mismatches and
     // flexible assumptions, beside the contract sources they are read from.
     assumptions["contract_revision"] = contract_revision::section(&contracts, &pins, &report);
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13h).
+    assumptions[contract_dependencies::SECTION_KEY] = contract_dependencies::section(
+        &assumptions["contract_revision"],
+        &contract_dependencies::premises(&contracts)?,
+        &report,
+    );
     // Card CONTRACT-PIN-TIP-MODE: this route prints no tally, so it prints
     // each tip entry's notice on its own (nothing when there is none).
     for line in contract_revision::notice_lines(&assumptions["contract_revision"]) {

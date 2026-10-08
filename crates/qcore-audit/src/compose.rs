@@ -207,6 +207,14 @@ pub fn compose(
     let refuted_rows = refuted_rows(&mut members)?;
     let refuted = refuted_rows.section(&applied);
     println!("{}", crate::refuted_contracts::tally(&refuted));
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13h): the same fold the whole
+    // run makes, one unit at a time, under the premises the run recorded.
+    let dependencies = crate::contract_dependencies::render(
+        &dependency_facts(&mut members)?,
+        &revision,
+        &assumptions[crate::contract_dependencies::PREMISES_KEY],
+    );
+    println!("{}", crate::contract_dependencies::tally(&dependencies));
     if let Some(report) = outputs.report {
         if let Some(parent) = report.parent() {
             fs::create_dir_all(parent).map_err(|error| error.to_string())?;
@@ -229,6 +237,7 @@ pub fn compose(
         assumptions["pending_human_review"] = pending;
         assumptions["contract_revision"] = revision;
         assumptions[crate::refuted_contracts::APPLIED_KEY] = refuted;
+        assumptions[crate::contract_dependencies::SECTION_KEY] = dependencies;
         assumptions["source_file_count"] = json!(totals.sources.len());
         assumptions["configuration_count"] = json!(counts["units"]);
         fs::write(
@@ -274,6 +283,31 @@ fn refuted_rows(members: &mut [Member]) -> Result<crate::refuted_contracts::RowT
         }
     }
     Ok(tally)
+}
+
+/// Card VERDICT-CONTRACT-DEPENDENCIES: the dependency facts of every unit
+/// row, read like [`refuted_rows`].
+fn dependency_facts(
+    members: &mut [Member],
+) -> Result<crate::contract_dependencies::Facts, String> {
+    let mut facts = crate::contract_dependencies::Facts::default();
+    for member in members.iter_mut() {
+        let preparation = member.reader.section::<RowStepSection>("preparation")?;
+        let verdicts = member.reader.section::<RowStepSection>("verdicts")?;
+        for (preparation, verdicts) in preparation.units.iter().zip(&verdicts.units) {
+            let mut unit = serde_json::Map::new();
+            for member in preparation.members.iter().chain(&verdicts.members) {
+                if matches!(
+                    member.key.as_str(),
+                    "functions" | crate::contract_dependencies::UNIT_KEY
+                ) {
+                    unit.insert(member.key.clone(), member.value.to_json()?);
+                }
+            }
+            facts.absorb_unit(&Value::Object(unit));
+        }
+    }
+    Ok(facts)
 }
 
 /// Open and verify every file; refuse any set that is not exactly one run's

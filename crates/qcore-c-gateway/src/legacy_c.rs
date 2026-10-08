@@ -2968,6 +2968,9 @@ fn analyze_translation_unit_under_holds(
     typed_context: (CCompilerDialect, Option<&LegacyCertificateRequest>),
 ) -> Result<PartialTranslationUnitAnalysis, LegacyCError> {
     let (dialect, request) = typed_context;
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): the environment the unit
+    // is analysed under, before any withdrawal, for the body evidence.
+    let input = contracts;
     let _typed_path_source = crate::typed_access_path::enter_source(source, dialect, request);
     let (tokens, conditionals) = tokenize_with_conditionals(source);
     // Card W45-PARENTHESISED-CALLEE: every body's `(f)(x)` is rewritten to
@@ -3012,6 +3015,9 @@ fn analyze_translation_unit_under_holds(
     // W4 validation and `check_legacy_safety_certificate` reproduce them.
     let agreement = declared_abi::AbiAgreement::read(&tokens, contracts);
     let withdrawn_environment = agreement.withdraw_environment(contracts);
+    if let Some(after) = &withdrawn_environment {
+        crate::contract_dependencies::withdrawn_between(input, after, "abi", true);
+    }
     let contracts = withdrawn_environment.as_ref().unwrap_or(contracts);
     let withdrawn_tokens = agreement.withdraw_call_sites(&tokens);
     let tokens = withdrawn_tokens.unwrap_or(tokens);
@@ -3080,8 +3086,22 @@ fn analyze_translation_unit_under_holds(
         gate,
         withdrawn: withdrawn_specifications,
     } = refuted_contract::settle(&tokens, &scope, contracts, &refuted_table);
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g): what the final
+    // derivation's bodies made of the declarations they define.
+    let mode_withdrawn = gate
+        .agreement
+        .withdrawn_names()
+        .cloned()
+        .collect::<Vec<_>>();
     let tokens = gate.tokens.unwrap_or(tokens);
     let derivation = gate.derivation;
+    crate::contract_dependencies::unit_evidence(
+        input,
+        &scope,
+        &derivation,
+        &mode_withdrawn,
+        &withdrawn_specifications,
+    );
     let mut functions = BTreeMap::new();
     let mut projection_failures = Vec::new();
     // Card CG30-DIALECTS-FLAGS-TYPES (rule 11y): extension types are refused
@@ -3117,6 +3137,10 @@ fn analyze_translation_unit_under_holds(
                 // against its own declaration, for the audit's table.
                 summary.refutations =
                     refuted_contract::refutations(&summary, derivation.environment());
+                // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g).
+                if !summary.refutations.is_empty() {
+                    crate::contract_dependencies::failed(&name, "C06.4-own");
+                }
                 functions.insert(name, summary);
             }
             Err(error @ LegacyCError::MalformedFunction { .. }) => {
@@ -3152,6 +3176,17 @@ fn analyze_defined_function(
     function: &str,
     derivation: &CustodyDerivation,
 ) -> Result<LegacyFunctionSummary, LegacyCError> {
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f).
+    crate::contract_dependencies::within(function, || {
+        analyze_defined_function_unscoped(tokens, function, derivation)
+    })
+}
+
+fn analyze_defined_function_unscoped(
+    tokens: &[Token],
+    function: &str,
+    derivation: &CustodyDerivation,
+) -> Result<LegacyFunctionSummary, LegacyCError> {
     let cfg = match derivation.contextual_cfg(function) {
         Some(cfg) => cfg.clone(),
         None => build_function_cfg(tokens, function, derivation.environment())?,
@@ -3183,6 +3218,16 @@ fn analyze_defined_function(
                             &candidate,
                             &observations,
                         ) {
+                            // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13g):
+                            // the body, under its contract's entry custody,
+                            // matches every exit and is fully modelled.
+                            if candidate.status == AnalysisStatus::Safe
+                                && candidate.diagnostics.is_empty()
+                                && derivation.conflict(function).is_none()
+                                && *contract == contract.custody_projection()
+                            {
+                                crate::contract_dependencies::validated(function, "entry");
+                            }
                             candidate
                         } else {
                             analyze_cfg(cfg)
@@ -3319,6 +3364,20 @@ fn build_function_cfg_with(
     admit_derived_returns: bool,
     own: Option<&ResourceFunctionContract>,
 ) -> Result<LegacyCfg, LegacyCError> {
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): every lookup this build
+    // makes is `function`'s consultation; the identity without a recording.
+    crate::contract_dependencies::within(function, || {
+        build_function_cfg_unscoped(tokens, function, contracts, admit_derived_returns, own)
+    })
+}
+
+fn build_function_cfg_unscoped(
+    tokens: &[Token],
+    function: &str,
+    contracts: &ResourceContracts,
+    admit_derived_returns: bool,
+    own: Option<&ResourceFunctionContract>,
+) -> Result<LegacyCfg, LegacyCError> {
     // Card W47-SUMMARY-VALIDATION-PROTECTED-FORMALS: the contract in force for
     // this function's own body, which its declaration decides when it has one.
     let own_contract = contracts.contract(function).or(own);
@@ -3358,6 +3417,9 @@ fn build_function_cfg_with(
     let tokens = normalized.as_deref().unwrap_or(tokens);
     let (body_start, line) = find_function_body(tokens, function)
         .ok_or_else(|| LegacyCError::FunctionNotFound(function.to_owned()))?;
+    // Card VERDICT-CONTRACT-DEPENDENCIES (rule 13f): the names this body
+    // spells in the stream the build reads, which bound its consultations.
+    crate::contract_dependencies::body(function, tokens, body_start);
     let parameters = function_parameters(tokens, function).unwrap_or_default();
     let formal_parameters = parameters.iter().flatten().cloned().collect();
     let protected_formals =

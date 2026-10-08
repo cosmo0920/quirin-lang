@@ -626,6 +626,11 @@ struct LoadedDeclaration {
     /// `resource_no_return()`.
     no_return: bool,
     literal_arguments: Vec<DeclaredLiteralArgument>,
+    /// Card VERDICT-CONTRACT-DEPENDENCIES: every named premise the
+    /// declaration states (`requires resource_premise(NAME, "STATEMENT");`),
+    /// in clause order, followed by its literal-argument premises rendered as
+    /// premises. Read by no consumer that decides a verdict.
+    premises: Vec<DeclaredPremise>,
     /// Card W47-LOOP-OWNER-CONTRACTS: the declared loop-owner obligation.
     loop_owner: Option<DeclaredLoopOwner>,
     /// Card W47-CONDVAR-JOIN-PUBLICATION: the declared thread-synchronization
@@ -840,10 +845,12 @@ pub fn load_resource_contract_sources(
         for declaration in parsed.declarations {
             let decl = &declaration.value;
             let context = format!("{path}: {} at byte {}", decl.name, declaration.span.start);
-            if contracts.contract(&decl.name).is_some()
+            // Card VERDICT-CONTRACT-DEPENDENCIES: a duplicate check of the
+            // loader is not a consultation, so it reads the maps directly.
+            if contracts.functions().contains_key(&decl.name)
                 || pending.contains_key(&decl.name)
-                || contracts.relational_contract(&decl.name).is_some()
-                || contracts.retaining_contract(&decl.name).is_some()
+                || contracts.relational().contains_key(&decl.name)
+                || contracts.retaining().contains_key(&decl.name)
             {
                 return Err(format!("{context}: duplicate function contract"));
             }
@@ -1441,6 +1448,7 @@ fn inherited_declarations_agree(elaborated: &Elaborated) -> Result<(), String> {
             || child_loaded.variadic_borrowed_tail != parent_loaded.variadic_borrowed_tail
             || child_loaded.no_return != parent_loaded.no_return
             || child_loaded.literal_arguments != parent_loaded.literal_arguments
+            || child_loaded.premises != parent_loaded.premises
             || child_loaded.loop_owner != parent_loaded.loop_owner
             || child_loaded.thread_sync != parent_loaded.thread_sync
             || child_loaded.lifecycle != parent_loaded.lifecycle
@@ -1625,6 +1633,8 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
     // Card CG21-CALL-EXITS-AND-BOUNDARIES.
     let mut no_return = false;
     let mut literal_arguments: Vec<DeclaredLiteralArgument> = Vec::new();
+    // Card VERDICT-CONTRACT-DEPENDENCIES: the named premises, in clause order.
+    let mut premises: Vec<DeclaredPremise> = Vec::new();
     let mut loop_owner: Option<DeclaredLoopOwner> = None;
     let mut thread_sync: Option<DeclaredThreadSync> = None;
     let mut lifecycle: Option<DeclaredLifecycle> = None;
@@ -1792,6 +1802,22 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
                     parameter,
                     operation,
                 });
+                continue;
+            }
+            // Card VERDICT-CONTRACT-DEPENDENCIES: a named premise, at most
+            // once per name. It narrows nothing and widens nothing: it names
+            // an assumption the declaration rests on, for the report.
+            if let Some(premise) = premise_clause(expression)? {
+                if premises
+                    .iter()
+                    .any(|declared: &DeclaredPremise| declared.name == premise.name)
+                {
+                    return Err(format!(
+                        "duplicate premise `{}`: a declaration names each premise once",
+                        premise.name
+                    ));
+                }
+                premises.push(premise);
                 continue;
             }
             // Card HASH-CLAUSE. The only other admitted precondition: the
@@ -2367,6 +2393,18 @@ fn load_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, String> 
         variadic_data_tail,
         variadic_borrowed_tail,
         no_return,
+        premises: premises
+            .into_iter()
+            .chain(literal_arguments.iter().map(|premise| DeclaredPremise {
+                name: LITERAL_PREMISE_NAME.to_owned(),
+                statement: format!(
+                    "{} = {}",
+                    decl.parameters[premise.parameter].name.value,
+                    premise.literal.concat()
+                ),
+                origin: PremiseOrigin::LiteralArgument,
+            }))
+            .collect(),
         literal_arguments,
         loop_owner,
         thread_sync,
@@ -2578,6 +2616,7 @@ fn load_ffi_function(decl: &SourceDeclaration) -> Result<LoadedDeclaration, Stri
         variadic_borrowed_tail: false,
         no_return: false,
         literal_arguments: Vec::new(),
+        premises: Vec::new(),
         loop_owner: None,
         thread_sync: None,
         lifecycle: None,
@@ -2868,6 +2907,129 @@ fn loop_owner_clause(source: &str) -> Result<Option<(String, LoopOwnerOperation)
         _ => return Err(malformed()),
     };
     Ok(Some((parameter.clone(), operation)))
+}
+
+/// Card **VERDICT-CONTRACT-DEPENDENCIES**: the clause introducer of a named
+/// premise, `requires resource_premise(NAME, "STATEMENT");` (contract spec
+/// §C04.18).
+pub const PREMISE_CLAUSE: &str = "resource_premise";
+
+/// The name a literal-argument premise (§C04.5) is reported under.
+pub const LITERAL_PREMISE_NAME: &str = "literal_argument";
+
+/// Where a declaration's premise comes from.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum PremiseOrigin {
+    /// `requires resource_premise(NAME, "STATEMENT");`.
+    Declared,
+    /// `requires resource_literal_argument(p, LITERAL);`, read as the premise
+    /// `p = LITERAL`.
+    LiteralArgument,
+}
+
+impl PremiseOrigin {
+    /// The report spelling.
+    #[must_use]
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Declared => "declared",
+            Self::LiteralArgument => "literal-argument",
+        }
+    }
+}
+
+/// One premise a declaration rests on (card **VERDICT-CONTRACT-DEPENDENCIES**).
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DeclaredPremise {
+    /// The premise's name: a lowercase identifier for a declared premise,
+    /// [`LITERAL_PREMISE_NAME`] for a literal-argument one.
+    pub name: String,
+    /// What it states.
+    pub statement: String,
+    pub origin: PremiseOrigin,
+}
+
+/// `resource_premise(NAME, "STATEMENT")`, exactly. `None` when the expression
+/// is not this clause; one that names it and is malformed rejects the module:
+/// the name is a lowercase identifier (`[a-z][a-z0-9_]*`) and the statement one
+/// plain, non-blank string literal with no escape and no control character.
+fn premise_clause(source: &str) -> Result<Option<DeclaredPremise>, String> {
+    let tokens = token_kinds(source)?;
+    let Some(TokenKind::Word(head)) = tokens.first() else {
+        return Ok(None);
+    };
+    if head != PREMISE_CLAUSE {
+        return Ok(None);
+    }
+    let malformed = || {
+        format!(
+            "malformed premise `{source}`: write `requires {PREMISE_CLAUSE}(NAME, \"STATEMENT\");` \
+             with a lowercase identifier and one plain string"
+        )
+    };
+    let [
+        _,
+        TokenKind::Symbol(Symbol::LeftParen),
+        TokenKind::Word(name),
+        TokenKind::Symbol(Symbol::Comma),
+        TokenKind::StringLiteral(statement),
+        TokenKind::Symbol(Symbol::RightParen),
+    ] = tokens.as_slice()
+    else {
+        return Err(malformed());
+    };
+    let identifier = name
+        .chars()
+        .next()
+        .is_some_and(|first| first.is_ascii_lowercase())
+        && name
+            .chars()
+            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_');
+    if !identifier
+        || statement.trim().is_empty()
+        || statement.contains('\\')
+        || statement.chars().any(char::is_control)
+    {
+        return Err(malformed());
+    }
+    Ok(Some(DeclaredPremise {
+        name: name.clone(),
+        statement: statement.clone(),
+        origin: PremiseOrigin::Declared,
+    }))
+}
+
+/// Card **VERDICT-CONTRACT-DEPENDENCIES**: every premise `sources` declares,
+/// keyed by function name: the named premises in clause order, then the
+/// literal-argument premises. A declaration with none is absent.
+/// Total-or-reject exactly as [`literal_argument_premises`]; read by the
+/// audit's dependency report only, never by a verdict.
+pub fn declaration_premises(
+    sources: &BTreeMap<String, String>,
+) -> Result<BTreeMap<String, Vec<DeclaredPremise>>, String> {
+    let mut premises = BTreeMap::new();
+    each_loaded_declaration(sources, |name, context, loaded| {
+        if !loaded.premises.is_empty()
+            && premises
+                .insert(name.to_owned(), loaded.premises.clone())
+                .is_some()
+        {
+            return Err(format!("{context}: duplicate function contract"));
+        }
+        Ok(())
+    })?;
+    Ok(premises)
+}
+
+/// The premises of an environment, rederived from its retained trusted
+/// sources ([`declaration_premises`]); none without declared sources.
+pub fn declared_premises(
+    contracts: &ResourceContracts,
+) -> Result<BTreeMap<String, Vec<DeclaredPremise>>, String> {
+    if contracts.source_assumptions().is_empty() {
+        return Ok(BTreeMap::new());
+    }
+    declaration_premises(contracts.source_assumptions())
 }
 
 /// The loop-owner obligations `sources` declares, keyed by function name
