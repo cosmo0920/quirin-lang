@@ -567,6 +567,31 @@
       "contract_sha256": "14ce1db84cd91074b6d909b758ba5903a510f3d6f8183bed3f5e5f8aafb7e4a4"
     },
     {
+      "function": "strtod",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "cb45aedbc7037c8d5c56d75123da499513f2d9845b1fa0acf63be22deee95bf2"
+    },
+    {
+      "function": "strtol",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "355df93b12eb3405f2895af0f2f544891fa37c67dd0721400749fd04a3757963"
+    },
+    {
+      "function": "strtoll",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "de8c73ec3944e6c5eae09c263febc5704f554300f878e3e12764c4dd95e90916"
+    },
+    {
+      "function": "strtoul",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "1033d711a1c342ad18c6906f7fd7a4f3bb4d744e66398c25278e2c04def8ab50"
+    },
+    {
+      "function": "strtoull",
+      "module": "libc/stdlib.qv",
+      "contract_sha256": "97b1539630ad51f5c46a7b092da08971fc127c4d3574592d6148c292aca0de62"
+    },
+    {
       "function": "sysconf",
       "module": "libc/unistd.qv",
       "contract_sha256": "9952680d44829bc9d8399fb4b18468941d42e0c777a386dd54ec2303386f0b10"

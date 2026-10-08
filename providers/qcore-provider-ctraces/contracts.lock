@@ -535,6 +535,33 @@
           ]
         }
       ]
+    },
+    {
+      "function": "sds_cat_safe",
+      "module": "ctraces/context_lifetime.qv",
+      "contract_sha256": "e49e8b34ff1b92999928c5dccbc1a4e535d1929771979bc6fdf496f6f3490eec",
+      "identities": [
+        {
+          "reviewed_at": [
+            {
+              "kind": "git",
+              "revision": "046accf6aded7906f66a1baf0202da349e521736"
+            },
+            {
+              "kind": "git",
+              "revision": "66910c10a4d7eafa810b84229cf2dcf7b0f26f97"
+            }
+          ],
+          "sites": [
+            {
+              "path": "lib/ctraces/src/ctr_encode_text.c",
+              "kind": "definition",
+              "declaration_sha256": "7ae35ad7014739feead173710afd075ac83d8c4289b6d4e948122e25981244fa",
+              "body_sha256": "49e0d48d24a1f1cb18afc17c65961455ef0cc317cc9fd3686d55c6e2fac9cbb7"
+            }
+          ]
+        }
+      ]
     }
   ],
   "flexible": []

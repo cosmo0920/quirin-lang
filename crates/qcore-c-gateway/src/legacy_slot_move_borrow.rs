@@ -468,16 +468,18 @@ pub(super) fn apply(
                             BaseActual::Place(place) => state.pointers.get(place).cloned(),
                             BaseActual::Untracked => None,
                         };
+                        // The slot may keep its old value (an untracked one),
+                        // so nothing on it is ever accused: the binding is
+                        // read at the `Borrowed` extent, whose release and
+                        // use after the base's release are refused, and is
+                        // recorded as no borrow, so only the base's release
+                        // ends it (§C04.3.1's rules, refused).
                         let mut derived = super::derive_pointer(
                             base_binding.as_ref(),
-                            DerivedExtent::Interior,
+                            DerivedExtent::Borrowed,
                             true,
                             *const_dropped,
                         );
-                        // The slot may keep its old value, which no relation
-                        // describes: the binding claims nothing beyond
-                        // owning nothing.
-                        derived.unknown = true;
                         derived.may_be_null = true;
                         state.invalidated.remove(name);
                         state.borrows.remove(name);
