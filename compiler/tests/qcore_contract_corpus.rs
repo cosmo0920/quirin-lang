@@ -1053,6 +1053,50 @@ const EXPECTED_CONTRACTS: &[(&str, &str, usize)] = &[
         3,
     ),
     ("librdkafka/client.qv", "rd_slice_reader0", 6),
+    // Card REFCOUNT-RESOURCE-KIND (C04.17, rules 13b and 13c): four keeps and
+    // five drops (marker, borrowed formals, the reference clause, the alias
+    // or `none` result), the queue handle constructor and six destructors
+    // (`rd_kafka_topic_partition_destroy0` under its literal premise).
+    ("librdkafka/client.qv", "rd_kafka_toppar_keep0", 6),
+    ("librdkafka/client.qv", "rd_kafka_q_keep", 4),
+    ("librdkafka/client.qv", "rd_kafka_q_keep_nolock", 4),
+    ("librdkafka/client.qv", "rd_kafka_topic_keep", 4),
+    ("librdkafka/client.qv", "rd_kafka_toppar_destroy0", 6),
+    ("librdkafka/client.qv", "rd_kafka_q_destroy0", 5),
+    ("librdkafka/client.qv", "rd_kafka_q_destroy_owner", 4),
+    ("librdkafka/client.qv", "rd_kafka_topic_destroy0", 4),
+    ("librdkafka/client.qv", "rd_kafka_enq_once_trigger", 6),
+    ("librdkafka/client.qv", "rd_kafka_queue_new0", 4),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_topic_partition_list_destroy",
+        3,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_topic_partition_destroy0",
+        5,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_AlterConsumerGroupOffsets_destroy",
+        3,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_DeleteConsumerGroupOffsets_destroy",
+        3,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_ListConsumerGroupOffsets_destroy",
+        3,
+    ),
+    (
+        "librdkafka/client.qv",
+        "rd_kafka_topic_partition_result_destroy",
+        3,
+    ),
     // Card W36-CORPUS-CONTRACTS-3: kept in its own module rather than appended
     // to `librdkafka/memory.qv`, so that module's pin stays untouched. Read
     // from `lib/librdkafka-2.15.0/src/rdkafka.c:7131-7133`: `rk` is read

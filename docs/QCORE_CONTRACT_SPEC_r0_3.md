@@ -415,7 +415,7 @@ ensures normal resource_kind(p, KIND);
 ensures normal resource_return_kind(KIND);
 ```
 
-`KIND` is exactly one of `descriptor`, `stream`, `directory`, `dynamic_library` and `regex`, each the kind of a pair a card declares; no kind is added without a declared use (an `FTS *` kind waits on a readable `fts_open`). Card CG25-RESOURCE-KINDS added `dynamic_library` (`dlopen`/`dlclose`, pointer-carried, failure value NULL), once the return route modelled `return (T *)handle;` (card W44-LEAK-PIN-AUDIT), and the in-place kind `regex` (`regcomp`/`regfree`, §C04.6.1). The **heap** kind is what a position with no kind clause means, and it is spelled only by that absence: writing `heap` rejects the module, so every meaning has one spelling. Every declaration written before this card therefore loads to exactly the contract it loaded to before, with every position heap. Kinds load onto `ResourceFunctionContract` as `parameter_kinds` (non-heap entries only) and `result_kind`, both omitted from the serialized form and from the diagnostic text when heap, so a contract without a kind is byte-identical in every artifact.
+`KIND` is exactly one of `descriptor`, `stream`, `directory`, `dynamic_library` and `regex`, each the kind of a pair a card declares; no kind is added without a declared use (an `FTS *` kind waits on a readable `fts_open`). Card CG25-RESOURCE-KINDS added `dynamic_library` (`dlopen`/`dlclose`, pointer-carried, failure value NULL), once the return route modelled `return (T *)handle;` (card W44-LEAK-PIN-AUDIT), and the in-place kind `regex` (`regcomp`/`regfree`, §C04.6.1). Card REFCOUNT-RESOURCE-KIND added the pointer-carried `reference` kind (§C04.17): a reference is taken only by `resource_reference_kept` and dropped only by `resource_reference_dropped`, `resource_return_kind(reference)` beside `resource_return_owned` is a returned reference the caller owes, and `resource_kind(p, reference)` on a parameter rejects the module. A use of a reference after its last drop is refused there, never accused, as the heap's is (rule 6 below does not apply to it). The **heap** kind is what a position with no kind clause means, and it is spelled only by that absence: writing `heap` rejects the module, so every meaning has one spelling. Every declaration written before this card therefore loads to exactly the contract it loaded to before, with every position heap. Kinds load onto `ResourceFunctionContract` as `parameter_kinds` (non-heap entries only) and `result_kind`, both omitted from the serialized form and from the diagnostic text when heap, so a contract without a kind is byte-identical in every artifact.
 
 **Placement.** A kind clause names a custody-bearing position:
 
@@ -756,6 +756,63 @@ contract {
 **What the C gateway decides (rule 12z).** `&L` with `L` holding no tracked identity: `L` becomes a pointer derived from `p`'s binding, possibly NULL. Because the slot may still hold its old (untracked) value, the binding is read at the `Borrowed` extent of C04.3.4 without a borrow record: it owns nothing (a release of it is refused), the release of `p`'s object ends it (a later use is refused rather than accused), and no mutation ends it. `&L` with `L` holding a tracked identity is refused (the write could lose it, `out-derived-undecided`); a NULL slot under `nullable` and a caller's slot passed through change nothing here; anything else is refused.
 
 **Checked against bodies (rule 13a).** In a unit that defines the declared function, every mention of the slot formal is `*s = EXPR;` with `EXPR` reached from `p` (C04.3.4's reading), or a whole actual at a derived-out position; otherwise the declaration is withdrawn in that unit. The Lean model is `QCore.DerivedOutSlot`.
+
+### C04.17. Reference counts
+
+Card REFCOUNT-RESOURCE-KIND (gateway rules 13b and 13c), on the user's decision recorded here verbatim from the card's brief (it is also recorded in `W48-CALLEE-DECISION-TABLE`):
+
+> **USER DECISION 2026-10-05.**
+> **Class 3, reference counts → a new reference-count resource kind.**
+> - Taking a reference ("keep") is +1 owned reference.
+> - Dropping one ("destroy" or "drop") is −1.
+> - Each function must balance the references it takes, or hand them off (return, store into a tracked owner, a declared transfer), exactly as with other owned resources.
+> - A plain counter that is not a reference (e.g. a statistics counter incremented with `rd_atomic32_add`) needs its own declaration, and never inherits the reference reading.
+> - **Rejected by the user:** treating keep/drop as custody-neutral. It is not fail-closed: a missing drop would read Safe. Never fall back to it.
+
+```qcore
+extern fn keep(p: ptr<mut, u8>) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_reference_kept(p);
+    ensures normal resource_return_alias(p, nonnull);
+};
+
+extern fn drop(p: ptr<mut, u8>) -> unit
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(p);
+    ensures normal resource_reference_dropped(p);
+    ensures normal resource_return_none();
+};
+
+extern fn lookup(key: i32) -> ptr<mut, u8>
+contract {
+    requires resource_contract_v1;
+    ensures normal resource_borrowed(key);
+    ensures normal resource_return_owned(nullable);
+    ensures normal resource_return_kind(reference);
+};
+```
+
+**The resource kind.** `reference` is a resource kind (C04.6), pointer-carried: one reference a function holds on a reference-counted object. Its obligation is counted **per object**, not owned per pointer, because a keep returns its own argument: `q = keep(p)` leaves `p` and `q` denoting one object on which the caller holds one more reference, and `keep(p);` as a statement takes the reference all the same. A reference is therefore taken only by `resource_reference_kept` and dropped only by `resource_reference_dropped`; the one other position that spells the kind is a **returned reference**, `resource_return_owned(n)` with `resource_return_kind(reference)` (a constructor or lookup that hands its caller one reference: `rd_kafka_q_new0`, `rd_kafka_toppar_get2`), which is how a returned kept reference is owned by the caller. `resource_kind(p, reference)` on a parameter rejects the module (a declared transfer of a caller's reference to a callee is not spelled, `REFCOUNT-REFERENCE-TRANSFER`), and a heap release of a reference is a kind mismatch (C04.6 rule 1).
+
+**Placement** (total-or-reject, grammar G05). `p` names a depth-one pointer parameter (`ptr<mut, u8>` or `ptr<const, u8>`), `resource_borrowed`, with no kind; a declaration carries at most one reference clause; a keep's result is `resource_return_alias(p, nonnull)` on that parameter (the keep hands back its argument) or `resource_return_none()`, a drop's is `resource_return_none()`; `p` is never also retained, a slot or a derived out slot's base; the clause stands where a retention may (C04.14). A declaration carrying one is **withheld from the function map** with the retaining declarations: a consumer that knows nothing of references sees an uncontracted callee, so the borrowed reading of `p` — the custody-neutral reading the user rejected — is never what it applies.
+
+**Semantics** (what a consumer that honours the clauses MUST apply; the C gateway's route G does, rule 13b):
+
+1. **Which object.** The object a keep or drop applies to is the one its actual denotes: a plain name, or a pointer cast of one. A keep of a name bound to no tracked identity (an unrebound formal, an untracked local: an object some other reference keeps alive) starts a **family** — the references this function holds on that object — held once, bound to that name and to the keep's result; a keep of a name bound to a live family adds one. A returned reference starts an **acquired** family, held once and bound to the call's destination; its null edge holds nothing. Every other actual (a member read, a call, a tracked identity of another kind, an ambiguous, unknown, possibly-null or derived binding) is refused (`reference-undecided`), and a keep into a place that is not a plain name (`o->f = keep(p)`) is refused too.
+2. **Balance.** Along a path a family's count is its keeps minus its drops. At every exit it must be zero, or exactly one reference must have been handed off: returned (`return p;`), or stored into a tracked owner (a field link to an owner the function itself acquired, escaping with it). A family that still owes a reference at an exit is a **leak candidate** on a path with no refusal, and a refusal (`reference-unbalanced`) on a path that has one, since the refused statement may have handed it on. A refused statement whose line reads the family's name withdraws it, as it withdraws any identity (the refused hand-on rule).
+3. **The last drop.** A drop subtracts one; the drop that takes a family's count to zero is **possibly final** — `destroy` may free the object when the object's own count reaches zero, which the function cannot see — so the family is discharged and every name bound to it is invalidated: any later read, a keep or a drop included, is refused (`reference-dropped`), never accused, unless the function still holds another reference (a count above zero). A drop of a reference the function does not hold — an unbound formal (the caller's reference), a member read, a name the last drop of a kept family invalidated, a family already handed off or held by a structure — is refused (`reference-drop-unheld`, `reference-dropped`): consuming a caller's reference needs a declaration. A drop through a name the last drop of an **acquired** family invalidated is an **over-drop**: every reference the function could see on an object it obtained itself is already dropped, so the drop takes a reference nobody handed it. It is a violation candidate (published as a double release) on a path that refused nothing, and a refusal on any other path. Counts that two arriving paths disagree on are undecided, and every later operation on the family refuses.
+4. **Verdicts.** Every candidate is provisional and never presented as an upstream defect; everything unproven is `Unknown`. No route here turns `Unknown` into `Safe` by approximation: a function that calls no keep is unchanged byte for byte.
+
+**Inference.** A derived summary never publishes a reference result (C04.6 rule 7: inferred summaries stay heap), so a body that returns a kept reference (`rd_kafka_toppar_list_copy`) is `Safe` on its own row and its callers see an uncontracted callee (`REFCOUNT-INFERRED-REFERENCE-RESULT`).
+
+**Plain counters.** The primitive a reference count is built on (`rd_atomic32_add`, `rd_atomic32_sub`, `rd_atomic32_set`; `rd.h:298,351` make `rd_refcnt_t` an `rd_atomic32_t` and `rd_refcnt_add0(R)` `rd_atomic32_add(R, 1)`) is never declared: a reference operation is declared on a named wrapper whose body names the object (`rd_kafka_toppar_keep0`, `rd_kafka_q_destroy0`, …), so after preprocessing a statistics counter on the same primitive is never read as a reference, and a reference operation spelled through the primitive is not read at all (it stays an uncontracted call). A plain counter's own declaration — custody-neutral only where Clang states the operand is not a reference count (the `rd_refcnt_t` field type) — is not written yet (`REFCOUNT-PLAIN-COUNTER-DECLARATION`).
+
+**Interactions.** A slot move (C04.15) of a name bound to a family is refused (`slot-move-undecided`: a family is held by its count, not by a name). A borrowed result (C04.3.4) and a derived out slot (C04.16) own nothing and are never a family: a keep of one is refused. A family that a holder retains (C04.14), that is linked into an owner's field or stored or published into a container counts as held elsewhere: a drop of it is refused (as a release while held is), and at an exit only an escape (alone, or with the owner it is linked into), a stored containment or a publication hands a reference off, so a reference left in an owner that is freed or kept is still owed. No reference clause stands beside a return-code disposition (C04.13), so a family is never decided per class. Counted users (C04.7) remain a separate clause family on a formal's counter member; a reference family is per object on any name, with hand-offs.
+
+**Checked against bodies (rule 13c).** In a unit that defines a keep or drop declaration's body (a header `static inline` body is defined in every unit that includes it), the declaration stands only when the body validates it structurally: `p` is never assigned and never has its address taken; it is mentioned only through member accesses, as a whole actual of a call, or in a null test; nothing stores or returns it except a keep's `return p;` (an alias keep returns exactly `p`, every other body returns nothing); the body has no `goto`; and it touches the object (a member access, or a whole actual at the same reference position of a declared callee: `rd_kafka_q_destroy_owner` forwards to `rd_kafka_q_destroy0`). Otherwise the declaration is marked withdrawn in that unit: every call there refuses (`reference-withdrawn`), and — unlike rule 13a's withdrawal — it is not dropped, so no inference reads the body in its place. The check establishes that the body hands back exactly its argument and keeps or stores nothing else of it; that the count arithmetic is the one declared stays a declared assumption (constraint 4), pinned to the body (C06.2). The Lean model is `QCore.ReferenceCount`.
 
 ## C05. Manifests and immutable assumptions
 

@@ -916,6 +916,29 @@ fn production_contracts_preserve_the_previous_resource_modes() {
             ),
         );
     }
+    // Card REFCOUNT-RESOURCE-KIND: the queue handle constructor and six
+    // destructors had no previous reading; each is its plain v1 mode (the
+    // keeps and drops are withheld, below).
+    old.insert_contract(
+        "rd_kafka_queue_new0",
+        ResourceFunctionContract::new([], R::Owned { nullable: false }),
+    );
+    for name in [
+        "rd_kafka_topic_partition_list_destroy",
+        "rd_kafka_topic_partition_destroy0",
+        "rd_kafka_AlterConsumerGroupOffsets_destroy",
+        "rd_kafka_DeleteConsumerGroupOffsets_destroy",
+        "rd_kafka_ListConsumerGroupOffsets_destroy",
+        "rd_kafka_topic_partition_result_destroy",
+    ] {
+        old.insert_contract(
+            name,
+            ResourceFunctionContract::new(
+                [P::Released { nullable: false }],
+                R::None,
+            ),
+        );
+    }
     // Explicitly borrowed trailing arguments were implicit in the old table.
     fn canonical(mut contract: ResourceFunctionContract) -> ResourceFunctionContract {
         while contract.parameters.last() == Some(&P::Borrowed) {
@@ -1719,9 +1742,14 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // `cJSON_ParseWithLengthOpts` (beside a `global` retention) and the
     // flexible libc `strtol`/`strtoll`/`strtoul`/`strtoull`/`strtod` in
     // `libc/stdlib.qv`; the rest pinned. Selection and rejected unchanged.
+    // 333 -> 349 by card REFCOUNT-RESOURCE-KIND: sixteen declarations
+    // appended to `librdkafka/client.qv`, all pinned: four keeps and five
+    // drops (reference clauses, withheld) and seven plain declarations (the
+    // queue handle constructor `rd_kafka_queue_new0` and six destructors).
+    // Selection and rejected unchanged.
     assert_eq!(
         (selected, v1_declarations, rejected_declarations),
-        (61, 333, 218)
+        (61, 349, 218)
     );
     // A declaration held for human review is loaded and withheld from the
     // function map (contract spec C06.1): the map plus the held set is every
@@ -1738,8 +1766,10 @@ fn every_corpus_module_outside_the_v1_vocabulary_is_rejected_not_skipped() {
     // are withheld into the same table (C04.15, C04.16): the two slot moves,
     // `rd_slice_reader0`, `cJSON_ParseWithLengthOpts` and the five libc
     // `strto*`: 7 -> 16. The five borrowed results are in the function map.
+    // Card REFCOUNT-RESOURCE-KIND: the nine keeps and drops (C04.17) are
+    // withheld into the same table: 16 -> 25.
     assert_eq!(loaded.relational().len(), 6);
-    assert_eq!(loaded.retaining().len(), 16);
+    assert_eq!(loaded.retaining().len(), 25);
     assert_eq!(
         loaded.functions().len()
             + loaded.pending_review().len()

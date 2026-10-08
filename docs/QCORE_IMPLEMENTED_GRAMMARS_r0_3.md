@@ -3554,6 +3554,7 @@ resource_predicate = "resource_borrowed", "(", IDENT, ")"
   | container_predicate
   | retention_predicate
   | slot_predicate
+  | reference_predicate
   | "resource_return_borrowed_from", "(", IDENT, ",", nullability, ")" ;
     (* card SLOT-MOVE-AND-INTERIOR-BORROW, contract spec C04.3.4 *)
 nullability = "nullable" | "nonnull" ;
@@ -3588,7 +3589,12 @@ guard_op = "==" | "<" | ">" | "<=" | ">=" ;
 slot_predicate =
     "resource_slot_moved", "(", IDENT, ",", nullability, ")"            (* slot *)
   | "resource_out_derived", "(", IDENT, ",", IDENT, ",", nullability, ")" ;  (* slot, base *)
+(* card REFCOUNT-RESOURCE-KIND, contract specification C04.17 *)
+reference_predicate =
+    ("resource_reference_kept" | "resource_reference_dropped"), "(", IDENT, ")" ;
 ```
+
+The reference predicates (card REFCOUNT-RESOURCE-KIND, contract specification C04.17) carry static conditions of their own: the named parameter is a depth-one pointer (`ptr<mut, u8>` or `ptr<const, u8>`) whose mode is `resource_borrowed` and which carries no kind; a declaration carries at most one reference predicate; a keep's result is `resource_return_alias(p, nonnull)` on the same parameter or `resource_return_none()`, a drop's is `resource_return_none()`; the referenced parameter is never also retained, a slot or a derived out slot's base; a reference predicate stands where a retention predicate may; and the kind `reference` is spelled by `resource_return_kind(reference)` only beside `resource_return_owned` (a returned reference) and never by `resource_kind` on a parameter (the module is rejected). Every violation rejects the whole module. A declaration carrying one is withheld from the function map with the retaining declarations (C04.14).
 
 The slot predicates and the borrowed result (card SLOT-MOVE-AND-INTERIOR-BORROW, contract specification C04.3.4, C04.15, C04.16) carry static conditions of their own: a moved slot names a `ptr<mut, ptr<mut, u8>>` parameter, a derived out slot a `ptr<mut, ptr<mut, u8>>` or `ptr<mut, ptr<const, u8>>` parameter, each `resource_borrowed` with no kind; a derived out slot's base is a distinct depth-one pointer parameter, `resource_borrowed`, with no kind; a slot is named by at most one slot predicate and is never also a retained pointer; a slot predicate stands where a retention predicate may (beside plain parameter and result predicates, revision markers and retention predicates), and a declaration carrying one is withheld from the function map with the retaining declarations (C04.14). `resource_return_borrowed_from(p, n)` loads to the derived result at the `Borrowed` extent: `p` names a depth-one `resource_borrowed` pointer parameter and the result is a depth-one pointer or `ptr<mut, ptr<mut, u8>>` / `ptr<mut, ptr<const, u8>>` (an array of the parent's children); every other placement rejects the module. A slot predicate inside `resource_on_return` is not admitted (an unsupported predicate). Every violation rejects the whole module.
 

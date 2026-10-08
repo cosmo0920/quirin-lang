@@ -1,0 +1,1852 @@
+{
+ "report": "private/rrk/a3/resource-diagnostics.json",
+ "statuses": {
+  "Unknown": 3941,
+  "Safe": 884,
+  "Unsafe": 9
+ },
+ "members": {
+  "rd_kafka_queue_destroy": {
+   "group": "destructor",
+   "leaves": 4,
+   "functions": 2,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_topic_partition_destroy": {
+   "group": "destructor",
+   "leaves": 14,
+   "functions": 13,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_topic_partition_destroy0": {
+   "group": "destructor",
+   "leaves": 3,
+   "functions": 3,
+   "alone": 1,
+   "alone_functions": [
+    "rdkafka_partition.c::rd_kafka_topic_partition_list_clear"
+   ]
+  },
+  "rd_kafka_topic_partition_list_clear": {
+   "group": "destructor",
+   "leaves": 7,
+   "functions": 4,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_txn_clear_partitions_flag": {
+   "group": "destructor",
+   "leaves": 3,
+   "functions": 2,
+   "alone": 2,
+   "alone_functions": [
+    "rdkafka_txnmgr.c::rd_kafka_txn_clear_partitions",
+    "rdkafka_txnmgr.c::rd_kafka_txn_clear_pending_partitions"
+   ]
+  },
+  "rd_kafka_enq_once_del_source": {
+   "group": "drop",
+   "leaves": 4,
+   "functions": 3,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_enq_once_del_source_return": {
+   "group": "drop",
+   "leaves": 2,
+   "functions": 2,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_enq_once_trigger": {
+   "group": "drop",
+   "leaves": 6,
+   "functions": 6,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_q_destroy0": {
+   "group": "drop",
+   "leaves": 11,
+   "functions": 11,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_q_destroy_owner": {
+   "group": "drop",
+   "leaves": 30,
+   "functions": 26,
+   "alone": 1,
+   "alone_functions": [
+    "rdunittest_fetcher.c::ut_destroy_mock_queue"
+   ]
+  },
+  "rd_kafka_topic_destroy0": {
+   "group": "drop",
+   "leaves": 19,
+   "functions": 13,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_topic_destroy_app": {
+   "group": "drop",
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_toppar_destroy0": {
+   "group": "drop",
+   "leaves": 72,
+   "functions": 56,
+   "alone": 1,
+   "alone_functions": [
+    "rdkafka_msg.c::rd_kafka_msgbatch_destroy"
+   ]
+  },
+  "rd_kafka_topic_keep": {
+   "group": "keep",
+   "leaves": 4,
+   "functions": 4,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_topic_keep_app": {
+   "group": "keep",
+   "leaves": 1,
+   "functions": 1,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_kafka_toppar_keep0": {
+   "group": "keep",
+   "leaves": 3,
+   "functions": 3,
+   "alone": 0,
+   "alone_functions": []
+  },
+  "rd_atomic32_add": {
+   "group": "primitive",
+   "leaves": 10,
+   "functions": 10,
+   "alone": 2,
+   "alone_functions": [
+    "rdkafka_cert.c::rd_kafka_cert_dup",
+    "rdkafka_idempotence.c::rd_kafka_idemp_inflight_toppar_add"
+   ]
+  },
+  "rd_atomic32_set": {
+   "group": "primitive",
+   "leaves": 5,
+   "functions": 4,
+   "alone": 1,
+   "alone_functions": [
+    "rdkafka_buf.c::rd_kafka_bufq_reset"
+   ]
+  },
+  "rd_atomic32_sub": {
+   "group": "primitive",
+   "leaves": 6,
+   "functions": 6,
+   "alone": 1,
+   "alone_functions": [
+    "rdkafka_broker.c::rd_kafka_broker_persistent_connection_del"
+   ]
+  }
+ },
+ "by_set": [
+  {
+   "function": "rdkafka_broker.c::rd_kafka_broker_persistent_connection_del",
+   "members": [
+    "rd_atomic32_sub"
+   ],
+   "leaves": [
+    "call to uncontracted function `rd_atomic32_sub`"
+   ]
+  },
+  {
+   "function": "rdkafka_buf.c::rd_kafka_bufq_reset",
+   "members": [
+    "rd_atomic32_set"
+   ],
+   "leaves": [
+    "call to uncontracted function `rd_atomic32_set`",
+    "call to uncontracted function `rd_atomic32_set`"
+   ]
+  },
+  {
+   "function": "rdkafka_cert.c::rd_kafka_cert_dup",
+   "members": [
+    "rd_atomic32_add"
+   ],
+   "leaves": [
+    "call to uncontracted function `rd_atomic32_add`"
+   ]
+  },
+  {
+   "function": "rdkafka_idempotence.c::rd_kafka_idemp_inflight_toppar_add",
+   "members": [
+    "rd_atomic32_add"
+   ],
+   "leaves": [
+    "call to uncontracted function `rd_atomic32_add`"
+   ]
+  },
+  {
+   "function": "rdkafka_msg.c::rd_kafka_msgbatch_destroy",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "leaves": [
+    "call to `rd_kafka_toppar_destroy0` with `_RKTP`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_topic_partition_list_clear",
+   "members": [
+    "rd_kafka_topic_partition_destroy0"
+   ],
+   "leaves": [
+    "call to `rd_kafka_topic_partition_destroy0` outside its declared literal-argument premise"
+   ]
+  },
+  {
+   "function": "rdkafka_txnmgr.c::rd_kafka_txn_clear_partitions",
+   "members": [
+    "rd_kafka_txn_clear_partitions_flag"
+   ],
+   "leaves": [
+    "call to uncontracted function `rd_kafka_txn_clear_partitions_flag`"
+   ]
+  },
+  {
+   "function": "rdkafka_txnmgr.c::rd_kafka_txn_clear_pending_partitions",
+   "members": [
+    "rd_kafka_txn_clear_partitions_flag"
+   ],
+   "leaves": [
+    "call to uncontracted function `rd_kafka_txn_clear_partitions_flag`",
+    "call to uncontracted function `rd_kafka_txn_clear_partitions_flag`"
+   ]
+  },
+  {
+   "function": "rdunittest_fetcher.c::ut_destroy_mock_queue",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "leaves": [
+    "call to `rd_kafka_q_destroy_owner` with `rkq`: a drop of a reference this function does not hold, or whose count is undecided (reference-drop-unheld)"
+   ]
+  }
+ ],
+ "mixed": [
+  {
+   "function": "rdkafka.c::rd_kafka_committed",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 9,
+    "call to uncontracted function `_`": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_consume",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 5,
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_consume_batch",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 6,
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_consume_callback",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 6,
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_consume_start0",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 6,
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unresolved resource identity `_`": 1,
+    "braced initializer, expression, or declaration is not modeled": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_consume_stop",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 4,
+    "indirect memory access is outside the resource projection": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_consume_stop0",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 5,
+    "indirect memory access is outside the resource projection": 4
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_consumer_close0",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 8,
+    "call to uncontracted function `_`": 6,
+    "indirect memory access is outside the resource projection": 5,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "nullable resource `_` used by a non-null contract": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_get_watermark_offsets",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 4,
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_offsets_for_times",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 8,
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_position",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 4,
+    "unresolved resource identity `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_purge",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 5,
+    "indirect memory access is outside the resource projection": 3,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_query_watermark_offsets",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 11,
+    "indirect memory access is outside the resource projection": 8,
+    "unresolved resource identity `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_seek",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 4,
+    "indirect memory access is outside the resource projection": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unresolved resource identity `_`": 2,
+    "braced initializer, expression, or declaration is not modeled": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_seek_partitions",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 12,
+    "call to uncontracted function `_`": 7,
+    "nullable resource `_` used by a non-null contract": 4,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled increment or decrement expression": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_share_commit_sync",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 13,
+    "indirect memory access is outside the resource projection": 7,
+    "unresolved resource identity `_`": 5,
+    "store through `_` without an out-parameter contract": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "nullable resource `_` used by a non-null contract": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_share_select_broker",
+   "members": [
+    "rd_kafka_toppar_destroy0",
+    "rd_kafka_toppar_keep0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 8,
+    "unresolved resource identity `_`": 7,
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "loop re-acquisition: an earlier generation that may be live is still held": 1
+   }
+  },
+  {
+   "function": "rdkafka.c::rd_kafka_thread_main",
+   "members": [
+    "rd_atomic32_add",
+    "rd_atomic32_sub"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 18,
+    "call to uncontracted function `_`": 17,
+    "unresolved resource identity `_`": 15,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_admin.c::rd_kafka_ListOffsetsResultInfo_destroy",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_admin.c::rd_kafka_ListOffsets_response_merge",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "function": "rdkafka_admin.c::rd_kafka_admin_common_worker_destroy",
+   "members": [
+    "rd_kafka_enq_once_del_source"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `_`": 2,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_admin.c::rd_kafka_admin_coord_request",
+   "members": [
+    "rd_kafka_enq_once_del_source_return"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `_`": 1,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_admin.c::rd_kafka_admin_coord_response_parse",
+   "members": [
+    "rd_kafka_enq_once_del_source_return"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `_`": 3,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_admin.c::rd_kafka_admin_eonce_timeout_cb",
+   "members": [
+    "rd_kafka_enq_once_trigger"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_admin.c::rd_kafka_admin_worker",
+   "members": [
+    "rd_kafka_enq_once_del_source"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 22,
+    "indirect memory access is outside the resource projection": 10,
+    "call to uncontracted function `_`": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 7
+   }
+  },
+  {
+   "function": "rdkafka_assignment.c::rd_kafka_assignment_clear",
+   "members": [
+    "rd_kafka_topic_partition_list_clear"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 3,
+    "unresolved resource identity `_`": 3,
+    "call to uncontracted function `_`": 2
+   }
+  },
+  {
+   "function": "rdkafka_assignment.c::rd_kafka_assignment_serve_removals",
+   "members": [
+    "rd_kafka_topic_partition_list_clear"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 8,
+    "indirect memory access is outside the resource projection": 7,
+    "call to uncontracted function `_`": 6,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unmodeled increment or decrement expression": 1
+   }
+  },
+  {
+   "function": "rdkafka_assignment.c::rd_kafka_share_assignment_clear",
+   "members": [
+    "rd_kafka_topic_partition_list_clear"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 3,
+    "unresolved resource identity `_`": 2,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_assignment.c::rd_kafka_share_assignment_serve_removals",
+   "members": [
+    "rd_kafka_topic_partition_list_clear"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 7,
+    "call to uncontracted function `_`": 4,
+    "unresolved resource identity `_`": 2,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unmodeled increment or decrement expression": 1
+   }
+  },
+  {
+   "function": "rdkafka_aux.c::rd_kafka_topic_partition_result_destroy",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 1,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_background.c::rd_kafka_background_thread_main",
+   "members": [
+    "rd_atomic32_add",
+    "rd_atomic32_sub"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 7,
+    "indirect memory access is outside the resource projection": 7,
+    "unresolved resource identity `_`": 4,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::rd_kafka_broker_op_serve",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 62,
+    "unresolved resource identity `_`": 61,
+    "call to uncontracted function `_`": 33,
+    "unmodeled call, aggregate or indirect access in branch condition": 12,
+    "unrecognized assignment destination": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::rd_kafka_broker_share_session_add_remove_toppar",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "local declaration may shadow a formal resource identity": 2,
+    "unresolved resource identity `_`": 1,
+    "store through `_` without an out-parameter contract": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::rd_kafka_broker_state_change_trigger_eonce",
+   "members": [
+    "rd_kafka_enq_once_trigger"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_broker.c::rd_kafka_broker_thread_main",
+   "members": [
+    "rd_atomic32_add",
+    "rd_atomic32_sub"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 25,
+    "call to uncontracted function `_`": 23,
+    "unresolved resource identity `_`": 16,
+    "unmodeled call, aggregate or indirect access in branch condition": 7,
+    "unmodeled call, aggregate or indirect access in loop condition": 2
+   }
+  },
+  {
+   "function": "rdkafka_buf.c::rd_kafka_bufq_deq",
+   "members": [
+    "rd_atomic32_sub"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "function": "rdkafka_buf.c::rd_kafka_bufq_enq",
+   "members": [
+    "rd_atomic32_add"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 2,
+    "unrecognized assignment destination": 1,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::rd_kafka_cgrp_assignment_clear_lost",
+   "members": [
+    "rd_atomic32_set"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::rd_kafka_cgrp_assignment_set_lost",
+   "members": [
+    "rd_atomic32_set"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::rd_kafka_cgrp_get_coord",
+   "members": [
+    "rd_atomic32_add"
+   ],
+   "others": {
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::rd_kafka_cgrp_partition_del",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 6,
+    "unresolved resource identity `_`": 6,
+    "call to uncontracted function `_`": 4
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::rd_kafka_cgrp_subscription_set",
+   "members": [
+    "rd_atomic32_add"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::rd_kafka_cgrp_terminate0",
+   "members": [
+    "rd_kafka_q_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 16,
+    "indirect memory access is outside the resource projection": 12,
+    "call to uncontracted function `_`": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 5
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::rd_kafka_cgrp_update_committed_offsets",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 5,
+    "unresolved resource identity `_`": 4,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::unittest_list_to_map",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `_`": 2
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::unittest_set_intersect",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 12,
+    "unmodeled expression may mutate a formal resource identity": 5,
+    "unmodeled call, aggregate or indirect access in branch condition": 5,
+    "unresolved resource identity `_`": 2,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "call to uncontracted function `_`": 2
+   }
+  },
+  {
+   "function": "rdkafka_cgrp.c::unittest_set_subtract",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 11,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "call to uncontracted function `_`": 2,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_fetcher.c::rd_kafka_broker_session_remove_partition_from_toppars_in_session",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 2,
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_fetcher.c::rd_kafka_broker_session_reset",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 4,
+    "indirect memory access is outside the resource projection": 4,
+    "call to uncontracted function `_`": 3,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_fetcher.c::rd_kafka_broker_session_update_toppars_list",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 5,
+    "call to uncontracted function `_`": 4,
+    "indirect memory access is outside the resource projection": 2,
+    "store through `_` without an out-parameter contract": 2,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_fetcher.c::rd_kafka_fetch_reply_handle",
+   "members": [
+    "rd_kafka_topic_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 31,
+    "indirect memory access is outside the resource projection": 13,
+    "unmodeled call, aggregate or indirect access in branch condition": 13,
+    "call to uncontracted function `_`": 9,
+    "unsupported assignment expression": 8,
+    "C operator `_` requires type/operand analysis": 6
+   }
+  },
+  {
+   "function": "rdkafka_fetcher.c::rd_kafka_fetch_reply_handle_partition",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 68,
+    "indirect memory access is outside the resource projection": 37,
+    "unmodeled call, aggregate or indirect access in branch condition": 21,
+    "call to uncontracted function `_`": 12,
+    "C operator `_` requires type/operand analysis": 10,
+    "unsupported assignment expression": 7
+   }
+  },
+  {
+   "function": "rdkafka_fetcher.c::rd_kafka_share_fetch_reply_handle",
+   "members": [
+    "rd_kafka_topic_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 29,
+    "indirect memory access is outside the resource projection": 20,
+    "call to uncontracted function `_`": 17,
+    "unmodeled call, aggregate or indirect access in branch condition": 11,
+    "unsupported assignment expression": 8,
+    "unrecognized assignment destination": 2
+   }
+  },
+  {
+   "function": "rdkafka_fetcher.c::rd_kafka_share_fetch_reply_handle_partition",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 47,
+    "indirect memory access is outside the resource projection": 34,
+    "unmodeled call, aggregate or indirect access in branch condition": 21,
+    "unsupported assignment expression": 16,
+    "call to uncontracted function `_`": 12,
+    "unrecognized assignment destination": 3
+   }
+  },
+  {
+   "function": "rdkafka_metadata.c::rd_kafka_metadata",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 13,
+    "unresolved resource identity `_`": 3,
+    "indirect memory access is outside the resource projection": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_metadata.c::rd_kafka_parse_Metadata0",
+   "members": [
+    "rd_kafka_topic_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 160,
+    "indirect memory access is outside the resource projection": 102,
+    "unmodeled call, aggregate or indirect access in branch condition": 47,
+    "call to uncontracted function `_`": 24,
+    "unsupported assignment expression": 19,
+    "store through `_` without an out-parameter contract": 15
+   }
+  },
+  {
+   "function": "rdkafka_metadata_cache.c::rd_kafka_metadata_cache_propagate_changes_trigger_eonce",
+   "members": [
+    "rd_kafka_enq_once_trigger"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_mock.c::rd_kafka_mock_cluster_thread_main",
+   "members": [
+    "rd_atomic32_add",
+    "rd_atomic32_sub"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 8,
+    "unresolved resource identity `_`": 3,
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_msg.c::rd_kafka_msg_partitioner",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 19,
+    "indirect memory access is outside the resource projection": 8,
+    "call to uncontracted function `_`": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "function": "rdkafka_msg.c::rd_kafka_produce_batch",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 15,
+    "call to uncontracted function `_`": 9,
+    "indirect memory access is outside the resource projection": 5,
+    "braced initializer, expression, or declaration is not modeled": 1
+   }
+  },
+  {
+   "function": "rdkafka_msg.c::rd_kafka_producev",
+   "members": [
+    "rd_kafka_topic_destroy0",
+    "rd_kafka_topic_keep"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 18,
+    "indirect memory access is outside the resource projection": 10,
+    "call to uncontracted function `_`": 9,
+    "va_list protocol refused: a `_` operation under a conditional operator or an unevaluated operand": 6,
+    "unsupported assignment expression": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_msg.c::rd_kafka_produceva",
+   "members": [
+    "rd_kafka_topic_destroy0",
+    "rd_kafka_topic_keep"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 32,
+    "call to uncontracted function `_`": 9,
+    "indirect memory access is outside the resource projection": 6,
+    "nested call `_` inside a modeled call is outside the resource projection": 3,
+    "unsupported assignment expression": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_offset.c::rd_kafka_commit",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 4,
+    "unresolved resource identity `_`": 2,
+    "braced initializer, expression, or declaration is not modeled": 1
+   }
+  },
+  {
+   "function": "rdkafka_offset.c::rd_kafka_commit_queue",
+   "members": [
+    "rd_kafka_q_destroy0",
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 4,
+    "unresolved resource identity `_`": 3,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "function": "rdkafka_offset.c::rd_kafka_offset_broker_commit_cb",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 6,
+    "unresolved resource identity `_`": 5,
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_offset.c::rd_kafka_offset_store",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `_`": 2,
+    "unresolved resource identity `_`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_offset.c::rd_kafka_offsets_store",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 10,
+    "indirect memory access is outside the resource projection": 3,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_offset.c::rd_kafka_toppar_handle_OffsetForLeaderEpoch",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 19,
+    "indirect memory access is outside the resource projection": 11,
+    "call to uncontracted function `_`": 6,
+    "braced initializer, expression, or declaration is not modeled": 2
+   }
+  },
+  {
+   "function": "rdkafka_op.c::rd_kafka_op_destroy",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 56,
+    "unmodeled call, aggregate or indirect access in branch condition": 49,
+    "unresolved resource identity `_`": 7,
+    "call to uncontracted function `_`": 4,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_op.c::rd_kafka_op_req",
+   "members": [
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 2
+   }
+  },
+  {
+   "function": "rdkafka_op.c::rd_kafka_op_throttle_time",
+   "members": [
+    "rd_atomic32_set"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 2,
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_partition_leader_query_eonce_timeout_cb",
+   "members": [
+    "rd_kafka_enq_once_trigger"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_partition_leader_query_eonce_timer_cb",
+   "members": [
+    "rd_kafka_enq_once_trigger"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_purge_ua_toppar_queues",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 10,
+    "unresolved resource identity `_`": 4,
+    "a reference taken at line 22828 may still be owed at this exit (reference-unbalanced)": 1,
+    "unsupported assignment expression": 1,
+    "loop re-acquisition: an earlier generation that may be live is still held": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_topic_partition_list_del_by_idx",
+   "members": [
+    "rd_kafka_topic_partition_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_topic_partition_list_destroy",
+   "members": [
+    "rd_kafka_topic_partition_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 3,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_topic_partition_list_get_topics",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 2,
+    "call to uncontracted function `_`": 1,
+    "unresolved resource identity `_`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_topic_partition_list_query_leaders_async_worker",
+   "members": [
+    "rd_kafka_enq_once_del_source"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 11,
+    "indirect memory access is outside the resource projection": 10,
+    "call to uncontracted function `_`": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 4
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_topic_partition_private_destroy",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_desired_unlink",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_enq_msg",
+   "members": [
+    "rd_kafka_q_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 5,
+    "indirect memory access is outside the resource projection": 4,
+    "a reference taken at line 20611 may still be owed at this exit (reference-unbalanced)": 1,
+    "unmodeled increment or decrement expression": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_get2",
+   "members": [
+    "rd_kafka_topic_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 7,
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_get_by_id2",
+   "members": [
+    "rd_kafka_topic_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 7,
+    "call to uncontracted function `_`": 3
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_handle_Offset",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 13,
+    "unresolved resource identity `_`": 12,
+    "call to uncontracted function `_`": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unmodeled increment or decrement expression": 1,
+    "braced initializer, expression, or declaration is not modeled": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_lag_handle_Offset",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 9,
+    "call to uncontracted function `_`": 2,
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_new0",
+   "members": [
+    "rd_kafka_toppar_keep0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 32,
+    "unresolved resource identity `_`": 16,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_op_serve",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 14,
+    "indirect memory access is outside the resource projection": 14,
+    "call to uncontracted function `_`": 9,
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppar_version_new_barrier0",
+   "members": [
+    "rd_atomic32_add"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_partition.c::rd_kafka_toppars_pause_resume",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 4,
+    "unresolved resource identity `_`": 4,
+    "indirect memory access is outside the resource projection": 3
+   }
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_enq_once_trigger_destroy",
+   "members": [
+    "rd_kafka_enq_once_trigger"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_q_apply",
+   "members": [
+    "rd_kafka_q_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 4,
+    "unresolved resource identity `_`": 4,
+    "call to uncontracted function `_`": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_q_pop_serve0",
+   "members": [
+    "rd_kafka_q_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_q_purge0",
+   "members": [
+    "rd_kafka_q_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 6,
+    "unresolved resource identity `_`": 4,
+    "call to uncontracted function `_`": 3,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_q_purge_toppar_version",
+   "members": [
+    "rd_kafka_q_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 8,
+    "unresolved resource identity `_`": 6,
+    "call to uncontracted function `_`": 2,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unrecognized assignment destination": 1
+   }
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_q_serve0",
+   "members": [
+    "rd_kafka_q_destroy0",
+    "rd_kafka_q_destroy_owner"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unmodeled call, aggregate or indirect access in loop condition": 2,
+    "indirect memory access is outside the resource projection": 1,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_q_serve_rkmessages",
+   "members": [
+    "rd_kafka_q_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 18,
+    "indirect memory access is outside the resource projection": 12,
+    "call to uncontracted function `_`": 11,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "unrecognized assignment destination": 2
+   }
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_q_serve_share_rkmessages",
+   "members": [
+    "rd_kafka_q_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 11,
+    "call to uncontracted function `_`": 6,
+    "indirect memory access is outside the resource projection": 5,
+    "store through `_` without an out-parameter contract": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unmodeled call, aggregate or indirect access in loop condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_queue_get_partition",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 1,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_queue.c::rd_kafka_queue_new",
+   "members": [
+    "rd_kafka_q_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_request.c::rd_kafka_handle_OffsetFetch",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 27,
+    "indirect memory access is outside the resource projection": 26,
+    "unmodeled call, aggregate or indirect access in branch condition": 16,
+    "unsupported assignment expression": 14,
+    "call to uncontracted function `_`": 8,
+    "unrecognized assignment destination": 3
+   }
+  },
+  {
+   "function": "rdkafka_request.c::rd_kafka_parse_ListOffsets",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 19,
+    "unsupported assignment expression": 14,
+    "indirect memory access is outside the resource projection": 14,
+    "unmodeled call, aggregate or indirect access in branch condition": 14,
+    "call to uncontracted function `_`": 8,
+    "unrecognized assignment destination": 2
+   }
+  },
+  {
+   "function": "rdkafka_request.c::unittest_idempotent_producer",
+   "members": [
+    "rd_kafka_queue_destroy",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 27,
+    "call to uncontracted function `_`": 24,
+    "unmodeled call, aggregate or indirect access in branch condition": 17,
+    "unresolved resource identity `_`": 4,
+    "nested call `_` inside a modeled call is outside the resource projection": 4,
+    "unmodeled call, aggregate or indirect access in loop condition": 2
+   }
+  },
+  {
+   "function": "rdkafka_sasl.c::rd_kafka_sasl_background_callbacks_enable",
+   "members": [
+    "rd_kafka_queue_destroy"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 2,
+    "nullable resource `_` used by a non-null contract": 2,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_share_acknowledgement.c::rd_kafka_share_ack_batches_destroy",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 2,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "function": "rdkafka_share_acknowledgement.c::rd_kafka_share_build_ack_details",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 12,
+    "call to uncontracted function `_`": 11,
+    "indirect memory access is outside the resource projection": 7,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 3
+   }
+  },
+  {
+   "function": "rdkafka_share_acknowledgement.c::rd_kafka_share_find_ack_entry",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 2,
+    "unresolved resource identity `_`": 2,
+    "call to uncontracted function `_`": 1,
+    "store through `_` without an out-parameter contract": 1
+   }
+  },
+  {
+   "function": "rdkafka_share_acknowledgement.c::rd_kafka_share_partition_offsets_destroy",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_assign_uas",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 16,
+    "indirect memory access is outside the resource projection": 11,
+    "call to uncontracted function `_`": 4,
+    "braced initializer, expression, or declaration is not modeled": 2,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_destroy",
+   "members": [
+    "rd_kafka_topic_destroy_app"
+   ],
+   "others": {
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "call to uncontracted function `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_destroy_app",
+   "members": [
+    "rd_kafka_topic_destroy0"
+   ],
+   "others": {
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_metadata_update",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 16,
+    "indirect memory access is outside the resource projection": 9,
+    "call to uncontracted function `_`": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unrecognized assignment destination": 2
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_metadata_update2",
+   "members": [
+    "rd_kafka_topic_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 5,
+    "indirect memory access is outside the resource projection": 2,
+    "unmodeled call, aggregate or indirect access in branch condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_new",
+   "members": [
+    "rd_kafka_topic_destroy0",
+    "rd_kafka_topic_keep_app"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 2
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_new0",
+   "members": [
+    "rd_kafka_topic_keep"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 33,
+    "indirect memory access is outside the resource projection": 28,
+    "call to uncontracted function `_`": 7,
+    "unmodeled call, aggregate or indirect access in branch condition": 7,
+    "store through `_` without an out-parameter contract": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_new_with_id",
+   "members": [
+    "rd_kafka_topic_keep"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 19,
+    "unresolved resource identity `_`": 8,
+    "call to uncontracted function `_`": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unrecognized assignment destination": 1,
+    "nullable resource `_` used by a non-null contract": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_opaque",
+   "members": [
+    "rd_kafka_topic_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 2,
+    "call to uncontracted function `_`": 1,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "unmodeled call, aggregate or indirect access in return expression": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_partition_available",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 3,
+    "unmodeled call, aggregate or indirect access in branch condition": 2
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_partition_cnt_update",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 17,
+    "indirect memory access is outside the resource projection": 15,
+    "call to uncontracted function `_`": 8,
+    "unmodeled call, aggregate or indirect access in branch condition": 2,
+    "unrecognized assignment destination": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_partitions_remove",
+   "members": [
+    "rd_kafka_topic_destroy0",
+    "rd_kafka_toppar_destroy0",
+    "rd_kafka_toppar_keep0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 13,
+    "call to uncontracted function `_`": 5,
+    "unresolved resource identity `_`": 5,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 2,
+    "loop re-acquisition: an earlier generation that may be live is still held": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_topic_scan_all",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 17,
+    "unresolved resource identity `_`": 10,
+    "call to uncontracted function `_`": 6,
+    "unmodeled call, aggregate or indirect access in branch condition": 4,
+    "braced initializer, expression, or declaration is not modeled": 1,
+    "unsupported assignment expression": 1
+   }
+  },
+  {
+   "function": "rdkafka_topic.c::rd_kafka_toppar_leader_update",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 13,
+    "indirect memory access is outside the resource projection": 10,
+    "call to uncontracted function `_`": 4,
+    "unmodeled call, aggregate or indirect access in branch condition": 1,
+    "nested call `_` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "function": "rdkafka_txnmgr.c::rd_kafka_txn_clear_partitions_flag",
+   "members": [
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "indirect memory access is outside the resource projection": 5,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdkafka_txnmgr.c::rd_kafka_txn_handle_AddPartitionsToTxn",
+   "members": [
+    "rd_kafka_topic_destroy0",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 32,
+    "indirect memory access is outside the resource projection": 20,
+    "call to uncontracted function `_`": 10,
+    "unmodeled call, aggregate or indirect access in branch condition": 7,
+    "unsupported assignment expression": 6,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1
+   }
+  },
+  {
+   "function": "rdunittest_acknowledge.c::ut_ack_get_type",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 3,
+    "call to uncontracted function `_`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1
+   }
+  },
+  {
+   "function": "rdunittest_acknowledge.c::ut_ack_set_gap",
+   "members": [
+    "rd_kafka_topic_partition_destroy"
+   ],
+   "others": {
+    "unresolved resource identity `_`": 3,
+    "call to uncontracted function `_`": 1,
+    "indirect memory access is outside the resource projection": 1,
+    "unmodeled call, aggregate or indirect access in for-loop condition": 1
+   }
+  },
+  {
+   "function": "rdunittest_msgset_errors.c::unittest_msgset_all_error_types_with_valid",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 27,
+    "unmodeled call, aggregate or indirect access in branch condition": 19,
+    "indirect memory access is outside the resource projection": 10,
+    "unresolved resource identity `_`": 6
+   }
+  },
+  {
+   "function": "rdunittest_msgset_errors.c::unittest_msgset_all_errors",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 17,
+    "unmodeled call, aggregate or indirect access in branch condition": 7,
+    "indirect memory access is outside the resource projection": 1,
+    "nested call `_` inside a modeled call is outside the resource projection": 1
+   }
+  },
+  {
+   "function": "rdunittest_msgset_errors.c::unittest_msgset_all_success",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 14,
+    "unmodeled call, aggregate or indirect access in branch condition": 3,
+    "unresolved resource identity `_`": 2,
+    "indirect memory access is outside the resource projection": 2
+   }
+  },
+  {
+   "function": "rdunittest_msgset_errors.c::unittest_msgset_crc_error_share_consumer",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 11,
+    "unmodeled call, aggregate or indirect access in branch condition": 5,
+    "indirect memory access is outside the resource projection": 4,
+    "nested call `_` inside a modeled call is outside the resource projection": 1,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdunittest_msgset_errors.c::unittest_msgset_decompression_error_share_consumer",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 12,
+    "unmodeled call, aggregate or indirect access in branch condition": 5,
+    "indirect memory access is outside the resource projection": 4,
+    "unresolved resource identity `_`": 1
+   }
+  },
+  {
+   "function": "rdunittest_msgset_errors.c::unittest_msgset_mixed_crc_success_decomp",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 18,
+    "unmodeled call, aggregate or indirect access in branch condition": 9,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "function": "rdunittest_msgset_errors.c::unittest_msgset_mixed_magic_success_crc_success",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 20,
+    "unmodeled call, aggregate or indirect access in branch condition": 11,
+    "unresolved resource identity `_`": 1,
+    "indirect memory access is outside the resource projection": 1
+   }
+  },
+  {
+   "function": "rdunittest_msgset_errors.c::unittest_msgset_mixed_success_crc_success",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 17,
+    "unmodeled call, aggregate or indirect access in branch condition": 9,
+    "indirect memory access is outside the resource projection": 5,
+    "unresolved resource identity `_`": 3
+   }
+  },
+  {
+   "function": "rdunittest_msgset_errors.c::unittest_msgset_unsupported_magic_share_consumer",
+   "members": [
+    "rd_kafka_q_destroy_owner",
+    "rd_kafka_toppar_destroy0"
+   ],
+   "others": {
+    "call to uncontracted function `_`": 11,
+    "unmodeled call, aggregate or indirect access in branch condition": 5,
+    "indirect memory access is outside the resource projection": 4,
+    "unresolved resource identity `_`": 1
+   }
+  }
+ ]
+}
